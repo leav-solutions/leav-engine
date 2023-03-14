@@ -350,7 +350,7 @@ export default function ({
                             options: {version: formattedVersion},
                             withCount: fields.includes('totalCount'),
                             retrieveInactive,
-                            searchQuery
+                            fulltextSearch: searchQuery
                         },
                         ctx
                     });

@@ -714,8 +714,7 @@ describe('RecordDomain', () => {
             };
 
             const recRepo: Mockify<IRecordRepo> = {
-                find: global.__mockPromise(mockSearchRes),
-                search: global.__mockPromise('')
+                find: global.__mockPromise(mockSearchRes)
             };
 
             const libRepo: Mockify<ILibraryRepo> = {
@@ -741,12 +740,11 @@ describe('RecordDomain', () => {
             const findRes = await recDomain.find({
                 params: {
                     library: 'test_lib',
-                    searchQuery: 'text'
+                    fulltextSearch: 'text'
                 },
                 ctx
             });
 
-            expect(recRepo.search.mock.calls.length).toBe(1);
             expect(findRes).toEqual({
                 totalCount: 1,
                 list: [

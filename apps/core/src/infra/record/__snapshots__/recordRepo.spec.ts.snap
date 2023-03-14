@@ -9,12 +9,13 @@ exports[`RecordRepo find Handle fulltext search result 1`] = `
   "query": {
     "_source": [Function],
     "bindVars": {
-      "value0": "test_lib",
+      "value0": "fulltextSearchQuery",
+      "value1": "test_lib",
     },
-    "query": "FOR r IN (fulltextSearchQuery)
+    "query": "FOR r IN (@value0)
 SORT r.core_index.score DESC, r._key ASC
 FILTER r.active == true
-RETURN MERGE(r, {library: @value0})",
+RETURN MERGE(r, {library: @value1})",
   },
   "withTotalCount": true,
 }
@@ -65,19 +66,5 @@ FILTER r.active == true
 RETURN MERGE(r, {library: @value1})",
   },
   "withTotalCount": true,
-}
-`;
-
-exports[`RecordRepo search should return search query 1`] = `
-{
-  "_source": [Function],
-  "bindVars": {
-    "value0": "indexField",
-    "value1": "id",
-    "value2": "analyzer",
-  },
-  "query": "FOR doc IN view SEARCH
-ANALYZER(doc.@value0.@value1 LIKE TOKENS("%query%", @value2)[0], @value2)
-RETURN MERGE(doc, {@value0: MERGE(doc.@value0, {score: BM25(doc)})})",
 }
 `;

@@ -2,6 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, Database} from 'arangojs';
+import {IAttributeRepo} from 'infra/attribute/attributeRepo';
+import {GetSearchQuery} from 'infra/indexation/helpers/getSearchQuery';
 import {cloneDeep} from 'lodash';
 import {AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition, IRecordFilterOption, Operator} from '../../_types/record';
@@ -487,9 +489,17 @@ describe('RecordRepo', () => {
                 cleanup: jest.fn().mockReturnValueOnce(mockCleanupRes[0]).mockReturnValueOnce(mockCleanupRes[1])
             };
 
+            const mockAttrRepo: Mockify<IAttributeRepo> = {
+                getLibraryFullTextAttributes: global.__mockPromise(['id', 'label'])
+            };
+
+            const mockGetSearchQuery: Mockify<GetSearchQuery> = jest.fn(() => 'fulltextSearchQuery');
+
             const recRepo = recordRepo({
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                'core.infra.indexation.helpers.getSearchQuery': mockGetSearchQuery as GetSearchQuery
             });
 
             const records = await recRepo.find({
@@ -497,13 +507,13 @@ describe('RecordRepo', () => {
                 filters: [],
                 pagination: null,
                 withCount: true,
-                fulltextSearchQuery: aql`fulltextSearchQuery`,
+                fulltextSearch: 'fulltextSearch',
                 ctx
             });
 
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
-            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/fulltextSearchQuery/);
             expect(mockDbServ.execute.mock.calls[0][0]).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars.value0).toMatch('fulltextSearchQuery');
 
             expect(records).toEqual({
                 cursor: null,
@@ -615,15 +625,6 @@ describe('RecordRepo', () => {
                     }
                 ]
             });
-        });
-    });
-
-    describe('search', () => {
-        test('should return search query', async function () {
-            const recRepo = recordRepo();
-            const result = await recRepo.search('view', 'analyzer', 'indexField', ['id'], 'query');
-
-            expect(result).toMatchSnapshot();
         });
     });
 });

@@ -75,7 +75,7 @@ export interface IFindRecordParams {
     pagination?: IPaginationParams | ICursorPaginationParams;
     withCount?: boolean;
     retrieveInactive?: boolean;
-    searchQuery?: string;
+    fulltextSearch?: string;
 }
 
 const allowedTypeOperator = {
@@ -761,10 +761,9 @@ export default function ({
         },
         async find({params, ctx}: {params: IFindRecordParams; ctx: IQueryInfos}): Promise<IListWithCursor<IRecord>> {
             const {library, sort, pagination, withCount, retrieveInactive = false} = params;
-            const {filters = [] as IRecordFilterLight[], searchQuery} = params;
+            const {filters = [] as IRecordFilterLight[], fulltextSearch} = params;
             const fullFilters: IRecordFilterOption[] = [];
             let fullSort: IRecordSort;
-            let fulltextSearchQuery: GeneratedAqlQuery;
 
             const isLibraryAccessible = await libraryPermissionDomain.getLibraryPermission({
                 libraryId: params.library,
@@ -775,22 +774,6 @@ export default function ({
 
             if (!isLibraryAccessible) {
                 throw new PermissionError(LibraryPermissionsActions.ACCESS_LIBRARY);
-            }
-
-            // Add ids filters if searchQuery is defined
-            if (typeof searchQuery !== 'undefined' && searchQuery !== '') {
-                // format search query
-                const cleanSearchQuery = searchQuery?.replace(/\s+/g, ' ').trim();
-
-                const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(params.library, ctx);
-
-                fulltextSearchQuery = await recordRepo.search(
-                    `${CORE_INDEX_VIEW}_${params.library}`,
-                    CORE_INDEX_ANALYZER,
-                    CORE_INDEX_FIELD,
-                    fullTextAttributes.map(a => a.id),
-                    cleanSearchQuery
-                );
             }
 
             if (filters.length) {
@@ -911,7 +894,7 @@ export default function ({
                 pagination,
                 withCount,
                 retrieveInactive,
-                fulltextSearchQuery,
+                fulltextSearch,
                 ctx
             });
 

@@ -9,7 +9,6 @@ import {IQueryInfos} from '_types/queryInfos';
 import {
     CursorDirection,
     ICursorPaginationParams,
-    IList,
     IListWithCursor,
     IPaginationCursors,
     IPaginationParams
@@ -28,6 +27,8 @@ import {IDbUtils} from '../db/dbUtils';
 import {IFilterTypesHelper} from './helpers/filterTypes';
 import {GetSearchVariableName} from './helpers/getSearchVariableName';
 import {GetSearchVariablesQueryPart} from './helpers/getSearchVariablesQueryPart';
+import {IAttributeRepo} from '../attribute/attributeRepo';
+import {GetSearchQuery} from 'infra/indexation/helpers/getSearchQuery';
 
 export interface IFindRequestResult {
     initialVars: GeneratedAqlQuery[]; // Some "global" variables needed later on the query (eg. "classified in" subquery)
@@ -61,26 +62,21 @@ export interface IRecordRepo {
         pagination?: IPaginationParams | ICursorPaginationParams;
         withCount?: boolean;
         retrieveInactive?: boolean;
-        fulltextSearchQuery?: GeneratedAqlQuery;
+        fulltextSearch?: string;
         ctx: IQueryInfos;
     }): Promise<IListWithCursor<IRecord>>;
-    search(
-        view: string,
-        analyzer: string,
-        indexField: string,
-        fields: string[],
-        query: string
-    ): Promise<GeneratedAqlQuery>;
 }
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
     'core.infra.attributeTypes'?: IAttributeTypesRepo;
+    'core.infra.attribute'?: IAttributeRepo;
     'core.infra.attributeTypes.helpers.getConditionPart'?: GetConditionPart;
     'core.infra.record.helpers.getSearchVariablesQueryPart'?: GetSearchVariablesQueryPart;
     'core.infra.record.helpers.getSearchVariableName'?: GetSearchVariableName;
     'core.infra.record.helpers.filterTypes'?: IFilterTypesHelper;
+    'core.infra.indexation.helpers.getSearchQuery'?: GetSearchQuery;
 }
 
 export default function ({
@@ -90,7 +86,9 @@ export default function ({
     'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
     'core.infra.record.helpers.getSearchVariablesQueryPart': getSearchVariablesQueryPart = null,
     'core.infra.record.helpers.getSearchVariableName': getSearchVariableName = null,
-    'core.infra.record.helpers.filterTypes': filterTypesHelper = null
+    'core.infra.record.helpers.filterTypes': filterTypesHelper = null,
+    'core.infra.indexation.helpers.getSearchQuery': getSearchQuery = null,
+    'core.infra.attribute': attributeRepo = null
 }: IDeps = {}): IRecordRepo {
     const _generateCursor = (from: number, direction: CursorDirection): string =>
         Buffer.from(`${direction}:${from}`).toString('base64');
@@ -111,42 +109,13 @@ export default function ({
     };
 
     return {
-        async search(
-            view: string,
-            analyzer: string,
-            indexField: string,
-            fields: string[],
-            query: string
-        ): Promise<GeneratedAqlQuery> {
-            if (!fields.length) {
-                return aql`[]`;
-            }
-
-            const queryParts = [aql`FOR doc IN ${literal(view)} SEARCH`];
-
-            const value = literal(`"%${query}%"`);
-
-            for (const [i, field] of fields.entries()) {
-                queryParts.push(
-                    aql`ANALYZER(doc.${indexField}.${field} LIKE TOKENS(${value}, ${analyzer})[0], ${analyzer})`
-                );
-
-                if (i < fields.length - 1) {
-                    queryParts.push(aql`OR`);
-                }
-            }
-
-            queryParts.push(aql`RETURN MERGE(doc, {${indexField}: MERGE(doc.${indexField}, {score: BM25(doc)})})`);
-
-            return join(queryParts, '\n');
-        },
         async find({
             libraryId,
             filters,
             sort,
             pagination,
             withCount,
-            fulltextSearchQuery,
+            fulltextSearch,
             retrieveInactive = false,
             ctx
         }): Promise<IListWithCursor<IRecord>> {
@@ -154,6 +123,19 @@ export default function ({
             // Force disabling count on cursor  pagination as it's pointless
             const withTotalCount = withCount && !withCursorPagination;
             const coll = dbService.db.collection(libraryId);
+            let fulltextSearchQuery: GeneratedAqlQuery;
+
+            if (typeof fulltextSearch !== 'undefined' && fulltextSearch !== '') {
+                // format search query
+                const cleanFulltextSearch = fulltextSearch?.replace(/\s+/g, ' ').trim();
+                const fullTextAttributes = await attributeRepo.getLibraryFullTextAttributes({libraryId, ctx});
+
+                fulltextSearchQuery = getSearchQuery(
+                    libraryId,
+                    fullTextAttributes.map(a => a.id),
+                    cleanFulltextSearch
+                );
+            }
 
             const queryParts = [aql`FOR r IN (${fulltextSearchQuery ?? coll})`];
 

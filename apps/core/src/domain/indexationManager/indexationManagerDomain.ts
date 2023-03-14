@@ -15,8 +15,7 @@ import {IValue} from '_types/value';
 import {AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
 import {EventAction, IDbEvent, ILibraryPayload, IRecordPayload, IValuePayload} from '../../_types/event';
 import {AttributeCondition, Operator} from '../../_types/record';
-import {ILibraryRepo} from '../../infra/library/libraryRepo';
-import {IDbService} from '../../infra/db/dbService';
+import {IIndexationService} from '../../infra/indexation/indexationService';
 
 export interface IIndexationManagerDomain {
     init(): Promise<void>;
@@ -26,12 +25,11 @@ export interface IIndexationManagerDomain {
 interface IDeps {
     config?: Config.IConfig;
     'core.infra.amqpService'?: IAmqpService;
-    'core.infra.db.dbService'?: IDbService;
     'core.domain.record'?: IRecordDomain;
     'core.infra.record'?: IRecordRepo;
-    'core.infra.library'?: ILibraryRepo;
     'core.domain.library'?: ILibraryDomain;
     'core.domain.attribute'?: IAttributeDomain;
+    'core.infra.indexation.indexationService'?: IIndexationService;
 }
 
 export const CORE_INDEX_FIELD = 'core_index';
@@ -41,43 +39,18 @@ export const CORE_INDEX_VIEW = 'core_index';
 export default function ({
     config = null,
     'core.infra.amqpService': amqpService = null,
-    'core.infra.db.dbService': dbService = null,
     'core.domain.record': recordDomain = null,
     'core.infra.record': recordRepo = null,
-    'core.infra.library': libraryRepo = null,
     'core.domain.library': libraryDomain = null,
-    'core.domain.attribute': attributeDomain = null
+    'core.domain.attribute': attributeDomain = null,
+    'core.infra.indexation.indexationService': indexationService = null
 }: IDeps): IIndexationManagerDomain {
-    const _getCoreIndexView = libraryId => `${CORE_INDEX_VIEW}_${libraryId}`;
-
-    const _createView = async (libraryId: string): Promise<void> => {
-        await dbService.createView(_getCoreIndexView(libraryId), {
-            type: 'arangosearch',
-            links: {
-                [libraryId]: {
-                    analyzers: [CORE_INDEX_ANALYZER],
-                    fields: {
-                        [CORE_INDEX_FIELD]: {
-                            includeAllFields: true
-                        }
-                    }
-                }
-            }
-        });
-    };
-
-    const _viewExists = async (libraryId: string): Promise<boolean> => {
-        const views = await dbService.views();
-        return !!views.find(v => v.name === _getCoreIndexView(libraryId));
-    };
-
     const _indexRecords = async (findRecordParams: IFindRecordParams, ctx: IQueryInfos): Promise<void> => {
-        const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(findRecordParams.library, ctx);
-
-        // If index does not exits, we create the index and the associated view
-        if (!(await _viewExists(findRecordParams.library))) {
-            await _createView(findRecordParams.library);
+        if (!(await indexationService.isLibraryListed(findRecordParams.library))) {
+            await indexationService.listLibrary(findRecordParams.library);
         }
+
+        const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(findRecordParams.library, ctx);
 
         const records = await recordDomain.find({
             params: findRecordParams,
@@ -118,11 +91,7 @@ export default function ({
                 )
             ).reduce((acc, e) => ({...acc, ...e}), {});
 
-            await recordRepo.updateRecord({
-                libraryId: findRecordParams.library,
-                recordData: {id: record.id, [CORE_INDEX_FIELD]: data},
-                mergeObjects: false
-            });
+            await indexationService.indexRecord(findRecordParams.library, record.id, data);
         }
     };
 
@@ -345,18 +314,17 @@ export default function ({
 
                 const attrProps = await attributeDomain.getAttributeProperties({id: data.attributeId, ctx});
 
-                let values;
+                let values: IValue[];
 
                 if (attrProps.multiple_values) {
-                    values = await recordDomain.getRecordFieldValue({
+                    values = (await recordDomain.getRecordFieldValue({
                         library: data.libraryId,
                         record: {id: data.recordId},
                         attributeId: data.attributeId,
                         ctx
-                    });
+                    })) as IValue[];
 
                     values = (await _getFormattedValuesAndLabels(attrProps, values, ctx)) as IValue[];
-                    values = values.map((v: IValue) => String(v.value));
                 }
 
                 await recordRepo.updateRecord({
@@ -364,7 +332,7 @@ export default function ({
                     recordData: {
                         id: data.recordId,
                         [CORE_INDEX_FIELD]: {
-                            [data.attributeId]: values ?? null
+                            [data.attributeId]: values?.map((v: IValue) => String(v.value)) ?? null
                         }
                     }
                 });
@@ -420,20 +388,7 @@ export default function ({
                 _onMessage
             );
 
-            const analyzers = await dbService.analyzers();
-
-            if (!analyzers.find(a => a.name === `${config.db.name}::${CORE_INDEX_ANALYZER}`)) {
-                // Create norm analyzer used by indexation manager
-                await dbService.createAnalyzer(CORE_INDEX_ANALYZER, {
-                    type: 'norm',
-                    properties: {
-                        locale: 'en',
-                        case: 'lower',
-                        accent: false
-                    },
-                    features: ['frequency', 'norm']
-                });
-            }
+            await indexationService.init();
         },
         async indexDatabase(ctx: IQueryInfos, libraryId: string, records?: string[]): Promise<void> {
             // if records are undefined we re-index all library's records

@@ -135,10 +135,11 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
 
             return {...state, sort: action.sort, view: {...state.view, sync}};
         case SearchActionTypes.CANCEL_SORT:
-            delete state.sort;
+            const {sort, ...newState} = state;
+
             sync = sync && typeof state.view.current.sort === 'undefined';
 
-            return {...state, view: {...state.view, sync}, loading: true};
+            return {...newState, view: {...state.view, sync}, loading: true};
         case SearchActionTypes.SET_ATTRIBUTES:
             return {...state, attributes: action.attributes};
         case SearchActionTypes.SET_FIELDS:
