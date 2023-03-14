@@ -6,18 +6,18 @@ import LibraryIcon from 'components/shared/LibraryIcon';
 import {Location} from 'history';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {AiOutlineFileSearch} from 'react-icons/ai';
 import {useHistory, useLocation} from 'react-router-dom';
-import {Header, Tab, TabProps, Button, Grid} from 'semantic-ui-react';
+import {Button, Grid, Header, Tab, TabProps} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {indexRecordsMutation} from '../../../../queries/records/indexRecordsMutation';
-import {INDEX_RECORDS, INDEX_RECORDSVariables} from '../../../../_gqlTypes/INDEX_RECORDS';
 import {GET_LIB_BY_ID_libraries_list} from '../../../../_gqlTypes/GET_LIB_BY_ID';
+import {INDEX_RECORDS, INDEX_RECORDSVariables} from '../../../../_gqlTypes/INDEX_RECORDS';
 import AttributesTab from './AttributesTab';
 import FormsTab from './FormsTab';
 import InfosTab from './InfosTab';
 import PermissionsTab from './PermissionsTab';
 import PurgeTab from './PurgeTab';
-import {AiOutlineFileSearch} from 'react-icons/ai';
 
 const Title = styled(Header)`
     display: flex;
@@ -128,14 +128,14 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
     return (
         <>
             <Grid padded verticalAlign={'middle'}>
-                <Grid.Column>
+                <Grid.Column width={12}>
                     <Title className="no-grow" role="heading" aria-label="title">
                         <LibraryIcon library={library} />
                         {label}
                     </Title>
                 </Grid.Column>
                 {!isCreationMode && (
-                    <Grid.Column>
+                    <Grid.Column width={4} textAlign="right">
                         <Button
                             primary
                             disabled={indexLoading}
@@ -143,7 +143,7 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
                             loading={indexLoading}
                             aria-label="index"
                         >
-                            <AiOutlineFileSearch /> {t('libraries.index')}
+                            <AiOutlineFileSearch /> {t('libraries.index_fulltext_search')}
                         </Button>
                     </Grid.Column>
                 )}
