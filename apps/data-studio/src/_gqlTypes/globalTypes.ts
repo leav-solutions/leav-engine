@@ -224,7 +224,7 @@ export interface RecordFilterInput {
 }
 
 export interface RecordSortInput {
-    field?: string | null;
+    field: string;
     order: SortOrder;
 }
 

@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql} from 'arangojs';
+import {aql, literal, join} from 'arangojs/aql';
+import {CollectionType} from 'arangojs/collection';
 import {IList, IPaginationParams} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
@@ -9,7 +10,7 @@ import {IGetCoreEntitiesParams} from '_types/shared';
 import {IGetCoreTreesParams, ITree, ITreeElement, ITreeNode, ITreeNodeLight, TreePaths} from '_types/tree';
 import {IDbDocument, IDbEdge, IExecuteWithCount, isExecuteWithCount} from '../../infra/db/_types';
 import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
-import {collectionTypes, IDbService} from '../db/dbService';
+import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {
     getEdgesCollectionName,
@@ -173,8 +174,8 @@ export default function ({
                 ctx
             });
 
-            await dbService.createCollection(getEdgesCollectionName(treeData.id), collectionTypes.EDGE);
-            await dbService.createCollection(getNodesCollectionName(treeData.id), collectionTypes.DOCUMENT);
+            await dbService.createCollection(getEdgesCollectionName(treeData.id), CollectionType.EDGE_COLLECTION);
+            await dbService.createCollection(getNodesCollectionName(treeData.id), CollectionType.DOCUMENT_COLLECTION);
 
             const nodesCollection = dbService.db.collection(getNodesCollectionName(treeData.id));
 
@@ -228,8 +229,8 @@ export default function ({
                 ctx
             });
 
-            await dbService.dropCollection(getEdgesCollectionName(id), collectionTypes.EDGE);
-            await dbService.dropCollection(getNodesCollectionName(id), collectionTypes.DOCUMENT);
+            await dbService.dropCollection(getEdgesCollectionName(id), CollectionType.EDGE_COLLECTION);
+            await dbService.dropCollection(getNodesCollectionName(id), CollectionType.DOCUMENT_COLLECTION);
 
             // Return deleted library
             return dbUtils.cleanup(res.pop());
@@ -249,7 +250,7 @@ export default function ({
                 })
             )[0];
 
-            const edgeCollec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
+            const edgeCollec = dbService.db.collection(getEdgesCollectionName(treeId));
 
             // Add this entity to the tree
             const res = (
@@ -272,7 +273,7 @@ export default function ({
             const destination = parentTo ? getFullNodeId(parentTo, treeId) : getRootId(treeId);
             const elemId = getFullNodeId(nodeId, treeId);
 
-            const edgeCollec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
+            const edgeCollec = dbService.db.collection(getEdgesCollectionName(treeId));
 
             const res = (
                 await dbService.execute<ITreeEdge[]>({
@@ -293,8 +294,8 @@ export default function ({
             };
         },
         async deleteElement({treeId, nodeId, deleteChildren = true, ctx}): Promise<ITreeNodeLight> {
-            const edgeCollec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
-            const nodesCollec = dbService.db.edgeCollection(getNodesCollectionName(treeId));
+            const edgeCollec = dbService.db.collection(getEdgesCollectionName(treeId));
+            const nodesCollec = dbService.db.collection(getNodesCollectionName(treeId));
             const fullNodeId = getFullNodeId(nodeId, treeId);
 
             if (deleteChildren) {
@@ -369,7 +370,7 @@ export default function ({
             return {id: removedEntity._key};
         },
         async isNodePresent({treeId, nodeId, ctx}): Promise<boolean> {
-            const collec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
+            const collec = dbService.db.collection(getEdgesCollectionName(treeId));
             const elemId = getFullNodeId(nodeId, treeId);
 
             const query = aql`
@@ -387,8 +388,8 @@ export default function ({
 
             const query = aql`
                 FOR n IN ${collec}
-                    FILTER n.${aql.literal(NODE_LIBRARY_ID_FIELD)} == ${record.library}
-                        AND n.${aql.literal(NODE_RECORD_ID_FIELD)} == ${record.id}
+                    FILTER n.${literal(NODE_LIBRARY_ID_FIELD)} == ${record.library}
+                        AND n.${literal(NODE_RECORD_ID_FIELD)} == ${record.id}
                     RETURN n
             `;
             const res = await dbService.execute({query, ctx});
@@ -404,7 +405,7 @@ export default function ({
         }): Promise<ITreeNode[]> {
             const rootId = getRootId(treeId);
 
-            const collec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
+            const collec = dbService.db.collection(getEdgesCollectionName(treeId));
 
             const nodeFrom = startingNode ? getFullNodeId(startingNode, treeId) : rootId;
             const nodeFromKey = startingNode ?? rootId.split('/')[1];
@@ -446,7 +447,7 @@ export default function ({
                     id: v._key,
                     record: MERGE(record, {path}),
                     order: nodeOrder,
-                    ${aql.literal(childrenCount ? 'childrenCount' : '')}
+                    ${literal(childrenCount ? 'childrenCount' : '')}
                 }
             `);
 
@@ -456,7 +457,7 @@ export default function ({
                 order: number;
                 childrenCount?: number;
             }> = await dbService.execute({
-                query: aql.join(queryParts),
+                query: join(queryParts),
                 ctx
             });
 
@@ -519,7 +520,7 @@ export default function ({
 
             const hasPagination = typeof pagination?.offset !== 'undefined' && typeof pagination?.limit !== 'undefined';
 
-            const treeEdgeCollec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
+            const treeEdgeCollec = dbService.db.collection(getEdgesCollectionName(treeId));
 
             const childrenCountQuery = aql`
                 LET childrenCount = COUNT(
@@ -536,7 +537,7 @@ export default function ({
                     LET order = TO_NUMBER(p.edges[0].order)
                     LET key = p.edges[0]._key
                     SORT order ASC, key ASC
-                    ${hasPagination ? aql`LIMIT ${pagination.offset}, ${pagination.limit}` : aql.literal('')}
+                    ${hasPagination ? aql`LIMIT ${pagination.offset}, ${pagination.limit}` : literal('')}
 
                     ${childrenCount ? childrenCountQuery : aql``}
 
@@ -545,7 +546,7 @@ export default function ({
                     RETURN {
                         id: v._key,
                         order,
-                        ${childrenCount ? aql.literal('childrenCount,') : aql``}
+                        ${childrenCount ? literal('childrenCount,') : aql``}
                         record
                     }
             `;
@@ -575,7 +576,7 @@ export default function ({
                 return [];
             }
 
-            const treeEdgeCollec = dbService.db.edgeCollection(getEdgesCollectionName(treeId));
+            const treeEdgeCollec = dbService.db.collection(getEdgesCollectionName(treeId));
 
             const query = aql`
                 FOR v,e,p IN 0..${MAX_TREE_DEPTH} INBOUND ${getFullNodeId(nodeId, treeId)}
@@ -598,7 +599,7 @@ export default function ({
             return cleanResult;
         },
         async getLinkedRecords({treeId, attribute, nodeId, ctx}): Promise<IRecord[]> {
-            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             const query = aql`
                 FOR v,e,p

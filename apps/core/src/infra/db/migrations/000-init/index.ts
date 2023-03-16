@@ -5,7 +5,6 @@ import {aql} from 'arangojs';
 import * as bcrypt from 'bcryptjs';
 import {i18n} from 'i18next';
 import {IApplicationService} from 'infra/application/applicationService';
-import {IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import moment from 'moment';
 import {IConfig} from '_types/config';
@@ -19,12 +18,13 @@ import {IAttributeForRepo, IAttributeRepo} from '../../../attribute/attributeRep
 import {ILibraryRepo, LIB_COLLECTION_NAME} from '../../../library/libraryRepo';
 import {getEdgesCollectionName, getNodesCollectionName} from '../../../tree/helpers/utils';
 import {VIEWS_COLLECTION_NAME} from '../../../view/_types';
-import {collectionTypes, IDbService} from '../../dbService';
+import {IDbService} from '../../dbService';
 import {coreCollections, IMigrationCoreCollection} from './coreCollections';
 import {MigrationApplicationToCreate, systemApplications} from './systemApplications';
 import {systemAttributes} from './systemAttributes';
 import {MigrationLibraryToCreate, systemLibraries} from './systemLibraries';
 import {MigrationTreeToCreate, systemTrees} from './systemTrees';
+import {CollectionType} from 'arangojs/collection';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
@@ -32,7 +32,6 @@ interface IDeps {
     'core.infra.attribute'?: IAttributeRepo;
     'core.infra.permission'?: IPermissionRepo;
     'core.infra.application.service'?: IApplicationService;
-    'core.infra.elasticsearch.elasticsearchService'?: IElasticsearchService;
     translator?: i18n;
     config?: IConfig;
 }
@@ -43,7 +42,6 @@ export default function ({
     'core.infra.attribute': attributeRepo = null,
     'core.infra.permission': permissionRepo = null,
     'core.infra.application.service': applicationService = null,
-    'core.infra.elasticsearch.elasticsearchService': elasticsearchService = null,
     translator = null,
     config = null
 }: IDeps = {}): IMigration {
@@ -126,12 +124,6 @@ export default function ({
             if (!(await dbService.collectionExists(lib._key))) {
                 await dbService.createCollection(lib._key);
             }
-
-            // Ensure elasticsearch index exists for this library
-            const doesIndexExist = await elasticsearchService.indiceExists(lib._key);
-            if (!doesIndexExist) {
-                await elasticsearchService.indiceCreate(lib._key);
-            }
         }
     };
 
@@ -155,7 +147,7 @@ export default function ({
 
             const edgeCollecName = `core_edge_tree_${tree._key}`;
             if (!(await dbService.collectionExists(edgeCollecName))) {
-                await dbService.createCollection(edgeCollecName, collectionTypes.EDGE);
+                await dbService.createCollection(edgeCollecName, CollectionType.EDGE_COLLECTION);
             }
 
             const nodesCollectionName = getNodesCollectionName(tree._key);
@@ -227,6 +219,7 @@ export default function ({
 
         const usersCollec = dbService.db.collection('users');
         const valuesLinkCollec = dbService.db.collection('core_edge_values_links');
+
         for (const user of users) {
             const {group, ...userData} = user;
             const existingUser = await dbService.execute({
@@ -276,12 +269,6 @@ export default function ({
                     ctx
                 });
             }
-
-            await elasticsearchService.indexData('users', user._key, {
-                login: user.login,
-                email: user.email,
-                label: user.label
-            });
         }
     };
 
@@ -380,10 +367,6 @@ export default function ({
                     ctx
                 });
             }
-
-            await elasticsearchService.indexData('users_groups', groupRecord._key, {
-                label: groupRecord.label
-            });
         }
     };
 

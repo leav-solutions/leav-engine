@@ -17,9 +17,7 @@ const _getDbConnection = (config: IConfig): Database => {
 export default function (deps: IDeps): Database {
     const db = _getDbConnection(deps.config);
 
-    db.useDatabase(deps.config.db.name);
-
-    return db;
+    return db.database(deps.config.db.name);
 }
 
 export const initDb = async (config: IConfig) => {

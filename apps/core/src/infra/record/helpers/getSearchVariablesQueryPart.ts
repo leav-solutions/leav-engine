@@ -1,8 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql} from 'arangojs';
-import {GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {aql, literal, GeneratedAqlQuery} from 'arangojs/aql';
 import {IAttributeTypesRepo} from 'infra/attributeTypes/attributeTypesRepo';
 import {IRecordFilterOption} from '../../../_types/record';
 import {IFilterTypesHelper} from './filterTypes';
@@ -53,7 +52,7 @@ export default function ({
             }
 
             queryPartsById[variableName] = variablePart;
-            acc.push(aql`LET ${aql.literal(variableName)} = (${variablePart})`);
+            acc.push(aql`LET ${literal(variableName)} = (${variablePart})`);
 
             return acc;
         }, []);

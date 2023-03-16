@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
-import {GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {GeneratedAqlQuery, literal} from 'arangojs/aql';
 import {IDbService} from 'infra/db/dbService';
 import {IRecordFilterOption} from '_types/record';
 import {getEdgesCollectionName, getFullNodeId, getRootId} from '../../../infra/tree/helpers/utils';
@@ -17,7 +17,7 @@ interface IDeps {
 
 export type GetClassifyingFiltersVariableQueryPart = (filter: IRecordFilterOption) => GeneratedAqlQuery;
 
-export default function({
+export default function ({
     'core.infra.record.helpers.filterTypes': filterTypesHelper = null,
     'core.infra.db.dbService': dbService = null
 }: IDeps): GetClassifyingFiltersVariableQueryPart {
@@ -26,7 +26,7 @@ export default function({
             return null;
         }
 
-        const collec = dbService.db.edgeCollection(getEdgesCollectionName(filter.treeId));
+        const collec = dbService.db.collection(getEdgesCollectionName(filter.treeId));
 
         const startingNode = filter.value
             ? getFullNodeId(String(filter.value), filter.treeId)
@@ -36,8 +36,8 @@ export default function({
             FOR v, e IN 1..${MAX_TREE_DEPTH} OUTBOUND ${startingNode}
                 ${collec}
                 LET record = DOCUMENT(
-                    v.${aql.literal(NODE_LIBRARY_ID_FIELD)},
-                    v.${aql.literal(NODE_RECORD_ID_FIELD)}
+                    v.${literal(NODE_LIBRARY_ID_FIELD)},
+                    v.${literal(NODE_RECORD_ID_FIELD)}
                 )
                 RETURN record._id
         `;

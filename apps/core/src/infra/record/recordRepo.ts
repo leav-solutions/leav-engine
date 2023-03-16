@@ -1,16 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {estypes} from '@elastic/elasticsearch';
-import {aql} from 'arangojs';
-import {GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {aql, join, literal, GeneratedAqlQuery} from 'arangojs/aql';
+import {CORE_INDEX_FIELD} from '../../domain/indexationManager/indexationManagerDomain';
 import {GetConditionPart} from 'infra/attributeTypes/helpers/getConditionPart';
 import {IDbDocument, IExecuteWithCount} from 'infra/db/_types';
 import {IQueryInfos} from '_types/queryInfos';
 import {
     CursorDirection,
     ICursorPaginationParams,
-    IList,
     IListWithCursor,
     IPaginationCursors,
     IPaginationParams
@@ -26,10 +24,11 @@ import {
 import {IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
-import {IElasticsearchService} from '../elasticsearch/elasticsearchService';
 import {IFilterTypesHelper} from './helpers/filterTypes';
 import {GetSearchVariableName} from './helpers/getSearchVariableName';
 import {GetSearchVariablesQueryPart} from './helpers/getSearchVariablesQueryPart';
+import {IAttributeRepo} from '../attribute/attributeRepo';
+import {GetSearchQuery} from 'infra/indexation/helpers/getSearchQuery';
 
 export interface IFindRequestResult {
     initialVars: GeneratedAqlQuery[]; // Some "global" variables needed later on the query (eg. "classified in" subquery)
@@ -49,11 +48,11 @@ export interface IRecordRepo {
     updateRecord({
         libraryId,
         recordData,
-        ctx
+        mergeObjects = true
     }: {
         libraryId: string;
         recordData: IRecord;
-        ctx: IQueryInfos;
+        mergeObjects?: boolean;
     }): Promise<IRecord>;
     deleteRecord({libraryId, recordId, ctx}: {libraryId: string; recordId: string; ctx: IQueryInfos}): Promise<IRecord>;
     find(params: {
@@ -63,32 +62,33 @@ export interface IRecordRepo {
         pagination?: IPaginationParams | ICursorPaginationParams;
         withCount?: boolean;
         retrieveInactive?: boolean;
-        fulltextSearchResult?: string[];
+        fulltextSearch?: string;
         ctx: IQueryInfos;
     }): Promise<IListWithCursor<IRecord>>;
-    search(library: string, query: string, from?: number, size?: number): Promise<IList<IRecord>>;
 }
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
-    'core.infra.elasticsearch.elasticsearchService'?: IElasticsearchService;
     'core.infra.db.dbUtils'?: IDbUtils;
     'core.infra.attributeTypes'?: IAttributeTypesRepo;
+    'core.infra.attribute'?: IAttributeRepo;
     'core.infra.attributeTypes.helpers.getConditionPart'?: GetConditionPart;
     'core.infra.record.helpers.getSearchVariablesQueryPart'?: GetSearchVariablesQueryPart;
     'core.infra.record.helpers.getSearchVariableName'?: GetSearchVariableName;
     'core.infra.record.helpers.filterTypes'?: IFilterTypesHelper;
+    'core.infra.indexation.helpers.getSearchQuery'?: GetSearchQuery;
 }
 
 export default function ({
     'core.infra.db.dbService': dbService = null,
-    'core.infra.elasticsearch.elasticsearchService': elasticsearchService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attributeTypes': attributeTypesRepo = null,
     'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
     'core.infra.record.helpers.getSearchVariablesQueryPart': getSearchVariablesQueryPart = null,
     'core.infra.record.helpers.getSearchVariableName': getSearchVariableName = null,
-    'core.infra.record.helpers.filterTypes': filterTypesHelper = null
+    'core.infra.record.helpers.filterTypes': filterTypesHelper = null,
+    'core.infra.indexation.helpers.getSearchQuery': getSearchQuery = null,
+    'core.infra.attribute': attributeRepo = null
 }: IDeps = {}): IRecordRepo {
     const _generateCursor = (from: number, direction: CursorDirection): string =>
         Buffer.from(`${direction}:${from}`).toString('base64');
@@ -109,23 +109,13 @@ export default function ({
     };
 
     return {
-        async search(library: string, query: string, from?: number, size?: number): Promise<IList<IRecord>> {
-            const result = await elasticsearchService.wildcardSearch(library, query, from, size);
-
-            const records = result.hits.hits.map(h => ({id: h._id, library, ...(h._source as IRecord)}));
-
-            return {
-                totalCount: (result.hits.total as estypes.SearchTotalHits).value,
-                list: records
-            };
-        },
         async find({
             libraryId,
             filters,
             sort,
             pagination,
             withCount,
-            fulltextSearchResult,
+            fulltextSearch,
             retrieveInactive = false,
             ctx
         }): Promise<IListWithCursor<IRecord>> {
@@ -133,8 +123,22 @@ export default function ({
             // Force disabling count on cursor  pagination as it's pointless
             const withTotalCount = withCount && !withCursorPagination;
             const coll = dbService.db.collection(libraryId);
+            let fulltextSearchQuery: GeneratedAqlQuery;
 
-            const queryParts = [aql`FOR r IN ${coll}`];
+            if (typeof fulltextSearch !== 'undefined' && fulltextSearch !== '') {
+                // format search query
+                const cleanFulltextSearch = fulltextSearch?.replace(/\s+/g, ' ').trim();
+                const fullTextAttributes = await attributeRepo.getLibraryFullTextAttributes({libraryId, ctx});
+
+                fulltextSearchQuery = getSearchQuery(
+                    libraryId,
+                    fullTextAttributes.map(a => a.id),
+                    cleanFulltextSearch
+                );
+            }
+
+            const queryParts = [aql`FOR r IN (${fulltextSearchQuery ?? coll})`];
+
             let isFilteringOnActive = false;
 
             const aqlPartByOperator: Record<Operator, GeneratedAqlQuery> = {
@@ -143,11 +147,6 @@ export default function ({
                 [Operator.OPEN_BRACKET]: aql`(`,
                 [Operator.CLOSE_BRACKET]: aql`)`
             };
-
-            if (fulltextSearchResult) {
-                // Full-text search result is just a list of record IDs. Filters on it before applying all other filters
-                queryParts.push(aql`FILTER r._key IN ${fulltextSearchResult}`);
-            }
 
             if (typeof filters !== 'undefined' && filters.length) {
                 // Get all variables definitions
@@ -162,7 +161,7 @@ export default function ({
                         const variableName = getSearchVariableName(filter);
                         const lastFilterAttribute = filter.attributes.slice(-1)[0];
 
-                        const variableNameAql = aql.literal(variableName);
+                        const variableNameAql = literal(variableName);
                         let statement: GeneratedAqlQuery;
 
                         if (filterTypesHelper.isCountFilter(filter)) {
@@ -211,30 +210,30 @@ export default function ({
                                 lastFilterAttribute
                             );
 
-                            statement = aql`IS_ARRAY(${variableNameAql}) ? LENGTH(${aql.literal(
+                            statement = aql`IS_ARRAY(${variableNameAql}) ? LENGTH(${literal(
                                 variableNameAql
                             )}[* FILTER ${arrayConditionPart}]) : ${standardConditionPart}`;
                         }
 
-                        filterStatements.push(aql.join([aql`(`, statement, aql`)`]));
+                        filterStatements.push(join([aql`(`, statement, aql`)`]));
                     } else if (filterTypesHelper.isClassifyingFilter(filter)) {
                         const variableName = getSearchVariableName(filter);
                         const classifyingCondition = filter.condition === TreeCondition.CLASSIFIED_IN ? 'IN' : 'NOT IN';
-                        filterStatements.push(
-                            aql`r._id ${aql.literal(classifyingCondition)} ${aql.literal(variableName)}`
-                        );
+                        filterStatements.push(aql`r._id ${literal(classifyingCondition)} ${literal(variableName)}`);
                     }
                 }
 
                 filterStatements.push(aql`)`);
 
-                queryParts.push(aql.join(variablesDeclarations, '\n'));
-                queryParts.push(aql.join(filterStatements, '\n'));
+                queryParts.push(join(variablesDeclarations, '\n'));
+                queryParts.push(join(filterStatements, '\n'));
             }
 
             const sortQueryPart = sort
                 ? attributeTypesRepo.getTypeRepo(sort.attributes[0]).sortQueryPart(sort)
-                : aql`SORT r._key ASC`;
+                : aql`SORT ${literal(
+                      fulltextSearchQuery ? `r.${CORE_INDEX_FIELD}.score DESC, r._key ASC` : 'r._key ASC'
+                  )}`;
 
             queryParts.push(sortQueryPart as GeneratedAqlQuery);
 
@@ -258,14 +257,14 @@ export default function ({
                         queryParts.push(aql`SORT r._key DESC`);
                     }
 
-                    queryParts.push(aql`FILTER r._key ${aql.literal(operator)} ${from}`);
+                    queryParts.push(aql`FILTER r._key ${literal(operator)} ${from}`);
                     queryParts.push(aql`LIMIT ${pagination.limit}`);
                 }
             }
 
             queryParts.push(aql`RETURN MERGE(r, {library: ${libraryId}})`);
 
-            const fullQuery = aql.join(queryParts, '\n');
+            const fullQuery = join(queryParts, '\n');
 
             const records = await dbService.execute<IExecuteWithCount | IDbDocument[]>({
                 query: fullQuery,
@@ -297,7 +296,7 @@ export default function ({
             let newRecord = await collection.save(recordData);
             newRecord = await collection.document(newRecord);
 
-            newRecord.library = newRecord._id.split('/')[0];
+            (newRecord as IRecord).library = newRecord._id.split('/')[0];
 
             return dbUtils.cleanup(newRecord);
         },
@@ -305,20 +304,24 @@ export default function ({
             const collection = dbService.db.collection(libraryId);
 
             // Delete record
-            const deletedRecord = await collection.remove({_key: String(recordId)}, {returnOld: true});
+            const deletedRecord: IRecord = await collection.remove({_key: String(recordId)}, {returnOld: true});
 
             deletedRecord.library = deletedRecord._id.split('/')[0];
             deletedRecord.old = dbUtils.cleanup(deletedRecord.old);
 
             return dbUtils.cleanup(deletedRecord);
         },
-        async updateRecord({libraryId, recordData, ctx}): Promise<IRecord> {
+        async updateRecord({libraryId, recordData, mergeObjects = true}): Promise<IRecord> {
             const collection = dbService.db.collection(libraryId);
             const dataToSave = {...recordData};
             const recordId = dataToSave.id;
             delete dataToSave.id; // Don't save ID
 
-            const updatedRecord = await collection.update({_key: String(recordId)}, dataToSave, {returnOld: true});
+            const updatedRecord: IRecord = await collection.update({_key: String(recordId)}, dataToSave, {
+                mergeObjects,
+                returnOld: true,
+                keepNull: false
+            });
 
             updatedRecord.library = updatedRecord._id.split('/')[0];
 

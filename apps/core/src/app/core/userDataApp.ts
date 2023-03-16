@@ -29,7 +29,7 @@ export default function ({'core.domain.user': userDomain = null}: IDeps = {}): I
                     }
 
                     extend type Mutation {
-                        saveUserData(key: String!, value: Any, global: Boolean!): UserData
+                        saveUserData(key: String!, value: Any, global: Boolean!): UserData!
                     }
 
                     extend type Query {

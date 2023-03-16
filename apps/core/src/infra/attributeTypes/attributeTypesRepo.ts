@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AqlLiteral, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {AqlLiteral, AqlQuery, GeneratedAqlQuery} from 'arangojs/aql';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {AttributeCondition, IRecordFilterOption} from '../../_types/record';
@@ -194,7 +194,7 @@ interface IDeps {
     'core.infra.attributeTypes.attributeTree'?: IAttributeTypeRepo;
 }
 
-export default function({
+export default function ({
     'core.infra.attributeTypes.attributeSimple': attributeSimpleRepo = null,
     'core.infra.attributeTypes.attributeSimpleLink': attributeSimpleLinkRepo = null,
     'core.infra.attributeTypes.attributeAdvanced': attributeAdvancedRepo = null,

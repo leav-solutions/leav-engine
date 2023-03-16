@@ -27,7 +27,7 @@ export interface ValueDetails_Value_version_treeNode_record {
 
 export interface ValueDetails_Value_version_treeNode {
     id: string;
-    record: ValueDetails_Value_version_treeNode_record;
+    record: ValueDetails_Value_version_treeNode_record | null;
 }
 
 export interface ValueDetails_Value_version {
@@ -72,7 +72,7 @@ export interface ValueDetails_LinkValue_version_treeNode_record {
 
 export interface ValueDetails_LinkValue_version_treeNode {
     id: string;
-    record: ValueDetails_LinkValue_version_treeNode_record;
+    record: ValueDetails_LinkValue_version_treeNode_record | null;
 }
 
 export interface ValueDetails_LinkValue_version {
@@ -142,7 +142,7 @@ export interface ValueDetails_TreeValue_version_treeNode_record {
 
 export interface ValueDetails_TreeValue_version_treeNode {
     id: string;
-    record: ValueDetails_TreeValue_version_treeNode_record;
+    record: ValueDetails_TreeValue_version_treeNode_record | null;
 }
 
 export interface ValueDetails_TreeValue_version {
@@ -213,11 +213,11 @@ export interface ValueDetails_TreeValue_treeValue_ancestors_record {
 }
 
 export interface ValueDetails_TreeValue_treeValue_ancestors {
-    record: ValueDetails_TreeValue_treeValue_ancestors_record;
+    record: ValueDetails_TreeValue_treeValue_ancestors_record | null;
 }
 
 export interface ValueDetails_TreeValue_treeValue {
-    record: ValueDetails_TreeValue_treeValue_record;
+    record: ValueDetails_TreeValue_treeValue_record | null;
     ancestors: ValueDetails_TreeValue_treeValue_ancestors[] | null;
 }
 

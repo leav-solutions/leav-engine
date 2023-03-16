@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, Database, DocumentCollection} from 'arangojs';
+import {aql, Database} from 'arangojs';
+import {DocumentCollection} from 'arangojs/collection';
 import {asFunction, AwilixContainer} from 'awilix';
 import {resolve} from 'dns';
 import {readdirSync} from 'fs';

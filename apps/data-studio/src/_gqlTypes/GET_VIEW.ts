@@ -60,7 +60,7 @@ export interface GET_VIEW_view_filters {
 }
 
 export interface GET_VIEW_view_sort {
-    field: string | null;
+    field: string;
     order: SortOrder;
 }
 

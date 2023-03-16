@@ -82,6 +82,7 @@
         "behavior_directories": "Directories",
         "default_view": "Default view",
         "fulltext_attributes": "Fulltext search attributes",
+        "index_fulltext_search": "Refresh fulltext index",
         "purge": {
             "title": "Purge",
             "summary": "There are {{count}} inactive records to purge",

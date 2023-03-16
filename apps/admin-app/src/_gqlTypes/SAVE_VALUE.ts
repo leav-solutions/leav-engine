@@ -90,7 +90,7 @@ export interface SAVE_VALUE_saveValue_TreeValue_treeValue_record {
 }
 
 export interface SAVE_VALUE_saveValue_TreeValue_treeValue {
-    record: SAVE_VALUE_saveValue_TreeValue_treeValue_record;
+    record: SAVE_VALUE_saveValue_TreeValue_treeValue_record | null;
 }
 
 export interface SAVE_VALUE_saveValue_TreeValue {

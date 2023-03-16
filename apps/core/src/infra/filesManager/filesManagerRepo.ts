@@ -5,12 +5,12 @@ import {IDbService} from 'infra/db/dbService';
 import {IListWithCursor} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
-import {aql} from 'arangojs';
+import {aql, join} from 'arangojs/aql';
 import winston from 'winston';
 import {IDbDocument} from 'infra/db/_types';
 import {FilesAttributes} from '../../_types/filesManager';
 import {IDbUtils} from 'infra/db/dbUtils';
-import {join} from 'path';
+import {join as joinPath} from 'path';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
@@ -61,7 +61,7 @@ export default function ({
             }
             queryParts.push(aql`SORT r._key DESC`);
             queryParts.push(aql`RETURN MERGE(r, {library: ${recordLibrary}})`);
-            const query = aql.join(queryParts, '\n');
+            const query = join(queryParts, '\n');
 
             try {
                 results = await dbService.execute({
@@ -97,7 +97,7 @@ export default function ({
             const coll = dbService.db.collection(library);
             const query = aql`FOR r in ${coll} FILTER (r.${FilesAttributes.FILE_NAME} == ${parentName} AND r.${
                 FilesAttributes.FILE_PATH
-            } == ${join(...parentPath)}) RETURN MERGE(r, {library: ${library}})`;
+            } == ${joinPath(...parentPath)}) RETURN MERGE(r, {library: ${library}})`;
             let results: IDbDocument[];
             try {
                 results = await dbService.execute({

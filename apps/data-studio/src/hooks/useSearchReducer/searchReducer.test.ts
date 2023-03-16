@@ -76,7 +76,6 @@ describe('searchReducer', () => {
             {
                 type: SearchActionTypes.SET_SORT,
                 sort: {
-                    active: true,
                     order: SortOrder.desc,
                     field: 'label'
                 }
@@ -84,7 +83,6 @@ describe('searchReducer', () => {
         );
 
         expect(newState.sort).toEqual({
-            active: true,
             order: SortOrder.desc,
             field: 'label'
         });
@@ -98,7 +96,7 @@ describe('searchReducer', () => {
             }
         );
 
-        expect(newState.sort.active).toBe(false);
+        expect(newState.sort).toBe(undefined);
     });
 
     test('SET_ATTRIBUTES', async () => {

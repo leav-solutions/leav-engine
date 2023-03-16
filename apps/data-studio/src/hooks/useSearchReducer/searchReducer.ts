@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import getFieldsFromView from 'components/LibraryItemsList/helpers/getFieldsFromView';
-import {defaultSort, defaultView, viewSettingsField} from 'constants/constants';
+import {defaultView, viewSettingsField} from 'constants/constants';
 import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import {IAttribute, IField, IFilter, IValueVersion, IView, IViewDisplay} from '_types/types';
 import {ISearchRecord, ISearchSort, ISearchState} from './_types';
@@ -63,7 +63,6 @@ export const initialSearchState: ISearchState = {
     loading: false,
     pagination: 20,
     offset: 0,
-    sort: {...defaultSort, active: false},
     attributes: [],
     fields: [],
     fullText: '',
@@ -84,8 +83,8 @@ const checkSync = (
 
     if (toCheck.sort) {
         sync =
-            state.sort.field === state.view?.current?.sort?.field &&
-            state.sort.order === state.view?.current?.sort?.order;
+            state.sort?.field === state.view?.current?.sort?.field &&
+            state.sort?.order === state.view?.current?.sort?.order;
     }
 
     if (toCheck.filters) {
@@ -131,12 +130,16 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
         case SearchActionTypes.SET_SORT:
             sync =
                 sync &&
-                state.view.current.sort.field === action.sort.field &&
-                state.view.current.sort.order === action.sort.order;
+                state.view.current.sort?.field === action.sort.field &&
+                state.view.current.sort?.order === action.sort.order;
 
             return {...state, sort: action.sort, view: {...state.view, sync}};
         case SearchActionTypes.CANCEL_SORT:
-            return {...state, sort: {...defaultSort, active: false}, loading: true};
+            const {sort, ...newState} = state;
+
+            sync = sync && typeof state.view.current.sort === 'undefined';
+
+            return {...newState, view: {...state.view, sync}, loading: true};
         case SearchActionTypes.SET_ATTRIBUTES:
             return {...state, attributes: action.attributes};
         case SearchActionTypes.SET_FIELDS:
@@ -162,7 +165,7 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
                 },
                 fields: getFieldsFromView(action.view, state.library, state.lang),
                 filters: action.view.filters,
-                sort: {...(action.view?.sort ?? defaultSort), active: true},
+                sort: action.view.sort,
                 display: action.view.display,
                 valuesVersions: action.view.valuesVersions
             };

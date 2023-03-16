@@ -4,6 +4,11 @@
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IValidateHelper} from 'domain/helpers/validate';
+import {
+    CORE_INDEX_ANALYZER,
+    CORE_INDEX_FIELD,
+    CORE_INDEX_VIEW
+} from '../../domain/indexationManager/indexationManagerDomain';
 import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
@@ -43,6 +48,7 @@ import {
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import getAttributesFromField from './helpers/getAttributesFromField';
+import {GeneratedAqlQuery} from 'arangojs/aql';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -69,7 +75,7 @@ export interface IFindRecordParams {
     pagination?: IPaginationParams | ICursorPaginationParams;
     withCount?: boolean;
     retrieveInactive?: boolean;
-    searchQuery?: string;
+    fulltextSearch?: string;
 }
 
 const allowedTypeOperator = {
@@ -117,11 +123,6 @@ const allowedTypeOperator = {
         AttributeCondition.NEXT_MONTH
     ],
     object: [AttributeCondition.BETWEEN]
-};
-
-const fulltextSearchDefaultPagination = {
-    from: 0,
-    size: 10000
 };
 
 export interface IRecordDomain {
@@ -197,7 +198,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.record': recordRepo = null,
     'core.domain.attribute': attributeDomain = null,
@@ -574,6 +575,7 @@ export default function({
                 options: valuesOptions,
                 ctx
             });
+
             if (treeValues.length) {
                 // for now we look through first element (discard others if linked to multiple leaves of tree)
                 const treeAttrProps = await attributeDomain.getAttributeProperties({id: conf.treeColorPreview, ctx});
@@ -658,7 +660,7 @@ export default function({
             return newRecord;
         },
         async updateRecord({library, recordData, ctx}): Promise<IRecord> {
-            const savedRecord = await recordRepo.updateRecord({libraryId: library, recordData, ctx});
+            const savedRecord = await recordRepo.updateRecord({libraryId: library, recordData});
 
             await eventsManager.sendDatabaseEvent(
                 {
@@ -759,10 +761,9 @@ export default function({
         },
         async find({params, ctx}: {params: IFindRecordParams; ctx: IQueryInfos}): Promise<IListWithCursor<IRecord>> {
             const {library, sort, pagination, withCount, retrieveInactive = false} = params;
-            const {filters = [] as IRecordFilterLight[], searchQuery} = params;
+            const {filters = [] as IRecordFilterLight[], fulltextSearch} = params;
             const fullFilters: IRecordFilterOption[] = [];
             let fullSort: IRecordSort;
-            let fulltextSearchResult;
 
             const isLibraryAccessible = await libraryPermissionDomain.getLibraryPermission({
                 libraryId: params.library,
@@ -773,25 +774,6 @@ export default function({
 
             if (!isLibraryAccessible) {
                 throw new PermissionError(LibraryPermissionsActions.ACCESS_LIBRARY);
-            }
-
-            // Add ids filters if searchQuery is defined
-            if (typeof searchQuery !== 'undefined' && searchQuery !== '') {
-                // format search query
-                const cleanSearchQuery = searchQuery?.replace(/\s+/g, ' ').trim();
-
-                const {from, size} = fulltextSearchDefaultPagination;
-                const searchRecords = await recordRepo.search(library, cleanSearchQuery, from, size);
-
-                fulltextSearchResult = searchRecords.list.map(r => r.id);
-
-                if (!fulltextSearchResult.length) {
-                    return {
-                        totalCount: 0,
-                        list: [],
-                        cursor: {}
-                    };
-                }
             }
 
             if (filters.length) {
@@ -873,7 +855,7 @@ export default function({
             }
 
             // Check sort fields
-            if (sort && sort?.field) {
+            if (sort) {
                 const sortAttributes = await getAttributesFromField(
                     sort.field,
                     null,
@@ -912,7 +894,7 @@ export default function({
                 pagination,
                 withCount,
                 retrieveInactive,
-                fulltextSearchResult,
+                fulltextSearch,
                 ctx
             });
 

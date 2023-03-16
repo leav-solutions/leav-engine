@@ -151,7 +151,7 @@ export default function ({
 
                     type RecordFilter {
                         field: String,
-                        value: String
+                        value: String,
                         condition: RecordFilterCondition,
                         operator: RecordFilterOperator,
                         tree: Tree
@@ -159,19 +159,19 @@ export default function ({
 
                     input RecordFilterInput {
                         field: String,
-                        value: String
+                        value: String,
                         condition: RecordFilterCondition,
                         operator: RecordFilterOperator,
                         treeId: String
                     }
 
                     type RecordSort {
-                        field: String,
+                        field: String!,
                         order: SortOrder!
                     }
 
                     input RecordSortInput {
-                        field: String,
+                        field: String!,
                         order: SortOrder!
                     }
 
@@ -202,7 +202,9 @@ export default function ({
                             return recordDomain.deleteRecord({library, id, ctx});
                         },
                         async indexRecords(parent, {libraryId, records}, ctx): Promise<boolean> {
-                            return indexationManagerApp.indexDatabase(ctx, libraryId, records);
+                            await indexationManagerApp.indexDatabase(ctx, libraryId, records);
+
+                            return true;
                         },
                         async deactivateRecords(parent, {libraryId, recordsIds, filters}, ctx): Promise<IRecord[]> {
                             return recordDomain.deactivateRecordsBatch({libraryId, recordsIds, filters, ctx});

@@ -59,8 +59,7 @@ function QuickSearch({library, onResult, onClear, pagination}: IQuickSearchProps
             variables: {
                 fullText: search,
                 limit: pagination.limit ?? null,
-                offset: pagination.offset ?? null,
-                sortOrder: SortOrder.asc
+                offset: pagination.offset ?? null
             }
         });
     }, [search, pagination, runSearch]);

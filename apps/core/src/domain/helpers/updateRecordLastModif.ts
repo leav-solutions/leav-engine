@@ -20,8 +20,7 @@ export default function ({'core.infra.record': recordRepo = null}: IDeps): Updat
                 id: recordId,
                 modified_at: moment().unix(),
                 modified_by: String(ctx.userId)
-            },
-            ctx
+            }
         });
     };
 }

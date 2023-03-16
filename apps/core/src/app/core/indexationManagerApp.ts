@@ -6,7 +6,7 @@ import {IQueryInfos} from '_types/queryInfos';
 
 export interface IIndexationManagerApp {
     init(): Promise<void>;
-    indexDatabase(ctx: IQueryInfos, libraryId: string, records?: string[]): Promise<boolean>;
+    indexDatabase(ctx: IQueryInfos, libraryId: string, records?: string[]): Promise<void>;
 }
 
 interface IDeps {

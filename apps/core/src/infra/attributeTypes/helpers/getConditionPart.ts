@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, AqlLiteral, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {aql, AqlLiteral, literal, GeneratedAqlQuery} from 'arangojs/aql';
 import moment from 'moment';
 import {AttributeFormats, IAttribute} from '../../../_types/attribute';
 import {AttributeCondition, IDateFilterValue} from '../../../_types/record';
@@ -20,7 +20,7 @@ export default function (): GetConditionPart {
         value: string | number | boolean | IDateFilterValue,
         attribute: IAttribute
     ): GeneratedAqlQuery => {
-        const valueField = typeof valueIdentifier === 'string' ? aql.literal(valueIdentifier) : valueIdentifier;
+        const valueField = typeof valueIdentifier === 'string' ? literal(valueIdentifier) : valueIdentifier;
 
         switch (condition) {
             case AttributeCondition.EQUAL: {

@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
-import {IElasticsearchService} from 'infra/elasticsearch/elasticsearchService';
 import {difference} from 'lodash';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
@@ -89,14 +88,12 @@ interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
     'core.infra.attribute'?: IAttributeRepo;
-    'core.infra.elasticsearch.elasticsearchService'?: IElasticsearchService;
 }
 
 export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
-    'core.infra.attribute': attributeRepo = null,
-    'core.infra.elasticsearch.elasticsearchService': elasticsearchService = null
+    'core.infra.attribute': attributeRepo = null
 }: IDeps = {}): ILibraryRepo {
     return {
         async getLibraries({params = {}, ctx}): Promise<IList<ILibrary>> {
@@ -161,7 +158,7 @@ export default function ({
             }
 
             // Delete library attributes
-            const libAttributesCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
+            const libAttributesCollec = dbService.db.collection(LIB_ATTRIB_COLLECTION_NAME);
 
             await dbService.execute({
                 query: aql`FOR e IN ${libAttributesCollec}
@@ -185,7 +182,7 @@ export default function ({
         },
         async saveLibraryAttributes({libId, attributes, ctx}): Promise<string[]> {
             // TODO: in CONCAT, query will fail is using constant instead of hard coding 'core_attributes'
-            const libAttribCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
+            const libAttribCollec = dbService.db.collection(LIB_ATTRIB_COLLECTION_NAME);
 
             // Get current library attributes
             const currentAttrs = await attributeRepo.getLibraryAttributes({libraryId: libId, ctx});
@@ -234,7 +231,7 @@ export default function ({
             return libAttribRes.map(res => res._to.split('/')[1]);
         },
         async saveLibraryFullTextAttributes({libId, fullTextAttributes, ctx}): Promise<void> {
-            const libAttribCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
+            const libAttribCollec = dbService.db.collection(LIB_ATTRIB_COLLECTION_NAME);
 
             await dbService.execute({
                 query: aql`
@@ -250,7 +247,7 @@ export default function ({
             });
         },
         async getLibrariesUsingAttribute(attributeId: string, ctx: IQueryInfos): Promise<string[]> {
-            const libAttributesCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
+            const libAttributesCollec = dbService.db.collection(LIB_ATTRIB_COLLECTION_NAME);
 
             const res = await dbService.execute<string[]>({
                 query: aql`FOR e IN ${libAttributesCollec}

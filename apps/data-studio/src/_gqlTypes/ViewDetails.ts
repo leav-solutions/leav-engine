@@ -60,7 +60,7 @@ export interface ViewDetails_filters {
 }
 
 export interface ViewDetails_sort {
-    field: string | null;
+    field: string;
     order: SortOrder;
 }
 

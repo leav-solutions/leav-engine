@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {aql, AqlQuery, GeneratedAqlQuery, literal} from 'arangojs/aql';
 import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
@@ -18,7 +18,7 @@ interface IDeps {
     'core.infra.record.helpers.filterTypes'?: IFilterTypesHelper;
 }
 
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
     'core.infra.record.helpers.filterTypes': filterTypesHelper = null
@@ -119,13 +119,13 @@ export default function({
                 recordValue = _getExtendedFilterPart(attributes);
             } else {
                 const attributeId = attributes[0].id === 'id' ? '_key' : attributes[0].id;
-                recordValue = aql`${aql.literal(parentIdentifier)}.${attributeId}`;
+                recordValue = aql`${literal(parentIdentifier)}.${attributeId}`;
             }
 
             return filterTypesHelper.isCountFilter(filter) ? aql`COUNT(${recordValue}) ? 1 : 0` : recordValue;
         },
         async clearAllValues({attribute, ctx}): Promise<boolean> {
-            const libAttribCollec = dbService.db.edgeCollection(LIB_ATTRIB_COLLECTION_NAME);
+            const libAttribCollec = dbService.db.collection(LIB_ATTRIB_COLLECTION_NAME);
 
             // TODO: use aql template tag, and find out why it doesn't work :)
             const query = `

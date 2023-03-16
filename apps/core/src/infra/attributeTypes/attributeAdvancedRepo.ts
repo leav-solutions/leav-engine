@@ -1,13 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {aql, AqlQuery, GeneratedAqlQuery, join, literal} from 'arangojs/aql';
+import {DocumentCollection, EdgeCollection} from 'arangojs/collection';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {IDbDocument, IDbEdge} from 'infra/db/_types';
 import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {VALUES_COLLECTION, VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
-import {IRecordSort} from '../../_types/record';
+import {IRecord, IRecordSort} from '../../_types/record';
 import {IValue, IValueEdge} from '../../_types/value';
 import {IDbService} from '../db/dbService';
 import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
@@ -20,7 +21,7 @@ interface IDeps {
     'core.infra.record.helpers.filterTypes'?: IFilterTypesHelper;
 }
 
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
@@ -44,7 +45,7 @@ export default function({
     return {
         async createValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
             const valCollec = dbService.db.collection(VALUES_COLLECTION);
-            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             // Create new value entity
             const valueData = {
@@ -101,7 +102,7 @@ export default function({
         },
         async updateValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
             const valCollec = dbService.db.collection(VALUES_COLLECTION);
-            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             // Save value entity
             const valueData = {
@@ -163,8 +164,8 @@ export default function({
             return res;
         },
         async deleteValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
-            const valCollec = dbService.db.collection(VALUES_COLLECTION);
-            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            const valCollec = dbService.db.collection(VALUES_COLLECTION) as DocumentCollection;
+            const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION) as EdgeCollection<IDbEdge>;
 
             const deletedVal = await valCollec.remove({_key: String(value.id_value)});
 
@@ -174,7 +175,7 @@ export default function({
                 _to: deletedVal._id
             };
 
-            const deletedEdge = await edgeCollec.removeByExample(edgeData);
+            const deletedEdge: IRecord = await edgeCollec.removeByExample(edgeData);
 
             return {
                 id_value: deletedVal._key,
@@ -186,7 +187,7 @@ export default function({
             };
         },
         async getValues({library, recordId, attribute, forceGetAllValues = false, options, ctx}): Promise<IValue[]> {
-            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             const queryParts = [
                 aql`
@@ -201,12 +202,12 @@ export default function({
                 queryParts.push(aql`FILTER edge.version == ${options.version}`);
             }
 
-            const limitOne = aql.literal(!attribute.multiple_values && !forceGetAllValues ? 'LIMIT 1' : '');
+            const limitOne = literal(!attribute.multiple_values && !forceGetAllValues ? 'LIMIT 1' : '');
             queryParts.push(aql`
                 ${limitOne}
                 RETURN {value, edge}
             `);
-            const query = aql.join(queryParts);
+            const query = join(queryParts);
             const res = await dbService.execute({query, ctx});
 
             return res.map(r => ({
@@ -222,20 +223,28 @@ export default function({
             }));
         },
         async getValueById({library, recordId, attribute, valueId, ctx}): Promise<IValue> {
-            const valCollec = dbService.db.collection(VALUES_COLLECTION);
-            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            const valCollec = dbService.db.collection(VALUES_COLLECTION) as DocumentCollection;
+            const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION) as EdgeCollection<IDbEdge>;
 
-            const values = await valCollec.lookupByKeys([valueId]);
+            const query = aql`
+                LET value = FIRST(FOR v IN ${valCollec}
+                    FILTER v._key == ${valueId}
+                RETURN v)
 
-            if (!values.length) {
+                FOR e IN ${edgeCollec}
+                    FILTER e._to == value._id
+                RETURN MERGE(e, {value: value.value})
+            `;
+
+            const valueLinks = await dbService.execute({query, ctx});
+
+            if (!valueLinks.length) {
                 return null;
             }
 
-            const valueLinks = await edgeCollec.inEdges(values[0]);
-
             return {
-                id_value: values[0]._key,
-                value: values[0].value,
+                id_value: valueId,
+                value: valueLinks[0].value,
                 attribute: valueLinks[0].attribute,
                 modified_at: valueLinks[0].modified_at,
                 created_at: valueLinks[0].created_at,
@@ -260,12 +269,12 @@ export default function({
             return query;
         },
         filterValueQueryPart(attributes, filter, parentIdentifier = BASE_QUERY_IDENTIFIER) {
-            const vIdentifier = aql.literal(parentIdentifier + 'v');
-            const eIdentifier = aql.literal(parentIdentifier + 'e');
+            const vIdentifier = literal(parentIdentifier + 'v');
+            const eIdentifier = literal(parentIdentifier + 'e');
             const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             const retrieveValues = aql`
-                FOR ${vIdentifier}, ${eIdentifier} IN 1 OUTBOUND ${aql.literal(parentIdentifier)}._id
+                FOR ${vIdentifier}, ${eIdentifier} IN 1 OUTBOUND ${literal(parentIdentifier)}._id
                     ${collec}
                     FILTER ${eIdentifier}.attribute == ${attributes[0].id}
                     RETURN ${vIdentifier}.value

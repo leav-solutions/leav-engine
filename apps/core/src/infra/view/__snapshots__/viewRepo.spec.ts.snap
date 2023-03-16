@@ -58,7 +58,7 @@ exports[`viewRepo deleteView Should delete view 2`] = `
 exports[`viewRepo updateView Should update an existing view 1`] = `
 "
                     UPDATE @value0 IN @@value1
-                    OPTIONS {mergeObjects: false}
+                    OPTIONS {mergeObjects: false, keepNull: false}
                     RETURN NEW"
 `;
 

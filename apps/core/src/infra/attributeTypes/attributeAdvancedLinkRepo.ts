@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {join, AqlQuery, GeneratedAqlQuery, literal, aql} from 'arangojs/aql';
 import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IUtils} from 'utils/utils';
 import {ILinkValue, IValueEdge} from '_types/value';
@@ -81,7 +81,7 @@ export default function ({
                 };
             }
 
-            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             // Create the link between records and add some metadata on it.
 
@@ -139,7 +139,7 @@ export default function ({
                 });
             }
 
-            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             // Update value's metadata on records link.
 
@@ -194,7 +194,7 @@ export default function ({
                 });
             }
 
-            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             // Create the link between records and add some metadata on it
             const edgeData = {
@@ -232,7 +232,7 @@ export default function ({
                     ctx
                 });
             }
-            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
             const queryParts = [];
 
             const edgeAttribute = !!attribute.reverse_link ? (attribute.reverse_link as IAttribute).id : attribute.id;
@@ -249,21 +249,21 @@ export default function ({
                 queryParts.push(aql`FILTER edge.version == ${options.version}`);
             }
 
-            const limitOne = aql.literal(!attribute.multiple_values && !forceGetAllValues ? 'LIMIT 1' : '');
+            const limitOne = literal(!attribute.multiple_values && !forceGetAllValues ? 'LIMIT 1' : '');
 
             queryParts.push(aql`
                 ${limitOne}
                 RETURN {linkedRecord, edge}
             `);
 
-            const query = aql.join(queryParts);
+            const query = join(queryParts);
 
             const res = await dbService.execute({query, ctx});
 
             return res.map(r => _buildLinkValue(dbUtils.cleanup(r.linkedRecord), r.edge, !!attribute.reverse_link));
         },
         async getValueById({library, recordId, attribute, valueId, ctx}): Promise<ILinkValue> {
-            const edgeCollec = dbService.db.edgeCollection(VALUES_LINKS_COLLECTION);
+            const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             const edgeAttribute = !!attribute.reverse_link ? (attribute.reverse_link as IAttribute).id : attribute.id;
             const direction = !!attribute.reverse_link ? aql`INBOUND` : aql`OUTBOUND`;
@@ -329,8 +329,8 @@ export default function ({
             const isCountFilter = filterTypes.isCountFilter(filter);
 
             const linkIdentifier = parentIdentifier + 'v';
-            const vIdentifier = aql.literal(linkIdentifier);
-            const eIdentifier = aql.literal(parentIdentifier + 'e');
+            const vIdentifier = literal(linkIdentifier);
+            const eIdentifier = literal(parentIdentifier + 'e');
 
             const eAttribute = !!attributes[0].reverse_link
                 ? (attributes[0].reverse_link as IAttribute)?.id
@@ -345,7 +345,7 @@ export default function ({
                 return aql`
                     COUNT(
                         FOR ${vIdentifier} IN ${collec}
-                            FILTER ${vIdentifier}._from == ${aql.literal(parentIdentifier)}._id
+                            FILTER ${vIdentifier}._from == ${literal(parentIdentifier)}._id
                                 AND ${vIdentifier}.attribute == ${eAttribute}
                             RETURN true
                     )
@@ -356,34 +356,28 @@ export default function ({
                 const c = dbService.db.collection(attributes[0].linked_library);
                 retrieveValue = aql`
                         FOR ${vIdentifier} IN ${c}
-                            FILTER ${vIdentifier}.${attributes[0].reverse_link.id} == ${aql.literal(
+                            FILTER ${vIdentifier}.${attributes[0].reverse_link.id} == ${literal(
                     parentIdentifier
                 )}._key`;
             } else {
                 retrieveValue = aql`
-                        FOR ${vIdentifier}, ${eIdentifier} IN 1 ${direction} ${aql.literal(parentIdentifier)}._id
+                        FOR ${vIdentifier}, ${eIdentifier} IN 1 ${direction} ${literal(parentIdentifier)}._id
                             ${collec}
                             FILTER ${eIdentifier}.attribute == ${eAttribute}
                         `;
             }
 
-            const linkValueIdentifier = aql.literal(`${parentIdentifier}linkVal`);
+            const linkValueIdentifier = literal(`${parentIdentifier}linkVal`);
             const returnValue = aql`RETURN ${linkValueIdentifier}`;
 
             const linkValueQuery = attributes[1]
-                ? aql`LET ${aql.literal(linkValueIdentifier)} = (${attributes[1]._repo.filterValueQueryPart(
+                ? aql`LET ${literal(linkValueIdentifier)} = (${attributes[1]._repo.filterValueQueryPart(
                       [...attributes].splice(1),
                       filter,
                       linkIdentifier
                   )})`
                 : null;
-            const linkedValue = aql.join([
-                aql.literal('FLATTEN('),
-                retrieveValue,
-                linkValueQuery,
-                returnValue,
-                aql.literal(')')
-            ]);
+            const linkedValue = join([literal('FLATTEN('), retrieveValue, linkValueQuery, returnValue, literal(')')]);
 
             return linked.format !== AttributeFormats.EXTENDED
                 ? linkedValue

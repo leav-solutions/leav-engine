@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, AqlQuery, GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {aql, AqlQuery, GeneratedAqlQuery, literal, join} from 'arangojs/aql';
 import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
 import {ILinkValue, IStandardValue} from '../../_types/value';
@@ -68,14 +68,14 @@ export default function ({
                 FOR r IN ${libCollec}
                     FILTER r.${(advancedLinkAttr.reverse_link as IAttribute)?.id} == ${value}`);
 
-            const limitOne = aql.literal(!advancedLinkAttr.multiple_values && !forceGetAllValues ? 'LIMIT 1' : '');
+            const limitOne = literal(!advancedLinkAttr.multiple_values && !forceGetAllValues ? 'LIMIT 1' : '');
 
             queryParts.push(aql`
                 ${limitOne}
                 RETURN r
             `);
 
-            const query = aql.join(queryParts);
+            const query = join(queryParts);
             const res = await dbService.execute({query, ctx});
 
             return res.map(r => ({id_value: null, value: dbUtils.cleanup(r), created_by: null, modified_by: null}));
@@ -133,25 +133,30 @@ export default function ({
             if (isCountFilter) {
                 return aql`COUNT(r.${attributes[0].id}) ? 1 : 0`;
             }
+
             const linkedLibCollec = dbService.db.collection(attributes[0].linked_library);
+
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}
                 : attributes[1].id === 'id'
                 ? {...attributes[1], id: '_key'}
                 : attributes[1];
+
             const retrieveValue = aql`FOR l IN ${linkedLibCollec}
                     FILTER TO_STRING(r.${attributes[0].id}) == l._key`;
 
             const linkedValueQueryPart = attributes[1]
                 ? attributes[1]._repo.filterValueQueryPart([...attributes].splice(1), filter, 'l')
                 : null;
-            const linkValueIdentifier = aql.literal(`${parentIdentifier}linkVal`);
+
+            const linkValueIdentifier = literal(`${parentIdentifier}linkVal`);
+
             const returnLinkedValue = aql`
                     LET ${linkValueIdentifier} = (${linkedValueQueryPart})
                     RETURN ${linkValueIdentifier}
                 `;
 
-            const linkedValue = aql.join([aql.literal('FLATTEN('), retrieveValue, returnLinkedValue, aql.literal(')')]);
+            const linkedValue = join([literal('FLATTEN('), retrieveValue, returnLinkedValue, literal(')')]);
 
             return linked.format !== AttributeFormats.EXTENDED
                 ? linkedValue

@@ -7,20 +7,14 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: SAVE_USER_DATA
+// GraphQL mutation operation: INDEX_RECORDS
 // ====================================================
 
-export interface SAVE_USER_DATA_saveUserData {
-    global: boolean;
-    data: Any | null;
+export interface INDEX_RECORDS {
+    indexRecords: boolean;
 }
 
-export interface SAVE_USER_DATA {
-    saveUserData: SAVE_USER_DATA_saveUserData;
-}
-
-export interface SAVE_USER_DATAVariables {
-    key: string;
-    value?: Any | null;
-    global: boolean;
+export interface INDEX_RECORDSVariables {
+    libraryId: string;
+    records?: string[] | null;
 }

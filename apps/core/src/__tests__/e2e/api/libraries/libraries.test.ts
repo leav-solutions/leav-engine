@@ -17,7 +17,7 @@ describe('Libraries', () => {
                 saveLibrary(library: {id: "libraries_test", label: {fr: "Test lib"}}) {
                     id
                     attributes {id type}
-                    fullTextAttributes { id type }
+                    fullTextAttributes { id }
                     permissions {
                         access_library
                     }
@@ -28,8 +28,7 @@ describe('Libraries', () => {
         expect(res.data.data.saveLibrary.id).toBe('libraries_test');
         expect(res.data.data.saveLibrary.attributes.length).toBeGreaterThanOrEqual(1);
         expect(res.data.data.saveLibrary.attributes[0].type).toBeDefined();
-        expect(res.data.data.saveLibrary.fullTextAttributes.length).toBeGreaterThanOrEqual(1);
-        expect(res.data.data.saveLibrary.fullTextAttributes[0].type).toBeDefined();
+        expect(res.data.data.saveLibrary.fullTextAttributes.length).toBe(0);
         expect(res.data.data.saveLibrary.permissions.access_library).toBeDefined();
         expect(res.data.errors).toBeUndefined();
 

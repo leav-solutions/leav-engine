@@ -8,7 +8,6 @@ export interface IConfig {
     server: IServer;
     db: IDb;
     diskCache: IDiskCache;
-    elasticsearch: IElasticsearch;
     auth: IAuth;
     mailer: IMailer;
     lang: ILang;
@@ -54,10 +53,6 @@ export interface IServer {
 export interface IDb {
     url: string;
     name: string;
-}
-
-export interface IElasticsearch {
-    url: string;
 }
 
 export interface IAuth {

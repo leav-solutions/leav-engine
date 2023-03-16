@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
-import {GeneratedAqlQuery} from 'arangojs/lib/cjs/aql-query';
-import {CollectionType} from 'arangojs/lib/cjs/collection';
+import {GeneratedAqlQuery, join} from 'arangojs/aql';
+import {CollectionType} from 'arangojs/collection';
 import {AwilixContainer} from 'awilix';
 import {accessSync, constants, readdirSync} from 'fs';
 import {IPluginsRepo} from 'infra/plugins/pluginsRepo';
@@ -18,7 +18,7 @@ import {IKeyValue} from '_types/shared';
 import {ITree} from '_types/tree';
 import {IDbValueVersion, IValueVersion} from '_types/value';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
-import {collectionTypes, IDbService} from './dbService';
+import {IDbService} from './dbService';
 import runMigrationFiles from './helpers/runMigrationFiles';
 import {IExecuteWithCount} from './_types';
 
@@ -59,7 +59,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.cache.cacheService': cacheService = null,
     'core.utils.logger': logger = null,
@@ -103,14 +103,14 @@ export default function({
         if (Array.isArray(filterVal)) {
             if (filterVal.length) {
                 const valParts = filterVal.map(val => _getFilterCondition(filterKey, val, strictFilters));
-                queryParts.push(aql.join(valParts, ' OR '));
+                queryParts.push(join(valParts, ' OR '));
             }
         } else {
             if (filterKey === 'label') {
                 // Search for label in any language
                 const valParts = config.lang.available.map(l => aql`LIKE(el.label.${l}, ${filterVal}, true)`);
                 valParts.push(aql`LIKE(el.label, ${filterVal}, true)`); // In case label is not translated
-                queryParts.push(aql.join(valParts, ' OR '));
+                queryParts.push(join(valParts, ' OR '));
             } else {
                 // Filter with a "like" on ID or exact value in other fields
                 queryParts.push(
@@ -121,7 +121,7 @@ export default function({
             }
         }
 
-        return aql.join(queryParts);
+        return join(queryParts);
     }
 
     const ret = {
@@ -285,7 +285,7 @@ export default function({
 
             queryParts.push(aql`RETURN el`);
 
-            const query = aql.join(queryParts);
+            const query = join(queryParts);
             const res = await dbService.execute<IExecuteWithCount | any[]>({query, withTotalCount: withCount, ctx});
 
             const results = !Array.isArray(res) ? res.results : res;
@@ -309,7 +309,9 @@ export default function({
             const cols = await dbService.db.listCollections();
             for (const col of cols) {
                 const colType =
-                    col.type === CollectionType.DOCUMENT_COLLECTION ? collectionTypes.DOCUMENT : collectionTypes.EDGE;
+                    col.type === CollectionType.DOCUMENT_COLLECTION
+                        ? CollectionType.DOCUMENT_COLLECTION
+                        : CollectionType.EDGE_COLLECTION;
                 await dbService.dropCollection(col.name, colType);
             }
         }

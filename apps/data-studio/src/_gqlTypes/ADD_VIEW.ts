@@ -61,7 +61,7 @@ export interface ADD_VIEW_saveView_filters {
 }
 
 export interface ADD_VIEW_saveView_sort {
-    field: string | null;
+    field: string;
     order: SortOrder;
 }
 

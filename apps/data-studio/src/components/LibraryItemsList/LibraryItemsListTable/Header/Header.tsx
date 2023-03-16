@@ -101,8 +101,7 @@ const Header = ({id, children, type}: IHeaderProps) => {
             type: SearchActionTypes.SET_SORT,
             sort: {
                 field: newSortField,
-                order,
-                active: true
+                order
             }
         });
 
@@ -176,9 +175,9 @@ const Header = ({id, children, type}: IHeaderProps) => {
                 <DropdownContent>
                     <WrapperArrow
                         className="wrapper-arrow"
-                        data-testid={`wrapper-arrow-${searchState.sort.order}`}
+                        data-testid={`wrapper-arrow-${searchState.sort?.order}`}
                         filterDirection={searchState.sort?.order}
-                        filterActive={!!searchState.sort?.active && searchState.sort?.field === id}
+                        filterActive={searchState.sort?.field === id}
                         style={{fontSize: '130%'}}
                     >
                         <CaretUpOutlined />

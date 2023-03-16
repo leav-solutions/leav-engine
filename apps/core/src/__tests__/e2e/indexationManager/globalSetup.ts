@@ -42,12 +42,6 @@ export async function setup() {
 
         await dbUtils.migrate(coreContainer);
 
-        const elasticsearch = coreContainer.cradle['core.infra.elasticsearch.elasticsearchService'];
-
-        if (await elasticsearch.indiceExists('indexation_library_test')) {
-            await elasticsearch.indiceDelete('indexation_library_test');
-        }
-
         const server = coreContainer.cradle['core.interface.server'];
         const indexationManager = coreContainer.cradle['core.interface.indexationManager'];
 

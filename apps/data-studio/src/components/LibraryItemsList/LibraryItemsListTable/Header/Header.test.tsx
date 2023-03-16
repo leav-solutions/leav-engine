@@ -33,8 +33,7 @@ describe('Header', () => {
                     state={{
                         sort: {
                             field: 'id',
-                            order: SortOrder.desc,
-                            active: true
+                            order: SortOrder.desc
                         }
                     }}
                 >
@@ -58,8 +57,7 @@ describe('Header', () => {
                     state={{
                         sort: {
                             field: 'id',
-                            order: SortOrder.asc,
-                            active: true
+                            order: SortOrder.asc
                         }
                     }}
                 >

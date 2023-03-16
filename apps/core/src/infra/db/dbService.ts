@@ -3,7 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getCallStack} from '@leav/utils';
 import {Database} from 'arangojs';
-import {isAqlQuery} from 'arangojs/lib/cjs/aql-query';
+import {Analyzer, CreateAnalyzerOptions} from 'arangojs/analyzer';
+import {isAqlQuery} from 'arangojs/aql';
+import {CollectionType} from 'arangojs/collection';
+import {CreateViewOptions, View} from 'arangojs/view';
 import {createHash} from 'crypto';
 import {IUtils} from 'utils/utils';
 import {IConfig} from '_types/config';
@@ -14,7 +17,6 @@ const MAX_ATTEMPTS = 10;
 
 export interface IDbService {
     db?: Database;
-
     /**
      * Execute an AQL query
      * If withTotalCount is set to true, return an object with totalCount and results. Otherwise, just return
@@ -34,7 +36,7 @@ export interface IDbService {
      * @param type Document or edge collection?
      * @throws If collection already exists
      */
-    createCollection?(name: string, type?: collectionTypes): Promise<void> | null;
+    createCollection?(name: string, type?: CollectionType): Promise<void> | null;
 
     /**
      * Delete a collection in database
@@ -43,7 +45,7 @@ export interface IDbService {
      * @param type Document or edge collection?
      * @throws If collection already exists
      */
-    dropCollection?(name: string, type?: collectionTypes): Promise<void> | null;
+    dropCollection?(name: string, type?: CollectionType): Promise<void> | null;
 
     /**
      * Check if collection already exists
@@ -51,11 +53,21 @@ export interface IDbService {
      * @param name
      */
     collectionExists?(name: string): Promise<boolean>;
-}
 
-export enum collectionTypes {
-    DOCUMENT = 'document',
-    EDGE = 'edge'
+    createAnalyzer?(name: string, options: CreateAnalyzerOptions): Promise<Analyzer>;
+
+    /**
+     * Create a view in database
+     *
+     * @param name View name
+     * @param properties ArangoSearchView properties
+     * @throws If collection not exists
+     */
+    createView?(name: string, options: CreateViewOptions): Promise<View>;
+
+    views?(): Promise<View[]>;
+
+    analyzers?(): Promise<Analyzer[]>;
 }
 
 interface IDeps {
@@ -126,12 +138,13 @@ export default function ({
                           bindVars: {}
                       };
 
-                const queryOptions = withTotalCount ? {count: true, options: {fullCount: true}} : {};
+                const queryOptions = withTotalCount ? {count: true, fullCount: true} : {};
 
                 const cursor = await db.query(queryToRun, queryOptions);
 
                 const results = await cursor.all();
-                return withTotalCount ? {totalCount: cursor.extra.stats.fullCount, results} : results;
+
+                return (withTotalCount ? {totalCount: cursor.extra.stats.fullCount, results} : results) as T;
             } catch (e) {
                 // Handle write-write conflicts: we try the query again with a growing delay between trials.
                 // If we reach maximum attempts and still no success, stop it and throw the exception
@@ -152,26 +165,36 @@ export default function ({
                 utils.rethrow(e);
             }
         },
-        async createCollection(name: string, type = collectionTypes.DOCUMENT): Promise<void> {
+        async createCollection(name: string, type: CollectionType): Promise<void> {
             if (await collectionExists(name)) {
                 throw new Error(`Collection ${name} already exists`);
             }
 
-            if (type === collectionTypes.EDGE) {
-                const collection = db.edgeCollection(name);
-                await collection.create();
+            if (type === CollectionType.EDGE_COLLECTION) {
+                await db.createCollection(name, {type: type as CollectionType.EDGE_COLLECTION});
             } else {
-                const collection = db.collection(name);
-                await collection.create();
+                await db.createCollection(name, {type: type as CollectionType.DOCUMENT_COLLECTION});
             }
         },
-        async dropCollection(name: string, type = collectionTypes.DOCUMENT): Promise<void> {
+        async createAnalyzer(name: string, options: CreateAnalyzerOptions): Promise<Analyzer> {
+            return db.createAnalyzer(name, options);
+        },
+        async createView(name: string, options: CreateViewOptions): Promise<View> {
+            return db.createView(name, options);
+        },
+        async dropCollection(name: string, type = CollectionType.DOCUMENT_COLLECTION): Promise<void> {
             if (!(await collectionExists(name))) {
                 throw new Error(`Collection ${name} does not exist`);
             }
 
-            const collection = type === collectionTypes.EDGE ? db.edgeCollection(name) : db.collection(name);
+            const collection = type === CollectionType.EDGE_COLLECTION ? db.collection(name) : db.collection(name);
             await collection.drop();
+        },
+        async views(): Promise<any> {
+            return db.views();
+        },
+        async analyzers(): Promise<Analyzer[]> {
+            return db.analyzers();
         },
         collectionExists
     };

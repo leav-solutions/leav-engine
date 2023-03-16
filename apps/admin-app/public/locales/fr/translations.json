@@ -82,6 +82,7 @@
         "behavior_directories": "Dossiers",
         "default_view": "Vue par défaut",
         "fulltext_attributes": "Attributs de recherche fulltext",
+        "index_fulltext_search": "Rafraichir index fulltext",
         "purge": {
             "title": "Purge",
             "summary": "Il y a {{count}} éléments inactifs à purger",

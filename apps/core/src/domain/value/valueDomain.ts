@@ -281,7 +281,6 @@ const valueDomain = function ({
         // Make sure attribute is returned here
         res.attribute = attribute;
 
-        // delete value on elasticsearch
         await eventsManager.sendDatabaseEvent(
             {
                 action: EventAction.VALUE_DELETE,

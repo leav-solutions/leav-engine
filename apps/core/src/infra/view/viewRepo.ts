@@ -19,7 +19,7 @@ export default function ({
             const updatedView = await dbService.execute({
                 query: aql`
                     UPDATE ${docToInsert} IN ${collec}
-                    OPTIONS {mergeObjects: false}
+                    OPTIONS {mergeObjects: false, keepNull: false}
                     RETURN NEW`,
                 ctx
             });
