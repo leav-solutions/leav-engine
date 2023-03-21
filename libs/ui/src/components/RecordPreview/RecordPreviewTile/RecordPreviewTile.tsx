@@ -34,7 +34,7 @@ ImagePreviewWrapper.displayName = 'ImagePreviewTile';
 
 const ImageComp = styled.img<{$loaded: boolean}>`
     display: ${p => (p.$loaded ? 'block' : 'none')};
-    border: 1px solid ${themeVars.borderLightColor};
+    border: 1px solid ${themeVars.borderColor};
 `;
 
 const GeneratedPreviewTile = styled.div<IGeneratedPreviewProps>`
