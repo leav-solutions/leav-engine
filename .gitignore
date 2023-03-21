@@ -83,4 +83,5 @@ apps/core/applications/instances
 apps/core/config/local.js
 
 apps/*/dist
+libs/ui/dist
 *.tsbuildinfo

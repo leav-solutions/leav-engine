@@ -24,6 +24,7 @@ export const commonConfig = rootPath => ({
     plugins: [svgr(), react(), jsonHmr(), splitVendorChunkPlugin()],
     resolve: {
         alias: {
+            '@leav/ui': path.resolve(__dirname, 'libs/ui/src'),
             components: path.resolve(rootPath, './src/components'),
             context: path.resolve(rootPath, './src/context'),
             hooks: path.resolve(rootPath, './src/hooks'),
