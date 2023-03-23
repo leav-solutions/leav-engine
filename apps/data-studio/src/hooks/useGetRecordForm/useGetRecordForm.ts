@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ApolloError, useQuery} from '@apollo/client';
+import {ApolloError, QueryResult, useQuery} from '@apollo/client';
 import {objectToNameValueArray, Override} from '@leav/utils';
 import {getRecordFormQuery} from 'graphQL/queries/forms/getRecordFormQuery';
 import React from 'react';
@@ -53,6 +53,7 @@ export interface IUseGetRecordFormHook {
     loading: boolean;
     error: ApolloError;
     recordForm: IRecordForm;
+    refetch: QueryResult<RECORD_FORM, RECORD_FORMVariables>['refetch'];
 }
 
 const useGetRecordForm = ({
@@ -77,8 +78,9 @@ const useGetRecordForm = ({
               }))
         : null;
 
-    const {loading, error} = useQuery<RECORD_FORM, RECORD_FORMVariables>(getRecordFormQuery, {
+    const {loading, error, refetch} = useQuery<RECORD_FORM, RECORD_FORMVariables>(getRecordFormQuery, {
         fetchPolicy: 'network-only',
+        notifyOnNetworkStatusChange: true,
         variables: {
             libraryId,
             recordId,
@@ -106,9 +108,18 @@ const useGetRecordForm = ({
         }
     });
 
+    const refetchRecordForm = () => {
+        return refetch({
+            libraryId,
+            recordId,
+            formId,
+            version: requestVersion
+        });
+    };
+
     // To avoid a moment where loading is done and record form is not available yet, we force loading to be true until
     // record form is available
-    return {loading: loading || (!recordForm && !error), error, recordForm};
+    return {loading: loading || (!recordForm && !error), error, recordForm, refetch: refetchRecordForm};
 };
 
 export default useGetRecordForm;

@@ -5,9 +5,11 @@ import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID} from '@leav/utils';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import useGetRecordForm from 'hooks/useGetRecordForm';
 import useRecordsConsultationHistory from 'hooks/useRecordsConsultationHistory';
+import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {FormElementTypes} from '_gqlTypes/globalTypes';
 import {IRecordIdentityWhoAmI} from '_types/types';
+import {EditRecordReducerActionsTypes} from '../editRecordModalReducer/editRecordModalReducer';
 import {useEditRecordModalReducer} from '../editRecordModalReducer/useEditRecordModalReducer';
 import EditRecordSkeleton from './EditRecordSkeleton';
 import extractFormElements from './helpers/extractFormElements';
@@ -34,16 +36,23 @@ function EditRecord({
 }: IEditRecordProps): JSX.Element {
     const formId = record ? 'edition' : 'creation';
     const {t} = useTranslation();
-    const {state} = useEditRecordModalReducer();
+    const {state, dispatch} = useEditRecordModalReducer();
 
     useRecordsConsultationHistory(record?.library?.id ?? null, record?.id ?? null);
 
-    const {loading, error, recordForm} = useGetRecordForm({
+    const {loading, error, recordForm, refetch} = useGetRecordForm({
         libraryId: library,
         recordId: record?.id,
         formId,
         version: state.valuesVersion
     });
+
+    useEffect(() => {
+        if (state.refreshRequested) {
+            refetch();
+            dispatch({type: EditRecordReducerActionsTypes.REFRESH_DONE});
+        }
+    }, [state.refreshRequested]);
 
     if (loading) {
         return <EditRecordSkeleton rows={5} />;

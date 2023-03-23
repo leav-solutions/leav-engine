@@ -20,6 +20,7 @@ export interface IEditRecordReducerState {
     sidebarContent: 'summary' | 'valueDetails' | 'valuesVersions';
     valuesVersion: IValueVersion;
     originValuesVersion: IValueVersion;
+    refreshRequested: boolean;
 }
 
 export enum EditRecordReducerActionsTypes {
@@ -27,7 +28,9 @@ export enum EditRecordReducerActionsTypes {
     SET_ACTIVE_VALUE = 'SET_ACTIVE_VALUE',
     SET_SIDEBAR_CONTENT = 'SET_SIDEBAR_CONTENT',
     SET_VALUES_VERSION = 'SET_VALUES_VERSION',
-    SET_EDITING_VALUE = 'SET_CURRENT_VALUE_CONTENT'
+    SET_EDITING_VALUE = 'SET_CURRENT_VALUE_CONTENT',
+    REQUEST_REFRESH = 'REQUEST_REFRESH',
+    REFRESH_DONE = 'REFRESH_DONE'
 }
 
 export type IEditRecordReducerActions =
@@ -50,6 +53,12 @@ export type IEditRecordReducerActions =
     | {
           type: EditRecordReducerActionsTypes.SET_EDITING_VALUE;
           value: StandardValueTypes;
+      }
+    | {
+          type: EditRecordReducerActionsTypes.REQUEST_REFRESH;
+      }
+    | {
+          type: EditRecordReducerActionsTypes.REFRESH_DONE;
       };
 
 export type EditRecordDispatchFunc = (action: IEditRecordReducerActions) => void;
@@ -60,7 +69,8 @@ export const initialState: IEditRecordReducerState = {
     activeValue: null,
     sidebarContent: 'summary',
     valuesVersion: null,
-    originValuesVersion: null
+    originValuesVersion: null,
+    refreshRequested: false
 };
 
 const editRecordModalReducer = (
@@ -88,6 +98,10 @@ const editRecordModalReducer = (
                     editingValue: action.value
                 }
             };
+        case EditRecordReducerActionsTypes.REQUEST_REFRESH:
+            return {...state, refreshRequested: true};
+        case EditRecordReducerActionsTypes.REFRESH_DONE:
+            return {...state, refreshRequested: false};
         default:
             return state;
     }
