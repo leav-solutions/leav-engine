@@ -25,6 +25,7 @@ const AddButton = styled(Button)`
         border: none;
         width: 100%;
         color: rgba(0, 0, 0, 0.25);
+        box-shadow: none;
     }
 
     &&:hover {

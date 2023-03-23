@@ -74,6 +74,10 @@ const TableWrapper = styled.div<{isValuesAddVisible: boolean; $themeToken: AntdT
         }
     }
 
+    &&& .ant-table-header {
+        border-radius: 0;
+    }
+
     &&& .ant-table-footer {
         padding: 0;
     }
@@ -409,7 +413,7 @@ function LinkField({
     };
     const tableFooter = () => {
         return (
-            <FieldFooter>
+            <FieldFooter style={{borderRadius: 0}}>
                 <div>
                     {attribute?.versions_conf?.versionable && (
                         <ValuesVersionBtn

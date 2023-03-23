@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {RedoOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
 import {RecordCard, themeVars} from '@leav/ui';
 import {Button, Modal, Space, Tooltip} from 'antd';
@@ -129,14 +130,6 @@ const ModalFooter = styled.div`
 `;
 
 const StyledModal = styled(Modal)`
-    .ant-modal-close {
-        top: 0;
-        right: 0;
-        width: 4rem;
-        height: 4rem;
-        line-height: 4rem;
-    }
-
     && .ant-modal-content {
         padding: 0;
     }
@@ -413,6 +406,12 @@ function EditRecordModal({
         });
     };
 
+    const _handleClickRefresh = () => {
+        dispatch({
+            type: EditRecordReducerActionsTypes.REQUEST_REFRESH
+        });
+    };
+
     const title = record ? <RecordCard record={record} size={PreviewSize.small} /> : t('record_edition.new_record');
 
     const footerButtons = [
@@ -438,7 +437,7 @@ function EditRecordModal({
 
     const footer = (
         <ModalFooter>
-            {state.valuesVersion ? (
+            {Object.values(state.valuesVersion ?? {}).filter(v => !!v).length ? (
                 <ValuesVersionSummary
                     libraryId={library}
                     version={state.valuesVersion}
@@ -476,6 +475,9 @@ function EditRecordModal({
                                         <HeaderIcons>
                                             <Tooltip title={t('values_version.title')}>
                                                 <VscLayers onClick={_handleClickValuesVersions} />
+                                            </Tooltip>
+                                            <Tooltip title={t('global.refresh')}>
+                                                <RedoOutlined onClick={_handleClickRefresh} />
                                             </Tooltip>
                                         </HeaderIcons>
                                     </Title>
