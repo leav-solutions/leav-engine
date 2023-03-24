@@ -343,7 +343,10 @@ function StandardFieldValue({
                 switch (attribute.format) {
                     case AttributeFormat.date_range:
                         const dateRangeValue = fieldValue.displayValue as IDateRangeValue;
-                        displayedValue = stringifyDateRangeValue(dateRangeValue, t);
+                        displayedValue =
+                            dateRangeValue?.from && dateRangeValue?.to
+                                ? stringifyDateRangeValue(dateRangeValue, t)
+                                : '';
                         break;
                     case AttributeFormat.encrypted:
                         displayedValue = '•••••••••';
