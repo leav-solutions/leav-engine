@@ -30,12 +30,19 @@ const Wrapper = styled.div`
 
 interface IEditAttributeProps {
     match?: match<IEditAttributeMatchParams>;
+    redirectAfterCreate?: boolean;
     attributeId?: string | null;
     onPostSave?: OnAttributePostSaveFunc;
     forcedType?: AttributeType;
 }
 
-function EditAttribute({match: routeMatch, attributeId, onPostSave, forcedType}: IEditAttributeProps): JSX.Element {
+function EditAttribute({
+    match: routeMatch,
+    attributeId,
+    onPostSave,
+    forcedType,
+    redirectAfterCreate
+}: IEditAttributeProps): JSX.Element {
     const attrId = typeof attributeId !== 'undefined' ? attributeId : routeMatch ? routeMatch.params.id : '';
 
     const {loading, error, data} = useQuery<GET_ATTRIBUTE_BY_ID, GET_ATTRIBUTE_BY_IDVariables>(getAttributeByIdQuery, {
@@ -45,7 +52,12 @@ function EditAttribute({match: routeMatch, attributeId, onPostSave, forcedType}:
 
     const _renderEditAttributeTabs = useMemo(
         () => (attribute?: GET_ATTRIBUTE_BY_ID_attributes_list) => (
-            <EditAttributeTabs attribute={attribute} onPostSave={onPostSave} forcedType={forcedType} />
+            <EditAttributeTabs
+                attribute={attribute}
+                onPostSave={onPostSave}
+                forcedType={forcedType}
+                redirectAfterCreate={redirectAfterCreate}
+            />
         ),
         [onPostSave, forcedType, history]
     );

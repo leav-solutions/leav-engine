@@ -21,6 +21,7 @@ import ValuesListTab from './ValuesListTab';
 interface IEditAttributeTabsProps {
     attribute?: GET_ATTRIBUTE_BY_ID_attributes_list;
     onPostSave?: OnAttributePostSaveFunc;
+    redirectAfterCreate?: boolean;
     forcedType?: AttributeType;
 }
 
@@ -30,7 +31,12 @@ const GridTab = styled(Tab)`
 `;
 GridTab.displayName = 'Tab';
 
-function EditAttributeTabs({attribute, onPostSave, forcedType}: IEditAttributeTabsProps): JSX.Element {
+function EditAttributeTabs({
+    attribute,
+    onPostSave,
+    forcedType,
+    redirectAfterCreate
+}: IEditAttributeTabsProps): JSX.Element {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
     const history = useHistory();
@@ -44,7 +50,12 @@ function EditAttributeTabs({attribute, onPostSave, forcedType}: IEditAttributeTa
             menuItem: t('attributes.informations'),
             render: () => (
                 <Tab.Pane key="infos" className="grow">
-                    <InfosTab attribute={attribute} onPostSave={onPostSave} forcedType={forcedType} />
+                    <InfosTab
+                        attribute={attribute}
+                        onPostSave={onPostSave}
+                        forcedType={forcedType}
+                        redirectAfterCreate={redirectAfterCreate}
+                    />
                 </Tab.Pane>
             )
         }
