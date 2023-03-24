@@ -19,9 +19,16 @@ interface IEditAttributeModalProps {
     open: boolean;
     onClose: () => void;
     onPostSave?: OnAttributePostSaveFunc;
+    redirectAfterCreate?: boolean;
 }
 
-function EditAttributeModal({attribute, open, onClose, onPostSave}: IEditAttributeModalProps): JSX.Element {
+function EditAttributeModal({
+    attribute,
+    open,
+    onClose,
+    onPostSave,
+    redirectAfterCreate
+}: IEditAttributeModalProps): JSX.Element {
     const {t} = useTranslation();
 
     return (
@@ -37,7 +44,11 @@ function EditAttributeModal({attribute, open, onClose, onPostSave}: IEditAttribu
             onClose={onClose}
         >
             <GridContent scrolling>
-                <EditAttribute attributeId={attribute} onPostSave={onPostSave} />
+                <EditAttribute
+                    attributeId={attribute}
+                    onPostSave={onPostSave}
+                    redirectAfterCreate={redirectAfterCreate}
+                />
             </GridContent>
         </Modal>
     );

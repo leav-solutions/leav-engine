@@ -19,16 +19,17 @@ interface IInfosTabProps {
     attribute?: GET_ATTRIBUTE_BY_ID_attributes_list;
     onPostSave?: OnAttributePostSaveFunc;
     forcedType?: AttributeType;
+    redirectAfterCreate?: boolean;
 }
 
-function InfosTab({attribute, onPostSave, forcedType}: IInfosTabProps): JSX.Element {
+function InfosTab({attribute, onPostSave, forcedType, redirectAfterCreate = true}: IInfosTabProps): JSX.Element {
     const history = useHistory();
     const isNewAttribute = !attribute;
     const [saveAttribute, {error}] = useMutation<SAVE_ATTRIBUTE, SAVE_ATTRIBUTEVariables>(saveAttributeQuery, {
         // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
         onError: () => undefined,
         onCompleted: res => {
-            if (history && isNewAttribute) {
+            if (history && isNewAttribute && redirectAfterCreate) {
                 history.replace({pathname: '/attributes/edit/' + res.saveAttribute.id});
             }
         },

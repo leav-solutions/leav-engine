@@ -126,6 +126,7 @@ const AttributesTab = ({library, readonly}: IAttributesTabProps): JSX.Element | 
                         onClose={_handleCloseAttributeModal}
                         onPostSave={attributeModalDisplay.attribute ? null : _onNewAttributeSaved}
                         attribute={attributeModalDisplay.attribute}
+                        redirectAfterCreate={false}
                     />
                 )}
             </div>
