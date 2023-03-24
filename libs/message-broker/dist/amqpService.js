@@ -37,7 +37,6 @@ async function default_1({ config }) {
         const consumerChannel = await consumerConnection.createConfirmChannel();
         await consumerChannel.assertExchange(config.exchange, config.type);
         await consumerChannel.prefetch(config.prefetch);
-        console.debug('Init prefetch', config.prefetch);
         publisher = { connection: publisherConnection, channel: publisherChannel };
         consumer = { connection: consumerConnection, channel: consumerChannel };
     };

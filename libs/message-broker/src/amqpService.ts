@@ -37,8 +37,6 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
         await consumerChannel.assertExchange(config.exchange, config.type);
         await consumerChannel.prefetch(config.prefetch);
 
-        console.debug('Init prefetch', config.prefetch);
-
         publisher = {connection: publisherConnection, channel: publisherChannel};
         consumer = {connection: consumerConnection, channel: consumerChannel};
     };
