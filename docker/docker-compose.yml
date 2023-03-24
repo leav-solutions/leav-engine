@@ -202,10 +202,10 @@ services:
     command: [
         sh,
         -c,
-        "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn workspace core run start:indexation",
+        "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start:indexation",
       ]
 
-  tasks-manager:
+  tasks-manager-master:
     image: *node_image
     stdin_open: true
     environment:
@@ -225,7 +225,28 @@ services:
     command: [
         sh,
         -c,
-        "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn workspace core run start:tasks",
+        "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start:tasksMaster",
+      ]
+
+  tasks-manager-worker:
+    image: *node_image
+    restart: always
+    environment:
+      <<: *env-core
+      <<: *env-amqp
+    volumes:
+      - *mount_point-repo
+      - *mount_point-scripts
+      - *mount_point-imports
+      - *mount_point-exports
+      - *volume-yarn-cache
+      - *volume-shared-modules
+      - *volume-core-modules
+    working_dir: *dir-core
+    command: [
+        sh,
+        -c,
+        "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start:tasksWorker",
       ]
 
   admin-app:

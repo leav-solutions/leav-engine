@@ -358,10 +358,12 @@
     "tasks": {
         "title": "Tâches",
          "task-statuses": {
+            "CREATED": "Créée",
             "CANCELED": "Annulée",
             "DONE": "Terminée",
             "FAILED": "Erreur",
             "PENDING": "En attente",
+            "PENDING_CANCEL": "Annulation",
             "RUNNING": "En cours"
         },
         "completed": "Terminées",

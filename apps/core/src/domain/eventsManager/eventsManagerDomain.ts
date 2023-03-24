@@ -8,6 +8,7 @@ import winston from 'winston';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {DbPayload, IPubSubEvent, IPubSubPayload} from '../../_types/event';
+import * as amqp from 'amqplib';
 
 export interface IEventsManagerDomain {
     sendDatabaseEvent(payload: DbPayload, ctx: IQueryInfos): Promise<void>;
@@ -47,8 +48,10 @@ export default function ({
         }
     };
 
-    const _onMessage = async (msg: string): Promise<void> => {
-        const pubSubEvent: IPubSubEvent = JSON.parse(msg);
+    const _onMessage = async (msg: amqp.ConsumeMessage): Promise<void> => {
+        amqpService.consumer.channel.ack(msg);
+
+        const pubSubEvent: IPubSubEvent = JSON.parse(msg.content.toString());
 
         try {
             _validateMsg(pubSubEvent);
@@ -61,6 +64,7 @@ export default function ({
             userId: pubSubEvent.userId,
             ...pubSubEvent.payload.data
         };
+
         await pubsub.publish(pubSubEvent.payload.triggerName, publishedPayload);
     };
 

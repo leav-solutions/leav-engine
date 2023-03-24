@@ -69,7 +69,10 @@ const Tasks = (): JSX.Element => {
     });
 
     const _isInProgressTask = (task: GET_TASKS_tasks_list) =>
-        task.status === TaskStatus.PENDING || task.status === TaskStatus.RUNNING;
+        task.status === TaskStatus.CREATED ||
+        task.status === TaskStatus.PENDING ||
+        task.status === TaskStatus.RUNNING ||
+        task.status === TaskStatus.PENDING_CANCEL;
     const _isCompletedTask = (task: GET_TASKS_tasks_list) =>
         task.status === TaskStatus.CANCELED || task.status === TaskStatus.DONE || task.status === TaskStatus.FAILED;
 
@@ -89,28 +92,26 @@ const Tasks = (): JSX.Element => {
         }
     }, [tasks]);
 
-    const [delTask] = useMutation<DELETE_TASK, DELETE_TASKVariables>(deleteTaskMutation, {
-        onCompleted: (data: DELETE_TASK) => {
-            dispatch(deleteTask(data.deleteTask));
-        }
-    });
+    const [delTask] = useMutation<DELETE_TASK, DELETE_TASKVariables>(deleteTaskMutation);
 
     const [cancelTask] = useMutation<CANCEL_TASK, CANCEL_TASKVariables>(cancelTaskMutation);
 
-    const _onDeleteAll = (archivesOnly: boolean = false) => {
+    const _onDeleteAll = async (archivesOnly: boolean = false) => {
         for (const task of completedTasks) {
             if (!archivesOnly || (archivesOnly && task.archive)) {
-                delTask({variables: {taskId: task.id, archive: false}});
+                await delTask({variables: {taskId: task.id, archive: false}});
+                dispatch(deleteTask({id: task.id}));
             }
         }
     };
 
-    const onDelete = (taskId: string) => {
-        delTask({variables: {taskId, archive: false}});
+    const _onDelete = async (taskId: string) => {
+        await delTask({variables: {taskId, archive: false}});
+        dispatch(deleteTask({id: taskId}));
     };
 
-    const onCancel = (taskId: string) => {
-        cancelTask({variables: {taskId}});
+    const onCancel = async (taskId: string) => {
+        await cancelTask({variables: {taskId}});
     };
 
     const panes = [
@@ -131,7 +132,11 @@ const Tasks = (): JSX.Element => {
                             'duration'
                         ]}
                         striped
-                        actionsBtn={task => [<CancelTask onCancel={onCancel} task={task} />]}
+                        actionsBtn={task =>
+                            task.status !== TaskStatus.PENDING_CANCEL
+                                ? [<CancelTask onCancel={onCancel} task={task} />]
+                                : []
+                        }
                         loading={loading || !inProgressTasks}
                         tasks={inProgressTasks}
                     />
@@ -169,7 +174,7 @@ const Tasks = (): JSX.Element => {
                                       />
                                   ]
                                 : []),
-                            <DeleteTask onDelete={onDelete} task={task} />
+                            <DeleteTask onDelete={_onDelete} task={task} />
                         ]}
                         loading={loading || !completedTasks}
                         tasks={completedTasks}

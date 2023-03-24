@@ -140,13 +140,15 @@ export interface IIndexationManager {
 }
 
 export interface ITasksManager {
-    nbWorkers: number;
     checkingInterval: number; // in milliseconds
+    workerPrefetch: number;
     queues: {
-        orders: string;
+        execOrders: string;
+        cancelOrders: string;
     };
     routingKeys: {
-        orders: string;
+        execOrders: string;
+        cancelOrders: string;
     };
 }
 

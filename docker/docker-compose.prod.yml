@@ -111,7 +111,7 @@ services:
         "/app/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn start --indexationManager",
       ]
 
-  tasks-manager:
+  tasks-manager-master:
     image: leavengine/core:latest
     stdin_open: true
     restart: always
@@ -121,7 +121,22 @@ services:
     command: [
         sh,
         -c,
-        "/app/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn start --tasksManager",
+        "/app/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn start --tasksManager=master",
+      ]
+    volumes:
+      - *mount_point-exports
+      - *mount_point-imports
+
+  tasks-manager-worker:
+    image: leavengine/core:latest
+    restart: always
+    environment:
+      <<: *env-core
+      <<: *env-amqp
+    command: [
+        sh,
+        -c,
+        "/app/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn start --tasksManager=worker",
       ]
     volumes:
       - *mount_point-exports

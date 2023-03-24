@@ -52,7 +52,7 @@ exports[`TaskRepo Retrieve tasks to execute 1`] = `
 exports[`TaskRepo Retrieve tasks to execute 2`] = `
 {
   "@value0": "core_tasks",
-  "value1": "PENDING",
+  "value1": "CREATED",
   "value2": 1,
 }
 `;

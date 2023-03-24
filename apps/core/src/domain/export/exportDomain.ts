@@ -168,7 +168,8 @@ export default function ({
                             args: params
                         },
                         startAt: !!task.startAt ? task.startAt : Math.floor(Date.now() / 1000),
-                        priority: TaskPriority.MEDIUM
+                        priority: TaskPriority.MEDIUM,
+                        ...(!!task?.callback && {callback: task.callback})
                     },
                     ctx
                 );

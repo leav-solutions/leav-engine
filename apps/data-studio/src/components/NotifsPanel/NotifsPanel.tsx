@@ -39,11 +39,7 @@ function NotifsPanel({setNbNotifs}: INotifsPanelProps): JSX.Element {
     const [panel, setPanel] = useState<{inProgress: INotif[]; completed: INotif[]}>({inProgress: [], completed: []});
 
     const [runCancelTask] = useMutation<CANCEL_TASK, CANCEL_TASKVariables>(cancelTaskMutation);
-    const [runDeleteTask] = useMutation<DELETE_TASK, DELETE_TASKVariables>(deleteTaskMutation, {
-        onCompleted: (data: DELETE_TASK) => {
-            dispatch(deleteTask(data.deleteTask));
-        }
-    });
+    const [runDeleteTask] = useMutation<DELETE_TASK, DELETE_TASKVariables>(deleteTaskMutation);
 
     const _onClose = () => {
         dispatch(setIsPanelOpen(false));
@@ -77,6 +73,8 @@ function NotifsPanel({setNbNotifs}: INotifsPanelProps): JSX.Element {
             await runDeleteTask({
                 variables: {taskId: notif.data.id, archive: true}
             });
+
+            dispatch(deleteTask({id: notif.data.id}));
         }
     };
 
@@ -86,6 +84,8 @@ function NotifsPanel({setNbNotifs}: INotifsPanelProps): JSX.Element {
                 await runDeleteTask({
                     variables: {taskId: n.data.id, archive: true}
                 });
+
+                dispatch(deleteTask({id: n.data.id}));
             }
         }
     };

@@ -16,6 +16,7 @@ import {AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/
 import {EventAction, IDbEvent, ILibraryPayload, IRecordPayload, IValuePayload} from '../../_types/event';
 import {AttributeCondition, Operator} from '../../_types/record';
 import {IIndexationService} from '../../infra/indexation/indexationService';
+import * as amqp from 'amqplib';
 
 export interface IIndexationManagerDomain {
     init(): Promise<void>;
@@ -197,8 +198,10 @@ export default function ({
         }
     };
 
-    const _onMessage = async (msg: string): Promise<void> => {
-        const event: IDbEvent = JSON.parse(msg);
+    const _onMessage = async (msg: amqp.ConsumeMessage): Promise<void> => {
+        amqpService.consumer.channel.ack(msg);
+
+        const event: IDbEvent = JSON.parse(msg.content.toString());
         const ctx: IQueryInfos = {
             userId: '1',
             queryId: uuidv4()

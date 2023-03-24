@@ -45,6 +45,7 @@ import {CreateDirectoryFunc} from 'domain/helpers/createDirectory';
 import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {LibraryPermissionsActions} from '../../_types/permissions';
 import PermissionError from '../../errors/PermissionError';
+import * as amqp from 'amqplib';
 
 interface IPreviewAttributesSettings {
     [FilesAttributes.PREVIEWS]: IEmbeddedAttribute[];
@@ -160,7 +161,9 @@ export default function ({
         _defaultCtx.groupsId = groupsNodes;
     };
 
-    const _onMessage = async (msg: string): Promise<void> => {
+    const _onMessage = async (msg: amqp.ConsumeMessage): Promise<void> => {
+        amqpService.consumer.channel.ack(msg);
+
         let msgBody: IFileEventData;
         const ctx: IQueryInfos = {
             ..._defaultCtx,
@@ -168,7 +171,7 @@ export default function ({
         };
 
         try {
-            msgBody = JSON.parse(msg);
+            msgBody = JSON.parse(msg.content.toString());
             _validateMsg(msgBody);
         } catch (e) {
             logger.error(
@@ -277,7 +280,7 @@ export default function ({
 
             await _initDefaultCtx();
 
-            return amqpService.consume(
+            await amqpService.consume(
                 config.filesManager.queues.events,
                 config.filesManager.routingKeys.events,
                 _onMessage

@@ -14,7 +14,6 @@ export const panelSize = '22.5rem';
 export const initialColumnsLimit = 5;
 
 export const viewSettingsField = 'fields';
-export const viewSettingsTransparency = 'transparency';
 
 export const attributeExtendedKey = 'extended';
 
