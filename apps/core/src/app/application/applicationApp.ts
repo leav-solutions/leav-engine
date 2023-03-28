@@ -25,11 +25,9 @@ import {IGetCoreAttributesParams} from '_types/attribute';
 import {PublishedEvent} from '_types/event';
 import {IRequestWithContext} from '_types/express';
 import {IAppGraphQLSchema} from '_types/graphql';
-import {ILibrary} from '_types/library';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IKeyValue} from '_types/shared';
-import {ITree} from '_types/tree';
 import {IApplicationDomain, TRIGGER_NAME_APPLICATION_EVENT} from '../../domain/application/applicationDomain';
 import ApplicationError, {ApplicationErrorType} from '../../errors/ApplicationError';
 import {
@@ -67,7 +65,7 @@ interface IDeps {
     config?: any;
 }
 
-export default function({
+export default function ({
     'core.app.auth': authApp = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.helpers.initQueryContext': initQueryContext = null,
@@ -105,8 +103,6 @@ export default function({
                     type: ApplicationType!,
                     label(lang: [AvailableLanguage!]): SystemTranslation!,
                     description: SystemTranslation,
-                    libraries: [Library!],
-                    trees: [Tree!],
                     color: String,
                     icon: Record,
                     module: String,
@@ -132,8 +128,6 @@ export default function({
                     label: SystemTranslation,
                     type: ApplicationType,
                     description: SystemTranslationOptional,
-                    libraries: [String!],
-                    trees: [String!],
                     color: String,
                     icon: ApplicationIconInput,
                     module: String,
@@ -261,22 +255,6 @@ export default function({
                         }
                     },
                     Application: {
-                        async libraries(parent: IApplication, _, ctx: IQueryInfos): Promise<ILibrary[]> {
-                            if (parent.libraries === null) {
-                                return null;
-                            }
-
-                            return Promise.all(
-                                (parent?.libraries ?? []).map(l => libraryDomain.getLibraryProperties(l, ctx))
-                            );
-                        },
-                        async trees(parent: IApplication, _, ctx: IQueryInfos): Promise<ITree[]> {
-                            if (parent.trees === null) {
-                                return null;
-                            }
-
-                            return Promise.all((parent?.trees ?? []).map(t => treeDomain.getTreeProperties(t, ctx)));
-                        },
                         permissions: (
                             appData: IApplication,
                             _,
