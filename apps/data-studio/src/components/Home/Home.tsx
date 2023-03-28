@@ -45,7 +45,7 @@ function Home(): JSX.Element {
         dispatch(setInfoBase(baseInfo));
     }, [t, dispatch]);
 
-    if (appData?.currentApp?.libraries === null && appData?.currentApp?.trees === null) {
+    if (appData?.currentApp?.settings?.libraries === null && appData?.currentApp?.settings?.trees === null) {
         return <Alert style={{margin: '1rem'}} message={t('home.no_libraries_or_trees')} type="info" showIcon />;
     }
 

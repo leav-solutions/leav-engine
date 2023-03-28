@@ -58,14 +58,6 @@ export interface GET_APPLICATION_BY_ID_applications_list_icon {
     whoAmI: GET_APPLICATION_BY_ID_applications_list_icon_whoAmI;
 }
 
-export interface GET_APPLICATION_BY_ID_applications_list_libraries {
-    id: string;
-}
-
-export interface GET_APPLICATION_BY_ID_applications_list_trees {
-    id: string;
-}
-
 export interface GET_APPLICATION_BY_ID_applications_list_permissions {
     access_application: boolean;
 }
@@ -74,12 +66,10 @@ export interface GET_APPLICATION_BY_ID_applications_list {
     id: string;
     label: SystemTranslation;
     description: SystemTranslation | null;
-    endpoint: string;
-    url: string;
+    endpoint: string | null;
+    url: string | null;
     color: string | null;
     icon: GET_APPLICATION_BY_ID_applications_list_icon | null;
-    libraries: GET_APPLICATION_BY_ID_applications_list_libraries[] | null;
-    trees: GET_APPLICATION_BY_ID_applications_list_trees[] | null;
     permissions: GET_APPLICATION_BY_ID_applications_list_permissions;
     settings: JSONObject | null;
 }
