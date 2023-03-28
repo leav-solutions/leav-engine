@@ -10,8 +10,8 @@ import {ApplicationEventTypes} from '_gqlTypes/globalTypes';
 
 const useApplicationEventsSubscription = () => {
     return useSubscription<APPLICATION_EVENTS, APPLICATION_EVENTSVariables>(getApplicationsEventsSubscription, {
-        onData: ({client, data}) => {
-            const application = data.data.applicationEvent.application;
+        onSubscriptionData: ({client, subscriptionData}) => {
+            const application = subscriptionData.data.applicationEvent.application;
             const appsList = client.cache.readQuery<GET_APPLICATIONS>({
                 query: getApplicationsQuery,
                 variables: {}
@@ -20,7 +20,7 @@ const useApplicationEventsSubscription = () => {
             const appFromList = appsList?.applications.list.find(app => app.id === application.id);
 
             let newList: GET_APPLICATIONS_applications_list[];
-            switch (data.data.applicationEvent.type) {
+            switch (subscriptionData.data.applicationEvent.type) {
                 case ApplicationEventTypes.SAVE:
                     // If saved application is already in the list, replace it, otherwise add it to the list
                     newList = appFromList

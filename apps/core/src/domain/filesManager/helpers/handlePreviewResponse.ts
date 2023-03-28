@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAmqpService} from '@leav/message-broker';
+import {amqpService, IAmqpService} from '@leav/message-broker';
 import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
@@ -18,6 +18,7 @@ import {
 } from '../../../_types/filesManager';
 import {updateRecordFile} from './handleFileUtilsHelper';
 import winston = require('winston');
+import * as amqp from 'amqplib';
 
 export interface IHandlePreviewResponseDeps {
     amqpService: IAmqpService;
@@ -30,14 +31,16 @@ export interface IHandlePreviewResponseDeps {
     logger: winston.Winston;
 }
 
-const _onMessage = async (msg: string, logger: winston.Winston, deps: IHandlePreviewResponseDeps) => {
+const _onMessage = async (msg: amqp.ConsumeMessage, logger: winston.Winston, deps: IHandlePreviewResponseDeps) => {
+    deps.amqpService.consumer.channel.ack(msg);
+
     let previewResponse: IPreviewResponse;
     const ctx: IQueryInfos = {
         userId: deps.config.filesManager.userId,
         queryId: uuidv4()
     };
     try {
-        previewResponse = JSON.parse(msg);
+        previewResponse = JSON.parse(msg.content.toString());
     } catch (e) {
         logger.error(
             `[FilesManager] Preview return invalid message:
@@ -114,6 +117,6 @@ export const initPreviewResponseHandler = async (
     await deps.amqpService.consume(
         config.filesManager.queues.previewResponse,
         config.filesManager.routingKeys.previewResponse,
-        (msg: string) => _onMessage(msg, logger, deps)
+        (msg: amqp.ConsumeMessage) => _onMessage(msg, logger, deps)
     );
 };

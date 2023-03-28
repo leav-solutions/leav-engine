@@ -163,9 +163,11 @@ export enum SortOrder {
 
 export enum TaskStatus {
     CANCELED = 'CANCELED',
+    CREATED = 'CREATED',
     DONE = 'DONE',
     FAILED = 'FAILED',
     PENDING = 'PENDING',
+    PENDING_CANCEL = 'PENDING_CANCEL',
     RUNNING = 'RUNNING'
 }
 

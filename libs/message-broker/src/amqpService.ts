@@ -8,7 +8,12 @@ export interface IAmqpService {
     publisher: {connection: amqp.Connection; channel: amqp.ConfirmChannel};
     consumer: {connection: amqp.Connection; channel: amqp.ConfirmChannel};
     publish(exchange: string, routingKey: string, msg: string): Promise<void>;
-    consume(queue: string, routingKey: string, onMessage: onMessageFunc): Promise<void>;
+    consume(
+        queue: string,
+        routingKey: string,
+        onMessage: onMessageFunc,
+        consumerTag?: string
+    ): Promise<amqp.Replies.Consume>;
     close(): Promise<void>;
 }
 
@@ -21,8 +26,7 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
     let consumer: {connection: amqp.Connection; channel: amqp.ConfirmChannel};
     let retries = 0;
 
-    const init = async () => {
-        console.debug({connOpt: config.connOpt});
+    const _init = async () => {
         const publisherConnection = await amqp.connect(config.connOpt);
         const publisherChannel = await publisherConnection.createConfirmChannel();
         await publisherChannel.assertExchange(config.exchange, config.type);
@@ -37,7 +41,7 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
         consumer = {connection: consumerConnection, channel: consumerChannel};
     };
 
-    await init();
+    await _init();
 
     const publish = async (exchange: string, routingKey: string, msg: string): Promise<void> => {
         try {
@@ -50,7 +54,7 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
                 retries += 1;
 
                 try {
-                    await init();
+                    await _init();
                     await publish(exchange, routingKey, msg);
                 } catch (err) {
                     throw new Error('2 tries reached. Stop sync.');
@@ -61,27 +65,35 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
         }
     };
 
-    const consume = async (queue: string, routingKey: string, onMessage: onMessageFunc): Promise<void> => {
-        await consumer.channel.consume(queue, async msg => {
-            if (!msg) {
-                return;
-            }
+    const consume = async (
+        queue: string,
+        routingKey: string,
+        onMessage: onMessageFunc,
+        consumerTag?: string
+    ): Promise<amqp.Replies.Consume> => {
+        return consumer.channel.consume(
+            queue,
+            async msg => {
+                if (!msg) {
+                    return;
+                }
 
-            const msgString = msg.content.toString();
-
-            try {
-                await onMessage(msgString);
-            } catch (e) {
-                console.error(
-                    `[${queue}/${routingKey}] Error while processing message:
+                try {
+                    await onMessage(msg);
+                } catch (e) {
+                    console.error(process.pid, 'err amqp', e);
+                    console.error(
+                        `[${queue}/${routingKey}] Error while processing message:
                         ${e}.
-                        Message was: ${msgString}
+                        Message was: ${msg.content.toString()}
                     `
-                );
-            } finally {
-                consumer.channel.ack(msg);
-            }
-        });
+                    );
+                } finally {
+                    // TODO: add ack if msg has not been acked
+                }
+            },
+            {consumerTag}
+        );
     };
 
     const close = async () => {

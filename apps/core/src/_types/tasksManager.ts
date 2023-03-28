@@ -5,13 +5,17 @@ import {ISystemTranslation} from './systemTranslation';
 
 export enum OrderType {
     CREATE = 'CREATE',
-    CANCEL = 'CANCEL'
+    CANCEL = 'CANCEL',
+    DELETE = 'DELETE'
 }
+
 export enum TaskStatus {
+    CREATED = 'CREATED',
     PENDING = 'PENDING',
     RUNNING = 'RUNNING',
     FAILED = 'FAILED',
     DONE = 'DONE',
+    PENDING_CANCEL = 'PENDING_CANCEL',
     CANCELED = 'CANCELED'
 }
 
@@ -25,13 +29,13 @@ export type ITaskCreatePayload = Pick<ITask, 'label' | 'func' | 'priority' | 'ca
     Partial<Pick<ITask, 'id' | 'startAt'>>;
 
 export type ITaskCancelPayload = Pick<ITask, 'id'>;
+export type ITaskDeletePayload = Pick<ITask, 'id'> & {archive: boolean};
 
-export type Payload = ITaskCreatePayload | ITaskCancelPayload;
+export type Payload = ITaskCreatePayload | ITaskCancelPayload | ITaskDeletePayload;
 
 export interface ITaskOrder {
     time: number;
     userId: string;
-    type: OrderType;
     payload: Payload;
 }
 
@@ -48,7 +52,14 @@ export enum TaskCallbackType {
     ON_CANCEL = 'ON_CANCEL'
 }
 
-export type ITaskCallback = ITaskFunc & {type: TaskCallbackType[]};
+export enum TaskCallbackStatus {
+    PENDING = 'PENDING',
+    RUNNING = 'RUNNING',
+    FAILED = 'FAILED',
+    DONE = 'DONE'
+}
+
+export type ITaskCallback = ITaskFunc & {args: any[]; type: TaskCallbackType[]; status?: TaskCallbackStatus};
 
 // Interface to add as the least param of a new task function
 export interface ITaskFuncParams {

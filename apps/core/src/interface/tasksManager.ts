@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ITasksManagerApp} from 'app/core/tasksManagerApp';
-import {AwilixContainer} from 'awilix';
 
 export interface ITasksManagerInterface {
-    init(): Promise<void>;
+    initMaster(): Promise<NodeJS.Timer>;
+    initWorker(): Promise<void>;
 }
 
 interface IDeps {
@@ -14,6 +14,7 @@ interface IDeps {
 
 export default function ({'core.app.core.tasksManager': tasksManager}: IDeps): ITasksManagerInterface {
     return {
-        init: tasksManager.init
+        initMaster: tasksManager.initMaster,
+        initWorker: tasksManager.initWorker
     };
 }

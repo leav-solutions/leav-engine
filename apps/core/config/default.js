@@ -99,13 +99,16 @@ module.exports = {
         userGroupsIds: process.env.FM_USER_GROUPS_IDS || '2'
     },
     tasksManager: {
-        nbWorkers: process.env.TM_NB_WORKERS,
         checkingInterval: 3000,
+        workerPrefetch: 1,
+        restartWorker: process.env.TM_RESTART_WORKER ?? false,
         queues: {
-            orders: process.env.TM_ORDERS_QUEUE || 'tasks_orders'
+            execOrders: process.env.TM_EXEC_ORDERS_QUEUE || 'tasks_exec_orders',
+            cancelOrders: process.env.TM_CANCEL_ORDERS_QUEUE || 'tasks_cancel_orders'
         },
         routingKeys: {
-            orders: 'tasks.orders'
+            execOrders: 'tasks.exec.orders',
+            cancelOrders: 'tasks.cancel.orders'
         }
     },
     eventsManager: {

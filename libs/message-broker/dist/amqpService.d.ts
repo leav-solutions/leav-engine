@@ -1,4 +1,4 @@
-import { IAmqp, onMessageFunc } from './_types/amqp';
+import {IAmqp, onMessageFunc} from './_types/amqp';
 import * as amqp from 'amqplib';
 export interface IAmqpService {
     publisher: {
@@ -10,11 +10,16 @@ export interface IAmqpService {
         channel: amqp.ConfirmChannel;
     };
     publish(exchange: string, routingKey: string, msg: string): Promise<void>;
-    consume(queue: string, routingKey: string, onMessage: onMessageFunc): Promise<void>;
+    consume(
+        queue: string,
+        routingKey: string,
+        onMessage: onMessageFunc,
+        consumerTag?: string
+    ): Promise<amqp.Replies.Consume>;
     close(): Promise<void>;
 }
 interface IDeps {
     config: IAmqp;
 }
-export default function ({ config }: IDeps): Promise<IAmqpService>;
+export default function ({config}: IDeps): Promise<IAmqpService>;
 export {};

@@ -104,7 +104,8 @@ const TasksList = ({
 
                                 return (
                                     <Table.Row
-                                        {...(task.status === TaskStatus.CANCELED && {warning: true})}
+                                        {...((task.status === TaskStatus.PENDING_CANCEL ||
+                                            task.status === TaskStatus.CANCELED) && {warning: true})}
                                         {...(task.status === TaskStatus.FAILED && {error: true})}
                                         key={`row${task.id}`}
                                         data-testid="TableRow"
@@ -141,7 +142,8 @@ const TasksList = ({
                                                     percent={task.progress?.percent || 0}
                                                     progress
                                                     {...(task.status === TaskStatus.DONE && {success: true})}
-                                                    {...(task.status === TaskStatus.CANCELED && {warning: true})}
+                                                    {...((task.status === TaskStatus.CANCELED ||
+                                                        task.status === TaskStatus.PENDING_CANCEL) && {warning: true})}
                                                     {...(task.status === TaskStatus.FAILED && {error: true})}
                                                 >
                                                     {t(`tasks.task-statuses.${task.status}`)}

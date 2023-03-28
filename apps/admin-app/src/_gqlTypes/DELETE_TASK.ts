@@ -10,12 +10,8 @@
 // GraphQL mutation operation: DELETE_TASK
 // ====================================================
 
-export interface DELETE_TASK_deleteTask {
-    id: string;
-}
-
 export interface DELETE_TASK {
-    deleteTask: DELETE_TASK_deleteTask;
+    deleteTask: boolean;
 }
 
 export interface DELETE_TASKVariables {

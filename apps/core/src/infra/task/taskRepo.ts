@@ -7,7 +7,7 @@ import {IDbUtils} from 'infra/db/dbUtils';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
-import {TaskStatus, ITask} from '../../_types/tasksManager';
+import {TaskStatus, ITask, TaskCallbackStatus} from '../../_types/tasksManager';
 import {aql, join} from 'arangojs/aql';
 import {IUtils} from 'utils/utils';
 import {IExecuteWithCount, IDbDocument} from 'infra/db/_types';
@@ -19,6 +19,8 @@ export interface ITaskRepo {
     createTask(task: Omit<ITask, 'created_at' | 'created_by' | 'modified_at'>, ctx: IQueryInfos): Promise<ITask>;
     updateTask(task: Partial<ITask> & {id: string}, ctx: IQueryInfos): Promise<ITask>;
     getTasksToExecute(ctx: IQueryInfos): Promise<IList<ITask>>;
+    getTasksToCancel(ctx: IQueryInfos): Promise<IList<ITask>>;
+    getTasksWithPendingCallback(ctx: IQueryInfos): Promise<IList<ITask>>;
     deleteTask(taskId, ctx): Promise<ITask>;
     isATaskRunning(ctx: IQueryInfos, workerId?: number): Promise<boolean>;
 }
@@ -53,10 +55,55 @@ export default function ({
             const collec = dbService.db.collection(TASKS_COLLECTION);
 
             const query = aql`FOR task IN ${collec}
-                    FILTER task.status == ${TaskStatus.PENDING}
+                    FILTER task.status == ${TaskStatus.CREATED}
                     FILTER task.startAt <= ${utils.getUnixTime()}
                     FILTER task.workerId == null
                     SORT task.priority DESC, task.startAt ASC
+                RETURN task`;
+
+            const tasks = await dbService.execute<IExecuteWithCount | IDbDocument[]>({
+                query,
+                withTotalCount: true,
+                ctx
+            });
+
+            const list = (tasks as IExecuteWithCount).results;
+            const totalCount = (tasks as IExecuteWithCount).totalCount;
+
+            return {
+                totalCount,
+                list: list.map(dbUtils.cleanup) as ITask[]
+            };
+        },
+        async getTasksToCancel(ctx: IQueryInfos): Promise<IList<ITask>> {
+            const collec = dbService.db.collection(TASKS_COLLECTION);
+
+            const query = aql`FOR task IN ${collec}
+                    FILTER task.status == ${TaskStatus.PENDING_CANCEL}
+                    SORT task.priority DESC
+                RETURN task`;
+
+            const tasks = await dbService.execute<IExecuteWithCount | IDbDocument[]>({
+                query,
+                withTotalCount: true,
+                ctx
+            });
+
+            const list = (tasks as IExecuteWithCount).results;
+            const totalCount = (tasks as IExecuteWithCount).totalCount;
+
+            return {
+                totalCount,
+                list: list.map(dbUtils.cleanup) as ITask[]
+            };
+        },
+        async getTasksWithPendingCallback(ctx: IQueryInfos): Promise<IList<ITask>> {
+            const collec = dbService.db.collection(TASKS_COLLECTION);
+
+            const query = aql`FOR task IN ${collec}
+                    FILTER task.completedAt != null
+                    FILTER task.callback != null && task.callback.status == ${TaskCallbackStatus.PENDING}
+                    SORT task.priority DESC
                 RETURN task`;
 
             const tasks = await dbService.execute<IExecuteWithCount | IDbDocument[]>({

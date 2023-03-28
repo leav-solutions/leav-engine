@@ -17,7 +17,8 @@ import {AttributeCondition} from '../../_types/record';
 import {ITask, TaskPriority, TaskStatus} from '../../_types/tasksManager';
 
 export interface ITasksManagerApp {
-    init(): Promise<void>;
+    initMaster(): Promise<NodeJS.Timer>;
+    initWorker(): Promise<void>;
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
@@ -40,7 +41,7 @@ export interface IGetTasksArgs {
     sort?: ISortParams;
 }
 
-export default function({
+export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.tasksManager': tasksManagerDomain = null,
     'core.domain.eventsManager': eventsManager = null
@@ -58,7 +59,8 @@ export default function({
     };
 
     return {
-        init: tasksManagerDomain.init,
+        initMaster: tasksManagerDomain.initMaster,
+        initWorker: tasksManagerDomain.initWorker,
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
                 typeDefs: `
@@ -117,7 +119,7 @@ export default function({
 
                     extend type Mutation {
                         cancelTask(taskId: ID!): Boolean!
-                        deleteTask(taskId: ID!, archive: Boolean!): Task!
+                        deleteTask(taskId: ID!, archive: Boolean!): Boolean!
                     }
 
                     type Subscription {
@@ -155,8 +157,9 @@ export default function({
                             _,
                             {taskId, archive}: {taskId: string; archive: boolean},
                             ctx: IQueryInfos
-                        ): Promise<ITask> {
-                            return tasksManagerDomain.deleteTask(taskId, archive, ctx);
+                        ): Promise<boolean> {
+                            await tasksManagerDomain.deleteTask({id: taskId, archive}, ctx);
+                            return true;
                         },
                         async cancelTask(_, {taskId}: {taskId: string}, ctx: IQueryInfos): Promise<boolean> {
                             await tasksManagerDomain.cancelTask({id: taskId}, ctx);

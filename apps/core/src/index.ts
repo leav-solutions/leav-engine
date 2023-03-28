@@ -15,8 +15,11 @@ import {initRedis} from './infra/cache';
 import {initDb} from './infra/db/db';
 import {initMailer} from './infra/mailer';
 import {initPlugins} from './pluginsLoader';
+import minimist from 'minimist';
 
 (async function() {
+    const opt = minimist(process.argv.slice(2));
+
     let conf: Config.IConfig;
 
     try {
@@ -31,7 +34,9 @@ import {initPlugins} from './pluginsLoader';
     // Init services
     const [translator, amqp, redisClient, mailer] = await Promise.all([
         i18nextInit(conf),
-        amqpService({config: conf.amqp}),
+        amqpService({
+            config: {...conf.amqp, ...(opt.tasksManager === 'worker' && {prefetch: conf.tasksManager.workerPrefetch})}
+        }),
         initRedis({config: conf}),
         initMailer({config: conf}),
         initDb(conf)
@@ -73,31 +78,31 @@ import {initPlugins} from './pluginsLoader';
     };
 
     try {
-        const opt = process.argv[2];
-
         await _createRequiredDirectories();
 
-        if (typeof opt !== 'undefined' && opt.indexOf('server') !== -1) {
+        if (opt.server) {
             await server.init();
 
             await eventsManager.init();
-        } else if (typeof opt !== 'undefined' && opt.indexOf('migrate') !== -1) {
+        } else if (opt.migrate) {
             // Run db migrations
             await dbUtils.migrate(coreContainer);
             // Make sure we always exit process. Sometimes we don't and we're stuck here forever
             process.exit(0);
-        } else if (typeof opt !== 'undefined' && opt.indexOf('build-apps') !== -1) {
+        } else if (opt['build-apps']) {
             // Run apps builds
             const applicationService: IApplicationService = coreContainer.cradle['core.infra.application.service'];
             await applicationService.runInstallAll();
             // Make sure we always exit process. Sometimes we don't and we're stuck here forever
             process.exit(0);
-        } else if (typeof opt !== 'undefined' && opt.indexOf('filesManager') !== -1) {
+        } else if (opt.filesManager) {
             await filesManager.init();
-        } else if (typeof opt !== 'undefined' && opt.indexOf('indexationManager') !== -1) {
+        } else if (opt.indexationManager) {
             await indexationManager.init();
-        } else if (typeof opt !== 'undefined' && opt.indexOf('tasksManager') !== -1) {
-            await tasksManager.init();
+        } else if (opt.tasksManager === 'master') {
+            await tasksManager.initMaster();
+        } else if (opt.tasksManager === 'worker') {
+            await tasksManager.initWorker();
         } else {
             await cli.run();
         }
@@ -109,4 +114,8 @@ import {initPlugins} from './pluginsLoader';
 
 process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) => {
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('exit', code => {
+    console.debug(`Exiting process ${process.pid} with code ${code}`);
 });

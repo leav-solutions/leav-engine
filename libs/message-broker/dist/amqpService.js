@@ -28,7 +28,7 @@ async function default_1({ config }) {
     let publisher;
     let consumer;
     let retries = 0;
-    const init = async () => {
+    const _init = async () => {
         const publisherConnection = await amqp.connect(config.connOpt);
         const publisherChannel = await publisherConnection.createConfirmChannel();
         await publisherChannel.assertExchange(config.exchange, config.type);
@@ -40,7 +40,7 @@ async function default_1({ config }) {
         publisher = { connection: publisherConnection, channel: publisherChannel };
         consumer = { connection: consumerConnection, channel: consumerChannel };
     };
-    await init();
+    await _init();
     const publish = async (exchange, routingKey, msg) => {
         try {
             await publisher.channel.checkExchange(exchange);
@@ -52,7 +52,7 @@ async function default_1({ config }) {
             if (!retries) {
                 retries += 1;
                 try {
-                    await init();
+                    await _init();
                     await publish(exchange, routingKey, msg);
                 }
                 catch (err) {
@@ -64,25 +64,25 @@ async function default_1({ config }) {
             }
         }
     };
-    const consume = async (queue, routingKey, onMessage) => {
-        await consumer.channel.consume(queue, async (msg) => {
+    const consume = async (queue, routingKey, onMessage, consumerTag) => {
+        return consumer.channel.consume(queue, async (msg) => {
             if (!msg) {
                 return;
             }
-            const msgString = msg.content.toString();
             try {
-                await onMessage(msgString);
+                await onMessage(msg);
             }
             catch (e) {
+                console.error(process.pid, 'err amqp', e);
                 console.error(`[${queue}/${routingKey}] Error while processing message:
                         ${e}.
-                        Message was: ${msgString}
+                        Message was: ${msg.content.toString()}
                     `);
             }
             finally {
-                consumer.channel.ack(msg);
+                // TODO: add ack if msg has not been acked
             }
-        });
+        }, { consumerTag });
     };
     const close = async () => {
         await publisher.channel.close();
