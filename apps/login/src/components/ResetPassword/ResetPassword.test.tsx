@@ -5,6 +5,9 @@ import {act, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {MemoryRouter} from 'react-router-dom';
 import ResetPassword from './ResetPassword';
+import {enableFetchMocks} from 'jest-fetch-mock';
+
+enableFetchMocks();
 
 window.matchMedia = query => ({
     matches: false,

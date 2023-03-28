@@ -12,7 +12,7 @@ const ResetPassword = (): JSX.Element => {
     const [resetPasswordError, setResetPasswordError] = useState('');
     const resetPasswordUrl = import.meta.env.VITE_RESET_PASSWORD || '';
 
-    const {token} = useParams();
+    const {token} = useParams<{token: string}>();
     const redirectTo = '/';
 
     const _processResetPassword = async (newPassword: string) => {

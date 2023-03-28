@@ -3,17 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useSearchParams} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import LoginForm from './LoginForm';
 
 const Login = (): JSX.Element => {
-    const [searchParams] = useSearchParams();
+    const params = useParams<{dest?: string}>();
     const {t} = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [loginError, setLoginError] = useState('');
     const authUrl = import.meta.env.VITE_AUTH_URL || '';
 
-    const redirectTo = searchParams.get('dest') ?? '/';
+    const redirectTo = params.dest ?? '/';
 
     const _processLogin = async (login: string, password: string) => {
         try {

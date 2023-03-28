@@ -5,7 +5,7 @@ import {CheckOutlined, CloseOutlined, SendOutlined} from '@ant-design/icons';
 import {Alert, Button, Card, Form, Input, Space, Spin} from 'antd';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useNavigate} from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -41,14 +41,14 @@ const ForgotPasswordForm = ({
 }: IForgotPasswordFormProps): JSX.Element => {
     const {t} = useTranslation();
     const [email, setEmail] = useState('');
-    const navigate = useNavigate();
+    const history = useHistory();
 
     const _processForgotPassword = async () => {
         onSubmit(email);
     };
 
     const _handleCancel = () => {
-        navigate('/');
+        history.push('/');
     };
 
     return (

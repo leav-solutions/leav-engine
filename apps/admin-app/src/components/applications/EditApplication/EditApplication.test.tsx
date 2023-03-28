@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
 import React from 'react';
-import {match} from 'react-router';
+import {match} from 'react-router-dom';
 import {ApplicationType} from '_gqlTypes/globalTypes';
 import {render, screen} from '_tests/testUtils';
 import {Mockify} from '_types/Mockify';
