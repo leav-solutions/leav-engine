@@ -278,7 +278,7 @@ describe('Navigation', () => {
         },
         currentApp: {
             ...mockApplicationDetails,
-            trees: []
+            settings: {...mockApplicationDetails.settings, trees: []}
         }
     };
 

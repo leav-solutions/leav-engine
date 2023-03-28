@@ -291,7 +291,7 @@ services:
       <<: *env-react
       <<: *env-data-studio
       VITE_ENDPOINT: app/data-studio
-      VITE_APPLICATION_ID: data-studio
+      VITE_APPLICATION_ID: data_studio
       PUBLIC_URL: http://core.leav.localhost/app/data-studio
       WDS_SOCKET_HOST: data-studio.leav.localhost
       WDS_SOCKET_PORT: 80

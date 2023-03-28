@@ -2,13 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Override} from '@leav/utils';
-import LibrariesSelector from 'components/libraries/LibrariesSelector';
-import TreesSelector from 'components/trees/TreesSelector';
 import {useEditApplicationContext} from 'context/EditApplicationContext';
 import {Formik, FormikProps} from 'formik';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {Checkbox, Form, FormProps, Icon, Message} from 'semantic-ui-react';
+import {Form, FormProps, Icon, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
 import * as yup from 'yup';
 import {ApplicationType} from '_gqlTypes/globalTypes';
@@ -78,17 +76,13 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
             acc[cur] = '';
             return acc;
         }, {}),
-        endpoint: '',
-        libraries: [],
-        trees: []
+        endpoint: ''
     };
 
     const isNewApp = !application;
     const initialValues: ApplicationInfosFormValues = {
         ...defaultApplicationData,
-        ...application,
-        libraries: application?.libraries !== null ? (application?.libraries ?? []).map(lib => lib.id) : null,
-        trees: application?.trees !== null ? (application?.trees ?? []).map(tree => tree.id) : null
+        ...application
     };
 
     const _handleSubmit = (values: ApplicationInfosFormValues) => {
@@ -140,9 +134,7 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
                     [defaultLang]: yup.string()
                 })
                 .nullable(),
-            endpoint: yup.string().required(),
-            libraries: yup.array(yup.string()).nullable(),
-            trees: yup.array(yup.string()).nullable()
+            endpoint: yup.string().required()
         });
 
     const _renderForm = ({
@@ -334,60 +326,6 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
                     </FormFieldWrapper>
                     {values.type === ApplicationType.internal && (
                         <>
-                            <div className="field">
-                                <label>{t('applications.libraries')}</label>
-                                <FormFieldWrapper error={_getErrorByField('libraries')}>
-                                    <LibrariesSelector
-                                        placeholder={t('applications.all_libraries')}
-                                        fluid
-                                        selection
-                                        multiple
-                                        width="4"
-                                        disabled={isReadOnly || values.libraries === null}
-                                        name="libraries"
-                                        aria-label="id"
-                                        onChange={_handleChangeWithSubmit}
-                                        onBlur={_handleBlur}
-                                        value={values.libraries ?? []}
-                                    />
-                                </FormFieldWrapper>
-                                <Checkbox
-                                    toggle
-                                    label={t('applications.no_library')}
-                                    name="no_libraries"
-                                    onChange={_handleChangeNoLibraries}
-                                    checked={values.libraries === null}
-                                    disabled={isReadOnly}
-                                    aria-label="no_libraries"
-                                />
-                            </div>
-                            <div className="field">
-                                <label>{t('applications.trees')}</label>
-                                <FormFieldWrapper error={_getErrorByField('trees')}>
-                                    <TreesSelector
-                                        placeholder={t('applications.all_trees')}
-                                        fluid
-                                        selection
-                                        multiple
-                                        width="4"
-                                        disabled={isReadOnly || values.trees === null}
-                                        name="trees"
-                                        aria-label="id"
-                                        onChange={_handleChangeWithSubmit}
-                                        onBlur={_handleBlur}
-                                        value={values.trees ?? []}
-                                    />
-                                </FormFieldWrapper>
-                                <Checkbox
-                                    toggle
-                                    label={t('applications.no_tree')}
-                                    name="no_libraries"
-                                    onChange={_handleChangeNoTrees}
-                                    checked={values.trees === null}
-                                    disabled={isReadOnly}
-                                    aria-label="no_trees"
-                                />
-                            </div>
                             <FormFieldWrapper error={_getErrorByField('icon.whoAmI')}>
                                 <FileSelector
                                     onChange={_handleIconChange}
