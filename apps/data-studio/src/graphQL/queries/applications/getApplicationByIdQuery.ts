@@ -18,12 +18,6 @@ export const getApplicationByIdQuery = gql`
                 icon {
                     ...RecordIdentity
                 }
-                libraries {
-                    id
-                }
-                trees {
-                    id
-                }
                 permissions {
                     access_application
                 }
