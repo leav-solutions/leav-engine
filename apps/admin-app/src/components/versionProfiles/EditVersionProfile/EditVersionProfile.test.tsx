@@ -8,7 +8,7 @@ import {getVersionProfileByIdQuery} from 'queries/versionProfiles/getVersionProf
 import {getVersionProfilesQuery} from 'queries/versionProfiles/getVersionProfilesQuery';
 import {saveVersionProfileMutation} from 'queries/versionProfiles/saveVersionProfileMutation';
 import React from 'react';
-import {match} from 'react-router';
+import {match} from 'react-router-dom';
 import {act, fireEvent, render, screen, waitFor} from '_tests/testUtils';
 import {Mockify} from '_types/Mockify';
 import {mockAttrAdv} from '__mocks__/attributes';

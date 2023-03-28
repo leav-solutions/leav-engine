@@ -8,8 +8,7 @@ import {getVersionProfilesQuery} from 'queries/versionProfiles/getVersionProfile
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {VscLayers} from 'react-icons/vsc';
-import {useHistory} from 'react-router';
-import {Link} from 'react-router-dom';
+import {Link, useHistory} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {addWildcardToFilters} from 'utils';

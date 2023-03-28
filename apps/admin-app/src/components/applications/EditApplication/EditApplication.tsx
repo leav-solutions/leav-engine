@@ -8,7 +8,7 @@ import EditApplicationContext from 'context/EditApplicationContext';
 import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {match} from 'react-router';
+import {match} from 'react-router-dom';
 import styled from 'styled-components';
 import {GET_APPLICATION_BY_ID, GET_APPLICATION_BY_IDVariables} from '_gqlTypes/GET_APPLICATION_BY_ID';
 import EditApplicationTabs from './EditApplicationTabs';

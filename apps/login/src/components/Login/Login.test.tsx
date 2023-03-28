@@ -5,6 +5,9 @@ import {act, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {MemoryRouter} from 'react-router-dom';
 import Login from './Login';
+import {enableFetchMocks} from 'jest-fetch-mock';
+
+enableFetchMocks();
 
 window.matchMedia = query => ({
     matches: false,
@@ -19,7 +22,12 @@ window.matchMedia = query => ({
 
 jest.mock('react-router-dom', () => ({
     ...(jest.requireActual('react-router-dom') as {}),
-    useParams: jest.fn()
+    useParams: jest
+        .fn()
+        .mockReturnValueOnce({dest: '/'})
+        .mockReturnValueOnce({dest: '/'})
+        .mockReturnValueOnce({dest: '/my-app'})
+        .mockReturnValue({})
 }));
 
 const _renderComponent = (url: string = '/') =>

@@ -5,7 +5,7 @@ import {useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {getAttributeByIdQuery} from 'queries/attributes/getAttributeById';
 import React, {useMemo} from 'react';
-import {match} from 'react-router';
+import {match} from 'react-router-dom';
 import styled from 'styled-components';
 import {
     GET_ATTRIBUTE_BY_ID,

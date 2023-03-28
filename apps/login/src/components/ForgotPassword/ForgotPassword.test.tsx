@@ -6,6 +6,9 @@ import userEvent from '@testing-library/user-event';
 import {MemoryRouter} from 'react-router-dom';
 import ForgotPassword from './ForgotPassword';
 global.ASYNC_VALIDATOR_NO_WARNING = 1; // Suppress some really weird warning coming from ant-design during testing
+import {enableFetchMocks} from 'jest-fetch-mock';
+
+enableFetchMocks();
 
 window.matchMedia = query => ({
     matches: false,

@@ -5,7 +5,7 @@
 import Loading from 'components/shared/Loading';
 import ProtectedRoute from 'components/shared/ProtectedRoute';
 import React, {Suspense} from 'react';
-import {Route} from 'react-router';
+import {Route} from 'react-router-dom';
 import {PermissionsActions} from '_gqlTypes/globalTypes';
 
 const Dashboard = React.lazy(() => import('../Dashboard'));

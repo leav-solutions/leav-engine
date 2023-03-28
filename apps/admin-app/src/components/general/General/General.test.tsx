@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import {MemoryRouter} from 'react-router';
+import {MemoryRouter} from 'react-router-dom';
 import {act, render, screen} from '_tests/testUtils';
 import General from './General';
 

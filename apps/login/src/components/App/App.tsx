@@ -5,7 +5,7 @@ import ForgotPassword from 'components/ForgotPassword';
 import Login from 'components/Login';
 import ChangePassword from 'components/ResetPassword';
 import {useEffect} from 'react';
-import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import styled from 'styled-components';
 import useAppName from '../../useAppName';
 
@@ -28,11 +28,17 @@ function App() {
     return (
         <Background>
             <BrowserRouter basename={`${import.meta.env.VITE_ENDPOINT ?? '/'}`}>
-                <Routes>
-                    <Route path="/" element={<Login />} />
-                    <Route path="/reset-password/:token" element={<ChangePassword />} />
-                    <Route path="/forgot-password" element={<ForgotPassword />} />
-                </Routes>
+                <Switch>
+                    <Route path="/">
+                        <Login />
+                    </Route>
+                    <Route path="/reset-password/:token">
+                        <ChangePassword />
+                    </Route>
+                    <Route path="/forgot-password">
+                        <ForgotPassword />
+                    </Route>
+                </Switch>
             </BrowserRouter>
         </Background>
     );

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getStatsQuery} from 'queries/stats/getStatsQuery';
 import React from 'react';
-import {MemoryRouter} from 'react-router';
+import {MemoryRouter} from 'react-router-dom';
 import {render, screen} from '_tests/testUtils';
 import Dashboard from './Dashboard';
 

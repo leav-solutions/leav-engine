@@ -5,8 +5,8 @@
     "main": "dist/index.js",
     "scripts": {
         "start": "node .",
-        "start:watch": "ts-node-dev --respawn ./src",
-        "start:dev": "ts-node-dev/register ./src ",
+        "start:watch": "npm run start:dev",
+        "start:dev": "ts-node-dev --respawn ./src ",
         "start:watch:test": "NODE_ENV=test ts-node-dev --respawn src/",
         "dev": "npm run start:watch",
         "build": "tsc -b tsconfig.build.json",
