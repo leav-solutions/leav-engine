@@ -25,8 +25,6 @@ export const mockApplication: WithTypename<GetApplicationByIdQuery['applications
         lastCallResult: 'Installation successful',
         __typename: 'ApplicationInstall'
     },
-    libraries: [],
-    trees: [],
     settings: [],
     permissions: {
         access_application: true,

@@ -20,17 +20,19 @@ export default function useGetLibrariesListQuery({
 }: IUseGetLibrariesListQueryHookParams = {}): IUseGetLibrariesListQueryHook {
     const [queryData, setQueryData] = useState<GET_LIBRARIES_LIST>();
     const appData = useApplicationContext();
+    const appLibraries = appData?.currentApp?.settings?.libraries ?? null;
 
     const query = useQuery<GET_LIBRARIES_LIST>(getLibrariesListQuery, {
+        skip: onlyAllowed && appLibraries === null,
         onCompleted: data => {
             const allowedLibraries = data.libraries.list.filter(lib => {
                 return (!onlyAllowed || lib.permissions.access_library) && isLibraryInApp(appData.currentApp, lib.id);
             });
 
-            if (appData.currentApp.libraries.length) {
+            if (appLibraries.length) {
                 allowedLibraries.sort((libA, libB) => {
-                    const indexLibA = appData.currentApp.libraries.findIndex(lib => lib.id === libA.id);
-                    const indexLibB = appData.currentApp.libraries.findIndex(lib => lib.id === libB.id);
+                    const indexLibA = appLibraries.findIndex(lib => lib.id === libA.id);
+                    const indexLibB = appLibraries.findIndex(lib => lib.id === libB.id);
 
                     return indexLibA - indexLibB;
                 });
@@ -44,11 +46,10 @@ export default function useGetLibrariesListQuery({
             };
 
             setQueryData(cleanData);
-        },
-        skip: onlyAllowed && appData?.currentApp?.libraries === null
+        }
     });
 
-    if (onlyAllowed && appData?.currentApp?.libraries === null) {
+    if (onlyAllowed && appLibraries === null) {
         return {...query, loading: false, data: {libraries: {list: []}}};
     }
 

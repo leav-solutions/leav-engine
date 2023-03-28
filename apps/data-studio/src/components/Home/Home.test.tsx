@@ -176,8 +176,7 @@ describe('Home', () => {
 
     const currentApp = {
         ...mockApplicationDetails,
-        libraries: [],
-        trees: []
+        settings: {libraries: [], trees: []}
     };
 
     beforeEach(() => {
@@ -207,22 +206,10 @@ describe('Home', () => {
     test('Sort libraries and tree lists according to order in application', async () => {
         const currentAppWithLibraries = {
             ...mockApplicationDetails,
-            libraries: [
-                {
-                    id: 'libB'
-                },
-                {
-                    id: 'libA'
-                }
-            ],
-            trees: [
-                {
-                    id: 'treeB'
-                },
-                {
-                    id: 'treeA'
-                }
-            ]
+            settings: {
+                libraries: ['libB', 'libA'],
+                trees: ['treeB', 'treeA']
+            }
         };
 
         await act(async () => {
@@ -337,7 +324,7 @@ describe('Home', () => {
                     apolloMocks: mocks,
                     currentApp: {
                         ...currentApp,
-                        libraries: null
+                        settings: {...currentApp.settings, libraries: null}
                     }
                 }
             );
@@ -360,7 +347,7 @@ describe('Home', () => {
                     apolloMocks: mocks,
                     currentApp: {
                         ...currentApp,
-                        trees: null
+                        settings: {...currentApp.settings, trees: null}
                     }
                 }
             );
@@ -383,8 +370,7 @@ describe('Home', () => {
                     apolloMocks: mocks,
                     currentApp: {
                         ...currentApp,
-                        libraries: null,
-                        trees: null
+                        settings: {libraries: null, trees: null}
                     }
                 }
             );
