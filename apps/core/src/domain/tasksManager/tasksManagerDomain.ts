@@ -350,7 +350,7 @@ export default function ({
                 archive: false, // FIXME: move to repo
                 ...(!!callback && {callback: {...callback, status: TaskCallbackStatus.PENDING}})
             },
-            {userId: ctx.userId} // FIXME: ?? Converting circular structure to JSON si je mets ctx entier (groupsid??)
+            (({dbProfiler, ...c}) => c)(ctx)
         );
 
         await eventsManager.sendPubSubEvent({triggerName: TRIGGER_NAME_TASK, data: {task}}, ctx);
@@ -370,10 +370,9 @@ export default function ({
         return archive ? _updateTask(id, {archive}, ctx) : taskRepo.deleteTask(id, ctx);
     };
 
-    const _exit = async (taskId: string) => {
-        await _detachWorker(taskId, workerCtx);
+    const _exit = async () => {
         await amqpService.close();
-        process.kill(1); // FIXME: find why process.exit(0) does not kill main container process
+        process.exit();
     };
 
     const _onExecMessage = async (msg: amqp.ConsumeMessage): Promise<void> => {
@@ -386,15 +385,21 @@ export default function ({
             amqpService.consumer.channel.ack(msg);
         }
 
-        // We stop consuming on exec orders queue
+        // We stop listening to the execution order queue because if we ack the message we receive a new task.
+        // We can't wait for the task to finish before the ack because it can be long and exceed the rabbitmq timeout.
         amqpService.consumer.channel.cancel(tag);
         amqpService.consumer.channel.ack(msg);
 
         const task = order.payload as ITask;
 
         await _executeTask(task, {userId: task.created_by});
+        await _detachWorker(task.id, workerCtx);
 
-        await _exit(task.id);
+        if (config.tasksManager.restartWorker) {
+            return _exit();
+        }
+
+        await _listenExecOrders();
     };
 
     const _onCancelMessage = async (msg: amqp.ConsumeMessage): Promise<void> => {
@@ -416,8 +421,11 @@ export default function ({
         }
 
         await _updateTask(task.id, {completedAt: utils.getUnixTime(), status: TaskStatus.CANCELED}, workerCtx);
+        await _detachWorker(task.id, workerCtx);
 
-        await _exit(task.id);
+        if (config.tasksManager.restartWorker) {
+            await _exit();
+        }
     };
 
     const _sendOrder = async (routingKey: string | null, payload: Payload, ctx: IQueryInfos): Promise<void> => {
@@ -425,6 +433,15 @@ export default function ({
             config.amqp.exchange,
             routingKey,
             JSON.stringify({time: utils.getUnixTime(), userId: ctx.userId, payload})
+        );
+    };
+
+    const _listenExecOrders = async () => {
+        await amqpService.consume(
+            config.tasksManager.queues.execOrders,
+            config.tasksManager.routingKeys.execOrders,
+            _onExecMessage,
+            tag
         );
     };
 
@@ -459,13 +476,7 @@ export default function ({
 
         // Workers
         async initWorker(): Promise<void> {
-            // wait for exec orders
-            await amqpService.consume(
-                config.tasksManager.queues.execOrders,
-                config.tasksManager.routingKeys.execOrders,
-                _onExecMessage,
-                tag
-            );
+            await _listenExecOrders();
 
             // wait for cancel orders
             const cancelOrdersQueue = `${config.tasksManager.queues.cancelOrders}_${tag}`;

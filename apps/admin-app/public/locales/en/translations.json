@@ -363,7 +363,7 @@
             "DONE": "Done",
             "FAILED": "Failed",
             "PENDING": "Pending",
-            "PENDING_CANCEL": "Cancelation",
+            "PENDING_CANCEL": "Cancelation pending",
             "RUNNING": "Running"
         },
         "completed": "Completed",

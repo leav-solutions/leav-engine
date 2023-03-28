@@ -38,6 +38,7 @@ describe('Tasks Manager', () => {
         tasksManager: {
             checkingInterval: 3000,
             workerPrefetch: 1,
+            restartWorker: false,
             queues: {
                 execOrders: 'tasks_exec_orders.test',
                 cancelOrders: 'tasks_cancel_orders.test'

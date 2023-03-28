@@ -101,6 +101,7 @@ module.exports = {
     tasksManager: {
         checkingInterval: 3000,
         workerPrefetch: 1,
+        restartWorker: process.env.TM_RESTART_WORKER ?? false,
         queues: {
             execOrders: process.env.TM_EXEC_ORDERS_QUEUE || 'tasks_exec_orders',
             cancelOrders: process.env.TM_CANCEL_ORDERS_QUEUE || 'tasks_cancel_orders'
