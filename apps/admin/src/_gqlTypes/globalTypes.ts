@@ -224,8 +224,6 @@ export interface ApplicationInput {
     label?: SystemTranslation | null;
     type?: ApplicationType | null;
     description?: SystemTranslation | null;
-    libraries?: string[] | null;
-    trees?: string[] | null;
     color?: string | null;
     icon?: ApplicationIconInput | null;
     module?: string | null;

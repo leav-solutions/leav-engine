@@ -23,23 +23,9 @@ export const mockApplicationDetails: GET_APPLICATION_BY_ID_applications_list = {
     permissions: {
         access_application: true
     },
-    libraries: [
-        {
-            id: 'libA'
-        },
-        {
-            id: 'libB'
-        }
-    ],
-    trees: [
-        {
-            id: 'treeA'
-        },
-        {
-            id: 'treeB'
-        }
-    ],
     settings: {
+        libraries: ['libA', 'libB'],
+        trees: ['treeA', 'treeB'],
         showTransparency: false
     }
 };

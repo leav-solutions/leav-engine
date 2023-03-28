@@ -38,14 +38,6 @@ export interface APPLICATION_EVENTS_applicationEvent_application_icon {
     whoAmI: APPLICATION_EVENTS_applicationEvent_application_icon_whoAmI;
 }
 
-export interface APPLICATION_EVENTS_applicationEvent_application_libraries {
-    id: string;
-}
-
-export interface APPLICATION_EVENTS_applicationEvent_application_trees {
-    id: string;
-}
-
 export interface APPLICATION_EVENTS_applicationEvent_application_permissions {
     access_application: boolean;
     admin_application: boolean;
@@ -61,8 +53,6 @@ export interface APPLICATION_EVENTS_applicationEvent_application {
     color: string | null;
     icon: APPLICATION_EVENTS_applicationEvent_application_icon | null;
     module: string | null;
-    libraries: APPLICATION_EVENTS_applicationEvent_application_libraries[] | null;
-    trees: APPLICATION_EVENTS_applicationEvent_application_trees[] | null;
     permissions: APPLICATION_EVENTS_applicationEvent_application_permissions;
     settings: JSONObject | null;
 }

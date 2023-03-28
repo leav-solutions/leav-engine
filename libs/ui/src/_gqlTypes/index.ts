@@ -95,10 +95,8 @@ export type ApplicationInput = {
     icon?: InputMaybe<ApplicationIconInput>;
     id: Scalars['ID'];
     label?: InputMaybe<Scalars['SystemTranslation']>;
-    libraries?: InputMaybe<Array<Scalars['String']>>;
     module?: InputMaybe<Scalars['String']>;
     settings?: InputMaybe<Scalars['JSONObject']>;
-    trees?: InputMaybe<Array<Scalars['String']>>;
     type?: InputMaybe<ApplicationType>;
 };
 
@@ -841,8 +839,6 @@ export type GetApplicationByIdQuery = {
                       };
                   }
                 | null;
-            libraries?: Array<{id: string}> | null;
-            trees?: Array<{id: string}> | null;
             permissions: {access_application: boolean; admin_application: boolean};
         }>;
     } | null;
@@ -935,8 +931,6 @@ export type SaveApplicationMutation = {
                   };
               }
             | null;
-        libraries?: Array<{id: string}> | null;
-        trees?: Array<{id: string}> | null;
         permissions: {access_application: boolean; admin_application: boolean};
     };
 };
@@ -1001,12 +995,6 @@ export const DetailsApplicationFragmentDoc = gql`
             ...IdentityRecord
         }
         module
-        libraries {
-            id
-        }
-        trees {
-            id
-        }
         permissions {
             access_application
             admin_application

@@ -11,7 +11,6 @@ import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import useGetTreesListQuery from 'hooks/useGetTreesListQuery/useGetTreesListQuery';
 import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
-import {useAppDispatch} from 'reduxStore/store';
 import styled from 'styled-components';
 import {getTreeLink, localizedTranslation} from 'utils';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
@@ -48,7 +47,6 @@ interface IListItem {
 function TreeList(): JSX.Element {
     const {t} = useTranslation();
     const {lang} = useLang();
-    const dispatch = useAppDispatch();
 
     const treeListQuery = useGetTreesListQuery();
     const userDataQuery = useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
