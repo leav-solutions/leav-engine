@@ -38,14 +38,6 @@ export interface ApplicationDetails_icon {
     whoAmI: ApplicationDetails_icon_whoAmI;
 }
 
-export interface ApplicationDetails_libraries {
-    id: string;
-}
-
-export interface ApplicationDetails_trees {
-    id: string;
-}
-
 export interface ApplicationDetails_permissions {
     access_application: boolean;
     admin_application: boolean;
@@ -66,8 +58,6 @@ export interface ApplicationDetails {
     color: string | null;
     icon: ApplicationDetails_icon | null;
     module: string | null;
-    libraries: ApplicationDetails_libraries[] | null;
-    trees: ApplicationDetails_trees[] | null;
     permissions: ApplicationDetails_permissions;
     install: ApplicationDetails_install | null;
     settings: JSONObject | null;

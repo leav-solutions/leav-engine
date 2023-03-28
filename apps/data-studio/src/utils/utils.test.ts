@@ -50,7 +50,7 @@ describe('utils', () => {
             expect(isLibraryInApp(mockApplicationDetails, 'libA')).toBe(true);
             expect(isLibraryInApp(mockApplicationDetails, 'libB')).toBe(true);
             expect(isLibraryInApp(mockApplicationDetails, 'libC')).toBe(false);
-            expect(isLibraryInApp({...mockApplicationDetails, libraries: []}, 'libC')).toBe(true);
+            expect(isLibraryInApp({...mockApplicationDetails, settings: {libraries: []}}, 'libC')).toBe(true);
         });
     });
 
@@ -59,7 +59,7 @@ describe('utils', () => {
             expect(isTreeInApp(mockApplicationDetails, 'treeA')).toBe(true);
             expect(isTreeInApp(mockApplicationDetails, 'treeB')).toBe(true);
             expect(isTreeInApp(mockApplicationDetails, 'treeC')).toBe(false);
-            expect(isTreeInApp({...mockApplicationDetails, trees: []}, 'treeC')).toBe(true);
+            expect(isTreeInApp({...mockApplicationDetails, settings: {trees: []}}, 'treeC')).toBe(true);
         });
     });
 

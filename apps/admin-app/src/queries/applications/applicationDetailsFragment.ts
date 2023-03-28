@@ -18,12 +18,6 @@ export const applicationDetailsFragment = gql`
             ...RecordIdentity
         }
         module
-        libraries {
-            id
-        }
-        trees {
-            id
-        }
         permissions {
             access_application
             admin_application

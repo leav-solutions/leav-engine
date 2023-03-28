@@ -95,10 +95,8 @@ export type ApplicationInput = {
     icon?: InputMaybe<ApplicationIconInput>;
     id: Scalars['ID'];
     label?: InputMaybe<Scalars['SystemTranslation']>;
-    libraries?: InputMaybe<Array<Scalars['String']>>;
     module?: InputMaybe<Scalars['String']>;
     settings?: InputMaybe<Scalars['JSONObject']>;
-    trees?: InputMaybe<Array<Scalars['String']>>;
     type?: InputMaybe<ApplicationType>;
 };
 
@@ -576,9 +574,11 @@ export type TaskFiltersInput = {
 
 export enum TaskStatus {
     CANCELED = 'CANCELED',
+    CREATED = 'CREATED',
     DONE = 'DONE',
     FAILED = 'FAILED',
     PENDING = 'PENDING',
+    PENDING_CANCEL = 'PENDING_CANCEL',
     RUNNING = 'RUNNING'
 }
 
@@ -1198,8 +1198,6 @@ export type GetApplicationByIdQuery = {
                       };
                   }
                 | null;
-            libraries?: Array<{id: string}> | null;
-            trees?: Array<{id: string}> | null;
             permissions: {access_application: boolean; admin_application: boolean};
             install?: {status: ApplicationInstallStatus; lastCallResult?: string | null} | null;
         }>;
@@ -1651,8 +1649,6 @@ export type SaveApplicationMutation = {
                   };
               }
             | null;
-        libraries?: Array<{id: string}> | null;
-        trees?: Array<{id: string}> | null;
         permissions: {access_application: boolean; admin_application: boolean};
         install?: {status: ApplicationInstallStatus; lastCallResult?: string | null} | null;
     };
@@ -1718,12 +1714,6 @@ export const ApplicationDetailsFragmentDoc = gql`
             ...RecordIdentity
         }
         module
-        libraries {
-            id
-        }
-        trees {
-            id
-        }
         permissions {
             access_application
             admin_application
