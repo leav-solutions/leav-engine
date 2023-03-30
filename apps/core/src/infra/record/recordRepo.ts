@@ -232,7 +232,7 @@ export default function ({
             const sortQueryPart = sort
                 ? attributeTypesRepo.getTypeRepo(sort.attributes[0]).sortQueryPart(sort)
                 : aql`SORT ${literal(
-                      fulltextSearchQuery ? `r.${CORE_INDEX_FIELD}.score DESC, r._key ASC` : 'r._key ASC'
+                      fulltextSearchQuery ? `r.${CORE_INDEX_FIELD}.score DESC, r.created_at DESC` : 'r.created_at DESC'
                   )}`;
 
             queryParts.push(sortQueryPart as GeneratedAqlQuery);

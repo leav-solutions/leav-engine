@@ -134,7 +134,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     const [runSearch, {loading, error, data: searchData}] = useLazyQuery<
         IGetRecordsFromLibraryQuery,
         IGetRecordsFromLibraryQueryVariables
-    >(getRecordsFromLibraryQuery(attribute.linked_library.id, [], true));
+    >(getRecordsFromLibraryQuery(attribute.linked_library.gqlNames.query, [], true));
 
     useEffect(() => {
         wrapperRef.current.scrollIntoView({block: 'nearest'});
