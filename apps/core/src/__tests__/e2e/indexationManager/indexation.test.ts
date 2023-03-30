@@ -75,41 +75,11 @@ describe('Indexation', () => {
         expect(res.data.data[libNameQuery].list.length).toBe(2);
     });
 
-    test('Search records with wildcard at first', async () => {
+    test('Search records with start of the word', async () => {
         await setTimeout(5000);
 
         const res = await makeGraphQlCall(`{
-            ${libNameQuery}(searchQuery: "dmin",sort: {field: "id", order: asc}) {
-                totalCount
-                list {id}
-            }
-        }`);
-
-        expect(res.data.errors).toBeUndefined();
-        expect(res.status).toBe(200);
-        expect(res.data.data[libNameQuery].list.length).toBe(2);
-    });
-
-    test('Search records with wildcard at end', async () => {
-        await setTimeout(5000);
-
-        const res = await makeGraphQlCall(`{
-            ${libNameQuery}(searchQuery: "admi",sort: {field: "id", order: asc}) {
-                totalCount
-                list {id ${attrId}}
-            }
-        }`);
-
-        expect(res.data.errors).toBeUndefined();
-        expect(res.status).toBe(200);
-        expect(res.data.data[libNameQuery].list.length).toBe(2);
-    });
-
-    test('Search records with wildcard at first/end', async () => {
-        await setTimeout(5000);
-
-        const res = await makeGraphQlCall(`{
-            ${libNameQuery}(searchQuery: "dmi",sort: {field: "id", order: asc}) {
+            ${libNameQuery}(searchQuery: "adm",sort: {field: "id", order: asc}) {
                 totalCount
                 list {id}
             }

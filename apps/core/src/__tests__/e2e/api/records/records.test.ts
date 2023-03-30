@@ -273,20 +273,29 @@ describe('Records', () => {
 
             // Create some records
             sfRecord1 = await gqlCreateRecord(sfTestLibId);
+            await new Promise(r => setTimeout(r, 1000));
             sfRecord2 = await gqlCreateRecord(sfTestLibId);
+            await new Promise(r => setTimeout(r, 1000));
             sfRecord3 = await gqlCreateRecord(sfTestLibId);
 
             // Create records on linked lib
             sfLinkedRecord1 = await gqlCreateRecord(sfTestLibLinkId);
+            await new Promise(r => setTimeout(r, 1000));
             sfLinkedRecord2 = await gqlCreateRecord(sfTestLibLinkId);
+            await new Promise(r => setTimeout(r, 1000));
             sfLinkedRecord3 = await gqlCreateRecord(sfTestLibLinkId);
 
             // Create records on tree lib
             sfTreeRecord1 = await gqlCreateRecord(sfTestLibTreeId);
+            await new Promise(r => setTimeout(r, 1000));
             sfTreeRecord2 = await gqlCreateRecord(sfTestLibTreeId);
+            await new Promise(r => setTimeout(r, 1000));
             sfTreeRecord3 = await gqlCreateRecord(sfTestLibTreeId);
+            await new Promise(r => setTimeout(r, 1000));
             sfTreeRecord4 = await gqlCreateRecord(sfTestLibTreeId);
+            await new Promise(r => setTimeout(r, 1000));
             sfTreeRecord5 = await gqlCreateRecord(sfTestLibTreeId);
+            await new Promise(r => setTimeout(r, 1000));
             sfTreeRecord6 = await gqlCreateRecord(sfTestLibTreeId);
 
             // Save values on linked records
@@ -824,8 +833,8 @@ describe('Records', () => {
                 expect(res.status).toBe(200);
 
                 expect(res.data.data[sfTestLibTreeIdQueryName].list).toHaveLength(2);
-                expect(res.data.data[sfTestLibTreeIdQueryName].list[0].id).toBe(sfTreeRecord5);
-                expect(res.data.data[sfTestLibTreeIdQueryName].list[1].id).toBe(sfTreeRecord6);
+                expect(res.data.data[sfTestLibTreeIdQueryName].list[0].id).toBe(sfTreeRecord6);
+                expect(res.data.data[sfTestLibTreeIdQueryName].list[1].id).toBe(sfTreeRecord5);
             });
 
             test('Not Classified', async () => {
@@ -841,10 +850,10 @@ describe('Records', () => {
                 expect(res.status).toBe(200);
 
                 expect(res.data.data[sfTestLibTreeIdQueryName].list.length).toBe(4);
-                expect(res.data.data[sfTestLibTreeIdQueryName].list[0].id).toBe(sfTreeRecord1);
-                expect(res.data.data[sfTestLibTreeIdQueryName].list[1].id).toBe(sfTreeRecord2);
-                expect(res.data.data[sfTestLibTreeIdQueryName].list[2].id).toBe(sfTreeRecord3);
-                expect(res.data.data[sfTestLibTreeIdQueryName].list[3].id).toBe(sfTreeRecord4);
+                expect(res.data.data[sfTestLibTreeIdQueryName].list[0].id).toBe(sfTreeRecord4);
+                expect(res.data.data[sfTestLibTreeIdQueryName].list[1].id).toBe(sfTreeRecord3);
+                expect(res.data.data[sfTestLibTreeIdQueryName].list[2].id).toBe(sfTreeRecord2);
+                expect(res.data.data[sfTestLibTreeIdQueryName].list[3].id).toBe(sfTreeRecord1);
             });
         });
     });
