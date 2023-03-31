@@ -1,8 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {WithTypename} from '@leav/utils';
 import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
 import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
+import {ApplicationInstallStatus, ApplicationType} from '_gqlTypes/globalTypes';
 
 export const mockApplication: GET_APPLICATIONS_applications_list = {
     id: 'my-app',
@@ -18,10 +20,20 @@ export const mockApplication: GET_APPLICATIONS_applications_list = {
     icon: null
 };
 
-export const mockApplicationDetails: GET_APPLICATION_BY_ID_applications_list = {
+export const mockApplicationDetails: WithTypename<GET_APPLICATION_BY_ID_applications_list> = {
     ...mockApplication,
+    __typename: 'Application',
+    type: ApplicationType.external,
+    install: {
+        lastCallResult: null,
+        status: ApplicationInstallStatus.SUCCESS,
+        __typename: 'ApplicationInstall'
+    },
+    module: 'data-studio',
     permissions: {
-        access_application: true
+        admin_application: true,
+        access_application: true,
+        __typename: 'ApplicationPermissions'
     },
     settings: {
         libraries: ['libA', 'libB'],

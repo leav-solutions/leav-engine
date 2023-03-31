@@ -28,6 +28,7 @@ const InstallHeader = styled(Header)`
 function InstallView({onInstall, loading}: IInstallViewProps): JSX.Element {
     const {application} = useEditApplicationContext();
     const {t} = useTranslation();
+    const isReadOnly = !application.permissions?.admin_application;
 
     const iconByStatus: {[key in ApplicationInstallStatus]: ReactNode} = {
         [ApplicationInstallStatus.NONE]: <Icon name="question circle outline" color="grey" />,
@@ -46,10 +47,12 @@ function InstallView({onInstall, loading}: IInstallViewProps): JSX.Element {
                     {t('applications.status_label')}: {t(`applications.statuses.${installStatus}`)}{' '}
                     {iconByStatus[installStatus]}
                 </div>
-                <Button primary icon loading={loading} labelPosition="left" onClick={_handleClick}>
-                    <Icon name="redo alternate" />
-                    {t('applications.reinstall')}
-                </Button>
+                {!isReadOnly && (
+                    <Button primary icon loading={loading} labelPosition="left" onClick={_handleClick}>
+                        <Icon name="redo alternate" />
+                        {t('applications.reinstall')}
+                    </Button>
+                )}
             </InstallHeader>
             {!loading && <Result inverted>{application?.install?.lastCallResult}</Result>}
         </>

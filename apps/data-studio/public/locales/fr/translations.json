@@ -85,7 +85,8 @@
         "favorites_libraries": "Favorites",
         "others_trees": "Autres arbres",
         "related_trees": "Associée(s) à la bibliothèque active",
-        "favorites_trees": "Favoris"
+        "favorites_trees": "Favoris",
+        "settings": "Paramètres"
     },
     "lib_list": {
         "header": "Bibliothèques"
@@ -584,5 +585,13 @@
         "previews_generation_failed_only": "Seulement si la précédente génération a échoué",
         "previews_generation_success": "La génération des aperçus a bien été lancée",
         "previews_generation_nothing_to_do": "Aucun aperçu à générer"
+    },
+    "app_settings": {
+        "title": "Paramètres",
+        "application": "Application",
+        "libraries": "Bibliothèques",
+        "trees": "Arbres",
+        "advanced_settings": "Paramètres avancés",
+        "showTransparency": "Afficher la transparence"
     }
 }

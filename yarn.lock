@@ -66,6 +66,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ant-design/icons@npm:5.0.1":
+  version: 5.0.1
+  resolution: "@ant-design/icons@npm:5.0.1"
+  dependencies:
+    "@ant-design/colors": ^7.0.0
+    "@ant-design/icons-svg": ^4.2.1
+    "@babel/runtime": ^7.11.2
+    classnames: ^2.2.6
+    rc-util: ^5.9.4
+  peerDependencies:
+    react: ">=16.0.0"
+    react-dom: ">=16.0.0"
+  checksum: 426371e3a2d5d571a2df18229512ea5951ea71b97f1fa3a3a4dc2feda58498c70da7025c6e3ffcf0ae2dab0fb496d117f8962222f17d95dc58498850d9a21566
+  languageName: node
+  linkType: hard
+
 "@ant-design/icons@npm:^5.0.0":
   version: 5.0.0
   resolution: "@ant-design/icons@npm:5.0.0"
@@ -13877,6 +13893,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "data-studio@workspace:apps/data-studio"
   dependencies:
+    "@ant-design/icons": 5.0.1
     "@apollo/client": 3.6.9
     "@apollo/link-error": 2.0.0-beta.3
     "@graphql-codegen/cli": 2.12.0
