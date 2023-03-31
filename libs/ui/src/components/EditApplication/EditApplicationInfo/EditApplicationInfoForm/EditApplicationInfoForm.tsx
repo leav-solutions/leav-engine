@@ -77,6 +77,10 @@ function EditApplicationInfoForm({
     };
 
     const _handleFieldSubmit = async (field: string, value: any) => {
+        if (!form.isFieldTouched(field)) {
+            return;
+        }
+
         setRunningFieldsSubmit([...runningFieldsSubmit, field]);
 
         await onSubmitField(field, value);

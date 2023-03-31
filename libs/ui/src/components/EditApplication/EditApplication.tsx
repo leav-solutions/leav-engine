@@ -19,6 +19,7 @@ function EditApplication({
     appsBaseUrl,
     onSetSubmitFunction,
     tabContentStyle,
+    additionalTabs = [],
     activeTab = 'info'
 }: IEditApplicationProps): JSX.Element {
     const {t} = useTranslation('shared');
@@ -59,6 +60,16 @@ function EditApplication({
             key: 'info',
             label: t('applications.info'),
             children: <TabContentWrapper style={tabContentStyle}>{appInfoComp}</TabContentWrapper>
+        },
+        ...additionalTabs,
+        {
+            key: 'install',
+            label: t('applications.install'),
+            children: (
+                <TabContentWrapper style={tabContentStyle}>
+                    <EditApplicationInstall application={application} />
+                </TabContentWrapper>
+            )
         }
     ];
 

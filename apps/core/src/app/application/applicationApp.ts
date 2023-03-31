@@ -9,11 +9,9 @@ import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from 'app/core
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
 import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IApplicationPermissionDomain} from 'domain/permission/applicationPermissionDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
-import {ITreeDomain} from 'domain/tree/treeDomain';
 import express, {Express} from 'express';
 import glob from 'glob';
 import {GraphQLResolveInfo} from 'graphql';
@@ -56,8 +54,6 @@ interface IDeps {
     'core.domain.application'?: IApplicationDomain;
     'core.domain.permission'?: IPermissionDomain;
     'core.domain.permission.application'?: IApplicationPermissionDomain;
-    'core.domain.library'?: ILibraryDomain;
-    'core.domain.tree'?: ITreeDomain;
     'core.domain.record'?: IRecordDomain;
     'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.utils.logger'?: winston.Winston;
@@ -73,8 +69,6 @@ export default function ({
     'core.domain.application': applicationDomain = null,
     'core.domain.permission': permissionDomain = null,
     'core.domain.permission.application': applicationPermissionDomain = null,
-    'core.domain.library': libraryDomain,
-    'core.domain.tree': treeDomain,
     'core.domain.record': recordDomain,
     'core.domain.eventsManager': eventsManagerDomain = null,
     'core.utils.logger': logger = null,

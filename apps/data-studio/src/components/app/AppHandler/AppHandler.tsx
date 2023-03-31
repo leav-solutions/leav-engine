@@ -2,9 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery, useSubscription} from '@apollo/client';
-import {LangContext, useAppLang, ErrorDisplay, ErrorDisplayTypes, Loading} from '@leav/ui';
+import {ErrorDisplay, ErrorDisplayTypes, LangContext, Loading, useAppLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
+import {theme} from 'antd';
 import ApplicationContext from 'context/ApplicationContext';
+import {getApplicationByEndpointQuery} from 'graphQL/queries/applications/getApplicationByEndpointQuery';
+import {getLangs} from 'graphQL/queries/core/getLangs';
 import {getGlobalSettingsQuery} from 'graphQL/queries/globalSettings/getGlobalSettingsQuery';
 import {getTasks} from 'graphQL/queries/tasks/getTasks';
 import {getTaskUpdates} from 'graphQL/subscribes/tasks/getTaskUpdates';
@@ -12,23 +15,23 @@ import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useAppDispatch} from 'reduxStore/store';
 import {addTask} from 'reduxStore/tasks';
+import {ThemeProvider} from 'styled-components';
+import {GET_APPLICATION_BY_ENDPOINT, GET_APPLICATION_BY_ENDPOINTVariables} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
 import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
+import {GET_LANGS} from '_gqlTypes/GET_LANGS';
+import {APP_ENDPOINT} from '../../../constants';
 import {getMe} from '../../../graphQL/queries/userData/me';
 import {initialActiveLibrary, useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useUser} from '../../../hooks/UserHook/UserHook';
 import {ME} from '../../../_gqlTypes/ME';
 import {AvailableLanguage} from '../../../_types/types';
 import Router from '../../Router';
-import {getLangs} from 'graphQL/queries/core/getLangs';
-import {GET_LANGS} from '_gqlTypes/GET_LANGS';
-import {APP_ENDPOINT} from '../../../constants';
-import {getApplicationByEndpointQuery} from 'graphQL/queries/applications/getApplicationByEndpointQuery';
-import {GET_APPLICATION_BY_ENDPOINT, GET_APPLICATION_BY_ENDPOINTVariables} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
 
 function AppHandler(): JSX.Element {
     const {t, i18n} = useTranslation();
     const dispatch = useAppDispatch();
     const {lang: appLang, loading: appLangLoading, error: appLangErr} = useAppLang();
+    const {token: themeToken} = theme.useToken();
 
     // Add lang infos to the cache
     const userLang = i18n.language.split('-')[0];
@@ -127,7 +130,7 @@ function AppHandler(): JSX.Element {
         return <ErrorDisplay message={t('applications.current_app_error', {appId: currentApp.id})} />;
     }
 
-    if (!currentApp.permissions.access_application) {
+    if (!currentApp?.permissions?.access_application) {
         return <ErrorDisplay type={ErrorDisplayTypes.PERMISSION_ERROR} showActionButton={false} />;
     }
 
@@ -137,18 +140,20 @@ function AppHandler(): JSX.Element {
     };
 
     return (
-        <LangContext.Provider
-            value={{
-                lang,
-                availableLangs: availableLangs.langs,
-                defaultLang,
-                setLang: _handleLanguageChange
-            }}
-        >
-            <ApplicationContext.Provider value={appContextData}>
-                <Router />
-            </ApplicationContext.Provider>
-        </LangContext.Provider>
+        <ThemeProvider theme={{antd: themeToken}}>
+            <LangContext.Provider
+                value={{
+                    lang,
+                    availableLangs: availableLangs.langs,
+                    defaultLang,
+                    setLang: _handleLanguageChange
+                }}
+            >
+                <ApplicationContext.Provider value={appContextData}>
+                    <Router />
+                </ApplicationContext.Provider>
+            </LangContext.Provider>
+        </ThemeProvider>
     );
 }
 

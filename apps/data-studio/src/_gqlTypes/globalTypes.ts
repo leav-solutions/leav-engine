@@ -10,6 +10,23 @@
 // START Enums and Input Objects
 //==============================================================
 
+export enum ApplicationEventTypes {
+    DELETE = 'DELETE',
+    SAVE = 'SAVE'
+}
+
+export enum ApplicationInstallStatus {
+    ERROR = 'ERROR',
+    NONE = 'NONE',
+    RUNNING = 'RUNNING',
+    SUCCESS = 'SUCCESS'
+}
+
+export enum ApplicationType {
+    external = 'external',
+    internal = 'internal'
+}
+
 export enum AttributeFormat {
     boolean = 'boolean',
     date = 'date',
@@ -191,6 +208,12 @@ export enum ViewTypes {
     cards = 'cards',
     list = 'list',
     timeline = 'timeline'
+}
+
+export interface ApplicationEventFiltersInput {
+    ignoreOwnEvents?: boolean | null;
+    applicationId?: string | null;
+    events?: ApplicationEventTypes[] | null;
 }
 
 export interface FileInput {

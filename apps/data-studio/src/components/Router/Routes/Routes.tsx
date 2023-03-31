@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import Settings from 'components/Settings';
 import Workspace from 'components/Workspace';
-import React from 'react';
 import {Route, Switch} from 'react-router-dom';
 import RouteNotFound from '../RouteNotFound';
 import {routes} from './ListRoutes';
@@ -20,6 +20,10 @@ function Routes(): JSX.Element {
 
             <Route exact path={routes.workspace}>
                 <Workspace />
+            </Route>
+
+            <Route exact path={routes.settings}>
+                <Settings />
             </Route>
 
             <Route>
