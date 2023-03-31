@@ -273,29 +273,20 @@ describe('Records', () => {
 
             // Create some records
             sfRecord1 = await gqlCreateRecord(sfTestLibId);
-            await new Promise(r => setTimeout(r, 1000));
             sfRecord2 = await gqlCreateRecord(sfTestLibId);
-            await new Promise(r => setTimeout(r, 1000));
             sfRecord3 = await gqlCreateRecord(sfTestLibId);
 
             // Create records on linked lib
             sfLinkedRecord1 = await gqlCreateRecord(sfTestLibLinkId);
-            await new Promise(r => setTimeout(r, 1000));
             sfLinkedRecord2 = await gqlCreateRecord(sfTestLibLinkId);
-            await new Promise(r => setTimeout(r, 1000));
             sfLinkedRecord3 = await gqlCreateRecord(sfTestLibLinkId);
 
             // Create records on tree lib
             sfTreeRecord1 = await gqlCreateRecord(sfTestLibTreeId);
-            await new Promise(r => setTimeout(r, 1000));
             sfTreeRecord2 = await gqlCreateRecord(sfTestLibTreeId);
-            await new Promise(r => setTimeout(r, 1000));
             sfTreeRecord3 = await gqlCreateRecord(sfTestLibTreeId);
-            await new Promise(r => setTimeout(r, 1000));
             sfTreeRecord4 = await gqlCreateRecord(sfTestLibTreeId);
-            await new Promise(r => setTimeout(r, 1000));
             sfTreeRecord5 = await gqlCreateRecord(sfTestLibTreeId);
-            await new Promise(r => setTimeout(r, 1000));
             sfTreeRecord6 = await gqlCreateRecord(sfTestLibTreeId);
 
             // Save values on linked records

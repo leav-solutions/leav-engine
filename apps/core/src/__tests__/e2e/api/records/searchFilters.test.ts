@@ -204,41 +204,28 @@ describe('searchFilters', () => {
         await gqlSaveLibrary(libraryDateId, 'Test lib', [dateAttributeId]);
 
         recordId1 = await gqlCreateRecord(libraryId);
-        await new Promise(r => setTimeout(r, 1000));
         recordId2 = await gqlCreateRecord(libraryId);
-        await new Promise(r => setTimeout(r, 1000));
         recordId3 = await gqlCreateRecord(libraryId);
 
         recordIdForOperators1 = await gqlCreateRecord(libraryForOperatorsId);
-        await new Promise(r => setTimeout(r, 1000));
         recordIdForOperators2 = await gqlCreateRecord(libraryForOperatorsId);
-        await new Promise(r => setTimeout(r, 1000));
         recordIdForOperators3 = await gqlCreateRecord(libraryForOperatorsId);
 
         linkedRecordId1 = await gqlCreateRecord(linkedLibraryId);
-        await new Promise(r => setTimeout(r, 1000));
         linkedRecordId2 = await gqlCreateRecord(linkedLibraryId);
-        await new Promise(r => setTimeout(r, 1000));
         linkedRecordId3 = await gqlCreateRecord(linkedLibraryId);
 
         treeRecordId1 = await gqlCreateRecord(treeLibraryId);
-        await new Promise(r => setTimeout(r, 1000));
         treeRecordId2 = await gqlCreateRecord(treeLibraryId);
-        await new Promise(r => setTimeout(r, 1000));
         treeRecordId3 = await gqlCreateRecord(treeLibraryId);
 
         recordDateId1 = await gqlCreateRecord(libraryDateId);
-        await new Promise(r => setTimeout(r, 1000));
         recordDateId2 = await gqlCreateRecord(libraryDateId);
-        await new Promise(r => setTimeout(r, 1000));
         recordDateId3 = await gqlCreateRecord(libraryDateId);
 
         recordDateIdYesterday = await gqlCreateRecord(libraryDateId);
-        await new Promise(r => setTimeout(r, 1000));
         recordDateIdTomorrow = await gqlCreateRecord(libraryDateId);
-        await new Promise(r => setTimeout(r, 1000));
         recordDateIdNextMonth = await gqlCreateRecord(libraryDateId);
-        await new Promise(r => setTimeout(r, 1000));
         recordDateIdLastMonth = await gqlCreateRecord(libraryDateId);
     });
 

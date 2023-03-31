@@ -232,7 +232,9 @@ export default function ({
             const sortQueryPart = sort
                 ? attributeTypesRepo.getTypeRepo(sort.attributes[0]).sortQueryPart(sort)
                 : aql`SORT ${literal(
-                      fulltextSearchQuery ? `r.${CORE_INDEX_FIELD}.score DESC, r.created_at DESC` : 'r.created_at DESC'
+                      fulltextSearchQuery
+                          ? `r.${CORE_INDEX_FIELD}.score DESC, r.created_at DESC, r._key DESC`
+                          : 'r.created_at DESC, r._key DESC'
                   )}`;
 
             queryParts.push(sortQueryPart as GeneratedAqlQuery);
@@ -250,13 +252,13 @@ export default function ({
                     queryParts.push(aql`LIMIT ${(pagination as IPaginationParams).offset}, ${pagination.limit}`);
                 } else if ((pagination as ICursorPaginationParams).cursor) {
                     const {direction, from} = _parseCursor((pagination as ICursorPaginationParams).cursor);
-                    const operator = direction === CursorDirection.NEXT ? '>' : '<';
 
                     // When looking for previous records, first sort in reverse order to get the last records
                     if (direction === CursorDirection.PREV) {
-                        queryParts.push(aql`SORT r._key DESC`);
+                        queryParts.push(aql`SORT r.created_at ASC, r._key ASC`);
                     }
 
+                    const operator = direction === CursorDirection.NEXT ? '<' : '>';
                     queryParts.push(aql`FILTER r._key ${literal(operator)} ${from}`);
                     queryParts.push(aql`LIMIT ${pagination.limit}`);
                 }
