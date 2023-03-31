@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {DatabaseOutlined, StarFilled, StarOutlined} from '@ant-design/icons';
+import {DatabaseOutlined, SettingOutlined, StarFilled, StarOutlined} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
 import {themeVars, useLang, ErrorDisplay} from '@leav/ui';
 import {Menu, Spin} from 'antd';
@@ -161,6 +161,10 @@ function Sidebar(): JSX.Element {
         _goTo(getTreeLink(activeTree.id));
     };
 
+    const _goToSettings = () => {
+        _goTo('/settings');
+    };
+
     const _handleClickHome = () => _goTo('/');
 
     let libsMenuItems: ItemType[] = [];
@@ -282,6 +286,12 @@ function Sidebar(): JSX.Element {
             key: 'tree',
             onTitleClick: _goToActiveTree,
             children: treesMenuItems
+        },
+        {
+            key: 'settings',
+            icon: <SettingOutlined />,
+            label: t('app_settings.title'),
+            onClick: _goToSettings
         }
     ];
 
