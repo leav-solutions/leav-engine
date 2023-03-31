@@ -4,9 +4,10 @@
 import {CheckOutlined, CloseCircleOutlined, LoadingOutlined} from '@ant-design/icons';
 import {useEffect, useState} from 'react';
 import styled from 'styled-components';
+import {SubmitStateNotifierStates} from './_types';
 
 interface ISubmitStateNotifierProps {
-    state: 'idle' | 'processing' | 'success' | 'error';
+    state: SubmitStateNotifierStates;
     style?: React.CSSProperties;
 }
 

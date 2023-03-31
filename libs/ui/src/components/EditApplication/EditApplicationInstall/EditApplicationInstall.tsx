@@ -32,6 +32,7 @@ const InstallDetails = styled.div`
 function EditApplicationInstall({application}: IEditApplicationInstallProps): JSX.Element {
     const [messageApi, contextHolder] = message.useMessage();
     const {t} = useTranslation('shared');
+    const isReadOnly = !application.permissions?.admin_application;
 
     const [installApplication, {loading}] = useInstallApplicationMutation({
         variables: {id: application?.id},
@@ -55,7 +56,7 @@ function EditApplicationInstall({application}: IEditApplicationInstallProps): JS
                         style={{margin: 'auto', fontSize: '1.1em', lineHeight: '1.4em'}}
                     />
                 </TagWrapper>
-                {application?.install?.status !== ApplicationInstallStatus.RUNNING && (
+                {!isReadOnly && application?.install?.status !== ApplicationInstallStatus.RUNNING && (
                     <Button size="small" loading={loading} icon={<ReloadOutlined />} onClick={_handleInstallApp}>
                         {t('applications.re_install')}
                     </Button>

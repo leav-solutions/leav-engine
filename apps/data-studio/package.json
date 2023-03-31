@@ -4,6 +4,7 @@
     "version": "1.0.0-beta3",
     "private": true,
     "dependencies": {
+        "@ant-design/icons": "5.0.1",
         "@apollo/client": "3.6.9",
         "@apollo/link-error": "2.0.0-beta.3",
         "@leav/ui": "workspace:libs/ui",

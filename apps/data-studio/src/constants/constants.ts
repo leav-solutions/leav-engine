@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AttributeFormat, SortOrder, ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
+import {AttributeFormat, ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import {IView} from '../_types/types';
 
 export const selectionColumn = 'selection-column';
@@ -33,3 +33,5 @@ export const defaultLinkAttributeFilterFormat = AttributeFormat.text;
 export const treeNavigationPageSize = 20;
 
 export const getSelectedViewKey = (libraryId: string) => `selected_view_${libraryId}`;
+
+export const APPS_BASE_URL = import.meta.env.VITE_CORE_URL + '/' + import.meta.env.VITE_ENDPOINT_BASE;
