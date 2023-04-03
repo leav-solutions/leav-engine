@@ -17,15 +17,16 @@ import {IKeyValue} from '_types/shared';
 import {ISystemTranslation} from '_types/systemTranslation';
 import {ITree} from '_types/tree';
 import {IValueVersion} from '_types/value';
-import ValidationError from '../../errors/ValidationError';
-import {Errors} from '../../_types/errors';
-import {FilesAttributes} from '../../_types/filesManager';
-import {ILibrary, LibraryBehavior} from '../../_types/library';
-import {LibraryPermissionsActions, PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
-import {AttributeCondition, IRecord} from '../../_types/record';
-import {IGraphqlApp} from '../graphql/graphqlApp';
-import {ICoreAttributeApp} from './attributeApp/attributeApp';
-import {ICoreApp} from './coreApp';
+import ValidationError from '../../../errors/ValidationError';
+import {Errors} from '../../../_types/errors';
+import {FilesAttributes} from '../../../_types/filesManager';
+import {ILibrary, LibraryBehavior} from '../../../_types/library';
+import {LibraryPermissionsActions, PermissionTypes, RecordPermissionsActions} from '../../../_types/permissions';
+import {AttributeCondition, IRecord} from '../../../_types/record';
+import {IGraphqlApp} from '../../graphql/graphqlApp';
+import {ICoreAttributeApp} from '../attributeApp/attributeApp';
+import {ICoreApp} from '../coreApp';
+import {IGetLibraryParams} from './_types';
 
 export interface ICoreLibraryApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -123,8 +124,8 @@ export default function ({
                     }
 
                     input LibrariesFiltersInput {
-                        id: ID,
-                        label: String,
+                        id: [ID!],
+                        label: [String!],
                         system: Boolean,
                         behavior: [LibraryBehavior!]
                     }
@@ -148,6 +149,7 @@ export default function ({
                     type Query {
                         libraries(
                             filters: LibrariesFiltersInput,
+                            strictFilters: Boolean,
                             pagination: Pagination,
                             sort: SortLibraries
                         ): LibrariesList
@@ -160,9 +162,13 @@ export default function ({
                 `,
                 resolvers: {
                     Query: {
-                        async libraries(parent, {filters, pagination, sort}, ctx): Promise<IList<ILibrary>> {
+                        async libraries(
+                            _,
+                            {filters, pagination, sort, strictFilters}: IGetLibraryParams,
+                            ctx: IQueryInfos
+                        ): Promise<IList<ILibrary>> {
                             return libraryDomain.getLibraries({
-                                params: {filters, withCount: true, pagination, sort},
+                                params: {filters, withCount: true, pagination, sort, strictFilters},
                                 ctx
                             });
                         }

@@ -347,6 +347,6 @@ export interface GET_LIB_BY_ID {
 }
 
 export interface GET_LIB_BY_IDVariables {
-    id?: string | null;
+    id?: string[] | null;
     lang?: AvailableLanguage[] | null;
 }
