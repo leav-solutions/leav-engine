@@ -98,6 +98,33 @@ describe('EditApplication', () => {
             expect(screen.getByRole('tab', {name: /install/})).toHaveAttribute('aria-selected', 'true');
         });
 
+        test('Can pass custom tabs', async () => {
+            const customTabs = [
+                {
+                    key: 'custom',
+                    label: 'Custom',
+                    children: <div>Custom tab</div>
+                }
+            ];
+
+            render(
+                <EditApplication
+                    appsBaseUrl="/app"
+                    applicationId={mockApplication.id}
+                    activeTab="custom"
+                    additionalTabs={customTabs}
+                />,
+                {
+                    mocks
+                }
+            );
+
+            await waitFor(() => expect(screen.getByRole('tablist')).toBeInTheDocument());
+
+            expect(screen.getByRole('tab', {name: /custom/i})).toBeInTheDocument();
+            expect(screen.getByText('Custom tab')).toBeInTheDocument();
+        });
+
         describe('Info form tab', () => {
             test('Can edit application', async () => {
                 let saveCalled = false;
