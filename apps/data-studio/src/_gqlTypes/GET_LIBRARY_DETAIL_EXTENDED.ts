@@ -229,5 +229,5 @@ export interface GET_LIBRARY_DETAIL_EXTENDED {
 }
 
 export interface GET_LIBRARY_DETAIL_EXTENDEDVariables {
-    libId?: string | null;
+    libId?: string[] | null;
 }

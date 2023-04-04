@@ -28,12 +28,14 @@ function Settings(): JSX.Element {
         {
             key: 'libraries',
             label: t('app_settings.libraries'),
-            children: <LibrariesSettings />
+            children: <LibrariesSettings />,
+            style: {padding: 0}
         },
         {
             key: 'trees',
             label: t('app_settings.trees'),
-            children: <TreesSettings />
+            children: <TreesSettings />,
+            style: {padding: 0}
         }
     ];
 

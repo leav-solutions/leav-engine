@@ -590,6 +590,16 @@
         "libraries": "Libraries",
         "trees": "Trees",
         "advanced_settings": "Advanced settings",
-        "showTransparency": "Show transparency"
+        "showTransparency": "Show transparency",
+        "libraries_select_all": "All",
+        "libraries_select_none": "None",
+        "libraries_select_custom": "Custom selection",
+        "libraries_mode_confirm_title": "Are you sure ?",
+        "libraries_mode_confirm_description": "Your custom selection will be lost",
+        "available_libraries": "Available libraries",
+        "libraries_select_all_help": "All libraries will be available, including new ones.",
+        "libraries_select_none_help": "No libraries will be available.",
+        "libraries_select_custom_help": "Only selected libraries will be available. New ones won't be added automatically",
+        "search_libraries": "Search"
     }
 }

@@ -5,6 +5,7 @@ export * from './ApplicationInstallTag';
 export * from './EditApplication';
 export * from './ImageLoading';
 export * from './ImageMissing';
+export * from './Loading';
 export * from './RecordCard';
 export * from './RecordPreview';
 export * from './SubmitStateNotifier';

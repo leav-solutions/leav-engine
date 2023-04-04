@@ -10,7 +10,7 @@ import FloatingMenu from 'components/shared/FloatingMenu';
 import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
-import useGetLibrariesListQuery from 'hooks/useGetLibrariesListQuery/useGetLibrariesListQuery';
+import {useApplicationLibraries} from 'hooks/useApplicationLibraries';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
@@ -65,18 +65,17 @@ function LibrariesList(): JSX.Element {
 
     const [importActiveLibrary, setImportActiveLibrary] = useState<string>();
 
-    const librariesListQuery = useGetLibrariesListQuery();
+    const {libraries, loading: librariesLoading, error: librariesError} = useApplicationLibraries();
     const userDataQuery = useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
         variables: {keys: [FAVORITE_LIBRARIES_KEY]}
     });
 
     const [updateFavoritesMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData);
 
-    if (librariesListQuery.error || userDataQuery.error) {
-        return <ErrorDisplay message={librariesListQuery.error?.message || userDataQuery.error?.message} />;
+    if (librariesError || userDataQuery.error) {
+        return <ErrorDisplay message={librariesError || userDataQuery.error?.message} />;
     }
 
-    const libraries = librariesListQuery.data?.libraries?.list ?? [];
     const favoriteIds = userDataQuery.data?.userData?.data[FAVORITE_LIBRARIES_KEY] ?? [];
 
     const list: IListItem[] = libraries
@@ -143,7 +142,7 @@ function LibrariesList(): JSX.Element {
         }
     ];
 
-    if (!librariesListQuery.loading && !libraries.length) {
+    if (!librariesLoading && !libraries.length) {
         return null;
     }
 
@@ -153,13 +152,7 @@ function LibrariesList(): JSX.Element {
                 <DatabaseOutlined style={{fontSize: '1.5rem'}} />
                 {t('home.libraries')}
             </ListHeader>
-            <Table
-                bordered
-                columns={columns}
-                dataSource={list}
-                loading={librariesListQuery.loading}
-                pagination={false}
-            />
+            <Table bordered columns={columns} dataSource={list} loading={librariesLoading} pagination={false} />
             {importActiveLibrary && (
                 <ImportModal
                     open={!!importActiveLibrary}
