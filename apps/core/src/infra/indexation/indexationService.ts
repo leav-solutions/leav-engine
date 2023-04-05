@@ -25,6 +25,7 @@ interface IDeps {
     'core.infra.indexation.helpers.getSearchQuery'?: GetSearchQuery;
 }
 
+export const CORE_INDEX_INPUT_ANALYZER = 'core_index_input';
 export const CORE_INDEX_ANALYZER = 'core_index';
 export const CORE_INDEX_VIEW = 'core_index';
 export const CORE_INDEX_FIELD = 'core_index';
@@ -42,14 +43,34 @@ export default function ({
             // Create indexation analyzer
             const analyzers = await dbService.analyzers();
 
+            // Create analyzer used by the view
             if (!analyzers.find(a => a.name === `${config.db.name}::${CORE_INDEX_ANALYZER}`)) {
                 // Create norm analyzer used by indexation manager
                 await dbService.createAnalyzer(CORE_INDEX_ANALYZER, {
-                    type: 'norm',
+                    type: 'text',
                     properties: {
                         locale: 'en',
                         case: 'lower',
-                        accent: false
+                        accent: false,
+                        stemming: false,
+                        edgeNgram: {
+                            preserveOriginal: true
+                        }
+                    },
+                    features: ['frequency', 'norm']
+                });
+            }
+
+            // Create analyzer to apply on search input
+            if (!analyzers.find(a => a.name === `${config.db.name}::${CORE_INDEX_INPUT_ANALYZER}`)) {
+                // Create norm analyzer used by indexation manager
+                await dbService.createAnalyzer(CORE_INDEX_INPUT_ANALYZER, {
+                    type: 'text',
+                    properties: {
+                        locale: 'en',
+                        case: 'lower',
+                        accent: false,
+                        stemming: false
                     },
                     features: ['frequency', 'norm']
                 });

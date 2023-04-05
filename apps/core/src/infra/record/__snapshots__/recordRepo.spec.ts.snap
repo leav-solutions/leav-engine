@@ -13,7 +13,7 @@ exports[`RecordRepo find Handle fulltext search result 1`] = `
       "value1": "test_lib",
     },
     "query": "FOR r IN (@value0)
-SORT r.core_index.score DESC, r._key ASC
+SORT r.core_index.score DESC, r.created_at DESC, r._key DESC
 FILTER r.active == true
 RETURN MERGE(r, {library: @value1})",
   },
@@ -34,7 +34,7 @@ exports[`RecordRepo find Should find records 1`] = `
       "value1": "test_lib",
     },
     "query": "FOR r IN (@@value0)
-SORT r._key ASC
+SORT r.created_at DESC, r._key DESC
 FILTER r.active == true
 RETURN MERGE(r, {library: @value1})",
   },
@@ -61,7 +61,7 @@ FILTER (
 AND
 ( IS_ARRAY([object Object]) ? LENGTH([object Object][* FILTER <Condition>]) : <Condition> )
 )
-SORT r._key ASC
+SORT r.created_at DESC, r._key DESC
 FILTER r.active == true
 RETURN MERGE(r, {library: @value1})",
   },

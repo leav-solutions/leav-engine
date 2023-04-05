@@ -15,7 +15,7 @@ import {IValue} from '_types/value';
 import {AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
 import {EventAction, IDbEvent, ILibraryPayload, IRecordPayload, IValuePayload} from '../../_types/event';
 import {AttributeCondition, Operator} from '../../_types/record';
-import {IIndexationService} from '../../infra/indexation/indexationService';
+import {CORE_INDEX_FIELD, IIndexationService} from '../../infra/indexation/indexationService';
 import * as amqp from 'amqplib';
 
 export interface IIndexationManagerDomain {
@@ -32,10 +32,6 @@ interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
     'core.infra.indexation.indexationService'?: IIndexationService;
 }
-
-export const CORE_INDEX_FIELD = 'core_index';
-export const CORE_INDEX_ANALYZER = 'core_index';
-export const CORE_INDEX_VIEW = 'core_index';
 
 export default function ({
     config = null,

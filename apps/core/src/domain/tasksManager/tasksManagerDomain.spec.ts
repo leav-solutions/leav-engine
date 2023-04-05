@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
 import * as amqp from 'amqplib';
-import {IQueryInfos} from '_types/queryInfos';
 import {IConfig} from '_types/config';
 import tasksManager from './tasksManagerDomain';
 import {ITaskRepo} from 'infra/task/taskRepo';

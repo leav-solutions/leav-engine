@@ -222,6 +222,7 @@ describe('searchFilters', () => {
         recordDateId1 = await gqlCreateRecord(libraryDateId);
         recordDateId2 = await gqlCreateRecord(libraryDateId);
         recordDateId3 = await gqlCreateRecord(libraryDateId);
+
         recordDateIdYesterday = await gqlCreateRecord(libraryDateId);
         recordDateIdTomorrow = await gqlCreateRecord(libraryDateId);
         recordDateIdNextMonth = await gqlCreateRecord(libraryDateId);
@@ -271,8 +272,8 @@ describe('searchFilters', () => {
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
                 expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId3);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
+                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
             });
 
             test('Contains', async () => {
@@ -290,8 +291,8 @@ describe('searchFilters', () => {
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
                 expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
+                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId1);
             });
 
             test('Do not contains', async () => {
@@ -309,8 +310,8 @@ describe('searchFilters', () => {
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
                 expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId3);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
+                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId1);
             });
 
             test('Start with', async () => {
@@ -346,8 +347,8 @@ describe('searchFilters', () => {
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
                 expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
+                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId1);
             });
 
             test('Is empty', async () => {
@@ -400,12 +401,12 @@ describe('searchFilters', () => {
                 expect(res.status).toBe(200);
 
                 expect(res.data.data.onSimple.list.length).toBe(2);
-                expect(res.data.data.onSimple.list[0].id).toBe(recordId1);
-                expect(res.data.data.onSimple.list[1].id).toBe(recordId2);
+                expect(res.data.data.onSimple.list[0].id).toBe(recordId2);
+                expect(res.data.data.onSimple.list[1].id).toBe(recordId1);
 
                 expect(res.data.data.onAdvanced.list.length).toBe(2);
-                expect(res.data.data.onAdvanced.list[0].id).toBe(recordId1);
-                expect(res.data.data.onAdvanced.list[1].id).toBe(recordId2);
+                expect(res.data.data.onAdvanced.list[0].id).toBe(recordId2);
+                expect(res.data.data.onAdvanced.list[1].id).toBe(recordId1);
             });
         });
 
@@ -431,8 +432,8 @@ describe('searchFilters', () => {
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
                 expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId3);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
+                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
             });
 
             test('Lower than', async () => {
@@ -505,8 +506,8 @@ describe('searchFilters', () => {
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
                 expect(res.data.data[libraryDateGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryDateGqlQuery].list[0].id).toBe(recordDateId1);
-                expect(res.data.data[libraryDateGqlQuery].list[1].id).toBe(recordDateId2);
+                expect(res.data.data[libraryDateGqlQuery].list[0].id).toBe(recordDateId2);
+                expect(res.data.data[libraryDateGqlQuery].list[1].id).toBe(recordDateId1);
             });
 
             test('After', async () => {
@@ -524,7 +525,7 @@ describe('searchFilters', () => {
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
                 expect(res.data.data[libraryDateGqlQuery].list.length).toBe(6);
-                expect(res.data.data[libraryDateGqlQuery].list[0].id).toBe(recordDateId2);
+                expect(res.data.data[libraryDateGqlQuery].list[0].id).toBe(recordDateIdLastMonth);
             });
 
             test('Equal (rounded at day)', async () => {
@@ -542,8 +543,8 @@ describe('searchFilters', () => {
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
                 expect(res.data.data[libraryDateGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryDateGqlQuery].list[0].id).toBe(recordDateId1);
-                expect(res.data.data[libraryDateGqlQuery].list[1].id).toBe(recordDateId2);
+                expect(res.data.data[libraryDateGqlQuery].list[0].id).toBe(recordDateId2);
+                expect(res.data.data[libraryDateGqlQuery].list[1].id).toBe(recordDateId1);
             });
 
             test('Not equal (rounded at day)', async () => {
@@ -578,8 +579,8 @@ describe('searchFilters', () => {
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
                 expect(res.data.data[libraryDateGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryDateGqlQuery].list[0].id).toBe(recordDateId1);
-                expect(res.data.data[libraryDateGqlQuery].list[1].id).toBe(recordDateId2);
+                expect(res.data.data[libraryDateGqlQuery].list[0].id).toBe(recordDateId2);
+                expect(res.data.data[libraryDateGqlQuery].list[1].id).toBe(recordDateId1);
             });
 
             test('Today', async () => {
@@ -688,8 +689,8 @@ describe('searchFilters', () => {
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
                 expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId3);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
+                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId1);
             });
         });
 
@@ -815,8 +816,8 @@ describe('searchFilters', () => {
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
                 expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId3);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
+                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
             });
 
             test('End on (rounded at day)', async () => {
@@ -895,8 +896,8 @@ describe('searchFilters', () => {
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
                 expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
+                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId1);
             });
 
             test('Greater than', async () => {
@@ -931,9 +932,9 @@ describe('searchFilters', () => {
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
                 expect(res.data.data[libraryGqlQuery].list.length).toBe(3);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
                 expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
-                expect(res.data.data[libraryGqlQuery].list[2].id).toBe(recordId3);
+                expect(res.data.data[libraryGqlQuery].list[2].id).toBe(recordId1);
             });
         });
 
@@ -1113,8 +1114,8 @@ describe('searchFilters', () => {
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
                 expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
+                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId1);
             });
 
             describe('Values count', () => {
@@ -1133,8 +1134,8 @@ describe('searchFilters', () => {
                     expect(res.data.errors).toBeUndefined();
                     expect(res.status).toBe(200);
                     expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                    expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
-                    expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
+                    expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
+                    expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId1);
                 });
 
                 test('Greater than', async () => {
@@ -1169,9 +1170,9 @@ describe('searchFilters', () => {
                     expect(res.data.errors).toBeUndefined();
                     expect(res.status).toBe(200);
                     expect(res.data.data[libraryGqlQuery].list.length).toBe(3);
-                    expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                    expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
                     expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
-                    expect(res.data.data[libraryGqlQuery].list[2].id).toBe(recordId3);
+                    expect(res.data.data[libraryGqlQuery].list[2].id).toBe(recordId1);
                 });
             });
         });
@@ -1285,8 +1286,8 @@ describe('searchFilters', () => {
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
                 expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
+                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId1);
             });
 
             describe('Values count', () => {
@@ -1475,8 +1476,8 @@ describe('searchFilters', () => {
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
                 expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
+                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
+                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId1);
             });
 
             describe('Values count', () => {
@@ -1608,8 +1609,8 @@ describe('searchFilters', () => {
             expect(res.data.errors).toBeUndefined();
             expect(res.status).toBe(200);
             expect(res.data.data[libraryForOperatorsGqlQuery].list.length).toBe(2);
-            expect(res.data.data[libraryForOperatorsGqlQuery].list[0].id).toBe(recordIdForOperators1);
-            expect(res.data.data[libraryForOperatorsGqlQuery].list[1].id).toBe(recordIdForOperators2);
+            expect(res.data.data[libraryForOperatorsGqlQuery].list[0].id).toBe(recordIdForOperators2);
+            expect(res.data.data[libraryForOperatorsGqlQuery].list[1].id).toBe(recordIdForOperators1);
         });
 
         test('Multiple filters with AND and OR', async () => {
@@ -1651,8 +1652,8 @@ describe('searchFilters', () => {
             expect(res.data.errors).toBeUndefined();
             expect(res.status).toBe(200);
             expect(res.data.data[libraryForOperatorsGqlQuery].list.length).toBe(2);
-            expect(res.data.data[libraryForOperatorsGqlQuery].list[0].id).toBe(recordIdForOperators1);
-            expect(res.data.data[libraryForOperatorsGqlQuery].list[1].id).toBe(recordIdForOperators2);
+            expect(res.data.data[libraryForOperatorsGqlQuery].list[0].id).toBe(recordIdForOperators2);
+            expect(res.data.data[libraryForOperatorsGqlQuery].list[1].id).toBe(recordIdForOperators1);
         });
     });
 });

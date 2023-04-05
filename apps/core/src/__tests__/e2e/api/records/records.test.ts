@@ -824,8 +824,8 @@ describe('Records', () => {
                 expect(res.status).toBe(200);
 
                 expect(res.data.data[sfTestLibTreeIdQueryName].list).toHaveLength(2);
-                expect(res.data.data[sfTestLibTreeIdQueryName].list[0].id).toBe(sfTreeRecord5);
-                expect(res.data.data[sfTestLibTreeIdQueryName].list[1].id).toBe(sfTreeRecord6);
+                expect(res.data.data[sfTestLibTreeIdQueryName].list[0].id).toBe(sfTreeRecord6);
+                expect(res.data.data[sfTestLibTreeIdQueryName].list[1].id).toBe(sfTreeRecord5);
             });
 
             test('Not Classified', async () => {
@@ -841,10 +841,10 @@ describe('Records', () => {
                 expect(res.status).toBe(200);
 
                 expect(res.data.data[sfTestLibTreeIdQueryName].list.length).toBe(4);
-                expect(res.data.data[sfTestLibTreeIdQueryName].list[0].id).toBe(sfTreeRecord1);
-                expect(res.data.data[sfTestLibTreeIdQueryName].list[1].id).toBe(sfTreeRecord2);
-                expect(res.data.data[sfTestLibTreeIdQueryName].list[2].id).toBe(sfTreeRecord3);
-                expect(res.data.data[sfTestLibTreeIdQueryName].list[3].id).toBe(sfTreeRecord4);
+                expect(res.data.data[sfTestLibTreeIdQueryName].list[0].id).toBe(sfTreeRecord4);
+                expect(res.data.data[sfTestLibTreeIdQueryName].list[1].id).toBe(sfTreeRecord3);
+                expect(res.data.data[sfTestLibTreeIdQueryName].list[2].id).toBe(sfTreeRecord2);
+                expect(res.data.data[sfTestLibTreeIdQueryName].list[3].id).toBe(sfTreeRecord1);
             });
         });
     });
