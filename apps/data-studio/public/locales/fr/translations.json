@@ -379,7 +379,8 @@
             "title": "Ce fichier existe déjà",
             "replaceBtn": "Remplacer",
             "keepBtn": "Conserver les deux",
-            "message": "Un fichier avec le nom \"{{filename}}\" existe déjà à cet emplacement. Que voulez-vous faire ?"
+            "message": "Un fichier avec le nom \"{{filename}}\" existe déjà à cet emplacement. Que voulez-vous faire ?",
+            "applyToAll": "Appliquer à tous"
         }
     },
     "create_directory": {

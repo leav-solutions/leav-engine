@@ -5,6 +5,7 @@ import {getLibraryGraphqlNames} from '@leav/utils';
 import {gqlUnchecked} from 'utils';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import recordIdentityFragment from './recordIdentityFragment';
+import {noopQuery} from '../noopQuery';
 
 export interface IDirectoryDataElement extends RecordIdentity {
     created_at: string;
@@ -28,7 +29,12 @@ export interface IDirectoryDataQueryVariables {
     directoryId: string;
 }
 
-export const getDirectoryDataQuery = (libraryId: string) => gqlUnchecked`
+export const getDirectoryDataQuery = (libraryId: string) => {
+    if (!libraryId) {
+        return noopQuery;
+    }
+
+    return gqlUnchecked`
     ${recordIdentityFragment}
     query GET_DIRECTORY_DATA($directoryId: String!) {
         ${getLibraryGraphqlNames(libraryId).query}(
@@ -52,3 +58,4 @@ export const getDirectoryDataQuery = (libraryId: string) => gqlUnchecked`
             }
         }
     }`;
+};

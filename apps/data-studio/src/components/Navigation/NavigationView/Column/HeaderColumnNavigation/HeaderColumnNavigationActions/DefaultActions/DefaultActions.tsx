@@ -207,7 +207,7 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
         <>
             {isUploadFilesModalVisible && (
                 <UploadFiles
-                    defaultSelectedKey={parent?.id || activeTree.id}
+                    defaultSelectedNode={{id: parent?.id || activeTree.id, recordId: parent?.record.id}}
                     libraryId={activeTree.libraries.filter(l => l.behavior === LibraryBehavior.files)[0].id}
                     multiple
                     onClose={_handleCloseUpload}
