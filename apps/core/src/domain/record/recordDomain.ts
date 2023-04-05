@@ -4,11 +4,6 @@
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IValidateHelper} from 'domain/helpers/validate';
-import {
-    CORE_INDEX_ANALYZER,
-    CORE_INDEX_FIELD,
-    CORE_INDEX_VIEW
-} from '../../domain/indexationManager/indexationManagerDomain';
 import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';

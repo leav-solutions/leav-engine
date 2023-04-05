@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, join, literal, GeneratedAqlQuery} from 'arangojs/aql';
-import {CORE_INDEX_FIELD} from '../../domain/indexationManager/indexationManagerDomain';
+import {CORE_INDEX_FIELD} from '../indexation/indexationService';
 import {GetConditionPart} from 'infra/attributeTypes/helpers/getConditionPart';
 import {IDbDocument, IExecuteWithCount} from 'infra/db/_types';
 import {IQueryInfos} from '_types/queryInfos';
