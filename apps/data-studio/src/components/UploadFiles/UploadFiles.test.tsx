@@ -40,11 +40,55 @@ describe('UploadFiles', () => {
     });
 
     test('Should be on step 2 with default selected key', async () => {
+        const mocks = [
+            {
+                request: {
+                    query: getTreeLibraries,
+                    variables: {
+                        library: 'files'
+                    }
+                },
+                result: {
+                    data: {
+                        trees: {
+                            totalCount: 1,
+                            list: [
+                                {
+                                    ...mockTree,
+                                    id: 'files_tree',
+                                    system: true,
+                                    behavior: TreeBehavior.files,
+                                    libraries: [
+                                        {
+                                            library: {
+                                                id: 'files_directories',
+                                                label: 'files_directories',
+                                                system: true,
+                                                behavior: LibraryBehavior.directories
+                                            },
+                                            settings: {
+                                                allowMultiplePositions: false,
+                                                allowedAtRoot: true,
+                                                allowedChildren: ['files', 'files_directories']
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        ];
+
         await act(async () => {
             render(
                 <BrowserRouter>
-                    <UploadFiles defaultSelectedKey="files_tree" libraryId="files" onClose={jest.fn()} />
-                </BrowserRouter>
+                    <UploadFiles defaultSelectedNode={{id: 'files_tree'}} libraryId="files" onClose={jest.fn()} />
+                </BrowserRouter>,
+                {
+                    apolloMocks: mocks
+                }
             );
         });
 
@@ -146,7 +190,7 @@ describe('UploadFiles', () => {
         await act(async () => {
             const {container} = render(
                 <BrowserRouter>
-                    <UploadFiles defaultSelectedKey="files_tree" libraryId="files" onClose={jest.fn()} />
+                    <UploadFiles defaultSelectedNode={{id: 'files_tree'}} libraryId="files" onClose={jest.fn()} />
                 </BrowserRouter>,
                 {apolloMocks: mocks}
             );
@@ -162,6 +206,10 @@ describe('UploadFiles', () => {
             });
         });
 
+        await act(async () => {
+            userEvent.click(screen.getByTestId('upload-btn'));
+        });
+
         await waitFor(() => expect(screen.getByText('upload.replace_modal.title')).toBeInTheDocument());
 
         const replaceBtn = screen.getByText('upload.replace_modal.replaceBtn');
@@ -172,10 +220,6 @@ describe('UploadFiles', () => {
 
         await act(async () => {
             userEvent.click(keepBtn);
-        });
-
-        await act(async () => {
-            userEvent.click(screen.getByTestId('upload-btn'));
         });
 
         await waitFor(() => expect(screen.queryByTestId('upload-btn')).not.toBeInTheDocument());

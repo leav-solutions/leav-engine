@@ -11,7 +11,7 @@ import {
 } from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
 import {RecordCard, themeVars, useLang} from '@leav/ui';
-import {Button, Divider, Input, InputRef, message, Space, Spin} from 'antd';
+import {Button, Divider, Input, InputRef, Space, Spin} from 'antd';
 import {PaginationConfig} from 'antd/lib/pagination';
 import CreateDirectory from 'components/CreateDirectory';
 import EditRecordModal from 'components/RecordEdition/EditRecordModal';
@@ -20,7 +20,6 @@ import ErrorDisplay from 'components/shared/ErrorDisplay';
 import List from 'components/shared/List';
 import {IListProps} from 'components/shared/List/List';
 import UploadFiles from 'components/UploadFiles';
-import {getFileDataQuery, IFileDataQuery, IFileDataQueryVariables} from 'graphQL/queries/records/getFileDataQuery';
 import {getRecordsFromLibraryQuery} from 'graphQL/queries/records/getRecordsFromLibraryQuery';
 import {
     IGetRecordsFromLibraryQuery,
@@ -31,7 +30,7 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {localizedTranslation} from 'utils';
 import {CREATE_DIRECTORY} from '_gqlTypes/CREATE_DIRECTORY';
-import {LibraryBehavior, SortOrder} from '_gqlTypes/globalTypes';
+import {LibraryBehavior} from '_gqlTypes/globalTypes';
 import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {
     RECORD_FORM_recordForm_elements_attribute_LinkAttribute,
@@ -134,7 +133,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     const [runSearch, {loading, error, data: searchData}] = useLazyQuery<
         IGetRecordsFromLibraryQuery,
         IGetRecordsFromLibraryQueryVariables
-    >(getRecordsFromLibraryQuery(attribute.linked_library.id, [], true));
+    >(getRecordsFromLibraryQuery(attribute.linked_library.gqlNames.query, [], true));
 
     useEffect(() => {
         wrapperRef.current.scrollIntoView({block: 'nearest'});
@@ -162,13 +161,6 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
 
     const _handleClickCreateDirectoryModal = () => setIsCreateDirectoryModalVisible(true);
     const _handleCloseCreateDirectoryModal = () => setIsCreateDirectoryModalVisible(false);
-
-    const [runGetFileDataQuery] = useLazyQuery<IFileDataQuery, IFileDataQueryVariables>(
-        getFileDataQuery(attribute.linked_library.id),
-        {
-            onError: err => message.error(err.message)
-        }
-    );
 
     const _onUploadFilesCompleted = async (data: UPLOAD) => {
         const toAdd = data.upload.map(d => {

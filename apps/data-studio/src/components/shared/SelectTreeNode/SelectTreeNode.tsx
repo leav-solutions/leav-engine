@@ -219,7 +219,7 @@ function SelectTreeNode({
 
     return (
         <Tree
-            defaultExpandedKeys={[selectedNode]}
+            defaultExpandedKeys={[tree.id]} // TODO: Should be selectedNode but more changes are needed
             multiple={multiple}
             selectable={true}
             selectedKeys={[selectedNode]}

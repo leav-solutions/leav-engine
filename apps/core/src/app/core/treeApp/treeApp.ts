@@ -54,7 +54,7 @@ interface IDeps {
     'core.domain.library'?: ILibraryDomain;
 }
 
-export default function({
+export default function ({
     'core.domain.tree': treeDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission': permissionDomain = null,
@@ -293,6 +293,9 @@ export default function({
 
                         # Retrieve full tree content form tree root, as an object.
                         fullTreeContent(treeId: ID!): FullTreeContent
+
+                        # Retrieve record by node id
+                        getRecordByNodeId(treeId: ID!, nodeId: ID!): Record!
                     }
 
                     extend type Mutation {
@@ -329,6 +332,13 @@ export default function({
                             ctx: IQueryInfos
                         ): Promise<IList<ITree>> {
                             return treeDomain.getTrees({params: {filters, withCount: true, pagination, sort}, ctx});
+                        },
+                        async getRecordByNodeId(
+                            _,
+                            {treeId, nodeId}: {treeId: string; nodeId: string},
+                            ctx: IQueryInfos
+                        ): Promise<IRecord> {
+                            return treeDomain.getRecordByNodeId({treeId, nodeId, ctx});
                         },
                         async treeContent(
                             _,

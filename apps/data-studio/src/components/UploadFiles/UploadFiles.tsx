@@ -2,8 +2,22 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {InboxOutlined, LoadingOutlined, FileOutlined, CheckCircleTwoTone} from '@ant-design/icons';
-import {Upload, Modal, Button, Steps, theme, StepProps, Alert, Divider, UploadFile} from 'antd';
-import {useState} from 'react';
+import {
+    Upload,
+    Modal,
+    Button,
+    Steps,
+    theme,
+    StepProps,
+    Alert,
+    Divider,
+    UploadFile,
+    Tooltip,
+    Space,
+    Row,
+    Checkbox
+} from 'antd';
+import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useQuery, useSubscription, useMutation, useLazyQuery} from '@apollo/client';
 import {getUploadUpdates} from 'graphQL/subscribes/upload/getUploadUpdates';
@@ -18,11 +32,17 @@ import {DOES_FILE_EXIST_AS_CHILD, DOES_FILE_EXIST_AS_CHILDVariables} from '_gqlT
 import {doesFileExistAsChild} from 'graphQL/queries/records/doesFileExistAsChild';
 import {useUser} from '../../hooks/UserHook/UserHook';
 import {v4 as uuidv4} from 'uuid';
+import {
+    getDirectoryDataQuery,
+    IDirectoryDataQuery,
+    IDirectoryDataQueryVariables
+} from 'graphQL/queries/records/getDirectoryDataQuery';
+import {getLibraryGraphqlNames} from '@leav/utils';
 
 const {confirm} = Modal;
 
 interface IUploadFilesProps {
-    defaultSelectedKey?: string;
+    defaultSelectedNode?: {id: string; recordId?: string};
     libraryId: string;
     multiple?: boolean;
     onClose: () => void;
@@ -30,7 +50,7 @@ interface IUploadFilesProps {
 }
 
 function UploadFiles({
-    defaultSelectedKey,
+    defaultSelectedNode,
     libraryId,
     multiple = false,
     onCompleted,
@@ -38,14 +58,44 @@ function UploadFiles({
 }: IUploadFilesProps): JSX.Element {
     const {t} = useTranslation();
     const {token} = theme.useToken();
-    const [selectedNodeKey, setSelectedNodeKey] = useState<string>(defaultSelectedKey);
+    const [selectedNode, setSelectedNode] = useState<{id: string; recordId?: string}>(defaultSelectedNode);
+    const [selectedDir, setSelectedDir] = useState<{path: string; name: string} | null>();
     const [files, setFiles] = useState<Array<UploadFile & {replace?: boolean}>>([]);
     const [user] = useUser();
-    const [status, setStatus] = useState<StepProps['status']>('wait');
-    const [currentStep, setCurrentStep] = useState(!!defaultSelectedKey ? 1 : 0);
+    const [status, setStatus] = useState<StepProps['status']>('process');
+    const [currentStep, setCurrentStep] = useState(!!defaultSelectedNode ? 1 : 0);
     const [filesTreeId, setFilesTreeId] = useState<string>();
     const [directoriesLibraryId, setdirectoriesLibraryId] = useState<string>();
     const [errorMsg, setErrorMsg] = useState<string>();
+
+    const [runUpload, {loading}] = useMutation<UPLOAD, UPLOADVariables>(uploadMutation, {
+        fetchPolicy: 'no-cache',
+        onCompleted: data => {
+            if (typeof onCompleted !== 'undefined') {
+                onCompleted(data);
+            }
+
+            setStatus('finish');
+        },
+        onError: err => {
+            setStatus('error');
+            setErrorMsg(err.message);
+        }
+    });
+
+    useQuery<IDirectoryDataQuery, IDirectoryDataQueryVariables>(getDirectoryDataQuery(directoriesLibraryId), {
+        skip: !directoriesLibraryId || !selectedNode?.recordId,
+        onCompleted: data => {
+            const dirData = data[getLibraryGraphqlNames(directoriesLibraryId).query].list[0];
+            setSelectedDir({
+                path: dirData.file_path,
+                name: dirData.file_name
+            });
+        },
+        variables: {
+            directoryId: selectedNode?.recordId
+        }
+    });
 
     const props = {
         name: 'files',
@@ -53,12 +103,10 @@ function UploadFiles({
         maxCount: multiple ? 99999 : 1,
         showUploadList: true,
         fileList: files,
-        disabled: status !== 'wait',
+        disabled: status !== 'process' || loading,
         beforeUpload: async (file: UploadFile) => {
             file.uid = uuidv4();
-
-            const newFiles = await _checkFilesExist(selectedNodeKey, [file]);
-            setFiles(prevState => prevState.concat(newFiles));
+            setFiles(prevState => prevState.concat([file]));
 
             return false;
         },
@@ -85,22 +133,37 @@ function UploadFiles({
         }
     );
 
-    const _checkFilesExist = async (parentNode: string, filesToCheck: Array<UploadFile & {replace?: boolean}>) => {
-        for (const f of filesToCheck) {
-            const isFileExists = await runDoesFileExistAsChild({
-                variables: {
-                    treeId: filesTreeId,
-                    parentNode: parentNode !== filesTreeId ? parentNode : null,
-                    filename: f.name
-                }
-            });
+    const _checkFilesExist = async (parentNode: string): Promise<void> => {
+        let applyToAll: {replace: boolean};
 
-            if (isFileExists.data.doesFileExistAsChild) {
-                f.replace = await showReplaceModal(f.name);
+        const filesToCheck = [...files];
+
+        for (const f of filesToCheck) {
+            if (applyToAll) {
+                f.replace = f.replace ?? applyToAll.replace;
+            } else {
+                const isFileExists = await runDoesFileExistAsChild({
+                    variables: {
+                        treeId: filesTreeId,
+                        parentNode: parentNode !== filesTreeId ? parentNode : null,
+                        filename: f.name
+                    }
+                });
+
+                if (isFileExists.data.doesFileExistAsChild) {
+                    const {applyToAll: mustBeAppliedToAll, replace} = await showReplaceModal(f.name);
+                    Modal.destroyAll();
+
+                    f.replace = replace;
+
+                    if (mustBeAppliedToAll) {
+                        applyToAll = {replace};
+                    }
+                }
             }
         }
 
-        return filesToCheck;
+        setFiles(filesToCheck);
     };
 
     useQuery<GET_TREE_LIBRARIES, GET_TREE_LIBRARIESVariables>(getTreeLibraries, {
@@ -119,21 +182,6 @@ function UploadFiles({
             )[0]?.library.id;
 
             setdirectoriesLibraryId(directoriesLibrary);
-        }
-    });
-
-    const [runUpload, {loading}] = useMutation<UPLOAD, UPLOADVariables>(uploadMutation, {
-        fetchPolicy: 'no-cache',
-        onCompleted: data => {
-            if (typeof onCompleted !== 'undefined') {
-                onCompleted(data);
-            }
-
-            setStatus('finish');
-        },
-        onError: err => {
-            setStatus('error');
-            setErrorMsg(err.message);
         }
     });
 
@@ -158,12 +206,10 @@ function UploadFiles({
     });
 
     const startUpload = async (): Promise<void> => {
-        setStatus('process');
-
         await runUpload({
             variables: {
                 library: libraryId,
-                nodeId: selectedNodeKey,
+                nodeId: selectedNode.id,
                 files: files.map(f => ({
                     data: f,
                     uid: f.uid,
@@ -175,8 +221,10 @@ function UploadFiles({
     };
 
     const _handleUploadClick = () => {
-        next();
-        startUpload();
+        _checkFilesExist(selectedNode.id).then(() => {
+            next();
+            startUpload();
+        });
     };
 
     const _onClose = () => {
@@ -185,8 +233,6 @@ function UploadFiles({
     };
 
     const contentStyle: React.CSSProperties = {
-        lineHeight: '260px',
-        textAlign: 'center',
         marginTop: 16
     };
 
@@ -199,13 +245,12 @@ function UploadFiles({
     };
 
     const onSelectPath = async (node: ITreeNodeWithRecord, selected: boolean) => {
-        const newSelectedNode = !selected ? undefined : node;
+        const newSelectedNode = !selected ? undefined : {id: node.id, recordId: node.record?.id};
 
-        setSelectedNodeKey(newSelectedNode?.key);
+        setSelectedNode(newSelectedNode);
 
-        if (selected && files.length) {
-            const newFiles = await _checkFilesExist(newSelectedNode?.id, files);
-            setFiles(newFiles);
+        if (!newSelectedNode?.recordId) {
+            setSelectedDir(null);
         }
     };
 
@@ -217,26 +262,54 @@ function UploadFiles({
             <p className="ant-upload-text">{t('upload.dragger_content')}</p>
         </Upload.Dragger>
     );
+
     const isDone = status === 'finish' || status === 'error';
 
-    const showReplaceModal = async (filename: string): Promise<boolean> =>
+    const showReplaceModal = async (filename: string): Promise<{replace: boolean; applyToAll: boolean}> =>
         new Promise(res => {
+            let applyToAll = false;
+
             confirm({
                 className: 'confirm-replace-modal',
                 closable: true,
                 open: true,
                 title: t('upload.replace_modal.title'),
-                okText: t('upload.replace_modal.replaceBtn'),
-                onOk: () => res(true),
-                cancelText: t('upload.replace_modal.keepBtn'),
-                onCancel: () => res(false),
-                content: <p>{t('upload.replace_modal.message', {filename})}</p>
+                content: <p>{t('upload.replace_modal.message', {filename})}</p>,
+                footer: (
+                    <Row justify="end">
+                        <Space>
+                            <Checkbox
+                                onChange={e => {
+                                    applyToAll = e.target.checked;
+                                }}
+                            >
+                                {t('upload.replace_modal.applyToAll')}
+                            </Checkbox>
+                            <Button key="keepBtn" onClick={() => res({replace: false, applyToAll})}>
+                                {t('upload.replace_modal.keepBtn')}
+                            </Button>
+                            <Button key="replaceBtn" type="primary" onClick={() => res({replace: true, applyToAll})}>
+                                {t('upload.replace_modal.replaceBtn')}
+                            </Button>
+                        </Space>
+                    </Row>
+                )
             });
         });
 
+    const PathTitle = () => {
+        const title = selectedNode
+            ? selectedDir
+                ? `${selectedDir?.path}/${selectedDir?.name}`.replace('./', '')
+                : filesTreeId
+            : t('upload.select_path_step_title');
+
+        return <Tooltip title={title}>{title?.length > 30 ? `${title.slice(0, 30)}...` : title}</Tooltip>;
+    };
+
     const steps = [
         {
-            title: t('upload.select_path_step_title'),
+            title: <PathTitle />,
             content: (
                 <div
                     data-testid="select-tree-node"
@@ -249,7 +322,7 @@ function UploadFiles({
                         <SelectTreeNode
                             tree={{id: filesTreeId}}
                             onSelect={onSelectPath}
-                            selectedNode={selectedNodeKey}
+                            selectedNode={selectedNode?.id}
                             canSelectRoot
                             selectableLibraries={[directoriesLibraryId]}
                         />
@@ -297,7 +370,7 @@ function UploadFiles({
                         {currentStep < steps.length - 2 && (
                             <Button
                                 data-testid="next-btn"
-                                disabled={!selectedNodeKey}
+                                disabled={!selectedNode}
                                 type="primary"
                                 onClick={() => next()}
                             >

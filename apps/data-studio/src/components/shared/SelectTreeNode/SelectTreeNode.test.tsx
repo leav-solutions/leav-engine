@@ -122,12 +122,6 @@ describe('SelectTreeNode', () => {
         await waitFor(() => screen.getByText('Tree Label'));
         expect(screen.getByText('Tree Label')).toBeInTheDocument();
 
-        // Expand root => show first level element
-        await act(async () => {
-            userEvent.click(screen.getByRole('img', {name: 'toggle-children'}));
-        });
-        expect(screen.getByText('label1')).toBeInTheDocument();
-
         // Expand node => fetch children
         await act(async () => {
             userEvent.click(screen.getAllByRole('img', {name: 'toggle-children'}).pop());
