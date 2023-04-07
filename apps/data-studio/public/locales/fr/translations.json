@@ -601,6 +601,8 @@
         "libraries_select_all_help": "Toutes les bibliothèques seront disponibles, y compris les nouvelles.",
         "libraries_select_none_help": "Aucune bibliothèque ne sera disponible.",
         "libraries_select_custom_help": "Les bibliothèques sélectionnées uniquement seront disponibles. Les nouvelles ne seront pas ajoutées automatiquement.",
-        "search_libraries": "Rechercher"
+        "search_libraries": "Rechercher",
+        "no_libraries": "Aucune bibliothèque sélectionnée",
+        "add_library": "Ajouter une bibliothèque"
     }
 }

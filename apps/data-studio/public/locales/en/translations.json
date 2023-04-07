@@ -600,6 +600,8 @@
         "libraries_select_all_help": "All libraries will be available, including new ones.",
         "libraries_select_none_help": "No libraries will be available.",
         "libraries_select_custom_help": "Only selected libraries will be available. New ones won't be added automatically",
-        "search_libraries": "Search"
+        "search_libraries": "Search",
+        "no_libraries": "No libraries selected",
+        "add_library": "Add library"
     }
 }

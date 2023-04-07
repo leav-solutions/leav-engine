@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import {GetApplicationByIdDocument, SaveApplicationDocument} from '../../_gqlTypes';
-import {render, screen, waitFor} from '../../_tests/testUtils';
+import {cleanup, render, screen, waitFor, waitForElementToBeRemoved} from '../../_tests/testUtils';
 import {mockApplication} from '../../__mocks__/common/application';
 import EditApplication from './EditApplication';
 
@@ -17,6 +17,9 @@ window.matchMedia = query => ({
     removeEventListener: jest.fn(),
     dispatchEvent: jest.fn()
 });
+
+// This test suite is very slow, I don't really know why. Increse the timeout for now.
+jest.setTimeout(15000);
 
 describe('EditApplication', () => {
     beforeEach(() => {
@@ -33,7 +36,7 @@ describe('EditApplication', () => {
             await userEvent.type(screen.getByRole('textbox', {name: 'description_en'}), 'Test app description en');
 
             const idField = screen.getByRole('textbox', {name: /id/});
-            expect(screen.getByRole('textbox', {name: /id/})).toHaveValue('test_app_fr');
+            expect(idField).toHaveValue('test_app_fr');
 
             //Hide some fields based on type
             expect(screen.getByRole('combobox', {name: /module/})).toBeInTheDocument();
@@ -41,7 +44,10 @@ describe('EditApplication', () => {
             //Change type
             userEvent.click(screen.getByText(/internal/)); // Open "type" dropdown
             userEvent.click(await screen.findByText('applications.type_external')); // Select "external"
-            await waitFor(() => expect(screen.queryByRole('combobox', {name: /module/})).not.toBeInTheDocument());
+
+            await waitForElementToBeRemoved(() => screen.getByRole('combobox', {name: /module/}));
+
+            expect(screen.queryByRole('combobox', {name: /module/})).not.toBeInTheDocument();
         });
 
         test('Do not generate id if user has modified it', async () => {
@@ -55,6 +61,7 @@ describe('EditApplication', () => {
             await userEvent.type(screen.getByRole('textbox', {name: /label_fr/}), 'Test app fr updated');
 
             expect(screen.getByRole('textbox', {name: /id/})).toHaveValue('test_app_fr_edited');
+            cleanup();
         });
     });
 

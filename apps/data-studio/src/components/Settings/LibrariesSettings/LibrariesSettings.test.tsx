@@ -200,4 +200,30 @@ describe('LibrariesSettings', () => {
         expect(screen.getByText('Lib A')).toBeInTheDocument();
         expect(screen.queryByText('Lib B')).not.toBeInTheDocument();
     });
+
+    describe('Custom mode', () => {
+        const currentAppCustomMode = {
+            ...currentApp,
+            settings: {
+                ...currentApp.settings,
+                libraries: []
+            }
+        };
+
+        test('Display a message if nothing selected', async () => {
+            render(<LibrariesSettings />, {apolloMocks: mocks, currentApp: currentAppCustomMode});
+
+            expect(await screen.findByText(/no_libraries/)).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: /add/})).toBeInTheDocument();
+        });
+
+        test('Can add library to list', async () => {
+            render(<LibrariesSettings />, {
+                apolloMocks: mocksCustomSelection,
+                currentApp: {...currentApp, settings: {libraries: ['libA', 'libB']}}
+            });
+
+            expect(await screen.findByRole('button', {name: /add/})).toBeInTheDocument();
+        });
+    });
 });

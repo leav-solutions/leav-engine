@@ -23,6 +23,11 @@ const TitleWrapper = styled.div`
     }
 `;
 
+const ListWrapper = styled.div`
+    max-width: 800px;
+    margin: auto;
+`;
+
 function LibrariesSettings(): JSX.Element {
     const {t} = useTranslation();
     const {currentApp} = useApplicationContext();
@@ -105,6 +110,16 @@ function LibrariesSettings(): JSX.Element {
         });
     };
 
+    const _handleAddLibrary = async (addedLibraries: string[]) => {
+        if (!Array.isArray(currentApp.settings?.libraries)) {
+            return;
+        }
+
+        _executeSave({
+            libraries: [...currentApp.settings?.libraries, ...addedLibraries]
+        });
+    };
+
     return (
         <TabContentWrapper>
             <TitleWrapper>
@@ -112,11 +127,14 @@ function LibrariesSettings(): JSX.Element {
                 <SubmitStateNotifier state={submitState} />
             </TitleWrapper>
             <ModeSelector onChange={_handleSelectionModeChange} />
-            <LibrariesList
-                libraries={libraries}
-                onMoveLibrary={_handleMoveLibrary}
-                onRemoveLibrary={_handleRemoveLibrary}
-            />
+            <ListWrapper>
+                <LibrariesList
+                    libraries={libraries}
+                    onMoveLibrary={_handleMoveLibrary}
+                    onRemoveLibrary={_handleRemoveLibrary}
+                    onAddLibraries={_handleAddLibrary}
+                />
+            </ListWrapper>
         </TabContentWrapper>
     );
 }
