@@ -17,7 +17,7 @@ import {initMailer} from './infra/mailer';
 import {initPlugins} from './pluginsLoader';
 import minimist from 'minimist';
 
-(async function() {
+(async function () {
     const opt = minimist(process.argv.slice(2));
 
     let conf: Config.IConfig;
@@ -110,7 +110,7 @@ import minimist from 'minimist';
         console.error(e);
         process.exit(1);
     }
-})().catch(e => console.error(e));
+})().catch(console.error);
 
 process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) => {
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);

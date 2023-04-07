@@ -18,7 +18,11 @@ const Background = styled.div`
     background: #8051fc;
 `;
 
-function App() {
+interface IAppProps {
+    basename: string;
+}
+
+function App({basename}: IAppProps) {
     const appName = useAppName();
 
     useEffect(() => {
@@ -27,9 +31,9 @@ function App() {
 
     return (
         <Background>
-            <BrowserRouter basename={`${import.meta.env.VITE_ENDPOINT ?? '/'}`}>
+            <BrowserRouter basename={basename}>
                 <Switch>
-                    <Route path="/">
+                    <Route exact path="/">
                         <Login />
                     </Route>
                     <Route path="/reset-password/:token">

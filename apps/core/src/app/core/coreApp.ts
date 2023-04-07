@@ -50,7 +50,7 @@ const _parseLiteralAny = ast => {
     }
 };
 
-export default function(
+export default function (
     {
         'core.domain.core': coreDomain = null,
         'core.app.graphql': graphqlApp = null,
@@ -93,7 +93,7 @@ export default function(
                 `,
                 resolvers: {
                     Query: {
-                        version: (parent, args, ctx: IQueryInfos) => coreDomain.getVersion(ctx)
+                        version: (parent, args, ctx: IQueryInfos) => coreDomain.getVersion()
                     } as any,
                     Mutation: {} as any,
                     JSON: GraphQLJSON,
