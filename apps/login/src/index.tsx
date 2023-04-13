@@ -9,32 +9,37 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import i18n from './i18n';
-import i18next from 'i18next';
-import useAppLang from './useAppLang';
-
-// Get endpoint app current from url /app/:endpoint
-export const APPS_URL_PREFIX = 'app';
-export const ENDPOINT = window.location.pathname.split('/').filter(e => e)[1];
-export const BASENAME = `${APPS_URL_PREFIX}/${ENDPOINT}`;
+import useAppLang from './hooks/useAppLang';
+import Loading from 'components/shared/Loading';
+import ErrorDisplay from 'components/shared/ErrorDisplay';
+import {APPS_ENDPOINT, APP_ENDPOINT} from './constants';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
 function Index() {
-    const appLang = useAppLang();
+    const {lang, loading, error} = useAppLang();
     const [i18nIsInitialized, seti18nIsInitialized] = useState(false);
 
     useEffect(() => {
-        if (!i18nIsInitialized) {
-            i18n.init(BASENAME, appLang);
+        if (!i18nIsInitialized && lang) {
+            i18n.init(`${APPS_ENDPOINT}/${APP_ENDPOINT}`, lang);
             seti18nIsInitialized(true);
         }
-    }, []);
+    }, [lang]);
+
+    if (error) {
+        return <ErrorDisplay message={error} />;
+    }
+
+    if (loading) {
+        return <Loading />;
+    }
 
     return (
         i18nIsInitialized && (
             <React.StrictMode>
                 <ConfigProvider theme={customTheme}>
-                    <App basename={BASENAME} />
+                    <App basename={`${APPS_ENDPOINT}/${APP_ENDPOINT}`} />
                 </ConfigProvider>
             </React.StrictMode>
         )

@@ -57,8 +57,8 @@ export interface APPLICATION_EVENTS_applicationEvent_application {
     label: SystemTranslation;
     type: ApplicationType;
     description: SystemTranslation | null;
-    endpoint: string;
-    url: string;
+    endpoint: string | null;
+    url: string | null;
     color: string | null;
     icon: APPLICATION_EVENTS_applicationEvent_application_icon | null;
     permissions: APPLICATION_EVENTS_applicationEvent_application_permissions;

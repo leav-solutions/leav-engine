@@ -7,11 +7,11 @@ import {localizedTranslation} from '@leav/utils';
 import {Card, Typography} from 'antd';
 import {EditApplicationModal} from 'components/Applications/EditApplicationModal';
 import {IEditApplicationModalProps} from 'components/Applications/EditApplicationModal/EditApplicationModal';
+import {ORIGIN_URL, APPS_ENDPOINT} from '../../../../constants';
 import {SyntheticEvent, useState} from 'react';
 import styled from 'styled-components';
 import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
 import {ApplicationInstallStatus, ApplicationType} from '_gqlTypes/globalTypes';
-import {APPS_BASE_URL} from '../../../../constants';
 import ApplicationCover from './ApplicationCover';
 
 interface IApplicationCardProps {
@@ -59,9 +59,9 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
 
     const label = localizedTranslation(application.label, lang);
     const description = localizedTranslation(application.description, lang);
-    const isAppReady =
-        application.type === ApplicationType.external ||
-        application.install.status === ApplicationInstallStatus.SUCCESS;
+    const isAppReady = true;
+    // application.type === ApplicationType.external ||
+    // application.install.status === ApplicationInstallStatus.SUCCESS;
 
     const _handleClick = () => {
         if (isAppReady) {
@@ -126,7 +126,7 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
             </AppCard>
             {isEditAppModalOpen && (
                 <EditApplicationModal
-                    appsBaseUrl={APPS_BASE_URL}
+                    appsBaseUrl={`${ORIGIN_URL}/${APPS_ENDPOINT}/`}
                     applicationId={application.id}
                     open={isEditAppModalOpen}
                     onClose={_handleCloseEditAppModal}

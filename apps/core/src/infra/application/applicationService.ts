@@ -125,8 +125,8 @@ export default function ({
         // Define env variables
         const leavEnv = {
             LEAV_CORE_URL: `${config.server.publicUrl}`,
-            LEAV_API_URL: `${config.server.publicUrl}/${config.server.apiEndpoint}`,
-            LEAV_WS_URL: `${config.server.wsUrl}/${config.server.apiEndpoint}`,
+            LEAV_API_URL: `${config.server.publicUrl}/graphql`,
+            LEAV_WS_URL: `${config.server.wsUrl}/graphql`,
             LEAV_AUTH_URL: `${config.server.publicUrl}/auth/authenticate`,
             LEAV_DEFAULT_LANG: config.lang.default,
             LEAV_AVAILABLE_LANG: config.lang.available.join(','),
@@ -136,7 +136,9 @@ export default function ({
             LEAV_APPLICATION_ID: application.id,
             LEAV_DEST_FOLDER: _getDestinationFolder(application.id, rootPath)
         };
+
         const timer = logger.startTimer();
+
         try {
             logger.info(`START build of ${application.id}`);
             const res = await _execCommand(`${scriptPath}`, leavEnv);

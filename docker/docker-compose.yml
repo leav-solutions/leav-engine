@@ -120,9 +120,6 @@ x-env-data-studio: &env-data-studio
 
 x-env-login: &env-login
   APP_ROOT_PATH: *dir-login
-  VITE_AUTH_URL: /auth/authenticate
-  VITE_RESET_PASSWORD: /auth/reset-password
-  VITE_FORGOT_PASSWORD: /auth/forgot-password
 
 x-env-portal: &env-portal
   APP_ROOT_PATH: *dir-portal
@@ -320,11 +317,6 @@ services:
     environment:
       <<: *env-react
       <<: *env-login
-      VITE_APPLICATION_ID: login
-      VITE_ENDPOINT: app/login
-      PUBLIC_URL: http://core.leav.localhost/app/login
-      WDS_SOCKET_HOST: login.leav.localhost
-      WDS_SOCKET_PORT: 80
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
@@ -355,10 +347,6 @@ services:
       <<: *env-react
       <<: *env-portal
       PUBLIC_URL: http://core.leav.localhost/app/portal
-      VITE_APPLICATION_ID: portal
-      VITE_ENDPOINT: app/portal
-      WDS_SOCKET_HOST: portal.leav.localhost
-      WDS_SOCKET_PORT: 80
     volumes:
       - *mount_point-repo
       - *mount_point-scripts

@@ -89,11 +89,13 @@ export default function (
 
                     extend type Query {
                         version: String!
+                        langs: [String]!
                     }
                 `,
                 resolvers: {
                     Query: {
-                        version: (parent, args, ctx: IQueryInfos) => coreDomain.getVersion()
+                        version: (parent, args, ctx: IQueryInfos) => coreDomain.getVersion(),
+                        langs: (parent, args, ctx: IQueryInfos) => config.lang.available
                     } as any,
                     Mutation: {} as any,
                     JSON: GraphQLJSON,

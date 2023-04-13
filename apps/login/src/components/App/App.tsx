@@ -4,10 +4,12 @@
 import ForgotPassword from 'components/ForgotPassword';
 import Login from 'components/Login';
 import ChangePassword from 'components/ResetPassword';
+import Loading from 'components/shared/Loading';
+import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {useEffect} from 'react';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import styled from 'styled-components';
-import useAppName from '../../useAppName';
+import useAppName from '../../hooks/useAppName';
 
 const Background = styled.div`
     position: absolute;
@@ -23,11 +25,19 @@ interface IAppProps {
 }
 
 function App({basename}: IAppProps) {
-    const appName = useAppName();
+    const {name, loading, error} = useAppName();
 
     useEffect(() => {
-        document.title = `${appName}`;
-    }, [appName]);
+        document.title = `${name}`;
+    }, [name]);
+
+    if (error) {
+        return <ErrorDisplay message={error} />;
+    }
+
+    if (loading) {
+        return <Loading />;
+    }
 
     return (
         <Background>

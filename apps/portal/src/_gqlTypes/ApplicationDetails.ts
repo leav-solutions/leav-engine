@@ -52,8 +52,8 @@ export interface ApplicationDetails {
     label: SystemTranslation;
     type: ApplicationType;
     description: SystemTranslation | null;
-    endpoint: string;
-    url: string;
+    endpoint: string | null;
+    url: string | null;
     color: string | null;
     icon: ApplicationDetails_icon | null;
     permissions: ApplicationDetails_permissions;

@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ApplicationType, ApplicationInstallStatus} from './globalTypes';
+import {ApplicationsFiltersInput, ApplicationType, ApplicationInstallStatus} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_APPLICATIONS
@@ -52,8 +52,8 @@ export interface GET_APPLICATIONS_applications_list {
     label: SystemTranslation;
     type: ApplicationType;
     description: SystemTranslation | null;
-    endpoint: string;
-    url: string;
+    endpoint: string | null;
+    url: string | null;
     color: string | null;
     icon: GET_APPLICATIONS_applications_list_icon | null;
     permissions: GET_APPLICATIONS_applications_list_permissions;
@@ -66,4 +66,8 @@ export interface GET_APPLICATIONS_applications {
 
 export interface GET_APPLICATIONS {
     applications: GET_APPLICATIONS_applications | null;
+}
+
+export interface GET_APPLICATIONSVariables {
+    filters?: ApplicationsFiltersInput | null;
 }

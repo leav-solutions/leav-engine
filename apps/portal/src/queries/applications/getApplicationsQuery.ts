@@ -6,8 +6,8 @@ import {applicationDetailsFragment} from './applicationDetailsFragment';
 
 export const getApplicationsQuery = gql`
     ${applicationDetailsFragment}
-    query GET_APPLICATIONS {
-        applications {
+    query GET_APPLICATIONS($filters: ApplicationsFiltersInput) {
+        applications(filters: $filters) {
             list {
                 ...ApplicationDetails
             }

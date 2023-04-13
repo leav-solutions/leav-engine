@@ -92,6 +92,15 @@ export interface ApplicationEventFiltersInput {
     events?: ApplicationEventTypes[] | null;
 }
 
+export interface ApplicationsFiltersInput {
+    id?: string | null;
+    label?: string | null;
+    type?: (ApplicationType | null)[] | null;
+    system?: boolean | null;
+    endpoint?: string | null;
+    module?: string | null;
+}
+
 /**
  * Element on which we want to retrieve record or attribute permission. Record ID is mandatory,
  * attributeId is only required for attribute permission

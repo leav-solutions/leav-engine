@@ -52,8 +52,8 @@ export interface GET_APPLICATION_BY_ID_applications_list {
     label: SystemTranslation;
     type: ApplicationType;
     description: SystemTranslation | null;
-    endpoint: string;
-    url: string;
+    endpoint: string | null;
+    url: string | null;
     color: string | null;
     icon: GET_APPLICATION_BY_ID_applications_list_icon | null;
     permissions: GET_APPLICATION_BY_ID_applications_list_permissions;

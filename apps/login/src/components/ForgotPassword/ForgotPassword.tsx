@@ -5,13 +5,13 @@ import i18n from 'i18next';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import ForgotPasswordForm from './ForgotPasswordForm';
+import {FORGOT_PASSWORD_URL} from '../../constants';
 
 const ForgotPassword = (): JSX.Element => {
     const {t} = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [forgotPasswordError, setForgotPasswordError] = useState('');
     const [forgotPasswordSuccess, setForgotPasswordSuccess] = useState('');
-    const forgotPasswordUrl = import.meta.env.VITE_FORGOT_PASSWORD || '';
 
     const _processForgotPassword = async (email: string) => {
         try {
@@ -19,7 +19,7 @@ const ForgotPassword = (): JSX.Element => {
             setForgotPasswordError('');
             setForgotPasswordSuccess('');
 
-            const response = await fetch(forgotPasswordUrl, {
+            const response = await fetch(FORGOT_PASSWORD_URL, {
                 method: 'POST',
                 headers: new Headers([['Content-Type', 'application/json']]),
                 body: JSON.stringify({

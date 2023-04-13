@@ -5,13 +5,13 @@ import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import LoginForm from './LoginForm';
+import {AUTH_URL} from '../../constants';
 
 const Login = (): JSX.Element => {
     const params = useParams<{dest?: string}>();
     const {t} = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [loginError, setLoginError] = useState('');
-    const authUrl = import.meta.env.VITE_AUTH_URL || '';
 
     const redirectTo = params.dest ?? '/';
 
@@ -20,7 +20,7 @@ const Login = (): JSX.Element => {
             setIsLoading(true);
             setLoginError('');
 
-            const response = await fetch(authUrl, {
+            const response = await fetch(AUTH_URL, {
                 method: 'POST',
                 headers: new Headers([['Content-Type', 'application/json']]),
                 body: JSON.stringify({

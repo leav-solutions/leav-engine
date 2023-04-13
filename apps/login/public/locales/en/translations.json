@@ -49,6 +49,7 @@
         }
     },
     "error": {
+        "error_occurred": "Error occurred",
         "no_server_response": "Server is not responding",
         "missing_parameters": "Missing parameters"
     }

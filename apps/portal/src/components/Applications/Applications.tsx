@@ -13,7 +13,7 @@ import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {GET_APPLICATIONS, GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
-import {APPS_BASE_URL} from '../../constants';
+import {ORIGIN_URL, APPS_ENDPOINT} from '../../constants';
 import ApplicationsList from './ApplicationsList';
 import ApplicationsSearch from './ApplicationsSearch';
 import {EditApplicationModal} from './EditApplicationModal';
@@ -85,7 +85,7 @@ function Applications(): JSX.Element {
                 <EditApplicationModal
                     open={showEditApplicationModal}
                     onClose={_handleCloseCreateApplication}
-                    appsBaseUrl={APPS_BASE_URL}
+                    appsBaseUrl={`${ORIGIN_URL}/${APPS_ENDPOINT}/`}
                 />
             )}
         </>

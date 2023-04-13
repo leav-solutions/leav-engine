@@ -16,12 +16,6 @@ if [ "$NODE_ENV" = "test" ]; then
 fi
 
 echo 'Injecting these variables:'
-echo VITE_AUTH_URL: /auth/authenticate
-echo VITE_RESET_PASSWORD: /auth/reset-password
-echo VITE_FORGOT_PASSWORD: /auth/forgot-password
-export VITE_AUTH_URL=/auth/authenticate
-export VITE_RESET_PASSWORD=/auth/reset-password
-export VITE_FORGOT_PASSWORD=/auth/forgot-password
 
 echo 'Building and installing applications...'
 export TSC_COMPILE_ON_ERROR=true
@@ -32,31 +26,38 @@ export SKIP_PREFLIGHT_CHECK=true
 # login
 BUILD_LOGIN_DIR=../apps/login/dist
 DEST_LOGIN_DIR=../apps/core/applications/login
-
-yarn --cwd ../apps/login install
-yarn --cwd ../apps/login workspace login build
+yarn workspace login install
+yarn workspace login build
 checkExitCode
 
 rm -rf $DEST_LOGIN_DIR
 checkExitCode
-
 mv $BUILD_LOGIN_DIR $DEST_LOGIN_DIR
 checkExitCode
 
-
 # portal
-# BUILD_PORTAL_DIR=./apps/portal/dist
-# DEST_PORTAL_DIR=./apps/core/applications/portal
+BUILD_PORTAL_DIR=../apps/portal/dist
+DEST_PORTAL_DIR=../apps/core/applications/portal
+yarn workspace portal install
+yarn workspace portal build
+checkExitCode
 
-# yarn --cwd ./apps/portal install
-# yarn --cwd ./apps/portal workspace portal build
-# checkExitCode
+rm -rf $DEST_PORTAL_DIR
+checkExitCode
+mv $BUILD_PORTAL_DIR $DEST_PORTAL_DIR
+checkExitCode
 
-# rm -rf $DEST_LOGIN_DIR
-# checkExitCode
+# admin
+BUILD_LOGIN_DIR=../apps/admin/dist
+DEST_LOGIN_DIR=../apps/core/applications/admin
+yarn workspace admin install
+yarn workspace login build
+checkExitCode
 
-# mv $BUILD_LOGIN_DIR $DEST_LOGIN_DIR
-# checkExitCode
+rm -rf $DEST_LOGIN_DIR
+checkExitCode
+mv $BUILD_LOGIN_DIR $DEST_LOGIN_DIR
+checkExitCode
 
 echo 'Applications installed!'
 echo 'All good!'
