@@ -1,3 +1,4 @@
+/// <reference types="jest" />
 export interface IKeyValue<T> {
     [key: string]: T;
 }
@@ -7,4 +8,7 @@ export declare type WithTypename<T> = {
     [P in keyof T]: T[P] extends object ? WithTypename<T[P]> : T[P];
 } & {
     readonly __typename?: string;
+};
+export declare type Mockify<T> = {
+    [P in keyof T]?: T[P] extends (...args: any) => any ? jest.Mock : T[P];
 };

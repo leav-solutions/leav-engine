@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from '@apollo/client';
 
-export const identityRecordFragment = gql`
-    fragment IdentityRecord on Record {
+export const recordIdentityFragment = gql`
+    fragment RecordIdentity on Record {
         id
         whoAmI {
             id

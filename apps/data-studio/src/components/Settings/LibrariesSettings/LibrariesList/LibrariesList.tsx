@@ -1,43 +1,17 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CloseOutlined, HolderOutlined, PlusOutlined} from '@ant-design/icons';
+import {PlusOutlined} from '@ant-design/icons';
 import {LibraryPicker, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Empty, Input} from 'antd';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {SyntheticEvent, useState} from 'react';
-import {DragDropContext, Draggable, DraggableProvidedDragHandleProps, Droppable, DropResult} from 'react-beautiful-dnd';
+import {DragDropContext, Draggable, DraggableProvided, Droppable, DropResult} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
-
-const LibraryBlock = styled.div`
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1.5rem 1fr 1.5rem;
-    justify-content: center;
-    margin: 10px;
-    border: 1px solid ${props => props.theme.antd?.colorBorder};
-    border-radius: ${props => props.theme?.antd?.borderRadius ?? 5}px;
-    background: ${props => props.theme.antd?.colorBgBase ?? '#ffffff'};
-`;
-
-const DragHandle = styled.div`
-    cursor: grab;
-    border-right: 1px solid ${props => props.theme.antd?.colorBorder};
-    display: flex;
-    align-items: center;
-    justify-content: center;
-`;
-
-const LibraryLabel = styled.div`
-    padding: 0.5rem 0.5rem;
-`;
-
-const RemoveButton = styled(CloseOutlined)`
-    cursor: pointer;
-`;
+import LibraryBlock from './LibraryBlock';
 
 const Header = styled.div`
     display: flex;
@@ -102,24 +76,15 @@ function LibrariesList({libraries, onMoveLibrary, onRemoveLibrary, onAddLibrarie
 
     const canDrag = !isReadOnly && !search;
 
-    const _getLibraryBlock = (
-        library: GET_LIBRARIES_LIST_libraries_list,
-        props?: any,
-        dragHandleProps?: DraggableProvidedDragHandleProps
-    ) => (
-        <LibraryBlock key={library.id} {...props}>
-            {canDrag ? (
-                <DragHandle {...dragHandleProps}>
-                    <HolderOutlined />
-                </DragHandle>
-            ) : (
-                <div>{/* Keep this empty div for styling purpose when not draggable */}</div>
-            )}
-            <LibraryLabel>{localizedTranslation(library.label, lang)}</LibraryLabel>
-            {isCustomMode && !isReadOnly && (
-                <RemoveButton aria-label="remove" onClick={_handleRemoveLibrary(library.id)} />
-            )}
-        </LibraryBlock>
+    const _getLibraryBlock = (library: GET_LIBRARIES_LIST_libraries_list, dragProvided?: DraggableProvided) => (
+        <LibraryBlock
+            canDrag={canDrag}
+            customMode={isCustomMode}
+            dragProvided={dragProvided}
+            readOnly={isReadOnly}
+            library={library}
+            onRemoveLibrary={_handleRemoveLibrary(library.id)}
+        />
     );
 
     const addLibraryButton = (
@@ -149,13 +114,7 @@ function LibrariesList({libraries, onMoveLibrary, onRemoveLibrary, onAddLibrarie
                                     {displayedLibraries.map((lib, index) =>
                                         canDrag ? (
                                             <Draggable key={lib.id} index={index} draggableId={lib.id}>
-                                                {dragProvided =>
-                                                    _getLibraryBlock(
-                                                        lib,
-                                                        {ref: dragProvided.innerRef, ...dragProvided.draggableProps},
-                                                        dragProvided.dragHandleProps
-                                                    )
-                                                }
+                                                {dragProvided => _getLibraryBlock(lib, dragProvided)}
                                             </Draggable>
                                         ) : (
                                             _getLibraryBlock(lib)
