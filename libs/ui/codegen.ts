@@ -24,7 +24,10 @@ const config: CodegenConfig = {
                 },
                 onlyOperationTypes: true,
                 skipTypename: true,
-                flattenGeneratedTypes: true
+                flattenGeneratedTypes: true,
+                flattenGeneratedTypesIncludeFragments: true,
+                exportFragmentSpreadSubTypes: true,
+                mergeFragmentTypes: true
             }
         }
     }

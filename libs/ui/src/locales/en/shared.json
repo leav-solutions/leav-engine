@@ -2,7 +2,9 @@
     "global": {
         "submit": "Submit",
         "cancel": "Cancel",
-        "close": "Close"
+        "close": "Close",
+        "id": "Identifier",
+        "search": "Search"
     },
     "errors": {
         "default_language_required": "The default language is required",
@@ -45,6 +47,34 @@
         "id": "Identifier",
         "label": "Label",
         "search": "Search",
-        "new_library": "New library"
+        "new_library": "New library",
+        "behavior": "Behavior",
+        "behavior_standard": "Standard",
+        "behavior_files": "Files",
+        "behavior_directories": "Directories",
+        "record_identity": "ID card of records",
+        "preview": "Preview",
+        "color": "Color",
+        "treeColorPreview": "Tree for default color and preview",
+        "info": "Information",
+        "attributes": "Attributes"
+    },
+    "attributes": {
+        "list_label": "Attribute",
+        "type": "Type",
+        "type_simple": "Simple",
+        "type_simple_link": "Simple link",
+        "type_advanced": "Advanced",
+        "type_advanced_link": "Advanced link",
+        "type_tree": "Tree",
+        "format": "Format",
+        "format_boolean": "Boolean",
+        "format_date": "Date",
+        "format_date_range": "Date range",
+        "format_encrypted": "Encrypted",
+        "format_extended": "Extended",
+        "format_numeric": "Numeric",
+        "format_text": "Text",
+        "delete_confirm": "Do you really want to delete this attribute?"
     }
 }
