@@ -757,6 +757,188 @@ export type ViewValuesVersionInput = {
     treeNode: Scalars['String'];
 };
 
+export type ApplicationDetailsFragment = {
+    id: string;
+    label: any;
+    type: ApplicationType;
+    description?: any | null;
+    endpoint?: string | null;
+    url?: string | null;
+    color?: string | null;
+    module?: string | null;
+    settings?: any | null;
+    icon?:
+        | {
+              id: string;
+              whoAmI: {
+                  id: string;
+                  label?: string | null;
+                  color?: string | null;
+                  library: {id: string; label?: any | null};
+                  preview?: {
+                      tiny?: string | null;
+                      small?: string | null;
+                      medium?: string | null;
+                      big?: string | null;
+                      huge?: string | null;
+                  } | null;
+              };
+          }
+        | {
+              id: string;
+              whoAmI: {
+                  id: string;
+                  label?: string | null;
+                  color?: string | null;
+                  library: {id: string; label?: any | null};
+                  preview?: {
+                      tiny?: string | null;
+                      small?: string | null;
+                      medium?: string | null;
+                      big?: string | null;
+                      huge?: string | null;
+                  } | null;
+              };
+          }
+        | null;
+    permissions: {access_application: boolean; admin_application: boolean};
+    install?: {status: ApplicationInstallStatus; lastCallResult?: string | null} | null;
+};
+
+export type RecordIdentityCiKj97QeAnYbXczlkDlUdl7S95HqiBoLpiYrguenasFragment = {
+    id: string;
+    whoAmI: {
+        id: string;
+        label?: string | null;
+        color?: string | null;
+        library: {id: string; label?: any | null};
+        preview?: {
+            tiny?: string | null;
+            small?: string | null;
+            medium?: string | null;
+            big?: string | null;
+            huge?: string | null;
+        } | null;
+    };
+};
+
+export type RecordIdentityGJvi46pODkKgHixpuL7Kn0ihx9N0m9wDj6oxCkw8Fragment = {
+    id: string;
+    whoAmI: {
+        id: string;
+        label?: string | null;
+        color?: string | null;
+        library: {id: string; label?: any | null};
+        preview?: {
+            tiny?: string | null;
+            small?: string | null;
+            medium?: string | null;
+            big?: string | null;
+            huge?: string | null;
+        } | null;
+    };
+};
+
+export type RecordIdentityFragment =
+    | RecordIdentityCiKj97QeAnYbXczlkDlUdl7S95HqiBoLpiYrguenasFragment
+    | RecordIdentityGJvi46pODkKgHixpuL7Kn0ihx9N0m9wDj6oxCkw8Fragment;
+
+export type LibraryDetailsFragment = {
+    id: string;
+    label?: any | null;
+    behavior: LibraryBehavior;
+    system?: boolean | null;
+    fullTextAttributes?: Array<{id: string; label?: any | null}> | null;
+    attributes?: Array<
+        | {
+              id: string;
+              label?: any | null;
+              system: boolean;
+              type: AttributeType;
+              format?: AttributeFormat | null;
+              linked_library?: {id: string; behavior: LibraryBehavior} | null;
+          }
+        | {id: string; label?: any | null; system: boolean; type: AttributeType; format?: AttributeFormat | null}
+    > | null;
+    permissions_conf?: {
+        relation: PermissionsRelation;
+        permissionTreeAttributes: Array<
+            {id: string; label?: any | null} | {id: string; label?: any | null; linked_tree?: {id: string} | null}
+        >;
+    } | null;
+    recordIdentityConf?: {
+        label?: string | null;
+        color?: string | null;
+        preview?: string | null;
+        treeColorPreview?: string | null;
+    } | null;
+    permissions?: {
+        admin_library: boolean;
+        access_library: boolean;
+        access_record: boolean;
+        create_record: boolean;
+        edit_record: boolean;
+        delete_record: boolean;
+    } | null;
+    icon?:
+        | {
+              id: string;
+              whoAmI: {
+                  id: string;
+                  label?: string | null;
+                  color?: string | null;
+                  library: {id: string; label?: any | null};
+                  preview?: {
+                      tiny?: string | null;
+                      small?: string | null;
+                      medium?: string | null;
+                      big?: string | null;
+                      huge?: string | null;
+                  } | null;
+              };
+          }
+        | {
+              id: string;
+              whoAmI: {
+                  id: string;
+                  label?: string | null;
+                  color?: string | null;
+                  library: {id: string; label?: any | null};
+                  preview?: {
+                      tiny?: string | null;
+                      small?: string | null;
+                      medium?: string | null;
+                      big?: string | null;
+                      huge?: string | null;
+                  } | null;
+              };
+          }
+        | null;
+};
+
+export type LibraryAttributesLinkAttributeFragment = {
+    id: string;
+    label?: any | null;
+    system: boolean;
+    type: AttributeType;
+    format?: AttributeFormat | null;
+    linked_library?: {id: string; behavior: LibraryBehavior} | null;
+};
+
+export type LibraryAttributesStandardAttributeTreeAttributeFragment = {
+    id: string;
+    label?: any | null;
+    system: boolean;
+    type: AttributeType;
+    format?: AttributeFormat | null;
+};
+
+export type LibraryAttributesFragment =
+    | LibraryAttributesLinkAttributeFragment
+    | LibraryAttributesStandardAttributeTreeAttributeFragment;
+
+export type LibraryLinkAttributeDetailsFragment = {linked_library?: {id: string; behavior: LibraryBehavior} | null};
+
 export type CheckApplicationExistenceQueryVariables = Exact<{
     id?: InputMaybe<Scalars['ID']>;
     endpoint?: InputMaybe<Scalars['String']>;
@@ -781,390 +963,6 @@ export type GetApplicationByIdQuery = {
             module?: string | null;
             settings?: any | null;
             icon?:
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
                 | {
                       id: string;
                       whoAmI: {
@@ -1264,358 +1062,153 @@ export type SaveApplicationMutation = {
                       } | null;
                   };
               }
+            | null;
+        permissions: {access_application: boolean; admin_application: boolean};
+        install?: {status: ApplicationInstallStatus; lastCallResult?: string | null} | null;
+    };
+};
+
+export type CheckLibraryExistenceQueryVariables = Exact<{
+    id?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
+}>;
+
+export type CheckLibraryExistenceQuery = {libraries?: {totalCount: number} | null};
+
+export type GetLibrariesQueryVariables = Exact<{[key: string]: never}>;
+
+export type GetLibrariesQuery = {libraries?: {list: Array<{id: string; label?: any | null}>} | null};
+
+export type GetLibraryByIdQueryVariables = Exact<{
+    id?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
+}>;
+
+export type GetLibraryByIdQuery = {
+    libraries?: {
+        list: Array<{
+            id: string;
+            label?: any | null;
+            behavior: LibraryBehavior;
+            system?: boolean | null;
+            fullTextAttributes?: Array<{id: string; label?: any | null}> | null;
+            attributes?: Array<
+                | {
+                      id: string;
+                      label?: any | null;
+                      system: boolean;
+                      type: AttributeType;
+                      format?: AttributeFormat | null;
+                      linked_library?: {id: string; behavior: LibraryBehavior} | null;
+                  }
+                | {
+                      id: string;
+                      label?: any | null;
+                      system: boolean;
+                      type: AttributeType;
+                      format?: AttributeFormat | null;
+                  }
+            > | null;
+            permissions_conf?: {
+                relation: PermissionsRelation;
+                permissionTreeAttributes: Array<
+                    | {id: string; label?: any | null}
+                    | {id: string; label?: any | null; linked_tree?: {id: string} | null}
+                >;
+            } | null;
+            recordIdentityConf?: {
+                label?: string | null;
+                color?: string | null;
+                preview?: string | null;
+                treeColorPreview?: string | null;
+            } | null;
+            permissions?: {
+                admin_library: boolean;
+                access_library: boolean;
+                access_record: boolean;
+                create_record: boolean;
+                edit_record: boolean;
+                delete_record: boolean;
+            } | null;
+            icon?:
+                | {
+                      id: string;
+                      whoAmI: {
+                          id: string;
+                          label?: string | null;
+                          color?: string | null;
+                          library: {id: string; label?: any | null};
+                          preview?: {
+                              tiny?: string | null;
+                              small?: string | null;
+                              medium?: string | null;
+                              big?: string | null;
+                              huge?: string | null;
+                          } | null;
+                      };
+                  }
+                | {
+                      id: string;
+                      whoAmI: {
+                          id: string;
+                          label?: string | null;
+                          color?: string | null;
+                          library: {id: string; label?: any | null};
+                          preview?: {
+                              tiny?: string | null;
+                              small?: string | null;
+                              medium?: string | null;
+                              big?: string | null;
+                              huge?: string | null;
+                          } | null;
+                      };
+                  }
+                | null;
+        }>;
+    } | null;
+};
+
+export type SaveLibraryMutationVariables = Exact<{
+    library: LibraryInput;
+}>;
+
+export type SaveLibraryMutation = {
+    saveLibrary: {
+        id: string;
+        label?: any | null;
+        behavior: LibraryBehavior;
+        system?: boolean | null;
+        fullTextAttributes?: Array<{id: string; label?: any | null}> | null;
+        attributes?: Array<
             | {
                   id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
+                  label?: any | null;
+                  system: boolean;
+                  type: AttributeType;
+                  format?: AttributeFormat | null;
+                  linked_library?: {id: string; behavior: LibraryBehavior} | null;
               }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
+            | {id: string; label?: any | null; system: boolean; type: AttributeType; format?: AttributeFormat | null}
+        > | null;
+        permissions_conf?: {
+            relation: PermissionsRelation;
+            permissionTreeAttributes: Array<
+                {id: string; label?: any | null} | {id: string; label?: any | null; linked_tree?: {id: string} | null}
+            >;
+        } | null;
+        recordIdentityConf?: {
+            label?: string | null;
+            color?: string | null;
+            preview?: string | null;
+            treeColorPreview?: string | null;
+        } | null;
+        permissions?: {
+            admin_library: boolean;
+            access_library: boolean;
+            access_record: boolean;
+            create_record: boolean;
+            edit_record: boolean;
+            delete_record: boolean;
+        } | null;
+        icon?:
             | {
                   id: string;
                   whoAmI: {
@@ -1649,14 +1242,8 @@ export type SaveApplicationMutation = {
                   };
               }
             | null;
-        permissions: {access_application: boolean; admin_application: boolean};
-        install?: {status: ApplicationInstallStatus; lastCallResult?: string | null} | null;
     };
 };
-
-export type GetLibrariesQueryVariables = Exact<{[key: string]: never}>;
-
-export type GetLibrariesQuery = {libraries?: {list: Array<{id: string; label?: any | null}>} | null};
 
 export type UserInfoQueryVariables = Exact<{
     type: PermissionTypes;
@@ -1728,6 +1315,72 @@ export const ApplicationDetailsFragmentDoc = gql`
         }
         settings
     }
+    ${RecordIdentityFragmentDoc}
+`;
+export const LibraryLinkAttributeDetailsFragmentDoc = gql`
+    fragment LibraryLinkAttributeDetails on LinkAttribute {
+        linked_library {
+            id
+            behavior
+        }
+    }
+`;
+export const LibraryAttributesFragmentDoc = gql`
+    fragment LibraryAttributes on Attribute {
+        id
+        label
+        system
+        type
+        format
+        ...LibraryLinkAttributeDetails
+    }
+    ${LibraryLinkAttributeDetailsFragmentDoc}
+`;
+export const LibraryDetailsFragmentDoc = gql`
+    fragment LibraryDetails on Library {
+        id
+        label
+        behavior
+        system
+        label
+        fullTextAttributes {
+            id
+            label
+        }
+        attributes {
+            ...LibraryAttributes
+        }
+        permissions_conf {
+            permissionTreeAttributes {
+                id
+                ... on TreeAttribute {
+                    linked_tree {
+                        id
+                    }
+                }
+                label
+            }
+            relation
+        }
+        recordIdentityConf {
+            label
+            color
+            preview
+            treeColorPreview
+        }
+        permissions {
+            admin_library
+            access_library
+            access_record
+            create_record
+            edit_record
+            delete_record
+        }
+        icon {
+            ...RecordIdentity
+        }
+    }
+    ${LibraryAttributesFragmentDoc}
     ${RecordIdentityFragmentDoc}
 `;
 export const CheckApplicationExistenceDocument = gql`
@@ -1966,6 +1619,54 @@ export type SaveApplicationMutationOptions = Apollo.BaseMutationOptions<
     SaveApplicationMutation,
     SaveApplicationMutationVariables
 >;
+export const CheckLibraryExistenceDocument = gql`
+    query CHECK_LIBRARY_EXISTENCE($id: [ID!]) {
+        libraries(filters: {id: $id}) {
+            totalCount
+        }
+    }
+`;
+
+/**
+ * __useCheckLibraryExistenceQuery__
+ *
+ * To run a query within a React component, call `useCheckLibraryExistenceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCheckLibraryExistenceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCheckLibraryExistenceQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useCheckLibraryExistenceQuery(
+    baseOptions?: Apollo.QueryHookOptions<CheckLibraryExistenceQuery, CheckLibraryExistenceQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useQuery<CheckLibraryExistenceQuery, CheckLibraryExistenceQueryVariables>(
+        CheckLibraryExistenceDocument,
+        options
+    );
+}
+export function useCheckLibraryExistenceLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<CheckLibraryExistenceQuery, CheckLibraryExistenceQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useLazyQuery<CheckLibraryExistenceQuery, CheckLibraryExistenceQueryVariables>(
+        CheckLibraryExistenceDocument,
+        options
+    );
+}
+export type CheckLibraryExistenceQueryHookResult = ReturnType<typeof useCheckLibraryExistenceQuery>;
+export type CheckLibraryExistenceLazyQueryHookResult = ReturnType<typeof useCheckLibraryExistenceLazyQuery>;
+export type CheckLibraryExistenceQueryResult = Apollo.QueryResult<
+    CheckLibraryExistenceQuery,
+    CheckLibraryExistenceQueryVariables
+>;
 export const GetLibrariesDocument = gql`
     query GET_LIBRARIES {
         libraries {
@@ -2007,6 +1708,84 @@ export function useGetLibrariesLazyQuery(
 export type GetLibrariesQueryHookResult = ReturnType<typeof useGetLibrariesQuery>;
 export type GetLibrariesLazyQueryHookResult = ReturnType<typeof useGetLibrariesLazyQuery>;
 export type GetLibrariesQueryResult = Apollo.QueryResult<GetLibrariesQuery, GetLibrariesQueryVariables>;
+export const GetLibraryByIdDocument = gql`
+    query GET_LIBRARY_BY_ID($id: [ID!]) {
+        libraries(filters: {id: $id}) {
+            list {
+                ...LibraryDetails
+            }
+        }
+    }
+    ${LibraryDetailsFragmentDoc}
+`;
+
+/**
+ * __useGetLibraryByIdQuery__
+ *
+ * To run a query within a React component, call `useGetLibraryByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLibraryByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLibraryByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetLibraryByIdQuery(
+    baseOptions?: Apollo.QueryHookOptions<GetLibraryByIdQuery, GetLibraryByIdQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useQuery<GetLibraryByIdQuery, GetLibraryByIdQueryVariables>(GetLibraryByIdDocument, options);
+}
+export function useGetLibraryByIdLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<GetLibraryByIdQuery, GetLibraryByIdQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useLazyQuery<GetLibraryByIdQuery, GetLibraryByIdQueryVariables>(GetLibraryByIdDocument, options);
+}
+export type GetLibraryByIdQueryHookResult = ReturnType<typeof useGetLibraryByIdQuery>;
+export type GetLibraryByIdLazyQueryHookResult = ReturnType<typeof useGetLibraryByIdLazyQuery>;
+export type GetLibraryByIdQueryResult = Apollo.QueryResult<GetLibraryByIdQuery, GetLibraryByIdQueryVariables>;
+export const SaveLibraryDocument = gql`
+    mutation saveLibrary($library: LibraryInput!) {
+        saveLibrary(library: $library) {
+            ...LibraryDetails
+        }
+    }
+    ${LibraryDetailsFragmentDoc}
+`;
+export type SaveLibraryMutationFn = Apollo.MutationFunction<SaveLibraryMutation, SaveLibraryMutationVariables>;
+
+/**
+ * __useSaveLibraryMutation__
+ *
+ * To run a mutation, you first call `useSaveLibraryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveLibraryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [saveLibraryMutation, { data, loading, error }] = useSaveLibraryMutation({
+ *   variables: {
+ *      library: // value for 'library'
+ *   },
+ * });
+ */
+export function useSaveLibraryMutation(
+    baseOptions?: Apollo.MutationHookOptions<SaveLibraryMutation, SaveLibraryMutationVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useMutation<SaveLibraryMutation, SaveLibraryMutationVariables>(SaveLibraryDocument, options);
+}
+export type SaveLibraryMutationHookResult = ReturnType<typeof useSaveLibraryMutation>;
+export type SaveLibraryMutationResult = Apollo.MutationResult<SaveLibraryMutation>;
+export type SaveLibraryMutationOptions = Apollo.BaseMutationOptions<SaveLibraryMutation, SaveLibraryMutationVariables>;
 export const UserInfoDocument = gql`
     query USER_INFO($type: PermissionTypes!, $actions: [PermissionsActions!]!) {
         me {

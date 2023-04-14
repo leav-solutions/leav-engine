@@ -2,13 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined} from '@ant-design/icons';
+import {useApolloClient} from '@apollo/client';
 import {localizedTranslation, Override} from '@leav/utils';
 import {Button, Input, Table, TableColumnsType} from 'antd';
 import {Key, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {useLang} from '../../../hooks';
-import {GetLibrariesQuery, useGetLibrariesQuery} from '../../../_gqlTypes';
+import {GetLibrariesQuery, SaveLibraryMutation, useGetLibrariesQuery} from '../../../_gqlTypes';
+import {getLibrariesQuery} from '../../../_queries/libraries/getLibrariesQuery';
 import {EditLibraryModal} from '../../EditLibraryModal';
 import {ErrorDisplay} from '../../ErrorDisplay';
 import {Loading} from '../../Loading';
@@ -40,6 +42,7 @@ function LibrariesList({onSelect, canCreate = true, selected = [], multiple = tr
     const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
     const [search, setSearch] = useState('');
     const [isNewLibraryModalOpen, setIsNewLibraryModalOpen] = useState(false);
+    const client = useApolloClient();
 
     const _handleSelectionChange = (selection: Key[]) => {
         setSelectedRowKeys(selection);
@@ -67,6 +70,25 @@ function LibrariesList({onSelect, canCreate = true, selected = [], multiple = tr
         setIsNewLibraryModalOpen(true);
     };
     const _handleCloseNewLibrary = () => setIsNewLibraryModalOpen(false);
+
+    const _handlePostCreate = async (newLibrary: SaveLibraryMutation['saveLibrary']) => {
+        const allLibrariesData = client.readQuery<GetLibrariesQuery>({query: getLibrariesQuery});
+
+        if (allLibrariesData) {
+            client.writeQuery({
+                query: getLibrariesQuery,
+                data: {
+                    libraries: {
+                        ...allLibrariesData.libraries,
+                        list: [newLibrary, ...allLibrariesData.libraries.list]
+                    }
+                }
+            });
+        }
+        const newSelection = [...selectedRowKeys, newLibrary.id];
+        onSelect(newSelection as string[]);
+        setSelectedRowKeys(newSelection);
+    };
 
     if (loading) {
         return <Loading />;
@@ -139,7 +161,14 @@ function LibrariesList({onSelect, canCreate = true, selected = [], multiple = tr
                     onClick: () => _handleRowClick(record)
                 })}
             />
-            {isNewLibraryModalOpen && <EditLibraryModal open={isNewLibraryModalOpen} />}
+            {isNewLibraryModalOpen && (
+                <EditLibraryModal
+                    open={isNewLibraryModalOpen}
+                    onClose={_handleCloseNewLibrary}
+                    onPostCreate={_handlePostCreate}
+                    width={790}
+                />
+            )}
         </>
     );
 }

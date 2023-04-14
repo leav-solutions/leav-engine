@@ -2,7 +2,9 @@
     "global": {
         "submit": "Valider",
         "cancel": "Annuler",
-        "close": "Fermer"
+        "close": "Fermer",
+        "id": "Identifiant",
+        "search": "Rechercher"
     },
     "errors": {
         "default_language_required": "La langue par défaut est requise",
@@ -44,6 +46,34 @@
         "id": "Identifiant",
         "label": "Libellé",
         "search": "Rechercher",
-        "new_library": "Nouvelle bibliothèque"
+        "new_library": "Nouvelle bibliothèque",
+        "behavior": "Comportement",
+        "behavior_standard": "Standard",
+        "behavior_files": "Fichiers",
+        "behavior_directories": "Dossiers",
+        "record_identity": "Carte d'identité des éléments",
+        "preview": "Aperçu",
+        "color": "Couleur",
+        "treeColorPreview": "Arbre pour couleur et aperçu par défaut",
+        "info": "Informations",
+        "attributes": "Attributs"
+    },
+    "attributes": {
+        "list_label": "Attribut",
+        "type": "Type",
+        "type_simple": "Simple",
+        "type_simple_link": "Lien simple",
+        "type_advanced": "Avancé",
+        "type_advanced_link": "Lien avancé",
+        "type_tree": "Arbre",
+        "format": "Format",
+        "format_boolean": "Booléen",
+        "format_date": "Date",
+        "format_date_range": "Période",
+        "format_encrypted": "Crypté",
+        "format_extended": "Étendu",
+        "format_numeric": "Numérique",
+        "format_text": "Texte",
+        "delete_confirm": "Êtes-vous sûr de vouloir supprimer cet attribut ?"
     }
 }
