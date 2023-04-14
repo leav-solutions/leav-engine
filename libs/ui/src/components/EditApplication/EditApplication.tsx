@@ -61,16 +61,7 @@ function EditApplication({
             label: t('applications.info'),
             children: <TabContentWrapper style={tabContentStyle}>{appInfoComp}</TabContentWrapper>
         },
-        ...additionalTabs,
-        {
-            key: 'install',
-            label: t('applications.install'),
-            children: (
-                <TabContentWrapper style={tabContentStyle}>
-                    <EditApplicationInstall application={application} />
-                </TabContentWrapper>
-            )
-        }
+        ...additionalTabs
     ];
 
     return <Tabs items={tabs} defaultActiveKey={activeTab} />;
