@@ -7,7 +7,6 @@ import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
 import ApplicationContext from 'context/CurrentApplicationContext';
 import {ICurrentApplicationContext} from 'context/CurrentApplicationContext/_types';
-import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
 import {getGlobalSettingsQuery} from 'queries/globalSettings/getGlobalSettingsQuery';
 import {getMe} from 'queries/users/me';
 import React, {useEffect, useState} from 'react';
@@ -16,7 +15,6 @@ import {HTML5Backend} from 'react-dnd-html5-backend';
 import {useTranslation} from 'react-i18next';
 import {Message} from 'semantic-ui-react';
 import * as yup from 'yup';
-import {GET_APPLICATION_BY_ID, GET_APPLICATION_BY_IDVariables} from '_gqlTypes/GET_APPLICATION_BY_ID';
 import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 import {IS_ALLOWED, IS_ALLOWEDVariables} from '_gqlTypes/IS_ALLOWED';
 import {ME} from '_gqlTypes/ME';
@@ -29,10 +27,18 @@ import UserContext from '../../shared/UserContext';
 import {IUserContext} from '../../shared/UserContext/UserContext';
 import Home from '../Home';
 import MessagesDisplay from '../MessagesDisplay';
+import {GET_LANGS} from '_gqlTypes/GET_LANGS';
+import {getLangs} from 'queries/core/getLangs';
+import {GET_APPLICATIONS, GET_APPLICATIONSVariables} from '_gqlTypes/GET_APPLICATIONS';
+import {APP_ENDPOINT} from '../../../constants';
+import useAppLang from 'hooks/useAppLang/useAppLang';
+import {getApplicationByEndpointQuery} from 'queries/applications/getApplicationByEndpointQuery';
+import {GET_APPLICATION_BY_ENDPOINT, GET_APPLICATION_BY_ENDPOINTVariables} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
 
 const App = (): JSX.Element => {
     const {t, i18n} = useTranslation();
-    const appId = process.env.REACT_APP_APPLICATION_ID;
+    const {lang: appLang, loading: appLangLoading, error: appLangErr} = useAppLang();
+    const {data: meData, loading: meLoading, error: meError} = useQuery<ME>(getMe);
 
     const {loading: isAllowedLoading, error: isAllowedError, data: isAllowedData} = useQuery<
         IS_ALLOWED,
@@ -43,11 +49,14 @@ const App = (): JSX.Element => {
             actions: Object.values(PermissionsActions).filter(a => !!a.match(/^admin_/))
         }
     });
-    const {data: meData, loading: meLoading, error: meError} = useQuery<ME>(getMe);
+
+    const {data: availableLangs, loading: langsLoading, error: langsError} = useQuery<GET_LANGS>(getLangs);
+
     const {data: applicationData, loading: applicationLoading, error: applicationError} = useQuery<
-        GET_APPLICATION_BY_ID,
-        GET_APPLICATION_BY_IDVariables
-    >(getApplicationByIdQuery, {variables: {id: appId ?? ''}});
+        GET_APPLICATION_BY_ENDPOINT,
+        GET_APPLICATION_BY_ENDPOINTVariables
+    >(getApplicationByEndpointQuery, {variables: {endpoint: APP_ENDPOINT}});
+
     const {
         data: globalSettingsData,
         loading: globalSettingsLoading,
@@ -77,7 +86,14 @@ const App = (): JSX.Element => {
         }
     });
 
-    if (isAllowedLoading || meLoading || applicationLoading || globalSettingsLoading) {
+    if (
+        isAllowedLoading ||
+        meLoading ||
+        applicationLoading ||
+        globalSettingsLoading ||
+        langsLoading ||
+        appLangLoading
+    ) {
         return <Loading style={{margin: '15rem'}} />;
     }
 
@@ -87,7 +103,9 @@ const App = (): JSX.Element => {
         applicationError ||
         globalSettingsError ||
         (!isAllowedLoading && !isAllowedData?.isAllowed) ||
-        (!meLoading && !meData?.me)
+        (!meLoading && !meData?.me) ||
+        appLangErr ||
+        langsError
     ) {
         return (
             <Message negative style={{margin: '2em'}}>
@@ -95,13 +113,14 @@ const App = (): JSX.Element => {
                     meError?.message ??
                     applicationError?.message ??
                     globalSettingsError?.message ??
+                    appLangErr ??
                     t('errors.INTERNAL_ERROR')}
             </Message>
         );
     }
 
     if (!currentApp) {
-        return <ErrorDisplay message={t('applications.current_app_error', {appId})} />;
+        return <ErrorDisplay message={t('applications.current_app_error', {appId: currentApp.id})} />;
     }
 
     if (!currentApp.permissions.access_application) {
@@ -114,15 +133,6 @@ const App = (): JSX.Element => {
         permissions: permsArrayToObject(isAllowedData.isAllowed)
     };
 
-    // const lang = getSysTranslationQueryLanguage(i18n);
-    const availableLangs = process.env.REACT_APP_AVAILABLE_LANG
-        ? process.env.REACT_APP_AVAILABLE_LANG.split(',').map(l => AvailableLanguage[l])
-        : [];
-
-    const defaultLang = process.env.REACT_APP_DEFAULT_LANG
-        ? AvailableLanguage[process.env.REACT_APP_DEFAULT_LANG]
-        : AvailableLanguage.en;
-
     const applicationContextData: ICurrentApplicationContext = {
         currentApp,
         globalSettings: globalSettingsData?.globalSettings
@@ -130,7 +140,14 @@ const App = (): JSX.Element => {
 
     return (
         <DndProvider backend={HTML5Backend}>
-            <LangContext.Provider value={{lang, availableLangs, defaultLang, setLang}}>
+            <LangContext.Provider
+                value={{
+                    lang,
+                    availableLangs: availableLangs.langs.map(l => AvailableLanguage[l]),
+                    defaultLang: AvailableLanguage[appLang],
+                    setLang
+                }}
+            >
                 <UserContext.Provider value={userData}>
                     <ApplicationContext.Provider value={applicationContextData}>
                         <div className="App height100">

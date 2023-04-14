@@ -10,6 +10,7 @@ import {useEffect} from 'react';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import styled from 'styled-components';
 import useAppName from '../../hooks/useAppName';
+import {APPS_ENDPOINT, APP_ENDPOINT} from '../../constants';
 
 const Background = styled.div`
     position: absolute;
@@ -20,11 +21,7 @@ const Background = styled.div`
     background: #8051fc;
 `;
 
-interface IAppProps {
-    basename: string;
-}
-
-function App({basename}: IAppProps) {
+function App() {
     const {name, loading, error} = useAppName();
 
     useEffect(() => {
@@ -41,7 +38,7 @@ function App({basename}: IAppProps) {
 
     return (
         <Background>
-            <BrowserRouter basename={basename}>
+            <BrowserRouter basename={`${APPS_ENDPOINT}/${APP_ENDPOINT}`}>
                 <Switch>
                     <Route exact path="/">
                         <Login />

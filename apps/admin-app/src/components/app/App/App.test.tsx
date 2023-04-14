@@ -11,6 +11,9 @@ import {PermissionsActions, PermissionTypes} from '_gqlTypes/globalTypes';
 import {act, render, screen} from '_tests/testUtils';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import App from '.';
+import {getLangs} from 'queries/core/getLangs';
+import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
+import {getApplicationByEndpointQuery} from 'queries/applications/getApplicationByEndpointQuery';
 
 jest.mock('../Home', () => {
     return function Home() {
@@ -23,6 +26,10 @@ jest.mock('../MessagesDisplay', () => {
         return <div>MessagesDisplay</div>;
     };
 });
+
+jest.mock('../../../constants', () => ({
+    APP_ENDPOINT: 'admin'
+}));
 
 test('Renders app', async () => {
     const mocks: MockedResponse[] = [
@@ -57,6 +64,17 @@ test('Renders app', async () => {
         },
         {
             request: {
+                query: getLangs,
+                variables: {}
+            },
+            result: {
+                data: {
+                    langs: ['fr']
+                }
+            }
+        },
+        {
+            request: {
                 query: isAllowedQuery,
                 variables: {
                     type: PermissionTypes.admin,
@@ -73,9 +91,9 @@ test('Renders app', async () => {
         },
         {
             request: {
-                query: getApplicationByIdQuery,
+                query: getApplicationByEndpointQuery,
                 variables: {
-                    id: mockApplicationDetails.id
+                    endpoint: 'admin'
                 }
             },
             result: {
@@ -104,7 +122,6 @@ test('Renders app', async () => {
         }
     ];
 
-    process.env.REACT_APP_APPLICATION_ID = mockApplicationDetails.id;
     await act(async () => {
         render(<App />, {apolloMocks: mocks, cacheSettings: {possibleTypes: {Record: ['User']}}});
     });

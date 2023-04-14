@@ -9,6 +9,7 @@ import {greyBackground} from 'themingVar';
 import AppMenu from '../AppMenu';
 import Header from '../Header';
 import Routes from '../Routes';
+import {APPS_ENDPOINT, APP_ENDPOINT} from '../../../constants';
 
 const headerHeight = '3rem';
 const LeftCol = styled.div`
@@ -49,7 +50,7 @@ function Home(): JSX.Element {
     };
 
     return (
-        <Router basename={`${process.env.REACT_APP_ENDPOINT ?? '/'}`}>
+        <Router basename={`${APPS_ENDPOINT}/${APP_ENDPOINT}`}>
             <HomeWrapper menuWidth={menuWidth}>
                 <HeaderWrapper>
                     <Header />

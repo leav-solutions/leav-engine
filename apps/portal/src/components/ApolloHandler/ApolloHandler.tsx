@@ -16,7 +16,7 @@ import {getMainDefinition} from '@apollo/client/utilities';
 import {onError} from '@apollo/link-error';
 import {message, Spin} from 'antd';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
-import {API_ENDPOINT, APPS_ENDPOINT, APP_ENDPOINT, LOGIN_ENDPOINT, ORIGIN_URL, WS_URL, BASE_URL} from '../../constants';
+import {API_ENDPOINT, APPS_ENDPOINT, APP_ENDPOINT, LOGIN_ENDPOINT, ORIGIN_URL, WS_URL} from '../../constants';
 import fetch from 'cross-fetch';
 import {createClient} from 'graphql-ws';
 import useGraphqlPossibleTypes from 'hooks/useGraphqlPossibleTypes';

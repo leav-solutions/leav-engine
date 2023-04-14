@@ -48,10 +48,10 @@ mv $BUILD_PORTAL_DIR $DEST_PORTAL_DIR
 checkExitCode
 
 # admin
-BUILD_LOGIN_DIR=../apps/admin/dist
+BUILD_LOGIN_DIR=../apps/admin-app/build
 DEST_LOGIN_DIR=../apps/core/applications/admin
-yarn workspace admin install
-yarn workspace login build
+yarn workspace admin-app install
+yarn workspace admin-app build
 checkExitCode
 
 rm -rf $DEST_LOGIN_DIR

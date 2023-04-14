@@ -39,7 +39,7 @@ function Index() {
         i18nIsInitialized && (
             <React.StrictMode>
                 <ConfigProvider theme={customTheme}>
-                    <App basename={`${APPS_ENDPOINT}/${APP_ENDPOINT}`} />
+                    <App />
                 </ConfigProvider>
             </React.StrictMode>
         )

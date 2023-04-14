@@ -25,6 +25,7 @@ import {Message, SemanticICONS} from 'semantic-ui-react';
 import * as yup from 'yup';
 import {ErrorTypes} from '_types/errors';
 import Loading from '../../shared/Loading';
+import {ORIGIN_URL, APPS_ENDPOINT, LOGIN_ENDPOINT, API_ENDPOINT, WS_URL} from '../../../constants';
 
 interface IApolloHandlerProps {
     children: ReactNode;
@@ -33,14 +34,14 @@ interface IApolloHandlerProps {
 export const UNAUTHENTICATED = 'UNAUTHENTICATED';
 
 const _redirectToLogin = () =>
-    window.location.replace(`${process.env.REACT_APP_LOGIN_ENDPOINT}?dest=${window.location.pathname}`);
+    window.location.replace(`${ORIGIN_URL}/${APPS_ENDPOINT}/${LOGIN_ENDPOINT}/?dest=${window.location.pathname}`);
 
 const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
     const dispatch = useDispatch();
     const {t} = useTranslation();
 
     const {loading: possibleTypesLoading, error: possibleTypesError, possibleTypes} = useGraphqlPossibleTypes(
-        process.env.REACT_APP_API_URL
+        `${ORIGIN_URL}/${API_ENDPOINT}`
     );
 
     if (possibleTypesLoading) {
@@ -134,7 +135,7 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
 
     const wsLink = new GraphQLWsLink(
         createClient({
-            url: process.env.REACT_APP_WS_URL
+            url: `${WS_URL}/${API_ENDPOINT}`
         })
     );
 
@@ -149,7 +150,7 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
             splitLink,
             _mutationsWatcherLink,
             new HttpLink({
-                uri: process.env.REACT_APP_API_URL
+                uri: `${ORIGIN_URL}/${API_ENDPOINT}`
             })
         ]),
         connectToDevTools: process.env.NODE_ENV === 'development',

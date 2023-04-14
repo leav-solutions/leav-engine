@@ -5,6 +5,8 @@
 // tslint:disable:no-console
 // In production, we register a service worker to serve assets from local cache.
 
+import {API_ENDPOINT, ORIGIN_URL} from './constants';
+
 // This lets the app load faster on subsequent visits in production, and gives
 // it offline capabilities. However, it also means that developers (and users)
 // will only see deployed updates on the 'N+1' visit to a page, since previously
@@ -24,7 +26,7 @@ const isLocalhost = Boolean(
 export default function register() {
     if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
         // The URL constructor is available in all browsers that support SW.
-        const publicUrl = new URL(process.env.PUBLIC_URL!, window.location.toString());
+        const publicUrl = new URL(`${ORIGIN_URL}/${API_ENDPOINT}`, window.location.toString());
         if (publicUrl.origin !== window.location.origin) {
             // Our service worker won't work if PUBLIC_URL is on a different origin
             // from what our page is served on. This might happen if a CDN is used to
@@ -33,7 +35,7 @@ export default function register() {
         }
 
         window.addEventListener('load', () => {
-            const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
+            const swUrl = `${ORIGIN_URL}/${API_ENDPOINT}/service-worker.js`;
 
             if (isLocalhost) {
                 // This is running on localhost. Lets check if a service worker still exists or not.
