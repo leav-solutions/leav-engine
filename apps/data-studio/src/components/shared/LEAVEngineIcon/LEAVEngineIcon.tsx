@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {APPS_ENDPOINT, APP_ENDPOINT} from '../../../constants';
 import React from 'react';
 
 interface ILEAVEngineIconProps {
@@ -11,7 +12,7 @@ interface ILEAVEngineIconProps {
 function LEAVEngineIcon({height, style}: ILEAVEngineIconProps): JSX.Element {
     return (
         <img
-            src={`/${import.meta.env.VITE_ENDPOINT}/assets/logo-leavengine.svg`}
+            src={`/${APPS_ENDPOINT}/${APP_ENDPOINT}/assets/logo-leavengine.svg`}
             alt="LEAV Engine"
             height={height}
             className="icon"

@@ -145,10 +145,10 @@ export const localizedTranslation = (translations: any, availableLanguages: Avai
     return translations[userLang] || translations[fallbackLang] || translations[Object.keys(translations)[0]] || '';
 };
 
-export const getSysTranslationQueryLanguage = (i18next: i18n): AvailableLanguage[] => {
+export const getSysTranslationQueryLanguage = (i18next: i18n, defaultLang?: AvailableLanguage): AvailableLanguage[] => {
     const userLang = i18next.language
         ? i18next.language.split('-')[0]
-        : AvailableLanguage[import.meta.env.VITE_DEFAULT_LANG as AvailableLanguage] ?? AvailableLanguage.en;
+        : AvailableLanguage[defaultLang] ?? AvailableLanguage.en;
     const fallbackLang = i18next.options?.fallbackLng ? (i18next as any).options.fallbackLng[0] : '';
 
     return [userLang, fallbackLang];

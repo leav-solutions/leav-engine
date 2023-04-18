@@ -13621,7 +13621,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-select@npm:^4.1.3, css-select@npm:^4.3.0":
+"css-select@npm:^4.1.3, css-select@npm:^4.2.1, css-select@npm:^4.3.0":
   version: 4.3.0
   resolution: "css-select@npm:4.3.0"
   dependencies:
@@ -13924,6 +13924,7 @@ __metadata:
     i18next-xhr-backend: 3.2.2
     jest: 29.4.1
     jest-environment-jsdom: 29.4.1
+    jest-fetch-mock: 3.0.3
     jest-styled-components: 7.1.1
     lodash: 4.17.21
     lodash-move: 1.1.1
@@ -13949,6 +13950,7 @@ __metadata:
     uuid: 9.0.0
     vite: 4.1.1
     vite-jest: 0.1.4
+    vite-plugin-dynamic-base: 0.4.9
     vite-plugin-svgr: 2.4.0
     waait: 1.0.5
     xlsx: 0.18.5
@@ -17643,7 +17645,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"he@npm:^1.2.0":
+"he@npm:1.2.0, he@npm:^1.2.0":
   version: 1.2.0
   resolution: "he@npm:1.2.0"
   bin:
@@ -22204,6 +22206,7 @@ __metadata:
     ts-jest-mock-import-meta: 1.0.0
     typescript: 4.8.3
     vite: 4.1.1
+    vite-plugin-dynamic-base: 0.4.9
     vite-plugin-rewrite-all: 1.0.1
     web-vitals: 2.1.4
   languageName: unknown
@@ -23155,6 +23158,16 @@ __metadata:
   bin:
     node-gyp: bin/node-gyp.js
   checksum: 4d8ef8860f7e4f4d86c91db3f519d26ed5cc23b48fe54543e2afd86162b4acbd14f21de42a5db344525efb69a991e021b96a68c70c6e2d5f4a5cb770793da6d3
+  languageName: node
+  linkType: hard
+
+"node-html-parser@npm:^5.3.3":
+  version: 5.4.2
+  resolution: "node-html-parser@npm:5.4.2"
+  dependencies:
+    css-select: ^4.2.1
+    he: 1.2.0
+  checksum: 2d2391147c83b402786eeab95d23ea4e24ca8608e0e70a2823bfd4f2a248be13a8cc31acfd55a0109e051131e4f0c17d7ada8d999ce70ff2e342ab0110f5da59
   languageName: node
   linkType: hard
 
@@ -24302,6 +24315,7 @@ __metadata:
     typescript: 4.8.3
     vite: 4.1.1
     vite-jest: 0.1.4
+    vite-plugin-dynamic-base: 0.4.9
   languageName: unknown
   linkType: soft
 
@@ -30992,6 +31006,15 @@ __metadata:
   bin:
     vite-jest: bin/vite-jest.js
   checksum: 5f994aec2d28f3192d3265a4a3d67647238a731056302f88f4bdf9dc46425c2e2a0546020aada028c51956209a3c64d6aee1acc5a8284909a41e01d0f8246595
+  languageName: node
+  linkType: hard
+
+"vite-plugin-dynamic-base@npm:0.4.9":
+  version: 0.4.9
+  resolution: "vite-plugin-dynamic-base@npm:0.4.9"
+  dependencies:
+    node-html-parser: ^5.3.3
+  checksum: 92504bf28e8ecc472914a124e008c30d4273fa8305528d2fa3792f02db3b18e5ca370e0e5a4a8f5ea5171b3085732c9ca9e96cff380c0feab4444921ebdd75b6
   languageName: node
   linkType: hard
 

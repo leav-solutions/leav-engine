@@ -6,13 +6,20 @@
 import {defineConfig} from 'vite';
 import pluginRewriteAll from 'vite-plugin-rewrite-all'; // Fixes bug when passing reset password key in URL
 import {commonConfig} from '../../vite-config-common';
+import {dynamicBase} from 'vite-plugin-dynamic-base';
 
 export default () => {
-    const base = process.env.VITE_ENDPOINT ? '/' + process.env.VITE_ENDPOINT + '/' : '/app/login/';
     const defaultConf = commonConfig(__dirname);
+
     return defineConfig({
         ...defaultConf,
-        plugins: [...defaultConf.plugins, pluginRewriteAll()],
-        base
+        plugins: [
+            ...defaultConf.plugins,
+            pluginRewriteAll(),
+            dynamicBase({
+                transformIndexHtml: true
+            })
+        ],
+        base: process.env.NODE_ENV === 'production' ? '/__dynamic_base__/' : '/app/login'
     });
 };

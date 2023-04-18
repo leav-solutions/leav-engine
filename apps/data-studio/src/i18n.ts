@@ -6,19 +6,21 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import Backend from 'i18next-xhr-backend';
 import {initReactI18next} from 'react-i18next';
 
-i18n.use(initReactI18next)
-    .use(Backend)
-    .use(LanguageDetector)
-    .init({
-        fallbackLng: import.meta.env.VITE_DEFAULT_LANG,
-        ns: ['translations'],
-        defaultNS: 'translations',
-        backend: {
-            loadPath: `/${import.meta.env.VITE_ENDPOINT}/locales/{{lng}}/{{ns}}.json`
-        },
-        react: {
-            useSuspense: true
-        }
-    });
+const init = (basename: string, defaultLang: string) => {
+    i18n.use(initReactI18next)
+        .use(Backend)
+        .use(LanguageDetector)
+        .init({
+            fallbackLng: defaultLang,
+            ns: ['translations'],
+            defaultNS: 'translations',
+            backend: {
+                loadPath: `/${basename}/locales/{{lng}}/{{ns}}.json`
+            },
+            react: {
+                useSuspense: true
+            }
+        });
+};
 
-export default i18n;
+export default {init};

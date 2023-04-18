@@ -29,7 +29,6 @@ import Home from '../Home';
 import MessagesDisplay from '../MessagesDisplay';
 import {GET_LANGS} from '_gqlTypes/GET_LANGS';
 import {getLangs} from 'queries/core/getLangs';
-import {GET_APPLICATIONS, GET_APPLICATIONSVariables} from '_gqlTypes/GET_APPLICATIONS';
 import {APP_ENDPOINT} from '../../../constants';
 import useAppLang from 'hooks/useAppLang/useAppLang';
 import {getApplicationByEndpointQuery} from 'queries/applications/getApplicationByEndpointQuery';
