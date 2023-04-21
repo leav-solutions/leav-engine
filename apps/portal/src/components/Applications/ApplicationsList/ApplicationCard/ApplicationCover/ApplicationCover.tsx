@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AntdThemeToken, ApplicationInstallTag, useLang} from '@leav/ui';
+import {AntdThemeToken, useLang} from '@leav/ui';
 import {getInvertColor, localizedTranslation, stringToColor} from '@leav/utils';
 import {theme} from 'antd';
 import {SyntheticEvent} from 'react';
@@ -11,7 +11,6 @@ import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
 
 interface IApplicationCoverProps {
     application: GET_APPLICATIONS_applications_list;
-    onInstallTagClick: (e: SyntheticEvent<any>) => void;
 }
 
 const Wrapper = styled.div`
@@ -40,7 +39,7 @@ const AppImage = styled.img`
     object-fit: cover;
 `;
 
-function ApplicationCover({application, onInstallTagClick}: IApplicationCoverProps): JSX.Element {
+function ApplicationCover({application}: IApplicationCoverProps): JSX.Element {
     const {lang} = useLang();
     const {t} = useTranslation();
     const {token} = theme.useToken();
@@ -61,11 +60,6 @@ function ApplicationCover({application, onInstallTagClick}: IApplicationCoverPro
             <Cover style={{background: bgColor, color: fontColor}} hasIcon={!!appIcon} $themeToken={token}>
                 {appIcon ? <AppImage src={appIcon} height="3rem" /> : initials}
             </Cover>
-            <ApplicationInstallTag
-                application={application}
-                style={{position: 'absolute', bottom: '1em', left: '1em'}}
-                onClick={onInstallTagClick}
-            />
         </Wrapper>
     );
 }

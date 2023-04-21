@@ -23,7 +23,7 @@ export ESLINT_NO_DEV_ERRORS=true
 export HOME=$(getent passwd `whoami`  | cut -d: -f6) # To avoid issue when trying to read /root folder as non-root user
 export SKIP_PREFLIGHT_CHECK=true
 
-# login
+# # login
 BUILD_LOGIN_DIR=../apps/login/dist
 DEST_LOGIN_DIR=../apps/core/applications/login
 yarn workspace login install
@@ -48,15 +48,27 @@ mv $BUILD_PORTAL_DIR $DEST_PORTAL_DIR
 checkExitCode
 
 # admin
-BUILD_LOGIN_DIR=../apps/admin-app/build
-DEST_LOGIN_DIR=../apps/core/applications/admin
-yarn workspace admin-app install
-yarn workspace admin-app build
+BUILD_ADMIN_DIR=../apps/admin/build
+DEST_ADMIN_DIR=../apps/core/applications/admin
+yarn workspace admin install
+yarn workspace admin build
 checkExitCode
 
-rm -rf $DEST_LOGIN_DIR
+rm -rf $DEST_ADMIN_DIR
 checkExitCode
-mv $BUILD_LOGIN_DIR $DEST_LOGIN_DIR
+mv $BUILD_ADMIN_DIR $DEST_ADMIN_DIR
+checkExitCode
+
+data-studio
+BUILD_DATA_STUDIO_DIR=../apps/data-studio/dist
+DEST_DATA_STUDIO_DIR=../apps/core/applications/data-studio
+yarn workspace data-studio install
+yarn workspace data-studio build
+checkExitCode
+
+rm -rf $DEST_DATA_STUDIO_DIR
+checkExitCode
+mv $BUILD_DATA_STUDIO_DIR $DEST_DATA_STUDIO_DIR
 checkExitCode
 
 echo 'Applications installed!'

@@ -9555,9 +9555,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"admin-app@workspace:apps/admin-app":
+"admin@workspace:apps/admin":
   version: 0.0.0-use.local
-  resolution: "admin-app@workspace:apps/admin-app"
+  resolution: "admin@workspace:apps/admin"
   dependencies:
     "@apollo/client": 3.3.7
     "@craco/craco": 6.4.5

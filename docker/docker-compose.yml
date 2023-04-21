@@ -8,7 +8,7 @@ x-redis-image: &redis_image "redis"
 x-arango-image: &arango_image "arangodb:3.10"
 
 x-dir-core: &dir-core /app/apps/core
-x-dir-admin: &dir-admin /app/apps/admin-app
+x-dir-admin: &dir-admin /app/apps/admin
 x-dir-data_studio: &dir-data_studio /app/apps/data-studio
 x-dir-login: &dir-login /app/apps/login
 x-dir-portal: &dir-portal /app/apps/portal
@@ -19,7 +19,7 @@ x-dir-sync_scan: &dir-sync_scan /app/apps/sync-scan
 x-volume-yarn-cache: &volume-yarn-cache yarn_cache:/app/.yarn/cache
 x-volume-shared-modules: &volume-shared-modules node_modules_shared:/app/node_modules
 x-volume-core-modules: &volume-core-modules node_modules_core:/app/apps/core/node_modules
-x-volume-admin-modules: &volume-admin-modules node_modules_admin-app:/app/apps/admin-app/node_modules
+x-volume-admin-modules: &volume-admin-modules node_modules_admin:/app/apps/admin/node_modules
 x-volume-data_studio-modules: &volume-data_studio-modules node_modules_data-studio:/app/apps/data-studio/node_modules
 x-volume-login-modules: &volume-login-modules node_modules_login:/app/apps/login/node_modules
 x-volume-portal-modules: &volume-portal-modules node_modules_portal:/app/apps/portal/node_modules
@@ -105,7 +105,7 @@ x-env-sync-scan: &env-sync-scan
   GRAPHQL_API_KEY: ${GRAPHQL_API_KEY}
   APP_ROOT_PATH: *dir-sync_scan
 
-x-env-admin-app: &env-admin-app
+x-env-admin: &env-admin
   APP_ROOT_PATH: *dir-admin
 
 x-env-data-studio: &env-data-studio
@@ -239,7 +239,7 @@ services:
         "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start:tasksWorker",
       ]
 
-  admin-app:
+  admin:
     image: *node_image
     user: node
     labels:
@@ -249,7 +249,7 @@ services:
       - traefik.http.routers.admin.entrypoints=web
     environment:
       <<: *env-react
-      <<: *env-admin-app
+      <<: *env-admin
       PUBLIC_URL: http://core.leav.localhost/app/admin
       REACT_APP_ENDPOINT: app/admin
       REACT_APP_APPLICATION_ID: admin
@@ -519,7 +519,7 @@ volumes:
     driver: local
   node_modules_core:
     driver: local
-  node_modules_admin-app:
+  node_modules_admin:
     driver: local
   node_modules_data-studio:
     driver: local

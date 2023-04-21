@@ -87,19 +87,11 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
         onChangeFavorite(application, !isFavorite);
     };
 
-    const _handleInstallTagClick = (e: SyntheticEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        setEditAppActiveTab('install');
-        setIsEditAppModalOpen(true);
-    };
-
     return (
         <>
             <AppCard
                 hoverable
-                cover={<ApplicationCover application={application} onInstallTagClick={_handleInstallTagClick} />}
+                cover={<ApplicationCover application={application} />}
                 onClick={_handleClick}
                 bodyStyle={{padding: '.5em'}}
                 data-testid={`app-card-${application.id}`}

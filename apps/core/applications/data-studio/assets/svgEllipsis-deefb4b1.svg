@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="14" height="4" viewBox="0 0 14 4">
+    <defs>
+        <style>.a{opacity:0.657;}.b{fill:#e4e4e4;stroke:#171725;}.c{stroke:none;}.d{fill:none;}</style>
+    </defs>
+    <g class="a" transform="translate(47.554 338.746) rotate(180)">
+        <g class="b" transform="translate(33.554 334.746)">
+            <circle class="c" cx="2" cy="2" r="2"/>
+            <circle class="d" cx="2" cy="2" r="1.5"/>
+        </g>
+        <g class="b" transform="translate(38.554 334.746)">
+            <circle class="c" cx="2" cy="2" r="2"/>
+            <circle class="d" cx="2" cy="2" r="1.5"/>
+        </g>
+        <g class="b" transform="translate(43.554 334.746)">
+            <circle class="c" cx="2" cy="2" r="2"/>
+            <circle class="d" cx="2" cy="2" r="1.5"/>
+        </g>
+    </g>
+</svg>

@@ -8,7 +8,6 @@ import {useGetApplicationByIdQuery} from '../../_gqlTypes';
 import {ErrorDisplay} from '../ErrorDisplay';
 import Loading from '../Loading';
 import {EditApplicationInfo} from './EditApplicationInfo';
-import EditApplicationInstall from './EditApplicationInstall';
 import {IEditApplicationProps} from './_types';
 
 const TabContentWrapper = styled.div<{$style?: CSSObject}>`
@@ -60,15 +59,6 @@ function EditApplication({
             key: 'info',
             label: t('applications.info'),
             children: <TabContentWrapper style={tabContentStyle}>{appInfoComp}</TabContentWrapper>
-        },
-        {
-            key: 'install',
-            label: t('applications.install'),
-            children: (
-                <TabContentWrapper style={tabContentStyle}>
-                    <EditApplicationInstall application={application} />
-                </TabContentWrapper>
-            )
         }
     ];
 

@@ -1,0 +1,43 @@
+{
+    "global": {
+        "submit": "Submit",
+        "cancel": "Cancel",
+        "close": "Close"
+    },
+    "errors": {
+        "default_language_required": "The default language is required",
+        "field_required": "The field {{fieldName}} is required",
+        "invalid_id_format": "The identifier must contain only letters, numbers, and underscores (eg. \"my_id\")",
+        "invalid_endpoint_format": "The endpoint must contain only letters, numbers, and dashes (eg. \"my-app\")",
+        "id_already_exists": "This ID already exists",
+        "endpoint_already_used": "This endpoint is already used",
+        "invalid_url_format": "Invalid URL"
+    },
+    "applications": {
+        "new_app": "New application",
+        "id": "Identifier",
+        "label": "Label",
+        "description": "Description",
+        "type": "Type",
+        "type_internal": "Internal",
+        "type_external": "External",
+        "module": "Module",
+        "endpoint": "Endpoint",
+        "url": "URL",
+        "libraries": "Accessible libraries",
+        "all_libraries": "All libraries",
+        "no_libraries": "No libraries",
+        "trees": "Accessible trees",
+        "all_trees": "All trees",
+        "no_trees": "No trees",
+        "info": "Information",
+        "install": "Install",
+        "install_waiting": "Install pending...",
+        "install_processing": "Install running...",
+        "install_error": "Install failed",
+        "install_success": "Install successful",
+        "install_details": "Last install details",
+        "re_install": "Re-install app",
+        "re_install_success": "Request successful, install will start soon"
+    }
+}

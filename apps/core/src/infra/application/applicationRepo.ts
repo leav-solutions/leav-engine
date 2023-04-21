@@ -9,7 +9,7 @@ import {IUtils} from 'utils/utils';
 import {IConfig} from '_types/config';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
-import {APPS_MODULES_FOLDER, IApplication, IApplicationModule} from '../../_types/application';
+import {IApplication, IApplicationModule} from '../../_types/application';
 import {IGetCoreEntitiesParams} from '../../_types/shared';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
@@ -92,19 +92,19 @@ export default function ({
         },
         async getAvailableModules(): Promise<IApplicationModule[]> {
             const rootPath = appRootPath();
-            const appRootFolder = path.resolve(rootPath, config.applications.rootFolder, APPS_MODULES_FOLDER);
+            const appRootFolder = path.resolve(rootPath, config.applications.rootFolder);
 
             const appsFolders = await readdir(appRootFolder);
 
             const components: IApplicationModule[] = await Promise.all(
                 appsFolders.map(async appFolder => {
                     const appPath = path.resolve(appRootFolder, appFolder);
-                    const appPackageJson = await import(path.resolve(appPath, 'package.json'));
+                    const appManifestJson = await import(path.resolve(appPath, 'manifest.json'));
 
                     return {
-                        id: appPackageJson.name,
-                        description: appPackageJson.description,
-                        version: appPackageJson.version
+                        id: appManifestJson.name,
+                        description: appManifestJson.description,
+                        version: appManifestJson.version
                     };
                 })
             );

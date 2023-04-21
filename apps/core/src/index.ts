@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {amqpService} from '@leav/message-broker';
 import fs from 'fs';
-import {IApplicationService} from 'infra/application/applicationService';
+// import {IApplicationService} from 'infra/application/applicationService';
 import {IFilesManagerInterface} from 'interface/filesManager';
 import {IIndexationManagerInterface} from 'interface/indexationManager';
 import {ITasksManagerInterface} from 'interface/tasksManager';
@@ -91,8 +91,8 @@ import minimist from 'minimist';
             process.exit(0);
         } else if (opt['build-apps']) {
             // Run apps builds
-            const applicationService: IApplicationService = coreContainer.cradle['core.infra.application.service'];
-            await applicationService.runInstallAll();
+            // const applicationService: IApplicationService = coreContainer.cradle['core.infra.application.service'];
+            // await applicationService.runInstallAll();
             // Make sure we always exit process. Sometimes we don't and we're stuck here forever
             process.exit(0);
         } else if (opt.filesManager) {

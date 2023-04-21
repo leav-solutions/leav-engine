@@ -1,0 +1,586 @@
+{
+    "global": {
+        "cancel": "Cancel",
+        "close": "Close",
+        "processing": "Processing",
+        "edit": "Edit",
+        "done": "Done",
+        "delete": "Delete",
+        "apply": "Apply",
+        "clear": "Effacer",
+        "submit": "Submit",
+        "select": "Select",
+        "search": "Search",
+        "duplicate": "Duplicate",
+        "copy": "Copy",
+        "feature_not_available": "This feature will be available soon!",
+        "available_soon": "Soon",
+        "go_back_home": "Back Home",
+        "details": "Details",
+        "element_not_found": "Element not found",
+        "refresh_page": "Refresh Page",
+        "document_title": "LEAV Engine - {{appLabel}}",
+        "yes": "Yes",
+        "no": "No",
+        "or": "or",
+        "create": "Create"
+    },
+    "errors": {
+        "INTERNAL_ERROR": "An internal error occurred",
+        "PERMISSION_ERROR": "You are not allowed to perform this operation",
+        "VALIDATION_ERROR": "Invalid request"
+    },
+    "login": {
+        "header": "Authentication",
+        "email": "Email address",
+        "password": "Password",
+        "submit": "Submit",
+        "apologize_header": "We are sorry,",
+        "apologize": "we were not able to authenticate you :",
+        "loading": {
+            "header": "Just a second,",
+            "text": "we are authenticating you..."
+        },
+        "error": {
+            "bad_credentials": "Invalid credentials.",
+            "no_server_response": "The server does not respond.",
+            "session_expired": "Your session has expired."
+        }
+    },
+    "home": {
+        "libraries": "Libraries",
+        "trees" : "Trees",
+        "id": "ID",
+        "label": "Label",
+        "no_libraries_or_trees": "No libraries or trees available"
+    },
+    "settings": {
+        "choose-lang": "Language"
+    },
+    "menu": {
+        "app_name": "Data Studio",
+        "shortcuts": "Shortcuts",
+        "events": "Events",
+        "user_menu": {
+            "tasks": "Tasks",
+            "shortcuts": "Shortcuts",
+            "events": "Events",
+            "admin": "Admin",
+            "logout": "Logout"
+        }
+    },
+    "sidebar": {
+        "close": "Close Sidebar",
+        "library": "Library",
+        "setting": "Settings",
+        "shortcuts": "Shortcuts",
+        "libraries": "Libraries",
+        "tree": "Tree",
+        "navigation": "Navigation",
+        "recent": "Recent",
+        "others_libraries": "Other libraries",
+        "related_libraries": "Related to active tree",
+        "favorites_libraries": "Favorites",
+        "others_trees": "Other trees",
+        "related_trees": "Related to active library",
+        "favorites_trees": "Favorites"
+    },
+    "lib_list": {
+        "header": "Libraries List"
+    },
+    "lib_detail": {
+        "id": "Id",
+        "lib_info": "Library Information",
+        "elements": "elements",
+        "search_saves": "Your search saves",
+        "search_all": "Search All",
+        "add_filter": "Add Filter",
+        "last_views": "Last Views",
+        "new": "New",
+        "not_found": "Unknown library \"{{libraryId}}\""
+    },
+    "loading": "Loading",
+    "items_list": {
+        "all_sheets": "All sheets",
+        "filters": "Filters",
+        "sorts": "Sorts",
+        "groups": "Groups",
+        "columns": "Columns",
+        "new": "New",
+        "display_type": "Display",
+        "header_table": "Items from {{libName}}",
+        "show-filter-panel": "Show filters",
+        "show_more_links": "Show more",
+        "deactivate_records": "Deactivate records",
+        "no_data": "Your search did not match any documents",
+        "new_record": "New element",
+        "import_data": "Import data",
+        "table": {
+            "preview": "Preview",
+            "selected": "Selected",
+            "id": "Id",
+            "actions": "Actions",
+            "infos": "Information",
+            "label": "Label",
+            "ad_label": "Ad Label",
+            "ean": "EAN",
+            "category": "Category",
+            "op_code": "Operation Code",
+            "header-cell-menu": {
+                "sort-ascend": "Sort Ascend",
+                "sort-descend": "Sort Descend",
+                "cancel-sort": "Cancel Sort",
+                "sort-advance": "Sort Advance",
+                "regroup": "regroup",
+                "choose-columns": "Choose Columns",
+                "hide-column": "Hide column"
+            },
+            "actions-tooltips": {
+                "informations": "Information",
+                "expand": "Expand",
+                "remove": "Remove",
+                "more": "More",
+                "favorite": "Favorite"
+            },
+            "pagination": {
+                "per-page": "{{pagination}} / page"
+            }
+        },
+        "display": {
+            "small": "small",
+            "medium": "medium",
+            "big": "big",
+            "tile": "Gallery"
+        }
+    },
+    "items-list-row": {
+        "nb-elements": "{{nbItems}} results",
+        "switch-to-selection-mode": "Switch to selection mode",
+        "edit": "Edit the record",
+        "select-only": "only",
+        "select-all": "all"
+    },
+    "items-menu-dropdown": {
+        "select-all": "Select All ({{nb}})",
+        "select-visible": "Select Visible ({{nb}})",
+        "items-display": "Number of items per page"
+    },
+    "filters": {
+        "trees-group": "Trees",
+        "attributes-group": "Attributes",
+        "libraries-group": "Libraries",
+        "filters": "Filters",
+        "contains": "Contains",
+        "not-contains": "Don't Contain",
+        "classified-in": "Classified in",
+        "not-classified-in": "Not classified in",
+        "equal": "Is Equal",
+        "not-equal": "Isn't Equal",
+        "through": "Through",
+        "begin-with": "Begin With",
+        "end-with": "End With",
+        "is-empty": "Is Empty",
+        "is-not-empty": "Is Not Empty",
+        "greater-than": "Greater than",
+        "less-than": "Lower than",
+        "exist": "Existing Value",
+        "search-in": "Search In...",
+        "select": "Select",
+        "before": "Before",
+        "after": "After",
+        "today": "Today",
+        "tomorrow": "Tomorrow",
+        "yesterday": "Yesterday",
+        "last-month": "Last month",
+        "next-month": "Next month",
+        "between": "Between",
+        "start-on": "Start on",
+        "start-after": "Starts after",
+        "start-before": "Starts before",
+        "end-on": "Ends on",
+        "end-after": "Ends after",
+        "end-before": "Ends before",
+        "values-count-equal": "Values count equal",
+        "values-count-greater-than": "Values count greater than",
+        "values-count-lower-than": "Values count lower than",
+        "where": "Where",
+        "label": "Label",
+        "value": "Value",
+        "apply": "Apply",
+        "and": "And",
+        "or": "Or",
+        "attributes": "Attributes",
+        "trees": "Trees",
+        "filters-options": "Filters Options",
+        "add-filters": "Add filters",
+        "disable-filters": "Disable all filters",
+        "enable-filters": "Enable all filters",
+        "remove-filters": "Remove all filters",
+        "add-separator": "Add request",
+        "search-active": "Can't apply filters while the search is active",
+        "no-filters": "No filter to apply",
+        "submit": "Apply filters",
+        "deactivate": "Deactivate",
+        "activate": "Activate",
+        "add": "Add",
+        "add-condition": "Add condition"
+    },
+    "filter-item": {
+        "no-operator": "If"
+    },
+    "attributes-list": {
+        "add": "Add filters",
+        "cancel": "Cancel",
+        "search": "Search...",
+        "items-selected": {
+            "library": "Library"
+        }
+    },
+    "trees-list": {
+        "add": "Add filters",
+        "cancel": "Cancel",
+        "search": "Search...",
+        "items-selected": {
+            "tree": "Tree"
+        }
+    },
+    "menu-selection": {
+        "nb-selected": "Selection {{nbSelected}} / {{total}}",
+        "quit": "Quit selection mode",
+        "actions": "Actions",
+        "all-selected-enabled": "All selected mode enabled",
+        "all-selected-disabled": "All selected mode disabled",
+        "unselect-all": "Unselect All"
+    },
+    "table-columns-selection": {
+        "header": "Columns available",
+        "cancel": "Cancel",
+        "submit": "Update Columns"
+    },
+    "tree-node-selection": {
+        "title": "Select Tree Node",
+        "show_more": "Next items..."
+    },
+    "change-attribute": {
+        "submit": "Change",
+        "cancel": "Cancel"
+    },
+    "select-view": {
+        "add-view": "Add view",
+        "default-view": "Default view",
+        "save": "Save view"
+    },
+    "search": {
+        "placeholder": "Search in library",
+        "explain-cancel": "Cancel search",
+        "type": {
+            "navigation": "Navigation",
+            "search": "Search"
+        }
+    },
+    "navigation": {
+        "header": {
+            "selection_label": "Selection: {{count}}",
+            "nb-selection": "{{nb}} elements in selection {{selectionType}}",
+            "add_by_search": "Search and add",
+            "add_by_creation": "Create and add"
+        },
+        "list": {
+            "header": "Navigation",
+            "info": {
+                "tree": "Tree Information",
+                "library": "Library Information",
+                "id": "Id",
+                "label": "Label",
+                "no-label": "No label"
+            }
+        },
+        "actions": {
+            "order": "Order",
+            "details": "Details",
+            "edit": "Edit",
+            "classified_in": "Search in",
+            "create": "Create",
+            "detach": "Detach",
+            "move-selected": "Move selection",
+            "detach-selected": "Detach selection",
+            "add-selected": "Add selection"
+        },
+        "infos": {
+            "success-add": "{{nb}} elements have been added",
+            "error-add": "An error occurs while adding elements {{elements}}: {{errorMessage}}",
+            "warning-add-no-selection": "No selection to add",
+            "success-move": "{{nb}} elements have been move",
+            "error-move": "An error occurs while moving elements {{elements}}: {{errorMessage}}",
+            "success-detach": "{{nb}} elements have been detached",
+            "error-detach": "An error occurs while detaching elements {{elements}}: {{errorMessage}}"
+        },
+        "access_denied": "You cannot access this element",
+        "inactive_element": "This element is inactive"
+    },
+    "info": {
+        "base-message": "Welcome to {{appLabel}}",
+        "active-lib": "You are currently on the library {{lib}}",
+        "active-tree": "You are currently on the tree {{tree}}"
+    },
+    "view": {
+        "views": "Views",
+        "search": "Search view",
+        "my-views": "My views",
+        "shared-views": "Shared",
+        "type-list": "List",
+        "type-cards": "Gallery",
+        "type-timeline": "View Timeline",
+        "default": "Default view",
+        "delete": "Delete",
+        "rename": "Rename",
+        "see-more": "See more",
+        "add-view": {
+            "title": "New view",
+            "label": "Name",
+            "description": "Description",
+            "type": "Type",
+            "shared": "Shared",
+            "color": "Color"
+        },
+        "edit-view": {
+            "title": "Edit view",
+            "label": "Name",
+            "description": "Description",
+            "type": "Type",
+            "shared": "Shared",
+            "color": "Color"
+        },
+        "show_transparency": "Show transparency",
+        "hide_transparency": "Hide transparency"
+    },
+    "export": {
+        "title": "Export",
+        "start": "Start export",
+        "attributes_selection": "Attributes selection",
+        "export_generation": "Export generation",
+        "export_done": "Export started",
+        "export_done_description": "Progress available in notifications panel",
+        "export_done_open_notifications": "Open notifications panel",
+        "download_file": "Download file",
+        "export_notification_title": "New export running in background",
+        "export_notification_description": "Scheduled for"
+    },
+    "upload": {
+        "title": "Upload files",
+        "select_path_step_title": "Select a path",
+        "select_files_step_title": "Select files",
+        "upload_step_title":  "Upload",
+        "next": "Next",
+        "previous": "Previous",
+        "dragger_content": "Click or drag file to this area",
+        "replace_modal": {
+            "title": "This file already exists",
+            "replaceBtn": "Replace",
+            "keepBtn": "Keep both",
+            "message": "A file with the name \"{{filename}}\" already exists at this location. What would you like to do?",
+            "applyToAll": "Apply to all"
+        }
+    },
+    "create_directory": {
+        "title": "Create directory",
+        "select_path_step_title": "Select a path",
+        "choose_name_step_title": "Choose a directory name",
+        "create_step_title":  "Create",
+        "directory_name": "Directory name",
+        "next": "Next",
+        "previous": "Previous",
+        "duplicate_modal": {
+            "title": "This directory already exists",
+            "message": "A directory with the name \"{{directoryName}}\" already exists in this location."
+        }
+    },
+    "import": {
+        "title": "Data import",
+        "file_selection": "Select file",
+        "file_selection_instruction": "Click or drag file",
+        "start": "Start import",
+        "in_progress": "Import in progress",
+        "data_overview": "Data Overview",
+        "file_configuration": "Configuration",
+        "import_schedule": "Schedule import",
+        "import_schedule_title": "Schedule time",
+        "import_done": "File import completed",
+        "import_done_description": "Progress available in notifications panel",
+        "import_done_open_notifications": "Open notifications panel",
+        "import_success": "Successfully imported",
+        "import_failure": "Import failed",
+        "import_notification_title": "New import as background task",
+        "import_notification_description": "Scheduled at",
+        "empty_file": "Empty file",
+        "mapping": "Mapping",
+        "attribute_selection": "Select an attribute",
+        "key": "Select reference attribute",
+        "library": "Library",
+        "type": "Import type",
+        "types": {
+            "IGNORE": "Ignore",
+            "STANDARD": "Standard",
+            "LINK": "Link"
+        },
+        "select_mode": "Select mode",
+        "mode": "Import mode",
+        "modes": {
+            "update": "Update only",
+            "insert": "Insert only",
+            "upsert": "Update and insert"
+        },
+        "import_key": "Import key",
+        "select_import_key": "Select key",
+        "link_key": "Link key",
+        "link_attribute": "Link attribute",
+        "select_library": "Select library",
+        "select_type": "Select type",
+        "select_link_attribute": "Select attribute",
+        "do_not_import": "Do not import",
+        "settings_errors": {
+            "MAPPING": "Please select at least one attribute",
+            "KEY": "Please select an import key",
+            "KEY_TO": "Please select a link key",
+            "TYPE": "Please select a type",
+            "MODE": "Please select a mode",
+            "LIBRARY": "Please select a library",
+            "LINK_ATTRIBUTE": "Please select a link attribute"
+        },
+        "tree_link_library": "Linked library"
+    },
+    "error": {
+        "error_occurred": "An error occurred",
+        "access_denied": "Access denied",
+        "access_denied_details": "You are not allowed to access this element, please contact an administrator",
+        "graphql_error_occurred": "An error ocurred: {{error}}",
+        "network_error_occurred": "An network error occurred",
+        "PERMISSION_ERROR": "You are not allowed to perform this action",
+        "INTERNAL_ERROR": "An internal error occurred",
+        "page_not_found": "Page not found"
+    },
+    "language": {
+        "fr": "French",
+        "en": "English"
+    },
+    "record_edition": {
+        "no_form_error": "No form available",
+        "invalid_format": "Invalid format",
+        "missing_attribute": "Missing attribute",
+        "modified_at": "Modified at",
+        "created_at": "Created at",
+        "link_created_at": "Linked at",
+        "add_value": "Add value",
+        "add_value_link": "Add link",
+        "delete_value_confirm": "Do you really want to delete this value?",
+        "whoAmI": "Information",
+        "no_value": "No value",
+        "value_details": "Value details",
+        "link_details": "Link details",
+        "by": "by",
+        "no_matching_value": "No matching value",
+        "copy_value": "Copy",
+        "new_value": "New value",
+        "advanced_search": "Advanced search",
+        "search_elements": "Search elements",
+        "values_list": "Values List",
+        "new_record": "New record",
+        "value_details_section": "Value",
+        "link_value_details_section": "Linked record",
+        "attribute_details_section": "More details...",
+        "path_section": "Path",
+        "start_typing_message": "Start typing to search elements",
+        "metadata_section": "Value properties",
+        "metadata_section_link": "Link properties",
+        "value_length": "{{length}} characters",
+        "delete_all_values": "Delete all values",
+        "delete_all_values_confirm": "Do you really want to delete all values?",
+        "value_details_tooltip": "More details",
+        "attribute": {
+            "id": "Identifier",
+            "info_title": "Attribute info",
+            "type": "Type",
+            "format": "Format",
+            "type_simple": "Simple",
+            "type_simple_link": "Simple link",
+            "type_advanced": "Advanced",
+            "type_advanced_link": "Advanced link",
+            "type_tree": "Tree",
+            "format_boolean": "Boolean",
+            "format_date": "Date",
+            "format_encrypted": "Encrypted",
+            "format_extended": "Extended",
+            "format_numeric": "Numeric",
+            "format_text": "Text"
+        },
+        "date_range_value": "From {{from}} to {{to}}"
+    },
+    "record_summary": {
+        "id": "Identifier",
+        "label": "Label",
+        "library": "Library",
+        "created_at": "Created on",
+        "created_at_value": "{{date}} by {{user}}",
+        "modified_at": "Modified on",
+        "modified_at_value": "{{date}} by {{user}}"
+    },
+    "floating_menu": {
+        "more_actions": "More"
+    },
+    "applications": {
+        "title": "Applications",
+        "current_app_error": "Couldn't load current application (ID: \"{{appId}}\")"
+    },
+    "file_data": {
+        "path": "Path",
+        "no_preview": "Preview unavailable",
+        "directory": "Dossier",
+        "previews_generation_pending": "Preview generation pending"
+    },
+    "records_deactivation": {
+        "title": "Deactivate records",
+        "title_one": "Deactivate",
+        "confirm": "Do you really want to deactivate the {{count}} records selected?",
+        "confirm_one": "Do you really want to deactivate this record?"
+    },
+    "values_version": {
+        "title": "Values versions",
+        "version": "Version",
+        "select_version": "Select a version",
+        "apply": "Apply",
+        "inherited_value": "inherited value",
+        "inherited_from": "Inherited from",
+        "reset": "Reset"
+    },
+    "notifications": {
+        "title": "Notifications",
+        "inProgress": "In progress",
+        "pending": "Pending",
+        "done": "Completed",
+        "deleteAll": "Delete all",
+        "task-status": {
+            "CANCELED": "Canceled",
+            "DONE": "Done",
+            "FAILED": "Failed",
+            "PENDING": "Pending",
+            "RUNNING": "Running"
+        },
+        "task-infos": "Information",
+        "task-cancel": "Cancel",
+        "task-createdAt": "Created at",
+        "task-startAt": "Start at",
+        "task-startedAt": "Started at",
+        "task-completedAt": "Completed at",
+        "task-canceledAt": "Canceled at",
+        "task-canceledBy": "Canceled by",
+        "task-duration": "Duration",
+        "task-confirmCancel": "Do you really want to cancel this task?"
+    },
+    "files": {
+        "generate_previews": "Generate previews",
+        "previews_generation_confirm": "Do you really want to generate previews?",
+        "previews_generation_failed_only": "Only if previous generation failed",
+        "previews_generation_success": "Previews generation started",
+        "previews_generation_nothing_to_do": "No preview to generate"
+    }
+}
