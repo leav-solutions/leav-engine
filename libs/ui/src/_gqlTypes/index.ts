@@ -1685,7 +1685,7 @@ export type UserInfoQuery = {
 };
 
 export const RecordIdentityFragmentDoc = gql`
-    fragment RecordIdentity on Record {
+    fragment IdentityRecord on Record {
         id
         whoAmI {
             id
@@ -1706,7 +1706,7 @@ export const RecordIdentityFragmentDoc = gql`
     }
 `;
 export const ApplicationDetailsFragmentDoc = gql`
-    fragment ApplicationDetails on Application {
+    fragment DetailsApplication on Application {
         id
         label
         type
@@ -1715,7 +1715,7 @@ export const ApplicationDetailsFragmentDoc = gql`
         url
         color
         icon {
-            ...RecordIdentity
+            ...IdentityRecord
         }
         module
         libraries {
@@ -1789,7 +1789,7 @@ export const GetApplicationByIdDocument = gql`
     query GET_APPLICATION_BY_ID($id: ID!) {
         applications(filters: {id: $id}) {
             list {
-                ...ApplicationDetails
+                ...DetailsApplication
             }
         }
     }
@@ -1930,7 +1930,7 @@ export type InstallApplicationMutationOptions = Apollo.BaseMutationOptions<
 export const SaveApplicationDocument = gql`
     mutation SAVE_APPLICATION($application: ApplicationInput!) {
         saveApplication(application: $application) {
-            ...ApplicationDetails
+            ...DetailsApplication
         }
     }
     ${ApplicationDetailsFragmentDoc}
@@ -1976,7 +1976,7 @@ export const UserInfoDocument = gql`
     query USER_INFO($type: PermissionTypes!, $actions: [PermissionsActions!]!) {
         me {
             login
-            ...RecordIdentity
+            ...IdentityRecord
         }
         permissions: isAllowed(type: $type, actions: $actions) {
             name
