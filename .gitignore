@@ -79,7 +79,7 @@ docker/files
 docker/imports
 docker/exports
 
-apps/core/applications/instances
+apps/core/applications/
 apps/core/config/local.js
 
 apps/*/dist
