@@ -49,7 +49,7 @@ describe('applicationDomain', () => {
             expect(attr).toMatchObject({id: 'test_application'});
         });
 
-        test('Should throw if unknown application', async function() {
+        test('Should throw if unknown application', async function () {
             const mockAppRepo: Mockify<IApplicationRepo> = {
                 getApplications: global.__mockPromise({list: [], totalCount: 0})
             };

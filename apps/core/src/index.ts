@@ -17,7 +17,7 @@ import {initMailer} from './infra/mailer';
 import {initPlugins} from './pluginsLoader';
 import minimist from 'minimist';
 
-(async function() {
+(async function () {
     const opt = minimist(process.argv.slice(2));
 
     let conf: Config.IConfig;

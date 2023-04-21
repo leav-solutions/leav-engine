@@ -36,7 +36,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.library': libraryRepo = null,
     'core.infra.attribute': attributeRepo = null,
@@ -191,12 +191,7 @@ export default function({
 
         // System user password is randomly generated as nobody is supposed to sign in with it
         // It might be changed later on if needed
-        const systemUserPwd = await bcrypt.hash(
-            Math.random()
-                .toString(36)
-                .slice(2),
-            salt
-        );
+        const systemUserPwd = await bcrypt.hash(Math.random().toString(36).slice(2), salt);
 
         const users = [
             {
