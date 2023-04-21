@@ -17,7 +17,7 @@ import {initMailer} from './infra/mailer';
 import {initPlugins} from './pluginsLoader';
 import minimist from 'minimist';
 
-(async function () {
+(async function() {
     const opt = minimist(process.argv.slice(2));
 
     let conf: Config.IConfig;
@@ -87,12 +87,6 @@ import minimist from 'minimist';
         } else if (opt.migrate) {
             // Run db migrations
             await dbUtils.migrate(coreContainer);
-            // Make sure we always exit process. Sometimes we don't and we're stuck here forever
-            process.exit(0);
-        } else if (opt['build-apps']) {
-            // Run apps builds
-            // const applicationService: IApplicationService = coreContainer.cradle['core.infra.application.service'];
-            // await applicationService.runInstallAll();
             // Make sure we always exit process. Sometimes we don't and we're stuck here forever
             process.exit(0);
         } else if (opt.filesManager) {

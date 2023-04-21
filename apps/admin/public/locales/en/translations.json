@@ -335,25 +335,14 @@
         "all_trees": "All trees",
         "select_module": "Select a module",
         "module": "Module",
-        "install_pending": "Installing app, please wait...",
-        "install": "Install",
-        "status_label": "Status",
-        "reinstall": "Restart installation",
         "open_application": "Open application",
         "type": "Type",
-        "statuses": {
-            "NONE": "None",
-            "RUNNING": "Running",
-            "SUCCESS": "Success",
-            "ERROR": "Error"
-        },
         "types": {
             "internal": "Internal",
             "external": "External"
         },
         "settings": "Settings",
-        "icon": "Icon",
-        "install_request_success": "The request has been taken into account. The installation will begin in a few moments"
+        "icon": "Icon"
     },
     "tasks": {
         "title": "Tasks",

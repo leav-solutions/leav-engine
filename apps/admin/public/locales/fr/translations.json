@@ -335,25 +335,14 @@
         "all_trees": "Tous les arbres",
         "select_module": "Sélectionner un module",
         "module": "Module",
-        "install_pending": "Installation de l'application, veuillez patienter...",
-        "install": "Installation",
-        "status_label": "Statut",
-        "reinstall": "Relancer l'installation",
         "open_application": "Ouvrir l'application",
         "type": "Type",
-        "statuses": {
-            "NONE": "Aucun",
-            "RUNNING":"En cours",
-            "SUCCESS":"Réussi",
-            "ERROR":"Erreur"
-        },
         "types": {
             "internal": "Interne",
             "external": "Externe"
         },
         "settings": "Configuration",
-        "icon": "Icône",
-        "install_request_success": "La demande a bien été prise en compte. L'installation débutera dans quelques instants."
+        "icon": "Icône"
     },
     "tasks": {
         "title": "Tâches",

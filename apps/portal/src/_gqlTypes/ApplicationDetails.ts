@@ -1,12 +1,9 @@
-// Copyright LEAV Solutions 2017
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 /* tslint:disable */
 /* eslint-disable */
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ApplicationType, ApplicationInstallStatus} from './globalTypes';
+import {ApplicationType} from './globalTypes';
 
 // ====================================================
 // GraphQL fragment: ApplicationDetails
@@ -42,11 +39,6 @@ export interface ApplicationDetails_permissions {
     access_application: boolean;
 }
 
-export interface ApplicationDetails_install {
-    status: ApplicationInstallStatus;
-    lastCallResult: string | null;
-}
-
 export interface ApplicationDetails {
     id: string;
     label: SystemTranslation;
@@ -57,5 +49,4 @@ export interface ApplicationDetails {
     color: string | null;
     icon: ApplicationDetails_icon | null;
     permissions: ApplicationDetails_permissions;
-    install: ApplicationDetails_install | null;
 }

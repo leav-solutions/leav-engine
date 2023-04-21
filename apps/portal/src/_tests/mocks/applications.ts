@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {WithTypename} from '@leav/utils';
 import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
-import {ApplicationInstallStatus, ApplicationType} from '_gqlTypes/globalTypes';
+import {ApplicationType} from '_gqlTypes/globalTypes';
 
 export const mockApplication: WithTypename<GET_APPLICATION_BY_ID_applications_list> = {
     __typename: 'Application',
@@ -22,11 +22,6 @@ export const mockApplication: WithTypename<GET_APPLICATION_BY_ID_applications_li
     type: ApplicationType.internal,
     color: null,
     url: 'https://example.com/app/my-app',
-    install: {
-        status: ApplicationInstallStatus.SUCCESS,
-        lastCallResult: 'OK',
-        __typename: 'ApplicationInstall'
-    },
     icon: {
         __typename: 'Icon',
         id: 'my-icon',

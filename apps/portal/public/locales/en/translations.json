@@ -21,9 +21,6 @@
     },
     "application": {
         "new_app": "New app",
-        "create": "Create an app",
-        "install_waiting": "Install pending...",
-        "install_processing": "Install running...",
-        "install_error": "Install failed"
+        "create": "Create an app"
     }
 }

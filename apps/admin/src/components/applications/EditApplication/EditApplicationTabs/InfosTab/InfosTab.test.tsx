@@ -8,7 +8,7 @@ import {getApplicationModulesQuery} from 'queries/applications/getApplicationsMo
 import {saveApplicationMutation} from 'queries/applications/saveApplicationMutation';
 import React from 'react';
 import {ApplicationType} from '_gqlTypes/globalTypes';
-import {act, render, screen, waitFor} from '_tests/testUtils';
+import {act, render, screen, waitFor, within} from '_tests/testUtils';
 import {mockApplicationDetails, mockApplicationsModules} from '__mocks__/common/applications';
 import InfosTab from './InfosTab';
 
@@ -84,8 +84,7 @@ describe('InfosTab', () => {
 
         await act(async () => {
             userEvent.click(moduleSelector);
-            const moduleBtn = (await screen.findAllByText(/admin/))[0];
-            userEvent.click(moduleBtn);
+            userEvent.click(await within(moduleSelector).findByText(/admin/));
         });
 
         await waitFor(() => expect(saveCalled).toBe(true));

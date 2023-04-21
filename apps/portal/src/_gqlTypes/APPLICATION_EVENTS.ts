@@ -1,17 +1,9 @@
-// Copyright LEAV Solutions 2017
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 /* tslint:disable */
 /* eslint-disable */
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {
-    ApplicationEventFiltersInput,
-    ApplicationEventTypes,
-    ApplicationType,
-    ApplicationInstallStatus
-} from './globalTypes';
+import {ApplicationEventFiltersInput, ApplicationEventTypes, ApplicationType} from './globalTypes';
 
 // ====================================================
 // GraphQL subscription operation: APPLICATION_EVENTS
@@ -47,11 +39,6 @@ export interface APPLICATION_EVENTS_applicationEvent_application_permissions {
     access_application: boolean;
 }
 
-export interface APPLICATION_EVENTS_applicationEvent_application_install {
-    status: ApplicationInstallStatus;
-    lastCallResult: string | null;
-}
-
 export interface APPLICATION_EVENTS_applicationEvent_application {
     id: string;
     label: SystemTranslation;
@@ -62,7 +49,6 @@ export interface APPLICATION_EVENTS_applicationEvent_application {
     color: string | null;
     icon: APPLICATION_EVENTS_applicationEvent_application_icon | null;
     permissions: APPLICATION_EVENTS_applicationEvent_application_permissions;
-    install: APPLICATION_EVENTS_applicationEvent_application_install | null;
 }
 
 export interface APPLICATION_EVENTS_applicationEvent {

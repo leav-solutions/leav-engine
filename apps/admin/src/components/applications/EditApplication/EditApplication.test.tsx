@@ -75,7 +75,7 @@ describe('EditApplication', () => {
         expect(screen.queryByText(/admin.permissions/)).not.toBeInTheDocument();
     });
 
-    test('If app is correctly installed, display a link to open it', async () => {
+    test('Display a link to open app', async () => {
         const mockMatch: Mockify<matchType> = {
             params: {id: mockApplicationDetails.id}
         };
