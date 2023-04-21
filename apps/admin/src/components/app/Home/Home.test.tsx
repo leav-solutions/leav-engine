@@ -23,6 +23,11 @@ jest.mock('../AppMenu', () => {
     };
 });
 
+jest.mock('../../../constants', () => ({
+    APPS_ENDPOINT: '',
+    APP_ENDPOINT: ''
+}));
+
 describe('Home', () => {
     test('Render home', async () => {
         await act(async () => {
