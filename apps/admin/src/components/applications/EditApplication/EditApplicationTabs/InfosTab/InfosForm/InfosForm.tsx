@@ -88,7 +88,6 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
     };
 
     const _handleSubmit = (values: ApplicationInfosFormValues) => {
-        console.debug('submit values', values);
         onSubmitInfos(values);
     };
 

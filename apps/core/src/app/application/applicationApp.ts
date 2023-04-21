@@ -34,7 +34,6 @@ import {IApplicationDomain, TRIGGER_NAME_APPLICATION_EVENT} from '../../domain/a
 import ApplicationError, {ApplicationErrorType} from '../../errors/ApplicationError';
 import {
     ApplicationEventTypes,
-    ApplicationInstallStatuses,
     ApplicationTypes,
     APPS_URL_PREFIX,
     IApplication,
@@ -68,7 +67,7 @@ interface IDeps {
     config?: any;
 }
 
-export default function ({
+export default function({
     'core.app.auth': authApp = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.helpers.initQueryContext': initQueryContext = null,
@@ -94,21 +93,10 @@ export default function ({
                         .join(' ')}
                 }
 
-                enum ApplicationInstallStatus {
-                    ${Object.values(ApplicationInstallStatuses)
-                        .map(status => `${status}`)
-                        .join(' ')}
-                }
-
                 enum ApplicationType {
                     ${Object.values(ApplicationTypes)
                         .map(type => `${type}`)
                         .join(' ')}
-                }
-
-                type ApplicationInstall {
-                    status: ApplicationInstallStatus!,
-                    lastCallResult: String
                 }
 
                 type Application {
@@ -125,7 +113,6 @@ export default function ({
                     endpoint: String,
                     url: String,
                     permissions: ApplicationPermissions!,
-                    install: ApplicationInstall,
                     settings: JSONObject
                 }
 

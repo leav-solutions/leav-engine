@@ -60,8 +60,6 @@ function InfosTab(): JSX.Element {
             }
         };
 
-        console.debug('dataToSave', dataToSave);
-
         await saveApplication({
             variables: dataToSave
         });

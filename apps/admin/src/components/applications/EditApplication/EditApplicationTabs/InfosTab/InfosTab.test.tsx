@@ -52,7 +52,6 @@ describe('InfosTab', () => {
                     }
                 },
                 result: () => {
-                    console.debug('saveCalled', saveCalled);
                     saveCalled = true;
 
                     return {
