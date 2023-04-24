@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FileOutlined, FolderOutlined, PictureOutlined} from '@ant-design/icons';
-import {RecordPreview} from '@leav/ui';
+import {EntityPreview} from '@leav/ui';
 import styled from 'styled-components';
 import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
 import {LibraryBehavior} from '_gqlTypes/globalTypes';
@@ -31,7 +31,7 @@ function LibraryIcon({library}: ILibraryIconProps): JSX.Element {
     return (
         <Wrapper>
             {library?.icon?.whoAmI?.preview ? (
-                <RecordPreview
+                <EntityPreview
                     image={library.icon.whoAmI.preview.tiny}
                     color={null}
                     label={null}

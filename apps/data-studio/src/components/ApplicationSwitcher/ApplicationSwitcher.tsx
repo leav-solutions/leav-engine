@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AppstoreOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
-import {RecordPreview, themeVars, useLang, ErrorDisplay} from '@leav/ui';
+import {EntityPreview, themeVars, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Drawer, Menu, Skeleton, Tooltip, Typography} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
@@ -84,7 +84,7 @@ function ApplicationSwitcher(): JSX.Element {
                       key: app.id,
                       icon: (
                           <AppLink app={app} label={label}>
-                              <RecordPreview
+                              <EntityPreview
                                   label={label}
                                   color={app.color}
                                   image={app?.icon?.whoAmI?.preview?.small}
@@ -115,7 +115,7 @@ function ApplicationSwitcher(): JSX.Element {
             key: portalApp.id,
             icon: (
                 <AppLink app={portalApp} label={portalLabel}>
-                    <RecordPreview
+                    <EntityPreview
                         label={portalLabel}
                         color={portalApp.color}
                         image={portalApp?.icon?.whoAmI?.preview?.small}
