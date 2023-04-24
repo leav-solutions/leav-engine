@@ -42,6 +42,7 @@
         "re_install_success": "La demande a bien été prise en compte. L'installation va bientôt démarrer."
     },
     "libraries": {
+        "library": "Bibliothèque",
         "select_libraries": "Sélectionner des bibliothèques",
         "id": "Identifiant",
         "label": "Libellé",
@@ -59,7 +60,7 @@
         "attributes": "Attributs"
     },
     "attributes": {
-        "list_label": "Attribut",
+        "attribute": "Attribut",
         "type": "Type",
         "type_simple": "Simple",
         "type_simple_link": "Lien simple",
@@ -74,6 +75,7 @@
         "format_extended": "Étendu",
         "format_numeric": "Numérique",
         "format_text": "Texte",
-        "delete_confirm": "Êtes-vous sûr de vouloir supprimer cet attribut ?"
+        "delete_confirm": "Êtes-vous sûr de vouloir supprimer cet attribut ?",
+        "add_attribute": "Ajouter un attribut"
     }
 }

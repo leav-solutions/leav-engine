@@ -43,6 +43,7 @@
         "re_install_success": "Request successful, install will start soon"
     },
     "libraries": {
+        "library": "Library",
         "select_libraries": "Select libraries",
         "id": "Identifier",
         "label": "Label",
@@ -60,7 +61,7 @@
         "attributes": "Attributes"
     },
     "attributes": {
-        "list_label": "Attribute",
+        "attribute": "Attribute",
         "type": "Type",
         "type_simple": "Simple",
         "type_simple_link": "Simple link",
@@ -75,6 +76,7 @@
         "format_extended": "Extended",
         "format_numeric": "Numeric",
         "format_text": "Text",
-        "delete_confirm": "Do you really want to delete this attribute?"
+        "delete_confirm": "Do you really want to delete this attribute?",
+        "add_attribute": "Add attribute"
     }
 }

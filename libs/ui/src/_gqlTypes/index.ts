@@ -1068,6 +1068,10 @@ export type SaveApplicationMutation = {
     };
 };
 
+export type GetAttributesQueryVariables = Exact<{[key: string]: never}>;
+
+export type GetAttributesQuery = {attributes?: {list: Array<{id: string; label?: any | null}>} | null};
+
 export type CheckLibraryExistenceQueryVariables = Exact<{
     id?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
 }>;
@@ -1619,6 +1623,47 @@ export type SaveApplicationMutationOptions = Apollo.BaseMutationOptions<
     SaveApplicationMutation,
     SaveApplicationMutationVariables
 >;
+export const GetAttributesDocument = gql`
+    query GET_ATTRIBUTES {
+        attributes {
+            list {
+                id
+                label
+            }
+        }
+    }
+`;
+
+/**
+ * __useGetAttributesQuery__
+ *
+ * To run a query within a React component, call `useGetAttributesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAttributesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAttributesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAttributesQuery(
+    baseOptions?: Apollo.QueryHookOptions<GetAttributesQuery, GetAttributesQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useQuery<GetAttributesQuery, GetAttributesQueryVariables>(GetAttributesDocument, options);
+}
+export function useGetAttributesLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<GetAttributesQuery, GetAttributesQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useLazyQuery<GetAttributesQuery, GetAttributesQueryVariables>(GetAttributesDocument, options);
+}
+export type GetAttributesQueryHookResult = ReturnType<typeof useGetAttributesQuery>;
+export type GetAttributesLazyQueryHookResult = ReturnType<typeof useGetAttributesLazyQuery>;
+export type GetAttributesQueryResult = Apollo.QueryResult<GetAttributesQuery, GetAttributesQueryVariables>;
 export const CheckLibraryExistenceDocument = gql`
     query CHECK_LIBRARY_EXISTENCE($id: [ID!]) {
         libraries(filters: {id: $id}) {

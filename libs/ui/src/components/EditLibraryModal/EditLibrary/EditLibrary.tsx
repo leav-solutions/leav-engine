@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Tabs, TabsProps} from 'antd';
 import {useTranslation} from 'react-i18next';
+import styled from 'styled-components';
 import {SaveLibraryMutation, useGetLibraryByIdQuery} from '../../../_gqlTypes';
 import {ErrorDisplay} from '../../ErrorDisplay';
 import {Loading} from '../../Loading';
@@ -13,6 +14,10 @@ interface IEditLibraryProps {
     libraryId?: string;
     onSetSubmitFunction?: (submitFunction: () => Promise<SaveLibraryMutation['saveLibrary']>) => void;
 }
+
+const TabContentWrapper = styled.div`
+    height: calc(95vh - 15rem);
+`;
 
 function EditLibrary({libraryId, onSetSubmitFunction}: IEditLibraryProps): JSX.Element {
     const {t} = useTranslation('shared');
@@ -51,12 +56,16 @@ function EditLibrary({libraryId, onSetSubmitFunction}: IEditLibraryProps): JSX.E
         {
             key: 'info',
             label: t('libraries.info'),
-            children: libraryInfoComp
+            children: <TabContentWrapper>{libraryInfoComp}</TabContentWrapper>
         },
         {
             key: 'attributes',
             label: t('libraries.attributes'),
-            children: <EditLibraryAttributes library={libraryData} />
+            children: (
+                <TabContentWrapper>
+                    <EditLibraryAttributes library={libraryData} />
+                </TabContentWrapper>
+            )
         }
     ];
 
