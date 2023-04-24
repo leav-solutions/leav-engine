@@ -9,10 +9,10 @@ import {act, render, screen} from '../../_tests/testUtils';
 import {mockRecord} from '../../__mocks__/common/record';
 import RecordCard from './RecordCard';
 
-jest.mock('../RecordPreview', () => {
+jest.mock('../EntityPreview', () => {
     return {
-        RecordPreview: () => {
-            return <div>RecordPreview</div>;
+        EntityPreview: () => {
+            return <div>EntityPreview</div>;
         }
     };
 });
@@ -35,6 +35,6 @@ describe('RecordCard', () => {
         });
 
         expect(screen.getByText(mock.label)).toBeInTheDocument();
-        expect(screen.getByText('RecordPreview')).toBeInTheDocument();
+        expect(screen.getByText('EntityPreview')).toBeInTheDocument();
     });
 });

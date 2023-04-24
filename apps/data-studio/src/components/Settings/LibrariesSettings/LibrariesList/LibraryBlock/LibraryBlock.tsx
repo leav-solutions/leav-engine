@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, ExpandAltOutlined, HolderOutlined} from '@ant-design/icons';
-import {EditLibraryModal, useLang} from '@leav/ui';
+import {EditLibraryModal, EntityCard, IEntityData, PreviewSize, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import FloatingMenu from 'components/shared/FloatingMenu';
 import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
@@ -83,6 +83,13 @@ function LibraryBlock({
         }
     ];
 
+    const libraryIdentity: IEntityData = {
+        label: localizedTranslation(library.label, lang),
+        subLabel: library.id,
+        color: null,
+        preview: null
+    };
+
     return (
         <Wrapper
             key={library.id}
@@ -96,7 +103,8 @@ function LibraryBlock({
             ) : (
                 <div>{/* Keep this empty div for styling purpose when not draggable */}</div>
             )}
-            <LibraryLabel>{localizedTranslation(library.label, lang)}</LibraryLabel>
+            <EntityCard entity={libraryIdentity} style={{padding: '0.7rem 0.5rem'}} size={PreviewSize.small} />
+            {/* <LibraryLabel>{localizedTranslation(library.label, lang)}</LibraryLabel> */}
             <FloatingMenu actions={libraryActions} />
             {customMode && !readOnly && <RemoveButton aria-label="remove" onClick={_handleRemoveLibrary} />}
             {isEditLibraryModalVisible && (

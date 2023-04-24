@@ -7,7 +7,7 @@ import styled, {CSSObject} from 'styled-components';
 import {themeVars} from '../../../antdTheme';
 import {ImageLoading} from '../../ImageLoading';
 import {ImageMissing} from '../../ImageMissing';
-import {IGeneratedPreviewProps, IRecordPreviewProps} from '../_types';
+import {IEntityPreviewProps, IGeneratedPreviewProps} from '../_types';
 
 interface IImagePreviewTileProps {
     style?: CSSObject;
@@ -59,7 +59,7 @@ function RecordPreviewTile({
     style,
     imageStyle,
     placeholderStyle
-}: IRecordPreviewProps): JSX.Element {
+}: IEntityPreviewProps): JSX.Element {
     const [imageLoaded, setImageLoaded] = useState(false);
     const [hasFailed, setHasFailed] = useState(false);
 

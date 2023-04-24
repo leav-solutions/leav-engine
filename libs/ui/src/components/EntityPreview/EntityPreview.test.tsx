@@ -4,12 +4,12 @@
 import '@testing-library/jest-dom';
 import {act, fireEvent, render, screen} from '@testing-library/react';
 import 'jest-styled-components';
-import RecordPreview from './RecordPreview';
+import EntityPreview from './EntityPreview';
 
 describe('RecordPreview', () => {
     test('Show an image, first placeholder then image when its loaded', async () => {
         await act(async () => {
-            render(<RecordPreview image="http://fake-image-url.com" label="TestLabel" tile />);
+            render(<EntityPreview image="http://fake-image-url.com" label="TestLabel" tile />);
         });
 
         const imageElem = screen.getByAltText('record preview');
@@ -25,7 +25,7 @@ describe('RecordPreview', () => {
 
     test('Show initial with color if no image', async () => {
         await act(async () => {
-            render(<RecordPreview color="#FF0000" label="TestLabel" />);
+            render(<EntityPreview color="#FF0000" label="TestLabel" />);
         });
 
         expect(screen.queryByRole('image')).not.toBeInTheDocument();
@@ -36,14 +36,14 @@ describe('RecordPreview', () => {
 
     test('Show initial with random color if no color', async () => {
         await act(async () => {
-            render(<RecordPreview label="TestLabel" />);
+            render(<EntityPreview label="TestLabel" />);
         });
 
         expect(screen.getByTestId('generated-preview')).toHaveStyleRule('background-color', /.*/);
     });
 
     test('Can show simplistic preview', async () => {
-        render(<RecordPreview color="#FF0000" label="TestLabel" simplistic />);
+        render(<EntityPreview color="#FF0000" label="TestLabel" simplistic />);
 
         expect(screen.queryByRole('image')).not.toBeInTheDocument();
         expect(screen.getByTestId('simplistic-preview')).toBeInTheDocument();
