@@ -20,8 +20,6 @@ export const mockApplication: WithTypename<GetApplicationByIdQuery['applications
     color: null,
     icon: null,
     module: 'data-studio',
-    libraries: [],
-    trees: [],
     settings: [],
     permissions: {
         access_application: true,

@@ -1,19 +1,24 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {PlusOutlined} from '@ant-design/icons';
 import {localizedTranslation, Override} from '@leav/utils';
-import {Input, Table, TableColumnsType, Tag, TagProps} from 'antd';
+import {Button, Input, Table, TableColumnsType, Tag, TagProps} from 'antd';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {PreviewSize} from '../../../../../constants';
 import {useLang} from '../../../../../hooks';
 import {AttributeFormat, AttributeType, LibraryAttributesFragment} from '../../../../../_gqlTypes';
+import {AttributePicker} from '../../../../AttributePicker';
+import {EntityCard, IEntityData} from '../../../../EntityCard';
 import {DeleteButton} from './DeleteButton';
 
 interface IAttributesListProps {
     readOnly: boolean;
     attributes: LibraryAttributesFragment[];
     onDeleteAttribute: (attribute: LibraryAttributesFragment) => Promise<void>;
+    onAddAttributes: (attributes: string[]) => Promise<void>;
 }
 
 const HeaderWrapper = styled.div`
@@ -24,6 +29,13 @@ const HeaderWrapper = styled.div`
 
     > input {
         flex-grow: 1;
+    }
+`;
+
+const Wrapper = styled.div`
+    // To fix a cosmetic issue with the table header (see https://github.com/ant-design/ant-design/issues/41975)
+    && .ant-table-header {
+        border-radius: 0;
     }
 `;
 
@@ -47,24 +59,48 @@ const tagColorByFormat: {[key in AttributeFormat]: TagProps['color']} = {
     [AttributeFormat.text]: 'green'
 };
 
-function AttributesList({attributes = [], readOnly, onDeleteAttribute}: IAttributesListProps): JSX.Element {
+function AttributesList({
+    attributes = [],
+    readOnly,
+    onDeleteAttribute,
+    onAddAttributes
+}: IAttributesListProps): JSX.Element {
     const {t} = useTranslation('shared');
     const {lang} = useLang();
     const [search, setSearch] = useState('');
+    const [isAddAttributeModalOpen, setIsAddAttributeModalOpen] = useState(false);
 
     const _handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value);
+    };
+
+    const _handleSubmitAddAttribute = async (selectedAttributes: string[]) => {
+        return onAddAttributes(selectedAttributes);
     };
 
     const _handleDeleteAttribute = (attribute: LibraryAttributesFragment) => async () => {
         return onDeleteAttribute(attribute);
     };
 
+    const _handleClickNewAttribute = () => {
+        setIsAddAttributeModalOpen(true);
+    };
+
+    const _handleCloseAddAttributeModal = () => setIsAddAttributeModalOpen(false);
+
     const columns: TableColumnsType<AttributeListType> = [
         {
-            title: t('attributes.list_label'),
-            dataIndex: 'label',
-            key: 'label'
+            title: t('attributes.attribute'),
+            key: 'label',
+            render: (_, attribute) => {
+                const attributeIdentity: IEntityData = {
+                    label: attribute.label,
+                    subLabel: attribute.id,
+                    preview: null,
+                    color: null
+                };
+                return <EntityCard entity={attributeIdentity} size={PreviewSize.small} />;
+            }
         },
         {
             title: t('attributes.type'),
@@ -111,19 +147,34 @@ function AttributesList({attributes = [], readOnly, onDeleteAttribute}: IAttribu
     const tableHeader = (
         <HeaderWrapper>
             <Input.Search onChange={_handleSearchChange} placeholder={t('global.search') + '...'} allowClear />
+            <Button type="primary" icon={<PlusOutlined />} onClick={_handleClickNewAttribute}>
+                {t('attributes.add_attribute')}
+            </Button>
         </HeaderWrapper>
     );
 
     return (
-        <Table
-            size="middle"
-            columns={columns}
-            dataSource={tableData}
-            bordered
-            pagination={false}
-            scroll={{y: 'calc(95vh - 20rem)'}}
-            title={() => tableHeader}
-        />
+        <Wrapper>
+            <Table
+                size="middle"
+                columns={columns}
+                dataSource={tableData}
+                bordered
+                pagination={false}
+                scroll={{y: 'calc(95vh - 22rem)'}}
+                title={() => tableHeader}
+            />
+            {isAddAttributeModalOpen && (
+                <AttributePicker
+                    multiple
+                    onClose={_handleCloseAddAttributeModal}
+                    onSubmit={_handleSubmitAddAttribute}
+                    open={isAddAttributeModalOpen}
+                    canCreate
+                    selected={attributes.map(a => a.id)}
+                />
+            )}
+        </Wrapper>
     );
 }
 

@@ -5,7 +5,7 @@ import {PlusOutlined} from '@ant-design/icons';
 import {useApolloClient} from '@apollo/client';
 import {localizedTranslation, Override} from '@leav/utils';
 import {Button, Input, Table, TableColumnsType} from 'antd';
-import {Key, useState} from 'react';
+import React, {Key, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {PreviewSize} from '../../../constants';

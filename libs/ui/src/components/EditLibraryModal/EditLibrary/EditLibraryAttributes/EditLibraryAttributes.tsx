@@ -12,6 +12,19 @@ function EditLibraryAttributes({library}: IEditLibraryAttributesProps): JSX.Elem
     const [saveLibrary] = useSaveLibraryMutation();
     const isReadOnly = !(library.permissions?.admin_library ?? true);
 
+    const _handleAddAttributes = async (attributes: string[]) => {
+        const newAttributes = [...(library.attributes ?? []).map(a => a.id), ...attributes];
+
+        await saveLibrary({
+            variables: {
+                library: {
+                    id: library.id,
+                    attributes: newAttributes
+                }
+            }
+        });
+    };
+
     const _handleDeleteAttribute = async (attribute: LibraryAttributesFragment) => {
         const newAttributes = (library.attributes ?? []).filter(attr => attr.id !== attribute.id).map(a => a.id);
 
@@ -28,6 +41,7 @@ function EditLibraryAttributes({library}: IEditLibraryAttributesProps): JSX.Elem
     return (
         <AttributesList
             readOnly={isReadOnly}
+            onAddAttributes={_handleAddAttributes}
             onDeleteAttribute={_handleDeleteAttribute}
             attributes={library.attributes}
         />
