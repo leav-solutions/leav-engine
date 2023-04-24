@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined} from '@ant-design/icons';
-import {Button, Popconfirm} from 'antd';
+import {Button, message, Popconfirm} from 'antd';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {LibraryAttributesFragment} from '../../../../../../_gqlTypes';
@@ -20,7 +20,11 @@ function DeleteButton({attribute, readOnly, onDelete}: IDeleteButtonProps): JSX.
 
     const _handleConfirm = async () => {
         setIsLoading(true);
-        await onDelete(attribute);
+        try {
+            await onDelete(attribute);
+        } catch (e) {
+            message.error(e.message);
+        }
         setIsLoading(false);
     };
 

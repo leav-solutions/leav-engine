@@ -4,34 +4,37 @@
 import {Modal} from 'antd';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {LibrariesList} from './LibrariesList';
+import {AttributesList} from './AttributesList';
 
-interface ILibraryPickerProps {
+interface IAttributePickerProps {
     open: boolean;
     onClose: () => void;
-    onSubmit: (selectedLibraries: string[]) => void;
+    onSubmit: (selectedLibraries: string[]) => Promise<void>;
     canCreate?: boolean;
     selected?: string[];
     multiple?: boolean;
 }
 
-function LibraryPicker({
+function AttributePicker({
     open,
     onClose,
     onSubmit,
     selected = [],
     canCreate = true,
     multiple = true
-}: ILibraryPickerProps): JSX.Element {
+}: IAttributePickerProps): JSX.Element {
     const {t} = useTranslation('shared');
-    const [selectedLibraries, setSelectedLibraries] = useState<string[]>([]);
+    const [selectedAttributes, setSelectedAttributes] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const _handleSelect = (selection: string[]) => {
-        setSelectedLibraries(selection);
+        setSelectedAttributes(selection);
     };
 
-    const _handleSubmit = () => {
-        onSubmit(selectedLibraries);
+    const _handleSubmit = async () => {
+        setIsLoading(true);
+        await onSubmit(selectedAttributes);
+        setIsLoading(false);
         onClose();
     };
 
@@ -40,16 +43,17 @@ function LibraryPicker({
             open={open}
             onCancel={onClose}
             width={800}
-            title={t('libraries.select_libraries')}
+            title={t('attributes.select_attributes')}
             onOk={_handleSubmit}
             destroyOnClose
             okText={t('global.submit')}
             cancelText={t('global.cancel')}
+            confirmLoading={isLoading}
             centered
         >
-            <LibrariesList onSelect={_handleSelect} selected={selected} multiple={multiple} canCreate={canCreate} />
+            <AttributesList onSelect={_handleSelect} selected={selected} multiple={multiple} canCreate={canCreate} />
         </Modal>
     );
 }
 
-export default LibraryPicker;
+export default AttributePicker;
