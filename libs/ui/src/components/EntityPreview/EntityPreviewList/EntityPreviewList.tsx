@@ -7,8 +7,8 @@ import {useState} from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {PreviewSize} from '../../../constants';
 import {getPreviewSize} from '../../../helpers/getPreviewSize';
-import {IGeneratedPreviewProps, IRecordPreviewProps} from '../_types';
-import SimplisticRecordPreview from './SimplisticRecordPreview';
+import {IEntityPreviewProps, IGeneratedPreviewProps} from '../_types';
+import SimplisticEntityPreview from './SimplisticEntityPreview';
 
 interface IImagePreviewProps {
     size?: PreviewSize;
@@ -47,11 +47,11 @@ const Image = styled.img<{$loaded: boolean}>`
     display: ${p => (p.$loaded ? 'block' : 'none')};
 `;
 
-function RecordPreviewList({label, color, image, size, style, simplistic = false}: IRecordPreviewProps): JSX.Element {
+function RecordPreviewList({label, color, image, size, style, simplistic = false}: IEntityPreviewProps): JSX.Element {
     const [imageLoaded, setImageLoaded] = useState(false);
 
     if (simplistic) {
-        return <SimplisticRecordPreview label={label} />;
+        return <SimplisticEntityPreview label={label} />;
     }
 
     if (image) {
@@ -68,6 +68,7 @@ function RecordPreviewList({label, color, image, size, style, simplistic = false
                     />
                 )}
                 <Image
+                    role="img"
                     $loaded={imageLoaded}
                     src={image}
                     alt="record preview"

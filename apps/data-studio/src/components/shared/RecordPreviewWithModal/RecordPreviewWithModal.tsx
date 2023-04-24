@@ -2,14 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EyeOutlined} from '@ant-design/icons';
-import {IRecordPreviewProps, RecordPreview, themeVars} from '@leav/ui';
+import {EntityPreview, IEntityPreviewProps, themeVars} from '@leav/ui';
 import FileModal from 'components/FileModal';
 import {useMustShowTransparency} from 'hooks/useMustShowTransparency';
 import {useState} from 'react';
 import styled from 'styled-components';
 import {RecordIdentity_whoAmI_preview_file} from '_gqlTypes/RecordIdentity';
 
-interface IRecordPreviewWithModalProps extends Omit<IRecordPreviewProps, 'onClick'> {
+interface IRecordPreviewWithModalProps extends Omit<IEntityPreviewProps, 'onClick'> {
     previewFile: RecordIdentity_whoAmI_preview_file;
 }
 
@@ -57,7 +57,7 @@ function RecordPreviewWithModal({
     return (
         <>
             <ClickHandler onClick={_handlePreviewClick} data-testid="click-handler">
-                <RecordPreview
+                <EntityPreview
                     imageStyle={{
                         background: mustShowTransparency ? themeVars.checkerBoard : 'transparent',
                         ...imageStyle

@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import {themeVars} from '../../../../antdTheme';
 import {getPreviewSize} from '../../../../helpers/getPreviewSize';
 
-interface ISimplisticRecordPreviewProps {
+interface ISimplisticEntityPreviewProps {
     label: string;
 }
 
@@ -20,10 +20,10 @@ const Wrapper = styled.div`
     justify-content: center;
 `;
 
-function SimplisticRecordPreview({label}: ISimplisticRecordPreviewProps): JSX.Element {
+function SimplisticEntityPreview({label}: ISimplisticEntityPreviewProps): JSX.Element {
     const initial = getInitials(label, 1);
 
     return <Wrapper data-testid="simplistic-preview">{initial}</Wrapper>;
 }
 
-export default SimplisticRecordPreview;
+export default SimplisticEntityPreview;
