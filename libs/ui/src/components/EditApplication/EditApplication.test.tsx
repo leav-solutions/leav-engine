@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import {GetApplicationByIdDocument, SaveApplicationDocument} from '../../_gqlTypes';
-import {cleanup, render, screen, waitFor, waitForElementToBeRemoved} from '../../_tests/testUtils';
+import {cleanup, render, screen, waitFor} from '../../_tests/testUtils';
 import {mockApplication} from '../../__mocks__/common/application';
 import EditApplication from './EditApplication';
 
@@ -30,10 +30,13 @@ describe('EditApplication', () => {
         test('Display creation form', async () => {
             render(<EditApplication appsBaseUrl="/app" />);
 
-            await userEvent.type(screen.getByRole('textbox', {name: 'label_fr'}), 'Test app fr');
-            await userEvent.type(screen.getByRole('textbox', {name: 'label_en'}), 'Test app en');
-            await userEvent.type(screen.getByRole('textbox', {name: 'description_fr'}), 'Test app description fr');
-            await userEvent.type(screen.getByRole('textbox', {name: 'description_en'}), 'Test app description en');
+            // Get all at once for performance reason
+            const inputs = await screen.findAllByRole('textbox', {name: /label|description/});
+
+            await userEvent.type(inputs[0], 'Test app fr');
+            await userEvent.type(inputs[1], 'Test app en');
+            await userEvent.type(inputs[2], 'Test app description fr');
+            await userEvent.type(inputs[3], 'Test app description en');
 
             const idField = screen.getByRole('textbox', {name: /id/});
             expect(idField).toHaveValue('test_app_fr');
@@ -42,10 +45,8 @@ describe('EditApplication', () => {
             expect(screen.getByRole('combobox', {name: /module/})).toBeInTheDocument();
 
             //Change type
-            userEvent.click(screen.getByText(/internal/)); // Open "type" dropdown
-            userEvent.click(await screen.findByText('applications.type_external')); // Select "external"
-
-            await waitForElementToBeRemoved(() => screen.getByRole('combobox', {name: /module/}));
+            await userEvent.click(screen.getByText(/internal/)); // Open "type" dropdown
+            await userEvent.click(await screen.findByText('applications.type_external')); // Select "external"
 
             expect(screen.queryByRole('combobox', {name: /module/})).not.toBeInTheDocument();
         });
