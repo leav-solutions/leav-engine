@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CheckCircleFilled, CheckOutlined} from '@ant-design/icons';
-import {RecordPreview, themeVars, useLang} from '@leav/ui';
+import {EntityPreview, themeVars, useLang} from '@leav/ui';
 import {Button, Card, Space, Tooltip} from 'antd';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import DeactivateRecordBtn from 'components/LibraryItemsList/shared/DeactivateRecordBtn';
@@ -261,7 +261,7 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
                 onDoubleClick={() => setEditRecordModal(true)}
                 cover={
                     <ImageWrapper>
-                        <RecordPreview
+                        <EntityPreview
                             label={item.whoAmI.label || item.whoAmI.id}
                             image={
                                 item.whoAmI.preview?.[previewSize] ? getFileUrl(item.whoAmI.preview[previewSize]) : ''

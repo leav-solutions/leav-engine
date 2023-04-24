@@ -4,7 +4,7 @@
 import {CSSObject} from 'styled-components';
 import {PreviewSize} from '../../constants';
 
-export interface IRecordPreviewProps {
+export interface IEntityPreviewProps {
     label: string;
     color?: string;
     image?: string;
