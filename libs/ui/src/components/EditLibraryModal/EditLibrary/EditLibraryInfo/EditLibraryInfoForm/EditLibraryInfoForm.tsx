@@ -50,7 +50,7 @@ function EditLibraryInfoForm({
     const _getRequiredMessage = (field: string) =>
         t('errors.field_required', {
             interpolation: {escapeValue: false},
-            fieldName: t(`applications.${field}`)
+            fieldName: t(`libraries.${field}`)
         });
 
     const _handleLabelChange = (labelLang: string) => (e: React.ChangeEvent<HTMLInputElement>) => {

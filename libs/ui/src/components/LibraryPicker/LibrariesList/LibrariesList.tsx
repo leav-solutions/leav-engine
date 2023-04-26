@@ -5,12 +5,12 @@ import {PlusOutlined} from '@ant-design/icons';
 import {useApolloClient} from '@apollo/client';
 import {localizedTranslation, Override} from '@leav/utils';
 import {Button, Input, Table, TableColumnsType} from 'antd';
-import {Key, useState} from 'react';
+import {Key, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {PreviewSize} from '../../../constants';
 import {useLang} from '../../../hooks';
-import {GetLibrariesQuery, SaveLibraryMutation, useGetLibrariesQuery} from '../../../_gqlTypes';
+import {GetLibrariesQuery, LibraryLightFragment, SaveLibraryMutation, useGetLibrariesQuery} from '../../../_gqlTypes';
 import {getLibrariesQuery} from '../../../_queries/libraries/getLibrariesQuery';
 import {EditLibraryModal} from '../../EditLibraryModal';
 import {EntityCard, IEntityData} from '../../EntityCard';
@@ -28,31 +28,48 @@ const HeaderWrapper = styled.div`
     }
 `;
 
-type LibraryType = Override<GetLibrariesQuery['libraries']['list'][number], {label: string}> & {key: string};
+type LibraryType = Override<LibraryLightFragment, {label: string}> & {key: string};
 
 interface ILibrariesListProps {
-    onSelect: (selectedLibraries: string[]) => void;
+    onSelect: (selectedLibraries: LibraryLightFragment[]) => void;
     selected?: string[];
     multiple?: boolean;
     canCreate?: boolean;
+    showSelected?: boolean;
 }
 
-function LibrariesList({onSelect, canCreate = true, selected = [], multiple = true}: ILibrariesListProps): JSX.Element {
+function LibrariesList({
+    onSelect,
+    canCreate = true,
+    selected = [],
+    multiple = true,
+    showSelected = false
+}: ILibrariesListProps): JSX.Element {
     const {t} = useTranslation('shared');
     const {lang} = useLang();
     const {loading, error, data} = useGetLibrariesQuery();
-    const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
+    const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>(showSelected ? selected : []);
     const [search, setSearch] = useState('');
     const [isNewLibraryModalOpen, setIsNewLibraryModalOpen] = useState(false);
     const client = useApolloClient();
+    const librariesByKey = useMemo(() => {
+        return data?.libraries.list.reduce((acc, library) => {
+            acc[library.id] = library;
+            return acc;
+        }, {});
+    }, [data?.libraries.list]);
 
     const _handleSelectionChange = (selection: Key[]) => {
         setSelectedRowKeys(selection);
-        onSelect(selection as string[]);
+        onSelect(_getLibsFromKeys(selection));
+    };
+
+    const _getLibsFromKeys = (keys: Key[]) => {
+        return keys.map(key => librariesByKey[key]);
     };
 
     const _handleRowClick = (record: LibraryType) => {
-        let newSelection;
+        let newSelection: Key[];
 
         if (selectedRowKeys.indexOf(record.key) === -1) {
             newSelection = multiple ? [...selectedRowKeys, record.key] : [record.key]; // Add to selection
@@ -61,7 +78,7 @@ function LibrariesList({onSelect, canCreate = true, selected = [], multiple = tr
         }
 
         setSelectedRowKeys(newSelection);
-        onSelect(newSelection as string[]);
+        onSelect(_getLibsFromKeys(newSelection));
     };
 
     const _handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,8 +105,8 @@ function LibrariesList({onSelect, canCreate = true, selected = [], multiple = tr
             });
         }
         const newSelection = [...selectedRowKeys, newLibrary.id];
-        onSelect(newSelection as string[]);
         setSelectedRowKeys(newSelection);
+        onSelect(_getLibsFromKeys(newSelection));
     };
 
     if (loading) {
@@ -118,8 +135,8 @@ function LibrariesList({onSelect, canCreate = true, selected = [], multiple = tr
 
     const tableData: LibraryType[] = ([...data?.libraries?.list] ?? [])
         .filter(lib => {
-            // Do not display already selected libraries
-            if (selected.find(selectedLib => selectedLib === lib.id)) {
+            // Do not display already selected libraries unless showSelected is true
+            if (!showSelected && selected.find(selectedLib => selectedLib === lib.id)) {
                 return false;
             }
 

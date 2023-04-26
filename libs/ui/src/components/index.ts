@@ -6,6 +6,7 @@ export * from './EditApplication';
 export * from './EditLibraryModal';
 export * from './EntityCard';
 export * from './EntityPreview';
+export * from './FloatingMenu';
 export * from './ImageLoading';
 export * from './ImageMissing';
 export * from './LibraryPicker';

@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import {AntdThemeToken} from '../../antdTheme';
 
 interface IFieldsGroupProps {
-    label?: string;
+    label?: string | React.ReactNode;
     children: React.ReactNode;
 }
 
