@@ -4,7 +4,8 @@
         "cancel": "Cancel",
         "close": "Close",
         "id": "Identifier",
-        "search": "Search"
+        "search": "Search",
+        "info": "Information"
     },
     "errors": {
         "default_language_required": "The default language is required",
@@ -77,6 +78,21 @@
         "format_numeric": "Numeric",
         "format_text": "Text",
         "delete_confirm": "Do you really want to delete this attribute?",
-        "add_attribute": "Add attribute"
+        "add_attribute": "Add attribute",
+        "select_attributes": "Select attributes",
+        "new_attribute": "New attribute",
+        "label": "Label",
+        "description": "Description",
+        "readonly":"Read only",
+        "unique": "Unique values",
+        "multiple_values": "Multiple values",
+        "values_versions": "Values versions",
+        "versionable": "Versionable",
+        "versions_profile": "Profile",
+        "versions_mode": "Mode",
+        "versions_mode_simple": "Simple",
+        "versions_mode_smart": "Smart",
+        "linked_library": "Linked library",
+        "select_linked_library": "Select library"
     }
 }

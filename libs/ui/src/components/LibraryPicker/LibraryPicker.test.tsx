@@ -27,6 +27,22 @@ jest.mock('../EditLibraryModal', () => {
 });
 
 describe('LibraryPicker', () => {
+    const mockLibA = {
+        __typename: 'Library',
+        ...mockLibrarySimple,
+        id: 'libA'
+    };
+    const mockLibB = {
+        __typename: 'Library',
+        ...mockLibrarySimple,
+        id: 'libB'
+    };
+    const mockLibC = {
+        __typename: 'Library',
+        ...mockLibrarySimple,
+        id: 'libC'
+    };
+
     const mocks = [
         {
             request: {
@@ -36,20 +52,7 @@ describe('LibraryPicker', () => {
             result: {
                 data: {
                     libraries: {
-                        list: [
-                            {
-                                ...mockLibrarySimple,
-                                id: 'libA'
-                            },
-                            {
-                                ...mockLibrarySimple,
-                                id: 'libB'
-                            },
-                            {
-                                ...mockLibrarySimple,
-                                id: 'libC'
-                            }
-                        ]
+                        list: [mockLibA, mockLibB, mockLibC]
                     }
                 }
             }
@@ -113,7 +116,7 @@ describe('LibraryPicker', () => {
 
         userEvent.click(screen.getByRole('button', {name: /submit/i}));
 
-        await waitFor(() => expect(mockHandleSubmit).toHaveBeenCalledWith(['libB', 'libC']));
+        await waitFor(() => expect(mockHandleSubmit).toHaveBeenCalledWith([mockLibB, mockLibC]));
     });
 
     test('If not multiple, only one element can be selected', async () => {

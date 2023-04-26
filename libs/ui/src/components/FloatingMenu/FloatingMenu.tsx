@@ -1,29 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {EllipsisOutlined} from '@ant-design/icons';
 import {Dropdown, Tooltip} from 'antd';
-import Button, {ButtonSize} from 'antd/lib/button';
+import Button from 'antd/lib/button';
 import {SizeType} from 'antd/lib/config-provider/SizeContext';
-import {IconEllipsisHorizontal} from 'assets/icons/IconEllipsisHorizontal';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
-
-export interface IFloatingMenuActionWithBtn extends IFloatingMenuActionCommon {
-    button?: React.ReactNode;
-}
-
-export interface IFloatingMenuActionWithIcon extends IFloatingMenuActionCommon {
-    icon?: React.ReactNode;
-    onClick?: () => void;
-    size?: ButtonSize;
-}
-
-export interface IFloatingMenuActionCommon {
-    title?: string;
-}
-
-export type FloatingMenuAction = IFloatingMenuActionWithIcon | IFloatingMenuActionWithBtn;
+import {FloatingMenuAction, IFloatingMenuActionWithBtn, IFloatingMenuActionWithIcon} from './_types';
 
 export interface IFloatingMenuProps {
     actions: FloatingMenuAction[];
@@ -95,7 +79,7 @@ function FloatingMenu({actions, moreActions, style, size = 'small'}: IFloatingMe
                     >
                         <Button
                             size={size}
-                            icon={<IconEllipsisHorizontal />}
+                            icon={<EllipsisOutlined />}
                             aria-label={t('floating_menu.more_actions')}
                             title={t('floating_menu.more_actions')}
                             shape="circle"

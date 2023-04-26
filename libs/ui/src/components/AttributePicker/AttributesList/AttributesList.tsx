@@ -1,15 +1,18 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {PlusOutlined} from '@ant-design/icons';
 import {useApolloClient} from '@apollo/client';
 import {localizedTranslation, Override} from '@leav/utils';
-import {Input, Table, TableColumnsType} from 'antd';
+import {Button, Input, Table, TableColumnsType} from 'antd';
 import {Key, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {PreviewSize} from '../../../constants';
 import {useLang} from '../../../hooks';
-import {GetAttributesQuery, useGetAttributesQuery} from '../../../_gqlTypes';
+import {AttributeDetailsFragment, GetAttributesQuery, useGetAttributesQuery} from '../../../_gqlTypes';
+import {getAttributesQuery} from '../../../_queries/attributes/getAttributesQuery';
+import EditAttributeModal from '../../EditAttributeModal/EditAttributeModal';
 import {EntityCard, IEntityData} from '../../EntityCard';
 import {ErrorDisplay} from '../../ErrorDisplay';
 import {Loading} from '../../Loading';
@@ -75,24 +78,24 @@ function AttributesList({
     };
     const _handleCloseNewAttribute = () => setIsNewAttributeModalOpen(false);
 
-    // const _handlePostCreate = async (newLibrary: SaveLibraryMutation['saveLibrary']) => {
-    //     const allLibrariesData = client.readQuery<GetLibrariesQuery>({query: getLibrariesQuery});
+    const _handlePostCreate = async (newAttribute: AttributeDetailsFragment) => {
+        const allAttributesData = client.readQuery<GetAttributesQuery>({query: getAttributesQuery});
 
-    //     if (allLibrariesData) {
-    //         client.writeQuery({
-    //             query: getLibrariesQuery,
-    //             data: {
-    //                 libraries: {
-    //                     ...allLibrariesData.libraries,
-    //                     list: [newLibrary, ...allLibrariesData.libraries.list]
-    //                 }
-    //             }
-    //         });
-    //     }
-    //     const newSelection = [...selectedRowKeys, newLibrary.id];
-    //     onSelect(newSelection as string[]);
-    //     setSelectedRowKeys(newSelection);
-    // };
+        if (allAttributesData) {
+            client.writeQuery({
+                query: getAttributesQuery,
+                data: {
+                    attributes: {
+                        ...allAttributesData.attributes,
+                        list: [newAttribute, ...allAttributesData.attributes.list]
+                    }
+                }
+            });
+        }
+        const newSelection = [...selectedRowKeys, newAttribute.id];
+        onSelect(newSelection as string[]);
+        setSelectedRowKeys(newSelection);
+    };
 
     if (loading) {
         return <Loading />;
@@ -141,11 +144,11 @@ function AttributesList({
     const tableHeader = (
         <HeaderWrapper>
             <Input.Search onChange={_handleSearchChange} placeholder={t('global.search') + '...'} allowClear />
-            {/* {canCreate && (
+            {canCreate && (
                 <Button type="primary" icon={<PlusOutlined />} onClick={_handleClickNewAttribute}>
-                    {t('libraries.new_library')}
+                    {t('attributes.new_attribute')}
                 </Button>
-            )} */}
+            )}
         </HeaderWrapper>
     );
 
@@ -168,14 +171,14 @@ function AttributesList({
                     onClick: () => _handleRowClick(record)
                 })}
             />
-            {/* {isNewAttributeModalOpen && (
-                <EditLibraryModal
+            {isNewAttributeModalOpen && (
+                <EditAttributeModal
                     open={isNewAttributeModalOpen}
                     onClose={_handleCloseNewAttribute}
                     onPostCreate={_handlePostCreate}
                     width={790}
                 />
-            )} */}
+            )}
         </>
     );
 }

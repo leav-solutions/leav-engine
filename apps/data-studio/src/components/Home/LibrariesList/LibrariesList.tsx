@@ -3,11 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloudUploadOutlined, DatabaseOutlined} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
-import {useLang} from '@leav/ui';
+import {FloatingMenu, FloatingMenuAction, useLang} from '@leav/ui';
 import {Table} from 'antd';
 import {ColumnsType} from 'antd/lib/table';
-import FloatingMenu from 'components/shared/FloatingMenu';
-import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {useApplicationLibraries} from 'hooks/useApplicationLibraries';

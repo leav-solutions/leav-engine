@@ -11,6 +11,7 @@ import {DragDropContext, Draggable, DraggableProvided, Droppable, DropResult} fr
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
+import {LibraryLightFragment} from '../../../../../../../libs/ui/src/_gqlTypes';
 import LibraryBlock from './LibraryBlock';
 
 const Header = styled.div`
@@ -61,9 +62,9 @@ function LibrariesList({libraries, onMoveLibrary, onRemoveLibrary, onAddLibrarie
 
     const _handleOpenLibraryPicker = () => setIsLibraryPickerOpen(true);
     const _handleCloseLibraryPicker = () => setIsLibraryPickerOpen(false);
-    const _handleSubmitLibraryPicker = (selectedLibraries: string[]) => {
+    const _handleSubmitLibraryPicker = (selectedLibraries: LibraryLightFragment[]) => {
         _handleCloseLibraryPicker();
-        onAddLibraries(selectedLibraries);
+        onAddLibraries(selectedLibraries.map(lib => lib.id));
     };
 
     const displayedLibraries = libraries.filter(lib => {
@@ -78,6 +79,7 @@ function LibrariesList({libraries, onMoveLibrary, onRemoveLibrary, onAddLibrarie
 
     const _getLibraryBlock = (library: GET_LIBRARIES_LIST_libraries_list, dragProvided?: DraggableProvided) => (
         <LibraryBlock
+            key={library.id}
             canDrag={canDrag}
             customMode={isCustomMode}
             dragProvided={dragProvided}
