@@ -7,11 +7,10 @@ import {Button, Input, Table, TableColumnsType, Tag, TagProps} from 'antd';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {PreviewSize} from '../../../../../constants';
 import {useLang} from '../../../../../hooks';
 import {AttributeFormat, AttributeType, LibraryAttributesFragment} from '../../../../../_gqlTypes';
 import {AttributePicker} from '../../../../AttributePicker';
-import {EntityCard, IEntityData} from '../../../../EntityCard';
+import {AttributeCell} from './AttributeCell';
 import {DeleteButton} from './DeleteButton';
 
 interface IAttributesListProps {
@@ -39,7 +38,7 @@ const Wrapper = styled.div`
     }
 `;
 
-type AttributeListType = Override<LibraryAttributesFragment, {label: string}> & {key: string};
+export type AttributeListType = Override<LibraryAttributesFragment, {label: string}> & {key: string};
 
 const tagColorByType: {[key in AttributeType]: TagProps['color']} = {
     [AttributeType.simple]: 'purple',
@@ -92,15 +91,7 @@ function AttributesList({
         {
             title: t('attributes.attribute'),
             key: 'label',
-            render: (_, attribute) => {
-                const attributeIdentity: IEntityData = {
-                    label: attribute.label,
-                    subLabel: attribute.id,
-                    preview: null,
-                    color: null
-                };
-                return <EntityCard entity={attributeIdentity} size={PreviewSize.small} />;
-            }
+            render: (_, attribute) => <AttributeCell attribute={attribute} />
         },
         {
             title: t('attributes.type'),

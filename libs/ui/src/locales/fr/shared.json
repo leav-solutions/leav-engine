@@ -4,7 +4,8 @@
         "cancel": "Annuler",
         "close": "Fermer",
         "id": "Identifiant",
-        "search": "Rechercher"
+        "search": "Rechercher",
+        "info": "Informations"
     },
     "errors": {
         "default_language_required": "La langue par défaut est requise",
@@ -68,6 +69,21 @@
         "format_numeric": "Numérique",
         "format_text": "Texte",
         "delete_confirm": "Êtes-vous sûr de vouloir supprimer cet attribut ?",
-        "add_attribute": "Ajouter un attribut"
+        "add_attribute": "Ajouter un attribut",
+        "new_attribute": "Nouvel attribut",
+        "select_attributes": "Sélectionner des attributs",
+        "label": "Libellé",
+        "description": "Description",
+        "readonly": "Lecture seule",
+        "unique": "Valeurs uniques",
+        "multiple_values": "Valeurs multiples",
+        "values_versions": "Versions de valeurs",
+        "versionable": "Versionnable",
+        "versions_profile": "Profil",
+        "versions_mode": "Mode",
+        "versions_mode_simple": "Simple",
+        "versions_mode_smart": "Intelligent",
+        "linked_library": "Bibliothèque liée",
+        "select_linked_library": "Sélectionner une bibliothèque"
     }
 }

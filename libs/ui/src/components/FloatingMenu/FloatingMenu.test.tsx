@@ -3,10 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DeleteOutlined} from '@ant-design/icons';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 import {act} from 'react-dom/test-utils';
-import {render, screen, waitFor} from '_tests/testUtils';
-import FloatingMenu, {FloatingMenuAction, IFloatingMenuActionWithIcon} from './FloatingMenu';
+import {render, screen} from '../../_tests/testUtils';
+import FloatingMenu from './FloatingMenu';
+import {FloatingMenuAction, IFloatingMenuActionWithIcon} from './_types';
 
 describe('FloatingMenu', () => {
     test('Display actions with button', async () => {
@@ -40,16 +40,12 @@ describe('FloatingMenu', () => {
             }
         ];
 
-        await act(async () => {
-            render(<FloatingMenu actions={mockActions} />);
-        });
+        render(<FloatingMenu actions={mockActions} />);
 
         const actionBtn = screen.getByRole('button', {name: 'delete'});
         expect(actionBtn).toBeInTheDocument();
 
-        await act(async () => {
-            userEvent.click(actionBtn);
-        });
+        await userEvent.click(actionBtn);
 
         expect(_handleClick).toBeCalled();
     });
@@ -74,17 +70,12 @@ describe('FloatingMenu', () => {
             }
         ];
 
-        await act(async () => {
-            render(<FloatingMenu actions={mockActions} moreActions={mockMoreActions} />);
-        });
+        render(<FloatingMenu actions={mockActions} moreActions={mockMoreActions} />);
 
         const moreBtn = screen.getByRole('button', {name: 'floating_menu.more_actions'});
-        await act(async () => {
-            userEvent.hover(moreBtn, null);
-        });
 
-        await waitFor(() => screen.getByText('moreActionA'));
+        await userEvent.hover(moreBtn);
 
-        expect(screen.getByText('moreActionA')).toBeInTheDocument();
+        expect(await screen.findByText('moreActionA')).toBeInTheDocument();
     });
 });

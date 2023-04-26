@@ -88,7 +88,7 @@ const marginBySize: Record<PreviewSize, string> = {
 };
 
 const Wrapper = styled.div<IWrapperProps>`
-    border-left: 5px solid ${props => (props.color && props.withColor ? props.color : 'transparent')};
+    border-left: ${props => (props.withColor ? `5px solid ${props.color ? props.color : 'transparent'}` : 'none')};
     display: grid;
     grid-template-areas: ${props => _getGridTemplateAreas(props.withPreview, props.withSubLabel, props.tile)};}};
 
