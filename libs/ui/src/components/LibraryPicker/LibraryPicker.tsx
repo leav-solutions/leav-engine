@@ -4,15 +4,17 @@
 import {Modal} from 'antd';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {LibraryLightFragment} from '../../_gqlTypes';
 import {LibrariesList} from './LibrariesList';
 
 interface ILibraryPickerProps {
     open: boolean;
     onClose: () => void;
-    onSubmit: (selectedLibraries: string[]) => void;
+    onSubmit: (selectedLibraries: LibraryLightFragment[]) => void;
     canCreate?: boolean;
     selected?: string[];
     multiple?: boolean;
+    showSelected?: boolean;
 }
 
 function LibraryPicker({
@@ -21,12 +23,13 @@ function LibraryPicker({
     onSubmit,
     selected = [],
     canCreate = true,
-    multiple = true
+    multiple = true,
+    showSelected = false
 }: ILibraryPickerProps): JSX.Element {
     const {t} = useTranslation('shared');
-    const [selectedLibraries, setSelectedLibraries] = useState<string[]>([]);
+    const [selectedLibraries, setSelectedLibraries] = useState<LibraryLightFragment[]>([]);
 
-    const _handleSelect = (selection: string[]) => {
+    const _handleSelect = (selection: LibraryLightFragment[]) => {
         setSelectedLibraries(selection);
     };
 
@@ -47,7 +50,13 @@ function LibraryPicker({
             cancelText={t('global.cancel')}
             centered
         >
-            <LibrariesList onSelect={_handleSelect} selected={selected} multiple={multiple} canCreate={canCreate} />
+            <LibrariesList
+                onSelect={_handleSelect}
+                selected={selected}
+                multiple={multiple}
+                canCreate={canCreate}
+                showSelected={showSelected}
+            />
         </Modal>
     );
 }

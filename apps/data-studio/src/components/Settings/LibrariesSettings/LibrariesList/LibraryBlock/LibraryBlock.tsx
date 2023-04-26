@@ -2,10 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, ExpandAltOutlined, HolderOutlined} from '@ant-design/icons';
-import {EditLibraryModal, EntityCard, IEntityData, PreviewSize, useLang} from '@leav/ui';
+import {
+    EditLibraryModal,
+    EntityCard,
+    FloatingMenu,
+    FloatingMenuAction,
+    IEntityData,
+    PreviewSize,
+    useLang
+} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import FloatingMenu from 'components/shared/FloatingMenu';
-import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
 import {useState} from 'react';
 import {DraggableProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
@@ -40,10 +46,6 @@ const DragHandle = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-`;
-
-const LibraryLabel = styled.div`
-    padding: 0.7rem 0.5rem;
 `;
 
 const RemoveButton = styled(CloseOutlined)`

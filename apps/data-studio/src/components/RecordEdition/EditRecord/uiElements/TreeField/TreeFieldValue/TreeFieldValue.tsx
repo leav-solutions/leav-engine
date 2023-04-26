@@ -1,12 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {RecordCard, themeVars} from '@leav/ui';
+import {FloatingMenu, FloatingMenuAction, RecordCard, themeVars} from '@leav/ui';
 import DeleteValueBtn from 'components/RecordEdition/EditRecord/shared/DeleteValueBtn';
 import ValueDetailsBtn from 'components/RecordEdition/EditRecord/shared/ValueDetailsBtn';
 import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
-import FloatingMenu from 'components/shared/FloatingMenu';
-import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
 import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';

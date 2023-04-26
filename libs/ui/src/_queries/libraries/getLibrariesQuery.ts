@@ -4,11 +4,15 @@
 import {gql} from '@apollo/client';
 
 export const getLibrariesQuery = gql`
+    fragment LibraryLight on Library {
+        id
+        label
+    }
+
     query GET_LIBRARIES {
         libraries {
             list {
-                id
-                label
+                ...LibraryLight
             }
         }
     }
