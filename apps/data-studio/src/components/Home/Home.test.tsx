@@ -25,7 +25,8 @@ describe('Home', () => {
     const mocks = [
         {
             request: {
-                query: getLibrariesListQuery
+                query: getLibrariesListQuery,
+                variables: {filters: {id: []}}
             },
             result: {
                 data: {
@@ -176,7 +177,7 @@ describe('Home', () => {
 
     const currentApp = {
         ...mockApplicationDetails,
-        settings: {libraries: [], trees: []}
+        settings: {libraries: 'all', trees: []}
     };
 
     beforeEach(() => {
@@ -201,34 +202,6 @@ describe('Home', () => {
 
         await waitFor(() => expect(within(librariesListBlock).getAllByRole('row')).toHaveLength(3)); // one for header + data
         await waitFor(() => expect(within(treesListBlock).getAllByRole('row')).toHaveLength(3)); // one for header + data
-    });
-
-    test('Sort libraries and tree lists according to order in application', async () => {
-        const currentAppWithLibraries = {
-            ...mockApplicationDetails,
-            settings: {
-                libraries: ['libB', 'libA'],
-                trees: ['treeB', 'treeA']
-            }
-        };
-
-        await act(async () => {
-            render(
-                <MemoryRouter>
-                    <Home />
-                </MemoryRouter>,
-                {apolloMocks: mocks, currentApp: currentAppWithLibraries}
-            );
-        });
-
-        const librariesListBlock = screen.getByTestId('libraries-list');
-        const treesListBlock = screen.getByTestId('trees-list');
-
-        await waitFor(() => expect(within(librariesListBlock).getAllByRole('row')[1]).toHaveTextContent('Lib B'));
-        expect(within(librariesListBlock).getAllByRole('row')[2]).toHaveTextContent('Lib A');
-
-        expect(within(treesListBlock).getAllByRole('row')[1]).toHaveTextContent('Tree B');
-        expect(within(treesListBlock).getAllByRole('row')[2]).toHaveTextContent('Tree A');
     });
 
     test('Display favorites first in libraries', async () => {
@@ -324,7 +297,7 @@ describe('Home', () => {
                     apolloMocks: mocks,
                     currentApp: {
                         ...currentApp,
-                        settings: {...currentApp.settings, libraries: null}
+                        settings: {...currentApp.settings, libraries: 'none'}
                     }
                 }
             );

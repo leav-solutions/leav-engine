@@ -6,7 +6,7 @@ import {ServerError, useLazyQuery, useMutation} from '@apollo/client';
 import {Button, Dropdown, message, Modal, Space, Steps} from 'antd';
 import {ErrorDisplay, Loading} from '@leav/ui';
 import dayjs from 'dayjs';
-import useGetLibrariesListQuery from 'hooks/useGetLibrariesListQuery/useGetLibrariesListQuery';
+import {useApplicationLibraries} from 'hooks/useApplicationLibraries';
 import useNotification from 'hooks/useNotification';
 import {lazy, ReactNode, Suspense, useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -55,13 +55,11 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
     const notification = useNotification();
 
     // get libraries list
-    const librariesListQuery = useGetLibrariesListQuery();
+    const {libraries, error: librariesError} = useApplicationLibraries();
 
-    if (librariesListQuery.error) {
-        return <ErrorDisplay message={librariesListQuery.error?.message} />;
+    if (librariesError) {
+        return <ErrorDisplay message={librariesError} />;
     }
-
-    const libraries = librariesListQuery.data?.libraries?.list ?? [];
 
     // Retrieve attributes list
     const [runGetAttributes] = useLazyQuery<GET_ATTRIBUTES_BY_LIB, GET_ATTRIBUTES_BY_LIBVariables>(

@@ -15,7 +15,7 @@ import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
-import useGetLibrariesListQuery from 'hooks/useGetLibrariesListQuery/useGetLibrariesListQuery';
+import {useApplicationLibraries} from 'hooks/useApplicationLibraries';
 import useGetTreesListQuery from 'hooks/useGetTreesListQuery/useGetTreesListQuery';
 import {useTranslation} from 'react-i18next';
 import {useHistory} from 'react-router-dom';
@@ -77,7 +77,7 @@ function Sidebar(): JSX.Element {
     const history = useHistory();
     const {activePanel} = useAppSelector(state => state);
 
-    const librariesList = useGetLibrariesListQuery();
+    const {libraries, loading: librariesLoading, error: librariesError} = useApplicationLibraries();
     const treesList = useGetTreesListQuery();
     const favoritesList = useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
         variables: {keys: [FAVORITE_LIBRARIES_KEY, FAVORITE_TREES_KEY]}
@@ -90,9 +90,7 @@ function Sidebar(): JSX.Element {
     const libraryFavorites = favoritesList?.data?.userData?.data?.[FAVORITE_LIBRARIES_KEY] ?? [];
     const treeFavorites = favoritesList?.data?.userData?.data?.[FAVORITE_TREES_KEY] ?? [];
 
-    const groupedLibraries: IGroupedElements<GET_LIBRARIES_LIST_libraries_list> = (
-        librariesList?.data?.libraries?.list ?? []
-    ).reduce(
+    const groupedLibraries: IGroupedElements<GET_LIBRARIES_LIST_libraries_list> = libraries.reduce(
         (groups, library) => {
             const newGroups = {...groups};
 
@@ -169,18 +167,18 @@ function Sidebar(): JSX.Element {
 
     let libsMenuItems: ItemType[] = [];
 
-    if (librariesList.loading || favoritesList.loading) {
+    if (librariesLoading || favoritesList.loading) {
         libsMenuItems = [
             {
                 key: 'libs-loading',
                 label: <Spin />
             }
         ];
-    } else if (librariesList.error || favoritesList.error) {
+    } else if (librariesError || favoritesList.error) {
         libsMenuItems = [
             {
                 key: 'libs-error',
-                label: <ErrorDisplay message={(librariesList.error || favoritesList.error).message} />
+                label: <ErrorDisplay message={librariesError || favoritesList?.error?.message} />
             }
         ];
     } else {
@@ -232,7 +230,7 @@ function Sidebar(): JSX.Element {
         treesMenuItems = [
             {
                 key: 'trees-error',
-                label: <ErrorDisplay message={(librariesList.error || favoritesList.error).message} />
+                label: <ErrorDisplay message={(treesList.error || favoritesList.error).message} />
             }
         ];
     } else {

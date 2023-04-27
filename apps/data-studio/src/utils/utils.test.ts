@@ -50,7 +50,7 @@ describe('utils', () => {
             expect(isLibraryInApp(mockApplicationDetails, 'libA')).toBe(true);
             expect(isLibraryInApp(mockApplicationDetails, 'libB')).toBe(true);
             expect(isLibraryInApp(mockApplicationDetails, 'libC')).toBe(false);
-            expect(isLibraryInApp({...mockApplicationDetails, settings: {libraries: []}}, 'libC')).toBe(true);
+            expect(isLibraryInApp({...mockApplicationDetails, settings: {libraries: 'all'}}, 'libC')).toBe(true);
         });
     });
 

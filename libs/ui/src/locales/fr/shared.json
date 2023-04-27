@@ -30,5 +30,12 @@
         "all_trees": "Tous les arbres",
         "no_trees": "Aucun  arbre",
         "info": "Informations"
+    },
+    "libraries": {
+        "select_libraries": "Sélectionner des bibliothèques",
+        "id": "Identifiant",
+        "label": "Libellé",
+        "search": "Rechercher",
+        "new_library": "Nouvelle bibliothèque"
     }
 }
