@@ -97,11 +97,11 @@ export interface IGetLibraryDetailExtendedQuery {
 }
 
 export interface IGetLibraryDetailExtendedVariables {
-    libId: string;
+    libId: string[];
 }
 
 export const getLibraryDetailExtendedQuery = (depthEmbeddedFields: number) => gqlUnchecked`
-    query GET_LIBRARY_DETAIL_EXTENDED($libId: ID) {
+    query GET_LIBRARY_DETAIL_EXTENDED($libId: [ID!]) {
         libraries(filters: {id: $libId}) {
             list {
                 id

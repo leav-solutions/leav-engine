@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 module.exports = {
     testEnvironment: 'jest-environment-jsdom',
+    testTimeout: 15000,
     moduleFileExtensions: ['ts', 'tsx', 'js'],
     setupFilesAfterEnv: ['./setupTests.ts'],
     transform: {

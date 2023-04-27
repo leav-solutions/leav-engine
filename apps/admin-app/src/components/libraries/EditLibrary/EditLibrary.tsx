@@ -23,7 +23,7 @@ const EditLibrary = ({match: routeMatch}: IEditLibraryProps): JSX.Element => {
     const {lang} = useLang();
 
     const {loading, error, data} = useQuery<GET_LIB_BY_ID, GET_LIB_BY_IDVariables>(getLibByIdQuery, {
-        variables: {id: libraryId, lang}
+        variables: {id: [libraryId], lang}
     });
     const readOnly = !data?.libraries?.list[0]?.permissions.admin_library;
 

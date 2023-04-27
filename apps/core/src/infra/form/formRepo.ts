@@ -48,10 +48,17 @@ export default function ({
 
             // Convert ID filter if any
             if (!!initializedParams?.filters?.id) {
-                initializedParams.filters.id = _generateKey({
-                    id: initializedParams.filters.id,
-                    library: (initializedParams.filters as IFormFilterOptions).library
-                });
+                initializedParams.filters.id = Array.isArray(initializedParams.filters.id)
+                    ? initializedParams.filters.id.map(filterId =>
+                          _generateKey({
+                              id: filterId,
+                              library: (initializedParams.filters as IFormFilterOptions).library
+                          })
+                      )
+                    : _generateKey({
+                          id: initializedParams.filters.id,
+                          library: (initializedParams.filters as IFormFilterOptions).library
+                      });
             }
 
             const res = await dbUtils.findCoreEntity<IForm>({

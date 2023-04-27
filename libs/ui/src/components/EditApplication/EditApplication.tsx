@@ -6,7 +6,7 @@ import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
 import {useGetApplicationByIdQuery} from '../../_gqlTypes';
 import {ErrorDisplay} from '../ErrorDisplay';
-import Loading from '../Loading';
+import {Loading} from '../Loading';
 import {EditApplicationInfo} from './EditApplicationInfo';
 import EditApplicationInstall from './EditApplicationInstall';
 import {IEditApplicationProps} from './_types';

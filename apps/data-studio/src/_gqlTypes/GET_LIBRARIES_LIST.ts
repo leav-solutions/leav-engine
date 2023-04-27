@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {LibraryBehavior, FileType} from './globalTypes';
+import {LibrariesFiltersInput, LibraryBehavior, FileType} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_LIBRARIES_LIST
@@ -87,4 +87,8 @@ export interface GET_LIBRARIES_LIST_libraries {
 
 export interface GET_LIBRARIES_LIST {
     libraries: GET_LIBRARIES_LIST_libraries | null;
+}
+
+export interface GET_LIBRARIES_LISTVariables {
+    filters?: LibrariesFiltersInput | null;
 }

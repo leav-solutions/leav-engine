@@ -38,5 +38,12 @@
         "install_details": "Compte-rendu de la dernière installation",
         "re_install": "Réinstaller l'application",
         "re_install_success": "La demande a bien été prise en compte. L'installation va bientôt démarrer."
+    },
+    "libraries": {
+        "select_libraries": "Sélectionner des bibliothèques",
+        "id": "Identifiant",
+        "label": "Libellé",
+        "search": "Rechercher",
+        "new_library": "Nouvelle bibliothèque"
     }
 }
