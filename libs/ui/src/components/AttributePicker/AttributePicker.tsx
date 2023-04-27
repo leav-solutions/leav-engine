@@ -9,7 +9,7 @@ import {AttributesList} from './AttributesList';
 interface IAttributePickerProps {
     open: boolean;
     onClose: () => void;
-    onSubmit: (selectedLibraries: string[]) => Promise<void>;
+    onSubmit: (selectedAttributes: string[]) => Promise<void>;
     canCreate?: boolean;
     selected?: string[];
     multiple?: boolean;
