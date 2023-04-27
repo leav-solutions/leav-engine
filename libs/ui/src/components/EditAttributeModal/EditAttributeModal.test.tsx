@@ -80,6 +80,7 @@ describe('EditAttributeModal', () => {
                             unique: false,
                             readonly: false,
                             linked_library: null,
+                            linked_tree: null,
                             multiple_values: false,
                             versions_conf: null
                         }

@@ -19,6 +19,7 @@ import {
 import FieldsGroup from '../../../../FieldsGroup';
 import {SubmitStateNotifier} from '../../../../SubmitStateNotifier';
 import {LinkedLibraryForm} from './LinkedLibraryForm';
+import {LinkedTreeForm} from './LinkedTreeForm';
 import {ValuesVersionsForm} from './ValuesVersionsForm';
 
 const SwitchFormItem = styled(Form.Item)`
@@ -78,6 +79,7 @@ function EditAttributeInfoForm({
     const isEditing = !!attribute;
     const isTypeStandard = currentType === AttributeType.simple || currentType === AttributeType.advanced;
     const isTypeLink = currentType === AttributeType.simple_link || currentType === AttributeType.advanced_link;
+    const isTypeTree = currentType === AttributeType.tree;
     const isTypeNotSimple = currentType !== AttributeType.simple && currentType !== AttributeType.simple_link;
     const isReadOnly = false;
 
@@ -127,7 +129,7 @@ function EditAttributeInfoForm({
     };
 
     const _handleSelectChange = (field: string) => (value: string) => {
-        _handleFieldSubmit(field, value);
+        return _handleFieldSubmit(field, value);
     };
 
     const _handleCheckboxChange = (field: string) => (value: boolean) => {
@@ -320,6 +322,14 @@ function EditAttributeInfoForm({
                     onChange={_handleSelectChange('linked_library')}
                     extra={<SubmitStateNotifier state={_getFieldState('linked_library')} />}
                     selected={form.getFieldValue('linked_library')?.id}
+                />
+            )}
+            {isTypeTree && (
+                <LinkedTreeForm
+                    isReadOnly={isReadOnly}
+                    onChange={_handleSelectChange('linked_tree')}
+                    extra={<SubmitStateNotifier state={_getFieldState('linked_tree')} />}
+                    selected={form.getFieldValue('linked_tree')?.id}
                 />
             )}
             <SwitchFormItem

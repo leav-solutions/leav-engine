@@ -1019,6 +1019,19 @@ export type LibraryAttributesFragment =
 
 export type LibraryLinkAttributeDetailsFragment = {linked_library?: {id: string; behavior: LibraryBehavior} | null};
 
+export type TreeDetailsFragment = {
+    id: string;
+    label?: any | null;
+    behavior: TreeBehavior;
+    system: boolean;
+    libraries: Array<{
+        library: {id: string; label?: any | null};
+        settings: {allowMultiplePositions: boolean; allowedAtRoot: boolean; allowedChildren: Array<string>};
+    }>;
+};
+
+export type TreeLightFragment = {id: string; label?: any | null};
+
 export type CheckApplicationExistenceQueryVariables = Exact<{
     id?: InputMaybe<Scalars['ID']>;
     endpoint?: InputMaybe<Scalars['String']>;
@@ -1501,6 +1514,52 @@ export type SaveLibraryMutation = {
     };
 };
 
+export type CheckTreeExistenceQueryVariables = Exact<{
+    id: Scalars['ID'];
+}>;
+
+export type CheckTreeExistenceQuery = {trees?: {totalCount: number} | null};
+
+export type GetTreeByIdQueryVariables = Exact<{
+    id?: InputMaybe<Scalars['ID']>;
+}>;
+
+export type GetTreeByIdQuery = {
+    trees?: {
+        list: Array<{
+            id: string;
+            label?: any | null;
+            behavior: TreeBehavior;
+            system: boolean;
+            libraries: Array<{
+                library: {id: string; label?: any | null};
+                settings: {allowMultiplePositions: boolean; allowedAtRoot: boolean; allowedChildren: Array<string>};
+            }>;
+        }>;
+    } | null;
+};
+
+export type GetTreesQueryVariables = Exact<{[key: string]: never}>;
+
+export type GetTreesQuery = {trees?: {list: Array<{id: string; label?: any | null}>} | null};
+
+export type SaveTreeMutationVariables = Exact<{
+    tree: TreeInput;
+}>;
+
+export type SaveTreeMutation = {
+    saveTree: {
+        id: string;
+        label?: any | null;
+        behavior: TreeBehavior;
+        system: boolean;
+        libraries: Array<{
+            library: {id: string; label?: any | null};
+            settings: {allowMultiplePositions: boolean; allowedAtRoot: boolean; allowedChildren: Array<string>};
+        }>;
+    };
+};
+
 export type UserInfoQueryVariables = Exact<{
     type: PermissionTypes;
     actions: Array<PermissionsActions> | PermissionsActions;
@@ -1694,6 +1753,31 @@ export const LibraryDetailsFragmentDoc = gql`
     }
     ${LibraryAttributesFragmentDoc}
     ${RecordIdentityFragmentDoc}
+`;
+export const TreeLightFragmentDoc = gql`
+    fragment TreeLight on Tree {
+        id
+        label
+    }
+`;
+export const TreeDetailsFragmentDoc = gql`
+    fragment TreeDetails on Tree {
+        id
+        label
+        behavior
+        system
+        libraries {
+            library {
+                id
+                label
+            }
+            settings {
+                allowMultiplePositions
+                allowedAtRoot
+                allowedChildren
+            }
+        }
+    }
 `;
 export const CheckApplicationExistenceDocument = gql`
     query CHECK_APPLICATION_EXISTENCE($id: ID, $endpoint: String) {
@@ -2323,6 +2407,169 @@ export function useSaveLibraryMutation(
 export type SaveLibraryMutationHookResult = ReturnType<typeof useSaveLibraryMutation>;
 export type SaveLibraryMutationResult = Apollo.MutationResult<SaveLibraryMutation>;
 export type SaveLibraryMutationOptions = Apollo.BaseMutationOptions<SaveLibraryMutation, SaveLibraryMutationVariables>;
+export const CheckTreeExistenceDocument = gql`
+    query CHECK_TREE_EXISTENCE($id: ID!) {
+        trees(filters: {id: $id}) {
+            totalCount
+        }
+    }
+`;
+
+/**
+ * __useCheckTreeExistenceQuery__
+ *
+ * To run a query within a React component, call `useCheckTreeExistenceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCheckTreeExistenceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCheckTreeExistenceQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useCheckTreeExistenceQuery(
+    baseOptions: Apollo.QueryHookOptions<CheckTreeExistenceQuery, CheckTreeExistenceQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useQuery<CheckTreeExistenceQuery, CheckTreeExistenceQueryVariables>(
+        CheckTreeExistenceDocument,
+        options
+    );
+}
+export function useCheckTreeExistenceLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<CheckTreeExistenceQuery, CheckTreeExistenceQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useLazyQuery<CheckTreeExistenceQuery, CheckTreeExistenceQueryVariables>(
+        CheckTreeExistenceDocument,
+        options
+    );
+}
+export type CheckTreeExistenceQueryHookResult = ReturnType<typeof useCheckTreeExistenceQuery>;
+export type CheckTreeExistenceLazyQueryHookResult = ReturnType<typeof useCheckTreeExistenceLazyQuery>;
+export type CheckTreeExistenceQueryResult = Apollo.QueryResult<
+    CheckTreeExistenceQuery,
+    CheckTreeExistenceQueryVariables
+>;
+export const GetTreeByIdDocument = gql`
+    query GET_TREE_BY_ID($id: ID) {
+        trees(filters: {id: $id}) {
+            list {
+                ...TreeDetails
+            }
+        }
+    }
+    ${TreeDetailsFragmentDoc}
+`;
+
+/**
+ * __useGetTreeByIdQuery__
+ *
+ * To run a query within a React component, call `useGetTreeByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTreeByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTreeByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetTreeByIdQuery(
+    baseOptions?: Apollo.QueryHookOptions<GetTreeByIdQuery, GetTreeByIdQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useQuery<GetTreeByIdQuery, GetTreeByIdQueryVariables>(GetTreeByIdDocument, options);
+}
+export function useGetTreeByIdLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<GetTreeByIdQuery, GetTreeByIdQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useLazyQuery<GetTreeByIdQuery, GetTreeByIdQueryVariables>(GetTreeByIdDocument, options);
+}
+export type GetTreeByIdQueryHookResult = ReturnType<typeof useGetTreeByIdQuery>;
+export type GetTreeByIdLazyQueryHookResult = ReturnType<typeof useGetTreeByIdLazyQuery>;
+export type GetTreeByIdQueryResult = Apollo.QueryResult<GetTreeByIdQuery, GetTreeByIdQueryVariables>;
+export const GetTreesDocument = gql`
+    query GET_TREES {
+        trees {
+            list {
+                ...TreeLight
+            }
+        }
+    }
+    ${TreeLightFragmentDoc}
+`;
+
+/**
+ * __useGetTreesQuery__
+ *
+ * To run a query within a React component, call `useGetTreesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTreesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTreesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetTreesQuery(baseOptions?: Apollo.QueryHookOptions<GetTreesQuery, GetTreesQueryVariables>) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useQuery<GetTreesQuery, GetTreesQueryVariables>(GetTreesDocument, options);
+}
+export function useGetTreesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTreesQuery, GetTreesQueryVariables>) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useLazyQuery<GetTreesQuery, GetTreesQueryVariables>(GetTreesDocument, options);
+}
+export type GetTreesQueryHookResult = ReturnType<typeof useGetTreesQuery>;
+export type GetTreesLazyQueryHookResult = ReturnType<typeof useGetTreesLazyQuery>;
+export type GetTreesQueryResult = Apollo.QueryResult<GetTreesQuery, GetTreesQueryVariables>;
+export const SaveTreeDocument = gql`
+    mutation SAVE_TREE($tree: TreeInput!) {
+        saveTree(tree: $tree) {
+            ...TreeDetails
+        }
+    }
+    ${TreeDetailsFragmentDoc}
+`;
+export type SaveTreeMutationFn = Apollo.MutationFunction<SaveTreeMutation, SaveTreeMutationVariables>;
+
+/**
+ * __useSaveTreeMutation__
+ *
+ * To run a mutation, you first call `useSaveTreeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveTreeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [saveTreeMutation, { data, loading, error }] = useSaveTreeMutation({
+ *   variables: {
+ *      tree: // value for 'tree'
+ *   },
+ * });
+ */
+export function useSaveTreeMutation(
+    baseOptions?: Apollo.MutationHookOptions<SaveTreeMutation, SaveTreeMutationVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useMutation<SaveTreeMutation, SaveTreeMutationVariables>(SaveTreeDocument, options);
+}
+export type SaveTreeMutationHookResult = ReturnType<typeof useSaveTreeMutation>;
+export type SaveTreeMutationResult = Apollo.MutationResult<SaveTreeMutation>;
+export type SaveTreeMutationOptions = Apollo.BaseMutationOptions<SaveTreeMutation, SaveTreeMutationVariables>;
 export const UserInfoDocument = gql`
     query USER_INFO($type: PermissionTypes!, $actions: [PermissionsActions!]!) {
         me {
