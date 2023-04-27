@@ -50,6 +50,7 @@ function EditAttributeInfo({attribute, onSetSubmitFunction}: IEditAttributeInfoP
 
         const isStandardType = values.type === AttributeType.simple || values.type === AttributeType.advanced;
         const isLinkType = values.type === AttributeType.simple_link || values.type === AttributeType.advanced_link;
+        const isTreeType = values.type === AttributeType.tree;
         const isTypeNotSimple = values.type !== AttributeType.simple && values.type !== AttributeType.simple_link;
 
         try {
@@ -71,7 +72,8 @@ function EditAttributeInfo({attribute, onSetSubmitFunction}: IEditAttributeInfoP
                                   profile: values?.versions_conf?.profile ?? null
                               }
                             : null,
-                        linked_library: isLinkType ? values.linked_library.id : null
+                        linked_library: isLinkType ? values.linked_library.id : null,
+                        linked_tree: isTreeType ? values.linked_tree.id : null
                     }
                 }
             });
