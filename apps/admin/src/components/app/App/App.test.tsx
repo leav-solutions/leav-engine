@@ -31,6 +31,8 @@ jest.mock('../../../constants', () => ({
     APP_ENDPOINT: 'admin'
 }));
 
+jest.mock('../Home', () => (): JSX.Element => <>Home</>);
+
 test('Renders app', async () => {
     const mocks: MockedResponse[] = [
         {
