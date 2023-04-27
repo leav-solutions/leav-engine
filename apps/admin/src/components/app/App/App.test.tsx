@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedResponse} from '@apollo/client/testing';
-import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
 import {getGlobalSettingsQuery} from 'queries/globalSettings/getGlobalSettingsQuery';
 import {isAllowedQuery} from 'queries/permissions/isAllowedQuery';
 import {getMe} from 'queries/users/me';
@@ -12,8 +11,10 @@ import {act, render, screen} from '_tests/testUtils';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import App from '.';
 import {getLangs} from 'queries/core/getLangs';
-import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
 import {getApplicationByEndpointQuery} from 'queries/applications/getApplicationByEndpointQuery';
+import {enableFetchMocks} from 'jest-fetch-mock';
+
+enableFetchMocks();
 
 jest.mock('../Home', () => {
     return function Home() {
@@ -28,8 +29,7 @@ jest.mock('../MessagesDisplay', () => {
 });
 
 jest.mock('../../../constants', () => ({
-    APPS_ENDPOINT: '',
-    APP_ENDPOINT: ''
+    APP_ENDPOINT: 'admin'
 }));
 
 test('Renders app', async () => {
@@ -94,7 +94,7 @@ test('Renders app', async () => {
             request: {
                 query: getApplicationByEndpointQuery,
                 variables: {
-                    endpoint: ''
+                    endpoint: 'admin'
                 }
             },
             result: {
