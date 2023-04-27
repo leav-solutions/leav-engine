@@ -12,7 +12,7 @@ import {PreviewSize} from '../../../constants';
 import {useLang} from '../../../hooks';
 import {AttributeDetailsFragment, GetAttributesQuery, useGetAttributesQuery} from '../../../_gqlTypes';
 import {getAttributesQuery} from '../../../_queries/attributes/getAttributesQuery';
-import EditAttributeModal from '../../EditAttributeModal/EditAttributeModal';
+import {EditAttributeModal} from '../../EditAttributeModal';
 import {EntityCard, IEntityData} from '../../EntityCard';
 import {ErrorDisplay} from '../../ErrorDisplay';
 import {Loading} from '../../Loading';

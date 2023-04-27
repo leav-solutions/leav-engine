@@ -18,13 +18,13 @@ window.matchMedia = query => ({
     dispatchEvent: jest.fn()
 });
 
-// jest.mock('../EditAttributeModal', () => {
-//     return {
-//         EditAttributeModal: () => {
-//             return <div>EditAttribute</div>;
-//         }
-//     };
-// });
+jest.mock('../EditAttributeModal', () => {
+    return {
+        EditAttributeModal: () => {
+            return <div>EditAttribute</div>;
+        }
+    };
+});
 
 describe('AttributePicker', () => {
     const mocks = [
@@ -133,7 +133,7 @@ describe('AttributePicker', () => {
         await waitFor(() => expect(radioBtnAttributeA).not.toBeChecked());
     });
 
-    test.skip('Can create new attribute', async () => {
+    test('Can create new attribute', async () => {
         const mockHandleSubmit = jest.fn();
         render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
 
@@ -142,11 +142,11 @@ describe('AttributePicker', () => {
         const newAttributeButton = screen.queryByRole('button', {name: /new_attribute/i});
         expect(newAttributeButton).toBeInTheDocument();
 
-        userEvent.click(newAttributeButton);
-        expect(await screen.findByText('EditAttribute')).toBeInTheDocument();
+        await userEvent.click(newAttributeButton);
+        expect(screen.getByText('EditAttribute')).toBeInTheDocument();
     });
 
-    test.skip('If not allowed, cannot create new attribute', async () => {
+    test('If not allowed, cannot create new attribute', async () => {
         const mockHandleSubmit = jest.fn();
         render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open canCreate={false} />, {mocks});
 
