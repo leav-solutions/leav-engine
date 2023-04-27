@@ -24,7 +24,7 @@ describe('EditRecord', () => {
             {
                 request: {
                     query: getLibByIdQuery,
-                    variables: {id: 'products'}
+                    variables: {id: ['products']}
                 },
                 result: {
                     data: {
@@ -69,7 +69,7 @@ describe('EditRecord', () => {
             {
                 request: {
                     query: getLibByIdQuery,
-                    variables: {id: 'products'}
+                    variables: {id: ['products']}
                 },
                 error: new Error('Boom!')
             }
@@ -97,7 +97,7 @@ describe('EditRecord', () => {
             {
                 request: {
                     query: getLibByIdQuery,
-                    variables: {id: 'products'}
+                    variables: {id: ['products']}
                 },
                 result: {
                     data: {

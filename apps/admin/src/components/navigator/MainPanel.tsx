@@ -43,7 +43,7 @@ export default function MainPanel({state, dispatch}: IListProps) {
 }
 
 export const QUERY_LIBRARY_CONFIG = gql`
-    query QUERY_LIBRARY_CONFIG($id: ID, $lang: [AvailableLanguage!]) {
+    query QUERY_LIBRARY_CONFIG($id: [ID!], $lang: [AvailableLanguage!]) {
         libraries(filters: {id: $id}) {
             list {
                 id

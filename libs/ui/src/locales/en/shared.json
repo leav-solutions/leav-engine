@@ -31,5 +31,12 @@
         "all_trees": "All trees",
         "no_trees": "No trees",
         "info": "Information"
+    },
+    "libraries": {
+        "select_libraries": "Select libraries",
+        "id": "Identifier",
+        "label": "Label",
+        "search": "Search",
+        "new_library": "New library"
     }
 }

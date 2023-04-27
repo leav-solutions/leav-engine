@@ -9,9 +9,12 @@ export const mockLibrary = {
     id: 'libraryId',
     behavior: LibraryBehavior.standard,
     label: mockLabel('libraryLabel'),
+    icon: null,
     gqlNames: {
         query: 'libraryId',
-        type: 'LibraryId'
+        type: 'LibraryId',
+        searchableFields: 'LibraryIdSearchableFields',
+        filter: 'LibraryIdFilter'
     }
 };
 
