@@ -85,6 +85,13 @@
         "versions_mode_simple": "Simple",
         "versions_mode_smart": "Smart",
         "linked_library": "Linked library",
-        "select_linked_library": "Select library"
+        "select_linked_library": "Select library",
+        "linked_tree": "Linked tree",
+        "select_linked_tree": "Select a tree"
+    },
+    "trees": {
+        "tree": "Tree",
+        "new_tree": "New tree",
+        "select_trees": "Select trees"
     }
 }
