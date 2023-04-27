@@ -28,10 +28,9 @@ jest.mock('../MessagesDisplay', () => {
 });
 
 jest.mock('../../../constants', () => ({
-    APP_ENDPOINT: 'admin'
+    APPS_ENDPOINT: '',
+    APP_ENDPOINT: ''
 }));
-
-jest.mock('../Home', () => (): JSX.Element => <>Home</>);
 
 test('Renders app', async () => {
     const mocks: MockedResponse[] = [
@@ -95,7 +94,7 @@ test('Renders app', async () => {
             request: {
                 query: getApplicationByEndpointQuery,
                 variables: {
-                    endpoint: 'admin'
+                    endpoint: ''
                 }
             },
             result: {
@@ -124,9 +123,7 @@ test('Renders app', async () => {
         }
     ];
 
-    await act(async () => {
-        render(<App />, {apolloMocks: mocks, cacheSettings: {possibleTypes: {Record: ['User']}}});
-    });
+    render(<App />, {apolloMocks: mocks, cacheSettings: {possibleTypes: {Record: ['User']}}});
 
     expect(await screen.findByText('Home')).toBeInTheDocument();
 });
