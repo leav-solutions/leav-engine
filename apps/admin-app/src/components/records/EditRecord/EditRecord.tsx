@@ -32,7 +32,7 @@ function EditRecord({
     inModal = false
 }: IEditRecordProps): JSX.Element {
     const {data, loading, error} = useQuery<GET_LIB_BY_ID, GET_LIB_BY_IDVariables>(getLibByIdQuery, {
-        variables: {id: library}
+        variables: {id: [library]}
     });
 
     if (loading) {

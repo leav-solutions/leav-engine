@@ -5,12 +5,8 @@ import {EditApplication, IEditApplicationProps} from '@leav/ui';
 import {APPS_BASE_URL} from 'constants/constants';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
+import TabContentWrapper from '../TabContentWrapper';
 import AdvancedSettings from './AdvancedSettings';
-
-const Wrapper = styled.div`
-    padding: 1rem;
-`;
 
 function ApplicationSettings(): JSX.Element {
     const {t} = useTranslation();
@@ -25,14 +21,14 @@ function ApplicationSettings(): JSX.Element {
     ];
 
     return (
-        <Wrapper>
+        <TabContentWrapper>
             <EditApplication
                 applicationId={currentApp.id}
                 appsBaseUrl={APPS_BASE_URL}
                 tabContentStyle={{maxHeight: 'calc(100vh - 10rem)', overflowY: 'auto'}}
                 additionalTabs={customTabs}
             />
-        </Wrapper>
+        </TabContentWrapper>
     );
 }
 

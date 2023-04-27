@@ -39,5 +39,12 @@
         "install_details": "Last install details",
         "re_install": "Re-install app",
         "re_install_success": "Request successful, install will start soon"
+    },
+    "libraries": {
+        "select_libraries": "Select libraries",
+        "id": "Identifier",
+        "label": "Label",
+        "search": "Search",
+        "new_library": "New library"
     }
 }

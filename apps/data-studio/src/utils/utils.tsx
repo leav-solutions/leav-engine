@@ -20,6 +20,7 @@ import {
     AttributeConditionType,
     AvailableLanguage,
     ExtendFormat,
+    IApplicationSettings,
     IAttribute,
     IDateRangeValue,
     IInfo,
@@ -365,12 +366,17 @@ export const stringifyDateRangeValue = (value: IDateRangeValue, t: TFunction): s
     });
 
 export const isLibraryInApp = (app: GET_APPLICATION_BY_ID_applications_list, libraryId: string): boolean => {
-    if (!app?.settings?.libraries === null) {
+    const settings: IApplicationSettings = app?.settings ?? {};
+    if (settings.libraries === 'none') {
         return false;
     }
 
-    const appLibraries = app?.settings?.libraries ?? [];
-    return !appLibraries.length || !!appLibraries.find(appLib => appLib === libraryId);
+    if (settings.libraries === 'all') {
+        return true;
+    }
+
+    const appLibraries = settings.libraries ?? [];
+    return !!appLibraries.find(appLib => appLib === libraryId);
 };
 
 export const isTreeInApp = (app: GET_APPLICATION_BY_ID_applications_list, treeId: string): boolean => {

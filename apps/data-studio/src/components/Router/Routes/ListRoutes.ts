@@ -16,7 +16,7 @@ export const routes = {
         list: '/library/list/',
         items: '/:panel(library)/:libId'
     },
-    settings: '/settings'
+    settings: '/settings/:tabId?'
 };
 
 export const makeActiveLibraryRoute = (activeLibrary: IActiveLibrary) => {

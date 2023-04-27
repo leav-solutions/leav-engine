@@ -6,8 +6,8 @@ import recordIdentityFragment from '../records/recordIdentityFragment';
 
 export const getLibrariesListQuery = gql`
     ${recordIdentityFragment}
-    query GET_LIBRARIES_LIST {
-        libraries {
+    query GET_LIBRARIES_LIST($filters: LibrariesFiltersInput) {
+        libraries(filters: $filters) {
             list {
                 id
                 label

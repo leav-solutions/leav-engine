@@ -302,8 +302,8 @@ export enum ImportType {
 
 export type LibrariesFiltersInput = {
     behavior?: InputMaybe<Array<LibraryBehavior>>;
-    id?: InputMaybe<Scalars['ID']>;
-    label?: InputMaybe<Scalars['String']>;
+    id?: InputMaybe<Array<Scalars['ID']>>;
+    label?: InputMaybe<Array<Scalars['String']>>;
     system?: InputMaybe<Scalars['Boolean']>;
 };
 
@@ -1654,6 +1654,10 @@ export type SaveApplicationMutation = {
     };
 };
 
+export type GetLibrariesQueryVariables = Exact<{[key: string]: never}>;
+
+export type GetLibrariesQuery = {libraries?: {list: Array<{id: string; label?: any | null}>} | null};
+
 export type UserInfoQueryVariables = Exact<{
     type: PermissionTypes;
     actions: Array<PermissionsActions> | PermissionsActions;
@@ -1962,6 +1966,47 @@ export type SaveApplicationMutationOptions = Apollo.BaseMutationOptions<
     SaveApplicationMutation,
     SaveApplicationMutationVariables
 >;
+export const GetLibrariesDocument = gql`
+    query GET_LIBRARIES {
+        libraries {
+            list {
+                id
+                label
+            }
+        }
+    }
+`;
+
+/**
+ * __useGetLibrariesQuery__
+ *
+ * To run a query within a React component, call `useGetLibrariesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLibrariesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLibrariesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetLibrariesQuery(
+    baseOptions?: Apollo.QueryHookOptions<GetLibrariesQuery, GetLibrariesQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useQuery<GetLibrariesQuery, GetLibrariesQueryVariables>(GetLibrariesDocument, options);
+}
+export function useGetLibrariesLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<GetLibrariesQuery, GetLibrariesQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useLazyQuery<GetLibrariesQuery, GetLibrariesQueryVariables>(GetLibrariesDocument, options);
+}
+export type GetLibrariesQueryHookResult = ReturnType<typeof useGetLibrariesQuery>;
+export type GetLibrariesLazyQueryHookResult = ReturnType<typeof useGetLibrariesLazyQuery>;
+export type GetLibrariesQueryResult = Apollo.QueryResult<GetLibrariesQuery, GetLibrariesQueryVariables>;
 export const UserInfoDocument = gql`
     query USER_INFO($type: PermissionTypes!, $actions: [PermissionsActions!]!) {
         me {

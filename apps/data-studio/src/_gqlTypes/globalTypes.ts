@@ -223,6 +223,13 @@ export interface FileInput {
     replace?: boolean | null;
 }
 
+export interface LibrariesFiltersInput {
+    id?: string[] | null;
+    label?: string[] | null;
+    system?: boolean | null;
+    behavior?: LibraryBehavior[] | null;
+}
+
 export interface Pagination {
     limit: number;
     offset: number;

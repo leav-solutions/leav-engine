@@ -49,15 +49,23 @@ describe('Libraries', () => {
     });
 
     test('Get library by ID', async () => {
-        const res = await makeGraphQlCall('{libraries(filters: {id: "users"}) { list { id } }}');
+        const res = await makeGraphQlCall('{libraries(filters: {id: ["users"]}) { list { id } }}');
 
         expect(res.status).toBe(200);
         expect(res.data.data.libraries.list.length).toBe(1);
         expect(res.data.errors).toBeUndefined();
     });
 
+    test('Get libraries by multiple IDs', async () => {
+        const res = await makeGraphQlCall('{libraries(filters: {id: ["users", "files"]}) { list { id } }}');
+
+        expect(res.status).toBe(200);
+        expect(res.data.data.libraries.list.length).toBe(2);
+        expect(res.data.errors).toBeUndefined();
+    });
+
     test('Return only request language on label', async () => {
-        const res = await makeGraphQlCall('{libraries(filters: {id: "users"}) { list {id label(lang: [fr])} }}');
+        const res = await makeGraphQlCall('{libraries(filters: {id: ["users"]}) { list {id label(lang: [fr])} }}');
 
         expect(res.status).toBe(200);
         expect(res.data.data.libraries.list.length).toBe(1);

@@ -28,8 +28,8 @@ declare global {
     }
 
     interface ICoreEntityFilterOptions {
-        id?: string;
-        label?: string;
+        id?: string | string[];
+        label?: string | string[];
         system?: boolean;
         key?: string;
     }
