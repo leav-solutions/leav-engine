@@ -4,8 +4,7 @@
 import {DownOutlined, FieldTimeOutlined, LoadingOutlined, RightOutlined, UploadOutlined} from '@ant-design/icons';
 import {ServerError, useLazyQuery, useMutation} from '@apollo/client';
 import {Button, Dropdown, message, Modal, Space, Steps} from 'antd';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
+import {ErrorDisplay, Loading} from '@leav/ui';
 import dayjs from 'dayjs';
 import useGetLibrariesListQuery from 'hooks/useGetLibrariesListQuery/useGetLibrariesListQuery';
 import useNotification from 'hooks/useNotification';

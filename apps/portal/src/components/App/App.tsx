@@ -2,13 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {customTheme, LangContext} from '@leav/ui';
+import {customTheme, LangContext, useAppLang, Loading, ErrorDisplay} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {ConfigProvider, Layout, theme} from 'antd';
 import Applications from 'components/Applications';
 import AppIcon from 'components/shared/AppIcon';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
 import UserMenu from 'components/UserMenu';
 import {APP_ENDPOINT} from '../../constants';
 import ApplicationContext from 'context/ApplicationContext';
@@ -24,7 +22,6 @@ import styled, {ThemeProvider} from 'styled-components';
 import {GET_APPLICATIONS, GET_APPLICATIONSVariables} from '_gqlTypes/GET_APPLICATIONS';
 import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 import {ME} from '_gqlTypes/ME';
-import useAppLang from 'hooks/useAppLang';
 import {GET_LANGS} from '_gqlTypes/GET_LANGS';
 import {getLangs} from 'queries/core/getLangs';
 

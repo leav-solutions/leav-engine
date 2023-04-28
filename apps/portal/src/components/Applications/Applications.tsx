@@ -3,11 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
-import {useLang} from '@leav/ui';
+import {useLang, Loading, ErrorDisplay} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {FloatButton} from 'antd';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
 import {useApplicationsPermissions} from 'hooks/useApplicationsPermissions';
 import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
 import {useState} from 'react';

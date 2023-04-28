@@ -2,11 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery, useSubscription} from '@apollo/client';
-import {LangContext} from '@leav/ui';
+import {LangContext, useAppLang, ErrorDisplay, ErrorDisplayTypes, Loading} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
-import Loading from 'components/shared/Loading';
 import ApplicationContext from 'context/ApplicationContext';
 import {getGlobalSettingsQuery} from 'graphQL/queries/globalSettings/getGlobalSettingsQuery';
 import {getTasks} from 'graphQL/queries/tasks/getTasks';
@@ -25,7 +22,6 @@ import Router from '../../Router';
 import {getLangs} from 'graphQL/queries/core/getLangs';
 import {GET_LANGS} from '_gqlTypes/GET_LANGS';
 import {APP_ENDPOINT} from '../../../constants';
-import useAppLang from '../../../hooks/useAppLang/useAppLang';
 import {getApplicationByEndpointQuery} from 'graphQL/queries/applications/getApplicationByEndpointQuery';
 import {GET_APPLICATION_BY_ENDPOINT, GET_APPLICATION_BY_ENDPOINTVariables} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
 

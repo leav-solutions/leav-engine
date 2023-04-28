@@ -2,10 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {themeVars, useLang} from '@leav/ui';
+import {themeVars, useLang, ErrorDisplay, Loading} from '@leav/ui';
 import {Badge, Button, Input} from 'antd';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
 import useUpdateViewsOrderMutation from 'graphQL/mutations/views/hooks/useUpdateViewsOrderMutation';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import useSearchReducer from 'hooks/useSearchReducer';

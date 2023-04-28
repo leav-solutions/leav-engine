@@ -2,12 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
-import {RecordCard, themeVars} from '@leav/ui';
+import {RecordCard, themeVars, ErrorDisplay, ErrorDisplayTypes, Loading} from '@leav/ui';
 import {Button, Modal, Space, Tooltip} from 'antd';
 import ErrorBoundary from 'components/shared/ErrorBoundary';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
-import Loading from 'components/shared/Loading';
 import createRecordMutation from 'graphQL/mutations/records/createRecordMutation';
 import {
     IRecordPropertyLink,

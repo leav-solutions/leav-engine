@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {customTheme} from '@leav/ui';
+import {customTheme, useAppLang, ErrorDisplay, Loading} from '@leav/ui';
 import {ConfigProvider} from 'antd';
 import App from 'components/App';
 import React, {useState, useEffect} from 'react';
@@ -9,9 +9,6 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import i18n from './i18n';
-import useAppLang from './hooks/useAppLang';
-import Loading from 'components/shared/Loading';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {APPS_ENDPOINT, APP_ENDPOINT} from './constants';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);

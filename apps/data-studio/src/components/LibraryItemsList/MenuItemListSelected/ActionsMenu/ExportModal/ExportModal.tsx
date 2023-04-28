@@ -8,6 +8,7 @@ import AttributesSelectionList from 'components/AttributesSelectionList';
 import useNotification from 'hooks/useNotification';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {useState} from 'react';
+import {ErrorDisplay} from '@leav/ui';
 import {useTranslation} from 'react-i18next';
 import {addInfo} from 'reduxStore/infos';
 import {setIsPanelOpen} from 'reduxStore/notifications';
@@ -31,7 +32,6 @@ import {
     ISelectedAttribute,
     SharedStateSelectionType
 } from '../../../../../_types/types';
-import ErrorDisplay from '../../../../shared/ErrorDisplay';
 
 export interface IExportModalProps {
     open: boolean;

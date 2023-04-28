@@ -6207,7 +6207,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@leav/ui@workspace:*, @leav/ui@workspace:libs/ui":
+"@leav/ui@workspace:libs/ui":
   version: 0.0.0-use.local
   resolution: "@leav/ui@workspace:libs/ui"
   dependencies:
@@ -22181,7 +22181,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "login@workspace:apps/login"
   dependencies:
-    "@leav/ui": "workspace:*"
+    "@leav/ui": "workspace:libs/ui"
     "@testing-library/jest-dom": 5.16.4
     "@testing-library/react": 13.0.1
     "@testing-library/user-event": 13.5.0
@@ -24287,7 +24287,7 @@ __metadata:
   resolution: "portal@workspace:apps/portal"
   dependencies:
     "@apollo/client": 3.7.10
-    "@leav/ui": "workspace:*"
+    "@leav/ui": "workspace:libs/ui"
     "@testing-library/jest-dom": 5.16.4
     "@testing-library/react": 13.1.1
     "@testing-library/react-hooks": 8.0.0

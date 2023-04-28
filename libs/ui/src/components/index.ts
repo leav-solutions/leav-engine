@@ -7,3 +7,5 @@ export * from './ImageMissing';
 export * from './RecordCard';
 export * from './RecordPreview';
 export * from './SubmitStateNotifier';
+export * from './ErrorDisplay';
+export * from './Loading';

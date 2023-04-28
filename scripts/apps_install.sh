@@ -23,10 +23,11 @@ export ESLINT_NO_DEV_ERRORS=true
 export HOME=$(getent passwd `whoami`  | cut -d: -f6) # To avoid issue when trying to read /root folder as non-root user
 export SKIP_PREFLIGHT_CHECK=true
 
-# # login
+yarn install
+
+# login
 BUILD_LOGIN_DIR=../apps/login/dist
 DEST_LOGIN_DIR=../apps/core/applications/login
-yarn workspace login install
 yarn workspace login build
 checkExitCode
 
@@ -38,7 +39,6 @@ checkExitCode
 # portal
 BUILD_PORTAL_DIR=../apps/portal/dist
 DEST_PORTAL_DIR=../apps/core/applications/portal
-yarn workspace portal install
 yarn workspace portal build
 checkExitCode
 
@@ -50,7 +50,6 @@ checkExitCode
 # admin
 BUILD_ADMIN_DIR=../apps/admin/build
 DEST_ADMIN_DIR=../apps/core/applications/admin
-yarn workspace admin install
 yarn workspace admin build
 checkExitCode
 
@@ -59,10 +58,9 @@ checkExitCode
 mv $BUILD_ADMIN_DIR $DEST_ADMIN_DIR
 checkExitCode
 
-data-studio
+# data-studio
 BUILD_DATA_STUDIO_DIR=../apps/data-studio/dist
 DEST_DATA_STUDIO_DIR=../apps/core/applications/data-studio
-yarn workspace data-studio install
 yarn workspace data-studio build
 checkExitCode
 

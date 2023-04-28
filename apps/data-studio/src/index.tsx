@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {customTheme} from '@leav/ui';
+import {customTheme, useAppLang, ErrorDisplay, Loading} from '@leav/ui';
 import {ConfigProvider} from 'antd';
 import 'antd/dist/reset.css';
 import App from 'components/app';
@@ -10,10 +10,7 @@ import i18n from './i18n';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
 import {useEffect, useState} from 'react';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
-import {APPS_ENDPOINT, APP_ENDPOINT, ORIGIN_URL} from './constants';
-import useAppLang from 'hooks/useAppLang/useAppLang';
+import {APPS_ENDPOINT, APP_ENDPOINT} from './constants';
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
 

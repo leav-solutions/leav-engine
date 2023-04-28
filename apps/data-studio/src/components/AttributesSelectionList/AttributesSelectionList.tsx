@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {useLang} from '@leav/ui';
+import {useLang, ErrorDisplay} from '@leav/ui';
 import {Input, List, Spin} from 'antd';
 import {useEffect, useReducer, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -11,7 +11,6 @@ import {getAttributesByLibQuery} from '../../graphQL/queries/attributes/getAttri
 import {localizedTranslation} from '../../utils';
 import {GET_ATTRIBUTES_BY_LIB, GET_ATTRIBUTES_BY_LIBVariables} from '../../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {ISelectedAttribute} from '../../_types/types';
-import ErrorDisplay from '../shared/ErrorDisplay';
 import Attribute from './Attribute';
 import attributeSelectionListReducer, {
     AttributesSelectionListActionTypes,

@@ -7,10 +7,8 @@ import React, {useState, useEffect} from 'react';
 import ReactDOM from 'react-dom/client';
 import i18n from './i18n';
 import './index.css';
-import useAppLang from './hooks/useAppLang';
+import {useAppLang, Loading, ErrorDisplay} from '@leav/ui';
 import {APPS_ENDPOINT, APP_ENDPOINT} from './constants';
-import Loading from 'components/shared/Loading';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 

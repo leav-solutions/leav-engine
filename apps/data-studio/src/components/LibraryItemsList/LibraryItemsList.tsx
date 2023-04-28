@@ -1,9 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
-import Loading from 'components/shared/Loading';
+import {ErrorDisplay, ErrorDisplayTypes, Loading} from '@leav/ui';
 import useLibraryView from 'hooks/useLibraryView/useLibraryView';
 import React from 'react';
 import {CSSObject} from 'styled-components';
