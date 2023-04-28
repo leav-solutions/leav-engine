@@ -91,7 +91,7 @@ function LibrariesList({libraries, onMoveLibrary, onRemoveLibrary, onAddLibrarie
 
     const addLibraryButton = (
         <Button icon={<PlusOutlined />} type="primary" onClick={_handleOpenLibraryPicker}>
-            {t('app_settings.add_library')}
+            {t('app_settings.libraries_settings.add_library')}
         </Button>
     );
 
@@ -105,7 +105,7 @@ function LibrariesList({libraries, onMoveLibrary, onRemoveLibrary, onAddLibrarie
                             aria-label="search"
                             onChange={_handleSearchChange}
                             style={{maxWidth: '30rem', margin: '10px'}}
-                            placeholder={t('app_settings.search_libraries') + '...'}
+                            placeholder={t('global.search') + '...'}
                         />
                         {isCustomMode && !isReadOnly && addLibraryButton}
                     </Header>
@@ -135,7 +135,7 @@ function LibrariesList({libraries, onMoveLibrary, onRemoveLibrary, onAddLibrarie
                     imageStyle={{
                         height: 60
                     }}
-                    description={<span>{t('app_settings.no_libraries')}.</span>}
+                    description={<span>{t('app_settings.libraries_settings.no_libraries')}.</span>}
                 >
                     {addLibraryButton}
                 </Empty>

@@ -13,3 +13,4 @@ export * from './LibraryPicker';
 export * from './Loading';
 export * from './RecordCard';
 export * from './SubmitStateNotifier';
+export * from './TreePicker';

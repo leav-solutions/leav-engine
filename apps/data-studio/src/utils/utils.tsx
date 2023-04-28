@@ -380,12 +380,17 @@ export const isLibraryInApp = (app: GET_APPLICATION_BY_ID_applications_list, lib
 };
 
 export const isTreeInApp = (app: GET_APPLICATION_BY_ID_applications_list, treeId: string): boolean => {
-    if (app?.settings?.trees === null) {
+    const settings: IApplicationSettings = app?.settings ?? {};
+    if (settings.trees === 'none') {
         return false;
     }
 
-    const appTrees = app?.settings?.trees ?? [];
-    return !appTrees.length || !!appTrees.find(appTree => appTree === treeId);
+    if (settings.trees === 'all') {
+        return true;
+    }
+
+    const appTrees = settings.trees ?? [];
+    return !!appTrees.find(appTree => appTree === treeId);
 };
 
 export const stopEvent = (e: React.SyntheticEvent<any>) => {

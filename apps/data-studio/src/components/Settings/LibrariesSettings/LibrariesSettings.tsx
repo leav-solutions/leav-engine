@@ -9,9 +9,9 @@ import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {IApplicationSettings} from '_types/types';
+import ModeSelector from '../ModeSelector';
 import TabContentWrapper from '../TabContentWrapper';
 import LibrariesList from './LibrariesList';
-import ModeSelector from './ModeSelector';
 
 const TitleWrapper = styled.div`
     display: flex;
@@ -120,13 +120,17 @@ function LibrariesSettings(): JSX.Element {
         });
     };
 
+    const currentMode = Array.isArray(currentApp.settings?.libraries)
+        ? 'custom'
+        : currentApp.settings?.libraries ?? 'all';
+
     return (
         <TabContentWrapper>
             <TitleWrapper>
                 <h2>{t('app_settings.libraries')}</h2>
                 <SubmitStateNotifier state={submitState} />
             </TitleWrapper>
-            <ModeSelector onChange={_handleSelectionModeChange} />
+            <ModeSelector onChange={_handleSelectionModeChange} entityType="libraries" selectedMode={currentMode} />
             <ListWrapper>
                 <LibrariesList
                     libraries={libraries}

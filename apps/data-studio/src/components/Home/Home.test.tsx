@@ -111,7 +111,10 @@ describe('Home', () => {
         },
         {
             request: {
-                query: getTreeListQuery
+                query: getTreeListQuery,
+                variables: {
+                    filters: {id: []}
+                }
             },
             result: {
                 data: {
@@ -177,7 +180,7 @@ describe('Home', () => {
 
     const currentApp = {
         ...mockApplicationDetails,
-        settings: {libraries: 'all', trees: []}
+        settings: {libraries: 'all', trees: 'all'}
     };
 
     beforeEach(() => {
@@ -185,17 +188,15 @@ describe('Home', () => {
     });
 
     test('Display libraries and tree lists', async () => {
-        await act(async () => {
-            render(
-                <MemoryRouter>
-                    <Home />
-                </MemoryRouter>,
-                {apolloMocks: mocks, currentApp}
-            );
-        });
+        render(
+            <MemoryRouter>
+                <Home />
+            </MemoryRouter>,
+            {apolloMocks: mocks, currentApp}
+        );
 
-        const librariesListBlock = screen.getByTestId('libraries-list');
-        const treesListBlock = screen.getByTestId('trees-list');
+        const librariesListBlock = await screen.findByTestId('libraries-list');
+        const treesListBlock = await screen.findByTestId('trees-list');
 
         expect(librariesListBlock).toBeInTheDocument();
         expect(treesListBlock).toBeInTheDocument();
@@ -233,16 +234,14 @@ describe('Home', () => {
     });
 
     test('Display favorites first in trees', async () => {
-        await act(async () => {
-            render(
-                <MemoryRouter>
-                    <Home />
-                </MemoryRouter>,
-                {apolloMocks: mocks, currentApp}
-            );
-        });
+        render(
+            <MemoryRouter>
+                <Home />
+            </MemoryRouter>,
+            {apolloMocks: mocks, currentApp}
+        );
 
-        const treesListBlock = screen.getByTestId('trees-list');
+        const treesListBlock = await screen.findByTestId('trees-list');
 
         expect(treesListBlock).toBeInTheDocument();
 
@@ -288,45 +287,41 @@ describe('Home', () => {
     });
 
     test('If no libraries allowed, do not display libraries list at all', async () => {
-        await act(async () => {
-            render(
-                <MemoryRouter>
-                    <Home />
-                </MemoryRouter>,
-                {
-                    apolloMocks: mocks,
-                    currentApp: {
-                        ...currentApp,
-                        settings: {...currentApp.settings, libraries: 'none'}
-                    }
+        render(
+            <MemoryRouter>
+                <Home />
+            </MemoryRouter>,
+            {
+                apolloMocks: mocks,
+                currentApp: {
+                    ...currentApp,
+                    settings: {...currentApp.settings, libraries: 'none', trees: 'all'}
                 }
-            );
-        });
+            }
+        );
 
         const librariesListBlock = screen.queryByTestId('libraries-list');
-        const treesListBlock = screen.queryByTestId('trees-list');
+        const treesListBlock = await screen.findByTestId('trees-list');
 
         expect(librariesListBlock).not.toBeInTheDocument();
         expect(treesListBlock).toBeInTheDocument();
     });
 
     test('If no trees allowed, do not display trees list at all', async () => {
-        await act(async () => {
-            render(
-                <MemoryRouter>
-                    <Home />
-                </MemoryRouter>,
-                {
-                    apolloMocks: mocks,
-                    currentApp: {
-                        ...currentApp,
-                        settings: {...currentApp.settings, trees: null}
-                    }
+        render(
+            <MemoryRouter>
+                <Home />
+            </MemoryRouter>,
+            {
+                apolloMocks: mocks,
+                currentApp: {
+                    ...currentApp,
+                    settings: {...currentApp.settings, trees: 'none', libraries: 'all'}
                 }
-            );
-        });
+            }
+        );
 
-        const librariesListBlock = screen.queryByTestId('libraries-list');
+        const librariesListBlock = await screen.findByTestId('libraries-list');
         const treesListBlock = screen.queryByTestId('trees-list');
 
         expect(librariesListBlock).toBeInTheDocument();
@@ -334,20 +329,18 @@ describe('Home', () => {
     });
 
     test('If no trees or libraries allowed, display a message', async () => {
-        await act(async () => {
-            render(
-                <MemoryRouter>
-                    <Home />
-                </MemoryRouter>,
-                {
-                    apolloMocks: mocks,
-                    currentApp: {
-                        ...currentApp,
-                        settings: {libraries: null, trees: null}
-                    }
+        render(
+            <MemoryRouter>
+                <Home />
+            </MemoryRouter>,
+            {
+                apolloMocks: mocks,
+                currentApp: {
+                    ...currentApp,
+                    settings: {libraries: 'none', trees: 'none'}
                 }
-            );
-        });
+            }
+        );
 
         expect(screen.getByText(/no_libraries_or_trees/)).toBeInTheDocument();
     });

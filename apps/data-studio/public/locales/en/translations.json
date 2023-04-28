@@ -153,7 +153,8 @@
             "medium": "medium",
             "big": "big",
             "tile": "Gallery"
-        }
+        },
+        "not_in_app": "This library is not available in this application"
     },
     "items-list-row": {
         "nb-elements": "{{nbItems}} results",
@@ -318,7 +319,8 @@
             "error-detach": "An error occurs while detaching elements {{elements}}: {{errorMessage}}"
         },
         "access_denied": "You cannot access this element",
-        "inactive_element": "This element is inactive"
+        "inactive_element": "This element is inactive",
+        "not_in_app": "This tree is not available in this application"
     },
     "info": {
         "base-message": "Welcome to {{appLabel}}",
@@ -603,6 +605,26 @@
         "libraries_select_custom_help": "Only selected libraries will be available. New ones won't be added automatically",
         "search_libraries": "Search",
         "no_libraries": "No libraries selected",
-        "add_library": "Add library"
+        "add_library": "Add library",
+        "mode_confirm_title":  "Are you sure ?",
+        "mode_confirm_description":  "Your custom selection will be lost",
+        "libraries_settings": {
+            "select_all":  "All",
+            "select_none":  "None",
+            "select_custom":  "Custom selection",
+            "available":  "Available libraries",
+            "select_all_help":  "All libraries will be available, including new ones.",
+            "select_none_help":  "No libraries will be available.",
+            "select_custom_help":  "Only selected libraries will be available. New ones won't be added automatically"
+        },
+        "trees_settings": {
+            "select_all":  "All",
+            "select_none":  "None",
+            "select_custom":  "Custom selection",
+            "available":  "Available trees",
+            "select_all_help":  "All trees will be available, including new ones.",
+            "select_none_help":  "No trees will be available.",
+            "select_custom_help":  "Only selected trees will be available. New ones won't be added automatically"
+        }
     }
 }

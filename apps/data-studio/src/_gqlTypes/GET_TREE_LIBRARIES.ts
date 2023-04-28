@@ -47,6 +47,6 @@ export interface GET_TREE_LIBRARIES {
 }
 
 export interface GET_TREE_LIBRARIESVariables {
-    treeId?: string | null;
+    treeId?: string[] | null;
     library?: string | null;
 }

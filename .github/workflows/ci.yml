@@ -13,6 +13,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          node-version: 18.x
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
@@ -26,6 +28,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          node-version: 18.x
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
@@ -39,6 +43,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          node-version: 18.x
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
@@ -69,6 +75,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          node-version: 18.x
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
@@ -125,6 +133,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          node-version: 18.x
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
@@ -169,6 +179,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          node-version: 18.x
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:

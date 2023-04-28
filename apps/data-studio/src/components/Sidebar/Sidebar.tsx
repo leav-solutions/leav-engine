@@ -17,14 +17,14 @@ import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import {useApplicationLibraries} from 'hooks/useApplicationLibraries';
-import useGetTreesListQuery from 'hooks/useGetTreesListQuery/useGetTreesListQuery';
+import {useApplicationTrees} from 'hooks/useApplicationTrees';
 import {useTranslation} from 'react-i18next';
 import {useHistory} from 'react-router-dom';
 import {useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
 import {getLibraryLink, getTreeLink, localizedTranslation} from 'utils';
 import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
-import {GET_TREE_LIST_QUERY_trees_list} from '_gqlTypes/GET_TREE_LIST_QUERY';
+import {GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 
@@ -79,7 +79,7 @@ function Sidebar(): JSX.Element {
     const {activePanel} = useAppSelector(state => state);
 
     const {libraries, loading: librariesLoading, error: librariesError} = useApplicationLibraries();
-    const treesList = useGetTreesListQuery();
+    const {trees, loading: treesLoading, error: treesError} = useApplicationTrees();
     const favoritesList = useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
         variables: {keys: [FAVORITE_LIBRARIES_KEY, FAVORITE_TREES_KEY]}
     });
@@ -108,7 +108,7 @@ function Sidebar(): JSX.Element {
         {related: [], favorites: [], others: []}
     );
 
-    const groupedTrees: IGroupedElements<GET_TREE_LIST_QUERY_trees_list> = (treesList?.data?.trees?.list ?? []).reduce(
+    const groupedTrees: IGroupedElements<GET_TREES_trees_list> = trees.reduce(
         (groups, tree) => {
             const newGroups = {...groups};
 
@@ -220,18 +220,18 @@ function Sidebar(): JSX.Element {
     }
 
     let treesMenuItems: ItemType[] = [];
-    if (treesList.loading || favoritesList.loading) {
+    if (treesLoading || favoritesList.loading) {
         treesMenuItems = [
             {
                 key: 'trees-loading',
                 label: <Spin />
             }
         ];
-    } else if (treesList.error || favoritesList.error) {
+    } else if (treesError || favoritesList.error) {
         treesMenuItems = [
             {
                 key: 'trees-error',
-                label: <ErrorDisplay message={(treesList.error || favoritesList.error).message} />
+                label: <ErrorDisplay message={treesError || favoritesList?.error?.message} />
             }
         ];
     } else {

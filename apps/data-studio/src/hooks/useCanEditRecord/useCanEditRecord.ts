@@ -48,7 +48,7 @@ export const useCanEditRecord = (
         GET_LIBRARY_PERMISSIONS,
         GET_LIBRARY_PERMISSIONSVariables
     >(getLibraryPermissionsQuery, {
-        variables: {libraryId: library.id},
+        variables: {libraryId: [library.id]},
         skip: !isCreationMode,
         fetchPolicy: 'cache-and-network'
     });

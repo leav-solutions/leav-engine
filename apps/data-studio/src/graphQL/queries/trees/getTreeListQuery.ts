@@ -4,8 +4,8 @@
 import gql from 'graphql-tag';
 
 export const getTreeListQuery = gql`
-    query GET_TREE_LIST_QUERY($treeId: ID) {
-        trees(filters: {id: $treeId}) {
+    query GET_TREES($filters: TreesFiltersInput) {
+        trees(filters: $filters) {
             list {
                 id
                 label

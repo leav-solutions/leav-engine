@@ -22,7 +22,7 @@ export const useTreeLibraryAllowedAsChild = (
 ): IUseTreeLibraryAllowedAsChild => {
     const {data, loading, error} = useQuery<GET_TREE_LIBRARIES, GET_TREE_LIBRARIESVariables>(getTreeLibraries, {
         skip: !treeId,
-        variables: {treeId}
+        variables: {treeId: [treeId]}
     });
 
     const libraries = [];

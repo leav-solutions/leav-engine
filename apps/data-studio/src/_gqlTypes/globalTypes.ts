@@ -290,6 +290,14 @@ export interface TreeEventFiltersInput {
     events?: TreeEventTypes[] | null;
 }
 
+export interface TreesFiltersInput {
+    id?: string[] | null;
+    label?: string[] | null;
+    system?: boolean | null;
+    behavior?: TreeBehavior | null;
+    library?: string | null;
+}
+
 export interface UploadFiltersInput {
     userId?: string | null;
     uid?: string | null;

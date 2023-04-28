@@ -4,7 +4,6 @@
 
 import {ReactNode} from 'react';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
-import {GET_TREE_LIST_QUERY_trees_list} from '_gqlTypes/GET_TREE_LIST_QUERY';
 import {
     AttributeFormat,
     AttributeType,
@@ -426,6 +425,7 @@ export interface IValueVersion {
 export interface IApplicationSettings {
     libraries?: 'all' | 'none' | string[];
     librariesOrder?: string[];
-    trees?: GET_TREE_LIST_QUERY_trees_list[];
+    trees?: 'all' | 'none' | string[];
+    treesOrder?: string[];
     showTransparency?: boolean;
 }

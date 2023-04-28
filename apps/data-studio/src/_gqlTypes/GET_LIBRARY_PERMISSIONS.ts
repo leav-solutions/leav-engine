@@ -31,5 +31,5 @@ export interface GET_LIBRARY_PERMISSIONS {
 }
 
 export interface GET_LIBRARY_PERMISSIONSVariables {
-    libraryId: string;
+    libraryId?: string[] | null;
 }

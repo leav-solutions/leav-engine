@@ -69,7 +69,7 @@ describe('Navigation', () => {
         request: {
             query: getTreeListQuery,
             variables: {
-                treeId: 'my_tree'
+                filters: {id: ['my_tree']}
             }
         },
         result: {
@@ -98,7 +98,7 @@ describe('Navigation', () => {
         request: {
             query: getTreeLibraries,
             variables: {
-                treeId: 'my_tree'
+                treeId: ['my_tree']
             }
         },
         result: {
@@ -229,12 +229,6 @@ describe('Navigation', () => {
         }
     };
 
-    const getTreeContentMockResultNoChildren = {
-        data: {
-            treeNodeChildren: {totalCount: 0, list: []}
-        }
-    };
-
     const mocks: MockedResponse[] = [
         getTreeListMock,
         getTreeLibrariesMock,
@@ -278,7 +272,7 @@ describe('Navigation', () => {
         },
         currentApp: {
             ...mockApplicationDetails,
-            settings: {...mockApplicationDetails.settings, trees: []}
+            settings: {...mockApplicationDetails.settings, trees: 'all'}
         }
     };
 
@@ -424,7 +418,7 @@ describe('Navigation', () => {
         render(<Navigation tree="my_tree" />, renderOptions);
 
         expect(screen.getByTestId('loading')).toBeInTheDocument();
-        await waitFor(async () => expect(await screen.findByTestId('navigation-column')).toBeInTheDocument());
+        expect(await screen.findByTestId('navigation-column')).toBeInTheDocument();
 
         expect(screen.getAllByTestId('navigation-column')).toHaveLength(1);
         const colHeader = screen.getAllByRole('banner')[0];

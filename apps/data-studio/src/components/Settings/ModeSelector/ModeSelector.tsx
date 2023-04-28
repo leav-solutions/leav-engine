@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CheckboxOptionType, Popconfirm, Radio, RadioChangeEvent} from 'antd';
 import {useApplicationContext} from 'context/ApplicationContext';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -26,20 +26,16 @@ type SelectionMode = 'all' | 'none' | 'custom';
 
 interface IModeSelectorProps {
     onChange: (mode: SelectionMode) => void;
+    selectedMode: SelectionMode;
+    entityType: 'trees' | 'libraries';
 }
 
-function ModeSelector({onChange}: IModeSelectorProps): JSX.Element {
+function ModeSelector({onChange, entityType, selectedMode}: IModeSelectorProps): JSX.Element {
     const {t} = useTranslation();
     const [isSelectionModeConfirmOpen, setIsSelectionModeConfirmOpen] = useState(false);
-    const [currentMode, setCurrentMode] = useState<SelectionMode>();
     const [pendingValueSave, setPendingValueSave] = useState<SelectionMode>();
     const {currentApp} = useApplicationContext();
     const currentAppLibrariesSettings = currentApp?.settings?.libraries;
-
-    useEffect(() => {
-        const selectedMode = Array.isArray(currentAppLibrariesSettings) ? 'custom' : currentAppLibrariesSettings;
-        setCurrentMode(selectedMode);
-    }, [currentAppLibrariesSettings]);
 
     const _handleOpenSelectionModeConfirm = () => setIsSelectionModeConfirmOpen(true);
     const _handleCloseSelectionModeConfirm = () => setIsSelectionModeConfirmOpen(false);
@@ -48,7 +44,7 @@ function ModeSelector({onChange}: IModeSelectorProps): JSX.Element {
         const value = e.target.value;
         setPendingValueSave(value);
 
-        if ((value === 'all' || value === 'none') && currentMode === 'custom') {
+        if ((value === 'all' || value === 'none') && selectedMode === 'custom') {
             _handleOpenSelectionModeConfirm();
         } else {
             _handleSelectionModeSave(value);
@@ -62,41 +58,40 @@ function ModeSelector({onChange}: IModeSelectorProps): JSX.Element {
 
     const _handleSelectionModeSave = async (value?: SelectionMode) => {
         const valueToSave = value ?? pendingValueSave;
-        setCurrentMode(valueToSave);
         setPendingValueSave(null);
         onChange(valueToSave);
     };
 
     const selectionModeOptions: CheckboxOptionType[] = [
         {
-            label: t('app_settings.libraries_select_all'),
+            label: t(`app_settings.${entityType}_settings.select_all`),
             value: 'all'
         },
         {
-            label: t('app_settings.libraries_select_none'),
+            label: t(`app_settings.${entityType}_settings.select_none`),
             value: 'none'
         },
         {
-            label: t('app_settings.libraries_select_custom'),
+            label: t(`app_settings.${entityType}_settings.select_custom`),
             value: 'custom'
         }
     ];
 
     const helpText: {[key in SelectionMode]: string} = {
-        all: t('app_settings.libraries_select_all_help'),
-        none: t('app_settings.libraries_select_none_help'),
-        custom: t('app_settings.libraries_select_custom_help')
+        all: t(`app_settings.${entityType}_settings.select_all_help`),
+        none: t(`app_settings.${entityType}_settings.select_none_help`),
+        custom: t(`app_settings.${entityType}_settings.select_custom_help`)
     };
 
     return (
         <Wrapper>
-            <label>{t('app_settings.available_libraries')}:</label>
+            <label>{t(`app_settings.${entityType}_settings.available`)}:</label>
             <div>
                 <Popconfirm
                     okText={t('global.submit')}
                     cancelText={t('global.cancel')}
-                    title={t('app_settings.libraries_mode_confirm_title')}
-                    description={t('app_settings.libraries_mode_confirm_description')}
+                    title={t('app_settings.mode_confirm_title')}
+                    description={t('app_settings.mode_confirm_description')}
                     open={isSelectionModeConfirmOpen}
                     onConfirm={_handleSelectionModeConfirm}
                     onCancel={_handleCloseSelectionModeConfirm}
@@ -105,11 +100,11 @@ function ModeSelector({onChange}: IModeSelectorProps): JSX.Element {
                         options={selectionModeOptions}
                         optionType="button"
                         buttonStyle="solid"
-                        value={currentMode}
+                        value={selectedMode}
                         onChange={_handleSelectionModeChange}
                     />
                 </Popconfirm>
-                <HelpText>{helpText[currentMode]}</HelpText>
+                <HelpText>{helpText[selectedMode]}</HelpText>
             </div>
         </Wrapper>
     );
