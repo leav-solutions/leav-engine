@@ -69,7 +69,7 @@ function DeactivateRecordsModal({onClose, open}: IDeactivateRecordsModalProps): 
             okButtonProps={{className: 'submit-btn'}}
             destroyOnClose
         >
-            {loading && <Loading />}
+            {loading && <Loading data-testid="loading" />}
             {!loading && error && <ErrorDisplay message={error.message} />}
             {!called && t('records_deactivation.confirm', {count: elementsCount})}
         </Modal>
