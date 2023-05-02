@@ -3,6 +3,8 @@
 # This file is released under LGPL V3
 # License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
+BASEDIR=$(dirname $0)
+
 checkExitCode () {
     code=$?
     if ! [ $code = 0 ]; then
@@ -15,8 +17,6 @@ if [ "$NODE_ENV" = "test" ]; then
     exit 0;
 fi
 
-echo 'Injecting these variables:'
-
 echo 'Building and installing applications...'
 export TSC_COMPILE_ON_ERROR=true
 export ESLINT_NO_DEV_ERRORS=true
@@ -26,8 +26,8 @@ export SKIP_PREFLIGHT_CHECK=true
 yarn install
 
 # login
-BUILD_LOGIN_DIR=../apps/login/dist
-DEST_LOGIN_DIR=../apps/core/applications/login
+BUILD_LOGIN_DIR="$BASEDIR/../apps/login/dist"
+DEST_LOGIN_DIR="$BASEDIR/../apps/core/applications/login"
 yarn workspace login build
 checkExitCode
 
@@ -37,8 +37,8 @@ mv $BUILD_LOGIN_DIR $DEST_LOGIN_DIR
 checkExitCode
 
 # portal
-BUILD_PORTAL_DIR=../apps/portal/dist
-DEST_PORTAL_DIR=../apps/core/applications/portal
+BUILD_PORTAL_DIR="$BASEDIR/../apps/portal/dist"
+DEST_PORTAL_DIR="$BASEDIR/../apps/core/applications/portal"
 yarn workspace portal build
 checkExitCode
 
@@ -48,8 +48,8 @@ mv $BUILD_PORTAL_DIR $DEST_PORTAL_DIR
 checkExitCode
 
 # admin
-BUILD_ADMIN_DIR=../apps/admin/build
-DEST_ADMIN_DIR=../apps/core/applications/admin
+BUILD_ADMIN_DIR="$BASEDIR/../apps/admin/build"
+DEST_ADMIN_DIR="$BASEDIR/../apps/core/applications/admin"
 yarn workspace admin build
 checkExitCode
 
@@ -59,8 +59,8 @@ mv $BUILD_ADMIN_DIR $DEST_ADMIN_DIR
 checkExitCode
 
 # data-studio
-BUILD_DATA_STUDIO_DIR=../apps/data-studio/dist
-DEST_DATA_STUDIO_DIR=../apps/core/applications/data-studio
+BUILD_DATA_STUDIO_DIR="$BASEDIR/../apps/data-studio/dist"
+DEST_DATA_STUDIO_DIR="$BASEDIR/../apps/core/applications/data-studio"
 yarn workspace data-studio build
 checkExitCode
 

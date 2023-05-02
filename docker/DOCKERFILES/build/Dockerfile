@@ -17,7 +17,7 @@ WORKDIR /app
 # Copy required files for builds
 COPY .yarn ./.yarn
 COPY *.json yarn.lock .yarnrc.yml vite-config-common.js ./
-COPY apps/ ./apps/
+COPY apps/ ./apps
 COPY libs/ ./libs/
 COPY assets/ ./assets
 
@@ -55,12 +55,17 @@ CMD yarn run start
 
 ### RUNNER FOR CORE ###
 FROM runner as runner-core
+WORKDIR /app
 
-# Copy source code of all front apps as it will be needed later on to build the apps
-COPY --from=builder /app/apps/data-studio ./apps/data-studio
-COPY --from=builder /app/apps/admin ./apps/admin
-COPY --from=builder /app/apps/login ./apps/login
-COPY --from=builder /app/apps/portal ./apps/portal
+COPY scripts/apps_install.sh ./scripts/apps_install.sh
+RUN ./scripts/apps_install.sh
+
+RUN rm -rf ./apps/login
+RUN rm -rf ./apps/admin
+RUN rm -rf  ./apps/data-studio
+RUN rm -rf  ./apps/portal
+
+WORKDIR /app/apps/core
 
 ### RUNNER FOR PREVIEW-GENERATOR ###
 FROM runner as runner-preview-generator

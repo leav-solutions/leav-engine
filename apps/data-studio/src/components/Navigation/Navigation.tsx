@@ -62,7 +62,7 @@ function Navigation({tree}: INavigationProps): JSX.Element {
     }, [data, loading, lang, updateActiveTree, t, dispatch, activePanel, activeTree, tree, hasAccess]);
 
     if (loading) {
-        return <Loading />;
+        return <Loading data-testid="loading" />;
     }
 
     if (error) {
