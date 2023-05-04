@@ -637,8 +637,8 @@ export type TreepermissionsConfInput = {
 
 export type TreesFiltersInput = {
     behavior?: InputMaybe<TreeBehavior>;
-    id?: InputMaybe<Scalars['ID']>;
-    label?: InputMaybe<Scalars['String']>;
+    id?: InputMaybe<Array<Scalars['ID']>>;
+    label?: InputMaybe<Array<Scalars['String']>>;
     library?: InputMaybe<Scalars['String']>;
     system?: InputMaybe<Scalars['Boolean']>;
 };
@@ -805,7 +805,7 @@ export type ApplicationDetailsFragment = {
     install?: {status: ApplicationInstallStatus; lastCallResult?: string | null} | null;
 };
 
-export type RecordIdentityCiKj97QeAnYbXczlkDlUdl7S95HqiBoLpiYrguenasFragment = {
+export type RecordIdentityFZysTIx1wTwc8lJex0I4yEnUlYzKmFwXllZg9IrYabMFragment = {
     id: string;
     whoAmI: {
         id: string;
@@ -822,7 +822,7 @@ export type RecordIdentityCiKj97QeAnYbXczlkDlUdl7S95HqiBoLpiYrguenasFragment = {
     };
 };
 
-export type RecordIdentityGJvi46pODkKgHixpuL7Kn0ihx9N0m9wDj6oxCkw8Fragment = {
+export type RecordIdentityE1eBsVvwHokgggZ5sOn6JkRKlG8IFcMq3JbD9jjCmx8Fragment = {
     id: string;
     whoAmI: {
         id: string;
@@ -840,8 +840,8 @@ export type RecordIdentityGJvi46pODkKgHixpuL7Kn0ihx9N0m9wDj6oxCkw8Fragment = {
 };
 
 export type RecordIdentityFragment =
-    | RecordIdentityCiKj97QeAnYbXczlkDlUdl7S95HqiBoLpiYrguenasFragment
-    | RecordIdentityGJvi46pODkKgHixpuL7Kn0ihx9N0m9wDj6oxCkw8Fragment;
+    | RecordIdentityFZysTIx1wTwc8lJex0I4yEnUlYzKmFwXllZg9IrYabMFragment
+    | RecordIdentityE1eBsVvwHokgggZ5sOn6JkRKlG8IFcMq3JbD9jjCmx8Fragment;
 
 export type AttributeDetailsLinkAttributeFragment = {
     reverse_link?: string | null;
@@ -1515,13 +1515,13 @@ export type SaveLibraryMutation = {
 };
 
 export type CheckTreeExistenceQueryVariables = Exact<{
-    id: Scalars['ID'];
+    id?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
 }>;
 
 export type CheckTreeExistenceQuery = {trees?: {totalCount: number} | null};
 
 export type GetTreeByIdQueryVariables = Exact<{
-    id?: InputMaybe<Scalars['ID']>;
+    id?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
 }>;
 
 export type GetTreeByIdQuery = {
@@ -2408,7 +2408,7 @@ export type SaveLibraryMutationHookResult = ReturnType<typeof useSaveLibraryMuta
 export type SaveLibraryMutationResult = Apollo.MutationResult<SaveLibraryMutation>;
 export type SaveLibraryMutationOptions = Apollo.BaseMutationOptions<SaveLibraryMutation, SaveLibraryMutationVariables>;
 export const CheckTreeExistenceDocument = gql`
-    query CHECK_TREE_EXISTENCE($id: ID!) {
+    query CHECK_TREE_EXISTENCE($id: [ID!]) {
         trees(filters: {id: $id}) {
             totalCount
         }
@@ -2432,7 +2432,7 @@ export const CheckTreeExistenceDocument = gql`
  * });
  */
 export function useCheckTreeExistenceQuery(
-    baseOptions: Apollo.QueryHookOptions<CheckTreeExistenceQuery, CheckTreeExistenceQueryVariables>
+    baseOptions?: Apollo.QueryHookOptions<CheckTreeExistenceQuery, CheckTreeExistenceQueryVariables>
 ) {
     const options = {...defaultOptions, ...baseOptions};
     return Apollo.useQuery<CheckTreeExistenceQuery, CheckTreeExistenceQueryVariables>(
@@ -2456,7 +2456,7 @@ export type CheckTreeExistenceQueryResult = Apollo.QueryResult<
     CheckTreeExistenceQueryVariables
 >;
 export const GetTreeByIdDocument = gql`
-    query GET_TREE_BY_ID($id: ID) {
+    query GET_TREE_BY_ID($id: [ID!]) {
         trees(filters: {id: $id}) {
             list {
                 ...TreeDetails

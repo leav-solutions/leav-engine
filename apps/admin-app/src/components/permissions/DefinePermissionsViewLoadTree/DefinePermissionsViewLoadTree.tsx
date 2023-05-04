@@ -28,7 +28,7 @@ const DefinePermissionsViewLoadTree = ({
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
     const {loading, error, data} = useQuery<GET_TREE_BY_ID, GET_TREE_BY_IDVariables>(getTreeByIdQuery, {
-        variables: {id: treeId}
+        variables: {id: [treeId]}
     });
 
     if (loading) {

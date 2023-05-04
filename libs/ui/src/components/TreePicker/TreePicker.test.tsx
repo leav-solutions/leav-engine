@@ -18,13 +18,13 @@ window.matchMedia = query => ({
     dispatchEvent: jest.fn()
 });
 
-// jest.mock('../EditAttributeModal', () => {
-//     return {
-//         EditAttributeModal: () => {
-//             return <div>EditAttribute</div>;
-//         }
-//     };
-// });
+jest.mock('../EditTreeModal', () => {
+    return {
+        EditTreeModal: () => {
+            return <div>EditTree</div>;
+        }
+    };
+});
 
 describe('TreePicker', () => {
     const mockTreeA = {
@@ -136,20 +136,20 @@ describe('TreePicker', () => {
         await waitFor(() => expect(radioBtnAttributeA).not.toBeChecked());
     });
 
-    test.skip('Can create new tree', async () => {
+    test('Can create new tree', async () => {
         const mockHandleSubmit = jest.fn();
         render(<TreePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
 
         await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
 
-        const newAttributeButton = screen.queryByRole('button', {name: /new_tree/i});
-        expect(newAttributeButton).toBeInTheDocument();
+        const newTreeButton = screen.queryByRole('button', {name: /new_tree/i});
+        expect(newTreeButton).toBeInTheDocument();
 
-        userEvent.click(newAttributeButton);
-        expect(await screen.findByText('EditAttribute')).toBeInTheDocument();
+        userEvent.click(newTreeButton);
+        expect(await screen.findByText('EditTree')).toBeInTheDocument();
     });
 
-    test.skip('If not allowed, cannot create new tree', async () => {
+    test('If not allowed, cannot create new tree', async () => {
         const mockHandleSubmit = jest.fn();
         render(<TreePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open canCreate={false} />, {mocks});
 

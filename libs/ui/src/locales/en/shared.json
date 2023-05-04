@@ -99,7 +99,19 @@
     },
     "trees": {
         "tree": "Tree",
+        "label": "Label",
         "new_tree": "New tree",
-        "select_trees": "Select trees"
+        "select_trees": "Select trees",
+        "behavior": "Behavior",
+        "behavior_standard": "Standard",
+        "behavior_files": "Files",
+        "linked_libraries": "Linked libraries",
+        "allowed_multiple_positions": "Allowed multiple positions",
+        "add_libraries": "Add libraries",
+        "no_linked_libraries": "No linked libraries",
+        "no_children_allowed": "No children allowed",
+        "all_children_allowed": "All children allowed",
+        "libraries": "Libraries",
+        "advanced_settings": "Advanced settings"
     }
 }

@@ -148,8 +148,7 @@ export enum PermissionsActions {
     detach = 'detach',
     edit_children = 'edit_children',
     edit_record = 'edit_record',
-    edit_value = 'edit_value',
-    fake_plugin_permission = 'fake_plugin_permission'
+    edit_value = 'edit_value'
 }
 
 export enum PermissionsRelation {
@@ -440,6 +439,14 @@ export interface TreeNodePermissionsConfInput {
 export interface Treepermissions_confInput {
     permissionTreeAttributes: string[];
     relation: PermissionsRelation;
+}
+
+export interface TreesFiltersInput {
+    id?: string[] | null;
+    label?: string[] | null;
+    system?: boolean | null;
+    behavior?: TreeBehavior | null;
+    library?: string | null;
 }
 
 export interface ValueBatchInput {

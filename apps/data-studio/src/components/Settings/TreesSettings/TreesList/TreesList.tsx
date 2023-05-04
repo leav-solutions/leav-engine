@@ -63,7 +63,7 @@ function TreesList({trees, onMoveTree, onRemoveTree, onAddTrees}: ITreesListProp
     const _handleCloseTreePicker = () => setIsTreePickerOpen(false);
     const _handleSubmitTreePicker: ComponentProps<typeof TreePicker>['onSubmit'] = async selectedTrees => {
         _handleCloseTreePicker();
-        return onAddTrees(selectedTrees.map(lib => lib.id));
+        return onAddTrees(selectedTrees.map(tree => tree.id));
     };
 
     const displayedTrees = trees.filter(tree => {

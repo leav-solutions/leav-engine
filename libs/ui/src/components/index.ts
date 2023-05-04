@@ -3,7 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export * from './ApplicationInstallTag';
 export * from './EditApplication';
+export * from './EditAttributeModal';
 export * from './EditLibraryModal';
+export * from './EditTreeModal';
 export * from './EntityCard';
 export * from './EntityPreview';
 export * from './FloatingMenu';

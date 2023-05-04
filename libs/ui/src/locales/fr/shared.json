@@ -98,7 +98,21 @@
     },
     "trees": {
         "tree": "Arbre",
+        "label":"Libellé",
         "new_tree": "Nouvel arbre",
-        "select_trees": "Sélectionner des arbres"
+        "select_trees": "Sélectionner des arbres",
+        "behavior": "Comportement",
+        "behavior_standard": "Standard",
+        "behavior_files": "Fichiers",
+        "linked_libraries": "Bibliothèques liées",
+        "allowed_multiple_positions": "Autoriser les positions multiples",
+        "allowed_at_root": "Autoriser à la racine",
+        "allowed_children": "Enfants autorisés",
+        "add_libraries":"Ajouter des bibliothèques",
+        "no_linked_libraries": "Aucune bibliothèque liée",
+        "no_children_allowed": "Aucun enfant autorisé",
+        "all_children_allowed": "Toutes les bibliothèques",
+        "libraries": "Bibliothèques",
+        "advanced_settings": "Paramètres avancés"
     }
 }

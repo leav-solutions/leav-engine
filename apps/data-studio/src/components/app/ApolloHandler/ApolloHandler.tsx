@@ -205,6 +205,11 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
                     fields: {
                         permissions: {
                             merge: true
+                        },
+                        libraries: {
+                            merge(existing, incoming) {
+                                return incoming;
+                            }
                         }
                     }
                 },

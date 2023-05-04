@@ -21,7 +21,7 @@ function BreadcrumbNavigator(): JSX.Element {
 
     // Get tree attribute props
     const {loading, error, data} = useQuery<GET_TREE_BY_ID, GET_TREE_BY_IDVariables>(getTreeByIdQuery, {
-        variables: {id: linkedTree},
+        variables: {id: [linkedTree]},
         skip: !linkedTree
     });
 

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, ExpandAltOutlined, HolderOutlined} from '@ant-design/icons';
-import {EntityCard, FloatingMenu, FloatingMenuAction, IEntityData, PreviewSize, useLang} from '@leav/ui';
+import {EditTreeModal, EntityCard, FloatingMenu, FloatingMenuAction, IEntityData, PreviewSize, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {useState} from 'react';
 import {DraggableProvided} from 'react-beautiful-dnd';
@@ -93,9 +93,9 @@ function TreeBlock({tree, customMode, readOnly, canDrag, onRemoveTree, dragProvi
             <EntityCard entity={treeIdentity} style={{padding: '0.7rem 0.5rem'}} size={PreviewSize.small} />
             <FloatingMenu actions={treeActions} />
             {customMode && !readOnly && <RemoveButton aria-label="remove" onClick={_handleRemoveTree} />}
-            {/* {isEditTreeModalVisible && (
+            {isEditTreeModalVisible && (
                 <EditTreeModal treeId={tree.id} onClose={_handleCloseEditTreeModal} open={isEditTreeModalVisible} />
-            )} */}
+            )}
         </Wrapper>
     );
 }

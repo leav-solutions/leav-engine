@@ -64,8 +64,10 @@ function LibrariesList({
         onSelect(_getLibsFromKeys(selection));
     };
 
-    const _getLibsFromKeys = (keys: Key[]) => {
-        return keys.map(key => librariesByKey[key]);
+    const _getLibsFromKeys = (keys: Key[], libsList?: LibraryLightFragment[]) => {
+        // The list coming from data might not be up to date after a create, so we use the one passed as argument
+        const list = libsList ?? data?.libraries?.list ?? [];
+        return list.filter(lib => keys.find(k => lib.id === k));
     };
 
     const _handleRowClick = (record: LibraryType) => {
@@ -77,8 +79,7 @@ function LibrariesList({
             newSelection = multiple ? selectedRowKeys.filter(key => key !== record.key) : []; // Remove from selection
         }
 
-        setSelectedRowKeys(newSelection);
-        onSelect(_getLibsFromKeys(newSelection));
+        _handleSelectionChange(newSelection);
     };
 
     const _handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,20 +94,21 @@ function LibrariesList({
     const _handlePostCreate = async (newLibrary: SaveLibraryMutation['saveLibrary']) => {
         const allLibrariesData = client.readQuery<GetLibrariesQuery>({query: getLibrariesQuery});
 
+        const newLibsList = [newLibrary, ...(allLibrariesData?.libraries?.list ?? [])];
         if (allLibrariesData) {
             client.writeQuery({
                 query: getLibrariesQuery,
                 data: {
                     libraries: {
                         ...allLibrariesData.libraries,
-                        list: [newLibrary, ...allLibrariesData.libraries.list]
+                        list: newLibsList
                     }
                 }
             });
         }
         const newSelection = [...selectedRowKeys, newLibrary.id];
         setSelectedRowKeys(newSelection);
-        onSelect(_getLibsFromKeys(newSelection));
+        onSelect(_getLibsFromKeys(newSelection, newLibsList));
     };
 
     if (loading) {
