@@ -7,7 +7,6 @@ import ProtectedRoute from 'components/shared/ProtectedRoute';
 import React, {Suspense} from 'react';
 import {Route} from 'react-router-dom';
 import {PermissionsActions} from '_gqlTypes/globalTypes';
-
 import Dashboard from '../Dashboard';
 import General from 'components/general/General';
 import Libraries from 'components/libraries/Libraries';
@@ -21,20 +20,6 @@ import EditApplication from 'components/applications/EditApplication';
 import VersionProfiles from 'components/versionProfiles/VersionProfiles';
 import EditVersionProfile from 'components/versionProfiles/EditVersionProfile';
 import Tasks from 'components/tasks/Tasks';
-
-// const Dashboard = React.lazy(() => import('../Dashboard'));
-// const General = React.lazy(() => import('components/general/General'));
-// const Libraries = import('components/libraries/Libraries');
-// const EditLibrary = React.lazy(() => import('components/libraries/EditLibrary'));
-// const Attributes = React.lazy(() => import('components/attributes/Attributes'));
-// const EditAttribute = React.lazy(() => import('components/attributes/EditAttribute'));
-// const Trees = React.lazy(() => import('components/trees/Trees'));
-// const EditTree = React.lazy(() => import('components/trees/EditTree'));
-// const Applications = React.lazy(() => import('components/applications/Applications'));
-// const EditApplication = React.lazy(() => import('components/applications/EditApplication'));
-// const VersionProfiles = React.lazy(() => import('components/versionProfiles/VersionProfiles'));
-// const EditVersionProfile = React.lazy(() => import('components/versionProfiles/EditVersionProfile'));
-// const Tasks = React.lazy(() => import('components/tasks/Tasks'));
 
 function Routes(): JSX.Element {
     return (
