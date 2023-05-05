@@ -86,11 +86,9 @@ describe('EditAttribute', () => {
             }
         ];
 
-        await act(async () => {
-            render(<EditAttribute attributeId="test_attr" />, {apolloMocks: mocks});
-        });
+        render(<EditAttribute attributeId="test_attr" />, {apolloMocks: mocks});
 
-        expect(screen.getByText(/Unknown/)).toBeInTheDocument();
+        expect(await screen.findByText(/Unknown/)).toBeInTheDocument();
     });
 
     test('If no ID provided, display tabs directly (new attribute)', async () => {

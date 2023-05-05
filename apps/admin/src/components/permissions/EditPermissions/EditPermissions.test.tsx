@@ -185,10 +185,8 @@ describe('EditPermissions', () => {
             }
         ];
 
-        await act(async () => {
-            render(<EditPermissions permParams={permParams} />, {apolloMocks: mocks});
-        });
+        render(<EditPermissions permParams={permParams} />, {apolloMocks: mocks});
 
-        expect(screen.getByText(/Boom!/)).toBeInTheDocument();
+        expect(await screen.findByText(/Boom!/)).toBeInTheDocument();
     });
 });
