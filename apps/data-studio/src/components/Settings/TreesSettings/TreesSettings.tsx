@@ -110,6 +110,17 @@ function TreesSettings(): JSX.Element {
         });
     };
 
+    const _handleClearTrees = async () => {
+        if (currentApp.settings?.trees === 'all' || currentApp.settings?.trees === 'none') {
+            return;
+        }
+
+        _executeSave({
+            trees: [],
+            treesOrder: []
+        });
+    };
+
     const _handleAddTree = async (addedTrees: string[]) => {
         if (!Array.isArray(currentApp.settings?.trees)) {
             return;
@@ -135,6 +146,7 @@ function TreesSettings(): JSX.Element {
                     onMoveTree={_handleMoveTree}
                     onRemoveTree={_handleRemoveTree}
                     onAddTrees={_handleAddTree}
+                    onClearTrees={_handleClearTrees}
                 />
             </ListWrapper>
         </TabContentWrapper>

@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {PlusOutlined} from '@ant-design/icons';
+import {ClearOutlined, PlusOutlined} from '@ant-design/icons';
 import {LibraryPicker, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {Button, Empty, Input} from 'antd';
+import {Button, Empty, Input, Popconfirm, Space, Tooltip} from 'antd';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {SyntheticEvent, useState} from 'react';
 import {DragDropContext, Draggable, DraggableProvided, Droppable, DropResult} from 'react-beautiful-dnd';
@@ -29,9 +29,16 @@ interface ILibrariesListProps {
     onMoveLibrary: (libraryId: string, from: number, to: number) => void;
     onRemoveLibrary: (libraryId: string) => void;
     onAddLibraries: (libraries: string[]) => void;
+    onClearLibraries: () => void;
 }
 
-function LibrariesList({libraries, onMoveLibrary, onRemoveLibrary, onAddLibraries}: ILibrariesListProps): JSX.Element {
+function LibrariesList({
+    libraries,
+    onMoveLibrary,
+    onRemoveLibrary,
+    onAddLibraries,
+    onClearLibraries
+}: ILibrariesListProps): JSX.Element {
     const {t} = useTranslation();
     const {lang} = useLang();
     const {currentApp} = useApplicationContext();
@@ -65,6 +72,9 @@ function LibrariesList({libraries, onMoveLibrary, onRemoveLibrary, onAddLibrarie
     const _handleSubmitLibraryPicker = (selectedLibraries: LibraryLightFragment[]) => {
         _handleCloseLibraryPicker();
         onAddLibraries(selectedLibraries.map(lib => lib.id));
+    };
+    const _handleClearLibraries = () => {
+        onClearLibraries();
     };
 
     const displayedLibraries = libraries.filter(lib => {
@@ -107,7 +117,24 @@ function LibrariesList({libraries, onMoveLibrary, onRemoveLibrary, onAddLibrarie
                             style={{maxWidth: '30rem', margin: '10px'}}
                             placeholder={t('global.search') + '...'}
                         />
-                        {isCustomMode && !isReadOnly && addLibraryButton}
+                        {isCustomMode && !isReadOnly ? (
+                            <Space>
+                                {addLibraryButton}
+                                <Popconfirm
+                                    title={t('app_settings.libraries_settings.clear_libraries_confirm')}
+                                    onConfirm={_handleClearLibraries}
+                                    placement="bottomRight"
+                                    okText={t('global.submit')}
+                                    cancelText={t('global.cancel')}
+                                >
+                                    <Tooltip title={t('app_settings.libraries_settings.clear_libraries')}>
+                                        <Button icon={<ClearOutlined />} />
+                                    </Tooltip>
+                                </Popconfirm>
+                            </Space>
+                        ) : (
+                            <></>
+                        )}
                     </Header>
                     <DragDropContext onDragEnd={_handleDragEnd}>
                         <Droppable droppableId="libraries_list">

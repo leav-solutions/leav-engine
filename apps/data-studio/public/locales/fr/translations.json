@@ -606,7 +606,9 @@
             "available": "Bibliothèques disponibles",
             "select_all_help": "Toutes les bibliothèques seront disponibles, y compris les nouvelles.",
             "select_none_help": "Aucune bibliothèque ne sera disponible.",
-            "select_custom_help": "Les bibliothèques sélectionnées uniquement seront disponibles. Les nouvelles ne seront pas ajoutées automatiquement."
+            "select_custom_help": "Les bibliothèques sélectionnées uniquement seront disponibles. Les nouvelles ne seront pas ajoutées automatiquement.",
+            "clear_libraries_confirm": "Êtes-vous sûr de vouloir supprimer toutes les bibliothèques ?",
+            "clear_libraries": "Supprimer toutes les bibliothèques"
         },
         "trees_settings": {
             "no_trees": "Aucun arbre sélectionné",
@@ -617,7 +619,9 @@
             "available": "Arbres disponibles",
             "select_all_help": "Tous les arbres seront disponibles, y compris les nouveaux.",
             "select_none_help": "Aucun arbre ne sera disponible.",
-            "select_custom_help": "Les arbres sélectionnés uniquement seront disponibles. Les nouveaux ne seront pas ajoutées automatiquement."
+            "select_custom_help": "Les arbres sélectionnés uniquement seront disponibles. Les nouveaux ne seront pas ajoutées automatiquement.",
+            "clear_trees_confirm": "Êtes-vous sûr de vouloir supprimer tous les arbres ?",
+            "clear_trees": "Supprimer tous les arbres"
         }
     }
 }

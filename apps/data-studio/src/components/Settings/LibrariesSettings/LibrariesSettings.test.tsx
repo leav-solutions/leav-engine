@@ -224,5 +224,30 @@ describe('LibrariesSettings', () => {
 
             expect(await screen.findByRole('button', {name: /add/})).toBeInTheDocument();
         });
+
+        test('Can clear all libraries', async () => {
+            const saveAppMutation = jest.fn();
+            jest.spyOn(leavUi, 'useSaveApplicationMutation').mockImplementation(() => [
+                saveAppMutation,
+                {
+                    loading: false,
+                    error: null,
+                    called: false,
+                    reset: jest.fn(),
+                    client: null
+                }
+            ]);
+
+            render(<LibrariesSettings />, {
+                apolloMocks: mocksCustomSelection,
+                currentApp: {...currentApp, settings: {libraries: ['libA', 'libB']}}
+            });
+
+            userEvent.click(await screen.findByRole('button', {name: /clear/}));
+            userEvent.click(await screen.findByRole('button', {name: /submit/})); // Confirm
+
+            await waitFor(() => expect(saveAppMutation).toBeCalled());
+            expect(saveAppMutation.mock.calls[0][0].variables.application.settings.libraries).toEqual([]);
+        });
     });
 });

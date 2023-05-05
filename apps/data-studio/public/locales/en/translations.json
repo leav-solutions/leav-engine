@@ -594,37 +594,33 @@
         "trees": "Trees",
         "advanced_settings": "Advanced settings",
         "showTransparency": "Show transparency",
-        "libraries_select_all": "All",
-        "libraries_select_none": "None",
-        "libraries_select_custom": "Custom selection",
-        "libraries_mode_confirm_title": "Are you sure ?",
-        "libraries_mode_confirm_description": "Your custom selection will be lost",
-        "available_libraries": "Available libraries",
-        "libraries_select_all_help": "All libraries will be available, including new ones.",
-        "libraries_select_none_help": "No libraries will be available.",
-        "libraries_select_custom_help": "Only selected libraries will be available. New ones won't be added automatically",
-        "search_libraries": "Search",
-        "no_libraries": "No libraries selected",
-        "add_library": "Add library",
         "mode_confirm_title":  "Are you sure ?",
         "mode_confirm_description":  "Your custom selection will be lost",
         "libraries_settings": {
+            "no_libraries": "No libraries selected",
+            "add_library": "Add library",
             "select_all":  "All",
             "select_none":  "None",
             "select_custom":  "Custom selection",
             "available":  "Available libraries",
             "select_all_help":  "All libraries will be available, including new ones.",
             "select_none_help":  "No libraries will be available.",
-            "select_custom_help":  "Only selected libraries will be available. New ones won't be added automatically"
+            "select_custom_help":  "Only selected libraries will be available. New ones won't be added automatically",
+            "clear_libraries_confirm": "Do you really want to clear all libraries?",
+            "clear_libraries": "Clear all libraries"
         },
         "trees_settings": {
+            "no_trees": "No trees selected",
+            "add_tree": "Add tree",
             "select_all":  "All",
             "select_none":  "None",
             "select_custom":  "Custom selection",
             "available":  "Available trees",
             "select_all_help":  "All trees will be available, including new ones.",
             "select_none_help":  "No trees will be available.",
-            "select_custom_help":  "Only selected trees will be available. New ones won't be added automatically"
+            "select_custom_help":  "Only selected trees will be available. New ones won't be added automatically",
+            "clear_trees_confirm": "Do you really want to clear all trees?",
+            "clear_trees": "Clear all trees"
         }
     }
 }

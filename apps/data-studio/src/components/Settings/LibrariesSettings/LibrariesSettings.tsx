@@ -110,6 +110,14 @@ function LibrariesSettings(): JSX.Element {
         });
     };
 
+    const _handleClearLibraries = async () => {
+        if (currentApp.settings?.libraries === 'all' || currentApp.settings?.libraries === 'none') {
+            return;
+        }
+
+        _executeSave({libraries: [], librariesOrder: []});
+    };
+
     const _handleAddLibrary = async (addedLibraries: string[]) => {
         if (!Array.isArray(currentApp.settings?.libraries)) {
             return;
@@ -137,6 +145,7 @@ function LibrariesSettings(): JSX.Element {
                     onMoveLibrary={_handleMoveLibrary}
                     onRemoveLibrary={_handleRemoveLibrary}
                     onAddLibraries={_handleAddLibrary}
+                    onClearLibraries={_handleClearLibraries}
                 />
             </ListWrapper>
         </TabContentWrapper>

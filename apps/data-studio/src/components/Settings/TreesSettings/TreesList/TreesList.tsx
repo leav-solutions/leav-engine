@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {PlusOutlined} from '@ant-design/icons';
+import {ClearOutlined, PlusOutlined} from '@ant-design/icons';
 import {TreePicker, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {Button, Empty, Input} from 'antd';
+import {Button, Empty, Input, Popconfirm, Space, Tooltip} from 'antd';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {ComponentProps, SyntheticEvent, useState} from 'react';
 import {DragDropContext, Draggable, DraggableProvided, Droppable, DropResult} from 'react-beautiful-dnd';
@@ -28,9 +28,10 @@ interface ITreesListProps {
     onMoveTree: (treeId: string, from: number, to: number) => void;
     onRemoveTree: (treeId: string) => void;
     onAddTrees: (trees: string[]) => void;
+    onClearTrees: () => void;
 }
 
-function TreesList({trees, onMoveTree, onRemoveTree, onAddTrees}: ITreesListProps): JSX.Element {
+function TreesList({trees, onMoveTree, onRemoveTree, onAddTrees, onClearTrees}: ITreesListProps): JSX.Element {
     const {t} = useTranslation();
     const {lang} = useLang();
     const {currentApp} = useApplicationContext();
@@ -53,6 +54,10 @@ function TreesList({trees, onMoveTree, onRemoveTree, onAddTrees}: ITreesListProp
 
     const _handleRemoveTree = (treeId: string) => () => {
         onRemoveTree(treeId);
+    };
+
+    const _handleClearTrees = () => {
+        onClearTrees();
     };
 
     const _handleSearchChange = (e: SyntheticEvent<HTMLInputElement>) => {
@@ -106,7 +111,25 @@ function TreesList({trees, onMoveTree, onRemoveTree, onAddTrees}: ITreesListProp
                             style={{maxWidth: '30rem', margin: '10px'}}
                             placeholder={t('global.search') + '...'}
                         />
-                        {isCustomMode && !isReadOnly && addTreeButton}
+
+                        {isCustomMode && !isReadOnly ? (
+                            <Space>
+                                {addTreeButton}
+                                <Popconfirm
+                                    title={t('app_settings.trees_settings.clear_trees_confirm')}
+                                    onConfirm={_handleClearTrees}
+                                    placement="bottomRight"
+                                    okText={t('global.submit')}
+                                    cancelText={t('global.cancel')}
+                                >
+                                    <Tooltip title={t('app_settings.trees_settings.clear_trees')}>
+                                        <Button icon={<ClearOutlined />} />
+                                    </Tooltip>
+                                </Popconfirm>
+                            </Space>
+                        ) : (
+                            <></>
+                        )}
                     </Header>
                     <DragDropContext onDragEnd={_handleDragEnd}>
                         <Droppable droppableId="trees_list">
