@@ -17,7 +17,7 @@ interface IValuesVersionsFormProps {
     extra?: ReactNode;
 }
 
-function ValuesVersionsForm({isEditing, isReadOnly, onChange, extra}: IValuesVersionsFormProps): JSX.Element {
+function ValuesVersionsForm({isReadOnly, onChange, extra}: IValuesVersionsFormProps): JSX.Element {
     const form = Form.useFormInstance();
     const {t} = useTranslation('shared');
     const {lang} = useLang();
@@ -59,7 +59,7 @@ function ValuesVersionsForm({isEditing, isReadOnly, onChange, extra}: IValuesVer
                 validateTrigger={['onChange', 'onSubmit']}
                 valuePropName="checked"
             >
-                <Switch onChange={_handleChange} />
+                <Switch disabled={isReadOnly} onChange={_handleChange} />
             </Form.Item>
             {isVersionable && (
                 <>

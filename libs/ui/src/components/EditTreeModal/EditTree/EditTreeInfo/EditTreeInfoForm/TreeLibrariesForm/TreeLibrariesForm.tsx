@@ -32,10 +32,11 @@ const ALL_CHILDREN_ALLOWED_KEY = '__all__';
 
 interface ITreeLibrariesFormProps {
     onChange: (libraries: TreeDetailsFragment['libraries']) => void;
+    readOnly?: boolean;
     extra?: ReactNode;
 }
 
-function TreeLibrariesForm({onChange, extra}: ITreeLibrariesFormProps): JSX.Element {
+function TreeLibrariesForm({onChange, extra, readOnly}: ITreeLibrariesFormProps): JSX.Element {
     const {t} = useTranslation('shared');
     const {lang} = useLang();
     const form = Form.useFormInstance();
@@ -145,11 +146,13 @@ function TreeLibrariesForm({onChange, extra}: ITreeLibrariesFormProps): JSX.Elem
             <List.Item style={{flexDirection: 'column', padding: '5px 1rem'}}>
                 <ListItemPart style={{justifyContent: 'space-between'}}>
                     <EntityCard entity={itemIdentity} size={PreviewSize.small} />
-                    <RemoveButton
-                        role="button"
-                        aria-label="delete-library"
-                        onClick={_handleRemoveLibrary(item.library.id)}
-                    />
+                    {!readOnly && (
+                        <RemoveButton
+                            role="button"
+                            aria-label="delete-library"
+                            onClick={_handleRemoveLibrary(item.library.id)}
+                        />
+                    )}
                 </ListItemPart>
                 <Collapse size="small" style={{width: '100%', margin: '0.5rem'}}>
                     <Collapse.Panel header={t('trees.advanced_settings')} key="settings">
@@ -160,7 +163,10 @@ function TreeLibrariesForm({onChange, extra}: ITreeLibrariesFormProps): JSX.Elem
                                 valuePropName="checked"
                                 style={{margin: 0}}
                             >
-                                <Switch onChange={_handleSwitchChange(item.library.id, 'allowMultiplePositions')} />
+                                <Switch
+                                    disabled={readOnly}
+                                    onChange={_handleSwitchChange(item.library.id, 'allowMultiplePositions')}
+                                />
                             </Form.Item>
                             <Form.Item
                                 name={['libraries', index, 'settings', 'allowedAtRoot']}
@@ -168,7 +174,10 @@ function TreeLibrariesForm({onChange, extra}: ITreeLibrariesFormProps): JSX.Elem
                                 valuePropName="checked"
                                 style={{margin: 0}}
                             >
-                                <Switch onChange={_handleSwitchChange(item.library.id, 'allowedAtRoot')} />
+                                <Switch
+                                    disabled={readOnly}
+                                    onChange={_handleSwitchChange(item.library.id, 'allowedAtRoot')}
+                                />
                             </Form.Item>
                         </ListItemPart>
                         <ListItemPart>
@@ -183,6 +192,7 @@ function TreeLibrariesForm({onChange, extra}: ITreeLibrariesFormProps): JSX.Elem
                                     placeholder={t('trees.no_children_allowed')}
                                     mode="multiple"
                                     allowClear
+                                    disabled={readOnly}
                                     style={{minWidth: '15rem'}}
                                 />
                             </Form.Item>
@@ -193,11 +203,11 @@ function TreeLibrariesForm({onChange, extra}: ITreeLibrariesFormProps): JSX.Elem
         );
     };
 
-    const listFooter = (
+    const listFooter = !readOnly ? (
         <Button icon={<PlusOutlined />} style={{border: 'none', boxShadow: 'none'}} onClick={_handleAddLibrary}>
             {t('trees.add_libraries')}
         </Button>
-    );
+    ) : null;
     const selectedLibraries = libraries.map(library => library.library.id);
 
     return (

@@ -4,7 +4,14 @@
 import {Tabs, TabsProps} from 'antd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {AttributeDetailsFragment, useGetAttributeByIdQuery} from '../../../_gqlTypes';
+import {extractPermissionFromQuery} from '../../../helpers/extractPermissionFromQuery';
+import {
+    AttributeDetailsFragment,
+    PermissionsActions,
+    PermissionTypes,
+    useGetAttributeByIdQuery,
+    useIsAllowedQuery
+} from '../../../_gqlTypes';
 import {ErrorDisplay} from '../../ErrorDisplay';
 import {Loading} from '../../Loading';
 import {EditAttributeInfo} from './EditAttributeInfo';
@@ -30,17 +37,28 @@ function EditAttribute({attributeId, onSetSubmitFunction}: IEditAttributeProps):
         skip: !attributeId
     });
 
+    const isAllowedQueryResult = useIsAllowedQuery({
+        fetchPolicy: 'cache-and-network',
+        variables: {
+            type: PermissionTypes.admin,
+            actions: [PermissionsActions.admin_edit_attribute]
+        }
+    });
+    const isReadOnly = !extractPermissionFromQuery(isAllowedQueryResult, PermissionsActions.admin_edit_attribute);
+
     if (loading) {
         return <Loading />;
     }
 
-    if (error) {
-        return <ErrorDisplay message={error.message} />;
+    if (error || isAllowedQueryResult.error) {
+        return <ErrorDisplay message={error?.message || isAllowedQueryResult?.error?.message} />;
     }
 
     const attributeData = data?.attributes?.list[0] ?? null;
 
-    const attributeInfoComp = <EditAttributeInfo attribute={attributeData} onSetSubmitFunction={onSetSubmitFunction} />;
+    const attributeInfoComp = (
+        <EditAttributeInfo attribute={attributeData} onSetSubmitFunction={onSetSubmitFunction} readOnly={isReadOnly} />
+    );
 
     // If creating new library, return the form directly
     if (!isEditing) {

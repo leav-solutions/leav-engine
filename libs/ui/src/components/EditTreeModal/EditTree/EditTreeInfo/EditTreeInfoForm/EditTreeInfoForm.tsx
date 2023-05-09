@@ -19,6 +19,7 @@ interface IEditTreeInfoFormProps {
     loading: boolean;
     onSubmitField: (field: string, value: any) => Promise<void>;
     onCheckTreeUniqueness: (value: string) => Promise<boolean>;
+    readOnly?: boolean;
 }
 
 function EditTreeInfoForm({
@@ -26,7 +27,8 @@ function EditTreeInfoForm({
     tree,
     onSubmitField,
     onCheckTreeUniqueness,
-    loading
+    loading,
+    readOnly: isReadOnly
 }: IEditTreeInfoFormProps): JSX.Element {
     const {t} = useTranslation('shared');
     const {availableLangs, defaultLang} = useLang();
@@ -35,7 +37,6 @@ function EditTreeInfoForm({
     const [processedFieldsSubmit, setProcessedFieldsSubmit] = useState<string[]>([]);
 
     const isEditing = !!tree;
-    const isReadOnly = false;
 
     const _getRequiredMessage = (field: string) =>
         t('errors.field_required', {
@@ -203,6 +204,7 @@ function EditTreeInfoForm({
             </Form.Item>
             <Form.Item name="libraries" key="libraries">
                 <TreeLibrariesForm
+                    readOnly={isReadOnly}
                     onChange={_handleLibrariesChange}
                     extra={<SubmitStateNotifier state={_getFieldState('libraries')} />}
                 />

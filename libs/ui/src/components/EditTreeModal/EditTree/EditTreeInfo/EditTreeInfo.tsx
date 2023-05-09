@@ -15,9 +15,10 @@ import {EditTreeInfoForm} from './EditTreeInfoForm';
 interface IEditTreeInfoProps {
     tree?: TreeDetailsFragment;
     onSetSubmitFunction?: (submitFunction: () => Promise<TreeDetailsFragment>) => void;
+    readOnly?: boolean;
 }
 
-function EditTreeInfo({tree, onSetSubmitFunction}: IEditTreeInfoProps): JSX.Element {
+function EditTreeInfo({tree, onSetSubmitFunction, readOnly}: IEditTreeInfoProps): JSX.Element {
     const {availableLangs} = useLang();
     const [form] = Form.useForm();
     const isEditing = !!tree;
@@ -162,6 +163,7 @@ function EditTreeInfo({tree, onSetSubmitFunction}: IEditTreeInfoProps): JSX.Elem
             onSubmitField={_submitField}
             tree={tree}
             loading={loading}
+            readOnly={readOnly}
         />
     );
 }

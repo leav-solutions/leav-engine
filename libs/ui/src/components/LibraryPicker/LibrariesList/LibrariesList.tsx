@@ -5,12 +5,21 @@ import {PlusOutlined} from '@ant-design/icons';
 import {useApolloClient} from '@apollo/client';
 import {localizedTranslation, Override} from '@leav/utils';
 import {Button, Input, Table, TableColumnsType} from 'antd';
-import {Key, useMemo, useState} from 'react';
+import {Key, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {PreviewSize} from '../../../constants';
+import {extractPermissionFromQuery} from '../../../helpers/extractPermissionFromQuery';
 import {useLang} from '../../../hooks';
-import {GetLibrariesQuery, LibraryLightFragment, SaveLibraryMutation, useGetLibrariesQuery} from '../../../_gqlTypes';
+import {
+    GetLibrariesQuery,
+    LibraryLightFragment,
+    PermissionsActions,
+    PermissionTypes,
+    SaveLibraryMutation,
+    useGetLibrariesQuery,
+    useIsAllowedQuery
+} from '../../../_gqlTypes';
 import {getLibrariesQuery} from '../../../_queries/libraries/getLibrariesQuery';
 import {EditLibraryModal} from '../../EditLibraryModal';
 import {EntityCard, IEntityData} from '../../EntityCard';
@@ -34,13 +43,11 @@ interface ILibrariesListProps {
     onSelect: (selectedLibraries: LibraryLightFragment[]) => void;
     selected?: string[];
     multiple?: boolean;
-    canCreate?: boolean;
     showSelected?: boolean;
 }
 
 function LibrariesList({
     onSelect,
-    canCreate = true,
     selected = [],
     multiple = true,
     showSelected = false
@@ -48,16 +55,20 @@ function LibrariesList({
     const {t} = useTranslation('shared');
     const {lang} = useLang();
     const {loading, error, data} = useGetLibrariesQuery();
+
+    const isAllowedQueryResult = useIsAllowedQuery({
+        fetchPolicy: 'cache-and-network',
+        variables: {
+            type: PermissionTypes.admin,
+            actions: [PermissionsActions.admin_create_library]
+        }
+    });
+    const canCreate = extractPermissionFromQuery(isAllowedQueryResult, PermissionsActions.admin_create_library);
+
     const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>(showSelected ? selected : []);
     const [search, setSearch] = useState('');
     const [isNewLibraryModalOpen, setIsNewLibraryModalOpen] = useState(false);
     const client = useApolloClient();
-    const librariesByKey = useMemo(() => {
-        return data?.libraries.list.reduce((acc, library) => {
-            acc[library.id] = library;
-            return acc;
-        }, {});
-    }, [data?.libraries.list]);
 
     const _handleSelectionChange = (selection: Key[]) => {
         setSelectedRowKeys(selection);
@@ -115,8 +126,8 @@ function LibrariesList({
         return <Loading />;
     }
 
-    if (error) {
-        return <ErrorDisplay message={error.message} />;
+    if (error || isAllowedQueryResult.error) {
+        return <ErrorDisplay message={error?.message || isAllowedQueryResult?.error?.message} />;
     }
 
     const columns: TableColumnsType<LibraryType> = [

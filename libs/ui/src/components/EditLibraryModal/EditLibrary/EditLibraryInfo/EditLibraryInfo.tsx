@@ -16,9 +16,10 @@ import {EditLibraryInfoForm} from './EditLibraryInfoForm';
 interface IEditApplicationInfoProps {
     library?: GetLibraryByIdQuery['libraries']['list'][number];
     onSetSubmitFunction?: (submitFunction: () => Promise<SaveLibraryMutation['saveLibrary']>) => void;
+    readOnly?: boolean;
 }
 
-function EditApplicationInfo({library, onSetSubmitFunction}: IEditApplicationInfoProps): JSX.Element {
+function EditApplicationInfo({library, onSetSubmitFunction, readOnly}: IEditApplicationInfoProps): JSX.Element {
     const {availableLangs} = useLang();
     const [form] = Form.useForm();
     const isEditing = !!library;
@@ -149,6 +150,7 @@ function EditApplicationInfo({library, onSetSubmitFunction}: IEditApplicationInf
             onSubmitField={_submitField}
             library={library}
             loading={loading}
+            readOnly={readOnly}
         />
     );
 }

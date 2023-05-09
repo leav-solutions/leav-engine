@@ -9,8 +9,16 @@ import {ComponentProps, Key, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {PreviewSize} from '../../../constants';
+import {extractPermissionFromQuery} from '../../../helpers/extractPermissionFromQuery';
 import {useLang} from '../../../hooks';
-import {GetTreesQuery, TreeLightFragment, useGetTreesQuery} from '../../../_gqlTypes';
+import {
+    GetTreesQuery,
+    PermissionsActions,
+    PermissionTypes,
+    TreeLightFragment,
+    useGetTreesQuery,
+    useIsAllowedQuery
+} from '../../../_gqlTypes';
 import {getTreesQuery} from '../../../_queries/trees/getTreesQuery';
 import {EditTreeModal} from '../../EditTreeModal';
 import {EntityCard, IEntityData} from '../../EntityCard';
@@ -34,20 +42,23 @@ interface ITreesListProps {
     onSelect: (selectedTrees: TreeLightFragment[]) => void;
     selected?: string[];
     multiple?: boolean;
-    canCreate?: boolean;
     showSelected?: boolean;
 }
 
-function TreesList({
-    onSelect,
-    canCreate = true,
-    selected = [],
-    multiple = true,
-    showSelected = false
-}: ITreesListProps): JSX.Element {
+function TreesList({onSelect, selected = [], multiple = true, showSelected = false}: ITreesListProps): JSX.Element {
     const {t} = useTranslation('shared');
     const {lang} = useLang();
     const {loading, error, data} = useGetTreesQuery();
+
+    const isAllowedQueryResult = useIsAllowedQuery({
+        fetchPolicy: 'cache-and-network',
+        variables: {
+            type: PermissionTypes.admin,
+            actions: [PermissionsActions.admin_create_tree]
+        }
+    });
+    const canCreate = extractPermissionFromQuery(isAllowedQueryResult, PermissionsActions.admin_create_tree);
+
     const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>(showSelected ? selected : []);
     const [search, setSearch] = useState('');
     const [isNewTreeModalOpen, setIsNewTreeModalOpen] = useState(false);

@@ -11,7 +11,6 @@ interface ILibraryPickerProps {
     open: boolean;
     onClose: () => void;
     onSubmit: (selectedLibraries: LibraryLightFragment[]) => void;
-    canCreate?: boolean;
     selected?: string[];
     multiple?: boolean;
     showSelected?: boolean;
@@ -22,7 +21,6 @@ function LibraryPicker({
     onClose,
     onSubmit,
     selected = [],
-    canCreate = true,
     multiple = true,
     showSelected = false
 }: ILibraryPickerProps): JSX.Element {
@@ -54,7 +52,6 @@ function LibraryPicker({
                 onSelect={_handleSelect}
                 selected={selected}
                 multiple={multiple}
-                canCreate={canCreate}
                 showSelected={showSelected}
             />
         </Modal>

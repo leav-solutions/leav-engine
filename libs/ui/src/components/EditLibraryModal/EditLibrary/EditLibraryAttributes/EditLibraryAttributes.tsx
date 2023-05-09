@@ -6,11 +6,12 @@ import {AttributesList} from './AttributesList';
 
 interface IEditLibraryAttributesProps {
     library: GetLibraryByIdQuery['libraries']['list'][number];
+    readOnly?: boolean;
 }
 
-function EditLibraryAttributes({library}: IEditLibraryAttributesProps): JSX.Element {
+function EditLibraryAttributes({library, readOnly}: IEditLibraryAttributesProps): JSX.Element {
     const [saveLibrary] = useSaveLibraryMutation();
-    const isReadOnly = !(library.permissions?.admin_library ?? true);
+    const isReadOnly = readOnly || !(library.permissions?.admin_library ?? true);
 
     const _handleAddAttributes = async (attributes: string[]) => {
         const newAttributes = [...(library.attributes ?? []).map(a => a.id), ...attributes];

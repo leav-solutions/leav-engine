@@ -18,6 +18,22 @@ jest.mock('../LibraryPicker', () => {
 });
 
 describe('EditTreeModal', () => {
+    const mockResultIsAllowed: Mockify<typeof gqlTypes.useIsAllowedQuery> = {
+        loading: false,
+        data: {
+            isAllowed: [
+                {
+                    name: gqlTypes.PermissionsActions.admin_edit_tree,
+                    allowed: true
+                }
+            ]
+        },
+        called: true
+    };
+    jest.spyOn(gqlTypes, 'useIsAllowedQuery').mockImplementation(
+        () => mockResultIsAllowed as QueryResult<gqlTypes.IsAllowedQuery, gqlTypes.IsAllowedQueryVariables>
+    );
+
     describe('Create tree', () => {
         test('Create new tree', async () => {
             const user = userEvent.setup();
@@ -48,18 +64,22 @@ describe('EditTreeModal', () => {
             const mockOnPostCreate = jest.fn();
 
             render(<EditTreeModal open onPostCreate={mockOnPostCreate} onClose={jest.fn()} />);
-            const idField = screen.getByRole('textbox', {name: /id/});
 
-            await user.type(screen.getByRole('textbox', {name: 'label_fr'}), 'label fr');
-            await user.type(screen.getByRole('textbox', {name: 'label_en'}), 'label_en');
+            const inputs = screen.getAllByRole('textbox', {name: /label|id/i});
+            const labelFr = inputs[0];
+            const labelEn = inputs[1];
+            const idField = inputs[2];
+
+            await user.type(labelFr, 'label fr');
+            await user.type(labelEn, 'label_en');
 
             await waitFor(() => {
                 expect(idField).toHaveValue('label_fr');
             });
 
             await act(async () => {
-                fireEvent.focus(screen.getByRole('textbox', {name: /id/i}));
-                fireEvent.blur(screen.getByRole('textbox', {name: /id/i}));
+                fireEvent.focus(idField);
+                fireEvent.blur(idField);
             });
 
             await waitFor(() => {
@@ -68,24 +88,22 @@ describe('EditTreeModal', () => {
 
             expect(screen.queryByText(/id_already_exists/)).not.toBeInTheDocument();
 
-            user.click(screen.getByRole('button', {name: /submit/i}));
+            await user.click(screen.getByRole('button', {name: /submit/i}));
 
-            await waitFor(() => {
-                expect(mockSaveTreeMutation).toBeCalledWith({
-                    variables: {
-                        tree: {
-                            id: 'label_fr',
-                            label: {
-                                fr: 'label fr',
-                                en: 'label_en'
-                            },
-                            behavior: 'standard',
-                            libraries: []
-                        }
+            expect(mockSaveTreeMutation).toBeCalledWith({
+                variables: {
+                    tree: {
+                        id: 'label_fr',
+                        label: {
+                            fr: 'label fr',
+                            en: 'label_en'
+                        },
+                        behavior: 'standard',
+                        libraries: []
                     }
-                });
-                expect(mockOnPostCreate).toBeCalled();
+                }
             });
+            expect(mockOnPostCreate).toBeCalled();
         });
 
         test('Display an error if ID is already used', async () => {
@@ -179,6 +197,8 @@ describe('EditTreeModal', () => {
         });
 
         test('Can define libraries settings', async () => {
+            const user = userEvent.setup();
+
             const treeWithLibs = {
                 ...mockTreeWithDetails,
                 libraries: [
@@ -243,11 +263,17 @@ describe('EditTreeModal', () => {
 
             userEvent.click(within(libA).getByText(/advanced_settings/i));
 
-            expect(await within(libA).findByRole('switch', {name: /allowed_multiple_positions/})).not.toBeChecked();
-            expect(within(libA).getByRole('switch', {name: /allowed_at_root/})).toBeChecked();
+            const switches = await within(libA).findAllByRole('switch');
+            const allowedMultiplePositionsSwitch = switches[0];
+            const allowedAtRootSwitch = switches[1];
+
+            expect(allowedMultiplePositionsSwitch).not.toBeChecked();
+            expect(allowedAtRootSwitch).toBeChecked();
             expect(within(libA).getByLabelText(/allowed_children/)).toBeInTheDocument();
 
-            await userEvent.click(within(libA).getByRole('switch', {name: /allowed_multiple_positions/}));
+            await act(async () => {
+                await user.click(allowedMultiplePositionsSwitch);
+            });
 
             await waitFor(() => {
                 expect(mockSaveTreeMutation).toBeCalledWith({

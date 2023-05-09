@@ -4,7 +4,13 @@
 import {Tabs, TabsProps} from 'antd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {SaveLibraryMutation, useGetLibraryByIdQuery} from '../../../_gqlTypes';
+import {
+    PermissionsActions,
+    PermissionTypes,
+    SaveLibraryMutation,
+    useGetLibraryByIdQuery,
+    useIsAllowedQuery
+} from '../../../_gqlTypes';
 import {ErrorDisplay} from '../../ErrorDisplay';
 import {Loading} from '../../Loading';
 import {EditLibraryAttributes} from './EditLibraryAttributes';
@@ -31,17 +37,33 @@ function EditLibrary({libraryId, onSetSubmitFunction}: IEditLibraryProps): JSX.E
         skip: !libraryId
     });
 
+    const {loading: permissionsLoading, error: permissionsError, data: permissionsData} = useIsAllowedQuery({
+        fetchPolicy: 'cache-and-network',
+        variables: {
+            type: PermissionTypes.admin,
+            actions: isEditing
+                ? [PermissionsActions.admin_edit_library, PermissionsActions.admin_delete_library]
+                : [PermissionsActions.admin_create_library]
+        }
+    });
+
     if (loading) {
         return <Loading />;
     }
 
-    if (error) {
-        return <ErrorDisplay message={error.message} />;
+    if (error || permissionsError) {
+        return <ErrorDisplay message={error?.message || permissionsError?.message} />;
     }
 
     const libraryData = data?.libraries?.list[0] ?? null;
+    const isReadOnly =
+        !permissionsLoading &&
+        !permissionsError &&
+        !(permissionsData?.isAllowed ?? []).find(p => p.name === PermissionsActions.admin_edit_library).allowed;
 
-    const libraryInfoComp = <EditLibraryInfo library={libraryData} onSetSubmitFunction={onSetSubmitFunction} />;
+    const libraryInfoComp = (
+        <EditLibraryInfo library={libraryData} onSetSubmitFunction={onSetSubmitFunction} readOnly={isReadOnly} />
+    );
 
     // If creating new library, return the form directly
     if (!isEditing) {
@@ -63,7 +85,7 @@ function EditLibrary({libraryId, onSetSubmitFunction}: IEditLibraryProps): JSX.E
             label: t('libraries.attributes'),
             children: (
                 <TabContentWrapper>
-                    <EditLibraryAttributes library={libraryData} />
+                    <EditLibraryAttributes library={libraryData} readOnly={isReadOnly} />
                 </TabContentWrapper>
             )
         }

@@ -15,9 +15,10 @@ import {EditAttributeInfoForm} from './EditAttributeInfoForm';
 interface IEditAttributeInfoProps {
     attribute?: AttributeDetailsFragment;
     onSetSubmitFunction?: (submitFunction: () => Promise<AttributeDetailsFragment>) => void;
+    readOnly?: boolean;
 }
 
-function EditAttributeInfo({attribute, onSetSubmitFunction}: IEditAttributeInfoProps): JSX.Element {
+function EditAttributeInfo({attribute, onSetSubmitFunction, readOnly}: IEditAttributeInfoProps): JSX.Element {
     const {availableLangs} = useLang();
     const [form] = Form.useForm();
     const isEditing = !!attribute;
@@ -179,6 +180,7 @@ function EditAttributeInfo({attribute, onSetSubmitFunction}: IEditAttributeInfoP
             onSubmitField={_submitField}
             attribute={attribute}
             loading={loading}
+            readOnly={readOnly}
         />
     );
 }

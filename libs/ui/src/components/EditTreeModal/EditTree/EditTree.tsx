@@ -4,7 +4,14 @@
 import {Tabs, TabsProps} from 'antd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {TreeDetailsFragment, useGetTreeByIdQuery} from '../../../_gqlTypes';
+import {extractPermissionFromQuery} from '../../../helpers/extractPermissionFromQuery';
+import {
+    PermissionsActions,
+    PermissionTypes,
+    TreeDetailsFragment,
+    useGetTreeByIdQuery,
+    useIsAllowedQuery
+} from '../../../_gqlTypes';
 import {ErrorDisplay} from '../../ErrorDisplay';
 import {Loading} from '../../Loading';
 import {EditTreeInfo} from './EditTreeInfo';
@@ -30,17 +37,28 @@ function EditTree({treeId, onSetSubmitFunction}: IEditTreeProps): JSX.Element {
         skip: !treeId
     });
 
+    const isAllowedQueryResult = useIsAllowedQuery({
+        fetchPolicy: 'cache-and-network',
+        variables: {
+            type: PermissionTypes.admin,
+            actions: [PermissionsActions.admin_edit_tree]
+        }
+    });
+    const isReadOnly = !extractPermissionFromQuery(isAllowedQueryResult, PermissionsActions.admin_edit_tree);
+
     if (loading) {
         return <Loading />;
     }
 
-    if (error) {
-        return <ErrorDisplay message={error.message} />;
+    if (error || isAllowedQueryResult.error) {
+        return <ErrorDisplay message={error?.message || isAllowedQueryResult?.error?.message} />;
     }
 
     const treeData = data?.trees?.list[0] ?? null;
 
-    const treeInfoComp = <EditTreeInfo tree={treeData} onSetSubmitFunction={onSetSubmitFunction} />;
+    const treeInfoComp = (
+        <EditTreeInfo tree={treeData} onSetSubmitFunction={onSetSubmitFunction} readOnly={isReadOnly} />
+    );
 
     // If creating new library, return the form directly
     if (!isEditing) {

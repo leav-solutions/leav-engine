@@ -9,8 +9,16 @@ import {Key, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {PreviewSize} from '../../../constants';
+import {extractPermissionFromQuery} from '../../../helpers/extractPermissionFromQuery';
 import {useLang} from '../../../hooks';
-import {AttributeDetailsFragment, GetAttributesQuery, useGetAttributesQuery} from '../../../_gqlTypes';
+import {
+    AttributeDetailsFragment,
+    GetAttributesQuery,
+    PermissionsActions,
+    PermissionTypes,
+    useGetAttributesQuery,
+    useIsAllowedQuery
+} from '../../../_gqlTypes';
 import {getAttributesQuery} from '../../../_queries/attributes/getAttributesQuery';
 import {EditAttributeModal} from '../../EditAttributeModal';
 import {EntityCard, IEntityData} from '../../EntityCard';
@@ -34,18 +42,22 @@ interface IAttributesListProps {
     onSelect: (selectedAttributes: string[]) => void;
     selected?: string[];
     multiple?: boolean;
-    canCreate?: boolean;
 }
 
-function AttributesList({
-    onSelect,
-    canCreate = true,
-    selected = [],
-    multiple = true
-}: IAttributesListProps): JSX.Element {
+function AttributesList({onSelect, selected = [], multiple = true}: IAttributesListProps): JSX.Element {
     const {t} = useTranslation('shared');
     const {lang} = useLang();
     const {loading, error, data} = useGetAttributesQuery();
+
+    const isAllowedQueryResult = useIsAllowedQuery({
+        fetchPolicy: 'cache-and-network',
+        variables: {
+            type: PermissionTypes.admin,
+            actions: [PermissionsActions.admin_create_attribute]
+        }
+    });
+    const canCreate = extractPermissionFromQuery(isAllowedQueryResult, PermissionsActions.admin_create_attribute);
+
     const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
     const [search, setSearch] = useState('');
     const [isNewAttributeModalOpen, setIsNewAttributeModalOpen] = useState(false);
@@ -101,8 +113,8 @@ function AttributesList({
         return <Loading />;
     }
 
-    if (error) {
-        return <ErrorDisplay message={error.message} />;
+    if (error || isAllowedQueryResult.error) {
+        return <ErrorDisplay message={error?.message || isAllowedQueryResult?.error?.message} />;
     }
 
     const columns: TableColumnsType<AttributeType> = [

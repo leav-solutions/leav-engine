@@ -10,6 +10,22 @@ import {mockAttributeWithDetails} from '../../__mocks__/common/attribute';
 import EditAttributeModal from './EditAttributeModal';
 
 describe('EditAttributeModal', () => {
+    const mockResultIsAllowed: Mockify<typeof gqlTypes.useIsAllowedQuery> = {
+        loading: false,
+        data: {
+            isAllowed: [
+                {
+                    name: gqlTypes.PermissionsActions.admin_edit_attribute,
+                    allowed: true
+                }
+            ]
+        },
+        called: true
+    };
+    jest.spyOn(gqlTypes, 'useIsAllowedQuery').mockImplementation(
+        () => mockResultIsAllowed as QueryResult<gqlTypes.IsAllowedQuery, gqlTypes.IsAllowedQueryVariables>
+    );
+
     describe('Create attribute', () => {
         test('Create new attribute', async () => {
             const user = userEvent.setup();
@@ -127,14 +143,16 @@ describe('EditAttributeModal', () => {
             }
         };
 
-        const mockJestResult: Mockify<typeof gqlTypes.useGetAttributeByIdQuery> = {
+        const mockResultGetAttributeById: Mockify<typeof gqlTypes.useGetAttributeByIdQuery> = {
             loading: false,
             data: mockGetAttributeByIdData,
             called: true
         };
 
         test('Display edit form for existing attribute', async () => {
-            jest.spyOn(gqlTypes, 'useGetAttributeByIdQuery').mockImplementation(() => mockJestResult as QueryResult);
+            jest.spyOn(gqlTypes, 'useGetAttributeByIdQuery').mockImplementation(
+                () => mockResultGetAttributeById as QueryResult
+            );
             render(<EditAttributeModal attributeId={mockAttributeWithDetails.id} open onClose={jest.fn()} />);
 
             expect(screen.getByRole('textbox', {name: /id/})).toBeDisabled();
@@ -145,7 +163,9 @@ describe('EditAttributeModal', () => {
 
         test('Submit field on blur', async () => {
             const user = userEvent.setup();
-            jest.spyOn(gqlTypes, 'useGetAttributeByIdQuery').mockImplementation(() => mockJestResult as QueryResult);
+            jest.spyOn(gqlTypes, 'useGetAttributeByIdQuery').mockImplementation(
+                () => mockResultGetAttributeById as QueryResult
+            );
             const mockSaveAttributeMutation = jest.fn().mockReturnValue({
                 data: {
                     saveAttribute: {
@@ -184,7 +204,9 @@ describe('EditAttributeModal', () => {
 
         test('Submit checkbox field on change', async () => {
             const user = userEvent.setup();
-            jest.spyOn(gqlTypes, 'useGetAttributeByIdQuery').mockImplementation(() => mockJestResult as QueryResult);
+            jest.spyOn(gqlTypes, 'useGetAttributeByIdQuery').mockImplementation(
+                () => mockResultGetAttributeById as QueryResult
+            );
             const mockSaveAttributeMutation = jest.fn().mockReturnValue({
                 data: {
                     saveAttribute: {

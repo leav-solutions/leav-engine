@@ -138,9 +138,11 @@ function AttributesList({
     const tableHeader = (
         <HeaderWrapper>
             <Input.Search onChange={_handleSearchChange} placeholder={t('global.search') + '...'} allowClear />
-            <Button type="primary" icon={<PlusOutlined />} onClick={_handleClickNewAttribute}>
-                {t('attributes.add_attribute')}
-            </Button>
+            {!readOnly && (
+                <Button type="primary" icon={<PlusOutlined />} onClick={_handleClickNewAttribute}>
+                    {t('attributes.add_attribute')}
+                </Button>
+            )}
         </HeaderWrapper>
     );
 

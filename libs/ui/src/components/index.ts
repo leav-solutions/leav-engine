@@ -8,6 +8,7 @@ export * from './EditLibraryModal';
 export * from './EditTreeModal';
 export * from './EntityCard';
 export * from './EntityPreview';
+export * from './ErrorDisplay';
 export * from './FloatingMenu';
 export * from './ImageLoading';
 export * from './ImageMissing';

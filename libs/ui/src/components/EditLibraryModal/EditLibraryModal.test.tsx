@@ -10,6 +10,22 @@ import {mockLibraryWithDetails} from '../../__mocks__/common/library';
 import EditLibraryModal from './EditLibraryModal';
 
 describe('EditLibraryModal', () => {
+    const mockResultIsAllowed: Mockify<typeof gqlTypes.useIsAllowedQuery> = {
+        loading: false,
+        data: {
+            isAllowed: [
+                {
+                    name: gqlTypes.PermissionsActions.admin_edit_library,
+                    allowed: true
+                }
+            ]
+        },
+        called: true
+    };
+    jest.spyOn(gqlTypes, 'useIsAllowedQuery').mockImplementation(
+        () => mockResultIsAllowed as QueryResult<gqlTypes.IsAllowedQuery, gqlTypes.IsAllowedQueryVariables>
+    );
+
     describe('Create library', () => {
         test('Create new library', async () => {
             const user = userEvent.setup();
@@ -40,43 +56,41 @@ describe('EditLibraryModal', () => {
             const mockOnPostCreate = jest.fn();
 
             render(<EditLibraryModal open onPostCreate={mockOnPostCreate} onClose={jest.fn()} />);
-            const idField = screen.getByRole('textbox', {name: /id/});
 
-            await user.type(screen.getByRole('textbox', {name: 'label_fr'}), 'label fr');
-            await user.type(screen.getByRole('textbox', {name: 'label_en'}), 'label_en');
+            const inputs = screen.getAllByRole('textbox', {name: /label|id/i});
+            const labelFr = inputs[0];
+            const labelEn = inputs[1];
+            const idField = inputs[2];
 
-            await waitFor(() => {
-                expect(idField).toHaveValue('label_fr');
-            });
+            await user.type(labelFr, 'label fr');
+            await user.type(labelEn, 'label_en');
+
+            expect(idField).toHaveValue('label_fr');
 
             await act(async () => {
-                fireEvent.focus(screen.getByRole('textbox', {name: /id/i}));
-                fireEvent.blur(screen.getByRole('textbox', {name: /id/i}));
+                fireEvent.focus(idField);
+                fireEvent.blur(idField);
             });
 
-            await waitFor(() => {
-                expect(mockCheckLibraryExistenceLazyQuery).toBeCalled();
-            });
+            expect(mockCheckLibraryExistenceLazyQuery).toBeCalled();
 
             expect(screen.queryByText(/id_already_exists/)).not.toBeInTheDocument();
 
-            user.click(screen.getByRole('button', {name: /submit/i}));
+            await user.click(screen.getByRole('button', {name: /submit/i}));
 
-            await waitFor(() => {
-                expect(mockSaveLibraryMutation).toBeCalledWith({
-                    variables: {
-                        library: {
-                            id: 'label_fr',
-                            label: {
-                                fr: 'label fr',
-                                en: 'label_en'
-                            },
-                            behavior: 'standard'
-                        }
+            expect(mockSaveLibraryMutation).toBeCalledWith({
+                variables: {
+                    library: {
+                        id: 'label_fr',
+                        label: {
+                            fr: 'label fr',
+                            en: 'label_en'
+                        },
+                        behavior: 'standard'
                     }
-                });
-                expect(mockOnPostCreate).toBeCalled();
+                }
             });
+            expect(mockOnPostCreate).toBeCalled();
         });
 
         test('Display an error if ID is already used', async () => {
@@ -200,8 +214,9 @@ describe('EditLibraryModal', () => {
 
             await user.click(labelSelect);
 
-            expect(screen.getByText(mockLibraryWithDetails.attributes[0].label.fr)).toBeInTheDocument();
-            user.click(screen.getByText(mockLibraryWithDetails.attributes[0].label.fr));
+            const labelOption = screen.getByText(mockLibraryWithDetails.attributes[0].label.fr);
+            expect(labelOption).toBeInTheDocument();
+            user.click(labelOption);
 
             await waitFor(() => {
                 expect(mockSaveLibraryMutation).toBeCalledWith({
