@@ -94,7 +94,8 @@ export default function ({
             const rootPath = appRootPath();
             const appRootFolder = path.resolve(rootPath, config.applications.rootFolder);
 
-            const appsFolders = await readdir(appRootFolder);
+            let appsFolders = await readdir(appRootFolder);
+            appsFolders = appsFolders.filter(item => !/(^|\/)\.[^\/\.]/g.test(item)); // ignore hidden files
 
             const components: IApplicationModule[] = await Promise.all(
                 appsFolders.map(async appFolder => {
