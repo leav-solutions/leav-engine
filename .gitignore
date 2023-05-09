@@ -87,3 +87,6 @@ apps/*/dist
 apps/*/build
 libs/ui/dist
 *.tsbuildinfo
+
+apps/core/applications/*
+!apps/core/applications/.gitkeep
