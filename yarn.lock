@@ -13244,7 +13244,6 @@ __metadata:
     jsonschema: 1.4.1
     jsonwebtoken: 9.0.0
     license-check-and-add: 3.0.5
-    line-by-line: 0.1.6
     lint-staged: 7.3.0
     lodash: 4.17.21
     minimist: 1.2.8
@@ -21573,13 +21572,6 @@ __metadata:
   version: 2.0.5
   resolution: "lilconfig@npm:2.0.5"
   checksum: f7bb9e42656f06930ad04e583026f087508ae408d3526b8b54895e934eb2a966b7aafae569656f2c79a29fe6d779b3ec44ba577e80814734c8655d6f71cdf2d1
-  languageName: node
-  linkType: hard
-
-"line-by-line@npm:0.1.6":
-  version: 0.1.6
-  resolution: "line-by-line@npm:0.1.6"
-  checksum: fc1647c6eee2ca312d62ae647cf57afe325a4a31739cf35400aec2461bf4ab4d01914cbe0f7c31ce76b91950028fec2402467e4e43bdb797afdba8b087c5e938
   languageName: node
   linkType: hard
 
