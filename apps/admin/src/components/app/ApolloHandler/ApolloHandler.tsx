@@ -14,18 +14,19 @@ import {
 import {onError} from '@apollo/client/link/error';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
+import fetch from 'cross-fetch';
 import {createClient} from 'graphql-ws';
 import useGraphqlPossibleTypes from 'hooks/useGraphqlPossibleTypes';
 import React, {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useDispatch} from 'react-redux';
-import {addMessage, MessagesTypes} from 'redux/messages/messages';
-import {endMutation, startMutation} from 'redux/mutationsWatcher/mutationsWatcher';
+import {addMessage, MessagesTypes} from 'reduxStore/messages/messages';
+import {endMutation, startMutation} from 'reduxStore/mutationsWatcher/mutationsWatcher';
 import {Message, SemanticICONS} from 'semantic-ui-react';
 import * as yup from 'yup';
 import {ErrorTypes} from '_types/errors';
+import {API_ENDPOINT, APPS_ENDPOINT, LOGIN_ENDPOINT, ORIGIN_URL, WS_URL} from '../../../constants';
 import Loading from '../../shared/Loading';
-import {ORIGIN_URL, APPS_ENDPOINT, LOGIN_ENDPOINT, API_ENDPOINT, WS_URL} from '../../../constants';
 
 interface IApolloHandlerProps {
     children: ReactNode;
@@ -150,7 +151,8 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
             splitLink,
             _mutationsWatcherLink,
             new HttpLink({
-                uri: `${ORIGIN_URL}/${API_ENDPOINT}`
+                uri: `${ORIGIN_URL}/${API_ENDPOINT}`,
+                fetch
             })
         ]),
         connectToDevTools: process.env.NODE_ENV === 'development',

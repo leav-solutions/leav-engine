@@ -3,16 +3,16 @@
 exports[`NodePermissionTabContent Snapshot test 1`] = `
 LoadedCheerio {
   "0": Node {
-    "attribs": Object {
+    "attribs": {
       "class": "sc-hKMtZM ktggiM sc-jSMfEi dqGXdv",
     },
-    "children": Array [
+    "children": [
       Node {
-        "attribs": Object {
+        "attribs": {
           "aria-hidden": "true",
           "class": "cog icon",
         },
-        "children": Array [],
+        "children": [],
         "name": "i",
         "namespace": "http://www.w3.org/1999/xhtml",
         "next": Node {
@@ -25,11 +25,11 @@ LoadedCheerio {
         "parent": [Circular],
         "prev": null,
         "type": "tag",
-        "x-attribsNamespace": Object {
+        "x-attribsNamespace": {
           "aria-hidden": undefined,
           "class": undefined,
         },
-        "x-attribsPrefix": Object {
+        "x-attribsPrefix": {
           "aria-hidden": undefined,
           "class": undefined,
         },
@@ -39,22 +39,22 @@ LoadedCheerio {
         "next": null,
         "parent": [Circular],
         "prev": Node {
-          "attribs": Object {
+          "attribs": {
             "aria-hidden": "true",
             "class": "cog icon",
           },
-          "children": Array [],
+          "children": [],
           "name": "i",
           "namespace": "http://www.w3.org/1999/xhtml",
           "next": [Circular],
           "parent": [Circular],
           "prev": null,
           "type": "tag",
-          "x-attribsNamespace": Object {
+          "x-attribsNamespace": {
             "aria-hidden": undefined,
             "class": undefined,
           },
-          "x-attribsPrefix": Object {
+          "x-attribsPrefix": {
             "aria-hidden": undefined,
             "class": undefined,
           },
@@ -65,20 +65,20 @@ LoadedCheerio {
     "name": "div",
     "namespace": "http://www.w3.org/1999/xhtml",
     "next": Node {
-      "attribs": Object {
+      "attribs": {
         "class": "grow flex-col height100",
       },
-      "children": Array [
+      "children": [
         Node {
-          "attribs": Object {
+          "attribs": {
             "class": "ui attached tabular menu",
           },
-          "children": Array [
+          "children": [
             Node {
-              "attribs": Object {
+              "attribs": {
                 "class": "active item",
               },
-              "children": Array [
+              "children": [
                 Node {
                   "data": "permissions.library_tab_name",
                   "next": null,
@@ -90,10 +90,10 @@ LoadedCheerio {
               "name": "a",
               "namespace": "http://www.w3.org/1999/xhtml",
               "next": Node {
-                "attribs": Object {
+                "attribs": {
                   "class": "item",
                 },
-                "children": Array [
+                "children": [
                   Node {
                     "data": "Mon Attribut",
                     "next": null,
@@ -108,28 +108,28 @@ LoadedCheerio {
                 "parent": [Circular],
                 "prev": [Circular],
                 "type": "tag",
-                "x-attribsNamespace": Object {
+                "x-attribsNamespace": {
                   "class": undefined,
                 },
-                "x-attribsPrefix": Object {
+                "x-attribsPrefix": {
                   "class": undefined,
                 },
               },
               "parent": [Circular],
               "prev": null,
               "type": "tag",
-              "x-attribsNamespace": Object {
+              "x-attribsNamespace": {
                 "class": undefined,
               },
-              "x-attribsPrefix": Object {
+              "x-attribsPrefix": {
                 "class": undefined,
               },
             },
             Node {
-              "attribs": Object {
+              "attribs": {
                 "class": "item",
               },
-              "children": Array [
+              "children": [
                 Node {
                   "data": "Mon Attribut",
                   "next": null,
@@ -143,10 +143,10 @@ LoadedCheerio {
               "next": null,
               "parent": [Circular],
               "prev": Node {
-                "attribs": Object {
+                "attribs": {
                   "class": "active item",
                 },
-                "children": Array [
+                "children": [
                   Node {
                     "data": "permissions.library_tab_name",
                     "next": null,
@@ -161,18 +161,18 @@ LoadedCheerio {
                 "parent": [Circular],
                 "prev": null,
                 "type": "tag",
-                "x-attribsNamespace": Object {
+                "x-attribsNamespace": {
                   "class": undefined,
                 },
-                "x-attribsPrefix": Object {
+                "x-attribsPrefix": {
                   "class": undefined,
                 },
               },
               "type": "tag",
-              "x-attribsNamespace": Object {
+              "x-attribsNamespace": {
                 "class": undefined,
               },
-              "x-attribsPrefix": Object {
+              "x-attribsPrefix": {
                 "class": undefined,
               },
             },
@@ -180,13 +180,13 @@ LoadedCheerio {
           "name": "div",
           "namespace": "http://www.w3.org/1999/xhtml",
           "next": Node {
-            "attribs": Object {
+            "attribs": {
               "class": "ui bottom attached segment active tab grow flex-col height100",
             },
-            "children": Array [
+            "children": [
               Node {
-                "attribs": Object {},
-                "children": Array [
+                "attribs": {},
+                "children": [
                   Node {
                     "data": "DefinePermByUserGroupView",
                     "next": null,
@@ -201,8 +201,8 @@ LoadedCheerio {
                 "parent": [Circular],
                 "prev": null,
                 "type": "tag",
-                "x-attribsNamespace": Object {},
-                "x-attribsPrefix": Object {},
+                "x-attribsNamespace": {},
+                "x-attribsPrefix": {},
               },
             ],
             "name": "div",
@@ -211,31 +211,31 @@ LoadedCheerio {
             "parent": [Circular],
             "prev": [Circular],
             "type": "tag",
-            "x-attribsNamespace": Object {
+            "x-attribsNamespace": {
               "class": undefined,
             },
-            "x-attribsPrefix": Object {
+            "x-attribsPrefix": {
               "class": undefined,
             },
           },
           "parent": [Circular],
           "prev": null,
           "type": "tag",
-          "x-attribsNamespace": Object {
+          "x-attribsNamespace": {
             "class": undefined,
           },
-          "x-attribsPrefix": Object {
+          "x-attribsPrefix": {
             "class": undefined,
           },
         },
         Node {
-          "attribs": Object {
+          "attribs": {
             "class": "ui bottom attached segment active tab grow flex-col height100",
           },
-          "children": Array [
+          "children": [
             Node {
-              "attribs": Object {},
-              "children": Array [
+              "attribs": {},
+              "children": [
                 Node {
                   "data": "DefinePermByUserGroupView",
                   "next": null,
@@ -250,8 +250,8 @@ LoadedCheerio {
               "parent": [Circular],
               "prev": null,
               "type": "tag",
-              "x-attribsNamespace": Object {},
-              "x-attribsPrefix": Object {},
+              "x-attribsNamespace": {},
+              "x-attribsPrefix": {},
             },
           ],
           "name": "div",
@@ -259,15 +259,15 @@ LoadedCheerio {
           "next": null,
           "parent": [Circular],
           "prev": Node {
-            "attribs": Object {
+            "attribs": {
               "class": "ui attached tabular menu",
             },
-            "children": Array [
+            "children": [
               Node {
-                "attribs": Object {
+                "attribs": {
                   "class": "active item",
                 },
-                "children": Array [
+                "children": [
                   Node {
                     "data": "permissions.library_tab_name",
                     "next": null,
@@ -279,10 +279,10 @@ LoadedCheerio {
                 "name": "a",
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": Node {
-                  "attribs": Object {
+                  "attribs": {
                     "class": "item",
                   },
-                  "children": Array [
+                  "children": [
                     Node {
                       "data": "Mon Attribut",
                       "next": null,
@@ -297,28 +297,28 @@ LoadedCheerio {
                   "parent": [Circular],
                   "prev": [Circular],
                   "type": "tag",
-                  "x-attribsNamespace": Object {
+                  "x-attribsNamespace": {
                     "class": undefined,
                   },
-                  "x-attribsPrefix": Object {
+                  "x-attribsPrefix": {
                     "class": undefined,
                   },
                 },
                 "parent": [Circular],
                 "prev": null,
                 "type": "tag",
-                "x-attribsNamespace": Object {
+                "x-attribsNamespace": {
                   "class": undefined,
                 },
-                "x-attribsPrefix": Object {
+                "x-attribsPrefix": {
                   "class": undefined,
                 },
               },
               Node {
-                "attribs": Object {
+                "attribs": {
                   "class": "item",
                 },
-                "children": Array [
+                "children": [
                   Node {
                     "data": "Mon Attribut",
                     "next": null,
@@ -332,10 +332,10 @@ LoadedCheerio {
                 "next": null,
                 "parent": [Circular],
                 "prev": Node {
-                  "attribs": Object {
+                  "attribs": {
                     "class": "active item",
                   },
-                  "children": Array [
+                  "children": [
                     Node {
                       "data": "permissions.library_tab_name",
                       "next": null,
@@ -350,18 +350,18 @@ LoadedCheerio {
                   "parent": [Circular],
                   "prev": null,
                   "type": "tag",
-                  "x-attribsNamespace": Object {
+                  "x-attribsNamespace": {
                     "class": undefined,
                   },
-                  "x-attribsPrefix": Object {
+                  "x-attribsPrefix": {
                     "class": undefined,
                   },
                 },
                 "type": "tag",
-                "x-attribsNamespace": Object {
+                "x-attribsNamespace": {
                   "class": undefined,
                 },
-                "x-attribsPrefix": Object {
+                "x-attribsPrefix": {
                   "class": undefined,
                 },
               },
@@ -372,18 +372,18 @@ LoadedCheerio {
             "parent": [Circular],
             "prev": null,
             "type": "tag",
-            "x-attribsNamespace": Object {
+            "x-attribsNamespace": {
               "class": undefined,
             },
-            "x-attribsPrefix": Object {
+            "x-attribsPrefix": {
               "class": undefined,
             },
           },
           "type": "tag",
-          "x-attribsNamespace": Object {
+          "x-attribsNamespace": {
             "class": undefined,
           },
-          "x-attribsPrefix": Object {
+          "x-attribsPrefix": {
             "class": undefined,
           },
         },
@@ -392,7 +392,7 @@ LoadedCheerio {
       "namespace": "http://www.w3.org/1999/xhtml",
       "next": null,
       "parent": Node {
-        "children": Array [
+        "children": [
           [Circular],
           [Circular],
         ],
@@ -404,31 +404,31 @@ LoadedCheerio {
       },
       "prev": [Circular],
       "type": "tag",
-      "x-attribsNamespace": Object {
+      "x-attribsNamespace": {
         "class": undefined,
       },
-      "x-attribsPrefix": Object {
+      "x-attribsPrefix": {
         "class": undefined,
       },
     },
     "parent": Node {
-      "children": Array [
+      "children": [
         [Circular],
         Node {
-          "attribs": Object {
+          "attribs": {
             "class": "grow flex-col height100",
           },
-          "children": Array [
+          "children": [
             Node {
-              "attribs": Object {
+              "attribs": {
                 "class": "ui attached tabular menu",
               },
-              "children": Array [
+              "children": [
                 Node {
-                  "attribs": Object {
+                  "attribs": {
                     "class": "active item",
                   },
-                  "children": Array [
+                  "children": [
                     Node {
                       "data": "permissions.library_tab_name",
                       "next": null,
@@ -440,10 +440,10 @@ LoadedCheerio {
                   "name": "a",
                   "namespace": "http://www.w3.org/1999/xhtml",
                   "next": Node {
-                    "attribs": Object {
+                    "attribs": {
                       "class": "item",
                     },
-                    "children": Array [
+                    "children": [
                       Node {
                         "data": "Mon Attribut",
                         "next": null,
@@ -458,28 +458,28 @@ LoadedCheerio {
                     "parent": [Circular],
                     "prev": [Circular],
                     "type": "tag",
-                    "x-attribsNamespace": Object {
+                    "x-attribsNamespace": {
                       "class": undefined,
                     },
-                    "x-attribsPrefix": Object {
+                    "x-attribsPrefix": {
                       "class": undefined,
                     },
                   },
                   "parent": [Circular],
                   "prev": null,
                   "type": "tag",
-                  "x-attribsNamespace": Object {
+                  "x-attribsNamespace": {
                     "class": undefined,
                   },
-                  "x-attribsPrefix": Object {
+                  "x-attribsPrefix": {
                     "class": undefined,
                   },
                 },
                 Node {
-                  "attribs": Object {
+                  "attribs": {
                     "class": "item",
                   },
-                  "children": Array [
+                  "children": [
                     Node {
                       "data": "Mon Attribut",
                       "next": null,
@@ -493,10 +493,10 @@ LoadedCheerio {
                   "next": null,
                   "parent": [Circular],
                   "prev": Node {
-                    "attribs": Object {
+                    "attribs": {
                       "class": "active item",
                     },
-                    "children": Array [
+                    "children": [
                       Node {
                         "data": "permissions.library_tab_name",
                         "next": null,
@@ -511,18 +511,18 @@ LoadedCheerio {
                     "parent": [Circular],
                     "prev": null,
                     "type": "tag",
-                    "x-attribsNamespace": Object {
+                    "x-attribsNamespace": {
                       "class": undefined,
                     },
-                    "x-attribsPrefix": Object {
+                    "x-attribsPrefix": {
                       "class": undefined,
                     },
                   },
                   "type": "tag",
-                  "x-attribsNamespace": Object {
+                  "x-attribsNamespace": {
                     "class": undefined,
                   },
-                  "x-attribsPrefix": Object {
+                  "x-attribsPrefix": {
                     "class": undefined,
                   },
                 },
@@ -530,13 +530,13 @@ LoadedCheerio {
               "name": "div",
               "namespace": "http://www.w3.org/1999/xhtml",
               "next": Node {
-                "attribs": Object {
+                "attribs": {
                   "class": "ui bottom attached segment active tab grow flex-col height100",
                 },
-                "children": Array [
+                "children": [
                   Node {
-                    "attribs": Object {},
-                    "children": Array [
+                    "attribs": {},
+                    "children": [
                       Node {
                         "data": "DefinePermByUserGroupView",
                         "next": null,
@@ -551,8 +551,8 @@ LoadedCheerio {
                     "parent": [Circular],
                     "prev": null,
                     "type": "tag",
-                    "x-attribsNamespace": Object {},
-                    "x-attribsPrefix": Object {},
+                    "x-attribsNamespace": {},
+                    "x-attribsPrefix": {},
                   },
                 ],
                 "name": "div",
@@ -561,31 +561,31 @@ LoadedCheerio {
                 "parent": [Circular],
                 "prev": [Circular],
                 "type": "tag",
-                "x-attribsNamespace": Object {
+                "x-attribsNamespace": {
                   "class": undefined,
                 },
-                "x-attribsPrefix": Object {
+                "x-attribsPrefix": {
                   "class": undefined,
                 },
               },
               "parent": [Circular],
               "prev": null,
               "type": "tag",
-              "x-attribsNamespace": Object {
+              "x-attribsNamespace": {
                 "class": undefined,
               },
-              "x-attribsPrefix": Object {
+              "x-attribsPrefix": {
                 "class": undefined,
               },
             },
             Node {
-              "attribs": Object {
+              "attribs": {
                 "class": "ui bottom attached segment active tab grow flex-col height100",
               },
-              "children": Array [
+              "children": [
                 Node {
-                  "attribs": Object {},
-                  "children": Array [
+                  "attribs": {},
+                  "children": [
                     Node {
                       "data": "DefinePermByUserGroupView",
                       "next": null,
@@ -600,8 +600,8 @@ LoadedCheerio {
                   "parent": [Circular],
                   "prev": null,
                   "type": "tag",
-                  "x-attribsNamespace": Object {},
-                  "x-attribsPrefix": Object {},
+                  "x-attribsNamespace": {},
+                  "x-attribsPrefix": {},
                 },
               ],
               "name": "div",
@@ -609,15 +609,15 @@ LoadedCheerio {
               "next": null,
               "parent": [Circular],
               "prev": Node {
-                "attribs": Object {
+                "attribs": {
                   "class": "ui attached tabular menu",
                 },
-                "children": Array [
+                "children": [
                   Node {
-                    "attribs": Object {
+                    "attribs": {
                       "class": "active item",
                     },
-                    "children": Array [
+                    "children": [
                       Node {
                         "data": "permissions.library_tab_name",
                         "next": null,
@@ -629,10 +629,10 @@ LoadedCheerio {
                     "name": "a",
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": Node {
-                      "attribs": Object {
+                      "attribs": {
                         "class": "item",
                       },
-                      "children": Array [
+                      "children": [
                         Node {
                           "data": "Mon Attribut",
                           "next": null,
@@ -647,28 +647,28 @@ LoadedCheerio {
                       "parent": [Circular],
                       "prev": [Circular],
                       "type": "tag",
-                      "x-attribsNamespace": Object {
+                      "x-attribsNamespace": {
                         "class": undefined,
                       },
-                      "x-attribsPrefix": Object {
+                      "x-attribsPrefix": {
                         "class": undefined,
                       },
                     },
                     "parent": [Circular],
                     "prev": null,
                     "type": "tag",
-                    "x-attribsNamespace": Object {
+                    "x-attribsNamespace": {
                       "class": undefined,
                     },
-                    "x-attribsPrefix": Object {
+                    "x-attribsPrefix": {
                       "class": undefined,
                     },
                   },
                   Node {
-                    "attribs": Object {
+                    "attribs": {
                       "class": "item",
                     },
-                    "children": Array [
+                    "children": [
                       Node {
                         "data": "Mon Attribut",
                         "next": null,
@@ -682,10 +682,10 @@ LoadedCheerio {
                     "next": null,
                     "parent": [Circular],
                     "prev": Node {
-                      "attribs": Object {
+                      "attribs": {
                         "class": "active item",
                       },
-                      "children": Array [
+                      "children": [
                         Node {
                           "data": "permissions.library_tab_name",
                           "next": null,
@@ -700,18 +700,18 @@ LoadedCheerio {
                       "parent": [Circular],
                       "prev": null,
                       "type": "tag",
-                      "x-attribsNamespace": Object {
+                      "x-attribsNamespace": {
                         "class": undefined,
                       },
-                      "x-attribsPrefix": Object {
+                      "x-attribsPrefix": {
                         "class": undefined,
                       },
                     },
                     "type": "tag",
-                    "x-attribsNamespace": Object {
+                    "x-attribsNamespace": {
                       "class": undefined,
                     },
-                    "x-attribsPrefix": Object {
+                    "x-attribsPrefix": {
                       "class": undefined,
                     },
                   },
@@ -722,18 +722,18 @@ LoadedCheerio {
                 "parent": [Circular],
                 "prev": null,
                 "type": "tag",
-                "x-attribsNamespace": Object {
+                "x-attribsNamespace": {
                   "class": undefined,
                 },
-                "x-attribsPrefix": Object {
+                "x-attribsPrefix": {
                   "class": undefined,
                 },
               },
               "type": "tag",
-              "x-attribsNamespace": Object {
+              "x-attribsNamespace": {
                 "class": undefined,
               },
-              "x-attribsPrefix": Object {
+              "x-attribsPrefix": {
                 "class": undefined,
               },
             },
@@ -744,10 +744,10 @@ LoadedCheerio {
           "parent": [Circular],
           "prev": [Circular],
           "type": "tag",
-          "x-attribsNamespace": Object {
+          "x-attribsNamespace": {
             "class": undefined,
           },
-          "x-attribsPrefix": Object {
+          "x-attribsPrefix": {
             "class": undefined,
           },
         },
@@ -760,28 +760,28 @@ LoadedCheerio {
     },
     "prev": null,
     "type": "tag",
-    "x-attribsNamespace": Object {
+    "x-attribsNamespace": {
       "class": undefined,
     },
-    "x-attribsPrefix": Object {
+    "x-attribsPrefix": {
       "class": undefined,
     },
   },
   "1": Node {
-    "attribs": Object {
+    "attribs": {
       "class": "grow flex-col height100",
     },
-    "children": Array [
+    "children": [
       Node {
-        "attribs": Object {
+        "attribs": {
           "class": "ui attached tabular menu",
         },
-        "children": Array [
+        "children": [
           Node {
-            "attribs": Object {
+            "attribs": {
               "class": "active item",
             },
-            "children": Array [
+            "children": [
               Node {
                 "data": "permissions.library_tab_name",
                 "next": null,
@@ -793,10 +793,10 @@ LoadedCheerio {
             "name": "a",
             "namespace": "http://www.w3.org/1999/xhtml",
             "next": Node {
-              "attribs": Object {
+              "attribs": {
                 "class": "item",
               },
-              "children": Array [
+              "children": [
                 Node {
                   "data": "Mon Attribut",
                   "next": null,
@@ -811,28 +811,28 @@ LoadedCheerio {
               "parent": [Circular],
               "prev": [Circular],
               "type": "tag",
-              "x-attribsNamespace": Object {
+              "x-attribsNamespace": {
                 "class": undefined,
               },
-              "x-attribsPrefix": Object {
+              "x-attribsPrefix": {
                 "class": undefined,
               },
             },
             "parent": [Circular],
             "prev": null,
             "type": "tag",
-            "x-attribsNamespace": Object {
+            "x-attribsNamespace": {
               "class": undefined,
             },
-            "x-attribsPrefix": Object {
+            "x-attribsPrefix": {
               "class": undefined,
             },
           },
           Node {
-            "attribs": Object {
+            "attribs": {
               "class": "item",
             },
-            "children": Array [
+            "children": [
               Node {
                 "data": "Mon Attribut",
                 "next": null,
@@ -846,10 +846,10 @@ LoadedCheerio {
             "next": null,
             "parent": [Circular],
             "prev": Node {
-              "attribs": Object {
+              "attribs": {
                 "class": "active item",
               },
-              "children": Array [
+              "children": [
                 Node {
                   "data": "permissions.library_tab_name",
                   "next": null,
@@ -864,18 +864,18 @@ LoadedCheerio {
               "parent": [Circular],
               "prev": null,
               "type": "tag",
-              "x-attribsNamespace": Object {
+              "x-attribsNamespace": {
                 "class": undefined,
               },
-              "x-attribsPrefix": Object {
+              "x-attribsPrefix": {
                 "class": undefined,
               },
             },
             "type": "tag",
-            "x-attribsNamespace": Object {
+            "x-attribsNamespace": {
               "class": undefined,
             },
-            "x-attribsPrefix": Object {
+            "x-attribsPrefix": {
               "class": undefined,
             },
           },
@@ -883,13 +883,13 @@ LoadedCheerio {
         "name": "div",
         "namespace": "http://www.w3.org/1999/xhtml",
         "next": Node {
-          "attribs": Object {
+          "attribs": {
             "class": "ui bottom attached segment active tab grow flex-col height100",
           },
-          "children": Array [
+          "children": [
             Node {
-              "attribs": Object {},
-              "children": Array [
+              "attribs": {},
+              "children": [
                 Node {
                   "data": "DefinePermByUserGroupView",
                   "next": null,
@@ -904,8 +904,8 @@ LoadedCheerio {
               "parent": [Circular],
               "prev": null,
               "type": "tag",
-              "x-attribsNamespace": Object {},
-              "x-attribsPrefix": Object {},
+              "x-attribsNamespace": {},
+              "x-attribsPrefix": {},
             },
           ],
           "name": "div",
@@ -914,31 +914,31 @@ LoadedCheerio {
           "parent": [Circular],
           "prev": [Circular],
           "type": "tag",
-          "x-attribsNamespace": Object {
+          "x-attribsNamespace": {
             "class": undefined,
           },
-          "x-attribsPrefix": Object {
+          "x-attribsPrefix": {
             "class": undefined,
           },
         },
         "parent": [Circular],
         "prev": null,
         "type": "tag",
-        "x-attribsNamespace": Object {
+        "x-attribsNamespace": {
           "class": undefined,
         },
-        "x-attribsPrefix": Object {
+        "x-attribsPrefix": {
           "class": undefined,
         },
       },
       Node {
-        "attribs": Object {
+        "attribs": {
           "class": "ui bottom attached segment active tab grow flex-col height100",
         },
-        "children": Array [
+        "children": [
           Node {
-            "attribs": Object {},
-            "children": Array [
+            "attribs": {},
+            "children": [
               Node {
                 "data": "DefinePermByUserGroupView",
                 "next": null,
@@ -953,8 +953,8 @@ LoadedCheerio {
             "parent": [Circular],
             "prev": null,
             "type": "tag",
-            "x-attribsNamespace": Object {},
-            "x-attribsPrefix": Object {},
+            "x-attribsNamespace": {},
+            "x-attribsPrefix": {},
           },
         ],
         "name": "div",
@@ -962,15 +962,15 @@ LoadedCheerio {
         "next": null,
         "parent": [Circular],
         "prev": Node {
-          "attribs": Object {
+          "attribs": {
             "class": "ui attached tabular menu",
           },
-          "children": Array [
+          "children": [
             Node {
-              "attribs": Object {
+              "attribs": {
                 "class": "active item",
               },
-              "children": Array [
+              "children": [
                 Node {
                   "data": "permissions.library_tab_name",
                   "next": null,
@@ -982,10 +982,10 @@ LoadedCheerio {
               "name": "a",
               "namespace": "http://www.w3.org/1999/xhtml",
               "next": Node {
-                "attribs": Object {
+                "attribs": {
                   "class": "item",
                 },
-                "children": Array [
+                "children": [
                   Node {
                     "data": "Mon Attribut",
                     "next": null,
@@ -1000,28 +1000,28 @@ LoadedCheerio {
                 "parent": [Circular],
                 "prev": [Circular],
                 "type": "tag",
-                "x-attribsNamespace": Object {
+                "x-attribsNamespace": {
                   "class": undefined,
                 },
-                "x-attribsPrefix": Object {
+                "x-attribsPrefix": {
                   "class": undefined,
                 },
               },
               "parent": [Circular],
               "prev": null,
               "type": "tag",
-              "x-attribsNamespace": Object {
+              "x-attribsNamespace": {
                 "class": undefined,
               },
-              "x-attribsPrefix": Object {
+              "x-attribsPrefix": {
                 "class": undefined,
               },
             },
             Node {
-              "attribs": Object {
+              "attribs": {
                 "class": "item",
               },
-              "children": Array [
+              "children": [
                 Node {
                   "data": "Mon Attribut",
                   "next": null,
@@ -1035,10 +1035,10 @@ LoadedCheerio {
               "next": null,
               "parent": [Circular],
               "prev": Node {
-                "attribs": Object {
+                "attribs": {
                   "class": "active item",
                 },
-                "children": Array [
+                "children": [
                   Node {
                     "data": "permissions.library_tab_name",
                     "next": null,
@@ -1053,18 +1053,18 @@ LoadedCheerio {
                 "parent": [Circular],
                 "prev": null,
                 "type": "tag",
-                "x-attribsNamespace": Object {
+                "x-attribsNamespace": {
                   "class": undefined,
                 },
-                "x-attribsPrefix": Object {
+                "x-attribsPrefix": {
                   "class": undefined,
                 },
               },
               "type": "tag",
-              "x-attribsNamespace": Object {
+              "x-attribsNamespace": {
                 "class": undefined,
               },
-              "x-attribsPrefix": Object {
+              "x-attribsPrefix": {
                 "class": undefined,
               },
             },
@@ -1075,18 +1075,18 @@ LoadedCheerio {
           "parent": [Circular],
           "prev": null,
           "type": "tag",
-          "x-attribsNamespace": Object {
+          "x-attribsNamespace": {
             "class": undefined,
           },
-          "x-attribsPrefix": Object {
+          "x-attribsPrefix": {
             "class": undefined,
           },
         },
         "type": "tag",
-        "x-attribsNamespace": Object {
+        "x-attribsNamespace": {
           "class": undefined,
         },
-        "x-attribsPrefix": Object {
+        "x-attribsPrefix": {
           "class": undefined,
         },
       },
@@ -1095,18 +1095,18 @@ LoadedCheerio {
     "namespace": "http://www.w3.org/1999/xhtml",
     "next": null,
     "parent": Node {
-      "children": Array [
+      "children": [
         Node {
-          "attribs": Object {
+          "attribs": {
             "class": "sc-hKMtZM ktggiM sc-jSMfEi dqGXdv",
           },
-          "children": Array [
+          "children": [
             Node {
-              "attribs": Object {
+              "attribs": {
                 "aria-hidden": "true",
                 "class": "cog icon",
               },
-              "children": Array [],
+              "children": [],
               "name": "i",
               "namespace": "http://www.w3.org/1999/xhtml",
               "next": Node {
@@ -1119,11 +1119,11 @@ LoadedCheerio {
               "parent": [Circular],
               "prev": null,
               "type": "tag",
-              "x-attribsNamespace": Object {
+              "x-attribsNamespace": {
                 "aria-hidden": undefined,
                 "class": undefined,
               },
-              "x-attribsPrefix": Object {
+              "x-attribsPrefix": {
                 "aria-hidden": undefined,
                 "class": undefined,
               },
@@ -1133,22 +1133,22 @@ LoadedCheerio {
               "next": null,
               "parent": [Circular],
               "prev": Node {
-                "attribs": Object {
+                "attribs": {
                   "aria-hidden": "true",
                   "class": "cog icon",
                 },
-                "children": Array [],
+                "children": [],
                 "name": "i",
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": [Circular],
                 "parent": [Circular],
                 "prev": null,
                 "type": "tag",
-                "x-attribsNamespace": Object {
+                "x-attribsNamespace": {
                   "aria-hidden": undefined,
                   "class": undefined,
                 },
-                "x-attribsPrefix": Object {
+                "x-attribsPrefix": {
                   "aria-hidden": undefined,
                   "class": undefined,
                 },
@@ -1162,10 +1162,10 @@ LoadedCheerio {
           "parent": [Circular],
           "prev": null,
           "type": "tag",
-          "x-attribsNamespace": Object {
+          "x-attribsNamespace": {
             "class": undefined,
           },
-          "x-attribsPrefix": Object {
+          "x-attribsPrefix": {
             "class": undefined,
           },
         },
@@ -1178,16 +1178,16 @@ LoadedCheerio {
       "type": "root",
     },
     "prev": Node {
-      "attribs": Object {
+      "attribs": {
         "class": "sc-hKMtZM ktggiM sc-jSMfEi dqGXdv",
       },
-      "children": Array [
+      "children": [
         Node {
-          "attribs": Object {
+          "attribs": {
             "aria-hidden": "true",
             "class": "cog icon",
           },
-          "children": Array [],
+          "children": [],
           "name": "i",
           "namespace": "http://www.w3.org/1999/xhtml",
           "next": Node {
@@ -1200,11 +1200,11 @@ LoadedCheerio {
           "parent": [Circular],
           "prev": null,
           "type": "tag",
-          "x-attribsNamespace": Object {
+          "x-attribsNamespace": {
             "aria-hidden": undefined,
             "class": undefined,
           },
-          "x-attribsPrefix": Object {
+          "x-attribsPrefix": {
             "aria-hidden": undefined,
             "class": undefined,
           },
@@ -1214,22 +1214,22 @@ LoadedCheerio {
           "next": null,
           "parent": [Circular],
           "prev": Node {
-            "attribs": Object {
+            "attribs": {
               "aria-hidden": "true",
               "class": "cog icon",
             },
-            "children": Array [],
+            "children": [],
             "name": "i",
             "namespace": "http://www.w3.org/1999/xhtml",
             "next": [Circular],
             "parent": [Circular],
             "prev": null,
             "type": "tag",
-            "x-attribsNamespace": Object {
+            "x-attribsNamespace": {
               "aria-hidden": undefined,
               "class": undefined,
             },
-            "x-attribsPrefix": Object {
+            "x-attribsPrefix": {
               "aria-hidden": undefined,
               "class": undefined,
             },
@@ -1241,7 +1241,7 @@ LoadedCheerio {
       "namespace": "http://www.w3.org/1999/xhtml",
       "next": [Circular],
       "parent": Node {
-        "children": Array [
+        "children": [
           [Circular],
           [Circular],
         ],
@@ -1253,72 +1253,72 @@ LoadedCheerio {
       },
       "prev": null,
       "type": "tag",
-      "x-attribsNamespace": Object {
+      "x-attribsNamespace": {
         "class": undefined,
       },
-      "x-attribsPrefix": Object {
+      "x-attribsPrefix": {
         "class": undefined,
       },
     },
     "type": "tag",
-    "x-attribsNamespace": Object {
+    "x-attribsNamespace": {
       "class": undefined,
     },
-    "x-attribsPrefix": Object {
+    "x-attribsPrefix": {
       "class": undefined,
     },
   },
   "_root": LoadedCheerio {
     "0": Node {
-      "children": Array [
+      "children": [
         Node {
-          "attribs": Object {},
-          "children": Array [
+          "attribs": {},
+          "children": [
             Node {
-              "attribs": Object {},
-              "children": Array [],
+              "attribs": {},
+              "children": [],
               "name": "head",
               "namespace": "http://www.w3.org/1999/xhtml",
               "next": Node {
-                "attribs": Object {},
-                "children": Array [],
+                "attribs": {},
+                "children": [],
                 "name": "body",
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": null,
                 "parent": [Circular],
                 "prev": [Circular],
                 "type": "tag",
-                "x-attribsNamespace": Object {},
-                "x-attribsPrefix": Object {},
+                "x-attribsNamespace": {},
+                "x-attribsPrefix": {},
               },
               "parent": [Circular],
               "prev": null,
               "type": "tag",
-              "x-attribsNamespace": Object {},
-              "x-attribsPrefix": Object {},
+              "x-attribsNamespace": {},
+              "x-attribsPrefix": {},
             },
             Node {
-              "attribs": Object {},
-              "children": Array [],
+              "attribs": {},
+              "children": [],
               "name": "body",
               "namespace": "http://www.w3.org/1999/xhtml",
               "next": null,
               "parent": [Circular],
               "prev": Node {
-                "attribs": Object {},
-                "children": Array [],
+                "attribs": {},
+                "children": [],
                 "name": "head",
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": [Circular],
                 "parent": [Circular],
                 "prev": null,
                 "type": "tag",
-                "x-attribsNamespace": Object {},
-                "x-attribsPrefix": Object {},
+                "x-attribsNamespace": {},
+                "x-attribsPrefix": {},
               },
               "type": "tag",
-              "x-attribsNamespace": Object {},
-              "x-attribsPrefix": Object {},
+              "x-attribsNamespace": {},
+              "x-attribsPrefix": {},
             },
           ],
           "name": "html",
@@ -1327,8 +1327,8 @@ LoadedCheerio {
           "parent": [Circular],
           "prev": null,
           "type": "tag",
-          "x-attribsNamespace": Object {},
-          "x-attribsPrefix": Object {},
+          "x-attribsNamespace": {},
+          "x-attribsPrefix": {},
         },
       ],
       "name": "root",
@@ -1340,13 +1340,13 @@ LoadedCheerio {
     },
     "_root": [Circular],
     "length": 1,
-    "options": Object {
+    "options": {
       "decodeEntities": true,
       "xml": false,
     },
   },
   "length": 2,
-  "options": Object {
+  "options": {
     "decodeEntities": true,
     "xml": false,
   },

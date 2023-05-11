@@ -60,6 +60,6 @@ describe('TreesSelector', () => {
             render(<TreesSelector />, {apolloMocks: mocks});
         });
 
-        expect(screen.getByText('TestTree')).toBeInTheDocument();
+        expect(await screen.findByText('TestTree')).toBeInTheDocument();
     });
 });

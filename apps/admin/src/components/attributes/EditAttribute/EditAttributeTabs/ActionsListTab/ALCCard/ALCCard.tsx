@@ -20,7 +20,6 @@ export interface ICardProps {
     moveCard?: (id: string, isOver: boolean, to: number) => void;
     findCard?: (id: string) => number | undefined;
     origin: string;
-    addActionToList: (actionName: string, atIndex: number) => void;
     removeActionFromList?: (id: string) => void;
     marginTop?: string;
     currentIndex?: number;

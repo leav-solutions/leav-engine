@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import PropTypes from 'prop-types';
-import React, {Component} from 'react';
+import React, {Component, CSSProperties} from 'react';
 import {DragLayer} from 'react-dnd';
 import ALCCard from '../ALCCard';
 
-const layerStyles = {
+const layerStyles: CSSProperties = {
     position: 'fixed',
     pointerEvents: 'none',
     zIndex: 100,
@@ -17,8 +17,7 @@ const layerStyles = {
 };
 
 const getFieldStyle = isDragging => {
-    const style = {
-        //width: 300,
+    const style: CSSProperties = {
         maxWidth: 300
     };
     style.opacity = isDragging ? 0.8 : 1;
@@ -52,8 +51,22 @@ const collect = monitor => ({
     isDragging: monitor.isDragging()
 });
 
-class BinDragLayer extends Component {
-    static propTypes = {
+interface IBinDragLayerProps {
+    item: any;
+    itemType: string;
+    initialOffset: {
+        x: number;
+        y: number;
+    };
+    currentOffset: {
+        x: number;
+        y: number;
+    };
+    isDragging: boolean;
+}
+
+class BinDragLayer extends Component<IBinDragLayerProps> {
+    public static propTypes = {
         item: PropTypes.object,
         itemType: PropTypes.string,
         initialOffset: PropTypes.shape({
@@ -67,25 +80,22 @@ class BinDragLayer extends Component {
         isDragging: PropTypes.bool.isRequired
     };
 
-    static defaultProps = {};
+    public static defaultProps = {};
 
-    renderItem = (type, item) => {
+    private renderItem = (type, item) => {
         if (item) {
-            const connectionState =
-                item.connectionState === undefined ? 'neutral' : item.connectionState ? 'connected' : 'disconnected';
             const colorTypeDictionnary = item.colorTypeDictionnary;
             const width = item.width;
             return (
                 <div style={{pointerEvents: 'none', width: `${width}px`}}>
                     <ALCCard
                         key={item.id}
-                        id={`${item.id}`}
+                        id={item.id}
                         action={item.action}
                         findCard={() => {
-                            return {index: item.id};
+                            return item.id;
                         }}
                         origin={item.origin}
-                        connectionState={connectionState}
                         colorTypeDictionnary={colorTypeDictionnary}
                         dragging
                     />
@@ -94,7 +104,7 @@ class BinDragLayer extends Component {
         }
     };
 
-    render() {
+    public render() {
         const {item, itemType, isDragging} = this.props;
         return (
             <div style={layerStyles}>
@@ -106,4 +116,4 @@ class BinDragLayer extends Component {
     }
 }
 
-export default DragLayer(collect)(BinDragLayer);
+export default DragLayer(collect)(BinDragLayer as any);

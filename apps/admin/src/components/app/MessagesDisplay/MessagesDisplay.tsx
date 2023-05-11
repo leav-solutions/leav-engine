@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import useMessages from 'hooks/useMessages';
 import React from 'react';
-import {IMessage} from 'redux/messages/messages';
+import {IMessage} from 'reduxStore/messages/messages';
 import styled from 'styled-components';
 import MessageBlock from './MessageBlock';
 

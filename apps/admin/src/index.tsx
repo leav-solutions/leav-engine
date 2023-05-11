@@ -3,19 +3,19 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import ApolloHandler from 'components/app/ApolloHandler';
 import App from 'components/app/App';
+import ErrorDisplay from 'components/shared/ErrorDisplay';
+import Loading from 'components/shared/Loading';
 import 'fomantic-ui-less/semantic.less';
 import React, {Suspense, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {Provider as ReduxProvider} from 'react-redux';
-import {store} from 'redux/store';
+import {store} from 'reduxStore/store';
 import {Loader} from 'semantic-ui-react';
+import {APPS_ENDPOINT, APP_ENDPOINT} from './constants';
+import useAppLang from './hooks/useAppLang';
 import i18n from './i18n';
 import './index.css';
 import registerServiceWorker from './registerServiceWorker';
-import {APPS_ENDPOINT, APP_ENDPOINT} from './constants';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
-import useAppLang from './hooks/useAppLang';
 
 function Index() {
     const {lang, loading, error} = useAppLang();
