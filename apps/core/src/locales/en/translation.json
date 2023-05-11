@@ -78,6 +78,7 @@
         "UNKNOWN_VERSION_PROFILE": "Unknown version profile {{profile}}",
         "UNKNOWN_VERSION_TREE": "Unknown tree {{tree}}",
         "UNKNOWN_VIEW": "Unknown view",
+        "UNKNOWN_LIBRARY_ATTRIBUTE": "This library does not use this attribute",
         "VALUE_NOT_UNIQUE": "This value has already been registered"
     },
     "actions": {
