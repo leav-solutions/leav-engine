@@ -31,7 +31,7 @@ describe('GeneralInfosTab', () => {
             render(<GeneralInfosTab />, {apolloMocks: mocks});
         });
 
-        expect(screen.getByText(/42.0.0/)).toBeInTheDocument();
+        expect(await screen.findByText(/42.0.0/)).toBeInTheDocument();
         expect(screen.getByText('PluginsExplorer')).toBeInTheDocument();
     });
 });

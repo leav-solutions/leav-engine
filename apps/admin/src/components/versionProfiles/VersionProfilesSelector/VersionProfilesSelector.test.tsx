@@ -36,7 +36,7 @@ describe('VersionProfilesSelector', () => {
 
         // Type in input to filter dropdown, click profile on list to select it
         userEvent.type(await screen.findByRole('textbox'), 'A');
-        userEvent.click(screen.getAllByText('Profil A')[1]);
+        userEvent.click((await screen.findAllByText('Profil A'))[1]);
 
         expect(mockOnChange).toHaveBeenCalled();
     });

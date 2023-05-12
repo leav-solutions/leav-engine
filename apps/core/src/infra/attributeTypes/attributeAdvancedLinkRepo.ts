@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {join, AqlQuery, GeneratedAqlQuery, literal, aql} from 'arangojs/aql';
+import {aql, AqlQuery, GeneratedAqlQuery, join, literal} from 'arangojs/aql';
 import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IUtils} from 'utils/utils';
 import {ILinkValue, IValueEdge} from '_types/value';
@@ -12,6 +12,11 @@ import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo, IAttributeWithRevLink} from './attributeTypesRepo';
 import {GetConditionPart} from './helpers/getConditionPart';
+
+interface ISavedValueResult {
+    edge: IValueEdge;
+    linkedRecord: IRecord;
+}
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
@@ -89,9 +94,10 @@ export default function ({
                 ? attribute.linked_library + '/' + value.value
                 : library + '/' + recordId;
 
-            const _to = !!attribute.reverse_link
-                ? library + '/' + recordId
-                : attribute.linked_library + '/' + value.value;
+            const toLibrary = !!attribute.reverse_link ? library : attribute.linked_library;
+            const toRecordId = !!attribute.reverse_link ? recordId : value.value;
+
+            const _to = toLibrary + '/' + toRecordId;
 
             const edgeDataAttr = !!attribute.reverse_link ? (attribute.reverse_link as IAttribute).id : attribute.id;
 
@@ -110,20 +116,20 @@ export default function ({
                 edgeData.metadata = value.metadata;
             }
 
-            const resEdge = await dbService.execute<IValueEdge[]>({
+            const resEdge = await dbService.execute<ISavedValueResult[]>({
                 query: aql`
-                    INSERT ${edgeData}
-                        IN ${edgeCollec}
-                    RETURN NEW`,
+                    LET linkedRecord = DOCUMENT(${toLibrary + '/' + toRecordId})
+                    INSERT ${edgeData} IN ${edgeCollec}
+                    RETURN {edge: NEW, linkedRecord}`,
                 ctx
             });
 
-            const savedEdge: Partial<IValueEdge> = resEdge.length ? resEdge[0] : {};
-            const savedValue = !!attribute.reverse_link ? savedEdge._from : savedEdge._to;
+            const savedEdge = resEdge.length ? resEdge[0] : null;
+            const savedValue = !!attribute.reverse_link ? savedEdge?.edge?._from : savedEdge?.edge?._to;
 
             return _buildLinkValue(
-                utils.decomposeValueEdgeDestination(savedValue),
-                savedEdge as IValueEdge,
+                {...savedEdge?.linkedRecord, ...utils.decomposeValueEdgeDestination(savedValue)},
+                savedEdge?.edge,
                 !!attribute.reverse_link
             );
         },
@@ -141,15 +147,14 @@ export default function ({
 
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
-            // Update value's metadata on records link.
-
+            // Update value's metadata on records link.r
             const _from = !!attribute.reverse_link
                 ? attribute.linked_library + '/' + value.value
                 : library + '/' + recordId;
 
-            const _to = !!attribute.reverse_link
-                ? library + '/' + recordId
-                : attribute.linked_library + '/' + value.value;
+            const toLibrary = !!attribute.reverse_link ? library : attribute.linked_library;
+            const toRecordId = !!attribute.reverse_link ? recordId : value.value;
+            const _to = toLibrary + '/' + toRecordId;
 
             const edgeDataAttr = !!attribute.reverse_link ? (attribute.reverse_link as IAttribute).id : attribute.id;
 
@@ -167,23 +172,26 @@ export default function ({
                 edgeData.metadata = value.metadata;
             }
 
-            const resEdge = await dbService.execute<IValueEdge[]>({
+            const resEdge = await dbService.execute<ISavedValueResult[]>({
                 query: aql`
+                    LET linkedRecord = DOCUMENT(${toLibrary + '/' + toRecordId})
                     UPDATE ${{_key: value.id_value}}
                         WITH ${edgeData}
                         IN ${edgeCollec}
-                    RETURN NEW`,
+                    RETURN {edge: NEW, linkedRecord}`,
                 ctx
             });
-            const savedEdge: Partial<IValueEdge> = resEdge.length ? resEdge[0] : {};
+
+            const savedEdge = resEdge.length ? resEdge[0] : null;
+            const savedValue = !!attribute.reverse_link ? savedEdge?.edge?._from : savedEdge?.edge?._to;
 
             return _buildLinkValue(
-                utils.decomposeValueEdgeDestination(savedEdge._to),
-                savedEdge as IValueEdge,
+                {...savedEdge?.linkedRecord, ...utils.decomposeValueEdgeDestination(savedValue)},
+                savedEdge?.edge,
                 !!attribute.reverse_link
             );
         },
-        async deleteValue({library, recordId, attribute, value, ctx}): Promise<ILinkValue> {
+        async deleteValue({attribute, value, ctx}): Promise<ILinkValue> {
             if ((attribute.reverse_link as IAttribute)?.type === AttributeTypes.SIMPLE_LINK) {
                 return attributeSimpleLinkRepo.deleteValue({
                     library: attribute.linked_library,

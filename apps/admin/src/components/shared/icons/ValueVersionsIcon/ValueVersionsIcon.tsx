@@ -7,7 +7,7 @@ import CustomIcon from '../../CustomIcon';
 import IconSvg from './ValueVersionsIcon.svg';
 
 const ValueVersionsIcon = (iconProps: Omit<ICustomIconProps, 'svg'>) => {
-    return <CustomIcon svg={IconSvg} label="value versions" {...iconProps} />;
+    return <CustomIcon svg={String(IconSvg)} label="value versions" {...iconProps} />;
 };
 
 export default ValueVersionsIcon;

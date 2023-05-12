@@ -6,7 +6,7 @@ import CustomIcon from '../../CustomIcon';
 import IconSvg from './PermissionsInheritIcon.svg';
 
 const PermissionsInheritIcon = () => {
-    return <CustomIcon svg={IconSvg} label="permissions allowed" />;
+    return <CustomIcon svg={String(IconSvg)} label="permissions allowed" />;
 };
 
 export default PermissionsInheritIcon;

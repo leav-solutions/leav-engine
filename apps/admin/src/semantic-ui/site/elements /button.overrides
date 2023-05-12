@@ -1,0 +1,19 @@
+/*
+Copyright LEAV Solutions 2017
+This file is released under LGPL V3
+License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+*/
+.ui.primary.buttons .button,
+.ui.primary.button {
+    background: @primaryButtonGradient;
+}
+
+.ui.primary.buttons .button:hover,
+.ui.primary.button:hover {
+    background: @primaryButtonGradientHover;
+}
+
+.ui.basic.buttons .active.button, .ui.basic.active.button {
+    background: @activeItemColor;
+    border: 1px solid @primaryColor;
+}

@@ -6,7 +6,7 @@ import useMessages from 'hooks/useMessages';
 import {saveApiKeyMutation} from 'queries/apiKeys/saveApiKeyMutation';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {MessagesTypes} from 'redux/messages/messages';
+import {MessagesTypes} from 'reduxStore/messages/messages';
 import {Button, Icon, Message, Modal} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {GET_API_KEYS_apiKeys_list} from '_gqlTypes/GET_API_KEYS';

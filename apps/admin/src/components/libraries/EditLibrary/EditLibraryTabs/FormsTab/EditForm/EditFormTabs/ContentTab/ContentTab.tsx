@@ -5,7 +5,7 @@ import {useMutation} from '@apollo/client';
 import useMessages from 'hooks/useMessages';
 import React, {useCallback, useEffect, useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {MessagesTypes} from 'redux/messages/messages';
+import {MessagesTypes} from 'reduxStore/messages/messages';
 import {Button, Grid, Icon} from 'semantic-ui-react';
 import {saveFormQuery} from '../../../../../../../../queries/forms/saveFormMutation';
 import {

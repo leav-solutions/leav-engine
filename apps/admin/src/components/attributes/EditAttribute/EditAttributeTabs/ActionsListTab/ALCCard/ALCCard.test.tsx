@@ -50,7 +50,6 @@ describe('ALCCard', () => {
                         isSystem: false
                     }}
                     origin="ALCList"
-                    addActionToList={placeholder}
                     colorTypeDictionnary={{int: []}}
                 />
             </DndProvider>

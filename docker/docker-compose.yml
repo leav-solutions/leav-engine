@@ -246,8 +246,6 @@ services:
     environment:
       <<: [*env-react, *env-admin]
       PUBLIC_URL: http://core.leav.localhost/app/admin
-      REACT_APP_ENDPOINT: app/admin
-      REACT_APP_APPLICATION_ID: admin
       WDS_SOCKET_HOST: admin.leav.localhost
       WDS_SOCKET_PORT: 80
     volumes:

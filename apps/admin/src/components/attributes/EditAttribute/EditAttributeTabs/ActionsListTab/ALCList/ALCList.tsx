@@ -170,7 +170,6 @@ function ALCList({
                     moveCard={moveCard}
                     findCard={findCard}
                     origin="ALCList"
-                    addActionToList={addActionToList}
                     removeActionFromList={removeActionFromList}
                     marginTop={currentIndex === i ? '100px' : '0'}
                     currentIndex={currentIndex}

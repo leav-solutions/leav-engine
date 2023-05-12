@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useDispatch, useSelector} from 'react-redux';
-import {addMessage, IMessage, removeMessage} from 'redux/messages/messages';
-import {RootState} from 'redux/store';
+import {addMessage, IMessage, removeMessage} from 'reduxStore/messages/messages';
+import {RootState} from 'reduxStore/store';
 
 export interface IUseMessagesHook {
     messages?: IMessage[];

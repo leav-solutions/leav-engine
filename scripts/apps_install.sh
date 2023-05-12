@@ -51,7 +51,7 @@ checkExitCode
 
 # admin
 echo '### Build admin ###'
-BUILD_ADMIN_DIR="$BASEDIR/../apps/admin/build"
+BUILD_ADMIN_DIR="$BASEDIR/../apps/admin/dist"
 DEST_ADMIN_DIR="$BASEDIR/../apps/core/applications/admin"
 yarn workspace admin build
 checkExitCode

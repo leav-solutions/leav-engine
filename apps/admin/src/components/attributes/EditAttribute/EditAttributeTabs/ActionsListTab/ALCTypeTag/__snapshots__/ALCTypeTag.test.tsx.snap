@@ -3,11 +3,11 @@
 exports[`ALCTypeTag Snapshot test 1`] = `
 LoadedCheerio {
   "0": Node {
-    "attribs": Object {
+    "attribs": {
       "class": "sc-bczRLJ clxPAa",
       "color": "255,255,255",
     },
-    "children": Array [
+    "children": [
       Node {
         "data": "ww",
         "next": null,
@@ -20,7 +20,7 @@ LoadedCheerio {
     "namespace": "http://www.w3.org/1999/xhtml",
     "next": null,
     "parent": Node {
-      "children": Array [
+      "children": [
         [Circular],
       ],
       "name": "root",
@@ -31,66 +31,66 @@ LoadedCheerio {
     },
     "prev": null,
     "type": "tag",
-    "x-attribsNamespace": Object {
+    "x-attribsNamespace": {
       "class": undefined,
       "color": undefined,
     },
-    "x-attribsPrefix": Object {
+    "x-attribsPrefix": {
       "class": undefined,
       "color": undefined,
     },
   },
   "_root": LoadedCheerio {
     "0": Node {
-      "children": Array [
+      "children": [
         Node {
-          "attribs": Object {},
-          "children": Array [
+          "attribs": {},
+          "children": [
             Node {
-              "attribs": Object {},
-              "children": Array [],
+              "attribs": {},
+              "children": [],
               "name": "head",
               "namespace": "http://www.w3.org/1999/xhtml",
               "next": Node {
-                "attribs": Object {},
-                "children": Array [],
+                "attribs": {},
+                "children": [],
                 "name": "body",
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": null,
                 "parent": [Circular],
                 "prev": [Circular],
                 "type": "tag",
-                "x-attribsNamespace": Object {},
-                "x-attribsPrefix": Object {},
+                "x-attribsNamespace": {},
+                "x-attribsPrefix": {},
               },
               "parent": [Circular],
               "prev": null,
               "type": "tag",
-              "x-attribsNamespace": Object {},
-              "x-attribsPrefix": Object {},
+              "x-attribsNamespace": {},
+              "x-attribsPrefix": {},
             },
             Node {
-              "attribs": Object {},
-              "children": Array [],
+              "attribs": {},
+              "children": [],
               "name": "body",
               "namespace": "http://www.w3.org/1999/xhtml",
               "next": null,
               "parent": [Circular],
               "prev": Node {
-                "attribs": Object {},
-                "children": Array [],
+                "attribs": {},
+                "children": [],
                 "name": "head",
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": [Circular],
                 "parent": [Circular],
                 "prev": null,
                 "type": "tag",
-                "x-attribsNamespace": Object {},
-                "x-attribsPrefix": Object {},
+                "x-attribsNamespace": {},
+                "x-attribsPrefix": {},
               },
               "type": "tag",
-              "x-attribsNamespace": Object {},
-              "x-attribsPrefix": Object {},
+              "x-attribsNamespace": {},
+              "x-attribsPrefix": {},
             },
           ],
           "name": "html",
@@ -99,8 +99,8 @@ LoadedCheerio {
           "parent": [Circular],
           "prev": null,
           "type": "tag",
-          "x-attribsNamespace": Object {},
-          "x-attribsPrefix": Object {},
+          "x-attribsNamespace": {},
+          "x-attribsPrefix": {},
         },
       ],
       "name": "root",
@@ -112,13 +112,13 @@ LoadedCheerio {
     },
     "_root": [Circular],
     "length": 1,
-    "options": Object {
+    "options": {
       "decodeEntities": true,
       "xml": false,
     },
   },
   "length": 1,
-  "options": Object {
+  "options": {
     "decodeEntities": true,
     "xml": false,
   },

@@ -5,15 +5,15 @@ import {themeVars} from '@leav/ui';
 import {theme} from 'antd';
 import {GlobalToken} from 'antd/lib/theme/interface';
 import React from 'react';
-import styled from 'styled-components';
+import styled, {CSSObject} from 'styled-components';
 
 interface IFieldFooterProps {
     children?: React.ReactNode;
     bordered?: boolean;
-    style?: React.CSSProperties;
+    style?: CSSObject;
 }
 
-const FooterWrapper = styled.div<{style: React.CSSProperties; $bordered?: boolean; themeToken: GlobalToken}>`
+const FooterWrapper = styled.div<{style: CSSObject; $bordered?: boolean; themeToken: GlobalToken}>`
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -26,7 +26,7 @@ const FooterWrapper = styled.div<{style: React.CSSProperties; $bordered?: boolea
 
     ${props => (props.$bordered ? `border: 1px solid ${themeVars.borderColor};` : '')}
 
-    {...style}
+    ${props => props.style}
 `;
 
 function FieldFooter({children, bordered, style}: IFieldFooterProps): JSX.Element {

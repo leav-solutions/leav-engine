@@ -3,7 +3,7 @@
 exports[`Container Snapshot test 1`] = `
 LoadedCheerio {
   "length": 0,
-  "options": Object {
+  "options": {
     "decodeEntities": true,
     "xml": false,
   },

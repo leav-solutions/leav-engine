@@ -11,7 +11,7 @@ import useUserData from 'hooks/useUserData';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink} from 'react-router-dom';
-import {RootState, useAppSelector} from 'redux/store';
+import {RootState, useAppSelector} from 'reduxStore/store';
 import {Loader, Menu} from 'semantic-ui-react';
 import styled from 'styled-components';
 import UserPanel from '../UserPanel';

@@ -185,7 +185,7 @@ describe('EditRecordForm', () => {
             );
         });
 
-        expect(screen.getAllByText('LinksField')).toHaveLength(2);
+        expect(await screen.findAllByText('LinksField')).toHaveLength(2);
         expect(screen.getAllByText('StandardValuesWrapper')).toHaveLength(6);
     });
 

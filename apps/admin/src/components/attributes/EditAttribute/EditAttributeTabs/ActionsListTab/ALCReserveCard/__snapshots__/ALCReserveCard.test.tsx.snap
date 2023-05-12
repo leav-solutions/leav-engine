@@ -3,28 +3,28 @@
 exports[`ALCReserveCard Snapshot test 1`] = `
 LoadedCheerio {
   "0": Node {
-    "attribs": Object {},
-    "children": Array [
+    "attribs": {},
+    "children": [
       Node {
-        "attribs": Object {
+        "attribs": {
           "style": "padding-bottom:5px",
         },
-        "children": Array [
+        "children": [
           Node {
-            "attribs": Object {
+            "attribs": {
               "class": "ui fluid card",
             },
-            "children": Array [
+            "children": [
               Node {
-                "attribs": Object {
+                "attribs": {
                   "class": "content",
                 },
-                "children": Array [
+                "children": [
                   Node {
-                    "attribs": Object {
+                    "attribs": {
                       "class": "header",
                     },
-                    "children": Array [
+                    "children": [
                       Node {
                         "data": "action",
                         "next": null,
@@ -36,10 +36,10 @@ LoadedCheerio {
                     "name": "div",
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": Node {
-                      "attribs": Object {
+                      "attribs": {
                         "class": "description",
                       },
-                      "children": Array [
+                      "children": [
                         Node {
                           "data": "action",
                           "next": null,
@@ -51,28 +51,28 @@ LoadedCheerio {
                       "name": "div",
                       "namespace": "http://www.w3.org/1999/xhtml",
                       "next": Node {
-                        "attribs": Object {
+                        "attribs": {
                           "class": "ui circular icon button",
                           "style": "position:absolute;right:2px;top:5px;font-size:0.8em",
                         },
-                        "children": Array [
+                        "children": [
                           Node {
-                            "attribs": Object {
+                            "attribs": {
                               "aria-hidden": "true",
                               "class": "add icon",
                             },
-                            "children": Array [],
+                            "children": [],
                             "name": "i",
                             "namespace": "http://www.w3.org/1999/xhtml",
                             "next": null,
                             "parent": [Circular],
                             "prev": null,
                             "type": "tag",
-                            "x-attribsNamespace": Object {
+                            "x-attribsNamespace": {
                               "aria-hidden": undefined,
                               "class": undefined,
                             },
-                            "x-attribsPrefix": Object {
+                            "x-attribsPrefix": {
                               "aria-hidden": undefined,
                               "class": undefined,
                             },
@@ -81,34 +81,34 @@ LoadedCheerio {
                         "name": "button",
                         "namespace": "http://www.w3.org/1999/xhtml",
                         "next": Node {
-                          "attribs": Object {
+                          "attribs": {
                             "style": "text-align:right",
                           },
-                          "children": Array [
+                          "children": [
                             Node {
-                              "attribs": Object {
+                              "attribs": {
                                 "class": "meta",
                               },
-                              "children": Array [
+                              "children": [
                                 Node {
                                   "data": "attributes.display_types",
                                   "next": Node {
-                                    "attribs": Object {
+                                    "attribs": {
                                       "aria-hidden": "true",
                                       "class": "triangle right icon",
                                     },
-                                    "children": Array [],
+                                    "children": [],
                                     "name": "i",
                                     "namespace": "http://www.w3.org/1999/xhtml",
                                     "next": null,
                                     "parent": [Circular],
                                     "prev": [Circular],
                                     "type": "tag",
-                                    "x-attribsNamespace": Object {
+                                    "x-attribsNamespace": {
                                       "aria-hidden": undefined,
                                       "class": undefined,
                                     },
-                                    "x-attribsPrefix": Object {
+                                    "x-attribsPrefix": {
                                       "aria-hidden": undefined,
                                       "class": undefined,
                                     },
@@ -118,11 +118,11 @@ LoadedCheerio {
                                   "type": "text",
                                 },
                                 Node {
-                                  "attribs": Object {
+                                  "attribs": {
                                     "aria-hidden": "true",
                                     "class": "triangle right icon",
                                   },
-                                  "children": Array [],
+                                  "children": [],
                                   "name": "i",
                                   "namespace": "http://www.w3.org/1999/xhtml",
                                   "next": null,
@@ -135,11 +135,11 @@ LoadedCheerio {
                                     "type": "text",
                                   },
                                   "type": "tag",
-                                  "x-attribsNamespace": Object {
+                                  "x-attribsNamespace": {
                                     "aria-hidden": undefined,
                                     "class": undefined,
                                   },
-                                  "x-attribsPrefix": Object {
+                                  "x-attribsPrefix": {
                                     "aria-hidden": undefined,
                                     "class": undefined,
                                   },
@@ -151,10 +151,10 @@ LoadedCheerio {
                               "parent": [Circular],
                               "prev": null,
                               "type": "tag",
-                              "x-attribsNamespace": Object {
+                              "x-attribsNamespace": {
                                 "class": undefined,
                               },
-                              "x-attribsPrefix": Object {
+                              "x-attribsPrefix": {
                                 "class": undefined,
                               },
                             },
@@ -165,21 +165,21 @@ LoadedCheerio {
                           "parent": [Circular],
                           "prev": [Circular],
                           "type": "tag",
-                          "x-attribsNamespace": Object {
+                          "x-attribsNamespace": {
                             "style": undefined,
                           },
-                          "x-attribsPrefix": Object {
+                          "x-attribsPrefix": {
                             "style": undefined,
                           },
                         },
                         "parent": [Circular],
                         "prev": [Circular],
                         "type": "tag",
-                        "x-attribsNamespace": Object {
+                        "x-attribsNamespace": {
                           "class": undefined,
                           "style": undefined,
                         },
-                        "x-attribsPrefix": Object {
+                        "x-attribsPrefix": {
                           "class": undefined,
                           "style": undefined,
                         },
@@ -187,28 +187,28 @@ LoadedCheerio {
                       "parent": [Circular],
                       "prev": [Circular],
                       "type": "tag",
-                      "x-attribsNamespace": Object {
+                      "x-attribsNamespace": {
                         "class": undefined,
                       },
-                      "x-attribsPrefix": Object {
+                      "x-attribsPrefix": {
                         "class": undefined,
                       },
                     },
                     "parent": [Circular],
                     "prev": null,
                     "type": "tag",
-                    "x-attribsNamespace": Object {
+                    "x-attribsNamespace": {
                       "class": undefined,
                     },
-                    "x-attribsPrefix": Object {
+                    "x-attribsPrefix": {
                       "class": undefined,
                     },
                   },
                   Node {
-                    "attribs": Object {
+                    "attribs": {
                       "class": "description",
                     },
-                    "children": Array [
+                    "children": [
                       Node {
                         "data": "action",
                         "next": null,
@@ -220,28 +220,28 @@ LoadedCheerio {
                     "name": "div",
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": Node {
-                      "attribs": Object {
+                      "attribs": {
                         "class": "ui circular icon button",
                         "style": "position:absolute;right:2px;top:5px;font-size:0.8em",
                       },
-                      "children": Array [
+                      "children": [
                         Node {
-                          "attribs": Object {
+                          "attribs": {
                             "aria-hidden": "true",
                             "class": "add icon",
                           },
-                          "children": Array [],
+                          "children": [],
                           "name": "i",
                           "namespace": "http://www.w3.org/1999/xhtml",
                           "next": null,
                           "parent": [Circular],
                           "prev": null,
                           "type": "tag",
-                          "x-attribsNamespace": Object {
+                          "x-attribsNamespace": {
                             "aria-hidden": undefined,
                             "class": undefined,
                           },
-                          "x-attribsPrefix": Object {
+                          "x-attribsPrefix": {
                             "aria-hidden": undefined,
                             "class": undefined,
                           },
@@ -250,34 +250,34 @@ LoadedCheerio {
                       "name": "button",
                       "namespace": "http://www.w3.org/1999/xhtml",
                       "next": Node {
-                        "attribs": Object {
+                        "attribs": {
                           "style": "text-align:right",
                         },
-                        "children": Array [
+                        "children": [
                           Node {
-                            "attribs": Object {
+                            "attribs": {
                               "class": "meta",
                             },
-                            "children": Array [
+                            "children": [
                               Node {
                                 "data": "attributes.display_types",
                                 "next": Node {
-                                  "attribs": Object {
+                                  "attribs": {
                                     "aria-hidden": "true",
                                     "class": "triangle right icon",
                                   },
-                                  "children": Array [],
+                                  "children": [],
                                   "name": "i",
                                   "namespace": "http://www.w3.org/1999/xhtml",
                                   "next": null,
                                   "parent": [Circular],
                                   "prev": [Circular],
                                   "type": "tag",
-                                  "x-attribsNamespace": Object {
+                                  "x-attribsNamespace": {
                                     "aria-hidden": undefined,
                                     "class": undefined,
                                   },
-                                  "x-attribsPrefix": Object {
+                                  "x-attribsPrefix": {
                                     "aria-hidden": undefined,
                                     "class": undefined,
                                   },
@@ -287,11 +287,11 @@ LoadedCheerio {
                                 "type": "text",
                               },
                               Node {
-                                "attribs": Object {
+                                "attribs": {
                                   "aria-hidden": "true",
                                   "class": "triangle right icon",
                                 },
-                                "children": Array [],
+                                "children": [],
                                 "name": "i",
                                 "namespace": "http://www.w3.org/1999/xhtml",
                                 "next": null,
@@ -304,11 +304,11 @@ LoadedCheerio {
                                   "type": "text",
                                 },
                                 "type": "tag",
-                                "x-attribsNamespace": Object {
+                                "x-attribsNamespace": {
                                   "aria-hidden": undefined,
                                   "class": undefined,
                                 },
-                                "x-attribsPrefix": Object {
+                                "x-attribsPrefix": {
                                   "aria-hidden": undefined,
                                   "class": undefined,
                                 },
@@ -320,10 +320,10 @@ LoadedCheerio {
                             "parent": [Circular],
                             "prev": null,
                             "type": "tag",
-                            "x-attribsNamespace": Object {
+                            "x-attribsNamespace": {
                               "class": undefined,
                             },
-                            "x-attribsPrefix": Object {
+                            "x-attribsPrefix": {
                               "class": undefined,
                             },
                           },
@@ -334,31 +334,31 @@ LoadedCheerio {
                         "parent": [Circular],
                         "prev": [Circular],
                         "type": "tag",
-                        "x-attribsNamespace": Object {
+                        "x-attribsNamespace": {
                           "style": undefined,
                         },
-                        "x-attribsPrefix": Object {
+                        "x-attribsPrefix": {
                           "style": undefined,
                         },
                       },
                       "parent": [Circular],
                       "prev": [Circular],
                       "type": "tag",
-                      "x-attribsNamespace": Object {
+                      "x-attribsNamespace": {
                         "class": undefined,
                         "style": undefined,
                       },
-                      "x-attribsPrefix": Object {
+                      "x-attribsPrefix": {
                         "class": undefined,
                         "style": undefined,
                       },
                     },
                     "parent": [Circular],
                     "prev": Node {
-                      "attribs": Object {
+                      "attribs": {
                         "class": "header",
                       },
-                      "children": Array [
+                      "children": [
                         Node {
                           "data": "action",
                           "next": null,
@@ -373,44 +373,44 @@ LoadedCheerio {
                       "parent": [Circular],
                       "prev": null,
                       "type": "tag",
-                      "x-attribsNamespace": Object {
+                      "x-attribsNamespace": {
                         "class": undefined,
                       },
-                      "x-attribsPrefix": Object {
+                      "x-attribsPrefix": {
                         "class": undefined,
                       },
                     },
                     "type": "tag",
-                    "x-attribsNamespace": Object {
+                    "x-attribsNamespace": {
                       "class": undefined,
                     },
-                    "x-attribsPrefix": Object {
+                    "x-attribsPrefix": {
                       "class": undefined,
                     },
                   },
                   Node {
-                    "attribs": Object {
+                    "attribs": {
                       "class": "ui circular icon button",
                       "style": "position:absolute;right:2px;top:5px;font-size:0.8em",
                     },
-                    "children": Array [
+                    "children": [
                       Node {
-                        "attribs": Object {
+                        "attribs": {
                           "aria-hidden": "true",
                           "class": "add icon",
                         },
-                        "children": Array [],
+                        "children": [],
                         "name": "i",
                         "namespace": "http://www.w3.org/1999/xhtml",
                         "next": null,
                         "parent": [Circular],
                         "prev": null,
                         "type": "tag",
-                        "x-attribsNamespace": Object {
+                        "x-attribsNamespace": {
                           "aria-hidden": undefined,
                           "class": undefined,
                         },
-                        "x-attribsPrefix": Object {
+                        "x-attribsPrefix": {
                           "aria-hidden": undefined,
                           "class": undefined,
                         },
@@ -419,34 +419,34 @@ LoadedCheerio {
                     "name": "button",
                     "namespace": "http://www.w3.org/1999/xhtml",
                     "next": Node {
-                      "attribs": Object {
+                      "attribs": {
                         "style": "text-align:right",
                       },
-                      "children": Array [
+                      "children": [
                         Node {
-                          "attribs": Object {
+                          "attribs": {
                             "class": "meta",
                           },
-                          "children": Array [
+                          "children": [
                             Node {
                               "data": "attributes.display_types",
                               "next": Node {
-                                "attribs": Object {
+                                "attribs": {
                                   "aria-hidden": "true",
                                   "class": "triangle right icon",
                                 },
-                                "children": Array [],
+                                "children": [],
                                 "name": "i",
                                 "namespace": "http://www.w3.org/1999/xhtml",
                                 "next": null,
                                 "parent": [Circular],
                                 "prev": [Circular],
                                 "type": "tag",
-                                "x-attribsNamespace": Object {
+                                "x-attribsNamespace": {
                                   "aria-hidden": undefined,
                                   "class": undefined,
                                 },
-                                "x-attribsPrefix": Object {
+                                "x-attribsPrefix": {
                                   "aria-hidden": undefined,
                                   "class": undefined,
                                 },
@@ -456,11 +456,11 @@ LoadedCheerio {
                               "type": "text",
                             },
                             Node {
-                              "attribs": Object {
+                              "attribs": {
                                 "aria-hidden": "true",
                                 "class": "triangle right icon",
                               },
-                              "children": Array [],
+                              "children": [],
                               "name": "i",
                               "namespace": "http://www.w3.org/1999/xhtml",
                               "next": null,
@@ -473,11 +473,11 @@ LoadedCheerio {
                                 "type": "text",
                               },
                               "type": "tag",
-                              "x-attribsNamespace": Object {
+                              "x-attribsNamespace": {
                                 "aria-hidden": undefined,
                                 "class": undefined,
                               },
-                              "x-attribsPrefix": Object {
+                              "x-attribsPrefix": {
                                 "aria-hidden": undefined,
                                 "class": undefined,
                               },
@@ -489,10 +489,10 @@ LoadedCheerio {
                           "parent": [Circular],
                           "prev": null,
                           "type": "tag",
-                          "x-attribsNamespace": Object {
+                          "x-attribsNamespace": {
                             "class": undefined,
                           },
-                          "x-attribsPrefix": Object {
+                          "x-attribsPrefix": {
                             "class": undefined,
                           },
                         },
@@ -503,19 +503,19 @@ LoadedCheerio {
                       "parent": [Circular],
                       "prev": [Circular],
                       "type": "tag",
-                      "x-attribsNamespace": Object {
+                      "x-attribsNamespace": {
                         "style": undefined,
                       },
-                      "x-attribsPrefix": Object {
+                      "x-attribsPrefix": {
                         "style": undefined,
                       },
                     },
                     "parent": [Circular],
                     "prev": Node {
-                      "attribs": Object {
+                      "attribs": {
                         "class": "description",
                       },
-                      "children": Array [
+                      "children": [
                         Node {
                           "data": "action",
                           "next": null,
@@ -529,10 +529,10 @@ LoadedCheerio {
                       "next": [Circular],
                       "parent": [Circular],
                       "prev": Node {
-                        "attribs": Object {
+                        "attribs": {
                           "class": "header",
                         },
-                        "children": Array [
+                        "children": [
                           Node {
                             "data": "action",
                             "next": null,
@@ -547,60 +547,60 @@ LoadedCheerio {
                         "parent": [Circular],
                         "prev": null,
                         "type": "tag",
-                        "x-attribsNamespace": Object {
+                        "x-attribsNamespace": {
                           "class": undefined,
                         },
-                        "x-attribsPrefix": Object {
+                        "x-attribsPrefix": {
                           "class": undefined,
                         },
                       },
                       "type": "tag",
-                      "x-attribsNamespace": Object {
+                      "x-attribsNamespace": {
                         "class": undefined,
                       },
-                      "x-attribsPrefix": Object {
+                      "x-attribsPrefix": {
                         "class": undefined,
                       },
                     },
                     "type": "tag",
-                    "x-attribsNamespace": Object {
+                    "x-attribsNamespace": {
                       "class": undefined,
                       "style": undefined,
                     },
-                    "x-attribsPrefix": Object {
+                    "x-attribsPrefix": {
                       "class": undefined,
                       "style": undefined,
                     },
                   },
                   Node {
-                    "attribs": Object {
+                    "attribs": {
                       "style": "text-align:right",
                     },
-                    "children": Array [
+                    "children": [
                       Node {
-                        "attribs": Object {
+                        "attribs": {
                           "class": "meta",
                         },
-                        "children": Array [
+                        "children": [
                           Node {
                             "data": "attributes.display_types",
                             "next": Node {
-                              "attribs": Object {
+                              "attribs": {
                                 "aria-hidden": "true",
                                 "class": "triangle right icon",
                               },
-                              "children": Array [],
+                              "children": [],
                               "name": "i",
                               "namespace": "http://www.w3.org/1999/xhtml",
                               "next": null,
                               "parent": [Circular],
                               "prev": [Circular],
                               "type": "tag",
-                              "x-attribsNamespace": Object {
+                              "x-attribsNamespace": {
                                 "aria-hidden": undefined,
                                 "class": undefined,
                               },
-                              "x-attribsPrefix": Object {
+                              "x-attribsPrefix": {
                                 "aria-hidden": undefined,
                                 "class": undefined,
                               },
@@ -610,11 +610,11 @@ LoadedCheerio {
                             "type": "text",
                           },
                           Node {
-                            "attribs": Object {
+                            "attribs": {
                               "aria-hidden": "true",
                               "class": "triangle right icon",
                             },
-                            "children": Array [],
+                            "children": [],
                             "name": "i",
                             "namespace": "http://www.w3.org/1999/xhtml",
                             "next": null,
@@ -627,11 +627,11 @@ LoadedCheerio {
                               "type": "text",
                             },
                             "type": "tag",
-                            "x-attribsNamespace": Object {
+                            "x-attribsNamespace": {
                               "aria-hidden": undefined,
                               "class": undefined,
                             },
-                            "x-attribsPrefix": Object {
+                            "x-attribsPrefix": {
                               "aria-hidden": undefined,
                               "class": undefined,
                             },
@@ -643,10 +643,10 @@ LoadedCheerio {
                         "parent": [Circular],
                         "prev": null,
                         "type": "tag",
-                        "x-attribsNamespace": Object {
+                        "x-attribsNamespace": {
                           "class": undefined,
                         },
-                        "x-attribsPrefix": Object {
+                        "x-attribsPrefix": {
                           "class": undefined,
                         },
                       },
@@ -656,28 +656,28 @@ LoadedCheerio {
                     "next": null,
                     "parent": [Circular],
                     "prev": Node {
-                      "attribs": Object {
+                      "attribs": {
                         "class": "ui circular icon button",
                         "style": "position:absolute;right:2px;top:5px;font-size:0.8em",
                       },
-                      "children": Array [
+                      "children": [
                         Node {
-                          "attribs": Object {
+                          "attribs": {
                             "aria-hidden": "true",
                             "class": "add icon",
                           },
-                          "children": Array [],
+                          "children": [],
                           "name": "i",
                           "namespace": "http://www.w3.org/1999/xhtml",
                           "next": null,
                           "parent": [Circular],
                           "prev": null,
                           "type": "tag",
-                          "x-attribsNamespace": Object {
+                          "x-attribsNamespace": {
                             "aria-hidden": undefined,
                             "class": undefined,
                           },
-                          "x-attribsPrefix": Object {
+                          "x-attribsPrefix": {
                             "aria-hidden": undefined,
                             "class": undefined,
                           },
@@ -688,10 +688,10 @@ LoadedCheerio {
                       "next": [Circular],
                       "parent": [Circular],
                       "prev": Node {
-                        "attribs": Object {
+                        "attribs": {
                           "class": "description",
                         },
-                        "children": Array [
+                        "children": [
                           Node {
                             "data": "action",
                             "next": null,
@@ -705,10 +705,10 @@ LoadedCheerio {
                         "next": [Circular],
                         "parent": [Circular],
                         "prev": Node {
-                          "attribs": Object {
+                          "attribs": {
                             "class": "header",
                           },
-                          "children": Array [
+                          "children": [
                             Node {
                               "data": "action",
                               "next": null,
@@ -723,36 +723,36 @@ LoadedCheerio {
                           "parent": [Circular],
                           "prev": null,
                           "type": "tag",
-                          "x-attribsNamespace": Object {
+                          "x-attribsNamespace": {
                             "class": undefined,
                           },
-                          "x-attribsPrefix": Object {
+                          "x-attribsPrefix": {
                             "class": undefined,
                           },
                         },
                         "type": "tag",
-                        "x-attribsNamespace": Object {
+                        "x-attribsNamespace": {
                           "class": undefined,
                         },
-                        "x-attribsPrefix": Object {
+                        "x-attribsPrefix": {
                           "class": undefined,
                         },
                       },
                       "type": "tag",
-                      "x-attribsNamespace": Object {
+                      "x-attribsNamespace": {
                         "class": undefined,
                         "style": undefined,
                       },
-                      "x-attribsPrefix": Object {
+                      "x-attribsPrefix": {
                         "class": undefined,
                         "style": undefined,
                       },
                     },
                     "type": "tag",
-                    "x-attribsNamespace": Object {
+                    "x-attribsNamespace": {
                       "style": undefined,
                     },
-                    "x-attribsPrefix": Object {
+                    "x-attribsPrefix": {
                       "style": undefined,
                     },
                   },
@@ -763,10 +763,10 @@ LoadedCheerio {
                 "parent": [Circular],
                 "prev": null,
                 "type": "tag",
-                "x-attribsNamespace": Object {
+                "x-attribsNamespace": {
                   "class": undefined,
                 },
-                "x-attribsPrefix": Object {
+                "x-attribsPrefix": {
                   "class": undefined,
                 },
               },
@@ -777,10 +777,10 @@ LoadedCheerio {
             "parent": [Circular],
             "prev": null,
             "type": "tag",
-            "x-attribsNamespace": Object {
+            "x-attribsNamespace": {
               "class": undefined,
             },
-            "x-attribsPrefix": Object {
+            "x-attribsPrefix": {
               "class": undefined,
             },
           },
@@ -791,10 +791,10 @@ LoadedCheerio {
         "parent": [Circular],
         "prev": null,
         "type": "tag",
-        "x-attribsNamespace": Object {
+        "x-attribsNamespace": {
           "style": undefined,
         },
-        "x-attribsPrefix": Object {
+        "x-attribsPrefix": {
           "style": undefined,
         },
       },
@@ -803,7 +803,7 @@ LoadedCheerio {
     "namespace": "http://www.w3.org/1999/xhtml",
     "next": null,
     "parent": Node {
-      "children": Array [
+      "children": [
         [Circular],
       ],
       "name": "root",
@@ -814,60 +814,60 @@ LoadedCheerio {
     },
     "prev": null,
     "type": "tag",
-    "x-attribsNamespace": Object {},
-    "x-attribsPrefix": Object {},
+    "x-attribsNamespace": {},
+    "x-attribsPrefix": {},
   },
   "_root": LoadedCheerio {
     "0": Node {
-      "children": Array [
+      "children": [
         Node {
-          "attribs": Object {},
-          "children": Array [
+          "attribs": {},
+          "children": [
             Node {
-              "attribs": Object {},
-              "children": Array [],
+              "attribs": {},
+              "children": [],
               "name": "head",
               "namespace": "http://www.w3.org/1999/xhtml",
               "next": Node {
-                "attribs": Object {},
-                "children": Array [],
+                "attribs": {},
+                "children": [],
                 "name": "body",
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": null,
                 "parent": [Circular],
                 "prev": [Circular],
                 "type": "tag",
-                "x-attribsNamespace": Object {},
-                "x-attribsPrefix": Object {},
+                "x-attribsNamespace": {},
+                "x-attribsPrefix": {},
               },
               "parent": [Circular],
               "prev": null,
               "type": "tag",
-              "x-attribsNamespace": Object {},
-              "x-attribsPrefix": Object {},
+              "x-attribsNamespace": {},
+              "x-attribsPrefix": {},
             },
             Node {
-              "attribs": Object {},
-              "children": Array [],
+              "attribs": {},
+              "children": [],
               "name": "body",
               "namespace": "http://www.w3.org/1999/xhtml",
               "next": null,
               "parent": [Circular],
               "prev": Node {
-                "attribs": Object {},
-                "children": Array [],
+                "attribs": {},
+                "children": [],
                 "name": "head",
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": [Circular],
                 "parent": [Circular],
                 "prev": null,
                 "type": "tag",
-                "x-attribsNamespace": Object {},
-                "x-attribsPrefix": Object {},
+                "x-attribsNamespace": {},
+                "x-attribsPrefix": {},
               },
               "type": "tag",
-              "x-attribsNamespace": Object {},
-              "x-attribsPrefix": Object {},
+              "x-attribsNamespace": {},
+              "x-attribsPrefix": {},
             },
           ],
           "name": "html",
@@ -876,8 +876,8 @@ LoadedCheerio {
           "parent": [Circular],
           "prev": null,
           "type": "tag",
-          "x-attribsNamespace": Object {},
-          "x-attribsPrefix": Object {},
+          "x-attribsNamespace": {},
+          "x-attribsPrefix": {},
         },
       ],
       "name": "root",
@@ -889,13 +889,13 @@ LoadedCheerio {
     },
     "_root": [Circular],
     "length": 1,
-    "options": Object {
+    "options": {
       "decodeEntities": true,
       "xml": false,
     },
   },
   "length": 1,
-  "options": Object {
+  "options": {
     "decodeEntities": true,
     "xml": false,
   },
