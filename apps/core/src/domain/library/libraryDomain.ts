@@ -35,6 +35,7 @@ import validateLibAttributes from './helpers/validateLibAttributes';
 import validateLibFullTextAttributes from './helpers/validateLibFullTextAttributes';
 import validatePermConf from './helpers/validatePermConf';
 import validateRecordIdentityConf from './helpers/validateRecordIdentityConf';
+import {IUpdateAssociatedFormsHelper} from './helpers/updateAssociatedForms';
 
 export interface ILibraryDomain {
     getLibraries({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ILibrary>>;
@@ -53,6 +54,7 @@ interface IDeps {
     'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.domain.record'?: IRecordDomain;
     'core.domain.library.helpers.deleteAssociatedValues'?: IDeleteAssociatedValuesHelper;
+    'core.domain.library.helpers.updateAssociatedForms'?: IUpdateAssociatedFormsHelper;
     'core.domain.library.helpers.runPreDelete'?: RunPreDeleteFunc;
     'core.domain.helpers.validate'?: IValidateHelper;
     'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
@@ -70,6 +72,7 @@ export default function ({
     'core.domain.eventsManager': eventsManager = null,
     'core.domain.record': recordDomain = null,
     'core.domain.library.helpers.deleteAssociatedValues': deleteAssociatedValues = null,
+    'core.domain.library.helpers.updateAssociatedForms': updateAssociatedForms = null,
     'core.domain.library.helpers.runPreDelete': runPreDelete = null,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
     'core.domain.helpers.validate': validateHelper = null,
@@ -263,10 +266,11 @@ export default function ({
 
             await runBehaviorPostSave(savedLib, !existingLib, {treeRepo, libraryRepo, translator, utils, config}, ctx);
 
-            // delete associate values if attribute is delete
+            // delete associate values and update forms if attribute is delete
             const deletedAttrs = difference(difference(currentLibraryAttributes, defaultAttributes), libAttributes);
             if (deletedAttrs.length) {
                 await deleteAssociatedValues.deleteAssociatedValues(deletedAttrs, libData.id, ctx);
+                await updateAssociatedForms.updateAssociatedForms(deletedAttrs, libData.id, ctx);
             }
 
             // sending indexation event
