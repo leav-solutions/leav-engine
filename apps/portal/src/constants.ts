@@ -7,5 +7,5 @@ export const API_ENDPOINT = 'graphql';
 export const LOGIN_ENDPOINT = 'login';
 
 export const ORIGIN_URL = window.location.origin;
-export const WS_URL = `ws://${window.location.host}`;
+export const WS_URL = `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}`;
 export const APP_ENDPOINT = window.location.pathname.split('/').filter(e => e)[1]; // Get endpoint app current from url /APPS_ENDPOINT/:endpoint
