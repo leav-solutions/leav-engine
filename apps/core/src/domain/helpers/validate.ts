@@ -9,11 +9,13 @@ import {AttributeTypes} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {GetCoreEntityByIdFunc} from './getCoreEntityById';
+import {ILibraryRepo} from 'infra/library/libraryRepo';
 
 interface IDeps {
     'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
     'core.infra.record'?: IRecordRepo;
     'core.utils'?: IUtils;
+    'core.infra.library'?: ILibraryRepo;
 }
 
 export interface IValidateHelper {
@@ -21,14 +23,23 @@ export interface IValidateHelper {
     validateRecord(library: string, recordId: string, ctx: IQueryInfos): Promise<IRecord>;
     validateView(view: string, throwIfNotFound: boolean, ctx: IQueryInfos): Promise<boolean>;
     validateTree(tree: string, throwIfNotFound: boolean, ctx: IQueryInfos): Promise<boolean>;
+    validateLibraryAttribute(library: string, attribute: string, ctx: IQueryInfos): Promise<void>;
 }
 
 export default function ({
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
     'core.infra.record': recordRepo = null,
-    'core.utils': utils = null
+    'core.utils': utils = null,
+    'core.infra.library': libraryRepo = null
 }: IDeps): IValidateHelper {
     return {
+        async validateLibraryAttribute(library: string, attribute: string, ctx: IQueryInfos): Promise<void> {
+            const libs = await libraryRepo.getLibrariesUsingAttribute(attribute, ctx);
+
+            if (!libs.includes(library)) {
+                throw new ValidationError({attribute: Errors.UNKNOWN_LIBRARY_ATTRIBUTE});
+            }
+        },
         async validateRecord(library, recordId, ctx): Promise<IRecord> {
             const recordsRes = await recordRepo.find({
                 libraryId: library,
