@@ -2,10 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {useLang} from '@leav/ui';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
-import Loading from 'components/shared/Loading';
+import {ErrorDisplay, ErrorDisplayTypes, Loading, useLang} from '@leav/ui';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
 import {useEffect} from 'react';
@@ -74,7 +71,7 @@ function Navigation({tree}: INavigationProps): JSX.Element {
     }, [data, loading, lang, updateActiveTree, t, dispatch, activePanel, activeTree, tree, hasAccess]);
 
     if (loading) {
-        return <Loading />;
+        return <Loading data-testid="loading" />;
     }
 
     if (error) {

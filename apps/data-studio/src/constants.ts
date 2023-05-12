@@ -1,0 +1,10 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+
+export const APPS_ENDPOINT = 'app';
+export const API_ENDPOINT = 'graphql';
+export const APP_ENDPOINT = window.location.pathname.split('/').filter(e => e)[1]; // Get endpoint app current from url /APPS_ENDPOINT/:endpoint
+export const LOGIN_ENDPOINT = 'login';
+export const ORIGIN_URL = window.location.origin;
+export const WS_URL = `ws://${window.location.host}`;

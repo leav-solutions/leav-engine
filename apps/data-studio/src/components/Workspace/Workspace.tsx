@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import Loading from 'components/shared/Loading';
+import {Loading} from '@leav/ui';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import {lazy, Suspense, useEffect} from 'react';

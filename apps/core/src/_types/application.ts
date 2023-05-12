@@ -5,25 +5,11 @@ import {IRecord} from './record';
 import {IGetCoreEntitiesParams, IKeyValue} from './shared';
 import {ISystemTranslation} from './systemTranslation';
 
-export const APPS_MODULES_FOLDER = 'modules';
-export const APPS_INSTANCES_FOLDER = 'instances';
 export const APPS_URL_PREFIX = 'app';
-
-export enum ApplicationInstallStatuses {
-    NONE = 'NONE',
-    RUNNING = 'RUNNING',
-    ERROR = 'ERROR',
-    SUCCESS = 'SUCCESS'
-}
 
 export enum ApplicationTypes {
     INTERNAL = 'internal',
     EXTERNAL = 'external'
-}
-
-export interface IApplicationInstall {
-    status: ApplicationInstallStatuses;
-    lastCallResult?: string;
 }
 
 export interface IApplication extends ICoreEntity {
@@ -34,7 +20,6 @@ export interface IApplication extends ICoreEntity {
     icon?: IRecord;
     module: string;
     endpoint: string;
-    install?: IApplicationInstall;
     settings?: IKeyValue<any>;
 }
 

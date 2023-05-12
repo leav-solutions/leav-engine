@@ -2,8 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button, Modal} from 'antd';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
+import {ErrorDisplay, Loading} from '@leav/ui';
 import useGetFileDataQuery from 'hooks/useGetFileDataQuery/useGetFileDataQuery';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';

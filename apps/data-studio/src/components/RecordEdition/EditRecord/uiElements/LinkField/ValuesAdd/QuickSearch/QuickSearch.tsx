@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLazyQuery} from '@apollo/client';
 import {Input, InputRef} from 'antd';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
+import {ErrorDisplay} from '@leav/ui';
 import {getRecordsFromLibraryQuery} from 'graphQL/queries/records/getRecordsFromLibraryQuery';
 import {
     IGetRecordsFromLibraryQuery,

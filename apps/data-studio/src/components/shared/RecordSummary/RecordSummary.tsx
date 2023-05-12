@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useLang} from '@leav/ui';
+import {useLang, ErrorDisplay, Loading} from '@leav/ui';
 import {Space, theme} from 'antd';
 import {IRecordColumnValueLink, IRecordColumnValueStandard} from 'graphQL/queries/records/getRecordColumnsValues';
 import {useGetRecordValuesQuery} from 'hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
@@ -10,8 +10,6 @@ import styled from 'styled-components';
 import {getFileUrl, localizedTranslation} from 'utils';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {PreviewSize} from '_types/types';
-import ErrorDisplay from '../ErrorDisplay';
-import Loading from '../Loading';
 import PropertiesList from '../PropertiesList';
 import RecordPreviewWithModal from '../RecordPreviewWithModal';
 

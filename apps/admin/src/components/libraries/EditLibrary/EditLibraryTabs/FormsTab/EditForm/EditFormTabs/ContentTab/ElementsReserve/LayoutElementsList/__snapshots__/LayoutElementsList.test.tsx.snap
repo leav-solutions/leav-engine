@@ -1,0 +1,1984 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LayoutElementsList Snapshot test 1`] = `
+LoadedCheerio {
+  "0": Node {
+    "attribs": {
+      "class": "sc-hAZoDl fUgCLv",
+    },
+    "children": [
+      Node {
+        "data": "forms.elements.fields_container",
+        "next": null,
+        "parent": [Circular],
+        "prev": null,
+        "type": "text",
+      },
+    ],
+    "name": "div",
+    "namespace": "http://www.w3.org/1999/xhtml",
+    "next": Node {
+      "attribs": {
+        "class": "sc-hAZoDl fUgCLv",
+      },
+      "children": [
+        Node {
+          "data": "forms.elements.divider",
+          "next": null,
+          "parent": [Circular],
+          "prev": null,
+          "type": "text",
+        },
+      ],
+      "name": "div",
+      "namespace": "http://www.w3.org/1999/xhtml",
+      "next": Node {
+        "attribs": {
+          "class": "sc-hAZoDl fUgCLv",
+        },
+        "children": [
+          Node {
+            "data": "forms.elements.text_block",
+            "next": null,
+            "parent": [Circular],
+            "prev": null,
+            "type": "text",
+          },
+        ],
+        "name": "div",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": Node {
+          "attribs": {
+            "class": "sc-hAZoDl fUgCLv",
+          },
+          "children": [
+            Node {
+              "data": "forms.elements.tabs",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "text",
+            },
+          ],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": null,
+          "parent": Node {
+            "children": [
+              [Circular],
+              [Circular],
+              [Circular],
+              [Circular],
+            ],
+            "name": "root",
+            "next": null,
+            "parent": null,
+            "prev": null,
+            "type": "root",
+          },
+          "prev": [Circular],
+          "type": "tag",
+          "x-attribsNamespace": {
+            "class": undefined,
+          },
+          "x-attribsPrefix": {
+            "class": undefined,
+          },
+        },
+        "parent": Node {
+          "children": [
+            [Circular],
+            [Circular],
+            [Circular],
+            Node {
+              "attribs": {
+                "class": "sc-hAZoDl fUgCLv",
+              },
+              "children": [
+                Node {
+                  "data": "forms.elements.tabs",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+          ],
+          "name": "root",
+          "next": null,
+          "parent": null,
+          "prev": null,
+          "type": "root",
+        },
+        "prev": [Circular],
+        "type": "tag",
+        "x-attribsNamespace": {
+          "class": undefined,
+        },
+        "x-attribsPrefix": {
+          "class": undefined,
+        },
+      },
+      "parent": Node {
+        "children": [
+          [Circular],
+          [Circular],
+          Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.text_block",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": Node {
+              "attribs": {
+                "class": "sc-hAZoDl fUgCLv",
+              },
+              "children": [
+                Node {
+                  "data": "forms.elements.tabs",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+            "parent": [Circular],
+            "prev": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.tabs",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": [Circular],
+            "prev": Node {
+              "attribs": {
+                "class": "sc-hAZoDl fUgCLv",
+              },
+              "children": [
+                Node {
+                  "data": "forms.elements.text_block",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": [Circular],
+              "prev": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+        ],
+        "name": "root",
+        "next": null,
+        "parent": null,
+        "prev": null,
+        "type": "root",
+      },
+      "prev": [Circular],
+      "type": "tag",
+      "x-attribsNamespace": {
+        "class": undefined,
+      },
+      "x-attribsPrefix": {
+        "class": undefined,
+      },
+    },
+    "parent": Node {
+      "children": [
+        [Circular],
+        Node {
+          "attribs": {
+            "class": "sc-hAZoDl fUgCLv",
+          },
+          "children": [
+            Node {
+              "data": "forms.elements.divider",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "text",
+            },
+          ],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.text_block",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": Node {
+              "attribs": {
+                "class": "sc-hAZoDl fUgCLv",
+              },
+              "children": [
+                Node {
+                  "data": "forms.elements.tabs",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+            "parent": [Circular],
+            "prev": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          "parent": [Circular],
+          "prev": [Circular],
+          "type": "tag",
+          "x-attribsNamespace": {
+            "class": undefined,
+          },
+          "x-attribsPrefix": {
+            "class": undefined,
+          },
+        },
+        Node {
+          "attribs": {
+            "class": "sc-hAZoDl fUgCLv",
+          },
+          "children": [
+            Node {
+              "data": "forms.elements.text_block",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "text",
+            },
+          ],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.tabs",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": [Circular],
+            "prev": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          "parent": [Circular],
+          "prev": Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.divider",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": [Circular],
+            "prev": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          "type": "tag",
+          "x-attribsNamespace": {
+            "class": undefined,
+          },
+          "x-attribsPrefix": {
+            "class": undefined,
+          },
+        },
+        Node {
+          "attribs": {
+            "class": "sc-hAZoDl fUgCLv",
+          },
+          "children": [
+            Node {
+              "data": "forms.elements.tabs",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "text",
+            },
+          ],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": null,
+          "parent": [Circular],
+          "prev": Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.text_block",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": [Circular],
+            "prev": Node {
+              "attribs": {
+                "class": "sc-hAZoDl fUgCLv",
+              },
+              "children": [
+                Node {
+                  "data": "forms.elements.divider",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": [Circular],
+              "prev": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          "type": "tag",
+          "x-attribsNamespace": {
+            "class": undefined,
+          },
+          "x-attribsPrefix": {
+            "class": undefined,
+          },
+        },
+      ],
+      "name": "root",
+      "next": null,
+      "parent": null,
+      "prev": null,
+      "type": "root",
+    },
+    "prev": null,
+    "type": "tag",
+    "x-attribsNamespace": {
+      "class": undefined,
+    },
+    "x-attribsPrefix": {
+      "class": undefined,
+    },
+  },
+  "1": Node {
+    "attribs": {
+      "class": "sc-hAZoDl fUgCLv",
+    },
+    "children": [
+      Node {
+        "data": "forms.elements.divider",
+        "next": null,
+        "parent": [Circular],
+        "prev": null,
+        "type": "text",
+      },
+    ],
+    "name": "div",
+    "namespace": "http://www.w3.org/1999/xhtml",
+    "next": Node {
+      "attribs": {
+        "class": "sc-hAZoDl fUgCLv",
+      },
+      "children": [
+        Node {
+          "data": "forms.elements.text_block",
+          "next": null,
+          "parent": [Circular],
+          "prev": null,
+          "type": "text",
+        },
+      ],
+      "name": "div",
+      "namespace": "http://www.w3.org/1999/xhtml",
+      "next": Node {
+        "attribs": {
+          "class": "sc-hAZoDl fUgCLv",
+        },
+        "children": [
+          Node {
+            "data": "forms.elements.tabs",
+            "next": null,
+            "parent": [Circular],
+            "prev": null,
+            "type": "text",
+          },
+        ],
+        "name": "div",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": null,
+        "parent": Node {
+          "children": [
+            Node {
+              "attribs": {
+                "class": "sc-hAZoDl fUgCLv",
+              },
+              "children": [
+                Node {
+                  "data": "forms.elements.fields_container",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+            [Circular],
+            [Circular],
+            [Circular],
+          ],
+          "name": "root",
+          "next": null,
+          "parent": null,
+          "prev": null,
+          "type": "root",
+        },
+        "prev": [Circular],
+        "type": "tag",
+        "x-attribsNamespace": {
+          "class": undefined,
+        },
+        "x-attribsPrefix": {
+          "class": undefined,
+        },
+      },
+      "parent": Node {
+        "children": [
+          Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.fields_container",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": [Circular],
+            "prev": null,
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          [Circular],
+          [Circular],
+          Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.tabs",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": [Circular],
+            "prev": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+        ],
+        "name": "root",
+        "next": null,
+        "parent": null,
+        "prev": null,
+        "type": "root",
+      },
+      "prev": [Circular],
+      "type": "tag",
+      "x-attribsNamespace": {
+        "class": undefined,
+      },
+      "x-attribsPrefix": {
+        "class": undefined,
+      },
+    },
+    "parent": Node {
+      "children": [
+        Node {
+          "attribs": {
+            "class": "sc-hAZoDl fUgCLv",
+          },
+          "children": [
+            Node {
+              "data": "forms.elements.fields_container",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "text",
+            },
+          ],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": [Circular],
+          "parent": [Circular],
+          "prev": null,
+          "type": "tag",
+          "x-attribsNamespace": {
+            "class": undefined,
+          },
+          "x-attribsPrefix": {
+            "class": undefined,
+          },
+        },
+        [Circular],
+        Node {
+          "attribs": {
+            "class": "sc-hAZoDl fUgCLv",
+          },
+          "children": [
+            Node {
+              "data": "forms.elements.text_block",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "text",
+            },
+          ],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.tabs",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": [Circular],
+            "prev": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          "parent": [Circular],
+          "prev": [Circular],
+          "type": "tag",
+          "x-attribsNamespace": {
+            "class": undefined,
+          },
+          "x-attribsPrefix": {
+            "class": undefined,
+          },
+        },
+        Node {
+          "attribs": {
+            "class": "sc-hAZoDl fUgCLv",
+          },
+          "children": [
+            Node {
+              "data": "forms.elements.tabs",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "text",
+            },
+          ],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": null,
+          "parent": [Circular],
+          "prev": Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.text_block",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": [Circular],
+            "prev": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          "type": "tag",
+          "x-attribsNamespace": {
+            "class": undefined,
+          },
+          "x-attribsPrefix": {
+            "class": undefined,
+          },
+        },
+      ],
+      "name": "root",
+      "next": null,
+      "parent": null,
+      "prev": null,
+      "type": "root",
+    },
+    "prev": Node {
+      "attribs": {
+        "class": "sc-hAZoDl fUgCLv",
+      },
+      "children": [
+        Node {
+          "data": "forms.elements.fields_container",
+          "next": null,
+          "parent": [Circular],
+          "prev": null,
+          "type": "text",
+        },
+      ],
+      "name": "div",
+      "namespace": "http://www.w3.org/1999/xhtml",
+      "next": [Circular],
+      "parent": Node {
+        "children": [
+          [Circular],
+          [Circular],
+          Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.text_block",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": Node {
+              "attribs": {
+                "class": "sc-hAZoDl fUgCLv",
+              },
+              "children": [
+                Node {
+                  "data": "forms.elements.tabs",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+            "parent": [Circular],
+            "prev": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.tabs",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": [Circular],
+            "prev": Node {
+              "attribs": {
+                "class": "sc-hAZoDl fUgCLv",
+              },
+              "children": [
+                Node {
+                  "data": "forms.elements.text_block",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": [Circular],
+              "prev": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+        ],
+        "name": "root",
+        "next": null,
+        "parent": null,
+        "prev": null,
+        "type": "root",
+      },
+      "prev": null,
+      "type": "tag",
+      "x-attribsNamespace": {
+        "class": undefined,
+      },
+      "x-attribsPrefix": {
+        "class": undefined,
+      },
+    },
+    "type": "tag",
+    "x-attribsNamespace": {
+      "class": undefined,
+    },
+    "x-attribsPrefix": {
+      "class": undefined,
+    },
+  },
+  "2": Node {
+    "attribs": {
+      "class": "sc-hAZoDl fUgCLv",
+    },
+    "children": [
+      Node {
+        "data": "forms.elements.text_block",
+        "next": null,
+        "parent": [Circular],
+        "prev": null,
+        "type": "text",
+      },
+    ],
+    "name": "div",
+    "namespace": "http://www.w3.org/1999/xhtml",
+    "next": Node {
+      "attribs": {
+        "class": "sc-hAZoDl fUgCLv",
+      },
+      "children": [
+        Node {
+          "data": "forms.elements.tabs",
+          "next": null,
+          "parent": [Circular],
+          "prev": null,
+          "type": "text",
+        },
+      ],
+      "name": "div",
+      "namespace": "http://www.w3.org/1999/xhtml",
+      "next": null,
+      "parent": Node {
+        "children": [
+          Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.fields_container",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": Node {
+              "attribs": {
+                "class": "sc-hAZoDl fUgCLv",
+              },
+              "children": [
+                Node {
+                  "data": "forms.elements.divider",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": [Circular],
+              "prev": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+            "parent": [Circular],
+            "prev": null,
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.divider",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": [Circular],
+            "prev": Node {
+              "attribs": {
+                "class": "sc-hAZoDl fUgCLv",
+              },
+              "children": [
+                Node {
+                  "data": "forms.elements.fields_container",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          [Circular],
+          [Circular],
+        ],
+        "name": "root",
+        "next": null,
+        "parent": null,
+        "prev": null,
+        "type": "root",
+      },
+      "prev": [Circular],
+      "type": "tag",
+      "x-attribsNamespace": {
+        "class": undefined,
+      },
+      "x-attribsPrefix": {
+        "class": undefined,
+      },
+    },
+    "parent": Node {
+      "children": [
+        Node {
+          "attribs": {
+            "class": "sc-hAZoDl fUgCLv",
+          },
+          "children": [
+            Node {
+              "data": "forms.elements.fields_container",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "text",
+            },
+          ],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.divider",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": [Circular],
+            "prev": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          "parent": [Circular],
+          "prev": null,
+          "type": "tag",
+          "x-attribsNamespace": {
+            "class": undefined,
+          },
+          "x-attribsPrefix": {
+            "class": undefined,
+          },
+        },
+        Node {
+          "attribs": {
+            "class": "sc-hAZoDl fUgCLv",
+          },
+          "children": [
+            Node {
+              "data": "forms.elements.divider",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "text",
+            },
+          ],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": [Circular],
+          "parent": [Circular],
+          "prev": Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.fields_container",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": [Circular],
+            "prev": null,
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          "type": "tag",
+          "x-attribsNamespace": {
+            "class": undefined,
+          },
+          "x-attribsPrefix": {
+            "class": undefined,
+          },
+        },
+        [Circular],
+        Node {
+          "attribs": {
+            "class": "sc-hAZoDl fUgCLv",
+          },
+          "children": [
+            Node {
+              "data": "forms.elements.tabs",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "text",
+            },
+          ],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": null,
+          "parent": [Circular],
+          "prev": [Circular],
+          "type": "tag",
+          "x-attribsNamespace": {
+            "class": undefined,
+          },
+          "x-attribsPrefix": {
+            "class": undefined,
+          },
+        },
+      ],
+      "name": "root",
+      "next": null,
+      "parent": null,
+      "prev": null,
+      "type": "root",
+    },
+    "prev": Node {
+      "attribs": {
+        "class": "sc-hAZoDl fUgCLv",
+      },
+      "children": [
+        Node {
+          "data": "forms.elements.divider",
+          "next": null,
+          "parent": [Circular],
+          "prev": null,
+          "type": "text",
+        },
+      ],
+      "name": "div",
+      "namespace": "http://www.w3.org/1999/xhtml",
+      "next": [Circular],
+      "parent": Node {
+        "children": [
+          Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.fields_container",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": [Circular],
+            "prev": null,
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          [Circular],
+          [Circular],
+          Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.tabs",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": [Circular],
+            "prev": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+        ],
+        "name": "root",
+        "next": null,
+        "parent": null,
+        "prev": null,
+        "type": "root",
+      },
+      "prev": Node {
+        "attribs": {
+          "class": "sc-hAZoDl fUgCLv",
+        },
+        "children": [
+          Node {
+            "data": "forms.elements.fields_container",
+            "next": null,
+            "parent": [Circular],
+            "prev": null,
+            "type": "text",
+          },
+        ],
+        "name": "div",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": [Circular],
+        "parent": Node {
+          "children": [
+            [Circular],
+            [Circular],
+            [Circular],
+            Node {
+              "attribs": {
+                "class": "sc-hAZoDl fUgCLv",
+              },
+              "children": [
+                Node {
+                  "data": "forms.elements.tabs",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+          ],
+          "name": "root",
+          "next": null,
+          "parent": null,
+          "prev": null,
+          "type": "root",
+        },
+        "prev": null,
+        "type": "tag",
+        "x-attribsNamespace": {
+          "class": undefined,
+        },
+        "x-attribsPrefix": {
+          "class": undefined,
+        },
+      },
+      "type": "tag",
+      "x-attribsNamespace": {
+        "class": undefined,
+      },
+      "x-attribsPrefix": {
+        "class": undefined,
+      },
+    },
+    "type": "tag",
+    "x-attribsNamespace": {
+      "class": undefined,
+    },
+    "x-attribsPrefix": {
+      "class": undefined,
+    },
+  },
+  "3": Node {
+    "attribs": {
+      "class": "sc-hAZoDl fUgCLv",
+    },
+    "children": [
+      Node {
+        "data": "forms.elements.tabs",
+        "next": null,
+        "parent": [Circular],
+        "prev": null,
+        "type": "text",
+      },
+    ],
+    "name": "div",
+    "namespace": "http://www.w3.org/1999/xhtml",
+    "next": null,
+    "parent": Node {
+      "children": [
+        Node {
+          "attribs": {
+            "class": "sc-hAZoDl fUgCLv",
+          },
+          "children": [
+            Node {
+              "data": "forms.elements.fields_container",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "text",
+            },
+          ],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.divider",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": Node {
+              "attribs": {
+                "class": "sc-hAZoDl fUgCLv",
+              },
+              "children": [
+                Node {
+                  "data": "forms.elements.text_block",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": [Circular],
+              "prev": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+            "parent": [Circular],
+            "prev": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          "parent": [Circular],
+          "prev": null,
+          "type": "tag",
+          "x-attribsNamespace": {
+            "class": undefined,
+          },
+          "x-attribsPrefix": {
+            "class": undefined,
+          },
+        },
+        Node {
+          "attribs": {
+            "class": "sc-hAZoDl fUgCLv",
+          },
+          "children": [
+            Node {
+              "data": "forms.elements.divider",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "text",
+            },
+          ],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.text_block",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": [Circular],
+            "prev": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          "parent": [Circular],
+          "prev": Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.fields_container",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": [Circular],
+            "prev": null,
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          "type": "tag",
+          "x-attribsNamespace": {
+            "class": undefined,
+          },
+          "x-attribsPrefix": {
+            "class": undefined,
+          },
+        },
+        Node {
+          "attribs": {
+            "class": "sc-hAZoDl fUgCLv",
+          },
+          "children": [
+            Node {
+              "data": "forms.elements.text_block",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "text",
+            },
+          ],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": [Circular],
+          "parent": [Circular],
+          "prev": Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.divider",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": [Circular],
+            "prev": Node {
+              "attribs": {
+                "class": "sc-hAZoDl fUgCLv",
+              },
+              "children": [
+                Node {
+                  "data": "forms.elements.fields_container",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          "type": "tag",
+          "x-attribsNamespace": {
+            "class": undefined,
+          },
+          "x-attribsPrefix": {
+            "class": undefined,
+          },
+        },
+        [Circular],
+      ],
+      "name": "root",
+      "next": null,
+      "parent": null,
+      "prev": null,
+      "type": "root",
+    },
+    "prev": Node {
+      "attribs": {
+        "class": "sc-hAZoDl fUgCLv",
+      },
+      "children": [
+        Node {
+          "data": "forms.elements.text_block",
+          "next": null,
+          "parent": [Circular],
+          "prev": null,
+          "type": "text",
+        },
+      ],
+      "name": "div",
+      "namespace": "http://www.w3.org/1999/xhtml",
+      "next": [Circular],
+      "parent": Node {
+        "children": [
+          Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.fields_container",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": Node {
+              "attribs": {
+                "class": "sc-hAZoDl fUgCLv",
+              },
+              "children": [
+                Node {
+                  "data": "forms.elements.divider",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": [Circular],
+              "prev": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+            "parent": [Circular],
+            "prev": null,
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          Node {
+            "attribs": {
+              "class": "sc-hAZoDl fUgCLv",
+            },
+            "children": [
+              Node {
+                "data": "forms.elements.divider",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": [Circular],
+            "prev": Node {
+              "attribs": {
+                "class": "sc-hAZoDl fUgCLv",
+              },
+              "children": [
+                Node {
+                  "data": "forms.elements.fields_container",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          [Circular],
+          [Circular],
+        ],
+        "name": "root",
+        "next": null,
+        "parent": null,
+        "prev": null,
+        "type": "root",
+      },
+      "prev": Node {
+        "attribs": {
+          "class": "sc-hAZoDl fUgCLv",
+        },
+        "children": [
+          Node {
+            "data": "forms.elements.divider",
+            "next": null,
+            "parent": [Circular],
+            "prev": null,
+            "type": "text",
+          },
+        ],
+        "name": "div",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": [Circular],
+        "parent": Node {
+          "children": [
+            Node {
+              "attribs": {
+                "class": "sc-hAZoDl fUgCLv",
+              },
+              "children": [
+                Node {
+                  "data": "forms.elements.fields_container",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+            [Circular],
+            [Circular],
+            [Circular],
+          ],
+          "name": "root",
+          "next": null,
+          "parent": null,
+          "prev": null,
+          "type": "root",
+        },
+        "prev": Node {
+          "attribs": {
+            "class": "sc-hAZoDl fUgCLv",
+          },
+          "children": [
+            Node {
+              "data": "forms.elements.fields_container",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "text",
+            },
+          ],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": [Circular],
+          "parent": Node {
+            "children": [
+              [Circular],
+              [Circular],
+              [Circular],
+              [Circular],
+            ],
+            "name": "root",
+            "next": null,
+            "parent": null,
+            "prev": null,
+            "type": "root",
+          },
+          "prev": null,
+          "type": "tag",
+          "x-attribsNamespace": {
+            "class": undefined,
+          },
+          "x-attribsPrefix": {
+            "class": undefined,
+          },
+        },
+        "type": "tag",
+        "x-attribsNamespace": {
+          "class": undefined,
+        },
+        "x-attribsPrefix": {
+          "class": undefined,
+        },
+      },
+      "type": "tag",
+      "x-attribsNamespace": {
+        "class": undefined,
+      },
+      "x-attribsPrefix": {
+        "class": undefined,
+      },
+    },
+    "type": "tag",
+    "x-attribsNamespace": {
+      "class": undefined,
+    },
+    "x-attribsPrefix": {
+      "class": undefined,
+    },
+  },
+  "_root": LoadedCheerio {
+    "0": Node {
+      "children": [
+        Node {
+          "attribs": {},
+          "children": [
+            Node {
+              "attribs": {},
+              "children": [],
+              "name": "head",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": Node {
+                "attribs": {},
+                "children": [],
+                "name": "body",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": [Circular],
+                "type": "tag",
+                "x-attribsNamespace": {},
+                "x-attribsPrefix": {},
+              },
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": {},
+              "x-attribsPrefix": {},
+            },
+            Node {
+              "attribs": {},
+              "children": [],
+              "name": "body",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": Node {
+                "attribs": {},
+                "children": [],
+                "name": "head",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": [Circular],
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": {},
+                "x-attribsPrefix": {},
+              },
+              "type": "tag",
+              "x-attribsNamespace": {},
+              "x-attribsPrefix": {},
+            },
+          ],
+          "name": "html",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": null,
+          "parent": [Circular],
+          "prev": null,
+          "type": "tag",
+          "x-attribsNamespace": {},
+          "x-attribsPrefix": {},
+        },
+      ],
+      "name": "root",
+      "next": null,
+      "parent": null,
+      "prev": null,
+      "type": "root",
+      "x-mode": "quirks",
+    },
+    "_root": [Circular],
+    "length": 1,
+    "options": {
+      "decodeEntities": true,
+      "xml": false,
+    },
+  },
+  "length": 4,
+  "options": {
+    "decodeEntities": true,
+    "xml": false,
+  },
+}
+`;

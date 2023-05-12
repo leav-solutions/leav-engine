@@ -51,7 +51,7 @@ function AttributePicker({
             confirmLoading={isLoading}
             centered
         >
-            <AttributesList onSelect={_handleSelect} selected={selected} multiple={multiple} canCreate={canCreate} />
+            <AttributesList onSelect={_handleSelect} selected={selected} multiple={multiple} />
         </Modal>
     );
 }

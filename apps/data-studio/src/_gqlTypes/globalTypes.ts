@@ -15,13 +15,6 @@ export enum ApplicationEventTypes {
     SAVE = 'SAVE'
 }
 
-export enum ApplicationInstallStatus {
-    ERROR = 'ERROR',
-    NONE = 'NONE',
-    RUNNING = 'RUNNING',
-    SUCCESS = 'SUCCESS'
-}
-
 export enum ApplicationType {
     external = 'external',
     internal = 'internal'

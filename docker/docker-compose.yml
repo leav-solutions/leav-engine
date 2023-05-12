@@ -8,7 +8,7 @@ x-redis-image: &redis_image "redis"
 x-arango-image: &arango_image "arangodb:3.10"
 
 x-dir-core: &dir-core /app/apps/core
-x-dir-admin: &dir-admin /app/apps/admin-app
+x-dir-admin: &dir-admin /app/apps/admin
 x-dir-data_studio: &dir-data_studio /app/apps/data-studio
 x-dir-login: &dir-login /app/apps/login
 x-dir-portal: &dir-portal /app/apps/portal
@@ -19,7 +19,7 @@ x-dir-sync_scan: &dir-sync_scan /app/apps/sync-scan
 x-volume-yarn-cache: &volume-yarn-cache yarn_cache:/app/.yarn/cache
 x-volume-shared-modules: &volume-shared-modules node_modules_shared:/app/node_modules
 x-volume-core-modules: &volume-core-modules node_modules_core:/app/apps/core/node_modules
-x-volume-admin-modules: &volume-admin-modules node_modules_admin-app:/app/apps/admin-app/node_modules
+x-volume-admin-modules: &volume-admin-modules node_modules_admin:/app/apps/admin/node_modules
 x-volume-data_studio-modules: &volume-data_studio-modules node_modules_data-studio:/app/apps/data-studio/node_modules
 x-volume-login-modules: &volume-login-modules node_modules_login:/app/apps/login/node_modules
 x-volume-portal-modules: &volume-portal-modules node_modules_portal:/app/apps/portal/node_modules
@@ -83,13 +83,6 @@ x-env-react: &env-react
   REACT_APP_DEFAULT_LANG: fr
   REACT_APP_AVAILABLE_LANG: fr,en
   REACT_APP_LOGIN_ENDPOINT: /app/login/
-  VITE_CORE_URL: http://core.leav.localhost
-  VITE_API_URL: http://core.leav.localhost/graphql
-  VITE_WS_URL: ws://core.leav.localhost/graphql
-  VITE_DEFAULT_LANG: fr
-  VITE_AVAILABLE_LANG: fr,en
-  VITE_LOGIN_ENDPOINT: /app/login/
-  VITE_ENDPOINT_BASE: /app/
   SKIP_PREFLIGHT_CHECK: "true"
   TSC_WATCHFILE: UseFsEventsWithFallbackDynamicPolling # To reduce CPU usage of TSC's file watching
   ESLINT_NO_DEV_ERRORS: "true" # To keep compiling on eslint errors
@@ -112,7 +105,7 @@ x-env-sync-scan: &env-sync-scan
   GRAPHQL_API_KEY: ${GRAPHQL_API_KEY}
   APP_ROOT_PATH: *dir-sync_scan
 
-x-env-admin-app: &env-admin-app
+x-env-admin: &env-admin
   APP_ROOT_PATH: *dir-admin
 
 x-env-data-studio: &env-data-studio
@@ -120,9 +113,6 @@ x-env-data-studio: &env-data-studio
 
 x-env-login: &env-login
   APP_ROOT_PATH: *dir-login
-  VITE_AUTH_URL: /auth/authenticate
-  VITE_RESET_PASSWORD: /auth/reset-password
-  VITE_FORGOT_PASSWORD: /auth/forgot-password
 
 x-env-portal: &env-portal
   APP_ROOT_PATH: *dir-portal
@@ -148,8 +138,7 @@ services:
       - traefik.http.services.core.loadbalancer.server.port=4001
       - traefik.http.routers.core.entrypoints=web
     environment:
-      <<: *env-core
-      <<: *env-amqp
+      <<: [*env-core, *env-amqp]
     volumes: # We must load every volumes for install
       - *mount_point-repo
       - *mount_point-files
@@ -188,8 +177,7 @@ services:
     image: *node_image
     stdin_open: true
     environment:
-      <<: *env-core
-      <<: *env-amqp
+      <<: [*env-core, *env-amqp]
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
@@ -209,8 +197,7 @@ services:
     image: *node_image
     stdin_open: true
     environment:
-      <<: *env-core
-      <<: *env-amqp
+      <<: [*env-core, *env-amqp]
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
@@ -232,8 +219,7 @@ services:
     image: *node_image
     restart: always
     environment:
-      <<: *env-core
-      <<: *env-amqp
+      <<: [*env-core, *env-amqp]
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
@@ -249,7 +235,7 @@ services:
         "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start:tasksWorker",
       ]
 
-  admin-app:
+  admin:
     image: *node_image
     user: node
     labels:
@@ -258,11 +244,8 @@ services:
       - traefik.http.services.admin.loadbalancer.server.port=3000
       - traefik.http.routers.admin.entrypoints=web
     environment:
-      <<: *env-react
-      <<: *env-admin-app
+      <<: [*env-react, *env-admin]
       PUBLIC_URL: http://core.leav.localhost/app/admin
-      REACT_APP_ENDPOINT: app/admin
-      REACT_APP_APPLICATION_ID: admin
       WDS_SOCKET_HOST: admin.leav.localhost
       WDS_SOCKET_PORT: 80
     volumes:
@@ -288,10 +271,7 @@ services:
       - traefik.http.services.data-studio.loadbalancer.server.port=3000
       - traefik.http.routers.data-studio.entrypoints=web
     environment:
-      <<: *env-react
-      <<: *env-data-studio
-      VITE_ENDPOINT: app/data-studio
-      VITE_APPLICATION_ID: data_studio
+      <<: [*env-react, *env-data-studio]
       PUBLIC_URL: http://core.leav.localhost/app/data-studio
       WDS_SOCKET_HOST: data-studio.leav.localhost
       WDS_SOCKET_PORT: 80
@@ -318,10 +298,7 @@ services:
       - traefik.http.services.login.loadbalancer.server.port=3000
       - traefik.http.routers.login.entrypoints=web
     environment:
-      <<: *env-react
-      <<: *env-login
-      VITE_APPLICATION_ID: login
-      VITE_ENDPOINT: app/login
+      <<: [*env-react, *env-login]
       PUBLIC_URL: http://core.leav.localhost/app/login
       WDS_SOCKET_HOST: login.leav.localhost
       WDS_SOCKET_PORT: 80
@@ -352,13 +329,8 @@ services:
       # - traefik.app.frontend.rule=Host:core.leav.localhost;PathPrefix:/app/portal
       # - traefik.ws.frontend.rule=Host:portal.leav.localhost
     environment:
-      <<: *env-react
-      <<: *env-portal
+      <<: [*env-react, *env-portal]
       PUBLIC_URL: http://core.leav.localhost/app/portal
-      VITE_APPLICATION_ID: portal
-      VITE_ENDPOINT: app/portal
-      WDS_SOCKET_HOST: portal.leav.localhost
-      WDS_SOCKET_PORT: 80
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
@@ -376,8 +348,7 @@ services:
     image: *node_image
     restart: always
     environment:
-      <<: *env-automate-scan
-      <<: *env-amqp
+      <<: [*env-automate-scan, *env-amqp]
     volumes:
       - *mount_point-repo
       - *mount_point-files
@@ -397,8 +368,7 @@ services:
     image: *node_image
     restart: always
     environment:
-      <<: *env-core
-      <<: *env-amqp
+      <<: [*env-core, *env-amqp]
     volumes:
       - *mount_point-repo
       - *mount_point-files
@@ -421,8 +391,7 @@ services:
       dockerfile: ../../docker/DOCKERFILES/PREVIEW_GENERATOR/Dockerfile
     restart: always
     environment:
-      <<: *env-amqp
-      <<: *env-preview-generator
+      <<: [*env-amqp, *env-preview-generator]
     volumes:
       - *mount_point-repo
       - *mount_point-files
@@ -447,8 +416,7 @@ services:
     labels:
       - traefik.enable=true
     environment:
-      <<: *env-sync-scan
-      <<: *env-amqp
+      <<: [*env-sync-scan, *env-amqp]
     depends_on:
       - core
     volumes:
@@ -480,7 +448,6 @@ services:
     image: *arango_image
     environment:
       ARANGO_NO_AUTH: 1
-    platform: linux/amd64
     labels:
       - traefik.enable=true
       - traefik.http.routers.arangodb.rule=Host(`arango.leav.localhost`)
@@ -537,7 +504,7 @@ volumes:
     driver: local
   node_modules_core:
     driver: local
-  node_modules_admin-app:
+  node_modules_admin:
     driver: local
   node_modules_data-studio:
     driver: local

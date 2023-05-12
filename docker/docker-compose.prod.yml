@@ -91,7 +91,6 @@ services:
       - *mount_point-previews
       - *mount_point-exports
       - *mount_point-imports
-      - apps_instances:/app/apps/core/applications/instances
     command: [
         sh,
         -c,
@@ -246,6 +245,4 @@ services:
 
 volumes:
   arango_data_prod:
-    driver: local
-  apps_instances:
     driver: local

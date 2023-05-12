@@ -5,12 +5,12 @@ import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import ResetPasswordForm from './ResetPasswordForm';
+import {RESET_PASSWORD_URL} from '../../constants';
 
 const ResetPassword = (): JSX.Element => {
     const {t} = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [resetPasswordError, setResetPasswordError] = useState('');
-    const resetPasswordUrl = import.meta.env.VITE_RESET_PASSWORD || '';
 
     const {token} = useParams<{token: string}>();
     const redirectTo = '/';
@@ -20,7 +20,7 @@ const ResetPassword = (): JSX.Element => {
             setIsLoading(true);
             setResetPasswordError('');
 
-            const response = await fetch(resetPasswordUrl, {
+            const response = await fetch(RESET_PASSWORD_URL, {
                 method: 'POST',
                 headers: new Headers([['Content-Type', 'application/json']]),
                 body: JSON.stringify({

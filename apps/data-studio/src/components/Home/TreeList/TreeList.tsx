@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation, useQuery} from '@apollo/client';
-import {useLang} from '@leav/ui';
+import {useLang, ErrorDisplay} from '@leav/ui';
 import {Table} from 'antd';
 import {ColumnsType} from 'antd/lib/table';
 import TreeIcon from 'components/shared/TreeIcon';
@@ -15,7 +15,6 @@ import styled from 'styled-components';
 import {getTreeLink, localizedTranslation} from 'utils';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '../../../_gqlTypes/SAVE_USER_DATA';
-import ErrorDisplay from '../../shared/ErrorDisplay';
 import FavoriteStar from '../FavoriteStar';
 
 export const FAVORITE_TREES_KEY = 'favorites_trees_ids';

@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
@@ -96,13 +99,6 @@ export type ApplicationInput = {
   settings?: InputMaybe<Scalars['JSONObject']>;
   type?: InputMaybe<ApplicationType>;
 };
-
-export enum ApplicationInstallStatus {
-  ERROR = 'ERROR',
-  NONE = 'NONE',
-  RUNNING = 'RUNNING',
-  SUCCESS = 'SUCCESS'
-}
 
 export enum ApplicationSortableFields {
   endpoint = 'endpoint',
@@ -754,13 +750,13 @@ export type ViewValuesVersionInput = {
   treeNode: Scalars['String'];
 };
 
-export type ApplicationDetailsFragment = { id: string, label: any, type: ApplicationType, description?: any | null, endpoint?: string | null, url?: string | null, color?: string | null, module?: string | null, settings?: any | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, library: { id: string, label?: any | null }, preview?: { tiny?: string | null, small?: string | null, medium?: string | null, big?: string | null, huge?: string | null } | null } } | { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, library: { id: string, label?: any | null }, preview?: { tiny?: string | null, small?: string | null, medium?: string | null, big?: string | null, huge?: string | null } | null } } | null, permissions: { access_application: boolean, admin_application: boolean }, install?: { status: ApplicationInstallStatus, lastCallResult?: string | null } | null };
+export type DetailsApplicationFragment = { id: string, label: any, type: ApplicationType, description?: any | null, endpoint?: string | null, url?: string | null, color?: string | null, module?: string | null, settings?: any | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, library: { id: string, label?: any | null }, preview?: { tiny?: string | null, small?: string | null, medium?: string | null, big?: string | null, huge?: string | null } | null } } | { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, library: { id: string, label?: any | null }, preview?: { tiny?: string | null, small?: string | null, medium?: string | null, big?: string | null, huge?: string | null } | null } } | null, permissions: { access_application: boolean, admin_application: boolean } };
 
-export type RecordIdentityIXWneC929TdkvZFoyeHRfT3VVxgYr2ku8RVjX8oyJgFragment = { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, library: { id: string, label?: any | null }, preview?: { tiny?: string | null, small?: string | null, medium?: string | null, big?: string | null, huge?: string | null } | null } };
+export type RecordIdentityJP8DKlXcZJvQZiM0DlOr5ZygRhVzdZpv9xjTg8rnHUFragment = { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, library: { id: string, label?: any | null }, preview?: { tiny?: string | null, small?: string | null, medium?: string | null, big?: string | null, huge?: string | null } | null } };
 
-export type RecordIdentity_1gGRwDhWjw3TxNghkKkX0dwzxHfiUaW52J_9kpuIlTcFragment = { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, library: { id: string, label?: any | null }, preview?: { tiny?: string | null, small?: string | null, medium?: string | null, big?: string | null, huge?: string | null } | null } };
+export type RecordIdentityD5inBa0WRi2y1Et4JmUEvqT20Hc1ZErjlg7Z3tQ4puEFragment = { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, library: { id: string, label?: any | null }, preview?: { tiny?: string | null, small?: string | null, medium?: string | null, big?: string | null, huge?: string | null } | null } };
 
-export type RecordIdentityFragment = RecordIdentityIXWneC929TdkvZFoyeHRfT3VVxgYr2ku8RVjX8oyJgFragment | RecordIdentity_1gGRwDhWjw3TxNghkKkX0dwzxHfiUaW52J_9kpuIlTcFragment;
+export type RecordIdentityFragment = RecordIdentityJP8DKlXcZJvQZiM0DlOr5ZygRhVzdZpv9xjTg8rnHUFragment | RecordIdentityD5inBa0WRi2y1Et4JmUEvqT20Hc1ZErjlg7Z3tQ4puEFragment;
 
 export type AttributeDetailsLinkAttributeFragment = { reverse_link?: string | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, linked_library?: { id: string, label?: any | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null };
 
@@ -799,26 +795,19 @@ export type GetApplicationByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetApplicationByIdQuery = { applications?: { list: Array<{ id: string, label: any, type: ApplicationType, description?: any | null, endpoint?: string | null, url?: string | null, color?: string | null, module?: string | null, settings?: any | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, library: { id: string, label?: any | null }, preview?: { tiny?: string | null, small?: string | null, medium?: string | null, big?: string | null, huge?: string | null } | null } } | { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, library: { id: string, label?: any | null }, preview?: { tiny?: string | null, small?: string | null, medium?: string | null, big?: string | null, huge?: string | null } | null } } | null, permissions: { access_application: boolean, admin_application: boolean }, install?: { status: ApplicationInstallStatus, lastCallResult?: string | null } | null }> } | null };
+export type GetApplicationByIdQuery = { applications?: { list: Array<{ id: string, label: any, type: ApplicationType, description?: any | null, endpoint?: string | null, url?: string | null, color?: string | null, module?: string | null, settings?: any | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, library: { id: string, label?: any | null }, preview?: { tiny?: string | null, small?: string | null, medium?: string | null, big?: string | null, huge?: string | null } | null } } | { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, library: { id: string, label?: any | null }, preview?: { tiny?: string | null, small?: string | null, medium?: string | null, big?: string | null, huge?: string | null } | null } } | null, permissions: { access_application: boolean, admin_application: boolean } }> } | null };
 
 export type GetApplicationModulesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetApplicationModulesQuery = { applicationsModules: Array<{ id: string, description?: string | null, version?: string | null }> };
 
-export type InstallApplicationMutationVariables = Exact<{
-  id: Scalars['ID'];
-}>;
-
-
-export type InstallApplicationMutation = { installApplication: string };
-
 export type SaveApplicationMutationVariables = Exact<{
   application: ApplicationInput;
 }>;
 
 
-export type SaveApplicationMutation = { saveApplication: { id: string, label: any, type: ApplicationType, description?: any | null, endpoint?: string | null, url?: string | null, color?: string | null, module?: string | null, settings?: any | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, library: { id: string, label?: any | null }, preview?: { tiny?: string | null, small?: string | null, medium?: string | null, big?: string | null, huge?: string | null } | null } } | { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, library: { id: string, label?: any | null }, preview?: { tiny?: string | null, small?: string | null, medium?: string | null, big?: string | null, huge?: string | null } | null } } | null, permissions: { access_application: boolean, admin_application: boolean }, install?: { status: ApplicationInstallStatus, lastCallResult?: string | null } | null } };
+export type SaveApplicationMutation = { saveApplication: { id: string, label: any, type: ApplicationType, description?: any | null, endpoint?: string | null, url?: string | null, color?: string | null, module?: string | null, settings?: any | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, library: { id: string, label?: any | null }, preview?: { tiny?: string | null, small?: string | null, medium?: string | null, big?: string | null, huge?: string | null } | null } } | { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, library: { id: string, label?: any | null }, preview?: { tiny?: string | null, small?: string | null, medium?: string | null, big?: string | null, huge?: string | null } | null } } | null, permissions: { access_application: boolean, admin_application: boolean } } };
 
 export type CheckAttributeExistenceQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -945,8 +934,8 @@ export const RecordIdentityFragmentDoc = gql`
   }
 }
     `;
-export const ApplicationDetailsFragmentDoc = gql`
-    fragment ApplicationDetails on Application {
+export const DetailsApplicationFragmentDoc = gql`
+    fragment DetailsApplication on Application {
   id
   label
   type
@@ -961,10 +950,6 @@ export const ApplicationDetailsFragmentDoc = gql`
   permissions {
     access_application
     admin_application
-  }
-  install {
-    status
-    lastCallResult
   }
   settings
 }
@@ -1154,11 +1139,11 @@ export const GetApplicationByIdDocument = gql`
     query GET_APPLICATION_BY_ID($id: ID!) {
   applications(filters: {id: $id}) {
     list {
-      ...ApplicationDetails
+      ...DetailsApplication
     }
   }
 }
-    ${ApplicationDetailsFragmentDoc}`;
+    ${DetailsApplicationFragmentDoc}`;
 
 /**
  * __useGetApplicationByIdQuery__
@@ -1223,44 +1208,13 @@ export function useGetApplicationModulesLazyQuery(baseOptions?: Apollo.LazyQuery
 export type GetApplicationModulesQueryHookResult = ReturnType<typeof useGetApplicationModulesQuery>;
 export type GetApplicationModulesLazyQueryHookResult = ReturnType<typeof useGetApplicationModulesLazyQuery>;
 export type GetApplicationModulesQueryResult = Apollo.QueryResult<GetApplicationModulesQuery, GetApplicationModulesQueryVariables>;
-export const InstallApplicationDocument = gql`
-    mutation INSTALL_APPLICATION($id: ID!) {
-  installApplication(id: $id)
-}
-    `;
-export type InstallApplicationMutationFn = Apollo.MutationFunction<InstallApplicationMutation, InstallApplicationMutationVariables>;
-
-/**
- * __useInstallApplicationMutation__
- *
- * To run a mutation, you first call `useInstallApplicationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInstallApplicationMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [installApplicationMutation, { data, loading, error }] = useInstallApplicationMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useInstallApplicationMutation(baseOptions?: Apollo.MutationHookOptions<InstallApplicationMutation, InstallApplicationMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<InstallApplicationMutation, InstallApplicationMutationVariables>(InstallApplicationDocument, options);
-      }
-export type InstallApplicationMutationHookResult = ReturnType<typeof useInstallApplicationMutation>;
-export type InstallApplicationMutationResult = Apollo.MutationResult<InstallApplicationMutation>;
-export type InstallApplicationMutationOptions = Apollo.BaseMutationOptions<InstallApplicationMutation, InstallApplicationMutationVariables>;
 export const SaveApplicationDocument = gql`
     mutation SAVE_APPLICATION($application: ApplicationInput!) {
   saveApplication(application: $application) {
-    ...ApplicationDetails
+    ...DetailsApplication
   }
 }
-    ${ApplicationDetailsFragmentDoc}`;
+    ${DetailsApplicationFragmentDoc}`;
 export type SaveApplicationMutationFn = Apollo.MutationFunction<SaveApplicationMutation, SaveApplicationMutationVariables>;
 
 /**

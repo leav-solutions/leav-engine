@@ -10,6 +10,11 @@ import {act, render, screen} from '_tests/testUtils';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockTask} from '__mocks__/common/task';
 import AppHandler from './AppHandler';
+import {getApplicationByEndpointQuery} from 'graphQL/queries/applications/getApplicationByEndpointQuery';
+import {getLangs} from 'graphQL/queries/core/getLangs';
+import {enableFetchMocks} from 'jest-fetch-mock';
+
+enableFetchMocks();
 
 jest.mock(
     '../../Router',
@@ -19,10 +24,12 @@ jest.mock(
         }
 );
 
+jest.mock('../../../constants', () => ({
+    APP_ENDPOINT: 'data-studio'
+}));
+
 describe('AppHandler', () => {
     test('Should contain Router', async () => {
-        import.meta.env.VITE_APPLICATION_ID = mockApplicationDetails.id;
-
         const mocks = [
             {
                 request: {
@@ -61,9 +68,9 @@ describe('AppHandler', () => {
             },
             {
                 request: {
-                    query: getApplicationByIdQuery,
+                    query: getApplicationByEndpointQuery,
                     variables: {
-                        id: mockApplicationDetails.id
+                        endpoint: 'data-studio'
                     }
                 },
                 result: {
@@ -88,6 +95,17 @@ describe('AppHandler', () => {
                         tasks: {
                             list: [mockTask]
                         }
+                    }
+                }
+            },
+            {
+                request: {
+                    query: getLangs,
+                    variables: {}
+                },
+                result: {
+                    data: {
+                        langs: ['fr']
                     }
                 }
             },

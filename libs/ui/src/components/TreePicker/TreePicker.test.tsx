@@ -193,7 +193,7 @@ describe('TreePicker', () => {
         ];
 
         const mockHandleSubmit = jest.fn();
-        render(<TreePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open canCreate={false} />, {
+        render(<TreePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {
             mocks: mocksNotAllowed
         });
 

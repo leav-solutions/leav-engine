@@ -4,3 +4,4 @@
 
 export {useSaveApplicationMutation} from '../_gqlTypes';
 export {default as useLang} from './useLang';
+export {default as useAppLang} from './useAppLang';

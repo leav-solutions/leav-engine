@@ -1,6 +1,6 @@
 {
-  "short_name": "leav_engine_portal",
-  "name": "LEAV Engine Portal",
+  "name": "portal",
+  "version": "1.0.0-beta3",
   "icons": [
     {
       "src": "favicon-leav.svg",

@@ -28,7 +28,7 @@ describe('EditApplication', () => {
 
     describe('Create new app', () => {
         test('Display creation form', async () => {
-            render(<EditApplication appsBaseUrl="/app" />);
+            render(<EditApplication />);
 
             // Get all at once for performance reason
             const inputs = await screen.findAllByRole('textbox', {name: /label|description/});
@@ -52,7 +52,7 @@ describe('EditApplication', () => {
         });
 
         test('Do not generate id if user has modified it', async () => {
-            render(<EditApplication appsBaseUrl="/app" />);
+            render(<EditApplication />);
 
             await userEvent.type(screen.getByRole('textbox', {name: 'label_fr'}), 'Test app fr');
 
@@ -87,23 +87,21 @@ describe('EditApplication', () => {
         ];
 
         test('Display tabs', async () => {
-            render(<EditApplication appsBaseUrl="/app" applicationId={mockApplication.id} />, {mocks});
+            render(<EditApplication applicationId={mockApplication.id} />, {mocks});
 
             await waitFor(() => expect(screen.getByRole('tablist')).toBeInTheDocument());
 
             expect(screen.getByRole('tab', {name: /info/})).toHaveAttribute('aria-selected', 'true');
-            expect(screen.getByRole('tab', {name: /install/})).toBeInTheDocument();
         });
 
         test('Can select default active tab', async () => {
-            render(<EditApplication appsBaseUrl="/app" applicationId={mockApplication.id} activeTab="install" />, {
+            render(<EditApplication applicationId={mockApplication.id} activeTab="info" />, {
                 mocks
             });
 
             await waitFor(() => expect(screen.getByRole('tablist')).toBeInTheDocument());
 
             expect(screen.getByRole('tab', {name: /info/})).toBeInTheDocument();
-            expect(screen.getByRole('tab', {name: /install/})).toHaveAttribute('aria-selected', 'true');
         });
 
         test('Can pass custom tabs', async () => {
@@ -116,12 +114,29 @@ describe('EditApplication', () => {
             ];
 
             render(
-                <EditApplication
-                    appsBaseUrl="/app"
-                    applicationId={mockApplication.id}
-                    activeTab="custom"
-                    additionalTabs={customTabs}
-                />,
+                <EditApplication applicationId={mockApplication.id} activeTab="custom" additionalTabs={customTabs} />,
+                {
+                    mocks
+                }
+            );
+
+            await waitFor(() => expect(screen.getByRole('tablist')).toBeInTheDocument());
+
+            expect(screen.getByRole('tab', {name: /custom/i})).toBeInTheDocument();
+            expect(screen.getByText('Custom tab')).toBeInTheDocument();
+        });
+
+        test('Can pass custom tabs', async () => {
+            const customTabs = [
+                {
+                    key: 'custom',
+                    label: 'Custom',
+                    children: <div>Custom tab</div>
+                }
+            ];
+
+            render(
+                <EditApplication applicationId={mockApplication.id} activeTab="custom" additionalTabs={customTabs} />,
                 {
                     mocks
                 }
@@ -167,7 +182,7 @@ describe('EditApplication', () => {
                     }
                 ];
 
-                render(<EditApplication appsBaseUrl="/app" applicationId={mockApplication.id} />, {
+                render(<EditApplication applicationId={mockApplication.id} />, {
                     mocks: [...mocks, ...mockSave]
                 });
 
@@ -217,7 +232,7 @@ describe('EditApplication', () => {
                     }
                 ];
 
-                render(<EditApplication appsBaseUrl="/app" applicationId={mockApplication.id} />, {
+                render(<EditApplication applicationId={mockApplication.id} />, {
                     mocks: mocksNotAllowed
                 });
 
@@ -230,19 +245,6 @@ describe('EditApplication', () => {
                 screen.getAllByRole('combobox').forEach(field => {
                     expect(field).toBeDisabled();
                 });
-            });
-        });
-
-        describe('Install tab', () => {
-            test('Display install status and details', async () => {
-                render(<EditApplication appsBaseUrl="/app" applicationId={mockApplication.id} activeTab="install" />, {
-                    mocks
-                });
-
-                await waitFor(() => expect(screen.getByRole('tablist')).toBeInTheDocument());
-
-                expect(screen.getByText(/install_success/)).toBeInTheDocument();
-                expect(screen.getByText(mockApplication.install.lastCallResult)).toBeInTheDocument();
             });
         });
     });

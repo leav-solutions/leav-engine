@@ -86,6 +86,8 @@
         "related_trees": "Related to active library",
         "favorites_trees": "Favorites",
         "settings": "Settings"
+        "favorites_trees": "Favorites",
+        "settings": "Settings"
     },
     "lib_list": {
         "header": "Libraries List"

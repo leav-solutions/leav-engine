@@ -3,14 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DatabaseOutlined, SettingOutlined, StarFilled, StarOutlined} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
-import {themeVars, useLang} from '@leav/ui';
+import {ErrorDisplay, themeVars, useLang} from '@leav/ui';
 import {Menu, Spin} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import {FAVORITE_LIBRARIES_KEY} from 'components/Home/LibrariesList/LibrariesList';
 import LibraryIcon from 'components/Home/LibrariesList/LibraryIcon';
 import {FAVORITE_TREES_KEY} from 'components/Home/TreeList/TreeList';
 import AppIcon from 'components/shared/AppIcon';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
 import TreeIcon from 'components/shared/TreeIcon';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';

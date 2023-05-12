@@ -30,7 +30,7 @@ interface IDeps {
     config: IConfig;
 }
 
-export default function({
+export default function ({
     'core.app.helpers.initQueryContext': initQueryContext = null,
     'core.domain.globalSettings': globalSettingsDomain = null,
     'core.domain.record': recordDomain = null,
@@ -142,6 +142,19 @@ export default function({
                         const settings = await globalSettingsDomain.getSettings(req.ctx);
 
                         return res.status(200).send(settings.name || APP_DEFAULT_NAME);
+                    } catch (err) {
+                        next(err);
+                    }
+                },
+                _handleError
+            );
+
+            app.get(
+                '/global-lang',
+                _initCtx,
+                async (req: IRequestWithContext, res: Response, next: NextFunction) => {
+                    try {
+                        return res.status(200).send(config.lang.default);
                     } catch (err) {
                         next(err);
                     }

@@ -6,7 +6,7 @@ import {recordIdentityFragment} from '../records/recordIdentityFragment';
 
 export const applicationDetailsFragment = gql`
     ${recordIdentityFragment}
-    fragment ApplicationDetails on Application {
+    fragment DetailsApplication on Application {
         id
         label
         type
@@ -21,10 +21,6 @@ export const applicationDetailsFragment = gql`
         permissions {
             access_application
             admin_application
-        }
-        install {
-            status
-            lastCallResult
         }
         settings
     }

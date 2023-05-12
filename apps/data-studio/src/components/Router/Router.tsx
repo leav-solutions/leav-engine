@@ -10,6 +10,7 @@ import {BrowserRouter} from 'react-router-dom';
 import NotifsPanel from '../NotifsPanel';
 import UserPanel from '../UserPanel';
 import Routes from './Routes';
+import {APPS_ENDPOINT, APP_ENDPOINT} from '../../constants';
 
 const {Header, Content, Sider} = Layout;
 
@@ -24,7 +25,7 @@ function Router(): JSX.Element {
     const _setNbNotifs = (count: number) => setNbNotifs(count);
 
     return (
-        <BrowserRouter basename={`${import.meta.env.VITE_ENDPOINT ?? '/'}`}>
+        <BrowserRouter basename={`${APPS_ENDPOINT}/${APP_ENDPOINT}`}>
             <Layout style={{height: '100vh'}}>
                 <Sider
                     theme="light"

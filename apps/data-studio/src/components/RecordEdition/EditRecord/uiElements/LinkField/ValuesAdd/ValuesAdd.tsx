@@ -10,13 +10,12 @@ import {
     SearchOutlined
 } from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
-import {RecordCard, themeVars, useLang} from '@leav/ui';
+import {RecordCard, themeVars, useLang, ErrorDisplay} from '@leav/ui';
 import {Button, Divider, Input, InputRef, Space, Spin} from 'antd';
 import {PaginationConfig} from 'antd/lib/pagination';
 import CreateDirectory from 'components/CreateDirectory';
 import EditRecordModal from 'components/RecordEdition/EditRecordModal';
 import SearchModal from 'components/SearchModal';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
 import List from 'components/shared/List';
 import {IListProps} from 'components/shared/List/List';
 import UploadFiles from 'components/UploadFiles';

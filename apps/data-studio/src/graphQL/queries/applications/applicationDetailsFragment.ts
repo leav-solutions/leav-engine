@@ -22,10 +22,6 @@ export const applicationDetailsFragment = gql`
             access_application
             admin_application
         }
-        install {
-            status
-            lastCallResult
-        }
         settings
     }
 `;

@@ -2,10 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery, useSubscription} from '@apollo/client';
-import {themeVars} from '@leav/ui';
+import {themeVars, ErrorDisplay, Loading} from '@leav/ui';
 import {Pagination} from 'antd';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
 import {treeNavigationPageSize} from 'constants/constants';
 import {treeNodeChildrenQuery} from 'graphQL/queries/trees/getTreeNodeChildren';
 import {getTreeEvents} from 'graphQL/subscribes/trees/getTreeEvents';

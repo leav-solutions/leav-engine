@@ -8,7 +8,6 @@ import {useGetApplicationByIdQuery} from '../../_gqlTypes';
 import {ErrorDisplay} from '../ErrorDisplay';
 import {Loading} from '../Loading';
 import {EditApplicationInfo} from './EditApplicationInfo';
-import EditApplicationInstall from './EditApplicationInstall';
 import {IEditApplicationProps} from './_types';
 
 const TabContentWrapper = styled.div<{$style?: CSSObject}>`
@@ -17,7 +16,6 @@ const TabContentWrapper = styled.div<{$style?: CSSObject}>`
 
 function EditApplication({
     applicationId,
-    appsBaseUrl,
     onSetSubmitFunction,
     tabContentStyle,
     additionalTabs = [],
@@ -43,13 +41,7 @@ function EditApplication({
 
     const application = data?.applications?.list[0] ?? null;
 
-    const appInfoComp = (
-        <EditApplicationInfo
-            application={application}
-            appsBaseUrl={appsBaseUrl}
-            onSetSubmitFunction={onSetSubmitFunction}
-        />
-    );
+    const appInfoComp = <EditApplicationInfo application={application} onSetSubmitFunction={onSetSubmitFunction} />;
 
     // If creating new application, return the form directly
     if (!isEditing) {
@@ -62,16 +54,7 @@ function EditApplication({
             label: t('applications.info'),
             children: <TabContentWrapper style={tabContentStyle}>{appInfoComp}</TabContentWrapper>
         },
-        ...additionalTabs,
-        {
-            key: 'install',
-            label: t('applications.install'),
-            children: (
-                <TabContentWrapper style={tabContentStyle}>
-                    <EditApplicationInstall application={application} />
-                </TabContentWrapper>
-            )
-        }
+        ...additionalTabs
     ];
 
     return <Tabs items={tabs} defaultActiveKey={activeTab} />;

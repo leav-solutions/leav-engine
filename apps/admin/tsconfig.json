@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "src",
+    "module": "esnext",
+    "noEmit": true,
+    "outDir": "dist"
+  },
+  "include": [
+    "src",
+    "src/_types/custom.d.ts"
+  ]
+}

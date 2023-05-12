@@ -1,12 +1,22 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache, ServerError, split} from '@apollo/client';
+import {
+    ApolloClient,
+    ApolloLink,
+    ApolloProvider,
+    HttpLink,
+    InMemoryCache,
+    PossibleTypesMap,
+    ServerError,
+    split
+} from '@apollo/client';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {onError} from '@apollo/link-error';
 import {message, Spin} from 'antd';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
+import {ErrorDisplay} from '@leav/ui';
+import {API_ENDPOINT, APPS_ENDPOINT, APP_ENDPOINT, LOGIN_ENDPOINT, ORIGIN_URL, WS_URL} from '../../constants';
 import fetch from 'cross-fetch';
 import {createClient} from 'graphql-ws';
 import useGraphqlPossibleTypes from 'hooks/useGraphqlPossibleTypes';
@@ -20,17 +30,16 @@ interface IApolloHandlerProps {
 export const UNAUTHENTICATED = 'UNAUTHENTICATED';
 
 const _redirectToLogin = () =>
-    window.location.replace(`${import.meta.env.VITE_LOGIN_ENDPOINT}?dest=${window.location.pathname}`);
+    window.location.replace(`${ORIGIN_URL}/${APPS_ENDPOINT}/${LOGIN_ENDPOINT}/?dest=${window.location.pathname}`);
 
 function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     const {t} = useTranslation();
-
-    const {loading, error, possibleTypes} = useGraphqlPossibleTypes(import.meta.env.VITE_API_URL);
+    const {loading, error, possibleTypes} = useGraphqlPossibleTypes(`${ORIGIN_URL}/${API_ENDPOINT}`);
 
     const wsLink = useMemo(() => {
         return new GraphQLWsLink(
             createClient({
-                url: import.meta.env.VITE_WS_URL,
+                url: `${WS_URL}/${API_ENDPOINT}`,
                 shouldRetry: () => true
             })
         );
@@ -67,7 +76,9 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
             (networkError as ServerError)?.statusCode === 401 ||
             (graphQLErrors ?? []).some(err => err.extensions.code === 'UNAUTHENTICATED')
         ) {
-            window.location.replace(`${import.meta.env.VITE_LOGIN_ENDPOINT}?dest=${window.location.pathname}`);
+            window.location.replace(
+                `${ORIGIN_URL}/${APPS_ENDPOINT}/${LOGIN_ENDPOINT}/?dest=${window.location.pathname}`
+            );
         }
 
         message.error(errorContent);
@@ -83,7 +94,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
             (_handleApolloError as unknown) as ApolloLink,
             splitLink,
             new HttpLink({
-                uri: import.meta.env.VITE_API_URL,
+                uri: `${ORIGIN_URL}/${API_ENDPOINT}`,
                 fetch
             })
         ]),

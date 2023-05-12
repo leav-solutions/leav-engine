@@ -16,7 +16,7 @@ export interface SAVE_USER_DATA_saveUserData {
 }
 
 export interface SAVE_USER_DATA {
-    saveUserData: SAVE_USER_DATA_saveUserData | null;
+    saveUserData: SAVE_USER_DATA_saveUserData;
 }
 
 export interface SAVE_USER_DATAVariables {

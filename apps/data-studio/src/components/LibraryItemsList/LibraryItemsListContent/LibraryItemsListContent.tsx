@@ -2,9 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation, useQuery} from '@apollo/client';
-import {useLang} from '@leav/ui';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
+import {useLang, ErrorDisplay, Loading} from '@leav/ui';
 import {getSelectedViewKey, panelSize, viewSettingsField} from 'constants/constants';
 import {SelectionModeContext} from 'context';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
