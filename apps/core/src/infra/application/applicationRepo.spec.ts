@@ -6,7 +6,6 @@ import fs from 'fs/promises';
 import {IDbUtils} from 'infra/db/dbUtils';
 import path from 'path';
 import {IConfig} from '_types/config';
-import {APPS_MODULES_FOLDER} from '../../_types/application';
 import {mockApplication} from '../../__tests__/mocks/application';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import applicationRepo from './applicationRepo';
@@ -154,7 +153,7 @@ describe('applicationRepo', () => {
             const fsSpy = jest.spyOn(fs, 'readdir').mockResolvedValueOnce(['data-studio', 'admin'] as any[]);
 
             jest.mock(
-                `/some/path/${APPS_MODULES_FOLDER}/data-studio/package.json`,
+                '/some/path/data-studio/manifest.json',
                 () => ({
                     name: 'data-studio',
                     description: 'data studio description',
@@ -164,7 +163,7 @@ describe('applicationRepo', () => {
             );
 
             jest.mock(
-                `/some/path/${APPS_MODULES_FOLDER}/admin/package.json`,
+                '/some/path/admin/manifest.json',
                 () => ({
                     name: 'admin',
                     description: 'admin description',

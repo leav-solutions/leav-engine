@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from '@apollo/client';
-import {recordIdentityFragment} from '../records/recordIdentityFragment';
+import {identityRecordFragment} from '../records/recordIdentityFragment';
 
 export const applicationDetailsFragment = gql`
-    ${recordIdentityFragment}
-    fragment ApplicationDetails on Application {
+    ${identityRecordFragment}
+    fragment DetailsApplication on Application {
         id
         label
         type
@@ -15,7 +15,7 @@ export const applicationDetailsFragment = gql`
         url
         color
         icon {
-            ...RecordIdentity
+            ...IdentityRecord
         }
         module
         libraries {
@@ -27,10 +27,6 @@ export const applicationDetailsFragment = gql`
         permissions {
             access_application
             admin_application
-        }
-        install {
-            status
-            lastCallResult
         }
         settings
     }

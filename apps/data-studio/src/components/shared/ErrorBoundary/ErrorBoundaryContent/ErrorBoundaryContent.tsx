@@ -4,6 +4,7 @@
 import {FrownOutlined, HomeOutlined, ReloadOutlined} from '@ant-design/icons';
 import {AntdThemeToken, themeVars} from '@leav/ui';
 import {Button, Result, Space, theme} from 'antd';
+import {APPS_ENDPOINT, APP_ENDPOINT} from '../../../../constants';
 import {ErrorInfo} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -41,7 +42,8 @@ function ErrorBoundaryContent({error, errorInfo, showRecoveryButtons = true}: IE
     const {t} = useTranslation();
     const {token} = theme.useToken();
 
-    const homeUrl = `/${import.meta.env.VITE_ENDPOINT ?? ''}`;
+    const homeUrl = `/${APPS_ENDPOINT}/${APP_ENDPOINT}`;
+
     const _handleRefresh = () => {
         window.location.reload();
     };

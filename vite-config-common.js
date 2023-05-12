@@ -37,7 +37,8 @@ export const commonConfig = rootPath => ({
             __mocks__: path.resolve(rootPath, './src/__mocks__'),
             _types: path.resolve(rootPath, './src/_types'),
             constants: path.resolve(rootPath, './src/constants'),
-            utils: path.resolve(rootPath, './src/utils')
+            utils: path.resolve(rootPath, './src/utils'),
+            'react-i18next': path.resolve(__dirname, 'node_modules/react-i18next')
         }
     },
     server: {

@@ -7,11 +7,10 @@ import {localizedTranslation} from '@leav/utils';
 import {Card, Typography} from 'antd';
 import {EditApplicationModal} from 'components/Applications/EditApplicationModal';
 import {IEditApplicationModalProps} from 'components/Applications/EditApplicationModal/EditApplicationModal';
+import {ORIGIN_URL, APPS_ENDPOINT} from '../../../../constants';
 import {SyntheticEvent, useState} from 'react';
 import styled from 'styled-components';
 import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
-import {ApplicationInstallStatus, ApplicationType} from '_gqlTypes/globalTypes';
-import {APPS_BASE_URL} from '../../../../constants';
 import ApplicationCover from './ApplicationCover';
 
 interface IApplicationCardProps {
@@ -20,13 +19,12 @@ interface IApplicationCardProps {
     onChangeFavorite: (application: GET_APPLICATIONS_applications_list, isFavorite: boolean) => void;
 }
 
-const AppCard = styled(Card)<{$ready: boolean}>`
+const AppCard = styled(Card)`
     width: 200px;
     height: 200px;
     margin: 0.5rem;
     padding: 0;
-
-    cursor: ${props => (props.$ready ? 'pointer' : 'not-allowed')};
+    cursor: 'pointer';
 `;
 
 const EditIconWrapper = styled.div`
@@ -59,14 +57,9 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
 
     const label = localizedTranslation(application.label, lang);
     const description = localizedTranslation(application.description, lang);
-    const isAppReady =
-        application.type === ApplicationType.external ||
-        application.install.status === ApplicationInstallStatus.SUCCESS;
 
     const _handleClick = () => {
-        if (isAppReady) {
-            window.location.assign(application.url);
-        }
+        window.location.assign(application.url);
     };
 
     const _handleOpenEditAppModal = (e: SyntheticEvent) => {
@@ -87,23 +80,14 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
         onChangeFavorite(application, !isFavorite);
     };
 
-    const _handleInstallTagClick = (e: SyntheticEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        setEditAppActiveTab('install');
-        setIsEditAppModalOpen(true);
-    };
-
     return (
         <>
             <AppCard
                 hoverable
-                cover={<ApplicationCover application={application} onInstallTagClick={_handleInstallTagClick} />}
+                cover={<ApplicationCover application={application} />}
                 onClick={_handleClick}
                 bodyStyle={{padding: '.5em'}}
                 data-testid={`app-card-${application.id}`}
-                $ready={isAppReady}
             >
                 <Card.Meta
                     title={
@@ -126,7 +110,7 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
             </AppCard>
             {isEditAppModalOpen && (
                 <EditApplicationModal
-                    appsBaseUrl={APPS_BASE_URL}
+                    appsBaseUrl={`${ORIGIN_URL}/${APPS_ENDPOINT}/`}
                     applicationId={application.id}
                     open={isEditAppModalOpen}
                     onClose={_handleCloseEditAppModal}

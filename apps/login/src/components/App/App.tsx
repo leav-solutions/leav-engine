@@ -4,10 +4,12 @@
 import ForgotPassword from 'components/ForgotPassword';
 import Login from 'components/Login';
 import ChangePassword from 'components/ResetPassword';
+import {ErrorDisplay, Loading} from '@leav/ui';
 import {useEffect} from 'react';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import styled from 'styled-components';
-import useAppName from '../../useAppName';
+import useAppName from '../../hooks/useAppName';
+import {APPS_ENDPOINT, APP_ENDPOINT} from '../../constants';
 
 const Background = styled.div`
     position: absolute;
@@ -19,17 +21,25 @@ const Background = styled.div`
 `;
 
 function App() {
-    const appName = useAppName();
+    const {name, loading, error} = useAppName();
 
     useEffect(() => {
-        document.title = `${appName}`;
-    }, [appName]);
+        document.title = `${name}`;
+    }, [name]);
+
+    if (error) {
+        return <ErrorDisplay message={error} />;
+    }
+
+    if (loading) {
+        return <Loading />;
+    }
 
     return (
         <Background>
-            <BrowserRouter basename={`${import.meta.env.VITE_ENDPOINT ?? '/'}`}>
+            <BrowserRouter basename={`${APPS_ENDPOINT}/${APP_ENDPOINT}`}>
                 <Switch>
-                    <Route path="/">
+                    <Route exact path="/">
                         <Login />
                     </Route>
                     <Route path="/reset-password/:token">

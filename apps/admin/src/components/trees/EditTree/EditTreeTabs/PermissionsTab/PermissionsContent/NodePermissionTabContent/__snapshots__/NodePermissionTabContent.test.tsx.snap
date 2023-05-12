@@ -1,0 +1,1354 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NodePermissionTabContent Snapshot test 1`] = `
+LoadedCheerio {
+  "0": Node {
+    "attribs": {
+      "class": "sc-hKMtZM ktggiM sc-jSMfEi dqGXdv",
+    },
+    "children": [
+      Node {
+        "attribs": {
+          "aria-hidden": "true",
+          "class": "cog icon",
+        },
+        "children": [],
+        "name": "i",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": Node {
+          "data": "permissions_settings.title",
+          "next": null,
+          "parent": [Circular],
+          "prev": [Circular],
+          "type": "text",
+        },
+        "parent": [Circular],
+        "prev": null,
+        "type": "tag",
+        "x-attribsNamespace": {
+          "aria-hidden": undefined,
+          "class": undefined,
+        },
+        "x-attribsPrefix": {
+          "aria-hidden": undefined,
+          "class": undefined,
+        },
+      },
+      Node {
+        "data": "permissions_settings.title",
+        "next": null,
+        "parent": [Circular],
+        "prev": Node {
+          "attribs": {
+            "aria-hidden": "true",
+            "class": "cog icon",
+          },
+          "children": [],
+          "name": "i",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": [Circular],
+          "parent": [Circular],
+          "prev": null,
+          "type": "tag",
+          "x-attribsNamespace": {
+            "aria-hidden": undefined,
+            "class": undefined,
+          },
+          "x-attribsPrefix": {
+            "aria-hidden": undefined,
+            "class": undefined,
+          },
+        },
+        "type": "text",
+      },
+    ],
+    "name": "div",
+    "namespace": "http://www.w3.org/1999/xhtml",
+    "next": Node {
+      "attribs": {
+        "class": "grow flex-col height100",
+      },
+      "children": [
+        Node {
+          "attribs": {
+            "class": "ui attached tabular menu",
+          },
+          "children": [
+            Node {
+              "attribs": {
+                "class": "active item",
+              },
+              "children": [
+                Node {
+                  "data": "permissions.library_tab_name",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": Node {
+                "attribs": {
+                  "class": "item",
+                },
+                "children": [
+                  Node {
+                    "data": "Mon Attribut",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "text",
+                  },
+                ],
+                "name": "a",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": [Circular],
+                "type": "tag",
+                "x-attribsNamespace": {
+                  "class": undefined,
+                },
+                "x-attribsPrefix": {
+                  "class": undefined,
+                },
+              },
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+            Node {
+              "attribs": {
+                "class": "item",
+              },
+              "children": [
+                Node {
+                  "data": "Mon Attribut",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": Node {
+                "attribs": {
+                  "class": "active item",
+                },
+                "children": [
+                  Node {
+                    "data": "permissions.library_tab_name",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "text",
+                  },
+                ],
+                "name": "a",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": [Circular],
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": {
+                  "class": undefined,
+                },
+                "x-attribsPrefix": {
+                  "class": undefined,
+                },
+              },
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+          ],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": Node {
+            "attribs": {
+              "class": "ui bottom attached segment active tab grow flex-col height100",
+            },
+            "children": [
+              Node {
+                "attribs": {},
+                "children": [
+                  Node {
+                    "data": "DefinePermByUserGroupView",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "text",
+                  },
+                ],
+                "name": "div",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": {},
+                "x-attribsPrefix": {},
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": [Circular],
+            "prev": [Circular],
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          "parent": [Circular],
+          "prev": null,
+          "type": "tag",
+          "x-attribsNamespace": {
+            "class": undefined,
+          },
+          "x-attribsPrefix": {
+            "class": undefined,
+          },
+        },
+        Node {
+          "attribs": {
+            "class": "ui bottom attached segment active tab grow flex-col height100",
+          },
+          "children": [
+            Node {
+              "attribs": {},
+              "children": [
+                Node {
+                  "data": "DefinePermByUserGroupView",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": {},
+              "x-attribsPrefix": {},
+            },
+          ],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": null,
+          "parent": [Circular],
+          "prev": Node {
+            "attribs": {
+              "class": "ui attached tabular menu",
+            },
+            "children": [
+              Node {
+                "attribs": {
+                  "class": "active item",
+                },
+                "children": [
+                  Node {
+                    "data": "permissions.library_tab_name",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "text",
+                  },
+                ],
+                "name": "a",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": Node {
+                  "attribs": {
+                    "class": "item",
+                  },
+                  "children": [
+                    Node {
+                      "data": "Mon Attribut",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "text",
+                    },
+                  ],
+                  "name": "a",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": [Circular],
+                  "type": "tag",
+                  "x-attribsNamespace": {
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": {
+                    "class": undefined,
+                  },
+                },
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": {
+                  "class": undefined,
+                },
+                "x-attribsPrefix": {
+                  "class": undefined,
+                },
+              },
+              Node {
+                "attribs": {
+                  "class": "item",
+                },
+                "children": [
+                  Node {
+                    "data": "Mon Attribut",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "text",
+                  },
+                ],
+                "name": "a",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": Node {
+                  "attribs": {
+                    "class": "active item",
+                  },
+                  "children": [
+                    Node {
+                      "data": "permissions.library_tab_name",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "text",
+                    },
+                  ],
+                  "name": "a",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": [Circular],
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": {
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": {
+                    "class": undefined,
+                  },
+                },
+                "type": "tag",
+                "x-attribsNamespace": {
+                  "class": undefined,
+                },
+                "x-attribsPrefix": {
+                  "class": undefined,
+                },
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": [Circular],
+            "prev": null,
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          "type": "tag",
+          "x-attribsNamespace": {
+            "class": undefined,
+          },
+          "x-attribsPrefix": {
+            "class": undefined,
+          },
+        },
+      ],
+      "name": "div",
+      "namespace": "http://www.w3.org/1999/xhtml",
+      "next": null,
+      "parent": Node {
+        "children": [
+          [Circular],
+          [Circular],
+        ],
+        "name": "root",
+        "next": null,
+        "parent": null,
+        "prev": null,
+        "type": "root",
+      },
+      "prev": [Circular],
+      "type": "tag",
+      "x-attribsNamespace": {
+        "class": undefined,
+      },
+      "x-attribsPrefix": {
+        "class": undefined,
+      },
+    },
+    "parent": Node {
+      "children": [
+        [Circular],
+        Node {
+          "attribs": {
+            "class": "grow flex-col height100",
+          },
+          "children": [
+            Node {
+              "attribs": {
+                "class": "ui attached tabular menu",
+              },
+              "children": [
+                Node {
+                  "attribs": {
+                    "class": "active item",
+                  },
+                  "children": [
+                    Node {
+                      "data": "permissions.library_tab_name",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "text",
+                    },
+                  ],
+                  "name": "a",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": Node {
+                    "attribs": {
+                      "class": "item",
+                    },
+                    "children": [
+                      Node {
+                        "data": "Mon Attribut",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "text",
+                      },
+                    ],
+                    "name": "a",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": [Circular],
+                    "type": "tag",
+                    "x-attribsNamespace": {
+                      "class": undefined,
+                    },
+                    "x-attribsPrefix": {
+                      "class": undefined,
+                    },
+                  },
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": {
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": {
+                    "class": undefined,
+                  },
+                },
+                Node {
+                  "attribs": {
+                    "class": "item",
+                  },
+                  "children": [
+                    Node {
+                      "data": "Mon Attribut",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "text",
+                    },
+                  ],
+                  "name": "a",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": Node {
+                    "attribs": {
+                      "class": "active item",
+                    },
+                    "children": [
+                      Node {
+                        "data": "permissions.library_tab_name",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "text",
+                      },
+                    ],
+                    "name": "a",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": [Circular],
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "tag",
+                    "x-attribsNamespace": {
+                      "class": undefined,
+                    },
+                    "x-attribsPrefix": {
+                      "class": undefined,
+                    },
+                  },
+                  "type": "tag",
+                  "x-attribsNamespace": {
+                    "class": undefined,
+                  },
+                  "x-attribsPrefix": {
+                    "class": undefined,
+                  },
+                },
+              ],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": Node {
+                "attribs": {
+                  "class": "ui bottom attached segment active tab grow flex-col height100",
+                },
+                "children": [
+                  Node {
+                    "attribs": {},
+                    "children": [
+                      Node {
+                        "data": "DefinePermByUserGroupView",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "text",
+                      },
+                    ],
+                    "name": "div",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "tag",
+                    "x-attribsNamespace": {},
+                    "x-attribsPrefix": {},
+                  },
+                ],
+                "name": "div",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": [Circular],
+                "type": "tag",
+                "x-attribsNamespace": {
+                  "class": undefined,
+                },
+                "x-attribsPrefix": {
+                  "class": undefined,
+                },
+              },
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+            Node {
+              "attribs": {
+                "class": "ui bottom attached segment active tab grow flex-col height100",
+              },
+              "children": [
+                Node {
+                  "attribs": {},
+                  "children": [
+                    Node {
+                      "data": "DefinePermByUserGroupView",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "text",
+                    },
+                  ],
+                  "name": "div",
+                  "namespace": "http://www.w3.org/1999/xhtml",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "tag",
+                  "x-attribsNamespace": {},
+                  "x-attribsPrefix": {},
+                },
+              ],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": Node {
+                "attribs": {
+                  "class": "ui attached tabular menu",
+                },
+                "children": [
+                  Node {
+                    "attribs": {
+                      "class": "active item",
+                    },
+                    "children": [
+                      Node {
+                        "data": "permissions.library_tab_name",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "text",
+                      },
+                    ],
+                    "name": "a",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": Node {
+                      "attribs": {
+                        "class": "item",
+                      },
+                      "children": [
+                        Node {
+                          "data": "Mon Attribut",
+                          "next": null,
+                          "parent": [Circular],
+                          "prev": null,
+                          "type": "text",
+                        },
+                      ],
+                      "name": "a",
+                      "namespace": "http://www.w3.org/1999/xhtml",
+                      "next": null,
+                      "parent": [Circular],
+                      "prev": [Circular],
+                      "type": "tag",
+                      "x-attribsNamespace": {
+                        "class": undefined,
+                      },
+                      "x-attribsPrefix": {
+                        "class": undefined,
+                      },
+                    },
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "tag",
+                    "x-attribsNamespace": {
+                      "class": undefined,
+                    },
+                    "x-attribsPrefix": {
+                      "class": undefined,
+                    },
+                  },
+                  Node {
+                    "attribs": {
+                      "class": "item",
+                    },
+                    "children": [
+                      Node {
+                        "data": "Mon Attribut",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "text",
+                      },
+                    ],
+                    "name": "a",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": Node {
+                      "attribs": {
+                        "class": "active item",
+                      },
+                      "children": [
+                        Node {
+                          "data": "permissions.library_tab_name",
+                          "next": null,
+                          "parent": [Circular],
+                          "prev": null,
+                          "type": "text",
+                        },
+                      ],
+                      "name": "a",
+                      "namespace": "http://www.w3.org/1999/xhtml",
+                      "next": [Circular],
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "tag",
+                      "x-attribsNamespace": {
+                        "class": undefined,
+                      },
+                      "x-attribsPrefix": {
+                        "class": undefined,
+                      },
+                    },
+                    "type": "tag",
+                    "x-attribsNamespace": {
+                      "class": undefined,
+                    },
+                    "x-attribsPrefix": {
+                      "class": undefined,
+                    },
+                  },
+                ],
+                "name": "div",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": [Circular],
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": {
+                  "class": undefined,
+                },
+                "x-attribsPrefix": {
+                  "class": undefined,
+                },
+              },
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+          ],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": null,
+          "parent": [Circular],
+          "prev": [Circular],
+          "type": "tag",
+          "x-attribsNamespace": {
+            "class": undefined,
+          },
+          "x-attribsPrefix": {
+            "class": undefined,
+          },
+        },
+      ],
+      "name": "root",
+      "next": null,
+      "parent": null,
+      "prev": null,
+      "type": "root",
+    },
+    "prev": null,
+    "type": "tag",
+    "x-attribsNamespace": {
+      "class": undefined,
+    },
+    "x-attribsPrefix": {
+      "class": undefined,
+    },
+  },
+  "1": Node {
+    "attribs": {
+      "class": "grow flex-col height100",
+    },
+    "children": [
+      Node {
+        "attribs": {
+          "class": "ui attached tabular menu",
+        },
+        "children": [
+          Node {
+            "attribs": {
+              "class": "active item",
+            },
+            "children": [
+              Node {
+                "data": "permissions.library_tab_name",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": Node {
+              "attribs": {
+                "class": "item",
+              },
+              "children": [
+                Node {
+                  "data": "Mon Attribut",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": [Circular],
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+            "parent": [Circular],
+            "prev": null,
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+          Node {
+            "attribs": {
+              "class": "item",
+            },
+            "children": [
+              Node {
+                "data": "Mon Attribut",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "a",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": [Circular],
+            "prev": Node {
+              "attribs": {
+                "class": "active item",
+              },
+              "children": [
+                Node {
+                  "data": "permissions.library_tab_name",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": [Circular],
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+            "type": "tag",
+            "x-attribsNamespace": {
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "class": undefined,
+            },
+          },
+        ],
+        "name": "div",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": Node {
+          "attribs": {
+            "class": "ui bottom attached segment active tab grow flex-col height100",
+          },
+          "children": [
+            Node {
+              "attribs": {},
+              "children": [
+                Node {
+                  "data": "DefinePermByUserGroupView",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "div",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": {},
+              "x-attribsPrefix": {},
+            },
+          ],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": null,
+          "parent": [Circular],
+          "prev": [Circular],
+          "type": "tag",
+          "x-attribsNamespace": {
+            "class": undefined,
+          },
+          "x-attribsPrefix": {
+            "class": undefined,
+          },
+        },
+        "parent": [Circular],
+        "prev": null,
+        "type": "tag",
+        "x-attribsNamespace": {
+          "class": undefined,
+        },
+        "x-attribsPrefix": {
+          "class": undefined,
+        },
+      },
+      Node {
+        "attribs": {
+          "class": "ui bottom attached segment active tab grow flex-col height100",
+        },
+        "children": [
+          Node {
+            "attribs": {},
+            "children": [
+              Node {
+                "data": "DefinePermByUserGroupView",
+                "next": null,
+                "parent": [Circular],
+                "prev": null,
+                "type": "text",
+              },
+            ],
+            "name": "div",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": null,
+            "parent": [Circular],
+            "prev": null,
+            "type": "tag",
+            "x-attribsNamespace": {},
+            "x-attribsPrefix": {},
+          },
+        ],
+        "name": "div",
+        "namespace": "http://www.w3.org/1999/xhtml",
+        "next": null,
+        "parent": [Circular],
+        "prev": Node {
+          "attribs": {
+            "class": "ui attached tabular menu",
+          },
+          "children": [
+            Node {
+              "attribs": {
+                "class": "active item",
+              },
+              "children": [
+                Node {
+                  "data": "permissions.library_tab_name",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": Node {
+                "attribs": {
+                  "class": "item",
+                },
+                "children": [
+                  Node {
+                    "data": "Mon Attribut",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "text",
+                  },
+                ],
+                "name": "a",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": [Circular],
+                "type": "tag",
+                "x-attribsNamespace": {
+                  "class": undefined,
+                },
+                "x-attribsPrefix": {
+                  "class": undefined,
+                },
+              },
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+            Node {
+              "attribs": {
+                "class": "item",
+              },
+              "children": [
+                Node {
+                  "data": "Mon Attribut",
+                  "next": null,
+                  "parent": [Circular],
+                  "prev": null,
+                  "type": "text",
+                },
+              ],
+              "name": "a",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": Node {
+                "attribs": {
+                  "class": "active item",
+                },
+                "children": [
+                  Node {
+                    "data": "permissions.library_tab_name",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": null,
+                    "type": "text",
+                  },
+                ],
+                "name": "a",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": [Circular],
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": {
+                  "class": undefined,
+                },
+                "x-attribsPrefix": {
+                  "class": undefined,
+                },
+              },
+              "type": "tag",
+              "x-attribsNamespace": {
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "class": undefined,
+              },
+            },
+          ],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": [Circular],
+          "parent": [Circular],
+          "prev": null,
+          "type": "tag",
+          "x-attribsNamespace": {
+            "class": undefined,
+          },
+          "x-attribsPrefix": {
+            "class": undefined,
+          },
+        },
+        "type": "tag",
+        "x-attribsNamespace": {
+          "class": undefined,
+        },
+        "x-attribsPrefix": {
+          "class": undefined,
+        },
+      },
+    ],
+    "name": "div",
+    "namespace": "http://www.w3.org/1999/xhtml",
+    "next": null,
+    "parent": Node {
+      "children": [
+        Node {
+          "attribs": {
+            "class": "sc-hKMtZM ktggiM sc-jSMfEi dqGXdv",
+          },
+          "children": [
+            Node {
+              "attribs": {
+                "aria-hidden": "true",
+                "class": "cog icon",
+              },
+              "children": [],
+              "name": "i",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": Node {
+                "data": "permissions_settings.title",
+                "next": null,
+                "parent": [Circular],
+                "prev": [Circular],
+                "type": "text",
+              },
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+              "x-attribsPrefix": {
+                "aria-hidden": undefined,
+                "class": undefined,
+              },
+            },
+            Node {
+              "data": "permissions_settings.title",
+              "next": null,
+              "parent": [Circular],
+              "prev": Node {
+                "attribs": {
+                  "aria-hidden": "true",
+                  "class": "cog icon",
+                },
+                "children": [],
+                "name": "i",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": [Circular],
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+                "x-attribsPrefix": {
+                  "aria-hidden": undefined,
+                  "class": undefined,
+                },
+              },
+              "type": "text",
+            },
+          ],
+          "name": "div",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": [Circular],
+          "parent": [Circular],
+          "prev": null,
+          "type": "tag",
+          "x-attribsNamespace": {
+            "class": undefined,
+          },
+          "x-attribsPrefix": {
+            "class": undefined,
+          },
+        },
+        [Circular],
+      ],
+      "name": "root",
+      "next": null,
+      "parent": null,
+      "prev": null,
+      "type": "root",
+    },
+    "prev": Node {
+      "attribs": {
+        "class": "sc-hKMtZM ktggiM sc-jSMfEi dqGXdv",
+      },
+      "children": [
+        Node {
+          "attribs": {
+            "aria-hidden": "true",
+            "class": "cog icon",
+          },
+          "children": [],
+          "name": "i",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": Node {
+            "data": "permissions_settings.title",
+            "next": null,
+            "parent": [Circular],
+            "prev": [Circular],
+            "type": "text",
+          },
+          "parent": [Circular],
+          "prev": null,
+          "type": "tag",
+          "x-attribsNamespace": {
+            "aria-hidden": undefined,
+            "class": undefined,
+          },
+          "x-attribsPrefix": {
+            "aria-hidden": undefined,
+            "class": undefined,
+          },
+        },
+        Node {
+          "data": "permissions_settings.title",
+          "next": null,
+          "parent": [Circular],
+          "prev": Node {
+            "attribs": {
+              "aria-hidden": "true",
+              "class": "cog icon",
+            },
+            "children": [],
+            "name": "i",
+            "namespace": "http://www.w3.org/1999/xhtml",
+            "next": [Circular],
+            "parent": [Circular],
+            "prev": null,
+            "type": "tag",
+            "x-attribsNamespace": {
+              "aria-hidden": undefined,
+              "class": undefined,
+            },
+            "x-attribsPrefix": {
+              "aria-hidden": undefined,
+              "class": undefined,
+            },
+          },
+          "type": "text",
+        },
+      ],
+      "name": "div",
+      "namespace": "http://www.w3.org/1999/xhtml",
+      "next": [Circular],
+      "parent": Node {
+        "children": [
+          [Circular],
+          [Circular],
+        ],
+        "name": "root",
+        "next": null,
+        "parent": null,
+        "prev": null,
+        "type": "root",
+      },
+      "prev": null,
+      "type": "tag",
+      "x-attribsNamespace": {
+        "class": undefined,
+      },
+      "x-attribsPrefix": {
+        "class": undefined,
+      },
+    },
+    "type": "tag",
+    "x-attribsNamespace": {
+      "class": undefined,
+    },
+    "x-attribsPrefix": {
+      "class": undefined,
+    },
+  },
+  "_root": LoadedCheerio {
+    "0": Node {
+      "children": [
+        Node {
+          "attribs": {},
+          "children": [
+            Node {
+              "attribs": {},
+              "children": [],
+              "name": "head",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": Node {
+                "attribs": {},
+                "children": [],
+                "name": "body",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": null,
+                "parent": [Circular],
+                "prev": [Circular],
+                "type": "tag",
+                "x-attribsNamespace": {},
+                "x-attribsPrefix": {},
+              },
+              "parent": [Circular],
+              "prev": null,
+              "type": "tag",
+              "x-attribsNamespace": {},
+              "x-attribsPrefix": {},
+            },
+            Node {
+              "attribs": {},
+              "children": [],
+              "name": "body",
+              "namespace": "http://www.w3.org/1999/xhtml",
+              "next": null,
+              "parent": [Circular],
+              "prev": Node {
+                "attribs": {},
+                "children": [],
+                "name": "head",
+                "namespace": "http://www.w3.org/1999/xhtml",
+                "next": [Circular],
+                "parent": [Circular],
+                "prev": null,
+                "type": "tag",
+                "x-attribsNamespace": {},
+                "x-attribsPrefix": {},
+              },
+              "type": "tag",
+              "x-attribsNamespace": {},
+              "x-attribsPrefix": {},
+            },
+          ],
+          "name": "html",
+          "namespace": "http://www.w3.org/1999/xhtml",
+          "next": null,
+          "parent": [Circular],
+          "prev": null,
+          "type": "tag",
+          "x-attribsNamespace": {},
+          "x-attribsPrefix": {},
+        },
+      ],
+      "name": "root",
+      "next": null,
+      "parent": null,
+      "prev": null,
+      "type": "root",
+      "x-mode": "quirks",
+    },
+    "_root": [Circular],
+    "length": 1,
+    "options": {
+      "decodeEntities": true,
+      "xml": false,
+    },
+  },
+  "length": 2,
+  "options": {
+    "decodeEntities": true,
+    "xml": false,
+  },
+}
+`;

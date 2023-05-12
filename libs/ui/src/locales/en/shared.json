@@ -30,14 +30,6 @@
         "trees": "Accessible trees",
         "all_trees": "All trees",
         "no_trees": "No trees",
-        "info": "Information",
-        "install": "Install",
-        "install_waiting": "Install pending...",
-        "install_processing": "Install running...",
-        "install_error": "Install failed",
-        "install_success": "Install successful",
-        "install_details": "Last install details",
-        "re_install": "Re-install app",
-        "re_install_success": "Request successful, install will start soon"
+        "info": "Information"
     }
 }

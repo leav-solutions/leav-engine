@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {amqpService} from '@leav/message-broker';
 import fs from 'fs';
-import {IApplicationService} from 'infra/application/applicationService';
+// import {IApplicationService} from 'infra/application/applicationService';
 import {IFilesManagerInterface} from 'interface/filesManager';
 import {IIndexationManagerInterface} from 'interface/indexationManager';
 import {ITasksManagerInterface} from 'interface/tasksManager';
@@ -17,7 +17,7 @@ import {initMailer} from './infra/mailer';
 import {initPlugins} from './pluginsLoader';
 import minimist from 'minimist';
 
-(async function() {
+(async function () {
     const opt = minimist(process.argv.slice(2));
 
     let conf: Config.IConfig;
@@ -89,12 +89,6 @@ import minimist from 'minimist';
             await dbUtils.migrate(coreContainer);
             // Make sure we always exit process. Sometimes we don't and we're stuck here forever
             process.exit(0);
-        } else if (opt['build-apps']) {
-            // Run apps builds
-            const applicationService: IApplicationService = coreContainer.cradle['core.infra.application.service'];
-            await applicationService.runInstallAll();
-            // Make sure we always exit process. Sometimes we don't and we're stuck here forever
-            process.exit(0);
         } else if (opt.filesManager) {
             await filesManager.init();
         } else if (opt.indexationManager) {
@@ -110,7 +104,7 @@ import minimist from 'minimist';
         console.error(e);
         process.exit(1);
     }
-})().catch(e => console.error(e));
+})().catch(console.error);
 
 process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) => {
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);

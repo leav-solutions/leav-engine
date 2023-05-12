@@ -3,11 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AppstoreOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
-import {RecordPreview, themeVars, useLang} from '@leav/ui';
+import {RecordPreview, themeVars, useLang, ErrorDisplay} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Drawer, Menu, Skeleton, Tooltip, Typography} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {getApplicationsQuery} from 'graphQL/queries/applications/getApplicationsQuery';
 import {useState} from 'react';

@@ -4,10 +4,8 @@
 import {CONSULTED_APPS_KEY} from '@leav/utils';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
-import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {IUserDomain} from 'domain/user/userDomain';
 import {IApplicationRepo} from 'infra/application/applicationRepo';
-import {IApplicationService} from 'infra/application/applicationService';
 import {IUtils} from 'utils/utils';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
@@ -30,10 +28,6 @@ describe('applicationDomain', () => {
 
     const mockEventsManager: Mockify<IEventsManagerDomain> = {
         sendPubSubEvent: global.__mockPromise()
-    };
-
-    const mockTasksManager: Mockify<ITasksManagerDomain> = {
-        createTask: global.__mockPromise()
     };
 
     describe('getApplicationProperties', () => {
@@ -106,16 +100,13 @@ describe('applicationDomain', () => {
                     'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.application': mockAppRepo as IApplicationRepo,
-                    'core.domain.tasksManager': mockTasksManager as ITasksManagerDomain,
                     'core.utils': mockUtils as IUtils
                 });
-                appDomain.runInstall = jest.fn();
 
                 const createdApp = await appDomain.saveApplication({applicationData: mockApplication, ctx: mockCtx});
 
                 expect(mockAppRepo.createApplication).toBeCalled();
                 expect(mockAppRepo.updateApplication).not.toBeCalled();
-                expect(appDomain.runInstall).toBeCalled();
                 expect(createdApp).toEqual(mockApplication);
             });
 
@@ -248,20 +239,14 @@ describe('applicationDomain', () => {
                 deleteApplication: global.__mockPromise(mockApplication)
             };
 
-            const mockApplicationService: Mockify<IApplicationService> = {
-                runUninstall: jest.fn()
-            };
-
             const appDomain = applicationDomain({
                 'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
-                'core.infra.application': mockAppRepo as IApplicationRepo,
-                'core.infra.application.service': mockApplicationService as IApplicationService
+                'core.infra.application': mockAppRepo as IApplicationRepo
             });
             const deletedApp = await appDomain.deleteApplication({id: mockApplication.id, ctx: mockCtx});
 
             expect(mockAppRepo.deleteApplication).toBeCalled();
-            expect(mockApplicationService.runUninstall).toBeCalled();
             expect(deletedApp).toEqual(mockApplication);
         });
 
@@ -271,20 +256,14 @@ describe('applicationDomain', () => {
                 deleteApplication: global.__mockPromise(mockApplicationExternal)
             };
 
-            const mockApplicationService: Mockify<IApplicationService> = {
-                runUninstall: jest.fn()
-            };
-
             const appDomain = applicationDomain({
                 'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
-                'core.infra.application': mockAppRepo as IApplicationRepo,
-                'core.infra.application.service': mockApplicationService as IApplicationService
+                'core.infra.application': mockAppRepo as IApplicationRepo
             });
             await appDomain.deleteApplication({id: mockApplication.id, ctx: mockCtx});
 
             expect(mockAppRepo.deleteApplication).toBeCalled();
-            expect(mockApplicationService.runUninstall).not.toBeCalled();
         });
 
         test("Throws if application doesn't exist", async () => {

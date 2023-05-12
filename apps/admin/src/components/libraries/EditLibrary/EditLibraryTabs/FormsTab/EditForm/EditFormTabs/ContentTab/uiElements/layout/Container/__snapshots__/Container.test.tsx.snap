@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Container Snapshot test 1`] = `
+LoadedCheerio {
+  "length": 0,
+  "options": {
+    "decodeEntities": true,
+    "xml": false,
+  },
+}
+`;

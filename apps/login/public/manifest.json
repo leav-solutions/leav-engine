@@ -1,6 +1,6 @@
 {
-  "short_name": "leav_engine_login",
-  "name": "LEAV Engine Login",
+  "name": "login",
+  "version": "1.0.0-beta3",
   "icons": [
     {
       "src": "favicon-leav.svg",

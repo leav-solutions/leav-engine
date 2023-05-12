@@ -12,7 +12,7 @@ export const systemApplications: MigrationApplicationToCreate[] = [
         _key: 'admin',
         system: true,
         type: ApplicationTypes.INTERNAL,
-        module: 'admin-app',
+        module: 'admin',
         label: {fr: 'Administration', en: 'Administration'},
         description: {fr: "Application d'administration", en: 'Administration app'},
         endpoint: 'admin',

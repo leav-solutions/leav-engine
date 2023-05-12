@@ -188,8 +188,7 @@
         "export_description": {
             "elements_retrieval": "Récupération des fichiers",
             "excel_writing": "Ecriture du fichier excel"
-        },
-        "app_install": "Installation de l'application {{appId}}"
+        }
     },
     "import": {
         "add_value_error": "Impossible d'ajouter la valeur '{{value}}' à l'attribut '{{attributeId}}'",

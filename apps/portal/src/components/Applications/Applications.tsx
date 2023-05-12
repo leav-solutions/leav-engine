@@ -3,17 +3,15 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
-import {useLang} from '@leav/ui';
+import {useLang, Loading, ErrorDisplay} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {FloatButton} from 'antd';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
 import {useApplicationsPermissions} from 'hooks/useApplicationsPermissions';
 import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {GET_APPLICATIONS, GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
-import {APPS_BASE_URL} from '../../constants';
+import {ORIGIN_URL, APPS_ENDPOINT} from '../../constants';
 import ApplicationsList from './ApplicationsList';
 import ApplicationsSearch from './ApplicationsSearch';
 import {EditApplicationModal} from './EditApplicationModal';
@@ -85,7 +83,7 @@ function Applications(): JSX.Element {
                 <EditApplicationModal
                     open={showEditApplicationModal}
                     onClose={_handleCloseCreateApplication}
-                    appsBaseUrl={APPS_BASE_URL}
+                    appsBaseUrl={`${ORIGIN_URL}/${APPS_ENDPOINT}/`}
                 />
             )}
         </>

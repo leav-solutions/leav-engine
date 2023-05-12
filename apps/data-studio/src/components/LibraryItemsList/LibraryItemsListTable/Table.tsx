@@ -1,9 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {themeVars, useLang} from '@leav/ui';
+import {themeVars, useLang, Loading} from '@leav/ui';
 import Paragraph from 'antd/lib/typography/Paragraph';
-import Loading from 'components/shared/Loading';
 import useSearchReducer from 'hooks/useSearchReducer';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';

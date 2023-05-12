@@ -37,7 +37,6 @@ export interface IServer {
     publicUrl: string;
     allowIntrospection: boolean;
     wsUrl: string;
-    apiEndpoint: string;
     uploadLimit: number | string;
     supportEmail: string;
     admin: {

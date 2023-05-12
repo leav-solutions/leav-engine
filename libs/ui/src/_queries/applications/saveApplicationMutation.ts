@@ -8,7 +8,7 @@ export const saveApplicationMutation = gql`
     ${applicationDetailsFragment}
     mutation SAVE_APPLICATION($application: ApplicationInput!) {
         saveApplication(application: $application) {
-            ...ApplicationDetails
+            ...DetailsApplication
         }
     }
 `;

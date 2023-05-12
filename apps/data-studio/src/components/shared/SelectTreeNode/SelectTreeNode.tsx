@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DownOutlined} from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
-import {useLang} from '@leav/ui';
+import {useLang, ErrorDisplay} from '@leav/ui';
 import {Spin, Tree} from 'antd';
 import {Key} from 'antd/lib/table/interface';
 import {EventDataNode} from 'antd/lib/tree';
@@ -18,7 +18,6 @@ import {
     TREE_NODE_CHILDREN_treeNodeChildren_list
 } from '_gqlTypes/TREE_NODE_CHILDREN';
 import {ISystemTranslation, ITreeNodeWithRecord} from '_types/types';
-import ErrorDisplay from '../ErrorDisplay';
 
 interface ISelectTreeNodeProps {
     tree: {id: string; label?: ISystemTranslation | null};

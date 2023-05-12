@@ -21,9 +21,6 @@
     },
     "application": {
         "new_app": "Nouvelle application",
-        "create": "Créer une nouvelle appli",
-        "install_waiting": "Installation en attente...",
-        "install_processing": "Installation en cours...",
-        "install_error": "Échec de l'installation"
+        "create": "Créer une nouvelle appli"
     }
 }

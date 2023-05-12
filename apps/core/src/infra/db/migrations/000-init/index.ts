@@ -4,7 +4,6 @@
 import {aql} from 'arangojs';
 import * as bcrypt from 'bcryptjs';
 import {i18n} from 'i18next';
-import {IApplicationService} from 'infra/application/applicationService';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import moment from 'moment';
 import {IConfig} from '_types/config';
@@ -31,17 +30,15 @@ interface IDeps {
     'core.infra.library'?: ILibraryRepo;
     'core.infra.attribute'?: IAttributeRepo;
     'core.infra.permission'?: IPermissionRepo;
-    'core.infra.application.service'?: IApplicationService;
     translator?: i18n;
     config?: IConfig;
 }
 
-export default function ({
+export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.library': libraryRepo = null,
     'core.infra.attribute': attributeRepo = null,
     'core.infra.permission': permissionRepo = null,
-    'core.infra.application.service': applicationService = null,
     translator = null,
     config = null
 }: IDeps = {}): IMigration {
@@ -177,9 +174,6 @@ export default function ({
                 });
             }
         }
-
-        //Install Applications
-        await applicationService.runInstallAll();
     };
 
     const _createUsers = async (ctx: IQueryInfos) => {
@@ -194,7 +188,12 @@ export default function ({
 
         // System user password is randomly generated as nobody is supposed to sign in with it
         // It might be changed later on if needed
-        const systemUserPwd = await bcrypt.hash(Math.random().toString(36).slice(2), salt);
+        const systemUserPwd = await bcrypt.hash(
+            Math.random()
+                .toString(36)
+                .slice(2),
+            salt
+        );
 
         const users = [
             {

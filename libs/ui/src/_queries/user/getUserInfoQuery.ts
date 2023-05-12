@@ -2,14 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from '@apollo/client';
-import {recordIdentityFragment} from '../records/recordIdentityFragment';
+import {identityRecordFragment} from '../records/recordIdentityFragment';
 
 export const getUserInfoQuery = gql`
-    ${recordIdentityFragment}
+    ${identityRecordFragment}
     query USER_INFO($type: PermissionTypes!, $actions: [PermissionsActions!]!) {
         me {
             login
-            ...RecordIdentity
+            ...IdentityRecord
         }
         permissions: isAllowed(type: $type, actions: $actions) {
             name

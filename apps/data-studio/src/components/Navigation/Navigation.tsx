@@ -1,10 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useLang} from '@leav/ui';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
-import Loading from 'components/shared/Loading';
+import {useLang, ErrorDisplay, ErrorDisplayTypes, Loading} from '@leav/ui';
 import {useApplicationContext} from 'context/ApplicationContext';
 import useGetTreesListQuery from 'hooks/useGetTreesListQuery/useGetTreesListQuery';
 import {useEffect} from 'react';
@@ -65,7 +62,7 @@ function Navigation({tree}: INavigationProps): JSX.Element {
     }, [data, loading, lang, updateActiveTree, t, dispatch, activePanel, activeTree, tree, hasAccess]);
 
     if (loading) {
-        return <Loading />;
+        return <Loading data-testid="loading" />;
     }
 
     if (error) {

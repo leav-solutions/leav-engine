@@ -6,6 +6,9 @@ import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {render, screen, waitFor} from '_tests/testUtils';
 import ApolloHandler from './ApolloHandler';
+import {enableFetchMocks} from 'jest-fetch-mock';
+
+enableFetchMocks();
 
 console.error = jest.fn();
 

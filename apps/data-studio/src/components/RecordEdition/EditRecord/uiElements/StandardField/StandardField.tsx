@@ -5,7 +5,7 @@ import {AnyPrimitive, ErrorTypes, ICommonFieldsSettings} from '@leav/utils';
 import CreationErrorContext from 'components/RecordEdition/EditRecordModal/creationErrorContext';
 import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
 import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
+import {ErrorDisplay} from '@leav/ui';
 import {RecordFormElementsValueStandardValue} from 'hooks/useGetRecordForm/useGetRecordForm';
 import useRefreshFieldValues from 'hooks/useRefreshFieldValues';
 import {useContext, useEffect, useMemo, useReducer} from 'react';

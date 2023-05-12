@@ -3,8 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
 import {Modal} from 'antd';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
+import {ErrorDisplay, Loading} from '@leav/ui';
 import {deactivateRecordsMutation} from 'graphQL/mutations/records/deactivateRecordsMutation';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
@@ -70,7 +69,7 @@ function DeactivateRecordsModal({onClose, open}: IDeactivateRecordsModalProps): 
             okButtonProps={{className: 'submit-btn'}}
             destroyOnClose
         >
-            {loading && <Loading />}
+            {loading && <Loading data-testid="loading" />}
             {!loading && error && <ErrorDisplay message={error.message} />}
             {!called && t('records_deactivation.confirm', {count: elementsCount})}
         </Modal>

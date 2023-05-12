@@ -44,6 +44,11 @@ jest.mock('./Routes', () => {
 
 jest.mock('reduxStore/notifications', () => jest.fn());
 
+jest.mock('../../constants', () => ({
+    APPS_ENDPOINT: '',
+    APP_ENDPOINT: ''
+}));
+
 describe('Router', () => {
     test('Should add a router and layout elements', async () => {
         await act(async () => {

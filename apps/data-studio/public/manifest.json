@@ -1,6 +1,7 @@
 {
-  "short_name": "leav_engine_data_studio",
-  "name": "LEAV Engine Data Studio",
+  "name": "data-studio",
+  "description": "Generic application to manage your data",
+  "version": "1.0.0-beta3",
   "icons": [
     {
       "src": "favicon-leav.svg",

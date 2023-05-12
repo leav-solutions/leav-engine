@@ -15,13 +15,6 @@ export enum ApplicationEventTypes {
     SAVE = 'SAVE'
 }
 
-export enum ApplicationInstallStatus {
-    ERROR = 'ERROR',
-    NONE = 'NONE',
-    RUNNING = 'RUNNING',
-    SUCCESS = 'SUCCESS'
-}
-
 export enum ApplicationType {
     external = 'external',
     internal = 'internal'
@@ -90,6 +83,15 @@ export interface ApplicationEventFiltersInput {
     ignoreOwnEvents?: boolean | null;
     applicationId?: string | null;
     events?: ApplicationEventTypes[] | null;
+}
+
+export interface ApplicationsFiltersInput {
+    id?: string | null;
+    label?: string | null;
+    type?: (ApplicationType | null)[] | null;
+    system?: boolean | null;
+    endpoint?: string | null;
+    module?: string | null;
 }
 
 /**

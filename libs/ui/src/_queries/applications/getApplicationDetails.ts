@@ -9,7 +9,7 @@ export const getApplicationByIdQuery = gql`
     query GET_APPLICATION_BY_ID($id: ID!) {
         applications(filters: {id: $id}) {
             list {
-                ...ApplicationDetails
+                ...DetailsApplication
             }
         }
     }

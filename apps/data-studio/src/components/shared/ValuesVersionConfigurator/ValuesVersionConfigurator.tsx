@@ -1,9 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {themeVars} from '@leav/ui';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
+import {themeVars, ErrorDisplay, Loading} from '@leav/ui';
 import useLibraryVersionTrees from 'hooks/useLibraryVersionTrees';
 import styled from 'styled-components';
 import {ITreeNode, IValueVersion} from '_types/types';

@@ -102,13 +102,6 @@ export type ApplicationInput = {
     type?: InputMaybe<ApplicationType>;
 };
 
-export enum ApplicationInstallStatus {
-    ERROR = 'ERROR',
-    NONE = 'NONE',
-    RUNNING = 'RUNNING',
-    SUCCESS = 'SUCCESS'
-}
-
 export enum ApplicationSortableFields {
     endpoint = 'endpoint',
     id = 'id',
@@ -576,9 +569,11 @@ export type TaskFiltersInput = {
 
 export enum TaskStatus {
     CANCELED = 'CANCELED',
+    CREATED = 'CREATED',
     DONE = 'DONE',
     FAILED = 'FAILED',
     PENDING = 'PENDING',
+    PENDING_CANCEL = 'PENDING_CANCEL',
     RUNNING = 'RUNNING'
 }
 
@@ -845,363 +840,10 @@ export type GetApplicationByIdQuery = {
                           } | null;
                       };
                   }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
                 | null;
             libraries?: Array<{id: string}> | null;
             trees?: Array<{id: string}> | null;
             permissions: {access_application: boolean; admin_application: boolean};
-            install?: {status: ApplicationInstallStatus; lastCallResult?: string | null} | null;
         }>;
     } | null;
 };
@@ -1211,12 +853,6 @@ export type GetApplicationModulesQueryVariables = Exact<{[key: string]: never}>;
 export type GetApplicationModulesQuery = {
     applicationsModules: Array<{id: string; description?: string | null; version?: string | null}>;
 };
-
-export type InstallApplicationMutationVariables = Exact<{
-    id: Scalars['ID'];
-}>;
-
-export type InstallApplicationMutation = {installApplication: string};
 
 export type SaveApplicationMutationVariables = Exact<{
     application: ApplicationInput;
@@ -1298,363 +934,10 @@ export type SaveApplicationMutation = {
                       } | null;
                   };
               }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      color?: string | null;
-                      library: {id: string; label?: any | null};
-                      preview?: {
-                          tiny?: string | null;
-                          small?: string | null;
-                          medium?: string | null;
-                          big?: string | null;
-                          huge?: string | null;
-                      } | null;
-                  };
-              }
             | null;
         libraries?: Array<{id: string}> | null;
         trees?: Array<{id: string}> | null;
         permissions: {access_application: boolean; admin_application: boolean};
-        install?: {status: ApplicationInstallStatus; lastCallResult?: string | null} | null;
     };
 };
 
@@ -1684,8 +967,8 @@ export type UserInfoQuery = {
     permissions?: Array<{name: PermissionsActions; allowed?: boolean | null}> | null;
 };
 
-export const RecordIdentityFragmentDoc = gql`
-    fragment RecordIdentity on Record {
+export const IdentityRecordFragmentDoc = gql`
+    fragment IdentityRecord on Record {
         id
         whoAmI {
             id
@@ -1705,8 +988,8 @@ export const RecordIdentityFragmentDoc = gql`
         }
     }
 `;
-export const ApplicationDetailsFragmentDoc = gql`
-    fragment ApplicationDetails on Application {
+export const DetailsApplicationFragmentDoc = gql`
+    fragment DetailsApplication on Application {
         id
         label
         type
@@ -1715,7 +998,7 @@ export const ApplicationDetailsFragmentDoc = gql`
         url
         color
         icon {
-            ...RecordIdentity
+            ...IdentityRecord
         }
         module
         libraries {
@@ -1728,13 +1011,9 @@ export const ApplicationDetailsFragmentDoc = gql`
             access_application
             admin_application
         }
-        install {
-            status
-            lastCallResult
-        }
         settings
     }
-    ${RecordIdentityFragmentDoc}
+    ${IdentityRecordFragmentDoc}
 `;
 export const CheckApplicationExistenceDocument = gql`
     query CHECK_APPLICATION_EXISTENCE($id: ID, $endpoint: String) {
@@ -1789,11 +1068,11 @@ export const GetApplicationByIdDocument = gql`
     query GET_APPLICATION_BY_ID($id: ID!) {
         applications(filters: {id: $id}) {
             list {
-                ...ApplicationDetails
+                ...DetailsApplication
             }
         }
     }
-    ${ApplicationDetailsFragmentDoc}
+    ${DetailsApplicationFragmentDoc}
 `;
 
 /**
@@ -1885,55 +1164,13 @@ export type GetApplicationModulesQueryResult = Apollo.QueryResult<
     GetApplicationModulesQuery,
     GetApplicationModulesQueryVariables
 >;
-export const InstallApplicationDocument = gql`
-    mutation INSTALL_APPLICATION($id: ID!) {
-        installApplication(id: $id)
-    }
-`;
-export type InstallApplicationMutationFn = Apollo.MutationFunction<
-    InstallApplicationMutation,
-    InstallApplicationMutationVariables
->;
-
-/**
- * __useInstallApplicationMutation__
- *
- * To run a mutation, you first call `useInstallApplicationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useInstallApplicationMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [installApplicationMutation, { data, loading, error }] = useInstallApplicationMutation({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useInstallApplicationMutation(
-    baseOptions?: Apollo.MutationHookOptions<InstallApplicationMutation, InstallApplicationMutationVariables>
-) {
-    const options = {...defaultOptions, ...baseOptions};
-    return Apollo.useMutation<InstallApplicationMutation, InstallApplicationMutationVariables>(
-        InstallApplicationDocument,
-        options
-    );
-}
-export type InstallApplicationMutationHookResult = ReturnType<typeof useInstallApplicationMutation>;
-export type InstallApplicationMutationResult = Apollo.MutationResult<InstallApplicationMutation>;
-export type InstallApplicationMutationOptions = Apollo.BaseMutationOptions<
-    InstallApplicationMutation,
-    InstallApplicationMutationVariables
->;
 export const SaveApplicationDocument = gql`
     mutation SAVE_APPLICATION($application: ApplicationInput!) {
         saveApplication(application: $application) {
-            ...ApplicationDetails
+            ...DetailsApplication
         }
     }
-    ${ApplicationDetailsFragmentDoc}
+    ${DetailsApplicationFragmentDoc}
 `;
 export type SaveApplicationMutationFn = Apollo.MutationFunction<
     SaveApplicationMutation,
@@ -1976,14 +1213,14 @@ export const UserInfoDocument = gql`
     query USER_INFO($type: PermissionTypes!, $actions: [PermissionsActions!]!) {
         me {
             login
-            ...RecordIdentity
+            ...IdentityRecord
         }
         permissions: isAllowed(type: $type, actions: $actions) {
             name
             allowed
         }
     }
-    ${RecordIdentityFragmentDoc}
+    ${IdentityRecordFragmentDoc}
 `;
 
 /**

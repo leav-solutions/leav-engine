@@ -34,9 +34,7 @@ import {IApplicationDomain, TRIGGER_NAME_APPLICATION_EVENT} from '../../domain/a
 import ApplicationError, {ApplicationErrorType} from '../../errors/ApplicationError';
 import {
     ApplicationEventTypes,
-    ApplicationInstallStatuses,
     ApplicationTypes,
-    APPS_INSTANCES_FOLDER,
     APPS_URL_PREFIX,
     IApplication,
     IApplicationEvent,
@@ -95,21 +93,10 @@ export default function({
                         .join(' ')}
                 }
 
-                enum ApplicationInstallStatus {
-                    ${Object.values(ApplicationInstallStatuses)
-                        .map(status => `${status}`)
-                        .join(' ')}
-                }
-
                 enum ApplicationType {
                     ${Object.values(ApplicationTypes)
                         .map(type => `${type}`)
                         .join(' ')}
-                }
-
-                type ApplicationInstall {
-                    status: ApplicationInstallStatus!,
-                    lastCallResult: String
                 }
 
                 type Application {
@@ -126,7 +113,6 @@ export default function({
                     endpoint: String,
                     url: String,
                     permissions: ApplicationPermissions!,
-                    install: ApplicationInstall,
                     settings: JSONObject
                 }
 
@@ -210,7 +196,7 @@ export default function({
                 extend type Mutation {
                     saveApplication(application: ApplicationInput!): Application!
                     deleteApplication(id: ID!): Application!
-                    installApplication(id: ID!): String!
+      
                 }
 
                 extend type Subscription {
@@ -244,9 +230,6 @@ export default function({
                         },
                         async deleteApplication(_, {id}, ctx): Promise<IApplication> {
                             return applicationDomain.deleteApplication({id, ctx});
-                        },
-                        async installApplication(_, {id}, ctx): Promise<string> {
-                            return applicationDomain.runInstall({applicationId: id, ctx});
                         }
                     },
                     Subscription: {
@@ -377,10 +360,11 @@ export default function({
                     try {
                         // Get available applications
                         const {endpoint} = req.params;
-                        let applicationId;
+                        const application = {id: '', module: ''};
 
                         if (['portal', 'login'].includes(endpoint)) {
-                            applicationId = endpoint;
+                            application.id = endpoint;
+                            application.module = endpoint;
                         } else {
                             const applications = await applicationDomain.getApplications({
                                 params: {
@@ -396,13 +380,14 @@ export default function({
                             }
 
                             const requestApplication = applications.list[0];
-                            applicationId = requestApplication.id;
+                            application.id = requestApplication.id;
+                            application.module = requestApplication.module;
                         }
 
                         // Check permissions
                         const canAccess = await applicationPermissionDomain.getApplicationPermission({
                             action: ApplicationPermissionsActions.ACCESS_APPLICATION,
-                            applicationId,
+                            applicationId: application.id,
                             userId: req.ctx.userId,
                             ctx: req.ctx
                         });
@@ -412,14 +397,9 @@ export default function({
                         }
 
                         const rootPath = appRootPath();
-                        const appFolder = path.resolve(
-                            rootPath,
-                            config.applications.rootFolder,
-                            APPS_INSTANCES_FOLDER,
-                            applicationId
-                        );
+                        const appFolder = path.resolve(rootPath, config.applications.rootFolder, application.module);
 
-                        req.ctx.applicationId = applicationId;
+                        req.ctx.applicationId = application.id;
 
                         // Request will be handled by express as if it was a regular request to the app folder itself
                         // Thus, we remove the app endpoint from URL.

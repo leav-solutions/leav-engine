@@ -20,9 +20,5 @@ export const applicationDetailsFragment = gql`
         permissions {
             access_application
         }
-        install {
-            status
-            lastCallResult
-        }
     }
 `;

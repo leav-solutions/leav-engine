@@ -4,7 +4,7 @@
 import {AppstoreOutlined, ClockCircleOutlined, StarFilled} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
 import {Divider, message} from 'antd';
-import Loading from 'components/shared/Loading';
+import {Loading} from '@leav/ui';
 import {getUserDataQuery} from 'queries/userData/getUserData';
 import {saveUserData} from 'queries/userData/saveUserData';
 import {useState} from 'react';

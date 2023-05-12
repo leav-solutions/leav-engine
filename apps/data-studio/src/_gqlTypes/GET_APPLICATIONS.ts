@@ -62,8 +62,8 @@ export interface GET_APPLICATIONS_applications_list {
     id: string;
     label: SystemTranslation;
     description: SystemTranslation | null;
-    endpoint: string;
-    url: string;
+    endpoint: string | null;
+    url: string | null;
     color: string | null;
     icon: GET_APPLICATIONS_applications_list_icon | null;
 }

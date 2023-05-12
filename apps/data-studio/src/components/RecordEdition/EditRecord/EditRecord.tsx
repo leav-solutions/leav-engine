@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID} from '@leav/utils';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
+import {ErrorDisplay} from '@leav/ui';
 import useGetRecordForm from 'hooks/useGetRecordForm';
 import useRecordsConsultationHistory from 'hooks/useRecordsConsultationHistory';
 import {useEffect} from 'react';

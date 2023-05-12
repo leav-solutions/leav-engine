@@ -74,14 +74,16 @@ magick-*
 /exports
 /cache
 /exports
+
 docker/previews
 docker/files
 docker/imports
 docker/exports
 
-apps/core/applications/instances
+apps/core/applications/*
 apps/core/config/local.js
 
 apps/*/dist
+apps/*/build
 libs/ui/dist
 *.tsbuildinfo

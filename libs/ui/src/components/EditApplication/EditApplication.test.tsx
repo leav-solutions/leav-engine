@@ -84,18 +84,16 @@ describe('EditApplication', () => {
             await waitFor(() => expect(screen.getByRole('tablist')).toBeInTheDocument());
 
             expect(screen.getByRole('tab', {name: /info/})).toHaveAttribute('aria-selected', 'true');
-            expect(screen.getByRole('tab', {name: /install/})).toBeInTheDocument();
         });
 
         test('Can select default active tab', async () => {
-            render(<EditApplication appsBaseUrl="/app" applicationId={mockApplication.id} activeTab="install" />, {
+            render(<EditApplication appsBaseUrl="/app" applicationId={mockApplication.id} activeTab="info" />, {
                 mocks
             });
 
             await waitFor(() => expect(screen.getByRole('tablist')).toBeInTheDocument());
 
             expect(screen.getByRole('tab', {name: /info/})).toBeInTheDocument();
-            expect(screen.getByRole('tab', {name: /install/})).toHaveAttribute('aria-selected', 'true');
         });
 
         describe('Info form tab', () => {
@@ -195,19 +193,6 @@ describe('EditApplication', () => {
                 screen.getAllByRole('combobox').forEach(field => {
                     expect(field).toBeDisabled();
                 });
-            });
-        });
-
-        describe('Install tab', () => {
-            test('Display install status and details', async () => {
-                render(<EditApplication appsBaseUrl="/app" applicationId={mockApplication.id} activeTab="install" />, {
-                    mocks
-                });
-
-                await waitFor(() => expect(screen.getByRole('tablist')).toBeInTheDocument());
-
-                expect(screen.getByText(/install_success/)).toBeInTheDocument();
-                expect(screen.getByText(mockApplication.install.lastCallResult)).toBeInTheDocument();
             });
         });
     });

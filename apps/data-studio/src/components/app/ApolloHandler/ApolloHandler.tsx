@@ -14,8 +14,7 @@ import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {onError} from '@apollo/link-error';
 import {createUploadLink} from 'apollo-upload-client';
-import ErrorDisplay from 'components/shared/ErrorDisplay';
-import Loading from 'components/shared/Loading';
+import {ErrorDisplay, Loading} from '@leav/ui';
 import {createClient} from 'graphql-ws';
 import useGraphqlPossibleTypes from 'hooks/useGraphqlPossibleTypes';
 import {ReactNode} from 'react';
@@ -23,6 +22,7 @@ import {useTranslation} from 'react-i18next';
 import {addInfo} from 'reduxStore/infos';
 import {useAppDispatch} from 'reduxStore/store';
 import {IInfo, InfoChannel, InfoType} from '_types/types';
+import {ORIGIN_URL, APPS_ENDPOINT, LOGIN_ENDPOINT, API_ENDPOINT, WS_URL} from '../../../constants';
 
 interface IApolloHandlerProps {
     children: ReactNode;
@@ -31,13 +31,13 @@ interface IApolloHandlerProps {
 export const UNAUTHENTICATED = 'UNAUTHENTICATED';
 
 const _redirectToLogin = () =>
-    window.location.replace(`${import.meta.env.VITE_LOGIN_ENDPOINT}?dest=${window.location.pathname}`);
+    window.location.replace(`${ORIGIN_URL}/${APPS_ENDPOINT}/${LOGIN_ENDPOINT}/?dest=${window.location.pathname}`);
 
 function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     const {t} = useTranslation();
     const dispatch = useAppDispatch();
 
-    const {loading, error, possibleTypes} = useGraphqlPossibleTypes(import.meta.env.VITE_API_URL);
+    const {loading, error, possibleTypes} = useGraphqlPossibleTypes(`${ORIGIN_URL}/${API_ENDPOINT}`);
 
     if (loading) {
         return <Loading />;
@@ -123,7 +123,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
 
     const wsLink = new GraphQLWsLink(
         createClient({
-            url: import.meta.env.VITE_WS_URL
+            url: `${WS_URL}/${API_ENDPOINT}`
         })
     );
 
@@ -133,7 +133,11 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     }, wsLink);
 
     const gqlClient = new ApolloClient({
-        link: ApolloLink.from([_handleApolloError, splitLink, createUploadLink({uri: import.meta.env.VITE_API_URL})]),
+        link: ApolloLink.from([
+            _handleApolloError,
+            splitLink,
+            createUploadLink({uri: `${ORIGIN_URL}/${API_ENDPOINT}`})
+        ]),
         cache: new InMemoryCache({
             // For records, ID might sometimes be in the _id property to avoid messing up
             // with the ID attribute (eg. in the getRecordPropertiesQuery).
