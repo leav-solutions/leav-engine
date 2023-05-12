@@ -5,9 +5,9 @@ import {
     BulbOutlined,
     CloseOutlined,
     CloudUploadOutlined,
+    FolderAddOutlined,
     PlusOutlined,
-    SearchOutlined,
-    FolderAddOutlined
+    SearchOutlined
 } from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
 import {RecordCard, themeVars, useLang, ErrorDisplay} from '@leav/ui';
@@ -97,7 +97,14 @@ const StartTypingMessage = styled.div`
 `;
 
 const _renderListItem = (item: ValueFromList) => (
-    <RecordCard record={item.whoAmI} key={item.id} size={PreviewSize.small} withLibrary={false} withPreview={false} />
+    <RecordCard
+        record={item.whoAmI}
+        key={item.id}
+        size={PreviewSize.small}
+        withLibrary={false}
+        simplistic
+        style={{margin: '0.3rem 0'}}
+    />
 );
 
 function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {

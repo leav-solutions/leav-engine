@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined} from '@ant-design/icons';
 import {themeVars} from '@leav/ui';
-import {Space} from 'antd';
 import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
 import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import BasicButton from 'components/shared/BasicButton';
@@ -27,13 +26,6 @@ const Header = styled.div`
     padding: 0.3rem 0.3rem 0.3rem 1rem;
     font-weight: 700;
     border-bottom: 1px solid ${themeVars.borderLightColor};
-`;
-
-const Footer = styled(Space)`
-    background-color: ${themeVars.headerBg};
-    border-top: 1px solid ${themeVars.borderLightColor};
-    justify-content: flex-end;
-    padding: 0.3rem;
 `;
 
 const CloseButton = styled(CloseOutlined)`

@@ -4,12 +4,14 @@
 import {Database} from 'arangojs';
 import {aql} from 'arangojs/aql';
 import {DocumentCollection} from 'arangojs/collection';
+import {IDbService} from 'infra/db/dbService';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 import {mockAttrSimpleLink} from '../../__tests__/mocks/attribute';
+import {mockRecord} from '../../__tests__/mocks/record';
 import attributeSimpleLinkRepo from './attributeSimpleLinkRepo';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
 
@@ -36,6 +38,17 @@ describe('AttributeSimpleLinkRepo', () => {
 
     describe('createValue', () => {
         test('Should create a simple link value', async function () {
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise([
+                    {doc: {...mockRecord, [mockAttribute.id]: '123456'}, linkedRecord: mockRecord}
+                ])
+            };
+
+            const mockDbUtils: Mockify<IDbUtils> = {
+                cleanup: jest.fn().mockReturnValue(mockRecord)
+            };
+
             const updatedValueData = {
                 value: '123456'
             };
@@ -47,7 +60,9 @@ describe('AttributeSimpleLinkRepo', () => {
             };
 
             const attrRepo = attributeSimpleLinkRepo({
-                'core.infra.attributeTypes.attributeSimple': attrSimpleRepo as IAttributeTypeRepo
+                'core.infra.attributeTypes.attributeSimple': attrSimpleRepo as IAttributeTypeRepo,
+                'core.infra.db.dbService': mockDbServ as IDbService,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
             const createdVal = await attrRepo.createValue({
@@ -60,20 +75,15 @@ describe('AttributeSimpleLinkRepo', () => {
                 ctx
             });
 
-            expect(attrSimpleRepo.createValue.mock.calls.length).toBe(1);
-            expect(attrSimpleRepo.createValue).toBeCalledWith({
-                library: 'test_lib',
-                recordId: '12345',
-                attribute: mockAttribute,
-                value: {
-                    value: 123456
-                },
-                ctx
-            });
+            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch(/UPDATE/);
+            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
+            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
 
             expect(createdVal).toMatchObject({
                 ...updatedValueData,
                 value: {
+                    ...mockRecord,
                     id: '123456',
                     library: 'test_linked_lib'
                 }

@@ -1,5 +1,27 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`AttributeSimpleLinkRepo createValue Should create a simple link value 1`] = `
+"
+                    LET linkedRecord = DOCUMENT(@value0, @value1)
+                    UPDATE @value2 WITH @value3 IN @@value4
+                    OPTIONS { keepNull: false }
+                    RETURN {doc: NEW, linkedRecord}"
+`;
+
+exports[`AttributeSimpleLinkRepo createValue Should create a simple link value 2`] = `
+{
+  "@value4": "test_lib",
+  "value0": "test_linked_lib",
+  "value1": 123456,
+  "value2": {
+    "_key": "12345",
+  },
+  "value3": {
+    "test_simple_link_attr": 123456,
+  },
+}
+`;
+
 exports[`AttributeSimpleLinkRepo filterValueQueryPart Should return query to retrieve value to filter on 1`] = `
 {
   "_source": [Function],

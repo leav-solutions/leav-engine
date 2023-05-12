@@ -8,11 +8,10 @@ import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import ExcelJS from 'exceljs';
-import fs, {stat} from 'fs';
+import fs from 'fs';
 import JsonParser from 'jsonparse';
 import {validate} from 'jsonschema';
 import {ValidatorResultError} from 'jsonschema/lib/helpers';
-import LineByLine from 'line-by-line';
 import path from 'path';
 import * as Config from '_types/config';
 import {TaskPriority, TaskCallbackType, ITaskFuncParams} from '../../_types/tasksManager';
@@ -361,7 +360,7 @@ export default function ({
     ): Promise<boolean> => {
         return new Promise((resolve, reject) => {
             const parser = new JsonParser();
-            const fileStream = new LineByLine(`${config.import.directory}/${filename}`);
+            const fileStream = fs.createReadStream(`${config.import.directory}/${filename}`, {highWaterMark: 128}); // 128 characters by chunk
             let elementIndex = 0;
             let treeIndex = 0;
             let treesReached = false;
@@ -419,9 +418,11 @@ export default function ({
             };
 
             fileStream.on('error', () => reject(new Error(Errors.FILE_ERROR)));
-            fileStream.on('line', line => {
-                parser.write(line);
+
+            fileStream.on('data', chunk => {
+                parser.write(chunk);
             });
+
             fileStream.on('end', async () => {
                 try {
                     // If there are still pending callbacks we call them.

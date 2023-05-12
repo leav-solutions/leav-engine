@@ -2,15 +2,16 @@
 
 exports[`AttributeAdvancedLinkRepo createValue Should create a new advanced link value 1`] = `
 "
-                    INSERT @value0
-                        IN @@value1
-                    RETURN NEW"
+                    LET linkedRecord = DOCUMENT(@value0)
+                    INSERT @value1 IN @@value2
+                    RETURN {edge: NEW, linkedRecord}"
 `;
 
 exports[`AttributeAdvancedLinkRepo createValue Should create a new advanced link value 2`] = `
 {
-  "@value1": "core_edge_values_links",
-  "value0": {
+  "@value2": "core_edge_values_links",
+  "value0": "test_linked_lib/987654",
+  "value1": {
     "_from": "test_lib/12345",
     "_to": "test_linked_lib/987654",
     "attribute": "test_adv_link_attr",
@@ -30,15 +31,16 @@ exports[`AttributeAdvancedLinkRepo createValue Should create a new advanced link
 
 exports[`AttributeAdvancedLinkRepo createValue Should create a new reverse advanced link value 1`] = `
 "
-                    INSERT @value0
-                        IN @@value1
-                    RETURN NEW"
+                    LET linkedRecord = DOCUMENT(@value0)
+                    INSERT @value1 IN @@value2
+                    RETURN {edge: NEW, linkedRecord}"
 `;
 
 exports[`AttributeAdvancedLinkRepo createValue Should create a new reverse advanced link value 2`] = `
 {
-  "@value1": "core_edge_values_links",
-  "value0": {
+  "@value2": "core_edge_values_links",
+  "value0": "test_lib/12345",
+  "value1": {
     "_from": "test_linked_lib/987654",
     "_to": "test_lib/12345",
     "attribute": "test",
@@ -260,19 +262,21 @@ exports[`AttributeAdvancedLinkRepo sortQueryPart Should return advanced link sor
 
 exports[`AttributeAdvancedLinkRepo updateValue Should update a advanced link value 1`] = `
 "
-                    UPDATE @value0
-                        WITH @value1
-                        IN @@value2
-                    RETURN NEW"
+                    LET linkedRecord = DOCUMENT(@value0)
+                    UPDATE @value1
+                        WITH @value2
+                        IN @@value3
+                    RETURN {edge: NEW, linkedRecord}"
 `;
 
 exports[`AttributeAdvancedLinkRepo updateValue Should update a advanced link value 2`] = `
 {
-  "@value2": "core_edge_values_links",
-  "value0": {
+  "@value3": "core_edge_values_links",
+  "value0": "test_linked_lib/987654",
+  "value1": {
     "_key": "987654",
   },
-  "value1": {
+  "value2": {
     "_from": "test_lib/12345",
     "_to": "test_linked_lib/987654",
     "attribute": "test_adv_link_attr",
@@ -291,19 +295,21 @@ exports[`AttributeAdvancedLinkRepo updateValue Should update a advanced link val
 
 exports[`AttributeAdvancedLinkRepo updateValue Should update a reverse advanced link value 1`] = `
 "
-                    UPDATE @value0
-                        WITH @value1
-                        IN @@value2
-                    RETURN NEW"
+                    LET linkedRecord = DOCUMENT(@value0)
+                    UPDATE @value1
+                        WITH @value2
+                        IN @@value3
+                    RETURN {edge: NEW, linkedRecord}"
 `;
 
 exports[`AttributeAdvancedLinkRepo updateValue Should update a reverse advanced link value 2`] = `
 {
-  "@value2": "core_edge_values_links",
-  "value0": {
+  "@value3": "core_edge_values_links",
+  "value0": "test_lib/12345",
+  "value1": {
     "_key": "987654",
   },
-  "value1": {
+  "value2": {
     "_from": "test_linked_lib/987654",
     "_to": "test_lib/12345",
     "attribute": "test",
