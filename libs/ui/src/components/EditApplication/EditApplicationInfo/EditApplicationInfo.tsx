@@ -13,11 +13,10 @@ import EditApplicationInfoForm from './EditApplicationInfoForm';
 
 interface IEditApplicationInfoProps {
     application: GetApplicationByIdQuery['applications']['list'][number];
-    appsBaseUrl: string;
     onSetSubmitFunction?: (submitFunction: () => Promise<void>) => void;
 }
 
-function EditApplicationInfo({application, appsBaseUrl, onSetSubmitFunction}: IEditApplicationInfoProps): JSX.Element {
+function EditApplicationInfo({application, onSetSubmitFunction}: IEditApplicationInfoProps): JSX.Element {
     const {availableLangs} = useLang();
     const [form] = Form.useForm();
     const isEditing = !!application;
@@ -158,7 +157,6 @@ function EditApplicationInfo({application, appsBaseUrl, onSetSubmitFunction}: IE
             form={form}
             onSubmitField={_submitField}
             onCheckApplicationUniqueness={_isApplicationUnique}
-            appsBaseUrl={appsBaseUrl}
             application={application}
             loading={loading}
         />

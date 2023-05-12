@@ -33,5 +33,3 @@ export const defaultLinkAttributeFilterFormat = AttributeFormat.text;
 export const treeNavigationPageSize = 20;
 
 export const getSelectedViewKey = (libraryId: string) => `selected_view_${libraryId}`;
-
-export const APPS_BASE_URL = import.meta.env.VITE_CORE_URL + '/' + import.meta.env.VITE_ENDPOINT_BASE;

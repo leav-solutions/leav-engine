@@ -16,7 +16,6 @@ const TabContentWrapper = styled.div<{$style?: CSSObject}>`
 
 function EditApplication({
     applicationId,
-    appsBaseUrl,
     onSetSubmitFunction,
     tabContentStyle,
     additionalTabs = [],
@@ -42,13 +41,7 @@ function EditApplication({
 
     const application = data?.applications?.list[0] ?? null;
 
-    const appInfoComp = (
-        <EditApplicationInfo
-            application={application}
-            appsBaseUrl={appsBaseUrl}
-            onSetSubmitFunction={onSetSubmitFunction}
-        />
-    );
+    const appInfoComp = <EditApplicationInfo application={application} onSetSubmitFunction={onSetSubmitFunction} />;
 
     // If creating new application, return the form directly
     if (!isEditing) {

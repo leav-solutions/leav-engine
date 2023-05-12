@@ -21,7 +21,6 @@ const DescriptionFormItem = styled(Form.Item)`
 interface IEditApplicationInfoFormProps {
     form: FormInstance;
     application: GetApplicationByIdQuery['applications']['list'][number];
-    appsBaseUrl: string;
     loading: boolean;
     onSubmitField: (field: string, value: any) => Promise<void>;
     onCheckApplicationUniqueness: (fieldToCheck: 'id' | 'endpoint', value: any) => Promise<boolean>;
@@ -30,7 +29,6 @@ interface IEditApplicationInfoFormProps {
 function EditApplicationInfoForm({
     form,
     application,
-    appsBaseUrl,
     onSubmitField,
     onCheckApplicationUniqueness,
     loading
@@ -146,6 +144,8 @@ function EditApplicationInfoForm({
             return 'idle';
         }
     };
+
+    const appsBaseUrl = window.location.origin + '/app';
 
     return (
         <Form
