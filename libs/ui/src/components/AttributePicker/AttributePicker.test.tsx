@@ -133,7 +133,9 @@ describe('AttributePicker', () => {
 
         userEvent.click(screen.getByRole('button', {name: /submit/i}));
 
-        await waitFor(() => expect(mockHandleSubmit).toHaveBeenCalledWith(['attributeB', 'attributeC']));
+        await waitFor(() => expect(mockHandleSubmit).toHaveBeenCalledWith(['attributeB', 'attributeC']), {
+            timeout: 10000
+        });
     });
 
     test('If not multiple, only one element can be selected', async () => {

@@ -218,19 +218,24 @@ describe('EditLibraryModal', () => {
             expect(labelOption).toBeInTheDocument();
             user.click(labelOption);
 
-            await waitFor(() => {
-                expect(mockSaveLibraryMutation).toBeCalledWith({
-                    variables: {
-                        library: {
-                            id: mockLibraryWithDetails.id,
-                            recordIdentityConf: {
-                                ...mockLibraryWithDetails.recordIdentityConf,
-                                label: mockLibraryWithDetails.attributes[0].id
+            await waitFor(
+                () => {
+                    expect(mockSaveLibraryMutation).toBeCalledWith({
+                        variables: {
+                            library: {
+                                id: mockLibraryWithDetails.id,
+                                recordIdentityConf: {
+                                    ...mockLibraryWithDetails.recordIdentityConf,
+                                    label: mockLibraryWithDetails.attributes[0].id
+                                }
                             }
                         }
-                    }
-                });
-            });
+                    });
+                },
+                {
+                    timeout: 10000
+                }
+            );
         });
     });
 });

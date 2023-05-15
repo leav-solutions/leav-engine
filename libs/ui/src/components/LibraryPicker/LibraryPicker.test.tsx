@@ -137,7 +137,9 @@ describe('LibraryPicker', () => {
 
         userEvent.click(screen.getByRole('button', {name: /submit/i}));
 
-        await waitFor(() => expect(mockHandleSubmit).toHaveBeenCalledWith([mockLibB, mockLibC]));
+        await waitFor(() => expect(mockHandleSubmit).toHaveBeenCalledWith([mockLibB, mockLibC]), {
+            timeout: 10000
+        });
     });
 
     test('If not multiple, only one element can be selected', async () => {

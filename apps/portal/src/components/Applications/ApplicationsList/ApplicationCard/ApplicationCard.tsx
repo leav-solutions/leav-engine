@@ -7,7 +7,6 @@ import {localizedTranslation} from '@leav/utils';
 import {Card, Typography} from 'antd';
 import {EditApplicationModal} from 'components/Applications/EditApplicationModal';
 import {IEditApplicationModalProps} from 'components/Applications/EditApplicationModal/EditApplicationModal';
-import {ORIGIN_URL, APPS_ENDPOINT} from '../../../../constants';
 import {SyntheticEvent, useState} from 'react';
 import styled from 'styled-components';
 import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
@@ -110,7 +109,6 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
             </AppCard>
             {isEditAppModalOpen && (
                 <EditApplicationModal
-                    appsBaseUrl={`${ORIGIN_URL}/${APPS_ENDPOINT}/`}
                     applicationId={application.id}
                     open={isEditAppModalOpen}
                     onClose={_handleCloseEditAppModal}

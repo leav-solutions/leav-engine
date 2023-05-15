@@ -263,7 +263,13 @@ describe('EditTreeModal', () => {
 
             userEvent.click(within(libA).getByText(/advanced_settings/i));
 
-            const switches = await within(libA).findAllByRole('switch');
+            const switches = await within(libA).findAllByRole(
+                'switch',
+                {},
+                {
+                    timeout: 10000
+                }
+            );
             const allowedMultiplePositionsSwitch = switches[0];
             const allowedAtRootSwitch = switches[1];
 

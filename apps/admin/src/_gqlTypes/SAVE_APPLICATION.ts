@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ApplicationInput, ApplicationType, ApplicationInstallStatus} from './globalTypes';
+import {ApplicationInput, ApplicationType} from './globalTypes';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_APPLICATION
@@ -43,11 +43,6 @@ export interface SAVE_APPLICATION_saveApplication_permissions {
     admin_application: boolean;
 }
 
-export interface SAVE_APPLICATION_saveApplication_install {
-    status: ApplicationInstallStatus;
-    lastCallResult: string | null;
-}
-
 export interface SAVE_APPLICATION_saveApplication {
     id: string;
     label: SystemTranslation;
@@ -59,7 +54,6 @@ export interface SAVE_APPLICATION_saveApplication {
     icon: SAVE_APPLICATION_saveApplication_icon | null;
     module: string | null;
     permissions: SAVE_APPLICATION_saveApplication_permissions;
-    install: SAVE_APPLICATION_saveApplication_install | null;
     settings: JSONObject | null;
 }
 

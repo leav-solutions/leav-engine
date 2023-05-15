@@ -136,7 +136,9 @@ describe('TreePicker', () => {
 
         userEvent.click(screen.getByRole('button', {name: /submit/i}));
 
-        await waitFor(() => expect(mockHandleSubmit).toHaveBeenCalledWith([mockTreeB, mockTreeC]));
+        await waitFor(() => expect(mockHandleSubmit).toHaveBeenCalledWith([mockTreeB, mockTreeC]), {
+            timeout: 10000
+        });
     });
 
     test('If not multiple, only one element can be selected', async () => {

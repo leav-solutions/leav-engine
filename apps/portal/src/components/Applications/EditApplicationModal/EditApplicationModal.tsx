@@ -13,13 +13,7 @@ export interface IEditApplicationModalProps extends Omit<IEditApplicationProps, 
     onClose: () => void;
 }
 
-function EditApplicationModal({
-    open,
-    applicationId,
-    onClose,
-    appsBaseUrl,
-    activeTab
-}: IEditApplicationModalProps): JSX.Element {
+function EditApplicationModal({open, applicationId, onClose, activeTab}: IEditApplicationModalProps): JSX.Element {
     const {t} = useTranslation();
     const {lang} = useLang();
     const [submitFunction, setSubmitFunction] = useState<() => Promise<void>>();
@@ -91,7 +85,6 @@ function EditApplicationModal({
         >
             <EditApplication
                 applicationId={applicationId}
-                appsBaseUrl={appsBaseUrl}
                 onSetSubmitFunction={_handleSetSubmitFunction}
                 activeTab={activeTab}
                 tabContentStyle={{maxHeight: 'calc(100vh - 15rem)', overflowY: 'auto'}}
