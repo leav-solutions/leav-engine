@@ -89,7 +89,7 @@ function LibraryBlock({
         label: localizedTranslation(library.label, lang),
         subLabel: library.id,
         color: null,
-        preview: null
+        preview: library.icon?.whoAmI?.preview?.[PreviewSize.small]
     };
 
     return (

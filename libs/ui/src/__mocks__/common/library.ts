@@ -1,13 +1,35 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AttributeFormat, AttributeType, GetLibrariesQuery, GetLibraryByIdQuery, LibraryBehavior} from '../../_gqlTypes';
+import {
+    AttributeFormat,
+    AttributeType,
+    GetLibraryByIdQuery,
+    LibraryBehavior,
+    LibraryLightFragment
+} from '../../_gqlTypes';
 
-export const mockLibrarySimple: GetLibrariesQuery['libraries']['list'][0] = {
+export const mockLibrarySimple: LibraryLightFragment = {
     id: 'my_library',
     label: {
         fr: 'Ma bibliothèque',
         en: 'My library'
+    },
+    icon: {
+        id: '123456789',
+        whoAmI: {
+            id: '123456789',
+            library: {
+                id: 'files'
+            },
+            preview: {
+                huge: 'icon/path.png',
+                big: 'icon/path.png',
+                medium: 'icon/path.png',
+                small: 'icon/path.png',
+                tiny: 'icon/path.png'
+            }
+        }
     }
 };
 

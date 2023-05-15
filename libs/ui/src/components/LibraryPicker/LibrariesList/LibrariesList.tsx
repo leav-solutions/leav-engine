@@ -138,7 +138,7 @@ function LibrariesList({
                 const libraryIdentity: IEntityData = {
                     label: library.label,
                     subLabel: library.id,
-                    preview: null,
+                    preview: library.icon?.whoAmI?.preview?.[PreviewSize.small] ?? null,
                     color: null
                 };
                 return <EntityCard entity={libraryIdentity} size={PreviewSize.small} />;
