@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {appRootPath} from '@leav/app-root-path';
 import {aql} from 'arangojs';
-import {readdir} from 'fs/promises';
+import fs, {readdir} from 'fs/promises';
 import path from 'path';
-import {IUtils} from 'utils/utils';
+import winston from 'winston';
 import {IConfig} from '_types/config';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
@@ -27,14 +27,14 @@ export const APPLICATIONS_COLLECTION_NAME = 'core_applications';
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
-    'core.utils'?: IUtils;
+    'core.utils.logger'?: winston.Winston;
     config?: IConfig;
 }
 
 export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
-    'core.utils': utils = null,
+    'core.utils.logger': logger = null,
     config = null
 }: IDeps = {}): IApplicationRepo {
     return {
@@ -97,18 +97,29 @@ export default function ({
             let appsFolders = await readdir(appRootFolder);
             appsFolders = appsFolders.filter(item => !/(^|\/)\.[^\/\.]/g.test(item)); // ignore hidden files
 
-            const components: IApplicationModule[] = await Promise.all(
-                appsFolders.map(async appFolder => {
-                    const appPath = path.resolve(appRootFolder, appFolder);
-                    const appManifestJson = await import(path.resolve(appPath, 'manifest.json'));
+            const components: IApplicationModule[] = await appsFolders.reduce(async (accProm, appFolder) => {
+                const acc = await accProm;
+                const appPath = path.resolve(appRootFolder, appFolder);
+                const manifestPath = path.resolve(appPath, 'manifest.json');
 
-                    return {
-                        id: appManifestJson.name,
-                        description: appManifestJson.description,
-                        version: appManifestJson.version
-                    };
-                })
-            );
+                // Check if manifest file exists. If not, just ignore the folder
+                try {
+                    await fs.stat(manifestPath);
+                } catch (e) {
+                    logger.warn(`Manifest file not found for module "${appPath}"`);
+                    return acc;
+                }
+
+                const appManifestJson = await import(path.resolve(appPath, 'manifest.json'));
+
+                acc.push({
+                    id: appManifestJson.name,
+                    description: appManifestJson.description,
+                    version: appManifestJson.version
+                });
+
+                return acc;
+            }, Promise.resolve([]));
 
             return components;
         }

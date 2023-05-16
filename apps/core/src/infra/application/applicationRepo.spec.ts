@@ -2,9 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
+import {Stats} from 'fs';
 import fs from 'fs/promises';
 import {IDbUtils} from 'infra/db/dbUtils';
 import path from 'path';
+import winston from 'winston';
 import {IConfig} from '_types/config';
 import {mockApplication} from '../../__tests__/mocks/application';
 import {mockCtx} from '../../__tests__/mocks/shared';
@@ -151,6 +153,7 @@ describe('applicationRepo', () => {
         test('Return modules found on directory', async () => {
             const pathSpy = jest.spyOn(path, 'resolve').mockReturnValueOnce('/some/path');
             const fsSpy = jest.spyOn(fs, 'readdir').mockResolvedValueOnce(['data-studio', 'admin'] as any[]);
+            const fsSpyStat = jest.spyOn(fs, 'stat').mockResolvedValue({} as Stats);
 
             jest.mock(
                 '/some/path/data-studio/manifest.json',
@@ -183,6 +186,45 @@ describe('applicationRepo', () => {
 
             pathSpy.mockRestore();
             fsSpy.mockRestore();
+            fsSpyStat.mockRestore();
+        });
+
+        test('Ignore invalid folders', async () => {
+            const pathSpy = jest.spyOn(path, 'resolve').mockReturnValueOnce('/some/path');
+            const fsSpy = jest.spyOn(fs, 'readdir').mockResolvedValueOnce(['data-studio', 'invalid_module'] as any[]);
+            const fsSpyStat = jest.spyOn(fs, 'stat').mockImplementation(statPath => {
+                if (String(statPath).match(/invalid_module/)) {
+                    throw new Error('Invalid module');
+                }
+                return Promise.resolve({} as Stats);
+            });
+
+            jest.mock(
+                '/some/path/data-studio/manifest.json',
+                () => ({
+                    name: 'data-studio',
+                    description: 'data studio description',
+                    version: '42'
+                }),
+                {virtual: true}
+            );
+
+            const mockLogger: Mockify<winston.Winston> = {
+                warn: jest.fn()
+            };
+
+            const repo = applicationRepo({
+                'core.utils.logger': mockLogger as winston.Winston,
+                config: mockConfig as IConfig
+            });
+
+            const modules = await repo.getAvailableModules({ctx: mockCtx});
+
+            expect(modules).toEqual([{id: 'data-studio', description: 'data studio description', version: '42'}]);
+
+            pathSpy.mockRestore();
+            fsSpy.mockRestore();
+            fsSpyStat.mockRestore();
         });
     });
 });
