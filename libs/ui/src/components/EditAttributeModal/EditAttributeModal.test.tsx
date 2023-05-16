@@ -17,6 +17,14 @@ describe('EditAttributeModal', () => {
                 {
                     name: gqlTypes.PermissionsActions.admin_edit_attribute,
                     allowed: true
+                },
+                {
+                    name: gqlTypes.PermissionsActions.admin_delete_attribute,
+                    allowed: true
+                },
+                {
+                    name: gqlTypes.PermissionsActions.admin_create_attribute,
+                    allowed: true
                 }
             ]
         },
@@ -25,6 +33,18 @@ describe('EditAttributeModal', () => {
     jest.spyOn(gqlTypes, 'useIsAllowedQuery').mockImplementation(
         () => mockResultIsAllowed as QueryResult<gqlTypes.IsAllowedQuery, gqlTypes.IsAllowedQueryVariables>
     );
+
+    const mockGetAttributeByIdData = {
+        attributes: {
+            list: [{...mockAttributeWithDetails}]
+        }
+    };
+
+    const mockResultGetAttributeById: Mockify<typeof gqlTypes.useGetAttributeByIdQuery> = {
+        loading: false,
+        data: mockGetAttributeByIdData,
+        called: true
+    };
 
     describe('Create attribute', () => {
         test('Create new attribute', async () => {
@@ -76,7 +96,7 @@ describe('EditAttributeModal', () => {
 
             expect(screen.queryByText(/id_already_exists/)).not.toBeInTheDocument();
 
-            user.click(screen.getByRole('button', {name: /submit/i}));
+            await user.click(screen.getByRole('button', {name: /submit/i}));
 
             await waitFor(() => {
                 expect(mockSaveAttributeMutation).toBeCalledWith({
@@ -137,18 +157,6 @@ describe('EditAttributeModal', () => {
     });
 
     describe('Edit existing attribute', () => {
-        const mockGetAttributeByIdData = {
-            attributes: {
-                list: [{...mockAttributeWithDetails}]
-            }
-        };
-
-        const mockResultGetAttributeById: Mockify<typeof gqlTypes.useGetAttributeByIdQuery> = {
-            loading: false,
-            data: mockGetAttributeByIdData,
-            called: true
-        };
-
         test('Display edit form for existing attribute', async () => {
             jest.spyOn(gqlTypes, 'useGetAttributeByIdQuery').mockImplementation(
                 () => mockResultGetAttributeById as QueryResult
@@ -234,6 +242,92 @@ describe('EditAttributeModal', () => {
                     }
                 }
             });
+        });
+    });
+
+    describe('Delete attribute', () => {
+        test('Can delete attribute', async () => {
+            const user = userEvent.setup();
+            jest.spyOn(gqlTypes, 'useGetAttributeByIdQuery').mockImplementation(
+                () => mockResultGetAttributeById as QueryResult
+            );
+
+            const mockDeleteAttributeMutation = jest.fn().mockReturnValue({
+                data: {
+                    deleteAttribute: {
+                        __typename: 'Attribute',
+                        id: mockAttributeWithDetails.id
+                    }
+                }
+            });
+            jest.spyOn(gqlTypes, 'useDeleteAttributeMutation').mockImplementation(() => [
+                mockDeleteAttributeMutation,
+                {loading: false, called: false, client: null, reset: null, error: null}
+            ]);
+
+            render(<EditAttributeModal attributeId={mockAttributeWithDetails.id} open onClose={jest.fn()} />);
+
+            await user.click(screen.getByRole('button', {name: /delete/i}));
+            await user.click(screen.getByRole('button', {name: /submit/i})); // confirm
+
+            await waitFor(
+                () => {
+                    expect(mockDeleteAttributeMutation).toBeCalledWith({
+                        variables: {
+                            id: mockAttributeWithDetails.id
+                        }
+                    });
+                },
+                {
+                    timeout: 10000
+                }
+            );
+        });
+
+        test('If not allowed, cannot delete attribute', async () => {
+            const mockResultIsAllowedForbidden: Mockify<typeof gqlTypes.useIsAllowedQuery> = {
+                loading: false,
+                data: {
+                    isAllowed: [
+                        {
+                            name: gqlTypes.PermissionsActions.admin_edit_attribute,
+                            allowed: true
+                        },
+                        {
+                            name: gqlTypes.PermissionsActions.admin_delete_attribute,
+                            allowed: false
+                        }
+                    ]
+                },
+                called: true
+            };
+            jest.spyOn(gqlTypes, 'useIsAllowedQuery').mockImplementation(
+                () =>
+                    mockResultIsAllowedForbidden as QueryResult<
+                        gqlTypes.IsAllowedQuery,
+                        gqlTypes.IsAllowedQueryVariables
+                    >
+            );
+
+            jest.spyOn(gqlTypes, 'useGetAttributeByIdQuery').mockImplementation(
+                () => mockResultGetAttributeById as QueryResult
+            );
+            const mockDeleteAttributeMutation = jest.fn().mockReturnValue({
+                data: {
+                    deleteAttribute: {
+                        __typename: 'Attribute',
+                        id: mockAttributeWithDetails.id
+                    }
+                }
+            });
+            jest.spyOn(gqlTypes, 'useDeleteAttributeMutation').mockImplementation(() => [
+                mockDeleteAttributeMutation,
+                {loading: false, called: false, client: null, reset: null, error: null}
+            ]);
+
+            render(<EditAttributeModal attributeId={mockAttributeWithDetails.id} open onClose={jest.fn()} />);
+
+            expect(screen.queryByRole('button', {name: /delete/i})).not.toBeInTheDocument();
         });
     });
 });

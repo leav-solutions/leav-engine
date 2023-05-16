@@ -25,6 +25,14 @@ describe('EditTreeModal', () => {
                 {
                     name: gqlTypes.PermissionsActions.admin_edit_tree,
                     allowed: true
+                },
+                {
+                    name: gqlTypes.PermissionsActions.admin_delete_tree,
+                    allowed: true
+                },
+                {
+                    name: gqlTypes.PermissionsActions.admin_create_tree,
+                    allowed: true
                 }
             ]
         },
@@ -33,6 +41,18 @@ describe('EditTreeModal', () => {
     jest.spyOn(gqlTypes, 'useIsAllowedQuery').mockImplementation(
         () => mockResultIsAllowed as QueryResult<gqlTypes.IsAllowedQuery, gqlTypes.IsAllowedQueryVariables>
     );
+
+    const mockGetTreeByIdData = {
+        trees: {
+            list: [{...mockTreeWithDetails}]
+        }
+    };
+
+    const mockQueryResultGetTreeById: Mockify<typeof gqlTypes.useGetTreeByIdQuery> = {
+        loading: false,
+        data: mockGetTreeByIdData,
+        called: true
+    };
 
     describe('Create tree', () => {
         test('Create new tree', async () => {
@@ -137,20 +157,10 @@ describe('EditTreeModal', () => {
     });
 
     describe('Edit existing tree', () => {
-        const mockGetTreeByIdData = {
-            trees: {
-                list: [{...mockTreeWithDetails}]
-            }
-        };
-
-        const mockJestResult: Mockify<typeof gqlTypes.useGetTreeByIdQuery> = {
-            loading: false,
-            data: mockGetTreeByIdData,
-            called: true
-        };
-
         test('Display edit form for existing tree', async () => {
-            jest.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(() => mockJestResult as QueryResult);
+            jest.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(
+                () => mockQueryResultGetTreeById as QueryResult
+            );
             render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={jest.fn()} />);
 
             expect(screen.getByRole('textbox', {name: /id/})).toBeDisabled();
@@ -159,7 +169,9 @@ describe('EditTreeModal', () => {
 
         test('Submit field on blur', async () => {
             const user = userEvent.setup();
-            jest.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(() => mockJestResult as QueryResult);
+            jest.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(
+                () => mockQueryResultGetTreeById as QueryResult
+            );
             const mockSaveTreeMutation = jest.fn().mockReturnValue({
                 data: {
                     saveTree: {
@@ -234,7 +246,7 @@ describe('EditTreeModal', () => {
             };
 
             const mockJestResultNoLibs: Mockify<typeof gqlTypes.useGetTreeByIdQuery> = {
-                ...mockJestResult,
+                ...mockQueryResultGetTreeById,
                 data: {
                     trees: {
                         list: [treeWithLibs]
@@ -311,7 +323,9 @@ describe('EditTreeModal', () => {
         });
 
         test('Can add libraries', async () => {
-            jest.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(() => mockJestResult as QueryResult);
+            jest.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(
+                () => mockQueryResultGetTreeById as QueryResult
+            );
             render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={jest.fn()} />);
 
             await userEvent.click(screen.getByRole('button', {name: /add_libraries/i}));
@@ -355,7 +369,7 @@ describe('EditTreeModal', () => {
             };
 
             const mockJestResultWithLibs: Mockify<typeof gqlTypes.useGetTreeByIdQuery> = {
-                ...mockJestResult,
+                ...mockQueryResultGetTreeById,
                 data: {
                     trees: {
                         list: [treeWithLibs]
@@ -403,6 +417,95 @@ describe('EditTreeModal', () => {
                     }
                 });
             });
+        });
+    });
+
+    describe('Delete tree', () => {
+        test('Can delete tree', async () => {
+            const user = userEvent.setup();
+            jest.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(
+                () => mockQueryResultGetTreeById as QueryResult
+            );
+            const mockDeleteTreeMutation = jest.fn().mockReturnValue({
+                data: {
+                    deleteTree: {
+                        __typename: 'Tree',
+                        id: mockTreeWithDetails.id
+                    }
+                }
+            });
+            jest.spyOn(gqlTypes, 'useDeleteTreeMutation').mockImplementation(() => [
+                mockDeleteTreeMutation,
+                {loading: false, called: false, client: null, reset: null, error: null}
+            ]);
+
+            render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={jest.fn()} />);
+
+            await user.click(screen.getByRole('button', {name: /trees\.delete/i}));
+            await user.click(screen.getByRole('button', {name: /submit/i})); // confirm
+
+            await waitFor(
+                () => {
+                    expect(mockDeleteTreeMutation).toBeCalledWith({
+                        variables: {
+                            id: mockTreeWithDetails.id
+                        }
+                    });
+                },
+                {
+                    timeout: 10000
+                }
+            );
+        });
+
+        test('If not allowed, cannot delete tree', async () => {
+            const mockResultIsAllowedForbidden: Mockify<typeof gqlTypes.useIsAllowedQuery> = {
+                loading: false,
+                data: {
+                    isAllowed: [
+                        {
+                            name: gqlTypes.PermissionsActions.admin_edit_tree,
+                            allowed: true
+                        },
+                        {
+                            name: gqlTypes.PermissionsActions.admin_delete_tree,
+                            allowed: false
+                        },
+                        {
+                            name: gqlTypes.PermissionsActions.admin_create_tree,
+                            allowed: true
+                        }
+                    ]
+                },
+                called: true
+            };
+            jest.spyOn(gqlTypes, 'useIsAllowedQuery').mockImplementation(
+                () =>
+                    mockResultIsAllowedForbidden as QueryResult<
+                        gqlTypes.IsAllowedQuery,
+                        gqlTypes.IsAllowedQueryVariables
+                    >
+            );
+
+            jest.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(
+                () => mockQueryResultGetTreeById as QueryResult
+            );
+            const mockDeleteTreeMutation = jest.fn().mockReturnValue({
+                data: {
+                    deleteTree: {
+                        __typename: 'Tree',
+                        id: mockTreeWithDetails.id
+                    }
+                }
+            });
+            jest.spyOn(gqlTypes, 'useDeleteTreeMutation').mockImplementation(() => [
+                mockDeleteTreeMutation,
+                {loading: false, called: false, client: null, reset: null, error: null}
+            ]);
+
+            render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={jest.fn()} />);
+
+            expect(screen.queryByRole('button', {name: /trees\.delete/i})).not.toBeInTheDocument();
         });
     });
 });

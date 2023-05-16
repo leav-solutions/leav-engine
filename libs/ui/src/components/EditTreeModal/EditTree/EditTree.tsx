@@ -4,14 +4,7 @@
 import {Tabs, TabsProps} from 'antd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {extractPermissionFromQuery} from '../../../helpers/extractPermissionFromQuery';
-import {
-    PermissionsActions,
-    PermissionTypes,
-    TreeDetailsFragment,
-    useGetTreeByIdQuery,
-    useIsAllowedQuery
-} from '../../../_gqlTypes';
+import {TreeDetailsFragment, useGetTreeByIdQuery} from '../../../_gqlTypes';
 import {ErrorDisplay} from '../../ErrorDisplay';
 import {Loading} from '../../Loading';
 import {EditTreeInfo} from './EditTreeInfo';
@@ -19,13 +12,14 @@ import {EditTreeInfo} from './EditTreeInfo';
 interface IEditTreeProps {
     treeId?: string;
     onSetSubmitFunction?: (submitFunction: () => Promise<TreeDetailsFragment>) => void;
+    readOnly?: boolean;
 }
 
 const TabContentWrapper = styled.div`
     height: calc(95vh - 15rem);
 `;
 
-function EditTree({treeId, onSetSubmitFunction}: IEditTreeProps): JSX.Element {
+function EditTree({treeId, onSetSubmitFunction, readOnly: isReadOnly}: IEditTreeProps): JSX.Element {
     const {t} = useTranslation('shared');
     const isEditing = !!treeId;
 
@@ -37,21 +31,12 @@ function EditTree({treeId, onSetSubmitFunction}: IEditTreeProps): JSX.Element {
         skip: !treeId
     });
 
-    const isAllowedQueryResult = useIsAllowedQuery({
-        fetchPolicy: 'cache-and-network',
-        variables: {
-            type: PermissionTypes.admin,
-            actions: [PermissionsActions.admin_edit_tree]
-        }
-    });
-    const isReadOnly = !extractPermissionFromQuery(isAllowedQueryResult, PermissionsActions.admin_edit_tree);
-
     if (loading) {
         return <Loading />;
     }
 
-    if (error || isAllowedQueryResult.error) {
-        return <ErrorDisplay message={error?.message || isAllowedQueryResult?.error?.message} />;
+    if (error) {
+        return <ErrorDisplay message={error?.message} />;
     }
 
     const treeData = data?.trees?.list[0] ?? null;

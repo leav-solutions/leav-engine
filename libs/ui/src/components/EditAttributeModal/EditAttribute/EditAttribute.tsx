@@ -4,14 +4,7 @@
 import {Tabs, TabsProps} from 'antd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {extractPermissionFromQuery} from '../../../helpers/extractPermissionFromQuery';
-import {
-    AttributeDetailsFragment,
-    PermissionsActions,
-    PermissionTypes,
-    useGetAttributeByIdQuery,
-    useIsAllowedQuery
-} from '../../../_gqlTypes';
+import {AttributeDetailsFragment, useGetAttributeByIdQuery} from '../../../_gqlTypes';
 import {ErrorDisplay} from '../../ErrorDisplay';
 import {Loading} from '../../Loading';
 import {EditAttributeInfo} from './EditAttributeInfo';
@@ -19,13 +12,14 @@ import {EditAttributeInfo} from './EditAttributeInfo';
 interface IEditAttributeProps {
     attributeId?: string;
     onSetSubmitFunction?: (submitFunction: () => Promise<AttributeDetailsFragment>) => void;
+    readOnly?: boolean;
 }
 
 const TabContentWrapper = styled.div`
     height: calc(95vh - 15rem);
 `;
 
-function EditAttribute({attributeId, onSetSubmitFunction}: IEditAttributeProps): JSX.Element {
+function EditAttribute({attributeId, onSetSubmitFunction, readOnly: isReadOnly}: IEditAttributeProps): JSX.Element {
     const {t} = useTranslation('shared');
     const isEditing = !!attributeId;
 
@@ -37,21 +31,12 @@ function EditAttribute({attributeId, onSetSubmitFunction}: IEditAttributeProps):
         skip: !attributeId
     });
 
-    const isAllowedQueryResult = useIsAllowedQuery({
-        fetchPolicy: 'cache-and-network',
-        variables: {
-            type: PermissionTypes.admin,
-            actions: [PermissionsActions.admin_edit_attribute]
-        }
-    });
-    const isReadOnly = !extractPermissionFromQuery(isAllowedQueryResult, PermissionsActions.admin_edit_attribute);
-
     if (loading) {
         return <Loading />;
     }
 
-    if (error || isAllowedQueryResult.error) {
-        return <ErrorDisplay message={error?.message || isAllowedQueryResult?.error?.message} />;
+    if (error) {
+        return <ErrorDisplay message={error?.message} />;
     }
 
     const attributeData = data?.attributes?.list[0] ?? null;

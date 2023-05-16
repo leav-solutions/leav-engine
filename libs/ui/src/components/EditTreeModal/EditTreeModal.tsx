@@ -6,11 +6,20 @@
 
 import {gql, useApolloClient} from '@apollo/client';
 import {localizedTranslation} from '@leav/utils';
-import {Button, Modal, ModalProps} from 'antd';
+import {Button, Modal, ModalProps, Popconfirm} from 'antd';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {extractPermissionFromQuery} from '../../helpers/extractPermissionFromQuery';
 import {useLang} from '../../hooks';
-import {TreeDetailsFragment} from '../../_gqlTypes';
+import {
+    PermissionsActions,
+    PermissionTypes,
+    TreeDetailsFragment,
+    useDeleteTreeMutation,
+    useIsAllowedQuery
+} from '../../_gqlTypes';
+import {ErrorDisplay} from '../ErrorDisplay';
+import {Loading} from '../Loading';
 import {EditTree} from './EditTree';
 
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
@@ -26,9 +35,26 @@ function EditTreeModal({open, treeId, onClose, onPostCreate, width}: IEditTreeMo
     const {t} = useTranslation('shared');
     const {lang} = useLang();
     const apolloClient = useApolloClient();
+
+    const [deleteTree] = useDeleteTreeMutation();
+
     const [submitFunction, setSubmitFunction] = useState<() => Promise<TreeDetailsFragment>>();
     const [submitLoading, setSubmitLoading] = useState(false);
     const isEditing = !!treeId;
+    const permissionsQueryResult = useIsAllowedQuery({
+        fetchPolicy: 'cache-and-network',
+        variables: {
+            type: PermissionTypes.admin,
+            actions: isEditing
+                ? [PermissionsActions.admin_edit_tree, PermissionsActions.admin_delete_tree]
+                : [PermissionsActions.admin_create_tree]
+        }
+    });
+    const isReadOnly = !extractPermissionFromQuery(
+        permissionsQueryResult,
+        isEditing ? PermissionsActions.admin_edit_tree : PermissionsActions.admin_create_tree
+    );
+    const canDelete = extractPermissionFromQuery(permissionsQueryResult, PermissionsActions.admin_delete_tree);
 
     const _handleSubmit = async () => {
         if (!submitFunction) {
@@ -44,6 +70,25 @@ function EditTreeModal({open, treeId, onClose, onPostCreate, width}: IEditTreeMo
         } finally {
             setSubmitLoading(false);
         }
+    };
+
+    const _handleDelete = async () => {
+        if (!treeId) {
+            return;
+        }
+
+        const deleteRes = await deleteTree({
+            variables: {
+                id: treeId
+            }
+        });
+
+        // Remove library from apollo cache
+        apolloClient.cache.evict({
+            id: apolloClient.cache.identify(deleteRes.data.deleteTree)
+        });
+
+        onClose();
     };
 
     const _handleSetSubmitFunction = submitFunc => {
@@ -69,6 +114,20 @@ function EditTreeModal({open, treeId, onClose, onPostCreate, width}: IEditTreeMo
 
     const buttons = isEditing
         ? [
+              canDelete ? (
+                  <Popconfirm
+                      key="delete_confirm"
+                      title={t('trees.delete_confirm')}
+                      description={t('trees.delete_confirm_warning')}
+                      okText={t('global.submit')}
+                      cancelText={t('global.cancel')}
+                      onConfirm={_handleDelete}
+                  >
+                      <Button key="delete" danger>
+                          {t('trees.delete')}
+                      </Button>
+                  </Popconfirm>
+              ) : null,
               <Button key="close" onClick={onClose}>
                   {t('global.close')}
               </Button>
@@ -92,7 +151,13 @@ function EditTreeModal({open, treeId, onClose, onPostCreate, width}: IEditTreeMo
             bodyStyle={{height: 'calc(95vh - 15rem)', overflow: 'auto'}}
             centered
         >
-            <EditTree treeId={treeId} onSetSubmitFunction={_handleSetSubmitFunction} />
+            {permissionsQueryResult.loading ? (
+                <Loading />
+            ) : permissionsQueryResult.error ? (
+                <ErrorDisplay message={permissionsQueryResult.error.message} />
+            ) : (
+                <EditTree treeId={treeId} onSetSubmitFunction={_handleSetSubmitFunction} readOnly={isReadOnly} />
+            )}
         </Modal>
     );
 }

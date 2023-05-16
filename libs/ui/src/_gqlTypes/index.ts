@@ -797,7 +797,7 @@ export type DetailsApplicationFragment = {
     permissions: {access_application: boolean; admin_application: boolean};
 };
 
-export type RecordIdentityJP8DKlXcZJvQZiM0DlOr5ZygRhVzdZpv9xjTg8rnHUFragment = {
+export type RecordIdentityMO5atJ1H20afgJ8HxEpWOtugettwFDljEiEc6RhVjw0Fragment = {
     id: string;
     whoAmI: {
         id: string;
@@ -814,7 +814,7 @@ export type RecordIdentityJP8DKlXcZJvQZiM0DlOr5ZygRhVzdZpv9xjTg8rnHUFragment = {
     };
 };
 
-export type RecordIdentityD5inBa0WRi2y1Et4JmUEvqT20Hc1ZErjlg7Z3tQ4puEFragment = {
+export type RecordIdentityV5ZmiA8VmYbUf4n9iVljYxObNWugWZqgfrsErVrdj4Fragment = {
     id: string;
     whoAmI: {
         id: string;
@@ -832,8 +832,8 @@ export type RecordIdentityD5inBa0WRi2y1Et4JmUEvqT20Hc1ZErjlg7Z3tQ4puEFragment = 
 };
 
 export type RecordIdentityFragment =
-    | RecordIdentityJP8DKlXcZJvQZiM0DlOr5ZygRhVzdZpv9xjTg8rnHUFragment
-    | RecordIdentityD5inBa0WRi2y1Et4JmUEvqT20Hc1ZErjlg7Z3tQ4puEFragment;
+    | RecordIdentityMO5atJ1H20afgJ8HxEpWOtugettwFDljEiEc6RhVjw0Fragment
+    | RecordIdentityV5ZmiA8VmYbUf4n9iVljYxObNWugWZqgfrsErVrdj4Fragment;
 
 export type AttributeDetailsLinkAttributeFragment = {
     reverse_link?: string | null;
@@ -1184,6 +1184,12 @@ export type CheckAttributeExistenceQueryVariables = Exact<{
 
 export type CheckAttributeExistenceQuery = {attributes?: {totalCount: number} | null};
 
+export type DeleteAttributeMutationVariables = Exact<{
+    id?: InputMaybe<Scalars['ID']>;
+}>;
+
+export type DeleteAttributeMutation = {deleteAttribute: {id: string}};
+
 export type GetAttributeByIdQueryVariables = Exact<{
     id?: InputMaybe<Scalars['ID']>;
 }>;
@@ -1359,6 +1365,12 @@ export type CheckLibraryExistenceQueryVariables = Exact<{
 }>;
 
 export type CheckLibraryExistenceQuery = {libraries?: {totalCount: number} | null};
+
+export type DeleteLibraryMutationVariables = Exact<{
+    id?: InputMaybe<Scalars['ID']>;
+}>;
+
+export type DeleteLibraryMutation = {deleteLibrary: {id: string}};
 
 export type GetLibrariesQueryVariables = Exact<{[key: string]: never}>;
 
@@ -1582,6 +1594,12 @@ export type CheckTreeExistenceQueryVariables = Exact<{
 }>;
 
 export type CheckTreeExistenceQuery = {trees?: {totalCount: number} | null};
+
+export type DeleteTreeMutationVariables = Exact<{
+    id: Scalars['ID'];
+}>;
+
+export type DeleteTreeMutation = {deleteTree: {id: string}};
 
 export type GetTreeByIdQueryVariables = Exact<{
     id?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
@@ -2096,6 +2114,50 @@ export type CheckAttributeExistenceQueryResult = Apollo.QueryResult<
     CheckAttributeExistenceQuery,
     CheckAttributeExistenceQueryVariables
 >;
+export const DeleteAttributeDocument = gql`
+    mutation DELETE_ATTRIBUTE($id: ID) {
+        deleteAttribute(id: $id) {
+            id
+        }
+    }
+`;
+export type DeleteAttributeMutationFn = Apollo.MutationFunction<
+    DeleteAttributeMutation,
+    DeleteAttributeMutationVariables
+>;
+
+/**
+ * __useDeleteAttributeMutation__
+ *
+ * To run a mutation, you first call `useDeleteAttributeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteAttributeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteAttributeMutation, { data, loading, error }] = useDeleteAttributeMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteAttributeMutation(
+    baseOptions?: Apollo.MutationHookOptions<DeleteAttributeMutation, DeleteAttributeMutationVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useMutation<DeleteAttributeMutation, DeleteAttributeMutationVariables>(
+        DeleteAttributeDocument,
+        options
+    );
+}
+export type DeleteAttributeMutationHookResult = ReturnType<typeof useDeleteAttributeMutation>;
+export type DeleteAttributeMutationResult = Apollo.MutationResult<DeleteAttributeMutation>;
+export type DeleteAttributeMutationOptions = Apollo.BaseMutationOptions<
+    DeleteAttributeMutation,
+    DeleteAttributeMutationVariables
+>;
 export const GetAttributeByIdDocument = gql`
     query GET_ATTRIBUTE_BY_ID($id: ID) {
         attributes(filters: {id: $id}) {
@@ -2321,6 +2383,44 @@ export type CheckLibraryExistenceQueryResult = Apollo.QueryResult<
     CheckLibraryExistenceQuery,
     CheckLibraryExistenceQueryVariables
 >;
+export const DeleteLibraryDocument = gql`
+    mutation DELETE_LIBRARY($id: ID) {
+        deleteLibrary(id: $id) {
+            id
+        }
+    }
+`;
+export type DeleteLibraryMutationFn = Apollo.MutationFunction<DeleteLibraryMutation, DeleteLibraryMutationVariables>;
+
+/**
+ * __useDeleteLibraryMutation__
+ *
+ * To run a mutation, you first call `useDeleteLibraryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteLibraryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteLibraryMutation, { data, loading, error }] = useDeleteLibraryMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteLibraryMutation(
+    baseOptions?: Apollo.MutationHookOptions<DeleteLibraryMutation, DeleteLibraryMutationVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useMutation<DeleteLibraryMutation, DeleteLibraryMutationVariables>(DeleteLibraryDocument, options);
+}
+export type DeleteLibraryMutationHookResult = ReturnType<typeof useDeleteLibraryMutation>;
+export type DeleteLibraryMutationResult = Apollo.MutationResult<DeleteLibraryMutation>;
+export type DeleteLibraryMutationOptions = Apollo.BaseMutationOptions<
+    DeleteLibraryMutation,
+    DeleteLibraryMutationVariables
+>;
 export const GetLibrariesDocument = gql`
     query GET_LIBRARIES {
         libraries {
@@ -2534,6 +2634,41 @@ export type CheckTreeExistenceQueryResult = Apollo.QueryResult<
     CheckTreeExistenceQuery,
     CheckTreeExistenceQueryVariables
 >;
+export const DeleteTreeDocument = gql`
+    mutation DELETE_TREE($id: ID!) {
+        deleteTree(id: $id) {
+            id
+        }
+    }
+`;
+export type DeleteTreeMutationFn = Apollo.MutationFunction<DeleteTreeMutation, DeleteTreeMutationVariables>;
+
+/**
+ * __useDeleteTreeMutation__
+ *
+ * To run a mutation, you first call `useDeleteTreeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteTreeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteTreeMutation, { data, loading, error }] = useDeleteTreeMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteTreeMutation(
+    baseOptions?: Apollo.MutationHookOptions<DeleteTreeMutation, DeleteTreeMutationVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useMutation<DeleteTreeMutation, DeleteTreeMutationVariables>(DeleteTreeDocument, options);
+}
+export type DeleteTreeMutationHookResult = ReturnType<typeof useDeleteTreeMutation>;
+export type DeleteTreeMutationResult = Apollo.MutationResult<DeleteTreeMutation>;
+export type DeleteTreeMutationOptions = Apollo.BaseMutationOptions<DeleteTreeMutation, DeleteTreeMutationVariables>;
 export const GetTreeByIdDocument = gql`
     query GET_TREE_BY_ID($id: [ID!]) {
         trees(filters: {id: $id}) {

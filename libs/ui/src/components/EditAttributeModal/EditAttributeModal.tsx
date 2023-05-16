@@ -6,11 +6,20 @@
 
 import {gql, useApolloClient} from '@apollo/client';
 import {localizedTranslation} from '@leav/utils';
-import {Button, Modal, ModalProps} from 'antd';
+import {Button, Modal, ModalProps, Popconfirm} from 'antd';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {extractPermissionFromQuery} from '../../helpers/extractPermissionFromQuery';
 import {useLang} from '../../hooks';
-import {AttributeDetailsFragment} from '../../_gqlTypes';
+import {
+    AttributeDetailsFragment,
+    PermissionsActions,
+    PermissionTypes,
+    useDeleteAttributeMutation,
+    useIsAllowedQuery
+} from '../../_gqlTypes';
+import {ErrorDisplay} from '../ErrorDisplay';
+import {Loading} from '../Loading';
 import EditAttribute from './EditAttribute/EditAttribute';
 
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
@@ -32,6 +41,19 @@ function EditAttributeModal({
     const {t} = useTranslation('shared');
     const {lang} = useLang();
     const apolloClient = useApolloClient();
+
+    const isAllowedQueryResult = useIsAllowedQuery({
+        fetchPolicy: 'cache-and-network',
+        variables: {
+            type: PermissionTypes.admin,
+            actions: [PermissionsActions.admin_edit_attribute, PermissionsActions.admin_delete_attribute]
+        }
+    });
+    const isReadOnly = !extractPermissionFromQuery(isAllowedQueryResult, PermissionsActions.admin_edit_attribute);
+    const canDelete = extractPermissionFromQuery(isAllowedQueryResult, PermissionsActions.admin_delete_attribute);
+
+    const [deleteAttribute] = useDeleteAttributeMutation();
+
     const [submitFunction, setSubmitFunction] = useState<() => Promise<AttributeDetailsFragment>>();
     const [submitLoading, setSubmitLoading] = useState(false);
     const isEditing = !!attributeId;
@@ -50,6 +72,25 @@ function EditAttributeModal({
         } finally {
             setSubmitLoading(false);
         }
+    };
+
+    const _handleDelete = async () => {
+        if (!attributeId) {
+            return;
+        }
+
+        const deleteRes = await deleteAttribute({
+            variables: {
+                id: attributeId
+            }
+        });
+
+        // Remove library from apollo cache
+        apolloClient.cache.evict({
+            id: apolloClient.cache.identify(deleteRes.data.deleteAttribute)
+        });
+
+        onClose();
     };
 
     const _handleSetSubmitFunction = submitFunc => {
@@ -82,6 +123,20 @@ function EditAttributeModal({
 
     const buttons = isEditing
         ? [
+              canDelete ? (
+                  <Popconfirm
+                      key="delete_confirm"
+                      title={t('attributes.delete_confirm')}
+                      description={t('attributes.delete_confirm_warning')}
+                      okText={t('global.submit')}
+                      cancelText={t('global.cancel')}
+                      onConfirm={_handleDelete}
+                  >
+                      <Button key="delete" danger>
+                          {t('attributes.delete')}
+                      </Button>
+                  </Popconfirm>
+              ) : null,
               <Button key="close" onClick={onClose}>
                   {t('global.close')}
               </Button>
@@ -105,7 +160,17 @@ function EditAttributeModal({
             bodyStyle={{height: 'calc(95vh - 15rem)', overflow: 'auto'}}
             centered
         >
-            <EditAttribute attributeId={attributeId} onSetSubmitFunction={_handleSetSubmitFunction} />
+            {isAllowedQueryResult.loading ? (
+                <Loading />
+            ) : isAllowedQueryResult.error ? (
+                <ErrorDisplay message={isAllowedQueryResult.error.message} />
+            ) : (
+                <EditAttribute
+                    attributeId={attributeId}
+                    onSetSubmitFunction={_handleSetSubmitFunction}
+                    readOnly={isReadOnly}
+                />
+            )}
         </Modal>
     );
 }
