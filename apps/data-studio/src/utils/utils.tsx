@@ -3,13 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {objectToNameValueArray} from '@leav/utils';
 import {ADD_VIEW_saveView} from '_gqlTypes/ADD_VIEW';
-import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
+import {GET_APPLICATION_BY_ENDPOINT_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
 import {GET_VIEW_view, GET_VIEW_view_display, GET_VIEW_view_sort} from '_gqlTypes/GET_VIEW';
-import {AttributeFormat, AttributeType, ValueVersionInput, ViewSizes} from '_gqlTypes/globalTypes';
 import {RECORD_FORM_recordForm_elements_values_Value_version} from '_gqlTypes/RECORD_FORM';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
+import {AttributeFormat, AttributeType, ValueVersionInput, ViewSizes} from '_gqlTypes/globalTypes';
 import {gql} from 'graphql-tag';
-import {i18n, TFunction} from 'i18next';
+import {TFunction, i18n} from 'i18next';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {getFiltersFromRequest} from 'utils/getFiltersFromRequest';
@@ -23,11 +23,11 @@ import {
     IAttribute,
     IDateRangeValue,
     IInfo,
-    InfoPriority,
     IQueryFilter,
     ISelectedAttribute,
     IValueVersion,
     IView,
+    InfoPriority,
     PreviewAttributes,
     PreviewSize
 } from '../_types/types';
@@ -365,7 +365,7 @@ export const stringifyDateRangeValue = (value: IDateRangeValue, t: TFunction): s
         interpolation: {escapeValue: false}
     });
 
-export const isLibraryInApp = (app: GET_APPLICATION_BY_ID_applications_list, libraryId: string): boolean => {
+export const isLibraryInApp = (app: GET_APPLICATION_BY_ENDPOINT_applications_list, libraryId: string): boolean => {
     const settings: IApplicationSettings = app?.settings ?? {};
     if (settings.libraries === 'none') {
         return false;
@@ -379,7 +379,7 @@ export const isLibraryInApp = (app: GET_APPLICATION_BY_ID_applications_list, lib
     return !!appLibraries.find(appLib => appLib === libraryId);
 };
 
-export const isTreeInApp = (app: GET_APPLICATION_BY_ID_applications_list, treeId: string): boolean => {
+export const isTreeInApp = (app: GET_APPLICATION_BY_ENDPOINT_applications_list, treeId: string): boolean => {
     const settings: IApplicationSettings = app?.settings ?? {};
     if (settings.trees === 'none') {
         return false;
