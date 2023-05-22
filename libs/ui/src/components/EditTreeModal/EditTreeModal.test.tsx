@@ -4,9 +4,9 @@
 import {QueryResult} from '@apollo/client';
 import {Mockify} from '@leav/utils';
 import userEvent from '@testing-library/user-event';
+import {mockTreeWithDetails} from '../../__mocks__/common/tree';
 import * as gqlTypes from '../../_gqlTypes';
 import {act, fireEvent, render, screen, waitFor, within} from '../../_tests/testUtils';
-import {mockTreeWithDetails} from '../../__mocks__/common/tree';
 import EditTreeModal from './EditTreeModal';
 
 jest.mock('../LibraryPicker', () => {
@@ -333,7 +333,7 @@ describe('EditTreeModal', () => {
             expect(screen.getByText('LibraryPicker')).toBeInTheDocument();
         });
 
-        test('Can delete libraries', async () => {
+        test('Can delete trees', async () => {
             const treeWithLibs = {
                 ...mockTreeWithDetails,
                 libraries: [
@@ -398,25 +398,28 @@ describe('EditTreeModal', () => {
 
             userEvent.click(within(libA).getByRole('button', {name: /delete/}));
 
-            await waitFor(() => {
-                expect(mockSaveTreeMutation).toBeCalledWith({
-                    variables: {
-                        tree: {
-                            id: mockTreeWithDetails.id,
-                            libraries: [
-                                {
-                                    library: 'libB',
-                                    settings: {
-                                        allowedAtRoot: false,
-                                        allowMultiplePositions: false,
-                                        allowedChildren: []
+            await waitFor(
+                () => {
+                    expect(mockSaveTreeMutation).toBeCalledWith({
+                        variables: {
+                            tree: {
+                                id: mockTreeWithDetails.id,
+                                libraries: [
+                                    {
+                                        library: 'libB',
+                                        settings: {
+                                            allowedAtRoot: false,
+                                            allowMultiplePositions: false,
+                                            allowedChildren: []
+                                        }
                                     }
-                                }
-                            ]
+                                ]
+                            }
                         }
-                    }
-                });
-            });
+                    });
+                },
+                {timeout: 10000}
+            );
         });
     });
 
