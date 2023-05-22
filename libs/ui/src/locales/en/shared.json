@@ -110,7 +110,7 @@
         "all_children_allowed": "All children allowed",
         "libraries": "Libraries",
         "advanced_settings": "Advanced settings",
-        "delete": "Delete library",
+        "delete": "Delete tree",
         "delete_confirm": "Do you really want to delete this tree?",
         "delete_confirm_warning": "Warning: this action is irreversible"
     }

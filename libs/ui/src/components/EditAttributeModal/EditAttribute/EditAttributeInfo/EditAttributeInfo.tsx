@@ -3,13 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Form} from 'antd';
 import {useEffect} from 'react';
-import {useLang} from '../../../../hooks';
 import {
     AttributeDetailsFragment,
     AttributeType,
     useCheckAttributeExistenceLazyQuery,
     useSaveAttributeMutation
 } from '../../../../_gqlTypes';
+import {useLang} from '../../../../hooks';
 import {EditAttributeInfoForm} from './EditAttributeInfoForm';
 
 interface IEditAttributeInfoProps {

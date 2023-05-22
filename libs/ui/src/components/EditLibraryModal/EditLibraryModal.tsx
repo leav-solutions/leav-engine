@@ -9,15 +9,15 @@ import {localizedTranslation} from '@leav/utils';
 import {Button, Modal, ModalProps, Popconfirm} from 'antd';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {extractPermissionFromQuery} from '../../helpers/extractPermissionFromQuery';
-import {useLang} from '../../hooks';
 import {
-    PermissionsActions,
     PermissionTypes,
+    PermissionsActions,
     SaveLibraryMutation,
     useDeleteLibraryMutation,
     useIsAllowedQuery
 } from '../../_gqlTypes';
+import {extractPermissionFromQuery} from '../../helpers/extractPermissionFromQuery';
+import {useLang} from '../../hooks';
 import {ErrorDisplay} from '../ErrorDisplay';
 import {Loading} from '../Loading';
 import EditLibrary from './EditLibrary/EditLibrary';

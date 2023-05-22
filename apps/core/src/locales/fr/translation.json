@@ -78,6 +78,7 @@
         "UNKNOWN_VERSION_PROFILE": "Profil de version inconnu {{profile}}",
         "UNKNOWN_VERSION_TREE": "Arbre inconnu {{tree}}",
         "UNKNOWN_VIEW": "Vue inconnue",
+        "UNKNOWN_LIBRARY_ATTRIBUTE": "Cette bibliothèque n'utilise pas cet attribut",
         "VALUE_NOT_UNIQUE": "Cette valeur a déjà été enregistrée"
     },
     "actions": {

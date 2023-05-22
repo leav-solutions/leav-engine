@@ -67,7 +67,8 @@ describe('ValueDomain', () => {
 
     const mockValidateHelper: Mockify<IValidateHelper> = {
         validateLibrary: global.__mockPromise(true),
-        validateRecord: global.__mockPromise(true)
+        validateRecord: global.__mockPromise(true),
+        validateLibraryAttribute: global.__mockPromise(true)
     };
 
     const mockAttribute = {
@@ -311,6 +312,33 @@ describe('ValueDomain', () => {
             ).rejects.toThrow();
         });
 
+        test('Should throw if the library does not use the attribute', async function () {
+            const mValidateHelper: Mockify<IValidateHelper> = {
+                validateLibraryAttribute: jest.fn().mockImplementation(() => {
+                    throw new ValidationError({attribute: Errors.UNKNOWN_LIBRARY_ATTRIBUTE});
+                })
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.ADVANCED})
+            };
+
+            const valDomain = valueDomain({
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.helpers.validate': mValidateHelper as IValidateHelper
+            });
+
+            await expect(
+                valDomain.saveValue({
+                    library: 'test_lib',
+                    recordId: '12345',
+                    attribute: 'test_attr',
+                    value: {value: 'test val'},
+                    ctx
+                })
+            ).rejects.toThrow();
+        });
+
         test('Should throw if unknown library', async function () {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributes: global.__mockPromise({list: [{id: 'test_attr'}], totalCount: 1}),
@@ -528,7 +556,8 @@ describe('ValueDomain', () => {
                 validateRecord: jest.fn().mockImplementation(() => {
                     throw new ValidationError({test_record: Errors.UNKNOWN_RECORD});
                 }),
-                validateLibrary: global.__mockPromise(true)
+                validateLibrary: global.__mockPromise(true),
+                validateLibraryAttribute: global.__mockPromise(true)
             };
 
             const valDomain = valueDomain({
@@ -1410,6 +1439,29 @@ describe('ValueDomain', () => {
             await expect(saveVal).rejects.toHaveProperty('fields.library');
         });
 
+        test('Should throw if the library does not use the attribute', async function () {
+            const mValidateHelper: Mockify<IValidateHelper> = {
+                validateLibrary: global.__mockPromise(true),
+                validateLibraryAttribute: jest.fn().mockImplementation(() => {
+                    throw new ValidationError({attribute: Errors.UNKNOWN_LIBRARY_ATTRIBUTE});
+                })
+            };
+
+            const valDomain = valueDomain({
+                'core.domain.helpers.validate': mValidateHelper as IValidateHelper
+            });
+
+            await expect(
+                valDomain.saveValueBatch({
+                    library: 'test_lib',
+                    recordId: '123456',
+                    values: [],
+                    ctx,
+                    keepEmpty: true
+                })
+            ).rejects.toThrow();
+        });
+
         test('Should throw if unknown record', async function () {
             const values: IValue[] = [
                 {
@@ -1423,7 +1475,8 @@ describe('ValueDomain', () => {
                 validateRecord: jest.fn().mockImplementation(() => {
                     throw new ValidationError({recordId: Errors.UNKNOWN_RECORD});
                 }),
-                validateLibrary: global.__mockPromise(true)
+                validateLibrary: global.__mockPromise(true),
+                validateLibraryAttribute: global.__mockPromise(true)
             };
 
             const valDomain = valueDomain({

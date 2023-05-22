@@ -2,18 +2,17 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {objectToNameValueArray} from '@leav/utils';
+import {ADD_VIEW_saveView} from '_gqlTypes/ADD_VIEW';
+import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
+import {GET_VIEW_view, GET_VIEW_view_display, GET_VIEW_view_sort} from '_gqlTypes/GET_VIEW';
+import {AttributeFormat, AttributeType, ValueVersionInput, ViewSizes} from '_gqlTypes/globalTypes';
+import {RECORD_FORM_recordForm_elements_values_Value_version} from '_gqlTypes/RECORD_FORM';
+import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import {gql} from 'graphql-tag';
 import {i18n, TFunction} from 'i18next';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {getFiltersFromRequest} from 'utils/getFiltersFromRequest';
-import {ADD_VIEW_saveView} from '_gqlTypes/ADD_VIEW';
-import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
-import {GET_VIEW_view, GET_VIEW_view_display, GET_VIEW_view_sort} from '_gqlTypes/GET_VIEW';
-import {AttributeFormat, AttributeType, ValueVersionInput, ViewSizes} from '_gqlTypes/globalTypes';
-import {RecordIdentity} from '_gqlTypes/RecordIdentity';
-import {RECORD_FORM_recordForm_elements_values_Value_version} from '_gqlTypes/RECORD_FORM';
-import {defaultLinkAttributeFilterFormat, infosCol} from '../constants/constants';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {
     AttributeConditionFilter,
@@ -32,6 +31,7 @@ import {
     PreviewAttributes,
     PreviewSize
 } from '../_types/types';
+import {defaultLinkAttributeFilterFormat, infosCol} from '../constants/constants';
 
 export function getRecordIdentityCacheKey(libId: string, recordId: string): string {
     return `recordIdentity/${libId}/${recordId}`;

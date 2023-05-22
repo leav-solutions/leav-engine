@@ -10,8 +10,8 @@ import {
     ApplicationEventFiltersInput,
     ApplicationEventTypes,
     ApplicationType,
-    LibraryBehavior,
-    FileType
+    FileType,
+    LibraryBehavior
 } from './globalTypes';
 
 // ====================================================

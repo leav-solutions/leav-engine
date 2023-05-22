@@ -395,9 +395,9 @@ const valueDomain = function ({
             return values;
         },
         async saveValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
-            const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
-
             await validate.validateLibrary(library, ctx);
+            const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
+            await validate.validateLibraryAttribute(library, attribute, ctx);
             const record = await validate.validateRecord(library, recordId, ctx);
 
             const valueChecksParams = {
@@ -514,6 +514,11 @@ const valueDomain = function ({
         },
         async saveValueBatch({library, recordId, values, ctx, keepEmpty = false}): Promise<ISaveBatchValueResult> {
             await validate.validateLibrary(library, ctx);
+
+            for (const value of values) {
+                await validate.validateLibraryAttribute(library, value.attribute, ctx);
+            }
+
             const record = await validate.validateRecord(library, recordId, ctx);
 
             const saveRes: ISaveBatchValueResult = await values.reduce(

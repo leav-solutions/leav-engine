@@ -8,9 +8,6 @@ import {Button, Input, Table, TableColumnsType} from 'antd';
 import {Key, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {PreviewSize} from '../../../constants';
-import {extractPermissionFromQuery} from '../../../helpers/extractPermissionFromQuery';
-import {useLang} from '../../../hooks';
 import {
     GetLibrariesQuery,
     LibraryLightFragment,
@@ -21,6 +18,9 @@ import {
     useIsAllowedQuery
 } from '../../../_gqlTypes';
 import {getLibrariesQuery} from '../../../_queries/libraries/getLibrariesQuery';
+import {PreviewSize} from '../../../constants';
+import {extractPermissionFromQuery} from '../../../helpers/extractPermissionFromQuery';
+import {useLang} from '../../../hooks';
 import {EditLibraryModal} from '../../EditLibraryModal';
 import {EntityCard, IEntityData} from '../../EntityCard';
 import {ErrorDisplay} from '../../ErrorDisplay';

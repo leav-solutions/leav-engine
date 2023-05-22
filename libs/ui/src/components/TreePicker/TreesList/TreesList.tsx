@@ -8,9 +8,6 @@ import {Button, Input, Table, TableColumnsType} from 'antd';
 import {ComponentProps, Key, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {PreviewSize} from '../../../constants';
-import {extractPermissionFromQuery} from '../../../helpers/extractPermissionFromQuery';
-import {useLang} from '../../../hooks';
 import {
     GetTreesQuery,
     PermissionsActions,
@@ -20,6 +17,9 @@ import {
     useIsAllowedQuery
 } from '../../../_gqlTypes';
 import {getTreesQuery} from '../../../_queries/trees/getTreesQuery';
+import {PreviewSize} from '../../../constants';
+import {extractPermissionFromQuery} from '../../../helpers/extractPermissionFromQuery';
+import {useLang} from '../../../hooks';
 import {EditTreeModal} from '../../EditTreeModal';
 import {EntityCard, IEntityData} from '../../EntityCard';
 import {ErrorDisplay} from '../../ErrorDisplay';

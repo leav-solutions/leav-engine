@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
+import {mockApplication} from '../../__mocks__/common/application';
 import {GetApplicationByIdDocument, SaveApplicationDocument} from '../../_gqlTypes';
 import {cleanup, render, screen, waitFor} from '../../_tests/testUtils';
-import {mockApplication} from '../../__mocks__/common/application';
 import EditApplication from './EditApplication';
 
 window.matchMedia = query => ({

@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as leavUi from '@leav/ui';
 import userEvent from '@testing-library/user-event';
-import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
-import {mockDndSpacing} from 'react-beautiful-dnd-test-utils';
-import {render, screen, waitFor} from '_tests/testUtils';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockTree} from '__mocks__/common/tree';
+import {render, screen, waitFor} from '_tests/testUtils';
+import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
+import {mockDndSpacing} from 'react-beautiful-dnd-test-utils';
 import TreesSettings from './TreesSettings';
 
 describe('TreesSettings', () => {

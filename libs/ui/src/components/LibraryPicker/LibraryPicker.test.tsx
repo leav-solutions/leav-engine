@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
+import {mockLibrarySimple} from '../../__mocks__/common/library';
 import {GetLibrariesDocument, IsAllowedDocument, PermissionsActions, PermissionTypes} from '../../_gqlTypes';
 import {render, screen, waitFor, within} from '../../_tests/testUtils';
-import {mockLibrarySimple} from '../../__mocks__/common/library';
 import LibraryPicker from './LibraryPicker';
 
 window.matchMedia = query => ({

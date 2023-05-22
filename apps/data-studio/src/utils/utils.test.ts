@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IValueVersion} from '_types/types';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockTreeRecord} from '__mocks__/common/treeElements';
+import {IValueVersion} from '_types/types';
 import {mockSelectedAttributeB} from '../__mocks__/common/attribute';
 import {
     getInitials,

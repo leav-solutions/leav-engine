@@ -4,13 +4,13 @@
 import {WithTypename} from '@leav/utils';
 import {Form} from 'antd';
 import {useEffect} from 'react';
-import {useLang} from '../../../../hooks';
 import {
     GetLibraryByIdQuery,
     SaveLibraryMutation,
     useCheckLibraryExistenceLazyQuery,
     useSaveLibraryMutation
 } from '../../../../_gqlTypes';
+import {useLang} from '../../../../hooks';
 import {EditLibraryInfoForm} from './EditLibraryInfoForm';
 
 interface IEditApplicationInfoProps {

@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {mockApplicationDetails} from '__mocks__/common/applications';
 import {i18n} from 'i18next';
 import {TreeNode} from 'react-sortable-tree';
-import {mockApplicationDetails} from '__mocks__/common/applications';
-import {PermissionsActions} from '../_gqlTypes/globalTypes';
-import {IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
-import {Mockify} from '../_types/Mockify';
 import {mockAttrAdv, mockAttrAdvLink, mockAttrSimpleLink, mockAttrTree} from '../__mocks__/attributes';
+import {IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
+import {PermissionsActions} from '../_gqlTypes/globalTypes';
+import {Mockify} from '../_types/Mockify';
 import {
     addWildcardToFilters,
     arrayPick,

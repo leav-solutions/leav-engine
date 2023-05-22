@@ -4,9 +4,9 @@
 import {QueryResult} from '@apollo/client';
 import {Mockify} from '@leav/utils';
 import userEvent from '@testing-library/user-event';
+import {mockAttributeWithDetails} from '../../__mocks__/common/attribute';
 import * as gqlTypes from '../../_gqlTypes';
 import {act, fireEvent, render, screen, waitFor} from '../../_tests/testUtils';
-import {mockAttributeWithDetails} from '../../__mocks__/common/attribute';
 import EditAttributeModal from './EditAttributeModal';
 
 describe('EditAttributeModal', () => {

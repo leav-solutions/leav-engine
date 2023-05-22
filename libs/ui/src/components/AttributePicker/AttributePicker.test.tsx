@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
+import {mockAttributeSimple} from '../../__mocks__/common/attribute';
 import {GetAttributesDocument, IsAllowedDocument, PermissionsActions, PermissionTypes} from '../../_gqlTypes';
 import {render, screen, waitFor, within} from '../../_tests/testUtils';
-import {mockAttributeSimple} from '../../__mocks__/common/attribute';
 import AttributePicker from './AttributePicker';
 
 window.matchMedia = query => ({

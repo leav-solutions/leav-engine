@@ -8,12 +8,12 @@ import {
     SubmitStateNotifierStates,
     useSaveApplicationMutation
 } from '@leav/ui';
+import {IApplicationSettings} from '_types/types';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {useApplicationLibraries} from 'hooks/useApplicationLibraries';
 import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {IApplicationSettings} from '_types/types';
 import ModeSelector from '../ModeSelector';
 import TabContentWrapper from '../TabContentWrapper';
 import LibrariesList from './LibrariesList';

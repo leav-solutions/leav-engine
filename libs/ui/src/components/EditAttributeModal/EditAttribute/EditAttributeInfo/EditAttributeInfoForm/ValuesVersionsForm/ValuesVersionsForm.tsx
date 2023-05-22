@@ -5,8 +5,8 @@ import {localizedTranslation} from '@leav/utils';
 import {Form, Select, Space, Switch} from 'antd';
 import {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
+import {ValueVersionMode, useGetVersionProfilesQuery} from '../../../../../../_gqlTypes';
 import {useLang} from '../../../../../../hooks';
-import {useGetVersionProfilesQuery, ValueVersionMode} from '../../../../../../_gqlTypes';
 import FieldsGroup from '../../../../../FieldsGroup';
 import {Loading} from '../../../../../Loading';
 

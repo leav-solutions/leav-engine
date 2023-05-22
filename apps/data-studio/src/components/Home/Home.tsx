@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
+import {IBaseInfo, InfoType} from '_types/types';
 import {Alert} from 'antd';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {useEffect} from 'react';
@@ -10,7 +11,6 @@ import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'reduxStore/infos';
 import {useAppDispatch} from 'reduxStore/store';
 import styled from 'styled-components';
-import {IBaseInfo, InfoType} from '_types/types';
 import LibrariesList from './LibrariesList';
 import TreeList from './TreeList';
 

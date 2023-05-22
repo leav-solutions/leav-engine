@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as leavUi from '@leav/ui';
 import userEvent from '@testing-library/user-event';
-import {getLibrariesListQuery} from 'graphQL/queries/libraries/getLibrariesListQuery';
-import {mockDndSpacing} from 'react-beautiful-dnd-test-utils';
-import {render, screen, waitFor} from '_tests/testUtils';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockLibrary, mockLibraryPermissions} from '__mocks__/common/library';
+import {render, screen, waitFor} from '_tests/testUtils';
+import {getLibrariesListQuery} from 'graphQL/queries/libraries/getLibrariesListQuery';
+import {mockDndSpacing} from 'react-beautiful-dnd-test-utils';
 import LibrariesSettings from './LibrariesSettings';
 
 describe('LibrariesSettings', () => {

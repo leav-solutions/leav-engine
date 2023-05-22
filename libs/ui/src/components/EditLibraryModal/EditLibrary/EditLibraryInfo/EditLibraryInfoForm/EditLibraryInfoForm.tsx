@@ -7,13 +7,13 @@ import {Form, FormInstance, Input, Select} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {useLang} from '../../../../../hooks';
 import {
     AttributeType,
     GetLibraryByIdQuery,
     LibraryBehavior,
     LibraryLinkAttributeDetailsFragment
 } from '../../../../../_gqlTypes';
+import {useLang} from '../../../../../hooks';
 import FieldsGroup from '../../../../FieldsGroup';
 import {SubmitStateNotifier} from '../../../../SubmitStateNotifier';
 
