@@ -8,15 +8,15 @@ import {
     SubmitStateNotifierStates,
     useSaveApplicationMutation
 } from '@leav/ui';
+import {IApplicationSettings} from '_types/types';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {useApplicationLibraries} from 'hooks/useApplicationLibraries';
 import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {IApplicationSettings} from '_types/types';
+import ModeSelector from '../ModeSelector';
 import TabContentWrapper from '../TabContentWrapper';
 import LibrariesList from './LibrariesList';
-import ModeSelector from './ModeSelector';
 
 const TitleWrapper = styled.div`
     display: flex;
@@ -115,6 +115,14 @@ function LibrariesSettings(): JSX.Element {
         });
     };
 
+    const _handleClearLibraries = async () => {
+        if (currentApp.settings?.libraries === 'all' || currentApp.settings?.libraries === 'none') {
+            return;
+        }
+
+        _executeSave({libraries: [], librariesOrder: []});
+    };
+
     const _handleAddLibrary = async (addedLibraries: string[]) => {
         if (!Array.isArray(currentApp.settings?.libraries)) {
             return;
@@ -125,19 +133,24 @@ function LibrariesSettings(): JSX.Element {
         });
     };
 
+    const currentMode = Array.isArray(currentApp.settings?.libraries)
+        ? 'custom'
+        : currentApp.settings?.libraries ?? 'all';
+
     return (
         <TabContentWrapper>
             <TitleWrapper>
                 <h2>{t('app_settings.libraries')}</h2>
                 <SubmitStateNotifier state={submitState} />
             </TitleWrapper>
-            <ModeSelector onChange={_handleSelectionModeChange} />
+            <ModeSelector onChange={_handleSelectionModeChange} entityType="libraries" selectedMode={currentMode} />
             <ListWrapper>
                 <LibrariesList
                     libraries={libraries}
                     onMoveLibrary={_handleMoveLibrary}
                     onRemoveLibrary={_handleRemoveLibrary}
                     onAddLibraries={_handleAddLibrary}
+                    onClearLibraries={_handleClearLibraries}
                 />
             </ListWrapper>
         </TabContentWrapper>

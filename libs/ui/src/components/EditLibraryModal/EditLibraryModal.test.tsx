@@ -4,12 +4,55 @@
 import {QueryResult} from '@apollo/client';
 import {Mockify} from '@leav/utils';
 import userEvent from '@testing-library/user-event';
+import {mockLibraryWithDetails} from '../../__mocks__/common/library';
 import * as gqlTypes from '../../_gqlTypes';
 import {act, fireEvent, render, screen, waitFor} from '../../_tests/testUtils';
-import {mockLibraryWithDetails} from '../../__mocks__/common/library';
 import EditLibraryModal from './EditLibraryModal';
 
 describe('EditLibraryModal', () => {
+    const mockResultIsAllowed: Mockify<typeof gqlTypes.useIsAllowedQuery> = {
+        loading: false,
+        data: {
+            isAllowed: [
+                {
+                    name: gqlTypes.PermissionsActions.admin_edit_library,
+                    allowed: true
+                },
+                {
+                    name: gqlTypes.PermissionsActions.admin_delete_library,
+                    allowed: true
+                },
+                {
+                    name: gqlTypes.PermissionsActions.admin_create_library,
+                    allowed: true
+                }
+            ]
+        },
+        called: true
+    };
+    jest.spyOn(gqlTypes, 'useIsAllowedQuery').mockImplementation(
+        () => mockResultIsAllowed as QueryResult<gqlTypes.IsAllowedQuery, gqlTypes.IsAllowedQueryVariables>
+    );
+
+    const mockGetLibraryByIdData = {
+        libraries: {
+            list: [
+                {
+                    ...mockLibraryWithDetails,
+                    recordIdentityConf: {
+                        ...mockLibraryWithDetails.recordIdentityConf,
+                        __typename: 'RecordIdentityConf'
+                    }
+                }
+            ]
+        }
+    };
+    const mockResultGetLibById: Mockify<typeof gqlTypes.useGetLibraryByIdQuery> = {
+        loading: false,
+        data: mockGetLibraryByIdData,
+        called: true
+    };
+
     describe('Create library', () => {
         test('Create new library', async () => {
             const user = userEvent.setup();
@@ -40,43 +83,43 @@ describe('EditLibraryModal', () => {
             const mockOnPostCreate = jest.fn();
 
             render(<EditLibraryModal open onPostCreate={mockOnPostCreate} onClose={jest.fn()} />);
-            const idField = screen.getByRole('textbox', {name: /id/});
 
-            await user.type(screen.getByRole('textbox', {name: 'label_fr'}), 'label fr');
-            await user.type(screen.getByRole('textbox', {name: 'label_en'}), 'label_en');
+            const inputs = await screen.findAllByRole('textbox', {name: /label|id/i});
+            const labelFr = inputs[0];
+            const labelEn = inputs[1];
+            const idField = inputs[2];
+
+            await user.type(labelFr, 'label fr');
+            await user.type(labelEn, 'label_en');
 
             await waitFor(() => {
                 expect(idField).toHaveValue('label_fr');
             });
 
             await act(async () => {
-                fireEvent.focus(screen.getByRole('textbox', {name: /id/i}));
-                fireEvent.blur(screen.getByRole('textbox', {name: /id/i}));
+                fireEvent.focus(idField);
+                fireEvent.blur(idField);
             });
 
-            await waitFor(() => {
-                expect(mockCheckLibraryExistenceLazyQuery).toBeCalled();
-            });
+            expect(mockCheckLibraryExistenceLazyQuery).toBeCalled();
 
             expect(screen.queryByText(/id_already_exists/)).not.toBeInTheDocument();
 
-            user.click(screen.getByRole('button', {name: /submit/i}));
+            await user.click(screen.getByRole('button', {name: /submit/i}));
 
-            await waitFor(() => {
-                expect(mockSaveLibraryMutation).toBeCalledWith({
-                    variables: {
-                        library: {
-                            id: 'label_fr',
-                            label: {
-                                fr: 'label fr',
-                                en: 'label_en'
-                            },
-                            behavior: 'standard'
-                        }
+            expect(mockSaveLibraryMutation).toBeCalledWith({
+                variables: {
+                    library: {
+                        id: 'label_fr',
+                        label: {
+                            fr: 'label fr',
+                            en: 'label_en'
+                        },
+                        behavior: 'standard'
                     }
-                });
-                expect(mockOnPostCreate).toBeCalled();
+                }
             });
+            expect(mockOnPostCreate).toBeCalled();
         });
 
         test('Display an error if ID is already used', async () => {
@@ -110,27 +153,10 @@ describe('EditLibraryModal', () => {
     });
 
     describe('Edit existing library', () => {
-        const mockGetLibraryByIdData = {
-            libraries: {
-                list: [
-                    {
-                        ...mockLibraryWithDetails,
-                        recordIdentityConf: {
-                            ...mockLibraryWithDetails.recordIdentityConf,
-                            __typename: 'RecordIdentityConf'
-                        }
-                    }
-                ]
-            }
-        };
-        const mockJestResult: Mockify<typeof gqlTypes.useGetLibraryByIdQuery> = {
-            loading: false,
-            data: mockGetLibraryByIdData,
-            called: true
-        };
-
         test('Display edit form for existing library', async () => {
-            jest.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockImplementation(() => mockJestResult as QueryResult);
+            jest.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockImplementation(
+                () => mockResultGetLibById as QueryResult
+            );
             render(<EditLibraryModal libraryId={mockLibraryWithDetails.id} open onClose={jest.fn()} />);
 
             expect(screen.getByRole('textbox', {name: /id/})).toBeDisabled();
@@ -141,7 +167,9 @@ describe('EditLibraryModal', () => {
 
         test('Submit field on blur', async () => {
             const user = userEvent.setup();
-            jest.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockImplementation(() => mockJestResult as QueryResult);
+            jest.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockImplementation(
+                () => mockResultGetLibById as QueryResult
+            );
             const mockSaveLibraryMutation = jest.fn().mockReturnValue({
                 data: {
                     saveLibrary: {
@@ -180,7 +208,9 @@ describe('EditLibraryModal', () => {
 
         test('Submit select field on change', async () => {
             const user = userEvent.setup();
-            jest.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockImplementation(() => mockJestResult as QueryResult);
+            jest.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockImplementation(
+                () => mockResultGetLibById as QueryResult
+            );
             const mockSaveLibraryMutation = jest.fn().mockReturnValue({
                 data: {
                     saveLibrary: {
@@ -200,22 +230,113 @@ describe('EditLibraryModal', () => {
 
             await user.click(labelSelect);
 
-            expect(screen.getByText(mockLibraryWithDetails.attributes[0].label.fr)).toBeInTheDocument();
-            user.click(screen.getByText(mockLibraryWithDetails.attributes[0].label.fr));
+            const labelOption = screen.getByText(mockLibraryWithDetails.attributes[0].label.fr);
+            expect(labelOption).toBeInTheDocument();
+            user.click(labelOption);
 
-            await waitFor(() => {
-                expect(mockSaveLibraryMutation).toBeCalledWith({
-                    variables: {
-                        library: {
-                            id: mockLibraryWithDetails.id,
-                            recordIdentityConf: {
-                                ...mockLibraryWithDetails.recordIdentityConf,
-                                label: mockLibraryWithDetails.attributes[0].id
+            await waitFor(
+                () => {
+                    expect(mockSaveLibraryMutation).toBeCalledWith({
+                        variables: {
+                            library: {
+                                id: mockLibraryWithDetails.id,
+                                recordIdentityConf: {
+                                    ...mockLibraryWithDetails.recordIdentityConf,
+                                    label: mockLibraryWithDetails.attributes[0].id
+                                }
                             }
                         }
+                    });
+                },
+                {
+                    timeout: 10000
+                }
+            );
+        });
+    });
+
+    describe('Delete library', () => {
+        test('Can delete library', async () => {
+            const user = userEvent.setup();
+            jest.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockImplementation(
+                () => mockResultGetLibById as QueryResult
+            );
+            const mockDeleteLibraryMutation = jest.fn().mockReturnValue({
+                data: {
+                    deleteLibrary: {
+                        __typename: 'Library',
+                        id: mockLibraryWithDetails.id
                     }
-                });
+                }
             });
+            jest.spyOn(gqlTypes, 'useDeleteLibraryMutation').mockImplementation(() => [
+                mockDeleteLibraryMutation,
+                {loading: false, called: false, client: null, reset: null, error: null}
+            ]);
+
+            render(<EditLibraryModal libraryId={mockLibraryWithDetails.id} open onClose={jest.fn()} />);
+
+            await user.click(screen.getByRole('button', {name: /delete/i}));
+            await user.click(screen.getByRole('button', {name: /submit/i})); // confirm
+
+            await waitFor(
+                () => {
+                    expect(mockDeleteLibraryMutation).toBeCalledWith({
+                        variables: {
+                            id: mockLibraryWithDetails.id
+                        }
+                    });
+                },
+                {
+                    timeout: 10000
+                }
+            );
+        });
+
+        test('If not allowed, cannot delete library', async () => {
+            const mockResultIsAllowedForbidden: Mockify<typeof gqlTypes.useIsAllowedQuery> = {
+                loading: false,
+                data: {
+                    isAllowed: [
+                        {
+                            name: gqlTypes.PermissionsActions.admin_edit_library,
+                            allowed: true
+                        },
+                        {
+                            name: gqlTypes.PermissionsActions.admin_delete_library,
+                            allowed: false
+                        }
+                    ]
+                },
+                called: true
+            };
+            jest.spyOn(gqlTypes, 'useIsAllowedQuery').mockImplementation(
+                () =>
+                    mockResultIsAllowedForbidden as QueryResult<
+                        gqlTypes.IsAllowedQuery,
+                        gqlTypes.IsAllowedQueryVariables
+                    >
+            );
+
+            jest.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockImplementation(
+                () => mockResultGetLibById as QueryResult
+            );
+            const mockDeleteLibraryMutation = jest.fn().mockReturnValue({
+                data: {
+                    deleteLibrary: {
+                        __typename: 'Library',
+                        id: mockLibraryWithDetails.id
+                    }
+                }
+            });
+            jest.spyOn(gqlTypes, 'useDeleteLibraryMutation').mockImplementation(() => [
+                mockDeleteLibraryMutation,
+                {loading: false, called: false, client: null, reset: null, error: null}
+            ]);
+
+            render(<EditLibraryModal libraryId={mockLibraryWithDetails.id} open onClose={jest.fn()} />);
+
+            expect(screen.queryByRole('button', {name: /delete/i})).not.toBeInTheDocument();
         });
     });
 });

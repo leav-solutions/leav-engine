@@ -90,5 +90,5 @@ export interface GET_TREE_ATTRIBUTES_QUERY {
 }
 
 export interface GET_TREE_ATTRIBUTES_QUERYVariables {
-    treeId: string;
+    treeId?: string[] | null;
 }

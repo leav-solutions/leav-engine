@@ -13,13 +13,14 @@ import {EditLibraryInfo} from './EditLibraryInfo';
 interface IEditLibraryProps {
     libraryId?: string;
     onSetSubmitFunction?: (submitFunction: () => Promise<SaveLibraryMutation['saveLibrary']>) => void;
+    readOnly?: boolean;
 }
 
 const TabContentWrapper = styled.div`
     height: calc(95vh - 15rem);
 `;
 
-function EditLibrary({libraryId, onSetSubmitFunction}: IEditLibraryProps): JSX.Element {
+function EditLibrary({libraryId, onSetSubmitFunction, readOnly: isReadOnly}: IEditLibraryProps): JSX.Element {
     const {t} = useTranslation('shared');
     const isEditing = !!libraryId;
 
@@ -40,8 +41,9 @@ function EditLibrary({libraryId, onSetSubmitFunction}: IEditLibraryProps): JSX.E
     }
 
     const libraryData = data?.libraries?.list[0] ?? null;
-
-    const libraryInfoComp = <EditLibraryInfo library={libraryData} onSetSubmitFunction={onSetSubmitFunction} />;
+    const libraryInfoComp = (
+        <EditLibraryInfo library={libraryData} onSetSubmitFunction={onSetSubmitFunction} readOnly={isReadOnly} />
+    );
 
     // If creating new library, return the form directly
     if (!isEditing) {
@@ -63,7 +65,7 @@ function EditLibrary({libraryId, onSetSubmitFunction}: IEditLibraryProps): JSX.E
             label: t('libraries.attributes'),
             children: (
                 <TabContentWrapper>
-                    <EditLibraryAttributes library={libraryData} />
+                    <EditLibraryAttributes library={libraryData} readOnly={isReadOnly} />
                 </TabContentWrapper>
             )
         }

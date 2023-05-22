@@ -10,9 +10,8 @@ import {
     ApplicationEventFiltersInput,
     ApplicationEventTypes,
     ApplicationType,
-    LibraryBehavior,
     FileType,
-    ApplicationInstallStatus
+    LibraryBehavior
 } from './globalTypes';
 
 // ====================================================
@@ -70,11 +69,6 @@ export interface APPLICATION_EVENTS_applicationEvent_application_permissions {
     admin_application: boolean;
 }
 
-export interface APPLICATION_EVENTS_applicationEvent_application_install {
-    status: ApplicationInstallStatus;
-    lastCallResult: string | null;
-}
-
 export interface APPLICATION_EVENTS_applicationEvent_application {
     id: string;
     label: SystemTranslation;
@@ -86,7 +80,6 @@ export interface APPLICATION_EVENTS_applicationEvent_application {
     icon: APPLICATION_EVENTS_applicationEvent_application_icon | null;
     module: string | null;
     permissions: APPLICATION_EVENTS_applicationEvent_application_permissions;
-    install: APPLICATION_EVENTS_applicationEvent_application_install | null;
     settings: JSONObject | null;
 }
 

@@ -8,7 +8,7 @@ import {ColumnsType} from 'antd/lib/table';
 import TreeIcon from 'components/shared/TreeIcon';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
-import useGetTreesListQuery from 'hooks/useGetTreesListQuery/useGetTreesListQuery';
+import {useApplicationTrees} from 'hooks/useApplicationTrees';
 import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
@@ -48,7 +48,7 @@ function TreeList(): JSX.Element {
     const {t} = useTranslation();
     const {lang} = useLang();
 
-    const treeListQuery = useGetTreesListQuery();
+    const {trees, loading: treesLoading, error: treesError} = useApplicationTrees();
     const userDataQuery = useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
         variables: {keys: [FAVORITE_TREES_KEY]}
     });
@@ -57,14 +57,13 @@ function TreeList(): JSX.Element {
         ignoreResults: true
     });
 
-    if (treeListQuery.error || userDataQuery.error) {
-        return <ErrorDisplay message={treeListQuery.error.message || userDataQuery.error.message} />;
+    if (treesError || userDataQuery.error) {
+        return <ErrorDisplay message={treesError || userDataQuery.error.message} />;
     }
 
-    const treeList = treeListQuery.data?.trees?.list ?? [];
     const favoriteIds = userDataQuery.data?.userData?.data[FAVORITE_TREES_KEY] ?? [];
 
-    const list: IListItem[] = treeList
+    const list: IListItem[] = trees
         .map(tree => ({
             key: tree.id,
             id: tree.id,
@@ -116,7 +115,7 @@ function TreeList(): JSX.Element {
         }
     ];
 
-    if (!treeListQuery.loading && !treeList.length) {
+    if (!trees.length) {
         return null;
     }
 
@@ -126,7 +125,7 @@ function TreeList(): JSX.Element {
                 <TreeIcon style={{fontSize: '1.5rem'}} />
                 {t('home.trees')}
             </ListHeader>
-            <Table bordered columns={columns} dataSource={list} loading={treeListQuery.loading} pagination={false} />
+            <Table bordered columns={columns} dataSource={list} loading={treesLoading} pagination={false} />
         </div>
     );
 }

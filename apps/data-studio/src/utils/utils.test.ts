@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IValueVersion} from '_types/types';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockTreeRecord} from '__mocks__/common/treeElements';
+import {IValueVersion} from '_types/types';
 import {mockSelectedAttributeB} from '../__mocks__/common/attribute';
 import {
     getInitials,
@@ -59,7 +59,8 @@ describe('utils', () => {
             expect(isTreeInApp(mockApplicationDetails, 'treeA')).toBe(true);
             expect(isTreeInApp(mockApplicationDetails, 'treeB')).toBe(true);
             expect(isTreeInApp(mockApplicationDetails, 'treeC')).toBe(false);
-            expect(isTreeInApp({...mockApplicationDetails, settings: {trees: []}}, 'treeC')).toBe(true);
+            expect(isTreeInApp({...mockApplicationDetails, settings: {trees: 'all'}}, 'treeC')).toBe(true);
+            expect(isTreeInApp({...mockApplicationDetails, settings: {trees: 'none'}}, 'treeA')).toBe(false);
         });
     });
 

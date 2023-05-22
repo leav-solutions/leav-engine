@@ -26,7 +26,7 @@ describe('SelectTreeNodeModal', () => {
         {
             request: {
                 query: getTreeByIdQuery,
-                variables: {id: 'test_tree'}
+                variables: {id: ['test_tree']}
             },
             result: {
                 data: {

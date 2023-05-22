@@ -119,7 +119,7 @@ describe('useCanEditRecord', () => {
             {
                 request: {
                     query: getLibraryPermissionsQuery,
-                    variables: {libraryId: mockLib.id}
+                    variables: {libraryId: [mockLib.id]}
                 },
                 result: {
                     data: {

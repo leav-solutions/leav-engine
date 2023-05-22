@@ -154,7 +154,8 @@
             "medium": "Moyen",
             "big": "Grand",
             "tile": "Galerie"
-        }
+        },
+        "not_in_app": "Cette bibliothèque n'est pas disponible dans cette application"
     },
     "items-list-row": {
         "nb-elements": "{{nbItems}} résultats",
@@ -319,7 +320,8 @@
             "error-detach": "Une erreur est survenue lors du détachement des élements {{elements}}: {{errorMessage}}"
         },
         "access_denied": "Vous ne pouvez pas accéder à cet élément",
-        "inactive_element": "Cet élément est inactif"
+        "inactive_element": "Cet élément est inactif",
+        "not_in_app": "Cet arbre n'est pas disponible dans cette application"
     },
     "info": {
         "base-message": "Bienvenue dans {{appLabel}}",
@@ -593,17 +595,33 @@
         "trees": "Arbres",
         "advanced_settings": "Paramètres avancés",
         "showTransparency": "Afficher la transparence",
-        "libraries_select_all": "Toutes",
-        "libraries_select_none": "Aucune",
-        "libraries_select_custom": "Sélection personnalisée",
-        "libraries_mode_confirm_title": "Êtes-vous sûr ?",
-        "libraries_mode_confirm_description": "Votre sélection personnalisée sera perdue",
-        "available_libraries": "Bibliothèques disponibles",
-        "libraries_select_all_help": "Toutes les bibliothèques seront disponibles, y compris les nouvelles.",
-        "libraries_select_none_help": "Aucune bibliothèque ne sera disponible.",
-        "libraries_select_custom_help": "Les bibliothèques sélectionnées uniquement seront disponibles. Les nouvelles ne seront pas ajoutées automatiquement.",
-        "search_libraries": "Rechercher",
-        "no_libraries": "Aucune bibliothèque sélectionnée",
-        "add_library": "Ajouter une bibliothèque"
+        "mode_confirm_title": "Êtes-vous sûr ?",
+        "mode_confirm_description": "Votre sélection personnalisée sera perdue",
+        "libraries_settings": {
+            "no_libraries": "Aucune bibliothèque sélectionnée",
+            "add_library": "Ajouter une bibliothèque",
+            "select_all": "Toutes",
+            "select_none": "Aucune",
+            "select_custom": "Sélection personnalisée",
+            "available": "Bibliothèques disponibles",
+            "select_all_help": "Toutes les bibliothèques seront disponibles, y compris les nouvelles.",
+            "select_none_help": "Aucune bibliothèque ne sera disponible.",
+            "select_custom_help": "Les bibliothèques sélectionnées uniquement seront disponibles. Les nouvelles ne seront pas ajoutées automatiquement.",
+            "clear_libraries_confirm": "Êtes-vous sûr de vouloir supprimer toutes les bibliothèques ?",
+            "clear_libraries": "Supprimer toutes les bibliothèques"
+        },
+        "trees_settings": {
+            "no_trees": "Aucun arbre sélectionné",
+            "add_tree": "Ajouter un arbre",
+            "select_all": "Tous",
+            "select_none": "Aucun",
+            "select_custom": "Sélection personnalisée",
+            "available": "Arbres disponibles",
+            "select_all_help": "Tous les arbres seront disponibles, y compris les nouveaux.",
+            "select_none_help": "Aucun arbre ne sera disponible.",
+            "select_custom_help": "Les arbres sélectionnés uniquement seront disponibles. Les nouveaux ne seront pas ajoutées automatiquement.",
+            "clear_trees_confirm": "Êtes-vous sûr de vouloir supprimer tous les arbres ?",
+            "clear_trees": "Supprimer tous les arbres"
+        }
     }
 }

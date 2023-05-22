@@ -7,8 +7,8 @@ import {Button, Input, Table, TableColumnsType, Tag, TagProps} from 'antd';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {useLang} from '../../../../../hooks';
 import {AttributeFormat, AttributeType, LibraryAttributesFragment} from '../../../../../_gqlTypes';
+import {useLang} from '../../../../../hooks';
 import {AttributePicker} from '../../../../AttributePicker';
 import {AttributeCell} from './AttributeCell';
 import {DeleteButton} from './DeleteButton';
@@ -138,9 +138,11 @@ function AttributesList({
     const tableHeader = (
         <HeaderWrapper>
             <Input.Search onChange={_handleSearchChange} placeholder={t('global.search') + '...'} allowClear />
-            <Button type="primary" icon={<PlusOutlined />} onClick={_handleClickNewAttribute}>
-                {t('attributes.add_attribute')}
-            </Button>
+            {!readOnly && (
+                <Button type="primary" icon={<PlusOutlined />} onClick={_handleClickNewAttribute}>
+                    {t('attributes.add_attribute')}
+                </Button>
+            )}
         </HeaderWrapper>
     );
 

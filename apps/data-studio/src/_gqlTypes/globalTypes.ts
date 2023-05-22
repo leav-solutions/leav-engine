@@ -15,13 +15,6 @@ export enum ApplicationEventTypes {
     SAVE = 'SAVE'
 }
 
-export enum ApplicationInstallStatus {
-    ERROR = 'ERROR',
-    NONE = 'NONE',
-    RUNNING = 'RUNNING',
-    SUCCESS = 'SUCCESS'
-}
-
 export enum ApplicationType {
     external = 'external',
     internal = 'internal'
@@ -288,6 +281,14 @@ export interface TreeEventFiltersInput {
     treeId: string;
     nodes?: (string | null)[] | null;
     events?: TreeEventTypes[] | null;
+}
+
+export interface TreesFiltersInput {
+    id?: string[] | null;
+    label?: string[] | null;
+    system?: boolean | null;
+    behavior?: TreeBehavior | null;
+    library?: string | null;
 }
 
 export interface UploadFiltersInput {

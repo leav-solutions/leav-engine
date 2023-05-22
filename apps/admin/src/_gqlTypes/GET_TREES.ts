@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {TreeBehavior} from './globalTypes';
+import {TreesFiltersInput, TreeBehavior} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_TREES
@@ -46,7 +46,5 @@ export interface GET_TREES {
 }
 
 export interface GET_TREESVariables {
-    id?: string | null;
-    label?: string | null;
-    system?: boolean | null;
+    filters?: TreesFiltersInput | null;
 }

@@ -12,13 +12,14 @@ import {EditAttributeInfo} from './EditAttributeInfo';
 interface IEditAttributeProps {
     attributeId?: string;
     onSetSubmitFunction?: (submitFunction: () => Promise<AttributeDetailsFragment>) => void;
+    readOnly?: boolean;
 }
 
 const TabContentWrapper = styled.div`
     height: calc(95vh - 15rem);
 `;
 
-function EditAttribute({attributeId, onSetSubmitFunction}: IEditAttributeProps): JSX.Element {
+function EditAttribute({attributeId, onSetSubmitFunction, readOnly: isReadOnly}: IEditAttributeProps): JSX.Element {
     const {t} = useTranslation('shared');
     const isEditing = !!attributeId;
 
@@ -35,12 +36,14 @@ function EditAttribute({attributeId, onSetSubmitFunction}: IEditAttributeProps):
     }
 
     if (error) {
-        return <ErrorDisplay message={error.message} />;
+        return <ErrorDisplay message={error?.message} />;
     }
 
     const attributeData = data?.attributes?.list[0] ?? null;
 
-    const attributeInfoComp = <EditAttributeInfo attribute={attributeData} onSetSubmitFunction={onSetSubmitFunction} />;
+    const attributeInfoComp = (
+        <EditAttributeInfo attribute={attributeData} onSetSubmitFunction={onSetSubmitFunction} readOnly={isReadOnly} />
+    );
 
     // If creating new library, return the form directly
     if (!isEditing) {

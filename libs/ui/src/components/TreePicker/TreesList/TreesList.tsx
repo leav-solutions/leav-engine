@@ -5,19 +5,22 @@ import {PlusOutlined} from '@ant-design/icons';
 import {useApolloClient} from '@apollo/client';
 import {localizedTranslation, Override} from '@leav/utils';
 import {Button, Input, Table, TableColumnsType} from 'antd';
-import {Key, useMemo, useState} from 'react';
+import {ComponentProps, Key, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {PreviewSize} from '../../../constants';
-import {useLang} from '../../../hooks';
 import {
-    AttributeDetailsFragment as TreeDetailsFragment,
     GetTreesQuery,
+    PermissionsActions,
+    PermissionTypes,
     TreeLightFragment,
-    useGetTreesQuery
+    useGetTreesQuery,
+    useIsAllowedQuery
 } from '../../../_gqlTypes';
-import {getAttributesQuery as getTreesQuery} from '../../../_queries/attributes/getAttributesQuery';
-import EditAttributeModal from '../../EditAttributeModal/EditAttributeModal';
+import {getTreesQuery} from '../../../_queries/trees/getTreesQuery';
+import {PreviewSize} from '../../../constants';
+import {extractPermissionFromQuery} from '../../../helpers/extractPermissionFromQuery';
+import {useLang} from '../../../hooks';
+import {EditTreeModal} from '../../EditTreeModal';
 import {EntityCard, IEntityData} from '../../EntityCard';
 import {ErrorDisplay} from '../../ErrorDisplay';
 import {Loading} from '../../Loading';
@@ -39,38 +42,38 @@ interface ITreesListProps {
     onSelect: (selectedTrees: TreeLightFragment[]) => void;
     selected?: string[];
     multiple?: boolean;
-    canCreate?: boolean;
     showSelected?: boolean;
 }
 
-function TreesList({
-    onSelect,
-    canCreate = true,
-    selected = [],
-    multiple = true,
-    showSelected = false
-}: ITreesListProps): JSX.Element {
+function TreesList({onSelect, selected = [], multiple = true, showSelected = false}: ITreesListProps): JSX.Element {
     const {t} = useTranslation('shared');
     const {lang} = useLang();
     const {loading, error, data} = useGetTreesQuery();
+
+    const isAllowedQueryResult = useIsAllowedQuery({
+        fetchPolicy: 'cache-and-network',
+        variables: {
+            type: PermissionTypes.admin,
+            actions: [PermissionsActions.admin_create_tree]
+        }
+    });
+    const canCreate = extractPermissionFromQuery(isAllowedQueryResult, PermissionsActions.admin_create_tree);
+
     const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>(showSelected ? selected : []);
     const [search, setSearch] = useState('');
     const [isNewTreeModalOpen, setIsNewTreeModalOpen] = useState(false);
     const client = useApolloClient();
-    const treesByKey = useMemo(() => {
-        return data?.trees.list.reduce((acc, library) => {
-            acc[library.id] = library;
-            return acc;
-        }, {});
-    }, [data?.trees.list]);
 
-    const _getTreesFromKeys = (keys: Key[]) => {
-        return keys.map(key => treesByKey[key]);
+    const _getTreesFromKeys = (keys: Key[], treesList?: TreeLightFragment[]): TreeLightFragment[] => {
+        // The list coming from data might not be up to date after a create, so we use the one passed as argument
+        const list = treesList ?? data?.trees?.list ?? [];
+        return list.filter(tree => keys.find(k => tree.id === k));
     };
 
     const _handleSelectionChange = (selection: Key[]) => {
         setSelectedRowKeys(selection);
-        onSelect(_getTreesFromKeys(selection));
+        const treesSelected = _getTreesFromKeys(selection);
+        onSelect(treesSelected);
     };
 
     const _handleRowClick = (record: TreeType) => {
@@ -82,8 +85,7 @@ function TreesList({
             newSelection = multiple ? selectedRowKeys.filter(key => key !== record.key) : []; // Remove from selection
         }
 
-        setSelectedRowKeys(newSelection);
-        onSelect(_getTreesFromKeys(newSelection));
+        _handleSelectionChange(newSelection);
     };
 
     const _handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,23 +97,26 @@ function TreesList({
     };
     const _handleCloseNewAttribute = () => setIsNewTreeModalOpen(false);
 
-    const _handlePostCreate = async (newTree: TreeDetailsFragment) => {
+    const _handlePostCreate: ComponentProps<typeof EditTreeModal>['onPostCreate'] = async newTree => {
         const allTreesData = client.readQuery<GetTreesQuery>({query: getTreesQuery});
 
+        const newTreesList = [newTree, ...(allTreesData?.trees?.list ?? [])];
         if (allTreesData) {
             client.writeQuery({
                 query: getTreesQuery,
                 data: {
                     trees: {
                         ...allTreesData.trees,
-                        list: [newTree, ...allTreesData.trees.list]
+                        list: newTreesList
                     }
                 }
             });
         }
+
         const newSelection = [...selectedRowKeys, newTree.id];
-        onSelect(_getTreesFromKeys(newSelection));
         setSelectedRowKeys(newSelection);
+        const treesSelected = _getTreesFromKeys(newSelection, newTreesList);
+        onSelect(treesSelected);
     };
 
     if (loading) {
@@ -189,7 +194,7 @@ function TreesList({
                 })}
             />
             {isNewTreeModalOpen && (
-                <EditAttributeModal
+                <EditTreeModal
                     open={isNewTreeModalOpen}
                     onClose={_handleCloseNewAttribute}
                     onPostCreate={_handlePostCreate}

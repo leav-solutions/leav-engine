@@ -12,11 +12,11 @@ import {
     useLang
 } from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
+import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
 import {useState} from 'react';
 import {DraggableProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
 
 const Wrapper = styled.div`
     position: relative;
@@ -89,7 +89,7 @@ function LibraryBlock({
         label: localizedTranslation(library.label, lang),
         subLabel: library.id,
         color: null,
-        preview: null
+        preview: library.icon?.whoAmI?.preview?.[PreviewSize.small]
     };
 
     return (

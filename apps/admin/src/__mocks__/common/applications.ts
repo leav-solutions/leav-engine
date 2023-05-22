@@ -7,7 +7,6 @@ import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
 import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
 import {GET_APPLICATION_MODULES_applicationsModules} from '_gqlTypes/GET_APPLICATION_MODULES';
 import {ApplicationType} from '_gqlTypes/globalTypes';
-import {mockLibrary} from '__mocks__/libraries';
 
 export const mockApplication: GET_APPLICATIONS_applications_list = {
     id: 'myapp',
@@ -29,33 +28,15 @@ export const mockApplicationDetails: WithTypename<GET_APPLICATION_BY_ID_applicat
     ...mockApplication,
     __typename: 'Application',
     module: 'data-studio',
-    libraries: [
-        {
-            ...mockLibrary,
-            id: 'libA'
-        },
-        {
-            ...mockLibrary,
-            id: 'libB'
-        }
-    ],
-    trees: [
-        {
-            __typename: 'Tree',
-            id: 'treeA'
-        },
-        {
-            __typename: 'Tree',
-            id: 'treeB'
-        }
-    ],
     permissions: {
         __typename: 'ApplicationPermissions',
         access_application: true,
         admin_application: true
     },
     settings: {
-        foo: 'bar'
+        foo: 'bar',
+        libraries: ['libA', 'libB'],
+        trees: ['treeA', 'treeB']
     }
 };
 

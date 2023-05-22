@@ -1,18 +1,17 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getApplicationByIdQuery} from 'graphQL/queries/applications/getApplicationByIdQuery';
+import {mockApplicationDetails} from '__mocks__/common/applications';
+import {mockTask} from '__mocks__/common/task';
+import {act, render, screen} from '_tests/testUtils';
+import {getApplicationByEndpointQuery} from 'graphQL/queries/applications/getApplicationByEndpointQuery';
+import {getLangs} from 'graphQL/queries/core/getLangs';
 import {getGlobalSettingsQuery} from 'graphQL/queries/globalSettings/getGlobalSettingsQuery';
 import {getTasks} from 'graphQL/queries/tasks/getTasks';
 import {getMe} from 'graphQL/queries/userData/me';
 import {getTaskUpdates} from 'graphQL/subscribes/tasks/getTaskUpdates';
-import {act, render, screen} from '_tests/testUtils';
-import {mockApplicationDetails} from '__mocks__/common/applications';
-import {mockTask} from '__mocks__/common/task';
-import AppHandler from './AppHandler';
-import {getApplicationByEndpointQuery} from 'graphQL/queries/applications/getApplicationByEndpointQuery';
-import {getLangs} from 'graphQL/queries/core/getLangs';
 import {enableFetchMocks} from 'jest-fetch-mock';
+import AppHandler from './AppHandler';
 
 enableFetchMocks();
 

@@ -6,7 +6,6 @@ import {Form, FormInstance, Input, Select, Switch} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {useLang} from '../../../../../hooks';
 import {
     AttributeDetailsFragment,
     AttributeDetailsLinkAttributeFragment,
@@ -16,6 +15,7 @@ import {
     AttributeType,
     ValueVersionMode
 } from '../../../../../_gqlTypes';
+import {useLang} from '../../../../../hooks';
 import FieldsGroup from '../../../../FieldsGroup';
 import {SubmitStateNotifier} from '../../../../SubmitStateNotifier';
 import {LinkedLibraryForm} from './LinkedLibraryForm';
@@ -60,6 +60,7 @@ interface IEditAttributeInfoFormProps {
     loading: boolean;
     onSubmitField: (field: string, value: any) => Promise<void>;
     onCheckAttributeUniqueness: (value: string) => Promise<boolean>;
+    readOnly?: boolean;
 }
 
 function EditAttributeInfoForm({
@@ -67,10 +68,11 @@ function EditAttributeInfoForm({
     attribute,
     onSubmitField,
     onCheckAttributeUniqueness,
-    loading
+    loading,
+    readOnly: isReadOnly
 }: IEditAttributeInfoFormProps): JSX.Element {
     const {t} = useTranslation('shared');
-    const {lang, availableLangs, defaultLang} = useLang();
+    const {availableLangs, defaultLang} = useLang();
     const currentType = Form.useWatch('type', form);
     const [hasIdBeenEdited, setHasIdBeenEdited] = useState(false);
     const [runningFieldsSubmit, setRunningFieldsSubmit] = useState<string[]>([]);
@@ -81,7 +83,6 @@ function EditAttributeInfoForm({
     const isTypeLink = currentType === AttributeType.simple_link || currentType === AttributeType.advanced_link;
     const isTypeTree = currentType === AttributeType.tree;
     const isTypeNotSimple = currentType !== AttributeType.simple && currentType !== AttributeType.simple_link;
-    const isReadOnly = false;
 
     const _getRequiredMessage = (field: string) =>
         t('errors.field_required', {
@@ -340,7 +341,7 @@ function EditAttributeInfoForm({
                 valuePropName="checked"
                 extra={<SubmitStateNotifier state={_getFieldState('readonly')} />}
             >
-                <Switch onChange={_handleCheckboxChange('readonly')} />
+                <Switch disabled={isReadOnly} onChange={_handleCheckboxChange('readonly')} />
             </SwitchFormItem>
             {form.getFieldValue('type') === AttributeType.simple && (
                 <SwitchFormItem
@@ -351,7 +352,7 @@ function EditAttributeInfoForm({
                     valuePropName="checked"
                     extra={<SubmitStateNotifier state={_getFieldState('unique')} />}
                 >
-                    <Switch onChange={_handleCheckboxChange('unique')} />
+                    <Switch disabled={isReadOnly} onChange={_handleCheckboxChange('unique')} />
                 </SwitchFormItem>
             )}
             {isTypeNotSimple && (
@@ -363,7 +364,7 @@ function EditAttributeInfoForm({
                     valuePropName="checked"
                     extra={<SubmitStateNotifier state={_getFieldState('multiple_values')} />}
                 >
-                    <Switch onChange={_handleCheckboxChange('multiple_values')} />
+                    <Switch disabled={isReadOnly} onChange={_handleCheckboxChange('multiple_values')} />
                 </SwitchFormItem>
             )}
             {isTypeNotSimple && (

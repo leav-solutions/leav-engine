@@ -7,13 +7,13 @@ import {Form, FormInstance, Input, Select} from 'antd';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {useLang} from '../../../../../hooks';
 import {
     AttributeType,
     GetLibraryByIdQuery,
     LibraryBehavior,
     LibraryLinkAttributeDetailsFragment
 } from '../../../../../_gqlTypes';
+import {useLang} from '../../../../../hooks';
 import FieldsGroup from '../../../../FieldsGroup';
 import {SubmitStateNotifier} from '../../../../SubmitStateNotifier';
 
@@ -29,6 +29,7 @@ interface IEditLibraryInfoFormProps {
     loading: boolean;
     onSubmitField: (field: string, value: any) => Promise<void>;
     onCheckLibraryUniqueness: (value: string) => Promise<boolean>;
+    readOnly?: boolean;
 }
 
 function EditLibraryInfoForm({
@@ -36,7 +37,8 @@ function EditLibraryInfoForm({
     library,
     onSubmitField,
     onCheckLibraryUniqueness,
-    loading
+    loading,
+    readOnly
 }: IEditLibraryInfoFormProps): JSX.Element {
     const {t} = useTranslation('shared');
     const {lang, availableLangs, defaultLang} = useLang();
@@ -45,7 +47,7 @@ function EditLibraryInfoForm({
     const [hasIdBeenEdited, setHasIdBeenEdited] = useState(false);
     const [runningFieldsSubmit, setRunningFieldsSubmit] = useState<string[]>([]);
     const [processedFieldsSubmit, setProcessedFieldsSubmit] = useState<string[]>([]);
-    const isReadOnly = isEditing && !library?.permissions?.admin_library;
+    const isReadOnly = readOnly || (isEditing && !library?.permissions?.admin_library);
 
     const _getRequiredMessage = (field: string) =>
         t('errors.field_required', {
@@ -286,6 +288,7 @@ function EditLibraryInfoForm({
                                 onChange={_handleSelectChange(`recordIdentityConf_${fieldName}`)}
                                 options={options}
                                 clearIcon={<CloseOutlined />}
+                                disabled={isReadOnly || !!runningFieldsSubmit.find(f => f === fieldName)}
                             />
                         </SelectFormItem>
                     ))}

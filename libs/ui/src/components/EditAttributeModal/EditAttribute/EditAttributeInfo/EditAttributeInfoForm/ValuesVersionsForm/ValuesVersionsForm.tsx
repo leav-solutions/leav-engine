@@ -5,8 +5,8 @@ import {localizedTranslation} from '@leav/utils';
 import {Form, Select, Space, Switch} from 'antd';
 import {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
+import {ValueVersionMode, useGetVersionProfilesQuery} from '../../../../../../_gqlTypes';
 import {useLang} from '../../../../../../hooks';
-import {useGetVersionProfilesQuery, ValueVersionMode} from '../../../../../../_gqlTypes';
 import FieldsGroup from '../../../../../FieldsGroup';
 import {Loading} from '../../../../../Loading';
 
@@ -17,7 +17,7 @@ interface IValuesVersionsFormProps {
     extra?: ReactNode;
 }
 
-function ValuesVersionsForm({isEditing, isReadOnly, onChange, extra}: IValuesVersionsFormProps): JSX.Element {
+function ValuesVersionsForm({isReadOnly, onChange, extra}: IValuesVersionsFormProps): JSX.Element {
     const form = Form.useFormInstance();
     const {t} = useTranslation('shared');
     const {lang} = useLang();
@@ -59,7 +59,7 @@ function ValuesVersionsForm({isEditing, isReadOnly, onChange, extra}: IValuesVer
                 validateTrigger={['onChange', 'onSubmit']}
                 valuePropName="checked"
             >
-                <Switch onChange={_handleChange} />
+                <Switch disabled={isReadOnly} onChange={_handleChange} />
             </Form.Item>
             {isVersionable && (
                 <>

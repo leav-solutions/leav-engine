@@ -1,16 +1,16 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {PlusOutlined} from '@ant-design/icons';
+import {ClearOutlined, PlusOutlined} from '@ant-design/icons';
 import {LibraryPicker, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {Button, Empty, Input} from 'antd';
+import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
+import {Button, Empty, Input, Popconfirm, Space, Tooltip} from 'antd';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {SyntheticEvent, useState} from 'react';
-import {DragDropContext, Draggable, DraggableProvided, Droppable, DropResult} from 'react-beautiful-dnd';
+import {DragDropContext, Draggable, DraggableProvided, DropResult, Droppable} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
 import {LibraryLightFragment} from '../../../../../../../libs/ui/src/_gqlTypes';
 import LibraryBlock from './LibraryBlock';
 
@@ -29,9 +29,16 @@ interface ILibrariesListProps {
     onMoveLibrary: (libraryId: string, from: number, to: number) => void;
     onRemoveLibrary: (libraryId: string) => void;
     onAddLibraries: (libraries: string[]) => void;
+    onClearLibraries: () => void;
 }
 
-function LibrariesList({libraries, onMoveLibrary, onRemoveLibrary, onAddLibraries}: ILibrariesListProps): JSX.Element {
+function LibrariesList({
+    libraries,
+    onMoveLibrary,
+    onRemoveLibrary,
+    onAddLibraries,
+    onClearLibraries
+}: ILibrariesListProps): JSX.Element {
     const {t} = useTranslation();
     const {lang} = useLang();
     const {currentApp} = useApplicationContext();
@@ -66,6 +73,9 @@ function LibrariesList({libraries, onMoveLibrary, onRemoveLibrary, onAddLibrarie
         _handleCloseLibraryPicker();
         onAddLibraries(selectedLibraries.map(lib => lib.id));
     };
+    const _handleClearLibraries = () => {
+        onClearLibraries();
+    };
 
     const displayedLibraries = libraries.filter(lib => {
         const label = localizedTranslation(lib.label, lang);
@@ -91,7 +101,7 @@ function LibrariesList({libraries, onMoveLibrary, onRemoveLibrary, onAddLibrarie
 
     const addLibraryButton = (
         <Button icon={<PlusOutlined />} type="primary" onClick={_handleOpenLibraryPicker}>
-            {t('app_settings.add_library')}
+            {t('app_settings.libraries_settings.add_library')}
         </Button>
     );
 
@@ -105,9 +115,26 @@ function LibrariesList({libraries, onMoveLibrary, onRemoveLibrary, onAddLibrarie
                             aria-label="search"
                             onChange={_handleSearchChange}
                             style={{maxWidth: '30rem', margin: '10px'}}
-                            placeholder={t('app_settings.search_libraries') + '...'}
+                            placeholder={t('global.search') + '...'}
                         />
-                        {isCustomMode && !isReadOnly && addLibraryButton}
+                        {isCustomMode && !isReadOnly ? (
+                            <Space>
+                                {addLibraryButton}
+                                <Popconfirm
+                                    title={t('app_settings.libraries_settings.clear_libraries_confirm')}
+                                    onConfirm={_handleClearLibraries}
+                                    placement="bottomRight"
+                                    okText={t('global.submit')}
+                                    cancelText={t('global.cancel')}
+                                >
+                                    <Tooltip title={t('app_settings.libraries_settings.clear_libraries')}>
+                                        <Button icon={<ClearOutlined />} />
+                                    </Tooltip>
+                                </Popconfirm>
+                            </Space>
+                        ) : (
+                            <></>
+                        )}
                     </Header>
                     <DragDropContext onDragEnd={_handleDragEnd}>
                         <Droppable droppableId="libraries_list">
@@ -135,7 +162,7 @@ function LibrariesList({libraries, onMoveLibrary, onRemoveLibrary, onAddLibrarie
                     imageStyle={{
                         height: 60
                     }}
-                    description={<span>{t('app_settings.no_libraries')}.</span>}
+                    description={<span>{t('app_settings.libraries_settings.no_libraries')}.</span>}
                 >
                     {addLibraryButton}
                 </Empty>

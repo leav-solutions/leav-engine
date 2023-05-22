@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-import {ReactNode} from 'react';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
-import {GET_TREE_LIST_QUERY_trees_list} from '_gqlTypes/GET_TREE_LIST_QUERY';
+import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {TREE_NODE_CHILDREN_treeNodeChildren_list_permissions} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {
     AttributeFormat,
     AttributeType,
@@ -13,8 +13,7 @@ import {
     ViewSizes,
     ViewTypes
 } from '_gqlTypes/globalTypes';
-import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
-import {TREE_NODE_CHILDREN_treeNodeChildren_list_permissions} from '_gqlTypes/TREE_NODE_CHILDREN';
+import {ReactNode} from 'react';
 import {
     ILibraryDetailExtendedAttributeParentLinkedLibrary,
     ILibraryDetailExtendedAttributeParentLinkedTree
@@ -426,6 +425,7 @@ export interface IValueVersion {
 export interface IApplicationSettings {
     libraries?: 'all' | 'none' | string[];
     librariesOrder?: string[];
-    trees?: GET_TREE_LIST_QUERY_trees_list[];
+    trees?: 'all' | 'none' | string[];
+    treesOrder?: string[];
     showTransparency?: boolean;
 }

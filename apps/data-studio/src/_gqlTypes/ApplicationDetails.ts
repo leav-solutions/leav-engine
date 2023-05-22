@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ApplicationType, LibraryBehavior, FileType, ApplicationInstallStatus} from './globalTypes';
+import {ApplicationType, FileType, LibraryBehavior} from './globalTypes';
 
 // ====================================================
 // GraphQL fragment: ApplicationDetails
@@ -63,11 +63,6 @@ export interface ApplicationDetails_permissions {
     admin_application: boolean;
 }
 
-export interface ApplicationDetails_install {
-    status: ApplicationInstallStatus;
-    lastCallResult: string | null;
-}
-
 export interface ApplicationDetails {
     id: string;
     label: SystemTranslation;
@@ -79,6 +74,5 @@ export interface ApplicationDetails {
     icon: ApplicationDetails_icon | null;
     module: string | null;
     permissions: ApplicationDetails_permissions;
-    install: ApplicationDetails_install | null;
     settings: JSONObject | null;
 }

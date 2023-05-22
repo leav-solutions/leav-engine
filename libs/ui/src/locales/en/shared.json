@@ -51,7 +51,10 @@
         "color": "Color",
         "treeColorPreview": "Tree for default color and preview",
         "info": "Information",
-        "attributes": "Attributes"
+        "attributes": "Attributes",
+        "delete": "Delete library",
+        "delete_confirm": "Do you really want to delete this library?",
+        "delete_confirm_warning": "Warning: this action is irreversible and will delete all records in this library."
     },
     "attributes": {
         "attribute": "Attribute",
@@ -87,11 +90,28 @@
         "linked_library": "Linked library",
         "select_linked_library": "Select library",
         "linked_tree": "Linked tree",
-        "select_linked_tree": "Select a tree"
+        "select_linked_tree": "Select a tree",
+        "delete": "Delete attribute",
+        "delete_confirm_warning": "Warning: this action is irreversible and will delete all values"
     },
     "trees": {
         "tree": "Tree",
+        "label": "Label",
         "new_tree": "New tree",
-        "select_trees": "Select trees"
+        "select_trees": "Select trees",
+        "behavior": "Behavior",
+        "behavior_standard": "Standard",
+        "behavior_files": "Files",
+        "linked_libraries": "Linked libraries",
+        "allowed_multiple_positions": "Allowed multiple positions",
+        "add_libraries": "Add libraries",
+        "no_linked_libraries": "No linked libraries",
+        "no_children_allowed": "No children allowed",
+        "all_children_allowed": "All children allowed",
+        "libraries": "Libraries",
+        "advanced_settings": "Advanced settings",
+        "delete": "Delete tree",
+        "delete_confirm": "Do you really want to delete this tree?",
+        "delete_confirm_warning": "Warning: this action is irreversible"
     }
 }

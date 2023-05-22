@@ -13,7 +13,7 @@ describe('EditApplicationModal', () => {
         });
 
         const mockOnClose = jest.fn();
-        render(<EditApplicationModal open onClose={mockOnClose} appsBaseUrl="/app/" />);
+        render(<EditApplicationModal open onClose={mockOnClose} />);
 
         expect(screen.getByText(/new_app/)).toBeInTheDocument();
         expect(screen.getByText('EditApplication')).toBeInTheDocument();

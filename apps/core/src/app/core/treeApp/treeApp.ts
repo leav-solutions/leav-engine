@@ -232,8 +232,8 @@ export default function ({
                     }
 
                     input TreesFiltersInput {
-                        id: ID,
-                        label: String,
+                        id: [ID!],
+                        label: [String!],
                         system: Boolean,
                         behavior: TreeBehavior,
                         library: String

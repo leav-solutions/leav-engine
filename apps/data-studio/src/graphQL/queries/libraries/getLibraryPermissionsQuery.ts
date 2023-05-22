@@ -4,7 +4,7 @@
 import gql from 'graphql-tag';
 
 export const getLibraryPermissionsQuery = gql`
-    query GET_LIBRARY_PERMISSIONS($libraryId: ID!) {
+    query GET_LIBRARY_PERMISSIONS($libraryId: [ID!]) {
         libraries(filters: {id: $libraryId}) {
             list {
                 permissions {

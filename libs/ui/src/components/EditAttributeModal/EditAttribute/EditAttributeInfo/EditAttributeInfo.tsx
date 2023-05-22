@@ -3,21 +3,22 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Form} from 'antd';
 import {useEffect} from 'react';
-import {useLang} from '../../../../hooks';
 import {
     AttributeDetailsFragment,
     AttributeType,
     useCheckAttributeExistenceLazyQuery,
     useSaveAttributeMutation
 } from '../../../../_gqlTypes';
+import {useLang} from '../../../../hooks';
 import {EditAttributeInfoForm} from './EditAttributeInfoForm';
 
 interface IEditAttributeInfoProps {
     attribute?: AttributeDetailsFragment;
     onSetSubmitFunction?: (submitFunction: () => Promise<AttributeDetailsFragment>) => void;
+    readOnly?: boolean;
 }
 
-function EditAttributeInfo({attribute, onSetSubmitFunction}: IEditAttributeInfoProps): JSX.Element {
+function EditAttributeInfo({attribute, onSetSubmitFunction, readOnly}: IEditAttributeInfoProps): JSX.Element {
     const {availableLangs} = useLang();
     const [form] = Form.useForm();
     const isEditing = !!attribute;
@@ -179,6 +180,7 @@ function EditAttributeInfo({attribute, onSetSubmitFunction}: IEditAttributeInfoP
             onSubmitField={_submitField}
             attribute={attribute}
             loading={loading}
+            readOnly={readOnly}
         />
     );
 }

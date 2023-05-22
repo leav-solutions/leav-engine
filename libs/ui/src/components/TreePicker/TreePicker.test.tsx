@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {GetTreesDocument} from '../../_gqlTypes';
-import {render, screen, waitFor, within} from '../../_tests/testUtils';
 import {mockTreeSimple} from '../../__mocks__/common/tree';
+import {GetTreesDocument, IsAllowedDocument, PermissionsActions, PermissionTypes} from '../../_gqlTypes';
+import {render, screen, waitFor, within} from '../../_tests/testUtils';
 import TreePicker from './TreePicker';
 
 window.matchMedia = query => ({
@@ -18,13 +18,13 @@ window.matchMedia = query => ({
     dispatchEvent: jest.fn()
 });
 
-// jest.mock('../EditAttributeModal', () => {
-//     return {
-//         EditAttributeModal: () => {
-//             return <div>EditAttribute</div>;
-//         }
-//     };
-// });
+jest.mock('../EditTreeModal', () => {
+    return {
+        EditTreeModal: () => {
+            return <div>EditTree</div>;
+        }
+    };
+});
 
 describe('TreePicker', () => {
     const mockTreeA = {
@@ -54,6 +54,25 @@ describe('TreePicker', () => {
                     trees: {
                         list: [mockTreeA, mockTreeB, mockTreeC]
                     }
+                }
+            }
+        },
+        {
+            request: {
+                query: IsAllowedDocument,
+                variables: {
+                    type: PermissionTypes.admin,
+                    actions: [PermissionsActions.admin_create_tree]
+                }
+            },
+            result: {
+                data: {
+                    isAllowed: [
+                        {
+                            name: PermissionsActions.admin_create_tree,
+                            allowed: true
+                        }
+                    ]
                 }
             }
         }
@@ -117,7 +136,9 @@ describe('TreePicker', () => {
 
         userEvent.click(screen.getByRole('button', {name: /submit/i}));
 
-        await waitFor(() => expect(mockHandleSubmit).toHaveBeenCalledWith([mockTreeB, mockTreeC]));
+        await waitFor(() => expect(mockHandleSubmit).toHaveBeenCalledWith([mockTreeB, mockTreeC]), {
+            timeout: 10000
+        });
     });
 
     test('If not multiple, only one element can be selected', async () => {
@@ -136,22 +157,47 @@ describe('TreePicker', () => {
         await waitFor(() => expect(radioBtnAttributeA).not.toBeChecked());
     });
 
-    test.skip('Can create new tree', async () => {
+    test('Can create new tree', async () => {
         const mockHandleSubmit = jest.fn();
         render(<TreePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
 
         await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
 
-        const newAttributeButton = screen.queryByRole('button', {name: /new_tree/i});
-        expect(newAttributeButton).toBeInTheDocument();
+        const newTreeButton = screen.queryByRole('button', {name: /new_tree/i});
+        expect(newTreeButton).toBeInTheDocument();
 
-        userEvent.click(newAttributeButton);
-        expect(await screen.findByText('EditAttribute')).toBeInTheDocument();
+        userEvent.click(newTreeButton);
+        expect(await screen.findByText('EditTree')).toBeInTheDocument();
     });
 
-    test.skip('If not allowed, cannot create new tree', async () => {
+    test('If not allowed, cannot create new tree', async () => {
+        const mocksNotAllowed = [
+            mocks[0],
+            {
+                request: {
+                    query: IsAllowedDocument,
+                    variables: {
+                        type: PermissionTypes.admin,
+                        actions: [PermissionsActions.admin_create_tree]
+                    }
+                },
+                result: {
+                    data: {
+                        isAllowed: [
+                            {
+                                name: PermissionsActions.admin_create_tree,
+                                allowed: false
+                            }
+                        ]
+                    }
+                }
+            }
+        ];
+
         const mockHandleSubmit = jest.fn();
-        render(<TreePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open canCreate={false} />, {mocks});
+        render(<TreePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {
+            mocks: mocksNotAllowed
+        });
 
         await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
 

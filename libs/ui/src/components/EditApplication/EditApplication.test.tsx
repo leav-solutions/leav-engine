@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
+import {mockApplication} from '../../__mocks__/common/application';
 import {GetApplicationByIdDocument, SaveApplicationDocument} from '../../_gqlTypes';
 import {cleanup, render, screen, waitFor} from '../../_tests/testUtils';
-import {mockApplication} from '../../__mocks__/common/application';
 import EditApplication from './EditApplication';
 
 window.matchMedia = query => ({
@@ -28,7 +28,7 @@ describe('EditApplication', () => {
 
     describe('Create new app', () => {
         test('Display creation form', async () => {
-            render(<EditApplication appsBaseUrl="/app" />);
+            render(<EditApplication />);
 
             // Get all at once for performance reason
             const inputs = await screen.findAllByRole('textbox', {name: /label|description/});
@@ -52,7 +52,7 @@ describe('EditApplication', () => {
         });
 
         test('Do not generate id if user has modified it', async () => {
-            render(<EditApplication appsBaseUrl="/app" />);
+            render(<EditApplication />);
 
             await userEvent.type(screen.getByRole('textbox', {name: 'label_fr'}), 'Test app fr');
 
@@ -87,7 +87,7 @@ describe('EditApplication', () => {
         ];
 
         test('Display tabs', async () => {
-            render(<EditApplication appsBaseUrl="/app" applicationId={mockApplication.id} />, {mocks});
+            render(<EditApplication applicationId={mockApplication.id} />, {mocks});
 
             await waitFor(() => expect(screen.getByRole('tablist')).toBeInTheDocument());
 
@@ -95,7 +95,7 @@ describe('EditApplication', () => {
         });
 
         test('Can select default active tab', async () => {
-            render(<EditApplication appsBaseUrl="/app" applicationId={mockApplication.id} activeTab="info" />, {
+            render(<EditApplication applicationId={mockApplication.id} activeTab="info" />, {
                 mocks
             });
 
@@ -114,12 +114,29 @@ describe('EditApplication', () => {
             ];
 
             render(
-                <EditApplication
-                    appsBaseUrl="/app"
-                    applicationId={mockApplication.id}
-                    activeTab="custom"
-                    additionalTabs={customTabs}
-                />,
+                <EditApplication applicationId={mockApplication.id} activeTab="custom" additionalTabs={customTabs} />,
+                {
+                    mocks
+                }
+            );
+
+            await waitFor(() => expect(screen.getByRole('tablist')).toBeInTheDocument());
+
+            expect(screen.getByRole('tab', {name: /custom/i})).toBeInTheDocument();
+            expect(screen.getByText('Custom tab')).toBeInTheDocument();
+        });
+
+        test('Can pass custom tabs', async () => {
+            const customTabs = [
+                {
+                    key: 'custom',
+                    label: 'Custom',
+                    children: <div>Custom tab</div>
+                }
+            ];
+
+            render(
+                <EditApplication applicationId={mockApplication.id} activeTab="custom" additionalTabs={customTabs} />,
                 {
                     mocks
                 }
@@ -165,7 +182,7 @@ describe('EditApplication', () => {
                     }
                 ];
 
-                render(<EditApplication appsBaseUrl="/app" applicationId={mockApplication.id} />, {
+                render(<EditApplication applicationId={mockApplication.id} />, {
                     mocks: [...mocks, ...mockSave]
                 });
 
@@ -215,7 +232,7 @@ describe('EditApplication', () => {
                     }
                 ];
 
-                render(<EditApplication appsBaseUrl="/app" applicationId={mockApplication.id} />, {
+                render(<EditApplication applicationId={mockApplication.id} />, {
                     mocks: mocksNotAllowed
                 });
 

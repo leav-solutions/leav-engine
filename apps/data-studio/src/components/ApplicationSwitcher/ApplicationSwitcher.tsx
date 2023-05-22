@@ -3,8 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AppstoreOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
-import {EntityPreview, themeVars, useLang} from '@leav/ui';
+import {EntityPreview, ErrorDisplay, themeVars, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
+import {GET_APPLICATIONS} from '_gqlTypes/GET_APPLICATIONS';
 import {Button, Drawer, Menu, Skeleton, Tooltip, Typography} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import {useApplicationContext} from 'context/ApplicationContext';
@@ -12,7 +13,6 @@ import {getApplicationsQuery} from 'graphQL/queries/applications/getApplications
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {GET_APPLICATIONS} from '_gqlTypes/GET_APPLICATIONS';
 import AppLink from './AppLink';
 
 const AppsButton = styled(Button)`

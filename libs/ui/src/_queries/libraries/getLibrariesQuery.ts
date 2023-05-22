@@ -7,6 +7,22 @@ export const getLibrariesQuery = gql`
     fragment LibraryLight on Library {
         id
         label
+        icon {
+            id
+            whoAmI {
+                id
+                library {
+                    id
+                }
+                preview {
+                    tiny
+                    small
+                    medium
+                    big
+                    huge
+                }
+            }
+        }
     }
 
     query GET_LIBRARIES {

@@ -6,8 +6,8 @@ import gql from 'graphql-tag';
 export const getTreesQueryName = 'GET_TREES';
 
 export const getTreesQuery = gql`
-    query GET_TREES($id: ID, $label: String, $system: Boolean) {
-        trees(filters: {id: $id, label: $label, system: $system}) {
+    query GET_TREES($filters: TreesFiltersInput) {
+        trees(filters: $filters) {
             totalCount
             list {
                 id

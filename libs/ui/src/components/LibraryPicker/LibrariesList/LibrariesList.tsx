@@ -5,13 +5,22 @@ import {PlusOutlined} from '@ant-design/icons';
 import {useApolloClient} from '@apollo/client';
 import {localizedTranslation, Override} from '@leav/utils';
 import {Button, Input, Table, TableColumnsType} from 'antd';
-import {Key, useMemo, useState} from 'react';
+import {Key, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {PreviewSize} from '../../../constants';
-import {useLang} from '../../../hooks';
-import {GetLibrariesQuery, LibraryLightFragment, SaveLibraryMutation, useGetLibrariesQuery} from '../../../_gqlTypes';
+import {
+    GetLibrariesQuery,
+    LibraryLightFragment,
+    PermissionsActions,
+    PermissionTypes,
+    SaveLibraryMutation,
+    useGetLibrariesQuery,
+    useIsAllowedQuery
+} from '../../../_gqlTypes';
 import {getLibrariesQuery} from '../../../_queries/libraries/getLibrariesQuery';
+import {PreviewSize} from '../../../constants';
+import {extractPermissionFromQuery} from '../../../helpers/extractPermissionFromQuery';
+import {useLang} from '../../../hooks';
 import {EditLibraryModal} from '../../EditLibraryModal';
 import {EntityCard, IEntityData} from '../../EntityCard';
 import {ErrorDisplay} from '../../ErrorDisplay';
@@ -34,13 +43,11 @@ interface ILibrariesListProps {
     onSelect: (selectedLibraries: LibraryLightFragment[]) => void;
     selected?: string[];
     multiple?: boolean;
-    canCreate?: boolean;
     showSelected?: boolean;
 }
 
 function LibrariesList({
     onSelect,
-    canCreate = true,
     selected = [],
     multiple = true,
     showSelected = false
@@ -48,24 +55,30 @@ function LibrariesList({
     const {t} = useTranslation('shared');
     const {lang} = useLang();
     const {loading, error, data} = useGetLibrariesQuery();
+
+    const isAllowedQueryResult = useIsAllowedQuery({
+        fetchPolicy: 'cache-and-network',
+        variables: {
+            type: PermissionTypes.admin,
+            actions: [PermissionsActions.admin_create_library]
+        }
+    });
+    const canCreate = extractPermissionFromQuery(isAllowedQueryResult, PermissionsActions.admin_create_library);
+
     const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>(showSelected ? selected : []);
     const [search, setSearch] = useState('');
     const [isNewLibraryModalOpen, setIsNewLibraryModalOpen] = useState(false);
     const client = useApolloClient();
-    const librariesByKey = useMemo(() => {
-        return data?.libraries.list.reduce((acc, library) => {
-            acc[library.id] = library;
-            return acc;
-        }, {});
-    }, [data?.libraries.list]);
 
     const _handleSelectionChange = (selection: Key[]) => {
         setSelectedRowKeys(selection);
         onSelect(_getLibsFromKeys(selection));
     };
 
-    const _getLibsFromKeys = (keys: Key[]) => {
-        return keys.map(key => librariesByKey[key]);
+    const _getLibsFromKeys = (keys: Key[], libsList?: LibraryLightFragment[]) => {
+        // The list coming from data might not be up to date after a create, so we use the one passed as argument
+        const list = libsList ?? data?.libraries?.list ?? [];
+        return list.filter(lib => keys.find(k => lib.id === k));
     };
 
     const _handleRowClick = (record: LibraryType) => {
@@ -77,8 +90,7 @@ function LibrariesList({
             newSelection = multiple ? selectedRowKeys.filter(key => key !== record.key) : []; // Remove from selection
         }
 
-        setSelectedRowKeys(newSelection);
-        onSelect(_getLibsFromKeys(newSelection));
+        _handleSelectionChange(newSelection);
     };
 
     const _handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,28 +105,29 @@ function LibrariesList({
     const _handlePostCreate = async (newLibrary: SaveLibraryMutation['saveLibrary']) => {
         const allLibrariesData = client.readQuery<GetLibrariesQuery>({query: getLibrariesQuery});
 
+        const newLibsList = [newLibrary, ...(allLibrariesData?.libraries?.list ?? [])];
         if (allLibrariesData) {
             client.writeQuery({
                 query: getLibrariesQuery,
                 data: {
                     libraries: {
                         ...allLibrariesData.libraries,
-                        list: [newLibrary, ...allLibrariesData.libraries.list]
+                        list: newLibsList
                     }
                 }
             });
         }
         const newSelection = [...selectedRowKeys, newLibrary.id];
         setSelectedRowKeys(newSelection);
-        onSelect(_getLibsFromKeys(newSelection));
+        onSelect(_getLibsFromKeys(newSelection, newLibsList));
     };
 
     if (loading) {
         return <Loading />;
     }
 
-    if (error) {
-        return <ErrorDisplay message={error.message} />;
+    if (error || isAllowedQueryResult.error) {
+        return <ErrorDisplay message={error?.message || isAllowedQueryResult?.error?.message} />;
     }
 
     const columns: TableColumnsType<LibraryType> = [
@@ -125,7 +138,7 @@ function LibrariesList({
                 const libraryIdentity: IEntityData = {
                     label: library.label,
                     subLabel: library.id,
-                    preview: null,
+                    preview: library.icon?.whoAmI?.preview?.[PreviewSize.small] ?? null,
                     color: null
                 };
                 return <EntityCard entity={libraryIdentity} size={PreviewSize.small} />;

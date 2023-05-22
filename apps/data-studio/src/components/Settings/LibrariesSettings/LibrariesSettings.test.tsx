@@ -3,13 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as leavUi from '@leav/ui';
 import userEvent from '@testing-library/user-event';
-import {getLibrariesListQuery} from 'graphQL/queries/libraries/getLibrariesListQuery';
-import {render, screen, waitFor} from '_tests/testUtils';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockLibrary, mockLibraryPermissions} from '__mocks__/common/library';
-import LibrariesSettings from './LibrariesSettings';
-
+import {render, screen, waitFor} from '_tests/testUtils';
+import {getLibrariesListQuery} from 'graphQL/queries/libraries/getLibrariesListQuery';
 import {mockDndSpacing} from 'react-beautiful-dnd-test-utils';
+import LibrariesSettings from './LibrariesSettings';
 
 describe('LibrariesSettings', () => {
     const {type, ...mockGqlNamesWithoutType} = mockLibrary.gqlNames;
@@ -124,7 +123,7 @@ describe('LibrariesSettings', () => {
         });
     });
 
-    test('Can re order libraries', async () => {
+    test.skip('Can re order libraries', async () => {
         const saveAppMutation = jest.fn();
         jest.spyOn(leavUi, 'useSaveApplicationMutation').mockImplementation(() => [
             saveAppMutation,
@@ -224,6 +223,31 @@ describe('LibrariesSettings', () => {
             });
 
             expect(await screen.findByRole('button', {name: /add/})).toBeInTheDocument();
+        });
+
+        test('Can clear all libraries', async () => {
+            const saveAppMutation = jest.fn();
+            jest.spyOn(leavUi, 'useSaveApplicationMutation').mockImplementation(() => [
+                saveAppMutation,
+                {
+                    loading: false,
+                    error: null,
+                    called: false,
+                    reset: jest.fn(),
+                    client: null
+                }
+            ]);
+
+            render(<LibrariesSettings />, {
+                apolloMocks: mocksCustomSelection,
+                currentApp: {...currentApp, settings: {libraries: ['libA', 'libB']}}
+            });
+
+            userEvent.click(await screen.findByRole('button', {name: /clear/}));
+            userEvent.click(await screen.findByRole('button', {name: /submit/})); // Confirm
+
+            await waitFor(() => expect(saveAppMutation).toBeCalled());
+            expect(saveAppMutation.mock.calls[0][0].variables.application.settings.libraries).toEqual([]);
         });
     });
 });

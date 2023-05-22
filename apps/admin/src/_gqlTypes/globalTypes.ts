@@ -435,6 +435,14 @@ export interface Treepermissions_confInput {
     relation: PermissionsRelation;
 }
 
+export interface TreesFiltersInput {
+    id?: string[] | null;
+    label?: string[] | null;
+    system?: boolean | null;
+    behavior?: TreeBehavior | null;
+    library?: string | null;
+}
+
 export interface ValueBatchInput {
     attribute?: string | null;
     id_value?: string | null;

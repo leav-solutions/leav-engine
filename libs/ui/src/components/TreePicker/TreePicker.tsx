@@ -11,7 +11,6 @@ interface ITreePickerProps {
     open: boolean;
     onClose: () => void;
     onSubmit: (selectedTrees: TreeLightFragment[]) => Promise<void>;
-    canCreate?: boolean;
     selected?: string[];
     multiple?: boolean;
     showSelected?: boolean;
@@ -22,7 +21,6 @@ function TreePicker({
     onClose,
     onSubmit,
     selected = [],
-    canCreate = true,
     multiple = true,
     showSelected = false
 }: ITreePickerProps): JSX.Element {
@@ -54,13 +52,7 @@ function TreePicker({
             confirmLoading={isLoading}
             centered
         >
-            <TreesList
-                onSelect={_handleSelect}
-                selected={selected}
-                multiple={multiple}
-                canCreate={canCreate}
-                showSelected={showSelected}
-            />
+            <TreesList onSelect={_handleSelect} selected={selected} multiple={multiple} showSelected={showSelected} />
         </Modal>
     );
 }

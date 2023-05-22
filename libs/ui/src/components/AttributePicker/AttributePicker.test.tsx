@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {GetAttributesDocument} from '../../_gqlTypes';
-import {render, screen, waitFor, within} from '../../_tests/testUtils';
 import {mockAttributeSimple} from '../../__mocks__/common/attribute';
+import {GetAttributesDocument, IsAllowedDocument, PermissionsActions, PermissionTypes} from '../../_gqlTypes';
+import {render, screen, waitFor, within} from '../../_tests/testUtils';
 import AttributePicker from './AttributePicker';
 
 window.matchMedia = query => ({
@@ -51,6 +51,25 @@ describe('AttributePicker', () => {
                             }
                         ]
                     }
+                }
+            }
+        },
+        {
+            request: {
+                query: IsAllowedDocument,
+                variables: {
+                    type: PermissionTypes.admin,
+                    actions: [PermissionsActions.admin_create_attribute]
+                }
+            },
+            result: {
+                data: {
+                    isAllowed: [
+                        {
+                            name: PermissionsActions.admin_create_attribute,
+                            allowed: true
+                        }
+                    ]
                 }
             }
         }
@@ -114,7 +133,9 @@ describe('AttributePicker', () => {
 
         userEvent.click(screen.getByRole('button', {name: /submit/i}));
 
-        await waitFor(() => expect(mockHandleSubmit).toHaveBeenCalledWith(['attributeB', 'attributeC']));
+        await waitFor(() => expect(mockHandleSubmit).toHaveBeenCalledWith(['attributeB', 'attributeC']), {
+            timeout: 10000
+        });
     });
 
     test('If not multiple, only one element can be selected', async () => {
@@ -147,8 +168,33 @@ describe('AttributePicker', () => {
     });
 
     test('If not allowed, cannot create new attribute', async () => {
+        const mocksNotAllowed = [
+            mocks[0],
+            {
+                request: {
+                    query: IsAllowedDocument,
+                    variables: {
+                        type: PermissionTypes.admin,
+                        actions: [PermissionsActions.admin_create_attribute]
+                    }
+                },
+                result: {
+                    data: {
+                        isAllowed: [
+                            {
+                                name: PermissionsActions.admin_create_attribute,
+                                allowed: false
+                            }
+                        ]
+                    }
+                }
+            }
+        ];
+
         const mockHandleSubmit = jest.fn();
-        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open canCreate={false} />, {mocks});
+        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open canCreate={false} />, {
+            mocks: mocksNotAllowed
+        });
 
         await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
 

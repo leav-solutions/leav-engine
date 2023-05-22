@@ -56,7 +56,7 @@ describe('useTreeLibraryAllowedAsChild', () => {
             request: {
                 query: getTreeLibraries,
                 variables: {
-                    treeId: 'my_tree'
+                    treeId: ['my_tree']
                 }
             },
             result: {

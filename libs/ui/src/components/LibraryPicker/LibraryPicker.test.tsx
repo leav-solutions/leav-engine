@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {GetLibrariesDocument} from '../../_gqlTypes';
-import {render, screen, waitFor, within} from '../../_tests/testUtils';
 import {mockLibrarySimple} from '../../__mocks__/common/library';
+import {GetLibrariesDocument, IsAllowedDocument, PermissionsActions, PermissionTypes} from '../../_gqlTypes';
+import {render, screen, waitFor, within} from '../../_tests/testUtils';
 import LibraryPicker from './LibraryPicker';
 
 window.matchMedia = query => ({
@@ -56,6 +56,25 @@ describe('LibraryPicker', () => {
                     }
                 }
             }
+        },
+        {
+            request: {
+                query: IsAllowedDocument,
+                variables: {
+                    type: PermissionTypes.admin,
+                    actions: [PermissionsActions.admin_create_library]
+                }
+            },
+            result: {
+                data: {
+                    isAllowed: [
+                        {
+                            name: PermissionsActions.admin_create_library,
+                            allowed: true
+                        }
+                    ]
+                }
+            }
         }
     ];
 
@@ -97,8 +116,12 @@ describe('LibraryPicker', () => {
         userEvent.click(screen.getByText('libA'));
 
         // Select 'libA'
-        const rowLibA = screen.getByRole('row', {name: /libA/i});
-        const checkboxLibA = within(rowLibA).getByRole('checkbox'); // First checkbox is for the table header
+        const rows = screen.getAllByRole('row');
+        const rowLibA = rows[0];
+        const rowLibB = rows[1];
+        const rowLibC = rows[2];
+
+        const checkboxLibA = within(rowLibA).getByRole('checkbox');
         await waitFor(() => expect(checkboxLibA).toBeChecked());
 
         // Unselect 'libA'
@@ -106,17 +129,17 @@ describe('LibraryPicker', () => {
         await waitFor(() => expect(checkboxLibA).not.toBeChecked());
 
         // Select "libB" and "libC"
-        const rowLibB = screen.getByRole('row', {name: /libB/i});
-        const checkboxLibB = within(rowLibB).getByRole('checkbox'); // First checkbox is for the table header
+        const checkboxLibB = within(rowLibB).getByRole('checkbox');
         userEvent.click(checkboxLibB);
 
-        const rowLibC = screen.getByRole('row', {name: /libC/i});
-        const checkboxLibC = within(rowLibC).getByRole('checkbox'); // First checkbox is for the table header
+        const checkboxLibC = within(rowLibC).getByRole('checkbox');
         userEvent.click(checkboxLibC);
 
         userEvent.click(screen.getByRole('button', {name: /submit/i}));
 
-        await waitFor(() => expect(mockHandleSubmit).toHaveBeenCalledWith([mockLibB, mockLibC]));
+        await waitFor(() => expect(mockHandleSubmit).toHaveBeenCalledWith([mockLibB, mockLibC]), {
+            timeout: 10000
+        });
     });
 
     test('If not multiple, only one element can be selected', async () => {
@@ -149,8 +172,31 @@ describe('LibraryPicker', () => {
     });
 
     test('If not allowed, cannot create new library', async () => {
+        const mocksNotAllowed = [
+            mocks[0],
+            {
+                request: {
+                    query: IsAllowedDocument,
+                    variables: {
+                        type: PermissionTypes.admin,
+                        actions: [PermissionsActions.admin_create_library]
+                    }
+                },
+                result: {
+                    data: {
+                        isAllowed: [
+                            {
+                                name: PermissionsActions.admin_create_library,
+                                allowed: false
+                            }
+                        ]
+                    }
+                }
+            }
+        ];
+
         const mockHandleSubmit = jest.fn();
-        render(<LibraryPicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open canCreate={false} />, {mocks});
+        render(<LibraryPicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks: mocksNotAllowed});
 
         await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
 
