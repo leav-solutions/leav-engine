@@ -40,7 +40,7 @@ function EditView({visible, onClose, view, libraryId}: IEditViewProps): JSX.Elem
 
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
 
-    const {lang: availableLangs, defaultLang} = useLang();
+    const {availableLangs, defaultLang} = useLang();
     const [form] = Form.useForm();
     const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
 
