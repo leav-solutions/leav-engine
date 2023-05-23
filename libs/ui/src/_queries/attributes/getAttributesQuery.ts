@@ -9,6 +9,8 @@ export const getAttributesQuery = gql`
             list {
                 id
                 label
+                type
+                format
             }
         }
     }

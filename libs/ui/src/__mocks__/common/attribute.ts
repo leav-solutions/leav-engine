@@ -25,7 +25,9 @@ export const mockAttributeSimple: GetAttributesQuery['attributes']['list'][0] = 
     label: {
         fr: 'Mon attribut',
         en: 'My attribute'
-    }
+    },
+    type: AttributeType.simple,
+    format: AttributeFormat.text
 };
 
 export const mockAttributeWithDetails: AttributeDetailsFragment = {
