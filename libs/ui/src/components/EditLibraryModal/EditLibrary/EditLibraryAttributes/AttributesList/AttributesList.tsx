@@ -3,11 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined} from '@ant-design/icons';
 import {localizedTranslation, Override} from '@leav/utils';
-import {Button, Input, Table, TableColumnsType, Tag, TagProps} from 'antd';
+import {Button, Input, Table, TableColumnsType, Tag} from 'antd';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {AttributeFormat, AttributeType, LibraryAttributesFragment} from '../../../../../_gqlTypes';
+import {tagColorByAttributeFormat, tagColorByAttributeType} from '../../../../../constants';
 import {useLang} from '../../../../../hooks';
 import {AttributePicker} from '../../../../AttributePicker';
 import {AttributeCell} from './AttributeCell';
@@ -31,32 +32,14 @@ const HeaderWrapper = styled.div`
     }
 `;
 
+// To fix a cosmetic issue with the table header (see https://github.com/ant-design/ant-design/issues/41975)
 const Wrapper = styled.div`
-    // To fix a cosmetic issue with the table header (see https://github.com/ant-design/ant-design/issues/41975)
     && .ant-table-header {
         border-radius: 0;
     }
 `;
 
 export type AttributeListType = Override<LibraryAttributesFragment, {label: string}> & {key: string};
-
-const tagColorByType: {[key in AttributeType]: TagProps['color']} = {
-    [AttributeType.simple]: 'purple',
-    [AttributeType.simple_link]: 'blue',
-    [AttributeType.advanced]: 'orange',
-    [AttributeType.advanced_link]: 'volcano',
-    [AttributeType.tree]: 'green'
-};
-
-const tagColorByFormat: {[key in AttributeFormat]: TagProps['color']} = {
-    [AttributeFormat.boolean]: 'gold',
-    [AttributeFormat.date]: 'blue',
-    [AttributeFormat.date_range]: 'geekblue',
-    [AttributeFormat.encrypted]: 'red',
-    [AttributeFormat.extended]: 'magenta',
-    [AttributeFormat.numeric]: 'orange',
-    [AttributeFormat.text]: 'green'
-};
 
 function AttributesList({
     attributes = [],
@@ -98,7 +81,20 @@ function AttributesList({
             dataIndex: 'type',
             key: 'type',
             width: '150px',
-            render: (type: AttributeType) => <Tag color={tagColorByType[type]}>{t(`attributes.type_${type}`)}</Tag>
+            render: (type: AttributeType) => (
+                <Tag color={tagColorByAttributeType[type]}>{t(`attributes.type_${type}`)}</Tag>
+            ),
+            filters: Object.values(AttributeType).map(type => ({
+                text: t(`attributes.type_${type}`),
+                value: type
+            })),
+            onFilter: (value, record) => record.type === value,
+            sorter: (a, b) => {
+                const aTypeLabel = t(`attributes.type_${a.type}`);
+                const bTypeLabel = t(`attributes.type_${b.type}`);
+
+                return aTypeLabel.localeCompare(bTypeLabel);
+            }
         },
         {
             title: t('attributes.format'),
@@ -106,7 +102,18 @@ function AttributesList({
             key: 'format',
             width: '150px',
             render: (format: AttributeFormat) =>
-                format ? <Tag color={tagColorByFormat[format]}>{t(`attributes.format_${format}`)}</Tag> : null
+                format ? <Tag color={tagColorByAttributeFormat[format]}>{t(`attributes.format_${format}`)}</Tag> : null,
+            filters: Object.values(AttributeFormat).map(format => ({
+                text: t(`attributes.format_${format}`),
+                value: format
+            })),
+            onFilter: (value, record) => record.format === value,
+            sorter: (a, b) => {
+                const aFormatLabel = t(`attributes.format_${a.format}`);
+                const bFormatLabel = t(`attributes.format_${b.format}`);
+
+                return aFormatLabel.localeCompare(bFormatLabel);
+            }
         },
         {
             key: 'delete',

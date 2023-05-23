@@ -86,12 +86,7 @@ function ValuesVersionsForm({isReadOnly, onChange, extra}: IValuesVersionsFormPr
                                 label={t('attributes.versions_mode')}
                                 validateTrigger={['onBlur', 'onChange', 'onSubmit']}
                             >
-                                <Select
-                                    onChange={_handleChange}
-                                    options={modeSelectOptions}
-                                    disabled={isReadOnly}
-                                    allowClear
-                                />
+                                <Select onChange={_handleChange} options={modeSelectOptions} disabled={isReadOnly} />
                             </Form.Item>
                         </>
                     )}
