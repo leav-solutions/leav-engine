@@ -39,8 +39,7 @@ export default function ({
         },
         async clearCache({treeId, ctx}) {
             const cacheKey = _getCacheKey(treeId);
-            const cache = cacheService.getCache(ECacheType.RAM);
-            cache.deleteData([cacheKey]);
+            await cacheService.getCache(ECacheType.RAM)?.deleteData([cacheKey]);
         }
     };
 }

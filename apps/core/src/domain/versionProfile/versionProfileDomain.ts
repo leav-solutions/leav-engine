@@ -127,7 +127,7 @@ export default function ({
 
             if (!isNewProfile) {
                 const cacheKey = utils.getCoreEntityCacheKey('versionProfile', savedProfile.id);
-                await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey, `${cacheKey}:*`]);
+                await cacheService.getCache(ECacheType.RAM)?.deleteData([cacheKey, `${cacheKey}:*`]);
             }
 
             return savedProfile;

@@ -54,7 +54,7 @@ export const init = async (conf: IConfig): Promise<any> => {
     // Clear all caches (redis cache for example might persist between runs)
     const cacheService: ICachesService = coreContainer.cradle['core.infra.cache.cacheService'];
     await cacheService.getCache(ECacheType.DISK).deleteAll();
-    await cacheService.getCache(ECacheType.RAM).deleteAll();
+    await cacheService.getCache(ECacheType.RAM)?.deleteAll();
 
     await initPlugins(coreContainer.cradle.pluginsFolder, pluginsContainer);
 

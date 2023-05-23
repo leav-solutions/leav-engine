@@ -239,7 +239,7 @@ export default function ({
                     applyTo: libData.id
                 });
 
-                await cacheService.getCache(ECacheType.RAM).deleteData([keyLib, keyRec]);
+                await cacheService.getCache(ECacheType.RAM)?.deleteData([keyLib, keyRec]);
             }
 
             const savedLib = existingLib
@@ -297,7 +297,7 @@ export default function ({
 
             if (existingLib) {
                 const cacheKey = utils.getCoreEntityCacheKey('library', savedLib.id);
-                await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey, `${cacheKey}:*`]);
+                await cacheService.getCache(ECacheType.RAM)?.deleteData([cacheKey, `${cacheKey}:*`]);
             }
 
             return savedLib;
@@ -338,7 +338,7 @@ export default function ({
             );
 
             const cacheKey = utils.getCoreEntityCacheKey('library', id);
-            await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey, `${cacheKey}:*`]);
+            await cacheService.getCache(ECacheType.RAM)?.deleteData([cacheKey, `${cacheKey}:*`]);
 
             return deletedLibrary;
         }

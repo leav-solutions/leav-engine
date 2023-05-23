@@ -32,8 +32,7 @@ export default function ({
         },
         clearElementAncestorsCache: async ({treeId, ctx}) => {
             const cacheKey = _getCacheKey(treeId);
-            const cache = cacheService.getCache(ECacheType.RAM);
-            cache.deleteData([cacheKey]);
+            await cacheService.getCache(ECacheType.RAM)?.deleteData([cacheKey]);
         }
     };
 }

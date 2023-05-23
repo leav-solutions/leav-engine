@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {IQueryInfos} from '_types/queryInfos';
+import {RedisClientType} from './redis';
 
 export interface IMemoizeParams<T> {
     key: string;
@@ -17,6 +18,7 @@ export interface ICachesService {
 }
 
 export interface ICacheService {
+    client?: RedisClientType;
     storeData?(key: string, data: string, path?: string): Promise<void>;
     getData?(keys: string[], path?: string): Promise<string[]>;
     deleteData?(keys: string[], path?: string): Promise<void>;
@@ -38,7 +40,7 @@ export default function ({
     'core.infra.cache.diskService': diskService = null
 }: IDeps): ICachesService {
     return {
-        getCache(type: ECacheType): ICacheService {
+        getCache(type: ECacheType): ICacheService | undefined {
             let cacheService: ICacheService;
 
             switch (type) {
@@ -46,7 +48,9 @@ export default function ({
                     cacheService = diskService;
                     break;
                 case ECacheType.RAM:
-                    cacheService = ramService;
+                    if (ramService.client.isReady) {
+                        cacheService = ramService;
+                    }
                     break;
             }
 
@@ -54,16 +58,16 @@ export default function ({
         },
         async memoize({key, func, storeNulls, ctx}) {
             const cacheService = this.getCache(ECacheType.RAM);
-            const cacheValue = await cacheService.getData([key]);
+            const cacheValue = await cacheService?.getData([key]);
 
-            if (cacheValue[0]) {
+            if (cacheValue?.[0]) {
                 return JSON.parse(cacheValue[0]);
             }
 
             const result = await func();
 
             if (result !== null || storeNulls) {
-                cacheService.storeData(key, JSON.stringify(result));
+                await cacheService?.storeData(key, JSON.stringify(result));
             }
 
             return result;

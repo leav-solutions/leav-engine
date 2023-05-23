@@ -10,7 +10,11 @@ interface IDeps {
 
 export type RedisClientType = ReturnType<typeof redis.createClient>;
 
+const LIMIT_TRIES_RECONNECT = 3;
+
 export async function initRedis({config}: IDeps): Promise<RedisClientType> {
+    let retries = 0;
+
     const client = redis.createClient({
         socket: {
             host: config.redis.host,
@@ -19,8 +23,21 @@ export async function initRedis({config}: IDeps): Promise<RedisClientType> {
         database: config.redis.database
     });
 
+    client.on('ready', () => {
+        retries = 0;
+    });
+
     client.on('error', err => {
-        throw new Error(`Redis Client Error ${err}`);
+        console.error(`Redis client error ${err}`);
+    });
+
+    client.on('reconnecting', async () => {
+        if (retries++ < LIMIT_TRIES_RECONNECT) {
+            console.info(`Redis client is trying to reconnect to the server (${retries} tries)`);
+        } else {
+            console.info(`Redis client: ${LIMIT_TRIES_RECONNECT} failed reconnection attempts, quitting...`);
+            await client.disconnect();
+        }
     });
 
     await client.connect();

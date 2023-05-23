@@ -65,10 +65,10 @@ export default function ({
             ctx
         ): Promise<boolean> {
             const cacheKey = getPermissionCacheKey(ctx.groupsId, type, applyTo, action, '');
-            const permFromCache = (await cacheService.getCache(ECacheType.RAM).getData([cacheKey]))[0];
+            const permFromCache = (await cacheService.getCache(ECacheType.RAM)?.getData([cacheKey]))?.[0];
             let perm: boolean;
 
-            if (permFromCache !== null) {
+            if (permFromCache) {
                 if (permFromCache === PERMISSIONS_NULL_PLACEHOLDER) {
                     perm = null;
                 } else {
@@ -96,7 +96,7 @@ export default function ({
                 });
 
                 const permToStore = perm === null ? PERMISSIONS_NULL_PLACEHOLDER : perm.toString();
-                await cacheService.getCache(ECacheType.RAM).storeData(cacheKey, permToStore);
+                await cacheService.getCache(ECacheType.RAM)?.storeData(cacheKey, permToStore);
             }
 
             return perm ?? getDefaultPermission({action, applyTo, type, userId, ctx});

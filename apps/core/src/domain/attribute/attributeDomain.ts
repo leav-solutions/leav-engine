@@ -239,7 +239,7 @@ export default function ({
                     applyTo: attrProps.id
                 });
 
-                await cacheService.getCache(ECacheType.RAM).deleteData([keyAttr, keyRecAttr]);
+                await cacheService.getCache(ECacheType.RAM)?.deleteData([keyAttr, keyRecAttr]);
             }
 
             const attr = isExistingAttr
@@ -247,7 +247,7 @@ export default function ({
                 : await attributeRepo.createAttribute({attrData: attrToSave, ctx});
 
             const cacheKey = utils.getCoreEntityCacheKey('attribute', attrToSave.id);
-            await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey]);
+            await cacheService.getCache(ECacheType.RAM)?.deleteData([cacheKey]);
 
             return attr;
         },
@@ -298,7 +298,7 @@ export default function ({
             const deletedAttribute = await attributeRepo.deleteAttribute({attrData: attrProps, ctx});
 
             const cacheKey = utils.getCoreEntityCacheKey('attribute', id);
-            await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey]);
+            await cacheService.getCache(ECacheType.RAM)?.deleteData([cacheKey]);
 
             await _updateFormsUsingAttribute(id, ctx);
 

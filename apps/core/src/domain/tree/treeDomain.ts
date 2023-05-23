@@ -222,7 +222,7 @@ export default function ({
             );
         }
 
-        await cacheService.getCache(ECacheType.RAM).deleteData(keys);
+        await cacheService.getCache(ECacheType.RAM)?.deleteData(keys);
     };
 
     const _clearTrees = async (trees: string[]): Promise<void> => {
@@ -245,7 +245,7 @@ export default function ({
             );
         }
 
-        await cacheService.getCache(ECacheType.RAM).deleteData(keys);
+        await cacheService.getCache(ECacheType.RAM)?.deleteData(keys);
     };
 
     const _clearAttributes = async (attributes: string[]): Promise<void> => {
@@ -264,12 +264,12 @@ export default function ({
             );
         }
 
-        await cacheService.getCache(ECacheType.RAM).deleteData(keys);
+        await cacheService.getCache(ECacheType.RAM)?.deleteData(keys);
     };
 
     const _cleanPermissionsCacheRelatedToTree = async (treeId: string, ctx: IQueryInfos): Promise<void> => {
         if (treeId === 'users_groups') {
-            return cacheService.getCache(ECacheType.RAM).deleteData([`${PERMISSIONS_CACHE_HEADER}:*`]);
+            return cacheService.getCache(ECacheType.RAM)?.deleteData([`${PERMISSIONS_CACHE_HEADER}:*`]);
         }
 
         const attributes = (await attributeDomain.getAttributes({params: {filters: {linked_tree: treeId}}, ctx})).list;
@@ -396,7 +396,7 @@ export default function ({
 
             if (isExistingTree) {
                 const cacheKey = utils.getCoreEntityCacheKey('tree', dataToSave.id);
-                await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey]);
+                await cacheService.getCache(ECacheType.RAM)?.deleteData([cacheKey]);
 
                 await handleRemovedLibraries(treeProps, dataToSave as ITree, ctx);
             }
@@ -446,7 +446,7 @@ export default function ({
             const deletedTree = treeRepo.deleteTree({id, ctx});
 
             const cacheKey = utils.getCoreEntityCacheKey('tree', id);
-            await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey, `${cacheKey}:*`]);
+            await cacheService.getCache(ECacheType.RAM)?.deleteData([cacheKey, `${cacheKey}:*`]);
 
             return deletedTree;
         },
