@@ -13,7 +13,7 @@
         "graphql": "14.7.0",
         "graphql-tag": "2.10.1",
         "hex-rgba": "1.0.2",
-        "i18next": "19.0.1",
+        "i18next": "22.5.0",
         "i18next-browser-languagedetector": "4.0.1",
         "i18next-xhr-backend": "3.2.2",
         "jsoneditor": "9.7.4",

@@ -26,6 +26,8 @@ jest.mock('../EditLibraryModal', () => {
     };
 });
 
+jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
+
 describe('LibraryPicker', () => {
     const mockLibA = {
         __typename: 'Library',

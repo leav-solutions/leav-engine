@@ -8,16 +8,16 @@ import {gql, useApolloClient} from '@apollo/client';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Modal, ModalProps, Popconfirm} from 'antd';
 import {useState} from 'react';
-import {useTranslation} from 'react-i18next';
-import {extractPermissionFromQuery} from '../../helpers/extractPermissionFromQuery';
-import {useLang} from '../../hooks';
 import {
-    PermissionsActions,
     PermissionTypes,
+    PermissionsActions,
     TreeDetailsFragment,
     useDeleteTreeMutation,
     useIsAllowedQuery
 } from '../../_gqlTypes';
+import {extractPermissionFromQuery} from '../../helpers/extractPermissionFromQuery';
+import {useLang} from '../../hooks';
+import {useSharedTranslation} from '../../hooks/useSharedTranslation';
 import {ErrorDisplay} from '../ErrorDisplay';
 import {Loading} from '../Loading';
 import {EditTree} from './EditTree';
@@ -32,7 +32,7 @@ interface IEditTreeModalModalProps {
 }
 
 function EditTreeModal({open, treeId, onClose, onPostCreate, width}: IEditTreeModalModalProps): JSX.Element {
-    const {t} = useTranslation('shared');
+    const {t} = useSharedTranslation();
     const {lang} = useLang();
     const apolloClient = useApolloClient();
 

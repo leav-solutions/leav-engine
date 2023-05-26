@@ -8,7 +8,6 @@ import {gql, useApolloClient} from '@apollo/client';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Modal, ModalProps, Popconfirm} from 'antd';
 import {useState} from 'react';
-import {useTranslation} from 'react-i18next';
 import {
     PermissionTypes,
     PermissionsActions,
@@ -18,6 +17,7 @@ import {
 } from '../../_gqlTypes';
 import {extractPermissionFromQuery} from '../../helpers/extractPermissionFromQuery';
 import {useLang} from '../../hooks';
+import {useSharedTranslation} from '../../hooks/useSharedTranslation';
 import {ErrorDisplay} from '../ErrorDisplay';
 import {Loading} from '../Loading';
 import EditLibrary from './EditLibrary/EditLibrary';
@@ -32,7 +32,7 @@ interface IEditLibraryModalProps {
 }
 
 function EditLibraryModal({open, libraryId, onClose, onPostCreate, width}: IEditLibraryModalProps): JSX.Element {
-    const {t} = useTranslation('shared');
+    const {t} = useSharedTranslation();
     const {lang} = useLang();
     const apolloClient = useApolloClient();
 

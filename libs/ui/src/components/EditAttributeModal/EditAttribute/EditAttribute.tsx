@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Tabs, TabsProps} from 'antd';
-import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {AttributeDetailsFragment, useGetAttributeByIdQuery} from '../../../_gqlTypes';
+import {useSharedTranslation} from '../../../hooks/useSharedTranslation';
 import {ErrorDisplay} from '../../ErrorDisplay';
 import {Loading} from '../../Loading';
 import {EditAttributeInfo} from './EditAttributeInfo';
@@ -20,7 +20,7 @@ const TabContentWrapper = styled.div`
 `;
 
 function EditAttribute({attributeId, onSetSubmitFunction, readOnly: isReadOnly}: IEditAttributeProps): JSX.Element {
-    const {t} = useTranslation('shared');
+    const {t} = useSharedTranslation();
     const isEditing = !!attributeId;
 
     const {loading, error, data} = useGetAttributeByIdQuery({

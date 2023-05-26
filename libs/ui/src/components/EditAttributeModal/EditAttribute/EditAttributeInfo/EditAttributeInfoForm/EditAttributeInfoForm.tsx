@@ -4,7 +4,6 @@
 import {formatId, idFormatRegex, Override} from '@leav/utils';
 import {Form, FormInstance, Input, Select, Switch} from 'antd';
 import React, {useState} from 'react';
-import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {
     AttributeDetailsFragment,
@@ -16,6 +15,7 @@ import {
     ValueVersionMode
 } from '../../../../../_gqlTypes';
 import {useLang} from '../../../../../hooks';
+import {useSharedTranslation} from '../../../../../hooks/useSharedTranslation';
 import FieldsGroup from '../../../../FieldsGroup';
 import {SubmitStateNotifier} from '../../../../SubmitStateNotifier';
 import {LinkedLibraryForm} from './LinkedLibraryForm';
@@ -71,7 +71,7 @@ function EditAttributeInfoForm({
     loading,
     readOnly: isReadOnly
 }: IEditAttributeInfoFormProps): JSX.Element {
-    const {t} = useTranslation('shared');
+    const {t} = useSharedTranslation();
     const {availableLangs, defaultLang} = useLang();
     const currentType = Form.useWatch('type', form);
     const [hasIdBeenEdited, setHasIdBeenEdited] = useState(false);

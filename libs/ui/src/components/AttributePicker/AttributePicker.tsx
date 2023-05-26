@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Modal} from 'antd';
 import {useState} from 'react';
-import {useTranslation} from 'react-i18next';
+import {useSharedTranslation} from '../../hooks/useSharedTranslation';
 import {AttributesList} from './AttributesList';
 
 interface IAttributePickerProps {
@@ -23,7 +23,7 @@ function AttributePicker({
     canCreate = true,
     multiple = true
 }: IAttributePickerProps): JSX.Element {
-    const {t} = useTranslation('shared');
+    const {t} = useSharedTranslation();
     const [selectedAttributes, setSelectedAttributes] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 

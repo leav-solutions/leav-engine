@@ -9,6 +9,8 @@ import * as gqlTypes from '../../_gqlTypes';
 import {act, fireEvent, render, screen, waitFor} from '../../_tests/testUtils';
 import EditLibraryModal from './EditLibraryModal';
 
+jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
+
 describe('EditLibraryModal', () => {
     const mockResultIsAllowed: Mockify<typeof gqlTypes.useIsAllowedQuery> = {
         loading: false,

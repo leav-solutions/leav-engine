@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
 import {Button, Form, Space} from 'antd';
-import React, {ReactNode, useState} from 'react';
-import {useTranslation} from 'react-i18next';
+import {ReactNode, useState} from 'react';
+import {TreeLightFragment} from '../../../../../../_gqlTypes';
 import {PreviewSize} from '../../../../../../constants';
 import {useLang} from '../../../../../../hooks';
-import {TreeLightFragment} from '../../../../../../_gqlTypes';
+import {useSharedTranslation} from '../../../../../../hooks/useSharedTranslation';
 import {EntityCard, IEntityData} from '../../../../../EntityCard';
 import {TreePicker} from '../../../../../TreePicker';
 
@@ -21,7 +21,7 @@ interface ILinkedTreeFormProps {
 function LinkedTreeForm({onChange, isReadOnly, extra, selected}: ILinkedTreeFormProps): JSX.Element {
     const form = Form.useFormInstance();
     const linkedTree = Form.useWatch('linked_tree', form);
-    const {t} = useTranslation('shared');
+    const {t} = useSharedTranslation();
     const {lang} = useLang();
     const [isTreePickerOpen, setIsTreePickerOpen] = useState(false);
 

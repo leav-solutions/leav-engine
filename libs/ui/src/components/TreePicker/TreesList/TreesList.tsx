@@ -6,7 +6,6 @@ import {useApolloClient} from '@apollo/client';
 import {localizedTranslation, Override} from '@leav/utils';
 import {Button, Input, Table, TableColumnsType} from 'antd';
 import {ComponentProps, Key, useState} from 'react';
-import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {
     GetTreesQuery,
@@ -20,6 +19,7 @@ import {getTreesQuery} from '../../../_queries/trees/getTreesQuery';
 import {PreviewSize} from '../../../constants';
 import {extractPermissionFromQuery} from '../../../helpers/extractPermissionFromQuery';
 import {useLang} from '../../../hooks';
+import {useSharedTranslation} from '../../../hooks/useSharedTranslation';
 import {EditTreeModal} from '../../EditTreeModal';
 import {EntityCard, IEntityData} from '../../EntityCard';
 import {ErrorDisplay} from '../../ErrorDisplay';
@@ -46,7 +46,7 @@ interface ITreesListProps {
 }
 
 function TreesList({onSelect, selected = [], multiple = true, showSelected = false}: ITreesListProps): JSX.Element {
-    const {t} = useTranslation('shared');
+    const {t} = useSharedTranslation();
     const {lang} = useLang();
     const {loading, error, data} = useGetTreesQuery();
 

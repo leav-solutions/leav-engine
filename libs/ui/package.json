@@ -37,7 +37,7 @@
     "@ant-design/icons": ">=5.2",
     "@apollo/client": ">=3.7",
     "antd": ">=5.2",
-    "i18next": "22",
+    "i18next": "22.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-i18next": "12",
@@ -47,6 +47,7 @@
   },
   "stableVersion": "1.0.0",
   "dependencies": {
-    "@leav/utils": "workspace:*"
+    "@leav/utils": "workspace:*",
+    "i18next-resources-to-backend": "1.1.4"
   }
 }

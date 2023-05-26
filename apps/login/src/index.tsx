@@ -1,15 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {customTheme, useAppLang, ErrorDisplay, Loading} from '@leav/ui';
+import {ErrorDisplay, Loading, customTheme, useAppLang} from '@leav/ui';
 import {ConfigProvider} from 'antd';
 import App from 'components/App';
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom/client';
+import i18n from './i18n';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import i18n from './i18n';
-import {APPS_ENDPOINT, APP_ENDPOINT} from './constants';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
@@ -19,7 +18,7 @@ function Index() {
 
     useEffect(() => {
         if (!i18nIsInitialized && lang) {
-            i18n.init(`${APPS_ENDPOINT}/${APP_ENDPOINT}`, lang);
+            i18n.init(lang);
             seti18nIsInitialized(true);
         }
     }, [lang]);

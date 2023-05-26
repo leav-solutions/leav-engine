@@ -26,6 +26,8 @@ jest.mock('../EditAttributeModal', () => {
     };
 });
 
+jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
+
 describe('AttributePicker', () => {
     const mocks = [
         {

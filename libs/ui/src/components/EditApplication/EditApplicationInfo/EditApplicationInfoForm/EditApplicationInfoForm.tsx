@@ -4,10 +4,10 @@
 import {endpointFormatRegex, formatId, idFormatRegex} from '@leav/utils';
 import {Form, FormInstance, Input, Select} from 'antd';
 import React, {useState} from 'react';
-import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {useLang} from '../../../../hooks';
 import {ApplicationType, GetApplicationByIdQuery} from '../../../../_gqlTypes';
+import {useLang} from '../../../../hooks';
+import {useSharedTranslation} from '../../../../hooks/useSharedTranslation';
 import FieldsGroup from '../../../FieldsGroup';
 import {SubmitStateNotifier} from '../../../SubmitStateNotifier';
 import ModuleSelector from './ModuleSelector';
@@ -33,7 +33,7 @@ function EditApplicationInfoForm({
     onCheckApplicationUniqueness,
     loading
 }: IEditApplicationInfoFormProps): JSX.Element {
-    const {t} = useTranslation('shared');
+    const {t} = useSharedTranslation();
     const {availableLangs, defaultLang} = useLang();
     const isEditing = !!application;
 
@@ -220,7 +220,7 @@ function EditApplicationInfoForm({
                 ]}
                 hasFeedback
             >
-                <Input disabled={isReadOnly || isEditing} onChange={_handleIdChange} />
+                <Input disabled={isReadOnly || isEditing} onChange={_handleIdChange} aria-label="id" />
             </Form.Item>
             <Form.Item
                 name="type"
@@ -228,7 +228,7 @@ function EditApplicationInfoForm({
                 label={t('applications.type')}
                 rules={[{required: true, message: _getRequiredMessage('type')}]}
             >
-                <Select onChange={_handleTypeChange} disabled={isReadOnly || isEditing}>
+                <Select onChange={_handleTypeChange} disabled={isReadOnly || isEditing} aria-label="">
                     {Object.values(ApplicationType).map(type => (
                         <Select.Option key={type} value={type}>
                             {t(`applications.type_${type}`)}

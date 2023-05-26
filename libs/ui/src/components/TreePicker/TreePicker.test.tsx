@@ -26,6 +26,8 @@ jest.mock('../EditTreeModal', () => {
     };
 });
 
+jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
+
 describe('TreePicker', () => {
     const mockTreeA = {
         __typename: 'Tree',

@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Tabs, TabsProps} from 'antd';
-import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
 import {useGetApplicationByIdQuery} from '../../_gqlTypes';
+import {useSharedTranslation} from '../../hooks/useSharedTranslation';
 import {ErrorDisplay} from '../ErrorDisplay';
 import {Loading} from '../Loading';
 import {EditApplicationInfo} from './EditApplicationInfo';
@@ -21,7 +21,7 @@ function EditApplication({
     additionalTabs = [],
     activeTab = 'info'
 }: IEditApplicationProps): JSX.Element {
-    const {t} = useTranslation('shared');
+    const {t} = useSharedTranslation();
     const isEditing = !!applicationId;
 
     const {loading, error, data} = useGetApplicationByIdQuery({

@@ -5,11 +5,11 @@ import {CloseOutlined, PlusOutlined} from '@ant-design/icons';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Collapse, Form, List, Select, Space, Switch} from 'antd';
 import {ReactNode, useState} from 'react';
-import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
+import {LibraryLightFragment, TreeDetailsFragment} from '../../../../../../_gqlTypes';
 import {PreviewSize} from '../../../../../../constants';
 import useLang from '../../../../../../hooks/useLang';
-import {LibraryLightFragment, TreeDetailsFragment} from '../../../../../../_gqlTypes';
+import {useSharedTranslation} from '../../../../../../hooks/useSharedTranslation';
 import {EntityCard, IEntityData} from '../../../../../EntityCard';
 import FieldsGroup from '../../../../../FieldsGroup';
 import {LibraryPicker} from '../../../../../LibraryPicker';
@@ -37,7 +37,7 @@ interface ITreeLibrariesFormProps {
 }
 
 function TreeLibrariesForm({onChange, extra, readOnly}: ITreeLibrariesFormProps): JSX.Element {
-    const {t} = useTranslation('shared');
+    const {t} = useSharedTranslation();
     const {lang} = useLang();
     const form = Form.useFormInstance();
     const libraries: TreeDetailsFragment['libraries'] = form.getFieldValue('libraries') ?? [];

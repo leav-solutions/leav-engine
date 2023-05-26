@@ -21,6 +21,8 @@ window.matchMedia = query => ({
 // This test suite is very slow, I don't really know why. Increse the timeout for now.
 jest.setTimeout(15000);
 
+jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
+
 describe('EditApplication', () => {
     beforeEach(() => {
         jest.resetAllMocks();

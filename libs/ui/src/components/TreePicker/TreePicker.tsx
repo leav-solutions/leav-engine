@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Modal} from 'antd';
 import {useState} from 'react';
-import {useTranslation} from 'react-i18next';
 import {TreeLightFragment} from '../../_gqlTypes';
+import {useSharedTranslation} from '../../hooks/useSharedTranslation';
 import {TreesList} from './TreesList';
 
 interface ITreePickerProps {
@@ -24,7 +24,7 @@ function TreePicker({
     multiple = true,
     showSelected = false
 }: ITreePickerProps): JSX.Element {
-    const {t} = useTranslation('shared');
+    const {t} = useSharedTranslation();
     const [selectedTrees, setSelectedTrees] = useState<TreeLightFragment[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
