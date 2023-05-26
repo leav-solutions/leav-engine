@@ -84,7 +84,8 @@
         "favorites_libraries": "Favorites",
         "others_trees": "Other trees",
         "related_trees": "Related to active library",
-        "favorites_trees": "Favorites"
+        "favorites_trees": "Favorites",
+        "settings": "Settings"
     },
     "lib_list": {
         "header": "Libraries List"
@@ -152,7 +153,8 @@
             "medium": "medium",
             "big": "big",
             "tile": "Gallery"
-        }
+        },
+        "not_in_app": "This library is not available in this application"
     },
     "items-list-row": {
         "nb-elements": "{{nbItems}} results",
@@ -317,7 +319,8 @@
             "error-detach": "An error occurs while detaching elements {{elements}}: {{errorMessage}}"
         },
         "access_denied": "You cannot access this element",
-        "inactive_element": "This element is inactive"
+        "inactive_element": "This element is inactive",
+        "not_in_app": "This tree is not available in this application"
     },
     "info": {
         "base-message": "Welcome to {{appLabel}}",
@@ -583,5 +586,41 @@
         "previews_generation_failed_only": "Only if previous generation failed",
         "previews_generation_success": "Previews generation started",
         "previews_generation_nothing_to_do": "No preview to generate"
+    },
+    "app_settings": {
+        "title": "Settings",
+        "application": "Application",
+        "libraries": "Libraries",
+        "trees": "Trees",
+        "advanced_settings": "Advanced settings",
+        "showTransparency": "Show transparency",
+        "mode_confirm_title":  "Are you sure ?",
+        "mode_confirm_description":  "Your custom selection will be lost",
+        "libraries_settings": {
+            "no_libraries": "No libraries selected",
+            "add_library": "Add library",
+            "select_all":  "All",
+            "select_none":  "None",
+            "select_custom":  "Custom selection",
+            "available":  "Available libraries",
+            "select_all_help":  "All libraries will be available, including new ones.",
+            "select_none_help":  "No libraries will be available.",
+            "select_custom_help":  "Only selected libraries will be available. New ones won't be added automatically",
+            "clear_libraries_confirm": "Do you really want to clear all libraries?",
+            "clear_libraries": "Clear all libraries"
+        },
+        "trees_settings": {
+            "no_trees": "No trees selected",
+            "add_tree": "Add tree",
+            "select_all":  "All",
+            "select_none":  "None",
+            "select_custom":  "Custom selection",
+            "available":  "Available trees",
+            "select_all_help":  "All trees will be available, including new ones.",
+            "select_none_help":  "No trees will be available.",
+            "select_custom_help":  "Only selected trees will be available. New ones won't be added automatically",
+            "clear_trees_confirm": "Do you really want to clear all trees?",
+            "clear_trees": "Clear all trees"
+        }
     }
 }

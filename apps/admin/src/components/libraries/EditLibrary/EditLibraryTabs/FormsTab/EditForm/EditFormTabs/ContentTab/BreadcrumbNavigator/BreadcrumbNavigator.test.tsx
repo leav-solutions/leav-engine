@@ -38,7 +38,7 @@ describe('BreadcrumbNavigator', () => {
                 request: {
                     query: getTreeByIdQuery,
                     variables: {
-                        id: 'categories'
+                        id: ['categories']
                     }
                 },
                 result: {

@@ -16,9 +16,9 @@ const TabContentWrapper = styled.div<{$style?: CSSObject}>`
 
 function EditApplication({
     applicationId,
-    appsBaseUrl,
     onSetSubmitFunction,
     tabContentStyle,
+    additionalTabs = [],
     activeTab = 'info'
 }: IEditApplicationProps): JSX.Element {
     const {t} = useTranslation('shared');
@@ -41,13 +41,7 @@ function EditApplication({
 
     const application = data?.applications?.list[0] ?? null;
 
-    const appInfoComp = (
-        <EditApplicationInfo
-            application={application}
-            appsBaseUrl={appsBaseUrl}
-            onSetSubmitFunction={onSetSubmitFunction}
-        />
-    );
+    const appInfoComp = <EditApplicationInfo application={application} onSetSubmitFunction={onSetSubmitFunction} />;
 
     // If creating new application, return the form directly
     if (!isEditing) {
@@ -59,7 +53,8 @@ function EditApplication({
             key: 'info',
             label: t('applications.info'),
             children: <TabContentWrapper style={tabContentStyle}>{appInfoComp}</TabContentWrapper>
-        }
+        },
+        ...additionalTabs
     ];
 
     return <Tabs items={tabs} defaultActiveKey={activeTab} />;

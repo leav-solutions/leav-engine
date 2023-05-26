@@ -95,10 +95,8 @@ export type ApplicationInput = {
     icon?: InputMaybe<ApplicationIconInput>;
     id: Scalars['ID'];
     label?: InputMaybe<Scalars['SystemTranslation']>;
-    libraries?: InputMaybe<Array<Scalars['String']>>;
     module?: InputMaybe<Scalars['String']>;
     settings?: InputMaybe<Scalars['JSONObject']>;
-    trees?: InputMaybe<Array<Scalars['String']>>;
     type?: InputMaybe<ApplicationType>;
 };
 
@@ -297,8 +295,8 @@ export enum ImportType {
 
 export type LibrariesFiltersInput = {
     behavior?: InputMaybe<Array<LibraryBehavior>>;
-    id?: InputMaybe<Scalars['ID']>;
-    label?: InputMaybe<Scalars['String']>;
+    id?: InputMaybe<Array<Scalars['ID']>>;
+    label?: InputMaybe<Array<Scalars['String']>>;
     system?: InputMaybe<Scalars['Boolean']>;
 };
 
@@ -632,8 +630,8 @@ export type TreepermissionsConfInput = {
 
 export type TreesFiltersInput = {
     behavior?: InputMaybe<TreeBehavior>;
-    id?: InputMaybe<Scalars['ID']>;
-    label?: InputMaybe<Scalars['String']>;
+    id?: InputMaybe<Array<Scalars['ID']>>;
+    label?: InputMaybe<Array<Scalars['String']>>;
     library?: InputMaybe<Scalars['String']>;
     system?: InputMaybe<Scalars['Boolean']>;
 };
@@ -752,6 +750,313 @@ export type ViewValuesVersionInput = {
     treeNode: Scalars['String'];
 };
 
+export type DetailsApplicationFragment = {
+    id: string;
+    label: any;
+    type: ApplicationType;
+    description?: any | null;
+    endpoint?: string | null;
+    url?: string | null;
+    color?: string | null;
+    module?: string | null;
+    settings?: any | null;
+    icon?:
+        | {
+              id: string;
+              whoAmI: {
+                  id: string;
+                  label?: string | null;
+                  color?: string | null;
+                  library: {id: string; label?: any | null};
+                  preview?: {
+                      tiny?: string | null;
+                      small?: string | null;
+                      medium?: string | null;
+                      big?: string | null;
+                      huge?: string | null;
+                  } | null;
+              };
+          }
+        | {
+              id: string;
+              whoAmI: {
+                  id: string;
+                  label?: string | null;
+                  color?: string | null;
+                  library: {id: string; label?: any | null};
+                  preview?: {
+                      tiny?: string | null;
+                      small?: string | null;
+                      medium?: string | null;
+                      big?: string | null;
+                      huge?: string | null;
+                  } | null;
+              };
+          }
+        | null;
+    permissions: {access_application: boolean; admin_application: boolean};
+};
+
+export type RecordIdentityBoGOl5j673ybhJs2c0oakR7IaZ9B2SfFu04koczefYFragment = {
+    id: string;
+    whoAmI: {
+        id: string;
+        label?: string | null;
+        color?: string | null;
+        library: {id: string; label?: any | null};
+        preview?: {
+            tiny?: string | null;
+            small?: string | null;
+            medium?: string | null;
+            big?: string | null;
+            huge?: string | null;
+        } | null;
+    };
+};
+
+export type RecordIdentityVjGx7yay28rmOMaNcZtxPx3FeD3jNcn1Abvk7G9mHkUFragment = {
+    id: string;
+    whoAmI: {
+        id: string;
+        label?: string | null;
+        color?: string | null;
+        library: {id: string; label?: any | null};
+        preview?: {
+            tiny?: string | null;
+            small?: string | null;
+            medium?: string | null;
+            big?: string | null;
+            huge?: string | null;
+        } | null;
+    };
+};
+
+export type RecordIdentityFragment =
+    | RecordIdentityBoGOl5j673ybhJs2c0oakR7IaZ9B2SfFu04koczefYFragment
+    | RecordIdentityVjGx7yay28rmOMaNcZtxPx3FeD3jNcn1Abvk7G9mHkUFragment;
+
+export type AttributeDetailsLinkAttributeFragment = {
+    reverse_link?: string | null;
+    id: string;
+    type: AttributeType;
+    format?: AttributeFormat | null;
+    system: boolean;
+    readonly: boolean;
+    label?: any | null;
+    description?: any | null;
+    multiple_values: boolean;
+    linked_library?: {id: string; label?: any | null} | null;
+    metadata_fields?: Array<{
+        id: string;
+        label?: any | null;
+        type: AttributeType;
+        format?: AttributeFormat | null;
+    }> | null;
+    versions_conf?: {
+        versionable: boolean;
+        mode?: ValueVersionMode | null;
+        profile?: {id: string; label: any; trees: Array<{id: string; label?: any | null}>} | null;
+    } | null;
+    libraries?: Array<{id: string; label?: any | null}> | null;
+};
+
+export type AttributeDetailsStandardAttributeFragment = {
+    unique?: boolean | null;
+    id: string;
+    type: AttributeType;
+    format?: AttributeFormat | null;
+    system: boolean;
+    readonly: boolean;
+    label?: any | null;
+    description?: any | null;
+    multiple_values: boolean;
+    metadata_fields?: Array<{
+        id: string;
+        label?: any | null;
+        type: AttributeType;
+        format?: AttributeFormat | null;
+    }> | null;
+    versions_conf?: {
+        versionable: boolean;
+        mode?: ValueVersionMode | null;
+        profile?: {id: string; label: any; trees: Array<{id: string; label?: any | null}>} | null;
+    } | null;
+    libraries?: Array<{id: string; label?: any | null}> | null;
+};
+
+export type AttributeDetailsTreeAttributeFragment = {
+    id: string;
+    type: AttributeType;
+    format?: AttributeFormat | null;
+    system: boolean;
+    readonly: boolean;
+    label?: any | null;
+    description?: any | null;
+    multiple_values: boolean;
+    linked_tree?: {id: string; label?: any | null} | null;
+    metadata_fields?: Array<{
+        id: string;
+        label?: any | null;
+        type: AttributeType;
+        format?: AttributeFormat | null;
+    }> | null;
+    versions_conf?: {
+        versionable: boolean;
+        mode?: ValueVersionMode | null;
+        profile?: {id: string; label: any; trees: Array<{id: string; label?: any | null}>} | null;
+    } | null;
+    libraries?: Array<{id: string; label?: any | null}> | null;
+};
+
+export type AttributeDetailsFragment =
+    | AttributeDetailsLinkAttributeFragment
+    | AttributeDetailsStandardAttributeFragment
+    | AttributeDetailsTreeAttributeFragment;
+
+export type LibraryLightFragment = {
+    id: string;
+    label?: any | null;
+    icon?:
+        | {
+              id: string;
+              whoAmI: {
+                  id: string;
+                  library: {id: string};
+                  preview?: {
+                      tiny?: string | null;
+                      small?: string | null;
+                      medium?: string | null;
+                      big?: string | null;
+                      huge?: string | null;
+                  } | null;
+              };
+          }
+        | {
+              id: string;
+              whoAmI: {
+                  id: string;
+                  library: {id: string};
+                  preview?: {
+                      tiny?: string | null;
+                      small?: string | null;
+                      medium?: string | null;
+                      big?: string | null;
+                      huge?: string | null;
+                  } | null;
+              };
+          }
+        | null;
+};
+
+export type LibraryDetailsFragment = {
+    id: string;
+    label?: any | null;
+    behavior: LibraryBehavior;
+    system?: boolean | null;
+    fullTextAttributes?: Array<{id: string; label?: any | null}> | null;
+    attributes?: Array<
+        | {
+              id: string;
+              label?: any | null;
+              system: boolean;
+              type: AttributeType;
+              format?: AttributeFormat | null;
+              linked_library?: {id: string; behavior: LibraryBehavior} | null;
+          }
+        | {id: string; label?: any | null; system: boolean; type: AttributeType; format?: AttributeFormat | null}
+    > | null;
+    permissions_conf?: {
+        relation: PermissionsRelation;
+        permissionTreeAttributes: Array<
+            {id: string; label?: any | null} | {id: string; label?: any | null; linked_tree?: {id: string} | null}
+        >;
+    } | null;
+    recordIdentityConf?: {
+        label?: string | null;
+        color?: string | null;
+        preview?: string | null;
+        treeColorPreview?: string | null;
+    } | null;
+    permissions?: {
+        admin_library: boolean;
+        access_library: boolean;
+        access_record: boolean;
+        create_record: boolean;
+        edit_record: boolean;
+        delete_record: boolean;
+    } | null;
+    icon?:
+        | {
+              id: string;
+              whoAmI: {
+                  id: string;
+                  label?: string | null;
+                  color?: string | null;
+                  library: {id: string; label?: any | null};
+                  preview?: {
+                      tiny?: string | null;
+                      small?: string | null;
+                      medium?: string | null;
+                      big?: string | null;
+                      huge?: string | null;
+                  } | null;
+              };
+          }
+        | {
+              id: string;
+              whoAmI: {
+                  id: string;
+                  label?: string | null;
+                  color?: string | null;
+                  library: {id: string; label?: any | null};
+                  preview?: {
+                      tiny?: string | null;
+                      small?: string | null;
+                      medium?: string | null;
+                      big?: string | null;
+                      huge?: string | null;
+                  } | null;
+              };
+          }
+        | null;
+};
+
+export type LibraryAttributesLinkAttributeFragment = {
+    id: string;
+    label?: any | null;
+    system: boolean;
+    type: AttributeType;
+    format?: AttributeFormat | null;
+    linked_library?: {id: string; behavior: LibraryBehavior} | null;
+};
+
+export type LibraryAttributesStandardAttributeTreeAttributeFragment = {
+    id: string;
+    label?: any | null;
+    system: boolean;
+    type: AttributeType;
+    format?: AttributeFormat | null;
+};
+
+export type LibraryAttributesFragment =
+    | LibraryAttributesLinkAttributeFragment
+    | LibraryAttributesStandardAttributeTreeAttributeFragment;
+
+export type LibraryLinkAttributeDetailsFragment = {linked_library?: {id: string; behavior: LibraryBehavior} | null};
+
+export type TreeDetailsFragment = {
+    id: string;
+    label?: any | null;
+    behavior: TreeBehavior;
+    system: boolean;
+    libraries: Array<{
+        library: {id: string; label?: any | null};
+        settings: {allowMultiplePositions: boolean; allowedAtRoot: boolean; allowedChildren: Array<string>};
+    }>;
+};
+
+export type TreeLightFragment = {id: string; label?: any | null};
+
 export type CheckApplicationExistenceQueryVariables = Exact<{
     id?: InputMaybe<Scalars['ID']>;
     endpoint?: InputMaybe<Scalars['String']>;
@@ -808,41 +1113,7 @@ export type GetApplicationByIdQuery = {
                           } | null;
                       };
                   }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          color?: string | null;
-                          library: {id: string; label?: any | null};
-                          preview?: {
-                              tiny?: string | null;
-                              small?: string | null;
-                              medium?: string | null;
-                              big?: string | null;
-                              huge?: string | null;
-                          } | null;
-                      };
-                  }
                 | null;
-            libraries?: Array<{id: string}> | null;
-            trees?: Array<{id: string}> | null;
             permissions: {access_application: boolean; admin_application: boolean};
         }>;
     } | null;
@@ -902,6 +1173,381 @@ export type SaveApplicationMutation = {
                       } | null;
                   };
               }
+            | null;
+        permissions: {access_application: boolean; admin_application: boolean};
+    };
+};
+
+export type CheckAttributeExistenceQueryVariables = Exact<{
+    id: Scalars['ID'];
+}>;
+
+export type CheckAttributeExistenceQuery = {attributes?: {totalCount: number} | null};
+
+export type DeleteAttributeMutationVariables = Exact<{
+    id?: InputMaybe<Scalars['ID']>;
+}>;
+
+export type DeleteAttributeMutation = {deleteAttribute: {id: string}};
+
+export type GetAttributeByIdQueryVariables = Exact<{
+    id?: InputMaybe<Scalars['ID']>;
+}>;
+
+export type GetAttributeByIdQuery = {
+    attributes?: {
+        list: Array<
+            | {
+                  reverse_link?: string | null;
+                  id: string;
+                  type: AttributeType;
+                  format?: AttributeFormat | null;
+                  system: boolean;
+                  readonly: boolean;
+                  label?: any | null;
+                  description?: any | null;
+                  multiple_values: boolean;
+                  linked_library?: {id: string; label?: any | null} | null;
+                  metadata_fields?: Array<{
+                      id: string;
+                      label?: any | null;
+                      type: AttributeType;
+                      format?: AttributeFormat | null;
+                  }> | null;
+                  versions_conf?: {
+                      versionable: boolean;
+                      mode?: ValueVersionMode | null;
+                      profile?: {id: string; label: any; trees: Array<{id: string; label?: any | null}>} | null;
+                  } | null;
+                  libraries?: Array<{id: string; label?: any | null}> | null;
+              }
+            | {
+                  unique?: boolean | null;
+                  id: string;
+                  type: AttributeType;
+                  format?: AttributeFormat | null;
+                  system: boolean;
+                  readonly: boolean;
+                  label?: any | null;
+                  description?: any | null;
+                  multiple_values: boolean;
+                  metadata_fields?: Array<{
+                      id: string;
+                      label?: any | null;
+                      type: AttributeType;
+                      format?: AttributeFormat | null;
+                  }> | null;
+                  versions_conf?: {
+                      versionable: boolean;
+                      mode?: ValueVersionMode | null;
+                      profile?: {id: string; label: any; trees: Array<{id: string; label?: any | null}>} | null;
+                  } | null;
+                  libraries?: Array<{id: string; label?: any | null}> | null;
+              }
+            | {
+                  id: string;
+                  type: AttributeType;
+                  format?: AttributeFormat | null;
+                  system: boolean;
+                  readonly: boolean;
+                  label?: any | null;
+                  description?: any | null;
+                  multiple_values: boolean;
+                  linked_tree?: {id: string; label?: any | null} | null;
+                  metadata_fields?: Array<{
+                      id: string;
+                      label?: any | null;
+                      type: AttributeType;
+                      format?: AttributeFormat | null;
+                  }> | null;
+                  versions_conf?: {
+                      versionable: boolean;
+                      mode?: ValueVersionMode | null;
+                      profile?: {id: string; label: any; trees: Array<{id: string; label?: any | null}>} | null;
+                  } | null;
+                  libraries?: Array<{id: string; label?: any | null}> | null;
+              }
+        >;
+    } | null;
+};
+
+export type GetAttributesQueryVariables = Exact<{[key: string]: never}>;
+
+export type GetAttributesQuery = {
+    attributes?: {
+        list: Array<{id: string; label?: any | null; type: AttributeType; format?: AttributeFormat | null}>;
+    } | null;
+};
+
+export type GetVersionProfilesQueryVariables = Exact<{
+    filters?: InputMaybe<VersionProfilesFiltersInput>;
+    sort?: InputMaybe<SortVersionProfilesInput>;
+}>;
+
+export type GetVersionProfilesQuery = {versionProfiles: {list: Array<{id: string; label: any}>}};
+
+export type SaveAttributeMutationVariables = Exact<{
+    attribute: AttributeInput;
+}>;
+
+export type SaveAttributeMutation = {
+    saveAttribute:
+        | {
+              reverse_link?: string | null;
+              id: string;
+              type: AttributeType;
+              format?: AttributeFormat | null;
+              system: boolean;
+              readonly: boolean;
+              label?: any | null;
+              description?: any | null;
+              multiple_values: boolean;
+              linked_library?: {id: string; label?: any | null} | null;
+              metadata_fields?: Array<{
+                  id: string;
+                  label?: any | null;
+                  type: AttributeType;
+                  format?: AttributeFormat | null;
+              }> | null;
+              versions_conf?: {
+                  versionable: boolean;
+                  mode?: ValueVersionMode | null;
+                  profile?: {id: string; label: any; trees: Array<{id: string; label?: any | null}>} | null;
+              } | null;
+              libraries?: Array<{id: string; label?: any | null}> | null;
+          }
+        | {
+              unique?: boolean | null;
+              id: string;
+              type: AttributeType;
+              format?: AttributeFormat | null;
+              system: boolean;
+              readonly: boolean;
+              label?: any | null;
+              description?: any | null;
+              multiple_values: boolean;
+              metadata_fields?: Array<{
+                  id: string;
+                  label?: any | null;
+                  type: AttributeType;
+                  format?: AttributeFormat | null;
+              }> | null;
+              versions_conf?: {
+                  versionable: boolean;
+                  mode?: ValueVersionMode | null;
+                  profile?: {id: string; label: any; trees: Array<{id: string; label?: any | null}>} | null;
+              } | null;
+              libraries?: Array<{id: string; label?: any | null}> | null;
+          }
+        | {
+              id: string;
+              type: AttributeType;
+              format?: AttributeFormat | null;
+              system: boolean;
+              readonly: boolean;
+              label?: any | null;
+              description?: any | null;
+              multiple_values: boolean;
+              linked_tree?: {id: string; label?: any | null} | null;
+              metadata_fields?: Array<{
+                  id: string;
+                  label?: any | null;
+                  type: AttributeType;
+                  format?: AttributeFormat | null;
+              }> | null;
+              versions_conf?: {
+                  versionable: boolean;
+                  mode?: ValueVersionMode | null;
+                  profile?: {id: string; label: any; trees: Array<{id: string; label?: any | null}>} | null;
+              } | null;
+              libraries?: Array<{id: string; label?: any | null}> | null;
+          };
+};
+
+export type CheckLibraryExistenceQueryVariables = Exact<{
+    id?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
+}>;
+
+export type CheckLibraryExistenceQuery = {libraries?: {totalCount: number} | null};
+
+export type DeleteLibraryMutationVariables = Exact<{
+    id?: InputMaybe<Scalars['ID']>;
+}>;
+
+export type DeleteLibraryMutation = {deleteLibrary: {id: string}};
+
+export type GetLibrariesQueryVariables = Exact<{[key: string]: never}>;
+
+export type GetLibrariesQuery = {
+    libraries?: {
+        list: Array<{
+            id: string;
+            label?: any | null;
+            icon?:
+                | {
+                      id: string;
+                      whoAmI: {
+                          id: string;
+                          library: {id: string};
+                          preview?: {
+                              tiny?: string | null;
+                              small?: string | null;
+                              medium?: string | null;
+                              big?: string | null;
+                              huge?: string | null;
+                          } | null;
+                      };
+                  }
+                | {
+                      id: string;
+                      whoAmI: {
+                          id: string;
+                          library: {id: string};
+                          preview?: {
+                              tiny?: string | null;
+                              small?: string | null;
+                              medium?: string | null;
+                              big?: string | null;
+                              huge?: string | null;
+                          } | null;
+                      };
+                  }
+                | null;
+        }>;
+    } | null;
+};
+
+export type GetLibraryByIdQueryVariables = Exact<{
+    id?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
+}>;
+
+export type GetLibraryByIdQuery = {
+    libraries?: {
+        list: Array<{
+            id: string;
+            label?: any | null;
+            behavior: LibraryBehavior;
+            system?: boolean | null;
+            fullTextAttributes?: Array<{id: string; label?: any | null}> | null;
+            attributes?: Array<
+                | {
+                      id: string;
+                      label?: any | null;
+                      system: boolean;
+                      type: AttributeType;
+                      format?: AttributeFormat | null;
+                      linked_library?: {id: string; behavior: LibraryBehavior} | null;
+                  }
+                | {
+                      id: string;
+                      label?: any | null;
+                      system: boolean;
+                      type: AttributeType;
+                      format?: AttributeFormat | null;
+                  }
+            > | null;
+            permissions_conf?: {
+                relation: PermissionsRelation;
+                permissionTreeAttributes: Array<
+                    | {id: string; label?: any | null}
+                    | {id: string; label?: any | null; linked_tree?: {id: string} | null}
+                >;
+            } | null;
+            recordIdentityConf?: {
+                label?: string | null;
+                color?: string | null;
+                preview?: string | null;
+                treeColorPreview?: string | null;
+            } | null;
+            permissions?: {
+                admin_library: boolean;
+                access_library: boolean;
+                access_record: boolean;
+                create_record: boolean;
+                edit_record: boolean;
+                delete_record: boolean;
+            } | null;
+            icon?:
+                | {
+                      id: string;
+                      whoAmI: {
+                          id: string;
+                          label?: string | null;
+                          color?: string | null;
+                          library: {id: string; label?: any | null};
+                          preview?: {
+                              tiny?: string | null;
+                              small?: string | null;
+                              medium?: string | null;
+                              big?: string | null;
+                              huge?: string | null;
+                          } | null;
+                      };
+                  }
+                | {
+                      id: string;
+                      whoAmI: {
+                          id: string;
+                          label?: string | null;
+                          color?: string | null;
+                          library: {id: string; label?: any | null};
+                          preview?: {
+                              tiny?: string | null;
+                              small?: string | null;
+                              medium?: string | null;
+                              big?: string | null;
+                              huge?: string | null;
+                          } | null;
+                      };
+                  }
+                | null;
+        }>;
+    } | null;
+};
+
+export type SaveLibraryMutationVariables = Exact<{
+    library: LibraryInput;
+}>;
+
+export type SaveLibraryMutation = {
+    saveLibrary: {
+        id: string;
+        label?: any | null;
+        behavior: LibraryBehavior;
+        system?: boolean | null;
+        fullTextAttributes?: Array<{id: string; label?: any | null}> | null;
+        attributes?: Array<
+            | {
+                  id: string;
+                  label?: any | null;
+                  system: boolean;
+                  type: AttributeType;
+                  format?: AttributeFormat | null;
+                  linked_library?: {id: string; behavior: LibraryBehavior} | null;
+              }
+            | {id: string; label?: any | null; system: boolean; type: AttributeType; format?: AttributeFormat | null}
+        > | null;
+        permissions_conf?: {
+            relation: PermissionsRelation;
+            permissionTreeAttributes: Array<
+                {id: string; label?: any | null} | {id: string; label?: any | null; linked_tree?: {id: string} | null}
+            >;
+        } | null;
+        recordIdentityConf?: {
+            label?: string | null;
+            color?: string | null;
+            preview?: string | null;
+            treeColorPreview?: string | null;
+        } | null;
+        permissions?: {
+            admin_library: boolean;
+            access_library: boolean;
+            access_record: boolean;
+            create_record: boolean;
+            edit_record: boolean;
+            delete_record: boolean;
+        } | null;
+        icon?:
             | {
                   id: string;
                   whoAmI: {
@@ -935,9 +1581,67 @@ export type SaveApplicationMutation = {
                   };
               }
             | null;
-        libraries?: Array<{id: string}> | null;
-        trees?: Array<{id: string}> | null;
-        permissions: {access_application: boolean; admin_application: boolean};
+    };
+};
+
+export type IsAllowedQueryVariables = Exact<{
+    type: PermissionTypes;
+    actions: Array<PermissionsActions> | PermissionsActions;
+    applyTo?: InputMaybe<Scalars['ID']>;
+    target?: InputMaybe<PermissionTarget>;
+}>;
+
+export type IsAllowedQuery = {isAllowed?: Array<{name: PermissionsActions; allowed?: boolean | null}> | null};
+
+export type CheckTreeExistenceQueryVariables = Exact<{
+    id?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
+}>;
+
+export type CheckTreeExistenceQuery = {trees?: {totalCount: number} | null};
+
+export type DeleteTreeMutationVariables = Exact<{
+    id: Scalars['ID'];
+}>;
+
+export type DeleteTreeMutation = {deleteTree: {id: string}};
+
+export type GetTreeByIdQueryVariables = Exact<{
+    id?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
+}>;
+
+export type GetTreeByIdQuery = {
+    trees?: {
+        list: Array<{
+            id: string;
+            label?: any | null;
+            behavior: TreeBehavior;
+            system: boolean;
+            libraries: Array<{
+                library: {id: string; label?: any | null};
+                settings: {allowMultiplePositions: boolean; allowedAtRoot: boolean; allowedChildren: Array<string>};
+            }>;
+        }>;
+    } | null;
+};
+
+export type GetTreesQueryVariables = Exact<{[key: string]: never}>;
+
+export type GetTreesQuery = {trees?: {list: Array<{id: string; label?: any | null}>} | null};
+
+export type SaveTreeMutationVariables = Exact<{
+    tree: TreeInput;
+}>;
+
+export type SaveTreeMutation = {
+    saveTree: {
+        id: string;
+        label?: any | null;
+        behavior: TreeBehavior;
+        system: boolean;
+        libraries: Array<{
+            library: {id: string; label?: any | null};
+            settings: {allowMultiplePositions: boolean; allowedAtRoot: boolean; allowedChildren: Array<string>};
+        }>;
     };
 };
 
@@ -967,8 +1671,8 @@ export type UserInfoQuery = {
     permissions?: Array<{name: PermissionsActions; allowed?: boolean | null}> | null;
 };
 
-export const IdentityRecordFragmentDoc = gql`
-    fragment IdentityRecord on Record {
+export const RecordIdentityFragmentDoc = gql`
+    fragment RecordIdentity on Record {
         id
         whoAmI {
             id
@@ -998,22 +1702,179 @@ export const DetailsApplicationFragmentDoc = gql`
         url
         color
         icon {
-            ...IdentityRecord
+            ...RecordIdentity
         }
         module
-        libraries {
-            id
-        }
-        trees {
-            id
-        }
         permissions {
             access_application
             admin_application
         }
         settings
     }
-    ${IdentityRecordFragmentDoc}
+    ${RecordIdentityFragmentDoc}
+`;
+export const AttributeDetailsFragmentDoc = gql`
+    fragment AttributeDetails on Attribute {
+        id
+        type
+        format
+        system
+        readonly
+        label
+        description
+        multiple_values
+        metadata_fields {
+            id
+            label
+            type
+            format
+        }
+        versions_conf {
+            versionable
+            mode
+            profile {
+                id
+                label
+                trees {
+                    id
+                    label
+                }
+            }
+        }
+        libraries {
+            id
+            label
+        }
+        ... on StandardAttribute {
+            unique
+        }
+        ... on LinkAttribute {
+            linked_library {
+                id
+                label
+            }
+            reverse_link
+        }
+        ... on TreeAttribute {
+            linked_tree {
+                id
+                label
+            }
+        }
+    }
+`;
+export const LibraryLightFragmentDoc = gql`
+    fragment LibraryLight on Library {
+        id
+        label
+        icon {
+            id
+            whoAmI {
+                id
+                library {
+                    id
+                }
+                preview {
+                    tiny
+                    small
+                    medium
+                    big
+                    huge
+                }
+            }
+        }
+    }
+`;
+export const LibraryLinkAttributeDetailsFragmentDoc = gql`
+    fragment LibraryLinkAttributeDetails on LinkAttribute {
+        linked_library {
+            id
+            behavior
+        }
+    }
+`;
+export const LibraryAttributesFragmentDoc = gql`
+    fragment LibraryAttributes on Attribute {
+        id
+        label
+        system
+        type
+        format
+        ...LibraryLinkAttributeDetails
+    }
+    ${LibraryLinkAttributeDetailsFragmentDoc}
+`;
+export const LibraryDetailsFragmentDoc = gql`
+    fragment LibraryDetails on Library {
+        id
+        label
+        behavior
+        system
+        label
+        fullTextAttributes {
+            id
+            label
+        }
+        attributes {
+            ...LibraryAttributes
+        }
+        permissions_conf {
+            permissionTreeAttributes {
+                id
+                ... on TreeAttribute {
+                    linked_tree {
+                        id
+                    }
+                }
+                label
+            }
+            relation
+        }
+        recordIdentityConf {
+            label
+            color
+            preview
+            treeColorPreview
+        }
+        permissions {
+            admin_library
+            access_library
+            access_record
+            create_record
+            edit_record
+            delete_record
+        }
+        icon {
+            ...RecordIdentity
+        }
+    }
+    ${LibraryAttributesFragmentDoc}
+    ${RecordIdentityFragmentDoc}
+`;
+export const TreeLightFragmentDoc = gql`
+    fragment TreeLight on Tree {
+        id
+        label
+    }
+`;
+export const TreeDetailsFragmentDoc = gql`
+    fragment TreeDetails on Tree {
+        id
+        label
+        behavior
+        system
+        libraries {
+            library {
+                id
+                label
+            }
+            settings {
+                allowMultiplePositions
+                allowedAtRoot
+                allowedChildren
+            }
+        }
+    }
 `;
 export const CheckApplicationExistenceDocument = gql`
     query CHECK_APPLICATION_EXISTENCE($id: ID, $endpoint: String) {
@@ -1209,18 +2070,738 @@ export type SaveApplicationMutationOptions = Apollo.BaseMutationOptions<
     SaveApplicationMutation,
     SaveApplicationMutationVariables
 >;
+export const CheckAttributeExistenceDocument = gql`
+    query CHECK_ATTRIBUTE_EXISTENCE($id: ID!) {
+        attributes(filters: {id: $id}) {
+            totalCount
+        }
+    }
+`;
+
+/**
+ * __useCheckAttributeExistenceQuery__
+ *
+ * To run a query within a React component, call `useCheckAttributeExistenceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCheckAttributeExistenceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCheckAttributeExistenceQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useCheckAttributeExistenceQuery(
+    baseOptions: Apollo.QueryHookOptions<CheckAttributeExistenceQuery, CheckAttributeExistenceQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useQuery<CheckAttributeExistenceQuery, CheckAttributeExistenceQueryVariables>(
+        CheckAttributeExistenceDocument,
+        options
+    );
+}
+export function useCheckAttributeExistenceLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<CheckAttributeExistenceQuery, CheckAttributeExistenceQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useLazyQuery<CheckAttributeExistenceQuery, CheckAttributeExistenceQueryVariables>(
+        CheckAttributeExistenceDocument,
+        options
+    );
+}
+export type CheckAttributeExistenceQueryHookResult = ReturnType<typeof useCheckAttributeExistenceQuery>;
+export type CheckAttributeExistenceLazyQueryHookResult = ReturnType<typeof useCheckAttributeExistenceLazyQuery>;
+export type CheckAttributeExistenceQueryResult = Apollo.QueryResult<
+    CheckAttributeExistenceQuery,
+    CheckAttributeExistenceQueryVariables
+>;
+export const DeleteAttributeDocument = gql`
+    mutation DELETE_ATTRIBUTE($id: ID) {
+        deleteAttribute(id: $id) {
+            id
+        }
+    }
+`;
+export type DeleteAttributeMutationFn = Apollo.MutationFunction<
+    DeleteAttributeMutation,
+    DeleteAttributeMutationVariables
+>;
+
+/**
+ * __useDeleteAttributeMutation__
+ *
+ * To run a mutation, you first call `useDeleteAttributeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteAttributeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteAttributeMutation, { data, loading, error }] = useDeleteAttributeMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteAttributeMutation(
+    baseOptions?: Apollo.MutationHookOptions<DeleteAttributeMutation, DeleteAttributeMutationVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useMutation<DeleteAttributeMutation, DeleteAttributeMutationVariables>(
+        DeleteAttributeDocument,
+        options
+    );
+}
+export type DeleteAttributeMutationHookResult = ReturnType<typeof useDeleteAttributeMutation>;
+export type DeleteAttributeMutationResult = Apollo.MutationResult<DeleteAttributeMutation>;
+export type DeleteAttributeMutationOptions = Apollo.BaseMutationOptions<
+    DeleteAttributeMutation,
+    DeleteAttributeMutationVariables
+>;
+export const GetAttributeByIdDocument = gql`
+    query GET_ATTRIBUTE_BY_ID($id: ID) {
+        attributes(filters: {id: $id}) {
+            list {
+                ...AttributeDetails
+            }
+        }
+    }
+    ${AttributeDetailsFragmentDoc}
+`;
+
+/**
+ * __useGetAttributeByIdQuery__
+ *
+ * To run a query within a React component, call `useGetAttributeByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAttributeByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAttributeByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetAttributeByIdQuery(
+    baseOptions?: Apollo.QueryHookOptions<GetAttributeByIdQuery, GetAttributeByIdQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useQuery<GetAttributeByIdQuery, GetAttributeByIdQueryVariables>(GetAttributeByIdDocument, options);
+}
+export function useGetAttributeByIdLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<GetAttributeByIdQuery, GetAttributeByIdQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useLazyQuery<GetAttributeByIdQuery, GetAttributeByIdQueryVariables>(
+        GetAttributeByIdDocument,
+        options
+    );
+}
+export type GetAttributeByIdQueryHookResult = ReturnType<typeof useGetAttributeByIdQuery>;
+export type GetAttributeByIdLazyQueryHookResult = ReturnType<typeof useGetAttributeByIdLazyQuery>;
+export type GetAttributeByIdQueryResult = Apollo.QueryResult<GetAttributeByIdQuery, GetAttributeByIdQueryVariables>;
+export const GetAttributesDocument = gql`
+    query GET_ATTRIBUTES {
+        attributes {
+            list {
+                id
+                label
+                type
+                format
+            }
+        }
+    }
+`;
+
+/**
+ * __useGetAttributesQuery__
+ *
+ * To run a query within a React component, call `useGetAttributesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAttributesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAttributesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAttributesQuery(
+    baseOptions?: Apollo.QueryHookOptions<GetAttributesQuery, GetAttributesQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useQuery<GetAttributesQuery, GetAttributesQueryVariables>(GetAttributesDocument, options);
+}
+export function useGetAttributesLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<GetAttributesQuery, GetAttributesQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useLazyQuery<GetAttributesQuery, GetAttributesQueryVariables>(GetAttributesDocument, options);
+}
+export type GetAttributesQueryHookResult = ReturnType<typeof useGetAttributesQuery>;
+export type GetAttributesLazyQueryHookResult = ReturnType<typeof useGetAttributesLazyQuery>;
+export type GetAttributesQueryResult = Apollo.QueryResult<GetAttributesQuery, GetAttributesQueryVariables>;
+export const GetVersionProfilesDocument = gql`
+    query GET_VERSION_PROFILES($filters: VersionProfilesFiltersInput, $sort: SortVersionProfilesInput) {
+        versionProfiles(filters: $filters, sort: $sort) {
+            list {
+                id
+                label
+            }
+        }
+    }
+`;
+
+/**
+ * __useGetVersionProfilesQuery__
+ *
+ * To run a query within a React component, call `useGetVersionProfilesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetVersionProfilesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetVersionProfilesQuery({
+ *   variables: {
+ *      filters: // value for 'filters'
+ *      sort: // value for 'sort'
+ *   },
+ * });
+ */
+export function useGetVersionProfilesQuery(
+    baseOptions?: Apollo.QueryHookOptions<GetVersionProfilesQuery, GetVersionProfilesQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useQuery<GetVersionProfilesQuery, GetVersionProfilesQueryVariables>(
+        GetVersionProfilesDocument,
+        options
+    );
+}
+export function useGetVersionProfilesLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<GetVersionProfilesQuery, GetVersionProfilesQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useLazyQuery<GetVersionProfilesQuery, GetVersionProfilesQueryVariables>(
+        GetVersionProfilesDocument,
+        options
+    );
+}
+export type GetVersionProfilesQueryHookResult = ReturnType<typeof useGetVersionProfilesQuery>;
+export type GetVersionProfilesLazyQueryHookResult = ReturnType<typeof useGetVersionProfilesLazyQuery>;
+export type GetVersionProfilesQueryResult = Apollo.QueryResult<
+    GetVersionProfilesQuery,
+    GetVersionProfilesQueryVariables
+>;
+export const SaveAttributeDocument = gql`
+    mutation SAVE_ATTRIBUTE($attribute: AttributeInput!) {
+        saveAttribute(attribute: $attribute) {
+            ...AttributeDetails
+        }
+    }
+    ${AttributeDetailsFragmentDoc}
+`;
+export type SaveAttributeMutationFn = Apollo.MutationFunction<SaveAttributeMutation, SaveAttributeMutationVariables>;
+
+/**
+ * __useSaveAttributeMutation__
+ *
+ * To run a mutation, you first call `useSaveAttributeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveAttributeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [saveAttributeMutation, { data, loading, error }] = useSaveAttributeMutation({
+ *   variables: {
+ *      attribute: // value for 'attribute'
+ *   },
+ * });
+ */
+export function useSaveAttributeMutation(
+    baseOptions?: Apollo.MutationHookOptions<SaveAttributeMutation, SaveAttributeMutationVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useMutation<SaveAttributeMutation, SaveAttributeMutationVariables>(SaveAttributeDocument, options);
+}
+export type SaveAttributeMutationHookResult = ReturnType<typeof useSaveAttributeMutation>;
+export type SaveAttributeMutationResult = Apollo.MutationResult<SaveAttributeMutation>;
+export type SaveAttributeMutationOptions = Apollo.BaseMutationOptions<
+    SaveAttributeMutation,
+    SaveAttributeMutationVariables
+>;
+export const CheckLibraryExistenceDocument = gql`
+    query CHECK_LIBRARY_EXISTENCE($id: [ID!]) {
+        libraries(filters: {id: $id}) {
+            totalCount
+        }
+    }
+`;
+
+/**
+ * __useCheckLibraryExistenceQuery__
+ *
+ * To run a query within a React component, call `useCheckLibraryExistenceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCheckLibraryExistenceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCheckLibraryExistenceQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useCheckLibraryExistenceQuery(
+    baseOptions?: Apollo.QueryHookOptions<CheckLibraryExistenceQuery, CheckLibraryExistenceQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useQuery<CheckLibraryExistenceQuery, CheckLibraryExistenceQueryVariables>(
+        CheckLibraryExistenceDocument,
+        options
+    );
+}
+export function useCheckLibraryExistenceLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<CheckLibraryExistenceQuery, CheckLibraryExistenceQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useLazyQuery<CheckLibraryExistenceQuery, CheckLibraryExistenceQueryVariables>(
+        CheckLibraryExistenceDocument,
+        options
+    );
+}
+export type CheckLibraryExistenceQueryHookResult = ReturnType<typeof useCheckLibraryExistenceQuery>;
+export type CheckLibraryExistenceLazyQueryHookResult = ReturnType<typeof useCheckLibraryExistenceLazyQuery>;
+export type CheckLibraryExistenceQueryResult = Apollo.QueryResult<
+    CheckLibraryExistenceQuery,
+    CheckLibraryExistenceQueryVariables
+>;
+export const DeleteLibraryDocument = gql`
+    mutation DELETE_LIBRARY($id: ID) {
+        deleteLibrary(id: $id) {
+            id
+        }
+    }
+`;
+export type DeleteLibraryMutationFn = Apollo.MutationFunction<DeleteLibraryMutation, DeleteLibraryMutationVariables>;
+
+/**
+ * __useDeleteLibraryMutation__
+ *
+ * To run a mutation, you first call `useDeleteLibraryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteLibraryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteLibraryMutation, { data, loading, error }] = useDeleteLibraryMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteLibraryMutation(
+    baseOptions?: Apollo.MutationHookOptions<DeleteLibraryMutation, DeleteLibraryMutationVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useMutation<DeleteLibraryMutation, DeleteLibraryMutationVariables>(DeleteLibraryDocument, options);
+}
+export type DeleteLibraryMutationHookResult = ReturnType<typeof useDeleteLibraryMutation>;
+export type DeleteLibraryMutationResult = Apollo.MutationResult<DeleteLibraryMutation>;
+export type DeleteLibraryMutationOptions = Apollo.BaseMutationOptions<
+    DeleteLibraryMutation,
+    DeleteLibraryMutationVariables
+>;
+export const GetLibrariesDocument = gql`
+    query GET_LIBRARIES {
+        libraries {
+            list {
+                ...LibraryLight
+            }
+        }
+    }
+    ${LibraryLightFragmentDoc}
+`;
+
+/**
+ * __useGetLibrariesQuery__
+ *
+ * To run a query within a React component, call `useGetLibrariesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLibrariesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLibrariesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetLibrariesQuery(
+    baseOptions?: Apollo.QueryHookOptions<GetLibrariesQuery, GetLibrariesQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useQuery<GetLibrariesQuery, GetLibrariesQueryVariables>(GetLibrariesDocument, options);
+}
+export function useGetLibrariesLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<GetLibrariesQuery, GetLibrariesQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useLazyQuery<GetLibrariesQuery, GetLibrariesQueryVariables>(GetLibrariesDocument, options);
+}
+export type GetLibrariesQueryHookResult = ReturnType<typeof useGetLibrariesQuery>;
+export type GetLibrariesLazyQueryHookResult = ReturnType<typeof useGetLibrariesLazyQuery>;
+export type GetLibrariesQueryResult = Apollo.QueryResult<GetLibrariesQuery, GetLibrariesQueryVariables>;
+export const GetLibraryByIdDocument = gql`
+    query GET_LIBRARY_BY_ID($id: [ID!]) {
+        libraries(filters: {id: $id}) {
+            list {
+                ...LibraryDetails
+            }
+        }
+    }
+    ${LibraryDetailsFragmentDoc}
+`;
+
+/**
+ * __useGetLibraryByIdQuery__
+ *
+ * To run a query within a React component, call `useGetLibraryByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLibraryByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLibraryByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetLibraryByIdQuery(
+    baseOptions?: Apollo.QueryHookOptions<GetLibraryByIdQuery, GetLibraryByIdQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useQuery<GetLibraryByIdQuery, GetLibraryByIdQueryVariables>(GetLibraryByIdDocument, options);
+}
+export function useGetLibraryByIdLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<GetLibraryByIdQuery, GetLibraryByIdQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useLazyQuery<GetLibraryByIdQuery, GetLibraryByIdQueryVariables>(GetLibraryByIdDocument, options);
+}
+export type GetLibraryByIdQueryHookResult = ReturnType<typeof useGetLibraryByIdQuery>;
+export type GetLibraryByIdLazyQueryHookResult = ReturnType<typeof useGetLibraryByIdLazyQuery>;
+export type GetLibraryByIdQueryResult = Apollo.QueryResult<GetLibraryByIdQuery, GetLibraryByIdQueryVariables>;
+export const SaveLibraryDocument = gql`
+    mutation saveLibrary($library: LibraryInput!) {
+        saveLibrary(library: $library) {
+            ...LibraryDetails
+        }
+    }
+    ${LibraryDetailsFragmentDoc}
+`;
+export type SaveLibraryMutationFn = Apollo.MutationFunction<SaveLibraryMutation, SaveLibraryMutationVariables>;
+
+/**
+ * __useSaveLibraryMutation__
+ *
+ * To run a mutation, you first call `useSaveLibraryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveLibraryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [saveLibraryMutation, { data, loading, error }] = useSaveLibraryMutation({
+ *   variables: {
+ *      library: // value for 'library'
+ *   },
+ * });
+ */
+export function useSaveLibraryMutation(
+    baseOptions?: Apollo.MutationHookOptions<SaveLibraryMutation, SaveLibraryMutationVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useMutation<SaveLibraryMutation, SaveLibraryMutationVariables>(SaveLibraryDocument, options);
+}
+export type SaveLibraryMutationHookResult = ReturnType<typeof useSaveLibraryMutation>;
+export type SaveLibraryMutationResult = Apollo.MutationResult<SaveLibraryMutation>;
+export type SaveLibraryMutationOptions = Apollo.BaseMutationOptions<SaveLibraryMutation, SaveLibraryMutationVariables>;
+export const IsAllowedDocument = gql`
+    query IS_ALLOWED(
+        $type: PermissionTypes!
+        $actions: [PermissionsActions!]!
+        $applyTo: ID
+        $target: PermissionTarget
+    ) {
+        isAllowed(type: $type, actions: $actions, applyTo: $applyTo, target: $target) {
+            name
+            allowed
+        }
+    }
+`;
+
+/**
+ * __useIsAllowedQuery__
+ *
+ * To run a query within a React component, call `useIsAllowedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useIsAllowedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useIsAllowedQuery({
+ *   variables: {
+ *      type: // value for 'type'
+ *      actions: // value for 'actions'
+ *      applyTo: // value for 'applyTo'
+ *      target: // value for 'target'
+ *   },
+ * });
+ */
+export function useIsAllowedQuery(baseOptions: Apollo.QueryHookOptions<IsAllowedQuery, IsAllowedQueryVariables>) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useQuery<IsAllowedQuery, IsAllowedQueryVariables>(IsAllowedDocument, options);
+}
+export function useIsAllowedLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<IsAllowedQuery, IsAllowedQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useLazyQuery<IsAllowedQuery, IsAllowedQueryVariables>(IsAllowedDocument, options);
+}
+export type IsAllowedQueryHookResult = ReturnType<typeof useIsAllowedQuery>;
+export type IsAllowedLazyQueryHookResult = ReturnType<typeof useIsAllowedLazyQuery>;
+export type IsAllowedQueryResult = Apollo.QueryResult<IsAllowedQuery, IsAllowedQueryVariables>;
+export const CheckTreeExistenceDocument = gql`
+    query CHECK_TREE_EXISTENCE($id: [ID!]) {
+        trees(filters: {id: $id}) {
+            totalCount
+        }
+    }
+`;
+
+/**
+ * __useCheckTreeExistenceQuery__
+ *
+ * To run a query within a React component, call `useCheckTreeExistenceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCheckTreeExistenceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCheckTreeExistenceQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useCheckTreeExistenceQuery(
+    baseOptions?: Apollo.QueryHookOptions<CheckTreeExistenceQuery, CheckTreeExistenceQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useQuery<CheckTreeExistenceQuery, CheckTreeExistenceQueryVariables>(
+        CheckTreeExistenceDocument,
+        options
+    );
+}
+export function useCheckTreeExistenceLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<CheckTreeExistenceQuery, CheckTreeExistenceQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useLazyQuery<CheckTreeExistenceQuery, CheckTreeExistenceQueryVariables>(
+        CheckTreeExistenceDocument,
+        options
+    );
+}
+export type CheckTreeExistenceQueryHookResult = ReturnType<typeof useCheckTreeExistenceQuery>;
+export type CheckTreeExistenceLazyQueryHookResult = ReturnType<typeof useCheckTreeExistenceLazyQuery>;
+export type CheckTreeExistenceQueryResult = Apollo.QueryResult<
+    CheckTreeExistenceQuery,
+    CheckTreeExistenceQueryVariables
+>;
+export const DeleteTreeDocument = gql`
+    mutation DELETE_TREE($id: ID!) {
+        deleteTree(id: $id) {
+            id
+        }
+    }
+`;
+export type DeleteTreeMutationFn = Apollo.MutationFunction<DeleteTreeMutation, DeleteTreeMutationVariables>;
+
+/**
+ * __useDeleteTreeMutation__
+ *
+ * To run a mutation, you first call `useDeleteTreeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteTreeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteTreeMutation, { data, loading, error }] = useDeleteTreeMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteTreeMutation(
+    baseOptions?: Apollo.MutationHookOptions<DeleteTreeMutation, DeleteTreeMutationVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useMutation<DeleteTreeMutation, DeleteTreeMutationVariables>(DeleteTreeDocument, options);
+}
+export type DeleteTreeMutationHookResult = ReturnType<typeof useDeleteTreeMutation>;
+export type DeleteTreeMutationResult = Apollo.MutationResult<DeleteTreeMutation>;
+export type DeleteTreeMutationOptions = Apollo.BaseMutationOptions<DeleteTreeMutation, DeleteTreeMutationVariables>;
+export const GetTreeByIdDocument = gql`
+    query GET_TREE_BY_ID($id: [ID!]) {
+        trees(filters: {id: $id}) {
+            list {
+                ...TreeDetails
+            }
+        }
+    }
+    ${TreeDetailsFragmentDoc}
+`;
+
+/**
+ * __useGetTreeByIdQuery__
+ *
+ * To run a query within a React component, call `useGetTreeByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTreeByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTreeByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetTreeByIdQuery(
+    baseOptions?: Apollo.QueryHookOptions<GetTreeByIdQuery, GetTreeByIdQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useQuery<GetTreeByIdQuery, GetTreeByIdQueryVariables>(GetTreeByIdDocument, options);
+}
+export function useGetTreeByIdLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<GetTreeByIdQuery, GetTreeByIdQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useLazyQuery<GetTreeByIdQuery, GetTreeByIdQueryVariables>(GetTreeByIdDocument, options);
+}
+export type GetTreeByIdQueryHookResult = ReturnType<typeof useGetTreeByIdQuery>;
+export type GetTreeByIdLazyQueryHookResult = ReturnType<typeof useGetTreeByIdLazyQuery>;
+export type GetTreeByIdQueryResult = Apollo.QueryResult<GetTreeByIdQuery, GetTreeByIdQueryVariables>;
+export const GetTreesDocument = gql`
+    query GET_TREES {
+        trees {
+            list {
+                ...TreeLight
+            }
+        }
+    }
+    ${TreeLightFragmentDoc}
+`;
+
+/**
+ * __useGetTreesQuery__
+ *
+ * To run a query within a React component, call `useGetTreesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTreesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTreesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetTreesQuery(baseOptions?: Apollo.QueryHookOptions<GetTreesQuery, GetTreesQueryVariables>) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useQuery<GetTreesQuery, GetTreesQueryVariables>(GetTreesDocument, options);
+}
+export function useGetTreesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTreesQuery, GetTreesQueryVariables>) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useLazyQuery<GetTreesQuery, GetTreesQueryVariables>(GetTreesDocument, options);
+}
+export type GetTreesQueryHookResult = ReturnType<typeof useGetTreesQuery>;
+export type GetTreesLazyQueryHookResult = ReturnType<typeof useGetTreesLazyQuery>;
+export type GetTreesQueryResult = Apollo.QueryResult<GetTreesQuery, GetTreesQueryVariables>;
+export const SaveTreeDocument = gql`
+    mutation SAVE_TREE($tree: TreeInput!) {
+        saveTree(tree: $tree) {
+            ...TreeDetails
+        }
+    }
+    ${TreeDetailsFragmentDoc}
+`;
+export type SaveTreeMutationFn = Apollo.MutationFunction<SaveTreeMutation, SaveTreeMutationVariables>;
+
+/**
+ * __useSaveTreeMutation__
+ *
+ * To run a mutation, you first call `useSaveTreeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveTreeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [saveTreeMutation, { data, loading, error }] = useSaveTreeMutation({
+ *   variables: {
+ *      tree: // value for 'tree'
+ *   },
+ * });
+ */
+export function useSaveTreeMutation(
+    baseOptions?: Apollo.MutationHookOptions<SaveTreeMutation, SaveTreeMutationVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useMutation<SaveTreeMutation, SaveTreeMutationVariables>(SaveTreeDocument, options);
+}
+export type SaveTreeMutationHookResult = ReturnType<typeof useSaveTreeMutation>;
+export type SaveTreeMutationResult = Apollo.MutationResult<SaveTreeMutation>;
+export type SaveTreeMutationOptions = Apollo.BaseMutationOptions<SaveTreeMutation, SaveTreeMutationVariables>;
 export const UserInfoDocument = gql`
     query USER_INFO($type: PermissionTypes!, $actions: [PermissionsActions!]!) {
         me {
             login
-            ...IdentityRecord
+            ...RecordIdentity
         }
         permissions: isAllowed(type: $type, actions: $actions) {
             name
             allowed
         }
     }
-    ${IdentityRecordFragmentDoc}
+    ${RecordIdentityFragmentDoc}
 `;
 
 /**

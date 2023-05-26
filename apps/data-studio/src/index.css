@@ -24,3 +24,7 @@ code {
   background-size: contain;
   background-position: bottom;
 }
+
+.ant-table-filter-dropdown-btns {
+    background: #ffffff;
+}

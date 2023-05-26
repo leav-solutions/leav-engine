@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {GetApplicationByIdDocument, SaveApplicationDocument} from '../../_gqlTypes';
-import {render, screen, waitFor} from '../../_tests/testUtils';
 import {mockApplication} from '../../__mocks__/common/application';
+import {GetApplicationByIdDocument, SaveApplicationDocument} from '../../_gqlTypes';
+import {cleanup, render, screen, waitFor} from '../../_tests/testUtils';
 import EditApplication from './EditApplication';
 
 window.matchMedia = query => ({
@@ -18,6 +18,9 @@ window.matchMedia = query => ({
     dispatchEvent: jest.fn()
 });
 
+// This test suite is very slow, I don't really know why. Increse the timeout for now.
+jest.setTimeout(15000);
+
 describe('EditApplication', () => {
     beforeEach(() => {
         jest.resetAllMocks();
@@ -25,27 +28,31 @@ describe('EditApplication', () => {
 
     describe('Create new app', () => {
         test('Display creation form', async () => {
-            render(<EditApplication appsBaseUrl="/app" />);
+            render(<EditApplication />);
 
-            await userEvent.type(screen.getByRole('textbox', {name: 'label_fr'}), 'Test app fr');
-            await userEvent.type(screen.getByRole('textbox', {name: 'label_en'}), 'Test app en');
-            await userEvent.type(screen.getByRole('textbox', {name: 'description_fr'}), 'Test app description fr');
-            await userEvent.type(screen.getByRole('textbox', {name: 'description_en'}), 'Test app description en');
+            // Get all at once for performance reason
+            const inputs = await screen.findAllByRole('textbox', {name: /label|description/});
+
+            await userEvent.type(inputs[0], 'Test app fr');
+            await userEvent.type(inputs[1], 'Test app en');
+            await userEvent.type(inputs[2], 'Test app description fr');
+            await userEvent.type(inputs[3], 'Test app description en');
 
             const idField = screen.getByRole('textbox', {name: /id/});
-            expect(screen.getByRole('textbox', {name: /id/})).toHaveValue('test_app_fr');
+            expect(idField).toHaveValue('test_app_fr');
 
             //Hide some fields based on type
             expect(screen.getByRole('combobox', {name: /module/})).toBeInTheDocument();
 
             //Change type
-            userEvent.click(screen.getByText(/internal/)); // Open "type" dropdown
-            userEvent.click(await screen.findByText('applications.type_external')); // Select "external"
-            await waitFor(() => expect(screen.queryByRole('combobox', {name: /module/})).not.toBeInTheDocument());
+            await userEvent.click(screen.getByText(/internal/)); // Open "type" dropdown
+            await userEvent.click(await screen.findByText('applications.type_external')); // Select "external"
+
+            expect(screen.queryByRole('combobox', {name: /module/})).not.toBeInTheDocument();
         });
 
         test('Do not generate id if user has modified it', async () => {
-            render(<EditApplication appsBaseUrl="/app" />);
+            render(<EditApplication />);
 
             await userEvent.type(screen.getByRole('textbox', {name: 'label_fr'}), 'Test app fr');
 
@@ -55,6 +62,7 @@ describe('EditApplication', () => {
             await userEvent.type(screen.getByRole('textbox', {name: /label_fr/}), 'Test app fr updated');
 
             expect(screen.getByRole('textbox', {name: /id/})).toHaveValue('test_app_fr_edited');
+            cleanup();
         });
     });
 
@@ -79,7 +87,7 @@ describe('EditApplication', () => {
         ];
 
         test('Display tabs', async () => {
-            render(<EditApplication appsBaseUrl="/app" applicationId={mockApplication.id} />, {mocks});
+            render(<EditApplication applicationId={mockApplication.id} />, {mocks});
 
             await waitFor(() => expect(screen.getByRole('tablist')).toBeInTheDocument());
 
@@ -87,13 +95,57 @@ describe('EditApplication', () => {
         });
 
         test('Can select default active tab', async () => {
-            render(<EditApplication appsBaseUrl="/app" applicationId={mockApplication.id} activeTab="info" />, {
+            render(<EditApplication applicationId={mockApplication.id} activeTab="info" />, {
                 mocks
             });
 
             await waitFor(() => expect(screen.getByRole('tablist')).toBeInTheDocument());
 
             expect(screen.getByRole('tab', {name: /info/})).toBeInTheDocument();
+        });
+
+        test('Can pass custom tabs', async () => {
+            const customTabs = [
+                {
+                    key: 'custom',
+                    label: 'Custom',
+                    children: <div>Custom tab</div>
+                }
+            ];
+
+            render(
+                <EditApplication applicationId={mockApplication.id} activeTab="custom" additionalTabs={customTabs} />,
+                {
+                    mocks
+                }
+            );
+
+            await waitFor(() => expect(screen.getByRole('tablist')).toBeInTheDocument());
+
+            expect(screen.getByRole('tab', {name: /custom/i})).toBeInTheDocument();
+            expect(screen.getByText('Custom tab')).toBeInTheDocument();
+        });
+
+        test('Can pass custom tabs', async () => {
+            const customTabs = [
+                {
+                    key: 'custom',
+                    label: 'Custom',
+                    children: <div>Custom tab</div>
+                }
+            ];
+
+            render(
+                <EditApplication applicationId={mockApplication.id} activeTab="custom" additionalTabs={customTabs} />,
+                {
+                    mocks
+                }
+            );
+
+            await waitFor(() => expect(screen.getByRole('tablist')).toBeInTheDocument());
+
+            expect(screen.getByRole('tab', {name: /custom/i})).toBeInTheDocument();
+            expect(screen.getByText('Custom tab')).toBeInTheDocument();
         });
 
         describe('Info form tab', () => {
@@ -130,7 +182,7 @@ describe('EditApplication', () => {
                     }
                 ];
 
-                render(<EditApplication appsBaseUrl="/app" applicationId={mockApplication.id} />, {
+                render(<EditApplication applicationId={mockApplication.id} />, {
                     mocks: [...mocks, ...mockSave]
                 });
 
@@ -180,7 +232,7 @@ describe('EditApplication', () => {
                     }
                 ];
 
-                render(<EditApplication appsBaseUrl="/app" applicationId={mockApplication.id} />, {
+                render(<EditApplication applicationId={mockApplication.id} />, {
                     mocks: mocksNotAllowed
                 });
 

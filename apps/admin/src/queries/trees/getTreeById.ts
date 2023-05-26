@@ -4,7 +4,7 @@
 import gql from 'graphql-tag';
 
 export const getTreeByIdQuery = gql`
-    query GET_TREE_BY_ID($id: ID) {
+    query GET_TREE_BY_ID($id: [ID!]) {
         trees(filters: {id: $id}) {
             totalCount
             list {

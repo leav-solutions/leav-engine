@@ -1,9 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {DatabaseOutlined, StarFilled, StarOutlined} from '@ant-design/icons';
+import {DatabaseOutlined, SettingOutlined, StarFilled, StarOutlined} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
-import {themeVars, useLang, ErrorDisplay} from '@leav/ui';
+import {ErrorDisplay, themeVars, useLang} from '@leav/ui';
+import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
+import {GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
+import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
+import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 import {Menu, Spin} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import {FAVORITE_LIBRARIES_KEY} from 'components/Home/LibrariesList/LibrariesList';
@@ -15,17 +19,13 @@ import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
-import useGetLibrariesListQuery from 'hooks/useGetLibrariesListQuery/useGetLibrariesListQuery';
-import useGetTreesListQuery from 'hooks/useGetTreesListQuery/useGetTreesListQuery';
+import {useApplicationLibraries} from 'hooks/useApplicationLibraries';
+import {useApplicationTrees} from 'hooks/useApplicationTrees';
 import {useTranslation} from 'react-i18next';
 import {useHistory} from 'react-router-dom';
 import {useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
 import {getLibraryLink, getTreeLink, localizedTranslation} from 'utils';
-import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
-import {GET_TREE_LIST_QUERY_trees_list} from '_gqlTypes/GET_TREE_LIST_QUERY';
-import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
-import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 
 interface IGroupedElements<EntityType> {
     related: EntityType[];
@@ -77,8 +77,8 @@ function Sidebar(): JSX.Element {
     const history = useHistory();
     const {activePanel} = useAppSelector(state => state);
 
-    const librariesList = useGetLibrariesListQuery();
-    const treesList = useGetTreesListQuery();
+    const {libraries, loading: librariesLoading, error: librariesError} = useApplicationLibraries();
+    const {trees, loading: treesLoading, error: treesError} = useApplicationTrees();
     const favoritesList = useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
         variables: {keys: [FAVORITE_LIBRARIES_KEY, FAVORITE_TREES_KEY]}
     });
@@ -90,9 +90,7 @@ function Sidebar(): JSX.Element {
     const libraryFavorites = favoritesList?.data?.userData?.data?.[FAVORITE_LIBRARIES_KEY] ?? [];
     const treeFavorites = favoritesList?.data?.userData?.data?.[FAVORITE_TREES_KEY] ?? [];
 
-    const groupedLibraries: IGroupedElements<GET_LIBRARIES_LIST_libraries_list> = (
-        librariesList?.data?.libraries?.list ?? []
-    ).reduce(
+    const groupedLibraries: IGroupedElements<GET_LIBRARIES_LIST_libraries_list> = libraries.reduce(
         (groups, library) => {
             const newGroups = {...groups};
 
@@ -109,7 +107,7 @@ function Sidebar(): JSX.Element {
         {related: [], favorites: [], others: []}
     );
 
-    const groupedTrees: IGroupedElements<GET_TREE_LIST_QUERY_trees_list> = (treesList?.data?.trees?.list ?? []).reduce(
+    const groupedTrees: IGroupedElements<GET_TREES_trees_list> = trees.reduce(
         (groups, tree) => {
             const newGroups = {...groups};
 
@@ -161,22 +159,26 @@ function Sidebar(): JSX.Element {
         _goTo(getTreeLink(activeTree.id));
     };
 
+    const _goToSettings = () => {
+        _goTo('/settings');
+    };
+
     const _handleClickHome = () => _goTo('/');
 
     let libsMenuItems: ItemType[] = [];
 
-    if (librariesList.loading || favoritesList.loading) {
+    if (librariesLoading || favoritesList.loading) {
         libsMenuItems = [
             {
                 key: 'libs-loading',
                 label: <Spin />
             }
         ];
-    } else if (librariesList.error || favoritesList.error) {
+    } else if (librariesError || favoritesList.error) {
         libsMenuItems = [
             {
                 key: 'libs-error',
-                label: <ErrorDisplay message={(librariesList.error || favoritesList.error).message} />
+                label: <ErrorDisplay message={librariesError || favoritesList?.error?.message} />
             }
         ];
     } else {
@@ -217,18 +219,18 @@ function Sidebar(): JSX.Element {
     }
 
     let treesMenuItems: ItemType[] = [];
-    if (treesList.loading || favoritesList.loading) {
+    if (treesLoading || favoritesList.loading) {
         treesMenuItems = [
             {
                 key: 'trees-loading',
                 label: <Spin />
             }
         ];
-    } else if (treesList.error || favoritesList.error) {
+    } else if (treesError || favoritesList.error) {
         treesMenuItems = [
             {
                 key: 'trees-error',
-                label: <ErrorDisplay message={(librariesList.error || favoritesList.error).message} />
+                label: <ErrorDisplay message={treesError || favoritesList?.error?.message} />
             }
         ];
     } else {
@@ -282,6 +284,12 @@ function Sidebar(): JSX.Element {
             key: 'tree',
             onTitleClick: _goToActiveTree,
             children: treesMenuItems
+        },
+        {
+            key: 'settings',
+            icon: <SettingOutlined />,
+            label: t('app_settings.title'),
+            onClick: _goToSettings
         }
     ];
 

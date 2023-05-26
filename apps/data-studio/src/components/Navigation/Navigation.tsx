@@ -1,15 +1,17 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useLang, ErrorDisplay, ErrorDisplayTypes, Loading} from '@leav/ui';
+import {useQuery} from '@apollo/client';
+import {ErrorDisplay, ErrorDisplayTypes, Loading, useLang} from '@leav/ui';
 import {useApplicationContext} from 'context/ApplicationContext';
-import useGetTreesListQuery from 'hooks/useGetTreesListQuery/useGetTreesListQuery';
+import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
 import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'reduxStore/infos';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
+import {GET_TREES, GET_TREESVariables} from '_gqlTypes/GET_TREES';
 import {useActiveTree} from '../../hooks/ActiveTreeHook/ActiveTreeHook';
-import {localizedTranslation} from '../../utils';
+import {isTreeInApp, localizedTranslation} from '../../utils';
 import {IBaseInfo, InfoType, WorkspacePanels} from '../../_types/types';
 import NavigationView from './NavigationView';
 
@@ -28,8 +30,15 @@ function Navigation({tree}: INavigationProps): JSX.Element {
     const {lang} = useLang();
     const [activeTree, updateActiveTree] = useActiveTree();
 
-    const {data, loading, error} = useGetTreesListQuery({onlyAllowed: false, treeId: tree, skip: !tree});
+    const {data, loading, error} = useQuery<GET_TREES, GET_TREESVariables>(getTreeListQuery, {
+        variables: {
+            filters: {id: [tree]}
+        },
+        skip: !tree
+    });
+
     const hasAccess = data?.trees?.list[0]?.permissions.access_tree;
+    const isInApp = isTreeInApp(appData.currentApp, tree);
 
     useEffect(() => {
         if (activePanel !== WorkspacePanels.TREE || !hasAccess) {
@@ -71,6 +80,10 @@ function Navigation({tree}: INavigationProps): JSX.Element {
 
     if (!hasAccess) {
         return <ErrorDisplay type={ErrorDisplayTypes.PERMISSION_ERROR} />;
+    }
+
+    if (!isInApp) {
+        return <ErrorDisplay message={t('navigation.not_in_app')} />;
     }
 
     return <NavigationView tree={tree} />;

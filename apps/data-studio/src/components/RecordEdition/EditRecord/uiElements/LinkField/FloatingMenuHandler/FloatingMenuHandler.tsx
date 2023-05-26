@@ -1,13 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {FloatingMenu, FloatingMenuAction} from '@leav/ui';
 import DeleteValueBtn from 'components/RecordEdition/EditRecord/shared/DeleteValueBtn';
 import ValueDetailsBtn from 'components/RecordEdition/EditRecord/shared/ValueDetailsBtn';
 import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
-import FloatingMenu from 'components/shared/FloatingMenu';
-import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
 import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
-import React, {ReactNode} from 'react';
+import {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {RECORD_FORM_recordForm_elements_attribute} from '_gqlTypes/RECORD_FORM';
 import {IRecordIdentityWhoAmI} from '_types/types';

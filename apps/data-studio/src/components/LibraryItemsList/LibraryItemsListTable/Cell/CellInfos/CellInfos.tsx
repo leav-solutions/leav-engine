@@ -1,13 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {RecordCard} from '@leav/ui';
+import {FloatingMenu, FloatingMenuAction, RecordCard} from '@leav/ui';
 import {SizeType} from 'antd/lib/config-provider/SizeContext';
 import DeactivateRecordBtn from 'components/LibraryItemsList/shared/DeactivateRecordBtn';
 import SelectCellsBtn, {SelectCellsBtnType} from 'components/LibraryItemsList/shared/SelectCellsBtn';
 import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
-import FloatingMenu from 'components/shared/FloatingMenu';
-import {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {useTranslation} from 'react-i18next';

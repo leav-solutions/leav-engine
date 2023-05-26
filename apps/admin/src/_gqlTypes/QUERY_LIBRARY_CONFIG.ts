@@ -40,6 +40,6 @@ export interface QUERY_LIBRARY_CONFIG {
 }
 
 export interface QUERY_LIBRARY_CONFIGVariables {
-    id?: string | null;
+    id?: string[] | null;
     lang?: AvailableLanguage[] | null;
 }

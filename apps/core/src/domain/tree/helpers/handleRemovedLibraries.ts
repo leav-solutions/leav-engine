@@ -17,7 +17,12 @@ export type HandleRemovedLibrariesFunc = (
 
 export default function ({'core.infra.tree': treeRepo = null}: IDeps): HandleRemovedLibrariesFunc {
     return async (treeDataBefore, treeDataAfter, ctx) => {
-        const oldTreeLibrariesIds = Object.keys(treeDataBefore.libraries);
+        if (!treeDataAfter.libraries) {
+            // If libraries have not changed, don't do anything
+            return;
+        }
+
+        const oldTreeLibrariesIds = Object.keys(treeDataBefore.libraries ?? {});
         const newTreeLibraries = Object.keys(treeDataAfter.libraries);
         const removedLibraries = oldTreeLibrariesIds.filter(l => !newTreeLibraries.includes(l));
 

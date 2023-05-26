@@ -39,7 +39,7 @@ export interface IGetTreeAttributesVariables {
 }
 
 export const getTreeAttributesQuery = gql`
-    query GET_TREE_ATTRIBUTES_QUERY($treeId: ID!) {
+    query GET_TREE_ATTRIBUTES_QUERY($treeId: [ID!]) {
         trees(filters: {id: $treeId}) {
             list {
                 id

@@ -83,5 +83,5 @@ export interface GET_TREE_BY_ID {
 }
 
 export interface GET_TREE_BY_IDVariables {
-    id?: string | null;
+    id?: string[] | null;
 }

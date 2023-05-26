@@ -24,7 +24,7 @@ const SelectTreeNodeModal = ({open, tree, onSelect, onClose}: ISelectTreeNodeMod
     const [currentSelection, setCurrentSelection] = useState<ITreeNodeData[] | null>(null);
     const {loading, error, data} = useQuery<GET_TREE_BY_ID, GET_TREE_BY_IDVariables>(getTreeByIdQuery, {
         variables: {
-            id: tree
+            id: [tree]
         }
     });
 

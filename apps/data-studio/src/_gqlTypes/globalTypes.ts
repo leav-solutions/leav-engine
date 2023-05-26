@@ -10,6 +10,16 @@
 // START Enums and Input Objects
 //==============================================================
 
+export enum ApplicationEventTypes {
+    DELETE = 'DELETE',
+    SAVE = 'SAVE'
+}
+
+export enum ApplicationType {
+    external = 'external',
+    internal = 'internal'
+}
+
 export enum AttributeFormat {
     boolean = 'boolean',
     date = 'date',
@@ -193,11 +203,24 @@ export enum ViewTypes {
     timeline = 'timeline'
 }
 
+export interface ApplicationEventFiltersInput {
+    ignoreOwnEvents?: boolean | null;
+    applicationId?: string | null;
+    events?: ApplicationEventTypes[] | null;
+}
+
 export interface FileInput {
     data: Upload;
     uid: string;
     size?: number | null;
     replace?: boolean | null;
+}
+
+export interface LibrariesFiltersInput {
+    id?: string[] | null;
+    label?: string[] | null;
+    system?: boolean | null;
+    behavior?: LibraryBehavior[] | null;
 }
 
 export interface Pagination {
@@ -258,6 +281,14 @@ export interface TreeEventFiltersInput {
     treeId: string;
     nodes?: (string | null)[] | null;
     events?: TreeEventTypes[] | null;
+}
+
+export interface TreesFiltersInput {
+    id?: string[] | null;
+    label?: string[] | null;
+    system?: boolean | null;
+    behavior?: TreeBehavior | null;
+    library?: string | null;
 }
 
 export interface UploadFiltersInput {

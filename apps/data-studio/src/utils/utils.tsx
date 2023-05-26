@@ -2,35 +2,36 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {objectToNameValueArray} from '@leav/utils';
+import {ADD_VIEW_saveView} from '_gqlTypes/ADD_VIEW';
+import {GET_APPLICATION_BY_ENDPOINT_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
+import {GET_VIEW_view, GET_VIEW_view_display, GET_VIEW_view_sort} from '_gqlTypes/GET_VIEW';
+import {RECORD_FORM_recordForm_elements_values_Value_version} from '_gqlTypes/RECORD_FORM';
+import {RecordIdentity} from '_gqlTypes/RecordIdentity';
+import {AttributeFormat, AttributeType, ValueVersionInput, ViewSizes} from '_gqlTypes/globalTypes';
 import {gql} from 'graphql-tag';
-import {i18n, TFunction} from 'i18next';
+import {TFunction, i18n} from 'i18next';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {getFiltersFromRequest} from 'utils/getFiltersFromRequest';
-import {ADD_VIEW_saveView} from '_gqlTypes/ADD_VIEW';
-import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
-import {GET_VIEW_view, GET_VIEW_view_display, GET_VIEW_view_sort} from '_gqlTypes/GET_VIEW';
-import {AttributeFormat, AttributeType, ValueVersionInput, ViewSizes} from '_gqlTypes/globalTypes';
-import {RecordIdentity} from '_gqlTypes/RecordIdentity';
-import {RECORD_FORM_recordForm_elements_values_Value_version} from '_gqlTypes/RECORD_FORM';
-import {defaultLinkAttributeFilterFormat, infosCol} from '../constants/constants';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {
     AttributeConditionFilter,
     AttributeConditionType,
     AvailableLanguage,
     ExtendFormat,
+    IApplicationSettings,
     IAttribute,
     IDateRangeValue,
     IInfo,
-    InfoPriority,
     IQueryFilter,
     ISelectedAttribute,
     IValueVersion,
     IView,
+    InfoPriority,
     PreviewAttributes,
     PreviewSize
 } from '../_types/types';
+import {defaultLinkAttributeFilterFormat, infosCol} from '../constants/constants';
 
 export function getRecordIdentityCacheKey(libId: string, recordId: string): string {
     return `recordIdentity/${libId}/${recordId}`;
@@ -364,22 +365,32 @@ export const stringifyDateRangeValue = (value: IDateRangeValue, t: TFunction): s
         interpolation: {escapeValue: false}
     });
 
-export const isLibraryInApp = (app: GET_APPLICATION_BY_ID_applications_list, libraryId: string): boolean => {
-    if (!app?.libraries === null) {
+export const isLibraryInApp = (app: GET_APPLICATION_BY_ENDPOINT_applications_list, libraryId: string): boolean => {
+    const settings: IApplicationSettings = app?.settings ?? {};
+    if (settings.libraries === 'none') {
         return false;
     }
 
-    const appLibraries = app?.libraries ?? [];
-    return !appLibraries.length || !!appLibraries.find(appLib => appLib.id === libraryId);
+    if (settings.libraries === 'all') {
+        return true;
+    }
+
+    const appLibraries = settings.libraries ?? [];
+    return !!appLibraries.find(appLib => appLib === libraryId);
 };
 
-export const isTreeInApp = (app: GET_APPLICATION_BY_ID_applications_list, treeId: string): boolean => {
-    if (app?.trees === null) {
+export const isTreeInApp = (app: GET_APPLICATION_BY_ENDPOINT_applications_list, treeId: string): boolean => {
+    const settings: IApplicationSettings = app?.settings ?? {};
+    if (settings.trees === 'none') {
         return false;
     }
 
-    const appTrees = app?.trees ?? [];
-    return !appTrees.length || !!appTrees.find(appTree => appTree.id === treeId);
+    if (settings.trees === 'all') {
+        return true;
+    }
+
+    const appTrees = settings.trees ?? [];
+    return !!appTrees.find(appTree => appTree === treeId);
 };
 
 export const stopEvent = (e: React.SyntheticEvent<any>) => {

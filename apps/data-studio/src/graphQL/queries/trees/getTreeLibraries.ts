@@ -4,7 +4,7 @@
 import gql from 'graphql-tag';
 
 export const getTreeLibraries = gql`
-    query GET_TREE_LIBRARIES($treeId: ID, $library: String) {
+    query GET_TREE_LIBRARIES($treeId: [ID!], $library: String) {
         trees(filters: {id: $treeId, library: $library}) {
             totalCount
             list {

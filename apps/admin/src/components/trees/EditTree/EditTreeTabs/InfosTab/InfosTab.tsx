@@ -50,8 +50,8 @@ function TreeInfosTab({tree, readonly}: ITreeInfosTabProps): JSX.Element {
         }
     };
 
-    const _handleCheckIdExists = async val => {
-        await getTreeById({variables: {id: val}});
+    const _handleCheckIdExists = async (val: string) => {
+        await getTreeById({variables: {filters: {id: [val]}}});
         return !!dataTreeById && !!dataTreeById.trees && !dataTreeById.trees.list.length;
     };
 

@@ -10,8 +10,7 @@ export const mockApplication: IApplication = {
     label: {fr: 'Test'},
     endpoint: 'my-application',
     description: {fr: 'Super application'},
-    libraries: ['products', 'categories'],
-    trees: ['files', 'categories'],
+    settings: {libraries: ['products', 'categories'], trees: ['files', 'categories']},
     color: 'orange',
     icon: {
         id: '123456'
@@ -26,8 +25,6 @@ export const mockApplicationExternal: IApplication = {
     label: {fr: 'Test'},
     endpoint: 'http://example.com',
     description: {fr: 'Super application'},
-    libraries: null,
-    trees: null,
     color: 'orange',
     icon: {
         id: '123456'

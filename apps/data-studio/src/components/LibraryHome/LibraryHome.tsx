@@ -11,7 +11,7 @@ import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'reduxStore/infos';
 import {setSelection} from 'reduxStore/selection';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
-import {localizedTranslation} from 'utils';
+import {isLibraryInApp, localizedTranslation} from 'utils';
 import {IBaseInfo, InfoType, WorkspacePanels} from '_types/types';
 
 export interface ILibraryHomeProps {
@@ -29,6 +29,7 @@ function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
     const {loading, data, error} = useGetLibraryDetailExtendedQuery({library});
 
     const hasAccess = data?.libraries?.list[0]?.permissions.access_library;
+    const isInApp = isLibraryInApp(appData.currentApp, library);
 
     useEffect(() => {
         // Update infos about current lib (active library, info message)
@@ -102,6 +103,10 @@ function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
 
     if (!hasAccess) {
         return <ErrorDisplay type={ErrorDisplayTypes.PERMISSION_ERROR} />;
+    }
+
+    if (!isInApp) {
+        return <ErrorDisplay message={t('items_list.not_in_app')} />;
     }
 
     return <LibraryItemsList selectionMode={false} library={data.libraries.list[0]} key={library} />;

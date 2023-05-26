@@ -19,7 +19,7 @@ export default function useGetLibraryDetailExtendedQuery({
         getLibraryDetailExtendedQuery(DEPTH_EMBEDDED_FIELDS),
         {
             variables: {
-                libId: library
+                libId: [library]
             },
             skip: !library
         }

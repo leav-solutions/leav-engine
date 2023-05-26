@@ -2,20 +2,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ApolloCache, StoreObject} from '@apollo/client';
+import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
 import {FormikErrors, FormikTouched} from 'formik';
 import gql from 'graphql-tag';
 import {i18n} from 'i18next';
 import get from 'lodash/get';
 import {TreeNode} from 'react-sortable-tree';
 import removeAccents from 'remove-accents';
-import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
 import {
     GET_ATTRIBUTE_BY_ID_attributes_list,
     GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute,
     GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute
 } from '../_gqlTypes/GET_ATTRIBUTE_BY_ID';
-import {AttributeType, AvailableLanguage} from '../_gqlTypes/globalTypes';
 import {IS_ALLOWED_isAllowed} from '../_gqlTypes/IS_ALLOWED';
+import {AttributeType, AvailableLanguage} from '../_gqlTypes/globalTypes';
 import {IErrorByField} from '../_types/errors';
 import {IGenericValue, ILinkValue, ITreeLinkValue, IValue} from '../_types/records';
 import {IKeyValue} from '../_types/shared';
@@ -314,21 +314,26 @@ export function pick<T extends object, K extends keyof T>(obj: T, keys: K | K[])
 export const gqlUnchecked = gql;
 
 export const isLibraryInApp = (app: GET_APPLICATION_BY_ID_applications_list, libraryId: string): boolean => {
-    if (app?.libraries === null) {
+    if (app?.settings?.libraries === null) {
         return false;
     }
 
-    const appLibraries = app?.libraries ?? [];
-    return !appLibraries.length || !!appLibraries.find(appLib => appLib.id === libraryId);
+    const appLibraries = app?.settings?.libraries ?? [];
+    return !appLibraries.length || !!appLibraries.find(appLib => appLib === libraryId);
 };
 
 export const isTreeInApp = (app: GET_APPLICATION_BY_ID_applications_list, treeId: string): boolean => {
-    if (app?.trees === null) {
+    const settings = app?.settings ?? {};
+    if (settings.trees === 'none') {
         return false;
     }
 
-    const appTrees = app?.trees ?? [];
-    return !appTrees.length || !!appTrees.find(appTree => appTree.id === treeId);
+    if (settings.trees === 'all') {
+        return true;
+    }
+
+    const appTrees = settings.trees ?? [];
+    return !!appTrees.find(appTree => appTree === treeId);
 };
 
 export const enforceInitialSlash = (url: string): string => {

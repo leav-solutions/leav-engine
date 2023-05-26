@@ -13,6 +13,7 @@ export interface IRecordCardProps {
     lang?: string[];
     withPreview?: boolean;
     withLibrary?: boolean;
+    withColor?: boolean;
     tile?: boolean;
     simplistic?: boolean;
 }

@@ -3,15 +3,16 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {theme} from 'antd';
 import React from 'react';
-import styled from 'styled-components';
+import styled, {CSSObject} from 'styled-components';
 import {AntdThemeToken} from '../../antdTheme';
 
 interface IFieldsGroupProps {
-    label?: string;
+    label?: string | React.ReactNode;
+    style?: CSSObject;
     children: React.ReactNode;
 }
 
-const FieldsSet = styled.fieldset<{themeToken: AntdThemeToken}>`
+const FieldsSet = styled.fieldset<{themeToken: AntdThemeToken; style: CSSObject}>`
     border-radius: ${props => props.themeToken.borderRadius}px;
     border: 1px solid ${props => props.themeToken.colorBorderSecondary};
     padding: ${props => props.themeToken.padding}px ${props => props.themeToken.padding / 2}px;
@@ -25,12 +26,14 @@ const FieldsSet = styled.fieldset<{themeToken: AntdThemeToken}>`
         color: ${props => props.themeToken.colorTextSecondary};
         width: auto;
     }
+
+    ${props => props.style}
 `;
 
-function FieldsGroup({label, children}: IFieldsGroupProps): JSX.Element {
+function FieldsGroup({label, children, style}: IFieldsGroupProps): JSX.Element {
     const {token} = theme.useToken();
     return (
-        <FieldsSet themeToken={token}>
+        <FieldsSet themeToken={token} style={style}>
             {label && <legend>{label}</legend>}
             {children}
         </FieldsSet>

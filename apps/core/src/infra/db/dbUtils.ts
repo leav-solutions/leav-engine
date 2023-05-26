@@ -102,7 +102,9 @@ export default function ({
         // we call this function recursively on array and join filters with an OR
         if (Array.isArray(filterVal)) {
             if (filterVal.length) {
-                const valParts = filterVal.map(val => _getFilterCondition(filterKey, val, strictFilters));
+                const valParts = filterVal.map(val =>
+                    _getFilterCondition(filterKey, val, strictFilters, nonStrictFields)
+                );
                 queryParts.push(join(valParts, ' OR '));
             }
         } else {

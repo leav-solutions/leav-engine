@@ -141,7 +141,8 @@ export enum PermissionsActions {
     detach = 'detach',
     edit_children = 'edit_children',
     edit_record = 'edit_record',
-    edit_value = 'edit_value'
+    edit_value = 'edit_value',
+    fake_plugin_permission = 'fake_plugin_permission'
 }
 
 export enum PermissionsRelation {
@@ -224,8 +225,6 @@ export interface ApplicationInput {
     label?: SystemTranslation | null;
     type?: ApplicationType | null;
     description?: SystemTranslation | null;
-    libraries?: string[] | null;
-    trees?: string[] | null;
     color?: string | null;
     icon?: ApplicationIconInput | null;
     module?: string | null;
@@ -434,6 +433,14 @@ export interface TreeNodePermissionsConfInput {
 export interface Treepermissions_confInput {
     permissionTreeAttributes: string[];
     relation: PermissionsRelation;
+}
+
+export interface TreesFiltersInput {
+    id?: string[] | null;
+    label?: string[] | null;
+    system?: boolean | null;
+    behavior?: TreeBehavior | null;
+    library?: string | null;
 }
 
 export interface ValueBatchInput {

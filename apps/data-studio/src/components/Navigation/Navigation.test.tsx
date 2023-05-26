@@ -3,17 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedResponse} from '@apollo/client/testing';
 import userEvent from '@testing-library/user-event';
-import {treeNavigationPageSize} from 'constants/constants';
-import {getTreeLibraries} from 'graphQL/queries/trees/getTreeLibraries';
-import {treeNodeChildrenQuery} from 'graphQL/queries/trees/getTreeNodeChildren';
-import {LibraryBehavior, TreeBehavior} from '_gqlTypes/globalTypes';
-import {act, render, screen, waitFor, within} from '_tests/testUtils';
-import {SharedStateSelectionType} from '_types/types';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockInitialState} from '__mocks__/common/mockRedux/mockInitialState';
 import {mockRecord} from '__mocks__/common/record';
 import {mockTree} from '__mocks__/common/tree';
 import {mockTreeNodePermissions} from '__mocks__/common/treeElements';
+import {LibraryBehavior, TreeBehavior} from '_gqlTypes/globalTypes';
+import {act, render, screen, waitFor, within} from '_tests/testUtils';
+import {SharedStateSelectionType} from '_types/types';
+import {treeNavigationPageSize} from 'constants/constants';
+import {getTreeLibraries} from 'graphQL/queries/trees/getTreeLibraries';
+import {treeNodeChildrenQuery} from 'graphQL/queries/trees/getTreeNodeChildren';
 import {getTreeListQuery} from '../../graphQL/queries/trees/getTreeListQuery';
 import Navigation from './Navigation';
 
@@ -69,7 +69,7 @@ describe('Navigation', () => {
         request: {
             query: getTreeListQuery,
             variables: {
-                treeId: 'my_tree'
+                filters: {id: ['my_tree']}
             }
         },
         result: {
@@ -98,7 +98,7 @@ describe('Navigation', () => {
         request: {
             query: getTreeLibraries,
             variables: {
-                treeId: 'my_tree'
+                treeId: ['my_tree']
             }
         },
         result: {
@@ -229,12 +229,6 @@ describe('Navigation', () => {
         }
     };
 
-    const getTreeContentMockResultNoChildren = {
-        data: {
-            treeNodeChildren: {totalCount: 0, list: []}
-        }
-    };
-
     const mocks: MockedResponse[] = [
         getTreeListMock,
         getTreeLibrariesMock,
@@ -278,7 +272,7 @@ describe('Navigation', () => {
         },
         currentApp: {
             ...mockApplicationDetails,
-            trees: []
+            settings: {...mockApplicationDetails.settings, trees: 'all'}
         }
     };
 
@@ -424,7 +418,7 @@ describe('Navigation', () => {
         render(<Navigation tree="my_tree" />, renderOptions);
 
         expect(screen.getByTestId('loading')).toBeInTheDocument();
-        await waitFor(async () => expect(await screen.findByTestId('navigation-column')).toBeInTheDocument());
+        expect(await screen.findByTestId('navigation-column')).toBeInTheDocument();
 
         expect(screen.getAllByTestId('navigation-column')).toHaveLength(1);
         const colHeader = screen.getAllByRole('banner')[0];

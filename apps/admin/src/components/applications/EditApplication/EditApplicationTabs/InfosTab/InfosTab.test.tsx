@@ -45,8 +45,6 @@ describe('InfosTab', () => {
                             description: {en: 'My description'},
                             module: 'admin',
                             endpoint: 'my-app',
-                            libraries: ['libA', 'libB'],
-                            trees: ['treeA', 'treeB'],
                             icon: null
                         }
                     }
@@ -165,8 +163,6 @@ describe('InfosTab', () => {
                             description: {fr: '', en: ''},
                             module: 'admin',
                             endpoint: 'my-app',
-                            libraries: [],
-                            trees: [],
                             icon: null
                         }
                     }

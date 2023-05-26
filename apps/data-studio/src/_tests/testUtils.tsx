@@ -4,22 +4,22 @@
 import {InMemoryCacheConfig} from '@apollo/client';
 import {MockedResponse} from '@apollo/client/testing';
 import {ILangContext, LangContext} from '@leav/ui';
-import {render, RenderOptions, RenderResult} from '@testing-library/react';
+import {RenderOptions, RenderResult, render} from '@testing-library/react';
+import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
+import {mockApplicationDetails} from '__mocks__/common/applications';
+import MockStore from '__mocks__/common/mockRedux/mockStore';
+import {GET_APPLICATION_BY_ENDPOINT_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
+import {GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 import ApplicationContext from 'context/ApplicationContext';
 import {IApplicationContext} from 'context/ApplicationContext/_types';
 import {PropsWithChildren, ReactElement} from 'react';
 import {RootState} from 'reduxStore/store';
-import {GET_APPLICATION_BY_ID_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ID';
-import {GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETTINGS';
-import {mockApplicationDetails} from '__mocks__/common/applications';
-import MockStore from '__mocks__/common/mockRedux/mockStore';
-import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
 
 export interface ICustomRenderOptions extends RenderOptions {
     apolloMocks?: readonly MockedResponse[];
     storeState?: Partial<RootState>;
     cacheSettings?: InMemoryCacheConfig;
-    currentApp?: GET_APPLICATION_BY_ID_applications_list;
+    currentApp?: GET_APPLICATION_BY_ENDPOINT_applications_list;
     [key: string]: any;
 }
 
@@ -27,7 +27,7 @@ interface IProvidersProps {
     apolloMocks?: readonly MockedResponse[];
     storeState?: Partial<RootState>;
     cacheSettings?: InMemoryCacheConfig;
-    currentApp?: GET_APPLICATION_BY_ID_applications_list;
+    currentApp?: GET_APPLICATION_BY_ENDPOINT_applications_list;
     globalSettings?: GET_GLOBAL_SETTINGS_globalSettings;
 }
 

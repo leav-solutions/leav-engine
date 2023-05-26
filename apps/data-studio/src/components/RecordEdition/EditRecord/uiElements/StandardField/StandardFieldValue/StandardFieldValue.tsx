@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
-import {themeVars} from '@leav/ui';
+import {FloatingMenu, FloatingMenuAction, themeVars} from '@leav/ui';
 import {AnyPrimitive} from '@leav/utils';
 import {Button, Form, Input, InputRef, Popover, Space, theme} from 'antd';
 import DeleteValueBtn from 'components/RecordEdition/EditRecord/shared/DeleteValueBtn';
@@ -19,7 +19,6 @@ import {
 import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
 import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import Dimmer from 'components/shared/Dimmer';
-import FloatingMenu, {FloatingMenuAction} from 'components/shared/FloatingMenu/FloatingMenu';
 import moment from 'moment';
 import {MutableRefObject, useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
