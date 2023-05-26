@@ -40,7 +40,7 @@ import {IUtils} from 'utils/utils';
 import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
 import PermissionError from '../../errors/PermissionError';
 
-export const SCHEMA_PATH = path.resolve(__dirname, './import-schema.json');
+export const IMPORT_DATA_SCHEMA_PATH = path.resolve(__dirname, './import-data-schema.json');
 
 const DEFAULT_IMPORT_MODE = ImportMode.UPSERT;
 
@@ -464,7 +464,7 @@ export default function ({
 
         const buffer = await _getFileDataBuffer(filename);
         const data = JSON.parse(buffer.toString('utf8'));
-        const schema = await fs.promises.readFile(SCHEMA_PATH);
+        const schema = await fs.promises.readFile(IMPORT_DATA_SCHEMA_PATH);
         validate(data, JSON.parse(schema.toString()), {throwAll: true});
     };
 

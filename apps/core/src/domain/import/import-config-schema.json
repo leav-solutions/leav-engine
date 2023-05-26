@@ -1,0 +1,294 @@
+{
+    "$id": "import-config",
+    "title": "LEAV Import Config",
+    "type": "object",
+    "$defs": {
+        "id": {
+            "type": "string"
+        },
+        "actionConfiguration": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "$ref": "#/$defs/id"
+                },
+                "params": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["name", "value"]
+                }
+            },
+            "required": ["id"]
+        },
+        "actionsList": {
+            "type": "object",
+            "properties": {
+                "deleteValue": { 
+                    "$ref": "#/$defs/actionConfiguration"
+                },
+                "getValue": {
+                    "$ref": "#/$defs/actionConfiguration"
+                },
+                "saveValue": {
+                    "$ref": "#/$defs/actionConfiguration"
+                }
+            }
+        },
+        "systemTranslation": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": { "type": "string" }
+        },
+        "permissions_conf": {
+            "type": "object",
+            "properties": {
+                "permissionTreeAttributes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "relation": {
+                    "type": "string",
+                    "enum": ["and", "or"]
+                }
+            },
+            "required": ["permissionTreeAttributes", "relation"]
+        }
+    },
+    "definitions": {
+        "library": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "$ref": "#/$defs/id"
+                },
+                "label": { 
+                    "$ref": "#/$defs/systemTranslation"
+                },
+                "icon": {
+                    "type": "object",
+                    "properties": {
+                        "libraryId": {
+                            "type": "string"
+                        },
+                        "recordId": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["libraryId", "recordId"]
+                },
+                "fullTextAttributes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "defaultView": {
+                    "type":"string"
+                },
+                "behavior": {
+                    "type": "string",
+                    "enum": ["standard", "files", "directories"]
+                },
+                "recordIdentityConf": {
+                    "type": "object",
+                    "properties": {
+                        "color": {
+                            "type": "string"
+                        },
+                        "label": {
+                            "type": "string"
+                        },
+                        "preview": {
+                            "type": "string"
+                        },
+                        "treeColorPreview": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "permissions_conf": {
+                    "$ref": "#/$defs/permissions_conf"
+                },
+                "attributes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": ["id", "behavior"]
+        },
+        "attribute": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "$ref": "#/$defs/id"
+                },
+                "label": { 
+                    "$ref": "#/$defs/systemTranslation"
+                },
+                "description": { 
+                    "$ref": "#/$defs/systemTranslation"
+                },
+                "format": {
+                    "type": "string",
+                    "enum": ["text", "numeric", "date", "date_range", "encrypted", "boolean", "extended"]
+                },
+                "readonly": {
+                    "type": "boolean"
+                },
+                "actions_list": {
+                    "$ref": "#/$defs/actionsList"
+                },
+                "embedded_fields": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "$ref": "#/$defs/id"
+                        },
+                        "description": {"$ref": "#/$defs/systemTranslation"},
+                        "embedded_fields": {"$ref": "#/definitions/attribute/properties/embedded_fields"},
+                        "format": {
+                            "$ref": "#/definitions/attribute/properties/format"
+                        },
+                        "label": {"$ref": "#/$defs/systemTranslation"},
+                        "validation_regex": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["id"]
+                },
+                "linked_library": {
+                    "type": "string"
+                },
+                "linked_tree": {
+                    "type": "string"
+                },
+                "metadata_fields": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "multiple_values": {
+                    "type": "boolean"
+                },
+                "reverse_link": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": ["simple", "simple_link", "advanced", "advanced_link", "tree"]
+                },
+                "unique": {
+                    "type": "boolean"
+                },
+                "values_list": {
+                    "type": "object",
+                    "properties": {
+                        "allowFreeEntry": {
+                            "type": "boolean"
+                        },
+                        "enable": {
+                            "type": "boolean"
+                        },
+                        "values": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "required": ["enable"]
+                },
+                "versions_conf": {
+                    "type": "object",
+                    "properties": {
+                        "mode": {
+                            "type": "string",
+                            "enum": ["simple", "smart"]
+                        },
+                        "profile": {"type": "string"},
+                        "versionable": {"type": "string"}
+                    },
+                    "required": ["versionable"]
+                },
+                "permissions_conf": {
+                    "$ref": "#/$defs/permissions_conf"
+                }
+            },
+            "required": ["id"]
+        },
+        "tree": {
+            "type": "object",
+            "properties": {
+                "id": {"$ref": "#/$defs/id"},
+                "behavior": {
+                    "type": "string",
+                    "enum": ["standard", "files"]
+                },
+                "label": {"$ref": "#/$defs/systemTranslation"},
+                "permissions_conf": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "libraryId": {"type": "string"},
+                            "permissionsConf": {"$ref": "#/$defs/permissions_conf"}
+                        },
+                        "required": ["libraryId", "permissionsConf"]
+                    }
+                },
+                "libraries": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "library": {"type": "string"},
+                            "settings": {
+                                "type": "object",
+                                "properties": {
+                                    "allowMultiplePositions": {"type": "boolean"},
+                                    "allowedAtRoot": {"type": "boolean"},
+                                    "allowedChildren": {"type": "array", "items": {"type": "string"}}
+                                },
+                                "required": ["allowMultiplePositions", "allowedAtRoot", "allowedChildren"]
+                            } 
+                        },
+                        "required": ["library", "settings"]
+                    }
+                }
+            },
+            "required": ["id"]
+        }
+    },
+    "properties": {
+        "libraries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/library"
+            }
+        },
+        "attributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/attribute"
+            }
+        },
+        "trees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/tree"
+            }
+        }
+    }
+}
