@@ -4,9 +4,9 @@
 import {localizedTranslation} from '@leav/utils';
 import {Form, Select, Space, Switch} from 'antd';
 import {ReactNode} from 'react';
-import {useTranslation} from 'react-i18next';
 import {ValueVersionMode, useGetVersionProfilesQuery} from '../../../../../../_gqlTypes';
 import {useLang} from '../../../../../../hooks';
+import {useSharedTranslation} from '../../../../../../hooks/useSharedTranslation';
 import FieldsGroup from '../../../../../FieldsGroup';
 import {Loading} from '../../../../../Loading';
 
@@ -19,7 +19,7 @@ interface IValuesVersionsFormProps {
 
 function ValuesVersionsForm({isReadOnly, onChange, extra}: IValuesVersionsFormProps): JSX.Element {
     const form = Form.useFormInstance();
-    const {t} = useTranslation('shared');
+    const {t} = useSharedTranslation();
     const {lang} = useLang();
     const isVersionable = Form.useWatch(['versions_conf', 'versionable'], form);
 

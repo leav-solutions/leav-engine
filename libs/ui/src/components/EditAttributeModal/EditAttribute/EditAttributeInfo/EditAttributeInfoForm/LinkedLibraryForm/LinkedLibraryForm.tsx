@@ -4,10 +4,10 @@
 import {localizedTranslation} from '@leav/utils';
 import {Button, Form, Space} from 'antd';
 import {ReactNode, useState} from 'react';
-import {useTranslation} from 'react-i18next';
+import {LibraryLightFragment} from '../../../../../../_gqlTypes';
 import {PreviewSize} from '../../../../../../constants';
 import {useLang} from '../../../../../../hooks';
-import {LibraryLightFragment} from '../../../../../../_gqlTypes';
+import {useSharedTranslation} from '../../../../../../hooks/useSharedTranslation';
 import {EntityCard, IEntityData} from '../../../../../EntityCard';
 import {LibraryPicker} from '../../../../../LibraryPicker';
 
@@ -21,7 +21,7 @@ interface ILinkedLibraryFormProps {
 function LinkedLibraryForm({onChange, isReadOnly, extra, selected}: ILinkedLibraryFormProps): JSX.Element {
     const form = Form.useFormInstance();
     const linkedLibrary = Form.useWatch('linked_library', form);
-    const {t} = useTranslation('shared');
+    const {t} = useSharedTranslation();
     const {lang} = useLang();
     const [isLibraryPickerOpen, setIsLibraryPickerOpen] = useState(false);
 

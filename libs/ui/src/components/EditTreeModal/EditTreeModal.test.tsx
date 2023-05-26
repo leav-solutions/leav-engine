@@ -9,6 +9,8 @@ import * as gqlTypes from '../../_gqlTypes';
 import {act, fireEvent, render, screen, waitFor, within} from '../../_tests/testUtils';
 import EditTreeModal from './EditTreeModal';
 
+jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
+
 jest.mock('../LibraryPicker', () => {
     return {
         LibraryPicker: () => {

@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Modal} from 'antd';
 import {useState} from 'react';
-import {useTranslation} from 'react-i18next';
 import {LibraryLightFragment} from '../../_gqlTypes';
+import {useSharedTranslation} from '../../hooks/useSharedTranslation';
 import {LibrariesList} from './LibrariesList';
 
 interface ILibraryPickerProps {
@@ -24,7 +24,8 @@ function LibraryPicker({
     multiple = true,
     showSelected = false
 }: ILibraryPickerProps): JSX.Element {
-    const {t} = useTranslation('shared');
+    const {t} = useSharedTranslation();
+
     const [selectedLibraries, setSelectedLibraries] = useState<LibraryLightFragment[]>([]);
 
     const _handleSelect = (selection: LibraryLightFragment[]) => {

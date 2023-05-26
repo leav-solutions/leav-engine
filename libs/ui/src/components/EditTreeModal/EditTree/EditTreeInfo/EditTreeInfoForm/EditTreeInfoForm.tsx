@@ -4,9 +4,9 @@
 import {formatId, idFormatRegex} from '@leav/utils';
 import {Form, FormInstance, Input, Select} from 'antd';
 import React, {useState} from 'react';
-import {useTranslation} from 'react-i18next';
-import {useLang} from '../../../../../hooks';
 import {TreeBehavior, TreeDetailsFragment} from '../../../../../_gqlTypes';
+import {useLang} from '../../../../../hooks';
+import {useSharedTranslation} from '../../../../../hooks/useSharedTranslation';
 import FieldsGroup from '../../../../FieldsGroup';
 import {SubmitStateNotifier} from '../../../../SubmitStateNotifier';
 import {TreeLibrariesForm} from './TreeLibrariesForm';
@@ -30,7 +30,7 @@ function EditTreeInfoForm({
     loading,
     readOnly: isReadOnly
 }: IEditTreeInfoFormProps): JSX.Element {
-    const {t} = useTranslation('shared');
+    const {t} = useSharedTranslation();
     const {availableLangs, defaultLang} = useLang();
     const [hasIdBeenEdited, setHasIdBeenEdited] = useState(false);
     const [runningFieldsSubmit, setRunningFieldsSubmit] = useState<string[]>([]);

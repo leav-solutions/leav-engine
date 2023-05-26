@@ -4,8 +4,8 @@
 import {CloseOutlined} from '@ant-design/icons';
 import {Button, message, Popconfirm} from 'antd';
 import {useState} from 'react';
-import {useTranslation} from 'react-i18next';
 import {LibraryAttributesFragment} from '../../../../../../_gqlTypes';
+import {useSharedTranslation} from '../../../../../../hooks/useSharedTranslation';
 
 interface IDeleteButtonProps {
     attribute: LibraryAttributesFragment;
@@ -14,7 +14,7 @@ interface IDeleteButtonProps {
 }
 
 function DeleteButton({attribute, readOnly, onDelete}: IDeleteButtonProps): JSX.Element {
-    const {t} = useTranslation('shared');
+    const {t} = useSharedTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const isDisabled = readOnly || attribute.system;
 

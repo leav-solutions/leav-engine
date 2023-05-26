@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Tabs, TabsProps} from 'antd';
-import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {TreeDetailsFragment, useGetTreeByIdQuery} from '../../../_gqlTypes';
+import {useSharedTranslation} from '../../../hooks/useSharedTranslation';
 import {ErrorDisplay} from '../../ErrorDisplay';
 import {Loading} from '../../Loading';
 import {EditTreeInfo} from './EditTreeInfo';
@@ -20,7 +20,7 @@ const TabContentWrapper = styled.div`
 `;
 
 function EditTree({treeId, onSetSubmitFunction, readOnly: isReadOnly}: IEditTreeProps): JSX.Element {
-    const {t} = useTranslation('shared');
+    const {t} = useSharedTranslation();
     const isEditing = !!treeId;
 
     const {loading, error, data} = useGetTreeByIdQuery({

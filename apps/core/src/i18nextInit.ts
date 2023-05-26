@@ -7,8 +7,8 @@ import Backend from 'i18next-fs-backend';
 export default async (config: any): Promise<i18n> => {
     await i18next.use(Backend).init({
         lng: config.lang.default,
-        fallbackLng: config.lang.available,
-        whitelist: config.lang.available,
+        fallbackLng: config.lang.default,
+        supportedLngs: config.lang.available,
         debug: false,
         backend: {
             loadPath: __dirname + '/locales/{{lng}}/{{ns}}.json'

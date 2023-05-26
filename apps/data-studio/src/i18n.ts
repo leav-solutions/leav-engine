@@ -3,20 +3,27 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import Backend from 'i18next-xhr-backend';
+import resourcesToBackend from 'i18next-resources-to-backend';
 import {initReactI18next} from 'react-i18next';
 
-const init = (basename: string, defaultLang: string) => {
+const init = (defaultLang: string) => {
     i18n.use(initReactI18next)
-        .use(Backend)
+        .use(
+            resourcesToBackend(async (language, namespace) => {
+                try {
+                    const resource = await import(`./locales/${language}/${namespace}.json`);
+
+                    return resource;
+                } catch (e) {
+                    console.error('Error while fetching translations files', e);
+                }
+            })
+        )
         .use(LanguageDetector)
         .init({
             fallbackLng: defaultLang,
             ns: ['translations'],
             defaultNS: 'translations',
-            backend: {
-                loadPath: `/${basename}/locales/{{lng}}/{{ns}}.json`
-            },
             react: {
                 useSuspense: true
             }

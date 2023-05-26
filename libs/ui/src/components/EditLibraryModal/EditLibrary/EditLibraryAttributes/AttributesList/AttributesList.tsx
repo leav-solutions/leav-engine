@@ -5,11 +5,11 @@ import {PlusOutlined} from '@ant-design/icons';
 import {localizedTranslation, Override} from '@leav/utils';
 import {Button, Input, Table, TableColumnsType, Tag} from 'antd';
 import {useState} from 'react';
-import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {AttributeFormat, AttributeType, LibraryAttributesFragment} from '../../../../../_gqlTypes';
 import {tagColorByAttributeFormat, tagColorByAttributeType} from '../../../../../constants';
 import {useLang} from '../../../../../hooks';
+import {useSharedTranslation} from '../../../../../hooks/useSharedTranslation';
 import {AttributePicker} from '../../../../AttributePicker';
 import {AttributeCell} from './AttributeCell';
 import {DeleteButton} from './DeleteButton';
@@ -47,7 +47,7 @@ function AttributesList({
     onDeleteAttribute,
     onAddAttributes
 }: IAttributesListProps): JSX.Element {
-    const {t} = useTranslation('shared');
+    const {t} = useSharedTranslation();
     const {lang} = useLang();
     const [search, setSearch] = useState('');
     const [isAddAttributeModalOpen, setIsAddAttributeModalOpen] = useState(false);

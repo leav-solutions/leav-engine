@@ -5,7 +5,6 @@ import {CloseOutlined} from '@ant-design/icons';
 import {formatId, idFormatRegex, localizedTranslation} from '@leav/utils';
 import {Form, FormInstance, Input, Select} from 'antd';
 import React, {useState} from 'react';
-import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {
     AttributeType,
@@ -14,6 +13,7 @@ import {
     LibraryLinkAttributeDetailsFragment
 } from '../../../../../_gqlTypes';
 import {useLang} from '../../../../../hooks';
+import {useSharedTranslation} from '../../../../../hooks/useSharedTranslation';
 import FieldsGroup from '../../../../FieldsGroup';
 import {SubmitStateNotifier} from '../../../../SubmitStateNotifier';
 
@@ -40,7 +40,7 @@ function EditLibraryInfoForm({
     loading,
     readOnly
 }: IEditLibraryInfoFormProps): JSX.Element {
-    const {t} = useTranslation('shared');
+    const {t} = useSharedTranslation();
     const {lang, availableLangs, defaultLang} = useLang();
     const isEditing = !!library;
 
