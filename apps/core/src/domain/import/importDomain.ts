@@ -567,6 +567,8 @@ export default function ({
                 for (const e of err.errors) {
                     _writeReport(writeReportStream, e.path.join(' '), e, lang);
                 }
+
+                throw new Error(`Invalid JSON data. See ${reportFileName} file for more details.`);
             }
 
             const buffer = await _getFileDataBuffer(filepath);

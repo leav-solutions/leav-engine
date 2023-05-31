@@ -111,5 +111,5 @@ process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) =>
 });
 
 process.on('exit', code => {
-    console.debug(`Exiting process ${process.pid} with code ${code}`);
+    console.info(`Exiting process ${process.pid} with code ${code}`);
 });
