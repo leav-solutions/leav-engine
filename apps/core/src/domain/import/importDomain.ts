@@ -3,12 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {extractArgsFromString} from '@leav/utils';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain, IRecordFilterLight} from 'domain/record/recordDomain';
 import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import ExcelJS from 'exceljs';
 import fs from 'fs';
+import {nanoid} from 'nanoid';
 import JsonParser from 'jsonparse';
 import {validate} from 'jsonschema';
 import {ValidatorResultError} from 'jsonschema/lib/helpers';
@@ -18,7 +20,7 @@ import {TaskPriority, TaskCallbackType, ITaskFuncParams} from '../../_types/task
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
-import {ErrorFieldDetail, Errors} from '../../_types/errors';
+import {Errors} from '../../_types/errors';
 import {i18n} from 'i18next';
 import {
     Action,
@@ -41,6 +43,7 @@ import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
 import PermissionError from '../../errors/PermissionError';
 
 export const IMPORT_DATA_SCHEMA_PATH = path.resolve(__dirname, './import-data-schema.json');
+export const IMPORT_CONFIG_SCHEMA_PATH = path.resolve(__dirname, './import-config-schema.json');
 
 const DEFAULT_IMPORT_MODE = ImportMode.UPSERT;
 
@@ -66,8 +69,9 @@ interface IImportParams {
 }
 
 export interface IImportDomain {
-    import(params: IImportParams, task?: ITaskFuncParams): Promise<string>;
+    importData(params: IImportParams, task?: ITaskFuncParams): Promise<string>;
     importExcel({filename, sheets, startAt}: IImportExcelParams, ctx: IQueryInfos): Promise<string>;
+    importConfig(filepath: string, ctx: IQueryInfos): Promise<void>;
 }
 
 interface IExcelMapping {
@@ -96,6 +100,7 @@ interface IStat {
 type Stat = {[sheetIndex: number]: IStat} | IStat;
 
 interface IDeps {
+    'core.domain.library'?: ILibraryDomain;
     'core.domain.record'?: IRecordDomain;
     'core.domain.helpers.validate'?: IValidateHelper;
     'core.domain.attribute'?: IAttributeDomain;
@@ -110,6 +115,7 @@ interface IDeps {
 }
 
 export default function ({
+    'core.domain.library': libraryDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.helpers.validate': validateHelper = null,
     'core.domain.attribute': attributeDomain = null,
@@ -438,8 +444,8 @@ export default function ({
         });
     };
 
-    const _getFileDataBuffer = async (filename: string): Promise<Buffer> => {
-        const fileStream = fs.createReadStream(`${config.import.directory}/${filename}`);
+    const _getFileDataBuffer = async (filepath: string): Promise<Buffer> => {
+        const fileStream = fs.createReadStream(filepath);
 
         const data = await ((): Promise<Buffer> =>
             new Promise((resolve, reject) => {
@@ -453,8 +459,8 @@ export default function ({
         return data;
     };
 
-    const _jsonSchemaValidation = async (filename: string): Promise<void> => {
-        const {size} = await fs.promises.stat(`${config.import.directory}/${filename}`);
+    const _jsonSchemaValidation = async (schemaPath: string, filepath: string): Promise<void> => {
+        const {size} = await fs.promises.stat(filepath);
         const megaBytesSize = size / (1024 * 1024);
 
         // if file is too big we validate json schema
@@ -462,9 +468,9 @@ export default function ({
             return;
         }
 
-        const buffer = await _getFileDataBuffer(filename);
+        const buffer = await _getFileDataBuffer(filepath);
         const data = JSON.parse(buffer.toString('utf8'));
-        const schema = await fs.promises.readFile(IMPORT_DATA_SCHEMA_PATH);
+        const schema = await fs.promises.readFile(schemaPath);
         validate(data, JSON.parse(schema.toString()), {throwAll: true});
     };
 
@@ -541,7 +547,57 @@ export default function ({
     const _isExcelMapped = (stats: Stat): boolean => !(stats as IStat).elements;
 
     return {
-        async import(params: IImportParams, task?: ITaskFuncParams): Promise<string> {
+        async importConfig(filepath: string, ctx: IQueryInfos): Promise<void> {
+            const importId = path.parse(filepath).name + `_${nanoid(5)}`;
+            const reportFileName = importId + '.config.report.txt';
+            const reportFilePath = `${config.import.directory}/${reportFileName}`;
+
+            const lang = ctx.lang || config.lang.default;
+            const writeReportStream: fs.WriteStream = fs.createWriteStream(reportFilePath, {
+                flags: 'as' // 'as' - Open file for appending in synchronous mode. The file is created if it does not exist.
+            });
+
+            try {
+                await _jsonSchemaValidation(IMPORT_CONFIG_SCHEMA_PATH, filepath);
+            } catch (err) {
+                if (!(err instanceof ValidatorResultError)) {
+                    throw err;
+                }
+
+                for (const e of err.errors) {
+                    _writeReport(writeReportStream, e.path.join(' '), e, lang);
+                }
+            }
+
+            const buffer = await _getFileDataBuffer(filepath);
+            const elements = JSON.parse(buffer.toString());
+
+            console.info(`Starting configuration import #${importId}`);
+
+            console.info('Processing attributes...');
+            if ('attributes' in elements) {
+                for (const attribute of elements.attributes) {
+                    await attributeDomain.saveAttribute({attrData: attribute, ctx});
+                }
+            }
+
+            console.info('Processing libraries...');
+            if ('libraries' in elements) {
+                for (const library of elements.libraries) {
+                    await libraryDomain.saveLibrary(library, ctx);
+                }
+            }
+
+            console.info('Processing trees...');
+            if ('trees' in elements) {
+                for (const tree of elements.trees) {
+                    await treeDomain.saveTree(tree, ctx);
+                }
+            }
+
+            console.info('Configuration import completed');
+        },
+        async importData(params: IImportParams, task?: ITaskFuncParams): Promise<string> {
             const {filename, ctx, excelMapping} = params;
 
             if (typeof task?.id === 'undefined') {
@@ -570,7 +626,7 @@ export default function ({
                 return newTaskId;
             }
 
-            const reportFileName = filename.slice(0, filename.lastIndexOf('.')) + '.report.txt';
+            const reportFileName = filename.slice(0, filename.lastIndexOf('.')) + '.data.report.txt';
             const reportFilePath = `${config.import.directory}/${reportFileName}`;
             const lang = ctx.lang || config.lang.default;
             const writeReportStream: fs.WriteStream = fs.createWriteStream(reportFilePath, {
@@ -587,7 +643,7 @@ export default function ({
             };
 
             try {
-                await _jsonSchemaValidation(filename);
+                await _jsonSchemaValidation(IMPORT_DATA_SCHEMA_PATH, `${config.import.directory}/${filename}`);
             } catch (err) {
                 if (!(err instanceof ValidatorResultError)) {
                     throw err;
@@ -1019,7 +1075,7 @@ export default function ({
             // Delete xlsx file
             await utils.deleteFile(`${config.import.directory}/${filename}`);
 
-            return this.import(
+            return this.importData(
                 {filename: JSONFilename, ctx, excelMapping},
                 {
                     ...(!!startAt && {startAt}),

@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {AwilixContainer} from 'awilix';
 import {StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
 import {IImportDomain} from 'domain/import/importDomain';
 import {FileUpload, GraphQLUpload} from 'graphql-upload';
@@ -9,6 +10,7 @@ import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
+import {IDbUtils} from 'infra/db/dbUtils';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {ImportMode, ImportType} from '../../_types/import';
@@ -16,12 +18,15 @@ import {TaskCallbackType} from '../../_types/tasksManager';
 
 export interface ICoreImportApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
+    importConfig(filepath: string, clear: boolean): Promise<void>;
 }
 
 interface IDeps {
     'core.domain.import'?: IImportDomain;
     'core.domain.helpers.storeUploadFile'?: StoreUploadFileFunc;
+    'core.infra.db.dbUtils'?: IDbUtils;
     'core.utils'?: IUtils;
+    'core.depsManager'?: AwilixContainer;
     config?: Config.IConfig;
 }
 
@@ -48,6 +53,8 @@ export default function ({
     'core.domain.import': importDomain = null,
     'core.domain.helpers.storeUploadFile': storeUploadFile,
     'core.utils': utils = null,
+    'core.depsManager': depsManager = null,
+    'core.infra.db.dbUtils': dbUtils = null,
     config = null
 }: IDeps = {}): ICoreImportApp {
     const _validateFileFormat = (filename: string, allowed: string[]) => {
@@ -89,14 +96,14 @@ export default function ({
                     }
 
                     extend type Mutation {
-                        import(file: Upload!, startAt: Int): ID!
+                        importData(file: Upload!, startAt: Int): ID!
                         importExcel(file: Upload!, sheets: [SheetInput], startAt: Int): ID!
                     }
                 `,
                 resolvers: {
                     Upload: GraphQLUpload,
                     Mutation: {
-                        async import(_, {file, startAt}: IImportParams, ctx: IQueryInfos): Promise<string> {
+                        async importData(_, {file, startAt}: IImportParams, ctx: IQueryInfos): Promise<string> {
                             const fileData: FileUpload = await file;
 
                             const allowedExtensions = ['json'];
@@ -107,7 +114,7 @@ export default function ({
                             // Store JSON file in local filesystem.
                             await storeUploadFile(fileData, config.import.directory);
 
-                            return importDomain.import(
+                            return importDomain.importData(
                                 {filename: fileData.filename, ctx},
                                 {
                                     // Delete remaining import file.
@@ -148,9 +155,22 @@ export default function ({
                 }
             };
 
-            const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
+            return {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
+        },
+        async importConfig(filepath: string, clear: boolean): Promise<void> {
+            const ctx = {
+                userId: config.defaultUserId,
+                queryId: 'ImportConfig'
+            };
 
-            return fullSchema;
+            if (clear) {
+                await dbUtils.clearDatabase();
+            }
+
+            // Run DB migration before doing anything
+            await dbUtils.migrate(depsManager);
+
+            await importDomain.importConfig(filepath, ctx);
         }
     };
 }
