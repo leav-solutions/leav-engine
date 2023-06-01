@@ -586,6 +586,7 @@ export default function ({
             console.info('Processing libraries...');
             if ('libraries' in elements) {
                 for (const library of elements.libraries) {
+                    library.attributes = library.attributes?.map((id: string) => ({id}));
                     await libraryDomain.saveLibrary(library, ctx);
                 }
             }
