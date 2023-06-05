@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IMigration} from '_types/migration';
 import {IDbService} from '../dbService';
-import {IConfig} from '_types/config';
 import {aql} from 'arangojs';
 import {IQueryInfos} from '_types/queryInfos';
 

@@ -49,6 +49,12 @@ describe('importDomain', () => {
         jest.clearAllMocks();
     });
 
+    afterEach(async () => {
+        for (const file of fs.readdirSync(mockConfig.import.directory)) {
+            await fs.promises.unlink(path.join(mockConfig.import.directory, file));
+        }
+    });
+
     describe('Import config', () => {
         test('file doesnt exist', async () => {
             const imprtDomain = importDomain({
@@ -56,7 +62,7 @@ describe('importDomain', () => {
                 translator: mockTranslator as i18n
             });
 
-            await expect(imprtDomain.importConfig('path', ctx)).rejects.toThrow();
+            await expect(imprtDomain.importConfig({filepath: 'path', ctx, forceNoTask: true})).rejects.toThrow();
         });
 
         test('Invalid json schema', async () => {
@@ -68,8 +74,8 @@ describe('importDomain', () => {
                 ]
             };
 
-            const filePath = `${mockConfig.import.directory}/test.json`;
-            await fs.promises.writeFile(filePath, JSON.stringify(data, null, '\t'));
+            const filepath = `${mockConfig.import.directory}/test.json`;
+            await fs.promises.writeFile(filepath, JSON.stringify(data, null, '\t'));
 
             const mockLibDomain: Mockify<ILibraryDomain> = {
                 saveLibrary: jest.fn()
@@ -80,11 +86,11 @@ describe('importDomain', () => {
                 'core.domain.library': mockLibDomain as ILibraryDomain
             });
 
-            await expect(imprtDomain.importConfig(filePath, ctx)).rejects.toThrow();
+            await expect(imprtDomain.importConfig({filepath, ctx, forceNoTask: true})).rejects.toThrow();
 
-            // Delete remaining import file.
-            await fs.promises.unlink(filePath);
-            expect(fs.existsSync(filePath)).toBe(false);
+            // check if report file exist
+            const importDirFiles = fs.readdirSync(mockConfig.import.directory);
+            expect(importDirFiles.filter(f => f.endsWith('.config.report.txt')).length).toBeGreaterThan(0);
         });
 
         test('Import libraries', async () => {
@@ -101,8 +107,8 @@ describe('importDomain', () => {
                 ]
             };
 
-            const filePath = `${mockConfig.import.directory}/test.json`;
-            await fs.promises.writeFile(filePath, JSON.stringify(data, null, '\t'));
+            const filepath = `${mockConfig.import.directory}/test.json`;
+            await fs.promises.writeFile(filepath, JSON.stringify(data, null, '\t'));
 
             const mockLibDomain: Mockify<ILibraryDomain> = {
                 saveLibrary: jest.fn()
@@ -113,13 +119,9 @@ describe('importDomain', () => {
                 'core.domain.library': mockLibDomain as ILibraryDomain
             });
 
-            await imprtDomain.importConfig(filePath, ctx);
+            await imprtDomain.importConfig({filepath, ctx, forceNoTask: true});
 
             expect(mockLibDomain.saveLibrary.mock.calls.length).toBe(2);
-
-            // Delete remaining import file.
-            await fs.promises.unlink(filePath);
-            expect(fs.existsSync(filePath)).toBe(false);
         });
 
         test('Import attributes', async () => {
@@ -134,8 +136,8 @@ describe('importDomain', () => {
                 ]
             };
 
-            const filePath = `${mockConfig.import.directory}/test.json`;
-            await fs.promises.writeFile(filePath, JSON.stringify(data, null, '\t'));
+            const filepath = `${mockConfig.import.directory}/test.json`;
+            await fs.promises.writeFile(filepath, JSON.stringify(data, null, '\t'));
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 saveAttribute: jest.fn()
@@ -146,13 +148,9 @@ describe('importDomain', () => {
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain
             });
 
-            await imprtDomain.importConfig(filePath, ctx);
+            await imprtDomain.importConfig({filepath, ctx, forceNoTask: true});
 
             expect(mockAttrDomain.saveAttribute.mock.calls.length).toBe(2);
-
-            // Delete remaining import file.
-            await fs.promises.unlink(filePath);
-            expect(fs.existsSync(filePath)).toBe(false);
         });
 
         test('Import trees', async () => {
@@ -167,8 +165,8 @@ describe('importDomain', () => {
                 ]
             };
 
-            const filePath = `${mockConfig.import.directory}/test.json`;
-            await fs.promises.writeFile(filePath, JSON.stringify(data, null, '\t'));
+            const filepath = `${mockConfig.import.directory}/test.json`;
+            await fs.promises.writeFile(filepath, JSON.stringify(data, null, '\t'));
 
             const mockTreeDomain: Mockify<ITreeDomain> = {
                 saveTree: jest.fn()
@@ -179,13 +177,9 @@ describe('importDomain', () => {
                 'core.domain.tree': mockTreeDomain as ITreeDomain
             });
 
-            await imprtDomain.importConfig(filePath, ctx);
+            await imprtDomain.importConfig({filepath, ctx, forceNoTask: true});
 
             expect(mockTreeDomain.saveTree.mock.calls.length).toBe(2);
-
-            // Delete remaining import file.
-            await fs.promises.unlink(filePath);
-            expect(fs.existsSync(filePath)).toBe(false);
         });
 
         test('Import trees', async () => {
@@ -200,8 +194,8 @@ describe('importDomain', () => {
                 ]
             };
 
-            const filePath = `${mockConfig.import.directory}/test.json`;
-            await fs.promises.writeFile(filePath, JSON.stringify(data, null, '\t'));
+            const filepath = `${mockConfig.import.directory}/test.json`;
+            await fs.promises.writeFile(filepath, JSON.stringify(data, null, '\t'));
 
             const mockTreeDomain: Mockify<ITreeDomain> = {
                 saveTree: jest.fn()
@@ -212,13 +206,9 @@ describe('importDomain', () => {
                 'core.domain.tree': mockTreeDomain as ITreeDomain
             });
 
-            await imprtDomain.importConfig(filePath, ctx);
+            await imprtDomain.importConfig({filepath, ctx, forceNoTask: true});
 
             expect(mockTreeDomain.saveTree.mock.calls.length).toBe(2);
-
-            // Delete remaining import file.
-            await fs.promises.unlink(filePath);
-            expect(fs.existsSync(filePath)).toBe(false);
         });
     });
 
@@ -229,7 +219,7 @@ describe('importDomain', () => {
                 translator: mockTranslator as i18n
             });
 
-            expect(imprtDomain.importData({filename: 'kzdidnzj', ctx})).rejects.toThrow();
+            expect(imprtDomain.importData({filename: 'kzdidnzj', ctx}, {id: 'fakeTaskId'})).rejects.toThrow();
         });
 
         test('test import elements - simple and advanced links', async () => {
@@ -366,10 +356,6 @@ describe('importDomain', () => {
             expect(mockValidateHelper.validateLibrary.mock.calls.length).toBe(2);
             expect(mockValueDomain.saveValue.mock.calls.length).toBe(3);
             expect(mockValueDomain.getValues.mock.calls.length).toBe(1);
-
-            // Delete remaining import file.
-            await fs.promises.unlink(`${mockConfig.import.directory}/test.json`);
-            expect(fs.existsSync(`${mockConfig.import.directory}/test.json`)).toBe(false);
         });
 
         test('test import elements - simple link with matches', async () => {
@@ -470,12 +456,7 @@ describe('importDomain', () => {
                 translator: mockTranslator as i18n
             });
 
-            try {
-                await imprtDomain.importData({filename: 'test.json', ctx}, {id: 'fakeTaskId'});
-            } finally {
-                // Delete remaining import file.
-                await fs.promises.unlink(`${mockConfig.import.directory}/test.json`);
-            }
+            await imprtDomain.importData({filename: 'test.json', ctx}, {id: 'fakeTaskId'});
 
             expect(mockRecordDomain.createRecord.mock.calls.length).toBe(1);
             expect(mockRecordDomain.find.mock.calls.length).toBe(1);
@@ -547,12 +528,7 @@ describe('importDomain', () => {
                 translator: mockTranslator as i18n
             });
 
-            try {
-                await imprtDomain.importData({filename: 'test.json', ctx}, {id: 'fakeTaskId'});
-            } finally {
-                // Delete remaining import file.
-                await fs.promises.unlink(`${mockConfig.import.directory}/test.json`);
-            }
+            await imprtDomain.importData({filename: 'test.json', ctx}, {id: 'fakeTaskId'});
 
             expect(mockRecordDomain.find.mock.calls.length).toBe(1);
             expect(mockValidateHelper.validateLibrary.mock.calls.length).toBe(1);
@@ -638,9 +614,6 @@ describe('importDomain', () => {
             expect(mockRecordDomain.find).toBeCalledTimes(2);
             expect(mockRecordDomain.createRecord).toBeCalledTimes(1);
             expect(mockValueDomain.saveValue).toBeCalledTimes(2);
-
-            // Delete remaining import file.
-            await fs.promises.unlink(`${mockConfig.import.directory}/test.json`);
         });
 
         test('test import elements - Insert mode', async () => {
@@ -721,9 +694,6 @@ describe('importDomain', () => {
             expect(mockRecordDomain.find).toBeCalledTimes(2);
             expect(mockRecordDomain.createRecord).toBeCalledTimes(1);
             expect(mockValueDomain.saveValue).toBeCalledTimes(1);
-
-            // Delete remaining import file.
-            await fs.promises.unlink(`${mockConfig.import.directory}/test.json`);
         });
 
         test('test import elements - Update mode', async () => {
@@ -810,16 +780,9 @@ describe('importDomain', () => {
             expect(mockRecordDomain.createRecord).not.toBeCalled();
             expect(mockValueDomain.saveValue).toBeCalledTimes(1);
 
-            expect(fs.existsSync(`${mockConfig.import.directory}/test.json`)).toBe(true);
-
-            // Delete remaining import file.
-            await fs.promises.unlink(`${mockConfig.import.directory}/test.json`);
-
             // check if report file exist
-            expect(fs.existsSync(`${mockConfig.import.directory}/test.data.report.txt`)).toBe(true);
-
-            // Delete remaining report file.
-            await fs.promises.unlink(`${mockConfig.import.directory}/test.data.report.txt`);
+            const importDirFiles = fs.readdirSync(mockConfig.import.directory);
+            expect(importDirFiles.filter(f => f.endsWith('.data.report.txt')).length).toBeGreaterThan(0);
         });
     });
 });
