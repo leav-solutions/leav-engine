@@ -587,9 +587,8 @@ export default function ({
             }
 
             const reportFileName = nanoid() + '.config.report.txt';
-            const lang = ctx.lang || config.lang.default;
-
             const reportFilePath = `${config.import.directory}/${reportFileName}`;
+            const lang = ctx.lang || config.lang.default;
 
             try {
                 await _jsonSchemaValidation(IMPORT_CONFIG_SCHEMA_PATH, filepath);
@@ -604,15 +603,13 @@ export default function ({
                     _writeReport(fd, e.path.join(' '), e, lang);
                 }
 
-                if (typeof task?.id !== 'undefined') {
+                if (!forceNoTask) {
                     // We link report file to task
                     await tasksManagerDomain.setLink(
                         task.id,
                         {name: reportFileName, url: `/${config.import.endpoint}/${reportFileName}`},
                         ctx
                     );
-
-                    return task.id;
                 }
 
                 throw new Error(`Invalid JSON data. See ${reportFilePath} file for more details.`);
@@ -646,6 +643,10 @@ export default function ({
             }
 
             console.info('Configuration import completed.');
+
+            if (!forceNoTask) {
+                return task.id;
+            }
         },
         async importData(params: IImportDataParams, task?: ITaskFuncParams): Promise<string> {
             const {filename, ctx, excelMapping} = params;
@@ -701,7 +702,13 @@ export default function ({
                     _writeReport(fd, e.path.join(' '), e, lang);
                 }
 
-                // FIXME: we should link report file and throw here
+                await tasksManagerDomain.setLink(
+                    task.id,
+                    {name: reportFileName, url: `/${config.import.endpoint}/${reportFileName}`},
+                    ctx
+                );
+
+                throw new Error(`Invalid JSON data. See ${reportFilePath} file for more details.`);
             }
 
             const progress = {
