@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IQueryInfos} from '_types/queryInfos';
 import {aql, Database} from 'arangojs';
 import {IDbService} from 'infra/db/dbService';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IUtils} from 'utils/utils';
-import {IQueryInfos} from '_types/queryInfos';
+import {mockAttrAdvLink, mockAttrSimpleLink} from '../../__tests__/mocks/attribute';
+import {mockRecord} from '../../__tests__/mocks/record';
 import {AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 import {IValue} from '../../_types/value';
-import {mockAttrAdvLink} from '../../__tests__/mocks/attribute';
-import {mockRecord} from '../../__tests__/mocks/record';
 import attributeAdvancedLinkRepo from './attributeAdvancedLinkRepo';
 import {IAttributeTypeRepo} from './attributeTypesRepo';
 
@@ -921,6 +921,37 @@ describe('AttributeAdvancedLinkRepo', () => {
             expect(valueQuery).toMatchSnapshot();
         });
 
+        test('Should return query to retrieve value to filter on for reverse link, based on simple link', async () => {
+            const mockDbServ = {
+                db: new Database()
+            };
+
+            const mockRepo: Mockify<IAttributeTypeRepo> = {
+                filterValueQueryPart: jest.fn().mockReturnValue(aql`<VALUE QUERY PART>`)
+            };
+
+            const attrRepo = attributeAdvancedLinkRepo({
+                'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper,
+                'core.infra.db.dbService': mockDbServ
+            });
+
+            const valueQuery = attrRepo.filterValueQueryPart(
+                [
+                    {
+                        id: 'linked_from',
+                        type: AttributeTypes.ADVANCED_LINK,
+                        linked_library: 'test_lib',
+                        reverse_link: {...mockAttrSimpleLink},
+                        _repo: mockRepo as IAttributeTypeRepo
+                    },
+                    {id: 'label', type: AttributeTypes.ADVANCED, _repo: mockRepo as IAttributeTypeRepo}
+                ],
+                {condition: AttributeCondition.EQUAL, value: 'MyLabel'}
+            );
+
+            expect(valueQuery).toMatchSnapshot();
+        });
+
         test('Should return query to retrieve value to filter on for "count" filter', async () => {
             const mockDbServ = {
                 db: new Database()
@@ -944,6 +975,73 @@ describe('AttributeAdvancedLinkRepo', () => {
                     {
                         id: 'linked_from',
                         type: AttributeTypes.ADVANCED_LINK,
+                        _repo: mockRepo as IAttributeTypeRepo
+                    }
+                ],
+                {condition: AttributeCondition.IS_EMPTY}
+            );
+
+            expect(valueQuery).toMatchSnapshot();
+        });
+
+        test('Should return query to retrieve value to filter on for "count" filter on reverse link', async () => {
+            const mockDbServ = {
+                db: new Database()
+            };
+
+            const mockFilterTypesHelperCount: Mockify<IFilterTypesHelper> = {
+                isCountFilter: jest.fn().mockReturnValue(true)
+            };
+
+            const mockRepo: Mockify<IAttributeTypeRepo> = {
+                filterValueQueryPart: jest.fn().mockReturnValue(aql`<VALUE QUERY PART>`)
+            };
+
+            const attrRepo = attributeAdvancedLinkRepo({
+                'core.infra.record.helpers.filterTypes': mockFilterTypesHelperCount as IFilterTypesHelper,
+                'core.infra.db.dbService': mockDbServ
+            });
+
+            const valueQuery = attrRepo.filterValueQueryPart(
+                [
+                    {
+                        id: 'linked_from',
+                        type: AttributeTypes.ADVANCED_LINK,
+                        reverse_link: {...mockAttrAdvLink},
+                        _repo: mockRepo as IAttributeTypeRepo
+                    }
+                ],
+                {condition: AttributeCondition.IS_EMPTY}
+            );
+
+            expect(valueQuery).toMatchSnapshot();
+        });
+
+        test('Should return query to retrieve value to filter on for "count" filter on reverse link, based on simple link', async () => {
+            const mockDbServ = {
+                db: new Database()
+            };
+
+            const mockFilterTypesHelperCount: Mockify<IFilterTypesHelper> = {
+                isCountFilter: jest.fn().mockReturnValue(true)
+            };
+
+            const mockRepo: Mockify<IAttributeTypeRepo> = {
+                filterValueQueryPart: jest.fn().mockReturnValue(aql`<VALUE QUERY PART>`)
+            };
+
+            const attrRepo = attributeAdvancedLinkRepo({
+                'core.infra.record.helpers.filterTypes': mockFilterTypesHelperCount as IFilterTypesHelper,
+                'core.infra.db.dbService': mockDbServ
+            });
+
+            const valueQuery = attrRepo.filterValueQueryPart(
+                [
+                    {
+                        id: 'linked_from',
+                        type: AttributeTypes.ADVANCED_LINK,
+                        linked_library: 'test_lib',
+                        reverse_link: {...mockAttrSimpleLink},
                         _repo: mockRepo as IAttributeTypeRepo
                     }
                 ],

@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, AqlQuery, GeneratedAqlQuery, join, literal} from 'arangojs/aql';
+import {ILinkValue, IValueEdge} from '_types/value';
+import {AqlQuery, GeneratedAqlQuery, aql, join, literal} from 'arangojs/aql';
 import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IUtils} from 'utils/utils';
-import {ILinkValue, IValueEdge} from '_types/value';
-import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {IRecord} from '../../_types/record';
+import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo, IAttributeWithRevLink} from './attributeTypesRepo';
@@ -335,32 +335,47 @@ export default function ({
                 ? {...attributes[1], id: '_key'}
                 : attributes[1];
             const isCountFilter = filterTypes.isCountFilter(filter);
+            const isReverseLink = !!attributes[0].reverse_link;
+            const isReverseLinkOnSimpleLink =
+                isReverseLink && attributes[0].reverse_link?.type === AttributeTypes.SIMPLE_LINK;
 
             const linkIdentifier = parentIdentifier + 'v';
             const vIdentifier = literal(linkIdentifier);
             const eIdentifier = literal(parentIdentifier + 'e');
 
-            const eAttribute = !!attributes[0].reverse_link
-                ? (attributes[0].reverse_link as IAttribute)?.id
-                : attributes[0].id;
-            const direction = !!attributes[0].reverse_link ? aql`INBOUND` : aql`OUTBOUND`;
+            const eAttribute = isReverseLink ? (attributes[0].reverse_link as IAttribute)?.id : attributes[0].id;
+            const direction = isReverseLink ? aql`INBOUND` : aql`OUTBOUND`;
 
             let retrieveValue: GeneratedAqlQuery;
 
             if (isCountFilter) {
+                const countValueDirection = isReverseLink ? '_to' : '_from';
+                if (isReverseLinkOnSimpleLink) {
+                    const c = dbService.db.collection(attributes[0].linked_library);
+                    return aql`
+                        COUNT(
+                            FOR ${vIdentifier} IN ${c}
+                                FILTER ${vIdentifier}.${attributes[0].reverse_link.id} == ${literal(
+                        parentIdentifier
+                    )}._key
+                            RETURN true
+                        )
+                    `;
+                }
+
                 // In "count" filters, we don't need to retrieve the actual value, we just need to know how many links we have
                 // Thus, using a "join" query on the edge collection is more efficient than using a traversal
                 return aql`
                     COUNT(
                         FOR ${vIdentifier} IN ${collec}
-                            FILTER ${vIdentifier}._from == ${literal(parentIdentifier)}._id
+                            FILTER ${vIdentifier}.${literal(countValueDirection)} == ${literal(parentIdentifier)}._id
                                 AND ${vIdentifier}.attribute == ${eAttribute}
                             RETURN true
                     )
                 `;
             }
 
-            if (attributes[0].reverse_link?.type === AttributeTypes.SIMPLE_LINK) {
+            if (isReverseLinkOnSimpleLink) {
                 const c = dbService.db.collection(attributes[0].linked_library);
                 retrieveValue = aql`
                         FOR ${vIdentifier} IN ${c}
