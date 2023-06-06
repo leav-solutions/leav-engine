@@ -5,23 +5,23 @@ import React, {useState} from 'react';
 import {NodeData} from 'react-sortable-tree';
 import {Breadcrumb, Icon, Popup} from 'semantic-ui-react';
 import styled from 'styled-components';
+import {GET_TREE_BY_ID_trees_list} from '../../../../../../../../../../../_gqlTypes/GET_TREE_BY_ID';
 import useLang from '../../../../../../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../../../../../../utils';
-import {GET_TREE_BY_ID_trees_list} from '../../../../../../../../../../../_gqlTypes/GET_TREE_BY_ID';
-import {RecordIdentity_whoAmI} from '../../../../../../../../../../../_gqlTypes/RecordIdentity';
 import RecordCard from '../../../../../../../../../../shared/RecordCard';
 import TreeExplorer from '../../../../../../../../../../trees/TreeExplorer';
 import {
+    ActiveDependencyNode,
+    FormBuilderActionTypes,
     defaultDepAttribute,
-    defaultDepValue,
-    FormBuilderActionTypes
+    defaultDepValue
 } from '../../../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
 
 interface IBreadcrumbSectionProps {
     treeData: GET_TREE_BY_ID_trees_list;
-    element?: RecordIdentity_whoAmI;
-    ancestors?: RecordIdentity_whoAmI[];
+    element?: ActiveDependencyNode;
+    ancestors?: ActiveDependencyNode[];
 }
 
 const TreeElement = styled.div`
@@ -50,7 +50,7 @@ function BreadcrumbSection({treeData, element, ancestors}: IBreadcrumbSectionPro
     const _handleCloseTree = () => setShowTree(false);
 
     // No element supplied, consider it's root so display tree label
-    const content = element ? <RecordCard record={element} /> : treeLabel;
+    const content = element ? <RecordCard record={element?.record?.whoAmI} /> : treeLabel;
 
     const _handleTreeNodeSelection = ({node}: NodeData) => {
         setShowTree(false);
@@ -58,8 +58,8 @@ function BreadcrumbSection({treeData, element, ancestors}: IBreadcrumbSectionPro
             type: FormBuilderActionTypes.CHANGE_ACTIVE_DEPENDENCY,
             activeDependency: {
                 attribute: state.activeDependency?.attribute || defaultDepAttribute,
-                value: node.record.whoAmI || defaultDepValue,
-                ancestors: node.ancestors.slice(0, -1).map(p => p.whoAmI)
+                value: (node as ActiveDependencyNode) || {id: defaultDepValue, record: null},
+                ancestors: node.ancestors ? node.ancestors.slice(0, -1) : []
             }
         });
     };
@@ -78,7 +78,7 @@ function BreadcrumbSection({treeData, element, ancestors}: IBreadcrumbSectionPro
     let startTreeFrom;
     if (ancestors) {
         const parent = ancestors.slice(-1)[0];
-        startTreeFrom = parent ? {id: parent.id, library: parent.library.id} : undefined;
+        startTreeFrom = parent?.id;
     }
 
     return (

@@ -1,6 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {PublishedEvent} from '_types/event';
+import {IAppGraphQLSchema} from '_types/graphql';
+import {IList, IPaginationParams} from '_types/list';
+import {IQueryInfos} from '_types/queryInfos';
+import {IKeyValue} from '_types/shared';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
@@ -8,12 +13,6 @@ import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {GraphQLResolveInfo, GraphQLScalarType} from 'graphql';
 import {withFilter} from 'graphql-subscriptions';
 import {omit} from 'lodash';
-import {PublishedEvent} from '_types/event';
-import {IAppGraphQLSchema} from '_types/graphql';
-import {IList, IPaginationParams} from '_types/list';
-import {IQueryInfos} from '_types/queryInfos';
-import {IKeyValue} from '_types/shared';
-import {ITreeDomain, TRIGGER_NAME_TREE_EVENT} from '../../../domain/tree/treeDomain';
 import {PermissionTypes, TreeNodePermissionsActions, TreePermissionsActions} from '../../../_types/permissions';
 import {IQueryField, IRecord} from '../../../_types/record';
 import {
@@ -25,6 +24,7 @@ import {
     TreeEventTypes,
     TreePaths
 } from '../../../_types/tree';
+import {ITreeDomain, TRIGGER_NAME_TREE_EVENT} from '../../../domain/tree/treeDomain';
 import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
 import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from '../helpers/subscriptions';
@@ -123,6 +123,20 @@ export default function ({
         return depth;
     };
 
+    const _getAncestors = async (
+        parent: ITreeNode & {treeId?: string},
+        _,
+        ctx: IQueryInfos,
+        info: GraphQLResolveInfo
+    ): Promise<TreePaths> => {
+        const treeId = parent.treeId ?? ctx.treeId ?? (await _extractTreeIdFromParent(parent, info, ctx));
+
+        const ancestors = await treeDomain.getElementAncestors({treeId, nodeId: parent.id, ctx});
+
+        // Add treeId as it might be useful for nested resolvers
+        return ancestors.map(n => ({...n, treeId}));
+    };
+
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -216,6 +230,7 @@ export default function ({
                         id: ID!,
                         order: Int,
                         childrenCount: Int,
+                        ancestors: [TreeNode!],
                         record: Record!,
                         linkedRecords(attribute: ID): [Record!],
                         permissions: TreeNodePermissions!
@@ -595,20 +610,7 @@ export default function ({
                             // Add treeId as it might be useful for nested resolvers
                             return children.reduce(_filterTreeContentReduce(ctx, treeId), Promise.resolve([]));
                         },
-                        ancestors: async (
-                            parent: ITreeNode & {treeId?: string},
-                            _,
-                            ctx: IQueryInfos,
-                            info: GraphQLResolveInfo
-                        ): Promise<TreePaths> => {
-                            const treeId =
-                                parent.treeId ?? ctx.treeId ?? (await _extractTreeIdFromParent(parent, info, ctx));
-
-                            const ancestors = await treeDomain.getElementAncestors({treeId, nodeId: parent.id, ctx});
-
-                            // Add treeId as it might be useful for nested resolvers
-                            return ancestors.map(n => ({...n, treeId}));
-                        },
+                        ancestors: _getAncestors,
                         linkedRecords: async (
                             parent: ITreeNode & {treeId?: string},
                             {attribute}: {attribute: string},
@@ -680,7 +682,8 @@ export default function ({
 
                                 return {...allPerms, [action]: isAllowed};
                             }, Promise.resolve({}));
-                        }
+                        },
+                        ancestors: _getAncestors
                     }
                 }
             };

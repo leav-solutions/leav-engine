@@ -2,6 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useApolloClient} from '@apollo/client';
+import {
+    TREE_NODE_CHILDREN,
+    TREE_NODE_CHILDRENVariables,
+    TREE_NODE_CHILDREN_treeNodeChildren_list
+} from '_gqlTypes/TREE_NODE_CHILDREN';
+import {WithOptional} from '_types/WithOptional';
+import {ITreeNode, ITreeNodeData, fakeRootId} from '_types/trees';
 import {FetchResult} from 'apollo-link';
 import {ITreeItem} from 'components/attributes/EditAttribute/EditAttributeTabs/EmbeddedFieldsTab/EmbeddedFieldsTab';
 import {getTreeNodeChildrenQuery} from 'queries/trees/treeNodeChildrenQuery';
@@ -10,21 +17,14 @@ import {addNodeUnderParent, changeNodeAtPath, find, getNodeAtPath, removeNodeAtP
 import 'react-sortable-tree/style.css';
 import {Icon, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {
-    TREE_NODE_CHILDREN,
-    TREE_NODE_CHILDRENVariables,
-    TREE_NODE_CHILDREN_treeNodeChildren_list
-} from '_gqlTypes/TREE_NODE_CHILDREN';
-import {fakeRootId, ITreeNode, ITreeNodeData} from '_types/trees';
-import {WithOptional} from '_types/WithOptional';
-import {addTreeElementQuery} from '../../../queries/trees/treeAddElementMutation';
-import {deleteTreeElementQuery} from '../../../queries/trees/treeDeleteElementMutation';
-import {moveTreeElementQuery} from '../../../queries/trees/treeMoveElementMutation';
-import {getTreeNodeKey} from '../../../utils/utils';
 import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '../../../_gqlTypes/ADD_TREE_ELEMENT';
 import {DELETE_TREE_ELEMENT, DELETE_TREE_ELEMENTVariables} from '../../../_gqlTypes/DELETE_TREE_ELEMENT';
 import {GET_TREE_BY_ID_trees_list} from '../../../_gqlTypes/GET_TREE_BY_ID';
 import {MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables} from '../../../_gqlTypes/MOVE_TREE_ELEMENT';
+import {addTreeElementQuery} from '../../../queries/trees/treeAddElementMutation';
+import {deleteTreeElementQuery} from '../../../queries/trees/treeDeleteElementMutation';
+import {moveTreeElementQuery} from '../../../queries/trees/treeMoveElementMutation';
+import {getTreeNodeKey} from '../../../utils/utils';
 import RecordCard from '../../shared/RecordCard';
 import TreeExplorerView from './TreeExplorerView';
 import {
@@ -46,7 +46,7 @@ interface ITreeExplorerProps {
     startAt?: string;
 }
 
-type ConvertTreeRecordNode = WithOptional<TREE_NODE_CHILDREN_treeNodeChildren_list, 'order'>;
+type ConvertTreeRecordNode = WithOptional<TREE_NODE_CHILDREN_treeNodeChildren_list, 'order' | 'ancestors'>;
 const _convertTreeRecord = (nodes: ConvertTreeRecordNode[], compact: boolean): ITreeItem[] => {
     return nodes.map(
         (n: ConvertTreeRecordNode): ITreeItem => {

@@ -41,10 +41,24 @@ export interface SAVE_FORM_saveForm_elements {
     elements: SAVE_FORM_saveForm_elements_elements[];
 }
 
-export interface SAVE_FORM_saveForm_dependencyAttributes {
+export interface SAVE_FORM_saveForm_dependencyAttributes_StandardAttribute {
     id: string;
     label: SystemTranslation | null;
 }
+
+export interface SAVE_FORM_saveForm_dependencyAttributes_TreeAttribute_linked_tree {
+    id: string;
+}
+
+export interface SAVE_FORM_saveForm_dependencyAttributes_TreeAttribute {
+    id: string;
+    label: SystemTranslation | null;
+    linked_tree: SAVE_FORM_saveForm_dependencyAttributes_TreeAttribute_linked_tree | null;
+}
+
+export type SAVE_FORM_saveForm_dependencyAttributes =
+    | SAVE_FORM_saveForm_dependencyAttributes_StandardAttribute
+    | SAVE_FORM_saveForm_dependencyAttributes_TreeAttribute;
 
 export interface SAVE_FORM_saveForm {
     id: string;

@@ -3,44 +3,59 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {formBuilderReducer} from '../..';
 import {FormElementTypes} from '../../../../../../../../../../../_gqlTypes/globalTypes';
-import {layoutElements} from '../../../uiElements/__mocks__';
 import {UIElementTypes} from '../../../_types';
-import {defaultContainerId, FormBuilderActionTypes} from '../../formBuilderReducer';
+import {layoutElements} from '../../../uiElements/__mocks__';
 import {formElem1, formElem2, formElem3, formElem4, mockInitialState} from '../../_fixtures/fixtures';
+import {FormBuilderActionTypes, defaultContainerId} from '../../formBuilderReducer';
 
 describe('formBuilderReducer', () => {
     test('CHANGE_ACTIVE_DEPENDENCY', async () => {
         const newDep = {
             attribute: 'category',
             value: {
-                id: '12345',
-                label: null,
-                color: null,
-                preview: null,
-                library: {
-                    id: 'category',
-                    label: null
+                id: '987654',
+                record: {
+                    whoAmI: {
+                        id: '12345',
+                        label: null,
+                        color: null,
+                        preview: null,
+                        library: {
+                            id: 'category',
+                            label: null
+                        }
+                    }
                 }
             },
             ancestors: [
                 {
-                    id: '12344',
-                    label: null,
-                    color: null,
-                    preview: null,
-                    library: {
-                        id: 'category',
-                        label: null
+                    id: '654320',
+                    record: {
+                        whoAmI: {
+                            id: '12344',
+                            label: null,
+                            color: null,
+                            preview: null,
+                            library: {
+                                id: 'category',
+                                label: null
+                            }
+                        }
                     }
                 },
                 {
-                    id: '12343',
-                    label: null,
-                    color: null,
-                    preview: null,
-                    library: {
-                        id: 'category',
-                        label: null
+                    id: '654321',
+                    record: {
+                        whoAmI: {
+                            id: '12343',
+                            label: null,
+                            color: null,
+                            preview: null,
+                            library: {
+                                id: 'category',
+                                label: null
+                            }
+                        }
                     }
                 }
             ]

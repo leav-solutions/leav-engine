@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import cloneDeep from 'lodash/cloneDeep';
-import {RecordIdentity_whoAmI} from '../../../../../../../../../../../_gqlTypes/RecordIdentity';
 import {
     defaultDepAttribute,
     defaultDepValue,
@@ -16,15 +15,15 @@ export default function changeActiveDependency(
     state: IFormBuilderState,
     action: IFormBuilderActionChangeActiveDependency
 ) {
-    const {attribute = '', value = {}, ancestors = []} = action.activeDependency ?? {};
+    const {attribute, value, ancestors} = action.activeDependency ?? {};
 
     // Retrieve active fields.
-    // Always take default fields, set it as herited if we have an active dependency
+    // Always take default fields, set it as inherited if we have an active dependency
     let activeFields = cloneDeep(state.elements[defaultDepAttribute][defaultDepValue]);
     for (const containerId of Object.keys(activeFields)) {
         activeFields[containerId] = activeFields[containerId].map(f => ({
             ...f,
-            herited: attribute && (value as RecordIdentity_whoAmI)?.id ? true : false
+            herited: attribute && value?.id ? true : false
         }));
     }
 
@@ -46,7 +45,7 @@ export default function changeActiveDependency(
         }
 
         // Retrieve fields for this dependency value
-        const currentDepKey = getKeyFromDepValue(value as RecordIdentity_whoAmI);
+        const currentDepKey = getKeyFromDepValue(value as IFormBuilderState['activeDependency']['value']);
         const currentDepFields = state.elements?.[attribute]?.[currentDepKey] ?? {};
 
         for (const containerId of Object.keys(currentDepFields)) {

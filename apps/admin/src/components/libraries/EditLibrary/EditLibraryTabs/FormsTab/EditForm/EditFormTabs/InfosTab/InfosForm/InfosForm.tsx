@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Formik,FormikProps} from 'formik';
-import React,{useEffect,useRef,useState} from 'react';
+import {Formik, FormikProps} from 'formik';
+import React, {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {Button,Form,Icon} from 'semantic-ui-react';
+import {Button, Form, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
-import useLang from '../../../../../../../../../hooks/useLang';
-import {arrayPick,formatIDString,getFieldError,omit,pick} from '../../../../../../../../../utils';
 import {GET_FORM_forms_list} from '../../../../../../../../../_gqlTypes/GET_FORM';
-import {AttributeType,FormInput} from '../../../../../../../../../_gqlTypes/globalTypes';
+import {AttributeType, FormInput} from '../../../../../../../../../_gqlTypes/globalTypes';
+import useLang from '../../../../../../../../../hooks/useLang';
+import {arrayPick, formatIDString, getFieldError, omit, pick} from '../../../../../../../../../utils';
 import AttributeSelector from '../../../../../../../../attributes/AttributeSelector';
 import FormFieldWrapper from '../../../../../../../../shared/FormFieldWrapper';
 import {useEditFormModalButtonsContext} from '../../../../EditFormModal/EditFormModalButtonsContext';
@@ -173,7 +173,7 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
                 <FormFieldWrapper error={_getErrorByField('dependencyAttributes')}>
                     <AttributeSelector
                         label={t('forms.dependency_attributes')}
-                        filters={{type: [AttributeType.tree]}}
+                        filters={{type: [AttributeType.tree], libraries: [library]}}
                         multiple
                         name="dependencyAttributes"
                         value={dependencyAttributes}

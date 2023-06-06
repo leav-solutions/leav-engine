@@ -3,14 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {GET_FORM_forms_list} from '../../../../../../../../../_gqlTypes/GET_FORM';
 import {FormElementTypes} from '../../../../../../../../../_gqlTypes/globalTypes';
-import {formElements, layoutElements} from '../uiElements';
 import {IFormElement} from '../_types';
+import {formElements, layoutElements} from '../uiElements';
 import {
+    ElementsByDependencyAttribute,
+    IFormBuilderState,
     defaultContainerId,
     defaultDepAttribute,
-    defaultDepValue,
-    ElementsByDependencyAttribute,
-    IFormBuilderState
+    defaultDepValue
 } from './formBuilderReducer';
 import getKeyFromDepValue from './helpers/getKeyFromDepValue';
 import sortByOrder from './helpers/sortByOrder';
@@ -73,11 +73,16 @@ export default function computeInitialState(library: string, form: GET_FORM_form
             }
 
             const depKey = getKeyFromDepValue({
-                id: cur.dependencyValue.value.id || '',
-                library: {id: cur.dependencyValue.value.library || '', label: null},
-                label: '',
-                color: '',
-                preview: null
+                id: '__root__',
+                record: {
+                    whoAmI: {
+                        id: cur.dependencyValue.value.id || '',
+                        library: {id: cur.dependencyValue.value.library || '', label: null},
+                        label: '',
+                        color: '',
+                        preview: null
+                    }
+                }
             });
 
             acc[depAttr][depKey] = fieldsByContainer;

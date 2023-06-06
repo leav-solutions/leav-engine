@@ -2,15 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FormElementTypes} from '../../../../../../../../../../../_gqlTypes/globalTypes';
-import {formElements, layoutElements} from '../../../uiElements';
 import {FieldTypes, UIElementTypes} from '../../../_types';
+import {formElements, layoutElements} from '../../../uiElements';
+import {mockInitialState} from '../../_fixtures/fixtures';
 import {
+    FormBuilderActionTypes,
     defaultContainerId,
     defaultDepAttribute,
-    defaultDepValue,
-    FormBuilderActionTypes
+    defaultDepValue
 } from '../../formBuilderReducer';
-import {mockInitialState} from '../../_fixtures/fixtures';
 import addElement from './addElement';
 
 describe('formBuilderReducer', () => {
@@ -59,14 +59,19 @@ describe('formBuilderReducer', () => {
                     activeDependency: {
                         attribute: 'category',
                         value: {
-                            id: '12345',
-                            library: {
-                                id: 'category',
-                                label: null
-                            },
-                            label: null,
-                            color: null,
-                            preview: null
+                            id: '98731',
+                            record: {
+                                whoAmI: {
+                                    id: '12345',
+                                    library: {
+                                        id: 'category',
+                                        label: null
+                                    },
+                                    label: null,
+                                    color: null,
+                                    preview: null
+                                }
+                            }
                         },
                         ancestors: []
                     }
@@ -96,14 +101,19 @@ describe('formBuilderReducer', () => {
                     activeDependency: {
                         attribute: 'type',
                         value: {
-                            id: '12345',
-                            library: {
-                                id: 'type',
-                                label: null
-                            },
-                            label: null,
-                            color: null,
-                            preview: null
+                            id: '987321',
+                            record: {
+                                whoAmI: {
+                                    id: '12345',
+                                    library: {
+                                        id: 'type',
+                                        label: null
+                                    },
+                                    label: null,
+                                    color: null,
+                                    preview: null
+                                }
+                            }
                         },
                         ancestors: []
                     }

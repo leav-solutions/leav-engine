@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {GET_FORM_forms_list} from '../../../../../../../../../_gqlTypes/GET_FORM';
-import {RecordIdentity_whoAmI} from '../../../../../../../../../_gqlTypes/RecordIdentity';
 import {IKeyValue} from '../../../../../../../../../_types/shared';
 import {IFormElement, IFormElementPos} from '../_types';
 import addElement from './helpers/actions/addElement';
@@ -15,10 +15,9 @@ import removeTab from './helpers/actions/removeTab';
 import saveSettings from './helpers/actions/saveSettings';
 
 export type ElementsByDependencyAttribute = IKeyValue<ElementsByDependencyValue>;
-
 export type ElementsByDependencyValue = IKeyValue<ElementsByContainer>;
-
 export type ElementsByContainer = IKeyValue<IFormElement[]>;
+export type ActiveDependencyNode = Pick<TREE_NODE_CHILDREN_treeNodeChildren_list, 'id' | 'record'>;
 
 export const defaultDepAttribute = '__default';
 export const defaultDepValue = '__default';
@@ -30,8 +29,8 @@ export interface IFormBuilderState {
     openSettings: boolean;
     activeDependency: {
         attribute: string;
-        ancestors: RecordIdentity_whoAmI[];
-        value: RecordIdentity_whoAmI | null;
+        ancestors: ActiveDependencyNode[];
+        value: ActiveDependencyNode | null;
     } | null;
     elementInSettings: IFormElement | null;
     elements: ElementsByDependencyAttribute;
@@ -78,11 +77,7 @@ export interface IFormBuilderActionSaveSettings {
 }
 export interface IFormBuilderActionChangeActiveDependency {
     type: FormBuilderActionTypes.CHANGE_ACTIVE_DEPENDENCY;
-    activeDependency: {
-        attribute: string;
-        ancestors: RecordIdentity_whoAmI[];
-        value: RecordIdentity_whoAmI | null;
-    } | null;
+    activeDependency: IFormBuilderState['activeDependency'] | null;
 }
 export interface IFormBuilderActionRemoveTab {
     type: FormBuilderActionTypes.REMOVE_TAB;

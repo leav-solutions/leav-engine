@@ -15,6 +15,17 @@ export const getTreeNodeChildrenQuery = gql`
                 record {
                     ...RecordIdentity
                 }
+                ancestors {
+                    id
+                    record {
+                        id
+                        library {
+                            id
+                            label
+                        }
+                        ...RecordIdentity
+                    }
+                }
             }
         }
     }
