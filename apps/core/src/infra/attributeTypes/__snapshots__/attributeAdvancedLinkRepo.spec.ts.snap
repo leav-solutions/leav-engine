@@ -106,6 +106,41 @@ exports[`AttributeAdvancedLinkRepo filterValueQueryPart Should return query to r
 }
 `;
 
+exports[`AttributeAdvancedLinkRepo filterValueQueryPart Should return query to retrieve value to filter on for "count" filter on reverse link 1`] = `
+{
+  "_source": [Function],
+  "bindVars": {
+    "@value0": "core_edge_values_links",
+    "value1": "adv_link_attribute",
+  },
+  "query": "
+                    COUNT(
+                        FOR rv IN @@value0
+                            FILTER rv._to == r._id
+                                AND rv.attribute == @value1
+                            RETURN true
+                    )
+                ",
+}
+`;
+
+exports[`AttributeAdvancedLinkRepo filterValueQueryPart Should return query to retrieve value to filter on for "count" filter on reverse link, based on simple link 1`] = `
+{
+  "_source": [Function],
+  "bindVars": {
+    "@value0": "test_lib",
+    "value1": "simple_link_attribute",
+  },
+  "query": "
+                        COUNT(
+                            FOR rv IN @@value0
+                                FILTER rv.@value1 == r._key
+                            RETURN true
+                        )
+                    ",
+}
+`;
+
 exports[`AttributeAdvancedLinkRepo filterValueQueryPart Should return query to retrieve value to filter on for reverse link 1`] = `
 {
   "_source": [Function],
@@ -118,6 +153,19 @@ exports[`AttributeAdvancedLinkRepo filterValueQueryPart Should return query to r
                             @@value0
                             FILTER re.attribute == @value1
                          LET rlinkVal = (<VALUE QUERY PART>) RETURN rlinkVal )",
+}
+`;
+
+exports[`AttributeAdvancedLinkRepo filterValueQueryPart Should return query to retrieve value to filter on for reverse link, based on simple link 1`] = `
+{
+  "_source": [Function],
+  "bindVars": {
+    "@value0": "test_lib",
+    "value1": "simple_link_attribute",
+  },
+  "query": "FLATTEN( 
+                        FOR rv IN @@value0
+                            FILTER rv.@value1 == r._key LET rlinkVal = (<VALUE QUERY PART>) RETURN rlinkVal )",
 }
 `;
 
