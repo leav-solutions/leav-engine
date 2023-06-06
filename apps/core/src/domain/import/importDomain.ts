@@ -578,7 +578,7 @@ export default function ({
                         },
                         priority: TaskPriority.MEDIUM,
                         startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
-                        ...(!!task?.callback && {callback: task.callback})
+                        ...(!!task?.callbacks && {callbacks: task.callbacks})
                     },
                     ctx
                 );
@@ -669,7 +669,7 @@ export default function ({
                         },
                         priority: TaskPriority.MEDIUM,
                         startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
-                        ...(!!task?.callback && {callback: task.callback})
+                        ...(!!task?.callbacks && {callbacks: task.callbacks})
                     },
                     ctx
                 );
@@ -1137,12 +1137,14 @@ export default function ({
                 {
                     ...(!!startAt && {startAt}),
                     // Delete remaining import file.
-                    callback: {
-                        moduleName: 'utils',
-                        name: 'deleteFile',
-                        args: [`${config.import.directory}/${JSONFilename}`],
-                        type: [TaskCallbackType.ON_SUCCESS, TaskCallbackType.ON_FAILURE, TaskCallbackType.ON_CANCEL]
-                    }
+                    callbacks: [
+                        {
+                            moduleName: 'utils',
+                            name: 'deleteFile',
+                            args: [`${config.import.directory}/${JSONFilename}`],
+                            type: [TaskCallbackType.ON_SUCCESS, TaskCallbackType.ON_FAILURE, TaskCallbackType.ON_CANCEL]
+                        }
+                    ]
                 }
             );
         }

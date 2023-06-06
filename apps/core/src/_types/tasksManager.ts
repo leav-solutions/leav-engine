@@ -25,7 +25,7 @@ export enum TaskPriority {
     HIGH = 2
 }
 
-export type ITaskCreatePayload = Pick<ITask, 'label' | 'func' | 'priority' | 'callback'> &
+export type ITaskCreatePayload = Pick<ITask, 'label' | 'func' | 'priority' | 'callbacks'> &
     Partial<Pick<ITask, 'id' | 'startAt'>>;
 
 export type ITaskCancelPayload = Pick<ITask, 'id'>;
@@ -56,7 +56,8 @@ export enum TaskCallbackStatus {
     PENDING = 'PENDING',
     RUNNING = 'RUNNING',
     FAILED = 'FAILED',
-    DONE = 'DONE'
+    DONE = 'DONE',
+    SKIPPED = 'SKIPPED'
 }
 
 export type ITaskCallback = ITaskFunc & {args: any[]; type: TaskCallbackType[]; status?: TaskCallbackStatus};
@@ -65,7 +66,7 @@ export type ITaskCallback = ITaskFunc & {args: any[]; type: TaskCallbackType[]; 
 export interface ITaskFuncParams {
     id?: string;
     startAt?: number;
-    callback?: ITaskCallback;
+    callbacks?: ITaskCallback[];
 }
 
 export interface ITask {
@@ -84,6 +85,6 @@ export interface ITask {
     startedAt?: number;
     completedAt?: number;
     link?: {name: string; url: string};
-    callback?: ITaskCallback;
+    callbacks?: ITaskCallback[];
     workerId?: number;
 }

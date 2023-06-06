@@ -14,11 +14,12 @@ import {IDbUtils} from 'infra/db/dbUtils';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {ImportMode, ImportType} from '../../_types/import';
+import {IGraphqlApp} from '../graphql/graphqlApp';
 import {TaskCallbackType} from '../../_types/tasksManager';
 
 export interface ICoreImportApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
-    importConfig(filepath: string, clear: boolean): Promise<string>;
+    importConfig(filepath: string, clear: boolean): Promise<void>;
 }
 
 interface IDeps {
@@ -27,6 +28,7 @@ interface IDeps {
     'core.infra.db.dbUtils'?: IDbUtils;
     'core.utils'?: IUtils;
     'core.depsManager'?: AwilixContainer;
+    'core.app.graphql'?: IGraphqlApp;
     config?: Config.IConfig;
 }
 
@@ -59,6 +61,7 @@ export default function ({
     'core.domain.helpers.storeUploadFile': storeUploadFile,
     'core.utils': utils = null,
     'core.depsManager': depsManager = null,
+    'core.app.graphql': graphqlApp = null,
     'core.infra.db.dbUtils': dbUtils = null,
     config = null
 }: IDeps = {}): ICoreImportApp {
@@ -93,28 +96,41 @@ export default function ({
             {
                 ...(!forceNoTask && {
                     // Delete remaining import file.
-                    callback: {
-                        moduleName: 'utils',
-                        name: 'deleteFile',
-                        args: [filepath],
-                        type: [TaskCallbackType.ON_SUCCESS, TaskCallbackType.ON_FAILURE, TaskCallbackType.ON_CANCEL]
-                    }
+                    callbacks: [
+                        {
+                            moduleName: 'app',
+                            subModuleName: 'graphql',
+                            name: 'generateSchema',
+                            args: [],
+                            type: [TaskCallbackType.ON_SUCCESS, TaskCallbackType.ON_FAILURE, TaskCallbackType.ON_CANCEL]
+                        },
+                        {
+                            moduleName: 'utils',
+                            name: 'deleteFile',
+                            args: [filepath],
+                            type: [TaskCallbackType.ON_SUCCESS, TaskCallbackType.ON_FAILURE, TaskCallbackType.ON_CANCEL]
+                        }
+                    ]
                 })
             }
         );
     };
 
     return {
-        importConfig: async (filepath: string, clear: boolean): Promise<string> => {
-            return _importConfig(
-                filepath,
-                clear,
-                {
-                    userId: config.defaultUserId,
-                    queryId: 'ImportConfig'
-                },
-                true
-            );
+        importConfig: async (filepath: string, clear: boolean): Promise<void> => {
+            try {
+                await _importConfig(
+                    filepath,
+                    clear,
+                    {
+                        userId: config.defaultUserId,
+                        queryId: 'ImportConfig'
+                    },
+                    true
+                );
+            } finally {
+                await graphqlApp.generateSchema();
+            }
         },
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -177,16 +193,18 @@ export default function ({
                                 {
                                     // Delete remaining import file.
                                     ...(!!startAt && {startAt}),
-                                    callback: {
-                                        moduleName: 'utils',
-                                        name: 'deleteFile',
-                                        args: [`${config.import.directory}/${fileData.filename}`],
-                                        type: [
-                                            TaskCallbackType.ON_SUCCESS,
-                                            TaskCallbackType.ON_FAILURE,
-                                            TaskCallbackType.ON_CANCEL
-                                        ]
-                                    }
+                                    callbacks: [
+                                        {
+                                            moduleName: 'utils',
+                                            name: 'deleteFile',
+                                            args: [`${config.import.directory}/${fileData.filename}`],
+                                            type: [
+                                                TaskCallbackType.ON_SUCCESS,
+                                                TaskCallbackType.ON_FAILURE,
+                                                TaskCallbackType.ON_CANCEL
+                                            ]
+                                        }
+                                    ]
                                 }
                             );
 

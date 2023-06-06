@@ -42,7 +42,7 @@ export interface IUpdateData {
     workerId?: number;
     canceledBy?: string | null;
     archive?: boolean;
-    callback?: ITaskCallback;
+    callbacks?: ITaskCallback[];
 }
 
 interface IGetTasksParams extends IGetCoreEntitiesParams {
@@ -103,16 +103,16 @@ export default function ({
     const _monitorTasks = (ctx: IQueryInfos): NodeJS.Timer => {
         // check if tasks waiting for execution and execute them
         return setInterval(async () => {
-            const taskToExecute = (await taskRepo.getTasksToExecute(ctx)).list[0];
-            const taskToCancel = (await taskRepo.getTasksToCancel(ctx)).list[0];
-            const taskWithPendingCallback = (await taskRepo.getTasksWithPendingCallback(ctx)).list[0];
+            const taskToExecute = (await taskRepo.getTasksToExecute(ctx))?.list[0];
+            const taskToCancel = (await taskRepo.getTasksToCancel(ctx))?.list[0];
+            const taskWithPendingCallbacks = (await taskRepo.getTasksWithPendingCallbacks(ctx))?.list[0];
 
             if (taskToCancel) {
                 await _sendOrder(config.tasksManager.routingKeys.cancelOrders, taskToCancel, ctx);
             }
 
-            if (taskWithPendingCallback) {
-                await _executeCallback(taskWithPendingCallback, ctx);
+            if (taskWithPendingCallbacks) {
+                await _executeCallbacks(taskWithPendingCallbacks, ctx);
             }
 
             if (taskToExecute) {
@@ -176,33 +176,42 @@ export default function ({
         );
     };
 
-    const _executeCallback = async (task: ITask, ctx: IQueryInfos): Promise<void> => {
-        await _updateTask(task.id, {callback: {...task.callback, status: TaskCallbackStatus.RUNNING}}, ctx);
+    const _executeCallbacks = async (task: ITask, ctx: IQueryInfos): Promise<void> => {
+        let callbacks = task.callbacks.map(a => ({...a}));
 
-        let status;
+        for (const [i, callback] of callbacks.entries()) {
+            callbacks[i].status = TaskCallbackStatus.RUNNING;
+            await _updateTask(task.id, {callbacks}, ctx);
 
-        if (
-            (task.callback.type.includes(TaskCallbackType.ON_FAILURE) && task.status === TaskStatus.FAILED) ||
-            (task.callback.type.includes(TaskCallbackType.ON_SUCCESS) && task.status === TaskStatus.DONE) ||
-            (task.callback.type.includes(TaskCallbackType.ON_CANCEL) && task.status === TaskStatus.CANCELED)
-        ) {
-            try {
-                const callbackFunc = _getDepsManagerFunc({
-                    moduleName: task.callback.moduleName,
-                    subModuleName: task.callback.subModuleName,
-                    funcName: task.callback.name
-                });
+            let status: TaskCallbackStatus;
 
-                await callbackFunc(...task.callback.args);
+            if (
+                (callback.type.includes(TaskCallbackType.ON_FAILURE) && task.status === TaskStatus.FAILED) ||
+                (callback.type.includes(TaskCallbackType.ON_SUCCESS) && task.status === TaskStatus.DONE) ||
+                (callback.type.includes(TaskCallbackType.ON_CANCEL) && task.status === TaskStatus.CANCELED)
+            ) {
+                try {
+                    const callbackFunc = _getDepsManagerFunc({
+                        moduleName: callback.moduleName,
+                        subModuleName: callback.subModuleName,
+                        funcName: callback.name
+                    });
 
-                status = TaskCallbackStatus.DONE;
-            } catch (e) {
-                logger.error('Error executing callback', e);
-                status = TaskCallbackStatus.FAILED;
+                    await callbackFunc(...callback.args);
+
+                    status = TaskCallbackStatus.DONE;
+                } catch (e) {
+                    logger.error('Error executing callback', e);
+                    status = TaskCallbackStatus.FAILED;
+                }
+            } else {
+                status = TaskCallbackStatus.SKIPPED;
             }
-        }
 
-        await _updateTask(task.id, {callback: {...task.callback, status: status ?? TaskCallbackStatus.DONE}}, ctx);
+            callbacks = callbacks.map(c => ({...c})); // copy of callbacks to avoid changes on old refs in mock calls (tests only)
+            callbacks[i].status = status;
+            await _updateTask(task.id, {callbacks}, ctx);
+        }
     };
 
     const _validateMsg = (msg: ITaskOrder) => {
@@ -228,15 +237,17 @@ export default function ({
                             priority: Joi.string()
                                 .valid(...Object.values(TaskPriority))
                                 .required(),
-                            callback: Joi.object().keys({
-                                moduleName: Joi.string().required(),
-                                subModuleName: Joi.string(),
-                                name: Joi.string().required(),
-                                args: Joi.array().required(),
-                                type: Joi.array()
-                                    .items(...Object.values(TaskCallbackType))
-                                    .required()
-                            })
+                            callbacks: Joi.array().items(
+                                Joi.object().keys({
+                                    moduleName: Joi.string().required(),
+                                    subModuleName: Joi.string(),
+                                    name: Joi.string().required(),
+                                    args: Joi.array().required(),
+                                    type: Joi.array()
+                                        .items(...Object.values(TaskCallbackType))
+                                        .required()
+                                })
+                            )
                         })
                     },
                     {
@@ -266,6 +277,9 @@ export default function ({
             {
                 id: taskId,
                 ...data
+                // ...(!data.callbacks && {
+                //     callbacks: data.callbacks.map(a => ({...a})) // copy of callbacks to avoid changes on old refs in mock calls (tests only)
+                // })
             },
             ctx
         );
@@ -336,7 +350,7 @@ export default function ({
     };
 
     const _createTask = async (
-        {id, label, func, startAt, priority, callback}: ITaskCreatePayload,
+        {id, label, func, startAt, priority, callbacks}: ITaskCreatePayload,
         ctx: IQueryInfos
     ): Promise<string> => {
         const task = await taskRepo.createTask(
@@ -348,7 +362,7 @@ export default function ({
                 status: TaskStatus.CREATED,
                 priority,
                 archive: false, // FIXME: move to repo
-                ...(!!callback && {callback: {...callback, status: TaskCallbackStatus.PENDING}})
+                ...(!!callbacks && {callbacks: callbacks.map(c => ({...c, status: TaskCallbackStatus.PENDING}))})
             },
             (({dbProfiler, ...c}) => c)(ctx)
         );

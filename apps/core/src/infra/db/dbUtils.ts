@@ -315,7 +315,7 @@ export default function ({
                         : CollectionType.EDGE_COLLECTION;
 
                 await dbService.dropCollection(col.name, colType);
-                // TODO: clear linked arango view
+                // TODO: clear linked arango views
             }
         }
     };
