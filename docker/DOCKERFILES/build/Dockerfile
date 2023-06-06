@@ -43,8 +43,6 @@ COPY --from=builder /app/apps/$APP/dist ./apps/$APP/dist/
 # Install production only modules
 RUN yarn workspaces focus $APP --production
 
-RUN ls /app/node_modules
-
 RUN rm -rf ./apps/$APP/src
 RUN rm -rf .yarn/cache
 
@@ -66,13 +64,11 @@ WORKDIR /app
 COPY scripts/apps_install.sh ./scripts/apps_install.sh
 RUN ./scripts/apps_install.sh
 
-RUN ls /app/apps/core/applications
 
 ### RUNNER FOR CORE ###
 FROM runner as runner-core
 WORKDIR /app
 
-RUN ls /app/node_modules
 
 COPY --from=apps-installer-core /app/apps/core/applications ./apps/core/applications
 
