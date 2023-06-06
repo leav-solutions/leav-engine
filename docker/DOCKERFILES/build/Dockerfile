@@ -21,6 +21,7 @@ COPY apps/ ./apps
 COPY libs/ ./libs/
 COPY assets/ ./assets
 
+
 ### BUILDER ###
 FROM base AS builder
 ARG APP
@@ -34,6 +35,7 @@ RUN yarn workspace $APP build
 ### RUNNER ###
 FROM base as runner
 ARG APP
+
 
 # Retrieve code
 COPY --from=builder /app/apps/$APP/dist ./apps/$APP/dist/
@@ -53,17 +55,27 @@ WORKDIR /app/apps/$APP
 ENV APP_ROOT_PATH=/app/apps/$APP
 CMD yarn run start
 
+### APPS INSTALLER FOR CORE ###
+# Install apps for core in a specific stage to avoid having all node_modules in runner-core
+FROM runner as apps-installer-core
+WORKDIR /app
+
+# Install apps
+COPY scripts/apps_install.sh ./scripts/apps_install.sh
+RUN ./scripts/apps_install.sh
+
+
 ### RUNNER FOR CORE ###
 FROM runner as runner-core
 WORKDIR /app
 
-COPY scripts/apps_install.sh ./scripts/apps_install.sh
-RUN ./scripts/apps_install.sh
+
+COPY --from=apps-installer-core /app/apps/core/applications ./apps/core/applications
 
 RUN rm -rf ./apps/login
 RUN rm -rf ./apps/admin
-RUN rm -rf  ./apps/data-studio
-RUN rm -rf  ./apps/portal
+RUN rm -rf ./apps/data-studio
+RUN rm -rf ./apps/portal
 
 WORKDIR /app/apps/core
 

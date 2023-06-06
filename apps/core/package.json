@@ -56,7 +56,6 @@
     "moment-timezone": "0.5.37",
     "nodemon": "1.19.4",
     "npm-run-all": "4.1.5",
-    "onchange": "4.1.0",
     "prettier": "1.19.1",
     "ts-jest": "29.0.1",
     "ts-node": "10.9.1",
