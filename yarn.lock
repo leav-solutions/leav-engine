@@ -8603,7 +8603,7 @@ __metadata:
     ts-jest-mock-import-meta: 1.0.0
     typescript: 4.8.3
     uuid: 7.0.3
-    vite: 4.1.1
+    vite: 4.1.5
     vite-jest: 0.1.4
     yup: 0.32.11
   languageName: unknown
@@ -12367,7 +12367,7 @@ __metadata:
     ts-jest-mock-import-meta: 1.0.0
     typescript: 4.8.3
     uuid: 9.0.0
-    vite: 4.1.1
+    vite: 4.1.5
     vite-jest: 0.1.4
     vite-plugin-dynamic-base: 0.4.9
     vite-plugin-svgr: 2.4.0
@@ -19421,7 +19421,7 @@ __metadata:
     ts-jest: 29.0.5
     ts-jest-mock-import-meta: 1.0.0
     typescript: 4.8.3
-    vite: 4.1.1
+    vite: 4.1.5
     vite-plugin-dynamic-base: 0.4.9
     vite-plugin-rewrite-all: 1.0.1
     web-vitals: 2.1.4
@@ -21413,7 +21413,7 @@ __metadata:
     ts-jest: 29.0.5
     ts-jest-mock-import-meta: 1.0.0
     typescript: 4.8.3
-    vite: 4.1.1
+    vite: 4.1.5
     vite-jest: 0.1.4
     vite-plugin-dynamic-base: 0.4.9
   languageName: unknown
@@ -26569,9 +26569,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:4.1.1":
-  version: 4.1.1
-  resolution: "vite@npm:4.1.1"
+"vite@npm:4.1.5":
+  version: 4.1.5
+  resolution: "vite@npm:4.1.5"
   dependencies:
     esbuild: ^0.16.14
     fsevents: ~2.3.2
@@ -26603,7 +26603,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: aad14b660b69068f6596ab7e760dd71642862996328e404a4d265e090ae0d06c7064cf8415ffb135cd8b79d5157dc1dcb48b56386caaa96a474fb53bdd8cac3d
+  checksum: c5e4f447efe4c1ead7e8123b593afbabfdc3e3bf23e518edb4ba9b0a27b1af99409a712379b5d384a1954cb087ded9b0c0c893dfac461f12e55a9922e4438b90
   languageName: node
   linkType: hard
 
