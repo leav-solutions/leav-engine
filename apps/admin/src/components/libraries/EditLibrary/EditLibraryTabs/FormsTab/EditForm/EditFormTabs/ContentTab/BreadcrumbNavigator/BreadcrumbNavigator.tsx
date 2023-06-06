@@ -2,10 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
+import ErrorDisplay from 'components/shared/ErrorDisplay';
 import React from 'react';
-import {getTreeByIdQuery} from '../../../../../../../../../queries/trees/getTreeById';
 import {GET_FORM_forms_list_dependencyAttributes_TreeAttribute} from '../../../../../../../../../_gqlTypes/GET_FORM';
 import {GET_TREE_BY_ID, GET_TREE_BY_IDVariables} from '../../../../../../../../../_gqlTypes/GET_TREE_BY_ID';
+import {getTreeByIdQuery} from '../../../../../../../../../queries/trees/getTreeById';
 import Loading from '../../../../../../../../shared/Loading';
 import {useFormBuilderReducer} from '../formBuilderReducer/hook/useFormBuilderReducer';
 import BreadcrumbNavigatorView from './BreadcrumbNavigatorView';
@@ -30,11 +31,11 @@ function BreadcrumbNavigator(): JSX.Element {
     }
 
     if (error) {
-        return <div className="error">ERROR {error}</div>;
+        return <ErrorDisplay message={error.message} />;
     }
 
     if (!data?.trees?.list.length) {
-        return <div className="error">CANNOT RETRIEVE TREE DATA</div>;
+        return <ErrorDisplay />;
     }
 
     const treeData = data.trees.list[0];
