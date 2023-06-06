@@ -19331,7 +19331,7 @@ __metadata:
     ts-jest: 29.0.5
     ts-jest-mock-import-meta: 1.0.0
     typescript: 4.8.3
-    vite: 4.1.5
+    vite: 4.1.1
     vite-plugin-dynamic-base: 0.4.9
     vite-plugin-rewrite-all: 1.0.1
     web-vitals: 2.1.4
@@ -21287,7 +21287,7 @@ __metadata:
     ts-jest: 29.0.5
     ts-jest-mock-import-meta: 1.0.0
     typescript: 4.8.3
-    vite: 4.1.5
+    vite: 4.1.1
     vite-jest: 0.1.4
     vite-plugin-dynamic-base: 0.4.9
   languageName: unknown
@@ -26382,6 +26382,44 @@ __metadata:
   peerDependencies:
     vite: ^2.6.0 || 3 || 4
   checksum: 16b333a728ca9ca1904cad4dd288e1bc5ae50f4def578b94187c70c31eda596fb5bb2bd4c78b2f5bf22b61f9b1f1bbac1f8c464a80d2b887a138dbc187264ad9
+  languageName: node
+  linkType: hard
+
+"vite@npm:4.1.1":
+  version: 4.1.1
+  resolution: "vite@npm:4.1.1"
+  dependencies:
+    esbuild: ^0.16.14
+    fsevents: ~2.3.2
+    postcss: ^8.4.21
+    resolve: ^1.22.1
+    rollup: ^3.10.0
+  peerDependencies:
+    "@types/node": ">= 14"
+    less: "*"
+    sass: "*"
+    stylus: "*"
+    sugarss: "*"
+    terser: ^5.4.0
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+    less:
+      optional: true
+    sass:
+      optional: true
+    stylus:
+      optional: true
+    sugarss:
+      optional: true
+    terser:
+      optional: true
+  bin:
+    vite: bin/vite.js
+  checksum: aad14b660b69068f6596ab7e760dd71642862996328e404a4d265e090ae0d06c7064cf8415ffb135cd8b79d5157dc1dcb48b56386caaa96a474fb53bdd8cac3d
   languageName: node
   linkType: hard
 
