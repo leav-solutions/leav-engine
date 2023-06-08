@@ -38,5 +38,5 @@ export const mockTask: ITask = {
     status: TaskStatus.CREATED,
     priority: TaskPriority.MEDIUM,
     archive: false,
-    callback: mockCallback
+    callbacks: [mockCallback]
 };

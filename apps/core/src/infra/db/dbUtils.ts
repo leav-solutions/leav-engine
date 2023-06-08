@@ -309,12 +309,15 @@ export default function ({
         async clearDatabase(): Promise<void> {
             // Drop all collections
             const cols = await dbService.db.listCollections();
+
             for (const col of cols) {
                 const colType =
                     col.type === CollectionType.DOCUMENT_COLLECTION
                         ? CollectionType.DOCUMENT_COLLECTION
                         : CollectionType.EDGE_COLLECTION;
+
                 await dbService.dropCollection(col.name, colType);
+                // TODO: clear linked arango views
             }
         }
     };

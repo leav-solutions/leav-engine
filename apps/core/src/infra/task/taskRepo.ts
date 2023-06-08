@@ -20,7 +20,7 @@ export interface ITaskRepo {
     updateTask(task: Partial<ITask> & {id: string}, ctx: IQueryInfos): Promise<ITask>;
     getTasksToExecute(ctx: IQueryInfos): Promise<IList<ITask>>;
     getTasksToCancel(ctx: IQueryInfos): Promise<IList<ITask>>;
-    getTasksWithPendingCallback(ctx: IQueryInfos): Promise<IList<ITask>>;
+    getTasksWithPendingCallbacks(ctx: IQueryInfos): Promise<IList<ITask>>;
     deleteTask(taskId, ctx): Promise<ITask>;
     isATaskRunning(ctx: IQueryInfos, workerId?: number): Promise<boolean>;
 }
@@ -97,12 +97,15 @@ export default function ({
                 list: list.map(dbUtils.cleanup) as ITask[]
             };
         },
-        async getTasksWithPendingCallback(ctx: IQueryInfos): Promise<IList<ITask>> {
+        async getTasksWithPendingCallbacks(ctx: IQueryInfos): Promise<IList<ITask>> {
             const collec = dbService.db.collection(TASKS_COLLECTION);
 
             const query = aql`FOR task IN ${collec}
-                    FILTER task.completedAt != null
-                    FILTER task.callback != null && task.callback.status == ${TaskCallbackStatus.PENDING}
+                    FILTER task.status == ${TaskStatus.DONE} 
+                        OR task.status == ${TaskStatus.FAILED} 
+                        OR task.status == ${TaskStatus.CANCELED}
+                    FILTER task.callbacks != null 
+                    FILTER LENGTH(task.callbacks[* FILTER CURRENT.status == ${TaskCallbackStatus.PENDING}]) == LENGTH(task.callbacks)
                     SORT task.priority DESC
                 RETURN task`;
 

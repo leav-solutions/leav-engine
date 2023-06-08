@@ -3,12 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {extractArgsFromString} from '@leav/utils';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain, IRecordFilterLight} from 'domain/record/recordDomain';
 import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import ExcelJS from 'exceljs';
 import fs from 'fs';
+import {nanoid} from 'nanoid';
 import JsonParser from 'jsonparse';
 import {validate} from 'jsonschema';
 import {ValidatorResultError} from 'jsonschema/lib/helpers';
@@ -18,7 +20,7 @@ import {TaskPriority, TaskCallbackType, ITaskFuncParams} from '../../_types/task
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
-import {ErrorFieldDetail, Errors} from '../../_types/errors';
+import {Errors} from '../../_types/errors';
 import {i18n} from 'i18next';
 import {
     Action,
@@ -39,8 +41,10 @@ import {v4 as uuidv4} from 'uuid';
 import {IUtils} from 'utils/utils';
 import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
 import PermissionError from '../../errors/PermissionError';
+import {dbUtils} from 'infra/db';
 
-export const SCHEMA_PATH = path.resolve(__dirname, './import-schema.json');
+export const IMPORT_DATA_SCHEMA_PATH = path.resolve(__dirname, './import-data-schema.json');
+export const IMPORT_CONFIG_SCHEMA_PATH = path.resolve(__dirname, './import-config-schema.json');
 
 const DEFAULT_IMPORT_MODE = ImportMode.UPSERT;
 
@@ -59,14 +63,21 @@ export interface IImportExcelParams {
     startAt?: number;
 }
 
-interface IImportParams {
+interface IImportDataParams {
     filename: string;
     ctx: IQueryInfos;
     excelMapping?: IExcelMapping;
 }
 
+interface IImportConfigParams {
+    filepath: string;
+    ctx: IQueryInfos;
+    forceNoTask?: boolean;
+}
+
 export interface IImportDomain {
-    import(params: IImportParams, task?: ITaskFuncParams): Promise<string>;
+    importConfig(params: IImportConfigParams, task?: ITaskFuncParams): Promise<string>;
+    importData(params: IImportDataParams, task?: ITaskFuncParams): Promise<string>;
     importExcel({filename, sheets, startAt}: IImportExcelParams, ctx: IQueryInfos): Promise<string>;
 }
 
@@ -96,6 +107,7 @@ interface IStat {
 type Stat = {[sheetIndex: number]: IStat} | IStat;
 
 interface IDeps {
+    'core.domain.library'?: ILibraryDomain;
     'core.domain.record'?: IRecordDomain;
     'core.domain.helpers.validate'?: IValidateHelper;
     'core.domain.attribute'?: IAttributeDomain;
@@ -110,6 +122,7 @@ interface IDeps {
 }
 
 export default function ({
+    'core.domain.library': libraryDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.helpers.validate': validateHelper = null,
     'core.domain.attribute': attributeDomain = null,
@@ -438,8 +451,8 @@ export default function ({
         });
     };
 
-    const _getFileDataBuffer = async (filename: string): Promise<Buffer> => {
-        const fileStream = fs.createReadStream(`${config.import.directory}/${filename}`);
+    const _getFileDataBuffer = async (filepath: string): Promise<Buffer> => {
+        const fileStream = fs.createReadStream(filepath);
 
         const data = await ((): Promise<Buffer> =>
             new Promise((resolve, reject) => {
@@ -453,8 +466,8 @@ export default function ({
         return data;
     };
 
-    const _jsonSchemaValidation = async (filename: string): Promise<void> => {
-        const {size} = await fs.promises.stat(`${config.import.directory}/${filename}`);
+    const _jsonSchemaValidation = async (schemaPath: string, filepath: string): Promise<void> => {
+        const {size} = await fs.promises.stat(filepath);
         const megaBytesSize = size / (1024 * 1024);
 
         // if file is too big we validate json schema
@@ -462,18 +475,13 @@ export default function ({
             return;
         }
 
-        const buffer = await _getFileDataBuffer(filename);
+        const buffer = await _getFileDataBuffer(filepath);
         const data = JSON.parse(buffer.toString('utf8'));
-        const schema = await fs.promises.readFile(SCHEMA_PATH);
+        const schema = await fs.promises.readFile(schemaPath);
         validate(data, JSON.parse(schema.toString()), {throwAll: true});
     };
 
-    const _writeReport = (
-        writeStream: fs.WriteStream,
-        pos: string,
-        err: ValidationError<any> | PermissionError<any>,
-        lang: string
-    ) => {
+    const _writeReport = (fd: number, pos: string, err: ValidationError<any> | PermissionError<any>, lang: string) => {
         const errors = err.fields
             ? Object.values(err.fields)
                   .map(v => utils.translateError(v as string, lang))
@@ -482,16 +490,17 @@ export default function ({
 
         const message = err.message || '';
 
-        writeStream.write(`${pos}: ${errors}${errors && message ? ' | ' : ''}${message}\n`);
+        fs.writeSync(fd, `${pos}: ${errors}${errors && message ? ' | ' : ''}${message}\n`);
     };
 
-    const _writeStats = (writeStream: fs.WriteStream, stats: Stat, lang: string) => {
-        writeStream.write(`\n### ${translator.t('import.stats_title', {lng: lang}).toUpperCase()} ###\n`);
+    const _writeStats = (fd: number, stats: Stat, lang: string) => {
+        fs.writeSync(fd, `\n### ${translator.t('import.stats_title', {lng: lang}).toUpperCase()} ###\n`);
 
         if (_isExcelMapped(stats)) {
             for (const sheetIndex of Object.keys(stats)) {
                 if (stats[sheetIndex].elements) {
-                    writeStream.write(
+                    fs.writeSync(
+                        fd,
                         `${translator.t('import.stats_sheet_elements', {
                             lng: lang,
                             sheet: Number(sheetIndex) + 1,
@@ -503,7 +512,8 @@ export default function ({
                 }
 
                 if (stats[sheetIndex].links) {
-                    writeStream.write(
+                    fs.writeSync(
+                        fd,
                         `${translator.t('import.stats_sheet_links', {
                             lng: lang,
                             sheet: Number(sheetIndex) + 1,
@@ -513,7 +523,8 @@ export default function ({
                 }
             }
         } else {
-            writeStream.write(
+            fs.writeSync(
+                fd,
                 `${translator.t('import.stats_elements', {
                     lng: lang,
                     created: (stats as IStat).elements[ImportAction.CREATED],
@@ -522,14 +533,16 @@ export default function ({
                 })}\n`
             );
 
-            writeStream.write(
+            fs.writeSync(
+                fd,
                 `${translator.t('import.stats_links', {
                     lng: lang,
                     links: (stats as IStat).links
                 })}\n`
             );
 
-            writeStream.write(
+            fs.writeSync(
+                fd,
                 `${translator.t('import.stats_trees', {
                     lng: lang,
                     trees: (stats as IStat).trees
@@ -541,7 +554,101 @@ export default function ({
     const _isExcelMapped = (stats: Stat): boolean => !(stats as IStat).elements;
 
     return {
-        async import(params: IImportParams, task?: ITaskFuncParams): Promise<string> {
+        async importConfig(params: IImportConfigParams, task?: ITaskFuncParams): Promise<string> {
+            const {filepath, ctx, forceNoTask} = params;
+
+            if (!forceNoTask && typeof task?.id === 'undefined') {
+                const newTaskId = uuidv4();
+
+                await tasksManagerDomain.createTask(
+                    {
+                        id: newTaskId,
+                        label: config.lang.available.reduce((labels, lang) => {
+                            labels[lang] = `${translator.t('tasks.import_label', {
+                                lng: lang,
+                                filename: path.parse(filepath).name
+                            })}`;
+                            return labels;
+                        }, {}),
+                        func: {
+                            moduleName: 'domain',
+                            subModuleName: 'import',
+                            name: 'importConfig',
+                            args: params
+                        },
+                        priority: TaskPriority.MEDIUM,
+                        startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
+                        ...(!!task?.callbacks && {callbacks: task.callbacks})
+                    },
+                    ctx
+                );
+
+                return newTaskId;
+            }
+
+            const reportFileName = nanoid() + '.config.report.txt';
+            const reportFilePath = `${config.import.directory}/${reportFileName}`;
+            const lang = ctx.lang || config.lang.default;
+
+            try {
+                await _jsonSchemaValidation(IMPORT_CONFIG_SCHEMA_PATH, filepath);
+            } catch (err) {
+                if (!(err instanceof ValidatorResultError)) {
+                    throw err;
+                }
+
+                const fd: number = fs.openSync(reportFilePath, 'as');
+
+                for (const e of err.errors) {
+                    _writeReport(fd, e.path.join(' '), e, lang);
+                }
+
+                if (!forceNoTask) {
+                    // We link report file to task
+                    await tasksManagerDomain.setLink(
+                        task.id,
+                        {name: reportFileName, url: `/${config.import.endpoint}/${reportFileName}`},
+                        ctx
+                    );
+                }
+
+                throw new Error(`Invalid JSON data. See ${reportFilePath} file for more details.`);
+            }
+
+            const buffer = await _getFileDataBuffer(filepath);
+            const elements = JSON.parse(buffer.toString());
+
+            console.info('Starting configuration import...');
+
+            console.info('Processing attributes...');
+            if ('attributes' in elements) {
+                for (const attribute of elements.attributes) {
+                    await attributeDomain.saveAttribute({attrData: attribute, ctx});
+                }
+            }
+
+            console.info('Processing libraries...');
+            if ('libraries' in elements) {
+                for (const library of elements.libraries) {
+                    library.attributes = library.attributes?.map((id: string) => ({id}));
+                    await libraryDomain.saveLibrary(library, ctx);
+                }
+            }
+
+            console.info('Processing trees...');
+            if ('trees' in elements) {
+                for (const tree of elements.trees) {
+                    await treeDomain.saveTree(tree, ctx);
+                }
+            }
+
+            console.info('Configuration import completed.');
+
+            if (!forceNoTask) {
+                return task.id;
+            }
+        },
+        async importData(params: IImportDataParams, task?: ITaskFuncParams): Promise<string> {
             const {filename, ctx, excelMapping} = params;
 
             if (typeof task?.id === 'undefined') {
@@ -557,12 +664,12 @@ export default function ({
                         func: {
                             moduleName: 'domain',
                             subModuleName: 'import',
-                            name: 'import',
+                            name: 'importData',
                             args: params
                         },
                         priority: TaskPriority.MEDIUM,
                         startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
-                        ...(!!task?.callback && {callback: task.callback})
+                        ...(!!task?.callbacks && {callbacks: task.callbacks})
                     },
                     ctx
                 );
@@ -570,12 +677,10 @@ export default function ({
                 return newTaskId;
             }
 
-            const reportFileName = filename.slice(0, filename.lastIndexOf('.')) + '.report.txt';
+            const reportFileName = nanoid() + '.data.report.txt';
             const reportFilePath = `${config.import.directory}/${reportFileName}`;
             const lang = ctx.lang || config.lang.default;
-            const writeReportStream: fs.WriteStream = fs.createWriteStream(reportFilePath, {
-                flags: 'as' // 'as' - Open file for appending in synchronous mode. The file is created if it does not exist.
-            });
+            const fd: number = fs.openSync(reportFilePath, 'as');
 
             const _getExcelPos = (elementIndex: number): string => {
                 if (excelMapping) {
@@ -587,15 +692,23 @@ export default function ({
             };
 
             try {
-                await _jsonSchemaValidation(filename);
+                await _jsonSchemaValidation(IMPORT_DATA_SCHEMA_PATH, `${config.import.directory}/${filename}`);
             } catch (err) {
                 if (!(err instanceof ValidatorResultError)) {
                     throw err;
                 }
 
                 for (const e of err.errors) {
-                    _writeReport(writeReportStream, e.path.join(' '), e, lang);
+                    _writeReport(fd, e.path.join(' '), e, lang);
                 }
+
+                await tasksManagerDomain.setLink(
+                    task.id,
+                    {name: reportFileName, url: `/${config.import.endpoint}/${reportFileName}`},
+                    ctx
+                );
+
+                throw new Error(`Invalid JSON data. See ${reportFilePath} file for more details.`);
             }
 
             const progress = {
@@ -708,7 +821,7 @@ export default function ({
                             ? _getExcelPos(index)
                             : translator.t('import.element_pos', {lng: lang, index});
 
-                        _writeReport(writeReportStream, pos, e, lang);
+                        _writeReport(fd, pos, e, lang);
                     }
                 },
                 // Treat trees
@@ -744,7 +857,7 @@ export default function ({
                         // Trees import is impossible with Excel file, so we don't need to check if excelMapping is defined
                         const pos = translator.t('import.tree_pos', {lng: lang, index});
 
-                        _writeReport(writeReportStream, pos, e, lang);
+                        _writeReport(fd, pos, e, lang);
                     }
                 },
                 // For each element we check if it increases the progress, and update it if necessary
@@ -781,7 +894,7 @@ export default function ({
                                 ? _getExcelPos(cacheKey)
                                 : translator.t('import.element_pos', {lng: lang, index: cacheKey});
 
-                            _writeReport(writeReportStream, pos, e, lang);
+                            _writeReport(fd, pos, e, lang);
                         }
                     }
 
@@ -794,9 +907,9 @@ export default function ({
             // Delete cache.
             await cacheService.getCache(ECacheType.DISK).deleteAll(cacheDataPath);
 
-            _writeStats(writeReportStream, stats, lang);
+            _writeStats(fd, stats, lang);
 
-            // If errors were found, we link report file to task
+            // We link report file to task
             await tasksManagerDomain.setLink(
                 task.id,
                 {name: reportFileName, url: `/${config.import.endpoint}/${reportFileName}`},
@@ -1019,17 +1132,19 @@ export default function ({
             // Delete xlsx file
             await utils.deleteFile(`${config.import.directory}/${filename}`);
 
-            return this.import(
+            return this.importData(
                 {filename: JSONFilename, ctx, excelMapping},
                 {
                     ...(!!startAt && {startAt}),
                     // Delete remaining import file.
-                    callback: {
-                        moduleName: 'utils',
-                        name: 'deleteFile',
-                        args: [`${config.import.directory}/${JSONFilename}`],
-                        type: [TaskCallbackType.ON_SUCCESS, TaskCallbackType.ON_FAILURE, TaskCallbackType.ON_CANCEL]
-                    }
+                    callbacks: [
+                        {
+                            moduleName: 'utils',
+                            name: 'deleteFile',
+                            args: [`${config.import.directory}/${JSONFilename}`],
+                            type: [TaskCallbackType.ON_SUCCESS, TaskCallbackType.ON_FAILURE, TaskCallbackType.ON_CANCEL]
+                        }
+                    ]
                 }
             );
         }

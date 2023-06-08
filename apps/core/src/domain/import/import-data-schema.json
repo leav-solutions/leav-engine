@@ -1,7 +1,6 @@
 {
-  "$id": "https://configuration.cacom.com/categories.schema.json",
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "LEAV CORE IMPORT",
+  "$id": "import-data",
+  "title": "LEAV Import Data",
   "definitions": {
     "match": {
       "description": "Attribute/value pair used to find an element",

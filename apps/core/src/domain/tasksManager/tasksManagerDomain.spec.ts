@@ -187,7 +187,7 @@ describe('Tasks Manager', () => {
             getTasks: global.__mockPromise({totalCount: 1, list: [mockTask]}),
             getTasksToExecute: global.__mockPromise({totalCount: 1, list: [mockTask]}),
             getTasksToCancel: global.__mockPromise({totalCount: 0, list: []}),
-            getTasksWithPendingCallback: global.__mockPromise({totalCount: 0, list: []}),
+            getTasksWithPendingCallbacks: global.__mockPromise({totalCount: 0, list: []}),
             updateTask: global.__mockPromise()
         };
 
@@ -243,7 +243,7 @@ describe('Tasks Manager', () => {
         const mockTaskRepo: Mockify<ITaskRepo> = {
             getTasksToExecute: global.__mockPromise({totalCount: 0, list: []}),
             getTasksToCancel: global.__mockPromise({totalCount: 1, list: [mockTask]}),
-            getTasksWithPendingCallback: global.__mockPromise({totalCount: 0, list: []})
+            getTasksWithPendingCallbacks: global.__mockPromise({totalCount: 0, list: []})
         };
 
         const mockUtils: Mockify<IUtils> = {
@@ -290,7 +290,10 @@ describe('Tasks Manager', () => {
             getTasks: global.__mockPromise({totalCount: 1, list: [mockTask]}),
             getTasksToExecute: global.__mockPromise({totalCount: 0, list: []}),
             getTasksToCancel: global.__mockPromise({totalCount: 0, list: []}),
-            getTasksWithPendingCallback: global.__mockPromise({totalCount: 1, list: [mockTask]}),
+            getTasksWithPendingCallbacks: global.__mockPromise({
+                totalCount: 1,
+                list: [mockTask]
+            }),
             updateTask: global.__mockPromise()
         };
 
@@ -314,7 +317,7 @@ describe('Tasks Manager', () => {
         expect(mockAmqpService.consumer.channel.bindQueue).toBeCalledTimes(1);
 
         expect(mockTaskRepo.updateTask).toBeCalledWith(
-            {id: mockTask.id, callback: {...mockTask.callback, status: TaskCallbackStatus.RUNNING}},
+            {id: mockTask.id, callbacks: [{...mockTask.callbacks[0], status: TaskCallbackStatus.RUNNING}]},
             {
                 userId: conf.defaultUserId,
                 queryId: 'TasksManagerDomain'

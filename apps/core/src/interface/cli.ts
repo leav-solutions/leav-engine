@@ -1,23 +1,23 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IImporterApp} from 'app/importer/importerApp';
+import {ICoreImportApp} from 'app/core/importApp';
 import program from 'commander';
 
 interface IDeps {
-    'core.app.importer'?: IImporterApp;
+    'core.app.core.import'?: ICoreImportApp;
 }
 
-export default function ({'core.app.importer': importerApp = null}: IDeps = {}) {
+export default function ({'core.app.core.import': importApp = null}: IDeps = {}) {
     return {
         run(args) {
             program
                 .command('import <file>')
                 .description('Import data from a JSON file')
                 .option('--clear', 'Empty database before import')
-                .action(async (file, options) => {
+                .action(async (filepath, options) => {
                     try {
-                        await importerApp.import(file, options.clear);
+                        await importApp.importConfig(filepath, options.clear);
                         process.exit(0);
                     } catch (e) {
                         console.error(e);
