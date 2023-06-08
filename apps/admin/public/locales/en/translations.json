@@ -89,7 +89,8 @@
             "launch_button": "Start purge",
             "warning": "The purge is going to definitely delete inactive records. \n There is no way back.",
             "confirm": "Do you really want to continue?"
-        }
+        },
+        "unknown_library": "Unknown library"
     },
     "attributes": {
         "title": "Attributes",

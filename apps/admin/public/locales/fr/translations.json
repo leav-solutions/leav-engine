@@ -89,7 +89,8 @@
             "launch_button": "Lancer la purge",
             "warning": "La purge va supprimer définitivement tous les éléments inactifs.\n Il n'y a pas de retour en arrière possible.",
             "confirm": "Êtes-vous sûr de vouloir continuer?"
-        }
+        },
+        "unknown_library": "Bibliothèque inconnue"
     },
     "attributes": {
         "title": "Attributs",

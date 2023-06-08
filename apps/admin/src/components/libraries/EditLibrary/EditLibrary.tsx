@@ -2,11 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
+import {PermissionsActions} from '_gqlTypes/globalTypes';
+import ErrorDisplay from 'components/shared/ErrorDisplay';
+import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
+import useUserData from 'hooks/useUserData';
 import React from 'react';
+import {useTranslation} from 'react-i18next';
 import {match} from 'react-router-dom';
-import useLang from '../../../hooks/useLang';
-import {getLibByIdQuery} from '../../../queries/libraries/getLibraryById';
 import {GET_LIB_BY_ID, GET_LIB_BY_IDVariables, GET_LIB_BY_ID_libraries_list} from '../../../_gqlTypes/GET_LIB_BY_ID';
+import {getLibByIdQuery} from '../../../queries/libraries/getLibraryById';
 import Loading from '../../shared/Loading';
 import EditLibraryTabs from './EditLibraryTabs';
 
@@ -20,34 +24,39 @@ interface IEditLibraryProps {
 
 const EditLibrary = ({match: routeMatch}: IEditLibraryProps): JSX.Element => {
     const libraryId = routeMatch.params.id;
-    const {lang} = useLang();
+    const isNewLib = !libraryId;
+    const userData = useUserData();
+    const {t} = useTranslation();
 
     const {loading, error, data} = useQuery<GET_LIB_BY_ID, GET_LIB_BY_IDVariables>(getLibByIdQuery, {
-        variables: {id: [libraryId], lang}
+        variables: {id: [libraryId]},
+        skip: isNewLib
     });
-    const readOnly = !data?.libraries?.list[0]?.permissions.admin_library;
+    const readOnly = isNewLib
+        ? !userData.permissions[PermissionsActions.admin_create_library]
+        : !data?.libraries?.list[0]?.permissions.admin_library;
+
+    if (!libraryId && !userData.permissions[PermissionsActions.admin_create_library]) {
+        return <ErrorDisplay type={ErrorDisplayTypes.PERMISSION_ERROR} />;
+    }
 
     const _getEditLibraryTabs = (libToEdit: GET_LIB_BY_ID_libraries_list | null) => {
         return <EditLibraryTabs library={libToEdit} readOnly={readOnly} />;
     };
 
-    if (!libraryId) {
-        return _getEditLibraryTabs(null);
-    }
-
     if (loading) {
         return <Loading />;
     }
 
-    if (typeof error !== 'undefined') {
-        return <p>Error: {error.message}</p>;
+    if (error) {
+        return <ErrorDisplay message={error.message} />;
     }
 
-    if (!data || !data.libraries || !data.libraries.list.length) {
-        return <p>Unknown library</p>;
+    if (!isNewLib && !data?.libraries?.list?.length) {
+        return <ErrorDisplay message={t('libraries.unknown_library')} />;
     }
 
-    return _getEditLibraryTabs(data.libraries.list[0]);
+    return _getEditLibraryTabs(isNewLib ? null : data.libraries.list[0]);
 };
 
 export default EditLibrary;
