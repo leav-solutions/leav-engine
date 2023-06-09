@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {TFunction} from 'i18next';
 import {AttributeFormat, RecordFilterCondition} from '_gqlTypes/globalTypes';
+import {TFunction} from 'i18next';
 import {
     AttributeConditionFilter,
     AttributeConditionType,
@@ -86,12 +86,12 @@ export function getAttributeConditionOptions(t: TFunction): Array<IFilterConditi
         {text: t('filters.begin-with'), value: AttributeConditionFilter.BEGIN_WITH},
         {text: t('filters.end-with'), value: AttributeConditionFilter.END_WITH},
         {
-            text: t('filters.greater-than'),
+            text: t('filters.less-than'),
             textByFormat: {[AttributeFormat.date]: t('filters.before')},
             value: AttributeConditionFilter.LESS_THAN
         },
         {
-            text: t('filters.less-than'),
+            text: t('filters.greater-than'),
             textByFormat: {[AttributeFormat.date]: t('filters.after')},
             value: AttributeConditionFilter.GREATER_THAN
         },

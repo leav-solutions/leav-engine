@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, join, literal, GeneratedAqlQuery} from 'arangojs/aql';
-import {CORE_INDEX_FIELD} from '../indexation/indexationService';
+import {IQueryInfos} from '_types/queryInfos';
+import {GeneratedAqlQuery, aql, join, literal} from 'arangojs/aql';
 import {GetConditionPart} from 'infra/attributeTypes/helpers/getConditionPart';
 import {IDbDocument, IExecuteWithCount} from 'infra/db/_types';
-import {IQueryInfos} from '_types/queryInfos';
+import {GetSearchQuery} from 'infra/indexation/helpers/getSearchQuery';
 import {
     CursorDirection,
     ICursorPaginationParams,
@@ -21,14 +21,13 @@ import {
     Operator,
     TreeCondition
 } from '../../_types/record';
+import {IAttributeRepo} from '../attribute/attributeRepo';
 import {IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {IFilterTypesHelper} from './helpers/filterTypes';
 import {GetSearchVariableName} from './helpers/getSearchVariableName';
 import {GetSearchVariablesQueryPart} from './helpers/getSearchVariablesQueryPart';
-import {IAttributeRepo} from '../attribute/attributeRepo';
-import {GetSearchQuery} from 'infra/indexation/helpers/getSearchQuery';
 
 export interface IFindRequestResult {
     initialVars: GeneratedAqlQuery[]; // Some "global" variables needed later on the query (eg. "classified in" subquery)
@@ -229,15 +228,14 @@ export default function ({
                 queryParts.push(join(filterStatements, '\n'));
             }
 
-            const sortQueryPart = sort
-                ? attributeTypesRepo.getTypeRepo(sort.attributes[0]).sortQueryPart(sort)
-                : aql`SORT ${literal(
-                      fulltextSearchQuery
-                          ? `r.${CORE_INDEX_FIELD}.score DESC, r.created_at DESC, r._key DESC`
-                          : 'r.created_at DESC, r._key DESC'
-                  )}`;
+            // If we have a full text search query and no specific sort, sorting by relevance is already handled.
+            if (sort || !fulltextSearchQuery) {
+                const sortQueryPart = sort
+                    ? attributeTypesRepo.getTypeRepo(sort.attributes[0]).sortQueryPart(sort)
+                    : aql`SORT ${literal('TO_NUMBER(r._key) DESC')}`;
 
-            queryParts.push(sortQueryPart as GeneratedAqlQuery);
+                queryParts.push(sortQueryPart as GeneratedAqlQuery);
+            }
 
             if (!retrieveInactive && !isFilteringOnActive) {
                 queryParts.push(aql`FILTER r.active == true`);
@@ -277,7 +275,7 @@ export default function ({
             const list = withTotalCount ? (records as IExecuteWithCount).results : (records as IDbDocument[]);
             const totalCount = withTotalCount ? (records as IExecuteWithCount).totalCount : null;
 
-            // TODO: detect if we reach end/begining of the list and should not provide a cursor
+            // TODO: detect if we reach end/beginning of the list and should not provide a cursor
             const cursor: IPaginationCursors = pagination
                 ? {
                       prev: list.length ? _generateCursor(Number(list[0]._key), CursorDirection.PREV) : null,
