@@ -1,13 +1,19 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, literal, GeneratedAqlQuery, join} from 'arangojs/aql';
-import {CORE_INDEX_VIEW, CORE_INDEX_FIELD, CORE_INDEX_ANALYZER, CORE_INDEX_INPUT_ANALYZER} from '../indexationService';
+import {IRecordSort} from '_types/record';
+import {GeneratedAqlQuery, aql, join, literal} from 'arangojs/aql';
+import {CORE_INDEX_ANALYZER, CORE_INDEX_FIELD, CORE_INDEX_INPUT_ANALYZER, CORE_INDEX_VIEW} from '../indexationService';
 
-export type GetSearchQuery = (libraryId: string, fields: string[], search: string) => GeneratedAqlQuery;
+export type GetSearchQuery = (
+    libraryId: string,
+    fields: string[],
+    search: string,
+    sort?: IRecordSort
+) => GeneratedAqlQuery;
 
 export default function (): GetSearchQuery {
-    return (libraryId: string, fields: string[], search: string): GeneratedAqlQuery => {
+    return (libraryId: string, fields: string[], search: string, sort?: IRecordSort): GeneratedAqlQuery => {
         if (!fields.length) {
             return aql`[]`;
         }
@@ -24,9 +30,12 @@ export default function (): GetSearchQuery {
             }
         }
 
-        queryParts.push(
-            aql`RETURN MERGE(doc, {${CORE_INDEX_FIELD}: MERGE(doc.${CORE_INDEX_FIELD}, {score: BM25(doc)})})`
-        );
+        // If no specific sort is provided, we sort by relevance and then by _key
+        if (!sort) {
+            queryParts.push(aql`SORT BM25(doc) DESC, TO_NUMBER(doc._key) DESC`);
+        }
+
+        queryParts.push(aql`RETURN MERGE(doc, {${CORE_INDEX_FIELD}: doc.${CORE_INDEX_FIELD}})`);
 
         return join(queryParts, '\n');
     };
