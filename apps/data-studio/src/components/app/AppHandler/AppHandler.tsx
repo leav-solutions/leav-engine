@@ -2,10 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery, useSubscription} from '@apollo/client';
-import {ErrorDisplay, ErrorDisplayTypes, LangContext, Loading, useAppLang} from '@leav/ui';
+import {ErrorDisplay, ErrorDisplayTypes, LangContext, Loading, customTheme, useAntdLocale, useAppLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {theme} from 'antd';
+import {GET_APPLICATION_BY_ENDPOINT, GET_APPLICATION_BY_ENDPOINTVariables} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
+import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
+import {GET_LANGS} from '_gqlTypes/GET_LANGS';
+import {ConfigProvider, theme} from 'antd';
 import ApplicationContext from 'context/ApplicationContext';
+import dayjs from 'dayjs';
+import 'dayjs/locale/en';
+import 'dayjs/locale/fr';
 import {getApplicationByEndpointQuery} from 'graphQL/queries/applications/getApplicationByEndpointQuery';
 import {getLangs} from 'graphQL/queries/core/getLangs';
 import {getGlobalSettingsQuery} from 'graphQL/queries/globalSettings/getGlobalSettingsQuery';
@@ -16,15 +22,11 @@ import {useTranslation} from 'react-i18next';
 import {useAppDispatch} from 'reduxStore/store';
 import {addTask} from 'reduxStore/tasks';
 import {ThemeProvider} from 'styled-components';
-import {GET_APPLICATION_BY_ENDPOINT, GET_APPLICATION_BY_ENDPOINTVariables} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
-import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
-import {GET_LANGS} from '_gqlTypes/GET_LANGS';
+import {ME} from '../../../_gqlTypes/ME';
 import {APP_ENDPOINT} from '../../../constants';
 import {getMe} from '../../../graphQL/queries/userData/me';
 import {initialActiveLibrary, useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useUser} from '../../../hooks/UserHook/UserHook';
-import {ME} from '../../../_gqlTypes/ME';
-import {AvailableLanguage} from '../../../_types/types';
 import Router from '../../Router';
 
 function AppHandler(): JSX.Element {
@@ -37,12 +39,9 @@ function AppHandler(): JSX.Element {
     const userLang = i18n.language.split('-')[0];
     const fallbackLang = i18n.options.fallbackLng ? i18n.options.fallbackLng[0] : '';
     const [lang, setLang] = useState<string[]>([userLang, fallbackLang]);
+    const locale = useAntdLocale(lang[0]);
 
     const {data: availableLangs, loading: langsLoading, error: langsError} = useQuery<GET_LANGS>(getLangs);
-
-    // Depending on browser, user language might be "fr" or "fr-FR".
-    // We don't handle sub-language, thus extract first part only (eg. 'fr')
-    const defaultLang = AvailableLanguage?.[i18n.language.split('-')[0]] ?? appLang;
 
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
     const [user, updateUser] = useUser();
@@ -86,12 +85,14 @@ function AppHandler(): JSX.Element {
         }
     });
 
+    // Triggered when active library change
     useEffect(() => {
         if (!activeLibrary) {
             updateActiveLibrary(initialActiveLibrary);
         }
     }, [updateActiveLibrary, activeLibrary]);
 
+    // Triggered when user data change
     useEffect(() => {
         if (!user && userData && !meLoading) {
             updateUser({
@@ -102,6 +103,7 @@ function AppHandler(): JSX.Element {
         }
     }, [updateUser, user, meLoading, userData]);
 
+    // Triggered when lang change, to update document title
     useEffect(() => {
         if (!globalSettings || !currentApp) {
             return;
@@ -109,6 +111,11 @@ function AppHandler(): JSX.Element {
 
         document.title = `${globalSettings.name} - ${localizedTranslation(currentApp.label, lang)}`;
     }, [currentApp, globalSettings, userLang, t]);
+
+    // To update language in some components such as date-picker
+    useEffect(() => {
+        dayjs.locale(userLang);
+    }, [userLang]);
 
     const _handleLanguageChange = (newLang: string): void => {
         i18n.changeLanguage(newLang);
@@ -145,12 +152,14 @@ function AppHandler(): JSX.Element {
                 value={{
                     lang,
                     availableLangs: availableLangs.langs,
-                    defaultLang,
+                    defaultLang: i18n?.language.split('-')[0] ?? appLang,
                     setLang: _handleLanguageChange
                 }}
             >
                 <ApplicationContext.Provider value={appContextData}>
-                    <Router />
+                    <ConfigProvider theme={customTheme} locale={locale}>
+                        <Router />
+                    </ConfigProvider>
                 </ApplicationContext.Provider>
             </LangContext.Provider>
         </ThemeProvider>

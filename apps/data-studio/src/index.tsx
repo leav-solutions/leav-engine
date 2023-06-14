@@ -1,8 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ErrorDisplay, Loading, customTheme, useAppLang} from '@leav/ui';
-import {ConfigProvider} from 'antd';
+import {ErrorDisplay, Loading, useAppLang} from '@leav/ui';
 import 'antd/dist/reset.css';
 import App from 'components/app';
 import {useEffect, useState} from 'react';
@@ -32,13 +31,7 @@ function Index() {
         return <Loading />;
     }
 
-    return (
-        i18nIsInitialized && (
-            <ConfigProvider theme={customTheme}>
-                <App />
-            </ConfigProvider>
-        )
-    );
+    return i18nIsInitialized && <App />;
 }
 
 root.render(<Index />);

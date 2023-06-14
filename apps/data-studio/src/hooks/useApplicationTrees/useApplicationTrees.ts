@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
+import {GET_TREES, GET_TREESVariables, GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
-import {GET_TREES, GET_TREESVariables, GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
 
 interface IUseApplicationTreesParams {
     onlyAllowed?: boolean;
@@ -26,7 +26,7 @@ export const useApplicationTrees = (params: IUseApplicationTreesParams = {}): IU
             (Array.isArray(currentApp?.settings?.trees) && !currentApp.settings.trees.length), // Skip if no trees are selected
         variables: {
             filters: {
-                id: Array.isArray(currentApp?.settings?.trees) ? currentApp.settings.trees : []
+                id: Array.isArray(currentApp?.settings?.trees) ? currentApp.settings.trees.filter(t => !!t) : []
             }
         }
     });
