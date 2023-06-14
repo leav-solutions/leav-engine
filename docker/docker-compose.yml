@@ -170,8 +170,6 @@ services:
         -c,
         "/scripts/wait-for-it.sh message-broker:5672 -t 1000 -- /scripts/wait-for-it.sh arangodb:8529 -t 1000 -- /scripts/start-core.sh",
       ]
-    logging:
-      driver: local
 
   indexation-manager:
     image: *node_image

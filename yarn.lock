@@ -8573,7 +8573,7 @@ __metadata:
     graphql-tag: 2.10.1
     hex-rgba: 1.0.2
     i18next: 22.5.0
-    i18next-browser-languagedetector: 4.0.1
+    i18next-browser-languagedetector: 7.0.2
     i18next-xhr-backend: 3.2.2
     jest: 29.4.1
     jest-environment-jsdom: 29.4.1
@@ -15807,21 +15807,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next-browser-languagedetector@npm:*, i18next-browser-languagedetector@npm:6.1.4":
+"i18next-browser-languagedetector@npm:*":
   version: 6.1.4
   resolution: "i18next-browser-languagedetector@npm:6.1.4"
   dependencies:
     "@babel/runtime": ^7.14.6
   checksum: 379dba3527c359c3adeb26c1e16e6b7e007989763c4361d43662e4d9412c538ca35e28a6a12df0654edc0adb78b44ff5afdf4c5d842bbf0e83db59d5e9e02f55
-  languageName: node
-  linkType: hard
-
-"i18next-browser-languagedetector@npm:4.0.1":
-  version: 4.0.1
-  resolution: "i18next-browser-languagedetector@npm:4.0.1"
-  dependencies:
-    "@babel/runtime": ^7.5.5
-  checksum: 2804b7b65b0888cecec32987c4f3eae286b296dbad406ea3edc65e9a6ecb1eef3c3bb8961f06b1072196f07c0ee683bcd3f16be204ec7faa8a9a0bd3e6f3693e
   languageName: node
   linkType: hard
 
@@ -19299,7 +19290,7 @@ __metadata:
     "@vitejs/plugin-react": 3.1.0
     antd: 5.2.3
     i18next: 22.5.0
-    i18next-browser-languagedetector: 6.1.4
+    i18next-browser-languagedetector: 7.0.2
     i18next-http-backend: 2.1.1
     i18next-resources-to-backend: 1.1.4
     jest: 29.4.1
@@ -21260,6 +21251,7 @@ __metadata:
     cross-fetch: 3.1.5
     graphql-ws: 5.12.0
     i18next: 22.5.0
+    i18next-browser-languagedetector: 7.0.2
     i18next-resources-to-backend: 1.1.4
     jest: 29.4.1
     jest-environment-jsdom: 29.4.1
