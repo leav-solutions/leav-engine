@@ -324,16 +324,12 @@ export const isLibraryInApp = (app: GET_APPLICATION_BY_ID_applications_list, lib
 
 export const isTreeInApp = (app: GET_APPLICATION_BY_ID_applications_list, treeId: string): boolean => {
     const settings = app?.settings ?? {};
-    if (settings.trees === 'none') {
+    if (settings.trees === null) {
         return false;
     }
 
-    if (settings.trees === 'all') {
-        return true;
-    }
-
-    const appTrees = settings.trees ?? [];
-    return !!appTrees.find(appTree => appTree === treeId);
+    const appTrees = settings?.trees ?? [];
+    return !appTrees.length || !!appTrees.find(appTree => appTree === treeId);
 };
 
 export const enforceInitialSlash = (url: string): string => {

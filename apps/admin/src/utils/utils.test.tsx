@@ -336,8 +336,7 @@ describe('utils', () => {
             expect(isTreeInApp(mockApplicationDetails, 'treeA')).toBe(true);
             expect(isTreeInApp(mockApplicationDetails, 'treeB')).toBe(true);
             expect(isTreeInApp(mockApplicationDetails, 'treeC')).toBe(false);
-            expect(isTreeInApp({...mockApplicationDetails, settings: {trees: 'all'}}, 'treeC')).toBe(true);
-            expect(isTreeInApp({...mockApplicationDetails, settings: {trees: 'none'}}, 'treeA')).toBe(false);
+            expect(isTreeInApp({...mockApplicationDetails, settings: {trees: []}}, 'treeC')).toBe(true);
         });
     });
 
