@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import * as amqp from 'amqplib';
+import {IAmqpService} from '@leav/message-broker';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
-import {IAmqpService, amqpService} from '@leav/message-broker';
+import * as amqp from 'amqplib';
 import {EventAction} from '../../_types/event';
 import eventsManager from './eventsManagerDomain';
 import winston = require('winston');
@@ -88,7 +88,7 @@ describe('Events Manager', () => {
             'core.infra.amqpService': mockAmqpService as IAmqpService
         });
 
-        await events.init();
+        await events.initPubSubEventsConsumer();
 
         expect(mockAmqpService.consume).toBeCalledTimes(1);
     });

@@ -2,19 +2,24 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
+import * as Config from '_types/config';
+import {IQueryInfos} from '_types/queryInfos';
+import * as amqp from 'amqplib';
 import {PubSub} from 'graphql-subscriptions';
 import Joi from 'joi';
 import winston from 'winston';
-import * as Config from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
 import {DbPayload, IPubSubEvent, IPubSubPayload} from '../../_types/event';
-import * as amqp from 'amqplib';
 
 export interface IEventsManagerDomain {
     sendDatabaseEvent(payload: DbPayload, ctx: IQueryInfos): Promise<void>;
     sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos): Promise<void>;
     subscribe(triggersName: string[]): AsyncIterator<any>;
-    init(): Promise<void>;
+    initPubSubEventsConsumer(): Promise<void>;
+    initCustomConsumer(
+        queueName: string,
+        routinKey: string,
+        onMessage: (msg: amqp.ConsumeMessage, channel: amqp.ConfirmChannel) => Promise<void>
+    ): Promise<void>;
 }
 
 interface IDeps {
@@ -34,6 +39,7 @@ export default function ({
         const msgBodySchema = Joi.object().keys({
             time: Joi.number().required(),
             userId: Joi.string().required(),
+            emitterPid: Joi.number().required(),
             payload: Joi.object().keys({
                 triggerName: Joi.string().required(),
                 data: Joi.any().required()
@@ -72,12 +78,12 @@ export default function ({
         await amqpService.publish(
             config.amqp.exchange,
             routingKey,
-            JSON.stringify({time: Date.now(), userId: ctx.userId, payload})
+            JSON.stringify({time: Date.now(), userId: ctx.userId, emitterPid: process.pid, payload})
         );
     };
 
     return {
-        async init() {
+        async initPubSubEventsConsumer() {
             // listening pubsub events
             await amqpService.consumer.channel.assertQueue(config.eventsManager.queues.pubsub_events);
             await amqpService.consumer.channel.bindQueue(
@@ -91,6 +97,13 @@ export default function ({
                 config.eventsManager.routingKeys.pubsub_events,
                 _onMessage
             );
+        },
+        async initCustomConsumer(queue, routingKey, onMessage) {
+            // listening pubsub events
+            await amqpService.consumer.channel.assertQueue(queue);
+            await amqpService.consumer.channel.bindQueue(queue, config.amqp.exchange, routingKey);
+
+            await amqpService.consume(queue, routingKey, msg => onMessage(msg, amqpService.consumer.channel));
         },
         async sendDatabaseEvent(payload: DbPayload, ctx: IQueryInfos): Promise<void> {
             await _send(config.eventsManager.routingKeys.data_events, payload, ctx);

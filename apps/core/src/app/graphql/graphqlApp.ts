@@ -1,15 +1,19 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IConfig} from '_types/config';
+import {IAppGraphQLSchema} from '_types/graphql';
+import {IAppModule} from '_types/shared';
+import {ConfirmChannel, ConsumeMessage} from 'amqplib';
 import {makeExecutableSchema} from 'apollo-server';
 import {AwilixContainer} from 'awilix';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {EventEmitter} from 'events';
 import {GraphQLResolveInfo, GraphQLSchema, Kind} from 'graphql';
 import {merge} from 'lodash';
 import {IUtils} from 'utils/utils';
 import * as winston from 'winston';
-import {IAppGraphQLSchema} from '_types/graphql';
-import {IAppModule} from '_types/shared';
+import {EventAction, IDbEvent} from '../../_types/event';
 import {IQueryField} from '../../_types/record';
 
 export interface IGraphqlApp extends IAppModule {
@@ -18,20 +22,60 @@ export interface IGraphqlApp extends IAppModule {
     SCHEMA_UPDATE_EVENT: string;
     generateSchema(): Promise<void>;
     getQueryFields(info: GraphQLResolveInfo): IQueryField[];
+    initSchemaUpdateConsumer(): Promise<void>;
 }
 
 interface IDeps {
     'core.depsManager'?: AwilixContainer;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.utils.logger'?: winston.Winston;
     'core.utils'?: IUtils;
+    config?: IConfig;
 }
 
-export default function({'core.depsManager': depsManager = null, 'core.utils': utils = null}: IDeps = {}): IGraphqlApp {
+export default function ({
+    'core.depsManager': depsManager = null,
+    'core.domain.eventsManager': eventsManagerDomain = null,
+    'core.utils': utils = null,
+    config = null
+}: IDeps = {}): IGraphqlApp {
     let _fullSchema: GraphQLSchema;
     const _pluginsSchema: IAppGraphQLSchema[] = [];
 
     const schemaUpdateEmitter = new EventEmitter();
     const SCHEMA_UPDATE_EVENT = 'schemaUpdate';
+
+    const _generateSchema = async (): Promise<void> => {
+        try {
+            const appSchema = {typeDefs: [], resolvers: {}};
+            const modules = Object.keys(depsManager.registrations).filter(modName => modName.match(/^core\.app*/));
+
+            for (const modName of modules) {
+                const appModule = depsManager.cradle[modName];
+
+                if (typeof appModule.getGraphQLSchema === 'function') {
+                    const schemaToAdd = await appModule.getGraphQLSchema();
+
+                    appSchema.typeDefs.push(schemaToAdd.typeDefs);
+                    appSchema.resolvers = merge(appSchema.resolvers, schemaToAdd.resolvers);
+                }
+            }
+
+            for (const schemaPart of _pluginsSchema) {
+                appSchema.typeDefs.push(schemaPart.typeDefs);
+                appSchema.resolvers = merge(appSchema.resolvers, schemaPart.resolvers);
+            }
+
+            // Put together a schema
+            const schema = makeExecutableSchema(appSchema);
+
+            _fullSchema = schema;
+
+            schemaUpdateEmitter.emit(SCHEMA_UPDATE_EVENT, schema);
+        } catch (e) {
+            utils.rethrow(e, 'Error generating schema:');
+        }
+    };
 
     return {
         SCHEMA_UPDATE_EVENT,
@@ -39,37 +83,7 @@ export default function({'core.depsManager': depsManager = null, 'core.utils': u
         get schema(): GraphQLSchema {
             return _fullSchema;
         },
-        async generateSchema(): Promise<void> {
-            try {
-                const appSchema = {typeDefs: [], resolvers: {}};
-                const modules = Object.keys(depsManager.registrations).filter(modName => modName.match(/^core\.app*/));
-
-                for (const modName of modules) {
-                    const appModule = depsManager.cradle[modName];
-
-                    if (typeof appModule.getGraphQLSchema === 'function') {
-                        const schemaToAdd = await appModule.getGraphQLSchema();
-
-                        appSchema.typeDefs.push(schemaToAdd.typeDefs);
-                        appSchema.resolvers = merge(appSchema.resolvers, schemaToAdd.resolvers);
-                    }
-                }
-
-                for (const schemaPart of _pluginsSchema) {
-                    appSchema.typeDefs.push(schemaPart.typeDefs);
-                    appSchema.resolvers = merge(appSchema.resolvers, schemaPart.resolvers);
-                }
-
-                // Put together a schema
-                const schema = makeExecutableSchema(appSchema);
-
-                _fullSchema = schema;
-
-                schemaUpdateEmitter.emit(SCHEMA_UPDATE_EVENT, schema);
-            } catch (e) {
-                utils.rethrow(e, 'Error generating schema:');
-            }
-        },
+        generateSchema: _generateSchema,
         getQueryFields(info: GraphQLResolveInfo): IQueryField[] {
             const extractedFields = [];
 
@@ -127,6 +141,34 @@ export default function({'core.depsManager': depsManager = null, 'core.utils': u
             }
 
             return extractedFields;
+        },
+        async initSchemaUpdateConsumer() {
+            // Consumer that update GraphQL schema when a library or attribute is saved/deleted
+            await eventsManagerDomain.initCustomConsumer(
+                'schema_update_events',
+                config.eventsManager.routingKeys.data_events,
+                async (msg: ConsumeMessage, channel: ConfirmChannel) => {
+                    channel.ack(msg);
+                    const msgContent: IDbEvent = JSON.parse(msg.content.toString());
+                    if (msgContent.emitterPid === process.pid) {
+                        // No need to refresh if we are the emitter. Refresh has already been done
+                        return;
+                    }
+
+                    const handledActions: EventAction[] = [
+                        EventAction.LIBRARY_SAVE,
+                        EventAction.LIBRARY_DELETE,
+                        EventAction.ATTRIBUTE_SAVE,
+                        EventAction.ATTRIBUTE_DELETE
+                    ];
+
+                    if (!handledActions.includes(msgContent.payload.action)) {
+                        return;
+                    }
+
+                    await _generateSchema();
+                }
+            );
         },
         extensionPoints: {
             registerGraphQLSchema: (schemaPart: IAppGraphQLSchema) => {

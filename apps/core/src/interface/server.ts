@@ -1,17 +1,20 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IConfig} from '_types/config';
+import {IQueryInfos} from '_types/queryInfos';
 import {ApolloServerPluginCacheControlDisabled} from 'apollo-server-core';
-import {ApolloServer, AuthenticationError as ApolloAuthenticationError} from 'apollo-server-express';
+import {AuthenticationError as ApolloAuthenticationError, ApolloServer} from 'apollo-server-express';
 import {IApplicationApp} from 'app/application/applicationApp';
 import {IAuthApp} from 'app/auth/authApp';
+import {ICoreApp} from 'app/core/coreApp';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
 import {AwilixContainer} from 'awilix';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import express, {NextFunction, Request, Response} from 'express';
 import fs from 'fs';
-import {execute, GraphQLFormattedError} from 'graphql';
+import {GraphQLFormattedError, execute} from 'graphql';
 import {graphqlUploadExpress} from 'graphql-upload';
 import * as graphqlWS from 'graphql-ws/lib/use/ws';
 import {createServer} from 'http';
@@ -19,14 +22,13 @@ import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
 import * as winston from 'winston';
 import {WebSocketServer} from 'ws';
-import {IConfig} from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
-import AuthenticationError from '../errors/AuthenticationError';
 import {ACCESS_TOKEN_COOKIE_NAME, API_KEY_PARAM_NAME} from '../_types/auth';
 import {ErrorTypes, IExtendedErrorMsg} from '../_types/errors';
+import AuthenticationError from '../errors/AuthenticationError';
 
 export interface IServer {
     init(): Promise<void>;
+    initConsumers(): Promise<void>;
 }
 
 interface IDeps {
@@ -34,16 +36,18 @@ interface IDeps {
     'core.app.graphql'?: IGraphqlApp;
     'core.app.auth'?: IAuthApp;
     'core.app.application'?: IApplicationApp;
+    'core.app.core'?: ICoreApp;
     'core.utils.logger'?: winston.Winston;
     'core.utils'?: IUtils;
     'core.depsManager'?: AwilixContainer;
 }
 
-export default function({
+export default function ({
     config: config = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.auth': authApp = null,
     'core.app.application': applicationApp = null,
+    'core.app.core': coreApp = null,
     'core.utils.logger': logger = null,
     'core.utils': utils = null,
     'core.depsManager': depsManager = null
@@ -146,9 +150,7 @@ export default function({
                     express.static(config.preview.directory, {fallthrough: false}),
                     async (err, req, res, next) => {
                         const htmlContent = await fs.promises.readFile(__dirname + '/preview404.html', 'utf8');
-                        res.status(404)
-                            .type('html')
-                            .send(htmlContent);
+                        res.status(404).type('html').send(htmlContent);
                     }
                 ]);
                 app.use(`/${config.export.endpoint}`, [_checkAuth, express.static(config.export.directory)]);
@@ -325,6 +327,10 @@ export default function({
             } catch (e) {
                 utils.rethrow(e, 'Server init error:');
             }
+        },
+        async initConsumers() {
+            await graphqlApp.initSchemaUpdateConsumer();
+            await coreApp.initPubSubEventsConsumer();
         }
     };
 }
