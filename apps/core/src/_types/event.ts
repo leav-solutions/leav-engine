@@ -8,6 +8,7 @@ import {IValue} from './value';
 export interface IEvent {
     time: number;
     userId: string;
+    emitter: string;
 }
 
 export type PublishedEvent<T> = IEvent & T;
@@ -19,6 +20,8 @@ export enum EventAction {
     RECORD_DELETE = 'RECORD_DELETE',
     LIBRARY_SAVE = 'LIBRARY_SAVE',
     LIBRARY_DELETE = 'LIBRARY_DELETE',
+    ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+    ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
     VALUE_SAVE = 'VALUE_SAVE',
     VALUE_DELETE = 'VALUE_DELETE'
 }

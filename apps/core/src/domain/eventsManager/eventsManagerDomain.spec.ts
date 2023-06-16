@@ -1,10 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import * as amqp from 'amqplib';
+import {IAmqpService} from '@leav/message-broker';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
-import {IAmqpService, amqpService} from '@leav/message-broker';
+import * as amqp from 'amqplib';
+import {IUtils} from 'utils/utils';
 import {EventAction} from '../../_types/event';
 import eventsManager from './eventsManagerDomain';
 import winston = require('winston');
@@ -81,6 +82,10 @@ describe('Events Manager', () => {
         close: jest.fn()
     };
 
+    const mockUtils: Mockify<IUtils> = {
+        getProcessIdentifier: jest.fn().mockReturnValue('98765431-42')
+    };
+
     test('Init', async () => {
         const events = eventsManager({
             config: conf as IConfig,
@@ -88,7 +93,7 @@ describe('Events Manager', () => {
             'core.infra.amqpService': mockAmqpService as IAmqpService
         });
 
-        await events.init();
+        await events.initPubSubEventsConsumer();
 
         expect(mockAmqpService.consume).toBeCalledTimes(1);
     });
@@ -96,7 +101,8 @@ describe('Events Manager', () => {
     test('send database event', async () => {
         const events = eventsManager({
             config: conf as IConfig,
-            'core.infra.amqpService': mockAmqpService as IAmqpService
+            'core.infra.amqpService': mockAmqpService as IAmqpService,
+            'core.utils': mockUtils as IUtils
         });
 
         await events.sendDatabaseEvent({action: EventAction.LIBRARY_SAVE, data: {new: {id: 'test'}}}, ctx);
@@ -107,7 +113,8 @@ describe('Events Manager', () => {
     test('send pubsub event', async () => {
         const events = eventsManager({
             config: conf as IConfig,
-            'core.infra.amqpService': mockAmqpService as IAmqpService
+            'core.infra.amqpService': mockAmqpService as IAmqpService,
+            'core.utils': mockUtils as IUtils
         });
 
         await events.sendPubSubEvent({triggerName: 'test', data: {}}, ctx);

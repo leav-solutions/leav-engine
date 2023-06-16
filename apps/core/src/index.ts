@@ -4,10 +4,12 @@
 import {amqpService} from '@leav/message-broker';
 import fs from 'fs';
 // import {IApplicationService} from 'infra/application/applicationService';
+import * as Config from '_types/config';
 import {IFilesManagerInterface} from 'interface/filesManager';
 import {IIndexationManagerInterface} from 'interface/indexationManager';
+import {IServer} from 'interface/server';
 import {ITasksManagerInterface} from 'interface/tasksManager';
-import * as Config from '_types/config';
+import minimist from 'minimist';
 import {getConfig, validateConfig} from './config';
 import {initDI} from './depsManager';
 import i18nextInit from './i18nextInit';
@@ -15,7 +17,6 @@ import {initRedis} from './infra/cache';
 import {initDb} from './infra/db/db';
 import {initMailer} from './infra/mailer';
 import {initPlugins} from './pluginsLoader';
-import minimist from 'minimist';
 
 (async function () {
     const opt = minimist(process.argv.slice(2));
@@ -49,7 +50,7 @@ import minimist from 'minimist';
         'core.infra.mailer': mailer
     });
 
-    const server = coreContainer.cradle['core.interface.server'];
+    const server: IServer = coreContainer.cradle['core.interface.server'];
     const filesManager: IFilesManagerInterface = coreContainer.cradle['core.interface.filesManager'];
     const indexationManager: IIndexationManagerInterface = coreContainer.cradle['core.interface.indexationManager'];
     const tasksManager: ITasksManagerInterface = coreContainer.cradle['core.interface.tasksManager'];
@@ -82,8 +83,7 @@ import minimist from 'minimist';
 
         if (opt.server) {
             await server.init();
-
-            await eventsManager.init();
+            await server.initConsumers();
         } else if (opt.migrate) {
             // Run db migrations
             await dbUtils.migrate(coreContainer);

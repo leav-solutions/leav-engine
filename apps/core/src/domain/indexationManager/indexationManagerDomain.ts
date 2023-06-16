@@ -1,22 +1,22 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import Joi from 'joi';
+import {IAmqpService} from '@leav/message-broker';
+import * as Config from '_types/config';
+import {IQueryInfos} from '_types/queryInfos';
+import {IValue} from '_types/value';
+import * as amqp from 'amqplib';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IFindRecordParams, IRecordDomain} from 'domain/record/recordDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
-import {IAmqpService} from '@leav/message-broker';
+import Joi from 'joi';
 import {isEqual, pick} from 'lodash';
 import {v4 as uuidv4} from 'uuid';
-import * as Config from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
-import {IValue} from '_types/value';
 import {AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
 import {EventAction, IDbEvent, ILibraryPayload, IRecordPayload, IValuePayload} from '../../_types/event';
 import {AttributeCondition, Operator} from '../../_types/record';
 import {CORE_INDEX_FIELD, IIndexationService} from '../../infra/indexation/indexationService';
-import * as amqp from 'amqplib';
 
 export interface IIndexationManagerDomain {
     init(): Promise<void>;
@@ -353,6 +353,7 @@ export default function ({
         const msgBodySchema = Joi.object().keys({
             time: Joi.number().required(),
             userId: Joi.string().required(),
+            emitter: Joi.string().required(),
             payload: Joi.object()
                 .keys({
                     action: Joi.string()

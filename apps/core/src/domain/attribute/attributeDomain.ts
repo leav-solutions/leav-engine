@@ -1,6 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IFormStrict} from '_types/forms';
+import {ILibrary} from '_types/library';
+import {IQueryInfos} from '_types/queryInfos';
+import {IDateRangeValue} from '_types/value';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
@@ -9,17 +14,14 @@ import {IFormRepo} from 'infra/form/formRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
-import {IFormStrict} from '_types/forms';
-import {ILibrary} from '_types/library';
-import {IQueryInfos} from '_types/queryInfos';
-import {IDateRangeValue} from '_types/value';
+import {AttributeFormats, IAttribute, IGetCoreAttributesParams, IOAllowedTypes} from '../../_types/attribute';
+import {Errors} from '../../_types/errors';
+import {EventAction} from '../../_types/event';
+import {IList, SortOrder} from '../../_types/list';
+import {AdminPermissionsActions, PermissionTypes} from '../../_types/permissions';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
-import {AttributeFormats, IAttribute, IGetCoreAttributesParams, IOAllowedTypes} from '../../_types/attribute';
-import {Errors} from '../../_types/errors';
-import {IList, SortOrder} from '../../_types/list';
-import {AdminPermissionsActions, PermissionTypes} from '../../_types/permissions';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import getPermissionCachePatternKey from '../permission/helpers/getPermissionCachePatternKey';
 import {getActionsListToSave, getAllowedInputTypes, getAllowedOutputTypes} from './helpers/attributeALHelper';
@@ -61,6 +63,7 @@ interface IDeps {
     'core.domain.permission.admin'?: IAdminPermissionDomain;
     'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
     'core.domain.versionProfile'?: IVersionProfileDomain;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.infra.form'?: IFormRepo;
     'core.infra.library'?: ILibraryRepo;
     'core.infra.tree'?: ITreeRepo;
@@ -75,6 +78,7 @@ export default function ({
     'core.domain.permission.admin': adminPermissionDomain = null,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
     'core.domain.versionProfile': versionProfileDomain = null,
+    'core.domain.eventsManager': eventsManagerDomain = null,
     'core.infra.form': formRepo = null,
     'core.infra.library': libraryRepo = null,
     'core.infra.tree': treeRepo = null,
@@ -246,6 +250,19 @@ export default function ({
                 ? await attributeRepo.updateAttribute({attrData: attrToSave, ctx})
                 : await attributeRepo.createAttribute({attrData: attrToSave, ctx});
 
+            await eventsManagerDomain.sendDatabaseEvent(
+                {
+                    action: EventAction.ATTRIBUTE_SAVE,
+                    data: {
+                        new: attr,
+                        ...(isExistingAttr && {
+                            old: attrProps
+                        })
+                    }
+                },
+                ctx
+            );
+
             const cacheKey = utils.getCoreEntityCacheKey('attribute', attrToSave.id);
             await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey]);
 
@@ -296,6 +313,14 @@ export default function ({
             }
 
             const deletedAttribute = await attributeRepo.deleteAttribute({attrData: attrProps, ctx});
+
+            await eventsManagerDomain.sendDatabaseEvent(
+                {
+                    action: EventAction.ATTRIBUTE_DELETE,
+                    data: {old: deletedAttribute}
+                },
+                ctx
+            );
 
             const cacheKey = utils.getCoreEntityCacheKey('attribute', id);
             await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey]);

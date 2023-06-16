@@ -1,25 +1,28 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ISystemTranslationGenerator} from 'app/graphql/customScalars/systemTranslation/systemTranslation';
-import {ICoreDomain} from 'domain/core/coreDomain';
-import {constants, promises as fs} from 'fs';
-import {GraphQLScalarType, Kind} from 'graphql';
-import GraphQLJSON, {GraphQLJSONObject} from 'graphql-type-json';
-import {i18n} from 'i18next';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {IAppModule} from '_types/shared';
 import {ISystemTranslation} from '_types/systemTranslation';
+import {ISystemTranslationGenerator} from 'app/graphql/customScalars/systemTranslation/systemTranslation';
+import {ICoreDomain} from 'domain/core/coreDomain';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {constants, promises as fs} from 'fs';
+import {GraphQLScalarType, Kind} from 'graphql';
+import GraphQLJSON, {GraphQLJSONObject} from 'graphql-type-json';
+import {i18n} from 'i18next';
 import {IGraphqlApp} from '../graphql/graphqlApp';
 
 export interface ICoreApp extends IAppModule {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
     filterSysTranslationField(fieldData: ISystemTranslation, requestedLangs: string[]): ISystemTranslation;
+    initPubSubEventsConsumer(): Promise<void>;
 }
 
 interface IDeps {
     'core.domain.core'?: ICoreDomain;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.graphql.customScalars.systemTranslation'?: ISystemTranslationGenerator;
     'core.app.graphql.customScalars.dateTime'?: GraphQLScalarType;
@@ -53,6 +56,7 @@ const _parseLiteralAny = ast => {
 export default function (
     {
         'core.domain.core': coreDomain = null,
+        'core.domain.eventsManager': eventsManagerDomain = null,
         'core.app.graphql': graphqlApp = null,
         'core.app.graphql.customScalars.systemTranslation': systemTranslation = null,
         'core.app.graphql.customScalars.dateTime': DateTime = null,
@@ -138,6 +142,9 @@ export default function (
                     allLabel[labelLang] = fieldData[labelLang];
                     return allLabel;
                 }, {});
+        },
+        async initPubSubEventsConsumer() {
+            return eventsManagerDomain.initPubSubEventsConsumer();
         },
         extensionPoints: {
             /**

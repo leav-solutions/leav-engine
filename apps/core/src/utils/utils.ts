@@ -1,16 +1,17 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IActionsListConfig} from '_types/actionsList';
+import {ErrorFieldDetail, ErrorFieldDetailMessage, Errors, IExtendedErrorMsg} from '_types/errors';
+import {LibraryBehavior} from '_types/library';
 import fs from 'fs';
 import {i18n} from 'i18next';
 import {camelCase, flow, mergeWith, partialRight, trimEnd, upperFirst} from 'lodash';
 import moment from 'moment';
-import {IActionsListConfig} from '_types/actionsList';
-import {ErrorFieldDetail, ErrorFieldDetailMessage, Errors, IExtendedErrorMsg} from '_types/errors';
-import {LibraryBehavior} from '_types/library';
-import ValidationError from '../errors/ValidationError';
+import os from 'os';
 import {APPS_URL_PREFIX} from '../_types/application';
 import {AttributeTypes, IAttribute} from '../_types/attribute';
+import ValidationError from '../errors/ValidationError';
 import getDefaultActionsList from './helpers/getDefaultActionsList';
 import getLibraryDefaultAttributes from './helpers/getLibraryDefaultAttributes';
 
@@ -110,6 +111,8 @@ export interface IUtils {
     getUnixTime(): number;
 
     getFileExtension(filename: string): string | null;
+
+    getProcessIdentifier(): string;
 }
 
 export interface IUtilsDeps {
@@ -263,6 +266,9 @@ export default function ({translator = null}: IUtilsDeps = {}): IUtils {
 
             //TODO: test this
             return new ValidationError<T>(fieldDetails, this.translateError(message, lang));
+        },
+        getProcessIdentifier(): string {
+            return `${os.hostname()}-${process.pid}`;
         }
     };
 }
