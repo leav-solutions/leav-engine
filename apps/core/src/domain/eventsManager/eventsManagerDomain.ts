@@ -7,6 +7,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import * as amqp from 'amqplib';
 import {PubSub} from 'graphql-subscriptions';
 import Joi from 'joi';
+import {IUtils} from 'utils/utils';
 import winston from 'winston';
 import {DbPayload, IPubSubEvent, IPubSubPayload} from '../../_types/event';
 
@@ -26,12 +27,14 @@ interface IDeps {
     config?: Config.IConfig;
     'core.infra.amqpService'?: IAmqpService;
     'core.utils.logger'?: winston.Winston;
+    'core.utils'?: IUtils;
 }
 
 export default function ({
     config = null,
     'core.infra.amqpService': amqpService = null,
-    'core.utils.logger': logger = null
+    'core.utils.logger': logger = null,
+    'core.utils': utils = null
 }: IDeps): IEventsManagerDomain {
     const pubsub = new PubSub();
 
@@ -39,7 +42,7 @@ export default function ({
         const msgBodySchema = Joi.object().keys({
             time: Joi.number().required(),
             userId: Joi.string().required(),
-            emitterPid: Joi.number().required(),
+            emitter: Joi.string().required(),
             payload: Joi.object().keys({
                 triggerName: Joi.string().required(),
                 data: Joi.any().required()
@@ -78,7 +81,7 @@ export default function ({
         await amqpService.publish(
             config.amqp.exchange,
             routingKey,
-            JSON.stringify({time: Date.now(), userId: ctx.userId, emitterPid: process.pid, payload})
+            JSON.stringify({time: Date.now(), userId: ctx.userId, emitter: utils.getProcessIdentifier(), payload})
         );
     };
 

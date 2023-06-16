@@ -353,7 +353,7 @@ export default function ({
         const msgBodySchema = Joi.object().keys({
             time: Joi.number().required(),
             userId: Joi.string().required(),
-            emitterPid: Joi.number().required(),
+            emitter: Joi.string().required(),
             payload: Joi.object()
                 .keys({
                     action: Joi.string()

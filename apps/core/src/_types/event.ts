@@ -8,7 +8,7 @@ import {IValue} from './value';
 export interface IEvent {
     time: number;
     userId: string;
-    emitterPid: number;
+    emitter: string;
 }
 
 export type PublishedEvent<T> = IEvent & T;

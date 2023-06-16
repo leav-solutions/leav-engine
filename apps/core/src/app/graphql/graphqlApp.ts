@@ -150,7 +150,7 @@ export default function ({
                 async (msg: ConsumeMessage, channel: ConfirmChannel) => {
                     channel.ack(msg);
                     const msgContent: IDbEvent = JSON.parse(msg.content.toString());
-                    if (msgContent.emitterPid === process.pid) {
+                    if (msgContent.emitter === utils.getProcessIdentifier()) {
                         // No need to refresh if we are the emitter. Refresh has already been done
                         return;
                     }
