@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {RecordCard, useLang} from '@leav/ui';
+import {AttributeType} from '_gqlTypes/globalTypes';
 import {infosCol} from 'constants/constants';
 import useSearchReducer from 'hooks/useSearchReducer';
 import styled from 'styled-components';
-import {AttributeType} from '_gqlTypes/globalTypes';
-import {displayTypeToPreviewSize} from '../../../../utils';
 import {ITableCell, PreviewSize} from '../../../../_types/types';
+import {displayTypeToPreviewSize} from '../../../../utils';
 import AllValuesCount from './AllValuesCount';
 import CellInfos from './CellInfos';
 import StandardCell from './StandardCell';
@@ -60,7 +60,7 @@ const Cell = ({columnName, data}: ICellProps) => {
                         simplistic
                     />
 
-                    {otherValues.length ?? 0 ? <AllValuesCount values={valuesToDisplay} /> : <></>}
+                    {otherValues.length ?? 0 ? <AllValuesCount values={valuesToDisplay} attributeType={type} /> : <></>}
                 </RecordCardCellWrapper>
             ) : null;
         default:

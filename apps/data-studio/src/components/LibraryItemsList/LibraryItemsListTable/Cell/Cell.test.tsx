@@ -2,10 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import React from 'react';
-import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
-import {act, render, screen, waitFor} from '_tests/testUtils';
 import {mockRecord, mockRecordWhoAmI} from '__mocks__/common/record';
+import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
+import {act, render, screen} from '_tests/testUtils';
 import {ITableCell} from '../../../../_types/types';
 import Cell from './Cell';
 
@@ -74,13 +73,9 @@ describe('Cell', () => {
         expect(screen.queryByText('record3')).not.toBeInTheDocument();
         expect(screen.getByText('3')).toBeInTheDocument();
 
-        await act(async () => {
-            userEvent.hover(screen.getByText('3'), null);
-        });
+        userEvent.hover(screen.getByText('3'), null);
 
-        await waitFor(() => screen.getByText('record2'));
-
-        expect(screen.getByText('record2')).toBeInTheDocument();
-        expect(screen.getByText('record3')).toBeInTheDocument();
+        expect(await screen.findByText('record2')).toBeInTheDocument();
+        expect(await screen.findByText('record3')).toBeInTheDocument();
     });
 });
