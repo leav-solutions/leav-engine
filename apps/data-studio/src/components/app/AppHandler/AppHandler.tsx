@@ -110,7 +110,7 @@ function AppHandler(): JSX.Element {
         }
 
         document.title = `${globalSettings.name} - ${localizedTranslation(currentApp.label, lang)}`;
-    }, [currentApp, globalSettings, userLang, t]);
+    }, [currentApp, globalSettings, lang]);
 
     // To update language in some components such as date-picker
     useEffect(() => {
