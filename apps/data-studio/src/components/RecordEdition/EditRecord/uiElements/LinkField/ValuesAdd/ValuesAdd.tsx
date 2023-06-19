@@ -10,15 +10,24 @@ import {
     SearchOutlined
 } from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
-import {RecordCard, themeVars, useLang, ErrorDisplay} from '@leav/ui';
+import {ErrorDisplay, RecordCard, themeVars, useLang} from '@leav/ui';
+import {CREATE_DIRECTORY} from '_gqlTypes/CREATE_DIRECTORY';
+import {
+    RECORD_FORM_recordForm_elements_attribute_LinkAttribute,
+    RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values
+} from '_gqlTypes/RECORD_FORM';
+import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {UPLOAD} from '_gqlTypes/UPLOAD';
+import {LibraryBehavior} from '_gqlTypes/globalTypes';
+import {ISharedStateSelectionSearch, PreviewSize} from '_types/types';
 import {Button, Divider, Input, InputRef, Space, Spin} from 'antd';
 import {PaginationConfig} from 'antd/lib/pagination';
 import CreateDirectory from 'components/CreateDirectory';
 import EditRecordModal from 'components/RecordEdition/EditRecordModal';
 import SearchModal from 'components/SearchModal';
+import UploadFiles from 'components/UploadFiles';
 import List from 'components/shared/List';
 import {IListProps} from 'components/shared/List/List';
-import UploadFiles from 'components/UploadFiles';
 import {getRecordsFromLibraryQuery} from 'graphQL/queries/records/getRecordsFromLibraryQuery';
 import {
     IGetRecordsFromLibraryQuery,
@@ -28,15 +37,6 @@ import {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {localizedTranslation} from 'utils';
-import {CREATE_DIRECTORY} from '_gqlTypes/CREATE_DIRECTORY';
-import {LibraryBehavior} from '_gqlTypes/globalTypes';
-import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
-import {
-    RECORD_FORM_recordForm_elements_attribute_LinkAttribute,
-    RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values
-} from '_gqlTypes/RECORD_FORM';
-import {UPLOAD} from '_gqlTypes/UPLOAD';
-import {ISharedStateSelectionSearch, PreviewSize} from '_types/types';
 
 type ValueFromList = RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values;
 
@@ -259,7 +259,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
 
     const searchResult =
         searchData && currentSearch
-            ? searchData[attribute.linked_library.id].list.map(record => ({
+            ? searchData[attribute.linked_library.gqlNames.query].list.map(record => ({
                   id: record.whoAmI.id,
                   whoAmI: record.whoAmI
               }))
@@ -324,7 +324,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
                                     dataSource={searchResult}
                                     pagination={{
                                         ...paginationCommonProps,
-                                        total: searchData?.[attribute.linked_library.id].totalCount ?? 0,
+                                        total: searchData?.[attribute.linked_library.gqlNames.query].totalCount ?? 0,
                                         current: searchCurrentPage,
                                         onChange: _handleSearchPageChange
                                     }}
