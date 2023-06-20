@@ -3,5 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 export {useSaveApplicationMutation} from '../_gqlTypes';
-export {default as useLang} from './useLang';
+export {useAntdLocale} from './useAntdLocale';
 export {default as useAppLang} from './useAppLang';
+export {default as useLang} from './useLang';

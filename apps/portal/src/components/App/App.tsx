@@ -2,28 +2,28 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {customTheme, LangContext, useAppLang, Loading, ErrorDisplay} from '@leav/ui';
+import {ErrorDisplay, LangContext, Loading, customTheme, useAntdLocale, useAppLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
+import {GET_APPLICATIONS, GET_APPLICATIONSVariables} from '_gqlTypes/GET_APPLICATIONS';
+import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
+import {GET_LANGS} from '_gqlTypes/GET_LANGS';
+import {ME} from '_gqlTypes/ME';
 import {ConfigProvider, Layout, theme} from 'antd';
 import Applications from 'components/Applications';
-import AppIcon from 'components/shared/AppIcon';
 import UserMenu from 'components/UserMenu';
-import {APP_ENDPOINT} from '../../constants';
+import AppIcon from 'components/shared/AppIcon';
 import ApplicationContext from 'context/ApplicationContext';
 import UserContext from 'context/UserContext';
 import {useApplicationEventsSubscription} from 'hooks/useApplicationEventsSubscription';
 import useRedirectionError from 'hooks/useRedirectionError';
 import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
+import {getLangs} from 'queries/core/getLangs';
 import {getGlobalSettingsQuery} from 'queries/globalSettings/getGlobalSettingsQuery';
 import {getMe} from 'queries/me/me';
 import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled, {ThemeProvider} from 'styled-components';
-import {GET_APPLICATIONS, GET_APPLICATIONSVariables} from '_gqlTypes/GET_APPLICATIONS';
-import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
-import {ME} from '_gqlTypes/ME';
-import {GET_LANGS} from '_gqlTypes/GET_LANGS';
-import {getLangs} from 'queries/core/getLangs';
+import {APP_ENDPOINT} from '../../constants';
 
 const Header = styled(Layout.Header)`
     position: relative;
@@ -49,6 +49,7 @@ function App(): JSX.Element {
     const userLang = i18n.language.split('-')[0];
     const fallbackLang = i18n.options.fallbackLng ? i18n.options.fallbackLng[0] : '';
     const [lang, setLang] = useState<string[]>([userLang, fallbackLang]);
+    const locale = useAntdLocale(lang[0]);
 
     const {data: availableLangs, loading: langsLoading, error: langsError} = useQuery<GET_LANGS>(getLangs);
 
@@ -115,13 +116,18 @@ function App(): JSX.Element {
     };
 
     return (
-        <LangContext.Provider
-            value={{lang, availableLangs: availableLangs.langs, defaultLang: appLang, setLang: _handleLanguageChange}}
-        >
-            <ApplicationContext.Provider value={appContextData}>
-                <UserContext.Provider value={userData.me}>
-                    <ConfigProvider theme={customTheme}>
-                        <ThemeProvider theme={{antd: themeToken}}>
+        <ThemeProvider theme={{antd: themeToken}}>
+            <LangContext.Provider
+                value={{
+                    lang,
+                    availableLangs: availableLangs.langs,
+                    defaultLang: i18n?.language?.split('-')[0] ?? appLang,
+                    setLang: _handleLanguageChange
+                }}
+            >
+                <ApplicationContext.Provider value={appContextData}>
+                    <UserContext.Provider value={userData.me}>
+                        <ConfigProvider theme={customTheme} locale={locale}>
                             <Layout>
                                 <Header>
                                     <AppIcon size="tiny" style={{maxHeight: '2rem', margin: 'auto'}} />
@@ -131,11 +137,11 @@ function App(): JSX.Element {
                                     <Applications />
                                 </Content>
                             </Layout>
-                        </ThemeProvider>
-                    </ConfigProvider>
-                </UserContext.Provider>
-            </ApplicationContext.Provider>
-        </LangContext.Provider>
+                        </ConfigProvider>
+                    </UserContext.Provider>
+                </ApplicationContext.Provider>
+            </LangContext.Provider>
+        </ThemeProvider>
     );
 }
 
