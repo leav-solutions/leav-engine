@@ -1,6 +1,6 @@
 {
   "name": "portal",
-  "version": "1.0.0-beta4",
+  "version": "1.0.0-beta5",
   "private": true,
   "dependencies": {
     "@apollo/client": "3.7.10",

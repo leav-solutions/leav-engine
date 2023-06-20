@@ -1,6 +1,6 @@
 {
     "name": "sync-scan",
-    "version": "1.0.0-beta4",
+    "version": "1.0.0-beta5",
     "description": "",
     "main": "dist/index.js",
     "scripts": {
