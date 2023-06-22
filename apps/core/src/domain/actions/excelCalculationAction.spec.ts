@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import excelCalculationAction from './excelCalculationAction';
-import {IValueDomain} from 'domain/value/valueDomain';
 import {ActionsListValueType, IActionsListContext} from '_types/actionsList';
 import {ICalculationVariable, IVariableValue} from 'domain/helpers/calculationVariable';
+import {IUtils} from 'utils/utils';
+import excelCalculationAction from './excelCalculationAction';
 
 const mockCalculationsVariable = {
     processVariableString: async (
@@ -23,6 +23,10 @@ const mockCalculationsVariable = {
 };
 
 describe('excelCalculationAction', () => {
+    const mockUtils: Mockify<IUtils> = {
+        translateError: jest.fn().mockReturnValue('Excel calculation error')
+    };
+
     test('Simple excelCalculation', async () => {
         const action = excelCalculationAction().action;
         const ctx = {};
@@ -71,10 +75,9 @@ describe('excelCalculationAction', () => {
         expect(res).toBe('resultat totoValue tataValue titiValue');
     });
     test('Error calculation', async () => {
-        const mockValueDomain: Mockify<IValueDomain> = {
-            getValues: global.__mockPromise([{value: 'test'}])
-        };
-        const action = excelCalculationAction().action;
+        const action = excelCalculationAction({
+            'core.utils': mockUtils as IUtils
+        }).action;
         const ctx = {};
         const res = await action(
             null,

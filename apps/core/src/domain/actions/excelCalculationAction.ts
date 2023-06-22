@@ -3,10 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ICalculationVariable} from 'domain/helpers/calculationVariable';
 import {Parser} from 'hot-formula-parser';
+import {IUtils} from 'utils/utils';
 import {ActionsListIOTypes, ActionsListValueType, IActionsListContext} from '../../_types/actionsList';
+import {Errors} from '../../_types/errors';
 
 interface IDeps {
     'core.domain.helpers.calculationVariable'?: ICalculationVariable;
+    'core.utils'?: IUtils;
 }
 
 type ActionsListExcelValueType = string | number | boolean | {};
@@ -15,7 +18,10 @@ export interface IActionListExcelContext extends IActionsListContext {
     value?: ActionsListExcelValueType;
 }
 
-export default function ({'core.domain.helpers.calculationVariable': calculationVariable = null}: IDeps = {}) {
+export default function ({
+    'core.domain.helpers.calculationVariable': calculationVariable = null,
+    'core.utils': utils = null
+}: IDeps = {}) {
     const _processReplacement = async (
         context: IActionsListContext,
         initialValue: ActionsListValueType,
@@ -28,6 +34,7 @@ export default function ({'core.domain.helpers.calculationVariable': calculation
 
         return stringValues.join(' ');
     };
+
     const _replaceAsync = async (
         str: string,
         regex: RegExp,
@@ -50,6 +57,7 @@ export default function ({'core.domain.helpers.calculationVariable': calculation
         const stringDatas = data.map(d => (typeof d === 'object' ? d.recordId : d));
         return str.replace(regex, () => stringDatas.shift());
     };
+
     const _replaceVariables = async (
         formula: string,
         context: IActionsListContext,
@@ -59,10 +67,11 @@ export default function ({'core.domain.helpers.calculationVariable': calculation
         const res = _replaceAsync(formula, regExp, _processReplacement, context, value);
         return res;
     };
+
     return {
         id: 'excelCalculation',
         name: 'Excel calculation',
-        description: 'Performs an excel calcultation',
+        description: 'Performs an excel calculation',
         input_types: [ActionsListIOTypes.STRING, ActionsListIOTypes.NUMBER],
         output_types: [ActionsListIOTypes.STRING],
         params: [
@@ -87,10 +96,14 @@ export default function ({'core.domain.helpers.calculationVariable': calculation
             const finalFormula = await _replaceVariables(formula, ctx, value);
             const parser = new Parser();
             const {error, result} = parser.parse(finalFormula);
+
             if (error) {
-                return `Excel calculation error : ${error}
-                ${finalFormula}`;
+                return utils.translateError(
+                    {msg: Errors.EXCEL_CALCULATION_ERROR, vars: {error, formula: finalFormula}},
+                    ctx.lang
+                );
             }
+
             const finalResult: string = `${result}`;
             return finalResult;
         }
