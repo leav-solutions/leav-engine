@@ -9,6 +9,7 @@
         "ELEMENT_WITH_SAME_PATH_ALREADY_PRESENT": "Un élement identique avec le même chemin est déjà présent",
         "ERROR": "Erreur",
         "UNKNOWN": "Inconnu",
+        "FILE_ERROR": "Erreur lors de la lecture du fichier: {{error}}",
         "FILE_NOT_FOUND": "Fichier inconnu",
         "DUPLICATE_FILENAMES": "Noms de fichier identiques",
         "ONLY_FOLDERS_CAN_BE_SELECTED": "Only folders can be selected",
