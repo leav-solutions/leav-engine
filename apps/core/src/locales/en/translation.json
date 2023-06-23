@@ -10,6 +10,7 @@
         "ERROR": "Error",
         "EXCEL_CALCULATION_ERROR": "Excel calculation error: {{error}}. Formula: {{formula}}",
         "UNKNOWN": "Unknown",
+        "FILE_ERROR": "File read error: {{error}}",
         "FILE_NOT_FOUND": "Unknown file",
         "DUPLICATE_FILENAMES": "Duplicate filenames",
         "DUPLICATE_DIRECTORY_NAMES": "Duplicate directory names",

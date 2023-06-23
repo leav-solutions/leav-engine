@@ -10,6 +10,7 @@
         "ERROR": "Erreur",
         "EXCEL_CALCULATION_ERROR": "Erreur de calcul Excel: {{error}}. Formule: {{formula}}",
         "UNKNOWN": "Inconnu",
+        "FILE_ERROR": "Erreur lors de la lecture du fichier: {{error}}",
         "FILE_NOT_FOUND": "Fichier inconnu",
         "DUPLICATE_FILENAMES": "Noms de fichier identiques",
         "ONLY_FOLDERS_CAN_BE_SELECTED": "Only folders can be selected",

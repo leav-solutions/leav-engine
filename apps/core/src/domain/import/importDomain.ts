@@ -2,7 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {extractArgsFromString} from '@leav/utils';
+import * as Config from '_types/config';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain, IRecordFilterLight} from 'domain/record/recordDomain';
 import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
@@ -10,38 +12,35 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import ExcelJS from 'exceljs';
 import fs from 'fs';
-import {nanoid} from 'nanoid';
+import {i18n} from 'i18next';
 import JsonParser from 'jsonparse';
 import {validate} from 'jsonschema';
 import {ValidatorResultError} from 'jsonschema/lib/helpers';
+import {nanoid} from 'nanoid';
 import path from 'path';
-import * as Config from '_types/config';
-import {TaskPriority, TaskCallbackType, ITaskFuncParams} from '../../_types/tasksManager';
-import ValidationError from '../../errors/ValidationError';
-import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
+import {IUtils} from 'utils/utils';
+import {v4 as uuidv4} from 'uuid';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
-import {i18n} from 'i18next';
 import {
     Action,
     IData,
     IElement,
+    IValue as IImportValue,
     IMatch,
-    ImportMode,
-    ImportType,
     ITree,
-    IValue as IImportValue
+    ImportMode,
+    ImportType
 } from '../../_types/import';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {AttributeCondition, Operator} from '../../_types/record';
+import {ITaskFuncParams, TaskCallbackType, TaskPriority} from '../../_types/tasksManager';
 import {ITreeElement} from '../../_types/tree';
 import {IValue} from '../../_types/value';
-import {IValidateHelper} from '../helpers/validate';
-import {v4 as uuidv4} from 'uuid';
-import {IUtils} from 'utils/utils';
-import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
 import PermissionError from '../../errors/PermissionError';
-import {dbUtils} from 'infra/db';
+import ValidationError from '../../errors/ValidationError';
+import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
+import {IValidateHelper} from '../helpers/validate';
 
 export const IMPORT_DATA_SCHEMA_PATH = path.resolve(__dirname, './import-data-schema.json');
 export const IMPORT_CONFIG_SCHEMA_PATH = path.resolve(__dirname, './import-config-schema.json');
@@ -369,6 +368,7 @@ export default function ({
         filename: string,
         callbackElement: (element: IElement, index: number) => Promise<void>,
         callbackTree: (element: ITree, index: number) => Promise<void>,
+        ctx: IQueryInfos,
         updateProgress?: (increasePos: number, translationKey?: string) => Promise<void>
     ): Promise<boolean> => {
         return new Promise((resolve, reject) => {
@@ -430,7 +430,17 @@ export default function ({
                 }
             };
 
-            fileStream.on('error', () => reject(new Error(Errors.FILE_ERROR)));
+            fileStream.on('error', err =>
+                reject(
+                    new Error(
+                        translator.t(`errors.${Errors.FILE_ERROR}`, {
+                            lng: ctx.lang,
+                            error: err,
+                            interpolation: {escapeValue: false}
+                        })
+                    )
+                )
+            );
 
             fileStream.on('data', chunk => {
                 parser.write(chunk);
@@ -451,7 +461,7 @@ export default function ({
         });
     };
 
-    const _getFileDataBuffer = async (filepath: string): Promise<Buffer> => {
+    const _getFileDataBuffer = async (filepath: string, ctx: IQueryInfos): Promise<Buffer> => {
         const fileStream = fs.createReadStream(filepath);
 
         const data = await ((): Promise<Buffer> =>
@@ -459,14 +469,24 @@ export default function ({
                 const chunks = [];
 
                 fileStream.on('data', chunk => chunks.push(chunk));
-                fileStream.on('error', () => reject(new ValidationError({id: Errors.FILE_ERROR})));
+                fileStream.on('error', err => {
+                    reject(
+                        new Error(
+                            translator.t(`errors.${Errors.FILE_ERROR}`, {
+                                lng: ctx.lang,
+                                error: err,
+                                interpolation: {escapeValue: false}
+                            })
+                        )
+                    );
+                });
                 fileStream.on('end', () => resolve(Buffer.concat(chunks)));
             }))();
 
         return data;
     };
 
-    const _jsonSchemaValidation = async (schemaPath: string, filepath: string): Promise<void> => {
+    const _jsonSchemaValidation = async (schemaPath: string, filepath: string, ctx: IQueryInfos): Promise<void> => {
         const {size} = await fs.promises.stat(filepath);
         const megaBytesSize = size / (1024 * 1024);
 
@@ -475,7 +495,7 @@ export default function ({
             return;
         }
 
-        const buffer = await _getFileDataBuffer(filepath);
+        const buffer = await _getFileDataBuffer(filepath, ctx);
         const data = JSON.parse(buffer.toString('utf8'));
         const schema = await fs.promises.readFile(schemaPath);
         validate(data, JSON.parse(schema.toString()), {throwAll: true});
@@ -591,7 +611,7 @@ export default function ({
             const lang = ctx.lang || config.lang.default;
 
             try {
-                await _jsonSchemaValidation(IMPORT_CONFIG_SCHEMA_PATH, filepath);
+                await _jsonSchemaValidation(IMPORT_CONFIG_SCHEMA_PATH, filepath, ctx);
             } catch (err) {
                 if (!(err instanceof ValidatorResultError)) {
                     throw err;
@@ -615,7 +635,7 @@ export default function ({
                 throw new Error(`Invalid JSON data. See ${reportFilePath} file for more details.`);
             }
 
-            const buffer = await _getFileDataBuffer(filepath);
+            const buffer = await _getFileDataBuffer(filepath, ctx);
             const elements = JSON.parse(buffer.toString());
 
             console.info('Starting configuration import...');
@@ -692,7 +712,7 @@ export default function ({
             };
 
             try {
-                await _jsonSchemaValidation(IMPORT_DATA_SCHEMA_PATH, `${config.import.directory}/${filename}`);
+                await _jsonSchemaValidation(IMPORT_DATA_SCHEMA_PATH, `${config.import.directory}/${filename}`, ctx);
             } catch (err) {
                 if (!(err instanceof ValidatorResultError)) {
                     throw err;
@@ -739,7 +759,8 @@ export default function ({
                 },
                 async (tree: ITree, index: number) => {
                     progress.treesNb += 1;
-                }
+                },
+                params.ctx
             );
 
             const cacheDataPath = `${filename}-links`;
@@ -860,6 +881,7 @@ export default function ({
                         _writeReport(fd, pos, e, lang);
                     }
                 },
+                ctx,
                 // For each element we check if it increases the progress, and update it if necessary
                 _updateTaskProgress
             );
@@ -919,7 +941,7 @@ export default function ({
             return task.id;
         },
         async importExcel({filename, sheets, startAt}: IImportExcelParams, ctx: IQueryInfos): Promise<string> {
-            const buffer = await _getFileDataBuffer(filename);
+            const buffer = await _getFileDataBuffer(`${config.import.directory}/${filename}`, ctx);
             const workbook = new ExcelJS.Workbook();
             await workbook.xlsx.load(buffer);
             const data: string[][][] = [];
