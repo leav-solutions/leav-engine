@@ -2,17 +2,36 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
-import winston from 'winston';
+import {PreviewPriority} from '@leav/utils';
 import * as Config from '_types/config';
+import winston from 'winston';
 import {IPreviewMessage, IPreviewResponseContext, IPreviewVersion} from '../../../_types/filesManager';
+
+interface IRequestPreviewGenerationParams {
+    recordId: string;
+    pathAfter: string;
+    libraryId: string;
+    versions: IPreviewVersion[];
+    priority?: PreviewPriority;
+    deps: {
+        amqpService: IAmqpService;
+        config: Config.IConfig;
+        logger: winston.Winston;
+    };
+}
 
 export const sendPreviewMessage = async (
     previewMessage: IPreviewMessage,
-    amqpService: IAmqpService,
-    config: Config.IConfig
+    priority: PreviewPriority,
+    deps: {amqpService: IAmqpService; config: Config.IConfig}
 ) => {
     const msg = JSON.stringify(previewMessage);
-    await amqpService.publish(config.amqp.exchange, config.filesManager.routingKeys.previewRequest, msg);
+    await deps.amqpService.publish(
+        deps.config.amqp.exchange,
+        deps.config.filesManager.routingKeys.previewRequest,
+        msg,
+        priority
+    );
 };
 
 export const generatePreviewMsg = (
@@ -46,19 +65,18 @@ export const generatePreviewMsg = (
     return previewMsg;
 };
 
-export const requestPreviewGeneration = async (
-    recordId: string,
-    pathAfter: string,
-    libraryId: string,
-    versions: IPreviewVersion[],
-    amqpService: IAmqpService,
-    config: Config.IConfig,
-    logger: winston.Winston
-): Promise<void> => {
+export const requestPreviewGeneration = async ({
+    recordId,
+    pathAfter,
+    libraryId,
+    versions,
+    priority = PreviewPriority.LOW,
+    deps
+}): Promise<void> => {
     const context: IPreviewResponseContext = {library: libraryId, recordId};
 
     const previewMessage = generatePreviewMsg(recordId, pathAfter, versions, context);
-    sendPreviewMessage(previewMessage, amqpService, config).catch(function (e) {
-        logger.warn(`[FilesManager] error sending prevew request ${e.message}`);
+    sendPreviewMessage(previewMessage, priority, {...deps}).catch(function (e) {
+        deps.logger.warn(`[FilesManager] error sending prevew request ${e.message}`);
     });
 };

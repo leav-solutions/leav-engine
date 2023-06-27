@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {PreviewPriority} from '@leav/utils';
 import {Options} from 'amqplib';
 import {IConfig} from '../types/types';
 import {consume} from './consume/consume';
@@ -17,10 +18,10 @@ export const startConsume = async (config: IConfig) => {
 
     const channel = await getChannel(amqpConfig);
 
-    // init queue where get message
-    await initAmqp(channel, config.amqp.type, config.amqp.consume);
+    // init queue where getting preview request messages
+    await initAmqp(channel, config.amqp.type, {...config.amqp.consume, maxPriority: PreviewPriority.HIGH});
 
-    // init queue where send response
+    // init queue where sending preview result messages
     await initAmqp(channel, config.amqp.type, config.amqp.publish);
 
     await consume(channel, config);

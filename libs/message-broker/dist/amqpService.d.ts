@@ -1,5 +1,5 @@
-import {IAmqp, onMessageFunc} from './_types/amqp';
 import * as amqp from 'amqplib';
+import {IAmqp, onMessageFunc} from './_types/amqp';
 export interface IAmqpService {
     publisher: {
         connection: amqp.Connection;
@@ -9,7 +9,7 @@ export interface IAmqpService {
         connection: amqp.Connection;
         channel: amqp.ConfirmChannel;
     };
-    publish(exchange: string, routingKey: string, msg: string): Promise<void>;
+    publish(exchange: string, routingKey: string, msg: string, priority?: number): Promise<void>;
     consume(
         queue: string,
         routingKey: string,

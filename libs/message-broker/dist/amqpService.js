@@ -23,6 +23,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 const amqp = __importStar(require("amqplib"));
 async function default_1({ config }) {
     let publisher;
@@ -41,10 +44,11 @@ async function default_1({ config }) {
         consumer = { connection: consumerConnection, channel: consumerChannel };
     };
     await _init();
-    const publish = async (exchange, routingKey, msg) => {
+    const publish = async (exchange, routingKey, msg, priority) => {
         try {
+            console.log('publish', { exchange, routingKey, msg, priority });
             await publisher.channel.checkExchange(exchange);
-            publisher.channel.publish(exchange, routingKey, Buffer.from(msg), { persistent: true });
+            publisher.channel.publish(exchange, routingKey, Buffer.from(msg), { persistent: true, priority });
             await publisher.channel.waitForConfirms();
             retries = 0;
         }
@@ -53,7 +57,7 @@ async function default_1({ config }) {
                 retries += 1;
                 try {
                     await _init();
-                    await publish(exchange, routingKey, msg);
+                    await publish(exchange, routingKey, msg, priority);
                 }
                 catch (err) {
                     throw new Error('2 tries reached. Stop sync.');

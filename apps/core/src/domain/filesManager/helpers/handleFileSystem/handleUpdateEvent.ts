@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IQueryInfos} from '_types/queryInfos';
-import {systemPreviewVersions} from '../../../../domain/filesManager/_constants';
 import {IFileEventData, IFilesAttributes} from '../../../../_types/filesManager';
+import {systemPreviewVersions} from '../../../../domain/filesManager/_constants';
 import {IHandleFileSystemDeps, IHandleFileSystemResources} from '../handleFileSystem';
 import {getInputData, getPreviewsDefaultData, getRecord, updateRecordFile} from '../handleFileUtilsHelper';
 import {requestPreviewGeneration} from '../handlePreview';
@@ -51,13 +51,11 @@ export const handleUpdateEvent = async (
     });
 
     // Regenerate Previews
-    requestPreviewGeneration(
-        record.id,
-        scanMsg.pathAfter,
-        library,
-        systemPreviewVersions,
-        deps.amqpService,
-        deps.config,
-        deps.logger
-    );
+    requestPreviewGeneration({
+        recordId: record.id,
+        pathAfter: scanMsg.pathAfter,
+        libraryId: library,
+        versions: systemPreviewVersions,
+        deps: {...deps}
+    });
 };

@@ -2,11 +2,19 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
+import {PreviewPriority} from '@leav/utils';
+import * as Config from '_types/config';
+import {IQueryInfos} from '_types/queryInfos';
+import {ISystemTranslation} from '_types/systemTranslation';
+import {ITreeNode} from '_types/tree';
 import increment from 'add-filename-increment';
+import * as amqp from 'amqplib';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {CreateDirectoryFunc} from 'domain/helpers/createDirectory';
 import {StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
 import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {FileUpload} from 'graphql-upload';
@@ -18,12 +26,6 @@ import {Progress} from 'progress-stream';
 import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
 import winston from 'winston';
-import * as Config from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
-import {ISystemTranslation} from '_types/systemTranslation';
-import {ITreeNode} from '_types/tree';
-import ValidationError from '../../errors/ValidationError';
-import {USERS_GROUP_LIB_NAME, USERS_GROUP_TREE_NAME} from '../../infra/permission/permissionRepo';
 import {AttributeFormats, IEmbeddedAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {
@@ -34,18 +36,17 @@ import {
     IPreviewVersion
 } from '../../_types/filesManager';
 import {LibraryBehavior} from '../../_types/library';
+import {LibraryPermissionsActions} from '../../_types/permissions';
 import {AttributeCondition, IRecord, Operator} from '../../_types/record';
+import PermissionError from '../../errors/PermissionError';
+import ValidationError from '../../errors/ValidationError';
+import {USERS_GROUP_LIB_NAME, USERS_GROUP_TREE_NAME} from '../../infra/permission/permissionRepo';
 import {IRecordDomain, IRecordFilterLight} from '../record/recordDomain';
+import {systemPreviewVersions} from './_constants';
 import {getPreviewsDefaultData, updateRecordFile} from './helpers/handleFileUtilsHelper';
 import {requestPreviewGeneration} from './helpers/handlePreview';
 import {initPreviewResponseHandler} from './helpers/handlePreviewResponse';
 import {IMessagesHandlerHelper} from './helpers/messagesHandler/messagesHandler';
-import {systemPreviewVersions} from './_constants';
-import {CreateDirectoryFunc} from 'domain/helpers/createDirectory';
-import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
-import {LibraryPermissionsActions} from '../../_types/permissions';
-import PermissionError from '../../errors/PermissionError';
-import * as amqp from 'amqplib';
 
 interface IPreviewAttributesSettings {
     [FilesAttributes.PREVIEWS]: IEmbeddedAttribute[];
@@ -640,15 +641,14 @@ export default function ({
                         ctx
                     );
 
-                    await requestPreviewGeneration(
-                        r.id,
-                        `${r[FilesAttributes.FILE_PATH]}/${r[FilesAttributes.FILE_NAME]}`,
-                        r.library,
-                        systemPreviewVersions,
-                        amqpService,
-                        config,
-                        logger
-                    );
+                    await requestPreviewGeneration({
+                        recordId: r.id,
+                        pathAfter: `${r[FilesAttributes.FILE_PATH]}/${r[FilesAttributes.FILE_NAME]}`,
+                        libraryId: r.library,
+                        priority: PreviewPriority.MEDIUM,
+                        versions: systemPreviewVersions,
+                        deps: {amqpService, config, logger}
+                    });
                     generationRequested++;
                 }
             }
