@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as amqp from 'amqplib';
-import amqpService, {IAmqpService} from './amqpService';
 import {IAmqp} from './_types/amqp';
+import amqpService, {IAmqpService} from './amqpService';
 
 type Mockify<T> = {[P in keyof T]?: T[P] extends (...args: any) => any ? jest.Mock : T[P]};
 
@@ -61,5 +61,11 @@ describe('amqp', () => {
         expect(mockAmqpChannel.checkExchange).toBeCalled();
         expect(mockAmqpChannel.publish).toBeCalled();
         expect(mockAmqpChannel.waitForConfirms).toBeCalled();
+    });
+
+    test('Publish a message with priority', async () => {
+        await amqpServ.publish('exchange', 'someRoutingKey', JSON.stringify({test: 'Some value'}), 3);
+
+        expect(mockAmqpChannel.publish.mock.calls[0][3].priority).toBe(3);
     });
 });

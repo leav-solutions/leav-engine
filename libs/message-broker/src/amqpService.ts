@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAmqp, onMessageFunc} from './_types/amqp';
 import * as amqp from 'amqplib';
+import {IAmqp, onMessageFunc} from './_types/amqp';
 
 export interface IAmqpService {
     publisher: {connection: amqp.Connection; channel: amqp.ConfirmChannel};
     consumer: {connection: amqp.Connection; channel: amqp.ConfirmChannel};
-    publish(exchange: string, routingKey: string, msg: string): Promise<void>;
+    publish(exchange: string, routingKey: string, msg: string, priority?: number): Promise<void>;
     consume(
         queue: string,
         routingKey: string,
@@ -43,10 +43,10 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
 
     await _init();
 
-    const publish = async (exchange: string, routingKey: string, msg: string): Promise<void> => {
+    const publish: IAmqpService['publish'] = async (exchange, routingKey, msg, priority): Promise<void> => {
         try {
             await publisher.channel.checkExchange(exchange);
-            publisher.channel.publish(exchange, routingKey, Buffer.from(msg), {persistent: true});
+            publisher.channel.publish(exchange, routingKey, Buffer.from(msg), {persistent: true, priority});
             await publisher.channel.waitForConfirms();
             retries = 0;
         } catch (e) {
@@ -55,7 +55,7 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
 
                 try {
                     await _init();
-                    await publish(exchange, routingKey, msg);
+                    await publish(exchange, routingKey, msg, priority);
                 } catch (err) {
                     throw new Error('2 tries reached. Stop sync.');
                 }

@@ -52,10 +52,10 @@ describe('test initAmqp', () => {
         (assertQueue as jest.FunctionLike) = jest.fn();
         (bindQueue as jest.FunctionLike) = jest.fn();
 
-        await initAmqp(channel as Channel, 'direct', {exchange, queue, routingKey});
+        await initAmqp(channel as Channel, 'direct', {exchange, queue, routingKey, maxPriority: 3});
 
         expect(assertExchange).toBeCalledWith(channel as Channel, 'direct', exchange);
-        expect(assertQueue).toBeCalledWith(channel as Channel, queue);
+        expect(assertQueue).toBeCalledWith(channel as Channel, queue, 3);
         expect(bindQueue).toBeCalledWith(channel as Channel, queue, exchange, routingKey);
     });
 });

@@ -2,28 +2,29 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
+import {PreviewPriority} from '@leav/utils';
+import * as Config from '_types/config';
+import {IQueryInfos} from '_types/queryInfos';
 import * as amqp from 'amqplib';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {CreateDirectoryFunc} from 'domain/helpers/createDirectory';
 import {StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
+import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {i18n} from 'i18next';
 import {IRecordRepo} from 'infra/record/recordRepo';
-import * as Config from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
-import ValidationError from '../../errors/ValidationError';
-import {LibraryBehavior} from '../../_types/library';
-import {AttributeCondition, Operator} from '../../_types/record';
+import {IUtils} from 'utils/utils';
 import {mockLibrary, mockLibraryDirectories, mockLibraryFiles} from '../../__tests__/mocks/library';
 import {mockFileRecord, mockRecord} from '../../__tests__/mocks/record';
 import {mockTranslator} from '../../__tests__/mocks/translator';
 import {mockFilesTree, mockTree} from '../../__tests__/mocks/tree';
+import {LibraryBehavior} from '../../_types/library';
+import {AttributeCondition, Operator} from '../../_types/record';
+import ValidationError from '../../errors/ValidationError';
+import {systemPreviewVersions} from './_constants';
 import filesManager from './filesManagerDomain';
 import {requestPreviewGeneration} from './helpers/handlePreview';
-import {systemPreviewVersions} from './_constants';
 import winston = require('winston');
-import {CreateDirectoryFunc} from 'domain/helpers/createDirectory';
-import {IUtils} from 'utils/utils';
 
 const mockConfig: Mockify<Config.IConfig> = {
     amqp: {
@@ -154,15 +155,14 @@ describe('FilesManager', () => {
             ]);
             expect(requestPreviewGeneration).toBeCalledTimes(1);
 
-            expect(requestPreviewGeneration).toBeCalledWith(
-                'id',
-                'file_path/file_name',
-                mockLibraryFiles.id,
-                systemPreviewVersions,
-                mockAmqpService,
-                mockConfig,
-                logger
-            );
+            expect(requestPreviewGeneration).toBeCalledWith({
+                recordId: 'id',
+                pathAfter: 'file_path/file_name',
+                libraryId: mockLibraryFiles.id,
+                priority: PreviewPriority.MEDIUM,
+                versions: systemPreviewVersions,
+                deps: {amqpService: mockAmqpService, config: mockConfig, logger}
+            });
         });
 
         test('Force preview generation multiple files', async () => {
@@ -267,27 +267,23 @@ describe('FilesManager', () => {
 
             expect(requestPreviewGeneration).toBeCalledTimes(2);
 
-            expect(requestPreviewGeneration).toHaveBeenNthCalledWith(
-                1,
-                'file1',
-                'file_path_1/file_name_1',
-                'lib2',
-                systemPreviewVersions,
-                mockAmqpService,
-                mockConfig,
-                logger
-            );
+            expect(requestPreviewGeneration).toHaveBeenNthCalledWith(1, {
+                recordId: 'file1',
+                pathAfter: 'file_path_1/file_name_1',
+                libraryId: 'lib2',
+                priority: PreviewPriority.MEDIUM,
+                versions: systemPreviewVersions,
+                deps: {amqpService: mockAmqpService, config: mockConfig, logger}
+            });
 
-            expect(requestPreviewGeneration).toHaveBeenNthCalledWith(
-                2,
-                'file2',
-                'file_path_2/file_name_2',
-                'lib2',
-                systemPreviewVersions,
-                mockAmqpService,
-                mockConfig,
-                logger
-            );
+            expect(requestPreviewGeneration).toHaveBeenNthCalledWith(2, {
+                recordId: 'file2',
+                pathAfter: 'file_path_2/file_name_2',
+                libraryId: 'lib2',
+                priority: PreviewPriority.MEDIUM,
+                versions: systemPreviewVersions,
+                deps: {amqpService: mockAmqpService, config: mockConfig, logger}
+            });
         });
 
         test('Force preview generation full library', async () => {
@@ -315,27 +311,23 @@ describe('FilesManager', () => {
 
             expect(requestPreviewGeneration).toBeCalledTimes(2);
 
-            expect(requestPreviewGeneration).toHaveBeenNthCalledWith(
-                1,
-                'file1',
-                'file_path_1/file_name_1',
-                mockLibraryFiles.id,
-                systemPreviewVersions,
-                mockAmqpService,
-                mockConfig,
-                logger
-            );
+            expect(requestPreviewGeneration).toHaveBeenNthCalledWith(1, {
+                recordId: 'file1',
+                pathAfter: 'file_path_1/file_name_1',
+                libraryId: mockLibraryFiles.id,
+                priority: PreviewPriority.MEDIUM,
+                versions: systemPreviewVersions,
+                deps: {amqpService: mockAmqpService, config: mockConfig, logger}
+            });
 
-            expect(requestPreviewGeneration).toHaveBeenNthCalledWith(
-                2,
-                'file2',
-                'file_path_2/file_name_2',
-                mockLibraryFiles.id,
-                systemPreviewVersions,
-                mockAmqpService,
-                mockConfig,
-                logger
-            );
+            expect(requestPreviewGeneration).toHaveBeenNthCalledWith(2, {
+                recordId: 'file2',
+                pathAfter: 'file_path_2/file_name_2',
+                libraryId: mockLibraryFiles.id,
+                priority: PreviewPriority.MEDIUM,
+                versions: systemPreviewVersions,
+                deps: {amqpService: mockAmqpService, config: mockConfig, logger}
+            });
         });
 
         test('Force preview generation with failedOnly', async () => {
@@ -378,15 +370,14 @@ describe('FilesManager', () => {
 
             expect(requestPreviewGeneration).toBeCalledTimes(1);
 
-            expect(requestPreviewGeneration).toHaveBeenCalledWith(
-                'file2',
-                'file_path_2/file_name_2',
-                mockLibraryFiles.id,
-                systemPreviewVersions,
-                mockAmqpService,
-                mockConfig,
-                logger
-            );
+            expect(requestPreviewGeneration).toHaveBeenCalledWith({
+                recordId: 'file2',
+                pathAfter: 'file_path_2/file_name_2',
+                libraryId: mockLibraryFiles.id,
+                priority: PreviewPriority.MEDIUM,
+                versions: systemPreviewVersions,
+                deps: {amqpService: mockAmqpService, config: mockConfig, logger}
+            });
         });
 
         test('Force preview generation with filters', async () => {
@@ -437,15 +428,14 @@ describe('FilesManager', () => {
             ]);
 
             expect(requestPreviewGeneration).toBeCalledTimes(1);
-            expect(requestPreviewGeneration).toHaveBeenCalledWith(
-                'file1',
-                'file_path_1/file_name_1',
-                mockLibraryFiles.id,
-                systemPreviewVersions,
-                mockAmqpService,
-                mockConfig,
-                logger
-            );
+            expect(requestPreviewGeneration).toHaveBeenCalledWith({
+                recordId: 'file1',
+                pathAfter: 'file_path_1/file_name_1',
+                priority: PreviewPriority.MEDIUM,
+                libraryId: mockLibraryFiles.id,
+                versions: systemPreviewVersions,
+                deps: {amqpService: mockAmqpService, config: mockConfig, logger}
+            });
         });
     });
 
