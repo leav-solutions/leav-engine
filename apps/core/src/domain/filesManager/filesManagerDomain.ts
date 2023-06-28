@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
-import {PreviewPriority} from '@leav/utils';
+import {PreviewPriority, isFileAllowed} from '@leav/utils';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {ISystemTranslation} from '_types/systemTranslation';
@@ -73,7 +73,7 @@ interface ICreateDirectoryParams {
     name: string;
 }
 
-interface IStoreFilesParams {
+export interface IStoreFilesParams {
     library: string;
     nodeId: string;
     files: Array<{data: FileUpload; uid: string; size?: number; replace?: boolean}>;
@@ -97,7 +97,7 @@ export interface IFilesManagerDomain {
     storeFiles(
         {library, nodeId, files}: IStoreFilesParams,
         ctx: IQueryInfos
-    ): Promise<Array<{filename: string; record: IRecord}>>;
+    ): Promise<Array<{uid: string; record: IRecord}>>;
     createDirectory({library, nodeId, name}: ICreateDirectoryParams, ctx: IQueryInfos): Promise<IRecord>;
     doesFileExistAsChild({treeId, filename, parentNodeId}: IIsFileExistsAsChild, ctx: IQueryInfos): Promise<boolean>;
 }
@@ -121,7 +121,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.utils': utils = null,
     'core.infra.amqpService': amqpService = null,
@@ -259,6 +259,8 @@ export default function ({
         }, {});
     };
 
+    const _getSplittedListFiles = (list: string): string[] => list.split(',').filter(p => p);
+
     return {
         async init(): Promise<void> {
             await amqpService.consumer.channel.assertQueue(config.filesManager.queues.events);
@@ -368,16 +370,8 @@ export default function ({
 
             return record;
         },
-        async storeFiles(
-            {library, nodeId, files}: IStoreFilesParams,
-            ctx: IQueryInfos
-        ): Promise<Array<{filename: string; record: IRecord}>> {
-            const filenames = files.map(f => f.data.filename);
-
-            // Check if files have the same filename
-            if (filenames.filter((f, i) => filenames.indexOf(f) !== i).length) {
-                throw utils.generateExplicitValidationError('files', Errors.DUPLICATE_FILENAMES, ctx.lang);
-            }
+        async storeFiles({library, nodeId, files}: IStoreFilesParams, ctx: IQueryInfos) {
+            const filenames: string[] = files.map(f => f.data.filename);
 
             const treeId = treeDomain.getLibraryTreeId(library, ctx);
             const recordNode = await treeDomain.getRecordByNodeId({treeId, nodeId, ctx});
@@ -402,6 +396,28 @@ export default function ({
 
             const rootPath = this.getRootPathByKey(rootKey);
             const fullPath = Path.join(rootPath, path);
+
+            // Check if file is allowed according to allow/ignore lists
+            const allowList = _getSplittedListFiles(config.filesManager.allowFilesList);
+            const ignoreList = _getSplittedListFiles(config.filesManager.ignoreFilesList);
+
+            const forbiddenFiles = filenames.filter(f => {
+                const fullFilename = `${fullPath}/${f}`;
+                const isAllowed = isFileAllowed(rootPath, allowList, ignoreList, fullFilename);
+                return !isAllowed;
+            });
+            if (forbiddenFiles.length) {
+                throw utils.generateExplicitValidationError(
+                    'files',
+                    {msg: Errors.FORBIDDEN_FILES, vars: {files: forbiddenFiles.join(', ')}},
+                    ctx.lang
+                );
+            }
+
+            // Check if files have the same filename
+            if (filenames.filter((f, i) => filenames.indexOf(f) !== i).length) {
+                throw utils.generateExplicitValidationError('files', Errors.DUPLICATE_FILENAMES, ctx.lang);
+            }
 
             const records = [];
 

@@ -95,7 +95,9 @@ module.exports = {
             files1: 'files'
         },
         userId: process.env.FM_USER_ID || '2',
-        userGroupsIds: process.env.FM_USER_GROUPS_IDS || '2'
+        userGroupsIds: process.env.FM_USER_GROUPS_IDS || '2',
+        allowFilesList: process.env.ALLOW_FILES_LIST || '',
+        ignoreFilesList: process.env.IGNORE_FILES_LIST || ''
     },
     tasksManager: {
         checkingInterval: 3000,

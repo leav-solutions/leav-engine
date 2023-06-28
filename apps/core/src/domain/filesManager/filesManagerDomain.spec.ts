@@ -4,11 +4,11 @@
 import {IAmqpService} from '@leav/message-broker';
 import {PreviewPriority} from '@leav/utils';
 import * as Config from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
 import * as amqp from 'amqplib';
 import {CreateDirectoryFunc} from 'domain/helpers/createDirectory';
 import {StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {i18n} from 'i18next';
@@ -19,10 +19,11 @@ import {mockFileRecord, mockRecord} from '../../__tests__/mocks/record';
 import {mockTranslator} from '../../__tests__/mocks/translator';
 import {mockFilesTree, mockTree} from '../../__tests__/mocks/tree';
 import {LibraryBehavior} from '../../_types/library';
+import {IQueryInfos} from '../../_types/queryInfos';
 import {AttributeCondition, Operator} from '../../_types/record';
 import ValidationError from '../../errors/ValidationError';
 import {systemPreviewVersions} from './_constants';
-import filesManager from './filesManagerDomain';
+import filesManager, {IStoreFilesParams} from './filesManagerDomain';
 import {requestPreviewGeneration} from './helpers/handlePreview';
 import winston = require('winston');
 
@@ -47,7 +48,9 @@ const mockConfig: Mockify<Config.IConfig> = {
             files1: 'files'
         },
         userId: '0',
-        userGroupsIds: '1'
+        userGroupsIds: '1',
+        allowFilesList: '',
+        ignoreFilesList: ''
     },
     files: {
         rootPaths: 'files1:/files',
@@ -591,6 +594,210 @@ describe('FilesManager', () => {
             await expect(
                 files.createDirectory({library: mockLibraryDirectories.id, nodeId: 'fakeNodeId', name: 'name'}, ctx)
             ).rejects.toThrow(ValidationError);
+        });
+    });
+
+    describe('storeFiles', () => {
+        const mockRecordDomain: Mockify<IRecordDomain> = {
+            find: global.__mockPromise({
+                totalCount: 0,
+                list: []
+            }),
+            createRecord: global.__mockPromise(mockRecord),
+            updateRecord: global.__mockPromise(mockRecord)
+        };
+
+        const mockRecordDomainExists: Mockify<IRecordDomain> = {
+            find: global.__mockPromise({
+                totalCount: 1,
+                list: [{...mockRecord, id: '987654321'}]
+            }),
+            createRecord: global.__mockPromise(mockRecord),
+            updateRecord: global.__mockPromise(mockRecord)
+        };
+
+        const mockTreeDomainSpecific: Mockify<ITreeDomain> = {
+            getLibraryTreeId: global.__mockPromise(mockTree.id),
+            getRecordByNodeId: global.__mockPromise(mockFileRecord)
+        };
+
+        const mockLibraryDomainDirectory: Mockify<ILibraryDomain> = {
+            getLibraryProperties: global.__mockPromise(mockLibraryDirectories)
+        };
+
+        const mockCreateDirectory: Mockify<StoreUploadFileFunc> = global.__mockPromise();
+
+        const mockUtils: Mockify<IUtils> = {
+            generateExplicitValidationError: jest.fn(() => {
+                throw new ValidationError({});
+            }),
+            getFilesLibraryId: jest.fn(() => mockLibraryFiles.id)
+        };
+
+        const filesToUpload: IStoreFilesParams = {
+            library: 'files',
+            nodeId: '123456789',
+            files: [
+                {
+                    data: {
+                        filename: 'my_file.jpg',
+                        mimetype: 'image/jpeg',
+                        encoding: '7bit',
+                        createReadStream: jest.fn()
+                    },
+                    uid: '123456789',
+                    size: 42,
+                    replace: false
+                }
+            ]
+        };
+
+        const mockLibraryPermissionDomain: Mockify<ILibraryPermissionDomain> = {
+            getLibraryPermission: global.__mockPromise(true)
+        };
+
+        const mockStoreUploadFile = jest.fn();
+
+        test('Write file to disk', async () => {
+            const filesManagerDomain = filesManager({
+                config: mockConfig as Config.IConfig,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
+                'core.domain.library': mockLibraryDomainDirectory as ILibraryDomain,
+                'core.domain.helpers.createDirectory': mockCreateDirectory as CreateDirectoryFunc,
+                'core.domain.helpers.storeUploadFile': mockStoreUploadFile as StoreUploadFileFunc,
+                'core.utils': mockUtils as IUtils
+            });
+
+            const storedFiles = await filesManagerDomain.storeFiles(filesToUpload, ctx);
+
+            expect(storedFiles).toEqual([
+                {
+                    uid: '123456789',
+                    record: {...mockRecord}
+                }
+            ]);
+
+            expect(mockStoreUploadFile).toBeCalled();
+            expect(mockStoreUploadFile.mock.calls[0][1]).toBe('/files/path/name'); // path
+        });
+
+        test('Handle replacement if file already exists', async () => {
+            const filesManagerDomain = filesManager({
+                config: mockConfig as Config.IConfig,
+                'core.domain.record': mockRecordDomainExists as IRecordDomain,
+                'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
+                'core.domain.library': mockLibraryDomainDirectory as ILibraryDomain,
+                'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                'core.domain.helpers.createDirectory': mockCreateDirectory as CreateDirectoryFunc,
+                'core.domain.helpers.storeUploadFile': mockStoreUploadFile as StoreUploadFileFunc,
+                'core.utils': mockUtils as IUtils
+            });
+
+            const storedFiles = await filesManagerDomain.storeFiles(
+                {...filesToUpload, files: [{...filesToUpload.files[0], replace: true}]},
+                ctx
+            );
+
+            expect(storedFiles).toEqual([
+                {
+                    uid: '123456789',
+                    record: {...mockRecord, id: '987654321'}
+                }
+            ]);
+
+            expect(mockStoreUploadFile).toBeCalled();
+            expect(mockStoreUploadFile.mock.calls[0][1]).toBe('/files/path/name'); // path
+
+            expect(mockRecordDomainExists.createRecord).not.toBeCalled();
+            expect(mockRecordDomainExists.updateRecord).not.toBeCalled();
+        });
+
+        test('Handle rename if file already exists', async () => {
+            const filesManagerDomain = filesManager({
+                config: mockConfig as Config.IConfig,
+                'core.domain.record': mockRecordDomainExists as IRecordDomain,
+                'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
+                'core.domain.library': mockLibraryDomainDirectory as ILibraryDomain,
+                'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                'core.domain.helpers.createDirectory': mockCreateDirectory as CreateDirectoryFunc,
+                'core.domain.helpers.storeUploadFile': mockStoreUploadFile as StoreUploadFileFunc,
+                'core.utils': mockUtils as IUtils
+            });
+
+            const storedFiles = await filesManagerDomain.storeFiles(
+                {...filesToUpload, files: [{...filesToUpload.files[0], replace: false}]},
+                ctx
+            );
+
+            expect(storedFiles).toEqual([
+                {
+                    uid: '123456789',
+                    record: {...mockRecord}
+                }
+            ]);
+
+            expect(mockStoreUploadFile).toBeCalled();
+            expect(mockStoreUploadFile.mock.calls[0][1]).toBe('/files/path/name'); // path
+
+            expect(mockRecordDomainExists.createRecord).toBeCalled();
+            expect(mockRecordDomainExists.updateRecord).toBeCalled();
+        });
+
+        test('Throw if destination path is not a folder', async () => {
+            const filesManagerDomain = filesManager({
+                config: mockConfig as Config.IConfig,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
+                'core.domain.library': mockLibraryDomain as ILibraryDomain,
+                'core.domain.helpers.createDirectory': mockCreateDirectory as CreateDirectoryFunc,
+                'core.domain.helpers.storeUploadFile': mockStoreUploadFile as StoreUploadFileFunc,
+                'core.utils': mockUtils as IUtils
+            });
+
+            expect(async () => filesManagerDomain.storeFiles(filesToUpload, ctx)).rejects.toThrow(ValidationError);
+        });
+
+        test('Throw if duplicate names in files to store', async () => {
+            const filesManagerDomain = filesManager({
+                config: mockConfig as Config.IConfig,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
+                'core.domain.library': mockLibraryDomainDirectory as ILibraryDomain,
+                'core.domain.helpers.createDirectory': mockCreateDirectory as CreateDirectoryFunc,
+                'core.domain.helpers.storeUploadFile': mockStoreUploadFile as StoreUploadFileFunc,
+                'core.utils': mockUtils as IUtils
+            });
+
+            expect(async () =>
+                filesManagerDomain.storeFiles(
+                    {...filesToUpload, files: [filesToUpload.files[0], filesToUpload.files[0]]},
+                    ctx
+                )
+            ).rejects.toThrow(ValidationError);
+        });
+
+        test('Throw if forbidden files', async () => {
+            const mockConfigForbiddenFiles = {
+                ...mockConfig,
+                filesManager: {
+                    ...mockConfig.filesManager,
+                    allowFilesList: '',
+                    ignoreFilesList: '**/*.jpg'
+                }
+            };
+
+            const filesManagerDomain = filesManager({
+                config: mockConfigForbiddenFiles as Config.IConfig,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
+                'core.domain.library': mockLibraryDomainDirectory as ILibraryDomain,
+                'core.domain.helpers.createDirectory': mockCreateDirectory as CreateDirectoryFunc,
+                'core.domain.helpers.storeUploadFile': mockStoreUploadFile as StoreUploadFileFunc,
+                'core.utils': mockUtils as IUtils
+            });
+
+            expect(async () => filesManagerDomain.storeFiles(filesToUpload, ctx)).rejects.toThrow(ValidationError);
         });
     });
 });
