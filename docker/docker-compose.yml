@@ -68,6 +68,8 @@ x-env-core: &env-core
   SERVER_ADMIN_LOGIN: admin
   SERVER_ADMIN_PASSWORD: admin
   SERVER_ADMIN_EMAIL: admin@example.com
+  ALLOW_FILES_LIST: *allow-list
+  IGNORE_FILES_LIST: *ignore-list
 
 x-env-amqp: &env-amqp
   AMQP_PROTOCOL: 'amqp'

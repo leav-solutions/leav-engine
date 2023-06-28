@@ -120,6 +120,8 @@ export interface IFilesManager {
     };
     userId: string;
     userGroupsIds: string;
+    allowFilesList: string;
+    ignoreFilesList: string;
 }
 
 export interface IEventsManager {

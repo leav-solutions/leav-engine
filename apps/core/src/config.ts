@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {appRootPath} from '@leav/app-root-path';
 import {loadConfig} from '@leav/config-manager';
-import Joi from 'joi';
 import {IConfig} from '_types/config';
+import Joi from 'joi';
 import {env as appEnv} from './env';
 
 export const validateConfig = (conf: IConfig) => {
@@ -97,7 +97,9 @@ export const validateConfig = (conf: IConfig) => {
                 files1: Joi.string().required()
             }),
             userId: Joi.string().required(),
-            userGroupsIds: Joi.string().required()
+            userGroupsIds: Joi.string().required(),
+            allowFilesList: Joi.string().required().allow(''),
+            ignoreFilesList: Joi.string().required().allow('')
         }),
         indexationManager: Joi.object().keys({
             queues: Joi.object().keys({

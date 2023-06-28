@@ -1,16 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IDbService} from 'infra/db/dbService';
-import {IListWithCursor} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
 import {aql, join} from 'arangojs/aql';
-import winston from 'winston';
 import {IDbDocument} from 'infra/db/_types';
-import {FilesAttributes} from '../../_types/filesManager';
+import {IDbService} from 'infra/db/dbService';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {join as joinPath} from 'path';
+import winston from 'winston';
+import {FilesAttributes} from '../../_types/filesManager';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
@@ -40,7 +39,6 @@ export default function ({
             retrieveInactive: boolean,
             ctx: IQueryInfos
         ): Promise<IRecord | null> {
-            let recordsFind: IListWithCursor<IRecord>;
             const coll = dbService.db.collection(recordLibrary);
 
             const queryParts = [aql`FOR r in ${coll}`];
@@ -48,11 +46,11 @@ export default function ({
             if (recordId) {
                 queryParts.push(aql`FILTER (r.id == ${recordId})`);
             } else if (!!fileInode) {
-                queryParts.push(aql`FILTER (r.${FilesAttributes.INODE} == ${fileInode} 
+                queryParts.push(aql`FILTER (r.${FilesAttributes.INODE} == ${fileInode}
                         OR (r.${FilesAttributes.FILE_PATH} == ${filePath} AND r.${FilesAttributes.FILE_NAME} == ${fileName})
                     )`);
             } else {
-                queryParts.push(aql`FILTER (r.${FilesAttributes.FILE_PATH} == ${filePath} 
+                queryParts.push(aql`FILTER (r.${FilesAttributes.FILE_PATH} == ${filePath}
                         AND r.${FilesAttributes.FILE_NAME} == ${fileName}
                     )`);
             }
@@ -79,9 +77,7 @@ export default function ({
             }
 
             if (count > 1) {
-                logger.warn(
-                    `[FilesManager] Multiple record found using fileName and filePath: ${recordsFind.list.toString()}`
-                );
+                logger.warn(`[FilesManager] Multiple record found using fileName and filePath: ${results.toString()}`);
             }
 
             return dbUtils.cleanup(results[0]);
