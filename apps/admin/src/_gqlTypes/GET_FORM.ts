@@ -12,14 +12,9 @@ import {FormElementTypes} from './globalTypes';
 // GraphQL query operation: GET_FORM
 // ====================================================
 
-export interface GET_FORM_forms_list_elements_dependencyValue_value {
-    id: string | null;
-    library: string | null;
-}
-
 export interface GET_FORM_forms_list_elements_dependencyValue {
     attribute: string;
-    value: GET_FORM_forms_list_elements_dependencyValue_value;
+    value: string;
 }
 
 export interface GET_FORM_forms_list_elements_elements_settings {

@@ -12,7 +12,6 @@ import {
     defaultDepAttribute,
     defaultDepValue
 } from './formBuilderReducer';
-import getKeyFromDepValue from './helpers/getKeyFromDepValue';
 import sortByOrder from './helpers/sortByOrder';
 
 export default function computeInitialState(library: string, form: GET_FORM_forms_list): IFormBuilderState {
@@ -72,18 +71,7 @@ export default function computeInitialState(library: string, form: GET_FORM_form
                 acc[depAttr] = {};
             }
 
-            const depKey = getKeyFromDepValue({
-                id: '__root__',
-                record: {
-                    whoAmI: {
-                        id: cur.dependencyValue.value.id || '',
-                        library: {id: cur.dependencyValue.value.library || '', label: null},
-                        label: '',
-                        color: '',
-                        preview: null
-                    }
-                }
-            });
+            const depKey = cur.dependencyValue.value ?? '__root__';
 
             acc[depAttr][depKey] = fieldsByContainer;
 

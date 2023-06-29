@@ -6,9 +6,9 @@ import {
     GET_FORM_forms_list_elements_elements
 } from '../../../../../../../../../../_gqlTypes/GET_FORM';
 import {FormElementTypes} from '../../../../../../../../../../_gqlTypes/globalTypes';
-import {formElements, layoutElements} from '../../uiElements/__mocks__';
 import {FieldTypes, IFormElement, UIElementTypes} from '../../_types';
-import {defaultContainerId, defaultDepAttribute, defaultDepValue, IFormBuilderState} from '../formBuilderReducer';
+import {formElements, layoutElements} from '../../uiElements/__mocks__';
+import {IFormBuilderState, defaultContainerId, defaultDepAttribute, defaultDepValue} from '../formBuilderReducer';
 
 const commonFieldData1 = {
     id: '987654',
@@ -172,7 +172,7 @@ export const formData: GET_FORM_forms_list = {
             ]
         },
         {
-            dependencyValue: {attribute: 'category', value: {id: '12345', library: 'category'}},
+            dependencyValue: {attribute: 'category', value: '12345'},
             elements: [
                 {
                     ...field3

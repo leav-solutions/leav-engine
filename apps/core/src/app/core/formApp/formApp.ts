@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ConvertVersionFromGqlFormatFunc} from 'app/helpers/convertVersionFromGqlFormat';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IFormDomain} from 'domain/form/formDomain';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IUtils} from 'utils/utils';
 import {IAttribute} from '_types/attribute';
 import {IForm, IFormDependentElements, IFormElement, IRecordForm} from '_types/forms';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {ILibrary} from '_types/library';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
+import {ConvertVersionFromGqlFormatFunc} from 'app/helpers/convertVersionFromGqlFormat';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {IFormDomain} from 'domain/form/formDomain';
+import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {IUtils} from 'utils/utils';
 import {
     IDeleteFormArgs,
     IFormDependentElementsForGraphQL,
@@ -137,12 +137,12 @@ export default function ({
 
                     type FormDependencyValue {
                         attribute: ID!,
-                        value: TreeElement!
+                        value: ID!
                     }
 
                     input FormDependencyValueInput {
                         attribute: ID!,
-                        value: TreeElementInput!
+                        value: ID!
                     }
 
                     type FormElementsByDeps {

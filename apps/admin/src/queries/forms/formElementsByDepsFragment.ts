@@ -7,10 +7,7 @@ export const formElementsByDepsFragment = gql`
     fragment FormElementsByDeps on FormElementsByDeps {
         dependencyValue {
             attribute
-            value {
-                id
-                library
-            }
+            value
         }
         elements {
             id

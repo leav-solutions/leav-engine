@@ -12,14 +12,9 @@ import {FormInput, FormElementTypes} from './globalTypes';
 // GraphQL mutation operation: SAVE_FORM
 // ====================================================
 
-export interface SAVE_FORM_saveForm_elements_dependencyValue_value {
-    id: string | null;
-    library: string | null;
-}
-
 export interface SAVE_FORM_saveForm_elements_dependencyValue {
     attribute: string;
-    value: SAVE_FORM_saveForm_elements_dependencyValue_value;
+    value: string;
 }
 
 export interface SAVE_FORM_saveForm_elements_elements_settings {
