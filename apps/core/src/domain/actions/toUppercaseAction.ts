@@ -16,7 +16,7 @@ export default function (): IActionsListFunction {
         input_types: [ActionsListIOTypes.STRING],
         output_types: [ActionsListIOTypes.STRING],
         action: (value: ActionsListValueType, params: any, ctx: IActionsListContext): string => {
-            return (value as string).toUpperCase();
+            return value !== null ? (value as string).toUpperCase() : null;
         }
     };
 }

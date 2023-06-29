@@ -10,5 +10,6 @@ describe('toUppercaseAction', () => {
 
     test('toUppercase', async () => {
         expect(action('azerty', {}, ctx)).toBe('AZERTY');
+        expect(action(null, {}, ctx)).toBe(null);
     });
 });
