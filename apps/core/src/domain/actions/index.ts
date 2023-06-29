@@ -17,3 +17,4 @@ export {default as toStringAction} from './toStringAction';
 export {default as validateEmailAction} from './validateEmailAction';
 export {default as validateFormatAction} from './validateFormatAction';
 export {default as validateRegexAction} from './validateRegexAction';
+export {default as validateURLAction} from './validateURLAction';
