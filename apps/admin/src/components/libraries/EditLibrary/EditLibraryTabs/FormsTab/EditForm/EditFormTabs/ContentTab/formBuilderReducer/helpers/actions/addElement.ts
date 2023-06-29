@@ -40,8 +40,12 @@ export default function addElement(state: IFormBuilderState, action: IFormBuilde
     let newElementsByDeps = cloneDeep(state.elements);
     const containerId = elementToAdd.containerId ?? defaultContainerId;
 
-    const depAttributeKey = state.activeDependency ? state.activeDependency.attribute : defaultDepAttribute;
-    const depValueKey = state.activeDependency ? getKeyFromDepValue(state.activeDependency.value) : defaultDepValue;
+    const depAttributeKey =
+        state.activeDependency && state.activeDependency.value ? state.activeDependency.attribute : defaultDepAttribute;
+    const depValueKey =
+        state.activeDependency && state.activeDependency.value
+            ? getKeyFromDepValue(state.activeDependency.value)
+            : defaultDepValue;
 
     const elementToMerge = {
         [depAttributeKey]: {

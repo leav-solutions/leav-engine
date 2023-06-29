@@ -12,14 +12,9 @@ import {FormElementTypes} from './globalTypes';
 // GraphQL fragment: FormDetails
 // ====================================================
 
-export interface FormDetails_elements_dependencyValue_value {
-    id: string | null;
-    library: string | null;
-}
-
 export interface FormDetails_elements_dependencyValue {
     attribute: string;
-    value: FormDetails_elements_dependencyValue_value;
+    value: string;
 }
 
 export interface FormDetails_elements_elements_settings {

@@ -17,7 +17,7 @@ export default function saveSettings(state: IFormBuilderState, action: IFormBuil
     const depValueKey = state.activeDependency?.value ? getKeyFromDepValue(state.activeDependency.value) : '__default';
     const containerId = elementToUpdate.containerId ?? defaultContainerId;
 
-    const indexInFields = state.elements[depAttrKey][depValueKey][containerId].findIndex(
+    const indexInFields = (state.elements[depAttrKey]?.[depValueKey]?.[containerId] ?? []).findIndex(
         el => el.id === elementToUpdate.id
     );
     const indexInActiveFields = state.activeElements[containerId].findIndex(el => el.id === elementToUpdate.id);

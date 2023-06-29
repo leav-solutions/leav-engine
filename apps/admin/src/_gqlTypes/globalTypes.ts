@@ -271,7 +271,7 @@ export interface EmbeddedAttributeInput {
 
 export interface FormDependencyValueInput {
     attribute: string;
-    value: TreeElementInput;
+    value: string;
 }
 
 export interface FormElementInput {

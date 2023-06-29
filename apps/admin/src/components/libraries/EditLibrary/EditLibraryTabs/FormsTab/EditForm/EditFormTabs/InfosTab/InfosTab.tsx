@@ -4,15 +4,15 @@
 import {useMutation} from '@apollo/client';
 import React from 'react';
 import {useHistory, useLocation} from 'react-router-dom';
+import {SAVE_FORM, SAVE_FORMVariables} from '../../../../../../../../_gqlTypes/SAVE_FORM';
+import {FormInput} from '../../../../../../../../_gqlTypes/globalTypes';
 import {saveFormQuery} from '../../../../../../../../queries/forms/saveFormMutation';
 import {clearCacheForQuery} from '../../../../../../../../utils';
-import {FormInput} from '../../../../../../../../_gqlTypes/globalTypes';
-import {SAVE_FORM, SAVE_FORMVariables} from '../../../../../../../../_gqlTypes/SAVE_FORM';
 import {useEditFormContext} from '../../hooks/useEditFormContext';
 import InfosForm from './InfosForm';
 
 function InfosTab(): JSX.Element {
-    const {form, library, readonly, setForm} = useEditFormContext();
+    const {form, library, setForm} = useEditFormContext();
     const [saveForm] = useMutation<SAVE_FORM, SAVE_FORMVariables>(saveFormQuery, {
         // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
         onError: e => undefined,
