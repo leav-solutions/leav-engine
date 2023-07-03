@@ -46,7 +46,6 @@ async function default_1({ config }) {
     await _init();
     const publish = async (exchange, routingKey, msg, priority) => {
         try {
-            console.log('publish', { exchange, routingKey, msg, priority });
             await publisher.channel.checkExchange(exchange);
             publisher.channel.publish(exchange, routingKey, Buffer.from(msg), { persistent: true, priority });
             await publisher.channel.waitForConfirms();
