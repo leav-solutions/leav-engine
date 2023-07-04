@@ -12,6 +12,7 @@ const LoadingElem = styled(Spin)<ILoadingProps>`
     && {
         display: block;
         margin: ${props => (props.compact ? '1em' : '3em')};
+        font-size: inherit;
     }
 `;
 

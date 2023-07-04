@@ -3,6 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ICommonFieldsSettings} from '@leav/utils';
 import userEvent from '@testing-library/user-event';
+import {mockAttributeTree} from '__mocks__/common/attribute';
+import {mockFormElementTree, mockTreeValueA} from '__mocks__/common/form';
+import {mockRecordWhoAmI} from '__mocks__/common/record';
+import {mockTreeRecord} from '__mocks__/common/treeElements';
+import {RECORD_FORM_recordForm_elements_attribute_TreeAttribute} from '_gqlTypes/RECORD_FORM';
+import {ICustomRenderOptions, act, render, screen, waitFor, within} from '_tests/testUtils';
 import {
     EditRecordReducerActionsTypes,
     initialState
@@ -10,14 +16,7 @@ import {
 import * as useEditRecordModalReducer from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import {RecordFormElementsValueTreeValue} from 'hooks/useGetRecordForm/useGetRecordForm';
 import * as useRefreshFieldValues from 'hooks/useRefreshFieldValues/useRefreshFieldValues';
-import {RECORD_FORM_recordForm_elements_attribute_TreeAttribute} from '_gqlTypes/RECORD_FORM';
-import {act, ICustomRenderOptions, render, screen, waitFor, within} from '_tests/testUtils';
-import {mockAttributeTree} from '__mocks__/common/attribute';
-import {mockFormElementTree, mockTreeValueA} from '__mocks__/common/form';
-import {mockRecordWhoAmI} from '__mocks__/common/record';
-import {mockTreeRecord} from '__mocks__/common/treeElements';
 import TreeField from '.';
-import {RecordEditionContext} from '../../hooks/useRecordEditionContext';
 import {
     APICallStatus,
     DeleteMultipleValuesFunc,
@@ -26,6 +25,7 @@ import {
     ISubmitMultipleResult,
     SubmitValueFunc
 } from '../../_types';
+import {RecordEditionContext} from '../../hooks/useRecordEditionContext';
 
 jest.mock('../../../../shared/SelectTreeNode', () => {
     return function SelectTreeNode() {
@@ -170,7 +170,8 @@ describe('TreeField', () => {
         const deleteAllButton = screen.getByRole('button', {name: /delete-all-values/, hidden: true});
         expect(deleteAllButton).toBeInTheDocument();
 
-        userEvent.click(deleteAllButton);
+        // Click on the parent, because of the issue on Tooltip. See DeleteAllValuesBtn component file
+        userEvent.click(deleteAllButton.parentElement);
 
         await act(async () => {
             userEvent.click(screen.getByRole('button', {name: /confirm/}));

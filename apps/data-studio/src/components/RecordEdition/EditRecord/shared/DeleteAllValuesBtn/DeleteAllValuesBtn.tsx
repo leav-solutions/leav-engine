@@ -30,15 +30,18 @@ function DeleteAllValuesBtn({onDelete}: IDeleteAllValuesBtnProps): JSX.Element {
             okButtonProps={{'aria-label': 'delete-confirm-button'}}
             cancelText={t('global.cancel')}
         >
-            <Tooltip title={t('record_edition.delete_all_values')}>
-                <BasicButton
-                    aria-label="delete-all-values"
-                    icon={<DeleteOutlined />}
-                    shape="circle"
-                    onClick={e => e.stopPropagation()}
-                    loading={isLoading}
-                />
-            </Tooltip>
+            {/* Do not remove the <></>. Workaround for issue https://github.com/ant-design/ant-design/issues/41206 */}
+            <>
+                <Tooltip title={t('record_edition.delete_all_values')}>
+                    <BasicButton
+                        aria-label="delete-all-values"
+                        icon={<DeleteOutlined />}
+                        shape="circle"
+                        onClick={e => e.stopPropagation()}
+                        loading={isLoading}
+                    />
+                </Tooltip>
+            </>
         </Popconfirm>
     );
 }

@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FrownOutlined, HomeOutlined, ReloadOutlined} from '@ant-design/icons';
-import {AntdThemeToken, themeVars} from '@leav/ui';
-import {Button, Result, Space, theme} from 'antd';
-import {APPS_ENDPOINT, APP_ENDPOINT} from '../../../../constants';
+import {AntdThemeToken, customTheme, themeVars} from '@leav/ui';
+import {Button, ConfigProvider, Result, Space, theme} from 'antd';
 import {ErrorInfo} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {APPS_ENDPOINT, APP_ENDPOINT} from '../../../../constants';
 
 interface IErrorBoundaryContentProps {
     error?: Error;
@@ -53,23 +53,25 @@ function ErrorBoundaryContent({error, errorInfo, showRecoveryButtons = true}: IE
     };
 
     return (
-        <ErrorResult status="error" title={t('error.error_occurred')} icon={<FrownOutlined />} themeToken={token}>
-            {showRecoveryButtons && (
-                <ButtonsWrapper>
-                    <Button onClick={_handleRefresh} type="primary" icon={<ReloadOutlined />}>
-                        {t('global.refresh_page')}
-                    </Button>
-                    <Button onClick={_handleGoBack} type="primary" icon={<HomeOutlined />}>
-                        {t('global.go_back_home')}
-                    </Button>
-                </ButtonsWrapper>
-            )}
-            <details title="toto" style={{whiteSpace: 'pre-wrap'}}>
-                {error && error.toString()}
-                <br />
-                {errorInfo.componentStack}
-            </details>
-        </ErrorResult>
+        <ConfigProvider theme={customTheme}>
+            <ErrorResult status="error" title={t('error.error_occurred')} icon={<FrownOutlined />} themeToken={token}>
+                {showRecoveryButtons && (
+                    <ButtonsWrapper>
+                        <Button onClick={_handleRefresh} type="primary" icon={<ReloadOutlined />}>
+                            {t('global.refresh_page')}
+                        </Button>
+                        <Button onClick={_handleGoBack} type="primary" icon={<HomeOutlined />}>
+                            {t('global.go_back_home')}
+                        </Button>
+                    </ButtonsWrapper>
+                )}
+                <details title="toto" style={{whiteSpace: 'pre-wrap'}}>
+                    {error && error.toString()}
+                    <br />
+                    {errorInfo.componentStack}
+                </details>
+            </ErrorResult>
+        </ConfigProvider>
     );
 }
 

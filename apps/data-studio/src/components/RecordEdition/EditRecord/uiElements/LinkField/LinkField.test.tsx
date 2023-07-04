@@ -3,6 +3,16 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ICommonFieldsSettings} from '@leav/utils';
 import userEvent from '@testing-library/user-event';
+import {mockAttributeLink} from '__mocks__/common/attribute';
+import {mockFormElementLink, mockLinkValue} from '__mocks__/common/form';
+import {mockLibrary} from '__mocks__/common/library';
+import {mockRecordWhoAmI} from '__mocks__/common/record';
+import {mockModifier} from '__mocks__/common/value';
+import {
+    RECORD_FORM_recordForm_elements_attribute_LinkAttribute,
+    RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI
+} from '_gqlTypes/RECORD_FORM';
+import {ICustomRenderOptions, act, render, screen, waitFor, within} from '_tests/testUtils';
 import {
     EditRecordReducerActionsTypes,
     initialState
@@ -10,19 +20,6 @@ import {
 import * as useEditRecordModalReducer from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import {getRecordsFromLibraryQuery} from 'graphQL/queries/records/getRecordsFromLibraryQuery';
 import {IUseGetRecordColumnsValuesQueryHook} from 'hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
-import {LibraryBehavior, SortOrder} from '_gqlTypes/globalTypes';
-import {
-    RECORD_FORM_recordForm_elements_attribute_LinkAttribute,
-    RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI
-} from '_gqlTypes/RECORD_FORM';
-import {act, ICustomRenderOptions, render, screen, waitFor, within} from '_tests/testUtils';
-import {mockAttributeLink} from '__mocks__/common/attribute';
-import {mockFormElementLink, mockLinkValue} from '__mocks__/common/form';
-import {mockLibrary} from '__mocks__/common/library';
-import {mockRecordWhoAmI} from '__mocks__/common/record';
-import {mockModifier} from '__mocks__/common/value';
-import {RecordEditionContext} from '../../hooks/useRecordEditionContext';
-import * as useSaveValueBatchMutation from '../../hooks/useSaveValueBatchMutation';
 import {
     APICallStatus,
     DeleteMultipleValuesFunc,
@@ -32,6 +29,8 @@ import {
     ISubmitMultipleResult,
     SubmitValueFunc
 } from '../../_types';
+import {RecordEditionContext} from '../../hooks/useRecordEditionContext';
+import * as useSaveValueBatchMutation from '../../hooks/useSaveValueBatchMutation';
 import LinkField from './LinkField';
 
 jest.mock('components/SearchModal', () => {
@@ -212,7 +211,7 @@ describe('LinkField', () => {
         const deleteAllValuesButton = screen.getByRole('button', {name: /delete-all-values/, hidden: true});
         expect(deleteAllValuesButton).toBeInTheDocument();
 
-        userEvent.click(deleteAllValuesButton);
+        userEvent.click(deleteAllValuesButton.parentElement);
 
         await act(async () => {
             userEvent.click(screen.getByRole('button', {name: /confirm/}));
