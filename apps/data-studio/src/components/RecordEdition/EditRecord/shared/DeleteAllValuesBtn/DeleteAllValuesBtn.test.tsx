@@ -13,7 +13,8 @@ describe('DeleteAllValuesBtn', () => {
         const btn = screen.getByRole('button', {name: /delete-all-values/});
         expect(btn).toBeInTheDocument();
 
-        userEvent.click(btn);
+        // Click on the parent, because of the issue on Tooltip. See component file
+        userEvent.click(btn.parentElement);
         await act(async () => {
             userEvent.click(screen.getByRole('button', {name: /delete-confirm-button/}));
         });

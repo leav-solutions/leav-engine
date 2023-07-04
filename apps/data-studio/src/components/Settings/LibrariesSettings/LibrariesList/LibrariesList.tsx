@@ -127,9 +127,12 @@ function LibrariesList({
                                     okText={t('global.submit')}
                                     cancelText={t('global.cancel')}
                                 >
-                                    <Tooltip title={t('app_settings.libraries_settings.clear_libraries')}>
-                                        <Button icon={<ClearOutlined />} />
-                                    </Tooltip>
+                                    {/* Do not remove the div. Workaround for issue https://github.com/ant-design/ant-design/issues/41206 */}
+                                    <>
+                                        <Tooltip title={t('app_settings.libraries_settings.clear_libraries')}>
+                                            <Button icon={<ClearOutlined />} />
+                                        </Tooltip>
+                                    </>
                                 </Popconfirm>
                             </Space>
                         ) : (

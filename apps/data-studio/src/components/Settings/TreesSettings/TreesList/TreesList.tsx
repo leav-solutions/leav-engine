@@ -4,13 +4,13 @@
 import {ClearOutlined, PlusOutlined} from '@ant-design/icons';
 import {TreePicker, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
+import {GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
 import {Button, Empty, Input, Popconfirm, Space, Tooltip} from 'antd';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {ComponentProps, SyntheticEvent, useState} from 'react';
-import {DragDropContext, Draggable, DraggableProvided, Droppable, DropResult} from 'react-beautiful-dnd';
+import {DragDropContext, Draggable, DraggableProvided, DropResult, Droppable} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
 import TreeBlock from './TreeBlock';
 
 const Header = styled.div`
@@ -122,9 +122,11 @@ function TreesList({trees, onMoveTree, onRemoveTree, onAddTrees, onClearTrees}: 
                                     okText={t('global.submit')}
                                     cancelText={t('global.cancel')}
                                 >
-                                    <Tooltip title={t('app_settings.trees_settings.clear_trees')}>
-                                        <Button icon={<ClearOutlined />} />
-                                    </Tooltip>
+                                    <>
+                                        <Tooltip title={t('app_settings.trees_settings.clear_trees')}>
+                                            <Button icon={<ClearOutlined />} />
+                                        </Tooltip>
+                                    </>
                                 </Popconfirm>
                             </Space>
                         ) : (
