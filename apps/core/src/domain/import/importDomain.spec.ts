@@ -121,7 +121,7 @@ describe('importDomain', () => {
 
             await imprtDomain.importConfig({filepath, ctx, forceNoTask: true});
 
-            expect(mockLibDomain.saveLibrary.mock.calls.length).toBe(2);
+            expect(mockLibDomain.saveLibrary.mock.calls.length).toBe(4);
         });
 
         test('Import attributes', async () => {
