@@ -803,9 +803,14 @@ describe('RecordDomain', () => {
 
             const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
 
+            const mockUtils: Mockify<IUtils> = {
+                getPreviewsAttributeName: jest.fn().mockReturnValue('previews')
+            };
+
             const recDomain = recordDomain({
                 'core.domain.value': mockValDomain as IValueDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                'core.utils': mockUtils as IUtils,
                 config: mockConfig as Config.IConfig
             });
 

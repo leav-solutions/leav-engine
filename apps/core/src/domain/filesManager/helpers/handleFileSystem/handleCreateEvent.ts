@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IQueryInfos} from '_types/queryInfos';
+import {systemPreviewsSettings} from '../../../../domain/filesManager/_constants';
 import {IFileEventData, IFilesAttributes} from '../../../../_types/filesManager';
-import {systemPreviewVersions} from '../../../../domain/filesManager/_constants';
 import {IHandleFileSystemDeps, IHandleFileSystemResources} from '../handleFileSystem';
 import {
     createFilesTreeElement,
@@ -32,7 +32,7 @@ export const handleCreateEvent = async (
     let record = await getRecord({fileName, filePath, fileInode: scanMsg.inode}, {recordLibrary}, true, deps, ctx);
 
     // Preview and Previews status
-    const {previewsStatus, previews} = getPreviewsDefaultData(systemPreviewVersions);
+    const {previewsStatus, previews} = getPreviewsDefaultData(systemPreviewsSettings);
 
     if (record) {
         try {
@@ -83,7 +83,7 @@ export const handleCreateEvent = async (
             recordId: record.id,
             pathAfter: scanMsg.pathAfter,
             libraryId: recordLibrary,
-            versions: systemPreviewVersions,
+            versions: systemPreviewsSettings,
             deps: {...deps}
         });
     }

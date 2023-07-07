@@ -4,21 +4,7 @@
 import {IAmqpService} from '@leav/message-broker';
 import {PreviewPriority} from '@leav/utils';
 import * as Config from '_types/config';
-import winston from 'winston';
 import {IPreviewMessage, IPreviewResponseContext, IPreviewVersion} from '../../../_types/filesManager';
-
-interface IRequestPreviewGenerationParams {
-    recordId: string;
-    pathAfter: string;
-    libraryId: string;
-    versions: IPreviewVersion[];
-    priority?: PreviewPriority;
-    deps: {
-        amqpService: IAmqpService;
-        config: Config.IConfig;
-        logger: winston.Winston;
-    };
-}
 
 export const sendPreviewMessage = async (
     previewMessage: IPreviewMessage,

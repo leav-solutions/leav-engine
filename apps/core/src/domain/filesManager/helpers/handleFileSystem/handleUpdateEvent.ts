@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IQueryInfos} from '_types/queryInfos';
+import {systemPreviewsSettings} from '../../../../domain/filesManager/_constants';
 import {IFileEventData, IFilesAttributes} from '../../../../_types/filesManager';
-import {systemPreviewVersions} from '../../../../domain/filesManager/_constants';
 import {IHandleFileSystemDeps, IHandleFileSystemResources} from '../handleFileSystem';
 import {getInputData, getPreviewsDefaultData, getRecord, updateRecordFile} from '../handleFileUtilsHelper';
 import {requestPreviewGeneration} from '../handlePreview';
@@ -35,7 +35,7 @@ export const handleUpdateEvent = async (
         return;
     }
 
-    const {previewsStatus, previews} = getPreviewsDefaultData(systemPreviewVersions);
+    const {previewsStatus, previews} = getPreviewsDefaultData(systemPreviewsSettings);
 
     const recordData: IFilesAttributes = {
         INODE: scanMsg.inode,
@@ -55,7 +55,7 @@ export const handleUpdateEvent = async (
         recordId: record.id,
         pathAfter: scanMsg.pathAfter,
         libraryId: library,
-        versions: systemPreviewVersions,
+        versions: systemPreviewsSettings,
         deps: {...deps}
     });
 };

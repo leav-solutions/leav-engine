@@ -48,6 +48,8 @@
         "NON_FILES_LIBRARY": "Impossible de lier une bibliothèque non-fichiers",
         "ONLY_FOLDERS_CAN_BE_SELECTED": "Only folders can be selected",
         "PAGINATION_OFFSET_AND_CURSOR": "Impossible d'utiliser un offset et un curseur en même temps",
+        "PREVIEWS_SETTINGS_DUPLICATE_NAMES": "Doublons détectés dans les noms d'aperçus: {{duplicates}}",
+        "PREVIEWS_SETTINGS_NOT_ALLOWED": "Impossible de configurer des aperçus sur une bibliothèque de comportement autre que 'fichiers'",
         "PROTECTED_ENDPOINT": "Ce chemin n'est pas autorisé: {{endpoint}}",
         "READONLY_ATTRIBUTE": "L'attribut {{attribute}} est en lecture seule",
         "REQUIRED_ATTRIBUTE_FORMAT": "Format d'attribut non spécifié",

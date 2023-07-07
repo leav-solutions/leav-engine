@@ -6,15 +6,17 @@ import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IValidateHelper} from 'domain/helpers/validate';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {i18n} from 'i18next';
+import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
-import {difference, omit, union} from 'lodash';
+import {difference, union} from 'lodash';
 import {IUtils} from 'utils/utils';
 import {IAttribute} from '_types/attribute';
 import {IConfig} from '_types/config';
 import {ErrorFieldDetail} from '_types/errors';
 import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
+import {systemPreviewsSettings} from '../../domain/filesManager/_constants';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
@@ -31,11 +33,12 @@ import checkSavePermission from './helpers/checkSavePermission';
 import {IDeleteAssociatedValuesHelper} from './helpers/deleteAssociatedValues';
 import runBehaviorPostSave from './helpers/runBehaviorPostSave';
 import {RunPreDeleteFunc} from './helpers/runPreDelete';
+import {IUpdateAssociatedFormsHelper} from './helpers/updateAssociatedForms';
 import validateLibAttributes from './helpers/validateLibAttributes';
 import validateLibFullTextAttributes from './helpers/validateLibFullTextAttributes';
 import validatePermConf from './helpers/validatePermConf';
+import validatePreviewsSettings from './helpers/validatePreviewsSettings';
 import validateRecordIdentityConf from './helpers/validateRecordIdentityConf';
-import {IUpdateAssociatedFormsHelper} from './helpers/updateAssociatedForms';
 
 export interface ILibraryDomain {
     getLibraries({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<ILibrary>>;
@@ -46,39 +49,41 @@ export interface ILibraryDomain {
 }
 
 interface IDeps {
-    'core.infra.library'?: ILibraryRepo;
     'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.permission.admin'?: IAdminPermissionDomain;
-    'core.utils'?: IUtils;
-    'core.infra.tree'?: ITreeRepo;
     'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.domain.record'?: IRecordDomain;
-    'core.domain.library.helpers.deleteAssociatedValues'?: IDeleteAssociatedValuesHelper;
-    'core.domain.library.helpers.updateAssociatedForms'?: IUpdateAssociatedFormsHelper;
-    'core.domain.library.helpers.runPreDelete'?: RunPreDeleteFunc;
-    'core.domain.helpers.validate'?: IValidateHelper;
     'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
+    'core.domain.helpers.validate'?: IValidateHelper;
+    'core.domain.library.helpers.deleteAssociatedValues'?: IDeleteAssociatedValuesHelper;
+    'core.domain.library.helpers.runPreDelete'?: RunPreDeleteFunc;
+    'core.domain.library.helpers.updateAssociatedForms'?: IUpdateAssociatedFormsHelper;
+    'core.domain.permission.admin'?: IAdminPermissionDomain;
+    'core.domain.record'?: IRecordDomain;
+    'core.infra.attribute'?: IAttributeRepo;
     'core.infra.cache.cacheService'?: ICachesService;
-    translator?: i18n;
+    'core.infra.library'?: ILibraryRepo;
+    'core.infra.tree'?: ITreeRepo;
+    'core.utils'?: IUtils;
     config?: IConfig;
+    translator?: i18n;
 }
 
 export default function ({
-    'core.infra.library': libraryRepo = null,
     'core.domain.attribute': attributeDomain = null,
-    'core.domain.permission.admin': adminPermissionDomain = null,
-    'core.infra.tree': treeRepo = null,
-    'core.utils': utils = null,
     'core.domain.eventsManager': eventsManager = null,
-    'core.domain.record': recordDomain = null,
-    'core.domain.library.helpers.deleteAssociatedValues': deleteAssociatedValues = null,
-    'core.domain.library.helpers.updateAssociatedForms': updateAssociatedForms = null,
-    'core.domain.library.helpers.runPreDelete': runPreDelete = null,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
     'core.domain.helpers.validate': validateHelper = null,
+    'core.domain.library.helpers.deleteAssociatedValues': deleteAssociatedValues = null,
+    'core.domain.library.helpers.runPreDelete': runPreDelete = null,
+    'core.domain.library.helpers.updateAssociatedForms': updateAssociatedForms = null,
+    'core.domain.permission.admin': adminPermissionDomain = null,
+    'core.domain.record': recordDomain = null,
+    'core.infra.attribute': attributeRepo = null,
     'core.infra.cache.cacheService': cacheService = null,
-    translator: translator = null,
-    config = null
+    'core.infra.library': libraryRepo = null,
+    'core.infra.tree': treeRepo = null,
+    'core.utils': utils = null,
+    config = null,
+    translator: translator = null
 }: IDeps = {}): ILibraryDomain {
     return {
         async getLibraries({
@@ -135,7 +140,7 @@ export default function ({
             const library = await getCoreEntityById<ILibrary>('library', libData.id, ctx);
             const existingLib = !!library;
 
-            const defaultParams = {
+            const defaultParams: Partial<ILibrary> = {
                 id: '',
                 system: false,
                 behavior: LibraryBehavior.STANDARD,
@@ -143,12 +148,25 @@ export default function ({
             };
 
             // We need behavior later on for validation. It's forbidden to change it so we get it from the existing lib
-            const libBehavior = library?.behavior ?? defaultParams.behavior;
+            const libBehavior = existingLib ? library?.behavior : libData?.behavior ?? defaultParams.behavior;
 
-            // If existing lib, skip all uneditable fields from supplied params.
+            // If existing lib, force all uneditable fields to value saved id DB
             // If new lib, merge default params with supplied params
-            const uneditableFields = ['behavior', 'system'];
-            const dataToSave = existingLib ? omit(libData, uneditableFields) : {...defaultParams, ...libData};
+            const dataToSave = existingLib
+                ? {...libData, behavior: library.behavior, system: library.system}
+                : {...defaultParams, ...libData};
+
+            if (libBehavior === LibraryBehavior.FILES) {
+                dataToSave.previewsSettings = [...systemPreviewsSettings, ...(libData.previewsSettings ?? [])];
+
+                // Make sure the "system" flag is defined everywhere
+                dataToSave.previewsSettings = dataToSave.previewsSettings.map(preview => {
+                    return {
+                        ...preview,
+                        system: preview.system ?? false
+                    };
+                });
+            }
 
             const validationErrors: Array<ErrorFieldDetail<ILibrary>> = [];
             const defaultAttributes = getDefaultAttributes(dataToSave.behavior, libData.id);
@@ -213,7 +231,8 @@ export default function ({
                         attributeDomain
                     },
                     ctx
-                )
+                ),
+                await validatePreviewsSettings(dataToSave, ctx)
             );
 
             // remove full text attributes if attribute is delete
@@ -264,7 +283,12 @@ export default function ({
                 ctx
             });
 
-            await runBehaviorPostSave(savedLib, !existingLib, {treeRepo, libraryRepo, translator, utils, config}, ctx);
+            await runBehaviorPostSave(
+                savedLib,
+                !existingLib,
+                {treeRepo, attributeRepo, libraryRepo, translator, utils, config},
+                ctx
+            );
 
             // delete associate values and update forms if attribute is delete
             const deletedAttrs = difference(difference(currentLibraryAttributes, defaultAttributes), libAttributes);

@@ -4,11 +4,11 @@
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain, IRecordFilterLight} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
+import {GraphQLScalarType} from 'graphql';
 import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {ITree} from '_types/tree';
-import {IFilesManagerDomain} from '../../domain/filesManager/filesManagerDomain';
 import {RecordPermissionsActions} from '../../_types/permissions';
 import {AttributeCondition, IRecord, TreeCondition} from '../../_types/record';
 import {IGraphqlApp} from '../graphql/graphqlApp';
@@ -23,7 +23,6 @@ interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.tree'?: ITreeDomain;
-    'core.domain.filesManager'?: IFilesManagerDomain;
     'core.utils'?: IUtils;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.core.attribute'?: ICoreAttributeApp;
@@ -34,7 +33,6 @@ export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.tree': treeDomain = null,
-    'core.domain.filesManager': filesManagerDomain = null,
     'core.utils': utils = null,
     'core.app.core.attribute': attributeApp = null,
     'core.app.core.indexationManager': indexationManagerApp = null
@@ -64,6 +62,8 @@ export default function ({
 
             const baseSchema = {
                 typeDefs: `
+                    scalar Preview
+
                     type RecordPermissions {
                         ${Object.values(RecordPermissionsActions)
                             .map(action => `${action}: Boolean!`)
@@ -85,16 +85,6 @@ export default function ({
                         label: String,
                         color: String,
                         preview: Preview
-                    }
-
-                    type Preview {
-                        ${filesManagerDomain
-                            .getPreviewVersion()
-                            .reduce((sizes, version) => [...sizes, ...version.sizes.map(s => `${s.name}: String,`)], [])
-                            .join(' ')}
-                        pdf: String
-                        file: FileRecord
-                        original: String!
                     }
 
                     type RecordIdentityConf {
@@ -221,7 +211,14 @@ export default function ({
 
                             return treeDomain.getTreeProperties(recordFilter.treeId, ctx);
                         }
-                    }
+                    },
+                    Preview: new GraphQLScalarType({
+                        name: 'Preview',
+                        description: 'Object containing all previews available for a record',
+                        serialize: val => val,
+                        parseValue: val => val,
+                        parseLiteral: ast => ast
+                    })
                 }
             };
 

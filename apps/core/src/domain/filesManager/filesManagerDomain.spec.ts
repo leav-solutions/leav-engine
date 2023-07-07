@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
 import {PreviewPriority} from '@leav/utils';
-import * as Config from '_types/config';
 import * as amqp from 'amqplib';
 import {CreateDirectoryFunc} from 'domain/helpers/createDirectory';
 import {StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
@@ -14,17 +13,18 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import {i18n} from 'i18next';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {IUtils} from 'utils/utils';
+import * as Config from '_types/config';
+import ValidationError from '../../errors/ValidationError';
+import {LibraryBehavior} from '../../_types/library';
+import {IQueryInfos} from '../../_types/queryInfos';
+import {AttributeCondition, Operator} from '../../_types/record';
 import {mockLibrary, mockLibraryDirectories, mockLibraryFiles} from '../../__tests__/mocks/library';
 import {mockFileRecord, mockRecord} from '../../__tests__/mocks/record';
 import {mockTranslator} from '../../__tests__/mocks/translator';
 import {mockFilesTree, mockTree} from '../../__tests__/mocks/tree';
-import {LibraryBehavior} from '../../_types/library';
-import {IQueryInfos} from '../../_types/queryInfos';
-import {AttributeCondition, Operator} from '../../_types/record';
-import ValidationError from '../../errors/ValidationError';
-import {systemPreviewVersions} from './_constants';
 import filesManager, {IStoreFilesParams} from './filesManagerDomain';
 import {requestPreviewGeneration} from './helpers/handlePreview';
+import {systemPreviewsSettings} from './_constants';
 import winston = require('winston');
 
 const mockConfig: Mockify<Config.IConfig> = {
@@ -133,6 +133,12 @@ describe('FilesManager', () => {
             updateRecord: jest.fn()
         };
 
+        const mockUtils: Mockify<IUtils> = {
+            getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
+            getPreviewsStatusAttributeName: jest.fn().mockReturnValue('previews_status'),
+            getPreviewAttributesSettings: jest.fn().mockReturnValue(systemPreviewsSettings)
+        };
+
         test('Force preview generation one file', async () => {
             const mockRecordDomain: Mockify<IRecordDomain> = {
                 find: global.__mockPromise({
@@ -144,6 +150,7 @@ describe('FilesManager', () => {
 
             const files = filesManager({
                 config: mockConfig as Config.IConfig,
+                'core.utils': mockUtils as IUtils,
                 'core.utils.logger': logger as winston.Winston,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
@@ -163,7 +170,7 @@ describe('FilesManager', () => {
                 pathAfter: 'file_path/file_name',
                 libraryId: mockLibraryFiles.id,
                 priority: PreviewPriority.MEDIUM,
-                versions: systemPreviewVersions,
+                versions: systemPreviewsSettings,
                 deps: {amqpService: mockAmqpService, config: mockConfig, logger}
             });
         });
@@ -183,6 +190,7 @@ describe('FilesManager', () => {
 
             const files = filesManager({
                 config: mockConfig as Config.IConfig,
+                'core.utils': mockUtils as IUtils,
                 'core.utils.logger': logger as winston.Winston,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
@@ -258,6 +266,7 @@ describe('FilesManager', () => {
 
             const files = filesManager({
                 config: mockConfig as Config.IConfig,
+                'core.utils': mockUtils as IUtils,
                 'core.utils.logger': logger as winston.Winston,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomainForDirectories as ILibraryDomain,
@@ -275,7 +284,7 @@ describe('FilesManager', () => {
                 pathAfter: 'file_path_1/file_name_1',
                 libraryId: 'lib2',
                 priority: PreviewPriority.MEDIUM,
-                versions: systemPreviewVersions,
+                versions: systemPreviewsSettings,
                 deps: {amqpService: mockAmqpService, config: mockConfig, logger}
             });
 
@@ -284,7 +293,7 @@ describe('FilesManager', () => {
                 pathAfter: 'file_path_2/file_name_2',
                 libraryId: 'lib2',
                 priority: PreviewPriority.MEDIUM,
-                versions: systemPreviewVersions,
+                versions: systemPreviewsSettings,
                 deps: {amqpService: mockAmqpService, config: mockConfig, logger}
             });
         });
@@ -303,6 +312,7 @@ describe('FilesManager', () => {
 
             const files = filesManager({
                 config: mockConfig as Config.IConfig,
+                'core.utils': mockUtils as IUtils,
                 'core.utils.logger': logger as winston.Winston,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
@@ -319,7 +329,7 @@ describe('FilesManager', () => {
                 pathAfter: 'file_path_1/file_name_1',
                 libraryId: mockLibraryFiles.id,
                 priority: PreviewPriority.MEDIUM,
-                versions: systemPreviewVersions,
+                versions: systemPreviewsSettings,
                 deps: {amqpService: mockAmqpService, config: mockConfig, logger}
             });
 
@@ -328,7 +338,7 @@ describe('FilesManager', () => {
                 pathAfter: 'file_path_2/file_name_2',
                 libraryId: mockLibraryFiles.id,
                 priority: PreviewPriority.MEDIUM,
-                versions: systemPreviewVersions,
+                versions: systemPreviewsSettings,
                 deps: {amqpService: mockAmqpService, config: mockConfig, logger}
             });
         });
@@ -362,6 +372,7 @@ describe('FilesManager', () => {
 
             const files = filesManager({
                 config: mockConfig as Config.IConfig,
+                'core.utils': mockUtils as IUtils,
                 'core.utils.logger': logger as winston.Winston,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
@@ -378,7 +389,7 @@ describe('FilesManager', () => {
                 pathAfter: 'file_path_2/file_name_2',
                 libraryId: mockLibraryFiles.id,
                 priority: PreviewPriority.MEDIUM,
-                versions: systemPreviewVersions,
+                versions: systemPreviewsSettings,
                 deps: {amqpService: mockAmqpService, config: mockConfig, logger}
             });
         });
@@ -402,6 +413,7 @@ describe('FilesManager', () => {
 
             const files = filesManager({
                 config: mockConfig as Config.IConfig,
+                'core.utils': mockUtils as IUtils,
                 'core.utils.logger': logger as winston.Winston,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
@@ -436,7 +448,7 @@ describe('FilesManager', () => {
                 pathAfter: 'file_path_1/file_name_1',
                 priority: PreviewPriority.MEDIUM,
                 libraryId: mockLibraryFiles.id,
-                versions: systemPreviewVersions,
+                versions: systemPreviewsSettings,
                 deps: {amqpService: mockAmqpService, config: mockConfig, logger}
             });
         });

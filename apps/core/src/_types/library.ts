@@ -2,8 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttribute} from './attribute';
+import {IPreviewVersion} from './filesManager';
 import {ITreePermissionsConf} from './permissions';
 import {IRecordIdentityConf} from './record';
+import {ISystemTranslation} from './systemTranslation';
 
 export interface ILibrary extends ICoreEntity {
     system?: boolean;
@@ -38,10 +40,19 @@ export interface ILibrary extends ICoreEntity {
         libraryId: string;
         recordId: string;
     };
+
+    previewsSettings?: ILibraryPreviewsSettings[];
 }
 
 export interface ILibraryFilterOptions extends ICoreEntityFilterOptions {
     system?: boolean;
+}
+
+export interface ILibraryPreviewsSettings {
+    label: ISystemTranslation;
+    description?: ISystemTranslation;
+    system: boolean;
+    versions: IPreviewVersion;
 }
 
 export enum LibraryBehavior {

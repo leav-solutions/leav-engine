@@ -89,6 +89,24 @@ export default function ({
                         filter: String!
                     }
 
+                    type PreviewVersionSize {
+                        name: String!,
+                        size: Int!
+                    }
+
+                    type PreviewVersion {
+                        background: String!,
+                        density: Int!,
+                        sizes: [PreviewVersionSize]
+                    }
+
+                    type LibraryPreviewsSettings {
+                        label: SystemTranslation!,
+                        description: SystemTranslation,
+                        versions: PreviewVersion!,
+                        system: Boolean!
+                    }
+
                     # Application Library
                     type Library {
                         id: ID!,
@@ -103,12 +121,30 @@ export default function ({
                         gqlNames: LibraryGraphqlNames!,
                         linkedTrees: [Tree!],
                         defaultView: View,
-                        permissions: LibraryPermissions
+                        permissions: LibraryPermissions,
+                        previewsSettings: [LibraryPreviewsSettings!]
                     }
 
                     input LibraryIconInput {
                         libraryId: String!,
                         recordId: String!
+                    }
+
+                    input PreviewVersionSizeInput {
+                        name: String!,
+                        size: Int!
+                    }
+
+                    input PreviewVersionInput {
+                        background: String!,
+                        density: Int!,
+                        sizes: [PreviewVersionSizeInput!]!
+                    }
+
+                    input LibraryPreviewsSettingsInput {
+                        label: SystemTranslation!,
+                        description: SystemTranslationOptional,
+                        versions: PreviewVersionInput!
                     }
 
                     input LibraryInput {
@@ -120,7 +156,8 @@ export default function ({
                         behavior: LibraryBehavior,
                         permissions_conf: Treepermissions_confInput,
                         recordIdentityConf: RecordIdentityConfInput,
-                        defaultView: ID
+                        defaultView: ID,
+                        previewsSettings: [LibraryPreviewsSettingsInput!]
                     }
 
                     input LibrariesFiltersInput {

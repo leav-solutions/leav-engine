@@ -26,7 +26,6 @@ import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {EventAction} from '../../_types/event';
-import {FilesAttributes} from '../../_types/filesManager';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {LibraryPermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
@@ -43,7 +42,6 @@ import {
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import getAttributesFromField from './helpers/getAttributesFromField';
-import {GeneratedAqlQuery} from 'arangojs/aql';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -455,7 +453,7 @@ export default function ({
         const filePreviewsValue = await ret.getRecordFieldValue({
             library: lib.id,
             record: fileRecord,
-            attributeId: FilesAttributes.PREVIEWS,
+            attributeId: utils.getPreviewsAttributeName(lib),
             options: {forceArray: true},
             ctx
         });

@@ -1,19 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import * as Config from '_types/config';
+import {ILibrary} from '_types/library';
+import {IQueryInfos} from '_types/queryInfos';
 import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {basename, dirname} from 'path';
-import * as Config from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
-import {
-    FilesAttributes,
-    IFilesAttributes,
-    IPreviews,
-    IPreviewsStatus,
-    IPreviewVersion
-} from '../../../_types/filesManager';
+import {FilesAttributes, IFilesAttributes, IPreviews, IPreviewsStatus} from '../../../_types/filesManager';
 import {IRecord} from '../../../_types/record';
 import updateRecordLastModif from '../../value/helpers/updateRecordLastModif';
 import {IHandleFileSystemDeps} from './handleFileSystem';
@@ -187,12 +182,12 @@ export const deleteFilesTreeElement = async (
     }
 };
 
-export const getPreviewsDefaultData = (previewVersions: IPreviewVersion[]) => {
+export const getPreviewsDefaultData = (previewVersions: ILibrary['previewsSettings']) => {
     const previewsStatus: IPreviewsStatus = {};
     const previews: IPreviews = {};
 
-    previewVersions.forEach(version =>
-        version.sizes.forEach(size => {
+    previewVersions.forEach(previewSettings => {
+        previewSettings.versions.sizes.forEach(size => {
             // previewsStatus default value
             previewsStatus[size.name] = {
                 status: -1,
@@ -201,16 +196,16 @@ export const getPreviewsDefaultData = (previewVersions: IPreviewVersion[]) => {
 
             // previews default value
             previews[size.name] = '';
-        })
-    );
+        });
 
-    if (previewVersions.some(version => version.pdf)) {
-        previewsStatus.pdf = {
-            status: -1,
-            message: 'waiting for creation'
-        };
-        previews.pdf = '';
-    }
+        if (previewSettings.versions.pdf) {
+            previewsStatus.pdf = {
+                status: -1,
+                message: 'waiting for creation'
+            };
+            previews.pdf = '';
+        }
+    });
 
     return {
         previewsStatus,
