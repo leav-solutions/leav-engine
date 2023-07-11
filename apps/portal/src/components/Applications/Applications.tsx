@@ -44,7 +44,7 @@ function Applications(): JSX.Element {
 
     const _handleSearch = (search: string) => {
         const filteredApps = allApps.filter(app => {
-            if (!app.permissions.access_application) {
+            if (!app.permissions.access_application || hiddenApps.includes(app.id)) {
                 return false;
             }
 
