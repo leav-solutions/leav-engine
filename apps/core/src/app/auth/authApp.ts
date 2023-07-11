@@ -34,7 +34,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.apiKey': apiKeyDomain = null,
@@ -106,7 +106,9 @@ export default function({
                             ctx
                         });
 
-                        const isValidPwd = await bcrypt.compare(password, userPwd[0].raw_value);
+                        const isValidPwd =
+                            !!userPwd[0].raw_value && (await bcrypt.compare(password, userPwd[0].raw_value));
+
                         if (!isValidPwd) {
                             return res.status(401).send('Invalid credentials');
                         }
