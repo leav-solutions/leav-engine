@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {InfoCircleOutlined, InfoOutlined} from '@ant-design/icons';
+import {BasicButton} from '@leav/ui';
 import {Button, ButtonProps, Tooltip} from 'antd';
 import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
 import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
-import BasicButton from 'components/shared/BasicButton';
 import {IRecordPropertyStandard, RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {useTranslation} from 'react-i18next';
 import {isTypeStandard} from 'utils';

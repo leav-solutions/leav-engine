@@ -47,7 +47,7 @@ const Image = styled.img<{$loaded: boolean}>`
     display: ${p => (p.$loaded ? 'block' : 'none')};
 `;
 
-function RecordPreviewList({label, color, image, size, style, simplistic = false}: IEntityPreviewProps): JSX.Element {
+function EntityPreviewList({label, color, image, size, style, simplistic = false}: IEntityPreviewProps): JSX.Element {
     const [imageLoaded, setImageLoaded] = useState(false);
 
     if (simplistic) {
@@ -103,4 +103,4 @@ function RecordPreviewList({label, color, image, size, style, simplistic = false
     );
 }
 
-export default RecordPreviewList;
+export default EntityPreviewList;

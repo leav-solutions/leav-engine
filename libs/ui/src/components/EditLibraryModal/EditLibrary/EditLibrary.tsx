@@ -3,12 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Tabs, TabsProps} from 'antd';
 import styled from 'styled-components';
-import {SaveLibraryMutation, useGetLibraryByIdQuery} from '../../../_gqlTypes';
 import {useSharedTranslation} from '../../../hooks/useSharedTranslation';
+import {LibraryBehavior, SaveLibraryMutation, useGetLibraryByIdQuery} from '../../../_gqlTypes';
 import {ErrorDisplay} from '../../ErrorDisplay';
 import {Loading} from '../../Loading';
 import {EditLibraryAttributes} from './EditLibraryAttributes';
 import {EditLibraryInfo} from './EditLibraryInfo';
+import {EditLibraryPreviewsSettings} from './EditLibraryPreviewsSettings';
 
 interface IEditLibraryProps {
     libraryId?: string;
@@ -70,6 +71,18 @@ function EditLibrary({libraryId, onSetSubmitFunction, readOnly: isReadOnly}: IEd
             )
         }
     ];
+
+    if (isEditing && libraryData.behavior === LibraryBehavior.files) {
+        tabs.push({
+            key: 'previews_settings',
+            label: t('libraries.previews_settings.title'),
+            children: (
+                <TabContentWrapper>
+                    <EditLibraryPreviewsSettings library={libraryData} readOnly={isReadOnly} />
+                </TabContentWrapper>
+            )
+        });
+    }
 
     return <Tabs items={tabs} />;
 }

@@ -11,7 +11,7 @@ export declare const localizedTranslation: (translations: Record<string, string>
  * @param saturation in percent, default to 30
  * @param luminosity in percent, default to 80
  */
-export declare const stringToColor: (str?: string, format?: string, saturation?: number, luminosity?: number) => string;
+export declare const stringToColor: (str?: string | null, format?: string, saturation?: number, luminosity?: number) => string;
 export declare const getInvertColor: (color: string) => string;
 /**
  * Parse string to extract args.

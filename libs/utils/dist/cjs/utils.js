@@ -74,7 +74,7 @@ exports.localizedTranslation = localizedTranslation;
  */
 const stringToColor = (str = '', format = 'hsl', saturation = 30, luminosity = 80) => {
     let hash = 0;
-    for (let i = 0; i < str.length; i++) {
+    for (let i = 0; i < (str !== null && str !== void 0 ? str : '').length; i++) {
         // eslint-disable-next-line no-bitwise
         hash = str.charCodeAt(i) + ((hash << 5) - hash);
     }

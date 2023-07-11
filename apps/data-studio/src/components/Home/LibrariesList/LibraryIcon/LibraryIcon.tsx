@@ -15,7 +15,7 @@ const Wrapper = styled.div`
 `;
 
 interface ILibraryIconProps {
-    library: Pick<GET_LIBRARIES_LIST_libraries_list, 'id' | 'behavior' | 'icon'>;
+    library: Pick<GET_LIBRARIES_LIST_libraries_list, 'id' | 'behavior' | 'icon'> & {label: string};
 }
 
 function LibraryIcon({library}: ILibraryIconProps): JSX.Element {
@@ -34,7 +34,7 @@ function LibraryIcon({library}: ILibraryIconProps): JSX.Element {
                 <EntityPreview
                     image={library.icon.whoAmI.preview.tiny}
                     color={null}
-                    label={null}
+                    label={String(library?.label ?? '')}
                     size={PreviewSize.tiny}
                 />
             ) : (

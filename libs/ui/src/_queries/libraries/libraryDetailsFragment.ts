@@ -23,6 +23,20 @@ export const libraryDetailsFragment = gql`
         ...LibraryLinkAttributeDetails
     }
 
+    fragment LibraryPreviewsSettings on LibraryPreviewsSettings {
+        label
+        description
+        system
+        versions {
+            background
+            density
+            sizes {
+                name
+                size
+            }
+        }
+    }
+
     fragment LibraryDetails on Library {
         id
         label
@@ -64,6 +78,9 @@ export const libraryDetailsFragment = gql`
         }
         icon {
             ...RecordIdentity
+        }
+        previewsSettings {
+            ...LibraryPreviewsSettings
         }
     }
 `;

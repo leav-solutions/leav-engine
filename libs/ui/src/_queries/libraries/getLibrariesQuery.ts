@@ -14,13 +14,7 @@ export const getLibrariesQuery = gql`
                 library {
                     id
                 }
-                preview {
-                    tiny
-                    small
-                    medium
-                    big
-                    huge
-                }
+                preview
             }
         }
     }

@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DeleteOutlined} from '@ant-design/icons';
+import {BasicButton} from '@leav/ui';
 import {Popconfirm, Tooltip} from 'antd';
-import BasicButton from 'components/shared/BasicButton';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 

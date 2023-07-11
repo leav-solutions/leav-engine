@@ -2,9 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined} from '@ant-design/icons';
-import {themeVars} from '@leav/ui';
+import {BasicButton, themeVars} from '@leav/ui';
 import {ButtonProps} from 'antd';
-import BasicButton from 'components/shared/BasicButton';
 import {useTranslation} from 'react-i18next';
 import {FieldScope} from '../../_types';
 

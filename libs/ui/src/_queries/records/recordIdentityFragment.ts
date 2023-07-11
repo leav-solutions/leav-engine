@@ -14,13 +14,7 @@ export const recordIdentityFragment = gql`
                 id
                 label
             }
-            preview {
-                tiny
-                small
-                medium
-                big
-                huge
-            }
+            preview
         }
     }
 `;

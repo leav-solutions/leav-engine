@@ -8,6 +8,7 @@ import styled from 'styled-components';
 const StyledBtn = styled(Button)<{$bordered?: boolean; $centered?: boolean}>`
     && {
         color: ${themeVars.secondaryTextColor};
+        box-shadow: none;
         &,
         &:hover,
         &[disabled] {

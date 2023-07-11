@@ -49,9 +49,9 @@ export const localizedTranslation = (translations: Record<string, string>, avail
  * @param saturation in percent, default to 30
  * @param luminosity in percent, default to 80
  */
-export const stringToColor = (str = '', format = 'hsl', saturation = 30, luminosity = 80): string => {
+export const stringToColor = (str: string | null = '', format = 'hsl', saturation = 30, luminosity = 80): string => {
     let hash = 0;
-    for (let i = 0; i < str.length; i++) {
+    for (let i = 0; i < (str ?? '').length; i++) {
         // eslint-disable-next-line no-bitwise
         hash = str.charCodeAt(i) + ((hash << 5) - hash);
     }

@@ -53,7 +53,23 @@
         "attributes": "Attributs",
         "delete": "Supprimer la bibliothèque",
         "delete_confirm": "Êtes-vous sûr de vouloir supprimer cette bibliothèque ?",
-        "delete_confirm_warning": "Attention, cette action est irréversible et supprimera tous les éléments de la bibliothèque"
+        "delete_confirm_warning": "Attention, cette action est irréversible et supprimera tous les éléments de la bibliothèque",
+        "previews_settings": {
+            "title": "Configuration des aperçus",
+            "label": "Libellé",
+            "description": "Description",
+            "background": "Arrière-plan",
+            "density": "Densité",
+            "transparent": "Transparent",
+            "color": "Couleur",
+            "sizes": "Tailles",
+            "size_name": "Identifiant",
+            "size": "Taille",
+            "add_size": "Ajouter une taille",
+            "delete_size_confirm": "Êtes-vous sûr de vouloir supprimer cette taille ?",
+            "duplicate_size_name": "Cet identifiant est déjà utilisé",
+            "add_settings": "Ajouter une version"
+        }
     },
     "attributes": {
         "attribute": "Attribut",

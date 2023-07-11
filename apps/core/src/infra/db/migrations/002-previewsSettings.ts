@@ -22,7 +22,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function ({
+export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.attribute': attributeRepo = null,
     'core.infra.library': libraryRepo = null,
@@ -51,6 +51,10 @@ export default function ({
         const attributesSettings = utils.getPreviewAttributesSettings(savedLibraryObj);
 
         const attributesToCheck = [previewsAttributeId, previewsStatus];
+        const attributeLabel = {
+            [previewsAttributeId]: {fr: 'Aperçus', en: 'Previews'},
+            [previewsStatus]: {fr: 'Statut des aperçus', en: 'Previews status'}
+        };
 
         const attributesToBind = [];
         for (const attributeToCheck of attributesToCheck) {
@@ -76,10 +80,12 @@ export default function ({
                 const previewsAttributeSettings = attributesSettings[attributeToCheck];
                 const previewsAttributeData = {
                     id: attributeToCheck,
-                    label: {fr: 'Aperçus', en: 'Previews'},
+                    label: attributeLabel[attributeToCheck],
                     type: AttributeTypes.SIMPLE,
                     format: AttributeFormats.EXTENDED,
                     multiple_values: false,
+                    system: true,
+                    readonly: false,
                     actions_list: {
                         [ActionsListEvents.GET_VALUE]: [
                             {

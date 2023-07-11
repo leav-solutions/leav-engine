@@ -15,7 +15,16 @@ const config: CodegenConfig = {
     documents: ['src/_queries/**/*.ts'],
     generates: {
         'src/_gqlTypes/index.ts': {
-            plugins: ['typescript', 'typescript-operations', 'typescript-react-apollo'],
+            plugins: [
+                'typescript',
+                'typescript-operations',
+                'typescript-react-apollo',
+                {
+                    add: {
+                        content: "import {IPreviewScalar} from '@leav/utils'"
+                    }
+                }
+            ],
             config: {
                 namingConvention: {
                     typeNames: 'change-case-all#pascalCase',
@@ -27,7 +36,10 @@ const config: CodegenConfig = {
                 flattenGeneratedTypes: true,
                 flattenGeneratedTypesIncludeFragments: true,
                 exportFragmentSpreadSubTypes: true,
-                mergeFragmentTypes: true
+                mergeFragmentTypes: true,
+                scalars: {
+                    Preview: 'IPreviewScalar<RecordIdentityFragment>'
+                }
             }
         }
     }

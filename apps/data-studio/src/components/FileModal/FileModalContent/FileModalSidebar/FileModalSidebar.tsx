@@ -2,9 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PictureOutlined} from '@ant-design/icons';
-import {themeVars} from '@leav/ui';
+import {BasicButton, themeVars} from '@leav/ui';
 import {Descriptions} from 'antd';
-import BasicButton from 'components/shared/BasicButton';
 import TriggerPreviewsGenerationModal from 'components/shared/TriggerPreviewsGenerationModal';
 import {IFileDataWithPreviewsStatus} from 'graphQL/queries/records/getFileDataQuery';
 import {useState} from 'react';

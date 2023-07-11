@@ -3,24 +3,21 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import fs from 'fs';
 import {i18n} from 'i18next';
-import {camelCase, flow, mergeWith, partialRight, trimEnd, upperFirst} from 'lodash';
+import {camelCase,flow,mergeWith,partialRight,trimEnd,upperFirst} from 'lodash';
 import moment from 'moment';
 import os from 'os';
 import {IActionsListConfig} from '_types/actionsList';
 import {IConfig} from '_types/config';
-import {ErrorFieldDetail, ErrorFieldDetailMessage, Errors, IExtendedErrorMsg} from '_types/errors';
-import {ILibrary, LibraryBehavior} from '_types/library';
+import {ErrorFieldDetail,ErrorFieldDetailMessage,Errors,IExtendedErrorMsg} from '_types/errors';
+import {ILibrary,LibraryBehavior} from '_types/library';
 import {ISystemTranslation} from '_types/systemTranslation';
 import ValidationError from '../errors/ValidationError';
 import {APPS_URL_PREFIX} from '../_types/application';
-import {AttributeFormats, AttributeTypes, IAttribute} from '../_types/attribute';
-import {
-    IPreviewAttributesSettings,
-    PREVIEWS_ATTRIBUTE_SUFFIX,
-    PREVIEWS_STATUS_ATTRIBUTE_SUFFIX
-} from '../_types/filesManager';
+import {AttributeFormats,AttributeTypes,IAttribute} from '../_types/attribute';
+import {IPreviewAttributesSettings} from '../_types/filesManager';
 import getDefaultActionsList from './helpers/getDefaultActionsList';
 import getLibraryDefaultAttributes from './helpers/getLibraryDefaultAttributes';
+import {getPreviewsAttributeName,getPreviewsStatusAttributeName} from './helpers/getPreviewsAttributes';
 
 export interface IUtils {
     libNameToQueryName(name: string): string;
@@ -131,7 +128,7 @@ export interface IUtilsDeps {
     translator?: i18n;
 }
 
-export default function ({config = null, translator = null}: IUtilsDeps = {}): IUtils {
+export default function({config = null, translator = null}: IUtilsDeps = {}): IUtils {
     return {
         getFileExtension(filename) {
             if (filename.lastIndexOf('.') === -1) {
@@ -283,10 +280,10 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
             return `${os.hostname()}-${process.pid}`;
         },
         getPreviewsAttributeName(library) {
-            return `${library.id}_${PREVIEWS_ATTRIBUTE_SUFFIX}`;
+            return getPreviewsAttributeName(library?.id);
         },
         getPreviewsStatusAttributeName(library) {
-            return `${library.id}_${PREVIEWS_STATUS_ATTRIBUTE_SUFFIX}`;
+            return getPreviewsStatusAttributeName(library?.id);
         },
         getPreviewAttributesSettings(library) {
             const _getSizeLabel = (size): ISystemTranslation =>

@@ -5,3 +5,11 @@ export declare enum FileType {
     DOCUMENT = "document",
     OTHER = "other"
 }
+export declare type FileRecord<T extends {}> = T & {
+    type: FileType;
+};
+export interface IPreviewScalar<T extends {}> {
+    pdf?: string;
+    file: FileRecord<T>;
+    original: string;
+}
