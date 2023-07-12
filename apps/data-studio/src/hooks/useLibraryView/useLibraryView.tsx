@@ -12,8 +12,9 @@ import {prepareView} from 'utils';
 import {getFiltersFromRequest} from 'utils/getFiltersFromRequest';
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
-import {GET_VIEW, GET_VIEWVariables} from '_gqlTypes/GET_VIEW';
+import {GET_VIEW, GET_VIEWVariables, GET_VIEW_view_display, GET_VIEW_view_sort} from '_gqlTypes/GET_VIEW';
 import {IAttribute, IView} from '_types/types';
+import omit from 'lodash/omit';
 
 const useLibraryView = (
     library: GET_LIBRARY_DETAIL_EXTENDED_libraries_list
@@ -26,19 +27,20 @@ const useLibraryView = (
     const hasAccess = library.permissions.access_library;
     const selectedViewKey = getSelectedViewKey(library.id);
 
-    const _getLibraryDefaultView = () => {
+    const _getLibraryDefaultView = (): IView => {
         const attributesFromQuery: IAttribute[] = extractAttributesFromLibrary(library);
+
         return {
             id: library.defaultView.id,
             owner: true,
             library: library.id,
             label: library.defaultView.label,
             description: library.defaultView.description,
-            display: library.defaultView.display,
+            display: omit(view.display, ['__typename']) as GET_VIEW_view_display,
             color: library.defaultView.color,
             shared: library.defaultView.shared,
             filters: getFiltersFromRequest(library.defaultView.filters ?? [], library.id, attributesFromQuery),
-            sort: library.defaultView.sort,
+            sort: library.defaultView.sort && (omit(library.defaultView.sort, ['__typename']) as GET_VIEW_view_sort),
             settings: library.defaultView.settings
         };
     };
