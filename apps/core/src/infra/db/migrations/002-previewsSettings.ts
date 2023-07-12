@@ -46,8 +46,8 @@ export default function({
         const savedLibraryObj: ILibrary = dbUtils.cleanup(savedLib[0]);
         const libAttributes = await attributeRepo.getLibraryAttributes({libraryId: savedLibraryObj.id, ctx});
 
-        const previewsAttributeId = utils.getPreviewsAttributeName(savedLibraryObj);
-        const previewsStatus = utils.getPreviewsStatusAttributeName(savedLibraryObj);
+        const previewsAttributeId = utils.getPreviewsAttributeName(savedLibraryObj.id);
+        const previewsStatus = utils.getPreviewsStatusAttributeName(savedLibraryObj.id);
         const attributesSettings = utils.getPreviewAttributesSettings(savedLibraryObj);
 
         const attributesToCheck = [previewsAttributeId, previewsStatus];
@@ -126,6 +126,20 @@ export default function({
             libId: library._key,
             attributes: attributesToBind,
             insertOnly: true,
+            ctx
+        });
+
+        // Move previews values to the new attributes
+        const libCollec = dbService.db.collection(library._key);
+        await dbService.execute({
+            query: aql`
+                FOR r IN ${libCollec}
+                    FILTER r.previews != null AND r.previews_status != null
+                    UPDATE r WITH {
+                        ${previewsAttributeId}: r.previews,
+                        ${previewsStatus}: r.previews_status
+                    } IN ${libCollec}
+            `,
             ctx
         });
     };

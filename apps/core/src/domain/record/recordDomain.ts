@@ -191,7 +191,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.infra.record': recordRepo = null,
     'core.domain.attribute': attributeDomain = null,
@@ -426,8 +426,12 @@ export default function ({
 
         // On a file, previews are accessible straight on the record
         // Otherwise, we fetch values of the previews attribute
+        let previewsAttributeId;
+        let fileLibraryId;
         if (lib.behavior === LibraryBehavior.FILES) {
             fileRecord = record;
+            previewsAttributeId = utils.getPreviewsAttributeName(lib.id);
+            fileLibraryId = lib.id;
         } else {
             const previewAttribute = conf.preview;
             if (!previewAttribute) {
@@ -447,13 +451,15 @@ export default function ({
             }
 
             fileRecord = previewValues[0].value;
+            previewsAttributeId = utils.getPreviewsAttributeName(fileRecord.library);
+            fileLibraryId = fileRecord.library;
         }
 
         // Get value of the previews field. We're calling getRecordFieldValue to apply actions_list if any
         const filePreviewsValue = await ret.getRecordFieldValue({
-            library: lib.id,
+            library: fileLibraryId,
             record: fileRecord,
-            attributeId: utils.getPreviewsAttributeName(lib),
+            attributeId: previewsAttributeId,
             options: {forceArray: true},
             ctx
         });

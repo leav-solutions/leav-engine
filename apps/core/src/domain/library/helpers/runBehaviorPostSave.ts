@@ -29,8 +29,8 @@ const _filesBehavior = async (library: ILibrary, isNewLib: boolean, deps: IDeps,
     }
 
     // Create previews and previews status attributes for library if they don't exist. If they exist, update settings
-    const previewsAttributeId = deps.utils.getPreviewsAttributeName(library);
-    const previewsStatusAttributeId = deps.utils.getPreviewsStatusAttributeName(library);
+    const previewsAttributeId = deps.utils.getPreviewsAttributeName(library.id);
+    const previewsStatusAttributeId = deps.utils.getPreviewsStatusAttributeName(library.id);
     const attributesSettings = deps.utils.getPreviewAttributesSettings(library);
 
     // Previews attribute

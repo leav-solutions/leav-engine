@@ -107,7 +107,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.utils': utils = null,
     'core.infra.amqpService': amqpService = null,
@@ -577,14 +577,14 @@ export default function ({
                 if (
                     !failedOnly ||
                     (failedOnly &&
-                        Object.entries(r[utils.getPreviewsStatusAttributeName(libraryProps)]).some(
+                        Object.entries(r[utils.getPreviewsStatusAttributeName(libraryProps.id)]).some(
                             p => (p[1] as {status: number; message: string}).status !== 0
                         ))
                 ) {
                     const {previewsStatus, previews} = getPreviewsDefaultData(systemPreviewsSettings);
                     const recordData: IFilesAttributes = {
-                        [utils.getPreviewsStatusAttributeName(libraryProps)]: previewsStatus,
-                        [utils.getPreviewsAttributeName(libraryProps)]: previews
+                        [utils.getPreviewsStatusAttributeName(libraryProps.id)]: previewsStatus,
+                        [utils.getPreviewsAttributeName(libraryProps.id)]: previews
                     };
                     await updateRecordFile(
                         recordData,

@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Button, Modal} from 'antd';
 import {ErrorDisplay, Loading} from '@leav/ui';
+import {Button, Modal} from 'antd';
 import useGetFileDataQuery from 'hooks/useGetFileDataQuery/useGetFileDataQuery';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -37,6 +37,7 @@ interface IFileModalProps {
 function FileModal({fileId, libraryId, open, onClose}: IFileModalProps): JSX.Element {
     const {t} = useTranslation();
 
+    console.log({libraryId});
     const {loading, error, fileData} = useGetFileDataQuery(libraryId, fileId);
     const footerButtons = [
         <Button aria-label={t('global.close')} key="close" onClick={onClose}>

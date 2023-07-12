@@ -3,21 +3,21 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import fs from 'fs';
 import {i18n} from 'i18next';
-import {camelCase,flow,mergeWith,partialRight,trimEnd,upperFirst} from 'lodash';
+import {camelCase, flow, mergeWith, partialRight, trimEnd, upperFirst} from 'lodash';
 import moment from 'moment';
 import os from 'os';
 import {IActionsListConfig} from '_types/actionsList';
 import {IConfig} from '_types/config';
-import {ErrorFieldDetail,ErrorFieldDetailMessage,Errors,IExtendedErrorMsg} from '_types/errors';
-import {ILibrary,LibraryBehavior} from '_types/library';
+import {ErrorFieldDetail, ErrorFieldDetailMessage, Errors, IExtendedErrorMsg} from '_types/errors';
+import {ILibrary, LibraryBehavior} from '_types/library';
 import {ISystemTranslation} from '_types/systemTranslation';
 import ValidationError from '../errors/ValidationError';
 import {APPS_URL_PREFIX} from '../_types/application';
-import {AttributeFormats,AttributeTypes,IAttribute} from '../_types/attribute';
+import {AttributeFormats, AttributeTypes, IAttribute} from '../_types/attribute';
 import {IPreviewAttributesSettings} from '../_types/filesManager';
 import getDefaultActionsList from './helpers/getDefaultActionsList';
 import getLibraryDefaultAttributes from './helpers/getLibraryDefaultAttributes';
-import {getPreviewsAttributeName,getPreviewsStatusAttributeName} from './helpers/getPreviewsAttributes';
+import {getPreviewsAttributeName, getPreviewsStatusAttributeName} from './helpers/getPreviewsAttributes';
 
 export interface IUtils {
     libNameToQueryName(name: string): string;
@@ -118,8 +118,8 @@ export interface IUtils {
 
     getProcessIdentifier(): string;
 
-    getPreviewsAttributeName(library: ILibrary): string;
-    getPreviewsStatusAttributeName(library: ILibrary): string;
+    getPreviewsAttributeName(libraryId: string): string;
+    getPreviewsStatusAttributeName(libraryId: string): string;
     getPreviewAttributesSettings(library: ILibrary): IPreviewAttributesSettings;
 }
 
@@ -279,11 +279,11 @@ export default function({config = null, translator = null}: IUtilsDeps = {}): IU
         getProcessIdentifier(): string {
             return `${os.hostname()}-${process.pid}`;
         },
-        getPreviewsAttributeName(library) {
-            return getPreviewsAttributeName(library?.id);
+        getPreviewsAttributeName(libraryId) {
+            return getPreviewsAttributeName(libraryId);
         },
         getPreviewsStatusAttributeName(library) {
-            return getPreviewsStatusAttributeName(library?.id);
+            return getPreviewsStatusAttributeName(library);
         },
         getPreviewAttributesSettings(library) {
             const _getSizeLabel = (size): ISystemTranslation =>
@@ -293,8 +293,8 @@ export default function({config = null, translator = null}: IUtilsDeps = {}): IU
                 }, {});
 
             const previewsSettings = library.previewsSettings;
-            const previewsAttributeName = this.getPreviewsAttributeName(library);
-            const previewsStatusAttributeName = this.getPreviewsStatusAttributeName(library);
+            const previewsAttributeName = this.getPreviewsAttributeName(library.id);
+            const previewsStatusAttributeName = this.getPreviewsStatusAttributeName(library.id);
 
             return previewsSettings.reduce(
                 (allSettings: IPreviewAttributesSettings, settings) => {
