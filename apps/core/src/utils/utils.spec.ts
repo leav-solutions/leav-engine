@@ -421,4 +421,32 @@ describe('Utils', () => {
             });
         });
     });
+
+    describe('previewsSettingsToVersions', () => {
+        test('Extract versions from previews settings', async () => {
+            const utilsModule = utils();
+            expect(utilsModule.previewsSettingsToVersions(mockLibraryFiles.previewsSettings)).toEqual([
+                {
+                    background: '#123456',
+                    density: 42,
+                    sizes: [
+                        {
+                            name: 'my_size',
+                            size: 1337
+                        }
+                    ]
+                },
+                {
+                    background: '#123456',
+                    density: 42,
+                    sizes: [
+                        {
+                            name: 'my_other_size',
+                            size: 1337
+                        }
+                    ]
+                }
+            ]);
+        });
+    });
 });

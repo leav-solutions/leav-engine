@@ -28,6 +28,7 @@ export const handleCreateEvent = async (
     const directoriesLibraryId = deps.utils.getDirectoriesLibraryId(resources.library);
     const filesLibraryId = resources.library;
     const recordLibrary = scanMsg.isDirectory ? directoriesLibraryId : filesLibraryId;
+    const recordLibraryProps = await deps.libraryDomain.getLibraryProperties(recordLibrary, ctx);
 
     let record = await getRecord({fileName, filePath, fileInode: scanMsg.inode}, {recordLibrary}, true, deps, ctx);
 
@@ -43,8 +44,8 @@ export const handleCreateEvent = async (
             const recordData: IFilesAttributes = {
                 ROOT_KEY: scanMsg.rootKey,
                 INODE: scanMsg.inode,
-                PREVIEWS_STATUS: previewsStatus,
-                PREVIEWS: previews,
+                [deps.utils.getPreviewsStatusAttributeName(filesLibraryId)]: previewsStatus,
+                [deps.utils.getPreviewsAttributeName(filesLibraryId)]: previews,
                 HASH: scanMsg.hash
             };
 
@@ -59,8 +60,8 @@ export const handleCreateEvent = async (
             FILE_NAME: fileName,
             INODE: scanMsg.inode,
             HASH: scanMsg.hash,
-            PREVIEWS_STATUS: previewsStatus,
-            PREVIEWS: previews
+            [deps.utils.getPreviewsStatusAttributeName(filesLibraryId)]: previewsStatus,
+            [deps.utils.getPreviewsAttributeName(filesLibraryId)]: previews
         };
 
         try {
@@ -83,7 +84,7 @@ export const handleCreateEvent = async (
             recordId: record.id,
             pathAfter: scanMsg.pathAfter,
             libraryId: recordLibrary,
-            versions: systemPreviewsSettings,
+            versions: deps.utils.previewsSettingsToVersions(recordLibraryProps.previewsSettings),
             deps: {...deps}
         });
     }

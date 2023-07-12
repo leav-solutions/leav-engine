@@ -31,7 +31,12 @@ export const handleDocument = async ({input, output, size, name, version, rootPa
         pdfFile = await _createDocumentPdf(input, pdfOutput, size, name);
     } else {
         pdfFile = input;
-        fs.copyFile(input, pdfOutput);
+
+        // Copy PDF file to the results folder.
+        // First, create destination folder if it does not exist and then copy the file.
+        const dirName = pdfOutput.split('/').slice(0, -1).join('/');
+        await fs.mkdir(dirName, {recursive: true});
+        await fs.copyFile(input, pdfOutput);
     }
 
     const result: IResult = {

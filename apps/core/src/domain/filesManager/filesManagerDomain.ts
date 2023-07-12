@@ -107,7 +107,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.utils': utils = null,
     'core.infra.amqpService': amqpService = null,
@@ -258,13 +258,14 @@ export default function({
 
             await initPreviewResponseHandler(config, logger, {
                 amqpService,
+                libraryDomain,
                 recordDomain,
                 valueDomain,
                 recordRepo,
                 updateRecordLastModif,
-                previewVersions: null, // systemPreviewVersions,
                 config,
-                logger
+                logger,
+                utils
             });
 
             await _initDefaultCtx();
@@ -549,6 +550,7 @@ export default function({
 
             // If library is a directory library: recreate all previews of subfiles
             let recordsToProcess: IRecord[];
+            let filesLibraryProps;
             if (libraryProps.behavior === LibraryBehavior.DIRECTORIES) {
                 // Find tree where this directory belongs
                 const trees = await treeDomain.getTrees({params: {filters: {library: libraryId}}, ctx});
@@ -560,6 +562,7 @@ export default function({
                     )
                 );
                 const filesLibraryId = treeLibraries.find(l => l.behavior === LibraryBehavior.FILES).id;
+                filesLibraryProps = await libraryDomain.getLibraryProperties(filesLibraryId, ctx);
 
                 if (trees.list.length) {
                     const treeId = tree.id;
@@ -570,9 +573,11 @@ export default function({
                 }
             } else {
                 recordsToProcess = records;
+                filesLibraryProps = libraryProps;
             }
 
             let generationRequested = 0;
+
             for (const r of recordsToProcess) {
                 if (
                     !failedOnly ||
@@ -605,7 +610,7 @@ export default function({
                         pathAfter: `${r[FilesAttributes.FILE_PATH]}/${r[FilesAttributes.FILE_NAME]}`,
                         libraryId: r.library,
                         priority: PreviewPriority.MEDIUM,
-                        versions: systemPreviewsSettings,
+                        versions: utils.previewsSettingsToVersions(filesLibraryProps.previewsSettings),
                         deps: {amqpService, config, logger}
                     });
                     generationRequested++;

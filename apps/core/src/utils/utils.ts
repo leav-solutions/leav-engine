@@ -9,12 +9,12 @@ import os from 'os';
 import {IActionsListConfig} from '_types/actionsList';
 import {IConfig} from '_types/config';
 import {ErrorFieldDetail, ErrorFieldDetailMessage, Errors, IExtendedErrorMsg} from '_types/errors';
-import {ILibrary, LibraryBehavior} from '_types/library';
+import {ILibrary, ILibraryPreviewsSettings, LibraryBehavior} from '_types/library';
 import {ISystemTranslation} from '_types/systemTranslation';
 import ValidationError from '../errors/ValidationError';
 import {APPS_URL_PREFIX} from '../_types/application';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../_types/attribute';
-import {IPreviewAttributesSettings} from '../_types/filesManager';
+import {IPreviewAttributesSettings, IPreviewVersion} from '../_types/filesManager';
 import getDefaultActionsList from './helpers/getDefaultActionsList';
 import getLibraryDefaultAttributes from './helpers/getLibraryDefaultAttributes';
 import {getPreviewsAttributeName, getPreviewsStatusAttributeName} from './helpers/getPreviewsAttributes';
@@ -121,6 +121,7 @@ export interface IUtils {
     getPreviewsAttributeName(libraryId: string): string;
     getPreviewsStatusAttributeName(libraryId: string): string;
     getPreviewAttributesSettings(library: ILibrary): IPreviewAttributesSettings;
+    previewsSettingsToVersions(previewsSettings: ILibraryPreviewsSettings[]): IPreviewVersion[];
 }
 
 export interface IUtilsDeps {
@@ -128,7 +129,7 @@ export interface IUtilsDeps {
     translator?: i18n;
 }
 
-export default function({config = null, translator = null}: IUtilsDeps = {}): IUtils {
+export default function ({config = null, translator = null}: IUtilsDeps = {}): IUtils {
     return {
         getFileExtension(filename) {
             if (filename.lastIndexOf('.') === -1) {
@@ -328,6 +329,9 @@ export default function({config = null, translator = null}: IUtilsDeps = {}): IU
                     [previewsStatusAttributeName]: []
                 }
             );
+        },
+        previewsSettingsToVersions(previewsSettings) {
+            return previewsSettings.map(settings => settings.versions);
         }
     };
 }

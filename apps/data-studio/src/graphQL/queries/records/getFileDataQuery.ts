@@ -67,7 +67,6 @@ export const getFileDataQuery = (libraryId: string) => gqlUnchecked`
                 library {
                     behavior
                 }
-                previews_status
             }
         }
     }`;

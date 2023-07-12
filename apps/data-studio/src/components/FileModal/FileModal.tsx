@@ -37,7 +37,6 @@ interface IFileModalProps {
 function FileModal({fileId, libraryId, open, onClose}: IFileModalProps): JSX.Element {
     const {t} = useTranslation();
 
-    console.log({libraryId});
     const {loading, error, fileData} = useGetFileDataQuery(libraryId, fileId);
     const footerButtons = [
         <Button aria-label={t('global.close')} key="close" onClick={onClose}>

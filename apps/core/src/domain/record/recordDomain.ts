@@ -191,7 +191,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.record': recordRepo = null,
     'core.domain.attribute': attributeDomain = null,
@@ -463,6 +463,7 @@ export default function({
             options: {forceArray: true},
             ctx
         });
+
         const previews = filePreviewsValue[0]?.raw_value ?? {};
 
         const previewsWithUrl: IPreview = Object.entries(previews)
@@ -606,7 +607,10 @@ export default function({
         }
 
         // If no preview found, or preview is not available, use library icon if any
-        if (preview === null || !Object.keys(preview?.file?.previews ?? {}).length) {
+        if (
+            preview === null ||
+            !Object.keys(preview?.file?.[utils.getPreviewsAttributeName(record.library)] ?? {}).length
+        ) {
             preview = await _getLibraryIconPreview(lib, ctx);
         }
 

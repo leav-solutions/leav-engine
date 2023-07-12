@@ -3,9 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
 import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
+import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
+import {IFilesManagerRepo} from 'infra/filesManager/filesManagerRepo';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
@@ -16,9 +18,9 @@ import {handleMoveEvent} from './handleFileSystem/handleMoveEvent';
 import {handleRemoveEvent} from './handleFileSystem/handleRemoveEvent';
 import {handleUpdateEvent} from './handleFileSystem/handleUpdateEvent';
 import winston = require('winston');
-import {IFilesManagerRepo} from 'infra/filesManager/filesManagerRepo';
 
 export interface IHandleFileSystemDeps {
+    libraryDomain: ILibraryDomain;
     recordDomain: IRecordDomain;
     valueDomain: IValueDomain;
     treeDomain: ITreeDomain;

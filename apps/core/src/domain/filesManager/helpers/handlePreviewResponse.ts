@@ -1,34 +1,31 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {amqpService, IAmqpService} from '@leav/message-broker';
+import {IAmqpService} from '@leav/message-broker';
+import * as amqp from 'amqplib';
 import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
+import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
+import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
-import {
-    IFilesAttributes,
-    IPreviewResponse,
-    IPreviews,
-    IPreviewsStatus,
-    IPreviewVersion
-} from '../../../_types/filesManager';
+import {IFilesAttributes, IPreviewResponse, IPreviews, IPreviewsStatus} from '../../../_types/filesManager';
 import {updateRecordFile} from './handleFileUtilsHelper';
 import winston = require('winston');
-import * as amqp from 'amqplib';
 
 export interface IHandlePreviewResponseDeps {
     amqpService: IAmqpService;
+    libraryDomain: ILibraryDomain;
     recordDomain: IRecordDomain;
     valueDomain: IValueDomain;
     recordRepo: IRecordRepo;
-    previewVersions: IPreviewVersion[];
     updateRecordLastModif: UpdateRecordLastModifFunc;
     config: Config.IConfig;
     logger: winston.Winston;
+    utils: IUtils;
 }
 
 const _onMessage = async (msg: amqp.ConsumeMessage, logger: winston.Winston, deps: IHandlePreviewResponseDeps) => {
@@ -52,6 +49,7 @@ const _onMessage = async (msg: amqp.ConsumeMessage, logger: winston.Winston, dep
     }
 
     const {library, recordId} = previewResponse.context;
+    const libraryProps = await deps.libraryDomain.getLibraryProperties(library, ctx);
 
     // Update previews info in the record
     const previewsStatus: IPreviewsStatus = {};
@@ -68,10 +66,8 @@ const _onMessage = async (msg: amqp.ConsumeMessage, logger: winston.Winston, dep
 
             previews[name] = previewResult.params.output;
         } else {
-            // use systemPreviewVersions
-
-            // else take it from the record
-            for (const version in deps.previewVersions) {
+            const versions = deps.utils.previewsSettingsToVersions(libraryProps.previewsSettings);
+            for (const version in versions) {
                 if (previewResponse[version]) {
                     previewsStatus[version] = {
                         status: previewResult.error,
@@ -83,8 +79,8 @@ const _onMessage = async (msg: amqp.ConsumeMessage, logger: winston.Winston, dep
     }
 
     const recordData: IFilesAttributes = {
-        PREVIEWS_STATUS: previewsStatus,
-        PREVIEWS: previews
+        [deps.utils.getPreviewsStatusAttributeName(library)]: previewsStatus,
+        [deps.utils.getPreviewsAttributeName(library)]: previews
     };
 
     await updateRecordFile(

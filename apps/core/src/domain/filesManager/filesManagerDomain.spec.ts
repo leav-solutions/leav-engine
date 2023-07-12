@@ -136,7 +136,8 @@ describe('FilesManager', () => {
         const mockUtils: Mockify<IUtils> = {
             getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
             getPreviewsStatusAttributeName: jest.fn().mockReturnValue('previews_status'),
-            getPreviewAttributesSettings: jest.fn().mockReturnValue(systemPreviewsSettings)
+            getPreviewAttributesSettings: jest.fn().mockReturnValue(systemPreviewsSettings),
+            previewsSettingsToVersions: jest.fn().mockReturnValue(systemPreviewsSettings)
         };
 
         test('Force preview generation one file', async () => {

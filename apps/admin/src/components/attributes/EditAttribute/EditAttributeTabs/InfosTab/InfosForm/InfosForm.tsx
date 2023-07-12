@@ -98,7 +98,7 @@ function InfosForm({
                   linked_tree: (attribute as GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute).linked_tree?.id ?? null,
                   versions_conf: {
                       ...attribute.versions_conf,
-                      profile: attribute.versions_conf.profile?.id ?? null
+                      profile: attribute.versions_conf?.profile?.id ?? null
                   },
                   unique: (attribute as GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute).unique ?? null
               }

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IQueryInfos} from '_types/queryInfos';
 import {systemPreviewsSettings} from '../../../../domain/filesManager/_constants';
-import {IFileEventData, IFilesAttributes} from '../../../../_types/filesManager';
+import {IFileEventData} from '../../../../_types/filesManager';
 import {IHandleFileSystemDeps, IHandleFileSystemResources} from '../handleFileSystem';
 import {getInputData, getPreviewsDefaultData, getRecord, updateRecordFile} from '../handleFileUtilsHelper';
 import {requestPreviewGeneration} from '../handlePreview';
@@ -20,6 +20,7 @@ export const handleUpdateEvent = async (
     const filesLibraryId = library;
     const recordLibrary = scanMsg.isDirectory ? directoriesLibraryId : filesLibraryId;
     const recordId = scanMsg.recordId;
+    const recordLibraryProps = await deps.libraryDomain.getLibraryProperties(recordLibrary, ctx);
 
     // Get the records
     const record = await getRecord(
@@ -37,12 +38,12 @@ export const handleUpdateEvent = async (
 
     const {previewsStatus, previews} = getPreviewsDefaultData(systemPreviewsSettings);
 
-    const recordData: IFilesAttributes = {
+    const recordData = {
         INODE: scanMsg.inode,
         ROOT_KEY: scanMsg.rootKey,
         HASH: scanMsg.hash,
-        PREVIEWS_STATUS: previewsStatus,
-        PREVIEWS: previews
+        [deps.utils.getPreviewsStatusAttributeName(library)]: previewsStatus,
+        [deps.utils.getPreviewsAttributeName(library)]: previews
     };
 
     // Update datas
@@ -55,7 +56,7 @@ export const handleUpdateEvent = async (
         recordId: record.id,
         pathAfter: scanMsg.pathAfter,
         libraryId: library,
-        versions: systemPreviewsSettings,
+        versions: deps.utils.previewsSettingsToVersions(recordLibraryProps.previewsSettings),
         deps: {...deps}
     });
 };

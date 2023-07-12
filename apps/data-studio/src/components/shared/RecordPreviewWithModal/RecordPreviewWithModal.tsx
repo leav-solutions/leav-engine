@@ -44,7 +44,7 @@ function RecordPreviewWithModal({
 }: IRecordPreviewWithModalProps): JSX.Element {
     const [isPreviewModalOpen, setPreviewModalOpen] = useState(false);
     const fileId = previewFile?.id;
-    const fileLibraryId = previewFile?.whoAmI?.library?.id;
+    const fileLibraryId = previewFile?.library;
     const mustShowTransparency = useMustShowTransparency();
 
     const _handlePreviewClick = () => {

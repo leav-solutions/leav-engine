@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
 import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
+import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
@@ -25,6 +26,7 @@ interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.value'?: IValueDomain;
     'core.domain.tree'?: ITreeDomain;
+    'core.domain.library'?: ILibraryDomain;
     'core.infra.record'?: IRecordRepo;
     'core.utils'?: IUtils;
     'core.infra.filesManager'?: IFilesManagerRepo;
@@ -43,6 +45,7 @@ export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.value': valueDomain = null,
     'core.domain.tree': treeDomain = null,
+    'core.domain.library': libraryDomain = null,
     'core.infra.record': recordRepo = null,
     'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
     'core.utils': utils = null,
@@ -66,6 +69,7 @@ export default function ({
                 message,
                 {library},
                 {
+                    libraryDomain,
                     recordDomain,
                     valueDomain,
                     treeDomain,

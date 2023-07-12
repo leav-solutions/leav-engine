@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import * as Config from '_types/config';
-import {ILibrary} from '_types/library';
-import {IQueryInfos} from '_types/queryInfos';
 import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {basename, dirname} from 'path';
+import * as Config from '_types/config';
+import {ILibrary} from '_types/library';
+import {IQueryInfos} from '_types/queryInfos';
 import {FilesAttributes, IFilesAttributes, IPreviews, IPreviewsStatus} from '../../../_types/filesManager';
 import {IRecord} from '../../../_types/record';
 import updateRecordLastModif from '../../value/helpers/updateRecordLastModif';
@@ -90,7 +90,7 @@ export const updateRecordFile = async (
 ) => {
     // Update record file attributes
     const dataToSave: IRecord = Object.keys(recordData).reduce((acc, key) => {
-        acc[FilesAttributes[key]] = recordData[key];
+        acc[key] = recordData[key];
         return acc;
     }, {});
     dataToSave.id = recordId;

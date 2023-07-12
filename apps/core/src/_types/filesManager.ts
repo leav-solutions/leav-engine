@@ -31,8 +31,6 @@ export interface IFilesAttributes {
     FILE_PATH?: string;
     FILE_NAME?: string;
     INODE?: number;
-    PREVIEWS_STATUS?: object;
-    PREVIEWS?: object;
     ACTIVE?: boolean;
     HASH?: string;
 }
