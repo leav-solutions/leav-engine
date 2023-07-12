@@ -9,12 +9,13 @@ export enum FileType {
     OTHER = 'other'
 }
 
-export type FileRecord<T extends {}> = T & {
+export type FileRecord = Record<string, any> & {
     type: FileType;
 };
 
-export interface IPreviewScalar<T extends {}> {
+export interface IPreviewScalar {
     pdf?: string;
-    file: FileRecord<T>;
+    file: FileRecord;
     original: string;
+    [key: string]: string | FileRecord;
 }

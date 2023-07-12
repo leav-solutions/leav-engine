@@ -55,6 +55,7 @@ describe('Libraries', () => {
             }`);
 
         expect(res.status).toBe(200);
+        expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveLibrary.id).toBe('libraries_files_test');
         expect(res.data.data.saveLibrary.previewsSettings).toHaveLength(1);
         expect(res.data.data.saveLibrary.previewsSettings[0].system).toBe(true);
@@ -64,7 +65,6 @@ describe('Libraries', () => {
         expect(
             res.data.data.saveLibrary.attributes.find(attr => attr.id === 'libraries_files_test_previews_status')
         ).toBeTruthy();
-        expect(res.data.errors).toBeUndefined();
 
         // Check if directories library has been created
         const directoriesLibRes = await makeGraphQlCall(

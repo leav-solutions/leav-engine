@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, ExpandAltOutlined, PlusOutlined} from '@ant-design/icons';
 import {getInvertColor, localizedTranslation} from '@leav/utils';
 import {Button, Input, Popconfirm, Space, Table, TableColumnsType, Tag, Tooltip} from 'antd';

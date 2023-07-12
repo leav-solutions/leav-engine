@@ -42,6 +42,7 @@ const _filesBehavior = async (library: ILibrary, isNewLib: boolean, deps: IDeps,
             return labels;
         }, {}),
         system: true,
+        readonly: true,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.EXTENDED,
         multiple_values: false,
@@ -60,11 +61,12 @@ const _filesBehavior = async (library: ILibrary, isNewLib: boolean, deps: IDeps,
     const previewsStatusAttributeData = {
         id: previewsStatusAttributeId,
         label: deps.config.lang.available.reduce((labels, lang) => {
-            labels[lang] = deps.translator.t('files.previews', {lng: lang});
+            labels[lang] = deps.translator.t('files.previews_status', {lng: lang});
 
             return labels;
         }, {}),
         system: true,
+        readonly: true,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.EXTENDED,
         multiple_values: false,

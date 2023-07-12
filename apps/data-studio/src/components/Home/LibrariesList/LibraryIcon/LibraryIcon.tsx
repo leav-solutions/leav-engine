@@ -32,7 +32,7 @@ function LibraryIcon({library}: ILibraryIconProps): JSX.Element {
         <Wrapper>
             {library?.icon?.whoAmI?.preview ? (
                 <EntityPreview
-                    image={library.icon.whoAmI.preview.tiny}
+                    image={library.icon.whoAmI.preview.tiny as string}
                     color={null}
                     label={String(library?.label ?? '')}
                     size={PreviewSize.tiny}

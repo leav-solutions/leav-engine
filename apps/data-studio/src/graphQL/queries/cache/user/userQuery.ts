@@ -18,22 +18,7 @@ export const getUser = gql`
             id
             label
             color
-            preview {
-                tiny
-                small
-                medium
-                big
-                huge
-                pdf
-                original
-                file {
-                    id
-                    file_type
-                    library {
-                        id
-                    }
-                }
-            }
+            preview
             library {
                 id
                 behavior

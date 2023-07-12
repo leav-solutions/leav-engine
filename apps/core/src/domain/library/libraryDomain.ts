@@ -67,7 +67,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function ({
+export default function({
     'core.domain.attribute': attributeDomain = null,
     'core.domain.eventsManager': eventsManager = null,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,

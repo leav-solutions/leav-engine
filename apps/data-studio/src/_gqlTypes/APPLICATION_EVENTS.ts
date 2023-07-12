@@ -6,13 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {
-    ApplicationEventFiltersInput,
-    ApplicationEventTypes,
-    ApplicationType,
-    FileType,
-    LibraryBehavior
-} from './globalTypes';
+import {ApplicationEventFiltersInput, ApplicationEventTypes, ApplicationType, LibraryBehavior} from './globalTypes';
 
 // ====================================================
 // GraphQL subscription operation: APPLICATION_EVENTS
@@ -30,33 +24,12 @@ export interface APPLICATION_EVENTS_applicationEvent_application_icon_whoAmI_lib
     gqlNames: APPLICATION_EVENTS_applicationEvent_application_icon_whoAmI_library_gqlNames;
 }
 
-export interface APPLICATION_EVENTS_applicationEvent_application_icon_whoAmI_preview_file_library {
-    id: string;
-}
-
-export interface APPLICATION_EVENTS_applicationEvent_application_icon_whoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: APPLICATION_EVENTS_applicationEvent_application_icon_whoAmI_preview_file_library;
-}
-
-export interface APPLICATION_EVENTS_applicationEvent_application_icon_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: APPLICATION_EVENTS_applicationEvent_application_icon_whoAmI_preview_file | null;
-}
-
 export interface APPLICATION_EVENTS_applicationEvent_application_icon_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: APPLICATION_EVENTS_applicationEvent_application_icon_whoAmI_library;
-    preview: APPLICATION_EVENTS_applicationEvent_application_icon_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface APPLICATION_EVENTS_applicationEvent_application_icon {

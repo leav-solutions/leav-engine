@@ -40,7 +40,9 @@ export const mockApplication: WithTypename<GET_APPLICATION_BY_ID_applications_li
                 small: 'path/to/small/preview.png',
                 medium: 'path/to/medium/preview.png',
                 big: 'path/to/big/preview.png',
-                huge: 'path/to/huge/preview.png'
+                huge: 'path/to/huge/preview.png',
+                original: 'path/to/original/preview.png',
+                file: null
             }
         }
     }

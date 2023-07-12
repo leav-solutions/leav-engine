@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {GET_GLOBAL_SETTINGS_globalSettings_icon_whoAmI_preview} from '_gqlTypes/GET_GLOBAL_SETTINGS';
+// Copyright LEAV Solutions 2017
 
-type PossibleSizes = keyof Omit<GET_GLOBAL_SETTINGS_globalSettings_icon_whoAmI_preview, 'pdf' | 'file' | 'original'>;
+type PossibleSizes = 'tiny' | 'small' | 'medium' | 'big' | 'huge';
 
 interface IAppIconProps {
     size: PossibleSizes;

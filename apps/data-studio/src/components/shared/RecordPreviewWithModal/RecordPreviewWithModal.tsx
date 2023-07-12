@@ -7,10 +7,9 @@ import FileModal from 'components/FileModal';
 import {useMustShowTransparency} from 'hooks/useMustShowTransparency';
 import {useState} from 'react';
 import styled from 'styled-components';
-import {RecordIdentity_whoAmI_preview_file} from '_gqlTypes/RecordIdentity';
 
 interface IRecordPreviewWithModalProps extends Omit<IEntityPreviewProps, 'onClick'> {
-    previewFile: RecordIdentity_whoAmI_preview_file;
+    previewFile: Preview['file'];
 }
 
 const ClickHandler = styled.div`
@@ -45,7 +44,7 @@ function RecordPreviewWithModal({
 }: IRecordPreviewWithModalProps): JSX.Element {
     const [isPreviewModalOpen, setPreviewModalOpen] = useState(false);
     const fileId = previewFile?.id;
-    const fileLibraryId = previewFile?.library?.id;
+    const fileLibraryId = previewFile?.whoAmI?.library?.id;
     const mustShowTransparency = useMustShowTransparency();
 
     const _handlePreviewClick = () => {

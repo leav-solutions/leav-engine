@@ -185,7 +185,9 @@
     },
     "files": {
         "directories": "Dossiers",
-        "default_users_group_label": "Administrateurs fichiers"
+        "default_users_group_label": "Administrateurs fichiers",
+        "previews": "Aperçus",
+        "previews_status": "Statut des aperçus"
     },
     "tasks": {
         "import_label": "Import du fichier {{filename}}",

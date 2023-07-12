@@ -17,20 +17,12 @@ export interface GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_library {
     label: SystemTranslation | null;
 }
 
-export interface GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-}
-
 export interface GET_APPLICATION_BY_ID_applications_list_icon_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_library;
-    preview: GET_APPLICATION_BY_ID_applications_list_icon_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface GET_APPLICATION_BY_ID_applications_list_icon {

@@ -264,7 +264,9 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
                         <EntityPreview
                             label={item.whoAmI.label || item.whoAmI.id}
                             image={
-                                item.whoAmI.preview?.[previewSize] ? getFileUrl(item.whoAmI.preview[previewSize]) : ''
+                                item.whoAmI.preview?.[previewSize]
+                                    ? getFileUrl(item.whoAmI.preview[previewSize] as string)
+                                    : ''
                             }
                             tile={true}
                             style={{

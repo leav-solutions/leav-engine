@@ -12,8 +12,7 @@ import {
     RecordFilterCondition,
     RecordFilterOperator,
     SortOrder,
-    LibraryBehavior,
-    FileType
+    LibraryBehavior
 } from './globalTypes';
 
 // ====================================================
@@ -76,33 +75,12 @@ export interface ViewDetails_valuesVersions_treeNode_record_whoAmI_library {
     gqlNames: ViewDetails_valuesVersions_treeNode_record_whoAmI_library_gqlNames;
 }
 
-export interface ViewDetails_valuesVersions_treeNode_record_whoAmI_preview_file_library {
-    id: string;
-}
-
-export interface ViewDetails_valuesVersions_treeNode_record_whoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: ViewDetails_valuesVersions_treeNode_record_whoAmI_preview_file_library;
-}
-
-export interface ViewDetails_valuesVersions_treeNode_record_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: ViewDetails_valuesVersions_treeNode_record_whoAmI_preview_file | null;
-}
-
 export interface ViewDetails_valuesVersions_treeNode_record_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: ViewDetails_valuesVersions_treeNode_record_whoAmI_library;
-    preview: ViewDetails_valuesVersions_treeNode_record_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface ViewDetails_valuesVersions_treeNode_record {

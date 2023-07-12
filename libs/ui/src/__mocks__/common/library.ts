@@ -23,6 +23,8 @@ export const mockLibrarySimple: LibraryLightFragment = {
                 id: 'files'
             },
             preview: {
+                file: null,
+                original: 'icon/path.png',
                 huge: 'icon/path.png',
                 big: 'icon/path.png',
                 medium: 'icon/path.png',

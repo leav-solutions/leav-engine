@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {FileInput, LibraryBehavior, FileType} from './globalTypes';
+import {FileInput, LibraryBehavior} from './globalTypes';
 
 // ====================================================
 // GraphQL mutation operation: UPLOAD
@@ -24,33 +24,12 @@ export interface UPLOAD_upload_record_whoAmI_library {
     gqlNames: UPLOAD_upload_record_whoAmI_library_gqlNames;
 }
 
-export interface UPLOAD_upload_record_whoAmI_preview_file_library {
-    id: string;
-}
-
-export interface UPLOAD_upload_record_whoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: UPLOAD_upload_record_whoAmI_preview_file_library;
-}
-
-export interface UPLOAD_upload_record_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: UPLOAD_upload_record_whoAmI_preview_file | null;
-}
-
 export interface UPLOAD_upload_record_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: UPLOAD_upload_record_whoAmI_library;
-    preview: UPLOAD_upload_record_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface UPLOAD_upload_record {

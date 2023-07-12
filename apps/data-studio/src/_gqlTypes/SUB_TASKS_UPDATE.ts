@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {TaskFiltersInput, LibraryBehavior, FileType, TaskStatus} from './globalTypes';
+import {TaskFiltersInput, LibraryBehavior, TaskStatus} from './globalTypes';
 
 // ====================================================
 // GraphQL subscription operation: SUB_TASKS_UPDATE
@@ -24,33 +24,12 @@ export interface SUB_TASKS_UPDATE_task_created_by_whoAmI_library {
     gqlNames: SUB_TASKS_UPDATE_task_created_by_whoAmI_library_gqlNames;
 }
 
-export interface SUB_TASKS_UPDATE_task_created_by_whoAmI_preview_file_library {
-    id: string;
-}
-
-export interface SUB_TASKS_UPDATE_task_created_by_whoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: SUB_TASKS_UPDATE_task_created_by_whoAmI_preview_file_library;
-}
-
-export interface SUB_TASKS_UPDATE_task_created_by_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: SUB_TASKS_UPDATE_task_created_by_whoAmI_preview_file | null;
-}
-
 export interface SUB_TASKS_UPDATE_task_created_by_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: SUB_TASKS_UPDATE_task_created_by_whoAmI_library;
-    preview: SUB_TASKS_UPDATE_task_created_by_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface SUB_TASKS_UPDATE_task_created_by {
@@ -80,33 +59,12 @@ export interface SUB_TASKS_UPDATE_task_canceledBy_whoAmI_library {
     gqlNames: SUB_TASKS_UPDATE_task_canceledBy_whoAmI_library_gqlNames;
 }
 
-export interface SUB_TASKS_UPDATE_task_canceledBy_whoAmI_preview_file_library {
-    id: string;
-}
-
-export interface SUB_TASKS_UPDATE_task_canceledBy_whoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: SUB_TASKS_UPDATE_task_canceledBy_whoAmI_preview_file_library;
-}
-
-export interface SUB_TASKS_UPDATE_task_canceledBy_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: SUB_TASKS_UPDATE_task_canceledBy_whoAmI_preview_file | null;
-}
-
 export interface SUB_TASKS_UPDATE_task_canceledBy_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: SUB_TASKS_UPDATE_task_canceledBy_whoAmI_library;
-    preview: SUB_TASKS_UPDATE_task_canceledBy_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface SUB_TASKS_UPDATE_task_canceledBy {

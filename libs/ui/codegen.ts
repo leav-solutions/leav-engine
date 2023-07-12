@@ -38,7 +38,7 @@ const config: CodegenConfig = {
                 exportFragmentSpreadSubTypes: true,
                 mergeFragmentTypes: true,
                 scalars: {
-                    Preview: 'IPreviewScalar<RecordIdentityFragment>'
+                    Preview: 'IPreviewScalar'
                 }
             }
         }
