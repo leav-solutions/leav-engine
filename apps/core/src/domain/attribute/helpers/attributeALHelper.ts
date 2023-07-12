@@ -114,6 +114,12 @@ export const getActionsListToSave = (
             }, {});
         }
     } else {
+        // set is_system to false of new actions
+        attrDataToSave.actions_list = Object.entries(attrDataToSave.actions_list || {}).reduce(
+            (acc, [k, v]) => ({...acc, [k]: v.map(a => ({...a, is_system: false}))}),
+            {}
+        );
+
         alToSave = utils.mergeConcat(utils.getDefaultActionsList(attrDataToSave), attrDataToSave.actions_list);
     }
 

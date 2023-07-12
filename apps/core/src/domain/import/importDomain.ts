@@ -640,6 +640,13 @@ export default function ({
 
             console.info('Starting configuration import...');
 
+            console.info('Processing libraries...');
+            if ('libraries' in elements) {
+                for (const library of elements.libraries) {
+                    await libraryDomain.saveLibrary((({attributes, ...rest}) => rest)(library), ctx);
+                }
+            }
+
             console.info('Processing attributes...');
             if ('attributes' in elements) {
                 for (const attribute of elements.attributes) {
@@ -647,11 +654,11 @@ export default function ({
                 }
             }
 
-            console.info('Processing libraries...');
+            console.info('Add attributes to libraries...');
             if ('libraries' in elements) {
                 for (const library of elements.libraries) {
                     library.attributes = library.attributes?.map((id: string) => ({id}));
-                    await libraryDomain.saveLibrary(library, ctx);
+                    await libraryDomain.saveLibrary({id: library.id, attributes: library.attributes}, ctx);
                 }
             }
 
