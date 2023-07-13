@@ -87,11 +87,12 @@ function EditApplicationInfo({library, onSetSubmitFunction, readOnly}: IEditAppl
                 }, {})
             };
         } else if (field.startsWith('recordIdentityConf')) {
-            const {__typename, ...existingConf} = library.recordIdentityConf as WithTypename<typeof library>;
+            const {__typename, ...existingConf} = (library.recordIdentityConf as WithTypename<typeof library>) || {};
+
             dataToSave = {
                 recordIdentityConf: {
                     ...existingConf,
-                    [field.replace('recordIdentityConf_', '')]: value
+                    [field.replace('recordIdentityConf_', '')]: value ?? null
                 }
             };
         } else {
