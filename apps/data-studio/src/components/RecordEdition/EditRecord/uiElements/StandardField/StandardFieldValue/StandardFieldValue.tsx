@@ -207,7 +207,7 @@ function StandardFieldValue({
     state,
     dispatch
 }: IStandardFieldValueProps): JSX.Element {
-    const {t} = useTranslation();
+    const {t, i18n} = useTranslation();
     const {token} = theme.useToken();
 
     const actionsWrapperRef = useRef<HTMLDivElement>();
@@ -349,6 +349,13 @@ function StandardFieldValue({
                         break;
                     case AttributeFormat.encrypted:
                         displayedValue = '•••••••••';
+                        break;
+                    case AttributeFormat.date:
+                        if (!isNaN(fieldValue.displayValue as number)) {
+                            displayedValue = new Intl.DateTimeFormat(i18n.language).format(
+                                new Date(Number(displayedValue) * 1000)
+                            );
+                        }
                         break;
                 }
             }
