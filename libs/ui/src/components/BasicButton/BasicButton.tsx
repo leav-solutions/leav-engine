@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {themeVars} from '@leav/ui';
 import {Button, ButtonProps} from 'antd';
 import styled from 'styled-components';
+import {themeVars} from '../../antdTheme';
 
 const StyledBtn = styled(Button)<{$bordered?: boolean; $centered?: boolean}>`
     && {

@@ -24,7 +24,7 @@ describe('EditLibraryPreviewsSettings', () => {
         expect(screen.getAllByRole('row')).toHaveLength(2);
 
         // Labels
-        expect(screen.getByText('My settings')).toBeInTheDocument();
+        expect(screen.getByText('Ma config')).toBeInTheDocument();
 
         // Density
         expect(screen.getByText('300 dpi')).toBeInTheDocument();
@@ -33,9 +33,9 @@ describe('EditLibraryPreviewsSettings', () => {
         expect(screen.getByText('200')).toBeInTheDocument();
 
         // Display description on hover label
-        const firstVersionLabel = screen.getByText('My settings');
+        const firstVersionLabel = screen.getByText('Ma config');
         await userEvent.hover(firstVersionLabel);
-        expect(await screen.findByText('My settings description')).toBeInTheDocument();
+        expect(await screen.findByText('Ma description')).toBeInTheDocument();
 
         // Display size name on hover size
         await userEvent.hover(screen.getByText('1337'));
