@@ -8,6 +8,7 @@ import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
+import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IFormRepo} from 'infra/form/formRepo';
 import {IUtils} from 'utils/utils';
 import {Winston} from 'winston';
@@ -519,20 +520,35 @@ describe('formDomain', () => {
                 getRecordFieldValue: jest.fn().mockImplementation(async ({attributeId}) => {
                     switch (attributeId) {
                         case 'dep_attribute':
-                            return {value: {record: {id: '123456', library: 'dep_lib'}}};
+                            return {value: {id: '987654', record: {id: '123456', library: 'dep_lib'}}};
                         default:
                             return mockStandardValue;
                     }
                 })
             };
 
+            const mockTreeDomain: Mockify<ITreeDomain> = {
+                getElementAncestors: global.__mockPromise([{id: '987654', record: {id: '123456', library: 'dep_lib'}}])
+            };
+
             const domain = formDomain({
                 'core.domain.record': mockRecordDomainHandleDeps as IRecordDomain,
+                'core.domain.tree': mockTreeDomain as ITreeDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain
             });
 
-            const mockDepField1 = {...formField, id: 'field1', containerId: FORM_ROOT_CONTAINER_ID};
-            const mockDepField2 = {...formField, id: 'field2', containerId: FORM_ROOT_CONTAINER_ID};
+            const mockDepField1 = {
+                ...formField,
+                id: 'field1',
+                containerId: FORM_ROOT_CONTAINER_ID,
+                settings: {...formField.settings, label: 'Dep field 1'}
+            };
+            const mockDepField2 = {
+                ...formField,
+                id: 'field2',
+                containerId: FORM_ROOT_CONTAINER_ID,
+                settings: {...formField.settings, label: 'Dep field 2'}
+            };
             const mockFormWithDeps: IForm = {
                 ...mockForm,
                 elements: [
@@ -540,11 +556,11 @@ describe('formDomain', () => {
                         elements: [{...formField, containerId: FORM_ROOT_CONTAINER_ID}]
                     },
                     {
-                        dependency: {attribute: 'dep_attribute', value: {id: '123456', library: 'dep_lib'}},
+                        dependencyValue: {attribute: 'dep_attribute', value: '987654'},
                         elements: [mockDepField1]
                     },
                     {
-                        dependency: {attribute: 'dep_attribute', value: {id: '654321', library: 'dep_lib'}},
+                        dependencyValue: {attribute: 'dep_attribute', value: '987655'},
                         elements: [mockDepField2]
                     }
                 ]
@@ -567,6 +583,82 @@ describe('formDomain', () => {
                 elements: [
                     {...formField, containerId: FORM_ROOT_CONTAINER_ID, valueError: null, values: [mockStandardValue]},
                     {...mockDepField1, valueError: null, values: [mockStandardValue]}
+                ]
+            });
+        });
+
+        test('Retrieve fields by dependency value, applying inheritance', async () => {
+            const mockRecordDomainHandleDeps: Mockify<IRecordDomain> = {
+                getRecordFieldValue: jest.fn().mockImplementation(async ({attributeId}) => {
+                    switch (attributeId) {
+                        case 'dep_attribute':
+                            return {value: {id: '987654', record: {id: '123456', library: 'dep_lib'}}};
+                        default:
+                            return mockStandardValue;
+                    }
+                })
+            };
+
+            const mockTreeDomain: Mockify<ITreeDomain> = {
+                getElementAncestors: global.__mockPromise([
+                    {id: '111111', record: {id: '123456', library: 'dep_lib'}},
+                    {id: '987654', record: {id: '123457', library: 'dep_lib'}}
+                ])
+            };
+
+            const domain = formDomain({
+                'core.domain.record': mockRecordDomainHandleDeps as IRecordDomain,
+                'core.domain.tree': mockTreeDomain as ITreeDomain,
+                'core.domain.permission.recordAttribute': mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain
+            });
+
+            const mockDepField1 = {
+                ...formField,
+                id: 'field1',
+                containerId: FORM_ROOT_CONTAINER_ID,
+                settings: {...formField.settings, label: 'Dep field 1'}
+            };
+            const mockDepField2 = {
+                ...formField,
+                id: 'field2',
+                containerId: FORM_ROOT_CONTAINER_ID,
+                settings: {...formField.settings, label: 'Dep field 2'}
+            };
+            const mockFormWithDeps: IForm = {
+                ...mockForm,
+                elements: [
+                    {
+                        elements: [{...formField, containerId: FORM_ROOT_CONTAINER_ID}]
+                    },
+                    {
+                        dependencyValue: {attribute: 'dep_attribute', value: '987654'},
+                        elements: [mockDepField1]
+                    },
+                    {
+                        dependencyValue: {attribute: 'dep_attribute', value: '111111'},
+                        elements: [mockDepField2]
+                    }
+                ]
+            };
+
+            domain.getFormProperties = global.__mockPromise(mockFormWithDeps);
+
+            const res = await domain.getRecordForm({
+                libraryId: 'my_lib',
+                recordId: '123456',
+                formId: 'edition',
+                ctx
+            });
+
+            expect(res).toEqual({
+                id: 'edition',
+                library: 'my_lib',
+                recordId: '123456',
+                system: false,
+                elements: [
+                    {...formField, containerId: FORM_ROOT_CONTAINER_ID, valueError: null, values: [mockStandardValue]},
+                    {...mockDepField1, valueError: null, values: [mockStandardValue]},
+                    {...mockDepField2, valueError: null, values: [mockStandardValue]}
                 ]
             });
         });

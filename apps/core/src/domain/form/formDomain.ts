@@ -9,6 +9,7 @@ import {IAttributePermissionDomain} from 'domain/permission/attributePermissionD
 import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {IRecordAttributePermissionDomain} from 'domain/permission/recordAttributePermissionDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
+import {ITreeDomain} from 'domain/tree/treeDomain';
 import {i18n} from 'i18next';
 import {IFormRepo} from 'infra/form/formRepo';
 import {difference, uniqueId} from 'lodash';
@@ -71,6 +72,7 @@ interface IDeps {
     'core.domain.permission.recordAttribute'?: IRecordAttributePermissionDomain;
     'core.domain.permission.attribute'?: IAttributePermissionDomain;
     'core.domain.helpers.validate'?: IValidateHelper;
+    'core.domain.tree'?: ITreeDomain;
     'core.infra.form'?: IFormRepo;
     'core.utils'?: IUtils;
     'core.utils.logger'?: winston.Winston;
@@ -84,6 +86,7 @@ export default function (deps: IDeps = {}): IFormDomain {
         'core.domain.permission.recordAttribute': recordAttributePermissionDomain = null,
         'core.domain.permission.attribute': attributePermissionDomain = null,
         'core.domain.helpers.validate': validateHelper = null,
+        'core.domain.tree': treeDomain = null,
         'core.infra.form': formRepo = null,
         'core.utils': utils = null,
         'core.utils.logger': logger = null,
@@ -206,7 +209,7 @@ export default function (deps: IDeps = {}): IFormDomain {
 
             const flatElementsList: IFormElementWithValuesAndChildren[] = [];
 
-            // Retrieve all relevant attributes in a hash map. It will be used later on to filters out empty containers
+            // Retrieve all relevant attributes in a hash map. It will be used later on to filter out empty containers
             const elementsHashMap: {[id: string]: IFormElementWithValuesAndChildren} = await formProps.elements.reduce(
                 async (allElemsProm: Promise<{[id: string]: IFormElementWithValuesAndChildren}>, elementsWithDeps) => {
                     const allElems = await allElemsProm;

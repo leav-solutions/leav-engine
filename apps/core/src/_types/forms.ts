@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IKeyValue} from './shared';
-import {ITreeElement} from './tree';
 import {IValue} from './value';
 
 export interface IForm extends ICoreEntity {
@@ -29,11 +28,11 @@ export type IFormStrict = Required<IForm>;
 
 export interface IFormElementsDependency {
     attribute: string;
-    value: ITreeElement;
+    value: string;
 }
 
 export interface IFormDependentElements {
-    dependency?: IFormElementsDependency | null;
+    dependencyValue?: IFormElementsDependency | null;
     elements: IFormElement[];
 }
 
