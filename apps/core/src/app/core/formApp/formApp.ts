@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ConvertVersionFromGqlFormatFunc} from 'app/helpers/convertVersionFromGqlFormat';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {IFormDomain} from 'domain/form/formDomain';
+import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {IUtils} from 'utils/utils';
 import {IAttribute} from '_types/attribute';
 import {IForm, IFormDependentElements, IFormElement, IRecordForm} from '_types/forms';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {ILibrary} from '_types/library';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
-import {ConvertVersionFromGqlFormatFunc} from 'app/helpers/convertVersionFromGqlFormat';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {IFormDomain} from 'domain/form/formDomain';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IUtils} from 'utils/utils';
 import {
     IDeleteFormArgs,
     IFormDependentElementsForGraphQL,
@@ -124,7 +124,8 @@ export default function ({
                         library: Library!,
                         system: Boolean!,
                         label(lang: [AvailableLanguage!]): SystemTranslation,
-                        elements: [FormElementWithValues!]!
+                        elements: [FormElementWithValues!]!,
+                        dependencyAttributes: [Attribute!],
                     }
 
                     input FormInput {
@@ -266,13 +267,15 @@ export default function ({
                             ctx: IQueryInfos
                         ): Promise<IRecordForm> {
                             const formattedVersion = convertVersionFromGqlFormat(version);
-                            return formDomain.getRecordForm({
+                            const recordForm = await formDomain.getRecordForm({
                                 recordId,
                                 libraryId,
                                 formId,
                                 version: formattedVersion,
                                 ctx
                             });
+
+                            return recordForm;
                         }
                     },
                     Mutation: {
@@ -298,7 +301,13 @@ export default function ({
                     },
                     RecordForm: {
                         library: (form: IForm, _, ctx: IQueryInfos): Promise<ILibrary> =>
-                            libraryDomain.getLibraryProperties(form.library, ctx)
+                            libraryDomain.getLibraryProperties(form.library, ctx),
+                        dependencyAttributes: (form: IForm, _, ctx: IQueryInfos): Promise<IAttribute[]> =>
+                            Promise.all(
+                                (form?.dependencyAttributes ?? []).map(depAttribute =>
+                                    attributeDomain.getAttributeProperties({id: depAttribute, ctx})
+                                )
+                            )
                     },
                     FormElement: commonFormElementResolvers,
                     FormElementWithValues: commonFormElementResolvers

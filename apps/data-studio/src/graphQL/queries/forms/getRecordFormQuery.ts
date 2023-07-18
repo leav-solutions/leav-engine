@@ -33,6 +33,9 @@ export const getRecordFormQuery = gql`
             library {
                 id
             }
+            dependencyAttributes {
+                id
+            }
             elements {
                 id
                 containerId

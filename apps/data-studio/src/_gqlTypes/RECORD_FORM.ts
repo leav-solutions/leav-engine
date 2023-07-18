@@ -23,6 +23,10 @@ export interface RECORD_FORM_recordForm_library {
     id: string;
 }
 
+export interface RECORD_FORM_recordForm_dependencyAttributes {
+    id: string;
+}
+
 export interface RECORD_FORM_recordForm_elements_values_Value_created_by_whoAmI_library_gqlNames {
     query: string;
     type: string;
@@ -1095,6 +1099,7 @@ export interface RECORD_FORM_recordForm {
     id: string;
     recordId: string | null;
     library: RECORD_FORM_recordForm_library;
+    dependencyAttributes: RECORD_FORM_recordForm_dependencyAttributes[] | null;
     elements: RECORD_FORM_recordForm_elements[];
 }
 

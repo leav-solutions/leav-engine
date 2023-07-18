@@ -16,6 +16,7 @@ export interface IRecordForm {
     library: string;
     system: boolean;
     recordId: string;
+    dependencyAttributes?: string[];
     elements: IFormElementWithValues[];
 }
 

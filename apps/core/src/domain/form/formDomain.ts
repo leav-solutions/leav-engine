@@ -350,6 +350,7 @@ export default function (deps: IDeps = {}): IFormDomain {
                 recordId,
                 system: formProps.system,
                 library: libraryId,
+                dependencyAttributes: formProps.dependencyAttributes,
                 elements: formElements
             };
         },
