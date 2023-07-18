@@ -30,6 +30,7 @@ describe('EditRecord', () => {
                     data: {
                         recordForm: {
                             __typename: 'RecordForm',
+                            dependencyAttributes: [],
                             id: mockRecordForm.id,
                             recordId: '123456',
                             library: mockRecordForm.library,

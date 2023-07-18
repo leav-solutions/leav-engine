@@ -282,5 +282,6 @@ export const mockRecordForm: IRecordForm = {
         id: 'test_lib'
     },
     recordId: '123456',
+    dependencyAttributes: [],
     elements: [{...mockFormElementInput, settings: [{key: 'my_settings', value: 'value'}]}]
 };

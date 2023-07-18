@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID} from '@leav/utils';
 import {ErrorDisplay} from '@leav/ui';
+import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID} from '@leav/utils';
 import useGetRecordForm from 'hooks/useGetRecordForm';
 import useRecordsConsultationHistory from 'hooks/useRecordsConsultationHistory';
 import {useEffect} from 'react';
@@ -65,6 +65,29 @@ function EditRecord({
         return <ErrorDisplay message={message ?? t('record_edition.no_form_error')} />;
     }
 
+    const _checkDependencyChange = (changedAttribute: string) => {
+        // If a dependency attribute has changed, we need to refresh the form
+        if (recordForm.dependencyAttributes.map(depAttribute => depAttribute.id).includes(changedAttribute)) {
+            dispatch({type: EditRecordReducerActionsTypes.REQUEST_REFRESH});
+        }
+    };
+
+    const _handleValueSubmit: SubmitValueFunc = async (element, value) => {
+        const submitRes = await onValueSubmit(element, value);
+
+        _checkDependencyChange(element[0].attribute.id);
+
+        return submitRes;
+    };
+
+    const _handleValueDelete: DeleteValueFunc = async (value, attribute) => {
+        const deleteRes = await onValueDelete(value, attribute);
+
+        _checkDependencyChange(attribute);
+
+        return deleteRes;
+    };
+
     const elementsByContainer = extractFormElements(recordForm);
 
     const rootElement: FormElement<{}> = {
@@ -83,8 +106,8 @@ function EditRecord({
         <RecordEditionContext.Provider value={{elements: elementsByContainer, readOnly: readonly, record}}>
             <rootElement.uiElement
                 element={rootElement}
-                onValueSubmit={onValueSubmit}
-                onValueDelete={onValueDelete}
+                onValueSubmit={_handleValueSubmit}
+                onValueDelete={_handleValueDelete}
                 onDeleteMultipleValues={onDeleteMultipleValues}
             />
         </RecordEditionContext.Provider>
