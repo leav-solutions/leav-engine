@@ -258,8 +258,11 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
             )}
             {displayPreviewConfirm && (
                 <TriggerPreviewsGenerationModal
-                    libraryId={parent.record.whoAmI.library.id}
-                    recordIds={[parent.record.id]}
+                    libraryId={
+                        parent?.record.whoAmI.library.id ||
+                        activeTree.libraries.filter(l => l.behavior === LibraryBehavior.files)[0].id
+                    }
+                    {...(parent && {recordIds: [parent?.record.id]})}
                     onClose={_handleClosePreviewGenerationConfirm}
                 />
             )}
