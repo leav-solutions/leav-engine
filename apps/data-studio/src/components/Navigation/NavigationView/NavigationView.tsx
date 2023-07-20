@@ -32,9 +32,10 @@ function NavigationView({tree: treeId}: INavigationViewProps): JSX.Element {
 
     return (
         <Page>
-            <Column treeElement={null} depth={0} isActive={currentColumnActive} key="__root__" />
+            <Column treeId={treeId} treeElement={null} depth={0} isActive={currentColumnActive} key="__root__" />
             {navigation.path.map((pathPart, index) => (
                 <Column
+                    treeId={treeId}
                     key={`${pathPart.record.id}`}
                     treeElement={pathPart}
                     depth={index + 1}

@@ -7,7 +7,6 @@ import {Pagination} from 'antd';
 import {treeNavigationPageSize} from 'constants/constants';
 import {treeNodeChildrenQuery} from 'graphQL/queries/trees/getTreeNodeChildren';
 import {getTreeEvents} from 'graphQL/subscribes/trees/getTreeEvents';
-import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import {createRef, useEffect, useState} from 'react';
 import {setNavigationPath} from 'reduxStore/navigation';
 import {INavigationElement} from 'reduxStore/stateType';
@@ -44,13 +43,13 @@ const ColumnPagination = styled(Pagination)`
 `;
 
 interface IColumnProps {
+    treeId: string;
     treeElement?: INavigationElement;
     depth: number;
     isActive: boolean;
 }
 
-const Column = ({treeElement, depth, isActive: columnActive}: IColumnProps) => {
-    const [activeTree] = useActiveTree();
+const Column = ({treeId, treeElement, depth, isActive: columnActive}: IColumnProps) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalCount, setTotalCount] = useState<number>(0);
 
@@ -60,27 +59,27 @@ const Column = ({treeElement, depth, isActive: columnActive}: IColumnProps) => {
     }));
 
     const queryVariables = {
-        treeId: activeTree?.id,
+        treeId,
         node: treeElement?.id ?? null,
         pagination: {
             limit: treeNavigationPageSize,
             offset: (currentPage - 1) * treeNavigationPageSize
         }
     };
+
     const {loading, error, data, refetch, called} = useQuery<TREE_NODE_CHILDREN, TREE_NODE_CHILDRENVariables>(
         treeNodeChildrenQuery,
         {
             variables: queryVariables,
             onCompleted: res => {
                 setTotalCount(res.treeNodeChildren.totalCount);
-            },
-            skip: !activeTree
+            }
         }
     );
 
     useSubscription<TREE_EVENTS, TREE_EVENTSVariables>(getTreeEvents, {
-        variables: {filters: {ignoreOwnEvents: true, treeId: activeTree?.id, nodes: [treeElement?.id ?? null]}},
-        skip: !activeTree?.id || loading,
+        variables: {filters: {ignoreOwnEvents: true, treeId, nodes: [treeElement?.id ?? null]}},
+        skip: loading,
         onSubscriptionData() {
             // We known something happened concerning this node.
             // To make sure everything is clean and up to date, we just refetch data
@@ -100,7 +99,7 @@ const Column = ({treeElement, depth, isActive: columnActive}: IColumnProps) => {
     }, [ref, columnActive]);
 
     useEffect(() => {
-        if (!activeTree || !called) {
+        if (!called) {
             return;
         }
 
