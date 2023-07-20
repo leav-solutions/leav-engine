@@ -19,6 +19,7 @@ interface IEditLibraryProps {
 
 const TabContentWrapper = styled.div`
     height: calc(95vh - 15rem);
+    overflow-y: auto;
 `;
 
 function EditLibrary({libraryId, onSetSubmitFunction, readOnly: isReadOnly}: IEditLibraryProps): JSX.Element {
