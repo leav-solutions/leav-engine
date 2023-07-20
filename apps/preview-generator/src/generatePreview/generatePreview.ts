@@ -23,5 +23,5 @@ export const generatePreview = async (
     const allResults = await Promise.all(handleVersions);
 
     // Merge all results
-    return allResults.reduce((acc, results) => [...acc, ...results], []);
+    return allResults.flat();
 };
