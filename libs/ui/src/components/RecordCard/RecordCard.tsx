@@ -4,11 +4,11 @@
 import {localizedTranslation} from '@leav/utils';
 import {PreviewSize} from '../../constants';
 import useLang from '../../hooks/useLang';
-import {IRecordIdentityPreview} from '../../types/RecordIdentity';
+import {IRecordIdentityWhoAmI} from '../../types/RecordIdentity';
 import {EntityCard, IEntityData} from '../EntityCard';
 import {IRecordCardProps} from './_types';
 
-const _getPreviewBySize = (preview?: IRecordIdentityPreview, size?: PreviewSize) => {
+const _getPreviewBySize = (preview?: IRecordIdentityWhoAmI['preview'], size?: PreviewSize) => {
     const fileSizeByPreviewSize: {[size in PreviewSize]: string} = {
         [PreviewSize.tiny]: 'tiny',
         [PreviewSize.small]: 'tiny',
@@ -16,7 +16,7 @@ const _getPreviewBySize = (preview?: IRecordIdentityPreview, size?: PreviewSize)
         [PreviewSize.big]: 'medium'
     };
 
-    const previewPath: string = preview?.[fileSizeByPreviewSize[size]] ?? preview?.small;
+    const previewPath: string = (preview?.[fileSizeByPreviewSize[size]] ?? preview?.small) as string;
 
     return previewPath ?? '';
 };

@@ -2,11 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
-import {PreviewPriority, isFileAllowed} from '@leav/utils';
-import * as Config from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
-import {ISystemTranslation} from '_types/systemTranslation';
-import {ITreeNode} from '_types/tree';
+import {isFileAllowed, PreviewPriority} from '@leav/utils';
 import increment from 'add-filename-increment';
 import * as amqp from 'amqplib';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
@@ -26,32 +22,23 @@ import {Progress} from 'progress-stream';
 import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
 import winston from 'winston';
-import {AttributeFormats, IEmbeddedAttribute} from '../../_types/attribute';
-import {Errors} from '../../_types/errors';
-import {
-    FileEvents,
-    FilesAttributes,
-    IFileEventData,
-    IFilesAttributes,
-    IPreviewVersion
-} from '../../_types/filesManager';
-import {LibraryBehavior} from '../../_types/library';
-import {LibraryPermissionsActions} from '../../_types/permissions';
-import {AttributeCondition, IRecord, Operator} from '../../_types/record';
+import * as Config from '_types/config';
+import {IQueryInfos} from '_types/queryInfos';
+import {ITreeNode} from '_types/tree';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {USERS_GROUP_LIB_NAME, USERS_GROUP_TREE_NAME} from '../../infra/permission/permissionRepo';
+import {Errors} from '../../_types/errors';
+import {FileEvents, FilesAttributes, IFileEventData, IFilesAttributes} from '../../_types/filesManager';
+import {ILibrary, LibraryBehavior} from '../../_types/library';
+import {LibraryPermissionsActions} from '../../_types/permissions';
+import {AttributeCondition, IRecord, Operator} from '../../_types/record';
 import {IRecordDomain, IRecordFilterLight} from '../record/recordDomain';
-import {systemPreviewVersions} from './_constants';
 import {getPreviewsDefaultData, updateRecordFile} from './helpers/handleFileUtilsHelper';
 import {requestPreviewGeneration} from './helpers/handlePreview';
 import {initPreviewResponseHandler} from './helpers/handlePreviewResponse';
 import {IMessagesHandlerHelper} from './helpers/messagesHandler/messagesHandler';
-
-interface IPreviewAttributesSettings {
-    [FilesAttributes.PREVIEWS]: IEmbeddedAttribute[];
-    [FilesAttributes.PREVIEWS_STATUS]: IEmbeddedAttribute[];
-}
+import {systemPreviewsSettings} from './_constants';
 
 interface IForcePreviewsGenerationParams {
     ctx: IQueryInfos;
@@ -89,8 +76,7 @@ export const TRIGGER_NAME_UPLOAD_FILE = 'UPLOAD_FILE';
 
 export interface IFilesManagerDomain {
     init(): Promise<void>;
-    getPreviewVersion(): IPreviewVersion[];
-    getPreviewAttributesSettings(): IPreviewAttributesSettings;
+    getPreviewVersion(): ILibrary['previewsSettings'];
     forcePreviewsGeneration(params: IForcePreviewsGenerationParams): Promise<boolean>;
     getRootPathByKey(rootKey: string): string;
     getOriginalPath(params: IGetOriginalPathParams): Promise<string>;
@@ -121,7 +107,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.utils': utils = null,
     'core.infra.amqpService': amqpService = null,
@@ -272,13 +258,14 @@ export default function({
 
             await initPreviewResponseHandler(config, logger, {
                 amqpService,
+                libraryDomain,
                 recordDomain,
                 valueDomain,
                 recordRepo,
                 updateRecordLastModif,
-                previewVersions: systemPreviewVersions,
                 config,
-                logger
+                logger,
+                utils
             });
 
             await _initDefaultCtx();
@@ -516,51 +503,8 @@ export default function({
 
             return records;
         },
-        getPreviewVersion(): IPreviewVersion[] {
-            return systemPreviewVersions;
-        },
-        getPreviewAttributesSettings(): IPreviewAttributesSettings {
-            const _getSizeLabel = (size): ISystemTranslation =>
-                config.lang.available.reduce((labels, lang) => {
-                    labels[lang] = size.name;
-                    return labels;
-                }, {});
-
-            const versions = this.getPreviewVersion();
-
-            return versions.reduce(
-                (settings: IPreviewAttributesSettings, version) => {
-                    const listSizes = [...version.sizes, {name: 'pages', size: 0}];
-                    for (const size of listSizes) {
-                        settings[FilesAttributes.PREVIEWS].push({
-                            id: size.name,
-                            label: _getSizeLabel(size),
-                            format: AttributeFormats.TEXT
-                        });
-
-                        settings[FilesAttributes.PREVIEWS_STATUS].push({
-                            id: size.name,
-                            label: _getSizeLabel(size),
-                            format: AttributeFormats.EXTENDED,
-                            embedded_fields: [
-                                {
-                                    id: 'status',
-                                    format: AttributeFormats.NUMERIC
-                                },
-                                {
-                                    id: 'message',
-                                    format: AttributeFormats.TEXT
-                                }
-                            ]
-                        });
-                    }
-                    return settings;
-                },
-                {
-                    [FilesAttributes.PREVIEWS]: [],
-                    [FilesAttributes.PREVIEWS_STATUS]: []
-                }
-            );
+        getPreviewVersion() {
+            return systemPreviewsSettings;
         },
         async forcePreviewsGeneration({
             ctx,
@@ -606,6 +550,7 @@ export default function({
 
             // If library is a directory library: recreate all previews of subfiles
             let recordsToProcess: IRecord[];
+            let filesLibraryProps;
             if (libraryProps.behavior === LibraryBehavior.DIRECTORIES) {
                 // Find tree where this directory belongs
                 const trees = await treeDomain.getTrees({params: {filters: {library: libraryId}}, ctx});
@@ -617,6 +562,7 @@ export default function({
                     )
                 );
                 const filesLibraryId = treeLibraries.find(l => l.behavior === LibraryBehavior.FILES).id;
+                filesLibraryProps = await libraryDomain.getLibraryProperties(filesLibraryId, ctx);
 
                 if (trees.list.length) {
                     const treeId = tree.id;
@@ -627,21 +573,23 @@ export default function({
                 }
             } else {
                 recordsToProcess = records;
+                filesLibraryProps = libraryProps;
             }
 
             let generationRequested = 0;
+
             for (const r of recordsToProcess) {
                 if (
                     !failedOnly ||
                     (failedOnly &&
-                        Object.entries(r[FilesAttributes.PREVIEWS_STATUS]).some(
+                        Object.entries(r[utils.getPreviewsStatusAttributeName(libraryProps.id)]).some(
                             p => (p[1] as {status: number; message: string}).status !== 0
                         ))
                 ) {
-                    const {previewsStatus, previews} = getPreviewsDefaultData(systemPreviewVersions);
+                    const {previewsStatus, previews} = getPreviewsDefaultData(systemPreviewsSettings);
                     const recordData: IFilesAttributes = {
-                        PREVIEWS_STATUS: previewsStatus,
-                        PREVIEWS: previews
+                        [utils.getPreviewsStatusAttributeName(libraryProps.id)]: previewsStatus,
+                        [utils.getPreviewsAttributeName(libraryProps.id)]: previews
                     };
                     await updateRecordFile(
                         recordData,
@@ -662,7 +610,7 @@ export default function({
                         pathAfter: `${r[FilesAttributes.FILE_PATH]}/${r[FilesAttributes.FILE_NAME]}`,
                         libraryId: r.library,
                         priority: PreviewPriority.MEDIUM,
-                        versions: systemPreviewVersions,
+                        versions: utils.previewsSettingsToVersions(filesLibraryProps.previewsSettings),
                         deps: {amqpService, config, logger}
                     });
                     generationRequested++;

@@ -62,6 +62,10 @@ describe('utils', () => {
             const res = stringToColor(str, 'hex');
             expect(res).toMatch(/^#[0-9A-Fa-f]{6}$/);
         });
+        test('handle null string', () => {
+            const res = stringToColor(null, 'hex');
+            expect(res).toMatch(/^#[0-9A-Fa-f]{6}$/);
+        });
     });
 
     describe('getInvertColor', () => {

@@ -26,7 +26,6 @@ import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {EventAction} from '../../_types/event';
-import {FilesAttributes} from '../../_types/filesManager';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {LibraryPermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
@@ -43,7 +42,6 @@ import {
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import getAttributesFromField from './helpers/getAttributesFromField';
-import {GeneratedAqlQuery} from 'arangojs/aql';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -428,8 +426,12 @@ export default function ({
 
         // On a file, previews are accessible straight on the record
         // Otherwise, we fetch values of the previews attribute
+        let previewsAttributeId;
+        let fileLibraryId;
         if (lib.behavior === LibraryBehavior.FILES) {
             fileRecord = record;
+            previewsAttributeId = utils.getPreviewsAttributeName(lib.id);
+            fileLibraryId = lib.id;
         } else {
             const previewAttribute = conf.preview;
             if (!previewAttribute) {
@@ -449,16 +451,19 @@ export default function ({
             }
 
             fileRecord = previewValues[0].value;
+            previewsAttributeId = utils.getPreviewsAttributeName(fileRecord.library);
+            fileLibraryId = fileRecord.library;
         }
 
         // Get value of the previews field. We're calling getRecordFieldValue to apply actions_list if any
         const filePreviewsValue = await ret.getRecordFieldValue({
-            library: lib.id,
+            library: fileLibraryId,
             record: fileRecord,
-            attributeId: FilesAttributes.PREVIEWS,
+            attributeId: previewsAttributeId,
             options: {forceArray: true},
             ctx
         });
+
         const previews = filePreviewsValue[0]?.raw_value ?? {};
 
         const previewsWithUrl: IPreview = Object.entries(previews)
@@ -602,7 +607,10 @@ export default function ({
         }
 
         // If no preview found, or preview is not available, use library icon if any
-        if (preview === null || !Object.keys(preview?.file?.previews ?? {}).length) {
+        if (
+            preview === null ||
+            !Object.keys(preview?.file?.[utils.getPreviewsAttributeName(record.library)] ?? {}).length
+        ) {
             preview = await _getLibraryIconPreview(lib, ctx);
         }
 

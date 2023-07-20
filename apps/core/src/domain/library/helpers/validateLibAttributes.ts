@@ -27,7 +27,11 @@ export default async (
         return acc;
     }, {});
 
-    const unknownAttrs = difference(attributes, Object.keys(attributesById));
+    // Ignore default attributes here. We consider they exist or are created somewhere else
+    const unknownAttrs = difference(
+        attributes.filter(a => !defaultAttributes.includes(a)),
+        Object.keys(attributesById)
+    );
 
     if (unknownAttrs.length) {
         errors.attributes = {msg: Errors.UNKNOWN_ATTRIBUTES, vars: {attributes: unknownAttrs.join(', ')}};

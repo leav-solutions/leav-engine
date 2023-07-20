@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {LibraryBehavior, FileType} from './globalTypes';
+import {LibraryBehavior} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_APPLICATIONS
@@ -24,33 +24,12 @@ export interface GET_APPLICATIONS_applications_list_icon_whoAmI_library {
     gqlNames: GET_APPLICATIONS_applications_list_icon_whoAmI_library_gqlNames;
 }
 
-export interface GET_APPLICATIONS_applications_list_icon_whoAmI_preview_file_library {
-    id: string;
-}
-
-export interface GET_APPLICATIONS_applications_list_icon_whoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: GET_APPLICATIONS_applications_list_icon_whoAmI_preview_file_library;
-}
-
-export interface GET_APPLICATIONS_applications_list_icon_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: GET_APPLICATIONS_applications_list_icon_whoAmI_preview_file | null;
-}
-
 export interface GET_APPLICATIONS_applications_list_icon_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: GET_APPLICATIONS_applications_list_icon_whoAmI_library;
-    preview: GET_APPLICATIONS_applications_list_icon_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface GET_APPLICATIONS_applications_list_icon {

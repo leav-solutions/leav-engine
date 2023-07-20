@@ -17,20 +17,12 @@ export interface ApplicationDetails_icon_whoAmI_library {
     label: SystemTranslation | null;
 }
 
-export interface ApplicationDetails_icon_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-}
-
 export interface ApplicationDetails_icon_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: ApplicationDetails_icon_whoAmI_library;
-    preview: ApplicationDetails_icon_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface ApplicationDetails_icon {

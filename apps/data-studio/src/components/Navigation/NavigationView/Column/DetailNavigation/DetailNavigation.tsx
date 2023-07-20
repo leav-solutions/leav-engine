@@ -6,7 +6,6 @@ import {themeVars} from '@leav/ui';
 import RecordPreviewWithModal from 'components/shared/RecordPreviewWithModal';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {RecordIdentity_whoAmI_preview_file} from '_gqlTypes/RecordIdentity';
 import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {getFileUrl} from '../../../../../utils';
 
@@ -65,11 +64,11 @@ interface IDetailNavigationProps {
 const DetailNavigation = ({treeElement, closable, onClose}: IDetailNavigationProps): JSX.Element => {
     const {t} = useTranslation();
     const recordData = treeElement.record;
-    const previewFile = recordData?.whoAmI?.preview?.file as RecordIdentity_whoAmI_preview_file;
+    const previewFile = recordData?.whoAmI?.preview?.file;
 
     const label = recordData.whoAmI.label ? recordData.whoAmI.label : t('navigation.list.info.no-label');
 
-    const img = recordData.whoAmI.preview?.big;
+    const img = recordData.whoAmI.preview?.big as string;
 
     return (
         <Detail data-testid="details-column">

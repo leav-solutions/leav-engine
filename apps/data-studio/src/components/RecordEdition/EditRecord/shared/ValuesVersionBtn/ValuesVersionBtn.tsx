@@ -1,10 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {themeVars} from '@leav/ui';
+import {BasicButton, themeVars} from '@leav/ui';
 import {Button, ButtonProps, Dropdown, Space} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
-import BasicButton from 'components/shared/BasicButton';
 import {MenuItemType} from 'rc-menu/lib/interface';
 import {useTranslation} from 'react-i18next';
 import {VscLayers, VscLayersActive} from 'react-icons/vsc';

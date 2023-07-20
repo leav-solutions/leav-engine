@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IPreviewScalar} from '@leav/utils';
 import {IKeyValue} from '../_types/shared';
 
 declare global {
@@ -17,4 +18,5 @@ declare global {
         MEDIUM = 1,
         HIGH = 2
     }
+    export type Preview = IPreviewScalar;
 }

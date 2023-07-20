@@ -54,7 +54,23 @@
         "attributes": "Attributes",
         "delete": "Delete library",
         "delete_confirm": "Do you really want to delete this library?",
-        "delete_confirm_warning": "Warning: this action is irreversible and will delete all records in this library."
+        "delete_confirm_warning": "Warning: this action is irreversible and will delete all records in this library.",
+        "previews_settings": {
+            "title": "Previews settings",
+            "label": "Label",
+            "description": "Description",
+            "background": "Background",
+            "density": "Density",
+            "transparent": "Transparent",
+            "color": "Color",
+            "sizes": "Sizes",
+            "size_name": "Identifier",
+            "size": "Size",
+            "add_size": "Add size",
+            "delete_size_confirm": "Do you really want to delete this size?",
+            "duplicate_size_name": "This identifier is already used",
+            "add_settings": "Add version"
+        }
     },
     "attributes": {
         "attribute": "Attribute",

@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {LibraryBehavior, FileType} from './globalTypes';
+import {LibraryBehavior} from './globalTypes';
 
 // ====================================================
 // GraphQL mutation operation: CREATE_RECORD
@@ -24,33 +24,12 @@ export interface CREATE_RECORD_createRecord_whoAmI_library {
     gqlNames: CREATE_RECORD_createRecord_whoAmI_library_gqlNames;
 }
 
-export interface CREATE_RECORD_createRecord_whoAmI_preview_file_library {
-    id: string;
-}
-
-export interface CREATE_RECORD_createRecord_whoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: CREATE_RECORD_createRecord_whoAmI_preview_file_library;
-}
-
-export interface CREATE_RECORD_createRecord_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: CREATE_RECORD_createRecord_whoAmI_preview_file | null;
-}
-
 export interface CREATE_RECORD_createRecord_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: CREATE_RECORD_createRecord_whoAmI_library;
-    preview: CREATE_RECORD_createRecord_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface CREATE_RECORD_createRecord {

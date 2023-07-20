@@ -20,7 +20,8 @@ export const generatePreview = async (
         handleVersions.push(handleVersion({version, rootPaths, input, type, config}));
     }
 
-    const [results] = await Promise.all(handleVersions);
+    const allResults = await Promise.all(handleVersions);
 
-    return results;
+    // Merge all results
+    return allResults.flat();
 };

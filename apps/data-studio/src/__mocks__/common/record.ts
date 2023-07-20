@@ -1,11 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FileType, LibraryBehavior} from '_gqlTypes/globalTypes';
-import {RecordIdentity_whoAmI, RecordIdentity_whoAmI_preview} from '_gqlTypes/RecordIdentity';
+import {FileType} from '@leav/utils';
+import {LibraryBehavior} from '_gqlTypes/globalTypes';
+import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {IRecordIdentityWhoAmI} from '_types/types';
 
-export const mockPreviews: RecordIdentity_whoAmI_preview = {
+export const mockPreviews: Preview = {
     tiny: '/fake/url/tiny.jpg',
     small: '/fake/url/small.jpg',
     medium: '/fake/url/medium.jpg',
@@ -15,9 +16,18 @@ export const mockPreviews: RecordIdentity_whoAmI_preview = {
     original: 'originals/files/123456',
     file: {
         id: '123456',
-        file_type: FileType.image,
+        type: FileType.IMAGE,
+        label: 'Some file',
+        color: null,
+        preview: null,
         library: {
-            id: 'files'
+            id: 'files',
+            label: {fr: 'Fichiers'},
+            behavior: LibraryBehavior.files,
+            gqlNames: {
+                query: 'files',
+                type: 'Files'
+            }
         }
     }
 };

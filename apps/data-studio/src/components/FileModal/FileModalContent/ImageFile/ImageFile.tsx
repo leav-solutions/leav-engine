@@ -31,7 +31,7 @@ function ImageFile({fileData, fallback}: IFileViewerProps): JSX.Element {
             {!imageLoaded && <ImageLoading style={{height: '50%', width: '50%'}} />}
             <PreviewImage
                 $loaded={imageLoaded}
-                src={imagePreviews.huge}
+                src={imagePreviews.huge as string}
                 onLoad={_handleLoad}
                 onError={() => {
                     setImageLoaded(true);

@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Tabs, TabsProps} from 'antd';
 import styled, {CSSObject} from 'styled-components';
-import {useGetApplicationByIdQuery} from '../../_gqlTypes';
 import {useSharedTranslation} from '../../hooks/useSharedTranslation';
+import {useGetApplicationByIdQuery} from '../../_gqlTypes';
 import {ErrorDisplay} from '../ErrorDisplay';
 import {Loading} from '../Loading';
 import {EditApplicationInfo} from './EditApplicationInfo';

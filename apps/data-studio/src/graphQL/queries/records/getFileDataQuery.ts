@@ -50,9 +50,7 @@ export interface IFileDataQueryVariables {
 export const getFileDataQuery = (libraryId: string) => gqlUnchecked`
     ${recordIdentityFragment}
     query GET_FILE_DATA($fileId: String!) {
-        ${getLibraryGraphqlNames(libraryId).query}(
-            filters: [{field: "id", value: $fileId, condition: EQUAL}])
-        {
+        ${getLibraryGraphqlNames(libraryId).query}(filters: [{field: "id", value: $fileId, condition: EQUAL}]) {
             list {
                 ...RecordIdentity
                 created_at
@@ -69,7 +67,6 @@ export const getFileDataQuery = (libraryId: string) => gqlUnchecked`
                 library {
                     behavior
                 }
-                previews_status
             }
         }
     }`;

@@ -15,7 +15,39 @@ export const mockLibraryFiles: ILibrary = {
     id: 'files',
     system: false,
     behavior: LibraryBehavior.FILES,
-    label: {fr: 'Test lib'}
+    label: {fr: 'Test lib'},
+    previewsSettings: [
+        {
+            label: {fr: 'test'},
+            description: {fr: 'test'},
+            system: false,
+            versions: {
+                background: '#123456',
+                density: 42,
+                sizes: [
+                    {
+                        name: 'my_size',
+                        size: 1337
+                    }
+                ]
+            }
+        },
+        {
+            label: {fr: 'test 2'},
+            description: {fr: 'test 2'},
+            system: false,
+            versions: {
+                background: '#123456',
+                density: 42,
+                sizes: [
+                    {
+                        name: 'my_other_size',
+                        size: 1337
+                    }
+                ]
+            }
+        }
+    ]
 };
 
 export const mockLibraryDirectories: ILibrary = {

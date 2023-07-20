@@ -40,6 +40,49 @@ describe('Libraries', () => {
         expect(libsRes.data.data.libraries.list[0].permissions.access_library).toBeDefined();
     });
 
+    test('Create files library', async () => {
+        const res = await makeGraphQlCall(`mutation {
+                saveLibrary(library: {id: "libraries_files_test", label: {fr: "Test lib"}, behavior: files}) {
+                    id
+                    attributes {
+                        id
+                    }
+                    previewsSettings {
+                        label
+                        system
+                    }
+                }
+            }`);
+
+        expect(res.status).toBe(200);
+        expect(res.data.errors).toBeUndefined();
+        expect(res.data.data.saveLibrary.id).toBe('libraries_files_test');
+        expect(res.data.data.saveLibrary.previewsSettings).toHaveLength(1);
+        expect(res.data.data.saveLibrary.previewsSettings[0].system).toBe(true);
+        expect(
+            res.data.data.saveLibrary.attributes.find(attr => attr.id === 'libraries_files_test_previews')
+        ).toBeTruthy();
+        expect(
+            res.data.data.saveLibrary.attributes.find(attr => attr.id === 'libraries_files_test_previews_status')
+        ).toBeTruthy();
+
+        // Check if directories library has been created
+        const directoriesLibRes = await makeGraphQlCall(
+            '{ libraries(filters: {id: ["libraries_files_test_directories"]}) { list { id } } }'
+        );
+
+        expect(directoriesLibRes.status).toBe(200);
+        expect(directoriesLibRes.data.data.libraries.list.length).toBe(1);
+
+        // Check if tree has been created
+        const libTreeRes = await makeGraphQlCall(
+            '{ trees(filters: {id: ["libraries_files_test_tree"]}) { list { id } } }'
+        );
+
+        expect(libTreeRes.status).toBe(200);
+        expect(libTreeRes.data.data.trees.list.length).toBe(1);
+    });
+
     test('Schema regeneration after library creation', async () => {
         const res = await makeGraphQlCall('{ __type(name: "Query") { name fields { name } } }');
 

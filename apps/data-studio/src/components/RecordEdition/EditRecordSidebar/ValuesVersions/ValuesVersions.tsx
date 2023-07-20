@@ -2,10 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined} from '@ant-design/icons';
-import {themeVars} from '@leav/ui';
+import {BasicButton, themeVars} from '@leav/ui';
 import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
 import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
-import BasicButton from 'components/shared/BasicButton';
 import ValuesVersionConfigurator from 'components/shared/ValuesVersionConfigurator';
 import {useTranslation} from 'react-i18next';
 import {GrUndo} from 'react-icons/gr';

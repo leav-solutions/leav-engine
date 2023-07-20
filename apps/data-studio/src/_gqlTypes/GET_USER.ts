@@ -6,32 +6,11 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {FileType, LibraryBehavior} from './globalTypes';
+import {LibraryBehavior} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_USER
 // ====================================================
-
-export interface GET_USER_userWhoAmI_preview_file_library {
-    id: string;
-}
-
-export interface GET_USER_userWhoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: GET_USER_userWhoAmI_preview_file_library;
-}
-
-export interface GET_USER_userWhoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: GET_USER_userWhoAmI_preview_file | null;
-}
 
 export interface GET_USER_userWhoAmI_library_gqlNames {
     query: string;
@@ -49,7 +28,7 @@ export interface GET_USER_userWhoAmI {
     id: string;
     label: string | null;
     color: string | null;
-    preview: GET_USER_userWhoAmI_preview | null;
+    preview: Preview | null;
     library: GET_USER_userWhoAmI_library;
 }
 

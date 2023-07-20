@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {TreeEventFiltersInput, TreeEventTypes, LibraryBehavior, FileType} from './globalTypes';
+import {TreeEventFiltersInput, TreeEventTypes, LibraryBehavior} from './globalTypes';
 
 // ====================================================
 // GraphQL subscription operation: TREE_EVENTS
@@ -24,33 +24,12 @@ export interface TREE_EVENTS_treeEvent_element_record_whoAmI_library {
     gqlNames: TREE_EVENTS_treeEvent_element_record_whoAmI_library_gqlNames;
 }
 
-export interface TREE_EVENTS_treeEvent_element_record_whoAmI_preview_file_library {
-    id: string;
-}
-
-export interface TREE_EVENTS_treeEvent_element_record_whoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: TREE_EVENTS_treeEvent_element_record_whoAmI_preview_file_library;
-}
-
-export interface TREE_EVENTS_treeEvent_element_record_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: TREE_EVENTS_treeEvent_element_record_whoAmI_preview_file | null;
-}
-
 export interface TREE_EVENTS_treeEvent_element_record_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: TREE_EVENTS_treeEvent_element_record_whoAmI_library;
-    preview: TREE_EVENTS_treeEvent_element_record_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface TREE_EVENTS_treeEvent_element_record {

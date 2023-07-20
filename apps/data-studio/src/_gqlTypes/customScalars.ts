@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export {};
+import {IPreviewScalar} from '@leav/utils';
 
 declare global {
     export type SystemTranslation = Record<string, string | null>;
@@ -13,4 +14,5 @@ declare global {
         HIGH = 2
     }
     export type Upload = any;
+    export type Preview = IPreviewScalar;
 }

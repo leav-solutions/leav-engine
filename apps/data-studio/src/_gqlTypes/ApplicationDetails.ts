@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ApplicationType, FileType, LibraryBehavior} from './globalTypes';
+import {ApplicationType, LibraryBehavior} from './globalTypes';
 
 // ====================================================
 // GraphQL fragment: ApplicationDetails
@@ -24,33 +24,12 @@ export interface ApplicationDetails_icon_whoAmI_library {
     gqlNames: ApplicationDetails_icon_whoAmI_library_gqlNames;
 }
 
-export interface ApplicationDetails_icon_whoAmI_preview_file_library {
-    id: string;
-}
-
-export interface ApplicationDetails_icon_whoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: ApplicationDetails_icon_whoAmI_preview_file_library;
-}
-
-export interface ApplicationDetails_icon_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: ApplicationDetails_icon_whoAmI_preview_file | null;
-}
-
 export interface ApplicationDetails_icon_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: ApplicationDetails_icon_whoAmI_library;
-    preview: ApplicationDetails_icon_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface ApplicationDetails_icon {

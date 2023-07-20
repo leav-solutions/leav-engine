@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FilesAttributes} from '../../_types/filesManager';
 import {LibraryBehavior, USERS_LIBRARY} from '../../_types/library';
+import {getPreviewsAttributeName, getPreviewsStatusAttributeName} from './getPreviewsAttributes';
 
 export default (behavior: LibraryBehavior, libraryId: string): string[] => {
     const libraryCommonAttributes = {
@@ -20,7 +21,11 @@ export default (behavior: LibraryBehavior, libraryId: string): string[] => {
 
     const behaviorSpecificAttr = {
         [LibraryBehavior.STANDARD]: [],
-        [LibraryBehavior.FILES]: Object.values(FilesAttributes),
+        [LibraryBehavior.FILES]: [
+            ...Object.values(FilesAttributes),
+            getPreviewsAttributeName(libraryId),
+            getPreviewsStatusAttributeName(libraryId)
+        ],
         [LibraryBehavior.DIRECTORIES]: Object.values(FilesAttributes)
     };
 

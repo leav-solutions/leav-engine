@@ -6,14 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {
-    ValueVersionInput,
-    FormElementTypes,
-    LibraryBehavior,
-    FileType,
-    AttributeType,
-    AttributeFormat
-} from './globalTypes';
+import {ValueVersionInput, FormElementTypes, LibraryBehavior, AttributeType, AttributeFormat} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: RECORD_FORM
@@ -35,33 +28,12 @@ export interface RECORD_FORM_recordForm_elements_values_Value_created_by_whoAmI_
     gqlNames: RECORD_FORM_recordForm_elements_values_Value_created_by_whoAmI_library_gqlNames;
 }
 
-export interface RECORD_FORM_recordForm_elements_values_Value_created_by_whoAmI_preview_file_library {
-    id: string;
-}
-
-export interface RECORD_FORM_recordForm_elements_values_Value_created_by_whoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: RECORD_FORM_recordForm_elements_values_Value_created_by_whoAmI_preview_file_library;
-}
-
-export interface RECORD_FORM_recordForm_elements_values_Value_created_by_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: RECORD_FORM_recordForm_elements_values_Value_created_by_whoAmI_preview_file | null;
-}
-
 export interface RECORD_FORM_recordForm_elements_values_Value_created_by_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: RECORD_FORM_recordForm_elements_values_Value_created_by_whoAmI_library;
-    preview: RECORD_FORM_recordForm_elements_values_Value_created_by_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_Value_created_by {
@@ -81,33 +53,12 @@ export interface RECORD_FORM_recordForm_elements_values_Value_modified_by_whoAmI
     gqlNames: RECORD_FORM_recordForm_elements_values_Value_modified_by_whoAmI_library_gqlNames;
 }
 
-export interface RECORD_FORM_recordForm_elements_values_Value_modified_by_whoAmI_preview_file_library {
-    id: string;
-}
-
-export interface RECORD_FORM_recordForm_elements_values_Value_modified_by_whoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: RECORD_FORM_recordForm_elements_values_Value_modified_by_whoAmI_preview_file_library;
-}
-
-export interface RECORD_FORM_recordForm_elements_values_Value_modified_by_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: RECORD_FORM_recordForm_elements_values_Value_modified_by_whoAmI_preview_file | null;
-}
-
 export interface RECORD_FORM_recordForm_elements_values_Value_modified_by_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: RECORD_FORM_recordForm_elements_values_Value_modified_by_whoAmI_library;
-    preview: RECORD_FORM_recordForm_elements_values_Value_modified_by_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_Value_modified_by {
@@ -175,33 +126,12 @@ export interface RECORD_FORM_recordForm_elements_values_LinkValue_created_by_who
     gqlNames: RECORD_FORM_recordForm_elements_values_LinkValue_created_by_whoAmI_library_gqlNames;
 }
 
-export interface RECORD_FORM_recordForm_elements_values_LinkValue_created_by_whoAmI_preview_file_library {
-    id: string;
-}
-
-export interface RECORD_FORM_recordForm_elements_values_LinkValue_created_by_whoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: RECORD_FORM_recordForm_elements_values_LinkValue_created_by_whoAmI_preview_file_library;
-}
-
-export interface RECORD_FORM_recordForm_elements_values_LinkValue_created_by_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: RECORD_FORM_recordForm_elements_values_LinkValue_created_by_whoAmI_preview_file | null;
-}
-
 export interface RECORD_FORM_recordForm_elements_values_LinkValue_created_by_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: RECORD_FORM_recordForm_elements_values_LinkValue_created_by_whoAmI_library;
-    preview: RECORD_FORM_recordForm_elements_values_LinkValue_created_by_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_LinkValue_created_by {
@@ -221,33 +151,12 @@ export interface RECORD_FORM_recordForm_elements_values_LinkValue_modified_by_wh
     gqlNames: RECORD_FORM_recordForm_elements_values_LinkValue_modified_by_whoAmI_library_gqlNames;
 }
 
-export interface RECORD_FORM_recordForm_elements_values_LinkValue_modified_by_whoAmI_preview_file_library {
-    id: string;
-}
-
-export interface RECORD_FORM_recordForm_elements_values_LinkValue_modified_by_whoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: RECORD_FORM_recordForm_elements_values_LinkValue_modified_by_whoAmI_preview_file_library;
-}
-
-export interface RECORD_FORM_recordForm_elements_values_LinkValue_modified_by_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: RECORD_FORM_recordForm_elements_values_LinkValue_modified_by_whoAmI_preview_file | null;
-}
-
 export interface RECORD_FORM_recordForm_elements_values_LinkValue_modified_by_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: RECORD_FORM_recordForm_elements_values_LinkValue_modified_by_whoAmI_library;
-    preview: RECORD_FORM_recordForm_elements_values_LinkValue_modified_by_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_LinkValue_modified_by {
@@ -303,33 +212,12 @@ export interface RECORD_FORM_recordForm_elements_values_LinkValue_linkValue_whoA
     gqlNames: RECORD_FORM_recordForm_elements_values_LinkValue_linkValue_whoAmI_library_gqlNames;
 }
 
-export interface RECORD_FORM_recordForm_elements_values_LinkValue_linkValue_whoAmI_preview_file_library {
-    id: string;
-}
-
-export interface RECORD_FORM_recordForm_elements_values_LinkValue_linkValue_whoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: RECORD_FORM_recordForm_elements_values_LinkValue_linkValue_whoAmI_preview_file_library;
-}
-
-export interface RECORD_FORM_recordForm_elements_values_LinkValue_linkValue_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: RECORD_FORM_recordForm_elements_values_LinkValue_linkValue_whoAmI_preview_file | null;
-}
-
 export interface RECORD_FORM_recordForm_elements_values_LinkValue_linkValue_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: RECORD_FORM_recordForm_elements_values_LinkValue_linkValue_whoAmI_library;
-    preview: RECORD_FORM_recordForm_elements_values_LinkValue_linkValue_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_LinkValue_linkValue {
@@ -360,33 +248,12 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue_created_by_who
     gqlNames: RECORD_FORM_recordForm_elements_values_TreeValue_created_by_whoAmI_library_gqlNames;
 }
 
-export interface RECORD_FORM_recordForm_elements_values_TreeValue_created_by_whoAmI_preview_file_library {
-    id: string;
-}
-
-export interface RECORD_FORM_recordForm_elements_values_TreeValue_created_by_whoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: RECORD_FORM_recordForm_elements_values_TreeValue_created_by_whoAmI_preview_file_library;
-}
-
-export interface RECORD_FORM_recordForm_elements_values_TreeValue_created_by_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: RECORD_FORM_recordForm_elements_values_TreeValue_created_by_whoAmI_preview_file | null;
-}
-
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_created_by_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: RECORD_FORM_recordForm_elements_values_TreeValue_created_by_whoAmI_library;
-    preview: RECORD_FORM_recordForm_elements_values_TreeValue_created_by_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_created_by {
@@ -406,33 +273,12 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue_modified_by_wh
     gqlNames: RECORD_FORM_recordForm_elements_values_TreeValue_modified_by_whoAmI_library_gqlNames;
 }
 
-export interface RECORD_FORM_recordForm_elements_values_TreeValue_modified_by_whoAmI_preview_file_library {
-    id: string;
-}
-
-export interface RECORD_FORM_recordForm_elements_values_TreeValue_modified_by_whoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: RECORD_FORM_recordForm_elements_values_TreeValue_modified_by_whoAmI_preview_file_library;
-}
-
-export interface RECORD_FORM_recordForm_elements_values_TreeValue_modified_by_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: RECORD_FORM_recordForm_elements_values_TreeValue_modified_by_whoAmI_preview_file | null;
-}
-
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_modified_by_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: RECORD_FORM_recordForm_elements_values_TreeValue_modified_by_whoAmI_library;
-    preview: RECORD_FORM_recordForm_elements_values_TreeValue_modified_by_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_modified_by {
@@ -488,33 +334,12 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_reco
     gqlNames: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record_whoAmI_library_gqlNames;
 }
 
-export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record_whoAmI_preview_file_library {
-    id: string;
-}
-
-export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record_whoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record_whoAmI_preview_file_library;
-}
-
-export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record_whoAmI_preview_file | null;
-}
-
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record_whoAmI_library;
-    preview: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record {
@@ -534,33 +359,12 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ance
     gqlNames: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors_record_whoAmI_library_gqlNames;
 }
 
-export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors_record_whoAmI_preview_file_library {
-    id: string;
-}
-
-export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors_record_whoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors_record_whoAmI_preview_file_library;
-}
-
-export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors_record_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors_record_whoAmI_preview_file | null;
-}
-
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors_record_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors_record_whoAmI_library;
-    preview: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors_record_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors_record {
@@ -807,33 +611,12 @@ export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkVal
     gqlNames: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI_library_gqlNames;
 }
 
-export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI_preview_file_library {
-    id: string;
-}
-
-export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI_preview_file_library;
-}
-
-export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI_preview_file | null;
-}
-
 export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI_library;
-    preview: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values {
@@ -954,33 +737,12 @@ export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeVal
     gqlNames: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_record_whoAmI_library_gqlNames;
 }
 
-export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_record_whoAmI_preview_file_library {
-    id: string;
-}
-
-export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_record_whoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_record_whoAmI_preview_file_library;
-}
-
-export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_record_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_record_whoAmI_preview_file | null;
-}
-
 export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_record_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_record_whoAmI_library;
-    preview: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_record_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_record {
@@ -1000,33 +762,12 @@ export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeVal
     gqlNames: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI_library_gqlNames;
 }
 
-export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI_preview_file_library {
-    id: string;
-}
-
-export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI_preview_file_library;
-}
-
-export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI_preview_file | null;
-}
-
 export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI_library;
-    preview: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record {

@@ -1,19 +1,23 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IActionsListConfig} from '_types/actionsList';
-import {ErrorFieldDetail, ErrorFieldDetailMessage, Errors, IExtendedErrorMsg} from '_types/errors';
-import {LibraryBehavior} from '_types/library';
 import fs from 'fs';
 import {i18n} from 'i18next';
 import {camelCase, flow, mergeWith, partialRight, trimEnd, upperFirst} from 'lodash';
 import moment from 'moment';
 import os from 'os';
-import {APPS_URL_PREFIX} from '../_types/application';
-import {AttributeTypes, IAttribute} from '../_types/attribute';
+import {IActionsListConfig} from '_types/actionsList';
+import {IConfig} from '_types/config';
+import {ErrorFieldDetail, ErrorFieldDetailMessage, Errors, IExtendedErrorMsg} from '_types/errors';
+import {ILibrary, ILibraryPreviewsSettings, LibraryBehavior} from '_types/library';
+import {ISystemTranslation} from '_types/systemTranslation';
 import ValidationError from '../errors/ValidationError';
+import {APPS_URL_PREFIX} from '../_types/application';
+import {AttributeFormats, AttributeTypes, IAttribute} from '../_types/attribute';
+import {IPreviewAttributesSettings, IPreviewVersion} from '../_types/filesManager';
 import getDefaultActionsList from './helpers/getDefaultActionsList';
 import getLibraryDefaultAttributes from './helpers/getLibraryDefaultAttributes';
+import {getPreviewsAttributeName, getPreviewsStatusAttributeName} from './helpers/getPreviewsAttributes';
 
 export interface IUtils {
     libNameToQueryName(name: string): string;
@@ -113,13 +117,19 @@ export interface IUtils {
     getFileExtension(filename: string): string | null;
 
     getProcessIdentifier(): string;
+
+    getPreviewsAttributeName(libraryId: string): string;
+    getPreviewsStatusAttributeName(libraryId: string): string;
+    getPreviewAttributesSettings(library: ILibrary): IPreviewAttributesSettings;
+    previewsSettingsToVersions(previewsSettings: ILibraryPreviewsSettings[]): IPreviewVersion[];
 }
 
 export interface IUtilsDeps {
+    config?: IConfig;
     translator?: i18n;
 }
 
-export default function ({translator = null}: IUtilsDeps = {}): IUtils {
+export default function ({config = null, translator = null}: IUtilsDeps = {}): IUtils {
     return {
         getFileExtension(filename) {
             if (filename.lastIndexOf('.') === -1) {
@@ -269,6 +279,59 @@ export default function ({translator = null}: IUtilsDeps = {}): IUtils {
         },
         getProcessIdentifier(): string {
             return `${os.hostname()}-${process.pid}`;
+        },
+        getPreviewsAttributeName(libraryId) {
+            return getPreviewsAttributeName(libraryId);
+        },
+        getPreviewsStatusAttributeName(library) {
+            return getPreviewsStatusAttributeName(library);
+        },
+        getPreviewAttributesSettings(library) {
+            const _getSizeLabel = (size): ISystemTranslation =>
+                config.lang.available.reduce((labels, lang) => {
+                    labels[lang] = size.name;
+                    return labels;
+                }, {});
+
+            const previewsSettings = library.previewsSettings;
+            const previewsAttributeName = this.getPreviewsAttributeName(library.id);
+            const previewsStatusAttributeName = this.getPreviewsStatusAttributeName(library.id);
+
+            return previewsSettings.reduce(
+                (allSettings: IPreviewAttributesSettings, settings) => {
+                    for (const size of settings.versions.sizes) {
+                        allSettings[previewsAttributeName].push({
+                            id: size.name,
+                            label: _getSizeLabel(size),
+                            format: AttributeFormats.TEXT
+                        });
+
+                        allSettings[previewsStatusAttributeName].push({
+                            id: size.name,
+                            label: _getSizeLabel(size),
+                            format: AttributeFormats.EXTENDED,
+                            embedded_fields: [
+                                {
+                                    id: 'status',
+                                    format: AttributeFormats.NUMERIC
+                                },
+                                {
+                                    id: 'message',
+                                    format: AttributeFormats.TEXT
+                                }
+                            ]
+                        });
+                    }
+                    return allSettings;
+                },
+                {
+                    [previewsAttributeName]: [],
+                    [previewsStatusAttributeName]: []
+                }
+            );
+        },
+        previewsSettingsToVersions(previewsSettings) {
+            return previewsSettings.map(settings => settings.versions);
         }
     };
 }

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useLang, ErrorDisplay, Loading} from '@leav/ui';
+import {ErrorDisplay, Loading, useLang} from '@leav/ui';
 import {Space, theme} from 'antd';
 import {IRecordColumnValueLink, IRecordColumnValueStandard} from 'graphQL/queries/records/getRecordColumnsValues';
 import {useGetRecordValuesQuery} from 'hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
@@ -90,7 +90,7 @@ function RecordSummary({record}: IRecordSummaryProps): JSX.Element {
             <RecordPreviewWithModal
                 label={record?.label ?? record?.id}
                 color={record?.color}
-                image={preview && getFileUrl(preview)}
+                image={preview && getFileUrl(preview as string)}
                 tile
                 size={PreviewSize.medium}
                 style={{borderRadius: token.borderRadius}}

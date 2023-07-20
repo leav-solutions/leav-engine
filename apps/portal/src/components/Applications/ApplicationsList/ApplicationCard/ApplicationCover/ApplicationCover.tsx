@@ -1,10 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AntdThemeToken, useLang} from '@leav/ui';
-import {getInvertColor, localizedTranslation, stringToColor} from '@leav/utils';
+import {AntdThemeToken,useLang} from '@leav/ui';
+import {getInvertColor,localizedTranslation,stringToColor} from '@leav/utils';
 import {theme} from 'antd';
-import {SyntheticEvent} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
@@ -51,7 +50,7 @@ function ApplicationCover({application}: IApplicationCoverProps): JSX.Element {
         .map(word => word[0])
         .join('');
 
-    const appIcon = application.icon?.whoAmI?.preview?.medium;
+    const appIcon = application.icon?.whoAmI?.preview?.medium as string;
     const bgColor = application.color ?? stringToColor(label);
     const fontColor = getInvertColor(bgColor);
 

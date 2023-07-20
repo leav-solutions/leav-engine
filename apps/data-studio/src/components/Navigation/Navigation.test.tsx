@@ -3,17 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedResponse} from '@apollo/client/testing';
 import userEvent from '@testing-library/user-event';
+import {treeNavigationPageSize} from 'constants/constants';
+import {getTreeLibraries} from 'graphQL/queries/trees/getTreeLibraries';
+import {treeNodeChildrenQuery} from 'graphQL/queries/trees/getTreeNodeChildren';
+import {LibraryBehavior, TreeBehavior} from '_gqlTypes/globalTypes';
+import {act, render, screen, waitFor, within} from '_tests/testUtils';
+import {SharedStateSelectionType} from '_types/types';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockInitialState} from '__mocks__/common/mockRedux/mockInitialState';
 import {mockRecord} from '__mocks__/common/record';
 import {mockTree} from '__mocks__/common/tree';
 import {mockTreeNodePermissions} from '__mocks__/common/treeElements';
-import {LibraryBehavior, TreeBehavior} from '_gqlTypes/globalTypes';
-import {act, render, screen, waitFor, within} from '_tests/testUtils';
-import {SharedStateSelectionType} from '_types/types';
-import {treeNavigationPageSize} from 'constants/constants';
-import {getTreeLibraries} from 'graphQL/queries/trees/getTreeLibraries';
-import {treeNodeChildrenQuery} from 'graphQL/queries/trees/getTreeNodeChildren';
 import {getTreeListQuery} from '../../graphQL/queries/trees/getTreeListQuery';
 import Navigation from './Navigation';
 

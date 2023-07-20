@@ -14,7 +14,6 @@ import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {onError} from '@apollo/link-error';
 import {ErrorDisplay, Loading} from '@leav/ui';
-import {IInfo, InfoChannel, InfoType} from '_types/types';
 import {createUploadLink} from 'apollo-upload-client';
 import {createClient} from 'graphql-ws';
 import useGraphqlPossibleTypes from 'hooks/useGraphqlPossibleTypes';
@@ -22,6 +21,7 @@ import {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {addInfo} from 'reduxStore/infos';
 import {useAppDispatch} from 'reduxStore/store';
+import {IInfo, InfoChannel, InfoType} from '_types/types';
 import {API_ENDPOINT, APPS_ENDPOINT, LOGIN_ENDPOINT, ORIGIN_URL, WS_URL} from '../../../constants';
 
 interface IApolloHandlerProps {
@@ -179,6 +179,11 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
                         permissions: {
                             merge(existing, incoming) {
                                 return {...existing, ...incoming};
+                            }
+                        },
+                        previewsSettings: {
+                            merge(existing, incoming) {
+                                return incoming;
                             }
                         }
                     }

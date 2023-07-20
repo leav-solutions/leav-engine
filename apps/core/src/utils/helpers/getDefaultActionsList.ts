@@ -104,7 +104,13 @@ export default (attribute: IAttribute): IActionsListConfig => {
                         is_system: true
                     }
                 ],
-                [ActionsListEvents.GET_VALUE]: []
+                [ActionsListEvents.GET_VALUE]: [
+                    {
+                        is_system: true,
+                        id: 'toJSON',
+                        name: 'To JSON'
+                    }
+                ]
             };
             break;
         case AttributeFormats.DATE_RANGE:

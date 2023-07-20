@@ -12,8 +12,7 @@ import {
     RecordFilterCondition,
     RecordFilterOperator,
     SortOrder,
-    LibraryBehavior,
-    FileType
+    LibraryBehavior
 } from './globalTypes';
 
 // ====================================================
@@ -76,33 +75,12 @@ export interface GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI
     gqlNames: GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI_library_gqlNames;
 }
 
-export interface GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI_preview_file_library {
-    id: string;
-}
-
-export interface GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI_preview_file {
-    id: string;
-    file_type: FileType;
-    library: GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI_preview_file_library;
-}
-
-export interface GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-    original: string;
-    file: GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI_preview_file | null;
-}
-
 export interface GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI_library;
-    preview: GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record {

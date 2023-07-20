@@ -53,15 +53,16 @@ export interface ILibraryRepo {
      *
      * attributes Array of attributes IDs
      *
+     * @param libId
+     * @param attributes
+     * @param insertOnly If true, only insert new links, do not delete existing ones
+     * @param ctx
      * @return array     List of linked attributes
      */
-    saveLibraryAttributes({
-        libId,
-        attributes,
-        ctx
-    }: {
+    saveLibraryAttributes(params: {
         libId: string;
         attributes: string[];
+        insertOnly?: boolean;
         ctx: IQueryInfos;
     }): Promise<string[]>;
 
@@ -180,21 +181,22 @@ export default function ({
             // Return deleted library
             return dbUtils.cleanup(res.pop());
         },
-        async saveLibraryAttributes({libId, attributes, ctx}): Promise<string[]> {
-            // TODO: in CONCAT, query will fail is using constant instead of hard coding 'core_attributes'
+        async saveLibraryAttributes({libId, attributes, insertOnly = false, ctx}): Promise<string[]> {
+            // TODO: in CONCAT, query will fail if using constant instead of hard coding 'core_attributes'
             const libAttribCollec = dbService.db.collection(LIB_ATTRIB_COLLECTION_NAME);
 
             // Get current library attributes
-            const currentAttrs = await attributeRepo.getLibraryAttributes({libraryId: libId, ctx});
-            const deletedAttrs = difference(
-                currentAttrs.filter(a => !a.system).map(a => a.id),
-                attributes
-            );
+            if (!insertOnly) {
+                const currentAttrs = await attributeRepo.getLibraryAttributes({libraryId: libId, ctx});
+                const deletedAttrs = difference(
+                    currentAttrs.filter(a => !a.system).map(a => a.id),
+                    attributes
+                );
 
-            // Unlink attributes not used anymore
-            if (deletedAttrs.length) {
-                await dbService.execute({
-                    query: aql`
+                // Unlink attributes not used anymore
+                if (deletedAttrs.length) {
+                    await dbService.execute({
+                        query: aql`
                         FOR attr IN ${deletedAttrs}
                             FOR l in ${libAttribCollec}
                                 FILTER
@@ -204,8 +206,9 @@ export default function ({
                                 IN ${libAttribCollec}
                                 RETURN OLD
                     `,
-                    ctx
-                });
+                        ctx
+                    });
+                }
             }
 
             // Save new ones

@@ -7,6 +7,10 @@ import {localizedTranslation, Override} from '@leav/utils';
 import {Button, Input, Table, TableColumnsType} from 'antd';
 import {Key, useState} from 'react';
 import styled from 'styled-components';
+import {PreviewSize} from '../../../constants';
+import {extractPermissionFromQuery} from '../../../helpers/extractPermissionFromQuery';
+import {useLang} from '../../../hooks';
+import {useSharedTranslation} from '../../../hooks/useSharedTranslation';
 import {
     GetLibrariesQuery,
     LibraryLightFragment,
@@ -17,10 +21,6 @@ import {
     useIsAllowedQuery
 } from '../../../_gqlTypes';
 import {getLibrariesQuery} from '../../../_queries/libraries/getLibrariesQuery';
-import {PreviewSize} from '../../../constants';
-import {extractPermissionFromQuery} from '../../../helpers/extractPermissionFromQuery';
-import {useLang} from '../../../hooks';
-import {useSharedTranslation} from '../../../hooks/useSharedTranslation';
 import {EditLibraryModal} from '../../EditLibraryModal';
 import {EntityCard, IEntityData} from '../../EntityCard';
 import {ErrorDisplay} from '../../ErrorDisplay';
@@ -138,7 +138,7 @@ function LibrariesList({
                 const libraryIdentity: IEntityData = {
                     label: library.label,
                     subLabel: library.id,
-                    preview: library.icon?.whoAmI?.preview?.[PreviewSize.small] ?? null,
+                    preview: (library.icon?.whoAmI?.preview?.[PreviewSize.small] as string) ?? null,
                     color: null
                 };
                 return <EntityCard entity={libraryIdentity} size={PreviewSize.small} />;

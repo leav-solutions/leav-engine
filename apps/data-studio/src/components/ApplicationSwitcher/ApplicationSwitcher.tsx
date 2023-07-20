@@ -5,7 +5,6 @@ import {AppstoreOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
 import {EntityPreview, ErrorDisplay, themeVars, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {GET_APPLICATIONS} from '_gqlTypes/GET_APPLICATIONS';
 import {Button, Drawer, Menu, Skeleton, Tooltip, Typography} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import {useApplicationContext} from 'context/ApplicationContext';
@@ -13,6 +12,7 @@ import {getApplicationsQuery} from 'graphQL/queries/applications/getApplications
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {GET_APPLICATIONS} from '_gqlTypes/GET_APPLICATIONS';
 import AppLink from './AppLink';
 
 const AppsButton = styled(Button)`
@@ -87,7 +87,7 @@ function ApplicationSwitcher(): JSX.Element {
                               <EntityPreview
                                   label={label}
                                   color={app.color}
-                                  image={app?.icon?.whoAmI?.preview?.small}
+                                  image={app?.icon?.whoAmI?.preview?.small as string}
                               />
                           </AppLink>
                       ),
@@ -118,7 +118,7 @@ function ApplicationSwitcher(): JSX.Element {
                     <EntityPreview
                         label={portalLabel}
                         color={portalApp.color}
-                        image={portalApp?.icon?.whoAmI?.preview?.small}
+                        image={portalApp?.icon?.whoAmI?.preview?.small as string}
                     />
                 </AppLink>
             ),

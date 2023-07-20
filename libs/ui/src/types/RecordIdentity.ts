@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IPreviewScalar} from '@leav/utils';
 import {SystemTranslation} from './SystemTranslation';
 
 export interface IRecordIdentityLibrary {
@@ -21,7 +22,7 @@ export interface IRecordIdentityWhoAmI {
     label: string | null;
     color: string | null;
     library: IRecordIdentityLibrary;
-    preview: IRecordIdentityPreview | null;
+    preview: IPreviewScalar | null;
 }
 
 export interface IRecordIdentity {

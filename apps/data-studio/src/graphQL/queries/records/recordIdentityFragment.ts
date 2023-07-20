@@ -19,22 +19,7 @@ const recordIdentityFragment = gql`
                     type
                 }
             }
-            preview {
-                tiny
-                small
-                medium
-                big
-                huge
-                pdf
-                original
-                file {
-                    id
-                    file_type
-                    library {
-                        id
-                    }
-                }
-            }
+            preview
         }
     }
 `;

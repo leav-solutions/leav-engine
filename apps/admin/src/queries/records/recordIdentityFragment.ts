@@ -13,14 +13,7 @@ export const recordIdentityFragment = gql`
             }
             label
             color
-            preview {
-                tiny
-                small
-                medium
-                big
-                huge
-                pdf
-            }
+            preview
         }
     }
 `;

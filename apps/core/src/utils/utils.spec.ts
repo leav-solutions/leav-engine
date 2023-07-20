@@ -2,6 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {i18n} from 'i18next';
+import {IConfig} from '_types/config';
+import {AttributeFormats} from '../_types/attribute';
 import {Errors} from '../_types/errors';
 import {
     mockAttrAdv,
@@ -10,6 +12,7 @@ import {
     mockAttrSimpleLink,
     mockAttrTree
 } from '../__tests__/mocks/attribute';
+import {mockLibraryFiles} from '../__tests__/mocks/library';
 import utils from './utils';
 
 describe('Utils', () => {
@@ -335,6 +338,115 @@ describe('Utils', () => {
             const error = utilsModule.generateExplicitValidationError('id', Errors.UNKNOWN_ELEMENT, 'fr');
             expect(error.fields.id).toMatch('UNKNOWN_ELEMENT');
             expect(error.message).toMatch('[TRANSLATED]');
+        });
+    });
+
+    describe('getPreviewAttributesSettings', () => {
+        test('Generate attribute settings for previews attributes', async () => {
+            const mockConfig = {
+                lang: {available: ['fr', 'en'], default: 'fr'}
+            };
+
+            const utilsModule = utils({config: mockConfig as IConfig});
+
+            const settings = utilsModule.getPreviewAttributesSettings({
+                ...mockLibraryFiles,
+                previewsSettings: [
+                    {
+                        label: {fr: 'Previews'},
+                        system: false,
+                        versions: {
+                            background: '#123456',
+                            density: 42,
+                            sizes: [
+                                {
+                                    name: 'small',
+                                    size: 42
+                                },
+                                {
+                                    name: 'huge',
+                                    size: 1337
+                                }
+                            ]
+                        }
+                    }
+                ]
+            });
+
+            expect(settings).toEqual({
+                files_previews: [
+                    {
+                        id: 'small',
+                        label: {fr: 'small', en: 'small'},
+                        format: AttributeFormats.TEXT
+                    },
+                    {
+                        id: 'huge',
+                        label: {fr: 'huge', en: 'huge'},
+                        format: AttributeFormats.TEXT
+                    }
+                ],
+                files_previews_status: [
+                    {
+                        id: 'small',
+                        label: {fr: 'small', en: 'small'},
+                        format: AttributeFormats.EXTENDED,
+                        embedded_fields: [
+                            {
+                                id: 'status',
+                                format: AttributeFormats.NUMERIC
+                            },
+                            {
+                                id: 'message',
+                                format: AttributeFormats.TEXT
+                            }
+                        ]
+                    },
+                    {
+                        id: 'huge',
+                        label: {fr: 'huge', en: 'huge'},
+                        format: AttributeFormats.EXTENDED,
+                        embedded_fields: [
+                            {
+                                id: 'status',
+                                format: AttributeFormats.NUMERIC
+                            },
+                            {
+                                id: 'message',
+                                format: AttributeFormats.TEXT
+                            }
+                        ]
+                    }
+                ]
+            });
+        });
+    });
+
+    describe('previewsSettingsToVersions', () => {
+        test('Extract versions from previews settings', async () => {
+            const utilsModule = utils();
+            expect(utilsModule.previewsSettingsToVersions(mockLibraryFiles.previewsSettings)).toEqual([
+                {
+                    background: '#123456',
+                    density: 42,
+                    sizes: [
+                        {
+                            name: 'my_size',
+                            size: 1337
+                        }
+                    ]
+                },
+                {
+                    background: '#123456',
+                    density: 42,
+                    sizes: [
+                        {
+                            name: 'my_other_size',
+                            size: 1337
+                        }
+                    ]
+                }
+            ]);
         });
     });
 });

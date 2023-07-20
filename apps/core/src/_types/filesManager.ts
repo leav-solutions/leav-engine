@@ -1,6 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+
+import {IEmbeddedAttribute} from './attribute';
+
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export enum FileEvents {
     CREATE = 'CREATE',
     REMOVE = 'REMOVE',
@@ -13,19 +19,18 @@ export enum FilesAttributes {
     FILE_PATH = 'file_path',
     FILE_NAME = 'file_name',
     INODE = 'inode',
-    PREVIEWS = 'previews',
-    PREVIEWS_STATUS = 'previews_status',
     ACTIVE = 'active',
     HASH = 'hash'
 }
+
+export const PREVIEWS_ATTRIBUTE_SUFFIX = 'previews';
+export const PREVIEWS_STATUS_ATTRIBUTE_SUFFIX = 'previews_status';
 
 export interface IFilesAttributes {
     ROOT_KEY?: string;
     FILE_PATH?: string;
     FILE_NAME?: string;
     INODE?: number;
-    PREVIEWS_STATUS?: object;
-    PREVIEWS?: object;
     ACTIVE?: boolean;
     HASH?: string;
 }
@@ -93,4 +98,8 @@ export interface IPreviewResponse {
     context: IPreviewResponseContext;
     input: string;
     results?: IPreviewResponseResult[];
+}
+
+export interface IPreviewAttributesSettings {
+    [attributeId: string]: IEmbeddedAttribute[];
 }

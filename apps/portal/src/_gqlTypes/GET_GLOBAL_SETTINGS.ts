@@ -15,20 +15,12 @@ export interface GET_GLOBAL_SETTINGS_globalSettings_icon_whoAmI_library {
     label: SystemTranslation | null;
 }
 
-export interface GET_GLOBAL_SETTINGS_globalSettings_icon_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-}
-
 export interface GET_GLOBAL_SETTINGS_globalSettings_icon_whoAmI {
     id: string;
     label: string | null;
     color: string | null;
     library: GET_GLOBAL_SETTINGS_globalSettings_icon_whoAmI_library;
-    preview: GET_GLOBAL_SETTINGS_globalSettings_icon_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface GET_GLOBAL_SETTINGS_globalSettings_icon {
