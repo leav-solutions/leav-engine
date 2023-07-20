@@ -17,21 +17,12 @@ export interface SUB_TASKS_UPDATE_task_created_by_whoAmI_library {
     label: SystemTranslation | null;
 }
 
-export interface SUB_TASKS_UPDATE_task_created_by_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-}
-
 export interface SUB_TASKS_UPDATE_task_created_by_whoAmI {
     id: string;
     library: SUB_TASKS_UPDATE_task_created_by_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: SUB_TASKS_UPDATE_task_created_by_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface SUB_TASKS_UPDATE_task_created_by {
@@ -53,21 +44,12 @@ export interface SUB_TASKS_UPDATE_task_canceledBy_whoAmI_library {
     label: SystemTranslation | null;
 }
 
-export interface SUB_TASKS_UPDATE_task_canceledBy_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-}
-
 export interface SUB_TASKS_UPDATE_task_canceledBy_whoAmI {
     id: string;
     library: SUB_TASKS_UPDATE_task_canceledBy_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: SUB_TASKS_UPDATE_task_canceledBy_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface SUB_TASKS_UPDATE_task_canceledBy {

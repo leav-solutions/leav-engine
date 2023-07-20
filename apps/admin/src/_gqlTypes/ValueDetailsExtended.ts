@@ -93,21 +93,12 @@ export interface ValueDetailsExtended_LinkValue_linkValue_whoAmI_library {
     label: SystemTranslation | null;
 }
 
-export interface ValueDetailsExtended_LinkValue_linkValue_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-}
-
 export interface ValueDetailsExtended_LinkValue_linkValue_whoAmI {
     id: string;
     library: ValueDetailsExtended_LinkValue_linkValue_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: ValueDetailsExtended_LinkValue_linkValue_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface ValueDetailsExtended_LinkValue_linkValue {
@@ -163,21 +154,12 @@ export interface ValueDetailsExtended_TreeValue_treeValue_record_whoAmI_library 
     label: SystemTranslation | null;
 }
 
-export interface ValueDetailsExtended_TreeValue_treeValue_record_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-}
-
 export interface ValueDetailsExtended_TreeValue_treeValue_record_whoAmI {
     id: string;
     library: ValueDetailsExtended_TreeValue_treeValue_record_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: ValueDetailsExtended_TreeValue_treeValue_record_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface ValueDetailsExtended_TreeValue_treeValue_record {
@@ -189,21 +171,12 @@ export interface ValueDetailsExtended_TreeValue_treeValue_ancestors_record_whoAm
     label: SystemTranslation | null;
 }
 
-export interface ValueDetailsExtended_TreeValue_treeValue_ancestors_record_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-}
-
 export interface ValueDetailsExtended_TreeValue_treeValue_ancestors_record_whoAmI {
     id: string;
     library: ValueDetailsExtended_TreeValue_treeValue_ancestors_record_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: ValueDetailsExtended_TreeValue_treeValue_ancestors_record_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface ValueDetailsExtended_TreeValue_treeValue_ancestors_record {

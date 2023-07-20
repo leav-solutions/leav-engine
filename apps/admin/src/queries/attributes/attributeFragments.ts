@@ -103,6 +103,7 @@ export const attributeValuesListDetailsFragment = gql`
                 enable
                 allowFreeEntry
                 treeValues: values {
+                    id
                     record {
                         ...RecordIdentity
                     }
