@@ -49,7 +49,7 @@ function TreeValuesList({values, onValuesUpdate, linkedTree}: ITreeValuesListPro
                 record: {whoAmI: node.record.whoAmI},
                 ancestors: node.parents.map(p => ({
                     record: {
-                        whoAmI: p.whoAmI
+                        whoAmI: p.record.whoAmI
                     }
                 }))
             }

@@ -17,21 +17,12 @@ export interface APPLICATION_EVENTS_applicationEvent_application_icon_whoAmI_lib
     label: SystemTranslation | null;
 }
 
-export interface APPLICATION_EVENTS_applicationEvent_application_icon_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-}
-
 export interface APPLICATION_EVENTS_applicationEvent_application_icon_whoAmI {
     id: string;
     library: APPLICATION_EVENTS_applicationEvent_application_icon_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: APPLICATION_EVENTS_applicationEvent_application_icon_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface APPLICATION_EVENTS_applicationEvent_application_icon {

@@ -110,7 +110,7 @@ function ApplicationsSwitcher(): JSX.Element {
                                     <RecordPreview
                                         label={label}
                                         color={app.color}
-                                        image={app?.icon?.whoAmI?.preview?.small}
+                                        image={app?.icon?.whoAmI?.preview?.small as string}
                                     />
                                 </AppIcon>
                                 <List.Content>
