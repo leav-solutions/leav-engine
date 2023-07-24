@@ -124,7 +124,7 @@ export default function ({
                 .map(r => ({
                     id_value: null,
                     library: attribute.linked_library,
-                    value: dbUtils.cleanup(r),
+                    value: dbUtils.cleanup({...r, library: attribute.linked_library}),
                     created_by: null,
                     modified_by: null
                 }));

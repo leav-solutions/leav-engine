@@ -801,14 +801,21 @@ describe('RecordDomain', () => {
                 ])
             };
 
+            const mockAttributeDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise(mockAttrSimple)
+            };
+
             const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
 
             const mockUtils: Mockify<IUtils> = {
-                getPreviewsAttributeName: jest.fn().mockReturnValue('previews')
+                getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
+                isLinkAttribute: jest.fn().mockReturnValue(false),
+                isTreeAttribute: jest.fn().mockReturnValue(false)
             };
 
             const recDomain = recordDomain({
                 'core.domain.value': mockValDomain as IValueDomain,
+                'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 'core.utils': mockUtils as IUtils,
                 config: mockConfig as Config.IConfig

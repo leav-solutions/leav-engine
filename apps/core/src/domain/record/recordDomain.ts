@@ -523,6 +523,96 @@ export default function ({
         return cacheService.memoize({key: cacheKey, func: _execute, storeNulls: true, ctx});
     };
 
+    const _getLabel = async (record: IRecord, ctx: IQueryInfos): Promise<string> => {
+        if (!record) {
+            return null;
+        }
+
+        const lib = record?.library ? await getCoreEntityById<ILibrary>('library', record.library, ctx) : null;
+
+        if (!lib) {
+            throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
+        }
+
+        const conf = lib.recordIdentityConf || {};
+        const valuesOptions: IValuesOptions = {
+            version: ctx.version ?? null
+        };
+
+        let label: string = null;
+        if (conf.label) {
+            const labelAttributeProps = await attributeDomain.getAttributeProperties({id: conf.label, ctx});
+
+            const labelValues = await valueDomain.getValues({
+                library: lib.id,
+                recordId: record.id,
+                attribute: conf.label,
+                options: valuesOptions,
+                ctx
+            });
+
+            if (!labelValues.length) {
+                return null;
+            }
+
+            if (utils.isLinkAttribute(labelAttributeProps)) {
+                const linkValue = labelValues.pop().value;
+                label = await _getLabel(linkValue, ctx);
+            } else if (utils.isTreeAttribute(labelAttributeProps)) {
+                label = await _getLabel(labelValues.pop().value.record, ctx);
+            } else {
+                label = labelValues.pop().value;
+            }
+        }
+
+        return label;
+    };
+
+    const _getColor = async (record: IRecord, ctx: IQueryInfos): Promise<string> => {
+        if (!record) {
+            return null;
+        }
+        const lib = record?.library ? await getCoreEntityById<ILibrary>('library', record.library, ctx) : null;
+
+        if (!lib) {
+            throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
+        }
+
+        const conf = lib.recordIdentityConf || {};
+        const valuesOptions: IValuesOptions = {
+            version: ctx.version ?? null
+        };
+
+        let color: string = null;
+        if (conf.color) {
+            const colorAttributeProps = await attributeDomain.getAttributeProperties({id: conf.color, ctx});
+
+            const colorValues = await valueDomain.getValues({
+                library: lib.id,
+                recordId: record.id,
+                attribute: conf.color,
+                options: valuesOptions,
+                ctx
+            });
+
+            if (!colorValues.length) {
+                return null;
+            }
+
+            if (utils.isLinkAttribute(colorAttributeProps)) {
+                const linkValue = colorValues.pop().value;
+                color = await _getColor(linkValue, ctx);
+            } else if (utils.isTreeAttribute(colorAttributeProps)) {
+                const treeValue = colorValues.pop().value.record;
+                color = await _getColor(treeValue, ctx);
+            } else {
+                color = colorValues.pop().value;
+            }
+        }
+
+        return color;
+    };
+
     const _getRecordIdentity = async (record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity> => {
         const lib = await getCoreEntityById<ILibrary>('library', record.library, ctx);
 
@@ -537,28 +627,12 @@ export default function ({
 
         let label: string = null;
         if (conf.label) {
-            const labelValues = await valueDomain.getValues({
-                library: lib.id,
-                recordId: record.id,
-                attribute: conf.label,
-                options: valuesOptions,
-                ctx
-            });
-
-            label = labelValues.length ? labelValues.pop().value : null;
+            label = await _getLabel(record, ctx);
         }
 
         let color: string = null;
         if (conf.color) {
-            const colorValues = await valueDomain.getValues({
-                library: lib.id,
-                recordId: record.id,
-                attribute: conf.color,
-                options: valuesOptions,
-                ctx
-            });
-
-            color = colorValues.length ? colorValues.pop().value : null;
+            color = await _getColor(record, ctx);
         }
 
         let preview: IPreview = null;
