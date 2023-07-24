@@ -19,7 +19,7 @@ import {IIndexationService} from '../../infra/indexation/indexationService';
 
 export interface IIndexationManagerDomain {
     init(): Promise<void>;
-    indexDatabase(ctx: IQueryInfos, libraryId: string, records?: string[]): Promise<void>;
+    indexDatabase(findRecordParams: IFindRecordParams | IFindRecordParams[], ctx: IQueryInfos): Promise<void>;
 }
 
 interface IDeps {
@@ -321,6 +321,17 @@ export default function({
         }
     };
 
+    const _indexDatabase = async (
+        findRecordParams: IFindRecordParams | IFindRecordParams[],
+        ctx: IQueryInfos
+    ): Promise<void> => {
+        const params = [].concat(findRecordParams || []);
+
+        for (const p of params) {
+            await _indexRecords(p, ctx);
+        }
+    };
+
     return {
         async init(): Promise<void> {
             // Init rabbitmq
@@ -339,20 +350,6 @@ export default function({
 
             await indexationService.init();
         },
-        async indexDatabase(ctx: IQueryInfos, libraryId: string, records?: string[]): Promise<void> {
-            // if records are undefined we re-index all library's records
-
-            const filters = records
-                ? records.reduce((acc, id) => {
-                      acc.push({field: 'id', condition: AttributeCondition.EQUAL, value: id});
-                      if (records.length > 1) {
-                          acc.push({operator: Operator.OR});
-                      }
-                      return acc;
-                  }, [])
-                : [];
-
-            await _indexRecords({library: libraryId, filters}, ctx);
-        }
+        indexDatabase: _indexDatabase
     };
 }

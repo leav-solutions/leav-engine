@@ -10,7 +10,7 @@ import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {ITree} from '_types/tree';
 import {RecordPermissionsActions} from '../../_types/permissions';
-import {AttributeCondition, IRecord, TreeCondition} from '../../_types/record';
+import {AttributeCondition, IRecord, Operator, TreeCondition} from '../../_types/record';
 import {IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreAttributeApp} from './attributeApp/attributeApp';
 import {IIndexationManagerApp} from './indexationManagerApp';
@@ -185,13 +185,21 @@ export default function ({
                         }
                     },
                     Mutation: {
-                        async createRecord(parent, {library}, ctx): Promise<IRecord> {
+                        async createRecord(parent, {library}: {library: string}, ctx): Promise<IRecord> {
                             return recordDomain.createRecord(library, ctx);
                         },
-                        async deleteRecord(parent, {library, id}, ctx): Promise<IRecord> {
+                        async deleteRecord(
+                            parent,
+                            {library, id}: {library: string; id: string},
+                            ctx
+                        ): Promise<IRecord> {
                             return recordDomain.deleteRecord({library, id, ctx});
                         },
-                        async indexRecords(parent, {libraryId, records}, ctx): Promise<boolean> {
+                        async indexRecords(
+                            parent,
+                            {libraryId, records}: {libraryId: string; records?: string[]},
+                            ctx
+                        ): Promise<boolean> {
                             await indexationManagerApp.indexDatabase(ctx, libraryId, records);
 
                             return true;

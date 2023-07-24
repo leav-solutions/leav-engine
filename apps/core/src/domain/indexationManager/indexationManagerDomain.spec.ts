@@ -10,6 +10,7 @@ import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import indexationManager from './indexationManagerDomain';
 import {IIndexationService} from 'infra/indexation/indexationService';
+import {AttributeCondition} from '../../_types/record';
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     assertExchange: jest.fn(),
@@ -121,8 +122,11 @@ describe('Indexation Manager', () => {
             'core.infra.indexation.indexationService': mockIndexationService as IIndexationService
         });
 
-        await indexation.indexDatabase(ctx, 'test');
-        await indexation.indexDatabase(ctx, 'test', ['1337']);
+        await indexation.indexDatabase({library: 'test'}, ctx);
+        await indexation.indexDatabase(
+            {library: 'test', filters: [{field: 'id', value: '1337', condition: AttributeCondition.EQUAL}]},
+            ctx
+        );
 
         expect(mockIndexationService.isLibraryListed).toBeCalledTimes(2);
         expect(mockIndexationService.listLibrary).toBeCalledTimes(2);
