@@ -212,6 +212,9 @@
         "stats_links": "{{links}} links created",
         "stats_trees": "{{trees}} elements moved in trees"
     },
+    "indexation": {
+        "index_database": "Indexation {{library}}"
+    },
     "mailer": {
         "reset_password_subject": "Reset your password"
     },

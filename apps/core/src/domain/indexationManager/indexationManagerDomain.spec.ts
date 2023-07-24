@@ -122,10 +122,16 @@ describe('Indexation Manager', () => {
             'core.infra.indexation.indexationService': mockIndexationService as IIndexationService
         });
 
-        await indexation.indexDatabase({library: 'test'}, ctx);
+        await indexation.indexDatabase({findRecordParams: {library: 'test'}, ctx}, {id: 'fakeTaskId'});
         await indexation.indexDatabase(
-            {library: 'test', filters: [{field: 'id', value: '1337', condition: AttributeCondition.EQUAL}]},
-            ctx
+            {
+                findRecordParams: {
+                    library: 'test',
+                    filters: [{field: 'id', value: '1337', condition: AttributeCondition.EQUAL}]
+                },
+                ctx
+            },
+            {id: 'fakeTaskId'}
         );
 
         expect(mockIndexationService.isLibraryListed).toBeCalledTimes(2);

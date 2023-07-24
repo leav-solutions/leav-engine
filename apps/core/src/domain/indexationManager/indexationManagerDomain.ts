@@ -14,12 +14,20 @@ import {isEqual, difference, intersectionBy} from 'lodash';
 import {v4 as uuidv4} from 'uuid';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {EventAction, IDbEvent, ILibraryPayload, IRecordPayload, IValuePayload} from '../../_types/event';
-import {AttributeCondition, IRecord, Operator} from '../../_types/record';
+import {AttributeCondition, IRecord} from '../../_types/record';
 import {IIndexationService} from '../../infra/indexation/indexationService';
+import {ITaskFuncParams, TaskPriority} from '../../_types/tasksManager';
+import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
+import {i18n} from 'i18next';
+
+interface IIndexDatabaseParams {
+    findRecordParams: IFindRecordParams | IFindRecordParams[];
+    ctx: IQueryInfos;
+}
 
 export interface IIndexationManagerDomain {
     init(): Promise<void>;
-    indexDatabase(findRecordParams: IFindRecordParams | IFindRecordParams[], ctx: IQueryInfos): Promise<void>;
+    indexDatabase(params: IIndexDatabaseParams, task?: ITaskFuncParams): Promise<string>;
 }
 
 interface IDeps {
@@ -29,6 +37,8 @@ interface IDeps {
     'core.domain.library'?: ILibraryDomain;
     'core.domain.attribute'?: IAttributeDomain;
     'core.infra.indexation.indexationService'?: IIndexationService;
+    'core.domain.tasksManager'?: ITasksManagerDomain;
+    translator?: i18n;
 }
 
 export default function({
@@ -37,7 +47,9 @@ export default function({
     'core.domain.record': recordDomain = null,
     'core.domain.library': libraryDomain = null,
     'core.domain.attribute': attributeDomain = null,
-    'core.infra.indexation.indexationService': indexationService = null
+    'core.domain.tasksManager': tasksManagerDomain = null,
+    'core.infra.indexation.indexationService': indexationService = null,
+    translator = null
 }: IDeps): IIndexationManagerDomain {
     const _indexRecords = async (
         findRecordParams: IFindRecordParams,
@@ -321,15 +333,43 @@ export default function({
         }
     };
 
-    const _indexDatabase = async (
-        findRecordParams: IFindRecordParams | IFindRecordParams[],
-        ctx: IQueryInfos
-    ): Promise<void> => {
-        const params = [].concat(findRecordParams || []);
+    const _indexDatabase = async (params: IIndexDatabaseParams, task?: ITaskFuncParams): Promise<string> => {
+        const findRecordParams = [].concat(params.findRecordParams || []);
 
-        for (const p of params) {
-            await _indexRecords(p, ctx);
+        if (typeof task?.id === 'undefined') {
+            const newTaskId = uuidv4();
+
+            await tasksManagerDomain.createTask(
+                {
+                    id: newTaskId,
+                    label: config.lang.available.reduce((labels, lang) => {
+                        labels[lang] = `${translator.t('indexation.index_database', {
+                            lng: lang,
+                            library: findRecordParams.map(e => e.library).join(', ')
+                        })}`;
+                        return labels;
+                    }, {}),
+                    func: {
+                        moduleName: 'domain',
+                        subModuleName: 'indexationManager',
+                        name: 'indexDatabase',
+                        args: params
+                    },
+                    priority: TaskPriority.MEDIUM,
+                    startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
+                    ...(!!task?.callbacks && {callbacks: task.callbacks})
+                },
+                params.ctx
+            );
+
+            return newTaskId;
         }
+
+        for (const frp of findRecordParams) {
+            await _indexRecords(frp, params.ctx);
+        }
+
+        return task.id;
     };
 
     return {

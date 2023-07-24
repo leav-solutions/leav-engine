@@ -214,6 +214,9 @@
         "stats_links": "{{links}} liaisons créées",
         "stats_trees": "{{trees}} éléments placés dans un arbre"
     },
+    "indexation": {
+        "index_database": "Indexation {{library}}"
+    },
     "mailer": {
         "reset_password_subject": "Réinitialiser votre mot de passe"
     },

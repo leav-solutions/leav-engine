@@ -27,7 +27,10 @@ export default function ({'core.domain.indexationManager': indexationManager}: I
                 return acc;
             }, []);
 
-            await indexationManager.indexDatabase({library: libraryId, ...(filters.length && {filters})}, ctx);
+            await indexationManager.indexDatabase({
+                findRecordParams: {library: libraryId, ...(filters.length && {filters})},
+                ctx
+            });
         }
     };
 }
