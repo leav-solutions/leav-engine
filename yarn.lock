@@ -11976,7 +11976,6 @@ __metadata:
     cookie-parser: 1.4.6
     exceljs: 4.2.0
     exiftool-vendored: 22.0.0
-    exiftool-vendored.pl: 12.62.0
     express: 4.18.2
     express-useragent: 1.0.15
     glob: 7.1.6
@@ -14121,7 +14120,6 @@ __metadata:
 "exiftool-vendored.pl@npm:12.62.0":
   version: 12.62.0
   resolution: "exiftool-vendored.pl@npm:12.62.0"
-  checksum: cdff7a5e90943300949be92268c47635d5786a867ad0a41cd26461f07ecfe954f8aa15a9bb7ee18b753eed6d5c0b33d430901dc2bbde521b6d77689e84c5a9e3
   conditions: "!os=win32"
   languageName: node
   linkType: hard
