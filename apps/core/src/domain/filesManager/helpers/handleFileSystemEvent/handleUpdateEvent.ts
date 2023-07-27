@@ -2,16 +2,17 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IQueryInfos} from '_types/queryInfos';
-import {systemPreviewsSettings} from '../../../../domain/filesManager/_constants';
-import {IFileEventData} from '../../../../_types/filesManager';
-import {IHandleFileSystemDeps, IHandleFileSystemResources} from '../handleFileSystem';
+import {FilesAttributes, IFileEventData, IFileMetadata} from '../../../../_types/filesManager';
+import {systemPreviewsSettings} from '../../_constants';
+import {extractFileMetadata} from '../extractFileMetadata';
 import {getInputData, getPreviewsDefaultData, getRecord, updateRecordFile} from '../handleFileUtilsHelper';
 import {requestPreviewGeneration} from '../handlePreview';
+import {IHandleFileSystemEventDeps, IHandleFileSystemEventResources} from './_types';
 
 export const handleUpdateEvent = async (
     scanMsg: IFileEventData,
-    {library}: IHandleFileSystemResources,
-    deps: IHandleFileSystemDeps,
+    {library}: IHandleFileSystemEventResources,
+    deps: IHandleFileSystemEventDeps,
     ctx: IQueryInfos
 ): Promise<void> => {
     const {fileName, filePath} = getInputData(scanMsg.pathAfter);
@@ -38,13 +39,17 @@ export const handleUpdateEvent = async (
 
     const {previewsStatus, previews} = getPreviewsDefaultData(systemPreviewsSettings);
 
-    const recordData = {
-        INODE: scanMsg.inode,
-        ROOT_KEY: scanMsg.rootKey,
-        HASH: scanMsg.hash,
+    let recordData: IFileMetadata = {
+        [FilesAttributes.INODE]: scanMsg.inode,
+        [FilesAttributes.ROOT_KEY]: scanMsg.rootKey,
+        [FilesAttributes.HASH]: scanMsg.hash,
         [deps.utils.getPreviewsStatusAttributeName(library)]: previewsStatus,
         [deps.utils.getPreviewsAttributeName(library)]: previews
     };
+
+    const fileMetadata = await extractFileMetadata(scanMsg.pathAfter, scanMsg.rootKey, deps.config);
+
+    recordData = {...recordData, ...fileMetadata};
 
     // Update datas
     updateRecordFile(recordData, record.id, library, deps, ctx).catch(function (e) {
