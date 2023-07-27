@@ -25,7 +25,7 @@ export enum TaskPriority {
     HIGH = 2
 }
 
-export type ITaskCreatePayload = Pick<ITask, 'label' | 'func' | 'priority' | 'callbacks'> &
+export type ITaskCreatePayload = Pick<ITask, 'label' | 'func' | 'priority' | 'callbacks' | 'role'> &
     Partial<Pick<ITask, 'id' | 'startAt'>>;
 
 export type ITaskCancelPayload = Pick<ITask, 'id'>;
@@ -69,6 +69,18 @@ export interface ITaskFuncParams {
     callbacks?: ITaskCallback[];
 }
 
+export enum TaskType {
+    EXPORT = 'EXPORT',
+    IMPORT_CONFIG = 'IMPORT_CONFIG',
+    IMPORT_DATA = 'IMPORT_DATA',
+    INDEXATION = 'INDEXATION'
+}
+
+export interface ITaskRole {
+    type: TaskType;
+    detail?: string;
+}
+
 export interface ITask {
     id: string;
     label: ISystemTranslation;
@@ -80,6 +92,7 @@ export interface ITask {
     status: TaskStatus;
     priority: TaskPriority;
     archive: boolean;
+    role: ITaskRole;
     canceledBy?: string;
     progress?: {percent?: number; description?: ISystemTranslation};
     startedAt?: number;

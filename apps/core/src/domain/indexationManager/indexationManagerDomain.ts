@@ -15,10 +15,11 @@ import {v4 as uuidv4} from 'uuid';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {EventAction, IDbEvent, ILibraryPayload, IRecordPayload, IValuePayload} from '../../_types/event';
 import {AttributeCondition, IRecord} from '../../_types/record';
-import {IIndexationService} from '../../infra/indexation/indexationService';
-import {ITaskFuncParams, TaskPriority} from '../../_types/tasksManager';
+import {CORE_INDEX_FIELD, IIndexationService} from '../../infra/indexation/indexationService';
+import {ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
 import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {i18n} from 'i18next';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 
 interface IIndexDatabaseParams {
     findRecordParams: IFindRecordParams | IFindRecordParams[];
@@ -30,6 +31,8 @@ export interface IIndexationManagerDomain {
     indexDatabase(params: IIndexDatabaseParams, task?: ITaskFuncParams): Promise<string>;
 }
 
+export const TRIGGER_NAME_INDEXATION = 'INDEXATION';
+
 interface IDeps {
     config?: Config.IConfig;
     'core.infra.amqpService'?: IAmqpService;
@@ -38,6 +41,7 @@ interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
     'core.infra.indexation.indexationService'?: IIndexationService;
     'core.domain.tasksManager'?: ITasksManagerDomain;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
     translator?: i18n;
 }
 
@@ -49,6 +53,7 @@ export default function({
     'core.domain.attribute': attributeDomain = null,
     'core.domain.tasksManager': tasksManagerDomain = null,
     'core.infra.indexation.indexationService': indexationService = null,
+    'core.domain.eventsManager': eventsManager = null,
     translator = null
 }: IDeps): IIndexationManagerDomain {
     const _indexRecords = async (
@@ -355,6 +360,10 @@ export default function({
                         name: 'indexDatabase',
                         args: params
                     },
+                    role: {
+                        type: TaskType.INDEXATION,
+                        detail: findRecordParams.map(e => e.library).join(',')
+                    },
                     priority: TaskPriority.MEDIUM,
                     startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
                     ...(!!task?.callbacks && {callbacks: task.callbacks})
@@ -365,9 +374,25 @@ export default function({
             return newTaskId;
         }
 
+        const _updateLibraryIndexationStatus = async (inProgress: boolean) => {
+            for (const libraryId of findRecordParams.map(e => e.library)) {
+                await eventsManager.sendPubSubEvent(
+                    {
+                        triggerName: TRIGGER_NAME_INDEXATION,
+                        data: {indexation: {userId: params.ctx.userId, libraryId, inProgress}}
+                    },
+                    params.ctx
+                );
+            }
+        };
+
+        await _updateLibraryIndexationStatus(true);
+
         for (const frp of findRecordParams) {
             await _indexRecords(frp, params.ctx);
         }
+
+        await _updateLibraryIndexationStatus(false);
 
         return task.id;
     };

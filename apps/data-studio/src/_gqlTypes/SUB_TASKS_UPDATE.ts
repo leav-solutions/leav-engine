@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {TaskFiltersInput, LibraryBehavior, TaskStatus} from './globalTypes';
+import {TaskFiltersInput, LibraryBehavior, TaskStatus, TaskType} from './globalTypes';
 
 // ====================================================
 // GraphQL subscription operation: SUB_TASKS_UPDATE
@@ -35,6 +35,11 @@ export interface SUB_TASKS_UPDATE_task_created_by_whoAmI {
 export interface SUB_TASKS_UPDATE_task_created_by {
     id: string;
     whoAmI: SUB_TASKS_UPDATE_task_created_by_whoAmI;
+}
+
+export interface SUB_TASKS_UPDATE_task_role {
+    type: TaskType;
+    detail: string | null;
 }
 
 export interface SUB_TASKS_UPDATE_task_progress {
@@ -81,6 +86,7 @@ export interface SUB_TASKS_UPDATE_task {
     startAt: number;
     status: TaskStatus;
     priority: TaskPriority;
+    role: SUB_TASKS_UPDATE_task_role;
     progress: SUB_TASKS_UPDATE_task_progress | null;
     startedAt: number | null;
     completedAt: number | null;

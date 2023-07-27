@@ -34,7 +34,7 @@ import {
 } from '../../_types/import';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {AttributeCondition, Operator} from '../../_types/record';
-import {ITaskFuncParams, TaskCallbackType, TaskPriority} from '../../_types/tasksManager';
+import {ITaskFuncParams, TaskCallbackType, TaskPriority, TaskType} from '../../_types/tasksManager';
 import {ITreeElement} from '../../_types/tree';
 import {IValue} from '../../_types/value';
 import PermissionError from '../../errors/PermissionError';
@@ -596,6 +596,9 @@ export default function ({
                             name: 'importConfig',
                             args: params
                         },
+                        role: {
+                            type: TaskType.IMPORT_CONFIG
+                        },
                         priority: TaskPriority.MEDIUM,
                         startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
                         ...(!!task?.callbacks && {callbacks: task.callbacks})
@@ -693,6 +696,9 @@ export default function ({
                             subModuleName: 'import',
                             name: 'importData',
                             args: params
+                        },
+                        role: {
+                            type: TaskType.IMPORT_DATA
                         },
                         priority: TaskPriority.MEDIUM,
                         startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),

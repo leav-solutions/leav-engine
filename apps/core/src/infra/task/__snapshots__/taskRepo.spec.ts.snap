@@ -23,6 +23,9 @@ exports[`TaskRepo Create task 2`] = `
     },
     "modified_at": 1,
     "priority": 1,
+    "role": {
+      "type": "IMPORT_DATA",
+    },
     "startAt": 123,
     "status": "PENDING",
   },
@@ -80,6 +83,9 @@ exports[`TaskRepo Update task 2`] = `
     },
     "modified_at": 1,
     "priority": 1,
+    "role": {
+      "type": "IMPORT_DATA",
+    },
     "startAt": 123,
     "status": "PENDING",
   },

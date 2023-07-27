@@ -55,6 +55,8 @@
         "delete": "Delete library",
         "delete_confirm": "Do you really want to delete this library?",
         "delete_confirm_warning": "Warning: this action is irreversible and will delete all records in this library.",
+        "indexation": "Indexation",
+        "indexation_in_progress": "Indexation in progress",
         "previews_settings": {
             "title": "Previews settings",
             "label": "Label",
@@ -91,6 +93,7 @@
         "delete_confirm": "Do you really want to delete this attribute?",
         "add_attribute": "Add attribute",
         "select_attributes": "Select attributes",
+        "select_indexed_attributes": "Select indexed attributes",
         "new_attribute": "New attribute",
         "label": "Label",
         "description": "Description",

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
-import {TaskStatus} from '_gqlTypes/globalTypes';
+import {TaskStatus, TaskType} from '_gqlTypes/globalTypes';
 
 export const mockTask: GET_TASKS_tasks_list = {
     id: 'taskId',
@@ -12,6 +12,10 @@ export const mockTask: GET_TASKS_tasks_list = {
     modified_at: Date.now(),
     created_at: Date.now(),
     startAt: Date.now(),
+    role: {
+        type: TaskType.IMPORT_DATA,
+        detail: null
+    },
     progress: {description: null, percent: 0},
     status: TaskStatus.PENDING,
     priority: 1,
