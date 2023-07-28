@@ -56,6 +56,8 @@
         "delete_confirm_warning": "Attention, cette action est irréversible et supprimera tous les éléments de la bibliothèque",
         "indexation": "Indexation",
         "indexation_in_progress": "Indexation en cours",
+        "sync_indexation": "Synchroniser",
+        "indexed_attributes": "Attributs indexés",
         "previews_settings": {
             "title": "Configuration des aperçus",
             "label": "Libellé",

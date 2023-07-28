@@ -1417,6 +1417,13 @@ export type IsAllowedQueryVariables = Exact<{
 
 export type IsAllowedQuery = {isAllowed?: Array<{name: PermissionsActions; allowed?: boolean | null}> | null};
 
+export type IndexRecordsMutationVariables = Exact<{
+    libraryId: Scalars['String'];
+    records?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+}>;
+
+export type IndexRecordsMutation = {indexRecords: boolean};
+
 export type CancelTaskMutationVariables = Exact<{
     taskId: Scalars['ID'];
 }>;
@@ -2423,6 +2430,43 @@ export function useIsAllowedLazyQuery(
 export type IsAllowedQueryHookResult = ReturnType<typeof useIsAllowedQuery>;
 export type IsAllowedLazyQueryHookResult = ReturnType<typeof useIsAllowedLazyQuery>;
 export type IsAllowedQueryResult = Apollo.QueryResult<IsAllowedQuery, IsAllowedQueryVariables>;
+export const IndexRecordsDocument = gql`
+    mutation INDEX_RECORDS($libraryId: String!, $records: [String!]) {
+        indexRecords(libraryId: $libraryId, records: $records)
+    }
+`;
+export type IndexRecordsMutationFn = Apollo.MutationFunction<IndexRecordsMutation, IndexRecordsMutationVariables>;
+
+/**
+ * __useIndexRecordsMutation__
+ *
+ * To run a mutation, you first call `useIndexRecordsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useIndexRecordsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [indexRecordsMutation, { data, loading, error }] = useIndexRecordsMutation({
+ *   variables: {
+ *      libraryId: // value for 'libraryId'
+ *      records: // value for 'records'
+ *   },
+ * });
+ */
+export function useIndexRecordsMutation(
+    baseOptions?: Apollo.MutationHookOptions<IndexRecordsMutation, IndexRecordsMutationVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useMutation<IndexRecordsMutation, IndexRecordsMutationVariables>(IndexRecordsDocument, options);
+}
+export type IndexRecordsMutationHookResult = ReturnType<typeof useIndexRecordsMutation>;
+export type IndexRecordsMutationResult = Apollo.MutationResult<IndexRecordsMutation>;
+export type IndexRecordsMutationOptions = Apollo.BaseMutationOptions<
+    IndexRecordsMutation,
+    IndexRecordsMutationVariables
+>;
 export const CancelTaskDocument = gql`
     mutation CANCEL_TASK($taskId: ID!) {
         cancelTask(taskId: $taskId)

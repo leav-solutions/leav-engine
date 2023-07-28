@@ -1,8 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {GetLibraryByIdQuery, useSaveLibraryMutation, useCancelTaskMutation} from '../../../../_gqlTypes';
-import type {SelectProps} from 'antd';
+import {
+    GetLibraryByIdQuery,
+    useSaveLibraryMutation,
+    useCancelTaskMutation,
+    useIndexRecordsMutation
+} from '../../../../_gqlTypes';
+import {Divider, SelectProps} from 'antd';
 // eslint-disable-next-line no-duplicate-imports
 import {Select, Button, Alert, Space} from 'antd';
 import {localizedTranslation} from '@leav/utils';
@@ -20,6 +25,7 @@ function EditLibraryIndexation({library, indexationTask, readOnly}: IEditLibrary
     const {t} = useSharedTranslation();
     const {lang} = useLang();
     const [saveLibrary] = useSaveLibraryMutation();
+    const [indexRecords] = useIndexRecordsMutation();
     const [cancelTaskMutation] = useCancelTaskMutation();
     const [fullTextAttributes, setFullTextAttributes] = useState<string[]>(library.fullTextAttributes.map(e => e.id));
     const [isEdited, setIsEdited] = useState<boolean>(false);
@@ -45,6 +51,14 @@ function EditLibraryIndexation({library, indexationTask, readOnly}: IEditLibrary
         });
     };
 
+    const _onRefresh = async () => {
+        await indexRecords({
+            variables: {
+                libraryId: library.id
+            }
+        });
+    };
+
     const _onCancel = async () => {
         await cancelTaskMutation({
             variables: {
@@ -64,7 +78,7 @@ function EditLibraryIndexation({library, indexationTask, readOnly}: IEditLibrary
 
     return (
         <Space style={{display: 'flex'}} direction="vertical">
-            {!!indexationTask && (
+            {!!indexationTask ? (
                 <Alert
                     message={t('libraries.indexation_in_progress')}
                     type="warning"
@@ -75,25 +89,32 @@ function EditLibraryIndexation({library, indexationTask, readOnly}: IEditLibrary
                         </Button>
                     }
                 />
+            ) : (
+                <>
+                    <Button block type="primary" onClick={_onRefresh} disabled={isReadOnly}>
+                        {t('libraries.sync_indexation')}
+                    </Button>
+                    <Divider orientation="left">{t('libraries.indexed_attributes')}</Divider>
+                    <Select
+                        disabled={isReadOnly}
+                        mode="multiple"
+                        allowClear
+                        style={{width: '100%'}}
+                        placeholder={t('attributes.select_indexed_attributes')}
+                        defaultValue={library.fullTextAttributes.map(a => a.id)}
+                        onChange={_onChange}
+                        options={options}
+                    />
+                    <Button
+                        style={{float: 'right'}}
+                        type="primary"
+                        onClick={_onSubmit}
+                        disabled={!isEdited || isReadOnly}
+                    >
+                        {t('global.submit')}
+                    </Button>
+                </>
             )}
-            <Select
-                disabled={isReadOnly || !!indexationTask}
-                mode="multiple"
-                allowClear
-                style={{width: '100%'}}
-                placeholder={t('attributes.select_indexed_attributes')}
-                defaultValue={library.fullTextAttributes.map(a => a.id)}
-                onChange={_onChange}
-                options={options}
-            />
-            <Button
-                style={{float: 'right'}}
-                type="primary"
-                onClick={_onSubmit}
-                disabled={!isEdited || isReadOnly || !!indexationTask}
-            >
-                {t('global.submit')}
-            </Button>
         </Space>
     );
 }

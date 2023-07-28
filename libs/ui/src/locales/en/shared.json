@@ -57,6 +57,8 @@
         "delete_confirm_warning": "Warning: this action is irreversible and will delete all records in this library.",
         "indexation": "Indexation",
         "indexation_in_progress": "Indexation in progress",
+        "sync_indexation": "Synchronize",
+        "indexed_attributes": "Indexed attributes",
         "previews_settings": {
             "title": "Previews settings",
             "label": "Label",
