@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
-      - run: sudo apt-get install -y perl pkgconfig poppler poppler-dev poppler-utils
+      - run: sudo apt-get install -y libpoppler-dev poppler-utils
       - run: yarn install
       - run: yarn lint
 
@@ -36,7 +36,7 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
-      - run: sudo apt-get install -y perl pkgconfig poppler poppler-dev poppler-utils
+      - run: sudo apt-get install -y libpoppler-dev poppler-utils
       - run: yarn install
       - run: yarn tscheck
 
@@ -52,7 +52,7 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
-      - run: sudo apt-get install -y perl pkgconfig poppler poppler-dev poppler-utils
+      - run: sudo apt-get install -y libpoppler-dev poppler-utils
       - run: yarn install
       - run: yarn test --all
         env:
@@ -96,7 +96,7 @@ jobs:
         with:
           stack-version: 8.5.3
           security-enabled: false
-      - run: sudo apt-get install -y perl pkgconfig poppler poppler-dev poppler-utils
+      - run: sudo apt-get install -y libpoppler-dev poppler-utils
       - run: yarn install
       - name: Run e2e tests
         working-directory: ./apps/core
@@ -155,7 +155,7 @@ jobs:
         with:
           stack-version: 8.5.3
           security-enabled: false
-      - run: sudo apt-get install -y perl pkgconfig poppler poppler-dev poppler-utils
+      - run: sudo apt-get install -y libpoppler-dev poppler-utils
       - run: yarn install
       - name: Run e2e tests
         working-directory: ./apps/core
@@ -191,7 +191,7 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
-      - run: sudo apt-get install -y perl pkgconfig poppler poppler-dev poppler-utils
+      - run: sudo apt-get install -y libpoppler-dev poppler-utils
       - run: yarn install
       - name: Run e2e tests
         working-directory: ./apps/sync-scan
