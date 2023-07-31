@@ -238,14 +238,12 @@ export default function ({
                             priority: Joi.string()
                                 .valid(...Object.values(TaskPriority))
                                 .required(),
-                            role: Joi.object()
-                                .keys({
-                                    type: Joi.string()
-                                        .valid(...Object.values(TaskType))
-                                        .required(),
-                                    detail: Joi.string()
-                                })
-                                .required(),
+                            role: Joi.object().keys({
+                                type: Joi.string()
+                                    .valid(...Object.values(TaskType))
+                                    .required(),
+                                detail: Joi.string()
+                            }),
                             callbacks: Joi.array().items(
                                 Joi.object().keys({
                                     moduleName: Joi.string().required(),

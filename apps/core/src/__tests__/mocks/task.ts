@@ -35,9 +35,6 @@ export const mockTask: ITask = {
     created_by: '1',
     modified_at: 1234567890,
     func: mockFunc,
-    role: {
-        type: TaskType.IMPORT_DATA
-    },
     startAt: 1234567890,
     status: TaskStatus.CREATED,
     priority: TaskPriority.MEDIUM,

@@ -18,7 +18,7 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
 import {useAppSelector} from 'reduxStore/store';
-import {TaskStatus} from '_gqlTypes/globalTypes';
+import {TaskStatus, TaskType} from '_gqlTypes/globalTypes';
 import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
 
 const Wrapper = styled.div`
@@ -72,7 +72,7 @@ function LibraryBlock({
     onRemoveLibrary,
     dragProvided
 }: ILibraryBlockProps): JSX.Element {
-    const {t: translation} = useTranslation();
+    const {t} = useTranslation();
     const {lang} = useLang();
     const {tasks} = useAppSelector(state => state.tasks);
     const [isEditLibraryModalVisible, setIsEditLibraryModalVisible] = useState(false);
@@ -84,7 +84,7 @@ function LibraryBlock({
 
     const libraryActions: FloatingMenuAction[] = [
         {
-            title: translation('global.details'),
+            title: t('global.details'),
             icon: <ExpandAltOutlined />,
             onClick: _handleOpenEditLibraryModal
         }
@@ -104,9 +104,13 @@ function LibraryBlock({
         task.status === TaskStatus.RUNNING;
 
     useEffect(() => {
-        const task = Object.values(tasks).filter(
-            t => t.role.type === 'INDEXATION' && t.role.detail === library.id && isTaskInProgress(t)
-        )[0];
+        const task = Object.values(tasks).filter(e => {
+            return (
+                e.role?.type === TaskType.INDEXATION &&
+                e.role?.detail.split(',').includes(library.id) &&
+                isTaskInProgress(e)
+            );
+        })[0];
 
         setIndexationTask(task?.id);
     }, [tasks, useAppSelector]);

@@ -12,12 +12,9 @@ export const mockTask: GET_TASKS_tasks_list = {
     modified_at: Date.now(),
     created_at: Date.now(),
     startAt: Date.now(),
-    role: {
-        type: TaskType.IMPORT_DATA,
-        detail: null
-    },
     progress: {description: null, percent: 0},
     status: TaskStatus.PENDING,
+    role: null,
     priority: 1,
     created_by: null,
     startedAt: null,

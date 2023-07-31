@@ -86,7 +86,7 @@ export interface GET_TASKS_tasks_list {
     startAt: number;
     status: TaskStatus;
     priority: TaskPriority;
-    role: GET_TASKS_tasks_list_role;
+    role: GET_TASKS_tasks_list_role | null;
     progress: GET_TASKS_tasks_list_progress | null;
     startedAt: number | null;
     completedAt: number | null;

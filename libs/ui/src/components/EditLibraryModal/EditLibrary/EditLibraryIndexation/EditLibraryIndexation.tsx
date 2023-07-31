@@ -76,6 +76,16 @@ function EditLibraryIndexation({library, indexationTask, readOnly}: IEditLibrary
         );
     }, [library.fullTextAttributes, fullTextAttributes]);
 
+    const _formatLabel = (label: string): string =>
+        label
+            .trim()
+            .toLowerCase()
+            .normalize('NFD') // split accents and base letter
+            .replace(/[\u0300-\u036f]/g, ''); // remove all previously split accents to leave only base letters
+
+    const _onFilter = (inputValue, option): boolean =>
+        _formatLabel(option.label.toString()).includes(_formatLabel(inputValue));
+
     return (
         <Space style={{display: 'flex'}} direction="vertical">
             {!!indexationTask ? (
@@ -96,6 +106,7 @@ function EditLibraryIndexation({library, indexationTask, readOnly}: IEditLibrary
                     </Button>
                     <Divider orientation="left">{t('libraries.indexed_attributes')}</Divider>
                     <Select
+                        optionFilterProp="label"
                         disabled={isReadOnly}
                         mode="multiple"
                         allowClear
@@ -104,6 +115,7 @@ function EditLibraryIndexation({library, indexationTask, readOnly}: IEditLibrary
                         defaultValue={library.fullTextAttributes.map(a => a.id)}
                         onChange={_onChange}
                         options={options}
+                        filterOption={_onFilter}
                     />
                     <Button
                         style={{float: 'right'}}

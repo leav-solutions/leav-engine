@@ -86,7 +86,7 @@ export interface SUB_TASKS_UPDATE_task {
     startAt: number;
     status: TaskStatus;
     priority: TaskPriority;
-    role: SUB_TASKS_UPDATE_task_role;
+    role: SUB_TASKS_UPDATE_task_role | null;
     progress: SUB_TASKS_UPDATE_task_progress | null;
     startedAt: number | null;
     completedAt: number | null;

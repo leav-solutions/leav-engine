@@ -94,7 +94,7 @@ export default function ({
                         status: TaskStatus!,
                         priority: TaskPriority!,
                         archive: Boolean!,
-                        role: TaskRole!,
+                        role: TaskRole,
                         progress: Progress,
                         startedAt: Int,
                         completedAt: Int,
@@ -201,7 +201,7 @@ export default function ({
                                     }
 
                                     if (toReturn && typeof variables.filters?.type !== 'undefined') {
-                                        toReturn = payload.task.role.type === variables.filters.type;
+                                        toReturn = payload.task.role?.type === variables.filters.type;
                                     }
 
                                     return toReturn;
