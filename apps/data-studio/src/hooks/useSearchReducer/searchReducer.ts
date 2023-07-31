@@ -6,9 +6,11 @@ import {defaultView, viewSettingsField} from 'constants/constants';
 import {ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import {IAttribute, IField, IFilter, IValueVersion, IView, IViewDisplay} from '_types/types';
 import {ISearchRecord, ISearchSort, ISearchState} from './_types';
+import {ApolloError} from '@apollo/client';
 
 export enum SearchActionTypes {
     UPDATE_RESULT = 'UPDATE_RESULT',
+    SET_ERROR = 'SET_ERROR',
     SET_PAGINATION = 'SET_PAGINATION',
     SET_OFFSET = 'SET_OFFSET',
     SET_LOADING = 'SET_LOADING',
@@ -32,8 +34,19 @@ export enum SearchActionTypes {
     TOGGLE_TRANSPARENCY = 'TOGGLE_TRANSPARENCY'
 }
 
+interface ISearchResult {
+    type: SearchActionTypes.UPDATE_RESULT;
+    records: ISearchRecord[];
+    totalCount: number;
+}
+
+interface ISearchResultError {
+    type: SearchActionTypes.UPDATE_RESULT;
+    error: ApolloError;
+}
+
 export type SearchAction =
-    | {type: SearchActionTypes.UPDATE_RESULT; records: ISearchRecord[]; totalCount: number}
+    | ({type: SearchActionTypes.UPDATE_RESULT} & (ISearchResult | ISearchResultError))
     | {type: SearchActionTypes.SET_PAGINATION; page: number}
     | {type: SearchActionTypes.SET_OFFSET; offset: number}
     | {type: SearchActionTypes.SET_LOADING; loading: boolean}
@@ -111,7 +124,7 @@ const checkSync = (
 
 const searchReducer = (state: ISearchState, action: SearchAction): ISearchState => {
     let sync = checkSync(state, {
-        sort: action.type !== SearchActionTypes.SET_SORT, // FIXME: probleme avec le sort
+        sort: action.type !== SearchActionTypes.SET_SORT,
         filters: action.type !== SearchActionTypes.SET_FILTERS,
         display: action.type !== SearchActionTypes.SET_DISPLAY,
         fields: action.type !== SearchActionTypes.SET_FIELDS,
@@ -119,8 +132,15 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
     });
 
     switch (action.type) {
-        case SearchActionTypes.UPDATE_RESULT:
-            return {...state, records: action.records, totalCount: action.totalCount, loading: false};
+        case SearchActionTypes.UPDATE_RESULT: {
+            return {
+                ...state,
+                records: (action as ISearchResult).records ?? [],
+                totalCount: (action as ISearchResult).totalCount ?? 0,
+                error: (action as ISearchResultError).error,
+                loading: false
+            };
+        }
         case SearchActionTypes.SET_PAGINATION:
             return {...state, pagination: action.page, loading: true};
         case SearchActionTypes.SET_OFFSET:
