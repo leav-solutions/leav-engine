@@ -6,6 +6,7 @@ import {SortOrder} from '_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {IAttribute, IField, ILang, IValueVersion} from '_types/types';
 import {IFilter, IView, IViewDisplay} from '../../_types/types';
+import {ApolloError} from '@apollo/client';
 
 export type IRecordPreview = {
     small: string;
@@ -40,6 +41,7 @@ export interface ISearchState {
     library: GET_LIBRARY_DETAIL_EXTENDED_libraries_list;
     records: ISearchRecord[];
     totalCount: number;
+    error?: ApolloError;
     loading: boolean;
     pagination: number;
     offset: number;
