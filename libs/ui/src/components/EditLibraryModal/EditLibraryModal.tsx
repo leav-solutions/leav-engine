@@ -59,8 +59,6 @@ function EditLibraryModal({
         isEditing ? PermissionsActions.admin_edit_library : PermissionsActions.admin_create_library
     );
 
-    console.debug('edit library modal is read only: ', isReadOnly, libraryId);
-
     const canDelete = extractPermissionFromQuery(permissionsQueryResult, PermissionsActions.admin_delete_library);
 
     const [deleteLibrary] = useDeleteLibraryMutation();
