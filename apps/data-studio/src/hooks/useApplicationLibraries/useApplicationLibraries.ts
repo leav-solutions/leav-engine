@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
+import {QueryResult, useQuery} from '@apollo/client';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {getLibrariesListQuery} from 'graphQL/queries/libraries/getLibrariesListQuery';
 import {
@@ -18,22 +18,26 @@ export interface IUseApplicationLibrariesHook {
     loading: boolean;
     libraries: GET_LIBRARIES_LIST_libraries_list[];
     error?: string;
+    updateQuery: QueryResult['updateQuery'];
 }
 
 export const useApplicationLibraries = (params: IUseApplicationLibrariesParams = {}): IUseApplicationLibrariesHook => {
     const {currentApp} = useApplicationContext();
     const {onlyAllowed = true} = params;
 
-    const {loading, error, data} = useQuery<GET_LIBRARIES_LIST, GET_LIBRARIES_LISTVariables>(getLibrariesListQuery, {
-        skip:
-            currentApp?.settings?.libraries === 'none' ||
-            (Array.isArray(currentApp?.settings?.libraries) && !currentApp.settings.libraries.length), // Skip if no libraries are selected
-        variables: {
-            filters: {
-                id: Array.isArray(currentApp?.settings?.libraries) ? currentApp.settings.libraries : []
+    const {loading, error, data, updateQuery} = useQuery<GET_LIBRARIES_LIST, GET_LIBRARIES_LISTVariables>(
+        getLibrariesListQuery,
+        {
+            skip:
+                currentApp?.settings?.libraries === 'none' ||
+                (Array.isArray(currentApp?.settings?.libraries) && !currentApp.settings.libraries.length), // Skip if no libraries are selected
+            variables: {
+                filters: {
+                    id: Array.isArray(currentApp?.settings?.libraries) ? currentApp.settings.libraries : []
+                }
             }
         }
-    });
+    );
 
     let libraries = data?.libraries.list ? [...data?.libraries.list] : [];
     const librariesOrder = currentApp?.settings?.librariesOrder ?? [];
@@ -51,5 +55,5 @@ export const useApplicationLibraries = (params: IUseApplicationLibrariesParams =
         return aIndex - bIndex;
     });
 
-    return {loading, libraries, error: error?.message ?? null};
+    return {loading, libraries, error: error?.message ?? null, updateQuery};
 };

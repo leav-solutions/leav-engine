@@ -600,6 +600,7 @@
         "libraries_settings": {
             "no_libraries": "Aucune bibliothèque sélectionnée",
             "add_library": "Ajouter une bibliothèque",
+            "new_library": "Nouvelle bibliothèque",
             "select_all": "Toutes",
             "select_none": "Aucune",
             "select_custom": "Sélection personnalisée",

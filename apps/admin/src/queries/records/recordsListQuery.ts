@@ -93,13 +93,8 @@ export const getRecordsListQuery = (library: string) => gqlUnchecked`
                     id,
                     label,
                     color,
-                    preview {
-                        small
-                        medium
-                        pdf
-                        big
-                    },
-                    library{
+                    preview,
+                    library {
                         id,
                         label
                     }

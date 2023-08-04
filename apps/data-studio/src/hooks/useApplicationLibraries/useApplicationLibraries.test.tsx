@@ -66,11 +66,11 @@ describe('useApplicationLibraries', () => {
             )
         });
 
-        expect(result.current).toEqual({error: null, loading: true, libraries: []});
+        expect(result.current).toMatchObject({error: null, loading: true, libraries: []});
 
         await waitFor(() => expect(result.current.loading).toBe(false));
 
-        expect(result.current).toEqual({
+        expect(result.current).toMatchObject({
             error: null,
             loading: false,
             libraries: [
@@ -130,11 +130,11 @@ describe('useApplicationLibraries', () => {
             )
         });
 
-        expect(result.current).toEqual({error: null, loading: true, libraries: []});
+        expect(result.current).toMatchObject({error: null, loading: true, libraries: []});
 
         await waitFor(() => expect(result.current.loading).toBe(false));
 
-        expect(result.current).toEqual({
+        expect(result.current).toMatchObject({
             error: null,
             loading: false,
             libraries: [
@@ -167,7 +167,7 @@ describe('useApplicationLibraries', () => {
             )
         });
 
-        expect(result.current).toEqual({
+        expect(result.current).toMatchObject({
             error: null,
             loading: false,
             libraries: []
@@ -195,7 +195,7 @@ describe('useApplicationLibraries', () => {
             )
         });
 
-        expect(result.current).toEqual({
+        expect(result.current).toMatchObject({
             error: null,
             loading: false,
             libraries: []
@@ -257,7 +257,7 @@ describe('useApplicationLibraries', () => {
 
         await waitFor(() => expect(result.current.loading).toBe(false));
 
-        expect(result.current).toEqual({
+        expect(result.current).toMatchObject({
             error: null,
             loading: false,
             libraries: [
@@ -332,7 +332,7 @@ describe('useApplicationLibraries', () => {
 
         await waitFor(() => expect(result.current.loading).toBe(false));
 
-        expect(result.current).toEqual({
+        expect(result.current).toMatchObject({
             error: null,
             loading: false,
             libraries: [

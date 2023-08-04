@@ -143,7 +143,14 @@ function LibrariesSettings(): JSX.Element {
                 <h2>{t('app_settings.libraries')}</h2>
                 <SubmitStateNotifier state={submitState} />
             </TitleWrapper>
-            <ModeSelector onChange={_handleSelectionModeChange} entityType="libraries" selectedMode={currentMode} />
+            <div data-testid={'modeselector'}>
+                <ModeSelector
+                    data-testid={'modeselector'}
+                    onChange={_handleSelectionModeChange}
+                    entityType="libraries"
+                    selectedMode={currentMode}
+                />
+            </div>
             <ListWrapper>
                 <LibrariesList
                     libraries={libraries}

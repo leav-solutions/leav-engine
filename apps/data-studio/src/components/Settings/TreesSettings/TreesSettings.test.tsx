@@ -109,13 +109,13 @@ describe('TreesSettings', () => {
             current: {...currentApp, settings: {...currentApp.settings, trees: 'custom'}}
         });
 
-        expect(await screen.findByRole('radio', {name: /all/})).toBeInTheDocument();
-        expect(screen.getByRole('radio', {name: /none/})).toBeInTheDocument();
-        expect(screen.getByRole('radio', {name: /custom/})).toBeInTheDocument();
+        expect(await screen.findByDisplayValue('all')).toBeInTheDocument();
+        expect(screen.getByDisplayValue('none')).toBeInTheDocument();
+        expect(screen.getByDisplayValue('custom')).toBeInTheDocument();
 
-        await waitFor(() => expect(screen.getByRole('radio', {name: /custom/})).toBeChecked());
+        await waitFor(() => expect(screen.getByDisplayValue('custom')).toBeChecked());
 
-        userEvent.click(screen.getByRole('radio', {name: /all/})); // Change mode to "all"
+        userEvent.click(screen.getByDisplayValue('all')); // Change mode to "all"
 
         userEvent.click(await screen.findByRole('button', {name: /submit/})); // Confirm
 

@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CheckboxOptionType, Popconfirm, Radio, RadioChangeEvent} from 'antd';
+import {Checkbox, CheckboxOptionType, Popconfirm, Radio, RadioChangeEvent} from 'antd';
+import {CheckboxValueType} from 'antd/lib/checkbox/Group';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -40,9 +41,10 @@ function ModeSelector({onChange, entityType, selectedMode}: IModeSelectorProps):
     const _handleOpenSelectionModeConfirm = () => setIsSelectionModeConfirmOpen(true);
     const _handleCloseSelectionModeConfirm = () => setIsSelectionModeConfirmOpen(false);
 
-    const _handleSelectionModeChange = async (e: RadioChangeEvent) => {
-        const value = e.target.value;
-        setPendingValueSave(value);
+    const _handleSelectionModeChange = async (values: CheckboxValueType[]) => {
+        const value = values.filter(e => e !== selectedMode)[0] as SelectionMode;
+
+        setPendingValueSave(value as SelectionMode);
 
         if ((value === 'all' || value === 'none') && selectedMode === 'custom') {
             _handleOpenSelectionModeConfirm();
@@ -86,7 +88,7 @@ function ModeSelector({onChange, entityType, selectedMode}: IModeSelectorProps):
     return (
         <Wrapper>
             <label>{t(`app_settings.${entityType}_settings.available`)}:</label>
-            <div>
+            <div style={{margin: '5px'}}>
                 <Popconfirm
                     okText={t('global.submit')}
                     cancelText={t('global.cancel')}
@@ -96,11 +98,9 @@ function ModeSelector({onChange, entityType, selectedMode}: IModeSelectorProps):
                     onConfirm={_handleSelectionModeConfirm}
                     onCancel={_handleCloseSelectionModeConfirm}
                 >
-                    <Radio.Group
+                    <Checkbox.Group
                         options={selectionModeOptions}
-                        optionType="button"
-                        buttonStyle="solid"
-                        value={selectedMode}
+                        value={[selectedMode]}
                         onChange={_handleSelectionModeChange}
                     />
                 </Popconfirm>

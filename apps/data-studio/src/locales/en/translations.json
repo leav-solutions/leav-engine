@@ -599,6 +599,7 @@
         "libraries_settings": {
             "no_libraries": "No libraries selected",
             "add_library": "Add library",
+            "new_library": "New library",
             "select_all":  "All",
             "select_none":  "None",
             "select_custom":  "Custom selection",
