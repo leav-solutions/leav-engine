@@ -79,6 +79,9 @@ export default function ({'core.domain.actionsList': actionsListDomain = null}: 
                             to: Joi.date().timestamp('unix').raw().required()
                         });
                         break;
+                    case AttributeFormats.COLOR:
+                        schema = Joi.string().hex();
+                        break;
                 }
 
                 return schema;
