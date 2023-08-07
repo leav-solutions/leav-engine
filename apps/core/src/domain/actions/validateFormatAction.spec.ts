@@ -68,7 +68,7 @@ describe('validateFormatAction', () => {
         expect(() => action(badColorValue, {}, {attribute: attrColor})).toThrow(ValidationError);
     });
 
-    test('Throw if invalid format COLOR, to be less or equal to 6 Caracteres ', async () => {
+    test('Throw if invalid format COLOR, to be less or equal to 6 characters ', async () => {
         const badColorValue = "FFFFFFFFFFFFFFFFFFF"
         expect(() => action(badColorValue, {}, {attribute: attrColor})).toThrow(ValidationError);
     });
