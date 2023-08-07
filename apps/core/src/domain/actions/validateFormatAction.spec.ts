@@ -20,6 +20,7 @@ describe('validateFormatAction', () => {
     const attrNumeric = {...mockAttr, format: AttributeFormats.NUMERIC};
     const attrDate = {...mockAttr, format: AttributeFormats.DATE};
     const attrBoolean = {...mockAttr, format: AttributeFormats.BOOLEAN};
+    const attrColor = {...mockAttr, format: AttributeFormats.COLOR};
     const attrExt = {
         ...mockAttr,
         format: AttributeFormats.EXTENDED,
@@ -55,5 +56,20 @@ describe('validateFormatAction', () => {
         // Extended
         const badExtValue = {street: 'test', city: {zipcode: 'aaa', name: 'Grenoble'}};
         expect(() => action(badExtValue, {}, {attribute: attrExt})).toThrow(ValidationError);
+    });
+
+    test('validateFormat COLOR', async () => {
+        const colorValue = "FFFFFF";
+        expect(action(colorValue, {}, {attribute: attrColor})).toBe(colorValue);
+    });
+
+    test('Throw if invalid format COLOR', async () => {
+        const badColorValue = "AZERTY"
+        expect(() => action(badColorValue, {}, {attribute: attrColor})).toThrow(ValidationError);
+    });
+
+    test('Throw if invalid format COLOR, to be less or equal to 6 Caracteres ', async () => {
+        const badColorValue = "FFFFFFFFFFFFFFFFFFF"
+        expect(() => action(badColorValue, {}, {attribute: attrColor})).toThrow(ValidationError);
     });
 });

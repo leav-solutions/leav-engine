@@ -80,7 +80,7 @@ export default function ({'core.domain.actionsList': actionsListDomain = null}: 
                         });
                         break;
                     case AttributeFormats.COLOR:
-                        schema = Joi.string().hex();
+                        schema = Joi.string().max(6).hex();
                         break;
                 }
 
@@ -92,12 +92,10 @@ export default function ({'core.domain.actionsList': actionsListDomain = null}: 
             if (!attributeSchema) {
                 return value;
             }
-
             // Joi might convert value before testing. raw() force it to send back the value we passed in
             const formatSchema = attributeSchema.raw();
 
             const validationRes = formatSchema.validate(value);
-
             if (!!validationRes.error) {
                 throw new ValidationError(actionsListDomain.handleJoiError(ctx.attribute, validationRes.error));
             }
