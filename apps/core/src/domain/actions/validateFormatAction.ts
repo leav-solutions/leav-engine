@@ -80,7 +80,11 @@ export default function ({'core.domain.actionsList': actionsListDomain = null}: 
                         });
                         break;
                     case AttributeFormats.COLOR:
+<<<<<<< HEAD
                         schema = Joi.string().max(6).hex();
+=======
+                        schema = Joi.string().hex();
+>>>>>>> 5aa39be2 (Add validateFormatAction for color)
                         break;
                 }
 
