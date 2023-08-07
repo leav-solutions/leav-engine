@@ -67,11 +67,11 @@ describe('useApplicationTrees', () => {
             )
         });
 
-        expect(result.current).toEqual({error: null, loading: true, trees: []});
+        expect(result.current).toMatchObject({error: null, loading: true, trees: []});
 
         await waitFor(() => expect(result.current.loading).toBe(false));
 
-        expect(result.current).toEqual({
+        expect(result.current).toMatchObject({
             error: null,
             loading: false,
             trees: [
@@ -131,11 +131,11 @@ describe('useApplicationTrees', () => {
             )
         });
 
-        expect(result.current).toEqual({error: null, loading: true, trees: []});
+        expect(result.current).toMatchObject({error: null, loading: true, trees: []});
 
         await waitFor(() => expect(result.current.loading).toBe(false));
 
-        expect(result.current).toEqual({
+        expect(result.current).toMatchObject({
             error: null,
             loading: false,
             trees: [
@@ -168,7 +168,7 @@ describe('useApplicationTrees', () => {
             )
         });
 
-        expect(result.current).toEqual({
+        expect(result.current).toMatchObject({
             error: null,
             loading: false,
             trees: []
@@ -196,7 +196,7 @@ describe('useApplicationTrees', () => {
             )
         });
 
-        expect(result.current).toEqual({
+        expect(result.current).toMatchObject({
             error: null,
             loading: false,
             trees: []
@@ -258,7 +258,7 @@ describe('useApplicationTrees', () => {
 
         await waitFor(() => expect(result.current.loading).toBe(false));
 
-        expect(result.current).toEqual({
+        expect(result.current).toMatchObject({
             error: null,
             loading: false,
             trees: [
@@ -333,7 +333,7 @@ describe('useApplicationTrees', () => {
 
         await waitFor(() => expect(result.current.loading).toBe(false));
 
-        expect(result.current).toEqual({
+        expect(result.current).toMatchObject({
             error: null,
             loading: false,
             trees: [

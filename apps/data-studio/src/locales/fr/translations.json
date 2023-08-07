@@ -614,6 +614,7 @@
         "trees_settings": {
             "no_trees": "Aucun arbre sélectionné",
             "add_tree": "Ajouter un arbre",
+            "new_tree": "Nouvel arbre",
             "select_all": "Tous",
             "select_none": "Aucun",
             "select_custom": "Sélection personnalisée",
