@@ -141,6 +141,19 @@ export default (attribute: IAttribute): IActionsListConfig => {
                 ]
             };
             break;
+        case AttributeFormats.COLOR:
+            defaultActions = {
+                [ActionsListEvents.SAVE_VALUE]: [
+                    {
+                        id: 'validateFormat',
+                        name: 'Validate Format',
+                        is_system: true
+                    },
+
+                ],
+                [ActionsListEvents.GET_VALUE]: []
+            };
+            break;
         default:
             defaultActions = {
                 [ActionsListEvents.SAVE_VALUE]: [
