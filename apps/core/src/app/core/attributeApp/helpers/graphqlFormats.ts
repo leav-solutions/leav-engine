@@ -37,6 +37,7 @@ export const getFormatFromAttribute = (format: AttributeFormats): string => {
     switch (format) {
         case AttributeFormats.TEXT:
         case AttributeFormats.ENCRYPTED:
+        case AttributeFormats.COLOR:
             return 'String';
         case AttributeFormats.NUMERIC:
         case AttributeFormats.DATE:
