@@ -48,7 +48,5 @@ export const getFormatFromAttribute = (format: AttributeFormats): string => {
             return 'JSONObject';
         case AttributeFormats.DATE_RANGE:
             return 'DateRangeValue';
-        case AttributeFormats.COLOR:
-            return 'String';
     }
 };
