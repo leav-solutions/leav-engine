@@ -21,11 +21,6 @@ function ColorInput({state, fieldValue, onChange,onFocus}: IStandardInputProps):
         paddingLeft: "15px"
     };
 
-    const _handleOpenPopup = () => {
-        console.log(fieldValue.isEditing);
-        return fieldValue.isEditing;
-    }
-
       return (
         <ColorPicker
             showText
