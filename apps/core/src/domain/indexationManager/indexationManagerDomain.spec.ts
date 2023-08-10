@@ -101,7 +101,8 @@ describe('Indexation Manager', () => {
         };
 
         const mockAttributeDomain: Mockify<IAttributeDomain> = {
-            getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+            getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
+            getLibraryAttributes: global.__mockPromise([{id: 'id'}])
         };
 
         const mockLibraryDomain: Mockify<ILibraryDomain> = {
@@ -132,6 +133,7 @@ describe('Indexation Manager', () => {
         expect(mockIndexationService.isLibraryListed).toBeCalledTimes(2);
         expect(mockIndexationService.listLibrary).toBeCalledTimes(2);
         expect(mockAttributeDomain.getLibraryFullTextAttributes).toBeCalledTimes(2);
+        expect(mockAttributeDomain.getLibraryAttributes).toBeCalledTimes(2);
         expect(mockRecordDomain.find).toBeCalledTimes(2);
         expect(mockRecordDomain.getRecordFieldValue).toBeCalledTimes(2);
         expect(mockIndexationService.indexRecord).toBeCalledTimes(2);
