@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CheckOutlined, CloseOutlined, FileTextOutlined} from '@ant-design/icons';
 import {AnyPrimitive} from '@leav/utils';
-import {Switch, Tooltip, Typography} from 'antd';
+import {Switch, Tag, Tooltip, Typography} from 'antd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {stringifyDateRangeValue} from 'utils';
@@ -47,6 +47,29 @@ function StandardCell({cellData, values}: ISimpleCellProps): JSX.Element {
 
     const displayedValues = values.map(val => _getValueByFormat(val)).join(', ');
 
+    const _getElementToDisplay = () => {
+        switch (cellData.format){
+            case AttributeFormat.boolean:
+                return (
+                    <Switch
+                        disabled
+                        checked={!!values[0]}
+                        checkedChildren={<CheckOutlined />}
+                        unCheckedChildren={<CloseOutlined />}
+                    />
+                );
+            case AttributeFormat.color:
+                const colorHexValue = "#" + displayedValues; 
+                
+                return (
+                    <Tag bordered={true} color={colorHexValue} >{colorHexValue}</Tag>
+                );
+            default:
+                return displayedValues;
+        }
+    }
+
+
     return (
         <Wrapper format={cellData.format}>
             {cellData.format === AttributeFormat.extended ? (
@@ -61,16 +84,7 @@ function StandardCell({cellData, values}: ISimpleCellProps): JSX.Element {
                     }}
                     style={{margin: 0}}
                 >
-                    {cellData.format === AttributeFormat.boolean ? (
-                        <Switch
-                            disabled
-                            checked={!!values[0]}
-                            checkedChildren={<CheckOutlined />}
-                            unCheckedChildren={<CloseOutlined />}
-                        />
-                    ) : (
-                        displayedValues
-                    )}
+                    {_getElementToDisplay()}
                 </Typography.Paragraph>
             )}
         </Wrapper>
