@@ -36,6 +36,7 @@ function ReserveAttribute({attribute}: IReserveAttributeProps): JSX.Element {
     const _getElement = () => {
         const elemByFormat: {[format in AttributeFormat]: IUIElement} = {
             [AttributeFormat.boolean]: formElements[FieldTypes.CHECKBOX],
+            [AttributeFormat.color]: formElements[FieldTypes.TEXT_INPUT],
             [AttributeFormat.date]: formElements[FieldTypes.DATE],
             [AttributeFormat.encrypted]: formElements[FieldTypes.ENCRYPTED],
             [AttributeFormat.extended]: formElements[FieldTypes.TEXT_INPUT],
