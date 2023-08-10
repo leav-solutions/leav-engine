@@ -338,10 +338,9 @@ function StandardFieldValue({
     const _getInput = (): JSX.Element => {
         if (!fieldValue.isEditing && attribute.format !== AttributeFormat.boolean) {
             let displayedValue = String(fieldValue.displayValue);
-            if(attribute.format == AttributeFormat.color){
-                console.log("first field value :" )
-                console.log(    fieldValue.value !== null)
-            }
+            if(attribute.format == AttributeFormat.color && (fieldValue.value == null || fieldValue.value.value == null)){
+                fieldValue.value = null;
+            } 
             const hasValue = fieldValue.value !== null;
 
             if (hasValue) {
@@ -364,10 +363,6 @@ function StandardFieldValue({
                         }
                         break;
                     case AttributeFormat.color:
-                        console.log("inside swithc")
-                        console.log(hasValue)
-                        console.log(fieldValue.value);
-                        console.log(fieldValue["attribute"])
                         return <ColorInput 
                             state={state}
                             fieldValue={fieldValue}

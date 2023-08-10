@@ -9,6 +9,8 @@ import styled from 'styled-components';
 import {stringifyDateRangeValue} from 'utils';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
 import {IDateRangeValue, ITableCell} from '_types/types';
+import { cp } from 'fs';
+import { isEmpty } from 'lodash';
 
 interface ISimpleCellProps {
     cellData: ITableCell;
@@ -59,24 +61,29 @@ function StandardCell({cellData, values}: ISimpleCellProps): JSX.Element {
                     />
                 );
             case AttributeFormat.color:
-                const colorHexValue = "#" + displayedValues; 
-                let tagStyle: React.CSSProperties;
-                
-                const hexToRGB = (Values) => {
-                    Values = '0x' + Values
-                    const red = Values >> 16 & 0xFF
-                    const green = Values >> 8 & 0xFF
-                    const blue = Values & 0xFF
-                    tagStyle = ((red*0.299 + green*0.587 + blue*0.114) > 186 ) ? {
-                        color:"black"
-                    } : {
-                        color:"white"
-                    };
-                    return tagStyle;
-                  }
-                return (
-                    <Tag bordered={true} color={colorHexValue} style={hexToRGB(displayedValues)}>{colorHexValue}</Tag>
-                );
+                if(!isEmpty(displayedValues)){
+                    const colorHexValue = "#" + displayedValues; 
+                    let tagStyle: React.CSSProperties;
+                    
+                    const hexToRGB = (Values) => {
+                        Values = '0x' + Values
+                        const red = Values >> 16 & 0xFF
+                        const green = Values >> 8 & 0xFF
+                        const blue = Values & 0xFF
+                        tagStyle = ((red*0.299 + green*0.587 + blue*0.114) > 186 ) ? {
+                            color:"black"
+                        } : {
+                            color:"white"
+                        };
+                        return tagStyle;
+                    }
+                    return (
+                        <Tag bordered={true} color={colorHexValue} style={hexToRGB(displayedValues)}>{colorHexValue}</Tag>
+                    );
+                }
+                else{
+                    return displayedValues
+                }
             default:
                 return displayedValues;
         }
