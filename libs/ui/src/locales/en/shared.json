@@ -88,6 +88,7 @@
         "format_extended": "Extended",
         "format_numeric": "Numeric",
         "format_text": "Text",
+        "format_color": "Color",
         "delete_confirm": "Do you really want to delete this attribute?",
         "add_attribute": "Add attribute",
         "select_attributes": "Select attributes",
