@@ -22,6 +22,7 @@ export enum ApplicationType {
 
 export enum AttributeFormat {
     boolean = 'boolean',
+    color = 'color',
     date = 'date',
     date_range = 'date_range',
     encrypted = 'encrypted',
@@ -117,7 +118,8 @@ export enum PermissionsActions {
     detach = 'detach',
     edit_children = 'edit_children',
     edit_record = 'edit_record',
-    edit_value = 'edit_value'
+    edit_value = 'edit_value',
+    fake_plugin_permission = 'fake_plugin_permission'
 }
 
 export enum RecordFilterCondition {
