@@ -22,7 +22,8 @@ const alignmentByFormat: Record<AttributeFormat, 'left' | 'right' | 'center'> = 
     [AttributeFormat.date]: 'left',
     [AttributeFormat.date_range]: 'left',
     [AttributeFormat.extended]: 'left',
-    [AttributeFormat.encrypted]: 'left'
+    [AttributeFormat.encrypted]: 'left',
+    [AttributeFormat.color]: 'left'
 };
 
 const Wrapper = styled.div<{format: AttributeFormat}>`
