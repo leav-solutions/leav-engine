@@ -515,7 +515,8 @@
             "format_encrypted": "Encrypted",
             "format_extended": "Extended",
             "format_numeric": "Numeric",
-            "format_text": "Text"
+            "format_text": "Text",
+            "format_color": "Color"
         },
         "date_range_value": "From {{from}} to {{to}}"
     },
