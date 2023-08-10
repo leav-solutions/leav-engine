@@ -48,6 +48,7 @@ import NumberInput from './Inputs/NumberInput';
 import TextInput from './Inputs/TextInput';
 import ValuesList from './ValuesList';
 import {IValueOfValuesList} from './ValuesList/ValuesList';
+import ColorInput from './Inputs/ColorInput';
 
 const ErrorMessage = styled.div`
     color: ${themeVars.errorColor};
@@ -176,14 +177,15 @@ const FormItem = styled(Form.Item)`
     }
 `;
 
-const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInputProps) => JSX.Element} = {
+const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInputProps ) => JSX.Element} = {
     [AttributeFormat.text]: TextInput,
     [AttributeFormat.date]: DateInput,
     [AttributeFormat.date_range]: DateRangeInput,
     [AttributeFormat.boolean]: CheckboxInput,
     [AttributeFormat.numeric]: NumberInput,
     [AttributeFormat.encrypted]: EncryptedInput,
-    [AttributeFormat.extended]: TextInput
+    [AttributeFormat.extended]: TextInput,
+    [AttributeFormat.color]: ColorInput
 };
 
 type IStringValuesListConf = RECORD_FORM_recordForm_elements_attribute_StandardAttribute_values_list_StandardStringValuesListConf;
@@ -336,6 +338,10 @@ function StandardFieldValue({
     const _getInput = (): JSX.Element => {
         if (!fieldValue.isEditing && attribute.format !== AttributeFormat.boolean) {
             let displayedValue = String(fieldValue.displayValue);
+            if(attribute.format == AttributeFormat.color){
+                console.log("first field value :" )
+                console.log(    fieldValue.value !== null)
+            }
             const hasValue = fieldValue.value !== null;
 
             if (hasValue) {
@@ -357,9 +363,23 @@ function StandardFieldValue({
                             );
                         }
                         break;
+                    case AttributeFormat.color:
+                        console.log("inside swithc")
+                        console.log(hasValue)
+                        console.log(fieldValue.value);
+                        console.log(fieldValue["attribute"])
+                        return <ColorInput 
+                            state={state}
+                            fieldValue={fieldValue}
+                            onChange={_handleValueChange}
+                            onFocus={_handleFocus}
+                            onSubmit={_handleSubmit}
+                            onPressEnter={_handlePressEnter}
+                            settings={state.formElement.settings}
+                            inputRef={inputRef}
+                    />
                 }
             }
-
             return (
                 <Input
                     key="display"
