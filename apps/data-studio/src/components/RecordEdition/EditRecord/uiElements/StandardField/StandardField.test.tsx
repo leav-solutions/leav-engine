@@ -213,7 +213,6 @@ describe('StandardField', () => {
 
         const inputElem = screen.getByRole('textbox');
         userEvent.click(inputElem);
-
         const calendarElem = screen.getByTestId('datepicker');
         expect(calendarElem).toBeInTheDocument();
 
@@ -222,6 +221,46 @@ describe('StandardField', () => {
         });
         expect(mockHandleSubmit).toHaveBeenCalled();
     });
+
+    test('Render color field', async () => {
+        const values = "FFFFFF";
+        const recordValuesDate = [
+            {
+                ...mockRecordValuesCommon,
+                value: values,
+                raw_value: values
+            }
+        ];
+        render(
+            <StandardField
+                element={{
+                    ...mockFormElementInput,
+                    attribute: {...mockFormAttribute, format: AttributeFormat.color},
+                    values: recordValuesDate
+                }}
+                {...baseProps}
+            />
+        );
+
+        // Open ColorPicker Element
+        const colorElem = screen.getByText('#' + values);
+        await act(async () => {
+            userEvent.click(colorElem);
+        });      
+        
+        const colorPickerElem = await screen.getByRole('textbox');
+        expect(colorPickerElem).toBeInTheDocument();
+        
+        // Update color value 
+        const newValues = '000000'; 
+        userEvent.type(colorPickerElem,newValues)
+        await act(async () => {
+            userEvent.click(screen.getByText('global.submit'));
+        });
+        expect(colorElem).toHaveTextContent("#" + newValues)
+        expect(mockHandleSubmit).toHaveBeenCalled();
+
+    }); 
 
     test('Render checkbox', async () => {
         const recordValuesBoolean = [
