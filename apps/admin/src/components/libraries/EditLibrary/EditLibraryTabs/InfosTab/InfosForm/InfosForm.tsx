@@ -249,21 +249,23 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                         options={behaviorOptions}
                     />
                 </FormFieldWrapper>
-                <FormFieldWrapper error={_getErrorByField('libraries.fulltext_attributes')}>
-                    <Form.Dropdown
-                        search
-                        selection
-                        multiple
-                        options={libAttributesOptions}
-                        name="fullTextAttributes"
-                        aria-label="fullTextAttributes"
-                        disabled={!isExistingLib || readonly}
-                        label={t('libraries.fulltext_attributes')}
-                        value={fullTextAttributes}
-                        onChange={_handleChangeWithSubmit}
-                        onBlur={_handleBlur}
-                    />
-                </FormFieldWrapper>
+                {isExistingLib && (
+                    <FormFieldWrapper error={_getErrorByField('libraries.fulltext_attributes')}>
+                        <Form.Dropdown
+                            search
+                            selection
+                            multiple
+                            options={libAttributesOptions}
+                            name="fullTextAttributes"
+                            aria-label="fullTextAttributes"
+                            disabled={readonly}
+                            label={t('libraries.fulltext_attributes')}
+                            value={fullTextAttributes}
+                            onChange={_handleChangeWithSubmit}
+                            onBlur={_handleBlur}
+                        />
+                    </FormFieldWrapper>
+                )}
                 {isExistingLib && (
                     <FormFieldWrapper error={_getErrorByField('defaultView')}>
                         <ViewSelector
@@ -280,61 +282,65 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
                         />
                     </FormFieldWrapper>
                 )}
-                <Form.Group grouped>
-                    <label>{t('libraries.record_identity')}</label>
-                    <FormFieldWrapper error={_getErrorByField('recordIdentityConf.label')}>
-                        <Form.Dropdown
-                            search
-                            selection
-                            options={libAttributesOptions}
-                            name="recordIdentityConf.label"
-                            disabled={readonly}
-                            label={t('libraries.record_identity_label')}
-                            value={recordIdentityConf && recordIdentityConf.label ? recordIdentityConf.label : ''}
-                            onChange={_handleChangeWithSubmit}
-                        />
-                    </FormFieldWrapper>
-                    <FormFieldWrapper error={_getErrorByField('recordIdentityConf.color')}>
-                        <Form.Dropdown
-                            search
-                            selection
-                            options={libAttributesOptions}
-                            name="recordIdentityConf.color"
-                            disabled={readonly}
-                            label={t('libraries.record_identity_color')}
-                            value={recordIdentityConf && recordIdentityConf.color ? recordIdentityConf.color : ''}
-                            onChange={_handleChangeWithSubmit}
-                        />
-                    </FormFieldWrapper>
-                    <FormFieldWrapper error={_getErrorByField('recordIdentityConf.preview')}>
-                        <Form.Dropdown
-                            search
-                            selection
-                            options={libAttributesOptions}
-                            name="recordIdentityConf.preview"
-                            disabled={readonly}
-                            label={t('libraries.record_identity_preview')}
-                            value={recordIdentityConf && recordIdentityConf.preview ? recordIdentityConf.preview : ''}
-                            onChange={_handleChangeWithSubmit}
-                        />
-                    </FormFieldWrapper>
-                    <FormFieldWrapper error={_getErrorByField('recordIdentityConf.preview')}>
-                        <Form.Dropdown
-                            search
-                            selection
-                            options={libTreeAttributesOptions}
-                            name="recordIdentityConf.treeColorPreview"
-                            disabled={readonly}
-                            label={t('libraries.record_identity_dependent_color_and_preview')}
-                            value={
-                                recordIdentityConf && recordIdentityConf.treeColorPreview
-                                    ? recordIdentityConf.treeColorPreview
-                                    : ''
-                            }
-                            onChange={_handleChangeWithSubmit}
-                        />
-                    </FormFieldWrapper>
-                </Form.Group>
+                {isExistingLib && (
+                    <Form.Group grouped disabled={!isExistingLib || readonly}>
+                        <label>{t('libraries.record_identity')}</label>
+                        <FormFieldWrapper error={_getErrorByField('recordIdentityConf.label')}>
+                            <Form.Dropdown
+                                search
+                                selection
+                                options={libAttributesOptions}
+                                name="recordIdentityConf.label"
+                                disabled={readonly}
+                                label={t('libraries.record_identity_label')}
+                                value={recordIdentityConf && recordIdentityConf.label ? recordIdentityConf.label : ''}
+                                onChange={_handleChangeWithSubmit}
+                            />
+                        </FormFieldWrapper>
+                        <FormFieldWrapper error={_getErrorByField('recordIdentityConf.color')}>
+                            <Form.Dropdown
+                                search
+                                selection
+                                options={libAttributesOptions}
+                                name="recordIdentityConf.color"
+                                disabled={readonly}
+                                label={t('libraries.record_identity_color')}
+                                value={recordIdentityConf && recordIdentityConf.color ? recordIdentityConf.color : ''}
+                                onChange={_handleChangeWithSubmit}
+                            />
+                        </FormFieldWrapper>
+                        <FormFieldWrapper error={_getErrorByField('recordIdentityConf.preview')}>
+                            <Form.Dropdown
+                                search
+                                selection
+                                options={libAttributesOptions}
+                                name="recordIdentityConf.preview"
+                                disabled={readonly}
+                                label={t('libraries.record_identity_preview')}
+                                value={
+                                    recordIdentityConf && recordIdentityConf.preview ? recordIdentityConf.preview : ''
+                                }
+                                onChange={_handleChangeWithSubmit}
+                            />
+                        </FormFieldWrapper>
+                        <FormFieldWrapper error={_getErrorByField('recordIdentityConf.preview')}>
+                            <Form.Dropdown
+                                search
+                                selection
+                                options={libTreeAttributesOptions}
+                                name="recordIdentityConf.treeColorPreview"
+                                disabled={readonly}
+                                label={t('libraries.record_identity_dependent_color_and_preview')}
+                                value={
+                                    recordIdentityConf && recordIdentityConf.treeColorPreview
+                                        ? recordIdentityConf.treeColorPreview
+                                        : ''
+                                }
+                                onChange={_handleChangeWithSubmit}
+                            />
+                        </FormFieldWrapper>
+                    </Form.Group>
+                )}
                 <FormFieldWrapper error={_getErrorByField('icon.whoAmI')}>
                     <FileSelector
                         onChange={_handleIconChange}
