@@ -31,7 +31,7 @@ interface IDeps {
     'core.infra.indexation.indexationService'?: IIndexationService;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.domain.record': recordDomain = null,
@@ -53,6 +53,7 @@ export default function ({
             ctx
         );
 
+        // We retrieve the properties of the indexed attributes to be updated
         const attributesToEdit = {up: [], del: []};
         if (attributes) {
             const libraryAttributes = await attributeDomain.getLibraryAttributes(findRecordParams.library, ctx);
@@ -98,6 +99,8 @@ export default function ({
         });
 
         for (const record of records.list) {
+            // We iterate on the attributes to be edited and define new values for these attributes.
+            // The _toUp function returns the updated value of an attribute. Attributes to be deleted are set to null.
             const data = (await Promise.all([...attributesToEdit.up.map(async a => _toUp(record, a))]))
                 .concat(attributesToEdit.del.map(a => ({[a.id]: null})))
                 .reduce((acc, e) => ({...acc, ...e}), {});
@@ -172,6 +175,8 @@ export default function ({
 
         const libs = (await libraryDomain.getLibraries({ctx})).list;
 
+        // We cross-reference the attributes that point to the library that has been previously updated and
+        // the indexed attributes of each library. If these libraries use them, we need to update the indexes.
         for (const l of libs) {
             const intersections = intersectionBy(l.fullTextAttributes, attributesToUpdate, 'id');
 
@@ -180,7 +185,7 @@ export default function ({
 
                 if (typeof toRecordId !== 'undefined') {
                     filters = intersections.map(a => ({
-                        field: `${a.id}.${a.linked_tree ? `${libraryId}.` : ''}id`,
+                        field: `${a.id}.${a.linked_tree ? `${libraryId}.` : ''}id`, // if field is a tree attribute, we must specify the library
                         condition: AttributeCondition.EQUAL,
                         value: toRecordId
                     }));
