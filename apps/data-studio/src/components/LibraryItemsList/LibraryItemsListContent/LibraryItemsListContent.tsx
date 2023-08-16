@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation, useQuery} from '@apollo/client';
+import {ApolloError, useMutation, useQuery} from '@apollo/client';
 import {useLang, ErrorDisplay, Loading} from '@leav/ui';
 import {getSelectedViewKey, panelSize, viewSettingsField} from 'constants/constants';
 import {SelectionModeContext} from 'context';
@@ -14,7 +14,7 @@ import {
 import {SearchContext} from 'hooks/useSearchReducer/searchContext';
 import searchReducer, {initialSearchState, SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {ISearchRecord} from 'hooks/useSearchReducer/_types';
-import {useEffect, useReducer} from 'react';
+import {useEffect, useReducer, useState} from 'react';
 import {useAppSelector} from 'reduxStore/store';
 import styled, {CSSObject} from 'styled-components';
 import {objectValueVersionToArray} from 'utils';
@@ -154,8 +154,8 @@ function LibraryItemsListContent({
         onCompleted: _applyResults,
         onError: err => {
             searchDispatch({
-                type: SearchActionTypes.SET_LOADING,
-                loading: false
+                type: SearchActionTypes.UPDATE_RESULT,
+                error: err
             });
         }
     });
@@ -239,7 +239,7 @@ function LibraryItemsListContent({
                 >
                     <SideItems />
                     {isLoading && <Loading />}
-                    {!isLoading && getRecordsError && <ErrorDisplay message={getRecordsError.message} />}
+                    {!isLoading && searchState.error && <ErrorDisplay message={searchState.error.message} />}
                     {!isLoading &&
                         !getRecordsError &&
                         (!searchState.records.length ? <LibraryItemsListEmpty /> : <DisplayTypeSelector />)}

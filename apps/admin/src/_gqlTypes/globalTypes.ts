@@ -326,6 +326,13 @@ export interface LibraryInput {
     permissions_conf?: Treepermissions_confInput | null;
     recordIdentityConf?: RecordIdentityConfInput | null;
     defaultView?: string | null;
+    previewsSettings?: LibraryPreviewsSettingsInput[] | null;
+}
+
+export interface LibraryPreviewsSettingsInput {
+    label: SystemTranslation;
+    description?: SystemTranslation | null;
+    versions: PreviewVersionInput;
 }
 
 export interface Pagination {
@@ -369,6 +376,17 @@ export interface PermissionTarget {
 export interface PermissionsTreeTargetInput {
     tree: string;
     nodeId?: string | null;
+}
+
+export interface PreviewVersionInput {
+    background: string;
+    density: number;
+    sizes: PreviewVersionSizeInput[];
+}
+
+export interface PreviewVersionSizeInput {
+    name: string;
+    size: number;
 }
 
 export interface RecordIdentityConfInput {

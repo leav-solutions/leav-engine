@@ -2,9 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React from 'react';
-import {GET_GLOBAL_SETTINGS_globalSettings_icon_whoAmI_preview} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 
-type PossibleSizes = keyof Omit<GET_GLOBAL_SETTINGS_globalSettings_icon_whoAmI_preview, 'pdf'>;
+type PossibleSizes = 'tiny' | 'small' | 'medium' | 'big' | 'huge';
 
 interface IAppIconProps {
     size: PossibleSizes;

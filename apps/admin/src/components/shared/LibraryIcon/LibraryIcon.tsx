@@ -21,7 +21,7 @@ function LibraryIcon({library}: ILibraryIconProps): JSX.Element {
     const behavior = library?.behavior ?? LibraryBehavior.standard;
 
     return library?.icon?.whoAmI?.preview ? (
-        <RecordPreview image={library.icon.whoAmI.preview.small} color={null} label={null} />
+        <RecordPreview image={library.icon.whoAmI.preview.small as string} color={null} label={null} />
     ) : (
         <Icon data-testid="generic-icon" name={iconNameByBehavior[behavior]} size="big" />
     );
