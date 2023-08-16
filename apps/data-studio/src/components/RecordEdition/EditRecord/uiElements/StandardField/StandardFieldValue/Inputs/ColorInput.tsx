@@ -24,6 +24,7 @@ function ColorInput({state, fieldValue, onChange,onFocus}: IStandardInputProps):
       return (
         <ColorPicker
             showText
+            disabledAlpha
             disabled={state.isReadOnly}
             value={colorValue}
             style={colorPickerStyle}
