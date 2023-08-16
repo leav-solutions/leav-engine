@@ -37,7 +37,6 @@ function DeleteAllValuesBtn({onDelete}: IDeleteAllValuesBtnProps): JSX.Element {
                         aria-label="delete-all-values"
                         icon={<DeleteOutlined />}
                         shape="circle"
-                        onClick={e => e.stopPropagation()}
                         loading={isLoading}
                     />
                 </Tooltip>
