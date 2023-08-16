@@ -62,23 +62,17 @@ function StandardCell({cellData, values}: ISimpleCellProps): JSX.Element {
                 );
             case AttributeFormat.color:
                 if(!isEmpty(displayedValues)){
-                    const colorHexValue = "#" + displayedValues; 
-                    let tagStyle: React.CSSProperties;
-                    
-                    const hexToRGB = (Values) => {
-                        Values = '0x' + Values
-                        const red = Values >> 16 & 0xFF
-                        const green = Values >> 8 & 0xFF
-                        const blue = Values & 0xFF
-                        tagStyle = ((red*0.299 + green*0.587 + blue*0.114) > 186 ) ? {
-                            color:"black"
-                        } : {
-                            color:"white"
-                        };
-                        return tagStyle;
+                    const colorHexValue = "#" + displayedValues;          
+
+                    const hexToRGB = (values : string) => {
+                        const red = parseInt(values.slice(1, 3), 16);
+                        const green = parseInt(values.slice(3, 5), 16);
+                        const blue = parseInt(values.slice(5, 7), 16);
+                        return (red*0.299 + green*0.587 + blue*0.114) > 186 ? { color:"black"} : { color:"white" };
                     }
+
                     return (
-                        <Tag bordered={true} color={colorHexValue} style={hexToRGB(displayedValues)}>{colorHexValue}</Tag>
+                        <Tag bordered={true} color={colorHexValue} style={hexToRGB(colorHexValue)}>{colorHexValue}</Tag>
                     );
                 }
                 else{

@@ -338,7 +338,7 @@ function StandardFieldValue({
     const _getInput = (): JSX.Element => {
         if (!fieldValue.isEditing && attribute.format !== AttributeFormat.boolean) {
             let displayedValue = String(fieldValue.displayValue);
-            if(attribute.format == AttributeFormat.color && (fieldValue.value == null || fieldValue.value.value == null)){
+            if(attribute.format === AttributeFormat.color && (fieldValue.value === null || fieldValue.value.value === null)){
                 fieldValue.value = null;
             } 
             const hasValue = fieldValue.value !== null;
