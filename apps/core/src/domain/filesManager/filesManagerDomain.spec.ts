@@ -79,6 +79,7 @@ jest.mock('amqplib', () => ({
 }));
 
 const logger: Mockify<winston.Winston> = {
+    info: jest.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
     error: jest.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
     warn: jest.fn((...args) => console.log(args)) // eslint-disable-line no-restricted-syntax
 };

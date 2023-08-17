@@ -26,7 +26,13 @@ export default (behavior: LibraryBehavior, libraryId: string): string[] => {
             getPreviewsAttributeName(libraryId),
             getPreviewsStatusAttributeName(libraryId)
         ],
-        [LibraryBehavior.DIRECTORIES]: Object.values(FilesAttributes)
+        [LibraryBehavior.DIRECTORIES]: [
+            FilesAttributes.ROOT_KEY,
+            FilesAttributes.FILE_PATH,
+            FilesAttributes.FILE_NAME,
+            FilesAttributes.INODE,
+            FilesAttributes.ACTIVE
+        ]
     };
 
     // Using a Set to prevent duplicates

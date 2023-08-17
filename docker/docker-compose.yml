@@ -126,13 +126,17 @@ x-env-preview-generator: &env-preview-generator
   ICC_PATH: /app/apps/preview-generator/profile/
   APP_ROOT_PATH: *dir-preview_generator
 
+x-env-build-core: &env-build-core
+  context: ../apps/core
+  dockerfile: ../../docker/DOCKERFILES/CORE/Dockerfile
+
 ############################
 
 services:
   # The core is in charge of installing dependencies for ALL services. Each service must for wait the core, and then
   # just do their job, not having to handle install.
   core:
-    image: *node_image
+    build: *env-build-core
     stdin_open: true
     labels:
       - traefik.enable=true
@@ -174,7 +178,7 @@ services:
       ]
 
   indexation-manager:
-    image: *node_image
+    build: *env-build-core
     stdin_open: true
     environment:
       <<: [*env-core, *env-amqp]
@@ -194,7 +198,7 @@ services:
       ]
 
   tasks-manager-master:
-    image: *node_image
+    build: *env-build-core
     stdin_open: true
     environment:
       <<: [*env-core, *env-amqp]
@@ -216,7 +220,7 @@ services:
       ]
 
   tasks-manager-worker:
-    image: *node_image
+    build: *env-build-core
     restart: always
     environment:
       <<: [*env-core, *env-amqp]
@@ -365,7 +369,7 @@ services:
       ]
 
   files-manager:
-    image: *node_image
+    build: *env-build-core
     restart: always
     environment:
       <<: [*env-core, *env-amqp]

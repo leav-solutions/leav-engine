@@ -6221,6 +6221,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@photostructure/tz-lookup@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "@photostructure/tz-lookup@npm:7.0.0"
+  checksum: 859ddaa6b138b00f5fa799ba5ea34885b45cedbf30995d21c2bd51ab847d2fd9e7ccda6a6ef5e38f47785fdf2eb95157444a81f16e8d68dd23416add44cac22a
+  languageName: node
+  linkType: hard
+
 "@popperjs/core@npm:^2.6.0":
   version: 2.11.4
   resolution: "@popperjs/core@npm:2.11.4"
@@ -7623,6 +7630,13 @@ __metadata:
   version: 4.0.1
   resolution: "@types/long@npm:4.0.1"
   checksum: ff9653c33f5000d0f131fd98a950a0343e2e33107dd067a97ac4a3b9678e1a2e39ea44772ad920f54ef6e8f107f76bc92c2584ba905a0dc4253282a4101166d0
+  languageName: node
+  linkType: hard
+
+"@types/luxon@npm:^3.3.0":
+  version: 3.3.1
+  resolution: "@types/luxon@npm:3.3.1"
+  checksum: da8f6158edacae1430f3eca5f4ab4891200ffb34aa521ef6bae407a3c50b3854907098bc4535fb2a66a2779738f3c6c48fdfd86f01117a6f4844b18536cdb7c0
   languageName: node
   linkType: hard
 
@@ -10427,6 +10441,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"batch-cluster@npm:^12.1.0":
+  version: 12.1.0
+  resolution: "batch-cluster@npm:12.1.0"
+  checksum: 4236b1186d888f480bc5624471ce55a008435f791cec86cdb516b3f6908df765f734bdce7d55e12fa425daa4c68794a35d3cecfa8327b2d0f909137947ad0af9
+  languageName: node
+  linkType: hard
+
 "bcryptjs@npm:2.4.3":
   version: 2.4.3
   resolution: "bcryptjs@npm:2.4.3"
@@ -11954,6 +11975,7 @@ __metadata:
     compression: 1.7.4
     cookie-parser: 1.4.6
     exceljs: 4.2.0
+    exiftool-vendored: 22.0.0
     express: 4.18.2
     express-useragent: 1.0.15
     glob: 7.1.6
@@ -11983,6 +12005,7 @@ __metadata:
     nodemailer: 6.8.0
     nodemon: 1.19.4
     npm-run-all: 4.1.5
+    poppler-simple: 0.11.2
     prettier: 1.19.1
     progress-stream: 2.0.0
     redis: 4.0.4
@@ -14087,6 +14110,40 @@ __metadata:
   languageName: node
   linkType: hard
 
+"exiftool-vendored.exe@npm:12.62.0":
+  version: 12.62.0
+  resolution: "exiftool-vendored.exe@npm:12.62.0"
+  conditions: os=win32
+  languageName: node
+  linkType: hard
+
+"exiftool-vendored.pl@npm:12.62.0":
+  version: 12.62.0
+  resolution: "exiftool-vendored.pl@npm:12.62.0"
+  conditions: "!os=win32"
+  languageName: node
+  linkType: hard
+
+"exiftool-vendored@npm:22.0.0":
+  version: 22.0.0
+  resolution: "exiftool-vendored@npm:22.0.0"
+  dependencies:
+    "@photostructure/tz-lookup": ^7.0.0
+    "@types/luxon": ^3.3.0
+    batch-cluster: ^12.1.0
+    exiftool-vendored.exe: 12.62.0
+    exiftool-vendored.pl: 12.62.0
+    he: ^1.2.0
+    luxon: ^3.3.0
+  dependenciesMeta:
+    exiftool-vendored.exe:
+      optional: true
+    exiftool-vendored.pl:
+      optional: true
+  checksum: 05943031e0636f6f8455dcc558c2bff6b0856114f97da6a7ea6711cd10d046b3108146aa0447de4429661971604f93396a6bb7016245b532e6e828169b202dad
+  languageName: node
+  linkType: hard
+
 "exit@npm:^0.1.2":
   version: 0.1.2
   resolution: "exit@npm:0.1.2"
@@ -15627,7 +15684,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"he@npm:1.2.0":
+"he@npm:1.2.0, he@npm:^1.2.0":
   version: 1.2.0
   resolution: "he@npm:1.2.0"
   bin:
@@ -19496,6 +19553,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"luxon@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "luxon@npm:3.3.0"
+  checksum: 50cf17a0dc155c3dcacbeae8c0b7e80db425e0ba97b9cbdf12a7fc142d841ff1ab1560919f033af46240ed44e2f70c49f76e3422524c7fc8bb8d81ca47c66187
+  languageName: node
+  linkType: hard
+
 "lz-string@npm:^1.4.4":
   version: 1.4.4
   resolution: "lz-string@npm:1.4.4"
@@ -20107,6 +20171,15 @@ __metadata:
   dependencies:
     node-gyp: latest
   checksum: 33e1bb4dfca447fe37d4bb5889be55de154828632c8d38646db67293a21afd61ed9909cdf1b886214a64707d935926c4e60e2b09de9edfc2ad58de31d6ce8f39
+  languageName: node
+  linkType: hard
+
+"nan@npm:^2.15.0":
+  version: 2.17.0
+  resolution: "nan@npm:2.17.0"
+  dependencies:
+    node-gyp: latest
+  checksum: ec609aeaf7e68b76592a3ba96b372aa7f5df5b056c1e37410b0f1deefbab5a57a922061e2c5b369bae9c7c6b5e6eecf4ad2dac8833a1a7d3a751e0a7c7f849ed
   languageName: node
   linkType: hard
 
@@ -21312,6 +21385,18 @@ __metadata:
   dependencies:
     semver-compare: ^1.0.0
   checksum: d87c41581a2a022fbe25965a97006238cd9b8cbbf49b39f78d262548149a9d30bd2bdf35fec3d810e0001e630cd46ef13c7e19c389dea8de7e64db271a2381bb
+  languageName: node
+  linkType: hard
+
+"poppler-simple@npm:0.11.2":
+  version: 0.11.2
+  resolution: "poppler-simple@npm:0.11.2"
+  dependencies:
+    bluebird: ^3.7.2
+    nan: ^2.15.0
+    node-gyp: latest
+    typescript: ^4.6.3
+  checksum: f64efea65e1e4d8046028e1c4517197f8492160ea80e1462d5e760342e49111869309e1af3ac9dbeb485a8e58520b5ee716bbd767de44f9539f0d6a4265e9999
   languageName: node
   linkType: hard
 
@@ -25842,6 +25927,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:^4.6.3":
+  version: 4.9.5
+  resolution: "typescript@npm:4.9.5"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: ee000bc26848147ad423b581bd250075662a354d84f0e06eb76d3b892328d8d4440b7487b5a83e851b12b255f55d71835b008a66cbf8f255a11e4400159237db
+  languageName: node
+  linkType: hard
+
 "typescript@patch:typescript@4.8.3#~builtin<compat/typescript>":
   version: 4.8.3
   resolution: "typescript@patch:typescript@npm%3A4.8.3#~builtin<compat/typescript>::version=4.8.3&hash=a1c5e5"
@@ -25849,6 +25944,16 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 2222d2382fb3146089b1d27ce2b55e9d1f99cc64118f1aba75809b693b856c5d3c324f052f60c75b577947fc538bc1c27bad0eb76cbdba9a63a253489504ba7e
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@^4.6.3#~builtin<compat/typescript>":
+  version: 4.9.5
+  resolution: "typescript@patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=a1c5e5"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 2eee5c37cad4390385db5db5a8e81470e42e8f1401b0358d7390095d6f681b410f2c4a0c496c6ff9ebd775423c7785cdace7bcdad76c7bee283df3d9718c0f20
   languageName: node
   linkType: hard
 
