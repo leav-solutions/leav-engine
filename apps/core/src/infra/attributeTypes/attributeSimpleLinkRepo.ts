@@ -165,11 +165,13 @@ export default function ({
                 ? {...attributes[1], id: '_key'}
                 : attributes[1];
 
-            const retrieveValue = aql`FOR l IN ${linkedLibCollec}
-                    FILTER TO_STRING(r.${attributes[0].id}) == l._key`;
+            const baseIdentifier = `l${parentIdentifier}`;
+            const baseIdentifierLiteral = literal(baseIdentifier);
+            const retrieveValue = aql`FOR ${baseIdentifierLiteral} IN ${linkedLibCollec}
+                    FILTER TO_STRING(r.${attributes[0].id}) == ${baseIdentifierLiteral}._key`;
 
             const linkedValueQueryPart = attributes[1]
-                ? attributes[1]._repo.filterValueQueryPart([...attributes].splice(1), filter, 'l')
+                ? attributes[1]._repo.filterValueQueryPart([...attributes].splice(1), filter, baseIdentifier)
                 : null;
 
             const linkValueIdentifier = literal(`${parentIdentifier}linkVal`);

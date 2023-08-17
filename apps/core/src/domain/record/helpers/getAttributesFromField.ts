@@ -29,12 +29,14 @@ export interface IGetAttributesFromFieldsHelper {
  * @param field
  * @param ctx
  */
-const getAttributesFromField = async (
-    field: string,
-    condition: IRecordFilterLight['condition'],
-    deps: IDeps,
-    ctx: IQueryInfos
-): Promise<IAttribute[]> => {
+const getAttributesFromField = async (params: {
+    field: string;
+    condition: IRecordFilterLight['condition'];
+    visitedLibraries?: string[];
+    deps: IDeps;
+    ctx: IQueryInfos;
+}): Promise<IAttribute[]> => {
+    const {field, condition, visitedLibraries = [], deps, ctx} = params;
     const {
         'core.domain.attribute': attributeDomain = null,
         'core.infra.library': libraryRepo = null,
@@ -42,6 +44,12 @@ const getAttributesFromField = async (
     } = deps;
 
     const _getLabelOrIdAttribute = async (library: string): Promise<string> => {
+        if (visitedLibraries.includes(library)) {
+            return 'id';
+        }
+
+        visitedLibraries.push(library);
+
         const linkedLibraryProps = await libraryRepo.getLibraries({
             params: {filters: {id: library}},
             ctx
@@ -101,7 +109,13 @@ const getAttributesFromField = async (
             // For example, if we filter on "category.created_by", we'll actually search on category.created_by.label
             const subChildAttributes =
                 condition !== AttributeCondition.IS_EMPTY && condition !== AttributeCondition.IS_NOT_EMPTY
-                    ? await getAttributesFromField(childAttribute, condition, deps, ctx)
+                    ? await getAttributesFromField({
+                          field: childAttribute,
+                          visitedLibraries,
+                          condition,
+                          deps,
+                          ctx
+                      })
                     : [];
             attributes = [...attributes, ...subChildAttributes];
 
@@ -180,7 +194,7 @@ const getAttributesFromField = async (
 
                 // Calling this function recursively will handle the case where child attribute is a link
                 // For example, if we filter on "category.created_by", we'll actually search on category.created_by.label
-                const subChildAttributes = await getAttributesFromField(childAttribute, condition, deps, ctx);
+                const subChildAttributes = await getAttributesFromField({field: childAttribute, condition, deps, ctx});
                 attributes = [...attributes, ...subChildAttributes];
             }
 
