@@ -194,6 +194,7 @@ function TreeLibrariesForm({onChange, extra, readOnly}: ITreeLibrariesFormProps)
                                     allowClear
                                     disabled={readOnly}
                                     style={{minWidth: '15rem'}}
+                                    aria-label=""
                                 />
                             </Form.Item>
                         </ListItemPart>
