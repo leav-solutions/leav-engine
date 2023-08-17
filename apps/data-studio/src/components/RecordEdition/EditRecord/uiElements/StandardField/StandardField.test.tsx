@@ -223,12 +223,12 @@ describe('StandardField', () => {
     });
 
     test('Render color field', async () => {
-        const values = "FFFFFF";
+        const value = "FFFFFF";
         const recordValuesDate = [
             {
                 ...mockRecordValuesCommon,
-                value: values,
-                raw_value: values
+                value: value,
+                raw_value: value
             }
         ];
         render(
@@ -243,7 +243,7 @@ describe('StandardField', () => {
         );
 
         // Open ColorPicker Element
-        const colorElem = screen.getByText('#' + values);
+        const colorElem = screen.getByText('#' + value);
         await act(async () => {
             userEvent.click(colorElem);
         });      

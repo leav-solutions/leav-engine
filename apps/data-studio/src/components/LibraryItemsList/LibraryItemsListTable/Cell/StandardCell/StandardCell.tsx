@@ -64,10 +64,10 @@ function StandardCell({cellData, values}: ISimpleCellProps): JSX.Element {
                 if(!isEmpty(displayedValues)){
                     const colorHexValue = "#" + displayedValues;          
 
-                    const hexToRGB = (values : string) => {
-                        const red = parseInt(values.slice(1, 3), 16);
-                        const green = parseInt(values.slice(3, 5), 16);
-                        const blue = parseInt(values.slice(5, 7), 16);
+                    const hexToRGB = (value : string) => {
+                        const red = parseInt(value.slice(1, 3), 16);
+                        const green = parseInt(value.slice(3, 5), 16);
+                        const blue = parseInt(value.slice(5, 7), 16);
                         return (red*0.299 + green*0.587 + blue*0.114) > 186 ? { color:"black"} : { color:"white" };
                     }
 
