@@ -9,14 +9,13 @@ import * as amqp from 'amqplib';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IFindRecordParams, IRecordDomain} from 'domain/record/recordDomain';
-import {IRecordRepo} from 'infra/record/recordRepo';
 import Joi from 'joi';
-import {isEqual, pick} from 'lodash';
+import {isEqual, difference, intersectionBy} from 'lodash';
 import {v4 as uuidv4} from 'uuid';
-import {AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
+import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {EventAction, IDbEvent, ILibraryPayload, IRecordPayload, IValuePayload} from '../../_types/event';
-import {AttributeCondition, Operator} from '../../_types/record';
-import {CORE_INDEX_FIELD, IIndexationService} from '../../infra/indexation/indexationService';
+import {AttributeCondition, IRecord, Operator} from '../../_types/record';
+import {IIndexationService} from '../../infra/indexation/indexationService';
 
 export interface IIndexationManagerDomain {
     init(): Promise<void>;
@@ -27,27 +26,72 @@ interface IDeps {
     config?: Config.IConfig;
     'core.infra.amqpService'?: IAmqpService;
     'core.domain.record'?: IRecordDomain;
-    'core.infra.record'?: IRecordRepo;
     'core.domain.library'?: ILibraryDomain;
     'core.domain.attribute'?: IAttributeDomain;
     'core.infra.indexation.indexationService'?: IIndexationService;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.domain.record': recordDomain = null,
-    'core.infra.record': recordRepo = null,
     'core.domain.library': libraryDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.infra.indexation.indexationService': indexationService = null
 }: IDeps): IIndexationManagerDomain {
-    const _indexRecords = async (findRecordParams: IFindRecordParams, ctx: IQueryInfos): Promise<void> => {
+    const _indexRecords = async (
+        findRecordParams: IFindRecordParams,
+        ctx: IQueryInfos,
+        attributes?: {up?: string[]; del?: string[]}
+    ): Promise<void> => {
         if (!(await indexationService.isLibraryListed(findRecordParams.library))) {
             await indexationService.listLibrary(findRecordParams.library);
         }
 
-        const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(findRecordParams.library, ctx);
+        const fullTextLibraryAttributes = await attributeDomain.getLibraryFullTextAttributes(
+            findRecordParams.library,
+            ctx
+        );
+
+        // We retrieve the properties of the indexed attributes to be updated
+        const attributesToEdit = {up: [], del: []};
+        if (attributes) {
+            const libraryAttributes = await attributeDomain.getLibraryAttributes(findRecordParams.library, ctx);
+            attributesToEdit.up = fullTextLibraryAttributes.filter(a => attributes.up?.includes(a.id));
+            attributesToEdit.del = libraryAttributes.filter(a => attributes.del?.includes(a.id));
+        } else {
+            attributesToEdit.up = fullTextLibraryAttributes;
+            attributesToEdit.del = [];
+        }
+
+        const _toUp = async (record: IRecord, attribute: IAttribute) => {
+            let val = await recordDomain.getRecordFieldValue({
+                library: findRecordParams.library,
+                record,
+                attributeId: attribute.id,
+                options: {
+                    forceGetAllValues: true
+                },
+                ctx
+            });
+
+            // FIXME: is this statement necessary?
+            if (typeof val === 'undefined') {
+                return {};
+            }
+
+            val = await _getFormattedValuesAndLabels(attribute, val, ctx);
+
+            const value = Array.isArray(val) ? val.map(v => v?.value).filter(e => e) : val?.value;
+
+            if (value === null || (Array.isArray(value) && !value.length)) {
+                return {[attribute.id]: null};
+            }
+
+            return {
+                [attribute.id]: typeof value === 'object' ? JSON.stringify(value) : String(value)
+            };
+        };
 
         const records = await recordDomain.find({
             params: findRecordParams,
@@ -55,38 +99,11 @@ export default function ({
         });
 
         for (const record of records.list) {
-            const data = (
-                await Promise.all(
-                    fullTextAttributes.map(async fta => {
-                        let val = await recordDomain.getRecordFieldValue({
-                            library: findRecordParams.library,
-                            record,
-                            attributeId: fta.id,
-                            options: {
-                                forceGetAllValues: true
-                            },
-                            ctx
-                        });
-
-                        // FIXME: is this statement necessary?
-                        if (typeof val === 'undefined') {
-                            return {};
-                        }
-
-                        val = await _getFormattedValuesAndLabels(fta, val, ctx);
-
-                        const value = Array.isArray(val) ? val.map(v => v?.value).filter(e => e) : val?.value;
-
-                        if (value === null || (Array.isArray(value) && !value.length)) {
-                            return {};
-                        }
-
-                        return {
-                            [fta.id]: typeof value === 'object' ? JSON.stringify(value) : String(value)
-                        };
-                    })
-                )
-            ).reduce((acc, e) => ({...acc, ...e}), {});
+            // We iterate on the attributes to be edited and define new values for these attributes.
+            // The _toUp function returns the updated value of an attribute. Attributes to be deleted are set to null.
+            const data = (await Promise.all([...attributesToEdit.up.map(async a => _toUp(record, a))]))
+                .concat(attributesToEdit.del.map(a => ({[a.id]: null})))
+                .reduce((acc, e) => ({...acc, ...e}), {});
 
             await indexationService.indexRecord(findRecordParams.library, record.id, data);
         }
@@ -136,15 +153,12 @@ export default function ({
         return values;
     };
 
-    const _indexLinkedLibraries = async (libraryId: string, ctx: IQueryInfos, recordId?: string): Promise<void> => {
-        const linkedTreeFilters: IAttributeFilterOptions = {linked_tree: libraryId};
-        const linkedLibFilters: IAttributeFilterOptions = {linked_library: libraryId};
-
+    const _indexLinkedLibraries = async (libraryId: string, ctx: IQueryInfos, toRecordId?: string): Promise<void> => {
         // get all attributes with the new library as linked library / linked_tree
-        const attributes = (
+        const attributesToUpdate = (
             await attributeDomain.getAttributes({
                 params: {
-                    filters: linkedLibFilters
+                    filters: {linked_library: libraryId}
                 },
                 ctx
             })
@@ -152,45 +166,33 @@ export default function ({
             (
                 await attributeDomain.getAttributes({
                     params: {
-                        filters: linkedTreeFilters
+                        filters: {linked_tree: libraryId}
                     },
                     ctx
                 })
             ).list
         );
 
-        // get all libraries using theses attributes
-        const libraries = [];
-        for (const attr of attributes) {
-            const res = await libraryDomain.getLibrariesUsingAttribute(attr.id, ctx);
+        const libs = (await libraryDomain.getLibraries({ctx})).list;
 
-            for (let i = res.length - 1; i >= 0; i--) {
-                const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(res[i], ctx);
-                if (!fullTextAttributes.map(a => a.id).includes(attr.id)) {
-                    res.splice(i, 1);
+        // We cross-reference the attributes that point to the library that has been previously updated and
+        // the indexed attributes of each library. If these libraries use them, we need to update the indexes.
+        for (const l of libs) {
+            const intersections = intersectionBy(l.fullTextAttributes, attributesToUpdate, 'id');
+
+            if (intersections.length) {
+                let filters;
+
+                if (typeof toRecordId !== 'undefined') {
+                    filters = intersections.map(a => ({
+                        field: `${a.id}.${a.linked_tree ? `${libraryId}.` : ''}id`, // if field is a tree attribute, we must specify the library
+                        condition: AttributeCondition.EQUAL,
+                        value: toRecordId
+                    }));
                 }
+
+                await _indexRecords({library: l.id, filters}, ctx, {up: intersections.map(a => a.id)});
             }
-
-            libraries.push(res);
-        }
-
-        const linkedLibraries = [...new Set([].concat(...libraries))];
-
-        for (const ll of linkedLibraries) {
-            let filters;
-
-            if (typeof recordId !== 'undefined') {
-                let fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(ll, ctx);
-                fullTextAttributes = fullTextAttributes.filter(a => a.linked_library === libraryId);
-
-                filters = fullTextAttributes.map(attr => ({
-                    field: attr.id,
-                    condition: AttributeCondition.EQUAL,
-                    value: recordId
-                }));
-            }
-
-            await _indexRecords({library: ll, filters}, ctx);
         }
     };
 
@@ -215,41 +217,24 @@ export default function ({
             case EventAction.RECORD_SAVE: {
                 data = (event.payload as IRecordPayload).data;
 
-                const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(data.libraryId, ctx);
-                data.new = pick(
-                    data.new,
-                    fullTextAttributes.map(a => a.id)
+                await _indexRecords(
+                    {
+                        library: data.libraryId,
+                        filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: data.id}]
+                    },
+                    ctx
                 );
-
-                // if simple link replace id by record label
-                for (const [key, value] of Object.entries(data.new)) {
-                    const attrProps = await attributeDomain.getAttributeProperties({id: key, ctx});
-
-                    if (
-                        attrProps.type === AttributeTypes.SIMPLE_LINK ||
-                        attrProps.type === AttributeTypes.ADVANCED_LINK
-                    ) {
-                        const recordIdentity = await recordDomain.getRecordIdentity(
-                            {id: value as string, library: attrProps.linked_library},
-                            ctx
-                        );
-
-                        data.new[key] = recordIdentity.label ? String(recordIdentity.label) : value && String(value);
-                    }
-                }
-
-                await recordRepo.updateRecord({
-                    libraryId: data.libraryId,
-                    recordData: {id: data.id, [CORE_INDEX_FIELD]: data.new}
-                });
 
                 break;
             }
             case EventAction.LIBRARY_SAVE: {
                 data = (event.payload as ILibraryPayload).data;
 
+                const attrsToDel = difference(data.old?.fullTextAttributes, data.new?.fullTextAttributes) as string[];
+                const attrsToAdd = difference(data.new?.fullTextAttributes, data.old?.fullTextAttributes) as string[];
+
                 if (!isEqual(data.old?.fullTextAttributes?.sort(), data.new?.fullTextAttributes?.sort())) {
-                    await _indexRecords({library: data.new.id}, ctx);
+                    await _indexRecords({library: data.new.id}, ctx, {up: attrsToAdd, del: attrsToDel});
                 }
 
                 // if label change we re-index all linked libraries
@@ -262,46 +247,25 @@ export default function ({
             case EventAction.VALUE_SAVE: {
                 data = (event.payload as IValuePayload).data;
 
-                const attrToIndex = await attributeDomain.getLibraryFullTextAttributes(data.libraryId, ctx);
+                const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(data.libraryId, ctx);
 
-                if (data.attributeId === 'active' && data.value.new.value === true) {
+                const isActivated = data.attributeId === 'active' && data.value.new.value === true;
+                const isAttrToIndex = fullTextAttributes.map(a => a.id).includes(data.attributeId);
+
+                if (isActivated || isAttrToIndex) {
                     await _indexRecords(
                         {
                             library: data.libraryId,
                             filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: data.recordId}]
                         },
-                        ctx
+                        ctx,
+                        isActivated || !isAttrToIndex ? null : {up: [data.attributeId]}
                     );
-                } else if (attrToIndex.map(a => a.id).includes(data.attributeId)) {
-                    const attr = attrToIndex[await attrToIndex.map(a => a.id).indexOf(data.attributeId)];
-
-                    // get format value(s)
-                    data.value.new = await recordDomain.getRecordFieldValue({
-                        library: data.libraryId,
-                        record: {id: data.recordId},
-                        attributeId: data.attributeId,
-                        ctx
-                    });
-
-                    data.value.new = await _getFormattedValuesAndLabels(attr, data.value.new, ctx);
-
-                    await recordRepo.updateRecord({
-                        libraryId: data.libraryId,
-                        recordData: {
-                            id: data.recordId,
-                            [CORE_INDEX_FIELD]: {
-                                [data.attributeId]: Array.isArray(data.value.new)
-                                    ? data.value.new.map(v => v.value)
-                                    : data.value.new.value
-                            }
-                        }
-                    });
                 }
 
-                const library = await libraryDomain.getLibraryProperties(data.libraryId, ctx);
-
-                // if new value of the attribute is the label of the library
+                // if the new attribute's value is the label of the library
                 // we have to re-index all linked libraries
+                const library = await libraryDomain.getLibraryProperties(data.libraryId, ctx);
                 if (library.recordIdentityConf?.label === data.attributeId) {
                     await _indexLinkedLibraries(data.libraryId, ctx, data.recordId);
                 }
@@ -313,33 +277,18 @@ export default function ({
 
                 const attrProps = await attributeDomain.getAttributeProperties({id: data.attributeId, ctx});
 
-                let values: IValue[];
-
-                if (attrProps.multiple_values) {
-                    values = (await recordDomain.getRecordFieldValue({
+                await _indexRecords(
+                    {
                         library: data.libraryId,
-                        record: {id: data.recordId},
-                        attributeId: data.attributeId,
-                        ctx
-                    })) as IValue[];
+                        filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: data.recordId}]
+                    },
+                    ctx,
+                    attrProps.multiple_values ? {up: [data.attributeId]} : {del: [data.attributeId]}
+                );
 
-                    values = (await _getFormattedValuesAndLabels(attrProps, values, ctx)) as IValue[];
-                }
-
-                await recordRepo.updateRecord({
-                    libraryId: data.libraryId,
-                    recordData: {
-                        id: data.recordId,
-                        [CORE_INDEX_FIELD]: {
-                            [data.attributeId]: values?.map((v: IValue) => String(v.value)) ?? null
-                        }
-                    }
-                });
-
-                const library = await libraryDomain.getLibraryProperties(data.libraryId, ctx);
-
-                // if attribute updated/deleted is the label of the library
+                // if the updated/deleted attribute is the label of the library
                 // we have to re-index all linked libraries
+                const library = await libraryDomain.getLibraryProperties(data.libraryId, ctx);
                 if (library.recordIdentityConf?.label === data.attributeId) {
                     await _indexLinkedLibraries(data.libraryId, ctx, data.recordId);
                 }
