@@ -142,7 +142,7 @@ describe('e2e tests', () => {
 
             const fsc: FilesystemContent = await scan.filesystem(cfg);
 
-            console.debug(JSON.stringify({inodes}, null, 2));
+            // console.debug(JSON.stringify({inodes}, null, 2));
 
             const dbs: IDbScanResult = {
                 ...DB_SETTINGS,
