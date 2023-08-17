@@ -1,10 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Checkbox, CheckboxOptionType, Popconfirm, Radio, RadioChangeEvent} from 'antd';
-import {CheckboxValueType} from 'antd/lib/checkbox/Group';
+import {CheckboxOptionType, Popconfirm, Radio} from 'antd';
 import {useApplicationContext} from 'context/ApplicationContext';
-import {useState} from 'react';
+import {ComponentProps, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -41,8 +40,8 @@ function ModeSelector({onChange, entityType, selectedMode}: IModeSelectorProps):
     const _handleOpenSelectionModeConfirm = () => setIsSelectionModeConfirmOpen(true);
     const _handleCloseSelectionModeConfirm = () => setIsSelectionModeConfirmOpen(false);
 
-    const _handleSelectionModeChange = async (values: CheckboxValueType[]) => {
-        const value = values.filter(e => e !== selectedMode)[0] as SelectionMode;
+    const _handleSelectionModeChange: ComponentProps<typeof Radio>['onChange'] = async event => {
+        const value = event.target.value as SelectionMode;
 
         setPendingValueSave(value as SelectionMode);
 
@@ -98,9 +97,9 @@ function ModeSelector({onChange, entityType, selectedMode}: IModeSelectorProps):
                     onConfirm={_handleSelectionModeConfirm}
                     onCancel={_handleCloseSelectionModeConfirm}
                 >
-                    <Checkbox.Group
+                    <Radio.Group
                         options={selectionModeOptions}
-                        value={[selectedMode]}
+                        value={selectedMode}
                         onChange={_handleSelectionModeChange}
                     />
                 </Popconfirm>
