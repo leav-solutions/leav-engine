@@ -13,10 +13,7 @@ export default (inodes: {[ino: string]: any}) => {
 };
 
 const setInodes = (inodes: {[ino: string]: any}, elements: FullTreeContent): FullTreeContent => {
-    console.debug('inodes', inodes);
-
     for (const [i, e] of elements.entries()) {
-        console.debug('e.record.inode', Number(Object.keys(inodes)[i]));
         e.record.inode = Number(inodes[i].ino);
 
         if (e.record.library === DB_SETTINGS.directoriesLibraryId && e.children.length) {

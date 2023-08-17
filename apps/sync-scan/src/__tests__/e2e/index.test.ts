@@ -80,16 +80,6 @@ describe('e2e tests', () => {
         expect(fs.existsSync(`${cfg.filesystem.absolutePath}/dir/sfile`)).toEqual(true);
         expect(fs.existsSync(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`)).toEqual(true);
 
-        // inodes = {
-        //     [fs.statSync(`${cfg.filesystem.absolutePath}/dir`).ino]: {
-        //         [fs.statSync(`${cfg.filesystem.absolutePath}/dir/sdir`).ino]: {
-        //             [fs.statSync(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`).ino]: {}
-        //         },
-        //         [fs.statSync(`${cfg.filesystem.absolutePath}/dir/sfile`).ino]: {}
-        //     },
-        //     [fs.statSync(`${cfg.filesystem.absolutePath}/file`).ino]: {}
-        // };
-
         inodes = [
             {
                 ino: fs.statSync(`${cfg.filesystem.absolutePath}/dir`).ino,
