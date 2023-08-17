@@ -60,17 +60,19 @@ afterAll(async () => {
 });
 
 describe('e2e tests', () => {
-    test('1 - filesystem creation', async () => {
+    test('1 - filesystem creation', () => {
         expect.assertions(5);
 
         // Create two directories: dir/sdir from root
-        await fs.promises.mkdir(`${cfg.filesystem.absolutePath}/dir`);
-        await fs.promises.mkdir(`${cfg.filesystem.absolutePath}/dir/sdir`);
+        fs.mkdirSync(`${cfg.filesystem.absolutePath}/dir`);
+        fs.mkdirSync(`${cfg.filesystem.absolutePath}/dir/sdir`);
 
         // Create three files with differents paths
-        await fs.promises.writeFile(`${cfg.filesystem.absolutePath}/file`, '');
-        await fs.promises.writeFile(`${cfg.filesystem.absolutePath}/dir/sfile`, '');
-        await fs.promises.writeFile(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`, '');
+        [
+            `${cfg.filesystem.absolutePath}/file`,
+            `${cfg.filesystem.absolutePath}/dir/sfile`,
+            `${cfg.filesystem.absolutePath}/dir/sdir/ssfile`
+        ].forEach(p => fs.writeFileSync(p, ''));
 
         expect(fs.existsSync(`${cfg.filesystem.absolutePath}/dir`)).toEqual(true);
         expect(fs.existsSync(`${cfg.filesystem.absolutePath}/dir/sdir`)).toEqual(true);
@@ -78,15 +80,29 @@ describe('e2e tests', () => {
         expect(fs.existsSync(`${cfg.filesystem.absolutePath}/dir/sfile`)).toEqual(true);
         expect(fs.existsSync(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`)).toEqual(true);
 
-        inodes = {
-            [fs.statSync(`${cfg.filesystem.absolutePath}/dir`).ino]: {
-                [fs.statSync(`${cfg.filesystem.absolutePath}/dir/sdir`).ino]: {
-                    [fs.statSync(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`).ino]: {}
-                },
-                [fs.statSync(`${cfg.filesystem.absolutePath}/dir/sfile`).ino]: {}
+        // inodes = {
+        //     [fs.statSync(`${cfg.filesystem.absolutePath}/dir`).ino]: {
+        //         [fs.statSync(`${cfg.filesystem.absolutePath}/dir/sdir`).ino]: {
+        //             [fs.statSync(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`).ino]: {}
+        //         },
+        //         [fs.statSync(`${cfg.filesystem.absolutePath}/dir/sfile`).ino]: {}
+        //     },
+        //     [fs.statSync(`${cfg.filesystem.absolutePath}/file`).ino]: {}
+        // };
+
+        inodes = [
+            {
+                ino: fs.statSync(`${cfg.filesystem.absolutePath}/dir`).ino,
+                children: [
+                    {
+                        ino: fs.statSync(`${cfg.filesystem.absolutePath}/dir/sdir`).ino,
+                        children: [{ino: fs.statSync(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`).ino}]
+                    },
+                    {ino: fs.statSync(`${cfg.filesystem.absolutePath}/dir/sfile`).ino}
+                ]
             },
-            [fs.statSync(`${cfg.filesystem.absolutePath}/file`).ino]: {}
-        };
+            {ino: fs.statSync(`${cfg.filesystem.absolutePath}/file`).ino}
+        ];
     });
 
     test('2 - initialization/creation events', async done => {
