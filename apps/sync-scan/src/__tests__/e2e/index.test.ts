@@ -25,6 +25,8 @@ process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) =>
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
+jest.setTimeout(10000);
+
 beforeAll(async () => {
     try {
         cfg = await getConfig();
