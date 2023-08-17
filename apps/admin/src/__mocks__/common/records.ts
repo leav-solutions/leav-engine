@@ -20,6 +20,8 @@ export const mockRecord: RecordIdentity_whoAmI = {
         medium: 'path/to/preview.png',
         big: 'path/to/preview.png',
         huge: 'path/to/preview.png',
-        pdf: 'path/to/file.pdf'
+        pdf: 'path/to/file.pdf',
+        file: null,
+        original: 'path/to/file.png'
     }
 };

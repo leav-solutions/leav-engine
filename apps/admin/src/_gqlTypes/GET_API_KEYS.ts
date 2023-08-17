@@ -17,21 +17,12 @@ export interface GET_API_KEYS_apiKeys_list_createdBy_whoAmI_library {
     label: SystemTranslation | null;
 }
 
-export interface GET_API_KEYS_apiKeys_list_createdBy_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-}
-
 export interface GET_API_KEYS_apiKeys_list_createdBy_whoAmI {
     id: string;
     library: GET_API_KEYS_apiKeys_list_createdBy_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: GET_API_KEYS_apiKeys_list_createdBy_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface GET_API_KEYS_apiKeys_list_createdBy {
@@ -43,21 +34,12 @@ export interface GET_API_KEYS_apiKeys_list_modifiedBy_whoAmI_library {
     label: SystemTranslation | null;
 }
 
-export interface GET_API_KEYS_apiKeys_list_modifiedBy_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-}
-
 export interface GET_API_KEYS_apiKeys_list_modifiedBy_whoAmI {
     id: string;
     library: GET_API_KEYS_apiKeys_list_modifiedBy_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: GET_API_KEYS_apiKeys_list_modifiedBy_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface GET_API_KEYS_apiKeys_list_modifiedBy {
@@ -69,21 +51,12 @@ export interface GET_API_KEYS_apiKeys_list_user_whoAmI_library {
     label: SystemTranslation | null;
 }
 
-export interface GET_API_KEYS_apiKeys_list_user_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-}
-
 export interface GET_API_KEYS_apiKeys_list_user_whoAmI {
     id: string;
     library: GET_API_KEYS_apiKeys_list_user_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: GET_API_KEYS_apiKeys_list_user_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface GET_API_KEYS_apiKeys_list_user {

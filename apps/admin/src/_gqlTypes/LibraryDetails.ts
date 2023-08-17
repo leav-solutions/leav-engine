@@ -295,21 +295,12 @@ export interface LibraryDetails_icon_whoAmI_library {
     label: SystemTranslation | null;
 }
 
-export interface LibraryDetails_icon_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-}
-
 export interface LibraryDetails_icon_whoAmI {
     id: string;
     library: LibraryDetails_icon_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: LibraryDetails_icon_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface LibraryDetails_icon {
