@@ -60,19 +60,17 @@ afterAll(async () => {
 });
 
 describe('e2e tests', () => {
-    test('1 - filesystem creation', () => {
+    test('1 - filesystem creation', async () => {
         expect.assertions(5);
 
         // Create two directories: dir/sdir from root
-        fs.mkdirSync(`${cfg.filesystem.absolutePath}/dir`);
-        fs.mkdirSync(`${cfg.filesystem.absolutePath}/dir/sdir`);
+        await fs.promises.mkdir(`${cfg.filesystem.absolutePath}/dir`);
+        await fs.promises.mkdir(`${cfg.filesystem.absolutePath}/dir/sdir`);
 
         // Create three files with differents paths
-        [
-            `${cfg.filesystem.absolutePath}/file`,
-            `${cfg.filesystem.absolutePath}/dir/sfile`,
-            `${cfg.filesystem.absolutePath}/dir/sdir/ssfile`
-        ].forEach(p => fs.writeFileSync(p, ''));
+        await fs.promises.writeFile(`${cfg.filesystem.absolutePath}/file`, '');
+        await fs.promises.writeFile(`${cfg.filesystem.absolutePath}/dir/sfile`, '');
+        await fs.promises.writeFile(`${cfg.filesystem.absolutePath}/dir/sdir/ssfile`, '');
 
         expect(fs.existsSync(`${cfg.filesystem.absolutePath}/dir`)).toEqual(true);
         expect(fs.existsSync(`${cfg.filesystem.absolutePath}/dir/sdir`)).toEqual(true);
