@@ -12,7 +12,7 @@ import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
-import {IFilesAttributes, IPreviewResponse, IPreviews, IPreviewsStatus} from '../../../_types/filesManager';
+import {IFileMetadata, IPreviewResponse, IPreviews, IPreviewsStatus} from '../../../_types/filesManager';
 import {updateRecordFile} from './handleFileUtilsHelper';
 import winston = require('winston');
 
@@ -78,7 +78,7 @@ const _onMessage = async (msg: amqp.ConsumeMessage, logger: winston.Winston, dep
         }
     }
 
-    const recordData: IFilesAttributes = {
+    const recordData: IFileMetadata = {
         [deps.utils.getPreviewsStatusAttributeName(library)]: previewsStatus,
         [deps.utils.getPreviewsAttributeName(library)]: previews
     };

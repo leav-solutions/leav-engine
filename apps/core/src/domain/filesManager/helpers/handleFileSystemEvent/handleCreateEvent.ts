@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IQueryInfos} from '_types/queryInfos';
-import {systemPreviewsSettings} from '../../../../domain/filesManager/_constants';
-import {IFileEventData, IFilesAttributes} from '../../../../_types/filesManager';
-import {IHandleFileSystemDeps, IHandleFileSystemResources} from '../handleFileSystem';
+import {FilesAttributes, IFileEventData, IFileMetadata} from '../../../../_types/filesManager';
+import {systemPreviewsSettings} from '../../_constants';
+import {extractFileMetadata} from '../extractFileMetadata';
 import {
     createFilesTreeElement,
     createRecordFile,
@@ -15,11 +15,12 @@ import {
     updateRecordFile
 } from '../handleFileUtilsHelper';
 import {requestPreviewGeneration} from '../handlePreview';
+import {IHandleFileSystemEventDeps, IHandleFileSystemEventResources} from './_types';
 
 export const handleCreateEvent = async (
     scanMsg: IFileEventData,
-    resources: IHandleFileSystemResources,
-    deps: IHandleFileSystemDeps,
+    resources: IHandleFileSystemEventResources,
+    deps: IHandleFileSystemEventDeps,
     ctx: IQueryInfos
 ) => {
     const {filePath, fileName} = getInputData(scanMsg.pathAfter);
@@ -35,33 +36,38 @@ export const handleCreateEvent = async (
     // Preview and Previews status
     const {previewsStatus, previews} = getPreviewsDefaultData(systemPreviewsSettings);
 
+    const fileMetadata = await extractFileMetadata(scanMsg.pathAfter, scanMsg.rootKey, deps.config);
+
     if (record) {
         try {
             const {userId} = deps.config.filesManager;
 
             await deps.recordDomain.activateRecord(record, {userId});
 
-            const recordData: IFilesAttributes = {
-                ROOT_KEY: scanMsg.rootKey,
-                INODE: scanMsg.inode,
+            const recordData: IFileMetadata = {
+                [FilesAttributes.ROOT_KEY]: scanMsg.rootKey,
+                [FilesAttributes.INODE]: scanMsg.inode,
                 [deps.utils.getPreviewsStatusAttributeName(filesLibraryId)]: previewsStatus,
                 [deps.utils.getPreviewsAttributeName(filesLibraryId)]: previews,
-                HASH: scanMsg.hash
+                [FilesAttributes.HASH]: scanMsg.hash,
+                ...fileMetadata
             };
 
             await updateRecordFile(recordData, record.id, recordLibrary, deps, ctx);
         } catch (e) {
+            console.error(e);
             deps.logger.error(`[FilesManager] Event ${scanMsg.event} - Error on record activation : ${e.message}`);
         }
     } else {
-        const recordData: IFilesAttributes = {
-            ROOT_KEY: scanMsg.rootKey,
-            FILE_PATH: filePath,
-            FILE_NAME: fileName,
-            INODE: scanMsg.inode,
-            HASH: scanMsg.hash,
+        const recordData: IFileMetadata = {
+            [FilesAttributes.ROOT_KEY]: scanMsg.rootKey,
+            [FilesAttributes.FILE_PATH]: filePath,
+            [FilesAttributes.FILE_NAME]: fileName,
+            [FilesAttributes.INODE]: scanMsg.inode,
+            [FilesAttributes.HASH]: scanMsg.hash,
             [deps.utils.getPreviewsStatusAttributeName(filesLibraryId)]: previewsStatus,
-            [deps.utils.getPreviewsAttributeName(filesLibraryId)]: previews
+            [deps.utils.getPreviewsAttributeName(filesLibraryId)]: previews,
+            ...fileMetadata
         };
 
         try {

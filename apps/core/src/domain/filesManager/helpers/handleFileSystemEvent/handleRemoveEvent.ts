@@ -3,13 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IQueryInfos} from '_types/queryInfos';
 import {IFileEventData} from '../../../../_types/filesManager';
-import {IHandleFileSystemDeps, IHandleFileSystemResources} from '../handleFileSystem';
 import {deleteFilesTreeElement, getInputData, getRecord} from '../handleFileUtilsHelper';
+import {IHandleFileSystemEventDeps, IHandleFileSystemEventResources} from './_types';
 
 export const handleRemoveEvent = async (
     scanMsg: IFileEventData,
-    {library}: IHandleFileSystemResources,
-    deps: IHandleFileSystemDeps,
+    {library}: IHandleFileSystemEventResources,
+    deps: IHandleFileSystemEventDeps,
     ctx: IQueryInfos
 ) => {
     const {filePath, fileName} = getInputData(scanMsg.pathBefore);

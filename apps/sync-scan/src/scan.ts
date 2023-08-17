@@ -77,7 +77,7 @@ export const database = async ({graphql}: IConfig): Promise<IDbScanResult> => {
 
     // Get tree libraries settings to identify which library is directories and which is files
     const treePropsQuery: DocumentNode = gql`
-        query GET_TREES($treeId: ID!) {
+        query GET_TREES($treeId: [ID!]) {
             trees(filters: {id: $treeId}) {
                 list {
                     libraries {
@@ -92,7 +92,7 @@ export const database = async ({graphql}: IConfig): Promise<IDbScanResult> => {
     `;
     const treePropsResult: ApolloQueryResult<any> = await client.query({
         query: treePropsQuery,
-        variables: {treeId: graphql.treeId}
+        variables: {treeId: [graphql.treeId]}
     });
     const treeData = treePropsResult.data.trees.list[0];
     if (!treeData) {

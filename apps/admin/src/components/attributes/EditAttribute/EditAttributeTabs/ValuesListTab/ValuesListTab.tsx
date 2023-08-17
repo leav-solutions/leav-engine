@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation, useQuery} from '@apollo/client';
+import ErrorDisplay from 'components/shared/ErrorDisplay';
 import React from 'react';
 import {getAttributeValuesListQuery} from '../../../../../queries/attributes/getAttributeValuesListQuery';
 import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
@@ -37,11 +38,11 @@ function ValuesListTab({attributeId}: IValuesListTabProps): JSX.Element {
     }
 
     if (error) {
-        return <div className="error">ERROR</div>;
+        return <ErrorDisplay message={error.message} />;
     }
 
     if (saveError) {
-        return <div className="error">SAVE ERROR</div>;
+        return <ErrorDisplay message={saveError.message} />;
     }
 
     if (!data?.attributes?.list.length) {

@@ -26,7 +26,9 @@ describe('LibraryIcon', () => {
                         medium: 'path/to/file.png',
                         big: 'path/to/file.png',
                         huge: 'path/to/file.png',
-                        pdf: 'path/to/file.pdf'
+                        pdf: 'path/to/file.pdf',
+                        file: null,
+                        original: 'path/to/file.png'
                     }
                 }
             }

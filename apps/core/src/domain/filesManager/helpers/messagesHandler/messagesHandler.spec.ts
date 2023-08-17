@@ -4,13 +4,11 @@
 import {IConfig} from '_types/config';
 import {FileEvents, IFileEventData} from '../../../../_types/filesManager';
 import {mockCtx} from '../../../../__tests__/mocks/shared';
-import * as handleFileSystem from '../handleFileSystem';
 import messagesHandler from './messagesHandler';
 
 describe('MessagesHandler', () => {
     test('Process messages, respect incoming order', async () => {
         const mockHandleEventFileSystem = jest.fn();
-        jest.spyOn(handleFileSystem, 'handleEventFileSystem').mockImplementation(mockHandleEventFileSystem);
 
         const mockConfig = {
             filesManager: {
@@ -21,6 +19,7 @@ describe('MessagesHandler', () => {
         };
 
         const handler = messagesHandler({
+            'core.domain.filesManager.helpers.handleFileSystemEvent': mockHandleEventFileSystem,
             config: mockConfig as IConfig
         });
 

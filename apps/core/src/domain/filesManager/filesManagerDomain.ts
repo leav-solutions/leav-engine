@@ -29,11 +29,12 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {USERS_GROUP_LIB_NAME, USERS_GROUP_TREE_NAME} from '../../infra/permission/permissionRepo';
 import {Errors} from '../../_types/errors';
-import {FileEvents, FilesAttributes, IFileEventData, IFilesAttributes} from '../../_types/filesManager';
+import {FileEvents, FilesAttributes, IFileEventData, IFileMetadata} from '../../_types/filesManager';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {LibraryPermissionsActions} from '../../_types/permissions';
 import {AttributeCondition, IRecord, Operator} from '../../_types/record';
 import {IRecordDomain, IRecordFilterLight} from '../record/recordDomain';
+import {getRootPathByKey} from './helpers/getRootPathByKey';
 import {getPreviewsDefaultData, updateRecordFile} from './helpers/handleFileUtilsHelper';
 import {requestPreviewGeneration} from './helpers/handlePreview';
 import {initPreviewResponseHandler} from './helpers/handlePreviewResponse';
@@ -275,6 +276,8 @@ export default function ({
                 config.filesManager.routingKeys.events,
                 _onMessage
             );
+
+            logger.info('Files Manager is ready. Waiting for messages... 👀');
         },
         async createDirectory({library, nodeId, name}: ICreateDirectoryParams, ctx: IQueryInfos): Promise<IRecord> {
             const filesLibrary = utils.getFilesLibraryId(library);
@@ -587,7 +590,7 @@ export default function ({
                         ))
                 ) {
                     const {previewsStatus, previews} = getPreviewsDefaultData(systemPreviewsSettings);
-                    const recordData: IFilesAttributes = {
+                    const recordData: IFileMetadata = {
                         [utils.getPreviewsStatusAttributeName(libraryProps.id)]: previewsStatus,
                         [utils.getPreviewsAttributeName(libraryProps.id)]: previews
                     };
@@ -620,22 +623,7 @@ export default function ({
             return generationRequested > 0;
         },
         getRootPathByKey(rootKey) {
-            const rootPathConfig = config.files.rootPaths;
-
-            // Paths config is in the form of: "key1:path1,key2:path2"
-            const pathsByKeys = rootPathConfig.split(',').reduce((paths, pathByKey) => {
-                // Trim all the thing to be tolerant with trailing spaces
-                const [key, path] = pathByKey.trim().split(':');
-                paths[key.trim()] = path.trim();
-
-                return paths;
-            }, {});
-
-            if (!pathsByKeys[rootKey]) {
-                throw new Error(`Root path for key ${rootKey} not found`);
-            }
-
-            return pathsByKeys[rootKey];
+            return getRootPathByKey(rootKey, config);
         },
         async doesFileExistAsChild(
             {treeId, filename, parentNodeId}: IIsFileExistsAsChild,
