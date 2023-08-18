@@ -223,12 +223,12 @@ describe('StandardField', () => {
     });
 
     test('Render color field', async () => {
-        const value = "FFFFFF";
+        const valueColor = 'FFFFFF';
         const recordValuesDate = [
             {
                 ...mockRecordValuesCommon,
-                value: value,
-                raw_value: value
+                value: valueColor,
+                raw_value: valueColor
             }
         ];
         render(
@@ -243,24 +243,23 @@ describe('StandardField', () => {
         );
 
         // Open ColorPicker Element
-        const colorElem = screen.getByText('#' + value);
+        const colorElem = screen.getByText('#' + valueColor);
         await act(async () => {
             userEvent.click(colorElem);
-        });      
-        
+        });
+
         const colorPickerElem = await screen.getByRole('textbox');
         expect(colorPickerElem).toBeInTheDocument();
-        
-        // Update color value 
-        const newValues = '000000'; 
-        userEvent.type(colorPickerElem,newValues)
+
+        // Update color value
+        const newValues = '000000';
+        userEvent.type(colorPickerElem, newValues);
         await act(async () => {
             userEvent.click(screen.getByText('global.submit'));
         });
-        expect(colorElem).toHaveTextContent("#" + newValues)
+        expect(colorElem).toHaveTextContent('#' + newValues);
         expect(mockHandleSubmit).toHaveBeenCalled();
-
-    }); 
+    });
 
     test('Render checkbox', async () => {
         const recordValuesBoolean = [

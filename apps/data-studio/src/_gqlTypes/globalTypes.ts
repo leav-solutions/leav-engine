@@ -118,8 +118,7 @@ export enum PermissionsActions {
     detach = 'detach',
     edit_children = 'edit_children',
     edit_record = 'edit_record',
-    edit_value = 'edit_value',
-    fake_plugin_permission = 'fake_plugin_permission'
+    edit_value = 'edit_value'
 }
 
 export enum RecordFilterCondition {

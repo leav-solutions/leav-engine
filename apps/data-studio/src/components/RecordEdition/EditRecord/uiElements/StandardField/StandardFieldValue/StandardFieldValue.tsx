@@ -177,7 +177,7 @@ const FormItem = styled(Form.Item)`
     }
 `;
 
-const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInputProps ) => JSX.Element} = {
+const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInputProps) => JSX.Element} = {
     [AttributeFormat.text]: TextInput,
     [AttributeFormat.date]: DateInput,
     [AttributeFormat.date_range]: DateRangeInput,
@@ -336,11 +336,16 @@ function StandardFieldValue({
     };
 
     const _getInput = (): JSX.Element => {
+        let inputStyle: React.CSSProperties = {};
         if (!fieldValue.isEditing && attribute.format !== AttributeFormat.boolean) {
             let displayedValue = String(fieldValue.displayValue);
-            if(attribute.format === AttributeFormat.color && (fieldValue.value === null || fieldValue.value.value === null)){
+            let prefixValue;
+            if (
+                attribute.format === AttributeFormat.color &&
+                (fieldValue.value === null || fieldValue.value.value === null)
+            ) {
                 fieldValue.value = null;
-            } 
+            }
             const hasValue = fieldValue.value !== null;
 
             if (hasValue) {
@@ -363,26 +368,25 @@ function StandardFieldValue({
                         }
                         break;
                     case AttributeFormat.color:
-                        return <ColorInput 
-                            state={state}
-                            fieldValue={fieldValue}
-                            onChange={_handleValueChange}
-                            onFocus={_handleFocus}
-                            onSubmit={_handleSubmit}
-                            onPressEnter={_handlePressEnter}
-                            settings={state.formElement.settings}
-                            inputRef={inputRef}
-                    />
+                        prefixValue = _getColorDisplay();
+                        displayedValue = '#' + displayedValue;
+                        inputStyle = {
+                            paddingLeft: '39px'
+                        };
                 }
             }
             return (
-                <Input
-                    key="display"
-                    className={hasValue ? 'has-value' : ''}
-                    value={displayedValue}
-                    onFocus={_handleFocus}
-                    disabled={state.isReadOnly}
-                />
+                <>
+                    {prefixValue}
+                    <Input
+                        key="display"
+                        style={inputStyle}
+                        className={hasValue ? 'has-value' : ''}
+                        value={displayedValue}
+                        onFocus={_handleFocus}
+                        disabled={state.isReadOnly}
+                    />
+                </>
             );
         }
 
@@ -405,6 +409,32 @@ function StandardFieldValue({
                 inputRef={inputRef}
             />
         );
+    };
+
+    const _getColorDisplay = (): JSX.Element => {
+        const colorValue = '#' + String(fieldValue.displayValue);
+        let colorPickerStyle: React.CSSProperties = {};
+        if (fieldValue.index === 0) {
+            colorPickerStyle = {
+                width: '16px',
+                height: '16px',
+                borderRadius: '2px',
+                backgroundColor: colorValue,
+                marginTop: '25px',
+                marginLeft: '5px'
+            };
+        } else {
+            colorPickerStyle = {
+                width: '16px',
+                height: '16px',
+                borderRadius: '2px',
+                backgroundColor: colorValue,
+                marginTop: '15px',
+                marginLeft: '5px'
+            };
+        }
+
+        return <label style={colorPickerStyle} />;
     };
 
     const _getFilteredValuesList = (): IValueOfValuesList[] => {
