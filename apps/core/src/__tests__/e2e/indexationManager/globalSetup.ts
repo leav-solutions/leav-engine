@@ -44,9 +44,12 @@ export async function setup() {
 
         const server = coreContainer.cradle['core.interface.server'];
         const indexationManager = coreContainer.cradle['core.interface.indexationManager'];
+        const tasksManager = coreContainer.cradle['core.interface.tasksManager'];
 
         await server.init();
         await indexationManager.init();
+        await tasksManager.initMaster();
+        await tasksManager.initWorker();
     } catch (e) {
         console.error(e);
     }
