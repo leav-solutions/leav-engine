@@ -8,9 +8,7 @@ const DB_SETTINGS = {
     directoriesLibraryId: 'directories_library_id'
 };
 
-export default (inodes: {[ino: string]: any}) => {
-    return setInodes(inodes, database);
-};
+export default (inodes: {[ino: string]: any}) => setInodes(inodes, database);
 
 const setInodes = (inodes: {[ino: string]: any}, elements: FullTreeContent): FullTreeContent => {
     for (const [i, e] of elements.entries()) {
