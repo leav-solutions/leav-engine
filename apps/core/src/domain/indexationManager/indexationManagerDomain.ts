@@ -15,7 +15,7 @@ import {v4 as uuidv4} from 'uuid';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {EventAction, IDbEvent, ILibraryPayload, IRecordPayload, IValuePayload} from '../../_types/event';
 import {AttributeCondition, IRecord} from '../../_types/record';
-import {CORE_INDEX_FIELD, IIndexationService} from '../../infra/indexation/indexationService';
+import {IIndexationService} from '../../infra/indexation/indexationService';
 import {ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
 import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {i18n} from 'i18next';
@@ -23,6 +23,7 @@ import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 
 interface IIndexDatabaseParams {
     findRecordParams: IFindRecordParams | IFindRecordParams[];
+    attributes?: {up?: string[]; del?: string[]};
     ctx: IQueryInfos;
 }
 
@@ -45,7 +46,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.domain.record': recordDomain = null,
@@ -208,7 +209,11 @@ export default function({
                     }));
                 }
 
-                await _indexRecords({library: l.id, filters}, ctx, {up: intersections.map(a => a.id)});
+                await _indexDatabase({
+                    findRecordParams: {library: l.id, filters},
+                    ctx,
+                    attributes: {up: intersections.map(a => a.id)}
+                });
             }
         }
     };
@@ -234,13 +239,13 @@ export default function({
             case EventAction.RECORD_SAVE: {
                 data = (event.payload as IRecordPayload).data;
 
-                await _indexRecords(
-                    {
+                await _indexDatabase({
+                    findRecordParams: {
                         library: data.libraryId,
                         filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: data.id}]
                     },
                     ctx
-                );
+                });
 
                 break;
             }
@@ -251,7 +256,11 @@ export default function({
                 const attrsToAdd = difference(data.new?.fullTextAttributes, data.old?.fullTextAttributes) as string[];
 
                 if (!isEqual(data.old?.fullTextAttributes?.sort(), data.new?.fullTextAttributes?.sort())) {
-                    await _indexRecords({library: data.new.id}, ctx, {up: attrsToAdd, del: attrsToDel});
+                    await _indexDatabase({
+                        findRecordParams: {library: data.new.id},
+                        ctx,
+                        attributes: {up: attrsToAdd, del: attrsToDel}
+                    });
                 }
 
                 // if label change we re-index all linked libraries
@@ -270,14 +279,14 @@ export default function({
                 const isAttrToIndex = fullTextAttributes.map(a => a.id).includes(data.attributeId);
 
                 if (isActivated || isAttrToIndex) {
-                    await _indexRecords(
-                        {
+                    await _indexDatabase({
+                        findRecordParams: {
                             library: data.libraryId,
                             filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: data.recordId}]
                         },
                         ctx,
-                        isActivated || !isAttrToIndex ? null : {up: [data.attributeId]}
-                    );
+                        attributes: isActivated || !isAttrToIndex ? null : {up: [data.attributeId]}
+                    });
                 }
 
                 // if the new attribute's value is the label of the library
@@ -294,14 +303,14 @@ export default function({
 
                 const attrProps = await attributeDomain.getAttributeProperties({id: data.attributeId, ctx});
 
-                await _indexRecords(
-                    {
+                await _indexDatabase({
+                    findRecordParams: {
                         library: data.libraryId,
                         filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: data.recordId}]
                     },
                     ctx,
-                    attrProps.multiple_values ? {up: [data.attributeId]} : {del: [data.attributeId]}
-                );
+                    attributes: attrProps.multiple_values ? {up: [data.attributeId]} : {del: [data.attributeId]}
+                });
 
                 // if the updated/deleted attribute is the label of the library
                 // we have to re-index all linked libraries
