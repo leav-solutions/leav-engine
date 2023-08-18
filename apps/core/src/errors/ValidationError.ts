@@ -13,15 +13,19 @@ export default class ValidationError<T> extends Error {
 
     public isCustomMessage: boolean;
 
+    public context: any;
+
     public constructor(
         fields: ErrorFieldDetail<T>,
         message: string = 'Validation error',
-        isCustomMessage: boolean = false
+        isCustomMessage: boolean = false,
+        context?: any
     ) {
         super(message);
 
         this.type = ErrorTypes.VALIDATION_ERROR;
         this.fields = fields;
         this.isCustomMessage = isCustomMessage;
+        this.context = context;
     }
 }

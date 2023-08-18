@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ErrorDisplay} from '@leav/ui';
 import {AnyPrimitive, ErrorTypes, ICommonFieldsSettings} from '@leav/utils';
 import CreationErrorContext from 'components/RecordEdition/EditRecordModal/creationErrorContext';
 import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
 import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
-import {ErrorDisplay} from '@leav/ui';
 import {RecordFormElementsValueStandardValue} from 'hooks/useGetRecordForm/useGetRecordForm';
 import useRefreshFieldValues from 'hooks/useRefreshFieldValues';
 import {useContext, useEffect, useMemo, useReducer} from 'react';
@@ -84,18 +84,18 @@ function StandardField({
 
     useEffect(() => {
         if (creationErrors[attribute.id]) {
-            const idValue =
-                Object.values(state.values[state.activeScope].values).filter(
-                    val => val.editingValue === creationErrors[attribute.id].input
-                )?.[0].idValue ?? null;
+            // Affect error to each invalid value to display it on form
+            for (const fieldError of creationErrors[attribute.id]) {
+                const idValue = fieldError.id_value ?? null;
 
-            dispatch({
-                type: StandardFieldReducerActionsTypes.SET_ERROR,
-                idValue,
-                error: creationErrors[attribute.id].message
-            });
+                dispatch({
+                    type: StandardFieldReducerActionsTypes.SET_ERROR,
+                    idValue,
+                    error: fieldError.message
+                });
+            }
         }
-    }, [creationErrors, attribute.id, state.values]);
+    }, [creationErrors, attribute.id]);
 
     const _handleSubmit = async (idValue: IdValue, valueToSave: AnyPrimitive) => {
         const isSavingNewValue = idValue === newValueId;

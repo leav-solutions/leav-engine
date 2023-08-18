@@ -529,7 +529,7 @@ describe('FilesManager', () => {
                     totalCount: 0,
                     list: []
                 }),
-                createRecord: global.__mockPromise(mockRecord),
+                createRecord: global.__mockPromise({record: mockRecord}),
                 updateRecord: global.__mockPromise(mockRecord)
             };
 
@@ -574,7 +574,7 @@ describe('FilesManager', () => {
                     totalCount: 0,
                     list: []
                 }),
-                createRecord: global.__mockPromise(mockRecord),
+                createRecord: global.__mockPromise({record: mockRecord}),
                 updateRecord: global.__mockPromise(mockRecord)
             };
 
@@ -617,7 +617,7 @@ describe('FilesManager', () => {
                 totalCount: 0,
                 list: []
             }),
-            createRecord: global.__mockPromise(mockRecord),
+            createRecord: global.__mockPromise({record: mockRecord}),
             updateRecord: global.__mockPromise(mockRecord)
         };
 
@@ -626,7 +626,7 @@ describe('FilesManager', () => {
                 totalCount: 1,
                 list: [{...mockRecord, id: '987654321'}]
             }),
-            createRecord: global.__mockPromise(mockRecord),
+            createRecord: global.__mockPromise({record: mockRecord}),
             updateRecord: global.__mockPromise(mockRecord)
         };
 

@@ -37,7 +37,8 @@ describe('runActionsList', () => {
     };
 
     const ctx = {
-        attribute: {id: 'test_attr'},
+        library: 'test_lib',
+        attribute: {id: 'test_attr', type: AttributeTypes.SIMPLE},
         lang: 'en',
         defaultLang: 'fr'
     };

@@ -2,24 +2,25 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
+import * as amqp from 'amqplib';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {IRecordDomain} from 'domain/record/recordDomain';
+import {IFindRecordParams} from 'domain/record/_types';
+import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
+import {i18n} from 'i18next';
+import Joi from 'joi';
+import {difference, intersectionBy, isEqual} from 'lodash';
+import {v4 as uuidv4} from 'uuid';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {IValue} from '_types/value';
-import * as amqp from 'amqplib';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IFindRecordParams, IRecordDomain} from 'domain/record/recordDomain';
-import Joi from 'joi';
-import {isEqual, difference, intersectionBy} from 'lodash';
-import {v4 as uuidv4} from 'uuid';
+import {IIndexationService} from '../../infra/indexation/indexationService';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {EventAction, IDbEvent, ILibraryPayload, IRecordPayload, IValuePayload} from '../../_types/event';
 import {AttributeCondition, IRecord} from '../../_types/record';
-import {IIndexationService} from '../../infra/indexation/indexationService';
 import {ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
-import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
-import {i18n} from 'i18next';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 
 interface IIndexDatabaseParams {
     findRecordParams: IFindRecordParams | IFindRecordParams[];
@@ -47,7 +48,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.domain.record': recordDomain = null,

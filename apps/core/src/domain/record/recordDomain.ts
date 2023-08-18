@@ -16,7 +16,7 @@ import moment from 'moment';
 import {join} from 'path';
 import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
-import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_types/list';
+import {IListWithCursor} from '_types/list';
 import {IPreview} from '_types/preview';
 import {IValue, IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
@@ -42,35 +42,11 @@ import {
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import getAttributesFromField from './helpers/getAttributesFromField';
+import {ICreateRecordResult, IFindRecordParams, IRecordFilterLight} from './_types';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
  */
-
-export interface IRecordFilterLight {
-    field?: string;
-    value?: string;
-    condition?: AttributeCondition | TreeCondition;
-    operator?: Operator;
-    treeId?: string;
-}
-
-export interface IRecordSortLight {
-    field: string;
-    order: string;
-}
-
-export interface IFindRecordParams {
-    library: string;
-    filters?: IRecordFilterLight[];
-    sort?: IRecordSortLight;
-    options?: IValuesOptions;
-    pagination?: IPaginationParams | ICursorPaginationParams;
-    withCount?: boolean;
-    retrieveInactive?: boolean;
-    fulltextSearch?: string;
-}
-
 const allowedTypeOperator = {
     string: [
         AttributeCondition.EQUAL,
@@ -119,7 +95,7 @@ const allowedTypeOperator = {
 };
 
 export interface IRecordDomain {
-    createRecord(library: string, ctx: IQueryInfos): Promise<IRecord>;
+    createRecord(params: {library: string; values?: IValue[]; ctx: IQueryInfos}): Promise<ICreateRecordResult>;
 
     /**
      * Update record
@@ -144,13 +120,7 @@ export interface IRecordDomain {
      */
     find({params, ctx}: {params: IFindRecordParams; ctx: IQueryInfos}): Promise<IListWithCursor<IRecord>>;
 
-    getRecordFieldValue({
-        library,
-        record,
-        attributeId,
-        options,
-        ctx
-    }: {
+    getRecordFieldValue(params: {
         library: string;
         record: IRecord;
         attributeId: string;
@@ -239,7 +209,14 @@ export default function({
             // Apply actionsList
             values = await Promise.all(
                 values.map(v =>
-                    valueDomain.runActionsList(ActionsListEvents.GET_VALUE, v, attribute, record, library, ctx)
+                    valueDomain.runActionsList({
+                        listName: ActionsListEvents.GET_VALUE,
+                        value: v,
+                        attribute,
+                        record,
+                        library,
+                        ctx
+                    })
                 )
             );
         } else {
@@ -817,8 +794,8 @@ export default function({
         return identity;
     };
 
-    const ret = {
-        async createRecord(library: string, ctx: IQueryInfos): Promise<IRecord> {
+    const ret: IRecordDomain = {
+        async createRecord({library, values, ctx}) {
             const recordData = {
                 created_at: moment().unix(),
                 created_by: String(ctx.userId),
@@ -838,7 +815,54 @@ export default function({
                 throw new PermissionError(LibraryPermissionsActions.CREATE_RECORD);
             }
 
+            if (values?.length) {
+                // First, check if values are ok. If not, we won't create the record at all
+                const res = await Promise.allSettled(
+                    values.map(async v => {
+                        const attributeProps = await attributeDomain.getAttributeProperties({
+                            id: v.attribute,
+                            ctx
+                        });
+                        return valueDomain.runActionsList({
+                            listName: ActionsListEvents.SAVE_VALUE,
+                            value: v,
+                            attribute: attributeProps,
+                            library,
+                            ctx
+                        });
+                    })
+                );
+
+                const errors = res
+                    .filter(r => r.status === 'rejected')
+                    .map(err => {
+                        const rejection = err as PromiseRejectedResult;
+                        const errorAttribute = rejection.reason.context.attributeId;
+
+                        return {
+                            type: rejection.reason.type,
+                            attributeId: errorAttribute,
+                            id_value: rejection.reason.context.value.id_value,
+                            input: rejection.reason.context.value.value,
+                            message: utils.translateError(rejection.reason.fields[errorAttribute], ctx.lang)
+                        };
+                    });
+
+                if (errors.length) {
+                    return {record: null, valuesErrors: errors};
+                }
+            }
+
             const newRecord = await recordRepo.createRecord({libraryId: library, recordData, ctx});
+
+            if (values?.length) {
+                await valueDomain.saveValueBatch({
+                    library,
+                    recordId: newRecord.id,
+                    values,
+                    ctx
+                });
+            }
 
             await eventsManager.sendDatabaseEvent(
                 {
@@ -852,7 +876,7 @@ export default function({
                 ctx
             );
 
-            return newRecord;
+            return {record: newRecord, valuesErrors: null};
         },
         async updateRecord({library, recordData, ctx}): Promise<IRecord> {
             const savedRecord = await recordRepo.updateRecord({libraryId: library, recordData});
@@ -1096,7 +1120,7 @@ export default function({
             return records;
         },
         getRecordIdentity: _getRecordIdentity,
-        async getRecordFieldValue({library, record, attributeId, options, ctx}): Promise<IValue | IValue[] | null> {
+        async getRecordFieldValue({library, record, attributeId, options, ctx}) {
             const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
             let values = await _extractRecordValue(record, attrProps, library, options, ctx);
 

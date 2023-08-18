@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {RedoOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
-import {RecordCard, themeVars, ErrorDisplay, ErrorDisplayTypes, Loading} from '@leav/ui';
+import {ErrorDisplay, ErrorDisplayTypes, Loading, RecordCard, themeVars} from '@leav/ui';
 import {Button, Modal, Space, Tooltip} from 'antd';
 import ErrorBoundary from 'components/shared/ErrorBoundary';
 import createRecordMutation from 'graphQL/mutations/records/createRecordMutation';
@@ -16,19 +16,17 @@ import {useCanEditRecord} from 'hooks/useCanEditRecord/useCanEditRecord';
 import {useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {VscLayers} from 'react-icons/vsc';
-import {addInfo} from 'reduxStore/infos';
 import styled from 'styled-components';
-import {CREATE_RECORD, CREATE_RECORDVariables, CREATE_RECORD_createRecord_whoAmI} from '_gqlTypes/CREATE_RECORD';
-import {AttributeType} from '_gqlTypes/globalTypes';
+import {CREATE_RECORD, CREATE_RECORDVariables, CREATE_RECORD_createRecord_record_whoAmI} from '_gqlTypes/CREATE_RECORD';
+import {AttributeType, ValueBatchInput} from '_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {
-    SAVE_VALUE_BATCH_saveValueBatch_errors,
     SAVE_VALUE_BATCH_saveValueBatch_values,
     SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue,
     SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue,
     SAVE_VALUE_BATCH_saveValueBatch_values_Value
 } from '_gqlTypes/SAVE_VALUE_BATCH';
-import {InfoPriority, InfoType, IValueVersion, PreviewSize} from '_types/types';
+import {IValueVersion, PreviewSize} from '_types/types';
 import EditRecord from '../EditRecord';
 import useDeleteValueMutation from '../EditRecord/hooks/useDeleteValueMutation';
 import useSaveValueBatchMutation from '../EditRecord/hooks/useSaveValueBatchMutation';
@@ -49,7 +47,7 @@ import editRecordModalReducer, {
 } from '../editRecordModalReducer/editRecordModalReducer';
 import {EditRecordModalReducerContext} from '../editRecordModalReducer/editRecordModalReducerContext';
 import EditRecordSidebar from '../EditRecordSidebar';
-import CreationErrorContext from './creationErrorContext';
+import CreationErrorContext, {ICreationErrorByField} from './creationErrorContext';
 import ValuesVersionSummary from './ValuesVersionSummary';
 
 interface IEditRecordModalProps {
@@ -158,13 +156,9 @@ function EditRecordModal({
 
     const {saveValues, loading: saveValuesLoading} = useSaveValueBatchMutation();
     const {deleteValue} = useDeleteValueMutation(record);
-    const [createRecord] = useMutation<CREATE_RECORD, CREATE_RECORDVariables>(createRecordMutation, {
-        variables: {library}
-    });
+    const [createRecord] = useMutation<CREATE_RECORD, CREATE_RECORDVariables>(createRecordMutation);
 
-    const [creationErrors, setCreationErrors] = useState<{
-        [attributeId: string]: SAVE_VALUE_BATCH_saveValueBatch_errors;
-    }>({});
+    const [creationErrors, setCreationErrors] = useState<ICreationErrorByField>({});
 
     const [pendingValues, setPendingValues] = useState<IPendingValues>({});
     const hasPendingValues = !!Object.keys(pendingValues).length;
@@ -289,30 +283,9 @@ function EditRecordModal({
         }
 
         // Create Record
-        let newRecord: CREATE_RECORD_createRecord_whoAmI = state.record ?? null;
+        let newRecord: CREATE_RECORD_createRecord_record_whoAmI = state.record ?? null;
         if (!newRecord) {
-            try {
-                const createdRecord = await createRecord();
-
-                newRecord = createdRecord.data.createRecord.whoAmI;
-
-                dispatch({
-                    type: EditRecordReducerActionsTypes.SET_RECORD,
-                    record: newRecord
-                });
-            } catch (err) {
-                addInfo({
-                    type: InfoType.error,
-                    content: (err as Error).message,
-                    priority: InfoPriority.high
-                });
-                return;
-            }
-        }
-
-        try {
-            // Save values
-            const valuesToSave: IValueToSubmit[] = Object.values(pendingValues).reduce((allValues, valuesById) => {
+            const valuesToSave: ValueBatchInput[] = Object.values(pendingValues).reduce((allValues, valuesById) => {
                 const attributeValues = Object.values(valuesById).map(val => {
                     let actualValue;
                     switch (val.attribute.type) {
@@ -329,9 +302,8 @@ function EditRecordModal({
                             break;
                     }
                     return {
-                        ...val,
                         value: actualValue,
-                        id_value: null,
+                        id_value: val.id_value ?? null,
                         attribute: val.attribute.id
                     };
                 });
@@ -339,24 +311,30 @@ function EditRecordModal({
                 return [...allValues, ...attributeValues];
             }, []);
 
-            const saveRes = await saveValues(newRecord, valuesToSave, state.valuesVersion);
+            const creationResult = await createRecord({variables: {library, data: {values: valuesToSave}}});
 
-            // All encountered errors are available for children, grouped by attribute ID
-            if (saveRes.status === APICallStatus.ERROR || saveRes.status === APICallStatus.PARTIAL) {
-                setCreationErrors(
-                    saveRes.errors.reduce((errors, error) => ({...errors, [error.attribute]: error}), {})
-                );
+            if (creationResult.data.createRecord.valuesErrors?.length) {
+                // Extract errors by field
+                const errorsByField = creationResult.data.createRecord.valuesErrors.reduce((errors, error) => {
+                    if (!errors[error.attributeId]) {
+                        errors[error.attributeId] = [];
+                    }
+
+                    errors[error.attributeId].push(error);
+
+                    return errors;
+                }, {});
+                setCreationErrors(errorsByField);
+
                 return;
-            } else {
-                if (afterSave) {
-                    await afterSave(newRecord);
-                }
-
-                onClose();
             }
-        } catch (err) {
-            console.error(err);
-            return;
+
+            newRecord = creationResult.data.createRecord.record.whoAmI;
+
+            dispatch({
+                type: EditRecordReducerActionsTypes.SET_RECORD,
+                record: newRecord
+            });
         }
     };
 

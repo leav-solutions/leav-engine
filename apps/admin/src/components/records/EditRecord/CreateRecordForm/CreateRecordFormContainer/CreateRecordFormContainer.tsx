@@ -156,8 +156,8 @@ function CreateRecordFormContainer({
         });
 
         if (!!resCreaRecord && !!resCreaRecord.data) {
-            setRecordId(resCreaRecord.data.createRecord.id);
-            saveValuesRes = await _executeSaveValue(resCreaRecord.data.createRecord.id);
+            setRecordId(resCreaRecord.data.createRecord.record.id);
+            saveValuesRes = await _executeSaveValue(resCreaRecord.data.createRecord.record.id);
         }
         setSavePending(false);
 

@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {createContext} from 'react';
-import {SAVE_VALUE_BATCH_saveValueBatch_errors} from '_gqlTypes/SAVE_VALUE_BATCH';
+import {CREATE_RECORD_createRecord_valuesErrors} from '_gqlTypes/CREATE_RECORD';
 export interface ICreationErrorByField {
-    [attributeId: string]: SAVE_VALUE_BATCH_saveValueBatch_errors;
+    [attributeId: string]: CREATE_RECORD_createRecord_valuesErrors[];
 }
 
 const CreationErrorContext = createContext<ICreationErrorByField>({});

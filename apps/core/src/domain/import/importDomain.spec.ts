@@ -2,23 +2,23 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
 import {IValidateHelper} from 'domain/helpers/validate';
+import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import fs from 'fs';
+import {i18n} from 'i18next';
 import path from 'path';
+import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
 import {Action, ImportMode} from '../../_types/import';
-import importDomain from './importDomain';
 import {mockTranslator} from '../../__tests__/mocks/translator';
-import {i18n} from 'i18next';
-import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
-import {IUtils} from 'utils/utils';
-import {ILibraryDomain} from 'domain/library/libraryDomain';
+import importDomain from './importDomain';
 
 const importMockConfig: Mockify<Config.IImport> = {
     directory: path.resolve(__dirname, './imports'),
@@ -285,7 +285,7 @@ describe('importDomain', () => {
             };
 
             const mockRecordDomain: Mockify<IRecordDomain> = {
-                createRecord: global.__mockPromise({id: '1'})
+                createRecord: global.__mockPromise({record: {id: '1'}})
             };
 
             const mockValidateHelper: Mockify<IValidateHelper> = {
@@ -397,7 +397,7 @@ describe('importDomain', () => {
             };
 
             const mockRecordDomain: Mockify<IRecordDomain> = {
-                createRecord: global.__mockPromise({id: '1'}),
+                createRecord: global.__mockPromise({record: {id: '1'}}),
                 find: global.__mockPromise({totalCount: 1, list: [{id: '1'}]})
             };
 
@@ -576,7 +576,7 @@ describe('importDomain', () => {
                         return {totalCount: 0, list: []};
                     }
                 }),
-                createRecord: global.__mockPromise({id: '1'})
+                createRecord: global.__mockPromise({record: {id: '1'}})
             };
 
             const mockValidateHelper: Mockify<IValidateHelper> = {validateLibrary: global.__mockPromise()};
@@ -656,7 +656,7 @@ describe('importDomain', () => {
                         return {totalCount: 0, list: []};
                     }
                 }),
-                createRecord: global.__mockPromise({id: '1'})
+                createRecord: global.__mockPromise({record: {id: '1'}})
             };
 
             const mockValidateHelper: Mockify<IValidateHelper> = {validateLibrary: global.__mockPromise()};
@@ -736,7 +736,7 @@ describe('importDomain', () => {
                         return {totalCount: 0, list: []};
                     }
                 }),
-                createRecord: global.__mockPromise({id: '1'})
+                createRecord: global.__mockPromise({record: {id: '1'}})
             };
 
             const mockValidateHelper: Mockify<IValidateHelper> = {validateLibrary: global.__mockPromise()};

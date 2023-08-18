@@ -2,21 +2,21 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FileType} from '@leav/utils';
+import {IAuthApp} from 'app/auth/authApp';
+import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {IRecordFilterLight} from 'domain/record/_types';
+import express, {Express, NextFunction, Response} from 'express';
+import {withFilter} from 'graphql-subscriptions';
+import {FileUpload} from 'graphql-upload';
+import winston from 'winston';
 import {IConfig} from '_types/config';
 import {IRequestWithContext} from '_types/express';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
-import {IAuthApp} from 'app/auth/authApp';
-import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {IRecordFilterLight} from 'domain/record/recordDomain';
-import express, {Express, NextFunction, Response} from 'express';
-import {withFilter} from 'graphql-subscriptions';
-import {FileUpload} from 'graphql-upload';
-import winston from 'winston';
-import {API_KEY_PARAM_NAME} from '../../_types/auth';
 import {IFilesManagerDomain, TRIGGER_NAME_UPLOAD_FILE} from '../../domain/filesManager/filesManagerDomain';
+import {API_KEY_PARAM_NAME} from '../../_types/auth';
 
 export interface IFilesManagerApp {
     init(): Promise<void>;
