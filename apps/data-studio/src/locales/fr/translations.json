@@ -600,6 +600,7 @@
         "libraries_settings": {
             "no_libraries": "Aucune bibliothèque sélectionnée",
             "add_library": "Ajouter une bibliothèque",
+            "new_library": "Nouvelle bibliothèque",
             "select_all": "Toutes",
             "select_none": "Aucune",
             "select_custom": "Sélection personnalisée",
@@ -613,6 +614,7 @@
         "trees_settings": {
             "no_trees": "Aucun arbre sélectionné",
             "add_tree": "Ajouter un arbre",
+            "new_tree": "Nouvel arbre",
             "select_all": "Tous",
             "select_none": "Aucun",
             "select_custom": "Sélection personnalisée",

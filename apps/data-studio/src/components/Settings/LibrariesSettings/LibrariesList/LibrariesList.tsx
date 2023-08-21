@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ClearOutlined, PlusOutlined} from '@ant-design/icons';
-import {LibraryPicker, useLang} from '@leav/ui';
+import {EditLibraryModal, LibraryPicker, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
 import {Button, Empty, Input, Popconfirm, Space, Tooltip} from 'antd';
@@ -13,6 +13,7 @@ import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {LibraryLightFragment} from '../../../../../../../libs/ui/src/_gqlTypes';
 import LibraryBlock from './LibraryBlock';
+import {useApplicationLibraries} from 'hooks/useApplicationLibraries';
 
 const Header = styled.div`
     display: flex;
@@ -42,10 +43,12 @@ function LibrariesList({
     const {t} = useTranslation();
     const {lang} = useLang();
     const {currentApp} = useApplicationContext();
+    const {updateQuery} = useApplicationLibraries();
     const isCustomMode = Array.isArray(currentApp?.settings?.libraries);
     const isReadOnly = !currentApp?.permissions?.admin_application;
     const [search, setSearch] = useState<string>('');
     const [isLibraryPickerOpen, setIsLibraryPickerOpen] = useState<boolean>(false);
+    const [isNewLibraryModalOpen, setIsNewLibraryModalOpen] = useState(false);
 
     const _handleDragEnd = async (result: DropResult) => {
         if (!result.destination) {
@@ -77,6 +80,9 @@ function LibrariesList({
         onClearLibraries();
     };
 
+    const _handleClickNewLibrary = () => setIsNewLibraryModalOpen(true);
+    const _handleCloseNewLibrary = () => setIsNewLibraryModalOpen(false);
+
     const displayedLibraries = libraries.filter(lib => {
         const label = localizedTranslation(lib.label, lang);
         const searchStr = search.toLowerCase();
@@ -105,6 +111,20 @@ function LibrariesList({
         </Button>
     );
 
+    const createLibraryButton = (
+        <Button type="primary" icon={<PlusOutlined />} onClick={_handleClickNewLibrary}>
+            {t('app_settings.libraries_settings.new_library')}
+        </Button>
+    );
+
+    const _handlePostCreate = async (newLibrary: any) => {
+        updateQuery(data => {
+            return {
+                libraries: {__typename: 'LibrariesList', list: [...(data?.libraries?.list || []), newLibrary]}
+            };
+        });
+    };
+
     return (
         <>
             {!!libraries.length && (
@@ -117,7 +137,8 @@ function LibrariesList({
                             style={{maxWidth: '30rem', margin: '10px'}}
                             placeholder={t('global.search') + '...'}
                         />
-                        {isCustomMode && !isReadOnly ? (
+                        {!isCustomMode && !isReadOnly && createLibraryButton}
+                        {isCustomMode && !isReadOnly && (
                             <Space>
                                 {addLibraryButton}
                                 <Popconfirm
@@ -135,8 +156,6 @@ function LibrariesList({
                                     </>
                                 </Popconfirm>
                             </Space>
-                        ) : (
-                            <></>
                         )}
                     </Header>
                     <DragDropContext onDragEnd={_handleDragEnd}>
@@ -176,6 +195,14 @@ function LibrariesList({
                     onClose={_handleCloseLibraryPicker}
                     onSubmit={_handleSubmitLibraryPicker}
                     selected={libraries.map(lib => lib.id)}
+                />
+            )}
+            {isNewLibraryModalOpen && (
+                <EditLibraryModal
+                    open={isNewLibraryModalOpen}
+                    onClose={_handleCloseNewLibrary}
+                    onPostCreate={_handlePostCreate}
+                    width={790}
                 />
             )}
         </>

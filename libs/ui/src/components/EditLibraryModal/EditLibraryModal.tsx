@@ -73,7 +73,11 @@ function EditLibraryModal({
         setSubmitLoading(true);
         try {
             const savedLibrary = await submitFunction();
-            await onPostCreate(savedLibrary);
+
+            if (onPostCreate) {
+                await onPostCreate(savedLibrary);
+            }
+
             onClose();
         } catch (e) {
             console.error(e);

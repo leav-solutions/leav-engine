@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CheckboxOptionType, Popconfirm, Radio, RadioChangeEvent} from 'antd';
+import {CheckboxOptionType, Popconfirm, Radio} from 'antd';
 import {useApplicationContext} from 'context/ApplicationContext';
-import {useState} from 'react';
+import {ComponentProps, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -40,9 +40,10 @@ function ModeSelector({onChange, entityType, selectedMode}: IModeSelectorProps):
     const _handleOpenSelectionModeConfirm = () => setIsSelectionModeConfirmOpen(true);
     const _handleCloseSelectionModeConfirm = () => setIsSelectionModeConfirmOpen(false);
 
-    const _handleSelectionModeChange = async (e: RadioChangeEvent) => {
-        const value = e.target.value;
-        setPendingValueSave(value);
+    const _handleSelectionModeChange: ComponentProps<typeof Radio>['onChange'] = async event => {
+        const value = event.target.value as SelectionMode;
+
+        setPendingValueSave(value as SelectionMode);
 
         if ((value === 'all' || value === 'none') && selectedMode === 'custom') {
             _handleOpenSelectionModeConfirm();
@@ -86,7 +87,7 @@ function ModeSelector({onChange, entityType, selectedMode}: IModeSelectorProps):
     return (
         <Wrapper>
             <label>{t(`app_settings.${entityType}_settings.available`)}:</label>
-            <div>
+            <div style={{margin: '5px'}}>
                 <Popconfirm
                     okText={t('global.submit')}
                     cancelText={t('global.cancel')}
@@ -98,8 +99,6 @@ function ModeSelector({onChange, entityType, selectedMode}: IModeSelectorProps):
                 >
                     <Radio.Group
                         options={selectionModeOptions}
-                        optionType="button"
-                        buttonStyle="solid"
                         value={selectedMode}
                         onChange={_handleSelectionModeChange}
                     />

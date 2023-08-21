@@ -63,7 +63,9 @@ function EditTreeModal({open, treeId, onClose, onPostCreate, width}: IEditTreeMo
         setSubmitLoading(true);
         try {
             const savedTree = await submitFunction();
-            await onPostCreate(savedTree);
+            if (onPostCreate) {
+                await onPostCreate(savedTree);
+            }
             onClose();
         } catch (e) {
             console.error(e);

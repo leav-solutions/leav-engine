@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ClearOutlined, PlusOutlined} from '@ant-design/icons';
-import {TreePicker, useLang} from '@leav/ui';
+import {TreePicker, useLang, EditTreeModal} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
 import {Button, Empty, Input, Popconfirm, Space, Tooltip} from 'antd';
@@ -12,6 +12,7 @@ import {DragDropContext, Draggable, DraggableProvided, DropResult, Droppable} fr
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import TreeBlock from './TreeBlock';
+import {useApplicationTrees} from 'hooks/useApplicationTrees';
 
 const Header = styled.div`
     display: flex;
@@ -39,6 +40,8 @@ function TreesList({trees, onMoveTree, onRemoveTree, onAddTrees, onClearTrees}: 
     const isReadOnly = !currentApp?.permissions?.admin_application;
     const [search, setSearch] = useState<string>('');
     const [isTreePickerOpen, setIsTreePickerOpen] = useState<boolean>(false);
+    const {updateQuery} = useApplicationTrees();
+    const [isNewTreeModalOpen, setIsNewTreeModalOpen] = useState(false);
 
     const _handleDragEnd = async (result: DropResult) => {
         if (!result.destination) {
@@ -50,6 +53,31 @@ function TreesList({trees, onMoveTree, onRemoveTree, onAddTrees, onClearTrees}: 
         }
 
         return onMoveTree(result.draggableId, result.source.index, result.destination.index);
+    };
+
+    const _handleClickNewTree = () => setIsNewTreeModalOpen(true);
+    const _handleCloseNewTree = () => setIsNewTreeModalOpen(false);
+
+    const createTreeButton = (
+        <Button type="primary" icon={<PlusOutlined />} onClick={_handleClickNewTree}>
+            {t('app_settings.trees_settings.new_tree')}
+        </Button>
+    );
+
+    const _handlePostCreate = async (newTree: any) => {
+        updateQuery(data => {
+            return {
+                trees: {
+                    list: [
+                        ...(data?.trees?.list || []),
+                        {
+                            ...newTree,
+                            permissions: {access_tree: true, edit_children: true}
+                        }
+                    ]
+                }
+            };
+        });
     };
 
     const _handleRemoveTree = (treeId: string) => () => {
@@ -111,8 +139,8 @@ function TreesList({trees, onMoveTree, onRemoveTree, onAddTrees, onClearTrees}: 
                             style={{maxWidth: '30rem', margin: '10px'}}
                             placeholder={t('global.search') + '...'}
                         />
-
-                        {isCustomMode && !isReadOnly ? (
+                        {!isCustomMode && !isReadOnly && createTreeButton}
+                        {isCustomMode && !isReadOnly && (
                             <Space>
                                 {addTreeButton}
                                 <Popconfirm
@@ -129,8 +157,6 @@ function TreesList({trees, onMoveTree, onRemoveTree, onAddTrees, onClearTrees}: 
                                     </>
                                 </Popconfirm>
                             </Space>
-                        ) : (
-                            <></>
                         )}
                     </Header>
                     <DragDropContext onDragEnd={_handleDragEnd}>
@@ -170,6 +196,14 @@ function TreesList({trees, onMoveTree, onRemoveTree, onAddTrees, onClearTrees}: 
                     onClose={_handleCloseTreePicker}
                     onSubmit={_handleSubmitTreePicker}
                     selected={trees.map(lib => lib.id)}
+                />
+            )}
+            {isNewTreeModalOpen && (
+                <EditTreeModal
+                    open={isNewTreeModalOpen}
+                    onClose={_handleCloseNewTree}
+                    onPostCreate={_handlePostCreate}
+                    width={790}
                 />
             )}
         </>

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
+import {QueryResult, useQuery} from '@apollo/client';
 import {GET_TREES, GET_TREESVariables, GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
@@ -14,13 +14,14 @@ export interface IUseApplicationTreesHook {
     loading: boolean;
     trees: GET_TREES_trees_list[];
     error?: string;
+    updateQuery: QueryResult['updateQuery'];
 }
 
 export const useApplicationTrees = (params: IUseApplicationTreesParams = {}): IUseApplicationTreesHook => {
     const {currentApp} = useApplicationContext();
     const {onlyAllowed = true} = params;
 
-    const {loading, error, data} = useQuery<GET_TREES, GET_TREESVariables>(getTreeListQuery, {
+    const {loading, error, data, updateQuery} = useQuery<GET_TREES, GET_TREESVariables>(getTreeListQuery, {
         skip:
             currentApp?.settings?.trees === 'none' ||
             (Array.isArray(currentApp?.settings?.trees) && !currentApp.settings.trees.length), // Skip if no trees are selected
@@ -47,5 +48,5 @@ export const useApplicationTrees = (params: IUseApplicationTreesParams = {}): IU
         return aIndex - bIndex;
     });
 
-    return {loading, trees, error: error?.message ?? null};
+    return {loading, trees, error: error?.message ?? null, updateQuery};
 };
