@@ -478,6 +478,7 @@ export default function ({
                           record: previewRecord,
                           lib: previewAttributeLibraryProps,
                           conf: previewAttributeLibraryProps.recordIdentityConf,
+                          visitedLibraries,
                           ctx
                       })
                     : null;
