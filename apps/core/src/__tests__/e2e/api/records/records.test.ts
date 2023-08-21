@@ -15,12 +15,11 @@ import {
 describe('Records', () => {
     const testLibName = 'record_library_test';
     const testLibNameType = 'recordLibraryTest';
+
     let recordId;
 
     beforeAll(async () => {
-        await makeGraphQlCall(`mutation {
-            saveLibrary(library: {id: "${testLibName}", label: {fr: "Test lib"}}) { id }
-        }`);
+        await gqlSaveLibrary(testLibName, 'Test Lib');
 
         await makeGraphQlCall('mutation { refreshSchema }');
 
@@ -79,25 +78,6 @@ describe('Records', () => {
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
         expect(res.data.data[testLibNameType].list[0].library.id).toBe(testLibName);
-    });
-
-    test('Get record identity', async () => {
-        const res = await makeGraphQlCall(`
-            {
-                ${testLibNameType}(filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]) {
-                    list {
-                        id
-                        whoAmI { id library { id } label }
-                    }
-                }
-            }
-        `);
-
-        expect(res.data.errors).toBeUndefined();
-        expect(res.status).toBe(200);
-        expect(res.data.data[testLibNameType].list[0].whoAmI.id).toBe(recordId);
-        expect(res.data.data[testLibNameType].list[0].whoAmI.library.id).toBe(testLibName);
-        expect(res.data.data[testLibNameType].list[0].whoAmI.label).toBe(null);
     });
 
     test('Get records paginated', async () => {

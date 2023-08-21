@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ApolloError, useMutation, useQuery} from '@apollo/client';
-import {useLang, ErrorDisplay, Loading} from '@leav/ui';
+import {useMutation, useQuery} from '@apollo/client';
+import {ErrorDisplay, Loading, useLang} from '@leav/ui';
 import {getSelectedViewKey, panelSize, viewSettingsField} from 'constants/constants';
 import {SelectionModeContext} from 'context';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
@@ -14,7 +14,7 @@ import {
 import {SearchContext} from 'hooks/useSearchReducer/searchContext';
 import searchReducer, {initialSearchState, SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {ISearchRecord} from 'hooks/useSearchReducer/_types';
-import {useEffect, useReducer, useState} from 'react';
+import {useEffect, useReducer} from 'react';
 import {useAppSelector} from 'reduxStore/store';
 import styled, {CSSObject} from 'styled-components';
 import {objectValueVersionToArray} from 'utils';
@@ -241,7 +241,7 @@ function LibraryItemsListContent({
                     {isLoading && <Loading />}
                     {!isLoading && searchState.error && <ErrorDisplay message={searchState.error.message} />}
                     {!isLoading &&
-                        !getRecordsError &&
+                        !searchState.error &&
                         (!searchState.records.length ? <LibraryItemsListEmpty /> : <DisplayTypeSelector />)}
                 </Wrapper>
             </SelectionModeContext.Provider>

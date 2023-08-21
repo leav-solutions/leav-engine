@@ -29,8 +29,8 @@ exports[`AttributeSimpleLinkRepo filterValueQueryPart Should return query to ret
     "value0": {},
     "value1": "label",
   },
-  "query": "FLATTEN( FOR l IN @value0
-                    FILTER TO_STRING(r.@value1) == l._key 
+  "query": "FLATTEN( FOR lr IN @value0
+                    FILTER TO_STRING(r.@value1) == lr._key 
                     LET rlinkVal = ()
                     RETURN rlinkVal
                  )",
@@ -54,8 +54,8 @@ exports[`AttributeSimpleLinkRepo filterValueQueryPart Should return query to ret
     "value0": {},
     "value1": "linked_from",
   },
-  "query": "FLATTEN( FOR l IN @value0
-                    FILTER TO_STRING(r.@value1) == l._key 
+  "query": "FLATTEN( FOR lr IN @value0
+                    FILTER TO_STRING(r.@value1) == lr._key 
                     LET rlinkVal = (<VALUE QUERY PART>)
                     RETURN rlinkVal
                  )",

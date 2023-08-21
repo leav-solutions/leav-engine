@@ -22,7 +22,7 @@ import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition, IRecord, Operator} from '../../_types/record';
 import {mockAttrAdvLink, mockAttrSimple, mockAttrSimpleLink, mockAttrTree} from '../../__tests__/mocks/attribute';
-import {mockLibrary} from '../../__tests__/mocks/library';
+import {mockLibrary, mockLibraryFiles} from '../../__tests__/mocks/library';
 import {mockRecord} from '../../__tests__/mocks/record';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {mockTree} from '../../__tests__/mocks/tree';
@@ -801,15 +801,27 @@ describe('RecordDomain', () => {
                 ])
             };
 
+            const mockLibraryRepo: Mockify<ILibraryRepo> = {
+                getLibraries: global.__mockPromise({totalCount: 1, list: [mockLibraryFiles]})
+            };
+
+            const mockAttributeDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise(mockAttrSimple)
+            };
+
             const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
 
             const mockUtils: Mockify<IUtils> = {
-                getPreviewsAttributeName: jest.fn().mockReturnValue('previews')
+                getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
+                isLinkAttribute: jest.fn().mockReturnValue(false),
+                isTreeAttribute: jest.fn().mockReturnValue(false)
             };
 
             const recDomain = recordDomain({
                 'core.domain.value': mockValDomain as IValueDomain,
+                'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                'core.infra.library': mockLibraryRepo as ILibraryRepo,
                 'core.utils': mockUtils as IUtils,
                 config: mockConfig as Config.IConfig
             });

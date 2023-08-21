@@ -413,23 +413,26 @@ export default function ({
         conf,
         lib,
         record,
+        visitedLibraries = [],
         ctx
     }: {
         conf: IRecordIdentityConf;
         lib: ILibrary;
         record: IRecord;
+        visitedLibraries?: string[];
         ctx: IQueryInfos;
     }) => {
         const previewBaseUrl = getPreviewUrl();
+        visitedLibraries.push(lib.id);
 
-        let fileRecord: IRecord;
+        let previewRecord: IRecord;
 
         // On a file, previews are accessible straight on the record
         // Otherwise, we fetch values of the previews attribute
         let previewsAttributeId;
         let fileLibraryId;
         if (lib.behavior === LibraryBehavior.FILES) {
-            fileRecord = record;
+            previewRecord = record;
             previewsAttributeId = utils.getPreviewsAttributeName(lib.id);
             fileLibraryId = lib.id;
         } else {
@@ -437,6 +440,7 @@ export default function ({
             if (!previewAttribute) {
                 return null;
             }
+            const previewAttributeProps = await attributeDomain.getAttributeProperties({id: previewAttribute, ctx});
 
             const previewValues = await ret.getRecordFieldValue({
                 library: lib.id,
@@ -450,15 +454,44 @@ export default function ({
                 return null;
             }
 
-            fileRecord = previewValues[0].value;
-            previewsAttributeId = utils.getPreviewsAttributeName(fileRecord.library);
-            fileLibraryId = fileRecord.library;
+            const previewAttributeLibraryProps = (
+                await libraryRepo.getLibraries({
+                    params: {
+                        filters: {id: previewAttributeProps.linked_library}
+                    },
+                    ctx
+                })
+            ).list[0];
+
+            if (!previewAttributeLibraryProps) {
+                return null;
+            }
+
+            previewRecord = previewValues[0].value;
+
+            if (previewAttributeLibraryProps.behavior !== LibraryBehavior.FILES) {
+                // To avoid infinite loop, we check if the library has already been visited. If so, we return null
+                // For example, if the users' library preview is set to "created_by",
+                // we'll retrieve the user's creator, then we'll retrieve the creator's creator, and so on...
+                return !visitedLibraries.includes(previewAttributeLibraryProps.id)
+                    ? _getPreviews({
+                          record: previewRecord,
+                          lib: previewAttributeLibraryProps,
+                          conf: previewAttributeLibraryProps.recordIdentityConf,
+                          visitedLibraries,
+                          ctx
+                      })
+                    : null;
+            }
+
+            previewsAttributeId = utils.getPreviewsAttributeName(previewRecord.library);
+            fileLibraryId = previewRecord.library;
         }
 
         // Get value of the previews field. We're calling getRecordFieldValue to apply actions_list if any
         const filePreviewsValue = await ret.getRecordFieldValue({
             library: fileLibraryId,
-            record: fileRecord,
+            record: previewRecord,
             attributeId: previewsAttributeId,
             options: {forceArray: true},
             ctx
@@ -482,8 +515,8 @@ export default function ({
             })
             .reduce((obj, o) => ({...obj, ...o}), {});
 
-        previewsWithUrl.file = fileRecord;
-        previewsWithUrl.original = `/${config.files.originalsPathPrefix}/${fileRecord.library}/${fileRecord.id}`;
+        previewsWithUrl.file = previewRecord;
+        previewsWithUrl.original = `/${config.files.originalsPathPrefix}/${previewRecord.library}/${previewRecord.id}`;
 
         return previewsWithUrl;
     };
@@ -523,6 +556,115 @@ export default function ({
         return cacheService.memoize({key: cacheKey, func: _execute, storeNulls: true, ctx});
     };
 
+    const _getLabel = async (record: IRecord, visitedLibraries: string[] = [], ctx: IQueryInfos): Promise<string> => {
+        if (!record) {
+            return null;
+        }
+        visitedLibraries.push(record.library);
+
+        const lib = record?.library ? await getCoreEntityById<ILibrary>('library', record.library, ctx) : null;
+
+        if (!lib) {
+            throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
+        }
+
+        const conf = lib.recordIdentityConf || {};
+        const valuesOptions: IValuesOptions = {
+            version: ctx.version ?? null
+        };
+
+        let label: string = null;
+        if (conf.label) {
+            const labelAttributeProps = await attributeDomain.getAttributeProperties({id: conf.label, ctx});
+
+            const labelValues = await valueDomain.getValues({
+                library: lib.id,
+                recordId: record.id,
+                attribute: conf.label,
+                options: valuesOptions,
+                ctx
+            });
+
+            if (!labelValues.length) {
+                return null;
+            }
+
+            if (utils.isLinkAttribute(labelAttributeProps)) {
+                const linkValue = labelValues.pop().value;
+
+                // To avoid infinite loop, we check if the library has already been visited. If so, we return the id.
+                // For example, if the users' library label is set to "created_by",
+                // we'll retrieve the user's creator, then we'll retrieve the creator's creator, and so on...
+                if (visitedLibraries.includes(labelAttributeProps.linked_library)) {
+                    return linkValue.id;
+                }
+
+                label = await _getLabel(linkValue, visitedLibraries, ctx);
+            } else if (utils.isTreeAttribute(labelAttributeProps)) {
+                label = await _getLabel(labelValues.pop().value.record, visitedLibraries, ctx);
+            } else {
+                label = labelValues.pop().value;
+            }
+        }
+
+        return label;
+    };
+
+    const _getColor = async (record: IRecord, visitedLibraries: string[] = [], ctx: IQueryInfos): Promise<string> => {
+        if (!record) {
+            return null;
+        }
+        visitedLibraries.push(record.library);
+
+        const lib = record?.library ? await getCoreEntityById<ILibrary>('library', record.library, ctx) : null;
+
+        if (!lib) {
+            throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
+        }
+
+        const conf = lib.recordIdentityConf || {};
+        const valuesOptions: IValuesOptions = {
+            version: ctx.version ?? null
+        };
+
+        let color: string = null;
+        if (conf.color) {
+            const colorAttributeProps = await attributeDomain.getAttributeProperties({id: conf.color, ctx});
+
+            const colorValues = await valueDomain.getValues({
+                library: lib.id,
+                recordId: record.id,
+                attribute: conf.color,
+                options: valuesOptions,
+                ctx
+            });
+
+            if (!colorValues.length) {
+                return null;
+            }
+
+            if (utils.isLinkAttribute(colorAttributeProps)) {
+                const linkValue = colorValues.pop().value;
+
+                // To avoid infinite loop, we check if the library has already been visited. If so, we return null
+                // For example, if the users' library color is set to "created_by",
+                // we'll retrieve the user's creator, then we'll retrieve the creator's creator, and so on...
+                if (visitedLibraries.includes(colorAttributeProps.linked_library)) {
+                    return null;
+                }
+
+                color = await _getColor(linkValue, visitedLibraries, ctx);
+            } else if (utils.isTreeAttribute(colorAttributeProps)) {
+                const treeValue = colorValues.pop().value.record;
+                color = await _getColor(treeValue, visitedLibraries, ctx);
+            } else {
+                color = colorValues.pop().value;
+            }
+        }
+
+        return color;
+    };
+
     const _getRecordIdentity = async (record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity> => {
         const lib = await getCoreEntityById<ILibrary>('library', record.library, ctx);
 
@@ -537,28 +679,12 @@ export default function ({
 
         let label: string = null;
         if (conf.label) {
-            const labelValues = await valueDomain.getValues({
-                library: lib.id,
-                recordId: record.id,
-                attribute: conf.label,
-                options: valuesOptions,
-                ctx
-            });
-
-            label = labelValues.length ? labelValues.pop().value : null;
+            label = await _getLabel(record, [], ctx);
         }
 
         let color: string = null;
         if (conf.color) {
-            const colorValues = await valueDomain.getValues({
-                library: lib.id,
-                recordId: record.id,
-                attribute: conf.color,
-                options: valuesOptions,
-                ctx
-            });
-
-            color = colorValues.length ? colorValues.pop().value : null;
+            color = await _getColor(record, [], ctx);
         }
 
         let preview: IPreview = null;
@@ -609,7 +735,7 @@ export default function ({
         // If no preview found, or preview is not available, use library icon if any
         if (
             preview === null ||
-            !Object.keys(preview?.file?.[utils.getPreviewsAttributeName(record.library)] ?? {}).length
+            !Object.keys(preview?.file?.[utils.getPreviewsAttributeName(preview?.file?.library)] ?? {}).length
         ) {
             preview = await _getLibraryIconPreview(lib, ctx);
         }
@@ -788,16 +914,16 @@ export default function ({
                 let filter: IRecordFilterOption = {};
 
                 if (_isAttributeFilter(f)) {
-                    const attributes = await getAttributesFromField(
-                        f.field,
-                        f.condition,
-                        {
+                    const attributes = await getAttributesFromField({
+                        field: f.field,
+                        condition: f.condition,
+                        deps: {
                             'core.domain.attribute': attributeDomain,
                             'core.infra.library': libraryRepo,
                             'core.infra.tree': treeRepo
                         },
                         ctx
-                    );
+                    });
 
                     // Set reverse links if necessary.
                     const attrsRepo = (await Promise.all(
@@ -859,16 +985,16 @@ export default function ({
 
             // Check sort fields
             if (sort) {
-                const sortAttributes = await getAttributesFromField(
-                    sort.field,
-                    null,
-                    {
+                const sortAttributes = await getAttributesFromField({
+                    field: sort.field,
+                    condition: null,
+                    deps: {
                         'core.domain.attribute': attributeDomain,
                         'core.infra.library': libraryRepo,
                         'core.infra.tree': treeRepo
                     },
                     ctx
-                );
+                });
 
                 const sortAttributesRepo = (await Promise.all(
                     sortAttributes.map(async a =>
