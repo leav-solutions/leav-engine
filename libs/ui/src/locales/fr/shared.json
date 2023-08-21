@@ -91,6 +91,7 @@
         "format_extended": "Étendu",
         "format_numeric": "Numérique",
         "format_text": "Texte",
+        "format_color": "Couleur",
         "delete_confirm": "Êtes-vous sûr de vouloir supprimer cet attribut ?",
         "add_attribute": "Ajouter un attribut",
         "new_attribute": "Nouvel attribut",

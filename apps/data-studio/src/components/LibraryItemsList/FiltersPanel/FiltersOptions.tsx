@@ -74,6 +74,14 @@ const allowedConditionByFormat: {[format in AttributeFormat]: AttributeCondition
         AttributeConditionFilter.END_BEFORE,
         AttributeConditionFilter.IS_EMPTY,
         AttributeConditionFilter.IS_NOT_EMPTY
+    ],
+    [AttributeFormat.color]: [
+        AttributeConditionFilter.CONTAINS,
+        AttributeConditionFilter.NOT_CONTAINS,
+        AttributeConditionFilter.EQUAL,
+        AttributeConditionFilter.NOT_EQUAL,
+        AttributeConditionFilter.IS_EMPTY,
+        AttributeConditionFilter.IS_NOT_EMPTY
     ]
 };
 

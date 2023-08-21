@@ -303,7 +303,7 @@ function EditAttributeInfoForm({
                 rules={[{required: true, message: _getRequiredMessage('type')}]}
                 hasFeedback
             >
-                <Select options={typeSelectOptions} disabled={isReadOnly || isEditing} />
+                <Select options={typeSelectOptions} disabled={isReadOnly || isEditing} aria-label=""/>
             </Form.Item>
             {isTypeStandard && (
                 <Form.Item
@@ -314,7 +314,7 @@ function EditAttributeInfoForm({
                     rules={[{required: true, message: _getRequiredMessage('format')}]}
                     hasFeedback
                 >
-                    <Select options={formatSelectOptions} disabled={isReadOnly || isEditing} />
+                    <Select options={formatSelectOptions} disabled={isReadOnly || isEditing} aria-label=""/>
                 </Form.Item>
             )}
             {isTypeLink && (
