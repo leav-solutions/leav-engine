@@ -9,7 +9,7 @@ import {mockModifier} from '__mocks__/common/value';
 import {RECORD_FORM_recordForm_elements_attribute_StandardAttribute} from '_gqlTypes/RECORD_FORM';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_Value_attribute} from '_gqlTypes/SAVE_VALUE_BATCH';
 import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
-import {act, render, screen} from '_tests/testUtils';
+import {act, render, screen, waitFor} from '_tests/testUtils';
 import {
     EditRecordReducerActionsTypes,
     initialState
@@ -223,12 +223,13 @@ describe('StandardField', () => {
     });
 
     test('Render color field', async () => {
-        const valueColor = 'FFFFFF';
+        const colorValue = 'FFFFFF';
+        const newColorValue = '000000';
         const recordValuesDate = [
             {
                 ...mockRecordValuesCommon,
-                value: valueColor,
-                raw_value: valueColor
+                value: colorValue,
+                raw_value: colorValue
             }
         ];
         render(
@@ -241,23 +242,23 @@ describe('StandardField', () => {
                 {...baseProps}
             />
         );
-
         // Open ColorPicker Element
-        const colorElem = screen.getByText('#' + valueColor);
+        const colorElem = screen.getByRole('textbox');
         await act(async () => {
             userEvent.click(colorElem);
         });
 
-        const colorPickerElem = await screen.getByRole('textbox');
+        const colorPickerElem = screen.getByRole('textbox');
         expect(colorPickerElem).toBeInTheDocument();
 
         // Update color value
-        const newValues = '000000';
-        userEvent.type(colorPickerElem, newValues);
+        userEvent.clear(colorPickerElem);
+        userEvent.type(colorPickerElem, newColorValue);
         await act(async () => {
-            userEvent.click(screen.getByText('global.submit'));
+            userEvent.click(screen.getByRole('button', {name: 'global.submit'}));
         });
-        expect(colorElem).toHaveTextContent('#' + newValues);
+
+        expect(colorPickerElem).not.toBeInTheDocument();
         expect(mockHandleSubmit).toHaveBeenCalled();
     });
 

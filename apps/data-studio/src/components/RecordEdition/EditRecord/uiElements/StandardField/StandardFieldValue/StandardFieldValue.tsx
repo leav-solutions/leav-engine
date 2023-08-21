@@ -413,26 +413,14 @@ function StandardFieldValue({
 
     const _getColorDisplay = (): JSX.Element => {
         const colorValue = '#' + String(fieldValue.displayValue);
-        let colorPickerStyle: React.CSSProperties = {};
-        if (fieldValue.index === 0) {
-            colorPickerStyle = {
-                width: '16px',
-                height: '16px',
-                borderRadius: '2px',
-                backgroundColor: colorValue,
-                marginTop: '25px',
-                marginLeft: '5px'
-            };
-        } else {
-            colorPickerStyle = {
-                width: '16px',
-                height: '16px',
-                borderRadius: '2px',
-                backgroundColor: colorValue,
-                marginTop: '15px',
-                marginLeft: '5px'
-            };
-        }
+        const colorPickerStyle: React.CSSProperties = {
+            width: '16px',
+            height: '16px',
+            borderRadius: '2px',
+            backgroundColor: colorValue,
+            marginTop: fieldValue.index ? '15px' : '25px',
+            marginLeft: '5px'
+        };
 
         return <label style={colorPickerStyle} />;
     };

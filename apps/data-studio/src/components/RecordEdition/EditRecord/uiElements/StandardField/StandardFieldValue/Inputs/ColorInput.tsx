@@ -12,25 +12,13 @@ function ColorInput({state, fieldValue, onChange, onFocus}: IStandardInputProps)
     const _handleColorChange = (value: Color) => {
         onChange(value.toHex().toUpperCase());
     };
-    let colorPickerStyle: React.CSSProperties = {};
-
-    if (fieldValue.index === 0) {
-        colorPickerStyle = {
-            height: '54px',
-            width: '100%',
-            justifyContent: 'left',
-            paddingTop: '14px',
-            paddingLeft: '15px'
-        };
-    } else {
-        colorPickerStyle = {
-            height: '44px',
-            width: '100%',
-            justifyContent: 'left',
-            paddingTop: '4px',
-            paddingLeft: '15px'
-        };
-    }
+    const colorPickerStyle: React.CSSProperties = {
+        height: fieldValue.index ? '44px' : '54px',
+        width: '100%',
+        justifyContent: 'left',
+        paddingTop: fieldValue.index ? '4px' : '14px',
+        paddingLeft: '15px'
+    };
 
     return (
         <ColorPicker
