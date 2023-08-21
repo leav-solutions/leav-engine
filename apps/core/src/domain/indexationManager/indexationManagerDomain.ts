@@ -14,13 +14,25 @@ import {isEqual, difference, intersectionBy} from 'lodash';
 import {v4 as uuidv4} from 'uuid';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {EventAction, IDbEvent, ILibraryPayload, IRecordPayload, IValuePayload} from '../../_types/event';
-import {AttributeCondition, IRecord, Operator} from '../../_types/record';
+import {AttributeCondition, IRecord} from '../../_types/record';
 import {IIndexationService} from '../../infra/indexation/indexationService';
+import {ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
+import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
+import {i18n} from 'i18next';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+
+interface IIndexDatabaseParams {
+    findRecordParams: IFindRecordParams | IFindRecordParams[];
+    attributes?: {up?: string[]; del?: string[]};
+    ctx: IQueryInfos;
+}
 
 export interface IIndexationManagerDomain {
     init(): Promise<void>;
-    indexDatabase(ctx: IQueryInfos, libraryId: string, records?: string[]): Promise<void>;
+    indexDatabase(params: IIndexDatabaseParams, task?: ITaskFuncParams): Promise<string>;
 }
+
+export const TRIGGER_NAME_INDEXATION = 'INDEXATION';
 
 interface IDeps {
     config?: Config.IConfig;
@@ -29,15 +41,21 @@ interface IDeps {
     'core.domain.library'?: ILibraryDomain;
     'core.domain.attribute'?: IAttributeDomain;
     'core.infra.indexation.indexationService'?: IIndexationService;
+    'core.domain.tasksManager'?: ITasksManagerDomain;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
+    translator?: i18n;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.domain.record': recordDomain = null,
     'core.domain.library': libraryDomain = null,
     'core.domain.attribute': attributeDomain = null,
-    'core.infra.indexation.indexationService': indexationService = null
+    'core.domain.tasksManager': tasksManagerDomain = null,
+    'core.infra.indexation.indexationService': indexationService = null,
+    'core.domain.eventsManager': eventsManager = null,
+    translator = null
 }: IDeps): IIndexationManagerDomain {
     const _indexRecords = async (
         findRecordParams: IFindRecordParams,
@@ -191,7 +209,11 @@ export default function({
                     }));
                 }
 
-                await _indexRecords({library: l.id, filters}, ctx, {up: intersections.map(a => a.id)});
+                await _indexDatabase({
+                    findRecordParams: {library: l.id, filters},
+                    ctx,
+                    attributes: {up: intersections.map(a => a.id)}
+                });
             }
         }
     };
@@ -217,13 +239,13 @@ export default function({
             case EventAction.RECORD_SAVE: {
                 data = (event.payload as IRecordPayload).data;
 
-                await _indexRecords(
-                    {
+                await _indexDatabase({
+                    findRecordParams: {
                         library: data.libraryId,
                         filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: data.id}]
                     },
                     ctx
-                );
+                });
 
                 break;
             }
@@ -234,7 +256,11 @@ export default function({
                 const attrsToAdd = difference(data.new?.fullTextAttributes, data.old?.fullTextAttributes) as string[];
 
                 if (!isEqual(data.old?.fullTextAttributes?.sort(), data.new?.fullTextAttributes?.sort())) {
-                    await _indexRecords({library: data.new.id}, ctx, {up: attrsToAdd, del: attrsToDel});
+                    await _indexDatabase({
+                        findRecordParams: {library: data.new.id},
+                        ctx,
+                        attributes: {up: attrsToAdd, del: attrsToDel}
+                    });
                 }
 
                 // if label change we re-index all linked libraries
@@ -253,14 +279,14 @@ export default function({
                 const isAttrToIndex = fullTextAttributes.map(a => a.id).includes(data.attributeId);
 
                 if (isActivated || isAttrToIndex) {
-                    await _indexRecords(
-                        {
+                    await _indexDatabase({
+                        findRecordParams: {
                             library: data.libraryId,
                             filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: data.recordId}]
                         },
                         ctx,
-                        isActivated || !isAttrToIndex ? null : {up: [data.attributeId]}
-                    );
+                        attributes: isActivated || !isAttrToIndex ? null : {up: [data.attributeId]}
+                    });
                 }
 
                 // if the new attribute's value is the label of the library
@@ -277,14 +303,14 @@ export default function({
 
                 const attrProps = await attributeDomain.getAttributeProperties({id: data.attributeId, ctx});
 
-                await _indexRecords(
-                    {
+                await _indexDatabase({
+                    findRecordParams: {
                         library: data.libraryId,
                         filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: data.recordId}]
                     },
                     ctx,
-                    attrProps.multiple_values ? {up: [data.attributeId]} : {del: [data.attributeId]}
-                );
+                    attributes: attrProps.multiple_values ? {up: [data.attributeId]} : {del: [data.attributeId]}
+                });
 
                 // if the updated/deleted attribute is the label of the library
                 // we have to re-index all linked libraries
@@ -321,6 +347,65 @@ export default function({
         }
     };
 
+    const _indexDatabase = async (params: IIndexDatabaseParams, task?: ITaskFuncParams): Promise<string> => {
+        const findRecordParams = [].concat(params.findRecordParams || []);
+
+        if (typeof task?.id === 'undefined') {
+            const newTaskId = uuidv4();
+
+            await tasksManagerDomain.createTask(
+                {
+                    id: newTaskId,
+                    label: config.lang.available.reduce((labels, lang) => {
+                        labels[lang] = `${translator.t('indexation.index_database', {
+                            lng: lang,
+                            library: findRecordParams.map(e => e.library).join(', ')
+                        })}`;
+                        return labels;
+                    }, {}),
+                    func: {
+                        moduleName: 'domain',
+                        subModuleName: 'indexationManager',
+                        name: 'indexDatabase',
+                        args: params
+                    },
+                    role: {
+                        type: TaskType.INDEXATION,
+                        detail: findRecordParams.map(e => e.library).join(',')
+                    },
+                    priority: TaskPriority.MEDIUM,
+                    startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
+                    ...(!!task?.callbacks && {callbacks: task.callbacks})
+                },
+                params.ctx
+            );
+
+            return newTaskId;
+        }
+
+        const _updateLibraryIndexationStatus = async (inProgress: boolean) => {
+            for (const libraryId of findRecordParams.map(e => e.library)) {
+                await eventsManager.sendPubSubEvent(
+                    {
+                        triggerName: TRIGGER_NAME_INDEXATION,
+                        data: {indexation: {userId: params.ctx.userId, libraryId, inProgress}}
+                    },
+                    params.ctx
+                );
+            }
+        };
+
+        await _updateLibraryIndexationStatus(true);
+
+        for (const frp of findRecordParams) {
+            await _indexRecords(frp, params.ctx);
+        }
+
+        await _updateLibraryIndexationStatus(false);
+
+        return task.id;
+    };
+
     return {
         async init(): Promise<void> {
             // Init rabbitmq
@@ -339,20 +424,6 @@ export default function({
 
             await indexationService.init();
         },
-        async indexDatabase(ctx: IQueryInfos, libraryId: string, records?: string[]): Promise<void> {
-            // if records are undefined we re-index all library's records
-
-            const filters = records
-                ? records.reduce((acc, id) => {
-                      acc.push({field: 'id', condition: AttributeCondition.EQUAL, value: id});
-                      if (records.length > 1) {
-                          acc.push({operator: Operator.OR});
-                      }
-                      return acc;
-                  }, [])
-                : [];
-
-            await _indexRecords({library: libraryId, filters}, ctx);
-        }
+        indexDatabase: _indexDatabase
     };
 }

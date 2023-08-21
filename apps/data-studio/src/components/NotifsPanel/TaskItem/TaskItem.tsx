@@ -97,7 +97,7 @@ function TaskItem({notif, index, onNotifInfoClick, onCancel, onDelete}: ITaskIte
                     ) : (
                         <WrapperProgress isCanceled={task.status === TaskStatus.CANCELED}>
                             <Progress
-                                width={45}
+                                size={45}
                                 type="circle"
                                 percent={task.progress?.percent || 0}
                                 {...(isExceptionTask(task) && {

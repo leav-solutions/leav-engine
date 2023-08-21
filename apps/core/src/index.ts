@@ -56,7 +56,6 @@ import {initPlugins} from './pluginsLoader';
     const tasksManager: ITasksManagerInterface = coreContainer.cradle['core.interface.tasksManager'];
     const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
     const cli = coreContainer.cradle['core.interface.cli'];
-    const eventsManager = coreContainer.cradle['core.domain.eventsManager'];
 
     await initPlugins(coreContainer.cradle.pluginsFolder, pluginsContainer);
 

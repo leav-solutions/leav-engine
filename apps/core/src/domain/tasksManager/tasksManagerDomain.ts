@@ -18,7 +18,8 @@ import {
     ITaskFuncParams,
     ITaskDeletePayload,
     TaskCallbackStatus,
-    ITaskCallback
+    ITaskCallback,
+    TaskType
 } from '../../_types/tasksManager';
 import winston from 'winston';
 import {IList, SortOrder} from '../../_types/list';
@@ -237,6 +238,12 @@ export default function ({
                             priority: Joi.string()
                                 .valid(...Object.values(TaskPriority))
                                 .required(),
+                            role: Joi.object().keys({
+                                type: Joi.string()
+                                    .valid(...Object.values(TaskType))
+                                    .required(),
+                                detail: Joi.string()
+                            }),
                             callbacks: Joi.array().items(
                                 Joi.object().keys({
                                     moduleName: Joi.string().required(),
@@ -350,7 +357,7 @@ export default function ({
     };
 
     const _createTask = async (
-        {id, label, func, startAt, priority, callbacks}: ITaskCreatePayload,
+        {id, label, func, startAt, priority, callbacks, role}: ITaskCreatePayload,
         ctx: IQueryInfos
     ): Promise<string> => {
         const task = await taskRepo.createTask(
@@ -361,6 +368,7 @@ export default function ({
                 startAt: startAt ?? utils.getUnixTime(),
                 status: TaskStatus.CREATED,
                 priority,
+                role,
                 archive: false, // FIXME: move to repo
                 ...(!!callbacks && {callbacks: callbacks.map(c => ({...c, status: TaskCallbackStatus.PENDING}))})
             },

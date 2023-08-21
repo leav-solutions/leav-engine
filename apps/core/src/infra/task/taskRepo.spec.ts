@@ -6,7 +6,7 @@ import {IDbUtils} from 'infra/db/dbUtils';
 import {IUtils} from 'utils/utils';
 import {IFormFilterOptions} from '_types/forms';
 import {IQueryInfos} from '_types/queryInfos';
-import {ITask, TaskPriority, TaskStatus} from '../../_types/tasksManager';
+import {ITask, TaskPriority, TaskStatus, TaskType} from '../../_types/tasksManager';
 import {mockForm} from '../../__tests__/mocks/forms';
 import taskRepo from './taskRepo';
 
@@ -21,6 +21,9 @@ const mockTask: ITask = {
         subModuleName: 'subModuleName',
         name: 'func',
         args: []
+    },
+    role: {
+        type: TaskType.IMPORT_DATA
     },
     archive: false,
     startAt: 123,

@@ -54,6 +54,10 @@
         "delete": "Supprimer la bibliothèque",
         "delete_confirm": "Êtes-vous sûr de vouloir supprimer cette bibliothèque ?",
         "delete_confirm_warning": "Attention, cette action est irréversible et supprimera tous les éléments de la bibliothèque",
+        "indexation": "Indexation",
+        "indexation_in_progress": "Indexation en cours",
+        "sync_indexation": "Synchroniser",
+        "indexed_attributes": "Attributs indexés",
         "previews_settings": {
             "title": "Configuration des aperçus",
             "label": "Libellé",
@@ -91,6 +95,7 @@
         "add_attribute": "Ajouter un attribut",
         "new_attribute": "Nouvel attribut",
         "select_attributes": "Sélectionner des attributs",
+        "select_indexed_attributes": "Sélectionner les attributs indexés",
         "label": "Libellé",
         "description": "Description",
         "readonly": "Lecture seule",

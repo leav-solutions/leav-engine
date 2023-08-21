@@ -40,7 +40,7 @@ export default function () {
             writeStream.on('finish', resolve);
 
             writeStream.on('error', error => {
-                console.debug('Error while writing file', error);
+                console.error('Error while writing file', error);
 
                 fs.unlink(storedFilePath, () => {
                     reject(error);

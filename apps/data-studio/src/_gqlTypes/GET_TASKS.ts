@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {TaskFiltersInput, LibraryBehavior, TaskStatus} from './globalTypes';
+import {TaskFiltersInput, LibraryBehavior, TaskStatus, TaskType} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: GET_TASKS
@@ -35,6 +35,11 @@ export interface GET_TASKS_tasks_list_created_by_whoAmI {
 export interface GET_TASKS_tasks_list_created_by {
     id: string;
     whoAmI: GET_TASKS_tasks_list_created_by_whoAmI;
+}
+
+export interface GET_TASKS_tasks_list_role {
+    type: TaskType;
+    detail: string | null;
 }
 
 export interface GET_TASKS_tasks_list_progress {
@@ -81,6 +86,7 @@ export interface GET_TASKS_tasks_list {
     startAt: number;
     status: TaskStatus;
     priority: TaskPriority;
+    role: GET_TASKS_tasks_list_role | null;
     progress: GET_TASKS_tasks_list_progress | null;
     startedAt: number | null;
     completedAt: number | null;

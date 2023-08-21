@@ -19,7 +19,7 @@ import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {IRecord} from '../../_types/record';
-import {ITaskFuncParams, TaskPriority} from '../../_types/tasksManager';
+import {ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
 import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
 
@@ -166,6 +166,9 @@ export default function ({
                             subModuleName: 'export',
                             name: 'export',
                             args: params
+                        },
+                        role: {
+                            type: TaskType.EXPORT
                         },
                         startAt: !!task.startAt ? task.startAt : Math.floor(Date.now() / 1000),
                         priority: TaskPriority.MEDIUM,

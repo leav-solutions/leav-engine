@@ -6,7 +6,7 @@ import {cancelTaskMutation} from 'graphQL/mutations/tasks/cancelTask';
 import {deleteTaskMutation} from 'graphQL/mutations/tasks/deleteTask';
 import {BrowserRouter as Router} from 'react-router-dom';
 import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
-import {TaskStatus} from '_gqlTypes/globalTypes';
+import {TaskStatus, TaskType} from '_gqlTypes/globalTypes';
 import {act, render, screen} from '_tests/testUtils';
 import NotifsPanel from './NotifsPanel';
 
@@ -19,6 +19,7 @@ export const mockTask: GET_TASKS_tasks_list = {
     startAt: Date.now(),
     progress: {description: null, percent: 0},
     status: TaskStatus.PENDING,
+    role: null,
     priority: 1,
     created_by: null,
     startedAt: null,

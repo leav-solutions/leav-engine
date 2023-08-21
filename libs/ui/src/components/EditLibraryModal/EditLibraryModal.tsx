@@ -29,9 +29,17 @@ interface IEditLibraryModalProps {
     onPostCreate?: (library: SaveLibraryMutation['saveLibrary']) => Promise<void>;
     onClose?: () => void;
     width?: ModalProps['width'];
+    indexationTask?: string;
 }
 
-function EditLibraryModal({open, libraryId, onClose, onPostCreate, width}: IEditLibraryModalProps): JSX.Element {
+function EditLibraryModal({
+    open,
+    libraryId,
+    onClose,
+    onPostCreate,
+    width,
+    indexationTask
+}: IEditLibraryModalProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
     const apolloClient = useApolloClient();
@@ -50,6 +58,7 @@ function EditLibraryModal({open, libraryId, onClose, onPostCreate, width}: IEdit
         permissionsQueryResult,
         isEditing ? PermissionsActions.admin_edit_library : PermissionsActions.admin_create_library
     );
+
     const canDelete = extractPermissionFromQuery(permissionsQueryResult, PermissionsActions.admin_delete_library);
 
     const [deleteLibrary] = useDeleteLibraryMutation();
@@ -158,6 +167,7 @@ function EditLibraryModal({open, libraryId, onClose, onPostCreate, width}: IEdit
                     libraryId={libraryId}
                     onSetSubmitFunction={_handleSetSubmitFunction}
                     readOnly={isReadOnly}
+                    indexationTask={indexationTask}
                 />
             )}
         </Modal>

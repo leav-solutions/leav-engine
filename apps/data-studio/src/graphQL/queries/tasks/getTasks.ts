@@ -20,6 +20,10 @@ export const getTasks = gql`
                 startAt
                 status
                 priority
+                role {
+                    type
+                    detail
+                }
                 progress {
                     percent
                     description

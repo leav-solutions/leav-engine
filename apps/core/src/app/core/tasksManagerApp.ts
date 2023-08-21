@@ -14,7 +14,7 @@ import {IRecord} from '_types/record';
 import {ITasksManagerDomain, TRIGGER_NAME_TASK} from '../../domain/tasksManager/tasksManagerDomain';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition} from '../../_types/record';
-import {ITask, TaskPriority, TaskStatus} from '../../_types/tasksManager';
+import {ITask, TaskPriority, TaskStatus, TaskType} from '../../_types/tasksManager';
 
 export interface ITasksManagerApp {
     initMaster(): Promise<NodeJS.Timer>;
@@ -70,9 +70,18 @@ export default function ({
                         ${Object.values(TaskStatus).join(' ')}
                     }
 
+                    enum TaskType {
+                        ${Object.values(TaskType).join(' ')}
+                    }
+
                     type TaskLink {
                         name: String!,
                         url: String!
+                    }
+
+                    type TaskRole {
+                        type: TaskType!,
+                        detail: String
                     }
 
                     type Task {
@@ -85,6 +94,7 @@ export default function ({
                         status: TaskStatus!,
                         priority: TaskPriority!,
                         archive: Boolean!,
+                        role: TaskRole,
                         progress: Progress,
                         startedAt: Int,
                         completedAt: Int,
@@ -106,7 +116,8 @@ export default function ({
                         id: ID,
                         created_by: ID,
                         status: TaskStatus,
-                        archive: Boolean
+                        archive: Boolean,
+                        type: TaskType
                     }
 
                     extend type Query {
@@ -187,6 +198,10 @@ export default function ({
 
                                     if (toReturn && typeof variables.filters?.archive !== 'undefined') {
                                         toReturn = payload.task.archive === variables.filters.archive;
+                                    }
+
+                                    if (toReturn && typeof variables.filters?.type !== 'undefined') {
+                                        toReturn = payload.task.role?.type === variables.filters.type;
                                     }
 
                                     return toReturn;

@@ -10,6 +10,8 @@ import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import indexationManager from './indexationManagerDomain';
 import {IIndexationService} from 'infra/indexation/indexationService';
+import {AttributeCondition} from '../../_types/record';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     assertExchange: jest.fn(),
@@ -25,6 +27,10 @@ const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
 const mockAmqpConnection: Mockify<amqp.Connection> = {
     close: jest.fn(),
     createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel)
+};
+
+const mockEventsManager: Mockify<IEventsManagerDomain> = {
+    sendPubSubEvent: global.__mockPromise()
 };
 
 const ctx: IQueryInfos = {
@@ -118,11 +124,21 @@ describe('Indexation Manager', () => {
             'core.domain.record': mockRecordDomain as IRecordDomain,
             'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
             'core.domain.library': mockLibraryDomain as ILibraryDomain,
+            'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
             'core.infra.indexation.indexationService': mockIndexationService as IIndexationService
         });
 
-        await indexation.indexDatabase(ctx, 'test');
-        await indexation.indexDatabase(ctx, 'test', ['1337']);
+        await indexation.indexDatabase({findRecordParams: {library: 'test'}, ctx}, {id: 'fakeTaskId'});
+        await indexation.indexDatabase(
+            {
+                findRecordParams: {
+                    library: 'test',
+                    filters: [{field: 'id', value: '1337', condition: AttributeCondition.EQUAL}]
+                },
+                ctx
+            },
+            {id: 'fakeTaskId'}
+        );
 
         expect(mockIndexationService.isLibraryListed).toBeCalledTimes(2);
         expect(mockIndexationService.listLibrary).toBeCalledTimes(2);
