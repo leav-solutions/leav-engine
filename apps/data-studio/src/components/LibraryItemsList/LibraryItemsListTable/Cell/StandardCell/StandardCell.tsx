@@ -6,7 +6,7 @@ import {AnyPrimitive} from '@leav/utils';
 import {Switch, Tag, Tooltip, Typography} from 'antd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {stringifyDateRangeValue} from 'utils';
+import {getInvertColor, stringifyDateRangeValue} from 'utils';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
 import {IDateRangeValue, ITableCell} from '_types/types';
 import {cp} from 'fs';
@@ -49,12 +49,8 @@ function StandardCell({cellData, values}: ISimpleCellProps): JSX.Element {
 
     const displayedValues = values.map(val => _getValueByFormat(val)).join(', ');
 
-    const hexToRGB = (value: string) => {
-        const colorHex = '#' + value;
-        const red = parseInt(colorHex.slice(1, 3), 16);
-        const green = parseInt(colorHex.slice(3, 5), 16);
-        const blue = parseInt(colorHex.slice(5, 7), 16);
-        return red * 0.299 + green * 0.587 + blue * 0.114 > 186 ? {color: 'black'} : {color: 'white'};
+    const _getTagStyle = (value: string) => {
+        return {color: getInvertColor('#' + value)};
     };
 
     const _getElementToDisplay = () => {
@@ -73,7 +69,7 @@ function StandardCell({cellData, values}: ISimpleCellProps): JSX.Element {
                     return (
                         <>
                             {values.map(valueHex => (
-                                <Tag bordered={true} color={'#' + valueHex} style={hexToRGB('#' + valueHex)}>
+                                <Tag bordered={true} color={'#' + valueHex} style={_getTagStyle('#' + valueHex)}>
                                     {'#' + valueHex}
                                 </Tag>
                             ))}

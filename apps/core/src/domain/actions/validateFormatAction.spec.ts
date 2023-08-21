@@ -59,17 +59,17 @@ describe('validateFormatAction', () => {
     });
 
     test('validateFormat COLOR', async () => {
-        const colorValue = "FFFFFF";
+        const colorValue = 'FFFFFF';
         expect(action(colorValue, {}, {attribute: attrColor})).toBe(colorValue);
     });
 
     test('Throw if invalid format COLOR', async () => {
-        const badColorValue = "AZERTY"
+        const badColorValue = 'AZERTY';
         expect(() => action(badColorValue, {}, {attribute: attrColor})).toThrow(ValidationError);
     });
 
     test('Throw if invalid format COLOR, to be less or equal to 6 characters ', async () => {
-        const badColorValue = "FFFFFFFFFFFFFFFFFFF"
+        const badColorValue = 'FFFFFFFFFFFFFFFFFFF';
         expect(() => action(badColorValue, {}, {attribute: attrColor})).toThrow(ValidationError);
     });
 });
