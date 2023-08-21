@@ -30,5 +30,6 @@ export const tagColorByAttributeFormat: {[key in AttributeFormat]: TagProps['col
     [AttributeFormat.encrypted]: 'red',
     [AttributeFormat.extended]: 'magenta',
     [AttributeFormat.numeric]: 'orange',
-    [AttributeFormat.text]: 'green'
+    [AttributeFormat.text]: 'green',
+    [AttributeFormat.color]: 'magenta'
 };

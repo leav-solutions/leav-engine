@@ -126,6 +126,7 @@ export type ApplicationsFiltersInput = {
 
 export enum AttributeFormat {
     boolean = 'boolean',
+    color = 'color',
     date = 'date',
     date_range = 'date_range',
     encrypted = 'encrypted',

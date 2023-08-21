@@ -25,7 +25,7 @@ function ModuleSelector({disabled, ...itemProps}: IModuleSelectorProps): JSX.Ele
 
     return (
         <Form.Item {...itemProps}>
-            <Select loading={loading} disabled={disabled}>
+            <Select loading={loading} disabled={disabled} aria-label="">
                 {modules.map(module => (
                     <Select.Option value={module.id} key={module.id}>
                         <OptionLabel>{module.id}</OptionLabel>

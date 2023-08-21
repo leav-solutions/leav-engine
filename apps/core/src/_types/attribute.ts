@@ -91,7 +91,8 @@ export enum AttributeFormats {
     DATE_RANGE = 'date_range',
     ENCRYPTED = 'encrypted',
     BOOLEAN = 'boolean',
-    EXTENDED = 'extended'
+    EXTENDED = 'extended',
+    COLOR = 'color'
 }
 
 export enum IOTypes {

@@ -78,6 +78,7 @@ function ValuesVersionsForm({isReadOnly, onChange, extra}: IValuesVersionsFormPr
                                     options={profilesSelectOptions}
                                     disabled={isReadOnly}
                                     allowClear
+                                    aria-label=""
                                 />
                             </Form.Item>
                             <Form.Item
@@ -86,7 +87,7 @@ function ValuesVersionsForm({isReadOnly, onChange, extra}: IValuesVersionsFormPr
                                 label={t('attributes.versions_mode')}
                                 validateTrigger={['onBlur', 'onChange', 'onSubmit']}
                             >
-                                <Select onChange={_handleChange} options={modeSelectOptions} disabled={isReadOnly} />
+                                <Select onChange={_handleChange} options={modeSelectOptions} disabled={isReadOnly} aria-label=""/>
                             </Form.Item>
                         </>
                     )}

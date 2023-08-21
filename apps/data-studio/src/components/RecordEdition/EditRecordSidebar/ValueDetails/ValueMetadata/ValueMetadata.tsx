@@ -37,7 +37,8 @@ const _inputTypeByFormat: {[format in AttributeFormat]: FormFieldTypes} = {
     [AttributeFormat.boolean]: FormFieldTypes.CHECKBOX,
     [AttributeFormat.date_range]: FormFieldTypes.DATE,
     [AttributeFormat.encrypted]: FormFieldTypes.TEXT_INPUT,
-    [AttributeFormat.extended]: FormFieldTypes.TEXT_INPUT
+    [AttributeFormat.extended]: FormFieldTypes.TEXT_INPUT,
+    [AttributeFormat.color]: FormFieldTypes.TEXT_INPUT
 };
 
 function ValueMetadata({value, attribute, onMetadataSubmit}: IValueMetadataProps): JSX.Element {

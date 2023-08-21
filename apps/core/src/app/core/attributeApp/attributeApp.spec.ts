@@ -84,6 +84,12 @@ describe('coreAttributeApp', () => {
             );
         });
 
+        test('Color attribute', async () => {
+            expect(await attrApp.getGraphQLFormat({...mockAttrSimple, format: AttributeFormats.COLOR})).toBe(
+                'String'
+            );
+        });
+
         test('Simple link attribute', async () => {
             expect(await attrApp.getGraphQLFormat({...mockAttrSimpleLink})).toBe('TestLib');
         });

@@ -200,7 +200,7 @@ function EditTreeInfoForm({
                 rules={[{required: true, message: _getRequiredMessage('behavior')}]}
                 hasFeedback
             >
-                <Select options={behaviorSelectOptions} disabled={isReadOnly || isEditing} />
+                <Select options={behaviorSelectOptions} disabled={isReadOnly || isEditing} aria-label=""/>
             </Form.Item>
             <Form.Item name="libraries" key="libraries">
                 <TreeLibrariesForm

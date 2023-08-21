@@ -9,7 +9,7 @@ import {mockModifier} from '__mocks__/common/value';
 import {RECORD_FORM_recordForm_elements_attribute_StandardAttribute} from '_gqlTypes/RECORD_FORM';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_Value_attribute} from '_gqlTypes/SAVE_VALUE_BATCH';
 import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
-import {act, render, screen} from '_tests/testUtils';
+import {act, render, screen, waitFor} from '_tests/testUtils';
 import {
     EditRecordReducerActionsTypes,
     initialState
@@ -213,13 +213,52 @@ describe('StandardField', () => {
 
         const inputElem = screen.getByRole('textbox');
         userEvent.click(inputElem);
-
         const calendarElem = screen.getByTestId('datepicker');
         expect(calendarElem).toBeInTheDocument();
 
         await act(async () => {
             userEvent.click(screen.getByRole('cell', {name: '2021-03-11'}));
         });
+        expect(mockHandleSubmit).toHaveBeenCalled();
+    });
+
+    test('Render color field', async () => {
+        const colorValue = 'FFFFFF';
+        const newColorValue = '000000';
+        const recordValuesDate = [
+            {
+                ...mockRecordValuesCommon,
+                value: colorValue,
+                raw_value: colorValue
+            }
+        ];
+        render(
+            <StandardField
+                element={{
+                    ...mockFormElementInput,
+                    attribute: {...mockFormAttribute, format: AttributeFormat.color},
+                    values: recordValuesDate
+                }}
+                {...baseProps}
+            />
+        );
+        // Open ColorPicker Element
+        const colorElem = screen.getByRole('textbox');
+        await act(async () => {
+            userEvent.click(colorElem);
+        });
+
+        const colorPickerElem = screen.getByRole('textbox');
+        expect(colorPickerElem).toBeInTheDocument();
+
+        // Update color value
+        userEvent.clear(colorPickerElem);
+        userEvent.type(colorPickerElem, newColorValue);
+        await act(async () => {
+            userEvent.click(screen.getByRole('button', {name: 'global.submit'}));
+        });
+
+        expect(colorPickerElem).not.toBeInTheDocument();
         expect(mockHandleSubmit).toHaveBeenCalled();
     });
 
