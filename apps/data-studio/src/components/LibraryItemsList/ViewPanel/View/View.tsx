@@ -20,7 +20,6 @@ import {localizedTranslation} from '../../../../utils';
 import {getRequestFromFilters} from '../../../../utils/getRequestFromFilter';
 import {IView} from '../../../../_types/types';
 import IconViewType from '../../../IconViewType';
-import {useUser} from '../../../../hooks/UserHook/UserHook';
 import {RiUserReceivedLine} from 'react-icons/ri';
 import {PREFIX_SHARED_VIEWS_ORDER_KEY, PREFIX_USER_VIEWS_ORDER_KEY} from '../ViewPanel';
 import useUpdateViewsOrderMutation from 'graphQL/mutations/views/hooks/useUpdateViewsOrderMutation';
@@ -80,7 +79,6 @@ interface IViewProps {
 function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
     const {t} = useTranslation();
     const {lang, defaultLang} = useLang();
-    const [user] = useUser();
 
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
     const [description, setDescription] = useState<{expand: boolean; key: number}>({expand: false, key: 0});

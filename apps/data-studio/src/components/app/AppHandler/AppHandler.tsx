@@ -32,13 +32,15 @@ import Router from '../../Router';
 function AppHandler(): JSX.Element {
     const {t, i18n} = useTranslation();
     const dispatch = useAppDispatch();
-    const {lang: appLang, loading: appLangLoading, error: appLangErr} = useAppLang();
     const {token: themeToken} = theme.useToken();
 
     // Add lang infos to the cache
     const userLang = i18n.language.split('-')[0];
-    const fallbackLang = i18n.options.fallbackLng ? i18n.options.fallbackLng[0] : '';
-    const [lang, setLang] = useState<string[]>([userLang, fallbackLang]);
+    const fallbackLng = i18n.options.fallbackLng ? i18n.options.fallbackLng[0] : '';
+    const {lang: appLang, loading: appLangLoading, error: appLangErr} = useAppLang();
+
+    const [lang, setLang] = useState<string[]>([userLang, fallbackLng]);
+
     const locale = useAntdLocale(lang[0]);
 
     const {data: availableLangs, loading: langsLoading, error: langsError} = useQuery<GET_LANGS>(getLangs);
@@ -121,7 +123,7 @@ function AppHandler(): JSX.Element {
         i18n.changeLanguage(newLang);
 
         // Update cache lang infos
-        setLang([i18n.language, fallbackLang]);
+        setLang([i18n.language, fallbackLng]);
     };
 
     if (meLoading || applicationLoading || globalSettingsLoading || langsLoading || appLangLoading) {
@@ -152,7 +154,7 @@ function AppHandler(): JSX.Element {
                 value={{
                     lang,
                     availableLangs: availableLangs.langs,
-                    defaultLang: i18n?.language.split('-')[0] ?? appLang,
+                    defaultLang: appLang,
                     setLang: _handleLanguageChange
                 }}
             >

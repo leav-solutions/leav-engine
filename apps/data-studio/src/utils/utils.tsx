@@ -141,7 +141,7 @@ export const localizedTranslation = (translations: any, availableLanguages: Avai
     }
 
     const userLang = availableLanguages[0];
-    const fallbackLang = availableLanguages[1] ? availableLanguages[1] : '';
+    const fallbackLang = availableLanguages[1] ?? '';
 
     return translations[userLang] || translations[fallbackLang] || translations[Object.keys(translations)[0]] || '';
 };
