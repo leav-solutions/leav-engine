@@ -14,7 +14,7 @@ const Wrapper = styled.div`
 
 function LangSwitcher(): JSX.Element {
     const {t} = useTranslation();
-    const {availableLangs, setLang} = useLang();
+    const {lang: userLang, availableLangs, setLang} = useLang();
 
     const unicodeFlagByLang = {
         fr: '🇫🇷',
@@ -28,12 +28,21 @@ function LangSwitcher(): JSX.Element {
     return (
         <Wrapper>
             <FlagOutlined />
-            {t('settings.choose-lang')} :
-            {availableLangs.map(l => (
-                <Button type="text" name={l} key={l} style={{padding: '0 5px'}} onClick={_handleLangChange(l)}>
-                    {unicodeFlagByLang[l] ?? l}
-                </Button>
-            ))}
+            {t('settings.choose-lang')}
+            <div style={{marginInlineStart: '10px'}}>
+                {availableLangs.map(l => (
+                    <Button
+                        size="small"
+                        shape="circle"
+                        type={l === userLang[0] ? 'default' : 'text'}
+                        name={l}
+                        key={l}
+                        style={{padding: '5 5px'}}
+                        onClick={_handleLangChange(l)}
+                        icon={unicodeFlagByLang[l] ?? l}
+                    />
+                ))}
+            </div>
         </Wrapper>
     );
 }

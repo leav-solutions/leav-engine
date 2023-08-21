@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AppstoreFilled, FilterOutlined, MenuOutlined, PlusOutlined, SaveFilled} from '@ant-design/icons';
-import {useLang} from '@leav/ui';
+import {useLang, useAppLang} from '@leav/ui';
 import {objectToNameValueArray} from '@leav/utils';
 import {Badge, Button, Dropdown, MenuProps, Space, Tooltip} from 'antd';
 import useAddViewMutation from 'graphQL/mutations/views/hooks/useAddViewMutation';
@@ -49,6 +49,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
     const {t} = useTranslation();
 
     const {lang, defaultLang} = useLang();
+
     const dispatch = useAppDispatch();
     const {display} = useAppSelector(state => state);
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
@@ -78,7 +79,9 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
     const _getNewViewFromSearchState = (): ViewInput => {
         return {
             library: library.id,
-            label: {[defaultLang]: t('view.add-view.title')},
+            label: {
+                [defaultLang]: t('view.add-view.title', {lng: defaultLang})
+            },
             display: searchState.display,
             shared: false,
             sort: searchState.sort,
