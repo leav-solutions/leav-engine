@@ -10,7 +10,7 @@ export default (
     library: string,
     recordId: string,
     deps: {
-        recordRepo: IRecordRepo;
+        recordRepo?: IRecordRepo;
     },
     ctx: IQueryInfos
 ): Promise<IRecord> => {

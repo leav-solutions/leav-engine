@@ -6,7 +6,6 @@ import automate, {extractChildrenDbElements} from './automate';
 import {getConfig} from './config';
 import * as scan from './scan';
 import {IConfig} from './_types/config';
-import {_logMem} from './utils';
 
 (async function () {
     try {

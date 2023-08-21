@@ -2,8 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IQueryInfos} from '_types/queryInfos';
-import {IFileEventData, IFilesAttributes} from '../../../../_types/filesManager';
-import {IHandleFileSystemDeps, IHandleFileSystemResources} from '../handleFileSystem';
+import {FilesAttributes, IFileEventData, IFileMetadata} from '../../../../_types/filesManager';
 import {
     deleteFilesTreeElement,
     getInputData,
@@ -11,11 +10,12 @@ import {
     getRecord,
     updateRecordFile
 } from '../handleFileUtilsHelper';
+import {IHandleFileSystemEventDeps, IHandleFileSystemEventResources} from './_types';
 
 export const handleMoveEvent = async (
     scanMsg: IFileEventData,
-    {library}: IHandleFileSystemResources,
-    deps: IHandleFileSystemDeps,
+    {library}: IHandleFileSystemEventResources,
+    deps: IHandleFileSystemEventDeps,
     ctx: IQueryInfos
 ) => {
     const {fileName: fileNameDest, filePath: filePathDest} = getInputData(scanMsg.pathAfter);
@@ -59,10 +59,10 @@ export const handleMoveEvent = async (
         await deleteFilesTreeElement(destRecord.id, filesLibraryId, recordLibrary, deps, ctx);
     }
 
-    const recordData: IFilesAttributes = {
-        ROOT_KEY: scanMsg.rootKey,
-        FILE_PATH: filePathDest,
-        FILE_NAME: fileNameDest
+    const recordData: IFileMetadata = {
+        [FilesAttributes.ROOT_KEY]: scanMsg.rootKey,
+        [FilesAttributes.FILE_PATH]: filePathDest,
+        [FilesAttributes.FILE_NAME]: fileNameDest
     };
     await updateRecordFile(recordData, originRecord.id, recordLibrary, deps, ctx);
     // Find parent record destination

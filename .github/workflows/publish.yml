@@ -23,10 +23,7 @@ jobs:
                 uses: docker/build-push-action@v3
                 with:
                     push: true
-                    target: runner-core
-                    file: docker/DOCKERFILES/build/Dockerfile
-                    build-args: |
-                        "APP=core"
+                    file: docker/DOCKERFILES/build/core.Dockerfile
                     labels:
                         LEAV Engine
                         Core
@@ -52,7 +49,7 @@ jobs:
                 with:
                     push: true
                     target: runner-preview-generator
-                    file: docker/DOCKERFILES/build/Dockerfile
+                    file: docker/DOCKERFILES/build/generic.Dockerfile
                     build-args: |
                         "APP=preview-generator"
                     labels:
@@ -80,7 +77,7 @@ jobs:
                 with:
                     push: true
                     target: runner
-                    file: docker/DOCKERFILES/build/Dockerfile
+                    file: docker/DOCKERFILES/build/generic.Dockerfile
                     build-args: |
                         "APP=automate-scan"
                     labels:
@@ -108,7 +105,7 @@ jobs:
                 with:
                     push: true
                     target: runner
-                    file: docker/DOCKERFILES/build/Dockerfile
+                    file: docker/DOCKERFILES/build/generic.Dockerfile
                     build-args: |
                         "APP=sync-scan"
                     labels:

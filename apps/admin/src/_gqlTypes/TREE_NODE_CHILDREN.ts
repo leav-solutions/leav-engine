@@ -17,21 +17,12 @@ export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_library 
     label: SystemTranslation | null;
 }
 
-export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-}
-
 export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI {
     id: string;
     library: TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record {
@@ -48,21 +39,12 @@ export interface TREE_NODE_CHILDREN_treeNodeChildren_list_ancestors_record_whoAm
     label: SystemTranslation | null;
 }
 
-export interface TREE_NODE_CHILDREN_treeNodeChildren_list_ancestors_record_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-}
-
 export interface TREE_NODE_CHILDREN_treeNodeChildren_list_ancestors_record_whoAmI {
     id: string;
     library: TREE_NODE_CHILDREN_treeNodeChildren_list_ancestors_record_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: TREE_NODE_CHILDREN_treeNodeChildren_list_ancestors_record_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface TREE_NODE_CHILDREN_treeNodeChildren_list_ancestors_record {

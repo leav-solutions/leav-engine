@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Tabs, TabsProps} from 'antd';
+import {Tabs, TabsProps, Spin} from 'antd';
 import styled from 'styled-components';
 import {useSharedTranslation} from '../../../hooks/useSharedTranslation';
 import {LibraryBehavior, SaveLibraryMutation, useGetLibraryByIdQuery} from '../../../_gqlTypes';
@@ -10,11 +10,14 @@ import {Loading} from '../../Loading';
 import {EditLibraryAttributes} from './EditLibraryAttributes';
 import {EditLibraryInfo} from './EditLibraryInfo';
 import {EditLibraryPreviewsSettings} from './EditLibraryPreviewsSettings';
+import {EditLibraryIndexation} from './EditLibraryIndexation';
+import {LoadingOutlined} from '@ant-design/icons';
 
 interface IEditLibraryProps {
     libraryId?: string;
     onSetSubmitFunction?: (submitFunction: () => Promise<SaveLibraryMutation['saveLibrary']>) => void;
     readOnly?: boolean;
+    indexationTask?: string;
 }
 
 const TabContentWrapper = styled.div`
@@ -22,7 +25,12 @@ const TabContentWrapper = styled.div`
     overflow-y: auto;
 `;
 
-function EditLibrary({libraryId, onSetSubmitFunction, readOnly: isReadOnly}: IEditLibraryProps): JSX.Element {
+function EditLibrary({
+    libraryId,
+    onSetSubmitFunction,
+    readOnly: isReadOnly,
+    indexationTask
+}: IEditLibraryProps): JSX.Element {
     const {t} = useSharedTranslation();
     const isEditing = !!libraryId;
 
@@ -68,6 +76,26 @@ function EditLibrary({libraryId, onSetSubmitFunction, readOnly: isReadOnly}: IEd
             children: (
                 <TabContentWrapper>
                     <EditLibraryAttributes library={libraryData} readOnly={isReadOnly} />
+                </TabContentWrapper>
+            )
+        },
+        {
+            key: 'Indexation',
+            label: (
+                <span>
+                    {!!indexationTask && <LoadingOutlined spin />}
+                    {t('libraries.indexation')}
+                </span>
+            ),
+            children: (
+                <TabContentWrapper>
+                    {
+                        <EditLibraryIndexation
+                            library={libraryData}
+                            indexationTask={indexationTask}
+                            readOnly={isReadOnly}
+                        />
+                    }
                 </TabContentWrapper>
             )
         }

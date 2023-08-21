@@ -12,11 +12,14 @@ import {
     useLang
 } from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {DraggableProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
+import {useAppSelector} from 'reduxStore/store';
+import {TaskStatus, TaskType} from '_gqlTypes/globalTypes';
+import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
 
 const Wrapper = styled.div`
     position: relative;
@@ -71,7 +74,9 @@ function LibraryBlock({
 }: ILibraryBlockProps): JSX.Element {
     const {t} = useTranslation();
     const {lang} = useLang();
+    const {tasks} = useAppSelector(state => state.tasks);
     const [isEditLibraryModalVisible, setIsEditLibraryModalVisible] = useState(false);
+    const [indexationTask, setIndexationTask] = useState<string>();
 
     const _handleOpenEditLibraryModal = () => setIsEditLibraryModalVisible(true);
     const _handleCloseEditLibraryModal = () => setIsEditLibraryModalVisible(false);
@@ -91,6 +96,24 @@ function LibraryBlock({
         color: null,
         preview: library.icon?.whoAmI?.preview?.[PreviewSize.small] as string
     };
+
+    const isTaskInProgress = (task: GET_TASKS_tasks_list): boolean =>
+        task.status === TaskStatus.CREATED ||
+        task.status === TaskStatus.PENDING ||
+        task.status === TaskStatus.PENDING_CANCEL ||
+        task.status === TaskStatus.RUNNING;
+
+    useEffect(() => {
+        const task = Object.values(tasks).filter(e => {
+            return (
+                e.role?.type === TaskType.INDEXATION &&
+                e.role?.detail.split(',').includes(library.id) &&
+                isTaskInProgress(e)
+            );
+        })[0];
+
+        setIndexationTask(task?.id);
+    }, [tasks, useAppSelector]);
 
     return (
         <Wrapper
@@ -114,6 +137,7 @@ function LibraryBlock({
                     libraryId={library.id}
                     onClose={_handleCloseEditLibraryModal}
                     open={isEditLibraryModalVisible}
+                    indexationTask={indexationTask}
                 />
             )}
         </Wrapper>

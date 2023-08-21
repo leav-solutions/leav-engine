@@ -49,21 +49,12 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_values
     label: SystemTranslation | null;
 }
 
-export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_values_list_linkValues_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-}
-
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_values_list_linkValues_whoAmI {
     id: string;
     library: GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_values_list_linkValues_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_values_list_linkValues_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_LinkAttribute_values_list_linkValues {
@@ -95,21 +86,12 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values
     label: SystemTranslation | null;
 }
 
-export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_record_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-}
-
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_record_whoAmI {
     id: string;
     library: GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_record_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_record_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_record {
@@ -121,21 +103,12 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values
     label: SystemTranslation | null;
 }
 
-export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI_preview {
-    tiny: string | null;
-    small: string | null;
-    medium: string | null;
-    big: string | null;
-    huge: string | null;
-    pdf: string | null;
-}
-
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI {
     id: string;
     library: GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI_library;
     label: string | null;
     color: string | null;
-    preview: GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_ancestors_record_whoAmI_preview | null;
+    preview: Preview | null;
 }
 
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_ancestors_record {
@@ -147,6 +120,7 @@ export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values
 }
 
 export interface GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues {
+    id: string;
     record: GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_record | null;
     ancestors: GET_ATTRIBUTES_VALUES_LIST_attributes_list_TreeAttribute_values_list_treeValues_ancestors[] | null;
 }

@@ -8,17 +8,17 @@ import {basename, dirname} from 'path';
 import * as Config from '_types/config';
 import {ILibrary} from '_types/library';
 import {IQueryInfos} from '_types/queryInfos';
-import {FilesAttributes, IFilesAttributes, IPreviews, IPreviewsStatus} from '../../../_types/filesManager';
+import {IFileMetadata, IPreviews, IPreviewsStatus} from '../../../_types/filesManager';
 import {IRecord} from '../../../_types/record';
 import updateRecordLastModif from '../../value/helpers/updateRecordLastModif';
-import {IHandleFileSystemDeps} from './handleFileSystem';
+import {IHandleFileSystemEventDeps} from './handleFileSystemEvent/_types';
 import winston = require('winston');
 
 export const getRecord = async (
     {fileName, filePath, fileInode}: {fileName: string; filePath: string; fileInode?: number},
     {recordLibrary, recordId}: {recordLibrary: string; recordId?: string},
     retrieveInactive: boolean,
-    deps: IHandleFileSystemDeps,
+    deps: IHandleFileSystemEventDeps,
     ctx: IQueryInfos
 ): Promise<IRecord | null> => {
     return deps.filesManagerRepo.getRecord(
@@ -32,16 +32,16 @@ export const getRecord = async (
 export const getParentRecord = async (
     fullParentPath: string,
     library: string,
-    deps: IHandleFileSystemDeps,
+    deps: IHandleFileSystemEventDeps,
     ctx: IQueryInfos
 ): Promise<IRecord | null> => {
     return deps.filesManagerRepo.getParentRecord(fullParentPath, library, ctx);
 };
 
 export const createRecordFile = async (
-    recordData: IFilesAttributes,
+    recordData: IFileMetadata,
     library: string,
-    deps: IHandleFileSystemDeps,
+    deps: IHandleFileSystemEventDeps,
     ctx: IQueryInfos
 ) => {
     const {userId} = deps.config.filesManager;
@@ -55,8 +55,7 @@ export const createRecordFile = async (
 
     if (newRecord.id) {
         const dataToSave: IRecord = Object.keys(recordData).reduce((acc, key) => {
-            acc[FilesAttributes[key]] =
-                typeof recordData[key] === 'object' ? JSON.stringify(recordData[key]) : recordData[key];
+            acc[key] = typeof recordData[key] === 'object' ? JSON.stringify(recordData[key]) : recordData[key];
             return acc;
         }, {});
         dataToSave.id = newRecord.id;
@@ -76,15 +75,15 @@ export const createRecordFile = async (
 };
 
 export const updateRecordFile = async (
-    recordData: IFilesAttributes,
+    recordData: IFileMetadata,
     recordId: string,
     library: string,
     deps: {
-        valueDomain: IValueDomain;
-        recordRepo: IRecordRepo;
-        updateRecordLastModif: UpdateRecordLastModifFunc;
-        config: Config.IConfig;
-        logger: winston.Winston;
+        valueDomain?: IValueDomain;
+        recordRepo?: IRecordRepo;
+        updateRecordLastModif?: UpdateRecordLastModifFunc;
+        config?: Config.IConfig;
+        logger?: winston.Winston;
     },
     ctx: IQueryInfos
 ) => {
@@ -119,7 +118,7 @@ export const createFilesTreeElement = async (
     record: IRecord,
     parentRecord: IRecord,
     filesLibraryId: string,
-    deps: IHandleFileSystemDeps,
+    deps: IHandleFileSystemEventDeps,
     ctx: IQueryInfos
 ) => {
     try {
@@ -155,7 +154,7 @@ export const deleteFilesTreeElement = async (
     recordId: string,
     filesLibraryId: string,
     recordLibrary: string,
-    deps: IHandleFileSystemDeps,
+    deps: IHandleFileSystemEventDeps,
     ctx
 ) => {
     try {

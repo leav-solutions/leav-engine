@@ -8,7 +8,8 @@ import {
     TaskCallbackStatus,
     TaskCallbackType,
     TaskPriority,
-    TaskStatus
+    TaskStatus,
+    TaskType
 } from '../../_types/tasksManager';
 
 const mockFunc: ITaskFunc = {

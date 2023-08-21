@@ -59,7 +59,7 @@ const RecordCard = ({record, style, withLibrary = true, withPreview = true}: IRe
                     <RecordPreview
                         label={record.label || record.id}
                         color={record.color}
-                        image={record.preview?.small ? record.preview.small : ''}
+                        image={record.preview?.small ? (record.preview.small as string) : ''}
                     />
                 </PreviewWrapper>
             )}
