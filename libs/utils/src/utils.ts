@@ -217,7 +217,7 @@ export const getInitials = (label: string, length: number = 2) => {
 export const _getInitialEngine = (words: string[], length: number) => {
     let initials: string = '';
     if (words.length === 1) {
-        initials = words[0].slice(0, length).toUpperCase();
+        initials = words[0].slice(0, length);
     } else {
         if (words.length < length) {
             length = words.length;
@@ -226,7 +226,7 @@ export const _getInitialEngine = (words: string[], length: number) => {
             initials = initials + words[index].charAt(0);
         }
     }
-    return initials;
+    return initials.toUpperCase();
 };
 /**
  * Format an ID: remove accents, any special characters, replace spaces by underscore and make sure there is no double underscore
