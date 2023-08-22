@@ -36,7 +36,7 @@ function Param({param, actionId, changeParam, setBlockCard, index}: IParamProps)
 
     //////////////////// SETTING VALUES ON CHANGE
 
-    const _onChange = (event: React.SyntheticEvent<HTMLInputElement>|React.FormEvent<HTMLTextAreaElement>) => {
+    const _onChange = (event: React.SyntheticEvent<HTMLInputElement> | React.FormEvent<HTMLTextAreaElement>) => {
         const target = event.target as HTMLInputElement;
         const value =
             param && correspondences[param.type] === 'checkbox' ? target.checked.toString() : target.value.toString();
@@ -57,52 +57,52 @@ function Param({param, actionId, changeParam, setBlockCard, index}: IParamProps)
     };
 
     const _getRenderedElement = () => {
-        if (param.type === 'textarea') {
-            return <Form>
-                <Label attached="top" basic size="large">{param.name}:</Label>
-                <TextArea
-                style={{marginBottom: '3px'}}
-                name={param.name}
-                placeholder={param.default_value}
-                value={currentValue ? currentValue : ''}
-                onChange={_onChange}
-                onFocus={_onFocus}
-                onBlur={_onBlur}
-                />
-            </Form>;
+        if (correspondences[param.type] === 'text') {
+            return (
+                <Form>
+                    <Label attached="top" basic size="large">
+                        {param.name}
+                    </Label>
+                    {/* <Label attached="top" italic>
+                        {param.description}
+                    </Label> */}
+                    <TextArea
+                        style={{marginBottom: '3px'}}
+                        name={param.name}
+                        placeholder={param.default_value}
+                        value={currentValue ?? ''}
+                        onChange={_onChange}
+                        onFocus={_onFocus}
+                        onBlur={_onBlur}
+                    />
+                </Form>
+            );
         } else {
-            return <Input
-                style={{marginBottom: '3px'}}
-                fluid
-                label={{basic: true, content: `${param.name}:`}}
-                labelPosition="left"
-                type={correspondences[param.type]}
-                name={param.name}
-                placeholder={param.default_value}
-                value={currentValue ? currentValue : ''}
-                checked={
-                    correspondences[param.type] === 'checkbox' && currentValue
-                        ? JSON.parse(currentValue)
-                        : false
-                }
-                onChange={_onChange}
-                onFocus={_onFocus}
-                onBlur={_onBlur}
-            />;
+            return (
+                <Input
+                    style={{marginBottom: '3px'}}
+                    description="test"
+                    fluid
+                    label={{basic: true, content: `${param.name}:`}}
+                    labelPosition="left"
+                    type={correspondences[param.type]}
+                    name={param.name}
+                    placeholder={param.default_value}
+                    value={currentValue ?? ''}
+                    checked={
+                        correspondences[param.type] === 'checkbox' && currentValue ? JSON.parse(currentValue) : false
+                    }
+                    onChange={_onChange}
+                    onFocus={_onFocus}
+                    onBlur={_onBlur}
+                />
+            );
         }
     };
 
     //////////////////// RENDER
 
-    return (
-        <div>
-            {param && (
-                <>
-                    {_getRenderedElement()}
-                </>
-            )}
-        </div>
-    );
+    return <div>{param && <>{_getRenderedElement()}</>}</div>;
 }
 
 export default Param;
