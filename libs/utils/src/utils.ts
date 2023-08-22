@@ -10,6 +10,7 @@ import minimatch from 'minimatch';
 import * as extensions from './MIMEByExtension.json';
 import {FileType} from './types/files';
 import {IKeyValue} from './types/helpers';
+import {isEmpty} from 'lodash';
 
 export const getGraphqlTypeFromLibraryName = (library: string): string => {
     return flow([camelCase, upperFirst, trimEnd, partialRight(trimEnd, 's')])(library);
@@ -200,16 +201,33 @@ export const getCallStack = (depth: number = 2): string[] => {
 };
 
 export const getInitials = (label: string, length: number = 2) => {
-    if (typeof label !== 'string') {
+    if (typeof label !== 'string' || isEmpty(label.trim()) || length < 1) {
         return '?';
     }
 
-    const words = label.split(' ').slice(0, length);
-    const letters = words.length >= length ? words.map(word => word[0]).join('') : words[0].slice(0, length);
-
-    return letters.toUpperCase();
+    const letterRegex = new RegExp(/[A-Za-z]+/g);
+    const numberRegex = new RegExp(/[1-9]+/g);
+    const words: string[] = label.split(' ');
+    const wordsRegex = label.match(letterRegex) ? label.match(letterRegex) : label.match(numberRegex);
+    return wordsRegex !== null && wordsRegex.length >= 1
+        ? _getInitialEngine(wordsRegex, length)
+        : _getInitialEngine(words, length);
 };
 
+export const _getInitialEngine = (words: string[], length: number) => {
+    let initials: string = '';
+    if (words.length === 1) {
+        initials = words[0].slice(0, length).toUpperCase();
+    } else {
+        if (words.length < length) {
+            length = words.length;
+        }
+        for (let index = 0; index < length; index++) {
+            initials = initials + words[index].charAt(0);
+        }
+    }
+    return initials;
+};
 /**
  * Format an ID: remove accents, any special characters, replace spaces by underscore and make sure there is no double underscore
  *

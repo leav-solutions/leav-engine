@@ -168,9 +168,29 @@ describe('utils', () => {
 
     describe('getInitials', () => {
         test('Return label initials for given length', async () => {
-            expect(getInitials('Dwight Schrute', 2)).toBe('DS');
-            expect(getInitials('Dwight Schrute', 1)).toBe('D');
-            expect(getInitials('Dwight', 2)).toBe('DW');
+            expect(getInitials('', 2)).toBe('?');
+            expect(getInitials('    ', 2)).toBe('?');
+            expect(getInitials('Foo Bar', 0)).toBe('?');
+            expect(getInitials('Foo Bar', -1)).toBe('?');
+            expect(getInitials('Foo', 1)).toBe('F');
+            expect(getInitials('Foo', 2)).toBe('FO');
+            expect(getInitials('Foo', 4)).toBe('FOO');
+            expect(getInitials('Foo Bar', 1)).toBe('F');
+            expect(getInitials('Foo Bar', 2)).toBe('FB');
+            expect(getInitials('Foo - Bar', 2)).toBe('FB');
+            expect(getInitials('Foo & Bar', 2)).toBe('FB');
+            expect(getInitials('- Foo - Bar', 2)).toBe('FB');
+            expect(getInitials('- Foo -', 2)).toBe('FO');
+            expect(getInitials('123 Foo', 2)).toBe('FO');
+            expect(getInitials('132 - Foo Bar', 2)).toBe('FB');
+            expect(getInitials('987 & 654 -23_AB', 2)).toBe('AB');
+            expect(getInitials('987654', 2)).toBe('98');
+            expect(getInitials('987 - 654', 2)).toBe('96');
+            expect(getInitials('987 - aaaa', 4)).toBe('AAAA');
+            expect(getInitials('^ - ^456789', 6)).toBe('456789');
+            expect(getInitials('^ - ^456789', 7)).toBe('456789');
+            expect(getInitials('987 - 654', 1)).toBe('9');
+            expect(getInitials('^ - ^', 2)).toBe('^-');
         });
     });
 
