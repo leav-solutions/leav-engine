@@ -97,6 +97,14 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
         }
 
         if (networkError) {
+            // Check if error response is JSON
+            try {
+                JSON.parse(networkError.message);
+            } catch (e) {
+                // If not replace parsing error message with real one
+                networkError.message = t('error.network_error_occured_details');
+            }
+
             const errorContent = t('error.network_error_occurred');
 
             const info: IInfo = {
