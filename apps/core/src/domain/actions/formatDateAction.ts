@@ -44,11 +44,9 @@ export default function (): IActionsListFunction {
             let newValue = '';
 
             if (!isNaN(numberVal)) {
-                if (auto) {
-                    newValue = new Date(numberVal).toLocaleString(ctx.lang);
-                }
-
-                newValue = moment.unix(numberVal).format(format);
+                newValue = auto
+                    ? new Date(numberVal * 1000).toLocaleString(ctx.lang)
+                    : moment.unix(numberVal).format(format);
             }
 
             return newValue;
