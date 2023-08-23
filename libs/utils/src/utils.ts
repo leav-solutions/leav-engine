@@ -10,6 +10,7 @@ import minimatch from 'minimatch';
 import * as extensions from './MIMEByExtension.json';
 import {FileType} from './types/files';
 import {IKeyValue} from './types/helpers';
+import isEmpty from 'lodash/isEmpty';
 
 export const getGraphqlTypeFromLibraryName = (library: string): string => {
     return flow([camelCase, upperFirst, trimEnd, partialRight(trimEnd, 's')])(library);
@@ -200,16 +201,38 @@ export const getCallStack = (depth: number = 2): string[] => {
 };
 
 export const getInitials = (label: string, length: number = 2) => {
-    if (typeof label !== 'string') {
+    if (typeof label !== 'string' || isEmpty(label.trim()) || length < 1) {
         return '?';
     }
 
-    const words = label.split(' ').slice(0, length);
-    const letters = words.length >= length ? words.map(word => word[0]).join('') : words[0].slice(0, length);
-
-    return letters.toUpperCase();
+    const words: string[] = label.split(' ');
+    /*  Setting up the list of word by using a regex according to the label sent
+        if the label contains letters & numbers, filter only on these letters
+        if the label contains only numbers, filter only on these numbers
+        symbols are ignored by the regex
+        if both list filtered by the regex are null, using the basic filter and split the label by space
+    */
+    const letterRegex = new RegExp(/[A-Za-z]+/g);
+    const numberRegex = new RegExp(/[1-9]+/g);
+    const wordsRegex = label.match(letterRegex) ? label.match(letterRegex) : label.match(numberRegex);
+    return wordsRegex !== null ? _getInitialEngine(wordsRegex, length) : _getInitialEngine(words, length);
 };
 
+export const _getInitialEngine = (words: string[], length: number) => {
+    let initials: string = '';
+    if (words.length === 1) {
+        initials = words[0].slice(0, length);
+    } else {
+        //the number of initial to display cannot exceed the number of words filtered
+        if (words.length < length) {
+            length = words.length;
+        }
+        for (let index = 0; index < length; index++) {
+            initials = initials + words[index].charAt(0);
+        }
+    }
+    return initials.toUpperCase();
+};
 /**
  * Format an ID: remove accents, any special characters, replace spaces by underscore and make sure there is no double underscore
  *
