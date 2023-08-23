@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.formatId = exports.getInitials = exports.getCallStack = exports.getFileType = exports.getLibraryGraphqlNames = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
+exports.formatId = exports._getInitialEngine = exports.getInitials = exports.getCallStack = exports.getFileType = exports.getLibraryGraphqlNames = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
@@ -38,6 +38,7 @@ const upperFirst_1 = __importDefault(require("lodash/upperFirst"));
 const minimatch_1 = __importDefault(require("minimatch"));
 const extensions = __importStar(require("./MIMEByExtension.json"));
 const files_1 = require("./types/files");
+const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const getGraphqlTypeFromLibraryName = (library) => {
     return (0, flow_1.default)([camelCase_1.default, upperFirst_1.default, trimEnd_1.default, (0, partialRight_1.default)(trimEnd_1.default, 's')])(library);
 };
@@ -208,14 +209,39 @@ const getCallStack = (depth = 2) => {
 };
 exports.getCallStack = getCallStack;
 const getInitials = (label, length = 2) => {
-    if (typeof label !== 'string') {
+    if (typeof label !== 'string' || (0, isEmpty_1.default)(label.trim()) || length < 1) {
         return '?';
     }
-    const words = label.split(' ').slice(0, length);
-    const letters = words.length >= length ? words.map(word => word[0]).join('') : words[0].slice(0, length);
-    return letters.toUpperCase();
+    const words = label.split(' ');
+    /*  Setting up the list of word by using a regex according to the label sent
+        if the label contains letters & numbers, filter only on these letters
+        if the label contains only numbers, filter only on these numbers
+        symbols are ignored by the regex
+        if both list filtered by the regex are null, using the basic filter and split the label by space
+    */
+    const letterRegex = new RegExp(/[A-Za-z]+/g);
+    const numberRegex = new RegExp(/[1-9]+/g);
+    const wordsRegex = label.match(letterRegex) ? label.match(letterRegex) : label.match(numberRegex);
+    return wordsRegex !== null ? (0, exports._getInitialEngine)(wordsRegex, length) : (0, exports._getInitialEngine)(words, length);
 };
 exports.getInitials = getInitials;
+const _getInitialEngine = (words, length) => {
+    let initials = '';
+    if (words.length === 1) {
+        initials = words[0].slice(0, length);
+    }
+    else {
+        //the number of initial to display cannot exceed the number of words filtered
+        if (words.length < length) {
+            length = words.length;
+        }
+        for (let index = 0; index < length; index++) {
+            initials = initials + words[index].charAt(0);
+        }
+    }
+    return initials.toUpperCase();
+};
+exports._getInitialEngine = _getInitialEngine;
 /**
  * Format an ID: remove accents, any special characters, replace spaces by underscore and make sure there is no double underscore
  *
