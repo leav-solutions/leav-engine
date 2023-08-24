@@ -16,7 +16,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function ({
+export default function({
     'core.domain.actionsList': actionsListDomain = null,
     translator = null
 }: IDeps): ICoreActionListApp {
@@ -53,6 +53,7 @@ export default function ({
                         name: String!,
                         is_system: Boolean!,
                         params: [ActionConfigurationParam!]
+                        error_message: SystemTranslation,
                     }
 
                     type ActionsListConfiguration {
@@ -69,7 +70,8 @@ export default function ({
 
                     input ActionConfigurationInput {
                         id: ID!,
-                        params: [ActionConfigurationParamInput!]
+                        params: [ActionConfigurationParamInput!],
+                        error_message: SystemTranslation,
                     }
 
                     type ActionConfigurationParam {

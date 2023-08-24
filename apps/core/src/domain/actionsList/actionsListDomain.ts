@@ -32,7 +32,11 @@ export interface IActionsListDomain {
      * @param attribute
      * @param error
      */
-    handleJoiError(attribute: IAttribute, error: Joi.ValidationError): ErrorFieldDetail<IRecord>;
+    handleJoiError(
+        attribute: IAttribute,
+        error: Joi.ValidationError,
+        customMessage?: string
+    ): ErrorFieldDetail<IRecord>;
 
     /**
      * Execute a list of actions.
@@ -63,11 +67,17 @@ export default function({
 
             return [...actions, ..._pluginActions];
         },
-        handleJoiError(attribute: IAttribute, error: Joi.ValidationError): ErrorFieldDetail<IRecord> {
+        handleJoiError(
+            attribute: IAttribute,
+            error: Joi.ValidationError,
+            customMessage?: string
+        ): ErrorFieldDetail<IRecord> {
             return {
                 [attribute.id]: {
                     msg: Errors.FORMAT_ERROR,
-                    vars: {details: error.details.map(er => er.message).join('\n')}
+                    vars: customMessage
+                        ? {details: customMessage}
+                        : {details: error.details.map(er => er.message).join('\n')}
                 }
             };
         },
@@ -76,7 +86,6 @@ export default function({
         },
         async runActionsList(actions: IActionsListSavedAction[], value: IValue, ctx: any): Promise<IValue> {
             const availActions: IActionsListFunction[] = this.getAvailableActions();
-
             // Retrieve actual function to execute from saved actions list
             // For each function, we apply params and ctx parameters.
             const actionsToExec = actions.map(action => {
@@ -94,6 +103,9 @@ export default function({
                           return all;
                       }, {})
                     : {};
+
+                //Add custom error message if it has been define
+                params.customMessage = action.error_message ? action.error_message[ctx.lang] : '';
 
                 // Create a new function with params and ctx applied to it
                 // This new function only takes value has an argument
