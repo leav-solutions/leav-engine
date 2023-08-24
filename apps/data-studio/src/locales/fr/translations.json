@@ -460,6 +460,7 @@
         "access_denied_details": "Vous n'êtes pas autorisé à accéder à cet élément, veuillez contacter un administrateur.",
         "graphql_error_occurred": "Une erreur est survenue: {{error}}",
         "network_error_occurred": "Une erreur de connexion est survenue",
+        "network_error_occured_details": "Impossible de se connecter au serveur. Veuillez vérifier votre connexion Internet.",
         "PERMISSION_ERROR": "Vous n'êtes pas autorisé à effectuer cette action",
         "INTERNAL_ERROR": "Une erreur interne est survenue",
         "page_not_found": "La page demandée n'existe pas"

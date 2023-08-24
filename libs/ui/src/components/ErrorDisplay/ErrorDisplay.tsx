@@ -26,7 +26,7 @@ function ErrorDisplay({
     showActionButton = true,
     type = ErrorDisplayTypes.ERROR
 }: IErrorProps): JSX.Element {
-    const {t} = useTranslation();
+    const {t, i18n} = useTranslation();
     const history = useHistory();
 
     const _handleBackHomeClick = () => history.replace('/');
@@ -39,7 +39,7 @@ function ErrorDisplay({
 
     const errorByType = {
         [ErrorDisplayTypes.ERROR]: {
-            title: t('error.error_occurred'),
+            title: i18n.isInitialized ? t('error.error_occurred') : 'An error occurred',
             icon: <CloseCircleFilled color="red" />,
             message: '',
             actionButton: null

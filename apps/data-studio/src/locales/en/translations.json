@@ -459,6 +459,7 @@
         "access_denied_details": "You are not allowed to access this element, please contact an administrator",
         "graphql_error_occurred": "An error ocurred: {{error}}",
         "network_error_occurred": "An network error occurred",
+        "network_error_occured_details": "Unable to connect to server. Please check your Internet connection.",
         "PERMISSION_ERROR": "You are not allowed to perform this action",
         "INTERNAL_ERROR": "An internal error occurred",
         "page_not_found": "Page not found"
