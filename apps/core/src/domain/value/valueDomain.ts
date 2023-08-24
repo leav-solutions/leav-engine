@@ -130,7 +130,7 @@ interface IDeps {
     'core.domain.tree'?: ITreeDomain;
 }
 
-const valueDomain = function ({
+const valueDomain = function({
     config = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -263,6 +263,7 @@ const valueDomain = function ({
         const actionsListRes =
             !!attributeProps.actions_list && !!attributeProps.actions_list.deleteValue
                 ? await actionsListDomain.runActionsList(attributeProps.actions_list.deleteValue, v, {
+                      ...ctx,
                       attribute: attributeProps,
                       recordId,
                       library,
