@@ -84,7 +84,7 @@ export default function ({
             },
             {
                 name: 'Formula',
-                type: 'textarea',
+                type: 'string',
                 description: 'Excel formula to perform, place variables like so : {attribute_identifier}',
                 required: true,
                 default_value: '21*2'
