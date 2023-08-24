@@ -51,6 +51,7 @@ function ALCCard({
     const container = useRef(null);
     const [internalWidth, setWidth] = useState(null);
     const [paramOpen, toggleParams] = useState(false);
+    const [paramMessageOpen, toggleParamsMessage] = useState(false);
     const [blockedCard, setBlockCard] = useState(false);
 
     //////////////////// DRAG AND DROP
@@ -117,6 +118,10 @@ function ALCCard({
 
     const handleToggleParams = () => {
         toggleParams(!paramOpen);
+    };
+
+    const handleToggleParamsMessage = () => {
+        toggleParamsMessage(!paramMessageOpen);
     };
 
     const tryAndRemove = (actId: number) => {
@@ -214,6 +219,14 @@ function ALCCard({
                             </div>
                         </Card.Content>
                     )}
+                    <div style={{textAlign: 'right'}} onClick={handleToggleParamsMessage}>
+                        <Card.Meta>
+                            {paramMessageOpen ? t('attributes.hide_messages') : t('attributes.display_messages')}
+                            <Icon name={paramMessageOpen ? 'triangle down' : 'triangle right'} />
+                        </Card.Meta>
+                    </div>
+                    {paramMessageOpen && <></>}
+
                     <Connector inputs={outputs} dictionnary={colorTypeDictionnary} isDragging={dragging} />
                 </Card>
             </ActionRow>
