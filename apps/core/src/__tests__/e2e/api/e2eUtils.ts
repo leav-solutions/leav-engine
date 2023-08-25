@@ -230,14 +230,16 @@ export async function gqlCreateRecord(library: string): Promise<string> {
     const res = await makeGraphQlCall(
         `mutation {
         c: createRecord(library: "${library}") {
-            id
+            record {
+                id
+            }
         }
     }
     `,
         true
     );
 
-    return res.data.data.c.id;
+    return res.data.data.c.record.id;
 }
 
 export async function gqlGetAllUsersGroupNodeId() {

@@ -55,7 +55,7 @@ function StandardField({
 
     const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
     const {state: editRecordState} = useEditRecordModalReducer();
-    const {dispatch: editRecordModalDispatch} = useEditRecordModalReducer();
+    const {state: editRecordModalState, dispatch: editRecordModalDispatch} = useEditRecordModalReducer();
 
     const {fetchValues} = useRefreshFieldValues(
         editRecordState.record?.library?.id,
@@ -112,13 +112,26 @@ function StandardField({
 
         if (submitRes.status === APICallStatus.SUCCESS) {
             const submitResValue = submitRes.values[0] as SAVE_VALUE_BATCH_saveValueBatch_values_Value;
-            const resultValue = state.metadataEdit
-                ? {
-                      ...submitResValue.metadata.find(({name}) => name === element.attribute.id).value,
-                      metadata: null,
-                      attribute
-                  }
-                : submitResValue;
+
+            let resultValue;
+            if (state.metadataEdit) {
+                const metadataValue =
+                    (submitResValue.metadata ?? []).find(({name}) => name === element.attribute.id)?.value ?? null;
+                resultValue = {
+                    id_value: null,
+                    created_at: null,
+                    modified_at: null,
+                    created_by: null,
+                    modified_by: null,
+                    version: null,
+                    raw_value: metadataValue.raw_value ?? metadataValue.value,
+                    value: metadataValue.value,
+                    metadata: null,
+                    attribute
+                };
+            } else {
+                resultValue = submitResValue;
+            }
 
             dispatch({
                 type: StandardFieldReducerActionsTypes.UPDATE_AFTER_SUBMIT,
@@ -126,12 +139,30 @@ function StandardField({
                 idValue
             });
 
-            if (!state.metadataEdit) {
-                editRecordModalDispatch({
-                    type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-                    value: null
-                });
-            }
+            const newActiveValue = state.metadataEdit
+                ? {
+                      ...editRecordModalState.activeValue,
+                      value: {
+                          ...editRecordModalState.activeValue.value,
+                          metadata: [
+                              ...(editRecordModalState.activeValue?.value?.metadata ?? []),
+                              {
+                                  name: element.attribute.id,
+                                  value: {
+                                      ...resultValue,
+                                      version: null,
+                                      metadata: null
+                                  }
+                              }
+                          ]
+                      }
+                  }
+                : null;
+
+            editRecordModalDispatch({
+                type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+                value: newActiveValue
+            });
 
             return;
         }

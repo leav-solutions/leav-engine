@@ -48,7 +48,10 @@ interface IDeps {
     'core.depsManager'?: AwilixContainer;
 }
 
-export default function({'core.depsManager': depsManager = null}: IDeps = {}): IActionsListDomain {
+export default function({
+    'core.depsManager': depsManager = null,
+    'core.utils': utils = null
+}: IDeps = {}): IActionsListDomain {
     let _pluginActions = [];
     return {
         getAvailableActions(): IActionsListFunction[] {

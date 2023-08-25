@@ -39,11 +39,11 @@ describe('Indexation', () => {
 
         await makeGraphQlCall('mutation { refreshSchema }');
 
-        const rec1 = await makeGraphQlCall(`mutation { createRecord(library: "${testLibName}") { id }}`);
-        const rec2 = await makeGraphQlCall(`mutation { createRecord(library: "${testLibName}") { id }}`);
+        const rec1 = await makeGraphQlCall(`mutation { createRecord(library: "${testLibName}") { record {id} }}`);
+        const rec2 = await makeGraphQlCall(`mutation { createRecord(library: "${testLibName}") { record {id} }}`);
 
-        record1 = rec1.data.data.createRecord.id;
-        record2 = rec2.data.data.createRecord.id;
+        record1 = rec1.data.data.createRecord.record.id;
+        record2 = rec2.data.data.createRecord.record.id;
 
         await makeGraphQlCall(`mutation {
                 saveValue(

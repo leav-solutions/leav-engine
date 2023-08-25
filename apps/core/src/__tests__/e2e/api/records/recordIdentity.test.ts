@@ -141,18 +141,18 @@ describe('Record identity', () => {
         await makeGraphQlCall('mutation { refreshSchema }');
 
         const resCrea = await makeGraphQlCall(`mutation {
-            c1: createRecord(library: "${testLibraryId}") { id }
-            c2: createRecord(library: "${testLinkedIdentityLibraryId}") { id }
-            c3: createRecord(library: "${testTreeIdentityLibraryId}") { id }
-            c4: createRecord(library: "${testLinkedLibraryId}") { id }
-            c5: createRecord(library: "${testTreeRecordLibraryId}") { id }
+            c1: createRecord(library: "${testLibraryId}") { record {id} }
+            c2: createRecord(library: "${testLinkedIdentityLibraryId}") { record {id} }
+            c3: createRecord(library: "${testTreeIdentityLibraryId}") { record {id} }
+            c4: createRecord(library: "${testLinkedLibraryId}") { record {id} }
+            c5: createRecord(library: "${testTreeRecordLibraryId}") { record {id} }
         }`);
 
-        recordId = resCrea.data.data.c1.id;
-        recordIdLinkIdentity = resCrea.data.data.c2.id;
-        recordIdTreeIdentity = resCrea.data.data.c3.id;
-        recordIdInLinkedLibrary = resCrea.data.data.c4.id;
-        recordIdInTree = resCrea.data.data.c5.id;
+        recordId = resCrea.data.data.c1.record.id;
+        recordIdLinkIdentity = resCrea.data.data.c2.record.id;
+        recordIdTreeIdentity = resCrea.data.data.c3.record.id;
+        recordIdInLinkedLibrary = resCrea.data.data.c4.record.id;
+        recordIdInTree = resCrea.data.data.c5.record.id;
 
         // Values for linked identity
         await gqlSaveValue(

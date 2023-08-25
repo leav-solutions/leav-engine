@@ -30,31 +30,31 @@ describe('Records', () => {
         await gqlSaveLibrary(testLibName, 'Test', [testAttributeId]);
 
         const resCrea = await makeGraphQlCall(`mutation {
-            c1: createRecord(library: "${testLibName}") { id }
+            c1: createRecord(library: "${testLibName}") { record {id} }
         }`);
 
-        recordId = resCrea.data.data.c1.id;
+        recordId = resCrea.data.data.c1.record.id;
     });
 
     test('Create records', async () => {
         const res = await makeGraphQlCall(`mutation {
-            c1: createRecord(library: "${testLibName}") { id permissions {edit_record}},
-            c2: createRecord(library: "${testLibName}") { id },
-            c3: createRecord(library: "${testLibName}") { id },
-            c4: createRecord(library: "${testLibName}") { id },
-            c5: createRecord(library: "${testLibName}") { id },
-            c6: createRecord(library: "${testLibName}") { id },
-            c7: createRecord(library: "${testLibName}") { id },
-            c8: createRecord(library: "${testLibName}") { id },
-            c9: createRecord(library: "${testLibName}") { id },
-            c10: createRecord(library: "${testLibName}") { id },
+            c1: createRecord(library: "${testLibName}") { record {id permissions {edit_record} } },
+            c2: createRecord(library: "${testLibName}") { record {id} },
+            c3: createRecord(library: "${testLibName}") { record {id} },
+            c4: createRecord(library: "${testLibName}") { record {id} },
+            c5: createRecord(library: "${testLibName}") { record {id} },
+            c6: createRecord(library: "${testLibName}") { record {id} },
+            c7: createRecord(library: "${testLibName}") { record {id} },
+            c8: createRecord(library: "${testLibName}") { record {id} },
+            c9: createRecord(library: "${testLibName}") { record {id} },
+            c10: createRecord(library: "${testLibName}") { record {id} },
         }`);
 
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.c1.id).toBeTruthy();
-        expect(res.data.data.c1.permissions.edit_record).toBeDefined();
+        expect(res.data.data.c1.record.id).toBeTruthy();
+        expect(res.data.data.c1.record.permissions.edit_record).toBeDefined();
     });
 
     test('Create record with values', async () => {
@@ -68,9 +68,11 @@ describe('Records', () => {
                     }
                 ]
             }) {
-                id
-                ...on ${testLibNameType} {
-                    ${testAttributeId}
+                record {
+                    id
+                    ...on ${testLibNameType} {
+                        ${testAttributeId}
+                    }
                 }
             },
         }`);
@@ -78,8 +80,8 @@ describe('Records', () => {
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.c1.id).toBeTruthy();
-        expect(res.data.data.c1[testAttributeId]).toBe('My value');
+        expect(res.data.data.c1.record.id).toBeTruthy();
+        expect(res.data.data.c1.record[testAttributeId]).toBe('My value');
     });
 
     test('Get records filtered by ID', async () => {

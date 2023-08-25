@@ -200,14 +200,35 @@ function EditRecordModal({
             }
 
             // Each value is affected a fake id to handle updates
+            let newIdValue = value.idValue;
+            if (
+                !newIdValue &&
+                value.attribute.type !== AttributeType.simple &&
+                value.attribute.type !== AttributeType.simple_link
+            ) {
+                newIdValue = `pending_${Object.keys(newPendingValues[attributeId]).length + 1}`;
+            }
             const valueToStore: Partial<SAVE_VALUE_BATCH_saveValueBatch_values> = {
-                id_value: value.idValue ?? `pending_${Object.keys(newPendingValues[attributeId]).length + 1}`,
+                id_value: newIdValue,
                 modified_at: null,
                 modified_by: null,
                 created_at: null,
                 created_by: null,
                 version: null,
-                attribute: value.attribute
+                attribute: value.attribute,
+                metadata: value.metadata
+                    ? Object.keys(value.metadata).reduce((metadata, metadataAttributeId) => {
+                          metadata.push({
+                              name: metadataAttributeId,
+                              value: {
+                                  id_value: null,
+                                  value: value.metadata[metadataAttributeId],
+                                  raw_value: value.metadata[metadataAttributeId]
+                              }
+                          });
+                          return metadata;
+                      }, [])
+                    : null
             };
 
             // Format value to get all props clean, based on attribute type
@@ -304,7 +325,8 @@ function EditRecordModal({
                     return {
                         value: actualValue,
                         id_value: val.id_value ?? null,
-                        attribute: val.attribute.id
+                        attribute: val.attribute.id,
+                        metadata: val.metadata ?? null
                     };
                 });
 
@@ -331,11 +353,12 @@ function EditRecordModal({
 
             newRecord = creationResult.data.createRecord.record.whoAmI;
 
-            dispatch({
-                type: EditRecordReducerActionsTypes.SET_RECORD,
-                record: newRecord
-            });
+            if (afterSave) {
+                await afterSave(newRecord);
+            }
         }
+
+        onClose();
     };
 
     const _handleDeleteValue: DeleteValueFunc = async (value, attribute) => {

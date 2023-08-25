@@ -41,13 +41,13 @@ const _inputTypeByFormat: {[format in AttributeFormat]: FormFieldTypes} = {
     [AttributeFormat.color]: FormFieldTypes.TEXT_INPUT
 };
 
-function ValueMetadata({value, attribute, onMetadataSubmit}: IValueMetadataProps): JSX.Element {
+function ValueMetadata({value: parentValue, attribute, onMetadataSubmit}: IValueMetadataProps): JSX.Element {
     const {lang} = useLang();
 
     const _handleValueSubmit: (field: MetadataField) => SubmitValueFunc = field => (
         values
     ): Promise<ISubmitMultipleResult> => {
-        return onMetadataSubmit(value, attribute, {
+        return onMetadataSubmit(parentValue, attribute, {
             [field.id]: (values[0] as ISubmittedValueStandard).value
         });
     };
@@ -55,7 +55,7 @@ function ValueMetadata({value, attribute, onMetadataSubmit}: IValueMetadataProps
     const _handleValueDelete: (field: MetadataField) => DeleteValueFunc = field => (
         values
     ): Promise<ISubmitMultipleResult> => {
-        return onMetadataSubmit(value, attribute, {
+        return onMetadataSubmit(parentValue, attribute, {
             [field.id]: null
         });
     };
@@ -71,7 +71,9 @@ function ValueMetadata({value, attribute, onMetadataSubmit}: IValueMetadataProps
                     uiElementType: _inputTypeByFormat[field.format],
                     valueError: null,
                     values:
-                        [value?.metadata?.find(({name}) => name === field.id)?.value as RecordFormElementsValue] ?? [],
+                        [
+                            parentValue?.metadata?.find(({name}) => name === field.id)?.value as RecordFormElementsValue
+                        ] ?? [],
                     settings: {
                         label: localizedTranslation(field.label, lang)
                     },
@@ -80,7 +82,7 @@ function ValueMetadata({value, attribute, onMetadataSubmit}: IValueMetadataProps
 
                 return (
                     <StandardField
-                        key={`${field.id}_${value?.id_value}`}
+                        key={`${field.id}_${parentValue?.id_value}`}
                         element={formElement}
                         onValueSubmit={_handleValueSubmit(field)}
                         onValueDelete={_handleValueDelete(field)}

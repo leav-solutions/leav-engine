@@ -18,7 +18,7 @@ import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {IListWithCursor} from '_types/list';
 import {IPreview} from '_types/preview';
-import {IValue, IValuesOptions} from '_types/value';
+import {IStandardValue, IValue, IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {getPreviewUrl} from '../../utils/preview/preview';
@@ -856,10 +856,13 @@ export default function({
             const newRecord = await recordRepo.createRecord({libraryId: library, recordData, ctx});
 
             if (values?.length) {
+                // Make sure we don't any id_value hanging on as we're on creation here
+                const cleanValues = values.map(v => ({...v, id_value: null}));
+
                 await valueDomain.saveValueBatch({
                     library,
                     recordId: newRecord.id,
-                    values,
+                    values: cleanValues,
                     ctx
                 });
             }
@@ -1135,8 +1138,40 @@ export default function({
 
             const forceArray = options?.forceArray ?? false;
 
+            //TODO: fix "[object]" on input after edit
             let formattedValues = await Promise.all(
-                values.map(v => valueDomain.formatValue({attribute: attrProps, value: v, record, library, ctx}))
+                values.map(async v => {
+                    const formattedValue = await valueDomain.formatValue({
+                        attribute: attrProps,
+                        value: v,
+                        record,
+                        library,
+                        ctx
+                    });
+
+                    if (attrProps.metadata_fields && formattedValue.metadata) {
+                        for (const metadataField of attrProps.metadata_fields) {
+                            if (!formattedValue.metadata[metadataField]) {
+                                continue;
+                            }
+
+                            const metadataAttributeProps = await attributeDomain.getAttributeProperties({
+                                id: metadataField,
+                                ctx
+                            });
+
+                            formattedValue.metadata[metadataField] = await valueDomain.runActionsList({
+                                listName: ActionsListEvents.GET_VALUE,
+                                attribute: metadataAttributeProps,
+                                library,
+                                value: formattedValue.metadata[metadataField] as IStandardValue,
+                                ctx
+                            });
+                        }
+                    }
+
+                    return formattedValue;
+                })
             );
 
             // sort of flatMap cause _formatRecordValue can return multiple values for 1 input val (think heritage)
