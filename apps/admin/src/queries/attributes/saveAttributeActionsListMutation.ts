@@ -14,6 +14,7 @@ export const saveAttributeActionsListMutation = gql`
                         name
                         value
                     }
+                    error_message
                 }
                 getValue {
                     id
