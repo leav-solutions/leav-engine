@@ -38,7 +38,7 @@
         "title": "General",
         "infos": "Information",
         "admin_permissions": "Admin permissions",
-        "version": "LEAV Engine v{{version}}",
+        "version": "LEAV Engine {{version}}",
         "api_keys": "API keys",
         "customization": {
             "title": "Customization",
