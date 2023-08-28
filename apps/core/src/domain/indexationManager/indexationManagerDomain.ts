@@ -25,6 +25,7 @@ interface IIndexDatabaseParams {
     findRecordParams: IFindRecordParams | IFindRecordParams[];
     attributes?: {up?: string[]; del?: string[]};
     ctx: IQueryInfos;
+    forceNoTask?: boolean;
 }
 
 export interface IIndexationManagerDomain {
@@ -244,7 +245,8 @@ export default function ({
                         library: data.libraryId,
                         filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: data.id}]
                     },
-                    ctx
+                    ctx,
+                    forceNoTask: true
                 });
 
                 break;
@@ -285,7 +287,8 @@ export default function ({
                             filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: data.recordId}]
                         },
                         ctx,
-                        attributes: isActivated || !isAttrToIndex ? null : {up: [data.attributeId]}
+                        attributes: isActivated || !isAttrToIndex ? null : {up: [data.attributeId]},
+                        forceNoTask: true
                     });
                 }
 
@@ -309,7 +312,8 @@ export default function ({
                         filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: data.recordId}]
                     },
                     ctx,
-                    attributes: attrProps.multiple_values ? {up: [data.attributeId]} : {del: [data.attributeId]}
+                    attributes: attrProps.multiple_values ? {up: [data.attributeId]} : {del: [data.attributeId]},
+                    forceNoTask: true
                 });
 
                 // if the updated/deleted attribute is the label of the library
@@ -350,7 +354,7 @@ export default function ({
     const _indexDatabase = async (params: IIndexDatabaseParams, task?: ITaskFuncParams): Promise<string> => {
         const findRecordParams = [].concat(params.findRecordParams || []);
 
-        if (typeof task?.id === 'undefined') {
+        if (!params.forceNoTask && typeof task?.id === 'undefined') {
             const newTaskId = uuidv4();
 
             await tasksManagerDomain.createTask(
