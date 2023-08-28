@@ -213,7 +213,8 @@ export default function ({
                 await _indexDatabase({
                     findRecordParams: {library: l.id, filters},
                     ctx,
-                    attributes: {up: intersections.map(a => a.id)}
+                    attributes: {up: intersections.map(a => a.id)},
+                    forceNoTask: true
                 });
             }
         }
