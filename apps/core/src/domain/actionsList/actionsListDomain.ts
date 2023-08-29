@@ -4,7 +4,6 @@
 import {AwilixContainer} from 'awilix';
 import Joi from 'joi';
 import isEmpty from 'lodash/isEmpty';
-import {IUtils} from '../../utils/utils';
 import {IActionsListFunction, IActionsListParams, IActionsListSavedAction} from '../../_types/actionsList';
 import {IAttribute} from '../../_types/attribute';
 import {ErrorFieldDetail, Errors} from '../../_types/errors';
@@ -34,11 +33,7 @@ export interface IActionsListDomain {
      * @param attribute
      * @param error
      */
-    handleJoiError(
-        attribute: IAttribute,
-        error: Joi.ValidationError,
-        customMessage?: string
-    ): ErrorFieldDetail<IRecord>;
+    handleJoiError(attribute: IAttribute, error: Joi.ValidationError): ErrorFieldDetail<IRecord>;
 
     /**
      * Execute a list of actions.
@@ -53,7 +48,6 @@ export interface IActionsListDomain {
 
 interface IDeps {
     'core.depsManager'?: AwilixContainer;
-    'core.utils'?: IUtils;
     translator?: i18n;
 }
 
@@ -111,7 +105,7 @@ export default function ({'core.depsManager': depsManager = null, translator = n
                                   lng: ctx.lng
                               });
                     //throw the validation error with a custom message
-                    throw new ValidationError(error, !isEmpty(customMessage) ? customMessage : systemMessage);
+                    throw new ValidationError(error.fields, !isEmpty(customMessage) ? customMessage : systemMessage);
                 }
             }
             return {...value, value: resultAction};
