@@ -3,13 +3,15 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AwilixContainer} from 'awilix';
 import Joi from 'joi';
-import {partialRight} from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import {IUtils} from '../../utils/utils';
 import {IActionsListFunction, IActionsListParams, IActionsListSavedAction} from '../../_types/actionsList';
 import {IAttribute} from '../../_types/attribute';
 import {ErrorFieldDetail, Errors} from '../../_types/errors';
 import {IRecord} from '../../_types/record';
 import {IValue} from '../../_types/value';
+import ValidationError from '../../errors/ValidationError';
+import {i18n} from 'i18next';
 
 export interface IActionsListDomain {
     /**
@@ -52,32 +54,23 @@ export interface IActionsListDomain {
 interface IDeps {
     'core.depsManager'?: AwilixContainer;
     'core.utils'?: IUtils;
+    translator?: i18n;
 }
 
-export default function({
-    'core.depsManager': depsManager = null,
-    'core.utils': utils = null
-}: IDeps = {}): IActionsListDomain {
+export default function ({'core.depsManager': depsManager = null, translator = null}: IDeps = {}): IActionsListDomain {
     let _pluginActions = [];
     return {
         getAvailableActions(): IActionsListFunction[] {
             const actions = Object.keys(depsManager.registrations)
                 .filter(modName => modName.match(/^core\.domain\.actions\./))
                 .map(modName => depsManager.cradle[modName]);
-
             return [...actions, ..._pluginActions];
         },
-        handleJoiError(
-            attribute: IAttribute,
-            error: Joi.ValidationError,
-            customMessage?: string
-        ): ErrorFieldDetail<IRecord> {
+        handleJoiError(attribute: IAttribute, error: Joi.ValidationError): ErrorFieldDetail<IRecord> {
             return {
                 [attribute.id]: {
                     msg: Errors.FORMAT_ERROR,
-                    vars: customMessage
-                        ? {details: customMessage}
-                        : {details: error.details.map(er => er.message).join('\n')}
+                    vars: {details: error.details.map(er => er.message).join('\n')}
                 }
             };
         },
@@ -86,36 +79,42 @@ export default function({
         },
         async runActionsList(actions: IActionsListSavedAction[], value: IValue, ctx: any): Promise<IValue> {
             const availActions: IActionsListFunction[] = this.getAvailableActions();
-            // Retrieve actual function to execute from saved actions list
-            // For each function, we apply params and ctx parameters.
-            const actionsToExec = actions.map(action => {
-                const actionFunc = availActions.find(a => {
-                    const availableActionId = a.id ? a.id : a.name;
-                    const actionId = action.id ? action.id : action.name;
-                    return availableActionId === actionId;
-                }).action;
 
-                // Convert params from an array of object with name and value properties
-                // to an object {name: value}
+            let resultAction = value.value;
+            for (const action of actions) {
                 const params: IActionsListParams = !!action.params
                     ? action.params.reduce((all, p) => {
                           all[p.name] = p.value;
                           return all;
                       }, {})
                     : {};
+                const actionFunc = availActions.find(a => {
+                    const availableActionId = a.id ? a.id : a.name;
+                    const actionId = action.id ? action.id : action.name;
+                    return availableActionId === actionId;
+                }).action;
+                try {
+                    // run each actions separately to catch the context of the error.
+                    resultAction = await actionFunc(resultAction, params, ctx);
+                } catch (error) {
+                    //check if there is a custom message added by a user
+                    const customMessage =
+                        action.error_message && action.error_message[ctx.lang] ? action.error_message[ctx.lang] : '';
 
-                //Add custom error message if it has been define
-                params.customMessage = action.error_message ? action.error_message[ctx.lang] : '';
-
-                // Create a new function with params and ctx applied to it
-                // This new function only takes value has an argument
-                return partialRight(actionFunc, params, ctx);
-            });
-
-            // Execute functions
-            const pipeRes = actionsToExec.length ? await utils.pipe(...actionsToExec)(value.value) : value.value;
-
-            return {...value, value: pipeRes};
+                    //check if there is a message system or a joy error message
+                    const systemMessage =
+                        error.fields[ctx.attribute.id] &&
+                        error.fields[ctx.attribute.id].vars &&
+                        error.fields[ctx.attribute.id].vars.details
+                            ? error.fields[ctx.attribute.id].vars.details
+                            : translator.t(('errors.' + error.fields[ctx.attribute.id]) as string, {
+                                  lng: ctx.lng
+                              });
+                    //throw the validation error with a custom message
+                    throw new ValidationError(error, !isEmpty(customMessage) ? customMessage : systemMessage);
+                }
+            }
+            return {...value, value: resultAction};
         }
     };
 }

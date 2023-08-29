@@ -2,11 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import Joi from 'joi';
-import {IUtils} from 'utils/utils';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import actionListDomain from './actionsListDomain';
+import {mockTranslator} from '../../__tests__/mocks/translator';
+import {i18n} from 'i18next';
 
 describe('handleJoiError', () => {
     test('handleJoiError', async () => {
@@ -38,23 +39,20 @@ describe('runActionsList', () => {
     };
 
     const ctx = {
-        attribute: {id: 'test_attr'}
+        attribute: {id: 'test_attr'},
+        lang: 'en'
     };
 
     test('Should run a list of actions', async () => {
-        const mockUtils: Mockify<IUtils> = {
-            pipe: jest.fn().mockReturnValue(global.__mockPromise('test_val'))
-        };
-
-        const domain = actionListDomain({'core.utils': mockUtils as IUtils});
+        const domain = actionListDomain();
         const availActions = [
             {
                 name: 'validate',
-                action: jest.fn()
+                action: jest.fn().mockReturnValue('test_val')
             },
             {
                 name: 'convert',
-                action: jest.fn()
+                action: jest.fn().mockReturnValue('test_val')
             }
         ];
 
@@ -70,22 +68,10 @@ describe('runActionsList', () => {
         );
 
         expect(res).toEqual(val);
-        expect(mockUtils.pipe.mock.calls.length).toBe(1);
-        expect(mockUtils.pipe.mock.calls[0].length).toBe(2);
-        expect(typeof mockUtils.pipe.mock.calls[0][0]).toBe('function');
-        expect(typeof mockUtils.pipe.mock.calls[0][1]).toBe('function');
     });
 
     test('Should throw if an action throws', async () => {
-        const mockUtils: Mockify<IUtils> = {
-            pipe: jest.fn().mockReturnValue(
-                jest.fn().mockImplementation(() => {
-                    throw new ValidationError({test_attr: Errors.ERROR});
-                })
-            )
-        };
-
-        const domain = actionListDomain({'core.utils': mockUtils as IUtils});
+        const domain = actionListDomain({translator: mockTranslator as i18n});
         const availActions = [
             {
                 name: 'validate',
@@ -95,7 +81,7 @@ describe('runActionsList', () => {
             },
             {
                 name: 'convert',
-                action: jest.fn()
+                action: jest.fn().mockReturnValue('test_val')
             }
         ];
 
@@ -111,5 +97,68 @@ describe('runActionsList', () => {
                 ctx
             )
         ).rejects.toThrow(ValidationError);
+    });
+
+    test('Should throw an exception with custom message', async () => {
+        const domain = actionListDomain({translator: mockTranslator as i18n});
+        const availActions = [
+            {
+                name: 'validate',
+                action: jest.fn().mockImplementation(() => {
+                    throw new ValidationError({test_attr: Errors.ERROR});
+                })
+            },
+            {
+                name: 'convert',
+                action: jest.fn().mockReturnValue('test_val')
+            }
+        ];
+
+        domain.getAvailableActions = jest.fn().mockReturnValue(availActions);
+
+        const res = domain.runActionsList(
+            [
+                {id: 'convert', name: 'Convert', params: [{name: 'firstArg', value: 'test'}], is_system: false},
+                {id: 'validate', name: 'validate', is_system: true, error_message: {en: 'test error message'}}
+            ],
+            val,
+            ctx
+        );
+
+        await expect(res).rejects.toThrow(ValidationError);
+        await expect(res).rejects.toThrow('test error message');
+    });
+
+    test('Should throw an exception with custom message from system while a error_message "en" has been set', async () => {
+        const textctx = {
+            attribute: {id: 'test_attr'},
+            lang: 'fr'
+        };
+        const domain = actionListDomain({translator: mockTranslator as i18n});
+        const availActions = [
+            {
+                name: 'validate',
+                action: jest.fn().mockImplementation(() => {
+                    throw new ValidationError({test_attr: Errors.ERROR});
+                })
+            },
+            {
+                name: 'convert',
+                action: jest.fn().mockReturnValue('test_val')
+            }
+        ];
+
+        domain.getAvailableActions = jest.fn().mockReturnValue(availActions);
+
+        const res = domain.runActionsList(
+            [
+                {id: 'convert', name: 'Convert', params: [{name: 'firstArg', value: 'test'}], is_system: false},
+                {id: 'validate', name: 'validate', is_system: true, error_message: {en: 'test error message'}}
+            ],
+            val,
+            textctx
+        );
+        await expect(res).rejects.toThrow(ValidationError);
+        await expect(res).rejects.toThrow('errors.ERROR');
     });
 });
