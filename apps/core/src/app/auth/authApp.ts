@@ -28,6 +28,14 @@ export interface IAuthApp {
     registerRoute(app: Express): void;
 }
 
+const SESSION_CACHE_HEADER = 'session';
+interface ISession {
+    userId: string;
+    ip: string;
+    refreshToken: string;
+    expiresAt: number;
+}
+
 interface IDeps {
     'core.domain.value'?: IValueDomain;
     'core.domain.record'?: IRecordDomain;
@@ -37,8 +45,6 @@ interface IDeps {
     config?: IConfig;
 }
 
-const REFRESH_TOKENS_CACHE_HEADER = 'refreshTokens';
-
 export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
@@ -47,6 +53,32 @@ export default function ({
     'core.infra.cache.cacheService': cacheService = null,
     config = null
 }: IDeps = {}): IAuthApp {
+    const _generateAccessToken = async (userId: string, ctx: IQueryInfos) => {
+        const groupsId = (
+            await valueDomain.getValues({
+                library: 'users',
+                recordId: userId,
+                attribute: 'user_groups',
+                ctx
+            })
+        ).map(g => g.value.id);
+
+        // Generate token
+        const token = jwt.sign(
+            {
+                userId,
+                groupsId
+            },
+            config.auth.key,
+            {
+                algorithm: config.auth.algorithm as Algorithm,
+                expiresIn: String(config.auth.tokenExpiration)
+            }
+        );
+
+        return token;
+    };
+
     return {
         getGraphQLSchema(): IAppGraphQLSchema {
             return {
@@ -119,34 +151,9 @@ export default function ({
                             return res.status(401).send('Invalid credentials');
                         }
 
-                        // Get groups nodes of user
-                        const groupsId = (
-                            await valueDomain.getValues({
-                                library: 'users',
-                                recordId: user.id,
-                                attribute: 'user_groups',
-                                ctx
-                            })
-                        ).map(g => g.value.id);
+                        const accessToken = await _generateAccessToken(user.id, ctx);
 
-                        const tokenExpiration = String(config.auth.tokenExpiration);
-
-                        // Generate token
-                        const token = jwt.sign(
-                            {
-                                userId: user.id,
-                                login: user.login,
-                                role: 'admin', // FIXME: ??
-                                groupsId
-                            },
-                            config.auth.key,
-                            {
-                                algorithm: config.auth.algorithm as Algorithm,
-                                expiresIn: tokenExpiration
-                            }
-                        );
-
-                        const resfreshTokenData = {
+                        const session = {
                             userId: user.id,
                             ip: req.headers['x-forwarded-for'],
                             refreshToken: uuidv4(),
@@ -154,15 +161,13 @@ export default function ({
                         };
 
                         // store refresh token in cache
-                        const cacheKey = `${REFRESH_TOKENS_CACHE_HEADER}:${resfreshTokenData.userId}`;
-                        await cacheService
-                            .getCache(ECacheType.RAM)
-                            .storeData(cacheKey, JSON.stringify(resfreshTokenData));
+                        const cacheKey = `${SESSION_CACHE_HEADER}:${user.id}`;
+                        await cacheService.getCache(ECacheType.RAM).storeData(cacheKey, JSON.stringify(session));
 
                         // We need the milliseconds value to set cookie expiration
                         // ms is the package used by jsonwebtoken under the hood, hence we're sure the value is same
-                        const cookieExpires = ms(tokenExpiration);
-                        res.cookie(ACCESS_TOKEN_COOKIE_NAME, token, {
+                        const cookieExpires = ms(String(config.auth.tokenExpiration));
+                        res.cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, {
                             httpOnly: true,
                             sameSite: config.auth.cookie.sameSite,
                             secure: config.auth.cookie.secure,
@@ -171,8 +176,8 @@ export default function ({
                         });
 
                         return res.status(200).json({
-                            token,
-                            refreshToken: resfreshTokenData.refreshToken
+                            accessToken,
+                            refreshToken: session.refreshToken
                         });
                     } catch (err) {
                         next(err);
@@ -313,6 +318,87 @@ export default function ({
                     } catch (err) {
                         next(err);
                     }
+                }
+            );
+
+            app.post(
+                '/auth/refresh',
+                async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+                    try {
+                        const {userId, refreshToken} = req.body as any;
+
+                        if (typeof refreshToken === 'undefined' || typeof userId === 'undefined') {
+                            return res.status(400).send('Missing required parameters');
+                        }
+
+                        // Get user data
+                        const ctx: IQueryInfos = {
+                            userId: config.defaultUserId,
+                            queryId: 'refresh'
+                        };
+
+                        const users = await recordDomain.find({
+                            params: {
+                                library: 'users',
+                                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: userId}]
+                            },
+                            ctx
+                        });
+
+                        if (!users.list.length) {
+                            return res.status(400).send('Invalid user');
+                        }
+
+                        console.debug({userId, key: `${SESSION_CACHE_HEADER}:${userId}`});
+
+                        const data = (
+                            await cacheService.getCache(ECacheType.RAM).getData([`${SESSION_CACHE_HEADER}:${userId}`])
+                        )[0];
+
+                        if (!data) {
+                            return res.status(403).send('Invalid session');
+                        }
+
+                        const session = JSON.parse(data) as ISession;
+
+                        if (session.userId !== userId || session.ip !== req.headers['x-forwarded-for']) {
+                            return res.status(403).send('Invalid session');
+                        } else if (session.refreshToken !== refreshToken) {
+                            return res.status(403).send('Bad refresh token');
+                        } else if (session.expiresAt < Date.now()) {
+                            return res.status(403).send('Expired refresh token');
+                        }
+
+                        const newAccessToken = await _generateAccessToken(userId, ctx);
+
+                        // Update refresh token in cache
+                        const newSession = {
+                            userId,
+                            ip: req.headers['x-forwarded-for'],
+                            refreshToken: uuidv4(),
+                            expiresAt: Date.now() + ms(config.auth.refreshTokenExpiration)
+                        };
+                        const cacheKey = `${SESSION_CACHE_HEADER}:${userId}`;
+                        await cacheService.getCache(ECacheType.RAM).storeData(cacheKey, JSON.stringify(newSession));
+
+                        const cookieExpires = ms(String(config.auth.tokenExpiration));
+                        res.cookie(ACCESS_TOKEN_COOKIE_NAME, newAccessToken, {
+                            httpOnly: true,
+                            sameSite: config.auth.cookie.sameSite,
+                            secure: config.auth.cookie.secure,
+                            domain: req.headers.host,
+                            expires: new Date(Date.now() + cookieExpires)
+                        });
+
+                        return res.status(200).json({
+                            accessToken: newAccessToken,
+                            refreshToken: newSession.refreshToken
+                        });
+                    } catch (err) {
+                        next(err);
+                    }
+
+                    return;
                 }
             );
         },
