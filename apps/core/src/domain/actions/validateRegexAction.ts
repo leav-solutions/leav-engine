@@ -15,7 +15,7 @@ interface IDeps {
     'core.domain.actionsList'?: IActionsListDomain;
 }
 
-export default function({'core.domain.actionsList': actionsListDomain = null}: IDeps = {}): IActionsListFunction {
+export default function ({'core.domain.actionsList': actionsListDomain = null}: IDeps = {}): IActionsListFunction {
     return {
         id: 'validateRegex',
         name: 'Validate Regex',
@@ -31,9 +31,7 @@ export default function({'core.domain.actionsList': actionsListDomain = null}: I
             }
             const validationRes = schema.validate(value);
             if (!!validationRes.error) {
-                throw new ValidationError(
-                    actionsListDomain.handleJoiError(ctx.attribute, validationRes.error, params.customMessage)
-                );
+                throw new ValidationError(actionsListDomain.handleJoiError(ctx.attribute, validationRes.error));
             }
 
             return value;
