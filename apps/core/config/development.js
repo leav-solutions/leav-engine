@@ -10,7 +10,8 @@ module.exports = {
         transport: 'console'
     },
     auth: {
-        tokenExpiration: '99y'
+        tokenExpiration: '15m',
+        refreshTokenExpiration: '1h'
     },
     debug: true,
     dbProfiler: {

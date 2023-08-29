@@ -9,7 +9,6 @@ import {IValueDomain} from 'domain/value/valueDomain';
 import {Express, NextFunction, Request, Response} from 'express';
 import useragent from 'express-useragent';
 import jwt, {Algorithm} from 'jsonwebtoken';
-import ms from 'ms';
 import {IConfig} from '_types/config';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
@@ -19,6 +18,9 @@ import {USERS_GROUP_ATTRIBUTE_NAME} from '../../infra/permission/permissionRepo'
 import {ACCESS_TOKEN_COOKIE_NAME, ITokenUserData} from '../../_types/auth';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, IRecord} from '../../_types/record';
+import {v4 as uuidv4} from 'uuid';
+import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
+import ms from 'ms';
 
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
@@ -31,14 +33,18 @@ interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.apiKey'?: IApiKeyDomain;
     'core.domain.user'?: IUserDomain;
+    'core.infra.cache.cacheService'?: ICachesService;
     config?: IConfig;
 }
+
+const REFRESH_TOKENS_CACHE_HEADER = 'refreshTokens';
 
 export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.apiKey': apiKeyDomain = null,
     'core.domain.user': userDomain = null,
+    'core.infra.cache.cacheService': cacheService = null,
     config = null
 }: IDeps = {}): IAuthApp {
     return {
@@ -79,7 +85,7 @@ export default function ({
                             return res.status(401).send('Missing credentials');
                         }
 
-                        // Get user id
+                        // Check if user is active
                         const ctx: IQueryInfos = {
                             userId: config.defaultUserId,
                             queryId: 'authenticate'
@@ -97,7 +103,7 @@ export default function ({
                             return res.status(401).send('Invalid credentials');
                         }
 
-                        // Check password
+                        // Check if password is correct
                         const user = users.list[0];
                         const userPwd: IStandardValue[] = await valueDomain.getValues({
                             library: 'users',
@@ -113,7 +119,7 @@ export default function ({
                             return res.status(401).send('Invalid credentials');
                         }
 
-                        // get groups node id
+                        // Get groups nodes of user
                         const groupsId = (
                             await valueDomain.getValues({
                                 library: 'users',
@@ -130,7 +136,7 @@ export default function ({
                             {
                                 userId: user.id,
                                 login: user.login,
-                                role: 'admin',
+                                role: 'admin', // FIXME: ??
                                 groupsId
                             },
                             config.auth.key,
@@ -139,6 +145,19 @@ export default function ({
                                 expiresIn: tokenExpiration
                             }
                         );
+
+                        const resfreshTokenData = {
+                            userId: user.id,
+                            ip: req.headers['x-forwarded-for'],
+                            refreshToken: uuidv4(),
+                            expiresAt: Date.now() + ms(config.auth.refreshTokenExpiration)
+                        };
+
+                        // store refresh token in cache
+                        const cacheKey = `${REFRESH_TOKENS_CACHE_HEADER}:${resfreshTokenData.userId}`;
+                        await cacheService
+                            .getCache(ECacheType.RAM)
+                            .storeData(cacheKey, JSON.stringify(resfreshTokenData));
 
                         // We need the milliseconds value to set cookie expiration
                         // ms is the package used by jsonwebtoken under the hood, hence we're sure the value is same
@@ -152,7 +171,8 @@ export default function ({
                         });
 
                         return res.status(200).json({
-                            token
+                            token,
+                            refreshToken: resfreshTokenData.refreshToken
                         });
                     } catch (err) {
                         next(err);
