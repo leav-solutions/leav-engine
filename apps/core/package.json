@@ -70,7 +70,7 @@
     "add-filename-increment": "1.0.0",
     "amqplib": "0.8.0",
     "apollo-server": "2.26.0",
-    "apollo-server-core": "3.11.1",
+    "apollo-server-core": "3.12.1",
     "apollo-server-express": "3.11.1",
     "apollo-tracing": "0.15.0",
     "app-root-path": "3.1.0",
