@@ -18,7 +18,6 @@ import {USERS_GROUP_ATTRIBUTE_NAME} from '../../infra/permission/permissionRepo'
 import {ACCESS_TOKEN_COOKIE_NAME, ITokenUserData} from '../../_types/auth';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, IRecord} from '../../_types/record';
-import {v4 as uuidv4} from 'uuid';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import ms from 'ms';
 
@@ -29,11 +28,10 @@ export interface IAuthApp {
 }
 
 const SESSION_CACHE_HEADER = 'session';
-interface ISession {
+
+interface IRefreshTokenPayload {
     userId: string;
-    ip: string;
-    refreshToken: string;
-    expiresAt: number;
+    userIp: string | string[];
 }
 
 interface IDeps {
@@ -75,6 +73,15 @@ export default function ({
                 expiresIn: String(config.auth.tokenExpiration)
             }
         );
+
+        return token;
+    };
+
+    const _generateRefreshToken = (payload: IRefreshTokenPayload) => {
+        const token = jwt.sign(payload, config.auth.key, {
+            algorithm: config.auth.algorithm as Algorithm,
+            expiresIn: String(config.auth.refreshTokenExpiration)
+        });
 
         return token;
     };
@@ -153,16 +160,14 @@ export default function ({
 
                         const accessToken = await _generateAccessToken(user.id, ctx);
 
-                        const session = {
+                        const refreshToken = _generateRefreshToken({
                             userId: user.id,
-                            ip: req.headers['x-forwarded-for'],
-                            refreshToken: uuidv4(),
-                            expiresAt: Date.now() + ms(config.auth.refreshTokenExpiration)
-                        };
+                            userIp: req.headers['x-forwarded-for']
+                        });
 
                         // store refresh token in cache
                         const cacheKey = `${SESSION_CACHE_HEADER}:${user.id}`;
-                        await cacheService.getCache(ECacheType.RAM).storeData(cacheKey, JSON.stringify(session));
+                        await cacheService.getCache(ECacheType.RAM).storeData(cacheKey, refreshToken);
 
                         // We need the milliseconds value to set cookie expiration
                         // ms is the package used by jsonwebtoken under the hood, hence we're sure the value is same
@@ -177,7 +182,7 @@ export default function ({
 
                         return res.status(200).json({
                             accessToken,
-                            refreshToken: session.refreshToken
+                            refreshToken
                         });
                     } catch (err) {
                         next(err);
@@ -325,10 +330,22 @@ export default function ({
                 '/auth/refresh',
                 async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
                     try {
-                        const {userId, refreshToken} = req.body as any;
+                        const {refreshToken} = req.body as any;
 
-                        if (typeof refreshToken === 'undefined' || typeof userId === 'undefined') {
-                            return res.status(400).send('Missing required parameters');
+                        if (typeof refreshToken === 'undefined') {
+                            return res.status(400).send('Missing refresh token');
+                        }
+
+                        let payload: IRefreshTokenPayload;
+
+                        try {
+                            payload = jwt.verify(refreshToken, config.auth.key) as IRefreshTokenPayload;
+                        } catch (e) {
+                            throw new AuthenticationError('Invalid token');
+                        }
+
+                        if (typeof payload.userId === 'undefined' || typeof payload.userIp === 'undefined') {
+                            throw new AuthenticationError('Invalid token');
                         }
 
                         // Get user data
@@ -340,46 +357,43 @@ export default function ({
                         const users = await recordDomain.find({
                             params: {
                                 library: 'users',
-                                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: userId}]
+                                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.userId}]
                             },
                             ctx
                         });
 
+                        // User could have been deleted / disabled in database
                         if (!users.list.length) {
-                            return res.status(400).send('Invalid user');
+                            return res.status(403).send('Invalid token');
                         }
 
-                        console.debug({userId, key: `${SESSION_CACHE_HEADER}:${userId}`});
-
-                        const data = (
-                            await cacheService.getCache(ECacheType.RAM).getData([`${SESSION_CACHE_HEADER}:${userId}`])
+                        const localRefreshToken = (
+                            await cacheService
+                                .getCache(ECacheType.RAM)
+                                .getData([`${SESSION_CACHE_HEADER}:${payload.userId}`])
                         )[0];
 
-                        if (!data) {
+                        if (!localRefreshToken) {
                             return res.status(403).send('Invalid session');
                         }
 
-                        const session = JSON.parse(data) as ISession;
+                        const session = jwt.decode(localRefreshToken) as IRefreshTokenPayload;
 
-                        if (session.userId !== userId || session.ip !== req.headers['x-forwarded-for']) {
+                        if (
+                            session.userId !== payload.userId ||
+                            session.userIp !== payload.userIp ||
+                            session.userIp !== req.headers['x-forwarded-for']
+                        ) {
                             return res.status(403).send('Invalid session');
-                        } else if (session.refreshToken !== refreshToken) {
-                            return res.status(403).send('Bad refresh token');
-                        } else if (session.expiresAt < Date.now()) {
-                            return res.status(403).send('Expired refresh token');
                         }
 
-                        const newAccessToken = await _generateAccessToken(userId, ctx);
+                        // Everything is ok, we can generate, update and return new tokens
 
-                        // Update refresh token in cache
-                        const newSession = {
-                            userId,
-                            ip: req.headers['x-forwarded-for'],
-                            refreshToken: uuidv4(),
-                            expiresAt: Date.now() + ms(config.auth.refreshTokenExpiration)
-                        };
-                        const cacheKey = `${SESSION_CACHE_HEADER}:${userId}`;
-                        await cacheService.getCache(ECacheType.RAM).storeData(cacheKey, JSON.stringify(newSession));
+                        const newAccessToken = await _generateAccessToken(session.userId, ctx);
+                        const newRefreshToken = _generateRefreshToken(session);
+
+                        const cacheKey = `${SESSION_CACHE_HEADER}:${session.userId}`;
+                        await cacheService.getCache(ECacheType.RAM).storeData(cacheKey, newRefreshToken);
 
                         const cookieExpires = ms(String(config.auth.tokenExpiration));
                         res.cookie(ACCESS_TOKEN_COOKIE_NAME, newAccessToken, {
@@ -392,7 +406,7 @@ export default function ({
 
                         return res.status(200).json({
                             accessToken: newAccessToken,
-                            refreshToken: newSession.refreshToken
+                            refreshToken: newRefreshToken
                         });
                     } catch (err) {
                         next(err);
