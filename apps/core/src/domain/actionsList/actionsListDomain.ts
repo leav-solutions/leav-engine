@@ -96,16 +96,16 @@ export default function ({'core.depsManager': depsManager = null, translator = n
                         action.error_message && action.error_message[ctx.lang] ? action.error_message[ctx.lang] : '';
 
                     //check if there is a message system or a joy error message
-                    const systemMessage =
-                        error.fields[ctx.attribute.id] &&
-                        error.fields[ctx.attribute.id].vars &&
-                        error.fields[ctx.attribute.id].vars.details
-                            ? error.fields[ctx.attribute.id].vars.details
-                            : translator.t(('errors.' + error.fields[ctx.attribute.id]) as string, {
-                                  lng: ctx.lng
-                              });
+                    const systemMessage = error.fields[ctx.attribute.id]?.vars?.details
+                        ? error.fields[ctx.attribute.id].vars.details
+                        : translator.t(('errors.' + error.fields[ctx.attribute.id]) as string, {
+                              lng: ctx.lng
+                          });
                     //throw the validation error with a custom message
-                    throw new ValidationError(error.fields, !isEmpty(customMessage) ? customMessage : systemMessage);
+                    throw new ValidationError(
+                        {[ctx.attribute.id]: ''},
+                        !isEmpty(customMessage) ? customMessage : systemMessage
+                    );
                 }
             }
             return {...value, value: resultAction};
