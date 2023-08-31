@@ -6,8 +6,6 @@ import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import actionListDomain from './actionsListDomain';
-import {mockTranslator} from '../../__tests__/mocks/translator';
-import {i18n} from 'i18next';
 
 describe('handleJoiError', () => {
     test('handleJoiError', async () => {
@@ -71,7 +69,7 @@ describe('runActionsList', () => {
     });
 
     test('Should throw if an action throws', async () => {
-        const domain = actionListDomain({translator: mockTranslator as i18n});
+        const domain = actionListDomain();
         const availActions = [
             {
                 name: 'validate',
@@ -100,12 +98,12 @@ describe('runActionsList', () => {
     });
 
     test('Should throw an exception with custom message', async () => {
-        const domain = actionListDomain({translator: mockTranslator as i18n});
+        const domain = actionListDomain();
         const availActions = [
             {
                 name: 'validate',
                 action: jest.fn().mockImplementation(() => {
-                    throw new ValidationError({test_attr: Errors.ERROR});
+                    throw new ValidationError({test_attr: Errors.ERROR}, 'validation Error', true);
                 })
             },
             {
@@ -126,7 +124,7 @@ describe('runActionsList', () => {
         );
 
         await expect(res).rejects.toThrow(ValidationError);
-        await expect(res).rejects.toThrow('test error message');
+        await expect(res).rejects.toHaveProperty('fields.test_attr', 'test error message');
     });
 
     test('Should throw an exception with custom message from system while a error_message "en" has been set', async () => {
@@ -134,12 +132,12 @@ describe('runActionsList', () => {
             attribute: {id: 'test_attr'},
             lang: 'fr'
         };
-        const domain = actionListDomain({translator: mockTranslator as i18n});
+        const domain = actionListDomain();
         const availActions = [
             {
                 name: 'validate',
                 action: jest.fn().mockImplementation(() => {
-                    throw new ValidationError({test_attr: Errors.ERROR});
+                    throw new ValidationError({test_attr: Errors.ERROR}, 'validation Error', true);
                 })
             },
             {
@@ -159,6 +157,6 @@ describe('runActionsList', () => {
             textctx
         );
         await expect(res).rejects.toThrow(ValidationError);
-        await expect(res).rejects.toThrow('errors.ERROR');
+        await expect(res).rejects.toHaveProperty('fields.test_attr', Errors.ERROR);
     });
 });

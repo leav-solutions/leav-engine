@@ -11,10 +11,17 @@ export default class ValidationError<T> extends Error {
 
     public type: ErrorTypes;
 
-    public constructor(fields: ErrorFieldDetail<T>, message: string = 'Validation error') {
+    public isCustomMessage: boolean;
+
+    public constructor(
+        fields: ErrorFieldDetail<T>,
+        message: string = 'Validation error',
+        isCustomMessage: boolean = false
+    ) {
         super(message);
 
         this.type = ErrorTypes.VALIDATION_ERROR;
         this.fields = fields;
+        this.isCustomMessage = isCustomMessage;
     }
 }

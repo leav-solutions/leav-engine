@@ -130,7 +130,7 @@ interface IDeps {
     'core.domain.tree'?: ITreeDomain;
 }
 
-const valueDomain = function({
+const valueDomain = function ({
     config = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -680,7 +680,9 @@ const valueDomain = function({
                         prevRes.errors.push({
                             type: e.type,
                             message: e?.fields?.[value.attribute]
-                                ? utils.translateError(e.fields[value.attribute], ctx.lang)
+                                ? !e.isCustomMessage
+                                    ? utils.translateError(e.fields[value.attribute], ctx.lang)
+                                    : e.fields[value.attribute]
                                 : e.message,
                             input: value.value,
                             attribute: value.attribute

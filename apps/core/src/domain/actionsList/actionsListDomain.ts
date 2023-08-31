@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AwilixContainer} from 'awilix';
-import Joi from 'joi';
+import Joi, {custom} from 'joi';
 import isEmpty from 'lodash/isEmpty';
 import {IActionsListFunction, IActionsListParams, IActionsListSavedAction} from '../../_types/actionsList';
 import {IAttribute} from '../../_types/attribute';
@@ -10,7 +10,6 @@ import {ErrorFieldDetail, Errors} from '../../_types/errors';
 import {IRecord} from '../../_types/record';
 import {IValue} from '../../_types/value';
 import ValidationError from '../../errors/ValidationError';
-import i18next, {i18n} from 'i18next';
 
 export interface IActionsListDomain {
     /**
@@ -48,10 +47,9 @@ export interface IActionsListDomain {
 
 interface IDeps {
     'core.depsManager'?: AwilixContainer;
-    translator?: i18n;
 }
 
-export default function ({'core.depsManager': depsManager = null, translator = null}: IDeps = {}): IActionsListDomain {
+export default function ({'core.depsManager': depsManager = null}: IDeps = {}): IActionsListDomain {
     let _pluginActions = [];
     return {
         getAvailableActions(): IActionsListFunction[] {
@@ -91,21 +89,26 @@ export default function ({'core.depsManager': depsManager = null, translator = n
                     // run each actions separately to catch the context of the error.
                     resultAction = await actionFunc(resultAction, params, ctx);
                 } catch (error) {
-                    //check if there is a custom message added by a user
+                    //check if there is a custom message added by a user or a joy error message
                     const customMessage =
-                        action.error_message && action.error_message[ctx.lang] ? action.error_message[ctx.lang] : '';
+                        action.error_message &&
+                        action.error_message[ctx.lang] &&
+                        !isEmpty(action.error_message[ctx.lang].trim())
+                            ? action.error_message[ctx.lang]
+                            : error.fields[ctx.attribute.id]?.vars?.details
+                            ? error.fields[ctx.attribute.id].vars.details
+                            : '';
 
-                    //check if there is a message system or a joy error message
-                    const systemMessage = error.fields[ctx.attribute.id]?.vars?.details
-                        ? error.fields[ctx.attribute.id].vars.details
-                        : translator.t(('errors.' + error.fields[ctx.attribute.id]) as string, {
-                              lng: ctx.lang
-                          });
+                    let objectValidationError = {[ctx.attribute.id]: error.fields[ctx.attribute.id]};
+                    let isCustomMessage = false;
+
+                    if (!isEmpty(customMessage)) {
+                        objectValidationError = {[ctx.attribute.id]: customMessage};
+                        isCustomMessage = true;
+                    }
+
                     //throw the validation error with a custom message
-                    throw new ValidationError(
-                        {[ctx.attribute.id]: ''},
-                        !isEmpty(customMessage) ? customMessage : systemMessage
-                    );
+                    throw new ValidationError(objectValidationError, error.message, isCustomMessage);
                 }
             }
             return {...value, value: resultAction};
