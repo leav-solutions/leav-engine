@@ -116,6 +116,8 @@ docker-compose up -d
 ```
 This will start LEAV-Engine in development mode.
 
+⚠️ **Docker v.20.10** or higher is required to run the core.
+
 # Contributing
 We're glad you're interested in contributing to LEAV-Engine!
 Giving us feedback or reporting bugs are already a great way to contribute to the project. Feel free to [open an issue](https://github.com/leav-solutions/leav-engine/issues) on this repo, we'll be happy to help you.
