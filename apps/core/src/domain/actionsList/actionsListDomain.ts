@@ -10,7 +10,7 @@ import {ErrorFieldDetail, Errors} from '../../_types/errors';
 import {IRecord} from '../../_types/record';
 import {IValue} from '../../_types/value';
 import ValidationError from '../../errors/ValidationError';
-import {i18n} from 'i18next';
+import i18next, {i18n} from 'i18next';
 
 export interface IActionsListDomain {
     /**
@@ -99,7 +99,7 @@ export default function ({'core.depsManager': depsManager = null, translator = n
                     const systemMessage = error.fields[ctx.attribute.id]?.vars?.details
                         ? error.fields[ctx.attribute.id].vars.details
                         : translator.t(('errors.' + error.fields[ctx.attribute.id]) as string, {
-                              lng: ctx.lng
+                              lng: ctx.lang
                           });
                     //throw the validation error with a custom message
                     throw new ValidationError(
