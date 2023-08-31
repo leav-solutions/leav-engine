@@ -180,7 +180,7 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
             }
         }
     };
-    const changeCustomMessage = (actionId: number, value: string, lang: string) => {
+    const _handleCustomMessage = (actionId: number, value: string, lang: string) => {
         if (currentActionList && currentActionListName) {
             const currentActionListCopy = cloneDeep(currentActionList);
             const act = currentActionListCopy[currentActionListName][actionId];
@@ -283,7 +283,7 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
                         onSelectorChange={onSelectorChange}
                         currentActionListName={currentActionListName}
                         onSave={onSave}
-                        changeCustomMessage={changeCustomMessage}
+                        onChangeCustomMessage={_handleCustomMessage}
                     />
                 )}
             </ListsContainer>

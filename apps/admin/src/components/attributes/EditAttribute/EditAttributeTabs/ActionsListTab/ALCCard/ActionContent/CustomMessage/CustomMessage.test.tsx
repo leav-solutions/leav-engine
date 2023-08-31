@@ -15,9 +15,9 @@ describe('Custom Message', () => {
         const lang = 'fr';
         render(
             <CustomMessage
-                custom_message={customMessage}
+                customMessage={customMessage}
                 lang={lang}
-                changeCustomMessage={placeholder}
+                onChangeCustomMessage={placeholder}
                 index={0}
                 key={lang}
                 actionId={0}

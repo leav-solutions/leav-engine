@@ -8,10 +8,10 @@ import {Input, Label} from 'semantic-ui-react';
 
 interface ICustomMessageProps {
     index: number | undefined;
-    custom_message: string;
+    customMessage: string;
     lang: string;
     actionId: number;
-    changeCustomMessage?: (actionId: number, value: string, lang: string) => void;
+    onChangeCustomMessage?: (actionId: number, value: string, lang: string) => void;
     setBlockCard: (to: boolean) => void;
 }
 
@@ -19,19 +19,19 @@ interface ICustomMessageProps {
 
 function CustomMessage({
     index,
-    custom_message,
+    customMessage,
     lang,
     actionId,
-    changeCustomMessage,
+    onChangeCustomMessage,
     setBlockCard
 }: ICustomMessageProps): JSX.Element {
-    const [currentValue, setCurrentValue] = useState(custom_message ? custom_message : '');
+    const [currentValue, setCurrentValue] = useState(customMessage ? customMessage : '');
 
-    const _changeCustomMessage = (event: React.SyntheticEvent<HTMLInputElement>) => {
+    const _onChangeCustomMessage = (event: React.SyntheticEvent<HTMLInputElement>) => {
         const target = event.target as HTMLInputElement;
         const value = target.value.toString();
         setCurrentValue(value);
-        changeCustomMessage(actionId, value, lang);
+        onChangeCustomMessage(actionId, value, lang);
     };
 
     const _onFocus = e => {
@@ -48,32 +48,26 @@ function CustomMessage({
         fontWeight: 'bold'
     };
 
-    const _getRenderedElement = () => {
-        return (
-            <Input
-                style={{marginBottom: '10px'}}
-                description="text"
-                fluid
-                labelPosition="left"
-                type="string"
-                name={lang}
-                placeholder=""
-                value={currentValue}
-                onChange={_changeCustomMessage}
-                onFocus={_onFocus}
-                onBlur={_onBlur}
-            >
-                <Label style={labelStyle} basic>
-                    {lang.toUpperCase()} :
-                </Label>
-                <input />
-            </Input>
-        );
-    };
-
-    //////////////////// RENDER
-
-    return <div>{<>{_getRenderedElement()}</>}</div>;
+    return (
+        <Input
+            style={{marginBottom: '10px'}}
+            description="text"
+            fluid
+            labelPosition="left"
+            type="string"
+            name={lang}
+            placeholder=""
+            value={currentValue}
+            onChange={_onChangeCustomMessage}
+            onFocus={_onFocus}
+            onBlur={_onBlur}
+        >
+            <Label style={labelStyle} basic>
+                {lang.toUpperCase()} :
+            </Label>
+            <input />
+        </Input>
+    );
 }
 
 export default CustomMessage;

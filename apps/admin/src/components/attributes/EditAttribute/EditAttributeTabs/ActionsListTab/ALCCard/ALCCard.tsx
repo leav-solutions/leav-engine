@@ -29,7 +29,7 @@ export interface ICardProps {
     getConnectorStatus?: (indx: number, action: {}) => boolean | undefined;
     colorTypeDictionnary: IColorDic;
     changeParam?: (input: IParamInput) => void;
-    changeCustomMessage?: (actionId: number, value: string, lang: string) => void;
+    onChangeCustomMessage?: (actionId: number, value: string, lang: string) => void;
     index?: number;
     dragging?: boolean;
 }
@@ -49,7 +49,7 @@ function ALCCard({
     changeParam,
     index,
     dragging,
-    changeCustomMessage
+    onChangeCustomMessage
 }: ICardProps) {
     const {t} = useTranslation();
     const container = useRef(null);
@@ -239,11 +239,11 @@ function ALCCard({
                                 availableLangs.map(lang => (
                                     <CustomMessage
                                         index={index}
-                                        custom_message={listAction.error_message?.[lang] ?? ''}
+                                        customMessage={listAction.error_message?.[lang] ?? ''}
                                         lang={lang}
                                         key={lang}
                                         actionId={listAction.list_id !== undefined ? listAction.list_id : -1}
-                                        changeCustomMessage={changeCustomMessage}
+                                        onChangeCustomMessage={onChangeCustomMessage}
                                         setBlockCard={setBlockCard}
                                     />
                                 ))}
