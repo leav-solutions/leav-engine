@@ -11,6 +11,7 @@ export default async (config: IConfig): Promise<i18n> => {
         fallbackLng: config.lang.default,
         supportedLngs: config.lang.available,
         debug: false,
+        preload: config.lang.available,
         backend: {
             loadPath: __dirname + '/locales/{{lng}}/{{ns}}.json'
         }

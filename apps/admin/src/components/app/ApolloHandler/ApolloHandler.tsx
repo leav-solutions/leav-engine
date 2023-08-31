@@ -39,7 +39,7 @@ const _redirectToLogin = () =>
 
 const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
     const dispatch = useDispatch();
-    const {t} = useTranslation();
+    const {t, i18n} = useTranslation();
 
     const {loading: possibleTypesLoading, error: possibleTypesError, possibleTypes} = useGraphqlPossibleTypes(
         `${ORIGIN_URL}/${API_ENDPOINT}`
@@ -151,7 +151,7 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
             splitLink,
             _mutationsWatcherLink,
             new HttpLink({
-                uri: `${ORIGIN_URL}/${API_ENDPOINT}`,
+                uri: `${ORIGIN_URL}/${API_ENDPOINT}?lang=${i18n.language}`,
                 fetch
             })
         ]),
