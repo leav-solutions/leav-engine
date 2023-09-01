@@ -14,7 +14,7 @@ import {
 import {SearchContext} from 'hooks/useSearchReducer/searchContext';
 import searchReducer, {initialSearchState, SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {ISearchRecord} from 'hooks/useSearchReducer/_types';
-import {useEffect, useReducer} from 'react';
+import {useEffect, useMemo, useReducer} from 'react';
 import {useAppSelector} from 'reduxStore/store';
 import styled, {CSSObject} from 'styled-components';
 import {objectValueVersionToArray} from 'utils';
@@ -137,21 +137,27 @@ function LibraryItemsListContent({
             ? objectValueVersionToArray(searchState.valuesVersions).filter(v => !!v.treeNodeId)
             : [];
 
-    const {error: getRecordsError, loading: getRecordsLoading, fetchMore: getRecordsFetchMore} = useQuery<
-        IGetRecordsFromLibraryQuery,
-        IGetRecordsFromLibraryQueryVariables
-    >(getRecordsFromLibraryQuery(library.gqlNames.query, searchState.fields, !searchState.offset), {
-        fetchPolicy: 'network-only',
-        skip: !searchState.loading,
-        variables: {
+    // We're using a useMemo here to prevent query being fired on every change of searchState.
+    // Subsequent search will be triggered on user request and are handled elsewhere.
+    // We were previously using the skip property of useQuery but it was causing issues with data update
+    const variables = useMemo(
+        () => ({
             limit: searchState.pagination,
             offset: searchState.offset,
             filters: getRequestFromFilters(searchState.filters),
             sort: searchState.sort,
             fullText: searchState.fullText,
             version: _getVersionForRequest()
-        },
-        onCompleted: _applyResults,
+        }),
+        []
+    );
+
+    const {loading: getRecordsLoading, data: searchData, fetchMore: getRecordsFetchMore} = useQuery<
+        IGetRecordsFromLibraryQuery,
+        IGetRecordsFromLibraryQueryVariables
+    >(getRecordsFromLibraryQuery(library.gqlNames.query, searchState.fields, !searchState.offset), {
+        fetchPolicy: 'network-only',
+        variables,
         onError: err => {
             searchDispatch({
                 type: SearchActionTypes.UPDATE_RESULT,
@@ -164,7 +170,7 @@ function LibraryItemsListContent({
         try {
             const queryFilters = getRequestFromFilters(searchState.filters);
 
-            const variables = {
+            const currentVariables = {
                 limit: searchState.pagination,
                 offset: searchState.offset,
                 filters: queryFilters,
@@ -177,7 +183,7 @@ function LibraryItemsListContent({
             // we request the right fields by passing in a whole new query
             const results = await getRecordsFetchMore({
                 query: getRecordsFromLibraryQuery(library.gqlNames.query, searchState.fields, !searchState.offset),
-                variables
+                variables: currentVariables
             });
 
             const recordsData = results.data;
@@ -191,6 +197,18 @@ function LibraryItemsListContent({
     };
 
     const isLoading = getRecordsLoading || searchState.view.reload || searchState.loading;
+
+    useEffect(() => {
+        if (searchData) {
+            _applyResults(searchData);
+        }
+    }, [searchData]);
+
+    useEffect(() => {
+        if (searchState.loading) {
+            _fetchRecords();
+        }
+    }, [searchState.loading]);
 
     /**
      * Called when current view changes. In charge of refetching record and saving last used view
