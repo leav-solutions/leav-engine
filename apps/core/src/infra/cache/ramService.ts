@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IConfig} from '_types/config';
-import {ICacheService} from './cacheService';
+import {ICacheService, IStoreDataParams} from './cacheService';
 import {RedisClientType} from './redis';
 
 interface IDeps {
@@ -12,8 +12,8 @@ interface IDeps {
 
 export default function ({config = null, 'core.infra.redis': redis = null}: IDeps): ICacheService {
     return {
-        async storeData(key: string, data: string): Promise<void> {
-            await redis.SET(key, data);
+        async storeData({key, data, expiresIn}: IStoreDataParams): Promise<void> {
+            await redis.SET(key, data, {PX: expiresIn});
         },
         async getData(keys: string[]): Promise<string[]> {
             return redis.MGET(keys);

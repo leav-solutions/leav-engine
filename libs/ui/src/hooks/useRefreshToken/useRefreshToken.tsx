@@ -8,22 +8,22 @@ export default function useRefreshToken() {
         setRefreshToken: (token: string) => {
             localStorage.setItem(REFRESH_TOKEN_KEY, token);
         },
-        refreshToken: () => {
+        refreshToken: async () => {
             const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
 
-            fetch('/auth/refresh', {
+            const res = await fetch('/auth/refresh', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({refreshToken})
-            }).then(res => {
-                // make the promise be rejected if we didn't get a 2xx response
-                if (!res.ok) {
-                    throw new Error(res.statusText, {cause: res});
-                }
+            });
 
-                res.json().then(data => {
-                    localStorage.setItem(REFRESH_TOKEN_KEY, data.refreshToken);
-                });
+            // make the promise be rejected if we didn't get a 2xx response
+            if (!res.ok) {
+                throw new Error(res.statusText, {cause: res});
+            }
+
+            res.json().then(data => {
+                localStorage.setItem(REFRESH_TOKEN_KEY, data.refreshToken);
             });
         }
     };

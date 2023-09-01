@@ -16,8 +16,15 @@ export interface ICachesService {
     memoize<T>(params: IMemoizeParams<T>): Promise<T>;
 }
 
+export interface IStoreDataParams {
+    key: string;
+    data: string;
+    path?: string;
+    expiresIn?: number; // The specified expire time, in milliseconds
+}
+
 export interface ICacheService {
-    storeData?(key: string, data: string, path?: string): Promise<void>;
+    storeData?(params: IStoreDataParams): Promise<void>;
     getData?(keys: string[], path?: string): Promise<string[]>;
     deleteData?(keys: string[], path?: string): Promise<void>;
     deleteAll?(path?: string): Promise<void>;
@@ -63,7 +70,7 @@ export default function ({
             const result = await func();
 
             if (result !== null || storeNulls) {
-                cacheService.storeData(key, JSON.stringify(result));
+                cacheService.storeData({key, data: JSON.stringify(result)});
             }
 
             return result;

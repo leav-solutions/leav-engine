@@ -162,7 +162,11 @@ export default function ({
 
                         // store refresh token in cache
                         const cacheKey = `${SESSION_CACHE_HEADER}:${user.id}`;
-                        await cacheService.getCache(ECacheType.RAM).storeData(cacheKey, refreshToken);
+                        await cacheService.getCache(ECacheType.RAM).storeData({
+                            key: cacheKey,
+                            data: refreshToken,
+                            expiresIn: ms(config.auth.refreshTokenExpiration)
+                        });
 
                         // We need the milliseconds value to set cookie expiration
                         // ms is the package used by jsonwebtoken under the hood, hence we're sure the value is same
@@ -388,7 +392,11 @@ export default function ({
                         const newRefreshToken = _generateRefreshToken({userId: session.userId, userIp: session.userIp});
 
                         const cacheKey = `${SESSION_CACHE_HEADER}:${session.userId}`;
-                        await cacheService.getCache(ECacheType.RAM).storeData(cacheKey, newRefreshToken);
+                        await cacheService.getCache(ECacheType.RAM).storeData({
+                            key: cacheKey,
+                            data: newRefreshToken,
+                            expiresIn: ms(config.auth.refreshTokenExpiration)
+                        });
 
                         const cookieExpires = ms(String(config.auth.tokenExpiration));
                         res.cookie(ACCESS_TOKEN_COOKIE_NAME, newAccessToken, {
