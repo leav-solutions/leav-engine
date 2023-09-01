@@ -29,11 +29,6 @@ export interface IAuthApp {
 
 const SESSION_CACHE_HEADER = 'session';
 
-interface IRefreshTokenPayload {
-    userId: string;
-    userIp: string | string[];
-}
-
 interface IDeps {
     'core.domain.value'?: IValueDomain;
     'core.domain.record'?: IRecordDomain;
@@ -77,7 +72,7 @@ export default function ({
         return token;
     };
 
-    const _generateRefreshToken = (payload: IRefreshTokenPayload) => {
+    const _generateRefreshToken = (payload: {userId: string; userIp: string | string[]}) => {
         const token = jwt.sign(payload, config.auth.key, {
             algorithm: config.auth.algorithm as Algorithm,
             expiresIn: String(config.auth.refreshTokenExpiration)
@@ -336,10 +331,10 @@ export default function ({
                             return res.status(400).send('Missing refresh token');
                         }
 
-                        let payload: IRefreshTokenPayload;
+                        let payload: jwt.JwtPayload;
 
                         try {
-                            payload = jwt.verify(refreshToken, config.auth.key) as IRefreshTokenPayload;
+                            payload = jwt.verify(refreshToken, config.auth.key) as jwt.JwtPayload;
                         } catch (e) {
                             throw new AuthenticationError('Invalid token');
                         }
@@ -373,11 +368,11 @@ export default function ({
                                 .getData([`${SESSION_CACHE_HEADER}:${payload.userId}`])
                         )[0];
 
-                        if (!localRefreshToken) {
+                        if (!localRefreshToken || refreshToken !== localRefreshToken) {
                             return res.status(403).send('Invalid session');
                         }
 
-                        const session = jwt.decode(localRefreshToken) as IRefreshTokenPayload;
+                        const session = jwt.decode(localRefreshToken) as jwt.JwtPayload;
 
                         if (
                             session.userId !== payload.userId ||
@@ -390,7 +385,7 @@ export default function ({
                         // Everything is ok, we can generate, update and return new tokens
 
                         const newAccessToken = await _generateAccessToken(session.userId, ctx);
-                        const newRefreshToken = _generateRefreshToken(session);
+                        const newRefreshToken = _generateRefreshToken({userId: session.userId, userIp: session.userIp});
 
                         const cacheKey = `${SESSION_CACHE_HEADER}:${session.userId}`;
                         await cacheService.getCache(ECacheType.RAM).storeData(cacheKey, newRefreshToken);
@@ -411,8 +406,6 @@ export default function ({
                     } catch (err) {
                         next(err);
                     }
-
-                    return;
                 }
             );
         },

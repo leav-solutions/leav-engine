@@ -13,7 +13,7 @@ import {
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {onError} from '@apollo/link-error';
-import {ErrorDisplay, Loading} from '@leav/ui';
+import {useRefreshToken, ErrorDisplay, Loading} from '@leav/ui';
 import {createUploadLink} from 'apollo-upload-client';
 import {createClient} from 'graphql-ws';
 import useGraphqlPossibleTypes from 'hooks/useGraphqlPossibleTypes';
@@ -36,7 +36,7 @@ const _redirectToLogin = () =>
 function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     const {t, i18n} = useTranslation();
     const dispatch = useAppDispatch();
-
+    const {refreshToken} = useRefreshToken();
     const {loading, error, possibleTypes} = useGraphqlPossibleTypes(`${ORIGIN_URL}/${API_ENDPOINT}`);
 
     if (loading) {
@@ -58,7 +58,14 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
             (networkError as ServerError)?.statusCode === 401 ||
             (graphQLErrors ?? [])?.some(err => err?.extensions?.code === 'UNAUTHENTICATED')
         ) {
-            _redirectToLogin();
+            try {
+                refreshToken();
+                // TODO: reprendre la requête initiale
+                return;
+            } catch (e) {
+                _redirectToLogin();
+                return;
+            }
         }
 
         if (graphQLErrors) {
