@@ -8,6 +8,7 @@ import {
     defaultDataIdFromObject,
     InMemoryCache,
     ServerError,
+    Observable,
     split
 } from '@apollo/client';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
@@ -53,19 +54,19 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     }
 
     // This function will catch the errors from the exchange between Apollo Client and the server.
-    const _handleApolloError = onError(({graphQLErrors, networkError}) => {
+    const _handleApolloError = onError(({graphQLErrors, networkError, operation, forward}) => {
         if (
             (networkError as ServerError)?.statusCode === 401 ||
             (graphQLErrors ?? [])?.some(err => err?.extensions?.code === 'UNAUTHENTICATED')
         ) {
             try {
                 refreshToken();
-                // TODO: reprendre la requête initiale
-                return;
+                forward(operation);
             } catch (e) {
                 _redirectToLogin();
-                return;
             }
+
+            return;
         }
 
         if (graphQLErrors) {
