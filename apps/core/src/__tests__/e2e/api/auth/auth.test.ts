@@ -16,7 +16,8 @@ describe('Auth', () => {
         });
 
         expect(res.status).toBe(200);
-        expect(res.data.token).toBeTruthy();
+        expect(res.data.accessToken).toBeTruthy();
+        expect(res.data.refreshToken).toBeTruthy();
     });
 
     test('Me', async () => {
