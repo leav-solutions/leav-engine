@@ -9,7 +9,8 @@ import {
     HttpLink,
     InMemoryCache,
     ServerError,
-    split
+    split,
+    Observable
 } from '@apollo/client';
 import {onError} from '@apollo/client/link/error';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
@@ -27,6 +28,7 @@ import * as yup from 'yup';
 import {ErrorTypes} from '_types/errors';
 import {API_ENDPOINT, APPS_ENDPOINT, LOGIN_ENDPOINT, ORIGIN_URL, WS_URL} from '../../../constants';
 import Loading from '../../shared/Loading';
+import {useRefreshToken} from '@leav/ui';
 
 interface IApolloHandlerProps {
     children: ReactNode;
@@ -40,6 +42,7 @@ const _redirectToLogin = () =>
 const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
     const dispatch = useDispatch();
     const {t, i18n} = useTranslation();
+    const {refreshToken} = useRefreshToken();
 
     const {loading: possibleTypesLoading, error: possibleTypesError, possibleTypes} = useGraphqlPossibleTypes(
         `${ORIGIN_URL}/${API_ENDPOINT}`
@@ -62,7 +65,7 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
         );
     }
 
-    const _handleApolloError = onError(({graphQLErrors, networkError, operation}) => {
+    const _handleApolloError = onError(({graphQLErrors, networkError, operation, forward}) => {
         let title: string;
         let content: string;
         let icon: SemanticICONS;
@@ -74,7 +77,23 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
             (networkError as ServerError)?.statusCode === 401 ||
             (graphQLErrors ?? []).some(err => err.extensions.code === UNAUTHENTICATED)
         ) {
-            _redirectToLogin();
+            return new Observable(observer => {
+                (async () => {
+                    try {
+                        await refreshToken();
+
+                        // Retry last failed request
+                        forward(operation).subscribe({
+                            next: observer.next.bind(observer),
+                            error: observer.error.bind(observer),
+                            complete: observer.complete.bind(observer)
+                        });
+                    } catch (err) {
+                        _redirectToLogin();
+                        observer.error(err);
+                    }
+                })();
+            });
         }
 
         if (graphQLErrors) {
