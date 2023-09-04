@@ -20,6 +20,7 @@ import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import ms from 'ms';
+import {v4 as uuidv4} from 'uuid';
 
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
@@ -28,6 +29,12 @@ export interface IAuthApp {
 }
 
 const SESSION_CACHE_HEADER = 'session';
+
+interface ISessionPayload extends jwt.JwtPayload {
+    userId: string;
+    ip: string | string[];
+    agent: string;
+}
 
 interface IDeps {
     'core.domain.value'?: IValueDomain;
@@ -72,10 +79,11 @@ export default function ({
         return token;
     };
 
-    const _generateRefreshToken = (payload: {userId: string; userIp: string | string[]}) => {
+    const _generateRefreshToken = (payload: ISessionPayload) => {
         const token = jwt.sign(payload, config.auth.key, {
             algorithm: config.auth.algorithm as Algorithm,
-            expiresIn: String(config.auth.refreshTokenExpiration)
+            expiresIn: String(config.auth.refreshTokenExpiration),
+            jwtid: uuidv4()
         });
 
         return token;
@@ -157,14 +165,15 @@ export default function ({
 
                         const refreshToken = _generateRefreshToken({
                             userId: user.id,
-                            userIp: req.headers['x-forwarded-for']
+                            ip: req.headers['x-forwarded-for'],
+                            agent: req.headers['user-agent']
                         });
 
                         // store refresh token in cache
-                        const cacheKey = `${SESSION_CACHE_HEADER}:${user.id}`;
+                        const cacheKey = `${SESSION_CACHE_HEADER}:${refreshToken}`;
                         await cacheService.getCache(ECacheType.RAM).storeData({
                             key: cacheKey,
-                            data: refreshToken,
+                            data: user.id,
                             expiresIn: ms(config.auth.refreshTokenExpiration)
                         });
 
@@ -335,15 +344,15 @@ export default function ({
                             return res.status(400).send('Missing refresh token');
                         }
 
-                        let payload: jwt.JwtPayload;
+                        let payload: ISessionPayload;
 
                         try {
-                            payload = jwt.verify(refreshToken, config.auth.key) as jwt.JwtPayload;
+                            payload = jwt.verify(refreshToken, config.auth.key) as ISessionPayload;
                         } catch (e) {
                             throw new AuthenticationError('Invalid token');
                         }
 
-                        if (typeof payload.userId === 'undefined' || typeof payload.userIp === 'undefined') {
+                        if (!payload.userId || !payload.ip || !payload.agent) {
                             throw new AuthenticationError('Invalid token');
                         }
 
@@ -366,37 +375,40 @@ export default function ({
                             return res.status(403).send('Invalid token');
                         }
 
-                        const localRefreshToken = (
+                        const userSessionId = (
                             await cacheService
                                 .getCache(ECacheType.RAM)
-                                .getData([`${SESSION_CACHE_HEADER}:${payload.userId}`])
+                                .getData([`${SESSION_CACHE_HEADER}:${refreshToken}`])
                         )[0];
 
-                        if (!localRefreshToken || refreshToken !== localRefreshToken) {
+                        if (!userSessionId) {
                             return res.status(403).send('Invalid session');
                         }
 
-                        const session = jwt.decode(localRefreshToken) as jwt.JwtPayload;
-
-                        if (
-                            session.userId !== payload.userId ||
-                            session.userIp !== payload.userIp ||
-                            session.userIp !== req.headers['x-forwarded-for']
-                        ) {
+                        // We check if user agent is the same
+                        if (payload.agent !== req.headers['user-agent']) {
                             return res.status(403).send('Invalid session');
                         }
 
                         // Everything is ok, we can generate, update and return new tokens
 
-                        const newAccessToken = await _generateAccessToken(session.userId, ctx);
-                        const newRefreshToken = _generateRefreshToken({userId: session.userId, userIp: session.userIp});
+                        const newAccessToken = await _generateAccessToken(payload.userId, ctx);
+                        const newRefreshToken = _generateRefreshToken({
+                            userId: payload.userId,
+                            ip: req.headers['x-forwarded-for'],
+                            agent: req.headers['user-agent']
+                        });
 
-                        const cacheKey = `${SESSION_CACHE_HEADER}:${session.userId}`;
                         await cacheService.getCache(ECacheType.RAM).storeData({
-                            key: cacheKey,
-                            data: newRefreshToken,
+                            key: `${SESSION_CACHE_HEADER}:${newRefreshToken}`,
+                            data: payload.userId,
                             expiresIn: ms(config.auth.refreshTokenExpiration)
                         });
+
+                        // Delete old session
+                        await cacheService
+                            .getCache(ECacheType.RAM)
+                            .deleteData([`${SESSION_CACHE_HEADER}:${refreshToken}`]);
 
                         const cookieExpires = ms(String(config.auth.tokenExpiration));
                         res.cookie(ACCESS_TOKEN_COOKIE_NAME, newAccessToken, {

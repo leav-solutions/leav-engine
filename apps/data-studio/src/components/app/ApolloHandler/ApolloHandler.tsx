@@ -59,13 +59,23 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
             (networkError as ServerError)?.statusCode === 401 ||
             (graphQLErrors ?? [])?.some(err => err?.extensions?.code === 'UNAUTHENTICATED')
         ) {
-            refreshToken()
-                .then(() => {
-                    forward(operation);
-                })
-                .catch(e => _redirectToLogin());
+            return new Observable(observer => {
+                (async () => {
+                    try {
+                        await refreshToken();
 
-            return;
+                        // Retry last failed request
+                        forward(operation).subscribe({
+                            next: observer.next.bind(observer),
+                            error: observer.error.bind(observer),
+                            complete: observer.complete.bind(observer)
+                        });
+                    } catch (err) {
+                        _redirectToLogin();
+                        observer.error(err);
+                    }
+                })();
+            });
         }
 
         if (graphQLErrors) {
