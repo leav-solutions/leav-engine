@@ -133,6 +133,7 @@ export enum AttributeFormat {
     encrypted = 'encrypted',
     extended = 'extended',
     numeric = 'numeric',
+    rich_text = 'rich_text',
     text = 'text'
 }
 
@@ -1143,6 +1144,33 @@ export type GetApplicationByIdQuery = {
     } | null;
 };
 
+export type GetApplicationByIdQuery = {
+    applications?: {
+        list: Array<{
+            id: string;
+            label: any;
+            type: ApplicationType;
+            description?: any | null;
+            endpoint?: string | null;
+            url?: string | null;
+            color?: string | null;
+            module?: string | null;
+            settings?: any | null;
+            icon?: {
+                id: string;
+                whoAmI: {
+                    id: string;
+                    label?: string | null;
+                    color?: string | null;
+                    preview?: IPreviewScalar | null;
+                    library: {id: string; label?: any | null};
+                };
+            } | null;
+            permissions: {access_application: boolean; admin_application: boolean};
+        }>;
+    } | null;
+};
+
 export type GetApplicationModulesQueryVariables = Exact<{[key: string]: never}>;
 
 export type GetApplicationModulesQuery = {
@@ -1293,8 +1321,6 @@ export type GetAttributeByIdQuery = {
     } | null;
 };
 
-export type GetAttributesQueryVariables = Exact<{[key: string]: never}>;
-
 export type GetAttributesQuery = {
     attributes?: {
         list: Array<{
@@ -1403,8 +1429,6 @@ export type DeleteLibraryMutationVariables = Exact<{
 }>;
 
 export type DeleteLibraryMutation = {deleteLibrary: {id: string}};
-
-export type GetLibrariesQueryVariables = Exact<{[key: string]: never}>;
 
 export type GetLibrariesQuery = {
     libraries?: {
@@ -1874,11 +1898,35 @@ export const LibraryDetailsFragmentDoc = gql`
         previewsSettings {
             ...LibraryPreviewsSettings
         }
+      }
+      label
     }
+    relation
+  }
+  recordIdentityConf {
+    label
+    color
+    preview
+    treeColorPreview
+  }
+  permissions {
+    admin_library
+    access_library
+    access_record
+    create_record
+    edit_record
+    delete_record
+  }
+  icon {
+    ...RecordIdentity
+  }
+  previewsSettings {
+    ...LibraryPreviewsSettings
+  }
+}
     ${LibraryAttributesFragmentDoc}
-    ${RecordIdentityFragmentDoc}
-    ${LibraryPreviewsSettingsFragmentDoc}
-`;
+${RecordIdentityFragmentDoc}
+${LibraryPreviewsSettingsFragmentDoc}`;
 export const TreeLightFragmentDoc = gql`
     fragment TreeLight on Tree {
         id
@@ -2247,7 +2295,9 @@ export const GetAttributesDocument = gql`
             }
         }
     }
-`;
+  }
+}
+    `;
 
 /**
  * __useGetAttributesQuery__
