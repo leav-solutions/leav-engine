@@ -287,6 +287,7 @@ export default function ({
                             const ctx: IQueryInfos = {
                                 userId: payload.userId,
                                 lang: (req.query.lang as string) ?? config.lang.default,
+                                defaultLang: config.lang.default,
                                 queryId: req.body.requestId || uuidv4(),
                                 groupsId: payload.groupsId
                             };

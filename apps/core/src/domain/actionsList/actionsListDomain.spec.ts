@@ -38,7 +38,8 @@ describe('runActionsList', () => {
 
     const ctx = {
         attribute: {id: 'test_attr'},
-        lang: 'en'
+        lang: 'en',
+        defaultLang: 'fr'
     };
 
     test('Should run a list of actions', async () => {
@@ -130,7 +131,8 @@ describe('runActionsList', () => {
     test('Should throw an exception with custom message from system while a error_message "en" has been set', async () => {
         const textctx = {
             attribute: {id: 'test_attr'},
-            lang: 'fr'
+            lang: 'fr',
+            defaultLang: 'fr'
         };
         const domain = actionListDomain();
         const availActions = [

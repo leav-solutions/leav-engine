@@ -10,6 +10,7 @@ import {ErrorFieldDetail, Errors} from '../../_types/errors';
 import {IRecord} from '../../_types/record';
 import {IValue} from '../../_types/value';
 import ValidationError from '../../errors/ValidationError';
+import * as Config from '_types/config';
 
 export interface IActionsListDomain {
     /**
@@ -89,15 +90,23 @@ export default function ({'core.depsManager': depsManager = null}: IDeps = {}): 
                     // run each actions separately to catch the context of the error.
                     resultAction = await actionFunc(resultAction, params, ctx);
                 } catch (error) {
-                    //check if there is a custom message added by a user or a joy error message
-                    const customMessage =
+                    //check if there is a custom message added by a user (also check the default lng message)
+                    let customMessage =
                         action.error_message &&
                         action.error_message[ctx.lang] &&
                         !isEmpty(action.error_message[ctx.lang].trim())
                             ? action.error_message[ctx.lang]
-                            : error.fields[ctx.attribute.id]?.vars?.details
-                            ? error.fields[ctx.attribute.id].vars.details
+                            : action.error_message &&
+                              action.error_message[ctx.defaultLang] &&
+                              !isEmpty(action.error_message[ctx.defaultLang].trim())
+                            ? action.error_message[ctx.defaultLang]
                             : '';
+
+                    //check if there is a joy error message
+                    customMessage =
+                        customMessage === '' && error.fields[ctx.attribute.id]?.vars?.details
+                            ? error.fields[ctx.attribute.id].vars.details
+                            : customMessage;
 
                     let objectValidationError = {[ctx.attribute.id]: error.fields[ctx.attribute.id]};
                     let isCustomMessage = false;
