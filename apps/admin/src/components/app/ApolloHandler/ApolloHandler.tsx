@@ -81,7 +81,6 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
                 (async () => {
                     try {
                         await refreshToken();
-
                         // Retry last failed request
                         forward(operation).subscribe({
                             next: observer.next.bind(observer),

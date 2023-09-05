@@ -36,7 +36,7 @@ module.exports = {
         key: process.env.AUTH_KEY,
         algorithm: 'HS256',
         tokenExpiration: process.env.TOKEN_TTL || '15m',
-        refreshTokenExpiration: process.env.REFRESH_TOKEN_TTL || '15m',
+        refreshTokenExpiration: process.env.REFRESH_TOKEN_TTL || '2h',
         cookie: {
             sameSite: process.env.AUTH_COOKIE_SAMESITE || 'lax',
             secure: process.env.AUTH_COOKIE_SECURE || false
