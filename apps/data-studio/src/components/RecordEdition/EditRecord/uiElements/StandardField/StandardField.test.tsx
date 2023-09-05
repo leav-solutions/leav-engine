@@ -93,6 +93,12 @@ describe('StandardField', () => {
         onDeleteMultipleValues: mockHandleMultipleValues
     };
 
+    global.ResizeObserver = jest.fn().mockImplementation(() => ({
+        observe: jest.fn(),
+        unobserve: jest.fn(),
+        disconnect: jest.fn()
+    }));
+
     beforeEach(() => jest.clearAllMocks());
 
     test('Render text field, type value and submit', async () => {
@@ -347,6 +353,42 @@ describe('StandardField', () => {
         userEvent.click(inputElem);
 
         expect(screen.getByRole('spinbutton')).toBeInTheDocument();
+    });
+
+    test('Render Rich Text field', async () => {
+        const recordValuesDate = [
+            {
+                ...mockRecordValuesCommon,
+                value: '<p>rich text editor test<p>',
+                raw_value: 'new rich text editor test'
+            }
+        ];
+        render(
+            <StandardField
+                element={{
+                    ...mockFormElementInput,
+                    attribute: {...mockFormAttribute, format: AttributeFormat.rich_text},
+                    values: recordValuesDate
+                }}
+                {...baseProps}
+            />
+        );
+        const richTextElem = screen.getByTestId('ckeditor');
+        await act(async () => {
+            userEvent.click(richTextElem);
+        });
+        const richTextElemOpen = screen.getByRole('textbox');
+        expect(richTextElemOpen).toBeInTheDocument();
+        await act(async () => {
+            userEvent.click(richTextElemOpen);
+        });
+        const toolBarelem = screen.getByRole('toolbar');
+        expect(toolBarelem).toBeInTheDocument();
+
+        await act(async () => {
+            userEvent.click(screen.getByRole('button', {name: 'global.submit'}));
+        });
+        expect(mockHandleSubmit).toHaveBeenCalled();
     });
 
     test('Display error message', async () => {

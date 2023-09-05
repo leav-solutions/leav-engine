@@ -86,15 +86,12 @@ describe('coreAttributeApp', () => {
 
         test('Color attribute', async () => {
             expect(await attrApp.getGraphQLFormat({...mockAttrSimple, format: AttributeFormats.COLOR})).toBe('String');
-<<<<<<< HEAD
-=======
         });
 
         test('Rich Text attribute', async () => {
             expect(await attrApp.getGraphQLFormat({...mockAttrSimple, format: AttributeFormats.RICH_TEXT})).toBe(
                 'String'
             );
->>>>>>> a6e618cf (Add new format rich text)
         });
 
         test('Simple link attribute', async () => {

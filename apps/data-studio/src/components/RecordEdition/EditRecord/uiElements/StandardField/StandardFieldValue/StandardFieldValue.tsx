@@ -49,6 +49,7 @@ import TextInput from './Inputs/TextInput';
 import ValuesList from './ValuesList';
 import {IValueOfValuesList} from './ValuesList/ValuesList';
 import ColorInput from './Inputs/ColorInput';
+import RichTextEditorInput from './Inputs/RichTextEditorInput';
 
 const ErrorMessage = styled.div`
     color: ${themeVars.errorColor};
@@ -185,7 +186,8 @@ const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInp
     [AttributeFormat.numeric]: NumberInput,
     [AttributeFormat.encrypted]: EncryptedInput,
     [AttributeFormat.extended]: TextInput,
-    [AttributeFormat.color]: ColorInput
+    [AttributeFormat.color]: ColorInput,
+    [AttributeFormat.rich_text]: RichTextEditorInput
 };
 
 type IStringValuesListConf = RECORD_FORM_recordForm_elements_attribute_StandardAttribute_values_list_StandardStringValuesListConf;
@@ -337,7 +339,11 @@ function StandardFieldValue({
 
     const _getInput = (): JSX.Element => {
         let inputStyle: React.CSSProperties = {};
-        if (!fieldValue.isEditing && attribute.format !== AttributeFormat.boolean) {
+        if (
+            !fieldValue.isEditing &&
+            attribute.format !== AttributeFormat.boolean &&
+            attribute.format !== AttributeFormat.rich_text
+        ) {
             let displayedValue = String(fieldValue.displayValue);
             let prefixValue;
             if (
