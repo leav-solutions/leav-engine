@@ -6,17 +6,29 @@ import {getConfig} from '../../../../config';
 import {makeGraphQlCall} from '../e2eUtils';
 
 describe('Auth', () => {
-    test('Authenticate', async () => {
-        const conf = await getConfig();
-        const url = `http://${conf.server.host}:${conf.server.port}/auth/authenticate`;
+    test('Authenticate and refresh', async () => {
+        // Authenticate
 
-        const res = await axios.post(url, {
+        const conf = await getConfig();
+        const urlAuthenticate = `http://${conf.server.host}:${conf.server.port}/auth/authenticate`;
+
+        const resAuthenticate = await axios.post(urlAuthenticate, {
             login: 'admin',
             password: 'admin'
         });
 
+        expect(resAuthenticate.status).toBe(200);
+        expect(resAuthenticate.data.refreshToken).toBeTruthy();
+
+        // Refresh
+
+        const urlRefresh = `http://${conf.server.host}:${conf.server.port}/auth/refresh`;
+
+        const res = await axios.post(urlRefresh, {
+            refreshToken: resAuthenticate.data.refreshToken
+        });
+
         expect(res.status).toBe(200);
-        expect(res.data.accessToken).toBeTruthy();
         expect(res.data.refreshToken).toBeTruthy();
     });
 

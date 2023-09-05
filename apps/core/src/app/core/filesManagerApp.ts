@@ -45,7 +45,7 @@ interface ICreateDirectoryParams {
     nodeId: string;
 }
 
-export default function ({
+export default function({
     'core.domain.filesManager': filesManagerDomain = null,
     'core.app.helpers.initQueryContext': initQueryContext,
     'core.app.auth': authApp = null,
@@ -213,7 +213,7 @@ export default function ({
 
                     try {
                         const payload = await authApp.validateRequestToken({
-                            apiKey: String(req.query[API_KEY_PARAM_NAME]),
+                            ...(req.query[API_KEY_PARAM_NAME] && {apiKey: String(req.query[API_KEY_PARAM_NAME])}),
                             cookies: req.cookies
                         });
                         req.ctx.userId = payload.userId;

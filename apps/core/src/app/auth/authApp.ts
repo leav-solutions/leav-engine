@@ -36,6 +36,11 @@ interface ISessionPayload extends jwt.JwtPayload {
     agent: string;
 }
 
+interface IAccessTokenPayload extends jwt.JwtPayload {
+    userId: string;
+    groupsId: string[];
+}
+
 interface IDeps {
     'core.domain.value'?: IValueDomain;
     'core.domain.record'?: IRecordDomain;
@@ -45,7 +50,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function ({
+export default function({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.apiKey': apiKeyDomain = null,
@@ -121,7 +126,7 @@ export default function ({
                 '/auth/authenticate',
                 async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
                     try {
-                        const {login, password} = req.body as any;
+                        const {login, password} = req.body;
 
                         if (typeof login === 'undefined' || typeof password === 'undefined') {
                             return res.status(401).send('Missing credentials');
@@ -189,7 +194,6 @@ export default function ({
                         });
 
                         return res.status(200).json({
-                            accessToken,
                             refreshToken
                         });
                     } catch (err) {
@@ -217,7 +221,7 @@ export default function ({
                 '/auth/forgot-password',
                 async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
                     try {
-                        const {email, lang} = req.body as any;
+                        const {email, lang} = req.body;
                         const ua = useragent.parse(req.headers['user-agent']);
 
                         if (typeof email === 'undefined' || typeof lang === 'undefined') {
@@ -278,7 +282,7 @@ export default function ({
                 '/auth/reset-password',
                 async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
                     try {
-                        const {token, newPassword} = req.body as any;
+                        const {token, newPassword} = req.body;
 
                         if (typeof token === 'undefined' || typeof newPassword === 'undefined') {
                             return res.status(400).send('Missing required parameters');
@@ -338,7 +342,7 @@ export default function ({
                 '/auth/refresh',
                 async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
                     try {
-                        const {refreshToken} = req.body as any;
+                        const {refreshToken} = req.body;
 
                         if (typeof refreshToken === 'undefined') {
                             return res.status(400).send('Missing refresh token');
@@ -420,7 +424,6 @@ export default function ({
                         });
 
                         return res.status(200).json({
-                            accessToken: newAccessToken,
                             refreshToken: newRefreshToken
                         });
                     } catch (err) {
@@ -438,15 +441,24 @@ export default function ({
             const token = cookies?.[ACCESS_TOKEN_COOKIE_NAME];
             let userId: string;
             let groupsId: string[];
+
+            console.debug({cookies, token, apiKey});
+
             if (!token && !apiKey) {
                 throw new AuthenticationError('No token or api key provided');
             }
 
             if (token) {
                 // Token validation checking
-                const payload = jwt.verify(token, config.auth.key) as jwt.JwtPayload;
+                let payload: IAccessTokenPayload;
 
-                if (typeof payload.userId === 'undefined') {
+                try {
+                    payload = jwt.verify(token, config.auth.key) as IAccessTokenPayload;
+                } catch (e) {
+                    throw new AuthenticationError('Invalid token');
+                }
+
+                if (!payload.userId) {
                     throw new AuthenticationError('Invalid token');
                 }
 
@@ -454,7 +466,10 @@ export default function ({
                 groupsId = payload.groupsId;
             }
 
+            console.debug({apiKey, userId});
+
             if (!userId && apiKey) {
+                console.debug('heeey');
                 // If no valid token in cookies, check api key
                 const apiKeyData = await apiKeyDomain.validateApiKey({apiKey, ctx});
 
