@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {RedoOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
-import {RecordCard, themeVars, ErrorDisplay, ErrorDisplayTypes, Loading} from '@leav/ui';
+import {ErrorDisplay, ErrorDisplayTypes, Loading, RecordCard, themeVars} from '@leav/ui';
 import {Button, Modal, Space, Tooltip} from 'antd';
 import ErrorBoundary from 'components/shared/ErrorBoundary';
 import createRecordMutation from 'graphQL/mutations/records/createRecordMutation';
@@ -13,7 +13,8 @@ import {
     IRecordPropertyTree
 } from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {useCanEditRecord} from 'hooks/useCanEditRecord/useCanEditRecord';
-import {useReducer, useState} from 'react';
+import isEqual from 'lodash/isEqual';
+import {useEffect, useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {VscLayers} from 'react-icons/vsc';
 import {addInfo} from 'reduxStore/infos';
@@ -168,6 +169,16 @@ function EditRecordModal({
 
     const [pendingValues, setPendingValues] = useState<IPendingValues>({});
     const hasPendingValues = !!Object.keys(pendingValues).length;
+
+    // Update record in reducer when it changes. Might happen on record identity change (after value save)
+    useEffect(() => {
+        if (record && !isEqual(record, state.record)) {
+            dispatch({
+                type: EditRecordReducerActionsTypes.SET_RECORD,
+                record
+            });
+        }
+    }, [record]);
 
     const _handleValueSubmit: SubmitValueFunc = async (values, version) => {
         if (!isCreationMode) {

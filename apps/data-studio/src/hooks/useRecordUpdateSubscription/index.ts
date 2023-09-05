@@ -1,0 +1,1 @@
+export {useRecordUpdateSubscription} from './useRecordUpdateSubscription';

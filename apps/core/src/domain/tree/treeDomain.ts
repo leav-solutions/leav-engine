@@ -17,6 +17,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {Errors} from '../../_types/errors';
+import {TriggerNames} from '../../_types/eventsManager';
 import {IList, IPaginationParams, SortOrder} from '../../_types/list';
 import {
     AdminPermissionsActions,
@@ -161,9 +162,7 @@ interface IDeps {
     'core.infra.cache.cacheService'?: ICachesService;
 }
 
-export const TRIGGER_NAME_TREE_EVENT = 'treeEvent';
-
-export default function ({
+export default function({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission.admin': adminPermissionDomain = null,
@@ -344,7 +343,7 @@ export default function ({
                         order
                     }
                 },
-                triggerName: TRIGGER_NAME_TREE_EVENT
+                triggerName: TriggerNames.TREE_EVENT
             },
             ctx
         );

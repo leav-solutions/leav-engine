@@ -29,6 +29,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {USERS_GROUP_LIB_NAME, USERS_GROUP_TREE_NAME} from '../../infra/permission/permissionRepo';
 import {Errors} from '../../_types/errors';
+import {TriggerNames} from '../../_types/eventsManager';
 import {FileEvents, FilesAttributes, IFileEventData, IFileMetadata} from '../../_types/filesManager';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {LibraryPermissionsActions} from '../../_types/permissions';
@@ -73,8 +74,6 @@ interface IIsFileExistsAsChild {
     filename: string;
 }
 
-export const TRIGGER_NAME_UPLOAD_FILE = 'UPLOAD_FILE';
-
 export interface IFilesManagerDomain {
     init(): Promise<void>;
     getPreviewVersion(): ILibrary['previewsSettings'];
@@ -108,7 +107,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.utils': utils = null,
     'core.infra.amqpService': amqpService = null,
@@ -492,7 +491,7 @@ export default function ({
 
                     await eventsManager.sendPubSubEvent(
                         {
-                            triggerName: TRIGGER_NAME_UPLOAD_FILE,
+                            triggerName: TriggerNames.UPLOAD_FILE,
                             data: {upload: {uid: file.uid, userId: ctx.userId, progress}}
                         },
                         ctx

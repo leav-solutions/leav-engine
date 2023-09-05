@@ -5,6 +5,7 @@ import {useQuery} from '@apollo/client';
 import {ErrorDisplay, ErrorDisplayTypes, Loading, useLang} from '@leav/ui';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
+import {useRecordUpdateSubscription} from 'hooks/useRecordUpdateSubscription';
 import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'reduxStore/infos';
@@ -37,8 +38,14 @@ function Navigation({tree}: INavigationProps): JSX.Element {
         skip: !tree
     });
 
+    const treeData = data?.trees?.list[0];
     const hasAccess = data?.trees?.list[0]?.permissions.access_tree;
     const isInApp = isTreeInApp(appData.currentApp, tree);
+
+    useRecordUpdateSubscription(
+        {libraries: (treeData?.libraries ?? []).map(lib => lib.library.id)},
+        !treeData || !isInApp
+    );
 
     useEffect(() => {
         if (activePanel !== WorkspacePanels.TREE || !hasAccess) {

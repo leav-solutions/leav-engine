@@ -5,6 +5,7 @@ import {ErrorDisplay} from '@leav/ui';
 import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID} from '@leav/utils';
 import useGetRecordForm from 'hooks/useGetRecordForm';
 import useRecordsConsultationHistory from 'hooks/useRecordsConsultationHistory';
+import {useRecordUpdateSubscription} from 'hooks/useRecordUpdateSubscription';
 import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {FormElementTypes} from '_gqlTypes/globalTypes';
@@ -39,6 +40,8 @@ function EditRecord({
     const {state, dispatch} = useEditRecordModalReducer();
 
     useRecordsConsultationHistory(record?.library?.id ?? null, record?.id ?? null);
+
+    useRecordUpdateSubscription({records: [record?.id]});
 
     const {loading, error, recordForm, refetch} = useGetRecordForm({
         libraryId: library,

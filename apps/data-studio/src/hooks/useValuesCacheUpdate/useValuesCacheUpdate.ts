@@ -23,8 +23,6 @@ export default function (): IValuesCacheUpdateHook {
         const recordWithTypename = {...record, __typename: record.library.gqlNames.type};
         for (const savedValue of savedValues) {
             const propertyCacheFieldName = getPropertyCacheFieldName(savedValue.attribute.id);
-            console.log('savedValue', savedValue);
-            console.log('cache', cache);
 
             const _updateCacheValue = (
                 cacheValue: SAVE_VALUE_BATCH_saveValueBatch_values | SAVE_VALUE_BATCH_saveValueBatch_values[]

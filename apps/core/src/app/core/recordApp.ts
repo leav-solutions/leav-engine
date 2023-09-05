@@ -2,17 +2,22 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IRecordDomain, IRecordFilterLight} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {GraphQLScalarType} from 'graphql';
+import {withFilter} from 'graphql-subscriptions';
 import {IUtils} from 'utils/utils';
+import {PublishedEvent} from '_types/event';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {ITree} from '_types/tree';
+import {TriggerNames} from '../../_types/eventsManager';
 import {RecordPermissionsActions} from '../../_types/permissions';
-import {AttributeCondition, IRecord, Operator, TreeCondition} from '../../_types/record';
+import {AttributeCondition, IRecord, IRecordUpdateEventFilters, TreeCondition} from '../../_types/record';
 import {IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreAttributeApp} from './attributeApp/attributeApp';
+import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from './helpers/subscriptions';
 import {IIndexationManagerApp} from './indexationManagerApp';
 
 export interface ICoreRecordApp {
@@ -23,19 +28,23 @@ interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.tree'?: ITreeDomain;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.utils'?: IUtils;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.core.attribute'?: ICoreAttributeApp;
     'core.app.core.indexationManager'?: IIndexationManagerApp;
+    'core.app.core.subscriptionsHelper'?: ICoreSubscriptionsHelpersApp;
 }
 
 export default function({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.tree': treeDomain = null,
+    'core.domain.eventsManager': eventsManagerDomain = null,
     'core.utils': utils = null,
     'core.app.core.attribute': attributeApp = null,
-    'core.app.core.indexationManager': indexationManagerApp = null
+    'core.app.core.indexationManager': indexationManagerApp = null,
+    'core.app.core.subscriptionsHelper': subscriptionsHelper = null
 }: IDeps = {}): ICoreRecordApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
@@ -168,6 +177,11 @@ export default function({
                         order: SortOrder!
                     }
 
+                    input RecordUpdateFilterInput {
+                        libraries: [ID!],
+                        records: [ID!]
+                    }
+
                     extend type Mutation {
                         createRecord(library: ID): Record!
                         deleteRecord(library: ID, id: ID): Record!
@@ -175,18 +189,12 @@ export default function({
                         deactivateRecords(libraryId: String!, recordsIds: [String!], filters: [RecordFilterInput!]): [Record!]!
                         purgeInactiveRecords(libraryId: String!): [Record!]!
                     }
+
+                    extend type Subscription {
+                        recordUpdate(filters: RecordUpdateFilterInput): Record!
+                    }
                 `,
                 resolvers: {
-                    Record: {
-                        __resolveType(obj) {
-                            return utils.libNameToTypeName(obj.library);
-                        }
-                    },
-                    FileRecord: {
-                        __resolveType(obj) {
-                            return utils.libNameToTypeName(obj.library);
-                        }
-                    },
                     Mutation: {
                         async createRecord(parent, {library}: {library: string}, ctx): Promise<IRecord> {
                             return recordDomain.createRecord(library, ctx);
@@ -212,6 +220,44 @@ export default function({
                         },
                         async purgeInactiveRecords(parent, {libraryId}, ctx): Promise<IRecord[]> {
                             return recordDomain.purgeInactiveRecords({libraryId, ctx});
+                        }
+                    },
+                    Subscription: {
+                        recordUpdate: {
+                            subscribe: withFilter(
+                                () => eventsManagerDomain.subscribe([TriggerNames.RECORD_UPDATE]),
+                                (
+                                    event: PublishedEvent<{recordUpdate: IRecord}>,
+                                    {filters}: {filters: ICommonSubscriptionFilters & IRecordUpdateEventFilters},
+                                    ctx: IQueryInfos
+                                ) => {
+                                    if (filters?.ignoreOwnEvents && subscriptionsHelper.isOwnEvent(event, ctx)) {
+                                        return false;
+                                    }
+
+                                    const {recordUpdate: record} = event;
+                                    let mustReturn = true;
+                                    if (filters?.records?.length) {
+                                        mustReturn = filters?.records.includes(record?.id);
+                                    }
+
+                                    if (mustReturn && filters?.libraries?.length) {
+                                        mustReturn = filters?.libraries.includes(record?.library);
+                                    }
+
+                                    return mustReturn;
+                                }
+                            )
+                        }
+                    },
+                    Record: {
+                        __resolveType(obj) {
+                            return utils.libNameToTypeName(obj.library);
+                        }
+                    },
+                    FileRecord: {
+                        __resolveType(obj) {
+                            return utils.libNameToTypeName(obj.library);
                         }
                     },
                     RecordFilter: {

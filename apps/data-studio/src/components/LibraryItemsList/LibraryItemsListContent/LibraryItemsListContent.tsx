@@ -11,6 +11,7 @@ import {
     IGetRecordsFromLibraryQuery,
     IGetRecordsFromLibraryQueryVariables
 } from 'graphQL/queries/records/getRecordsFromLibraryQueryTypes';
+import {useRecordUpdateSubscription} from 'hooks/useRecordUpdateSubscription';
 import {SearchContext} from 'hooks/useSearchReducer/searchContext';
 import searchReducer, {initialSearchState, SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import {ISearchRecord} from 'hooks/useSearchReducer/_types';
@@ -113,6 +114,8 @@ function LibraryItemsListContent({
         lang,
         valuesVersions: defaultView.valuesVersions
     });
+
+    useRecordUpdateSubscription({libraries: [library.id]});
 
     const [updateSelectedViewMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData);
     const selectedViewKey = getSelectedViewKey(library.id);

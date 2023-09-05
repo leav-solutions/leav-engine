@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
+import {SendRecordUpdateEventHelper} from 'domain/record/helpers/sendRecordUpdateEvent';
 import {IElementAncestorsHelper} from 'domain/tree/helpers/elementAncestors';
 import {IGetDefaultElementHelper} from 'domain/tree/helpers/getDefaultElement';
 import {ITreeDomain} from 'domain/tree/treeDomain';
@@ -121,6 +122,7 @@ interface IDeps {
     'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
     'core.domain.tree.helpers.elementAncestors'?: IElementAncestorsHelper;
     'core.domain.tree.helpers.getDefaultElement'?: IGetDefaultElementHelper;
+    'core.domain.record.helpers.sendRecordUpdateEvent'?: SendRecordUpdateEventHelper;
     'core.domain.versionProfile'?: IVersionProfileDomain;
     'core.infra.record'?: IRecordRepo;
     'core.infra.tree'?: ITreeRepo;
@@ -130,7 +132,7 @@ interface IDeps {
     'core.domain.tree'?: ITreeDomain;
 }
 
-const valueDomain = function ({
+const valueDomain = function({
     config = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -141,6 +143,7 @@ const valueDomain = function ({
     'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
     'core.domain.tree.helpers.elementAncestors': elementAncestors = null,
     'core.domain.tree.helpers.getDefaultElement': getDefaultElementHelper = null,
+    'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent = null,
     'core.domain.versionProfile': versionProfileDomain = null,
     'core.infra.record': recordRepo = null,
     'core.infra.tree': treeRepo = null,
@@ -294,6 +297,8 @@ const valueDomain = function ({
             },
             ctx
         );
+
+        await sendRecordUpdateEvent({id: recordId, library}, ctx);
 
         return res;
     };
@@ -511,6 +516,8 @@ const valueDomain = function ({
                 ctx
             });
 
+            await sendRecordUpdateEvent(record, ctx);
+
             return {...savedVal, ...processedValue};
         },
         async saveValueBatch({library, recordId, values, ctx, keepEmpty = false}): Promise<ISaveBatchValueResult> {
@@ -696,6 +703,7 @@ const valueDomain = function ({
 
             if (saveRes.values.length) {
                 await updateRecordLastModif(library, recordId, ctx);
+                await sendRecordUpdateEvent(record, ctx);
             }
 
             return saveRes;
