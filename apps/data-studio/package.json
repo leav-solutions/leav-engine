@@ -7,6 +7,8 @@
         "@ant-design/icons": "5.1.4",
         "@apollo/client": "3.6.9",
         "@apollo/link-error": "2.0.0-beta.3",
+        "@ckeditor/ckeditor5-build-inline": "39.0.1",
+        "@ckeditor/ckeditor5-react": "6.1.0",
         "@leav/ui": "workspace:libs/ui",
         "@leav/utils": "workspace:libs/utils",
         "@reduxjs/toolkit": "1.9.2",
