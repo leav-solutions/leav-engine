@@ -24,10 +24,34 @@ function RichTextEditorInput({state, fieldValue, onFocus, onChange}: IStandardIn
         borderRadius: '5px'
     };
 
+    const configToolBar = {
+        toolbar: {
+            items: [
+                'undo',
+                'redo',
+                '|',
+                'heading',
+                '|',
+                'bold',
+                'italic',
+                '|',
+                'link',
+                'blockQuote',
+                'insertTable',
+                '|',
+                'bulletedList',
+                'numberedList',
+                'outdent',
+                'indent'
+            ]
+        }
+    };
+
     return (
         <div style={ckeditorStyle} data-testid="ckeditor">
             <CKEditor
                 editor={InlineEditor}
+                config={configToolBar}
                 data={editingValue.toString()}
                 onChange={_handleOnChange}
                 onFocus={_handleOnFocus}
