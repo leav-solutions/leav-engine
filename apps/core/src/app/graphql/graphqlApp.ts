@@ -54,7 +54,6 @@ export default function({
 
                 if (typeof appModule.getGraphQLSchema === 'function') {
                     const schemaToAdd = await appModule.getGraphQLSchema();
-                    //console.log(schemaToAdd);
                     appSchema.typeDefs.push(schemaToAdd.typeDefs);
                     appSchema.resolvers = merge(appSchema.resolvers, schemaToAdd.resolvers);
                 }
