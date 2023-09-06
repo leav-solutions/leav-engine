@@ -91,14 +91,16 @@ export default function ({
                         label: ID,
                         color: ID,
                         preview: ID,
-                        treeColorPreview: ID
+                        treeColorPreview: ID,
+                        nickname: ID
                     }
 
                     input RecordIdentityConfInput {
                         label: ID,
                         color: ID,
                         preview: ID,
-                        treeColorPreview: ID
+                        treeColorPreview: ID,
+                        nickname: ID
                     }
 
                     input RecordInput {

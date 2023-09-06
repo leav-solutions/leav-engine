@@ -665,6 +665,65 @@ export default function ({
         return color;
     };
 
+    const _getNickname = async (
+        record: IRecord,
+        visitedLibraries: string[] = [],
+        ctx: IQueryInfos
+    ): Promise<string> => {
+        if (!record) {
+            return null;
+        }
+        visitedLibraries.push(record.library);
+
+        const lib = record?.library ? await getCoreEntityById<ILibrary>('library', record.library, ctx) : null;
+
+        if (!lib) {
+            throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
+        }
+
+        const conf = lib.recordIdentityConf || {};
+        const valuesOptions: IValuesOptions = {
+            version: ctx.version ?? null
+        };
+
+        let nickname: string = null;
+        if (conf.nickname) {
+            const nicknameAttributeProps = await attributeDomain.getAttributeProperties({id: conf.nickname, ctx});
+
+            const nicknameValues = await valueDomain.getValues({
+                library: lib.id,
+                recordId: record.id,
+                attribute: conf.nickname,
+                options: valuesOptions,
+                ctx
+            });
+
+            if (!nicknameValues.length) {
+                return null;
+            }
+
+            if (utils.isLinkAttribute(nicknameAttributeProps)) {
+                const linkValue = nicknameValues.pop().value;
+
+                // To avoid infinite loop, we check if the library has already been visited. If so, we return null
+                // For example, if the users' library color is set to "created_by",
+                // we'll retrieve the user's creator, then we'll retrieve the creator's creator, and so on...
+                if (visitedLibraries.includes(nicknameAttributeProps.linked_library)) {
+                    return null;
+                }
+
+                nickname = await _getNickname(linkValue, visitedLibraries, ctx);
+            } else if (utils.isTreeAttribute(nicknameAttributeProps)) {
+                const treeValue = nicknameValues.pop().value.record;
+                nickname = await _getNickname(treeValue, visitedLibraries, ctx);
+            } else {
+                nickname = nicknameValues.pop().value;
+            }
+        }
+
+        return nickname;
+    };
+
     const _getRecordIdentity = async (record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity> => {
         const lib = await getCoreEntityById<ILibrary>('library', record.library, ctx);
 
@@ -685,6 +744,11 @@ export default function ({
         let color: string = null;
         if (conf.color) {
             color = await _getColor(record, [], ctx);
+        }
+
+        let nickname: string = null;
+        if (conf.nickname) {
+            nickname = await _getNickname(record, [], ctx);
         }
 
         let preview: IPreview = null;
@@ -745,7 +809,8 @@ export default function ({
             library: lib,
             label,
             color,
-            preview
+            preview,
+            nickname
         };
 
         return identity;

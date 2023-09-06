@@ -94,4 +94,5 @@ export interface IRecordIdentityConf {
     color?: string;
     preview?: string;
     treeColorPreview?: string;
+    nickname?: string;
 }
