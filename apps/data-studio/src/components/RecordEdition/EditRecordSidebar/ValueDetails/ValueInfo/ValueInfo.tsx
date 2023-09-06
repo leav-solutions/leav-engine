@@ -28,10 +28,21 @@ const Title = styled.div`
     gap: 1rem;
 `;
 
+const DisplayValueId = styled.div`
+    font-style: italic;
+    color: rgba(0, 0, 0, 0.4);
+    font-size: 10px;
+    position: relative;
+    left: 81%;
+    margin-bottom: 10px;
+`;
+
 function ValueInfo(): JSX.Element {
     const {t} = useTranslation();
     const {state} = useEditRecordModalReducer();
     const {value, attribute} = state.activeValue;
+
+    const valueId: string = value?.id_value ? value.id_value : '';
 
     const valueDetailsContent = value?.modified_at
         ? [
@@ -79,6 +90,7 @@ function ValueInfo(): JSX.Element {
 
     return (
         <Wrapper>
+            <DisplayValueId>{valueId}</DisplayValueId>
             <Title>
                 {valueDetailsSectionTitle}:
                 {canCountValueLength && (
