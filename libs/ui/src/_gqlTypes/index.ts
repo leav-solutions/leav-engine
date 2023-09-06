@@ -1165,7 +1165,13 @@ export type GetAttributesQueryVariables = Exact<{[key: string]: never}>;
 
 export type GetAttributesQuery = {
     attributes?: {
-        list: Array<{id: string; label?: any | null; type: AttributeType; format?: AttributeFormat | null}>;
+        list: Array<{
+            id: string;
+            label?: any | null;
+            type: AttributeType;
+            format?: AttributeFormat | null;
+            system: boolean;
+        }>;
     } | null;
 };
 
@@ -2054,6 +2060,7 @@ export const GetAttributesDocument = gql`
                 label
                 type
                 format
+                system
             }
         }
     }

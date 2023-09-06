@@ -16,14 +16,18 @@ function EditLibraryAttributes({library, readOnly}: IEditLibraryAttributesProps)
     const _handleAddAttributes = async (attributes: string[]) => {
         const newAttributes = [...(library.attributes ?? []).map(a => a.id), ...attributes];
 
-        await saveLibrary({
-            variables: {
-                library: {
-                    id: library.id,
-                    attributes: newAttributes
+        try {
+            await saveLibrary({
+                variables: {
+                    library: {
+                        id: library.id,
+                        attributes: newAttributes
+                    }
                 }
-            }
-        });
+            });
+        } catch (e) {
+            console.error(e); // FIXME:
+        }
     };
 
     const _handleDeleteAttribute = async (attribute: LibraryAttributesFragment) => {
