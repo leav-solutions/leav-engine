@@ -376,7 +376,7 @@ export default function({
 
                         // User could have been deleted / disabled in database
                         if (!users.list.length) {
-                            return res.status(403).send('Invalid token');
+                            return res.status(401).send('Invalid token');
                         }
 
                         const userSessionId = (
@@ -386,12 +386,12 @@ export default function({
                         )[0];
 
                         if (!userSessionId) {
-                            return res.status(403).send('Invalid session');
+                            return res.status(401).send('Invalid session');
                         }
 
                         // We check if user agent is the same
                         if (payload.agent !== req.headers['user-agent']) {
-                            return res.status(403).send('Invalid session');
+                            return res.status(401).send('Invalid session');
                         }
 
                         // Everything is ok, we can generate, update and return new tokens
@@ -442,8 +442,6 @@ export default function({
             let userId: string;
             let groupsId: string[];
 
-            console.debug({cookies, token, apiKey});
-
             if (!token && !apiKey) {
                 throw new AuthenticationError('No token or api key provided');
             }
@@ -466,10 +464,7 @@ export default function({
                 groupsId = payload.groupsId;
             }
 
-            console.debug({apiKey, userId});
-
             if (!userId && apiKey) {
-                console.debug('heeey');
                 // If no valid token in cookies, check api key
                 const apiKeyData = await apiKeyDomain.validateApiKey({apiKey, ctx});
 

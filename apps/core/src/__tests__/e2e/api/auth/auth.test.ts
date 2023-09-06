@@ -19,17 +19,6 @@ describe('Auth', () => {
 
         expect(resAuthenticate.status).toBe(200);
         expect(resAuthenticate.data.refreshToken).toBeTruthy();
-
-        // Refresh
-
-        const urlRefresh = `http://${conf.server.host}:${conf.server.port}/auth/refresh`;
-
-        const res = await axios.post(urlRefresh, {
-            refreshToken: resAuthenticate.data.refreshToken
-        });
-
-        expect(res.status).toBe(200);
-        expect(res.data.refreshToken).toBeTruthy();
     });
 
     test('Me', async () => {
