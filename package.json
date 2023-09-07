@@ -9,7 +9,7 @@
     ]
   },
   "scripts": {
-    "test": "CI=true node ./scripts/testChangedProjects.js",
+    "test": "CI=true node ./scripts/testChangedProjects.js --maxWorkers=50%",
     "lint": "eslint --ext=ts,tsx --fix apps/ libs/",
     "tscheck": "yarn workspaces foreach -vp run tscheck",
     "license:check": "license-check-and-add check -f license-check-config.json",
