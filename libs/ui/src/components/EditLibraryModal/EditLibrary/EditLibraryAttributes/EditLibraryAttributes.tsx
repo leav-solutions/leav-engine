@@ -26,7 +26,7 @@ function EditLibraryAttributes({library, readOnly}: IEditLibraryAttributesProps)
                 }
             });
         } catch (e) {
-            console.error(e); // FIXME:
+            console.error(e);
         }
     };
 
