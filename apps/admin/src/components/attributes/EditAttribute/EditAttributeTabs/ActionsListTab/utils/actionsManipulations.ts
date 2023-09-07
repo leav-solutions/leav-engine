@@ -47,6 +47,10 @@ export const getActionFromConfig = (configAct: IActionConfig, availableActions: 
         isSystem: configAct.is_system
     };
 
+    if (configAct.error_message) {
+        action.error_message = configAct.error_message;
+    }
+
     if (action.params && action.params.length) {
         action.params.forEach(param => {
             if (param) {

@@ -59,6 +59,7 @@ export default function ({
         const errorType = err?.extensions.exception?.type ?? ErrorTypes.INTERNAL_ERROR;
         const errorFields = err?.extensions.exception?.fields ?? {};
         const errorAction = err?.extensions.exception?.action ?? null;
+        const errorCustomMessage = err?.extensions.exception?.isCustomMessage ?? false;
 
         // Translate errors details
         for (const [field, errorDetails] of Object.entries(errorFields)) {
@@ -67,7 +68,7 @@ export default function ({
 
             const lang = context.lang ?? config.lang.default;
 
-            errorFields[field] = utils.translateError(toTranslate, lang);
+            errorFields[field] = !errorCustomMessage ? utils.translateError(toTranslate, lang) : errorFields[field];
         }
 
         newError.extensions.code = errorType;
@@ -286,6 +287,7 @@ export default function ({
                             const ctx: IQueryInfos = {
                                 userId: payload.userId,
                                 lang: (req.query.lang as string) ?? config.lang.default,
+                                defaultLang: config.lang.default,
                                 queryId: req.body.requestId || uuidv4(),
                                 groupsId: payload.groupsId
                             };

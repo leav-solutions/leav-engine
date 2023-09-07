@@ -11,6 +11,8 @@ import {IAction, IColorDic, IParamInput} from '../interfaces/interfaces';
 import itemTypes from '../ItemTypes';
 import {ActionRow} from '../stylesComps';
 import Param from './ActionContent/Param';
+import useLang from 'hooks/useLang';
+import CustomMessage from './ActionContent/CustomMessage/CustomMessage';
 
 //////////////////// INTERFACES
 
@@ -27,6 +29,7 @@ export interface ICardProps {
     getConnectorStatus?: (indx: number, action: {}) => boolean | undefined;
     colorTypeDictionnary: IColorDic;
     changeParam?: (input: IParamInput) => void;
+    onChangeCustomMessage?: (actionId: number, value: string, lang: string) => void;
     index?: number;
     dragging?: boolean;
 }
@@ -45,12 +48,16 @@ function ALCCard({
     colorTypeDictionnary,
     changeParam,
     index,
-    dragging
+    dragging,
+    onChangeCustomMessage
 }: ICardProps) {
     const {t} = useTranslation();
     const container = useRef(null);
+    const {availableLangs} = useLang();
+
     const [internalWidth, setWidth] = useState(null);
     const [paramOpen, toggleParams] = useState(false);
+    const [paramMessageOpen, toggleParamsMessage] = useState(false);
     const [blockedCard, setBlockCard] = useState(false);
 
     //////////////////// DRAG AND DROP
@@ -119,6 +126,10 @@ function ALCCard({
         toggleParams(!paramOpen);
     };
 
+    const handleToggleParamsMessage = () => {
+        toggleParamsMessage(!paramMessageOpen);
+    };
+
     const tryAndRemove = (actId: number) => {
         if (removeActionFromList) {
             removeActionFromList(String(actId));
@@ -140,7 +151,6 @@ function ALCCard({
     const outputs = action.output_types;
 
     //////////////////// RENDER
-
     function renderListCard(listAction: IAction) {
         return (
             <ActionRow
@@ -214,6 +224,32 @@ function ALCCard({
                             </div>
                         </Card.Content>
                     )}
+                    <div
+                        style={{textAlign: 'right', marginBottom: '13px', marginRight: '13px'}}
+                        onClick={handleToggleParamsMessage}
+                    >
+                        <Card.Meta>
+                            {paramMessageOpen ? t('attributes.hide_messages') : t('attributes.display_messages')}
+                            <Icon name={paramMessageOpen ? 'triangle down' : 'triangle right'} />
+                        </Card.Meta>
+                    </div>
+                    <Card.Content>
+                        <div>
+                            {paramMessageOpen &&
+                                availableLangs.map(lang => (
+                                    <CustomMessage
+                                        index={index}
+                                        customMessage={listAction.error_message?.[lang] ?? ''}
+                                        lang={lang}
+                                        key={lang}
+                                        actionId={listAction.list_id !== undefined ? listAction.list_id : -1}
+                                        onChangeCustomMessage={onChangeCustomMessage}
+                                        setBlockCard={setBlockCard}
+                                    />
+                                ))}
+                        </div>
+                    </Card.Content>
+
                     <Connector inputs={outputs} dictionnary={colorTypeDictionnary} isDragging={dragging} />
                 </Card>
             </ActionRow>

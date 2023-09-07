@@ -29,9 +29,7 @@ export default function ({'core.domain.actionsList': actionsListDomain = null}: 
             if (params.regex) {
                 schema = schema.regex(new RegExp(params.regex));
             }
-
             const validationRes = schema.validate(value);
-
             if (!!validationRes.error) {
                 throw new ValidationError(actionsListDomain.handleJoiError(ctx.attribute, validationRes.error));
             }

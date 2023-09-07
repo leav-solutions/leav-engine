@@ -7,6 +7,7 @@ import {IValueVersion} from './value';
 export interface IQueryInfos {
     userId?: string;
     lang?: string;
+    defaultLang?: string;
     queryId?: string;
     version?: IValueVersion;
     treeId?: string;

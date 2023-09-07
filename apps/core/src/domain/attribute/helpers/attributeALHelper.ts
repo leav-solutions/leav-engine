@@ -100,7 +100,7 @@ export const getActionsListToSave = (
                 allALs[evName] = attrDataToSave.actions_list[evName]
                     ? attrDataToSave.actions_list[evName].map(actionToSave => {
                           const sysActionIndex = (existingAL[evName] ?? []).findIndex(
-                              al => al.name === actionToSave.name && al.is_system
+                              al => al.id === actionToSave.id && al.is_system
                           );
                           return {
                               ...{is_system: false},
@@ -109,7 +109,6 @@ export const getActionsListToSave = (
                           };
                       })
                     : [];
-
                 return allALs;
             }, {});
         }

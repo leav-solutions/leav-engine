@@ -6,11 +6,14 @@ import React from 'react';
 import {DndProvider} from 'react-dnd';
 import {TestBackend} from 'react-dnd-test-backend';
 import ALCCard from './ALCCard';
+
 // import HTML5Backend from 'react-dnd-html5-backend';
 
 function placeholder() {
     return undefined;
 }
+
+jest.mock('hooks/useLang');
 
 jest.mock('react-dnd', () => ({
     useDrag: () => {
