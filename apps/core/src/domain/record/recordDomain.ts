@@ -665,7 +665,7 @@ export default function ({
         return color;
     };
 
-    const _getNickname = async (
+    const _getSubLabel = async (
         record: IRecord,
         visitedLibraries: string[] = [],
         ctx: IQueryInfos
@@ -686,42 +686,42 @@ export default function ({
             version: ctx.version ?? null
         };
 
-        let nickname: string = null;
-        if (conf.nickname) {
-            const nicknameAttributeProps = await attributeDomain.getAttributeProperties({id: conf.nickname, ctx});
+        let subLabel: string = null;
+        if (conf.subLabel) {
+            const subLabelAttributeProps = await attributeDomain.getAttributeProperties({id: conf.subLabel, ctx});
 
-            const nicknameValues = await valueDomain.getValues({
+            const subLabelValues = await valueDomain.getValues({
                 library: lib.id,
                 recordId: record.id,
-                attribute: conf.nickname,
+                attribute: conf.subLabel,
                 options: valuesOptions,
                 ctx
             });
 
-            if (!nicknameValues.length) {
+            if (!subLabelValues.length) {
                 return null;
             }
 
-            if (utils.isLinkAttribute(nicknameAttributeProps)) {
-                const linkValue = nicknameValues.pop().value;
+            if (utils.isLinkAttribute(subLabelAttributeProps)) {
+                const linkValue = subLabelValues.pop().value;
 
                 // To avoid infinite loop, we check if the library has already been visited. If so, we return null
                 // For example, if the users' library color is set to "created_by",
                 // we'll retrieve the user's creator, then we'll retrieve the creator's creator, and so on...
-                if (visitedLibraries.includes(nicknameAttributeProps.linked_library)) {
+                if (visitedLibraries.includes(subLabelAttributeProps.linked_library)) {
                     return null;
                 }
 
-                nickname = await _getNickname(linkValue, visitedLibraries, ctx);
-            } else if (utils.isTreeAttribute(nicknameAttributeProps)) {
-                const treeValue = nicknameValues.pop().value.record;
-                nickname = await _getNickname(treeValue, visitedLibraries, ctx);
+                subLabel = await _getSubLabel(linkValue, visitedLibraries, ctx);
+            } else if (utils.isTreeAttribute(subLabelAttributeProps)) {
+                const treeValue = subLabelValues.pop().value.record;
+                subLabel = await _getSubLabel(treeValue, visitedLibraries, ctx);
             } else {
-                nickname = nicknameValues.pop().value;
+                subLabel = subLabelValues.pop().value;
             }
         }
 
-        return nickname;
+        return subLabel;
     };
 
     const _getRecordIdentity = async (record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity> => {
@@ -746,9 +746,9 @@ export default function ({
             color = await _getColor(record, [], ctx);
         }
 
-        let nickname: string = null;
-        if (conf.nickname) {
-            nickname = await _getNickname(record, [], ctx);
+        let subLabel: string = null;
+        if (conf.subLabel) {
+            subLabel = await _getSubLabel(record, [], ctx);
         }
 
         let preview: IPreview = null;
@@ -810,7 +810,7 @@ export default function ({
             label,
             color,
             preview,
-            nickname
+            subLabel
         };
 
         return identity;

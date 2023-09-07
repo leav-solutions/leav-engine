@@ -30,4 +30,4 @@ echo "\n Checking staged files..."
 yarn lint-staged
 
 echo "\n Running tests..."
-yarn run test --staged
+yarn run test --maxWorkers=50% --staged

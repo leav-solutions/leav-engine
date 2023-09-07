@@ -92,7 +92,7 @@ export default function ({
                         color: ID,
                         preview: ID,
                         treeColorPreview: ID,
-                        nickname: ID
+                        subLabel: ID
                     }
 
                     input RecordIdentityConfInput {
@@ -100,7 +100,7 @@ export default function ({
                         color: ID,
                         preview: ID,
                         treeColorPreview: ID,
-                        nickname: ID
+                        subLabel: ID
                     }
 
                     input RecordInput {
