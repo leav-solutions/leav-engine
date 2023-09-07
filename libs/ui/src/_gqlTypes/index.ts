@@ -504,6 +504,7 @@ export type RecordIdentityConfInput = {
     color?: InputMaybe<Scalars['ID']>;
     label?: InputMaybe<Scalars['ID']>;
     preview?: InputMaybe<Scalars['ID']>;
+    subLabel?: InputMaybe<Scalars['ID']>;
     treeColorPreview?: InputMaybe<Scalars['ID']>;
 };
 
