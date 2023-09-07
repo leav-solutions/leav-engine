@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AppstoreFilled, FilterOutlined, MenuOutlined, PlusOutlined, SaveFilled} from '@ant-design/icons';
-import {useLang, useAppLang} from '@leav/ui';
+import {useLang} from '@leav/ui';
 import {objectToNameValueArray} from '@leav/utils';
 import {Badge, Button, Dropdown, MenuProps, Space, Tooltip} from 'antd';
 import useAddViewMutation from 'graphQL/mutations/views/hooks/useAddViewMutation';

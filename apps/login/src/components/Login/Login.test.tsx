@@ -30,6 +30,12 @@ jest.mock('react-router-dom', () => ({
         .mockReturnValue({})
 }));
 
+jest.mock('@leav/ui', () => ({
+    useRefreshToken: jest.fn(() => ({
+        setRefreshToken: jest.fn()
+    }))
+}));
+
 const _renderComponent = (url: string = '/') =>
     render(
         <MemoryRouter initialEntries={[url]}>
@@ -63,7 +69,10 @@ describe('Login', () => {
     test('Type credentials in login form and redirects to root', async () => {
         (fetch as jest.FunctionLike) = jest.fn().mockReturnValue({
             status: 200,
-            ok: true
+            ok: true,
+            json: async () => ({
+                refreshToken: 'refreshToken'
+            })
         });
 
         await act(async () => {
@@ -80,7 +89,10 @@ describe('Login', () => {
     test('Type credentials in login form and redirects to given path', async () => {
         (fetch as jest.FunctionLike) = jest.fn().mockReturnValue({
             status: 200,
-            ok: true
+            ok: true,
+            json: async () => ({
+                refreshToken: 'refreshToken'
+            })
         });
 
         await act(async () => {

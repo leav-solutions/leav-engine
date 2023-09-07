@@ -8,12 +8,13 @@ import {
     defaultDataIdFromObject,
     InMemoryCache,
     ServerError,
+    Observable,
     split
 } from '@apollo/client';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {onError} from '@apollo/link-error';
-import {ErrorDisplay, Loading} from '@leav/ui';
+import {useRefreshToken, ErrorDisplay, Loading} from '@leav/ui';
 import {createUploadLink} from 'apollo-upload-client';
 import {createClient} from 'graphql-ws';
 import useGraphqlPossibleTypes from 'hooks/useGraphqlPossibleTypes';
@@ -36,7 +37,7 @@ const _redirectToLogin = () =>
 function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     const {t, i18n} = useTranslation();
     const dispatch = useAppDispatch();
-
+    const {refreshToken} = useRefreshToken();
     const {loading, error, possibleTypes} = useGraphqlPossibleTypes(`${ORIGIN_URL}/${API_ENDPOINT}`);
 
     if (loading) {
@@ -53,12 +54,28 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     }
 
     // This function will catch the errors from the exchange between Apollo Client and the server.
-    const _handleApolloError = onError(({graphQLErrors, networkError}) => {
+    const _handleApolloError = onError(({graphQLErrors, networkError, operation, forward}) => {
         if (
             (networkError as ServerError)?.statusCode === 401 ||
             (graphQLErrors ?? [])?.some(err => err?.extensions?.code === 'UNAUTHENTICATED')
         ) {
-            _redirectToLogin();
+            return new Observable(observer => {
+                (async () => {
+                    try {
+                        await refreshToken();
+
+                        // Retry last failed request
+                        forward(operation).subscribe({
+                            next: observer.next.bind(observer),
+                            error: observer.error.bind(observer),
+                            complete: observer.complete.bind(observer)
+                        });
+                    } catch (err) {
+                        _redirectToLogin();
+                        observer.error(err);
+                    }
+                })();
+            });
         }
 
         if (graphQLErrors) {

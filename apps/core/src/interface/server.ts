@@ -42,7 +42,7 @@ interface IDeps {
     'core.depsManager'?: AwilixContainer;
 }
 
-export default function ({
+export default function({
     config: config = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.auth': authApp = null,
@@ -99,7 +99,10 @@ export default function ({
 
     const _checkAuth = async (req, res, next) => {
         try {
-            await authApp.validateRequestToken({apiKey: String(req.query[API_KEY_PARAM_NAME]), cookies: req.cookies});
+            await authApp.validateRequestToken({
+                ...(req.query[API_KEY_PARAM_NAME] && {apiKey: String(req.query[API_KEY_PARAM_NAME])}),
+                cookies: req.cookies
+            });
 
             next();
         } catch (err) {
@@ -151,7 +154,9 @@ export default function ({
                     express.static(config.preview.directory, {fallthrough: false}),
                     async (err, req, res, next) => {
                         const htmlContent = await fs.promises.readFile(__dirname + '/preview404.html', 'utf8');
-                        res.status(404).type('html').send(htmlContent);
+                        res.status(404)
+                            .type('html')
+                            .send(htmlContent);
                     }
                 ]);
                 app.use(`/${config.export.endpoint}`, [_checkAuth, express.static(config.export.directory)]);
@@ -280,7 +285,7 @@ export default function ({
                     context: async ({req, res}): Promise<IQueryInfos> => {
                         try {
                             const payload = await authApp.validateRequestToken({
-                                apiKey: String(req.query[API_KEY_PARAM_NAME]),
+                                ...(req.query[API_KEY_PARAM_NAME] && {apiKey: String(req.query[API_KEY_PARAM_NAME])}),
                                 cookies: req.cookies
                             });
 

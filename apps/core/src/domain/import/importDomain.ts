@@ -833,15 +833,15 @@ export default function ({
 
                         // Caching element links, to treat them later
                         // TODO: Improvement: if no links no cache.
-                        await cacheService.getCache(ECacheType.DISK).storeData(
-                            index.toString(),
-                            JSON.stringify({
+                        await cacheService.getCache(ECacheType.DISK).storeData({
+                            key: index.toString(),
+                            data: JSON.stringify({
                                 library: element.library,
                                 recordIds,
                                 links: element.links
                             } as ICachedLinks),
-                            cacheDataPath
-                        );
+                            path: cacheDataPath
+                        });
 
                         if (typeof lastCacheIndex === 'undefined' || index > lastCacheIndex) {
                             lastCacheIndex = index;

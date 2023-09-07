@@ -7721,6 +7721,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/ms@npm:0.7.31":
+  version: 0.7.31
+  resolution: "@types/ms@npm:0.7.31"
+  checksum: daadd354aedde024cce6f5aa873fefe7b71b22cd0e28632a69e8b677aeb48ae8caa1c60e5919bb781df040d116b01cb4316335167a3fc0ef6a63fa3614c0f6da
+  languageName: node
+  linkType: hard
+
 "@types/node-fetch@npm:2.1.4":
   version: 2.1.4
   resolution: "@types/node-fetch@npm:2.1.4"
@@ -8677,6 +8684,7 @@ __metadata:
   resolution: "admin@workspace:apps/admin"
   dependencies:
     "@apollo/client": 3.3.7
+    "@leav/ui": "workspace:libs/ui"
     "@reduxjs/toolkit": 1.7.1
     "@rushstack/eslint-patch": 1.0.6
     "@semantic-ui-react/craco-less": 2.0.2
@@ -12005,6 +12013,7 @@ __metadata:
     "@types/jsonwebtoken": 8.5.9
     "@types/lodash": 4.14.185
     "@types/minimist": 1.2.2
+    "@types/ms": 0.7.31
     "@types/node": 18.7.18
     "@types/nodemailer": 6.4.6
     "@types/uuid": 7.0.5

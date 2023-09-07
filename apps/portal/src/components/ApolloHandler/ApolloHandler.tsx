@@ -9,13 +9,14 @@ import {
     InMemoryCache,
     PossibleTypesMap,
     ServerError,
-    split
+    split,
+    Observable
 } from '@apollo/client';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {onError} from '@apollo/link-error';
 import {message, Spin} from 'antd';
-import {ErrorDisplay} from '@leav/ui';
+import {ErrorDisplay, useRefreshToken} from '@leav/ui';
 import {API_ENDPOINT, APPS_ENDPOINT, APP_ENDPOINT, LOGIN_ENDPOINT, ORIGIN_URL, WS_URL} from '../../constants';
 import fetch from 'cross-fetch';
 import {createClient} from 'graphql-ws';
@@ -34,6 +35,7 @@ const _redirectToLogin = () =>
 
 function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     const {t} = useTranslation();
+    const {refreshToken} = useRefreshToken();
     const {loading, error, possibleTypes} = useGraphqlPossibleTypes(`${ORIGIN_URL}/${API_ENDPOINT}`);
 
     const wsLink = useMemo(() => {
@@ -59,7 +61,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     }
 
     // This function will catch the errors from the exchange between Apollo Client and the server.
-    const _handleApolloError = onError(({graphQLErrors, networkError}) => {
+    const _handleApolloError = onError(({graphQLErrors, networkError, operation, forward}) => {
         if (graphQLErrors) {
             graphQLErrors.map(({message: origMessage, locations, path}) => {
                 const errorMessage = `[GraphQL error]: Message: ${origMessage}, Location: ${locations}, Path: ${path}`;
@@ -76,9 +78,23 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
             (networkError as ServerError)?.statusCode === 401 ||
             (graphQLErrors ?? []).some(err => err.extensions.code === 'UNAUTHENTICATED')
         ) {
-            window.location.replace(
-                `${ORIGIN_URL}/${APPS_ENDPOINT}/${LOGIN_ENDPOINT}/?dest=${window.location.pathname}`
-            );
+            return new Observable(observer => {
+                (async () => {
+                    try {
+                        await refreshToken();
+
+                        // Retry last failed request
+                        forward(operation).subscribe({
+                            next: observer.next.bind(observer),
+                            error: observer.error.bind(observer),
+                            complete: observer.complete.bind(observer)
+                        });
+                    } catch (err) {
+                        _redirectToLogin();
+                        observer.error(err);
+                    }
+                })();
+            });
         }
 
         message.error(errorContent);
