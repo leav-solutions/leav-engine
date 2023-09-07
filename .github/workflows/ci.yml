@@ -54,7 +54,7 @@ jobs:
           cache: 'yarn'
       - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
       - run: yarn install
-      - run: yarn test --all
+      - run: yarn test --all --runInBand
         env:
           SKIP_PREFLIGHT_CHECK: 'true'
 
