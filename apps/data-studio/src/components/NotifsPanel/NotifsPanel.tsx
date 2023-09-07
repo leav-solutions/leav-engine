@@ -87,7 +87,7 @@ function NotifsPanel({setNbNotifs}: INotifsPanelProps): JSX.Element {
             variables: {tasks: tasksToDel}
         });
 
-        dispatch(deleteTasks(tasksToDel.map(t => ({id: t.id}))));
+        dispatch(deleteTasks(tasksToDel.map(ttd => ({id: ttd.id}))));
     };
 
     const _onNotifInfoClick = ({type, ellipsis, data: task}: INotif, index: ['inProgress' | 'completed', number]) => {
