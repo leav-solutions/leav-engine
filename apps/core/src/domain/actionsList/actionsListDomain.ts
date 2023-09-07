@@ -91,16 +91,12 @@ export default function ({'core.depsManager': depsManager = null}: IDeps = {}): 
                     resultAction = await actionFunc(resultAction, params, ctx);
                 } catch (error) {
                     //check if there is a custom message added by a user (also check the default lng message)
-                    let customMessage =
-                        action.error_message &&
-                        action.error_message[ctx.lang] &&
-                        !isEmpty(action.error_message[ctx.lang].trim())
-                            ? action.error_message[ctx.lang]
-                            : action.error_message &&
-                              action.error_message[ctx.defaultLang] &&
-                              !isEmpty(action.error_message[ctx.defaultLang].trim())
-                            ? action.error_message[ctx.defaultLang]
-                            : '';
+
+                    let customMessage = !isEmpty(action?.error_message?.[ctx.lang]?.trim())
+                        ? action.error_message[ctx.lang]
+                        : !isEmpty(action?.error_message?.[ctx.defaultLang]?.trim())
+                        ? action.error_message[ctx.defaultLang]
+                        : '';
 
                     //check if there is a joy error message
                     customMessage =
