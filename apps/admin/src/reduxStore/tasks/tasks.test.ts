@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import reducer, {addTask, deleteTask, tasksInitialState} from './tasks';
+import reducer, {addTask, deleteTasks, tasksInitialState} from './tasks';
 import {mockTask} from '../../__mocks__/task';
 
 describe('tasks store', () => {
@@ -12,7 +12,7 @@ describe('tasks store', () => {
     });
 
     test('Delete task', async () => {
-        const newState = reducer({tasks: {[mockTask.id]: mockTask}}, deleteTask(mockTask));
+        const newState = reducer({tasks: {[mockTask.id]: mockTask}}, deleteTasks([mockTask]));
 
         expect(Object.keys(newState.tasks)).toHaveLength(0);
     });

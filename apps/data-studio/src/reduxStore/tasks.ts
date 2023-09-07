@@ -16,13 +16,13 @@ const tasksSlice = createSlice({
         addTask: (state, action: PayloadAction<GET_TASKS_tasks_list>) => {
             state.tasks[action.payload.id] = action.payload;
         },
-        deleteTask: (state, action: PayloadAction<{id: string}>) => {
-            const {[action.payload.id]: taskToDelete, ...restTasks} = state.tasks;
-            state.tasks = restTasks;
+        deleteTasks: (state, action: PayloadAction<Array<{id: string}>>) => {
+            const toExclude = action.payload.map(e => e.id);
+            state.tasks = Object.fromEntries(Object.entries(state.tasks).filter(t => !toExclude.includes(t[0])));
         }
     }
 });
 
-export const {addTask, deleteTask} = tasksSlice.actions;
+export const {addTask, deleteTasks} = tasksSlice.actions;
 
 export default tasksSlice.reducer;

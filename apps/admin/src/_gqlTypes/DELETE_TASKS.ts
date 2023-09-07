@@ -6,15 +6,16 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import {DeleteTaskInput} from './globalTypes';
+
 // ====================================================
-// GraphQL mutation operation: DELETE_TASK
+// GraphQL mutation operation: DELETE_TASKS
 // ====================================================
 
-export interface DELETE_TASK {
-    deleteTask: boolean;
+export interface DELETE_TASKS {
+    deleteTasks: boolean;
 }
 
-export interface DELETE_TASKVariables {
-    taskId: string;
-    archive: boolean;
+export interface DELETE_TASKSVariables {
+    tasks: DeleteTaskInput[];
 }

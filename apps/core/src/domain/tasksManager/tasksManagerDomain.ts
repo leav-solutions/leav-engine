@@ -68,7 +68,7 @@ export interface ITasksManagerDomain {
     ): Promise<void>;
     createTask(task: ITaskCreatePayload, ctx: IQueryInfos): Promise<string>;
     cancelTask(task: ITaskCancelPayload, ctx: IQueryInfos): Promise<void>;
-    deleteTask(task: ITaskDeletePayload, ctx: IQueryInfos): Promise<void>;
+    deleteTasks(tasks: ITaskDeletePayload[], ctx: IQueryInfos): Promise<void>;
 }
 
 interface IDeps {
@@ -476,10 +476,11 @@ export default function ({
         async cancelTask(task: ITaskCancelPayload, ctx: IQueryInfos): Promise<void> {
             await _cancelTask(task, ctx);
         },
-        async deleteTask(task: ITaskDeletePayload, ctx: IQueryInfos): Promise<void> {
-            await _deleteTask(task, ctx);
+        async deleteTasks(tasks: ITaskDeletePayload[], ctx: IQueryInfos): Promise<void> {
+            for (const t of tasks) {
+                await _deleteTask(t, ctx);
+            }
         },
-
         // Master
         async initMaster(): Promise<NodeJS.Timer> {
             // Create exec queue

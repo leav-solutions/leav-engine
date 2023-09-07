@@ -120,6 +120,11 @@ export default function ({
                         type: TaskType
                     }
 
+                    input DeleteTaskInput {
+                        id: ID!
+                        archive: Boolean!
+                    }
+
                     extend type Query {
                         tasks(
                             filters: TaskFiltersInput,
@@ -130,7 +135,7 @@ export default function ({
 
                     extend type Mutation {
                         cancelTask(taskId: ID!): Boolean!
-                        deleteTask(taskId: ID!, archive: Boolean!): Boolean!
+                        deleteTasks(tasks: [DeleteTaskInput!]!): Boolean!
                     }
 
                     type Subscription {
@@ -164,12 +169,12 @@ export default function ({
                         }
                     },
                     Mutation: {
-                        async deleteTask(
+                        async deleteTasks(
                             _,
-                            {taskId, archive}: {taskId: string; archive: boolean},
+                            {tasks}: {tasks: Array<{id: string; archive: boolean}>},
                             ctx: IQueryInfos
                         ): Promise<boolean> {
-                            await tasksManagerDomain.deleteTask({id: taskId, archive}, ctx);
+                            await tasksManagerDomain.deleteTasks(tasks, ctx);
                             return true;
                         },
                         async cancelTask(_, {taskId}: {taskId: string}, ctx: IQueryInfos): Promise<boolean> {
