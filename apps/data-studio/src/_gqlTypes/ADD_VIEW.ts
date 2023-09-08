@@ -76,6 +76,7 @@ export interface ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_library
 export interface ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_library;
     preview: Preview | null;

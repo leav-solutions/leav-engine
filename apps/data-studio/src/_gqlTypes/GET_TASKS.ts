@@ -24,6 +24,7 @@ export interface GET_TASKS_tasks_list_created_by_whoAmI_library {
 export interface GET_TASKS_tasks_list_created_by_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: GET_TASKS_tasks_list_created_by_whoAmI_library;
     preview: Preview | null;
@@ -64,6 +65,7 @@ export interface GET_TASKS_tasks_list_canceledBy_whoAmI_library {
 export interface GET_TASKS_tasks_list_canceledBy_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: GET_TASKS_tasks_list_canceledBy_whoAmI_library;
     preview: Preview | null;

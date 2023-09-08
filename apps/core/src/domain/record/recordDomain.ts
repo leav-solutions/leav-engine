@@ -685,7 +685,6 @@ export default function({
         const valuesOptions: IValuesOptions = {
             version: ctx.version ?? null
         };
-
         let subLabel: string = null;
         if (conf.subLabel) {
             const subLabelAttributeProps = await attributeDomain.getAttributeProperties({id: conf.subLabel, ctx});
@@ -697,6 +696,10 @@ export default function({
                 options: valuesOptions,
                 ctx
             });
+
+            if (conf.subLabel === 'id') {
+                subLabelValues[0].value = record.id;
+            }
 
             if (!subLabelValues.length) {
                 return null;
@@ -711,7 +714,6 @@ export default function({
                 if (visitedLibraries.includes(subLabelAttributeProps.linked_library)) {
                     return null;
                 }
-
                 subLabel = await _getSubLabel(linkValue, visitedLibraries, ctx);
             } else if (utils.isTreeAttribute(subLabelAttributeProps)) {
                 const treeValue = subLabelValues.pop().value.record;
@@ -720,7 +722,6 @@ export default function({
                 subLabel = subLabelValues.pop().value;
             }
         }
-
         return subLabel;
     };
 

@@ -85,6 +85,7 @@ export interface IRecordIdentity {
     id: string;
     library: ILibrary;
     label?: string;
+    subLabel?: string;
     color?: string;
     preview?: IPreview;
 }

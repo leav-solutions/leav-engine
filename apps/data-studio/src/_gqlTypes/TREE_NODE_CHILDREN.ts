@@ -24,6 +24,7 @@ export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_library 
 export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_library;
     preview: Preview | null;

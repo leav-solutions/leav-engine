@@ -20,6 +20,7 @@ export interface IRecordIdentityPreview {
 export interface IRecordIdentityWhoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: IRecordIdentityLibrary;
     preview: IPreviewScalar | null;

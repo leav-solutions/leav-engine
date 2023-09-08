@@ -24,6 +24,7 @@ export interface CREATE_DIRECTORY_createDirectory_whoAmI_library {
 export interface CREATE_DIRECTORY_createDirectory_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: CREATE_DIRECTORY_createDirectory_whoAmI_library;
     preview: Preview | null;
