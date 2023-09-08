@@ -14,7 +14,13 @@ import {IQueryInfos} from '_types/queryInfos';
 import {ITree} from '_types/tree';
 import {TriggerNames} from '../../_types/eventsManager';
 import {RecordPermissionsActions} from '../../_types/permissions';
-import {AttributeCondition, IRecord, IRecordUpdateEventFilters, TreeCondition} from '../../_types/record';
+import {
+    AttributeCondition,
+    IRecord,
+    IRecordUpdateEvent,
+    IRecordUpdateEventFilters,
+    TreeCondition
+} from '../../_types/record';
 import {IGraphqlApp} from '../graphql/graphqlApp';
 import {ICoreAttributeApp} from './attributeApp/attributeApp';
 import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from './helpers/subscriptions';
@@ -36,7 +42,7 @@ interface IDeps {
     'core.app.core.subscriptionsHelper'?: ICoreSubscriptionsHelpersApp;
 }
 
-export default function({
+export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.tree': treeDomain = null,
@@ -177,9 +183,20 @@ export default function({
                         order: SortOrder!
                     }
 
+                    type RecordUpdateEvent {
+                        record: Record!
+                        updatedValues: [RecordUpdatedValues!]!
+                    }
+
+                    type RecordUpdatedValues {
+                        attribute: String!,
+                        value: GenericValue!
+                    }
+
                     input RecordUpdateFilterInput {
                         libraries: [ID!],
-                        records: [ID!]
+                        records: [ID!],
+                        ignoreOwnEvents: Boolean
                     }
 
                     extend type Mutation {
@@ -191,7 +208,7 @@ export default function({
                     }
 
                     extend type Subscription {
-                        recordUpdate(filters: RecordUpdateFilterInput): Record!
+                        recordUpdate(filters: RecordUpdateFilterInput): RecordUpdateEvent!
                     }
                 `,
                 resolvers: {
@@ -227,7 +244,7 @@ export default function({
                             subscribe: withFilter(
                                 () => eventsManagerDomain.subscribe([TriggerNames.RECORD_UPDATE]),
                                 (
-                                    event: PublishedEvent<{recordUpdate: IRecord}>,
+                                    event: PublishedEvent<{recordUpdate: IRecordUpdateEvent}>,
                                     {filters}: {filters: ICommonSubscriptionFilters & IRecordUpdateEventFilters},
                                     ctx: IQueryInfos
                                 ) => {
@@ -235,14 +252,14 @@ export default function({
                                         return false;
                                     }
 
-                                    const {recordUpdate: record} = event;
+                                    const {recordUpdate} = event;
                                     let mustReturn = true;
                                     if (filters?.records?.length) {
-                                        mustReturn = filters?.records.includes(record?.id);
+                                        mustReturn = filters?.records.includes(recordUpdate?.record.id);
                                     }
 
                                     if (mustReturn && filters?.libraries?.length) {
-                                        mustReturn = filters?.libraries.includes(record?.library);
+                                        mustReturn = filters?.libraries.includes(recordUpdate?.record.library);
                                     }
 
                                     return mustReturn;

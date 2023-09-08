@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import camelCase from 'lodash/camelCase';
 import flow from 'lodash/flow';
+import isEmpty from 'lodash/isEmpty';
 import partialRight from 'lodash/partialRight';
 import trimEnd from 'lodash/trimEnd';
 import upperFirst from 'lodash/upperFirst';
@@ -10,7 +11,6 @@ import minimatch from 'minimatch';
 import * as extensions from './MIMEByExtension.json';
 import {FileType} from './types/files';
 import {IKeyValue} from './types/helpers';
-import isEmpty from 'lodash/isEmpty';
 
 export const getGraphqlTypeFromLibraryName = (library: string): string => {
     return flow([camelCase, upperFirst, trimEnd, partialRight(trimEnd, 's')])(library);
@@ -250,4 +250,23 @@ export const formatId = (id: string): string => {
         .replace(/__+/g, '_') // Remove double underscores
         .replace(/_$/g, '') // Remove underscore at the end
         .replace(/^_/g, ''); // Remove underscore at the beginning
+};
+
+/**
+ * Returns a hash code from a string
+ * @param  {String} str The string to hash.
+ * @return {Number}    A 32bit integer
+ * @see http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
+ */
+export const simpleStringHash = (str: string) => {
+    let hash = 0;
+    for (let i = 0, len = str.length; i < len; i++) {
+        const chr = str.charCodeAt(i);
+        // eslint-disable-next-line no-bitwise
+        hash = (hash << 5) - hash + chr;
+        // eslint-disable-next-line no-bitwise
+        hash |= 0; // Convert to 32bit integer
+    }
+
+    return Math.abs(hash);
 };

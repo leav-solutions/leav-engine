@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ErrorDisplay} from '@leav/ui';
-import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID} from '@leav/utils';
+import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID, simpleStringHash} from '@leav/utils';
 import useGetRecordForm from 'hooks/useGetRecordForm';
 import useRecordsConsultationHistory from 'hooks/useRecordsConsultationHistory';
 import {useRecordUpdateSubscription} from 'hooks/useRecordUpdateSubscription';
-import {useEffect} from 'react';
+import {useEffect, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {FormElementTypes} from '_gqlTypes/globalTypes';
 import {IRecordIdentityWhoAmI} from '_types/types';
@@ -41,7 +41,17 @@ function EditRecord({
 
     useRecordsConsultationHistory(record?.library?.id ?? null, record?.id ?? null);
 
-    useRecordUpdateSubscription({records: [record?.id]});
+    const {data: recordUpdateData} = useRecordUpdateSubscription({records: [record?.id], ignoreOwnEvents: true});
+
+    useEffect(() => {
+        if (recordUpdateData) {
+            dispatch({
+                type: EditRecordReducerActionsTypes.ADD_EXTERNAL_UPDATE,
+                modifier: recordUpdateData?.recordUpdate?.record?.modified_by?.whoAmI,
+                updatedValues: recordUpdateData?.recordUpdate?.updatedValues
+            });
+        }
+    }, [recordUpdateData]);
 
     const {loading, error, recordForm, refetch} = useGetRecordForm({
         libraryId: library,
@@ -49,6 +59,9 @@ function EditRecord({
         formId,
         version: state.valuesVersion
     });
+
+    // Generate a hash of recordForm to detect changes
+    const recordFormHash = useMemo(() => simpleStringHash(JSON.stringify(recordForm)), [recordForm]);
 
     useEffect(() => {
         if (state.refreshRequested) {
@@ -105,9 +118,11 @@ function EditRecord({
         uiElement: formComponents[FormUIElementTypes.FIELDS_CONTAINER]
     };
 
+    // Use a hash of record form as a key to force a full re-render when the form changes
     return (
         <RecordEditionContext.Provider value={{elements: elementsByContainer, readOnly: readonly, record}}>
             <rootElement.uiElement
+                key={recordFormHash}
                 element={rootElement}
                 onValueSubmit={_handleValueSubmit}
                 onValueDelete={_handleValueDelete}

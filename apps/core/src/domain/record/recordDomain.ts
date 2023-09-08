@@ -872,7 +872,7 @@ export default function({
                 ctx
             );
 
-            await sendRecordUpdateEvent({recordData, library}, ctx);
+            await sendRecordUpdateEvent({recordData, library}, null, ctx);
 
             return savedRecord;
         },

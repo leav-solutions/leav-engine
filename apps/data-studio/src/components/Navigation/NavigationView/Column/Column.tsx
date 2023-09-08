@@ -1,18 +1,17 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery, useSubscription} from '@apollo/client';
-import {themeVars, ErrorDisplay, Loading} from '@leav/ui';
+import {useQuery} from '@apollo/client';
+import {ErrorDisplay, Loading, themeVars} from '@leav/ui';
 import {Pagination} from 'antd';
 import {treeNavigationPageSize} from 'constants/constants';
 import {treeNodeChildrenQuery} from 'graphQL/queries/trees/getTreeNodeChildren';
-import {getTreeEvents} from 'graphQL/subscribes/trees/getTreeEvents';
+import {useTreeEventsSubscription} from 'hooks/useTreeEventsSubscription';
 import {createRef, useEffect, useState} from 'react';
 import {setNavigationPath} from 'reduxStore/navigation';
 import {INavigationElement} from 'reduxStore/stateType';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
-import {TREE_EVENTS, TREE_EVENTSVariables} from '_gqlTypes/TREE_EVENTS';
 import {TREE_NODE_CHILDREN, TREE_NODE_CHILDRENVariables} from '_gqlTypes/TREE_NODE_CHILDREN';
 import DetailNavigation from './DetailNavigation';
 import HeaderColumnNavigation from './HeaderColumnNavigation';
@@ -77,8 +76,8 @@ const Column = ({treeId, treeElement, depth, isActive: columnActive}: IColumnPro
         }
     );
 
-    useSubscription<TREE_EVENTS, TREE_EVENTSVariables>(getTreeEvents, {
-        variables: {filters: {ignoreOwnEvents: true, treeId, nodes: [treeElement?.id ?? null]}},
+    useTreeEventsSubscription({
+        filters: {ignoreOwnEvents: true, treeId, nodes: [treeElement?.id ?? null]},
         skip: loading,
         onSubscriptionData() {
             // We known something happened concerning this node.
@@ -86,6 +85,16 @@ const Column = ({treeId, treeElement, depth, isActive: columnActive}: IColumnPro
             refetch(queryVariables);
         }
     });
+
+    // useSubscription<TREE_EVENTS, TREE_EVENTSVariables>(getTreeEvents, {
+    //     variables: {filters: {ignoreOwnEvents: true, treeId, nodes: [treeElement?.id ?? null]}},
+    //     skip: loading,
+    //     onSubscriptionData() {
+    //         // We known something happened concerning this node.
+    //         // To make sure everything is clean and up to date, we just refetch data
+    //         refetch(queryVariables);
+    //     }
+    // });
 
     const ref = createRef<HTMLDivElement>();
 

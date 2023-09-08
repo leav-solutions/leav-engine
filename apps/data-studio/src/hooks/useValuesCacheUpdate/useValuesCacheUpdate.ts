@@ -2,17 +2,17 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useApolloClient} from '@apollo/client';
+import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {
     SAVE_VALUE_BATCH_saveValueBatch_values,
     SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue,
     SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue,
     SAVE_VALUE_BATCH_saveValueBatch_values_Value
 } from '_gqlTypes/SAVE_VALUE_BATCH';
-import {IRecordIdentityWhoAmI} from '../../../../../libs/ui/src/types/RecordIdentity';
 import {getPropertyCacheFieldName} from '../../utils';
 
 export type IValuesCacheUpdateHook = (
-    record: IRecordIdentityWhoAmI,
+    record: RecordIdentity_whoAmI,
     savedValues: SAVE_VALUE_BATCH_saveValueBatch_values[]
 ) => void;
 

@@ -519,7 +519,9 @@
             "format_text": "Text",
             "format_color": "Color"
         },
-        "date_range_value": "From {{from}} to {{to}}"
+        "date_range_value": "From {{from}} to {{to}}",
+        "external_update_warning": "This record has been updated by {{modifiers}}",
+        "field_external_update": "This field has been updated"
     },
     "record_summary": {
         "id": "Identifier",

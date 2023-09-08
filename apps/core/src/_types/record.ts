@@ -4,6 +4,7 @@
 import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
 import {ILibrary} from './library';
 import {IPreview} from './preview';
+import {IValue} from './value';
 
 export interface IRecord {
     id?: string;
@@ -96,6 +97,15 @@ export interface IRecordIdentityConf {
     treeColorPreview?: string;
     subLabel?: string;
 }
+
+export interface IRecordUpdateEvent {
+    record: IRecord;
+    updatedValues: Array<{
+        attribute: string;
+        value: IValue;
+    }>;
+}
+
 export interface IRecordUpdateEventFilters {
     libraries?: string[];
     records?: string[];

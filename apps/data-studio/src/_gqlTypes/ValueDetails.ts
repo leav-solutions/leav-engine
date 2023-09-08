@@ -27,6 +27,7 @@ export interface ValueDetails_Value_modified_by_whoAmI_library {
 export interface ValueDetails_Value_modified_by_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: ValueDetails_Value_modified_by_whoAmI_library;
     preview: Preview | null;
@@ -52,6 +53,7 @@ export interface ValueDetails_Value_created_by_whoAmI_library {
 export interface ValueDetails_Value_created_by_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: ValueDetails_Value_created_by_whoAmI_library;
     preview: Preview | null;
@@ -109,6 +111,7 @@ export interface ValueDetails_Value_metadata_value_modified_by_whoAmI_library {
 export interface ValueDetails_Value_metadata_value_modified_by_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: ValueDetails_Value_metadata_value_modified_by_whoAmI_library;
     preview: Preview | null;
@@ -134,6 +137,7 @@ export interface ValueDetails_Value_metadata_value_created_by_whoAmI_library {
 export interface ValueDetails_Value_metadata_value_created_by_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: ValueDetails_Value_metadata_value_created_by_whoAmI_library;
     preview: Preview | null;
@@ -213,6 +217,7 @@ export interface ValueDetails_LinkValue_modified_by_whoAmI_library {
 export interface ValueDetails_LinkValue_modified_by_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: ValueDetails_LinkValue_modified_by_whoAmI_library;
     preview: Preview | null;
@@ -238,6 +243,7 @@ export interface ValueDetails_LinkValue_created_by_whoAmI_library {
 export interface ValueDetails_LinkValue_created_by_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: ValueDetails_LinkValue_created_by_whoAmI_library;
     preview: Preview | null;
@@ -295,6 +301,7 @@ export interface ValueDetails_LinkValue_metadata_value_modified_by_whoAmI_librar
 export interface ValueDetails_LinkValue_metadata_value_modified_by_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: ValueDetails_LinkValue_metadata_value_modified_by_whoAmI_library;
     preview: Preview | null;
@@ -320,6 +327,7 @@ export interface ValueDetails_LinkValue_metadata_value_created_by_whoAmI_library
 export interface ValueDetails_LinkValue_metadata_value_created_by_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: ValueDetails_LinkValue_metadata_value_created_by_whoAmI_library;
     preview: Preview | null;
@@ -386,6 +394,7 @@ export interface ValueDetails_LinkValue_linkValue_whoAmI_library {
 export interface ValueDetails_LinkValue_linkValue_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: ValueDetails_LinkValue_linkValue_whoAmI_library;
     preview: Preview | null;
@@ -423,6 +432,7 @@ export interface ValueDetails_TreeValue_modified_by_whoAmI_library {
 export interface ValueDetails_TreeValue_modified_by_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: ValueDetails_TreeValue_modified_by_whoAmI_library;
     preview: Preview | null;
@@ -448,6 +458,7 @@ export interface ValueDetails_TreeValue_created_by_whoAmI_library {
 export interface ValueDetails_TreeValue_created_by_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: ValueDetails_TreeValue_created_by_whoAmI_library;
     preview: Preview | null;
@@ -505,6 +516,7 @@ export interface ValueDetails_TreeValue_metadata_value_modified_by_whoAmI_librar
 export interface ValueDetails_TreeValue_metadata_value_modified_by_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: ValueDetails_TreeValue_metadata_value_modified_by_whoAmI_library;
     preview: Preview | null;
@@ -530,6 +542,7 @@ export interface ValueDetails_TreeValue_metadata_value_created_by_whoAmI_library
 export interface ValueDetails_TreeValue_metadata_value_created_by_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: ValueDetails_TreeValue_metadata_value_created_by_whoAmI_library;
     preview: Preview | null;
@@ -596,6 +609,7 @@ export interface ValueDetails_TreeValue_treeValue_record_whoAmI_library {
 export interface ValueDetails_TreeValue_treeValue_record_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: ValueDetails_TreeValue_treeValue_record_whoAmI_library;
     preview: Preview | null;
@@ -621,6 +635,7 @@ export interface ValueDetails_TreeValue_treeValue_ancestors_record_whoAmI_librar
 export interface ValueDetails_TreeValue_treeValue_ancestors_record_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: ValueDetails_TreeValue_treeValue_ancestors_record_whoAmI_library;
     preview: Preview | null;

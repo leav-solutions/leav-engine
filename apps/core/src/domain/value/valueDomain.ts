@@ -298,7 +298,7 @@ const valueDomain = function({
             ctx
         );
 
-        await sendRecordUpdateEvent({id: recordId, library}, ctx);
+        await sendRecordUpdateEvent({id: recordId, library}, [{attribute, value: actionsListRes}], ctx);
 
         return res;
     };
@@ -516,9 +516,11 @@ const valueDomain = function({
                 ctx
             });
 
-            await sendRecordUpdateEvent(record, ctx);
+            const finalSavedValue = {...savedVal, ...processedValue};
 
-            return {...savedVal, ...processedValue};
+            await sendRecordUpdateEvent(record, [{attribute, value: finalSavedValue}], ctx);
+
+            return finalSavedValue;
         },
         async saveValueBatch({library, recordId, values, ctx, keepEmpty = false}): Promise<ISaveBatchValueResult> {
             await validate.validateLibrary(library, ctx);
@@ -703,7 +705,14 @@ const valueDomain = function({
 
             if (saveRes.values.length) {
                 await updateRecordLastModif(library, recordId, ctx);
-                await sendRecordUpdateEvent(record, ctx);
+                await sendRecordUpdateEvent(
+                    record,
+                    saveRes.values.map(savedValue => ({
+                        attribute: savedValue.attribute,
+                        value: savedValue
+                    })),
+                    ctx
+                );
             }
 
             return saveRes;
