@@ -164,7 +164,9 @@ describe('EditLibraryModal', () => {
             expect(screen.getByRole('textbox', {name: /id/})).toBeDisabled();
             expect(screen.getByRole('combobox', {name: /behavior/})).toBeDisabled();
             expect(screen.queryByRole('button', {name: /submit/i})).not.toBeInTheDocument();
-            expect(screen.getAllByRole('combobox', {name: /label|preview|color|treeColorPreview/i})).toHaveLength(4);
+            expect(
+                screen.getAllByRole('combobox', {name: /label|subLabel|preview|color|treeColorPreview/})
+            ).toHaveLength(5);
         });
 
         test('Submit field on blur', async () => {
@@ -227,7 +229,7 @@ describe('EditLibraryModal', () => {
 
             render(<EditLibraryModal libraryId={mockLibraryWithDetails.id} open onClose={jest.fn()} />);
 
-            const labelSelect = screen.getByRole('combobox', {name: /label/i});
+            const labelSelect = screen.getByRole('combobox', {name: /label/});
             expect(labelSelect).not.toBeDisabled();
 
             await user.click(labelSelect);
