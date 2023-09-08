@@ -13,6 +13,7 @@ export const mockModifier: RecordIdentity = {
     whoAmI: {
         id: '123456',
         label: 'admin',
+        subLabel: 'admin',
         library: {
             id: 'users',
             behavior: LibraryBehavior.standard,

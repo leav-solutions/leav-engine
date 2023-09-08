@@ -17,6 +17,7 @@ export const mockGetRecordsFromLibraryQueryElement: IGetRecordsFromLibraryQueryE
     whoAmI: {
         id: 'id',
         label: 'label',
+        subLabel: 'sublabel',
         color: null,
         preview: mockPreviews,
         library: mockLibrary

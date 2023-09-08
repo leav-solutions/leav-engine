@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 /* tslint:disable */
 /* eslint-disable */
 // @generated
@@ -24,6 +27,7 @@ export interface GET_USER_userWhoAmI_library {
 export interface GET_USER_userWhoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     preview: Preview | null;
     library: GET_USER_userWhoAmI_library;

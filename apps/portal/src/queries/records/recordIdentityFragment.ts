@@ -9,6 +9,7 @@ export const recordIdentityFragment = gql`
         whoAmI {
             id
             label
+            subLabel
             color
             library {
                 id

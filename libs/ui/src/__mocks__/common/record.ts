@@ -17,6 +17,7 @@ export const mockPreviews: IPreviewScalar = {
 export const mockRecord: IRecordIdentityWhoAmI = {
     id: '123456',
     label: 'record_label',
+    subLabel: 'record_subLabel',
     library: {
         id: 'record_lib',
         label: {fr: 'Test Lib'}

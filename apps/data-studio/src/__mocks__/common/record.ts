@@ -35,6 +35,7 @@ export const mockPreviews: Preview = {
 export const mockRecord: RecordIdentity_whoAmI = {
     id: '123456',
     label: 'record_label',
+    subLabel: 'record_sublabel',
     library: {
         id: 'record_lib',
         behavior: LibraryBehavior.standard,
