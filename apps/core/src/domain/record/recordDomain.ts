@@ -191,7 +191,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.infra.record': recordRepo = null,
     'core.domain.attribute': attributeDomain = null,
@@ -741,14 +741,14 @@ export default function ({
             label = await _getLabel(record, [], ctx);
         }
 
-        let color: string = null;
-        if (conf.color) {
-            color = await _getColor(record, [], ctx);
-        }
-
         let subLabel: string = null;
         if (conf.subLabel) {
             subLabel = await _getSubLabel(record, [], ctx);
+        }
+
+        let color: string = null;
+        if (conf.color) {
+            color = await _getColor(record, [], ctx);
         }
 
         let preview: IPreview = null;
@@ -808,9 +808,9 @@ export default function ({
             id: record.id,
             library: lib,
             label,
+            subLabel,
             color,
-            preview,
-            subLabel
+            preview
         };
 
         return identity;
