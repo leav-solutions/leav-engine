@@ -30,7 +30,7 @@ const getChangedProjects = require('./helpers/getChangedProjects');
         // Run tests
         const testRunProcess = spawn(
             'yarn',
-            ['workspaces', 'foreach', '-v', ...includeCmd, '--exclude', 'leav-monorepo', 'run', 'test', '--debug'],
+            ['workspaces', 'foreach', '-v', ...includeCmd, '--exclude', 'leav-monorepo', 'run', 'test', '--debug', '--maxWorkers=2'],
             {
                 stdio: 'inherit'
             }
