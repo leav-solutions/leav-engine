@@ -20,7 +20,7 @@ import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecord
 import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import Dimmer from 'components/shared/Dimmer';
 import moment from 'moment';
-import {MutableRefObject, useEffect, useRef} from 'react';
+import React, {MutableRefObject, useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
 import {stringifyDateRangeValue} from 'utils';
@@ -49,7 +49,6 @@ import TextInput from './Inputs/TextInput';
 import ValuesList from './ValuesList';
 import {IValueOfValuesList} from './ValuesList/ValuesList';
 import ColorInput from './Inputs/ColorInput';
-import RichTextEditorInput from './Inputs/RichTextEditorInput';
 
 const ErrorMessage = styled.div`
     color: ${themeVars.errorColor};
@@ -177,6 +176,8 @@ const FormItem = styled(Form.Item)`
         margin: 0;
     }
 `;
+
+const RichTextEditorInput = React.lazy(() => import('./Inputs/RichTextEditorInput'));
 
 const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInputProps) => JSX.Element} = {
     [AttributeFormat.text]: TextInput,

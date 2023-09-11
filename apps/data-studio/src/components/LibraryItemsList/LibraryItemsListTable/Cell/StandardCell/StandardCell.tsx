@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CheckOutlined, CloseOutlined, FileTextOutlined, EllipsisOutlined} from '@ant-design/icons';
+import {CheckOutlined, CloseOutlined, FileTextOutlined} from '@ant-design/icons';
 import {AnyPrimitive} from '@leav/utils';
 import {Switch, Tag, Tooltip, Typography} from 'antd';
 import {useTranslation} from 'react-i18next';
@@ -9,8 +9,10 @@ import styled from 'styled-components';
 import {getInvertColor, stringifyDateRangeValue} from 'utils';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
 import {IDateRangeValue, ITableCell} from '_types/types';
-import {isEmpty} from 'lodash';
-import parse from 'html-react-parser';
+import isEmpty from 'lodash/isEmpty';
+import React from 'react';
+
+const RichTextDisplay = React.lazy(() => import('./ElementsToDisplay/RichTextDisplay'));
 
 interface ISimpleCellProps {
     cellData: ITableCell;
@@ -81,19 +83,7 @@ function StandardCell({cellData, values}: ISimpleCellProps): JSX.Element {
                 }
             case AttributeFormat.rich_text:
                 if (!isEmpty(displayedValues)) {
-                    const ellipsisOutlinedStyle: React.CSSProperties = {
-                        borderWidth: '1px',
-                        borderStyle: 'solid',
-                        borderColor: '#d9d9d9',
-                        background: 'white',
-                        borderRadius: '10px'
-                    };
-                    const parseValue = parse(displayedValues);
-                    return (
-                        <Tooltip overlay={parseValue}>
-                            <EllipsisOutlined style={ellipsisOutlinedStyle} />
-                        </Tooltip>
-                    );
+                    return <RichTextDisplay displayedValue={displayedValues} />;
                 } else {
                     return displayedValues;
                 }
