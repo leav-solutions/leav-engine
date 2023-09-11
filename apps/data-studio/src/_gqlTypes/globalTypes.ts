@@ -209,6 +209,11 @@ export interface ApplicationEventFiltersInput {
     events?: ApplicationEventTypes[] | null;
 }
 
+export interface DeleteTaskInput {
+    id: string;
+    archive: boolean;
+}
+
 export interface FileInput {
     data: Upload;
     uid: string;

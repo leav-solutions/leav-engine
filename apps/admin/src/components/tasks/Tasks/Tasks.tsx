@@ -3,15 +3,15 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation, useQuery, useSubscription} from '@apollo/client';
 import {cancelTaskMutation} from 'queries/tasks/cancelTask';
-import {deleteTaskMutation} from 'queries/tasks/deleteTask';
+import {deleteTasksMutation} from 'queries/tasks/deleteTasks';
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
-import {addTask, deleteTask} from 'reduxStore/tasks/tasks';
+import {addTask, deleteTasks} from 'reduxStore/tasks/tasks';
 import {Button, Header, Icon, Tab} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {CANCEL_TASK, CANCEL_TASKVariables} from '_gqlTypes/CANCEL_TASK';
-import {DELETE_TASK, DELETE_TASKVariables} from '_gqlTypes/DELETE_TASK';
+import {DELETE_TASKS, DELETE_TASKSVariables} from '_gqlTypes/DELETE_TASKS';
 import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
 import useUserData from '../../../hooks/useUserData';
 import {getTasks} from '../../../queries/tasks/getTasks';
@@ -92,22 +92,19 @@ const Tasks = (): JSX.Element => {
         }
     }, [tasks]);
 
-    const [delTask] = useMutation<DELETE_TASK, DELETE_TASKVariables>(deleteTaskMutation);
-
+    const [delTasks] = useMutation<DELETE_TASKS, DELETE_TASKSVariables>(deleteTasksMutation);
     const [cancelTask] = useMutation<CANCEL_TASK, CANCEL_TASKVariables>(cancelTaskMutation);
 
     const _onDeleteAll = async (archivesOnly: boolean = false) => {
-        for (const task of completedTasks) {
-            if (!archivesOnly || (archivesOnly && task.archive)) {
-                await delTask({variables: {taskId: task.id, archive: false}});
-                dispatch(deleteTask({id: task.id}));
-            }
-        }
+        const tasksToDel = !archivesOnly ? completedTasks : completedTasks.filter(ct => ct.archive);
+
+        await delTasks({variables: {tasks: tasksToDel.map(ttd => ({id: ttd.id, archive: false}))}});
+        dispatch(deleteTasks(tasksToDel));
     };
 
     const _onDelete = async (taskId: string) => {
-        await delTask({variables: {taskId, archive: false}});
-        dispatch(deleteTask({id: taskId}));
+        await delTasks({variables: {tasks: [{id: taskId, archive: false}]}});
+        dispatch(deleteTasks([{id: taskId}]));
     };
 
     const onCancel = async (taskId: string) => {
