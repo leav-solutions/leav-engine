@@ -17,6 +17,7 @@ export const getUser = gql`
         userWhoAmI @client {
             id
             label
+            subLabel
             color
             preview
             library {

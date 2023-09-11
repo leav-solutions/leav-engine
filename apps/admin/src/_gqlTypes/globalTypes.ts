@@ -407,6 +407,7 @@ export interface RecordIdentityConfInput {
     color?: string | null;
     preview?: string | null;
     treeColorPreview?: string | null;
+    subLabel?: string | null;
 }
 
 export interface SortApiKeysInput {

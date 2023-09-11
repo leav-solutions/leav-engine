@@ -27,6 +27,7 @@ export interface GET_APPLICATIONS_applications_list_icon_whoAmI_library {
 export interface GET_APPLICATIONS_applications_list_icon_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: GET_APPLICATIONS_applications_list_icon_whoAmI_library;
     preview: Preview | null;

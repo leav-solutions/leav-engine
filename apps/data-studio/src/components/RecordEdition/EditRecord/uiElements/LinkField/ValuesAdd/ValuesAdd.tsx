@@ -199,6 +199,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
             whoAmI: {
                 id: selectedRecord.id,
                 label: selectedRecord.label,
+                subLabel: null,
                 library: attribute.linked_library,
                 color: null,
                 preview: null

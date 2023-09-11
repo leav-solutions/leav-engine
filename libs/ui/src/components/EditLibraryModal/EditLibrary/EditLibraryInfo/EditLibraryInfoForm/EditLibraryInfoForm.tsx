@@ -185,6 +185,10 @@ function EditLibraryInfoForm({
             options: attributesOptions
         },
         {
+            fieldName: 'subLabel',
+            options: attributesOptions
+        },
+        {
             fieldName: 'preview',
             options: filesLinkAttributesOptions
         },
@@ -258,7 +262,7 @@ function EditLibraryInfoForm({
                 rules={[{required: true, message: _getRequiredMessage('behavior')}]}
                 hasFeedback
             >
-                <Select options={behaviorOptions} disabled={isReadOnly || isEditing} aria-label=""/>
+                <Select options={behaviorOptions} disabled={isReadOnly || isEditing} aria-label="" />
             </Form.Item>
             {isEditing && (
                 <FieldsGroup label={t('libraries.record_identity')} key="recordIdentityConf">
@@ -278,7 +282,7 @@ function EditLibraryInfoForm({
                                         top: '0',
                                         transform: 'translateY(6px)'
                                     }}
-                            aria-label=""
+                                    aria-label=""
                                 />
                             }
                         >
