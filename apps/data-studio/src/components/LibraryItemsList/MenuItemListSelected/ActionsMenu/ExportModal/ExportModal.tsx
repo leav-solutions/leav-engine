@@ -89,7 +89,7 @@ function ExportModal({onClose, open}: IExportModalProps): JSX.Element {
                 type: InfoType.error,
                 priority: InfoPriority.high,
                 channel: InfoChannel.passive,
-                content: `${t('error.error_occurred')}: ${error.message}`
+                content: `${error.message}`
             };
 
             dispatch(addInfo(info));

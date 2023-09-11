@@ -83,7 +83,7 @@ function AddByCreationButton({availableLibraries, parent, onMessages}: IAddByCre
                 notification = {
                     channel: InfoChannel.trigger,
                     type: InfoType.error,
-                    content: `${t('error.error_occurred')}: ${err.message}`
+                    content: `${err.message}`
                 };
             }
         }

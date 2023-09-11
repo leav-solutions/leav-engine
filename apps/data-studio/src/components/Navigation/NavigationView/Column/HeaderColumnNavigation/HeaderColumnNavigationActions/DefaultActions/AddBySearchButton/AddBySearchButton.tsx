@@ -87,7 +87,7 @@ function AddBySearchButton({availableLibraries, parent, onMessages}: IAddBySearc
                             addInfo({
                                 channel: InfoChannel.trigger,
                                 type: InfoType.error,
-                                content: `${t('error.error_occurred')}: ${e.message}`
+                                content: `${e.message}`
                             })
                         );
                     }
