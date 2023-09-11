@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import {checkTypeIsLink, getValueVersionLabel, isTypeStandard} from 'utils';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
 import {PreviewSize} from '_types/types';
+import isEmpty from 'lodash/isEmpty';
 
 const Wrapper = styled.div`
     padding: 1rem;
@@ -42,8 +43,6 @@ function ValueInfo(): JSX.Element {
     const {state} = useEditRecordModalReducer();
     const {value, attribute} = state.activeValue;
 
-    const valueId: string = value?.id_value ? value.id_value : '';
-
     const valueDetailsContent = value?.modified_at
         ? [
               {
@@ -63,10 +62,17 @@ function ValueInfo(): JSX.Element {
           ]
         : [];
 
-    if (value?.version) {
+    if (value?.version && !isEmpty(value?.version)) {
         valueDetailsContent.push({
             title: t('values_version.version'),
             value: getValueVersionLabel(value.version)
+        });
+    }
+
+    if (state?.record && value?.id_value && !isEmpty(value?.id_value)) {
+        valueDetailsContent.push({
+            title: t('record_edition.attribute.id'),
+            value: value?.id_value
         });
     }
 
@@ -90,7 +96,6 @@ function ValueInfo(): JSX.Element {
 
     return (
         <Wrapper>
-            <DisplayValueId>{valueId}</DisplayValueId>
             <Title>
                 {valueDetailsSectionTitle}:
                 {canCountValueLength && (
