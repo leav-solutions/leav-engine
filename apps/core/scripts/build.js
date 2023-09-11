@@ -36,3 +36,9 @@ const pkgFiles = glob.sync('*/package.json', {cwd: srcPluginsFolder});
 for (const pkgFile of pkgFiles) {
     fs.copyFileSync(srcPluginsFolder + '/' + pkgFile, buildPluginsFolder + '/' + pkgFile);
 }
+
+// Copy html files to build folder
+const htmlFiles = glob.sync('**/*.html', {cwd: root + '/src'});
+for (const htmlFile of htmlFiles) {
+    fs.copyFileSync(root + '/src/' + htmlFile, buildFolder + '/' + htmlFile);
+}

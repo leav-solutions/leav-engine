@@ -84,8 +84,7 @@ services:
       - traefik.http.services.core.loadbalancer.server.port=4001
       - traefik.http.routers.core.entrypoints=web
     environment:
-      <<: *env-core
-      <<: *env-amqp
+      <<: [*env-core, *env-amqp]
     volumes:
       - *mount_point-files
       - *mount_point-previews
@@ -102,8 +101,7 @@ services:
     stdin_open: true
     restart: always
     environment:
-      <<: *env-core
-      <<: *env-amqp
+      <<: [*env-core, *env-amqp]
     command: [
         sh,
         -c,
@@ -115,8 +113,7 @@ services:
     stdin_open: true
     restart: always
     environment:
-      <<: *env-core
-      <<: *env-amqp
+      <<: [*env-core, *env-amqp]
     command: [
         sh,
         -c,
@@ -130,8 +127,7 @@ services:
     image: leavengine/core:latest
     restart: always
     environment:
-      <<: *env-core
-      <<: *env-amqp
+      <<: [*env-core, *env-amqp]
     command: [
         sh,
         -c,
@@ -146,8 +142,7 @@ services:
     stdin_open: true
     restart: always
     environment:
-      <<: *env-core
-      <<: *env-amqp
+      <<: [*env-core, *env-amqp]
     volumes:
       - *mount_point-files
       - *mount_point-previews
@@ -161,8 +156,7 @@ services:
     image: leavengine/automate-scan:latest
     restart: always
     environment:
-      <<: *env-amqp
-      <<: *env-automate-scan
+      <<: [*env-automate-scan, *env-amqp]
     volumes:
       - *mount_point-files
     command: [
@@ -175,8 +169,7 @@ services:
     image: leavengine/preview-generator:latest
     restart: always
     environment:
-      <<: *env-amqp
-      <<: *env-preview-generator
+      <<: [*env-amqp, *env-preview-generator]
     volumes:
       - *mount_point-files
       - *mount_point-previews
@@ -190,8 +183,7 @@ services:
     depends_on:
       - core
     environment:
-      <<: *env-sync-scan
-      <<: *env-amqp
+      <<: [*env-sync-scan, *env-amqp]
     volumes:
       - *mount_point-files
 
