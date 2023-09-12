@@ -4,7 +4,13 @@
 import {AwilixContainer} from 'awilix';
 import Joi from 'joi';
 import isEmpty from 'lodash/isEmpty';
-import {IActionsListFunction, IActionsListParams, IActionsListSavedAction} from '../../_types/actionsList';
+import ValidationError from '../../errors/ValidationError';
+import {
+    IActionsListFunction,
+    IActionsListParams,
+    IActionsListSavedAction,
+    IRunActionsListCtx
+} from '../../_types/actionsList';
 import {IAttribute} from '../../_types/attribute';
 import {ErrorFieldDetail, Errors} from '../../_types/errors';
 import {IRecord} from '../../_types/record';
@@ -48,10 +54,7 @@ interface IDeps {
     'core.depsManager'?: AwilixContainer;
 }
 
-export default function({
-    'core.depsManager': depsManager = null,
-    'core.utils': utils = null
-}: IDeps = {}): IActionsListDomain {
+export default function ({'core.depsManager': depsManager = null}: IDeps = {}): IActionsListDomain {
     let _pluginActions = [];
     return {
         getAvailableActions(): IActionsListFunction[] {

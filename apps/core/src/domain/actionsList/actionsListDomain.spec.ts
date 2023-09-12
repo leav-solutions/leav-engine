@@ -5,6 +5,8 @@ import Joi from 'joi';
 import ValidationError from '../../errors/ValidationError';
 import {AttributeTypes} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
+import {mockAttrSimple} from '../../__tests__/mocks/attribute';
+import {mockCtx} from '../../__tests__/mocks/shared';
 import actionListDomain from './actionsListDomain';
 
 describe('handleJoiError', () => {
@@ -131,7 +133,8 @@ describe('runActionsList', () => {
 
     test('Should throw an exception with custom message from system while a error_message "en" has been set', async () => {
         const textctx = {
-            attribute: {id: 'test_attr'},
+            ...mockCtx,
+            attribute: {...mockAttrSimple, id: 'test_attr'},
             lang: 'fr',
             defaultLang: 'fr'
         };

@@ -174,7 +174,7 @@ describe('RecordDomain', () => {
                 runActionsList: jest
                     .fn()
                     .mockRejectedValueOnce(
-                        new ValidationError({some_attribute: 'invalid value'}, 'mock error', {
+                        new ValidationError({some_attribute: 'invalid value'}, 'mock error', false, {
                             attributeId: 'some_attribute',
                             value: {
                                 id_value: 'fake_value1',
@@ -183,7 +183,7 @@ describe('RecordDomain', () => {
                         })
                     )
                     .mockRejectedValueOnce(
-                        new ValidationError({other_attribute: 'invalid value'}, 'mock error', {
+                        new ValidationError({other_attribute: 'invalid value'}, 'mock error', false, {
                             attributeId: 'other_attribute',
                             value: {
                                 id_value: 'fake_value2',
