@@ -38,7 +38,7 @@
         "title": "General",
         "infos": "Information",
         "admin_permissions": "Admin permissions",
-        "version": "LEAV Engine v{{version}}",
+        "version": "LEAV Engine {{version}}",
         "api_keys": "API keys",
         "customization": {
             "title": "Customization",
@@ -112,7 +112,9 @@
         "display_types": "Display Types",
         "hide_types": "Hide Types",
         "display_params": "Display Params",
+        "display_messages": "Display Error Messages",
         "hide_params": "Hide Params",
+        "hide_messages": "Hide Error Messages",
         "connection_problem": "There's a connection problem",
         "informations": "Information",
         "permissions": "Permissions",

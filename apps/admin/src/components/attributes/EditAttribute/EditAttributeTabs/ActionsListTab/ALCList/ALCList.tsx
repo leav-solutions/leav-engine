@@ -32,6 +32,7 @@ interface IALCListProps {
     changeParam?: (input: IParamInput) => void;
     cardOrder: any;
     onSave: () => void;
+    onChangeCustomMessage?: (actionId: number, value: string, lang: string) => void;
 }
 
 //////////////////// COMPONENT
@@ -52,7 +53,8 @@ function ALCList({
     cardOrder,
     onSelectorChange,
     currentActionListName,
-    onSave
+    onSave,
+    onChangeCustomMessage
 }: IALCListProps) {
     const {t} = useTranslation();
     const specificCardOrder = cardOrder[currentActionListName];
@@ -176,6 +178,7 @@ function ALCList({
                     setCurrentIndex={setCurrentIndex}
                     colorTypeDictionnary={colorTypeDictionnary}
                     changeParam={changeParam}
+                    onChangeCustomMessage={onChangeCustomMessage}
                 />
             );
         } else {

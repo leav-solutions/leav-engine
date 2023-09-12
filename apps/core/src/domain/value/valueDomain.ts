@@ -263,6 +263,7 @@ const valueDomain = function ({
         const actionsListRes =
             !!attributeProps.actions_list && !!attributeProps.actions_list.deleteValue
                 ? await actionsListDomain.runActionsList(attributeProps.actions_list.deleteValue, v, {
+                      ...ctx,
                       attribute: attributeProps,
                       recordId,
                       library,
@@ -679,7 +680,9 @@ const valueDomain = function ({
                         prevRes.errors.push({
                             type: e.type,
                             message: e?.fields?.[value.attribute]
-                                ? utils.translateError(e.fields[value.attribute], ctx.lang)
+                                ? !e.isCustomMessage
+                                    ? utils.translateError(e.fields[value.attribute], ctx.lang)
+                                    : e.fields[value.attribute]
                                 : e.message,
                             input: value.value,
                             attribute: value.attribute

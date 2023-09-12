@@ -27,6 +27,7 @@ export const getActionListQuery = gql`
                             name
                             value
                         }
+                        error_message
                     }
                     getValue {
                         id

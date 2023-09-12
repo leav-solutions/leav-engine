@@ -98,7 +98,7 @@ describe('Tasks Manager', () => {
             'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
         });
 
-        await tm.deleteTask(mockTask, mockCtx);
+        await tm.deleteTasks([mockTask], mockCtx);
 
         expect(mockTaskRepo.deleteTask).toBeCalledTimes(1);
     });
@@ -119,7 +119,7 @@ describe('Tasks Manager', () => {
             'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
         });
 
-        await tm.deleteTask({...mockTask, archive: true}, mockCtx);
+        await tm.deleteTasks([{...mockTask, archive: true}], mockCtx);
 
         expect(mockTaskRepo.updateTask).toBeCalledTimes(1);
         expect(mockEventsManager.sendPubSubEvent).toBeCalledTimes(1);

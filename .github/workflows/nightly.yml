@@ -1,0 +1,164 @@
+name: Nightly build
+on:
+  workflow_dispatch:
+  schedule:
+    # Every day at midnight
+    - cron: '0 0 * * *'
+
+jobs:
+    # Check if a build is needed: if the last successful nightly build has been made on the same commit
+    # as the current one, then a build is not needed
+    check:
+        runs-on: 'ubuntu-latest'
+        steps:
+        -
+            uses: octokit/request-action@v2.x
+            id: check_last_run
+            with:
+                route: GET /repos/${{github.repository}}/actions/workflows/nightly.yml/runs?per_page=1&status=completed
+            env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        - run: "echo Last nightly build sha: ${{ fromJson(steps.check_last_run.outputs.data).workflow_runs[0].head_sha }}"
+        - run: "echo Current build sha: ${{ github.sha }}"
+        - run: "echo Should run: ${{ fromJson(steps.check_last_run.outputs.data).workflow_runs[0].head_sha != github.sha }}"
+
+        outputs:
+            should_run: ${{ fromJson(steps.check_last_run.outputs.data).workflow_runs[0].head_sha != github.sha }}
+
+    # Build core and deploy it to Docker Hub
+    core:
+        needs: [check]
+        if: needs.check.outputs.should_run == 'true'
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: Set version # Write version to package.json and manifest.json
+              run: |
+                    echo "Setting version to \"nightly (${{ github.sha }})\""
+                    find \( -name "package.json" -o -name "manifest.json" \) -not -path "*/node_modules/*" -not -path "*/__tests__/*" -type f -exec sh -c 'jq ".version = \"nightly (${{ github.sha }})\"" {} > tmpfile && mv tmpfile {}' \;
+            -
+                name: Set up Docker Buildx
+                uses: docker/setup-buildx-action@v2
+            -
+                name: Login to Docker Hub
+                uses: docker/login-action@v2
+                with:
+                    username: ${{ secrets.DOCKERHUB_USERNAME }}
+                    password: ${{ secrets.DOCKERHUB_TOKEN }}
+            -
+                name: Build image
+                uses: docker/build-push-action@v4
+                with:
+                    context: .
+                    push: true
+                    file: docker/DOCKERFILES/build/core.Dockerfile
+                    labels:
+                        LEAV Engine
+                        Core
+                    tags: "leavengine/core:nightly"
+
+    # Build preview-generator and deploy it to Docker Hub
+    preview-generator:
+        needs: [check]
+        if: needs.check.outputs.should_run == 'true'
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: Set version # Write version to package.json and manifest.json
+              run: |
+                    echo "Setting version to \"nightly (${{ github.sha }})\""
+                    find \( -name "package.json" -o -name "manifest.json" \) -not -path "*/node_modules/*" -not -path "*/__tests__/*" -type f -exec sh -c 'jq ".version = \"nightly (${{ github.sha }})\"" {} > tmpfile && mv tmpfile {}' \;
+            -
+                name: Set up Docker Buildx
+                uses: docker/setup-buildx-action@v2
+            -
+                name: Login to Docker Hub
+                uses: docker/login-action@v2
+                with:
+                    username: ${{ secrets.DOCKERHUB_USERNAME }}
+                    password: ${{ secrets.DOCKERHUB_TOKEN }}
+            -
+                name: Build image
+                uses: docker/build-push-action@v3
+                with:
+                    context: .
+                    push: true
+                    target: runner-preview-generator
+                    file: docker/DOCKERFILES/build/generic.Dockerfile
+                    build-args: |
+                        "APP=preview-generator"
+                    labels:
+                        LEAV Engine
+                        Preview Generator
+                    tags: "leavengine/core:nightly"
+
+    # Build automate-scan and deploy it to Docker Hub
+    automate-scan:
+        needs: [check]
+        if: needs.check.outputs.should_run == 'true'
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: Set version # Write version to package.json and manifest.json
+              run: |
+                    echo "Setting version to \"nightly (${{ github.sha }})\""
+                    find \( -name "package.json" -o -name "manifest.json" \) -not -path "*/node_modules/*" -not -path "*/__tests__/*" -type f -exec sh -c 'jq ".version = \"nightly (${{ github.sha }})\"" {} > tmpfile && mv tmpfile {}' \;
+            -
+                name: Set up Docker Buildx
+                uses: docker/setup-buildx-action@v2
+            -
+                name: Login to Docker Hub
+                uses: docker/login-action@v2
+                with:
+                    username: ${{ secrets.DOCKERHUB_USERNAME }}
+                    password: ${{ secrets.DOCKERHUB_TOKEN }}
+            -
+                name: Build image
+                uses: docker/build-push-action@v3
+                with:
+                    context: .
+                    push: true
+                    target: runner
+                    file: docker/DOCKERFILES/build/generic.Dockerfile
+                    build-args: |
+                        "APP=automate-scan"
+                    labels:
+                        LEAV Engine
+                        Automate Scan
+                    tags: "leavengine/core:nightly"
+
+    # Build sync-scan and deploy it to Docker Hub
+    sync-scan:
+        needs: [check]
+        if: needs.check.outputs.should_run == 'true'
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: Set version # Write version to package.json and manifest.json
+              run: |
+                    echo "Setting version to \"nightly (${{ github.sha }})\""
+                    find \( -name "package.json" -o -name "manifest.json" \) -not -path "*/node_modules/*" -not -path "*/__tests__/*" -type f -exec sh -c 'jq ".version = \"nightly (${{ github.sha }})\"" {} > tmpfile && mv tmpfile {}' \;
+            -
+                name: Set up Docker Buildx
+                uses: docker/setup-buildx-action@v2
+            -
+                name: Login to Docker Hub
+                uses: docker/login-action@v2
+                with:
+                    username: ${{ secrets.DOCKERHUB_USERNAME }}
+                    password: ${{ secrets.DOCKERHUB_TOKEN }}
+            -
+                name: Build image
+                uses: docker/build-push-action@v3
+                with:
+                    context: .
+                    push: true
+                    target: runner
+                    file: docker/DOCKERFILES/build/generic.Dockerfile
+                    build-args: |
+                        "APP=sync-scan"
+                    labels:
+                        LEAV Engine
+                        Sync scan
+                    tags: "leavengine/core:nightly"

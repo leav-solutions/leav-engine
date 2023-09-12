@@ -27,6 +27,7 @@ export interface CREATE_RECORD_createRecord_whoAmI_library {
 export interface CREATE_RECORD_createRecord_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: CREATE_RECORD_createRecord_whoAmI_library;
     preview: Preview | null;

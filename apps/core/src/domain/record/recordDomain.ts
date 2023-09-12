@@ -191,7 +191,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.infra.record': recordRepo = null,
     'core.domain.attribute': attributeDomain = null,
@@ -665,6 +665,66 @@ export default function ({
         return color;
     };
 
+    const _getSubLabel = async (
+        record: IRecord,
+        visitedLibraries: string[] = [],
+        ctx: IQueryInfos
+    ): Promise<string> => {
+        if (!record) {
+            return null;
+        }
+        visitedLibraries.push(record.library);
+
+        const lib = record?.library ? await getCoreEntityById<ILibrary>('library', record.library, ctx) : null;
+
+        if (!lib) {
+            throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
+        }
+
+        const conf = lib.recordIdentityConf || {};
+        const valuesOptions: IValuesOptions = {
+            version: ctx.version ?? null
+        };
+        let subLabel: string = null;
+        if (conf.subLabel) {
+            const subLabelAttributeProps = await attributeDomain.getAttributeProperties({id: conf.subLabel, ctx});
+
+            const subLabelValues = await valueDomain.getValues({
+                library: lib.id,
+                recordId: record.id,
+                attribute: conf.subLabel,
+                options: valuesOptions,
+                ctx
+            });
+
+            if (conf.subLabel === 'id') {
+                subLabelValues[0].value = record.id;
+            }
+
+            if (!subLabelValues.length) {
+                return null;
+            }
+
+            if (utils.isLinkAttribute(subLabelAttributeProps)) {
+                const linkValue = subLabelValues.pop().value;
+
+                // To avoid infinite loop, we check if the library has already been visited. If so, we return null
+                // For example, if the users' library color is set to "created_by",
+                // we'll retrieve the user's creator, then we'll retrieve the creator's creator, and so on...
+                if (visitedLibraries.includes(subLabelAttributeProps.linked_library)) {
+                    return null;
+                }
+                subLabel = await _getSubLabel(linkValue, visitedLibraries, ctx);
+            } else if (utils.isTreeAttribute(subLabelAttributeProps)) {
+                const treeValue = subLabelValues.pop().value.record;
+                subLabel = await _getSubLabel(treeValue, visitedLibraries, ctx);
+            } else {
+                subLabel = subLabelValues.pop().value;
+            }
+        }
+        return subLabel;
+    };
+
     const _getRecordIdentity = async (record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity> => {
         const lib = await getCoreEntityById<ILibrary>('library', record.library, ctx);
 
@@ -680,6 +740,11 @@ export default function ({
         let label: string = null;
         if (conf.label) {
             label = await _getLabel(record, [], ctx);
+        }
+
+        let subLabel: string = null;
+        if (conf.subLabel) {
+            subLabel = await _getSubLabel(record, [], ctx);
         }
 
         let color: string = null;
@@ -744,6 +809,7 @@ export default function ({
             id: record.id,
             library: lib,
             label,
+            subLabel,
             color,
             preview
         };

@@ -78,6 +78,7 @@ export interface GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI
 export interface GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: GET_VIEWS_LIST_views_list_valuesVersions_treeNode_record_whoAmI_library;
     preview: Preview | null;

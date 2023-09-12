@@ -27,6 +27,7 @@ export interface SUB_TASKS_UPDATE_task_created_by_whoAmI_library {
 export interface SUB_TASKS_UPDATE_task_created_by_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: SUB_TASKS_UPDATE_task_created_by_whoAmI_library;
     preview: Preview | null;
@@ -67,6 +68,7 @@ export interface SUB_TASKS_UPDATE_task_canceledBy_whoAmI_library {
 export interface SUB_TASKS_UPDATE_task_canceledBy_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: SUB_TASKS_UPDATE_task_canceledBy_whoAmI_library;
     preview: Preview | null;

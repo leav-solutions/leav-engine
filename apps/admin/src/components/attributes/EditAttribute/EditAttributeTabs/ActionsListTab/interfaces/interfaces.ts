@@ -21,6 +21,7 @@ export interface IAction {
     output_types: string[];
     params: Array<IParam | null> | null;
     isSystem?: boolean | null;
+    error_message?: SystemTranslation;
 }
 
 export interface IReserveAction {
@@ -41,6 +42,7 @@ export interface IActionConfig {
     id: string;
     is_system?: boolean;
     params: IParamConfig[] | null;
+    error_message?: SystemTranslation;
 }
 
 export interface IParamInput {

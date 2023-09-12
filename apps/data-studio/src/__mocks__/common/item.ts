@@ -9,6 +9,7 @@ export const itemMock: IItem = {
     whoAmI: {
         id: 'id',
         label: 'label',
+        subLabel: null,
         color: null,
         preview: null,
         library: {

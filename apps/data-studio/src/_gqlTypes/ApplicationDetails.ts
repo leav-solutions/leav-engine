@@ -27,6 +27,7 @@ export interface ApplicationDetails_icon_whoAmI_library {
 export interface ApplicationDetails_icon_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: ApplicationDetails_icon_whoAmI_library;
     preview: Preview | null;

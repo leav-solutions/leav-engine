@@ -10,6 +10,7 @@ export const mockUser: ME_me = {
         id: '1',
         label: 'Toto',
         color: 'red',
+        subLabel: 'sub toto',
         library: {
             id: 'users',
             label: {

@@ -33,12 +33,15 @@ const RecordCard = ({
     tile = false,
     simplistic = false
 }: IRecordCardProps): JSX.Element => {
-    const label = record.label || record.id;
     const {lang: userLang} = useLang();
+    const label = record.label || record.id;
+    const subLabel = record.subLabel
+        ? record.subLabel
+        : localizedTranslation(record.library?.label, lang ?? userLang) || record.library?.id;
 
     const recordIdentity: IEntityData = {
         label,
-        subLabel: localizedTranslation(record.library?.label, lang ?? userLang) || record.library?.id,
+        subLabel,
         preview: _getPreviewBySize(record.preview, size),
         color: record.color
     };

@@ -53,6 +53,7 @@ export default function ({
                         name: String!,
                         is_system: Boolean!,
                         params: [ActionConfigurationParam!]
+                        error_message: SystemTranslationOptional,
                     }
 
                     type ActionsListConfiguration {
@@ -69,7 +70,8 @@ export default function ({
 
                     input ActionConfigurationInput {
                         id: ID!,
-                        params: [ActionConfigurationParamInput!]
+                        params: [ActionConfigurationParamInput!],
+                        error_message: SystemTranslationOptional,
                     }
 
                     type ActionConfigurationParam {

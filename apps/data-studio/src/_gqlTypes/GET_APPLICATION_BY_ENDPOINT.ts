@@ -27,6 +27,7 @@ export interface GET_APPLICATION_BY_ENDPOINT_applications_list_icon_whoAmI_libra
 export interface GET_APPLICATION_BY_ENDPOINT_applications_list_icon_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: GET_APPLICATION_BY_ENDPOINT_applications_list_icon_whoAmI_library;
     preview: Preview | null;

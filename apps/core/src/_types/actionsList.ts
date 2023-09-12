@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttribute} from './attribute';
 import {IQueryInfos} from '_types/queryInfos';
+import {ISystemTranslation} from './systemTranslation';
 
 export enum ActionsListEvents {
     SAVE_VALUE = 'saveValue',
@@ -51,6 +52,7 @@ export interface IActionsListFunction {
     input_types: ActionsListIOTypes[];
     output_types: ActionsListIOTypes[];
     params?: IActionsListParamsConfig[];
+    error_message?: ISystemTranslation;
     action: (value: ActionsListValueType, params: IActionsListParams, ctx: IActionsListContext) => ActionsListValueType;
 }
 
@@ -59,4 +61,5 @@ export interface IActionsListSavedAction {
     name: string;
     is_system?: boolean;
     params?: Array<{name: string; value: string}>;
+    error_message?: ISystemTranslation;
 }

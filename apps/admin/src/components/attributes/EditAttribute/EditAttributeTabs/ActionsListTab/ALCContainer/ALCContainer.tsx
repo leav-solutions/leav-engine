@@ -180,6 +180,17 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
             }
         }
     };
+    const _handleCustomMessage = (actionId: number, value: string, lang: string) => {
+        if (currentActionList && currentActionListName) {
+            const currentActionListCopy = cloneDeep(currentActionList);
+            const act = currentActionListCopy[currentActionListName][actionId];
+            if (act && !act.error_message) {
+                act.error_message = {};
+            }
+            act.error_message[lang] = value;
+            setCurrentList(currentActionListCopy);
+        }
+    };
 
     /////////////// SAVE CONFIG FUNCTIONS
 
@@ -194,7 +205,8 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
         const params = act.params && act.params.length ? act.params.map(param => extractParamConfig(param)) : null;
         return {
             id: act.id,
-            params
+            params,
+            error_message: act.error_message
         };
     };
 
@@ -271,6 +283,7 @@ function ALCContainer({availableActions = [], attribute}: IALCContainerProps): J
                         onSelectorChange={onSelectorChange}
                         currentActionListName={currentActionListName}
                         onSave={onSave}
+                        onChangeCustomMessage={_handleCustomMessage}
                     />
                 )}
             </ListsContainer>

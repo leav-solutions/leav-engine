@@ -27,6 +27,7 @@ export interface GET_GLOBAL_SETTINGS_globalSettings_icon_whoAmI_library {
 export interface GET_GLOBAL_SETTINGS_globalSettings_icon_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: GET_GLOBAL_SETTINGS_globalSettings_icon_whoAmI_library;
     preview: Preview | null;

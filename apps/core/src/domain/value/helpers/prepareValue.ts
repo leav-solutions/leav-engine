@@ -32,6 +32,7 @@ export default async (params: IPrepareValueParams): Promise<IValue> => {
     const preparedValue =
         !!attributeProps.actions_list && !!attributeProps.actions_list.saveValue
             ? await deps.actionsListDomain.runActionsList(attributeProps.actions_list.saveValue, value, {
+                  ...ctx,
                   attribute: attributeProps,
                   recordId,
                   library
@@ -48,6 +49,7 @@ export default async (params: IPrepareValueParams): Promise<IValue> => {
                         metaFieldProps.actions_list[ActionsListEvents.SAVE_VALUE],
                         {value: preparedValue.metadata[metaFieldName]},
                         {
+                            ...ctx,
                             attribute: metaFieldProps,
                             recordId,
                             library

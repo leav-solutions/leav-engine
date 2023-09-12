@@ -20,6 +20,7 @@ export interface APPLICATION_EVENTS_applicationEvent_application_icon_whoAmI_lib
 export interface APPLICATION_EVENTS_applicationEvent_application_icon_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: APPLICATION_EVENTS_applicationEvent_application_icon_whoAmI_library;
     preview: Preview | null;

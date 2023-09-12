@@ -34,6 +34,7 @@ export const mockApplication: WithTypename<GET_APPLICATION_BY_ID_applications_li
                     en: 'My Library'
                 }
             },
+            subLabel: 'my Icon',
             color: '#789456',
             preview: {
                 tiny: 'path/to/tiny/preview.png',

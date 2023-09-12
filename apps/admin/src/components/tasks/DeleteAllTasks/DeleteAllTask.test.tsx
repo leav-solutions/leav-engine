@@ -7,7 +7,7 @@ import DeleteAllTask from './DeleteAllTask';
 
 jest.mock('../../../hooks/useLang');
 
-describe('DeleteTask', () => {
+describe('DeleteTasks', () => {
     test('Render delete button for tasks', async () => {
         await act(async () => {
             render(<DeleteAllTask label={''} confirmMessage={''} onDeleteAll={() => jest.fn()} />);
