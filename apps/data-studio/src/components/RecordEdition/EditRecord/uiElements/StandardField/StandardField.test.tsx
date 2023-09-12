@@ -9,7 +9,7 @@ import {mockModifier} from '__mocks__/common/value';
 import {RECORD_FORM_recordForm_elements_attribute_StandardAttribute} from '_gqlTypes/RECORD_FORM';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_Value_attribute} from '_gqlTypes/SAVE_VALUE_BATCH';
 import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
-import {act, render, screen, waitFor} from '_tests/testUtils';
+import {act, render, screen, waitFor, waitForOptions} from '_tests/testUtils';
 import {
     EditRecordReducerActionsTypes,
     initialState
@@ -98,6 +98,10 @@ describe('StandardField', () => {
         unobserve: jest.fn(),
         disconnect: jest.fn()
     }));
+
+    const waitForOption: waitForOptions = {
+        timeout: 1000
+    };
 
     beforeEach(() => jest.clearAllMocks());
 
@@ -373,6 +377,10 @@ describe('StandardField', () => {
                 {...baseProps}
             />
         );
+
+        await waitFor(() => {
+            screen.getByTestId('ckeditor');
+        }, waitForOption);
         const richTextElem = screen.getByTestId('ckeditor');
         await act(async () => {
             userEvent.click(richTextElem);
