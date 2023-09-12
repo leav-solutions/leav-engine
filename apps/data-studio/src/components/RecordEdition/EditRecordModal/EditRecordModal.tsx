@@ -218,16 +218,33 @@ function EditRecordModal({
                 attribute: value.attribute,
                 metadata: value.metadata
                     ? Object.keys(value.metadata).reduce((metadata, metadataAttributeId) => {
-                          metadata.push({
-                              name: metadataAttributeId,
-                              value: {
-                                  id_value: null,
-                                  value: value.metadata[metadataAttributeId],
-                                  raw_value: value.metadata[metadataAttributeId]
-                              }
-                          });
+                          const metadataValue = {
+                              id_value: null,
+                              modified_at: null,
+                              modified_by: null,
+                              created_at: null,
+                              created_by: null,
+                              version: null,
+                              value: value.metadata[metadataAttributeId],
+                              raw_value: value.metadata[metadataAttributeId]
+                          };
+
+                          // If we find an existing metadata value, update it, otherwise add a new one
+                          const existingMetataIndex = metadata.findIndex(
+                              existingMetadata => existingMetadata.name === metadataAttributeId
+                          );
+
+                          if (existingMetataIndex !== -1) {
+                              metadata[existingMetataIndex].value = metadataValue;
+                          } else {
+                              metadata.push({
+                                  name: metadataAttributeId,
+                                  value: metadataValue
+                              });
+                          }
+
                           return metadata;
-                      }, [])
+                      }, newPendingValues?.[attributeId]?.[newIdValue]?.metadata ?? [])
                     : null
             };
 
@@ -326,7 +343,12 @@ function EditRecordModal({
                         value: actualValue,
                         id_value: val.id_value ?? null,
                         attribute: val.attribute.id,
-                        metadata: val.metadata ?? null
+                        metadata: val.metadata
+                            ? val.metadata.map(metadataValue => ({
+                                  name: metadataValue.name,
+                                  value: metadataValue.value.raw_value
+                              }))
+                            : null
                     };
                 });
 
