@@ -58,6 +58,41 @@ jobs:
         env:
           SKIP_PREFLIGHT_CHECK: 'true'
 
+  unit-tests-setup:
+    runs-on: ubuntu-latest
+    outputs:
+      test-chunks: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
+      test-chunk-ids: ${{ steps['set-test-chunk-ids'].outputs['test-chunk-ids'] }}
+    steps:
+      - uses: actions/checkout@v2
+      - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
+      - run: yarn install
+      - id: set-test-chunks
+        name: Set Chunks
+        run: echo "::set-output name=test-chunks::$(yarn run test:list)"
+      - id: set-test-chunk-ids
+        name: Set Chunk IDs
+        run: echo "::set-output name=test-chunk-ids::$(echo ['libs/ui','apps/data-studio','apps/admin','apps/core'])"
+        env:
+          CHUNKS: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
+  
+  unit-tests-test:
+    runs-on: ubuntu-latest
+    name: test (chunk ${{ matrix.chunk }})
+    needs:
+      - unit-tests-setup
+    strategy:
+      matrix:
+        chunk: ${{ fromJson(needs.unit-tests-setup.outputs['test-chunk-ids']) }}
+    steps:
+      - uses: actions/checkout@v2
+      - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
+      - run: yarn install
+      - name: jest
+        run: echo $CHUNKS | jq '.[${{ matrix.chunk }}] | .[] | @text' | xargs npx jest
+        env:
+          CHUNKS: ${{ needs.unit-tests-setup.outputs['test-chunks'] }}
+
   e2e-api:
     runs-on: ubuntu-latest
     services:
