@@ -13,8 +13,8 @@ export const useRecordUpdateSubscription = (filters: RecordUpdateFilterInput, sk
     return useSubscription<SUB_RECORD_UPDATE, SUB_RECORD_UPDATEVariables>(getRecordUpdates, {
         skip,
         variables: {filters},
-        onSubscriptionData: ({subscriptionData}) => {
-            const {record, updatedValues} = subscriptionData.data.recordUpdate;
+        onData: ({data}) => {
+            const {record, updatedValues} = data.data.recordUpdate;
             updateValuesCache(
                 record.whoAmI,
                 updatedValues.map(val => val.value)

@@ -90,8 +90,6 @@ function LibrariesList(): JSX.Element {
         }))
         .sort((a, b) => Number(b.isFavorite) - Number(a.isFavorite));
 
-    console.log(list);
-
     const columns: ColumnsType<IListItem> = [
         {
             title: t('home.label'),

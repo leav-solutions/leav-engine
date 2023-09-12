@@ -53,12 +53,22 @@ function AttributeDetails({attribute}: IAttributeDetailsProps): JSX.Element {
         });
     }
 
+    const collapseItems = [
+        {
+            key: 'attribute',
+            label: t('record_edition.attribute_details_section'),
+            children: <PropertiesList items={attributeDetailsContent} />
+        }
+    ];
+
     return (
-        <AttributeDetailsCollapse destroyInactivePanel bordered={false} ghost themeToken={token}>
-            <Collapse.Panel key="attribute" header={t('record_edition.attribute_details_section')}>
-                <PropertiesList items={attributeDetailsContent} />
-            </Collapse.Panel>
-        </AttributeDetailsCollapse>
+        <AttributeDetailsCollapse
+            items={collapseItems}
+            destroyInactivePanel
+            bordered={false}
+            ghost
+            themeToken={token}
+        />
     );
 }
 

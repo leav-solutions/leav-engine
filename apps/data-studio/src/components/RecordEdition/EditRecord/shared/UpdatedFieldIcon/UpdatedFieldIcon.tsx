@@ -5,9 +5,7 @@ import {ExclamationCircleOutlined} from '@ant-design/icons';
 import {Tooltip} from 'antd';
 import {useTranslation} from 'react-i18next';
 
-interface IUpdatedFieldIconProps {}
-
-function UpdatedFieldIcon({}: IUpdatedFieldIconProps): JSX.Element {
+function UpdatedFieldIcon(): JSX.Element {
     const {t} = useTranslation();
 
     return (

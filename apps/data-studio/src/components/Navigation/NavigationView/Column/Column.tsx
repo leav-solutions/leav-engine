@@ -79,22 +79,12 @@ const Column = ({treeId, treeElement, depth, isActive: columnActive}: IColumnPro
     useTreeEventsSubscription({
         filters: {ignoreOwnEvents: true, treeId, nodes: [treeElement?.id ?? null]},
         skip: loading,
-        onSubscriptionData() {
+        onData() {
             // We known something happened concerning this node.
             // To make sure everything is clean and up to date, we just refetch data
             refetch(queryVariables);
         }
     });
-
-    // useSubscription<TREE_EVENTS, TREE_EVENTSVariables>(getTreeEvents, {
-    //     variables: {filters: {ignoreOwnEvents: true, treeId, nodes: [treeElement?.id ?? null]}},
-    //     skip: loading,
-    //     onSubscriptionData() {
-    //         // We known something happened concerning this node.
-    //         // To make sure everything is clean and up to date, we just refetch data
-    //         refetch(queryVariables);
-    //     }
-    // });
 
     const ref = createRef<HTMLDivElement>();
 

@@ -9,12 +9,12 @@ import {TREE_EVENTS, TREE_EVENTSVariables} from '_gqlTypes/TREE_EVENTS';
 export const useTreeEventsSubscription = (params: {
     filters: TreeEventFiltersInput;
     skip?: boolean;
-    onSubscriptionData: SubscriptionHookOptions['onSubscriptionData'];
+    onData: SubscriptionHookOptions['onData'];
 }) => {
-    const {filters, skip, onSubscriptionData} = params;
+    const {filters, skip, onData} = params;
     return useSubscription<TREE_EVENTS, TREE_EVENTSVariables>(getTreeEvents, {
         variables: {filters},
         skip,
-        onSubscriptionData
+        onData
     });
 };

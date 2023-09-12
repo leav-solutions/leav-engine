@@ -6,14 +6,14 @@ import {formatId, idFormatRegex, localizedTranslation} from '@leav/utils';
 import {Form, FormInstance, Input, Select} from 'antd';
 import React, {useState} from 'react';
 import styled from 'styled-components';
+import {useLang} from '../../../../../hooks';
+import {useSharedTranslation} from '../../../../../hooks/useSharedTranslation';
 import {
     AttributeType,
     GetLibraryByIdQuery,
     LibraryBehavior,
     LibraryLinkAttributeDetailsFragment
 } from '../../../../../_gqlTypes';
-import {useLang} from '../../../../../hooks';
-import {useSharedTranslation} from '../../../../../hooks/useSharedTranslation';
 import FieldsGroup from '../../../../FieldsGroup';
 import {SubmitStateNotifier} from '../../../../SubmitStateNotifier';
 
@@ -287,12 +287,11 @@ function EditLibraryInfoForm({
                             }
                         >
                             <Select
-                                allowClear
+                                allowClear={{clearIcon: <CloseOutlined />}}
                                 autoClearSearchValue
                                 showSearch
                                 onChange={_handleSelectChange(`recordIdentityConf_${fieldName}`)}
                                 options={options}
-                                clearIcon={<CloseOutlined />}
                                 disabled={isReadOnly || !!runningFieldsSubmit.find(f => f === fieldName)}
                                 aria-label=""
                             />
