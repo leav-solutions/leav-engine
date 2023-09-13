@@ -22,6 +22,7 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
+      
       - id: set-test-chunks
         name: Set Chunks
         run: echo "::set-output name=test-chunks::$(npx jest --listTests --json | jq -cM '[_nwise(length / 5 | ceil)]')"
@@ -47,6 +48,8 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
+      - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
+      - run: yarn install
       - name: jest
         run: echo $CHUNKS | jq '.[${{ matrix.chunk }}] | .[] | @text' | xargs npx jest
         env:
