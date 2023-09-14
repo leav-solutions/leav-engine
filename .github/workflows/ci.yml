@@ -11,8 +11,7 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     outputs:
-      test-chunks: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
-      test-chunk-ids: ${{ steps['set-test-chunk-ids'].outputs['test-chunk-ids'] }}
+      workspace-list: ${{ steps['set-workspace-name'].outputs['workspace-list'] }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -22,22 +21,18 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
-      - id: set-test-chunks
-        name: Set Chunks
-        run: echo "::set-output name=test-chunks::$(npx jest --listTests --json | jq -cM '[_nwise(length / 5 | ceil)]')"
-      - id: set-test-chunk-ids
-        name: Set Chunk IDs
-        run: echo "::set-output name=test-chunk-ids::$(echo $CHUNKS | jq -cM 'to_entries | map(.key)')"
-        env:
-          CHUNKS: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
+      - id: set-workspace-name
+        name: Set workspace
+        run: echo "::set-output name=workspace-list::$(yarn workspaces list --json)"
+        
   test:
     runs-on: ubuntu-latest
-    name: test (chunk ${{ matrix.chunk }})
+    name: test on ${{ matrix.workspace }})
     needs:
       - setup
     strategy:
       matrix:
-        chunk: ${{ fromJson(needs.setup.outputs['test-chunk-ids']) }}
+        workspace: ${{ fromJson(needs.setup.outputs['workspace-list']) }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -50,6 +45,6 @@ jobs:
       - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
       - run: yarn install
       - name: jest
-        run: echo $CHUNKS | jq '.[${{ matrix.chunk }}] | .[] | @text' | xargs npx jest
+        run: cd ${{ matrix.workspace.location }} | yarn run test 
         env:
-          CHUNKS: ${{ needs.setup.outputs['test-chunks'] }}
+          CHUNKS: ${{ needs.setup.outputs['workspace-list'] }}
