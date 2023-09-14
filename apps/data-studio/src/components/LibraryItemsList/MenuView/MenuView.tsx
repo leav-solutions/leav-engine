@@ -127,7 +127,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
                 dispatch(
                     addInfo({
                         type: InfoType.error,
-                        content: `${t('error.error_occurred')}: ${e.message}`,
+                        content: `${e.message}`,
                         channel: InfoChannel.trigger
                     })
                 );

@@ -11,6 +11,7 @@ export const getAttributesQuery = gql`
                 label
                 type
                 format
+                system
             }
         }
     }
