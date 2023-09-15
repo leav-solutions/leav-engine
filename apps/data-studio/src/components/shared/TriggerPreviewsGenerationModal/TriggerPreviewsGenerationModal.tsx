@@ -43,24 +43,6 @@ function TriggerPreviewsGenerationModal({
     >(forcePreviewsGenerationMutation);
     const dispatch = useAppDispatch();
 
-    const getAllSizes = tree => {
-        const sizes = [];
-
-        for (const e of tree) {
-            let childKeys = [];
-
-            if (e.children?.length) {
-                childKeys = getAllSizes(e.children);
-            } else {
-                sizes.push(e.key);
-            }
-
-            sizes.push(...childKeys);
-        }
-
-        return sizes;
-    };
-
     useQuery<GET_LIBRARIES_LIST, GET_LIBRARIES_LISTVariables>(getLibrariesListQuery, {
         variables: {
             filters: {
@@ -69,15 +51,21 @@ function TriggerPreviewsGenerationModal({
         },
         onCompleted: getLibrariesData => {
             const previewSettings = getLibrariesData.libraries.list?.[0].previewsSettings || [];
+            const sizes = [];
 
-            const td = previewSettings.map(s => ({
-                title: localizedTranslation(s.label, lang),
-                key: localizedTranslation(s.label, lang),
-                children: s.versions.sizes.map(vs => ({title: `${vs.name} (${vs.size}px)`, key: vs.name}))
-            }));
+            const td = previewSettings.map(s => {
+                const children = s.versions.sizes.map(vs => ({title: `${vs.name} (${vs.size}px)`, key: vs.name}));
+                sizes.push(...children.map(c => c.key));
+
+                return {
+                    title: localizedTranslation(s.label, lang),
+                    key: localizedTranslation(s.label, lang),
+                    children
+                };
+            });
 
             setTreeData(td);
-            setAllSizes(getAllSizes(td));
+            setAllSizes(sizes);
         },
         onError: console.error
     });
