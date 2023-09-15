@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 'use strict';
 const {spawn} = require('child_process');
 const util = require('util');
@@ -17,7 +18,7 @@ const exec = util.promisify(require('child_process').exec);
             workspace = JSON.parse(workspace);
             workspaceFilter.push(workspace.location);
         });
-        return workspaceFilter;
+        console.log(workspaceFilter);
     } catch (e) {
         console.error(e);
         process.exit(1);
