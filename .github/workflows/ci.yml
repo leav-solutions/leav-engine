@@ -23,9 +23,4 @@ jobs:
         id: set-workspaces-list
         run: |
           workspaces_list=$(yarn run test:list)
-          echo "WORKSPACE LIST: $workspaces_list"
-          echo "workspaces_list=$workspaces_list" >> "$GITHUB_OUTPUT"
-      - name: Get Workspaces List
-        env:
-          WORKSPACES_LIST: ${{ steps.set-workspaces-list.outputs.workspaces_list }}
-        run: echo "$WORKSPACES_LIST"
+          echo $workspaces_list
