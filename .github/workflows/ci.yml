@@ -25,7 +25,8 @@ jobs:
         with:
           path: '**/node_modules'
           key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
+      - name: Install dependency
+        run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
       - name: install node module
         run: yarn install
 
@@ -65,8 +66,6 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
-      - name: Install dependency
-        run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
       - name: Cache NPM dependencies
         uses: actions/cache@v3
         with:
