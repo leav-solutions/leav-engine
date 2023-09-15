@@ -16,7 +16,8 @@ jobs:
     - name: Set the value
       id: step_one
       run: |
-        echo "workspace=apps/admin" >> "$GITHUB_OUTPUTS"
+        echo "workspace='apps/admin'"
+
 
   test:
     runs-on: ubuntu-latest
@@ -28,4 +29,6 @@ jobs:
     steps:
     - name: display value
       id: display-value
-      run: echo ${{ matrix.workspace_name }}
+      run: echo $workspace
+      env:
+        workspace: ${{ needs.setup.outputs.workspace }}
