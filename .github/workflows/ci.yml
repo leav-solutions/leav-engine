@@ -16,7 +16,7 @@ jobs:
     - name: Set the value
       id: step_one
       run: |
-        echo "workspace='apps/admin'"
+        echo "workspace=apps/admi'" >> "$GITHUB_OUTPUT" 
 
 
   test:
