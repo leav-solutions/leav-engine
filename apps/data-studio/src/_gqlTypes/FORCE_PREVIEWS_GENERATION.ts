@@ -24,4 +24,5 @@ export interface FORCE_PREVIEWS_GENERATIONVariables {
     filters?: RecordFilterInput[] | null;
     recordIds?: string[] | null;
     failedOnly?: boolean | null;
+    previewVersionSizeNames?: string[] | null;
 }
