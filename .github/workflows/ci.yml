@@ -12,20 +12,27 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       workspaces: ${{ steps.set-value.outputs.workspaces }}
+      id_workspace: ${{ steps.set-value.outputs.id_workspaces }}
     steps:
     - name: Set value
       id: set-value
       run: |
-        echo "workspaces=apps/admin'" >> "$GITHUB_OUTPUT"
+        echo "workspaces=[1:['apps/admin'],2:['apps/data-studio']]" >> "$GITHUB_OUTPUT"
+        echo "id_workspace=[1,2]" >> "$GITHUB_OUTPUT"
 
   test:
     runs-on: ubuntu-latest
-    name: test
+    name: test ${{ matrix.id_workspace }}
     needs: 
       - setup
+    strategy:
+      matrix:
+        id_workspace: ${{ fromJson(needs.setup.outputs.id_workspace) }}
     steps:
     - name: display value
       id: display-value
-      run: echo $workspace_path
+      run: |
+        echo $workspace_path
+        echo ${{ matrix.id_workspace }}
       env:
         workspace_path: ${{ needs.setup.outputs.workspaces }}
