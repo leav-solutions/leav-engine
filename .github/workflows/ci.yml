@@ -19,11 +19,10 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
-      - name: Set the workspace
-        id: set_variable
-        run: |
-          echo "action_state=$(yarn workspace list --json)" >> "$GITHUB_ENV"
-      - name: Use the workspace
-        id: display_variable
-        run: |
-          printf '%s\n' "$action_state" '\n' # This will output the workspace
+      - name: Set workspace list
+        id: set-workspace-list
+        run: echo "workspace_list=$(yarn workspace list --json)" >> "$GITHUB_OUTPUT"
+      - name: Get workspaces_list
+        env:
+          WORKSPACE_LIST: ${{ steps.set-workspace-list.outputs.workspace_list }}
+        run: echo "workspaces =\n $WORKSPACE_LIST"
