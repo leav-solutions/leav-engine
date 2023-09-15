@@ -31,3 +31,8 @@ jobs:
       id: display-value
       run: |
         echo ${{ matrix.path_workspace }}
+        sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
+        yarn install
+        cd ${{ matrix.path_workspace }}
+        yarn run test
+        
