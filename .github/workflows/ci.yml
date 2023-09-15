@@ -22,17 +22,16 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    name: Workspace ${{ matrix.path }}
+    name: Workspace ${{ matrix.name }}
     needs: 
       - setup
     strategy:
       matrix:
-        path: ${{ fromJson(needs.setup.outputs.workspaces_path) }}
         name: ${{ fromJson(needs.setup.outputs.workspaces_name) }}
     steps:
     - name: display value
       id: display-value
       run: |
-        echo ${{ matrix.path }} 
+        echo ${{ matrix.name }} 
         yarn workspace ${{ matrix.name }} run ci
         
