@@ -31,5 +31,6 @@ jobs:
       id: display-value
       run: |
         echo ${{ matrix.path_workspace }} 
-        pwd 
-        yarn run ci
+        pwd
+        ll
+        
