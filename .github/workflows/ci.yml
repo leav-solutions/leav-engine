@@ -11,25 +11,28 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     outputs:
-      workspaces: ${{ steps.set-value.outputs.workspaces }}
+      workspaces_name: ${{ steps.set-value.outputs.workspaces_name }}
+      workspaces_path: ${{ steps.set-value.outputs.workspaces_path }}
     steps:
     - name: Set value
       id: set-value
       run: |
-        echo "workspaces=['apps/admin','apps/data-studio']" >> "$GITHUB_OUTPUT"
+        echo "workspaces_name=['admin','data-studio']" >> "$GITHUB_OUTPUT"
+        echo "workspaces_path=['apps/admin','apps/data-studio']" >> "$GITHUB_OUTPUT"
 
   test:
     runs-on: ubuntu-latest
-    name: test ${{ matrix.path_workspace }}
+    name: Workspace ${{ matrix.path }}
     needs: 
       - setup
     strategy:
       matrix:
-        path_workspace: ${{ fromJson(needs.setup.outputs.workspaces) }}
+        path: ${{ fromJson(needs.setup.outputs.workspaces_path) }}
+        name: ${{ fromJson(needs.setup.outputs.workspaces_name) }}
     steps:
     - name: display value
       id: display-value
       run: |
-        echo ${{ matrix.path_workspace }} 
-        yarn workspaces ${{ matrix.path_workspace }} -v leav-monorepo run ci 
+        echo ${{ matrix.path }} 
+        yarn workspace ${{ matrix.name }} run ci
         
