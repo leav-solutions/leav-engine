@@ -15,7 +15,24 @@ describe('useApplicationLibraries', () => {
     const mockLibBase = {
         ...mockLibrary,
         gqlNames: mockGqlNamesWithoutType,
-        permissions: mockLibraryPermissions
+        permissions: mockLibraryPermissions,
+        previewsSettings: [
+            {
+                description: null,
+                system: true,
+                label: {fr: 'PreviewSettings1', en: 'PreviewSettings1'},
+                versions: {
+                    background: 'background',
+                    density: 1,
+                    sizes: [
+                        {
+                            name: 'PreviewSettings1ChildName',
+                            size: 'PreviewSettings1ChildSize'
+                        }
+                    ]
+                }
+            }
+        ]
     };
 
     test('If app is configured on "all libs", retrieve all libs', async () => {

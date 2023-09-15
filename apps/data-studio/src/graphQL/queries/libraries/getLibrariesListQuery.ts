@@ -20,6 +20,19 @@ export const getLibrariesListQuery = gql`
                     filter
                     searchableFields
                 }
+                previewsSettings {
+                    description
+                    label
+                    system
+                    versions {
+                        background
+                        density
+                        sizes {
+                            name
+                            size
+                        }
+                    }
+                }
                 permissions {
                     access_library
                     access_record

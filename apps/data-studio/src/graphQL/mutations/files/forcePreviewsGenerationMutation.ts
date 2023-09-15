@@ -9,12 +9,14 @@ export const forcePreviewsGenerationMutation = gql`
         $filters: [RecordFilterInput!]
         $recordIds: [ID!]
         $failedOnly: Boolean
+        $previewVersionSizeNames: [String!]
     ) {
         forcePreviewsGeneration(
             libraryId: $libraryId
             filters: $filters
             recordIds: $recordIds
             failedOnly: $failedOnly
+            previewVersionSizeNames: $previewVersionSizeNames
         )
     }
 `;
