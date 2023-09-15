@@ -43,8 +43,7 @@
         "gen_types": "apollo codegen:generate --target=typescript --no-addTypename --outputFlat --excludes='**/*.test.*' --passthroughCustomScalars  ./src/_gqlTypes && cd ../../ && yarn prettier --write apps/data-studio/src/_gqlTypes ",
         "create_comp": "scripts/createComponent.js",
         "tscheck": "tsc --noEmit -p .",
-        "tscheck:watch": "tsc -w --noEmit -p .",
-        "ci": "echo 'je suis dedans'"
+        "tscheck:watch": "tsc -w --noEmit -p ."
     },
     "browserslist": {
         "production": [

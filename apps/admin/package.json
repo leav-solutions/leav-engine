@@ -49,8 +49,7 @@
         "create_comp": "scripts/createComponent.js",
         "tscheck": "tsc --noEmit -p .",
         "tscheck:watch": "tsc -w --noEmit -p .",
-        "postinstall": "node scripts/fixSemanticUiCss.js",
-        "ci": "echo 'je suis dedans'"
+        "postinstall": "node scripts/fixSemanticUiCss.js"
     },
     "devDependencies": {
         "@rushstack/eslint-patch": "1.0.6",
