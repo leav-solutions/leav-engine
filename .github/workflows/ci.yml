@@ -31,6 +31,5 @@ jobs:
       id: display-value
       run: |
         echo ${{ matrix.path_workspace }} 
-        pwd
-        ls -l
+        yarn workspaces ${{ matrix.path_workspace }} -v leav-monorepo run ci 
         
