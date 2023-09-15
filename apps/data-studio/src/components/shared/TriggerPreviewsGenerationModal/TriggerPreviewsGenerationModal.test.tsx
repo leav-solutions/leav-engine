@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import {forcePreviewsGenerationMutation} from 'graphQL/mutations/files/forcePreviewsGenerationMutation';
-import {render, screen, waitFor} from '_tests/testUtils';
-import TriggerPreviewsGenerationModal from './TriggerPreviewsGenerationModal';
 import {getLibrariesListQuery} from 'graphQL/queries/libraries/getLibrariesListQuery';
-import {mockLibrary, mockLibraryPermissions} from '__mocks__/common/library';
 import {act} from 'react-dom/test-utils';
+import {render, screen, waitFor} from '_tests/testUtils';
+import {mockLibrary, mockLibraryPermissions} from '__mocks__/common/library';
+import TriggerPreviewsGenerationModal from './TriggerPreviewsGenerationModal';
 
 describe('TriggerPreviewsGenerationModal', () => {
     const {type, ...mockGqlNamesWithoutType} = mockLibrary.gqlNames;
@@ -68,7 +68,7 @@ describe('TriggerPreviewsGenerationModal', () => {
                         recordIds: ['123456'],
                         filters: null,
                         failedOnly: false,
-                        previewVersionSizeNames: ['PreviewSettings1']
+                        previewVersionSizeNames: ['PreviewSettings1ChildName']
                     }
                 },
                 result: () => {
@@ -84,23 +84,21 @@ describe('TriggerPreviewsGenerationModal', () => {
         ];
 
         render(<TriggerPreviewsGenerationModal libraryId={'files'} recordIds={['123456']} onClose={jest.fn()} />, {
-            apolloMocks: mocks,
-            cacheSettings: {
-                resultCaching: false
-            }
+            apolloMocks: mocks
         });
 
-        // expect(screen.getByText('files.generate_previews')).toBeInTheDocument();
+        expect(screen.getByText('files.generate_previews')).toBeInTheDocument();
 
-        // await act(async () => {
-        //     userEvent.click(screen.getByText('PreviewSettings1'));
-        // });
+        const settingsElem = await screen.findByText('PreviewSettings1');
+        await act(async () => {
+            userEvent.click(settingsElem);
+        });
 
-        // await waitFor(() => expect(screen.getByRole('button', {name: /submit/})).not.toBeDisabled());
+        await waitFor(() => expect(screen.getByRole('button', {name: /submit/})).not.toBeDisabled());
 
-        // userEvent.click(screen.getByRole('button', {name: /submit/}));
+        userEvent.click(screen.getByRole('button', {name: /submit/}));
 
-        // await waitFor(() => expect(mutationCalled).toBe(true));
+        await waitFor(() => expect(mutationCalled).toBe(true));
     });
 
     test('Can choose to generate only failed previews', async () => {
@@ -138,7 +136,7 @@ describe('TriggerPreviewsGenerationModal', () => {
                         recordIds: ['123456'],
                         filters: null,
                         failedOnly: true,
-                        previewVersionSizeNames: []
+                        previewVersionSizeNames: ['PreviewSettings1ChildName']
                     }
                 },
                 result: () => {
@@ -156,11 +154,19 @@ describe('TriggerPreviewsGenerationModal', () => {
             apolloMocks: mocks
         });
 
-        // expect(screen.getByText('files.previews_generation_failed_only')).toBeInTheDocument();
+        expect(await screen.findByText('files.previews_generation_failed_only')).toBeInTheDocument();
 
-        // userEvent.click(screen.getByRole('checkbox'));
-        // userEvent.click(screen.getByRole('button', {name: /submit/}));
+        const settingsElem = await screen.findByText('PreviewSettings1');
+        await act(async () => {
+            userEvent.click(settingsElem);
+        });
 
-        // await waitFor(() => expect(mutationCalled).toBe(true));
+        const checkboxElem = await screen.findByRole('checkbox', {name: /failed-only/});
+        userEvent.click(checkboxElem);
+
+        await waitFor(() => expect(screen.getByRole('button', {name: /submit/})).not.toBeDisabled());
+        userEvent.click(screen.getByRole('button', {name: /submit/}));
+
+        await waitFor(() => expect(mutationCalled).toBe(true));
     });
 });

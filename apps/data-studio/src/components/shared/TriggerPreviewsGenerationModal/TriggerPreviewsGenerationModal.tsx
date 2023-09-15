@@ -2,19 +2,19 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation, useQuery} from '@apollo/client';
+import {ErrorDisplay, Loading, useLang} from '@leav/ui';
+import {localizedTranslation} from '@leav/utils';
 import {Checkbox, Divider, Modal, Tree} from 'antd';
 import {forcePreviewsGenerationMutation} from 'graphQL/mutations/files/forcePreviewsGenerationMutation';
-import {useEffect, useState} from 'react';
+import {getLibrariesListQuery} from 'graphQL/queries/libraries/getLibrariesListQuery';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {addInfo} from 'reduxStore/infos';
-import {localizedTranslation} from '@leav/utils';
 import {useAppDispatch} from 'reduxStore/store';
 import {getRequestFromFilters} from 'utils/getRequestFromFilter';
 import {FORCE_PREVIEWS_GENERATION, FORCE_PREVIEWS_GENERATIONVariables} from '_gqlTypes/FORCE_PREVIEWS_GENERATION';
-import {IFilter, InfoChannel, InfoType} from '_types/types';
 import {GET_LIBRARIES_LIST, GET_LIBRARIES_LISTVariables} from '_gqlTypes/GET_LIBRARIES_LIST';
-import {getLibrariesListQuery} from 'graphQL/queries/libraries/getLibrariesListQuery';
-import {useLang} from '@leav/ui';
+import {IFilter, InfoChannel, InfoType} from '_types/types';
 
 interface ITriggerPreviewsGenerationModalProps {
     libraryId: string;
@@ -43,7 +43,10 @@ function TriggerPreviewsGenerationModal({
     >(forcePreviewsGenerationMutation);
     const dispatch = useAppDispatch();
 
-    useQuery<GET_LIBRARIES_LIST, GET_LIBRARIES_LISTVariables>(getLibrariesListQuery, {
+    const {error: getLibrariesError, loading: getLibrariesLoading} = useQuery<
+        GET_LIBRARIES_LIST,
+        GET_LIBRARIES_LISTVariables
+    >(getLibrariesListQuery, {
         variables: {
             filters: {
                 id: [libraryId]
@@ -66,8 +69,7 @@ function TriggerPreviewsGenerationModal({
 
             setTreeData(td);
             setAllSizes(sizes);
-        },
-        onError: console.error
+        }
     });
 
     const _triggerPreviewsGeneration = async () => {
@@ -98,7 +100,8 @@ function TriggerPreviewsGenerationModal({
 
             onClose();
         } catch (e) {
-            // Nothing to do here, error is handled globally by Apollo
+            // Nothing to do here, error is handled globally by Apollo. Uncomment next line for easier tests debug
+            console.error(e);
         }
     };
 
@@ -134,14 +137,26 @@ function TriggerPreviewsGenerationModal({
             }}
             confirmLoading={loading}
         >
-            <Checkbox onChange={onChange} checked={checkedSizes.length === allSizes.length}>
-                Select All
-            </Checkbox>
-            <Tree checkable onCheck={onCheck} checkedKeys={checkedSizes} selectable={false} treeData={treeData} />
-            <Divider />
-            <Checkbox onChange={_handleFailedOnlyChange} checked={isFailedOnlyChecked}>
-                {t('files.previews_generation_failed_only')}
-            </Checkbox>
+            {getLibrariesLoading && <Loading />}
+            {!getLibrariesLoading && getLibrariesError && <ErrorDisplay message={getLibrariesError.message} />}
+            {!getLibrariesLoading && !getLibrariesError && (
+                <>
+                    <Checkbox onChange={onChange} checked={checkedSizes.length === allSizes.length}>
+                        Select All
+                    </Checkbox>
+                    <Tree
+                        checkable
+                        onCheck={onCheck}
+                        checkedKeys={checkedSizes}
+                        selectable={false}
+                        treeData={treeData}
+                    />
+                    <Divider />
+                    <Checkbox onChange={_handleFailedOnlyChange} checked={isFailedOnlyChecked} aria-label="failed-only">
+                        {t('files.previews_generation_failed_only')}
+                    </Checkbox>
+                </>
+            )}
         </Modal>
     );
 }
