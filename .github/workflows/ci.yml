@@ -34,5 +34,6 @@ jobs:
       run: |
         echo ${{ needs.setup.outputs.workspaces }}
         echo ${{ needs.setup.outputs.id_workspaces }}
+        echo $workspaces_path | jq '.[${{ matrix.id_workspace }}] | .[] | @text' 
       env:
-        workspace_path: ${{ needs.setup.outputs.workspaces }}
+        workspaces_path: ${{ needs.setup.outputs.workspaces }}
