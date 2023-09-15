@@ -12,7 +12,7 @@ const exec = util.promisify(require('child_process').exec);
         const workspacesArray = stdout.split('\n');
         workspacesArray.shift();
         workspacesArray.pop();
-        let workspaceFilter;
+        const workspaceFilter = [];
         workspacesArray.forEach((workspace) => {
             workspace = JSON.parse(workspace);
             workspaceFilter.push(workspace.location);
