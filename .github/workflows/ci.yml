@@ -26,7 +26,7 @@ jobs:
         run: |
           echo "test=$(yarn workspaces list --json | jq '.name')"
           echo $test 
-          echo "workspaces_name=[$test]" >> "$GITHUB_OUTPUT"
+          echo "workspaces_name=[$(yarn workspaces list --json | jq '.name')]" >> "$GITHUB_OUTPUT"
 
   test:
     runs-on: ubuntu-latest
