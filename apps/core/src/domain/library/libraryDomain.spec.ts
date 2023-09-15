@@ -100,7 +100,7 @@ describe('LibraryDomain', () => {
     beforeEach(() => jest.clearAllMocks());
 
     describe('getLibraries', () => {
-        test('Should return a list of libs', async function () {
+        test('Should return a list of libs', async function() {
             const mockLibRepo: Mockify<ILibraryRepo> = {
                 getLibraries: global.__mockPromise({list: [{id: 'test'}, {id: 'test2'}], totalCount: 2})
             };
@@ -128,7 +128,7 @@ describe('LibraryDomain', () => {
             expect(lib.list[0].attributes).toBeDefined();
         });
 
-        test('Should add default sort', async function () {
+        test('Should add default sort', async function() {
             const mockLibRepo: Mockify<ILibraryRepo> = {
                 getLibraries: global.__mockPromise({list: [{id: 'test'}, {id: 'test2'}], totalCount: 2})
             };
@@ -149,7 +149,7 @@ describe('LibraryDomain', () => {
     });
 
     describe('getLibraryProperties', () => {
-        test('Should return library properties', async function () {
+        test('Should return library properties', async function() {
             const libDomain = libraryDomain({
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper
             });
@@ -158,7 +158,7 @@ describe('LibraryDomain', () => {
             expect(lib).toMatchObject(mockLibrary);
         });
 
-        test('Should throw if unknown library', async function () {
+        test('Should throw if unknown library', async function() {
             const mockLibRepo: Mockify<ILibraryRepo> = {
                 getLibraries: global.__mockPromise([])
             };
@@ -170,7 +170,7 @@ describe('LibraryDomain', () => {
 
     describe('saveLibrary', () => {
         describe('Create library', () => {
-            test('Should throw if invalid ID', async function () {
+            test('Should throw if invalid ID', async function() {
                 const mockUtilsInvalidID: Mockify<IUtils> = {
                     isIdValid: jest.fn().mockReturnValue(false)
                 };
@@ -266,7 +266,7 @@ describe('LibraryDomain', () => {
             });
 
             describe('Files library', () => {
-                test('Add previews settings on create', async function () {
+                test('Add previews settings on create', async function() {
                     const mockLibRepo: Mockify<ILibraryRepo> = {
                         createLibrary: global.__mockPromise({id: 'test', system: false}),
                         updateLibrary: jest.fn(),
@@ -324,7 +324,7 @@ describe('LibraryDomain', () => {
                     );
                 });
 
-                test('Should save a new library with custom previews settings', async function () {
+                test('Should save a new library with custom previews settings', async function() {
                     const mockLibRepo: Mockify<ILibraryRepo> = {
                         createLibrary: global.__mockPromise({id: 'test', system: false}),
                         updateLibrary: jest.fn(),
@@ -402,7 +402,7 @@ describe('LibraryDomain', () => {
                     ]);
                 });
 
-                test('Should throw if a size name is already used', async function () {
+                test('Should throw if a size name is already used', async function() {
                     const mockLibRepo: Mockify<ILibraryRepo> = {
                         createLibrary: global.__mockPromise({id: 'test', system: false}),
                         updateLibrary: jest.fn(),
@@ -552,7 +552,7 @@ describe('LibraryDomain', () => {
         });
 
         describe('Update library', () => {
-            test('Should update a library', async function () {
+            test('Should update a library', async function() {
                 const mockLibRepo: Mockify<ILibraryRepo> = {
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
@@ -612,7 +612,7 @@ describe('LibraryDomain', () => {
                 );
             });
 
-            test('Should update library attributes', async function () {
+            test('Should update library attributes', async function() {
                 const mockLibRepo: Mockify<ILibraryRepo> = {
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
@@ -682,6 +682,7 @@ describe('LibraryDomain', () => {
                 expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][0].attributes).toEqual(
                     defaultAttributes.concat(['attr2'])
                 );
+                expect(mockLibRepo.saveLibraryFullTextAttributes.mock.calls[0][0].fullTextAttributes).toEqual([]);
 
                 expect(updatedLib).toMatchObject({id: 'test', system: false});
 
@@ -691,7 +692,7 @@ describe('LibraryDomain', () => {
                 );
             });
 
-            test('Should throw if unknown attributes', async function () {
+            test('Should throw if unknown attributes', async function() {
                 const mockLibRepo: Mockify<ILibraryRepo> = {
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
@@ -752,7 +753,7 @@ describe('LibraryDomain', () => {
                 expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(0);
             });
 
-            test('Should throw if unknown trees attributes in permissions conf', async function () {
+            test('Should throw if unknown trees attributes in permissions conf', async function() {
                 const mockLibRepo: Mockify<ILibraryRepo> = {
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
@@ -812,7 +813,7 @@ describe('LibraryDomain', () => {
                 expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(0);
             });
 
-            test('Should throw if attributes in recordIdentity are not binded to library', async function () {
+            test('Should throw if attributes in recordIdentity are not binded to library', async function() {
                 const mockLibRepo: Mockify<ILibraryRepo> = {
                     getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                     createLibrary: jest.fn(),
@@ -869,7 +870,7 @@ describe('LibraryDomain', () => {
                 expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(0);
             });
 
-            test('Should throw if forbidden action', async function () {
+            test('Should throw if forbidden action', async function() {
                 const mockLibRepo: Mockify<ILibraryRepo> = {
                     getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 0}),
                     createLibrary: jest.fn(),
@@ -901,7 +902,7 @@ describe('LibraryDomain', () => {
                 await expect(libDomain.saveLibrary({id: 'test'}, ctx)).rejects.toThrow(PermissionError);
             });
 
-            test('Should throw if unknown default view', async function () {
+            test('Should throw if unknown default view', async function() {
                 const mockLibRepo: Mockify<ILibraryRepo> = {
                     createLibrary: jest.fn(),
                     updateLibrary: global.__mockPromise({id: 'test', system: false}),
@@ -1008,7 +1009,7 @@ describe('LibraryDomain', () => {
 
         const libData = {id: 'test_lib', system: false, label: {fr: 'Test'}};
 
-        test('Should delete a library and return deleted library', async function () {
+        test('Should delete a library and return deleted library', async function() {
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise(libData)};
             const mockEventsManager: Mockify<IEventsManagerDomain> = {
                 sendDatabaseEvent: global.__mockPromise()
@@ -1042,7 +1043,7 @@ describe('LibraryDomain', () => {
             );
         });
 
-        test('Should throw if unknown library', async function () {
+        test('Should throw if unknown library', async function() {
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise()};
             const mockEventsManager: Mockify<IEventsManagerDomain> = {
                 sendDatabaseEvent: global.__mockPromise()
@@ -1060,7 +1061,7 @@ describe('LibraryDomain', () => {
             await expect(libDomain.deleteLibrary(libData.id, ctx)).rejects.toThrow();
         });
 
-        test('Should throw if system library', async function () {
+        test('Should throw if system library', async function() {
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise()};
             const mockEventsManager: Mockify<IEventsManagerDomain> = {
                 sendDatabaseEvent: global.__mockPromise()
@@ -1075,7 +1076,7 @@ describe('LibraryDomain', () => {
             await expect(libDomain.deleteLibrary(libData.id, ctx)).rejects.toThrow();
         });
 
-        test('Should throw if forbidden action', async function () {
+        test('Should throw if forbidden action', async function() {
             const mockEventsManager: Mockify<IEventsManagerDomain> = {
                 sendDatabaseEvent: global.__mockPromise()
             };
