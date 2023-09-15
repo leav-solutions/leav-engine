@@ -24,7 +24,7 @@ export const getFormatFromALConf = async (
             case ActionsListIOTypes.STRING:
                 return 'String';
             case ActionsListIOTypes.NUMBER:
-                return 'Int';
+                return 'Float';
             case ActionsListIOTypes.BOOLEAN:
                 return 'Boolean';
             case ActionsListIOTypes.OBJECT:
@@ -40,6 +40,7 @@ export const getFormatFromAttribute = (format: AttributeFormats): string => {
         case AttributeFormats.COLOR:
             return 'String';
         case AttributeFormats.NUMERIC:
+            return 'Float';
         case AttributeFormats.DATE:
             return 'Int';
         case AttributeFormats.BOOLEAN:
