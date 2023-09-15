@@ -7,10 +7,10 @@ import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
 import {getUserDataQuery} from 'queries/userData/getUserData';
 import {saveUserData} from 'queries/userData/saveUserData';
 import {mockApplication} from '_tests/mocks/applications';
-import {render, screen, within} from '_tests/testUtils';
+import {render,screen,within} from '_tests/testUtils';
 import * as useApplicationsPermissions from '../../hooks/useApplicationsPermissions/useApplicationsPermissions';
 import Applications from './Applications';
-import {CONSULTED_APPS_KEY, FAVORITES_APPS_KEY} from './_constants';
+import {CONSULTED_APPS_KEY,FAVORITES_APPS_KEY} from './_constants';
 
 jest.mock('hooks/useApplicationsPermissions', () => ({
     useApplicationsPermissions: () => ({
@@ -164,13 +164,13 @@ describe('Applications', () => {
 
         await screen.findByText('My first app');
 
-        expect(screen.getByText('My first app')).toBeInTheDocument();
-        expect(screen.getByText('My first description')).toBeInTheDocument();
-        expect(screen.getByText('My second app')).toBeInTheDocument();
-        expect(screen.getByText('My second description')).toBeInTheDocument();
-        expect(screen.getByText(/favorites/)).toBeInTheDocument();
-        expect(screen.getByText(/consulted/)).toBeInTheDocument();
-        expect(screen.getByText(/other_applications/)).toBeInTheDocument();
+        expect(await screen.findByText('My first app')).toBeInTheDocument();
+        expect(await screen.findByText('My first description')).toBeInTheDocument();
+        expect(await screen.findByText('My second app')).toBeInTheDocument();
+        expect(await screen.findByText('My second description')).toBeInTheDocument();
+        expect(await screen.findByText(/favorites/)).toBeInTheDocument();
+        expect(await screen.findByText(/consulted/)).toBeInTheDocument();
+        expect(await screen.findByText(/other_applications/)).toBeInTheDocument();
 
         userEvent.click(screen.getByText('My first app'));
 

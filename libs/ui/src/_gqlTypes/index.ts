@@ -1,6 +1,3 @@
-// Copyright LEAV Solutions 2017
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IPreviewScalar} from '@leav/utils'
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
@@ -29,6 +26,7 @@ export type Scalars = {
 };
 
 export type ActionConfigurationInput = {
+  error_message?: InputMaybe<Scalars['SystemTranslation']>;
   id: Scalars['ID'];
   params?: InputMaybe<Array<ActionConfigurationParamInput>>;
 };
@@ -192,6 +190,11 @@ export enum AvailableLanguage {
   en = 'en',
   fr = 'fr'
 }
+
+export type DeleteTaskInput = {
+  archive: Scalars['Boolean'];
+  id: Scalars['ID'];
+};
 
 export type EmbeddedAttributeInput = {
   description?: InputMaybe<Scalars['SystemTranslation']>;
@@ -518,6 +521,12 @@ export type RecordSortInput = {
   order: SortOrder;
 };
 
+export type RecordUpdateFilterInput = {
+  ignoreOwnEvents?: InputMaybe<Scalars['Boolean']>;
+  libraries?: InputMaybe<Array<Scalars['ID']>>;
+  records?: InputMaybe<Array<Scalars['ID']>>;
+};
+
 /**
  * Records support on both offset and cursor. Cannot use both at the same time.
  * If none is supplied, it will apply an offset 0. Cursors are always returned along the results
@@ -780,9 +789,15 @@ export type ViewValuesVersionInput = {
   treeNode: Scalars['String'];
 };
 
-export type DetailsApplicationFragment = { id: string, label: any, type: ApplicationType, description?: any | null, endpoint?: string | null, url?: string | null, color?: string | null, module?: string | null, settings?: any | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, permissions: { access_application: boolean, admin_application: boolean } };
+export type DetailsApplicationFragment = { id: string, label: any, type: ApplicationType, description?: any | null, endpoint?: string | null, url?: string | null, color?: string | null, module?: string | null, settings?: any | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, permissions: { access_application: boolean, admin_application: boolean } };
 
-export type RecordIdentityFragment = { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } };
+export type RecordIdentityCjX1ctHtayKw3UvL3SxXwpZmvJocudQk0mb3YeupLuFragment = { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } };
+
+export type RecordIdentityNoK32r5S4GHrWvJrDbbZyQxNwU9KsPBsGItOGtQz4Fragment = { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } };
+
+export type RecordIdentityGdlFf7fowe20o0yE7yTvP85fHnPz4Ad88WmUdVAuYwFragment = { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } };
+
+export type RecordIdentityFragment = RecordIdentityCjX1ctHtayKw3UvL3SxXwpZmvJocudQk0mb3YeupLuFragment | RecordIdentityNoK32r5S4GHrWvJrDbbZyQxNwU9KsPBsGItOGtQz4Fragment | RecordIdentityGdlFf7fowe20o0yE7yTvP85fHnPz4Ad88WmUdVAuYwFragment;
 
 export type AttributeDetailsLinkAttributeFragment = { reverse_link?: string | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, linked_library?: { id: string, label?: any | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null };
 
@@ -792,9 +807,9 @@ export type AttributeDetailsTreeAttributeFragment = { id: string, type: Attribut
 
 export type AttributeDetailsFragment = AttributeDetailsLinkAttributeFragment | AttributeDetailsStandardAttributeFragment | AttributeDetailsTreeAttributeFragment;
 
-export type LibraryLightFragment = { id: string, label?: any | null, icon?: { id: string, whoAmI: { id: string, preview?: IPreviewScalar | null, library: { id: string } } } | null };
+export type LibraryLightFragment = { id: string, label?: any | null, icon?: { id: string, whoAmI: { id: string, preview?: IPreviewScalar | null, library: { id: string } } } | { id: string, whoAmI: { id: string, preview?: IPreviewScalar | null, library: { id: string } } } | { id: string, whoAmI: { id: string, preview?: IPreviewScalar | null, library: { id: string } } } | null };
 
-export type LibraryDetailsFragment = { id: string, label?: any | null, behavior: LibraryBehavior, system?: boolean | null, fullTextAttributes?: Array<{ id: string, label?: any | null }> | null, attributes?: Array<{ id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null, linked_library?: { id: string, behavior: LibraryBehavior } | null } | { id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<{ id: string, label?: any | null } | { id: string, label?: any | null, linked_tree?: { id: string } | null }> } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, previewsSettings?: Array<{ label: any, description?: any | null, system: boolean, versions: { background: string, density: number, sizes: Array<{ name: string, size: number }> } }> | null };
+export type LibraryDetailsFragment = { id: string, label?: any | null, behavior: LibraryBehavior, system?: boolean | null, fullTextAttributes?: Array<{ id: string, label?: any | null }> | null, attributes?: Array<{ id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null, linked_library?: { id: string, behavior: LibraryBehavior } | null } | { id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<{ id: string, label?: any | null } | { id: string, label?: any | null, linked_tree?: { id: string } | null }> } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, previewsSettings?: Array<{ label: any, description?: any | null, system: boolean, versions: { background: string, density: number, sizes: Array<{ name: string, size: number }> } }> | null };
 
 export type LibraryAttributesLinkAttributeFragment = { id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null, linked_library?: { id: string, behavior: LibraryBehavior } | null };
 
@@ -823,7 +838,7 @@ export type GetApplicationByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetApplicationByIdQuery = { applications?: { list: Array<{ id: string, label: any, type: ApplicationType, description?: any | null, endpoint?: string | null, url?: string | null, color?: string | null, module?: string | null, settings?: any | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, permissions: { access_application: boolean, admin_application: boolean } }> } | null };
+export type GetApplicationByIdQuery = { applications?: { list: Array<{ id: string, label: any, type: ApplicationType, description?: any | null, endpoint?: string | null, url?: string | null, color?: string | null, module?: string | null, settings?: any | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, permissions: { access_application: boolean, admin_application: boolean } }> } | null };
 
 export type GetApplicationModulesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -835,7 +850,7 @@ export type SaveApplicationMutationVariables = Exact<{
 }>;
 
 
-export type SaveApplicationMutation = { saveApplication: { id: string, label: any, type: ApplicationType, description?: any | null, endpoint?: string | null, url?: string | null, color?: string | null, module?: string | null, settings?: any | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, permissions: { access_application: boolean, admin_application: boolean } } };
+export type SaveApplicationMutation = { saveApplication: { id: string, label: any, type: ApplicationType, description?: any | null, endpoint?: string | null, url?: string | null, color?: string | null, module?: string | null, settings?: any | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, permissions: { access_application: boolean, admin_application: boolean } } };
 
 export type CheckAttributeExistenceQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -859,6 +874,7 @@ export type GetAttributeByIdQueryVariables = Exact<{
 export type GetAttributeByIdQuery = { attributes?: { list: Array<{ reverse_link?: string | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, linked_library?: { id: string, label?: any | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null } | { unique?: boolean | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null } | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, linked_tree?: { id: string, label?: any | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }> } | null };
 
 export type GetAttributesQueryVariables = Exact<{ [key: string]: never; }>;
+
 
 export type GetAttributesQuery = { attributes?: { list: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, system: boolean }> } | null };
 
@@ -894,19 +910,21 @@ export type DeleteLibraryMutation = { deleteLibrary: { id: string } };
 export type GetLibrariesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetLibrariesQuery = { libraries?: { list: Array<{ id: string, label?: any | null, icon?: { id: string, whoAmI: { id: string, preview?: IPreviewScalar | null, library: { id: string } } } | null }> } | null };
+export type GetLibrariesQuery = { libraries?: { list: Array<{ id: string, label?: any | null, icon?: { id: string, whoAmI: { id: string, preview?: IPreviewScalar | null, library: { id: string } } } | { id: string, whoAmI: { id: string, preview?: IPreviewScalar | null, library: { id: string } } } | { id: string, whoAmI: { id: string, preview?: IPreviewScalar | null, library: { id: string } } } | null }> } | null };
 
 export type GetLibraryByIdQueryVariables = Exact<{
   id?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
 }>;
 
-export type GetLibraryByIdQuery = { libraries?: { list: Array<{ id: string, label?: any | null, behavior: LibraryBehavior, system?: boolean | null, fullTextAttributes?: Array<{ id: string, label?: any | null }> | null, attributes?: Array<{ id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null, linked_library?: { id: string, behavior: LibraryBehavior } | null } | { id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<{ id: string, label?: any | null } | { id: string, label?: any | null, linked_tree?: { id: string } | null }> } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, previewsSettings?: Array<{ label: any, description?: any | null, system: boolean, versions: { background: string, density: number, sizes: Array<{ name: string, size: number }> } }> | null }> } | null };
+
+export type GetLibraryByIdQuery = { libraries?: { list: Array<{ id: string, label?: any | null, behavior: LibraryBehavior, system?: boolean | null, fullTextAttributes?: Array<{ id: string, label?: any | null }> | null, attributes?: Array<{ id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null, linked_library?: { id: string, behavior: LibraryBehavior } | null } | { id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<{ id: string, label?: any | null } | { id: string, label?: any | null, linked_tree?: { id: string } | null }> } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, previewsSettings?: Array<{ label: any, description?: any | null, system: boolean, versions: { background: string, density: number, sizes: Array<{ name: string, size: number }> } }> | null }> } | null };
 
 export type SaveLibraryMutationVariables = Exact<{
   library: LibraryInput;
 }>;
 
-export type SaveLibraryMutation = { saveLibrary: { id: string, label?: any | null, behavior: LibraryBehavior, system?: boolean | null, fullTextAttributes?: Array<{ id: string, label?: any | null }> | null, attributes?: Array<{ id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null, linked_library?: { id: string, behavior: LibraryBehavior } | null } | { id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<{ id: string, label?: any | null } | { id: string, label?: any | null, linked_tree?: { id: string } | null }> } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, previewsSettings?: Array<{ label: any, description?: any | null, system: boolean, versions: { background: string, density: number, sizes: Array<{ name: string, size: number }> } }> | null } };
+
+export type SaveLibraryMutation = { saveLibrary: { id: string, label?: any | null, behavior: LibraryBehavior, system?: boolean | null, fullTextAttributes?: Array<{ id: string, label?: any | null }> | null, attributes?: Array<{ id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null, linked_library?: { id: string, behavior: LibraryBehavior } | null } | { id: string, label?: any | null, system: boolean, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<{ id: string, label?: any | null } | { id: string, label?: any | null, linked_tree?: { id: string } | null }> } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, previewsSettings?: Array<{ label: any, description?: any | null, system: boolean, versions: { background: string, density: number, sizes: Array<{ name: string, size: number }> } }> | null } };
 
 export type IsAllowedQueryVariables = Exact<{
   type: PermissionTypes;
@@ -972,7 +990,7 @@ export type UserInfoQueryVariables = Exact<{
 }>;
 
 
-export type UserInfoQuery = { me?: { id: string, login?: string | null, whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, permissions?: Array<{ name: PermissionsActions, allowed?: boolean | null }> | null };
+export type UserInfoQuery = { me?: { id: string, login?: string | null, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, permissions?: Array<{ name: PermissionsActions, allowed?: boolean | null }> | null };
 
 export const RecordIdentityFragmentDoc = gql`
     fragment RecordIdentity on Record {
@@ -980,6 +998,7 @@ export const RecordIdentityFragmentDoc = gql`
   whoAmI {
     id
     label
+    subLabel
     color
     library {
       id

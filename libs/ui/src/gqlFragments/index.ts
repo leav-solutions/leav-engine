@@ -1,0 +1,1 @@
+export {recordIdentityFragment} from './recordIdentityFragment';
