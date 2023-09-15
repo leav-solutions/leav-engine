@@ -11,48 +11,28 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     outputs:
-      test-chunks: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
-      test-chunk-ids: ${{ steps['set-test-chunk-ids'].outputs['test-chunk-ids'] }}
+      workspaces: ${{ steps.set-value.outputs.workspaces }}
+      id_workspaces: ${{ steps.set-value.outputs.id_workspaces }}
     steps:
-      - uses: actions/checkout@v2
-        with:
-          node-version: 18.x
-      - name: Use Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 18.x
-          cache: 'yarn'
-      - id: set-test-chunks
-        name: Set Chunks
-        run: echo "::set-output name=test-chunks::$(npx jest --listTests --json | jq -cM '[_nwise(length / 5 | ceil)]')"
-      - id: set-test-chunk-ids
-        name: Set Chunk IDs
-        run: echo "::set-output name=test-chunk-ids::$(echo $CHUNKS | jq -cM 'to_entries | map(.key)')"
-        env:
-          CHUNKS: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
-          
+    - name: Set value
+      id: set-value
+      run: |
+        echo "workspaces=[['apps/admin'],['apps/data-studio']]" >> "$GITHUB_OUTPUT"
+        echo "id_workspaces=[0,1]" >> "$GITHUB_OUTPUT"
+
   test:
     runs-on: ubuntu-latest
-    name: test (chunk ${{ matrix.chunk }})
-    needs:
+    name: test ${{ matrix.id_workspace }}
+    needs: 
       - setup
     strategy:
       matrix:
-        chunk: ${{ fromJson(needs.setup.outputs['test-chunk-ids']) }}
+        id_workspace: ${{ fromJson(needs.setup.outputs.id_workspaces) }}
     steps:
-      - uses: actions/checkout@v2
-        with:
-          node-version: 18.x
-      - name: Use Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 18.x
-          cache: 'yarn'
-      - name: jest
-        run: |
-          echo ${{ matrix.chunk }} 
-          echo ${{ needs.setup.outputs['test-chunk-ids']}} 
-          echo ${{ needs.setup.outputs['test-chunks'] }}
-
-        env:
-          CHUNKS: ${{ needs.setup.outputs['test-chunks'] }}
+    - name: display value
+      id: display-value
+      run: |
+        echo ${{ needs.setup.outputs.workspaces }}
+        echo ${{ needs.setup.outputs.id_workspaces }}
+      env:
+        workspace_path: ${{ needs.setup.outputs.workspaces }}
