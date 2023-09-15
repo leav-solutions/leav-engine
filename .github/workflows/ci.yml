@@ -41,5 +41,5 @@ jobs:
       - run: yarn install
       - name: run_cmd
         id: run_cmd
-        run: yarn workspace ${{ matrix.name }} run ci
+        run: yarn workspace ${{ matrix.name }} run test
         
