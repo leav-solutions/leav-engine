@@ -37,9 +37,9 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
-      - name: display value
-        id: display-value
-        run: |
-          echo ${{ matrix.name }} 
-          yarn workspace ${{ matrix.name }} run ci
+      - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
+      - run: yarn install
+      - name: run_cmd
+        id: run_cmd
+        run: yarn workspace ${{ matrix.name }} run ci
         
