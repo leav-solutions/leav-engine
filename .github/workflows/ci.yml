@@ -11,24 +11,21 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     outputs:
-      workspace: ${{ steps.step_one.outputs.workspace }}
+      workspaces: ${{ steps.set-value.outputs.workspaces }}
     steps:
-    - name: Set the value
-      id: step_one
+    - name: Set value
+      id: set-value
       run: |
-        echo "workspace=apps/admi'" >> "$GITHUB_OUTPUT" 
-
+        echo "workspaces=apps/admin'" >> "$GITHUB_OUTPUT"
 
   test:
     runs-on: ubuntu-latest
-    name: test (chunk ${{ matrix.workspace_name }})
-    needs: [setup]
-    strategy:
-      matrix:
-        workspace_name: ${{ needs.setup.outputs.workspace }}
+    name: test
+    needs: 
+      - setup
     steps:
     - name: display value
       id: display-value
-      run: echo $workspace
+      run: echo $workspace_path
       env:
-        workspace: ${{ needs.setup.outputs.workspace }}
+        workspace_path: ${{ needs.setup.outputs.workspaces }}
