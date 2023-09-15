@@ -8,7 +8,37 @@ on:
   workflow_dispatch:
 
 jobs:
-  setup:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          node-version: 18.x
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+          cache: 'yarn'
+      - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
+      - run: yarn install
+      - run: yarn lint
+
+  tscheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          node-version: 18.x
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+          cache: 'yarn'
+      - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
+      - run: yarn install
+      - run: yarn tscheck
+
+  setup-workspace-list:
     runs-on: ubuntu-latest
     outputs:
       workspaces_name: ${{ steps.set-workspace-name.outputs.workspaces_name }}
@@ -21,24 +51,18 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
-      - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
-      - run: yarn install
-      - uses: actions/cache@v2
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
       - name: Set workspace name
         id: set-workspace-name
         run: echo "workspaces_name=$(yarn workspaces list --json | jq '.name' | jq -s | jq -c)" >> "$GITHUB_OUTPUT"
 
-  test:
+  workspace-unit-tests:
     runs-on: ubuntu-latest
     name: Workspace ${{ matrix.name }}
     needs: 
-      - setup
+      - setup-workspace-list
     strategy:
       matrix:
-        name: ${{ fromJson(needs.setup.outputs.workspaces_name) }}
+        name: ${{ fromJson(needs.setup-workspace-list.outputs.workspaces_name) }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -48,13 +72,155 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
-      - uses: actions/cache@v2
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
       - name: Install dependency
         run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
-      - name: run_cmd
-        id: run_cmd
+      - name: Install node module
+        run: yarn install 
+      - name: run workspace test
+        id: run-workspace-test
         run: yarn workspace ${{ matrix.name }} run test
-        
+
+  e2e-api:
+    runs-on: ubuntu-latest
+    services:
+      arangodb:
+        image: arangodb:3.9
+        env:
+          ARANGO_NO_AUTH: 1
+        ports:
+          - "8529:8529"
+      rabbitmq:
+        image: rabbitmq:3-management-alpine
+        ports:
+          - "5672:5672"
+      redis:
+        image: redis
+        ports:
+          - "6379:6379"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          node-version: 18.x
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+          cache: 'yarn'
+      - name: Configure sysctl limits for ElasticSearch
+        run: |
+          sudo swapoff -a
+          sudo sysctl -w vm.swappiness=1
+          sudo sysctl -w fs.file-max=262144
+          sudo sysctl -w vm.max_map_count=262144
+      - name: Runs Elasticsearch
+        uses: elastic/elastic-github-actions/elasticsearch@master
+        with:
+          stack-version: 8.5.3
+          security-enabled: false
+      - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
+      - run: yarn install
+      - name: Run e2e tests
+        working-directory: ./apps/core
+        run: yarn run test:e2e:api
+        env:
+          NODE_ENV: test
+          ARANGO_URL: 'http://root:@localhost:8529'
+          AUTH_KEY: 123456789
+          AMQP_HOST: localhost
+          AMQP_PORT: 5672
+          AMQP_USERNAME: guest
+          AMQP_PWD: guest
+          APP_ROOT_PATH: ${{ github.workspace }}/apps/core
+          ELASTICSEARCH_URL: "http://localhost:9200"
+          IMPORT_DIR: ${{ github.workspace }}/imports
+          DISK_CACHE_DIRECTORY: ${{ github.workspace }}/cache
+          FILES_ROOT_PATHS: files1:${{ github.workspace }}/files
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+
+  e2e-indexation-manager:
+    runs-on: ubuntu-latest
+    services:
+      arangodb:
+        image: arangodb:3.9
+        env:
+          ARANGO_NO_AUTH: 1
+        ports:
+          - "8529:8529"
+      rabbitmq:
+        image: rabbitmq:3-management-alpine
+        ports:
+          - "5672:5672"
+      redis:
+        image: redis
+        ports:
+          - "6379:6379"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          node-version: 18.x
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+          cache: 'yarn'
+      - name: Configure sysctl limits for ElasticSearch
+        run: |
+          sudo swapoff -a
+          sudo sysctl -w vm.swappiness=1
+          sudo sysctl -w fs.file-max=262144
+          sudo sysctl -w vm.max_map_count=262144
+      - name: Runs Elasticsearch
+        uses: elastic/elastic-github-actions/elasticsearch@master
+        with:
+          stack-version: 8.5.3
+          security-enabled: false
+      - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
+      - run: yarn install
+      - name: Run e2e tests
+        working-directory: ./apps/core
+        run: yarn run test:e2e:indexationManager
+        env:
+          NODE_ENV: test
+          ARANGO_URL: 'http://root:@localhost:8529'
+          AUTH_KEY: 123456789
+          AMQP_HOST: localhost
+          AMQP_PORT: 5672
+          AMQP_USERNAME: guest
+          AMQP_PWD: guest
+          APP_ROOT_PATH: .
+          ELASTICSEARCH_URL: "http://localhost:9200"
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+
+  e2e-sync-scan:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    services:
+      rabbitmq:
+        image: rabbitmq:3-management-alpine
+        ports:
+          - "5672:5672"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          node-version: 18.x
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+          cache: 'yarn'
+      - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
+      - run: yarn install
+      - name: Run e2e tests
+        working-directory: ./apps/sync-scan
+        run: yarn run test:e2e
+        env:
+          NODE_ENV: test
+          ALLOW_FILES_LIST: ""
+          IGNORE_FILES_LIST: ""
+          APP_ROOT_PATH: .
+          AMQP_HOST: localhost
+          AMQP_PORT: 5672
+          AMQP_USERNAME: guest
+          AMQP_PWD: guest
