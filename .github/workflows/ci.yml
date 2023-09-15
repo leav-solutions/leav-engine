@@ -10,6 +10,9 @@ on:
 jobs:
   setup:
     runs-on: ubuntu-latest
+    outputs:
+      test-chunks: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
+      test-chunk-ids: ${{ steps['set-test-chunk-ids'].outputs['test-chunk-ids'] }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -19,13 +22,35 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
-      - name: Set Workspace List
-        id: set-workspaces-list
-        run: |
-          workspaces_list="$(yarn run test:list)"
-          echo "WORKSPACE LIST: $workspaces_list"
-          echo "workspaces_list=$workspaces_list" >> "$GITHUB_OUTPUT"
-      - name: Get Workspaces List
+      - id: set-test-chunks
+        name: Set Chunks
+        run: echo "::set-output name=test-chunks::[['apps/admin'],['apps/data-studio']]"
+      - id: set-test-chunk-ids
+        name: Set Chunk IDs
+        run: echo "::set-output name=test-chunk-ids::$(echo $CHUNKS | jq -cM 'to_entries | map(.key)')"
         env:
-          WORKSPACES_LIST: ${{ steps.set-workspaces-list.outputs.workspaces_list }}
-        run: echo "$WORKSPACES_LIST"
+          CHUNKS: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
+
+  test:
+    runs-on: ubuntu-latest
+    name: test (chunk ${{ matrix.chunk }})
+    needs:
+      - setup
+    strategy:
+      matrix:
+        chunk: ${{ fromJson(needs.setup.outputs['test-chunk-ids']) }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          node-version: 18.x
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+          cache: 'yarn'
+      - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
+      - run: yarn install
+      - name: jest
+        run: echo $CHUNKS
+        env:
+          CHUNKS: ${{ needs.setup.outputs['test-chunks'] }}
