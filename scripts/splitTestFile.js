@@ -16,7 +16,7 @@ const exec = util.promisify(require('child_process').exec);
         const workspaceFilter = [];
         workspacesArray.forEach((workspace) => {
             workspace = JSON.parse(workspace);
-            workspaceFilter.push(workspace.location);
+            workspaceFilter.push(workspace.name);
         });
         console.log(workspaceFilter);
     } catch (e) {
