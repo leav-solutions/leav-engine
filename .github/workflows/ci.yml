@@ -23,7 +23,7 @@ jobs:
           cache: 'yarn'
       - name: Set value
         id: set-value
-        run: echo "workspaces_name=(yarn workspaces list --json | jq '.name' | jq -s | jq -c)" >> "$GITHUB_OUTPUT"
+        run: echo "workspaces_name=$(yarn workspaces list --json | jq '.name' | jq -s | jq -c)" >> "$GITHUB_OUTPUT"
 
   test:
     runs-on: ubuntu-latest
