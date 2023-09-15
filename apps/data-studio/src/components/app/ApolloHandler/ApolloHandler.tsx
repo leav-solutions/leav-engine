@@ -101,7 +101,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
                         info = {
                             content: errorContent,
                             type: InfoType.error,
-                            channel: InfoChannel.passive
+                            channel: InfoChannel.trigger
                         };
                         break;
                 }
@@ -134,10 +134,8 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
         }
 
         if (!graphQLErrors && !networkError) {
-            const errorContent = t('error.error_occurred');
-
             const info: IInfo = {
-                content: errorContent,
+                content: t('error.error_occurred'),
                 type: InfoType.error,
                 channel: InfoChannel.trigger
             };
