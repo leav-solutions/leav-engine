@@ -9,7 +9,7 @@ import {i18n} from 'i18next';
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
-import {difference, union} from 'lodash';
+import {difference, union, intersection} from 'lodash';
 import {IUtils} from 'utils/utils';
 import {IAttribute} from '_types/attribute';
 import {IConfig} from '_types/config';
@@ -67,7 +67,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function({
+export default function ({
     'core.domain.attribute': attributeDomain = null,
     'core.domain.eventsManager': eventsManager = null,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
@@ -203,7 +203,7 @@ export default function({
 
             const fullTextAttributesToSave = dataToSave.fullTextAttributes
                 ? dataToSave.fullTextAttributes.map(fta => fta.id)
-                : currentFullTextAttributes;
+                : intersection(attributesToSave, currentFullTextAttributes); // in case an attribute is deleted while indexed
 
             const libAttributes = union(defaultAttributes, attributesToSave);
 
