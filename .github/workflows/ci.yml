@@ -11,28 +11,48 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     outputs:
-      workspaces: ${{ steps.set-value.outputs.workspaces }}
-      id_workspace: ${{ steps.set-value.outputs.id_workspaces }}
+      test-chunks: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
+      test-chunk-ids: ${{ steps['set-test-chunk-ids'].outputs['test-chunk-ids'] }}
     steps:
-    - name: Set value
-      id: set-value
-      run: |
-        echo "workspaces=[1:['apps/admin'],2:['apps/data-studio']]" >> "$GITHUB_OUTPUT"
-        echo "id_workspace=[1,2]" >> "$GITHUB_OUTPUT"
-
+      - uses: actions/checkout@v2
+        with:
+          node-version: 18.x
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+          cache: 'yarn'
+      - id: set-test-chunks
+        name: Set Chunks
+        run: echo "::set-output name=test-chunks::$(npx jest --listTests --json | jq -cM '[_nwise(length / 5 | ceil)]')"
+      - id: set-test-chunk-ids
+        name: Set Chunk IDs
+        run: echo "::set-output name=test-chunk-ids::$(echo $CHUNKS | jq -cM 'to_entries | map(.key)')"
+        env:
+          CHUNKS: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
+          
   test:
     runs-on: ubuntu-latest
-    name: test ${{ matrix.id_workspace }}
-    needs: 
+    name: test (chunk ${{ matrix.chunk }})
+    needs:
       - setup
     strategy:
       matrix:
-        id_workspace: ${{ fromJson(needs.setup.outputs.id_workspace) }}
+        chunk: ${{ fromJson(needs.setup.outputs['test-chunk-ids']) }}
     steps:
-    - name: display value
-      id: display-value
-      run: |
-        echo $workspace_path
-        echo ${{ matrix.id_workspace }}
-      env:
-        workspace_path: ${{ needs.setup.outputs.workspaces }}
+      - uses: actions/checkout@v2
+        with:
+          node-version: 18.x
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+          cache: 'yarn'
+      - name: jest
+        run: |
+          echo ${{ matrix.chunk }} 
+          echo ${{ needs.setup.outputs['test-chunk-ids']}} 
+          echo ${{ needs.setup.outputs['test-chunks'] }}
+
+        env:
+          CHUNKS: ${{ needs.setup.outputs['test-chunks'] }}
