@@ -11,7 +11,7 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     outputs:
-      workspaces_name: ${{ steps.set-value.outputs.workspaces_name }}
+      workspaces_name: ${{ steps.set-workspace-name.outputs.workspaces_name }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -21,8 +21,13 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
-      - name: Set value
-        id: set-value
+      - run: yarn install
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      - name: Set workspace name
+        id: set-workspace-name
         run: echo "workspaces_name=$(yarn workspaces list --json | jq '.name' | jq -s | jq -c)" >> "$GITHUB_OUTPUT"
 
   test:
@@ -42,8 +47,12 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
-      - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
-      - run: yarn install
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      - name: Install dependency
+        run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
       - name: run_cmd
         id: run_cmd
         run: yarn workspace ${{ matrix.name }} run test
