@@ -21,7 +21,7 @@ jobs:
           cache: 'yarn'
       - name: Set workspace list
         id: set-workspace-list
-        run: echo "workspace_list=$(yarn workspace list --json)" >> "$GITHUB_OUTPUT"
+        run: echo "workspace_list=$(yarn workspaces list --json)" >> "$GITHUB_OUTPUT"
       - name: Get workspaces_list
         env:
           WORKSPACE_LIST: ${{ steps.set-workspace-list.outputs.workspace_list }}
