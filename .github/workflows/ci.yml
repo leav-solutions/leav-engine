@@ -32,5 +32,5 @@ jobs:
       run: |
         echo ${{ matrix.path_workspace }} 
         pwd
-        ll
+        ls -l
         
