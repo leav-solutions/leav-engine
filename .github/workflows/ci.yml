@@ -24,9 +24,9 @@ jobs:
       - name: Set value
         id: set-value
         run: |
-          echo "test=$(yarn workspaces list --json | jq '.name' | jq -s)"
+          echo "test=$(yarn workspaces list --json | jq '.name')"
           echo $test 
-          echo "workspaces_name=[admin]" >> "$GITHUB_OUTPUT"
+          echo "workspaces_name=[$test]" >> "$GITHUB_OUTPUT"
 
   test:
     runs-on: ubuntu-latest
