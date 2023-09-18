@@ -1,0 +1,12 @@
+{
+    "folders": [
+      {
+        "path": "apps",
+        "name": "apps"
+      },
+      {
+        "path": "libs",
+        "name": "libs"
+      }
+    ]
+  }

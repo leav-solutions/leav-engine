@@ -1,0 +1,240 @@
+version: "3.4"
+# Check https://github.com/leav-solutions/leav-engine/wiki/Configuration for more details about services configuration
+
+##### Common properties #####
+x-message-broker-image: &message_broker_image "rabbitmq:3.9-management-alpine"
+x-traefik-image: &traefik_image "traefik:2.6"
+x-redis-image: &redis_image "redis"
+x-arango-image: &arango_image "arangodb:3.10"
+
+# Files folder
+x-mount_point-files: &mount_point-files ./files/:/files
+x-mount_point-previews: &mount_point-previews ./previews/:/results
+x-mount_point-exports: &mount_point-exports ./exports:/exports
+x-mount_point-imports: &mount_point-imports ./imports:/imports
+
+# Lists of allowed and ignored files
+# Use ", " characters as separators between files
+# You can use glob pattern (https://github.com/isaacs/node-glob#readme)
+x-allow-files-list: &allow-list ""
+x-ignore-files-list: &ignore-list ""
+
+x-env-core: &env-core
+  NODE_ENV: development
+  ARANGO_URL: http://root:@arangodb:8529
+  DB_NAME: leav_core_prod
+  AUTH_KEY: 999999
+  SERVER_HOST: "0.0.0.0"
+  SERVER_PORT: 4001
+  SERVER_PUBLIC_URL: http://core.leav.localhost
+  SERVER_WS_URL: ws://core.leav.localhost
+  SERVER_UPLOAD_LIMIT: "15000mb"
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+  LOG_TRANSPORT: "console"
+  FILES_ROOT_PATHS: files1:/files
+  MAILER_HOST: <your-mailer-host> # Specify these variables to enable email sending
+  MAILER_AUTH_USER: <email>
+  MAILER_AUTH_PWD: <password>
+  SERVER_ADMIN_LOGIN: admin
+  SERVER_ADMIN_PASSWORD: admin
+  SERVER_ADMIN_EMAIL: admin@example.com
+  SERVER_SUPPORT_EMAIL: support@example.com
+
+x-env-amqp: &env-amqp
+  AMQP_PROTOCOL: 'amqp'
+  AMQP_HOST: message-broker
+  AMQP_USERNAME: leav
+  AMQP_PWD: LeavEngine!
+  AMQP_PORT: 5672
+
+x-env-automate-scan: &env-automate-scan
+  ALLOW_FILES_LIST: *allow-list
+  IGNORE_FILES_LIST: *ignore-list
+  NODE_ENV: production
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+  ROOT_PATH: /files
+  ROOT_KEY: files1
+
+x-env-sync-scan: &env-sync-scan
+  ALLOW_FILES_LIST: *allow-list
+  IGNORE_FILES_LIST: *ignore-list
+  FILESYSTEM_ABSOLUTE_PATH: /files
+  GRAPHQL_URI: http://core:4001/graphql
+  GRAPHQL_API_KEY: ${GRAPHQL_API_KEY}
+  APP_ROOT_PATH: /app/apps/sync-scan
+
+x-env-preview-generator: &env-preview-generator
+  NODE_ENV: production
+  INPUT_ROOT_PATH: /files
+  OUTPUT_ROOT_PATH: /results
+  ICC_PATH: /app/apps/preview-generator/profile/
+
+############################
+
+services:
+  core:
+    image: leavengine/core:latest
+    stdin_open: true
+    restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.core.rule=Host(`core.leav.localhost`)
+      - traefik.http.services.core.loadbalancer.server.port=4001
+      - traefik.http.routers.core.entrypoints=web
+    environment:
+      <<: [*env-core, *env-amqp]
+    volumes:
+      - *mount_point-files
+      - *mount_point-previews
+      - *mount_point-exports
+      - *mount_point-imports
+    command: [
+        sh,
+        -c,
+        "/app/scripts/wait-for-it.sh message-broker:5672 -t 1000 -- /app/scripts/wait-for-it.sh arangodb:8529 -t 1000 -- yarn run db:migrate && yarn start --server",
+      ]
+
+  indexation-manager:
+    image: leavengine/core:latest
+    stdin_open: true
+    restart: always
+    environment:
+      <<: [*env-core, *env-amqp]
+    command: [
+        sh,
+        -c,
+        "/app/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn start --indexationManager",
+      ]
+
+  tasks-manager-master:
+    image: leavengine/core:latest
+    stdin_open: true
+    restart: always
+    environment:
+      <<: [*env-core, *env-amqp]
+    command: [
+        sh,
+        -c,
+        "/app/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn start --tasksManager=master",
+      ]
+    volumes:
+      - *mount_point-exports
+      - *mount_point-imports
+
+  tasks-manager-worker:
+    image: leavengine/core:latest
+    restart: always
+    environment:
+      <<: [*env-core, *env-amqp]
+    command: [
+        sh,
+        -c,
+        "/app/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn start --tasksManager=worker",
+      ]
+    volumes:
+      - *mount_point-exports
+      - *mount_point-imports
+
+  files-manager:
+    image: leavengine/core:latest
+    stdin_open: true
+    restart: always
+    environment:
+      <<: [*env-core, *env-amqp]
+    volumes:
+      - *mount_point-files
+      - *mount_point-previews
+    command: [
+        sh,
+        -c,
+        "/app/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn start --filesManager",
+      ]
+
+  automate-scan:
+    image: leavengine/automate-scan:latest
+    restart: always
+    environment:
+      <<: [*env-automate-scan, *env-amqp]
+    volumes:
+      - *mount_point-files
+    command: [
+        sh,
+        -c,
+        "/app/scripts/wait-for-it.sh message-broker:5672 -t 1000 -- yarn start",
+      ]
+
+  preview-generator:
+    image: leavengine/preview-generator:latest
+    restart: always
+    environment:
+      <<: [*env-amqp, *env-preview-generator]
+    volumes:
+      - *mount_point-files
+      - *mount_point-previews
+
+  # Run "docker-compose run --rm sync-scan yarn start" to make the scan
+  # You need to have a GRAPHQL_API_KEY defined as environment variables (eg. in a .env file)
+  sync-scan:
+    image: leavengine/sync-scan:latest
+    labels:
+      - traefik.enable=true
+    depends_on:
+      - core
+    environment:
+      <<: [*env-sync-scan, *env-amqp]
+    volumes:
+      - *mount_point-files
+
+  # Proxy
+  traefik:
+    image: *traefik_image
+    command:
+      - "--api.insecure"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8000:8000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  arangodb:
+    image: *arango_image
+    environment:
+      ARANGO_NO_AUTH: 1
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.arangodb.rule=Host(`arango.leav.localhost`)
+      - traefik.http.services.arangodb.loadbalancer.server.port=8529
+    volumes:
+      - arango_data_prod:/var/lib/arangodb3
+
+  message-broker:
+    image: *message_broker_image
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: leav
+      RABBITMQ_DEFAULT_PASS: LeavEngine!
+    ports:
+      - "4369:4369"
+      - "5671:5671"
+      - "5672:5672"
+      - "15672:15672"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.message-broker.rule=Host(`rabbitmq.leav.localhost`)
+      - traefik.http.services.message-broker.loadbalancer.server.port=5672
+
+  redis:
+    image: *redis_image
+    restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.redis.loadbalancer.server.port=6379
+
+volumes:
+  arango_data_prod:
+    driver: local
