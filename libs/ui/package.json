@@ -10,7 +10,7 @@
     "tscheck": "tsc --noEmit -p .",
     "tscheck:watch": "tsc -w --noEmit -p .",
     "test": "jest",
-    "test:ci": "jest --debug --maxWorkers=100%",
+    "test:ci": "jest --maxWorkers=2",
     "create_comp": "scripts/createComponent.js"
   },
   "main": "dist/index",

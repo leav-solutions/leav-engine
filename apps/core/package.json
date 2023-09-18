@@ -14,7 +14,7 @@
     "test": "jest -c jest-unit-config.json",
     "test:ci": "jest -c jest-unit-config.json",
     "test:e2e": "npm run test:e2e:api",
-    "test:e2e:api": "NODE_ENV=test jest -c jest-e2e-api-config.json --forceExit --detectOpenHandles",
+    "test:e2e:api": "NODE_ENV=test jest -c jest-e2e-api-config.json --maxWorkers=2 --forceExit --detectOpenHandles",
     "test:e2e:filesManager": "NODE_ENV=test jest -c jest-e2e-filesManager-config.json --forceExit --detectOpenHandles",
     "test:e2e:indexationManager": "NODE_ENV=test jest -c jest-e2e-indexationManager-config.json --forceExit --detectOpenHandles",
     "lint": "eslint --fix src/",
