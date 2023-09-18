@@ -36,7 +36,9 @@ export const handleCreateEvent = async (
     // Preview and Previews status
     const {previewsStatus, previews} = getPreviewsDefaultData(systemPreviewsSettings);
 
-    const fileMetadata = await extractFileMetadata(scanMsg.pathAfter, scanMsg.rootKey, deps.config);
+    const fileMetadata = !scanMsg.isDirectory
+        ? await extractFileMetadata(scanMsg.pathAfter, scanMsg.rootKey, deps.config)
+        : null;
 
     if (record) {
         try {
