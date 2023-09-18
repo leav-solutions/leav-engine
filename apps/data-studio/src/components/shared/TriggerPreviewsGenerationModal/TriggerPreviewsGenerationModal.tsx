@@ -62,8 +62,9 @@ function TriggerPreviewsGenerationModal({
 
                 return {
                     title: localizedTranslation(s.label, lang),
-                    key: localizedTranslation(s.label, lang),
-                    children
+                    key: `${localizedTranslation(s.label, lang)}_preview`, //We add "_preview" to differentiate with version keys, which may be identical.
+                    children,
+                    disabled: !children.length
                 };
             });
 
