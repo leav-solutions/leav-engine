@@ -12,6 +12,7 @@
     "start:dev": "ts-node-dev --inspect=0.0.0.0:9229 --respawn src/ --server",
     "test:watch": "jest -c jest-unit-config.json --watch",
     "test": "jest -c jest-unit-config.json",
+    "test:ci": "jest -c jest-unit-config.json",
     "test:e2e": "npm run test:e2e:api",
     "test:e2e:api": "NODE_ENV=test jest -c jest-e2e-api-config.json --forceExit --detectOpenHandles",
     "test:e2e:filesManager": "NODE_ENV=test jest -c jest-e2e-filesManager-config.json --forceExit --detectOpenHandles",

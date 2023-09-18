@@ -4,6 +4,7 @@
   "description": "Module to load project configuration, allowing config overrides based on environment",
   "scripts": {
     "test": "jest -c jest-config.json",
+    "test:ci": "jest -c jest-config.json",
     "prepublishOnly": "npm run build",
     "build": "tsc --build",
     "tscheck": "tsc --noEmit -p .",

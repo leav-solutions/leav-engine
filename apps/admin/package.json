@@ -44,6 +44,7 @@
         "start": "vite",
         "build": "vite build",
         "test": "jest",
+        "test:ci": "jest",
         "lint": "eslint src/",
         "gen_types": "apollo codegen:generate ./src/_gqlTypes --target=typescript --no-addTypename --outputFlat --passthroughCustomScalars --excludes='**/*.test.*' && cd ../../ && yarn prettier --write apps/admin/src/_gqlTypes",
         "create_comp": "scripts/createComponent.js",

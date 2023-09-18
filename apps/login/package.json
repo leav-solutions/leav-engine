@@ -43,6 +43,7 @@
     "start": "vite",
     "build": "vite build",
     "test": "jest",
+    "test:ci": "jest",
     "tscheck": "tsc --noEmit -p .",
     "tscheck:watch": "tsc -w --noEmit -p ."
   },

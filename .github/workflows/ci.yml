@@ -30,12 +30,12 @@ jobs:
       - name: install node module
         run: yarn install
 
-  setup-workspace-list:
+  setup-workspaces-list-name:
     runs-on: ubuntu-latest
     needs:
       - install
     outputs:
-      workspaces_name: ${{ steps.set-workspace-name.outputs.workspaces_name }}
+      workspaces_name: ${{ steps.set-workspaces-list-name.outputs.workspaces_name }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -45,18 +45,18 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
-      - name: Set workspace name
-        id: set-workspace-name
+      - name: Set workspaces list name
+        id: set-workspaces-list-name
         run: echo "workspaces_name=$(yarn workspaces list --json | jq '.name' | jq -s | jq -c)" >> "$GITHUB_OUTPUT"
 
   workspace-unit-tests:
     runs-on: ubuntu-latest
     name: Workspace ${{ matrix.name }}
     needs: 
-      - setup-workspace-list
+      - setup-workspaces-list-name
     strategy:
       matrix:
-        name: ${{ fromJson(needs.setup-workspace-list.outputs.workspaces_name) }}
+        name: ${{ fromJson(needs.setup-workspaces-list-name.outputs.workspaces_name) }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -73,4 +73,4 @@ jobs:
           key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
       - name: run workspace test
         id: run-workspace-test
-        run: yarn workspace ${{ matrix.name }} run test
+        run: yarn workspace ${{ matrix.name }} run test:ci

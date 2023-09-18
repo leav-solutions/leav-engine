@@ -9,6 +9,7 @@
         "build": "tsc -b tsconfig.build.json",
         "test:watch": "jest -c jest-unit-config.json --watch",
         "test": "jest -c jest-unit-config.json",
+        "test:ci": "jest -c jest-unit-config.json",
         "test:integration": "jest -c jest-integration-config.json",
         "lint": "tslint --fix -p .",
         "prettier": "prettier --write 'src/**/*.ts'",
