@@ -3,6 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {ThemeConfig} from 'antd/lib/config-provider/context';
+import {KitApp} from 'aristid-ds';
+import {ComponentProps} from 'react';
 
 export * from './types';
 
@@ -10,6 +12,7 @@ export * from './types';
 const baseTextColor = '#000000';
 export const themeVars = {
     primaryColor: '#0f97e4',
+    primaryColorLighter: '#37b2f0',
     defaultBg: '#ffffff',
     invertedDefaultBg: '#000000',
     defaultTextColor: baseTextColor,
@@ -55,6 +58,53 @@ export const customTheme: ThemeConfig = {
         Table: {
             colorBgContainer: 'transparent', // To avoid issues with border-radius on footer
             colorFillAlter: themeVars.lightBg
+        }
+    }
+};
+
+export const dsTheme: ComponentProps<typeof KitApp>['customTheme'] = {
+    general: {
+        colors: {
+            primary: {
+                blue100: customTheme.token.colorPrimary,
+                blue200: customTheme.token.colorPrimary,
+                blue300: customTheme.token.colorPrimary,
+                blue400: customTheme.token.colorPrimary,
+                blue500: customTheme.token.colorPrimary,
+                blue600: customTheme.token.colorPrimary,
+                blue700: customTheme.token.colorPrimary
+            }
+        }
+    },
+    components: {
+        Button: {
+            primary: {
+                colors: {
+                    background: {
+                        active: customTheme.token.colorPrimary,
+                        default: customTheme.token.colorPrimary,
+                        hover: themeVars.primaryColorLighter
+                    },
+                    border: {
+                        default: customTheme.token.colorPrimary,
+                        hover: themeVars.primaryColorLighter
+                    }
+                }
+            },
+            default: {
+                colors: {
+                    border: {
+                        hover: customTheme.token.colorPrimary
+                    }
+                }
+            }
+        },
+        Input: {
+            colors: {
+                border: {
+                    hover: customTheme.token.colorPrimary
+                }
+            }
         }
     }
 };
