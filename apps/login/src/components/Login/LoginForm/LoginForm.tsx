@@ -2,7 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, LockOutlined, UserOutlined} from '@ant-design/icons';
-import {Alert, Button, Card, Form, Input, Spin} from 'antd';
+import {Alert, Card, Form, Spin} from 'antd';
+import {KitButton, KitInput} from 'aristid-ds';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NavLink} from 'react-router-dom';
@@ -49,9 +50,8 @@ const LoginForm = ({onSubmit, loading, loginError}: ILoginFormProps): JSX.Elemen
             >
                 <Form onFinish={_processLogin}>
                     <Form.Item>
-                        <Input
+                        <KitInput
                             prefix={<UserOutlined />}
-                            type="text"
                             name="login"
                             aria-label={t('login.login')}
                             placeholder={t('login.login')}
@@ -61,9 +61,8 @@ const LoginForm = ({onSubmit, loading, loginError}: ILoginFormProps): JSX.Elemen
                         />
                     </Form.Item>
                     <Form.Item>
-                        <Input
+                        <KitInput.Password
                             prefix={<LockOutlined />}
-                            type="password"
                             name="password"
                             aria-label={t('login.password')}
                             placeholder={t('login.password')}
@@ -93,17 +92,10 @@ const LoginForm = ({onSubmit, loading, loginError}: ILoginFormProps): JSX.Elemen
                         </Form.Item>
                     )}
                     {!loading && (
-                        <Form.Item>
-                            <Button
-                                size="large"
-                                type="primary"
-                                loading={loading}
-                                disabled={loading}
-                                htmlType="submit"
-                                block
-                            >
+                        <Form.Item style={{textAlign: 'center'}}>
+                            <KitButton type="primary" loading={loading} disabled={loading} htmlType="submit">
                                 {t('login.submit')}
-                            </Button>
+                            </KitButton>
                         </Form.Item>
                     )}
                     <Form.Item>

@@ -2,7 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CheckOutlined, CloseOutlined, SendOutlined} from '@ant-design/icons';
-import {Alert, Button, Card, Form, Input, Space, Spin} from 'antd';
+import {Alert, Card, Form, Space, Spin} from 'antd';
+import {KitButton, KitInput, KitTypography} from 'aristid-ds';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useHistory} from 'react-router-dom';
@@ -58,7 +59,7 @@ const ForgotPasswordForm = ({
                 headStyle={{textAlign: 'center', padding: '1rem'}}
                 style={{width: '30rem'}}
             >
-                <h3>{t('forgotPassword.header')}</h3>
+                <KitTypography.Title level={3}>{t('forgotPassword.header')}</KitTypography.Title>
                 <Form onFinish={_processForgotPassword}>
                     <Form.Item
                         hasFeedback
@@ -68,7 +69,7 @@ const ForgotPasswordForm = ({
                             {required: true, message: t('forgotPassword.email_required')}
                         ]}
                     >
-                        <Input
+                        <KitInput
                             aria-label={t('forgotPassword.email')}
                             placeholder={t('forgotPassword.email')}
                             autoFocus
@@ -110,14 +111,14 @@ const ForgotPasswordForm = ({
                     {!loading && (
                         <Space wrap style={{float: 'right'}} direction="horizontal">
                             <Form.Item>
-                                <Button onClick={_handleCancel} type="default" block>
+                                <KitButton onClick={_handleCancel} type="default" block>
                                     {t('forgotPassword.cancel')}
-                                </Button>
+                                </KitButton>
                             </Form.Item>
                             <Form.Item>
-                                <Button type="primary" htmlType="submit" icon={<SendOutlined />} block>
+                                <KitButton type="primary" htmlType="submit" icon={<SendOutlined />} block>
                                     {t('forgotPassword.submit')}
-                                </Button>
+                                </KitButton>
                             </Form.Item>
                         </Space>
                     )}
