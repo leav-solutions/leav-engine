@@ -9,6 +9,7 @@
         "test:e2e": "NODE_ENV=test jest -c jest-e2e.config.json --forceExit --detectOpenHandles",
         "test": "NODE_ENV=test jest -c jest-unit.config.json",
         "test:ci": "NODE_ENV=test jest -c jest-unit.config.json",
+        "test:commit": "NODE_ENV=test jest -c jest-unit.config.json --maxWorkers=50% --findRelatedTests ",
         "build": "tsc -b tsconfig.build.json",
         "tscheck": "tsc --noEmit -p .",
         "tscheck:watch": "tsc -w --noEmit -p ."

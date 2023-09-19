@@ -13,6 +13,7 @@
     "test:watch": "jest -c jest-unit-config.json --watch",
     "test": "jest -c jest-unit-config.json",
     "test:ci": "jest -c jest-unit-config.json",
+    "test:commit": "jest -c jest-unit-config.json --maxWorkers=50% --findRelatedTests ",
     "test:e2e": "npm run test:e2e:api",
     "test:e2e:api": "NODE_ENV=test jest -c jest-e2e-api-config.json --maxWorkers=2 --forceExit --detectOpenHandles",
     "test:e2e:filesManager": "NODE_ENV=test jest -c jest-e2e-filesManager-config.json --forceExit --detectOpenHandles",

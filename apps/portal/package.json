@@ -44,6 +44,7 @@
     "build": "vite build",
     "test": "jest",
     "test:ci": "jest",
+    "test:commit": "jest --maxWorkers=50% --findRelatedTests ",
     "gen_types": "apollo codegen:generate ./src/_gqlTypes --target=typescript --no-addTypename --outputFlat --passthroughCustomScalars --excludes='**/*.test.*' && cd ../../ && yarn prettier --write apps/portal/src/_gqlTypes",
     "create_comp": "scripts/createComponent.js",
     "tscheck": "tsc --noEmit -p .",

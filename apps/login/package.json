@@ -44,6 +44,7 @@
     "build": "vite build",
     "test": "jest",
     "test:ci": "jest",
+    "test:commit": "jest --maxWorkers=50% --findRelatedTests ",
     "tscheck": "tsc --noEmit -p .",
     "tscheck:watch": "tsc -w --noEmit -p ."
   },
