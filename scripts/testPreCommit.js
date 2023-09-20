@@ -2,6 +2,7 @@
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 const {spawn} = require('child_process');
+const getSortListOfFiles = require('./helpers/getSortListOfFiles');
 
 /**
  * This script will run test on changed projects.
@@ -13,37 +14,25 @@ const {spawn} = require('child_process');
         if (stderr) {
             process.exit(1);
         }
-        const listFileChanged = stdout.split('\n');
-        const index = 0;
+        const [workspaceList,sortListFilePath] = await getSortListOfFiles(stdout.split('\n'));
         //run tests related to change
-        runCommand(listFileChanged,index);
+        runCommand(sortListFilePath,workspaceList);
     } catch (e) {
         console.error(e);
         process.exit(1);
     }
 })();
 
-const runCommand = (listFilePath,index) => {
-    const filePath = listFilePath[index];
-    const rootPath = `${__dirname}/..`;
-    const extensionList = ['ts','js','tsx','jsx'];
-
-    const [rootFolder, projectFolder] = filePath.split('/');
-    const [fileName, ...fileExtension] = filePath.split('.');
-    let checkRelatedFiles = false;
-
-    for(const extension of extensionList){
-        if(fileExtension.includes(extension)){
-            checkRelatedFiles = true;
-            break;
-        }
-    }
-
-    if(rootFolder && projectFolder && checkRelatedFiles){
-        const packageJson = require(`${rootPath}/${rootFolder}/${projectFolder}/package.json`);
-        const projectName = packageJson.name;
-        const workspaceName = rootFolder + '/' + projectFolder + '/';
-        const file = filePath.replace(workspaceName,'');
+/**
+ * Recursive function to run test from workspace
+ *
+ * @param {object[]} listFilePath
+ * @param {string[]} workspaceList
+ */
+const runCommand = (listFilePath,workspaceList) => {
+    if(workspaceList.length > 0){
+        const projectName = workspaceList.shift();
+        const file =  listFilePath[projectName];
         const runProcess = spawn(
             'yarn',
             ['workspace', projectName, 'run', 'test:commit', file],
@@ -52,8 +41,7 @@ const runCommand = (listFilePath,index) => {
             }
         );
         runProcess.on('exit', code => {
-            index = index + 1;
-            runCommand(listFilePath,index);
+            runCommand(listFilePath,workspaceList);
         });
     }
 };

@@ -40,7 +40,7 @@
         "build": "vite build",
         "test": "jest",
         "test:ci": "jest --maxWorkers=2",
-        "test:commit": "jest --maxWorkers=50% --findRelatedTests ",
+        "test:commit": "jest --maxWorkers=50% --findRelatedTests",
         "graphql-generate": "graphql-codegen --config ./codegen.ts",
         "gen_types": "apollo codegen:generate --target=typescript --no-addTypename --outputFlat --excludes='**/*.test.*' --passthroughCustomScalars  ./src/_gqlTypes && cd ../../ && yarn prettier --write apps/data-studio/src/_gqlTypes ",
         "create_comp": "scripts/createComponent.js",
