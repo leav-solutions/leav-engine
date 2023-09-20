@@ -30,10 +30,10 @@ module.exports = async (listOfFiles) => {
             const file = filePath.replace(workspaceName,'');
 
             if(!list[projectName]){
-                list[projectName] = '';
+                list[projectName] = [];
                 workspaces.push(projectName);
             }
-            list[projectName] = list[projectName].concat(' ',file);
+            list[projectName].push(file);
         }
     }
     return [workspaces,list];

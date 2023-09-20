@@ -32,10 +32,14 @@ const getSortListOfFiles = require('./helpers/getSortListOfFiles');
 const runCommand = (listFilePath,workspaceList) => {
     if(workspaceList.length > 0){
         const projectName = workspaceList.shift();
-        const file =  listFilePath[projectName];
+        const fileList =  listFilePath[projectName];
+        const runProcessArgs = ['workspace', projectName, 'run', 'test:commit'];
+        for(const file of fileList){
+            runProcessArgs.push(file);
+        }
         const runProcess = spawn(
             'yarn',
-            ['workspace', projectName, 'run', 'test:commit', file],
+            runProcessArgs,
             {
                 stdio: 'inherit'
             }
