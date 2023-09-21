@@ -2,7 +2,6 @@
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 const {spawn} = require('child_process');
-const getSortListOfFiles = require('./helpers/getSortListOfFiles');
 
 /**
  * This script will run test on changed projects.
