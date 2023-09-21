@@ -11,7 +11,7 @@
     "tscheck:watch": "tsc -w --noEmit -p .",
     "test": "jest",
     "test:ci": "jest --maxWorkers=2",
-    "test:commit": "jest --maxWorkers=50% --findRelatedTests",
+    "test:commit": "jest --maxWorkers=50% --onlyChanged",
     "create_comp": "scripts/createComponent.js"
   },
   "main": "dist/index",
