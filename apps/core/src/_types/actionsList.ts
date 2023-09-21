@@ -1,9 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IAttribute} from './attribute';
 import {IQueryInfos} from '_types/queryInfos';
+import {IAttribute} from './attribute';
 import {ISystemTranslation} from './systemTranslation';
+import {IValue} from './value';
 
 export enum ActionsListEvents {
     SAVE_VALUE = 'saveValue',
@@ -62,4 +63,11 @@ export interface IActionsListSavedAction {
     is_system?: boolean;
     params?: Array<{name: string; value: string}>;
     error_message?: ISystemTranslation;
+}
+
+export interface IRunActionsListCtx extends IQueryInfos {
+    attribute?: IAttribute;
+    recordId?: string;
+    library?: string;
+    value?: IValue;
 }

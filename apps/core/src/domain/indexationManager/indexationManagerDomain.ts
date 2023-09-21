@@ -6,7 +6,8 @@ import * as amqp from 'amqplib';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IFindRecordParams, IRecordDomain} from 'domain/record/recordDomain';
+import {IRecordDomain} from 'domain/record/recordDomain';
+import {IFindRecordParams} from 'domain/record/_types';
 import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {i18n} from 'i18next';
 import Joi from 'joi';
@@ -46,7 +47,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.domain.record': recordDomain = null,

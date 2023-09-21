@@ -32,6 +32,7 @@
         "INVALID_MAPPING": "Mapping incorrect",
         "INVALID_PERMISSIONS_CONF_LIBRARIES": "Ces bibliothèques ne sont pas liées à cet arbre: {{libraries}}",
         "INVALID_SORT_FIELDS": "Les champs de tri ne sont pas valides",
+        "INVALID_VALUES": "Valeurs non valides",
         "INVALID_VALUES_VERSIONS_SETTINGS_BAD_NODE_ID": "L'élement {{nodeId}} ne fait pas partir de l'arbre {{treeId}}",
         "INVALID_VARIABLE_FUNCTION": "Nom de fonction de variable inconnu : {{functionName}}",
         "INVALID_VERSION": "Version non valide: ",

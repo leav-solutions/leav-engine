@@ -4,7 +4,8 @@
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IRecordDomain, IRecordFilterLight} from 'domain/record/recordDomain';
+import {IRecordDomain} from 'domain/record/recordDomain';
+import {IRecordFilterLight} from 'domain/record/_types';
 import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';

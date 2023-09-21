@@ -113,20 +113,20 @@ describe('Trees', () => {
         // Create some records
         const resCreaRecord = await makeGraphQlCall(`
                 mutation {
-                    r1: createRecord(library: "users") {id},
-                    r2: createRecord(library: "users") {id},
-                    r3: createRecord(library: "users") {id},
-                    r4: createRecord(library: "users") {id},
-                    r5: createRecord(library: "users") {id},
-                    r6: createRecord(library: "users") {id}
+                    r1: createRecord(library: "users") { record {id} },
+                    r2: createRecord(library: "users") { record {id} },
+                    r3: createRecord(library: "users") { record {id} },
+                    r4: createRecord(library: "users") { record {id} },
+                    r5: createRecord(library: "users") { record {id} },
+                    r6: createRecord(library: "users") { record {id} }
                 }
             `);
-        const recordId1 = resCreaRecord.data.data.r1.id;
-        const recordId2 = resCreaRecord.data.data.r2.id;
-        const recordId3 = resCreaRecord.data.data.r3.id;
-        const recordId4 = resCreaRecord.data.data.r4.id;
-        const recordId5 = resCreaRecord.data.data.r5.id;
-        const recordId6 = resCreaRecord.data.data.r6.id;
+        const recordId1 = resCreaRecord.data.data.r1.record.id;
+        const recordId2 = resCreaRecord.data.data.r2.record.id;
+        const recordId3 = resCreaRecord.data.data.r3.record.id;
+        const recordId4 = resCreaRecord.data.data.r4.record.id;
+        const recordId5 = resCreaRecord.data.data.r5.record.id;
+        const recordId6 = resCreaRecord.data.data.r6.record.id;
 
         // Add records to the tree
         const resAdd = await makeGraphQlCall(`mutation {

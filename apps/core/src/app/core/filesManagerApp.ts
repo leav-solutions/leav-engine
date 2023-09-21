@@ -5,7 +5,7 @@ import {FileType} from '@leav/utils';
 import {IAuthApp} from 'app/auth/authApp';
 import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {IRecordFilterLight} from 'domain/record/recordDomain';
+import {IRecordFilterLight} from 'domain/record/_types';
 import express, {Express, NextFunction, Response} from 'express';
 import {withFilter} from 'graphql-subscriptions';
 import {FileUpload} from 'graphql-upload';
@@ -46,7 +46,7 @@ interface ICreateDirectoryParams {
     nodeId: string;
 }
 
-export default function({
+export default function ({
     'core.domain.filesManager': filesManagerDomain = null,
     'core.app.helpers.initQueryContext': initQueryContext,
     'core.app.auth': authApp = null,
@@ -101,13 +101,16 @@ export default function({
                         doesFileExistAsChild(treeId: ID!, parentNode: ID, filename: String!): Boolean
                     }
 
+
+
                     extend type Mutation {
                         # Force previews generation for the given records. If filters is specified, it will perform a search applying these filters and generate previews for results. If both filters and recordIds are specified, filters will be ignored. If failedOnly is true, only failed previews will be generated.
                         forcePreviewsGeneration(
                             libraryId: ID!,
                             recordIds: [ID!],
                             filters: [RecordFilterInput],
-                            failedOnly: Boolean
+                            failedOnly: Boolean,
+                            previewVersionSizeNames: [String!]
                         ): Boolean!
                         upload(library: String!, nodeId: String!, files: [FileInput!]!): [UploadData!]!
                         createDirectory(library: String!, nodeId: String!, name: String!): Record!
@@ -161,12 +164,14 @@ export default function({
                                 libraryId,
                                 recordIds,
                                 filters,
-                                failedOnly
+                                failedOnly,
+                                previewVersionSizeNames
                             }: {
                                 libraryId: string;
-                                recordIds: string[];
-                                filters: IRecordFilterLight[];
-                                failedOnly: boolean;
+                                recordIds?: string[];
+                                filters?: IRecordFilterLight[];
+                                failedOnly?: boolean;
+                                previewVersionSizeNames?: string[];
                             },
                             ctx: IQueryInfos
                         ): Promise<boolean> {
@@ -175,6 +180,7 @@ export default function({
                                 recordIds,
                                 filters,
                                 failedOnly,
+                                previewVersionSizeNames,
                                 ctx
                             });
                         }

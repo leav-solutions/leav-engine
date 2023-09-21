@@ -54,14 +54,14 @@ describe('Versions', () => {
         // Create records for tree
         const resCreaTreeRecord = await makeGraphQlCall(`
             mutation {
-                r1: createRecord(library: "${treeElementLibName}") {id},
-                r2: createRecord(library: "${treeElementLibName}") {id},
-                r3: createRecord(library: "${treeElementLibName}") {id}
+                r1: createRecord(library: "${treeElementLibName}") { record {id} },
+                r2: createRecord(library: "${treeElementLibName}") { record {id} },
+                r3: createRecord(library: "${treeElementLibName}") { record {id} }
             }
         `);
-        treeElement1 = resCreaTreeRecord.data.data.r1.id;
-        treeElement2 = resCreaTreeRecord.data.data.r2.id;
-        treeElement3 = resCreaTreeRecord.data.data.r3.id;
+        treeElement1 = resCreaTreeRecord.data.data.r1.record.id;
+        treeElement2 = resCreaTreeRecord.data.data.r2.record.id;
+        treeElement3 = resCreaTreeRecord.data.data.r3.record.id;
 
         // Add records to the tree
         nodeElement1 = await gqlAddElemToTree(treeName, {id: treeElement1, library: treeElementLibName});

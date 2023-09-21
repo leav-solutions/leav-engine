@@ -14,59 +14,92 @@ import {
 
 describe('Records', () => {
     const testLibName = 'record_library_test';
-    const testLibNameType = 'recordLibraryTest';
-
+    const testLibNameQueryName = 'recordLibraryTest';
+    const testLibNameType = 'RecordLibraryTest';
+    const testAttributeId = 'create_record_test_attribute';
     let recordId;
 
     beforeAll(async () => {
-        await gqlSaveLibrary(testLibName, 'Test Lib');
+        await gqlSaveAttribute({
+            id: testAttributeId,
+            type: AttributeTypes.SIMPLE,
+            format: AttributeFormats.TEXT,
+            label: 'test'
+        });
 
-        await makeGraphQlCall('mutation { refreshSchema }');
+        await gqlSaveLibrary(testLibName, 'Test', [testAttributeId]);
 
         const resCrea = await makeGraphQlCall(`mutation {
-            c1: createRecord(library: "${testLibName}") { id }
+            c1: createRecord(library: "${testLibName}") { record {id} }
         }`);
 
-        recordId = resCrea.data.data.c1.id;
+        recordId = resCrea.data.data.c1.record.id;
     });
 
     test('Create records', async () => {
         const res = await makeGraphQlCall(`mutation {
-            c1: createRecord(library: "${testLibName}") { id permissions {edit_record}},
-            c2: createRecord(library: "${testLibName}") { id },
-            c3: createRecord(library: "${testLibName}") { id },
-            c4: createRecord(library: "${testLibName}") { id },
-            c5: createRecord(library: "${testLibName}") { id },
-            c6: createRecord(library: "${testLibName}") { id },
-            c7: createRecord(library: "${testLibName}") { id },
-            c8: createRecord(library: "${testLibName}") { id },
-            c9: createRecord(library: "${testLibName}") { id },
-            c10: createRecord(library: "${testLibName}") { id },
+            c1: createRecord(library: "${testLibName}") { record {id permissions {edit_record} } },
+            c2: createRecord(library: "${testLibName}") { record {id} },
+            c3: createRecord(library: "${testLibName}") { record {id} },
+            c4: createRecord(library: "${testLibName}") { record {id} },
+            c5: createRecord(library: "${testLibName}") { record {id} },
+            c6: createRecord(library: "${testLibName}") { record {id} },
+            c7: createRecord(library: "${testLibName}") { record {id} },
+            c8: createRecord(library: "${testLibName}") { record {id} },
+            c9: createRecord(library: "${testLibName}") { record {id} },
+            c10: createRecord(library: "${testLibName}") { record {id} },
         }`);
 
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.c1.id).toBeTruthy();
-        expect(res.data.data.c1.permissions.edit_record).toBeDefined();
+        expect(res.data.data.c1.record.id).toBeTruthy();
+        expect(res.data.data.c1.record.permissions.edit_record).toBeDefined();
+    });
+
+    test('Create record with values', async () => {
+        const res = await makeGraphQlCall(`mutation {
+            c1: createRecord(library: "${testLibName}", data: {
+                version: null,
+                values: [
+                    {
+                        attribute: "${testAttributeId}",
+                        value: "My value"
+                    }
+                ]
+            }) {
+                record {
+                    id
+                    ...on ${testLibNameType} {
+                        ${testAttributeId}
+                    }
+                }
+            },
+        }`);
+
+        expect(res.status).toBe(200);
+
+        expect(res.data.errors).toBeUndefined();
+        expect(res.data.data.c1.record.id).toBeTruthy();
+        expect(res.data.data.c1.record[testAttributeId]).toBe('My value');
     });
 
     test('Get records filtered by ID', async () => {
         const res = await makeGraphQlCall(
-            `{ ${testLibNameType}(filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]) { list {id permissions {edit_record}} } }
+            `{ ${testLibNameQueryName}(filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]) { list {id permissions {edit_record}} } }
         `
         );
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data[testLibNameType].list.length).toBe(1);
-        expect(res.data.data[testLibNameType].list[0].id).toBe(recordId);
-        expect(res.data.data[testLibNameType].list[0].permissions.edit_record).toBeDefined();
+        expect(res.data.data[testLibNameQueryName].list.length).toBe(1);
+        expect(res.data.data[testLibNameQueryName].list[0].id).toBe(recordId);
+        expect(res.data.data[testLibNameQueryName].list[0].permissions.edit_record).toBeDefined();
     });
 
     test('Get library details on a record', async () => {
         const res = await makeGraphQlCall(
-            `{ ${testLibNameType}(filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]) {
+            `{ ${testLibNameQueryName}(filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]) {
                  list {
                      id
                      library { id }
@@ -77,28 +110,47 @@ describe('Records', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data[testLibNameType].list[0].library.id).toBe(testLibName);
+        expect(res.data.data[testLibNameQueryName].list[0].library.id).toBe(testLibName);
+    });
+
+    test('Get record identity', async () => {
+        const res = await makeGraphQlCall(`
+            {
+                ${testLibNameQueryName}(filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]) {
+                    list {
+                        id
+                        whoAmI { id library { id } label }
+                    }
+                }
+            }
+        `);
+
+        expect(res.data.errors).toBeUndefined();
+        expect(res.status).toBe(200);
+        expect(res.data.data[testLibNameQueryName].list[0].whoAmI.id).toBe(recordId);
+        expect(res.data.data[testLibNameQueryName].list[0].whoAmI.library.id).toBe(testLibName);
+        expect(res.data.data[testLibNameQueryName].list[0].whoAmI.label).toBe(null);
     });
 
     test('Get records paginated', async () => {
         const firstCallRes = await makeGraphQlCall(
-            `{ ${testLibNameType}(pagination: {limit: 3, offset: 0}) { totalCount cursor {next prev} list {id} } }
+            `{ ${testLibNameQueryName}(pagination: {limit: 3, offset: 0}) { totalCount cursor {next prev} list {id} } }
         `
         );
 
         expect(firstCallRes.data.errors).toBeUndefined();
         expect(firstCallRes.status).toBe(200);
-        expect(firstCallRes.data.data[testLibNameType].list.length).toBe(3);
-        expect(firstCallRes.data.data[testLibNameType].totalCount).toBeGreaterThan(
-            firstCallRes.data.data[testLibNameType].list.length
+        expect(firstCallRes.data.data[testLibNameQueryName].list.length).toBe(3);
+        expect(firstCallRes.data.data[testLibNameQueryName].totalCount).toBeGreaterThan(
+            firstCallRes.data.data[testLibNameQueryName].list.length
         );
-        expect(firstCallRes.data.data[testLibNameType].cursor.next).toBeTruthy();
+        expect(firstCallRes.data.data[testLibNameQueryName].cursor.next).toBeTruthy();
 
         const cursorCallRes = await makeGraphQlCall(
-            `{ ${testLibNameType}(
+            `{ ${testLibNameQueryName}(
                 pagination: {
                     limit: 5,
-                    cursor: "${firstCallRes.data.data[testLibNameType].cursor.next}"
+                    cursor: "${firstCallRes.data.data[testLibNameQueryName].cursor.next}"
                 }) {
                     totalCount
                     cursor {next prev}
@@ -109,8 +161,8 @@ describe('Records', () => {
         );
 
         expect(cursorCallRes.data.errors).toBeUndefined();
-        expect(cursorCallRes.data.data[testLibNameType].list.length).toBe(5);
-        expect(cursorCallRes.data.data[testLibNameType].cursor.next).toBeTruthy();
+        expect(cursorCallRes.data.data[testLibNameQueryName].list.length).toBe(5);
+        expect(cursorCallRes.data.data[testLibNameQueryName].cursor.next).toBeTruthy();
     });
 
     test('Delete a record', async () => {

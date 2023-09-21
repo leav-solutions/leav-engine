@@ -1,9 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ConvertVersionFromGqlFormatFunc} from 'app/helpers/convertVersionFromGqlFormat';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {IRecordDomain, IRecordFilterLight} from 'domain/record/recordDomain';
+import {IRecordDomain} from 'domain/record/recordDomain';
+import {IRecordFilterLight} from 'domain/record/_types';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {GraphQLScalarType} from 'graphql';
 import {withFilter} from 'graphql-subscriptions';
@@ -12,19 +14,20 @@ import {PublishedEvent} from '_types/event';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {ITree} from '_types/tree';
-import {TriggerNames} from '../../_types/eventsManager';
-import {RecordPermissionsActions} from '../../_types/permissions';
+import {TriggerNames} from '../../../_types/eventsManager';
+import {RecordPermissionsActions} from '../../../_types/permissions';
 import {
     AttributeCondition,
     IRecord,
     IRecordUpdateEvent,
     IRecordUpdateEventFilters,
     TreeCondition
-} from '../../_types/record';
-import {IGraphqlApp} from '../graphql/graphqlApp';
-import {ICoreAttributeApp} from './attributeApp/attributeApp';
-import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from './helpers/subscriptions';
-import {IIndexationManagerApp} from './indexationManagerApp';
+} from '../../../_types/record';
+import {IGraphqlApp} from '../../graphql/graphqlApp';
+import {ICoreAttributeApp} from '../attributeApp/attributeApp';
+import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from '../helpers/subscriptions';
+import {IIndexationManagerApp} from '../indexationManagerApp';
+import {ICreateRecordParams} from './_types';
 
 export interface ICoreRecordApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -39,6 +42,7 @@ interface IDeps {
     'core.app.graphql'?: IGraphqlApp;
     'core.app.core.attribute'?: ICoreAttributeApp;
     'core.app.core.indexationManager'?: IIndexationManagerApp;
+    'core.app.helpers.convertVersionFromGqlFormat'?: ConvertVersionFromGqlFormatFunc;
     'core.app.core.subscriptionsHelper'?: ICoreSubscriptionsHelpersApp;
 }
 
@@ -50,6 +54,7 @@ export default function ({
     'core.utils': utils = null,
     'core.app.core.attribute': attributeApp = null,
     'core.app.core.indexationManager': indexationManagerApp = null,
+    'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat = null,
     'core.app.core.subscriptionsHelper': subscriptionsHelper = null
 }: IDeps = {}): ICoreRecordApp {
     return {
@@ -199,8 +204,26 @@ export default function ({
                         ignoreOwnEvents: Boolean
                     }
 
+                    input CreateRecordDataInput {
+                        version: [ValueVersionInput!],
+                        values: [ValueBatchInput!]
+                    }
+
+                    type CreateRecordValueSaveError {
+                        type: String!,
+                        attributeId: String!,
+                        id_value: String,
+                        input: String,
+                        message: String
+                    }
+
+                    type CreateRecordResult {
+                        record: Record,
+                        valuesErrors: [CreateRecordValueSaveError!]
+                    }
+
                     extend type Mutation {
-                        createRecord(library: ID): Record!
+                        createRecord(library: ID!, data: CreateRecordDataInput): CreateRecordResult!
                         deleteRecord(library: ID, id: ID): Record!
                         indexRecords(libraryId: String!, records: [String!]): Boolean!
                         deactivateRecords(libraryId: String!, recordsIds: [String!], filters: [RecordFilterInput!]): [Record!]!
@@ -212,9 +235,32 @@ export default function ({
                     }
                 `,
                 resolvers: {
+                    Record: {
+                        __resolveType(obj) {
+                            return utils.libNameToTypeName(obj.library);
+                        }
+                    },
+                    FileRecord: {
+                        __resolveType(obj) {
+                            return utils.libNameToTypeName(obj.library);
+                        }
+                    },
                     Mutation: {
-                        async createRecord(parent, {library}: {library: string}, ctx): Promise<IRecord> {
-                            return recordDomain.createRecord(library, ctx);
+                        async createRecord(
+                            _,
+                            {library, data}: ICreateRecordParams,
+                            ctx: IQueryInfos
+                        ): Promise<IRecord> {
+                            const valuesVersion = data?.version ? convertVersionFromGqlFormat(data.version) : null;
+                            const valuesToSave = data
+                                ? data.values.map(value => ({
+                                      ...value,
+                                      version: valuesVersion,
+                                      metadata: utils.nameValArrayToObj(value.metadata)
+                                  }))
+                                : null;
+
+                            return recordDomain.createRecord({library, values: valuesToSave, ctx});
                         },
                         async deleteRecord(
                             parent,
@@ -239,6 +285,7 @@ export default function ({
                             return recordDomain.purgeInactiveRecords({libraryId, ctx});
                         }
                     },
+
                     Subscription: {
                         recordUpdate: {
                             subscribe: withFilter(
@@ -265,16 +312,6 @@ export default function ({
                                     return mustReturn;
                                 }
                             )
-                        }
-                    },
-                    Record: {
-                        __resolveType(obj) {
-                            return utils.libNameToTypeName(obj.library);
-                        }
-                    },
-                    FileRecord: {
-                        __resolveType(obj) {
-                            return utils.libNameToTypeName(obj.library);
                         }
                     },
                     RecordFilter: {

@@ -57,6 +57,7 @@ logs
 
 ### VSCode ###
 .vscode
+*.code-workspace
 
 ### Apollo auth token ###
 apollo.token.js

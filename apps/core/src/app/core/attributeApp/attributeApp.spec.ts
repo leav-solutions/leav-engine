@@ -39,7 +39,7 @@ describe('coreAttributeApp', () => {
         });
 
         test('Numeric attribute', async () => {
-            expect(await attrApp.getGraphQLFormat({...mockAttrSimple, format: AttributeFormats.NUMERIC})).toBe('Int');
+            expect(await attrApp.getGraphQLFormat({...mockAttrSimple, format: AttributeFormats.NUMERIC})).toBe('Float');
         });
 
         test('Numeric attribute with formatting', async () => {
@@ -85,9 +85,7 @@ describe('coreAttributeApp', () => {
         });
 
         test('Color attribute', async () => {
-            expect(await attrApp.getGraphQLFormat({...mockAttrSimple, format: AttributeFormats.COLOR})).toBe(
-                'String'
-            );
+            expect(await attrApp.getGraphQLFormat({...mockAttrSimple, format: AttributeFormats.COLOR})).toBe('String');
         });
 
         test('Simple link attribute', async () => {

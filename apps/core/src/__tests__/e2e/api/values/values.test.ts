@@ -200,18 +200,18 @@ describe('Values', () => {
 
         // Create records
         const resRecord = await makeGraphQlCall(`mutation {
-            c1: createRecord(library: "${testLibName}") { id },
-            c2: createRecord(library: "${testLibName}") { id },
-            c3: createRecord(library: "${testLibName}") { id },
-            c4: createRecord(library: "${treeLibName}") { id },
-            c5: createRecord(library: "${testLibName}") { id },
+            c1: createRecord(library: "${testLibName}") { record {id} },
+            c2: createRecord(library: "${testLibName}") { record {id} },
+            c3: createRecord(library: "${testLibName}") { record {id} },
+            c4: createRecord(library: "${treeLibName}") { record {id} },
+            c5: createRecord(library: "${testLibName}") { record {id} },
         }`);
 
-        recordId = resRecord.data.data.c1.id;
-        recordIdBatch = resRecord.data.data.c2.id;
-        recordIdLinked = resRecord.data.data.c3.id;
-        treeElemId = resRecord.data.data.c4.id;
-        recordUniqueId = resRecord.data.data.c5.id;
+        recordId = resRecord.data.data.c1.record.id;
+        recordIdBatch = resRecord.data.data.c2.record.id;
+        recordIdLinked = resRecord.data.data.c3.record.id;
+        treeElemId = resRecord.data.data.c4.record.id;
+        recordUniqueId = resRecord.data.data.c5.record.id;
 
         // Add element to tree
         nodeTreeElem = await gqlAddElemToTree(treeName, {id: treeElemId, library: treeLibName});

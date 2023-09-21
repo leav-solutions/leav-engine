@@ -15,19 +15,17 @@ import {useCanEditRecord} from 'hooks/useCanEditRecord/useCanEditRecord';
 import isEqual from 'lodash/isEqual';
 import {useEffect, useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {addInfo} from 'reduxStore/infos';
 import styled from 'styled-components';
-import {CREATE_RECORD, CREATE_RECORDVariables, CREATE_RECORD_createRecord_whoAmI} from '_gqlTypes/CREATE_RECORD';
-import {AttributeType} from '_gqlTypes/globalTypes';
+import {CREATE_RECORD, CREATE_RECORDVariables, CREATE_RECORD_createRecord_record_whoAmI} from '_gqlTypes/CREATE_RECORD';
+import {AttributeType, ValueBatchInput} from '_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {
-    SAVE_VALUE_BATCH_saveValueBatch_errors,
     SAVE_VALUE_BATCH_saveValueBatch_values,
     SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue,
     SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue,
     SAVE_VALUE_BATCH_saveValueBatch_values_Value
 } from '_gqlTypes/SAVE_VALUE_BATCH';
-import {InfoPriority, InfoType, IValueVersion, PreviewSize} from '_types/types';
+import {IValueVersion, PreviewSize} from '_types/types';
 import EditRecord from '../EditRecord';
 import useDeleteValueMutation from '../EditRecord/hooks/useDeleteValueMutation';
 import useSaveValueBatchMutation from '../EditRecord/hooks/useSaveValueBatchMutation';
@@ -48,7 +46,7 @@ import editRecordModalReducer, {
 } from '../editRecordModalReducer/editRecordModalReducer';
 import {EditRecordModalReducerContext} from '../editRecordModalReducer/editRecordModalReducerContext';
 import EditRecordSidebar from '../EditRecordSidebar';
-import CreationErrorContext from './creationErrorContext';
+import CreationErrorContext, {ICreationErrorByField} from './creationErrorContext';
 import EditRecordModalHeader from './EditRecordModalHeader';
 import ValuesVersionSummary from './ValuesVersionSummary';
 
@@ -147,13 +145,9 @@ function EditRecordModal({
 
     const {saveValues, loading: saveValuesLoading} = useSaveValueBatchMutation();
     const {deleteValue} = useDeleteValueMutation(record);
-    const [createRecord] = useMutation<CREATE_RECORD, CREATE_RECORDVariables>(createRecordMutation, {
-        variables: {library}
-    });
+    const [createRecord] = useMutation<CREATE_RECORD, CREATE_RECORDVariables>(createRecordMutation);
 
-    const [creationErrors, setCreationErrors] = useState<{
-        [attributeId: string]: SAVE_VALUE_BATCH_saveValueBatch_errors;
-    }>({});
+    const [creationErrors, setCreationErrors] = useState<ICreationErrorByField>({});
 
     const [pendingValues, setPendingValues] = useState<IPendingValues>({});
     const hasPendingValues = !!Object.keys(pendingValues).length;
@@ -205,14 +199,52 @@ function EditRecordModal({
             }
 
             // Each value is affected a fake id to handle updates
+            let newIdValue = value.idValue;
+            if (
+                !newIdValue &&
+                value.attribute.type !== AttributeType.simple &&
+                value.attribute.type !== AttributeType.simple_link
+            ) {
+                newIdValue = `pending_${Object.keys(newPendingValues[attributeId]).length + 1}`;
+            }
             const valueToStore: Partial<SAVE_VALUE_BATCH_saveValueBatch_values> = {
-                id_value: value.idValue ?? `pending_${Object.keys(newPendingValues[attributeId]).length + 1}`,
+                id_value: newIdValue,
                 modified_at: null,
                 modified_by: null,
                 created_at: null,
                 created_by: null,
                 version: null,
-                attribute: value.attribute
+                attribute: value.attribute,
+                metadata: value.metadata
+                    ? Object.keys(value.metadata).reduce((metadata, metadataAttributeId) => {
+                          const metadataValue = {
+                              id_value: null,
+                              modified_at: null,
+                              modified_by: null,
+                              created_at: null,
+                              created_by: null,
+                              version: null,
+                              value: value.metadata[metadataAttributeId],
+                              raw_value: value.metadata[metadataAttributeId]
+                          };
+
+                          // If we find an existing metadata value, update it, otherwise add a new one
+                          const existingMetataIndex = metadata.findIndex(
+                              existingMetadata => existingMetadata.name === metadataAttributeId
+                          );
+
+                          if (existingMetataIndex !== -1) {
+                              metadata[existingMetataIndex].value = metadataValue;
+                          } else {
+                              metadata.push({
+                                  name: metadataAttributeId,
+                                  value: metadataValue
+                              });
+                          }
+
+                          return metadata;
+                      }, newPendingValues?.[attributeId]?.[newIdValue]?.metadata ?? [])
+                    : null
             };
 
             // Format value to get all props clean, based on attribute type
@@ -288,30 +320,9 @@ function EditRecordModal({
         }
 
         // Create Record
-        let newRecord: CREATE_RECORD_createRecord_whoAmI = state.record ?? null;
+        let newRecord: CREATE_RECORD_createRecord_record_whoAmI = state.record ?? null;
         if (!newRecord) {
-            try {
-                const createdRecord = await createRecord();
-
-                newRecord = createdRecord.data.createRecord.whoAmI;
-
-                dispatch({
-                    type: EditRecordReducerActionsTypes.SET_RECORD,
-                    record: newRecord
-                });
-            } catch (err) {
-                addInfo({
-                    type: InfoType.error,
-                    content: (err as Error).message,
-                    priority: InfoPriority.high
-                });
-                return;
-            }
-        }
-
-        try {
-            // Save values
-            const valuesToSave: IValueToSubmit[] = Object.values(pendingValues).reduce((allValues, valuesById) => {
+            const valuesToSave: ValueBatchInput[] = Object.values(pendingValues).reduce((allValues, valuesById) => {
                 const attributeValues = Object.values(valuesById).map(val => {
                     let actualValue;
                     switch (val.attribute.type) {
@@ -328,35 +339,47 @@ function EditRecordModal({
                             break;
                     }
                     return {
-                        ...val,
                         value: actualValue,
-                        id_value: null,
-                        attribute: val.attribute.id
+                        id_value: val.id_value ?? null,
+                        attribute: val.attribute.id,
+                        metadata: val.metadata
+                            ? val.metadata.map(metadataValue => ({
+                                  name: metadataValue.name,
+                                  value: metadataValue.value.raw_value
+                              }))
+                            : null
                     };
                 });
 
                 return [...allValues, ...attributeValues];
             }, []);
 
-            const saveRes = await saveValues(newRecord, valuesToSave, state.valuesVersion);
+            const creationResult = await createRecord({variables: {library, data: {values: valuesToSave}}});
 
-            // All encountered errors are available for children, grouped by attribute ID
-            if (saveRes.status === APICallStatus.ERROR || saveRes.status === APICallStatus.PARTIAL) {
-                setCreationErrors(
-                    saveRes.errors.reduce((errors, error) => ({...errors, [error.attribute]: error}), {})
-                );
+            if (creationResult.data.createRecord.valuesErrors?.length) {
+                // Extract errors by field
+                const errorsByField = creationResult.data.createRecord.valuesErrors.reduce((errors, error) => {
+                    if (!errors[error.attributeId]) {
+                        errors[error.attributeId] = [];
+                    }
+
+                    errors[error.attributeId].push(error);
+
+                    return errors;
+                }, {});
+                setCreationErrors(errorsByField);
+
                 return;
-            } else {
-                if (afterSave) {
-                    await afterSave(newRecord);
-                }
-
-                onClose();
             }
-        } catch (err) {
-            console.error(err);
-            return;
+
+            newRecord = creationResult.data.createRecord.record.whoAmI;
+
+            if (afterSave) {
+                await afterSave(newRecord);
+            }
         }
+
+        onClose();
     };
 
     const _handleDeleteValue: DeleteValueFunc = async (value, attribute) => {

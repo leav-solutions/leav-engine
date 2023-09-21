@@ -15,14 +15,14 @@ describe('Records deletion', () => {
         await gqlSaveLibrary(testLibName, 'Test Lib');
 
         const resCrea = await makeGraphQlCall(`mutation {
-            r1: createRecord(library: "${testLibName}") { id }
-            r2: createRecord(library: "${testLibName}") { id }
-            r3: createRecord(library: "${testLibName}") { id }
+            r1: createRecord(library: "${testLibName}") { record {id} }
+            r2: createRecord(library: "${testLibName}") { record {id} }
+            r3: createRecord(library: "${testLibName}") { record {id} }
         }`);
 
-        recordId1 = resCrea.data.data.r1.id;
-        recordId2 = resCrea.data.data.r2.id;
-        recordId3 = resCrea.data.data.r3.id;
+        recordId1 = resCrea.data.data.r1.record.id;
+        recordId2 = resCrea.data.data.r2.record.id;
+        recordId3 = resCrea.data.data.r3.record.id;
     });
 
     test('Deactivate and purge records', async () => {
