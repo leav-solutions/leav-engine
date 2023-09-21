@@ -11,6 +11,7 @@ import {StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
 import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
+import {SendRecordUpdateEventHelper} from 'domain/record/helpers/sendRecordUpdateEvent';
 import {IRecordFilterLight} from 'domain/record/_types';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
@@ -102,6 +103,7 @@ interface IDeps {
     'core.domain.filesManager.helpers.messagesHandler'?: IMessagesHandlerHelper;
     'core.domain.library'?: ILibraryDomain;
     'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
+    'core.domain.record.helpers.sendRecordUpdateEvent'?: SendRecordUpdateEventHelper;
     'core.domain.helpers.storeUploadFile'?: StoreUploadFileFunc;
     'core.domain.helpers.createDirectory'?: CreateDirectoryFunc;
     'core.infra.record'?: IRecordRepo;
@@ -123,6 +125,7 @@ export default function ({
     'core.domain.helpers.createDirectory': createDirectory = null,
     'core.domain.library': libraryDomain = null,
     'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
+    'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent = null,
     'core.domain.eventsManager': eventsManager = null,
     'core.infra.record': recordRepo = null,
     translator = null
@@ -619,6 +622,7 @@ export default function ({
                         {
                             recordRepo,
                             updateRecordLastModif,
+                            sendRecordUpdateEvent,
                             valueDomain,
                             config,
                             logger

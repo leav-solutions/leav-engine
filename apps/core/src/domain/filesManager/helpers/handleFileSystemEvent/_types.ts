@@ -4,6 +4,7 @@
 import {IAmqpService} from '@leav/message-broker';
 import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {SendRecordUpdateEventHelper} from 'domain/record/helpers/sendRecordUpdateEvent';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
@@ -27,6 +28,7 @@ export interface IHandleFileSystemEventDeps {
     config: IConfig;
     utils: IUtils;
     filesManagerRepo: IFilesManagerRepo;
+    sendRecordUpdateEvent: SendRecordUpdateEventHelper;
 }
 
 export interface IHandleFileSystemEventResources {
