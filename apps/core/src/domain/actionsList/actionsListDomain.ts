@@ -2,15 +2,19 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AwilixContainer} from 'awilix';
-import Joi, {custom} from 'joi';
+import Joi from 'joi';
 import isEmpty from 'lodash/isEmpty';
-import {IActionsListFunction, IActionsListParams, IActionsListSavedAction} from '../../_types/actionsList';
+import ValidationError from '../../errors/ValidationError';
+import {
+    IActionsListFunction,
+    IActionsListParams,
+    IActionsListSavedAction,
+    IRunActionsListCtx
+} from '../../_types/actionsList';
 import {IAttribute} from '../../_types/attribute';
 import {ErrorFieldDetail, Errors} from '../../_types/errors';
 import {IRecord} from '../../_types/record';
 import {IValue} from '../../_types/value';
-import ValidationError from '../../errors/ValidationError';
-import * as Config from '_types/config';
 
 export interface IActionsListDomain {
     /**
@@ -43,7 +47,7 @@ export interface IActionsListDomain {
      * @param value
      * @param ctx     Context transmitted to the function when executed
      */
-    runActionsList(actions: IActionsListSavedAction[], value: IValue, ctx: any): Promise<IValue>;
+    runActionsList(actions: IActionsListSavedAction[], value: IValue, ctx: IRunActionsListCtx): Promise<IValue>;
 }
 
 interface IDeps {
@@ -70,7 +74,7 @@ export default function ({'core.depsManager': depsManager = null}: IDeps = {}): 
         registerActions(actions: IActionsListFunction[]): void {
             _pluginActions = [..._pluginActions, ...actions];
         },
-        async runActionsList(actions: IActionsListSavedAction[], value: IValue, ctx: any): Promise<IValue> {
+        async runActionsList(actions, value, ctx) {
             const availActions: IActionsListFunction[] = this.getAvailableActions();
 
             let resultAction = value.value;

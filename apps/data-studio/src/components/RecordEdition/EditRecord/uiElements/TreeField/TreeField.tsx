@@ -119,7 +119,7 @@ function TreeField({
         if (creationErrors[attribute.id]) {
             dispatch({
                 type: LinkFieldReducerActionsType.SET_ERROR_MESSAGE,
-                errorMessage: creationErrors[attribute.id].message
+                errorMessage: creationErrors[attribute.id].map(err => err.message).join(' ')
             });
         }
     }, [creationErrors, attribute.id]);

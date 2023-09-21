@@ -15,7 +15,7 @@ export {default as indexationManager} from './indexationManagerApp';
 export {default as library} from './libraryApp/libraryApp';
 export {default as permission} from './permissionApp/permissionApp';
 export {default as plugins} from './pluginsApp';
-export {default as record} from './recordApp';
+export {default as record} from './recordApp/recordApp';
 export {default as tasksManager} from './tasksManagerApp';
 export {default as tree} from './treeApp/treeApp';
 export {default as userData} from './userDataApp';

@@ -6,9 +6,18 @@ import recordIdentityFragment from 'graphQL/queries/records/recordIdentityFragme
 
 const createRecordMutation = gql`
     ${recordIdentityFragment}
-    mutation CREATE_RECORD($library: ID!) {
-        createRecord(library: $library) {
-            ...RecordIdentity
+    mutation CREATE_RECORD($library: ID!, $data: CreateRecordDataInput) {
+        createRecord(library: $library, data: $data) {
+            record {
+                ...RecordIdentity
+            }
+            valuesErrors {
+                attributeId
+                id_value
+                input
+                message
+                type
+            }
         }
     }
 `;

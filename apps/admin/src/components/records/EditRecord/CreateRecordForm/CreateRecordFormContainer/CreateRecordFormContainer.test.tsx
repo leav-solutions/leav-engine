@@ -47,16 +47,18 @@ describe('CreateRecordFormContainer', () => {
                 result: {
                     data: {
                         createRecord: {
-                            id: '1234567',
-                            whoAmI: {
-                                __typename: 'RecordIdentity',
+                            record: {
                                 id: '1234567',
-                                library: mockLibrary,
-                                label: null,
-                                color: null,
-                                preview: null
-                            },
-                            __typename: 'Record'
+                                whoAmI: {
+                                    __typename: 'RecordIdentity',
+                                    id: '1234567',
+                                    library: mockLibrary,
+                                    label: null,
+                                    color: null,
+                                    preview: null
+                                },
+                                __typename: 'Record'
+                            }
                         }
                     }
                 }

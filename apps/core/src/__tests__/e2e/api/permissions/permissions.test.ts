@@ -325,10 +325,10 @@ describe('Permissions', () => {
         });
     });
 
-    describe('Herited Permissions', () => {
-        const heritTestLibName = 'test_lib_herit_perm';
-        const heritTestTreeName = 'test_tree_herit_perm';
-        const heritTestTreeElemLibName = 'test_lib_herit_perm_tree_element';
+    describe('Inherited Permissions', () => {
+        const inheritTestLibName = 'test_lib_inherit_perm';
+        const inheritTestTreeName = 'test_tree_inherit_perm';
+        const inheritTestTreeElemLibName = 'test_lib_inherit_perm_tree_element';
         let userGroupId1: string;
         let nodeUserGroupId1: string;
         let userGroupId2: string;
@@ -349,28 +349,28 @@ describe('Permissions', () => {
         beforeAll(async () => {
             // Create new test libs
             await makeGraphQlCall(`mutation {
-                l1: saveLibrary(library: {id: "${heritTestLibName}", label: {fr: "Test lib"}}) { id },
-                l2: saveLibrary(library: {id: "${heritTestTreeElemLibName}", label: {fr: "Test lib"}}) { id }
+                l1: saveLibrary(library: {id: "${inheritTestLibName}", label: {fr: "Test lib"}}) { id },
+                l2: saveLibrary(library: {id: "${inheritTestTreeElemLibName}", label: {fr: "Test lib"}}) { id }
             }`);
 
             // Create test tree
-            await gqlSaveTree(heritTestTreeName, 'Permissions Test tree', [heritTestTreeElemLibName]);
+            await gqlSaveTree(inheritTestTreeName, 'Permissions Test tree', [inheritTestTreeElemLibName]);
 
             // Create 2 users groups
             const resCreateGroups = await makeGraphQlCall(`mutation {
-                r1: createRecord(library: "users_groups") {id},
-                r2: createRecord(library: "users_groups") {id},
-                r3: createRecord(library: "users_groups") {id},
-                r4: createRecord(library: "users_groups") {id},
-                r5: createRecord(library: "users_groups") {id},
-                r6: createRecord(library: "users_groups") {id}
+                r1: createRecord(library: "users_groups") {record { id }},
+                r2: createRecord(library: "users_groups") {record { id }},
+                r3: createRecord(library: "users_groups") {record { id }},
+                r4: createRecord(library: "users_groups") {record { id }},
+                r5: createRecord(library: "users_groups") {record { id }},
+                r6: createRecord(library: "users_groups") {record { id }}
             }`);
-            userGroupId1 = resCreateGroups.data.data.r1.id;
-            userGroupId2 = resCreateGroups.data.data.r2.id;
-            userGroupId3 = resCreateGroups.data.data.r3.id;
-            userGroupId4 = resCreateGroups.data.data.r4.id;
-            userGroupId5 = resCreateGroups.data.data.r5.id;
-            userGroupId6 = resCreateGroups.data.data.r6.id;
+            userGroupId1 = resCreateGroups.data.data.r1.record.id;
+            userGroupId2 = resCreateGroups.data.data.r2.record.id;
+            userGroupId3 = resCreateGroups.data.data.r3.record.id;
+            userGroupId4 = resCreateGroups.data.data.r4.record.id;
+            userGroupId5 = resCreateGroups.data.data.r5.record.id;
+            userGroupId6 = resCreateGroups.data.data.r6.record.id;
 
             // Add users groups to tree
             nodeUserGroupId1 = await gqlAddElemToTree('users_groups', {library: 'users_groups', id: userGroupId1});
@@ -394,20 +394,20 @@ describe('Permissions', () => {
 
             // Create records for tree
             const resCreateTreeRecords = await makeGraphQlCall(`mutation {
-                r1: createRecord(library: "${heritTestTreeElemLibName}") {id},
-                r2: createRecord(library: "${heritTestTreeElemLibName}") {id}
+                r1: createRecord(library: "${inheritTestTreeElemLibName}") { record {id} },
+                r2: createRecord(library: "${inheritTestTreeElemLibName}") { record {id} }
             }`);
-            treeElemId1 = resCreateTreeRecords.data.data.r1.id;
-            treeElemId2 = resCreateTreeRecords.data.data.r2.id;
+            treeElemId1 = resCreateTreeRecords.data.data.r1.record.id;
+            treeElemId2 = resCreateTreeRecords.data.data.r2.record.id;
 
             // Add records to tree
-            nodeTreeElem1 = await gqlAddElemToTree(heritTestTreeName, {
+            nodeTreeElem1 = await gqlAddElemToTree(inheritTestTreeName, {
                 id: treeElemId1,
-                library: heritTestTreeElemLibName
+                library: inheritTestTreeElemLibName
             });
             nodeTreeElem2 = await gqlAddElemToTree(
-                heritTestTreeName,
-                {id: treeElemId2, library: heritTestTreeElemLibName},
+                inheritTestTreeName,
+                {id: treeElemId2, library: inheritTestTreeElemLibName},
                 nodeTreeElem1
             );
         });
@@ -419,10 +419,10 @@ describe('Permissions', () => {
                     savePermission(
                         permission: {
                             type: record,
-                            applyTo: "${heritTestLibName}",
+                            applyTo: "${inheritTestLibName}",
                             usersGroup: "${nodeUserGroupId1}",
                             permissionTreeTarget: {
-                                tree: "${heritTestTreeName}",
+                                tree: "${inheritTestTreeName}",
                                 nodeId: "${nodeTreeElem2}"
                             },
                             actions: [
@@ -436,11 +436,11 @@ describe('Permissions', () => {
                 const permHeritGroup = await makeGraphQlCall(`{
                     p: inheritedPermissions(
                         type: record,
-                        applyTo: "${heritTestLibName}",
+                        applyTo: "${inheritTestLibName}",
                         actions: [access_record],
                         userGroupNodeId: "${nodeUserGroupId2}",
                         permissionTreeTarget: {
-                            tree: "${heritTestTreeName}",
+                            tree: "${inheritTestTreeName}",
                             nodeId: "${nodeTreeElem2}"
                         }
                     ) { name allowed }
@@ -457,10 +457,10 @@ describe('Permissions', () => {
                     savePermission(
                         permission: {
                             type: record,
-                            applyTo: "${heritTestLibName}",
+                            applyTo: "${inheritTestLibName}",
                             usersGroup: "${nodeUserGroupId4}",
                             permissionTreeTarget: {
-                                tree: "${heritTestTreeName}",
+                                tree: "${inheritTestTreeName}",
                                 nodeId: "${nodeTreeElem1}"
                             },
                             actions: [
@@ -474,11 +474,11 @@ describe('Permissions', () => {
                 const permHeritGroup = await makeGraphQlCall(`{
                     p: inheritedPermissions(
                         type: record,
-                        applyTo: "${heritTestLibName}",
+                        applyTo: "${inheritTestLibName}",
                         actions: [access_record],
                         userGroupNodeId: "${nodeUserGroupId4}",
                         permissionTreeTarget: {
-                            tree: "${heritTestTreeName}",
+                            tree: "${inheritTestTreeName}",
                             nodeId: "${nodeTreeElem2}"
                         }
                     ) { name allowed }
@@ -494,11 +494,11 @@ describe('Permissions', () => {
                 const permHeritGroup = await makeGraphQlCall(`{
                     p: inheritedPermissions(
                         type: record,
-                        applyTo: "${heritTestLibName}",
+                        applyTo: "${inheritTestLibName}",
                         actions: [access_record],
                         userGroupNodeId: "${nodeUserGroupId6}",
                         permissionTreeTarget: {
-                            tree: "${heritTestTreeName}",
+                            tree: "${inheritTestTreeName}",
                             nodeId: "${nodeTreeElem2}"
                         }
                     ) { name allowed }
@@ -517,7 +517,7 @@ describe('Permissions', () => {
                     savePermission(
                         permission: {
                             type: library,
-                            applyTo: "${heritTestLibName}",
+                            applyTo: "${inheritTestLibName}",
                             usersGroup: "${nodeUserGroupId1}",
                             actions: [
                                 {name: access_record, allowed: false},
@@ -530,7 +530,7 @@ describe('Permissions', () => {
                 const permHeritGroup = await makeGraphQlCall(`{
                     p: inheritedPermissions(
                         type: library,
-                        applyTo: "${heritTestLibName}",
+                        applyTo: "${inheritTestLibName}",
                         actions: [access_record],
                         userGroupNodeId: "${nodeUserGroupId2}",
                     ) { name allowed }
@@ -546,7 +546,7 @@ describe('Permissions', () => {
                 const permHeritGroup = await makeGraphQlCall(`{
                     p: inheritedPermissions(
                         type: library,
-                        applyTo: "${heritTestLibName}",
+                        applyTo: "${inheritTestLibName}",
                         actions: [access_record],
                         userGroupNodeId: "${nodeUserGroupId4}",
                     ) { name allowed }

@@ -33,7 +33,7 @@ import findValue from './helpers/findValue';
 import prepareValue from './helpers/prepareValue';
 import saveOneValue from './helpers/saveOneValue';
 import validateValue from './helpers/validateValue';
-import {IDeleteValueParams} from './_types';
+import {IDeleteValueParams, IRunActionListParams} from './_types';
 
 export interface ISaveBatchValueError {
     type: string;
@@ -100,14 +100,7 @@ export interface IValueDomain {
         ctx: IQueryInfos;
     }): Promise<IValue>;
 
-    runActionsList(
-        listName: ActionsListEvents,
-        value: IValue,
-        attrProps: IAttribute,
-        record: IRecord,
-        library: string,
-        ctx: IQueryInfos
-    ): Promise<IValue>;
+    runActionsList(params: IRunActionListParams): Promise<IValue>;
 }
 
 interface IDeps {
@@ -130,7 +123,7 @@ interface IDeps {
     'core.domain.tree'?: ITreeDomain;
 }
 
-const valueDomain = function ({
+const valueDomain = function({
     config = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -158,27 +151,90 @@ const valueDomain = function ({
      * @param library
      * @param ctx
      */
-    const _runActionsList = async (
-        listName: ActionsListEvents = ActionsListEvents.GET_VALUE,
-        value: IValue,
-        attrProps: IAttribute,
-        record: IRecord,
-        library: string,
-        ctx: IQueryInfos
-    ) => {
-        const processedValue = await (!!attrProps.actions_list && !!attrProps.actions_list?.[listName]
-            ? actionsListDomain.runActionsList(attrProps.actions_list?.[listName], value, {
-                  ...ctx,
-                  attribute: attrProps,
-                  recordId: record.id,
-                  library,
-                  value
-              })
-            : value);
+    const _runActionsList: IValueDomain['runActionsList'] = async ({
+        listName,
+        value,
+        attribute: attrProps,
+        record,
+        library,
+        ctx
+    }) => {
+        try {
+            const processedValue = await (!!attrProps.actions_list?.[listName] && value !== null
+                ? actionsListDomain.runActionsList(attrProps.actions_list[listName], value, {
+                      ...ctx,
+                      attribute: attrProps,
+                      recordId: record?.id,
+                      library,
+                      value
+                  })
+                : value);
 
-        if (utils.isStandardAttribute(attrProps)) {
-            (processedValue as IStandardValue).raw_value = value.value;
+            if (utils.isStandardAttribute(attrProps)) {
+                (processedValue as IStandardValue).raw_value = value.value;
+            }
+            return processedValue;
+        } catch (e) {
+            // If ValidationError, add some context about value to the error and throw it again
+            if (e.type === ErrorTypes.VALIDATION_ERROR) {
+                e.context = {
+                    attributeId: attrProps.id,
+                    value,
+                    recordId: record?.id
+                };
+            }
+            throw e;
         }
+    };
+
+    const _formatValue = async ({attribute, value, record, library, ctx}) => {
+        let processedValue = {...value}; // Don't mutate given value
+
+        const isLinkAttribute =
+            attribute.type === AttributeTypes.SIMPLE_LINK || attribute.type === AttributeTypes.ADVANCED_LINK;
+
+        if (isLinkAttribute && attribute.linked_library) {
+            const linkValue = processedValue.value
+                ? {...processedValue.value, library: processedValue.value.library ?? attribute.linked_library}
+                : null;
+            processedValue = {...value, value: linkValue};
+        }
+
+        processedValue.attribute = attribute.id;
+
+        // Format metadata values as well
+        if ((attribute.metadata_fields ?? []).length) {
+            const metadataValuesFormatted = await attribute.metadata_fields.reduce(
+                async (allValuesProm, metadataField) => {
+                    const allValues = await allValuesProm;
+                    try {
+                        const metadataAttributeProps = await attributeDomain.getAttributeProperties({
+                            id: metadataField,
+                            ctx
+                        });
+
+                        allValues[metadataField] =
+                            typeof value.metadata?.[metadataField] !== 'undefined'
+                                ? await _formatValue({
+                                      attribute: metadataAttributeProps,
+                                      value: {value: value.metadata?.[metadataField]},
+                                      record,
+                                      library,
+                                      ctx
+                                  })
+                                : null;
+                    } catch (err) {
+                        logger.error(err);
+                        allValues[metadataField] = null;
+                    }
+
+                    return allValues;
+                },
+                Promise.resolve({})
+            );
+            processedValue.metadata = metadataValuesFormatted;
+        }
+
         return processedValue;
     };
 
@@ -267,7 +323,7 @@ const valueDomain = function ({
                       attribute: attributeProps,
                       recordId,
                       library,
-                      v
+                      value: v
                   })
                 : v;
 
@@ -296,6 +352,78 @@ const valueDomain = function ({
         );
 
         return res;
+    };
+
+    const _executeSaveValue = async (
+        library: string,
+        record: IRecord,
+        attribute: IAttribute,
+        value: IValue,
+        ctx: IQueryInfos
+    ) => {
+        const savedVal = await saveOneValue(
+            library,
+            record.id,
+            attribute,
+            value,
+            {
+                valueRepo,
+                recordRepo,
+                treeRepo,
+                getDefaultElementHelper,
+                actionsListDomain,
+                attributeDomain,
+                versionProfileDomain
+            },
+            ctx
+        );
+
+        // Apply actions list on value
+
+        let processedValue = await _runActionsList({
+            listName: ActionsListEvents.GET_VALUE,
+            value: savedVal,
+            attribute,
+            record,
+            library,
+            ctx
+        });
+
+        processedValue = await _formatValue({
+            attribute,
+            value: processedValue,
+            record,
+            library,
+            ctx
+        });
+
+        // Runs actionsList on metadata values as well
+        if (attribute.metadata_fields?.length && processedValue.metadata) {
+            for (const metadataField of attribute.metadata_fields) {
+                if (
+                    processedValue.metadata[metadataField] === null ||
+                    typeof processedValue.metadata[metadataField] === 'undefined'
+                ) {
+                    continue;
+                }
+
+                const metadataAttributeProps = await attributeDomain.getAttributeProperties({
+                    id: metadataField,
+                    ctx
+                });
+
+                processedValue.metadata[metadataField] = await _runActionsList({
+                    listName: ActionsListEvents.GET_VALUE,
+                    value: processedValue.metadata[metadataField] as IStandardValue,
+                    attribute: metadataAttributeProps,
+                    record,
+                    library,
+                    ctx
+                });
+            }
+        }
+
+        return processedValue;
     };
 
     return {
@@ -378,19 +506,26 @@ const valueDomain = function ({
             values = values.length
                 ? await Promise.all(
                       values.map(v =>
-                          _runActionsList(ActionsListEvents.GET_VALUE, v, attr, {id: recordId}, library, ctx)
+                          _runActionsList({
+                              listName: ActionsListEvents.GET_VALUE,
+                              value: v,
+                              attribute: attr,
+                              record: {id: recordId},
+                              library,
+                              ctx
+                          })
                       )
                   )
                 : [
                       // Force running actionsList for actions that generate values (eg. calculation or inheritance)
-                      await _runActionsList(
-                          ActionsListEvents.GET_VALUE,
-                          {value: null},
-                          attr,
-                          {id: recordId},
+                      await _runActionsList({
+                          listName: ActionsListEvents.GET_VALUE,
+                          value: {value: null},
+                          attribute: attr,
+                          record: {id: recordId},
                           library,
                           ctx
-                      )
+                      })
                   ].filter(v => v?.value !== null);
 
             return values;
@@ -460,22 +595,7 @@ const valueDomain = function ({
                 ctx
             });
 
-            const savedVal = await saveOneValue(
-                library,
-                recordId,
-                attributeProps,
-                valueToSave,
-                {
-                    valueRepo,
-                    recordRepo,
-                    treeRepo,
-                    getDefaultElementHelper,
-                    actionsListDomain,
-                    attributeDomain,
-                    versionProfileDomain
-                },
-                ctx
-            );
+            const savedVal = await _executeSaveValue(library, record, attributeProps, valueToSave, ctx);
 
             await eventsManager.sendDatabaseEvent(
                 {
@@ -492,26 +612,7 @@ const valueDomain = function ({
 
             await updateRecordLastModif(library, recordId, ctx);
 
-            // Apply actions list on value
-            let processedValue = await _runActionsList(
-                ActionsListEvents.GET_VALUE,
-                savedVal,
-                attributeProps,
-                record,
-                library,
-                ctx
-            );
-
-            // Apply formating
-            processedValue = await this.formatValue({
-                attribute: attributeProps,
-                value: processedValue,
-                record,
-                library,
-                ctx
-            });
-
-            return {...savedVal, ...processedValue};
+            return savedVal;
         },
         async saveValueBatch({library, recordId, values, ctx, keepEmpty = false}): Promise<ISaveBatchValueResult> {
             await validate.validateLibrary(library, ctx);
@@ -617,22 +718,7 @@ const valueDomain = function ({
                                       value: valToSave,
                                       ctx
                                   })
-                                : await saveOneValue(
-                                      library,
-                                      recordId,
-                                      attributeProps,
-                                      valToSave,
-                                      {
-                                          valueRepo,
-                                          recordRepo,
-                                          treeRepo,
-                                          getDefaultElementHelper,
-                                          actionsListDomain,
-                                          attributeDomain,
-                                          versionProfileDomain
-                                      },
-                                      ctx
-                                  );
+                                : await _executeSaveValue(library, record, attributeProps, valToSave, ctx);
 
                         // TODO: get old value ?
                         await eventsManager.sendDatabaseEvent(
@@ -648,23 +734,7 @@ const valueDomain = function ({
                             ctx
                         );
 
-                        let processedValue = await _runActionsList(
-                            ActionsListEvents.GET_VALUE,
-                            savedVal,
-                            attributeProps,
-                            {id: recordId},
-                            library,
-                            ctx
-                        );
-                        processedValue = await this.formatValue({
-                            attribute: attributeProps,
-                            value: processedValue,
-                            record,
-                            library,
-                            ctx
-                        });
-
-                        prevRes.values.push(processedValue);
+                        prevRes.values.push(savedVal);
                     } catch (e) {
                         if (
                             !e.type ||
@@ -706,56 +776,7 @@ const valueDomain = function ({
 
             return _executeDeleteValue({library, recordId, attribute, value, ctx});
         },
-        async formatValue({attribute, value, record, library, ctx}) {
-            let processedValue = {...value}; // Don't mutate given value
-
-            const isLinkAttribute =
-                attribute.type === AttributeTypes.SIMPLE_LINK || attribute.type === AttributeTypes.ADVANCED_LINK;
-
-            if (isLinkAttribute && attribute.linked_library) {
-                const linkValue = processedValue.value
-                    ? {...processedValue.value, library: processedValue.value.library ?? attribute.linked_library}
-                    : null;
-                processedValue = {...value, value: linkValue};
-            }
-
-            processedValue.attribute = attribute.id;
-
-            // Format metadata values as well
-            if ((attribute.metadata_fields ?? []).length) {
-                const metadataValuesFormatted = await attribute.metadata_fields.reduce(
-                    async (allValuesProm, metadataField) => {
-                        const allValues = await allValuesProm;
-                        try {
-                            const metadataAttributeProps = await attributeDomain.getAttributeProperties({
-                                id: metadataField,
-                                ctx
-                            });
-
-                            allValues[metadataField] =
-                                typeof value.metadata?.[metadataField] !== 'undefined'
-                                    ? await this.formatValue({
-                                          attribute: metadataAttributeProps,
-                                          value: {value: value.metadata?.[metadataField]},
-                                          record,
-                                          library,
-                                          ctx
-                                      })
-                                    : null;
-                        } catch (err) {
-                            logger.error(err);
-                            allValues[metadataField] = null;
-                        }
-
-                        return allValues;
-                    },
-                    Promise.resolve({})
-                );
-                processedValue.metadata = metadataValuesFormatted;
-            }
-
-            return processedValue;
-        },
+        formatValue: _formatValue,
         runActionsList: _runActionsList
     };
 };

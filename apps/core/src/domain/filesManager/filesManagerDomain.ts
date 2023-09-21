@@ -11,6 +11,7 @@ import {StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
 import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
+import {IRecordFilterLight} from 'domain/record/_types';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {FileUpload} from 'graphql-upload';
@@ -33,7 +34,7 @@ import {FileEvents, FilesAttributes, IFileEventData, IFileMetadata} from '../../
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {LibraryPermissionsActions} from '../../_types/permissions';
 import {AttributeCondition, IRecord, Operator} from '../../_types/record';
-import {IRecordDomain, IRecordFilterLight} from '../record/recordDomain';
+import {IRecordDomain} from '../record/recordDomain';
 import {getRootPathByKey} from './helpers/getRootPathByKey';
 import {getPreviewsDefaultData, updateRecordFile} from './helpers/handleFileUtilsHelper';
 import {requestPreviewGeneration} from './helpers/handlePreview';
@@ -339,7 +340,7 @@ export default function ({
                 throw utils.generateExplicitValidationError('directories', Errors.DUPLICATE_DIRECTORY_NAMES, ctx.lang);
             }
 
-            const record = await recordDomain.createRecord(library, ctx);
+            const creationRes = await recordDomain.createRecord({library, ctx});
 
             const systemCtx: IQueryInfos = {
                 userId: config.defaultUserId,
@@ -349,7 +350,7 @@ export default function ({
             await recordDomain.updateRecord({
                 library,
                 recordData: {
-                    id: record.id,
+                    id: creationRes.record.id,
                     [FilesAttributes.FILE_NAME]: name,
                     [FilesAttributes.FILE_PATH]: path,
                     [FilesAttributes.ROOT_KEY]: rootKey
@@ -359,7 +360,7 @@ export default function ({
 
             await createDirectory(name, fullPath, ctx);
 
-            return record;
+            return creationRes.record;
         },
         async storeFiles({library, nodeId, files}: IStoreFilesParams, ctx: IQueryInfos) {
             const filenames: string[] = files.map(f => f.data.filename);
@@ -456,7 +457,8 @@ export default function ({
 
                     record = fileExists.list[0];
                 } else {
-                    record = await recordDomain.createRecord(library, ctx);
+                    const createRecordResult = await recordDomain.createRecord({library, ctx});
+                    record = createRecordResult.record;
 
                     // if file already exists, we modify the filename
                     if (fileExists.totalCount && !file.replace) {
