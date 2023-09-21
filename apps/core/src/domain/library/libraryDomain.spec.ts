@@ -24,6 +24,9 @@ import {mockAttrSimple} from '../../__tests__/mocks/attribute';
 import {mockLibrary} from '../../__tests__/mocks/library';
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import libraryDomain from './libraryDomain';
+import {deleteAssociatedValues} from './helpers';
+import {IDeleteAssociatedValuesHelper} from './helpers/deleteAssociatedValues';
+import {IUpdateAssociatedFormsHelper} from './helpers/updateAssociatedForms';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
     routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'}
@@ -637,10 +640,16 @@ describe('LibraryDomain', () => {
                         ],
                         totalCount: 0
                     }),
-                    getLibraryAttributes: jest
-                        .fn()
-                        .mockReturnValueOnce(Promise.resolve([{id: 'attr1'}, {id: 'attr2'}])),
-                    getLibraryFullTextAttributes: jest.fn().mockReturnValueOnce(Promise.resolve([{id: 'attr1'}]))
+                    getLibraryAttributes: global.__mockPromise([{id: 'attr1'}]),
+                    getLibraryFullTextAttributes: global.__mockPromise([{id: 'attr1'}])
+                };
+
+                const mockDeleteAssociatedValues: Mockify<IDeleteAssociatedValuesHelper> = {
+                    deleteAssociatedValues: global.__mockPromise()
+                };
+
+                const mockUpdateAssociatedForms: Mockify<IUpdateAssociatedFormsHelper> = {
+                    updateAssociatedForms: global.__mockPromise()
                 };
 
                 const libDomain = libraryDomain({
@@ -651,16 +660,15 @@ describe('LibraryDomain', () => {
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.infra.cache.cacheService': mockCachesService as ICachesService,
                     'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                    'core.domain.library.helpers.deleteAssociatedValues': mockDeleteAssociatedValues as IDeleteAssociatedValuesHelper,
+                    'core.domain.library.helpers.updateAssociatedForms': mockUpdateAssociatedForms as IUpdateAssociatedFormsHelper,
                     'core.utils': mockUtils as IUtils
                 });
 
                 const updatedLib = await libDomain.saveLibrary(
                     {
                         id: 'test',
-                        attributes: [
-                            {id: 'attr1', type: AttributeTypes.SIMPLE},
-                            {id: 'attr2', type: AttributeTypes.SIMPLE}
-                        ]
+                        attributes: [{id: 'attr2', type: AttributeTypes.SIMPLE}]
                     },
                     ctx
                 );
@@ -672,8 +680,9 @@ describe('LibraryDomain', () => {
                 expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(1);
                 expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][0].libId).toEqual('test');
                 expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][0].attributes).toEqual(
-                    defaultAttributes.concat(['attr1', 'attr2'])
+                    defaultAttributes.concat(['attr2'])
                 );
+                expect(mockLibRepo.saveLibraryFullTextAttributes.mock.calls[0][0].fullTextAttributes).toEqual([]);
 
                 expect(updatedLib).toMatchObject({id: 'test', system: false});
 

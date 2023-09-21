@@ -47,7 +47,9 @@ export const handleUpdateEvent = async (
         [deps.utils.getPreviewsAttributeName(library)]: previews
     };
 
-    const fileMetadata = await extractFileMetadata(scanMsg.pathAfter, scanMsg.rootKey, deps.config);
+    const fileMetadata = !scanMsg.isDirectory
+        ? await extractFileMetadata(scanMsg.pathAfter, scanMsg.rootKey, deps.config)
+        : null;
 
     recordData = {...recordData, ...fileMetadata};
 

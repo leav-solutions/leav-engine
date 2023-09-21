@@ -48,6 +48,7 @@ interface IForcePreviewsGenerationParams {
     failedOnly?: boolean;
     recordIds?: string[];
     filters?: IRecordFilterLight[];
+    previewVersionSizeNames?: string[];
 }
 
 interface IGetOriginalPathParams {
@@ -516,7 +517,8 @@ export default function ({
             libraryId,
             failedOnly,
             filters,
-            recordIds = []
+            recordIds = [],
+            previewVersionSizeNames
         }: IForcePreviewsGenerationParams): Promise<boolean> {
             const libraryProps = await libraryDomain.getLibraryProperties(libraryId, ctx);
 
@@ -555,7 +557,7 @@ export default function ({
 
             // If library is a directory library: recreate all previews of subfiles
             let recordsToProcess: IRecord[];
-            let filesLibraryProps;
+            let filesLibraryProps: ILibrary;
             if (libraryProps.behavior === LibraryBehavior.DIRECTORIES) {
                 // Find tree where this directory belongs
                 const trees = await treeDomain.getTrees({params: {filters: {library: libraryId}}, ctx});
@@ -582,6 +584,21 @@ export default function ({
             }
 
             let generationRequested = 0;
+
+            let versions = utils.previewsSettingsToVersions(filesLibraryProps.previewsSettings);
+
+            // if preview version size names are specified we generate only theses previews
+            if (previewVersionSizeNames?.length) {
+                versions = versions.reduce((acc, curr) => {
+                    const sizes = curr.sizes.filter(s => previewVersionSizeNames.includes(s.name));
+
+                    if (sizes.length) {
+                        acc.push({...curr, sizes});
+                    }
+
+                    return acc;
+                }, []);
+            }
 
             for (const r of recordsToProcess) {
                 if (
@@ -615,7 +632,7 @@ export default function ({
                         pathAfter: `${r[FilesAttributes.FILE_PATH]}/${r[FilesAttributes.FILE_NAME]}`,
                         libraryId: r.library,
                         priority: PreviewPriority.MEDIUM,
-                        versions: utils.previewsSettingsToVersions(filesLibraryProps.previewsSettings),
+                        versions,
                         deps: {amqpService, config, logger}
                     });
                     generationRequested++;
