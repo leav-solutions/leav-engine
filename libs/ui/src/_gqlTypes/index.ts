@@ -29,6 +29,7 @@ export type Scalars = {
 };
 
 export type ActionConfigurationInput = {
+    error_message?: InputMaybe<Scalars['SystemTranslation']>;
     id: Scalars['ID'];
     params?: InputMaybe<Array<ActionConfigurationParamInput>>;
 };
@@ -192,6 +193,16 @@ export enum AvailableLanguage {
     en = 'en',
     fr = 'fr'
 }
+
+export type CreateRecordDataInput = {
+    values?: InputMaybe<Array<ValueBatchInput>>;
+    version?: InputMaybe<Array<ValueVersionInput>>;
+};
+
+export type DeleteTaskInput = {
+    archive: Scalars['Boolean'];
+    id: Scalars['ID'];
+};
 
 export type EmbeddedAttributeInput = {
     description?: InputMaybe<Scalars['SystemTranslation']>;
@@ -504,6 +515,7 @@ export type RecordIdentityConfInput = {
     color?: InputMaybe<Scalars['ID']>;
     label?: InputMaybe<Scalars['ID']>;
     preview?: InputMaybe<Scalars['ID']>;
+    subLabel?: InputMaybe<Scalars['ID']>;
     treeColorPreview?: InputMaybe<Scalars['ID']>;
 };
 
