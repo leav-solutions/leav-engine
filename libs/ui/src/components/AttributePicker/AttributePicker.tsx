@@ -13,6 +13,7 @@ interface IAttributePickerProps {
     canCreate?: boolean;
     selected?: string[];
     multiple?: boolean;
+    system?: boolean;
 }
 
 function AttributePicker({
@@ -21,7 +22,8 @@ function AttributePicker({
     onSubmit,
     selected = [],
     canCreate = true,
-    multiple = true
+    multiple = true,
+    system = false
 }: IAttributePickerProps): JSX.Element {
     const {t} = useSharedTranslation();
     const [selectedAttributes, setSelectedAttributes] = useState<string[]>([]);
@@ -51,7 +53,7 @@ function AttributePicker({
             confirmLoading={isLoading}
             centered
         >
-            <AttributesList onSelect={_handleSelect} selected={selected} multiple={multiple} />
+            <AttributesList onSelect={_handleSelect} selected={selected} multiple={multiple} system={system} />
         </Modal>
     );
 }

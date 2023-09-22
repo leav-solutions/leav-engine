@@ -15,7 +15,12 @@ function GeneralInfosTab(): JSX.Element {
     const {loading, error, data} = useQuery<GET_VERSION>(getCoreVersionQuery);
     const {t} = useTranslation();
 
-    //TODO: get core version, display plugins
+    // If version starts with a number, add a v in front of it
+    let version = data?.version;
+    if (version && !isNaN(parseInt(version[0], 10))) {
+        version = 'v' + version;
+    }
+
     return (
         <List divided relaxed>
             <List.Item>
@@ -23,7 +28,7 @@ function GeneralInfosTab(): JSX.Element {
                 <List.Content>
                     {loading && <Loading />}
                     {error && <ErrorDisplay message={error.message} />}
-                    {data && <span>{t('general.version', {version: data.version})}</span>}
+                    {data && <span>{t('general.version', {version})}</span>}
                 </List.Content>
             </List.Item>
             <List.Item>

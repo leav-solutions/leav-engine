@@ -44,9 +44,10 @@ interface IAttributesListProps {
     onSelect: (selectedAttributes: string[]) => void;
     selected?: string[];
     multiple?: boolean;
+    system?: boolean;
 }
 
-function AttributesList({onSelect, selected = [], multiple = true}: IAttributesListProps): JSX.Element {
+function AttributesList({onSelect, selected = [], multiple = true, system = false}: IAttributesListProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
     const {loading, error, data} = useGetAttributesQuery();
@@ -176,6 +177,10 @@ function AttributesList({onSelect, selected = [], multiple = true}: IAttributesL
 
     const tableData: ListAttributeType[] = ([...data?.attributes?.list] ?? [])
         .filter(attribute => {
+            if (!system && attribute.system) {
+                return false;
+            }
+
             // Do not display already selected libraries
             if (selected.find(selectedAttribute => selectedAttribute === attribute.id)) {
                 return false;

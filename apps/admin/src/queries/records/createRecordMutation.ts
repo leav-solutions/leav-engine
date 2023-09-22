@@ -8,8 +8,10 @@ export const createRecordQuery = gql`
     ${recordIdentityFragment}
     mutation CREATE_RECORD($library: ID!) {
         createRecord(library: $library) {
-            id
-            ...RecordIdentity
+            record {
+                id
+                ...RecordIdentity
+            }
         }
     }
 `;

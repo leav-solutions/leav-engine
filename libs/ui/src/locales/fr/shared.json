@@ -49,6 +49,7 @@
         "preview": "Aperçu",
         "color": "Couleur",
         "treeColorPreview": "Arbre pour couleur et aperçu par défaut",
+        "subLabel":"Sous Libellé", 
         "info": "Informations",
         "attributes": "Attributs",
         "delete": "Supprimer la bibliothèque",

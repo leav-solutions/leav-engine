@@ -99,7 +99,10 @@ export default function ({
 
     const _checkAuth = async (req, res, next) => {
         try {
-            await authApp.validateRequestToken({apiKey: String(req.query[API_KEY_PARAM_NAME]), cookies: req.cookies});
+            await authApp.validateRequestToken({
+                ...(req.query[API_KEY_PARAM_NAME] && {apiKey: String(req.query[API_KEY_PARAM_NAME])}),
+                cookies: req.cookies
+            });
 
             next();
         } catch (err) {
@@ -280,7 +283,7 @@ export default function ({
                     context: async ({req, res}): Promise<IQueryInfos> => {
                         try {
                             const payload = await authApp.validateRequestToken({
-                                apiKey: String(req.query[API_KEY_PARAM_NAME]),
+                                ...(req.query[API_KEY_PARAM_NAME] && {apiKey: String(req.query[API_KEY_PARAM_NAME])}),
                                 cookies: req.cookies
                             });
 

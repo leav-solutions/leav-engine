@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IPreviewScalar} from '@leav/utils';
-import {gql} from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import {gql} from '@apollo/client';
+import {IPreviewScalar} from '@leav/utils';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends {[key: string]: unknown}> = {[K in keyof T]: T[K]};
@@ -801,20 +801,42 @@ export type DetailsApplicationFragment = {
     color?: string | null;
     module?: string | null;
     settings?: any | null;
-    icon?: {
-        id: string;
-        whoAmI: {
-            id: string;
-            label?: string | null;
-            color?: string | null;
-            preview?: IPreviewScalar | null;
-            library: {id: string; label?: any | null};
-        };
-    } | null;
+    icon?:
+        | {
+              id: string;
+              whoAmI: {
+                  id: string;
+                  label?: string | null;
+                  color?: string | null;
+                  preview?: IPreviewScalar | null;
+                  library: {id: string; label?: any | null};
+              };
+          }
+        | {
+              id: string;
+              whoAmI: {
+                  id: string;
+                  label?: string | null;
+                  color?: string | null;
+                  preview?: IPreviewScalar | null;
+                  library: {id: string; label?: any | null};
+              };
+          }
+        | {
+              id: string;
+              whoAmI: {
+                  id: string;
+                  label?: string | null;
+                  color?: string | null;
+                  preview?: IPreviewScalar | null;
+                  library: {id: string; label?: any | null};
+              };
+          }
+        | null;
     permissions: {access_application: boolean; admin_application: boolean};
 };
 
-export type RecordIdentityFragment = {
+export type RecordIdentityCjX1ctHtayKw3UvL3SxXwpZmvJocudQk0mb3YeupLuFragment = {
     id: string;
     whoAmI: {
         id: string;
@@ -824,6 +846,33 @@ export type RecordIdentityFragment = {
         library: {id: string; label?: any | null};
     };
 };
+
+export type RecordIdentityNoK32r5S4GHrWvJrDbbZyQxNwU9KsPBsGItOGtQz4Fragment = {
+    id: string;
+    whoAmI: {
+        id: string;
+        label?: string | null;
+        color?: string | null;
+        preview?: IPreviewScalar | null;
+        library: {id: string; label?: any | null};
+    };
+};
+
+export type RecordIdentityGdlFf7fowe20o0yE7yTvP85fHnPz4Ad88WmUdVAuYwFragment = {
+    id: string;
+    whoAmI: {
+        id: string;
+        label?: string | null;
+        color?: string | null;
+        preview?: IPreviewScalar | null;
+        library: {id: string; label?: any | null};
+    };
+};
+
+export type RecordIdentityFragment =
+    | RecordIdentityCjX1ctHtayKw3UvL3SxXwpZmvJocudQk0mb3YeupLuFragment
+    | RecordIdentityNoK32r5S4GHrWvJrDbbZyQxNwU9KsPBsGItOGtQz4Fragment
+    | RecordIdentityGdlFf7fowe20o0yE7yTvP85fHnPz4Ad88WmUdVAuYwFragment;
 
 export type AttributeDetailsLinkAttributeFragment = {
     reverse_link?: string | null;
@@ -906,7 +955,11 @@ export type AttributeDetailsFragment =
 export type LibraryLightFragment = {
     id: string;
     label?: any | null;
-    icon?: {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}} | null;
+    icon?:
+        | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
+        | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
+        | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
+        | null;
 };
 
 export type LibraryDetailsFragment = {
@@ -934,6 +987,7 @@ export type LibraryDetailsFragment = {
     } | null;
     recordIdentityConf?: {
         label?: string | null;
+        subLabel?: string | null;
         color?: string | null;
         preview?: string | null;
         treeColorPreview?: string | null;
@@ -946,16 +1000,38 @@ export type LibraryDetailsFragment = {
         edit_record: boolean;
         delete_record: boolean;
     } | null;
-    icon?: {
-        id: string;
-        whoAmI: {
-            id: string;
-            label?: string | null;
-            color?: string | null;
-            preview?: IPreviewScalar | null;
-            library: {id: string; label?: any | null};
-        };
-    } | null;
+    icon?:
+        | {
+              id: string;
+              whoAmI: {
+                  id: string;
+                  label?: string | null;
+                  color?: string | null;
+                  preview?: IPreviewScalar | null;
+                  library: {id: string; label?: any | null};
+              };
+          }
+        | {
+              id: string;
+              whoAmI: {
+                  id: string;
+                  label?: string | null;
+                  color?: string | null;
+                  preview?: IPreviewScalar | null;
+                  library: {id: string; label?: any | null};
+              };
+          }
+        | {
+              id: string;
+              whoAmI: {
+                  id: string;
+                  label?: string | null;
+                  color?: string | null;
+                  preview?: IPreviewScalar | null;
+                  library: {id: string; label?: any | null};
+              };
+          }
+        | null;
     previewsSettings?: Array<{
         label: any;
         description?: any | null;
@@ -1030,16 +1106,38 @@ export type GetApplicationByIdQuery = {
             color?: string | null;
             module?: string | null;
             settings?: any | null;
-            icon?: {
-                id: string;
-                whoAmI: {
-                    id: string;
-                    label?: string | null;
-                    color?: string | null;
-                    preview?: IPreviewScalar | null;
-                    library: {id: string; label?: any | null};
-                };
-            } | null;
+            icon?:
+                | {
+                      id: string;
+                      whoAmI: {
+                          id: string;
+                          label?: string | null;
+                          color?: string | null;
+                          preview?: IPreviewScalar | null;
+                          library: {id: string; label?: any | null};
+                      };
+                  }
+                | {
+                      id: string;
+                      whoAmI: {
+                          id: string;
+                          label?: string | null;
+                          color?: string | null;
+                          preview?: IPreviewScalar | null;
+                          library: {id: string; label?: any | null};
+                      };
+                  }
+                | {
+                      id: string;
+                      whoAmI: {
+                          id: string;
+                          label?: string | null;
+                          color?: string | null;
+                          preview?: IPreviewScalar | null;
+                          library: {id: string; label?: any | null};
+                      };
+                  }
+                | null;
             permissions: {access_application: boolean; admin_application: boolean};
         }>;
     } | null;
@@ -1066,16 +1164,38 @@ export type SaveApplicationMutation = {
         color?: string | null;
         module?: string | null;
         settings?: any | null;
-        icon?: {
-            id: string;
-            whoAmI: {
-                id: string;
-                label?: string | null;
-                color?: string | null;
-                preview?: IPreviewScalar | null;
-                library: {id: string; label?: any | null};
-            };
-        } | null;
+        icon?:
+            | {
+                  id: string;
+                  whoAmI: {
+                      id: string;
+                      label?: string | null;
+                      color?: string | null;
+                      preview?: IPreviewScalar | null;
+                      library: {id: string; label?: any | null};
+                  };
+              }
+            | {
+                  id: string;
+                  whoAmI: {
+                      id: string;
+                      label?: string | null;
+                      color?: string | null;
+                      preview?: IPreviewScalar | null;
+                      library: {id: string; label?: any | null};
+                  };
+              }
+            | {
+                  id: string;
+                  whoAmI: {
+                      id: string;
+                      label?: string | null;
+                      color?: string | null;
+                      preview?: IPreviewScalar | null;
+                      library: {id: string; label?: any | null};
+                  };
+              }
+            | null;
         permissions: {access_application: boolean; admin_application: boolean};
     };
 };
@@ -1177,7 +1297,13 @@ export type GetAttributesQueryVariables = Exact<{[key: string]: never}>;
 
 export type GetAttributesQuery = {
     attributes?: {
-        list: Array<{id: string; label?: any | null; type: AttributeType; format?: AttributeFormat | null}>;
+        list: Array<{
+            id: string;
+            label?: any | null;
+            type: AttributeType;
+            format?: AttributeFormat | null;
+            system: boolean;
+        }>;
     } | null;
 };
 
@@ -1285,7 +1411,11 @@ export type GetLibrariesQuery = {
         list: Array<{
             id: string;
             label?: any | null;
-            icon?: {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}} | null;
+            icon?:
+                | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
+                | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
+                | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
+                | null;
         }>;
     } | null;
 };
@@ -1328,6 +1458,7 @@ export type GetLibraryByIdQuery = {
             } | null;
             recordIdentityConf?: {
                 label?: string | null;
+                subLabel?: string | null;
                 color?: string | null;
                 preview?: string | null;
                 treeColorPreview?: string | null;
@@ -1340,16 +1471,38 @@ export type GetLibraryByIdQuery = {
                 edit_record: boolean;
                 delete_record: boolean;
             } | null;
-            icon?: {
-                id: string;
-                whoAmI: {
-                    id: string;
-                    label?: string | null;
-                    color?: string | null;
-                    preview?: IPreviewScalar | null;
-                    library: {id: string; label?: any | null};
-                };
-            } | null;
+            icon?:
+                | {
+                      id: string;
+                      whoAmI: {
+                          id: string;
+                          label?: string | null;
+                          color?: string | null;
+                          preview?: IPreviewScalar | null;
+                          library: {id: string; label?: any | null};
+                      };
+                  }
+                | {
+                      id: string;
+                      whoAmI: {
+                          id: string;
+                          label?: string | null;
+                          color?: string | null;
+                          preview?: IPreviewScalar | null;
+                          library: {id: string; label?: any | null};
+                      };
+                  }
+                | {
+                      id: string;
+                      whoAmI: {
+                          id: string;
+                          label?: string | null;
+                          color?: string | null;
+                          preview?: IPreviewScalar | null;
+                          library: {id: string; label?: any | null};
+                      };
+                  }
+                | null;
             previewsSettings?: Array<{
                 label: any;
                 description?: any | null;
@@ -1390,6 +1543,7 @@ export type SaveLibraryMutation = {
         } | null;
         recordIdentityConf?: {
             label?: string | null;
+            subLabel?: string | null;
             color?: string | null;
             preview?: string | null;
             treeColorPreview?: string | null;
@@ -1402,16 +1556,38 @@ export type SaveLibraryMutation = {
             edit_record: boolean;
             delete_record: boolean;
         } | null;
-        icon?: {
-            id: string;
-            whoAmI: {
-                id: string;
-                label?: string | null;
-                color?: string | null;
-                preview?: IPreviewScalar | null;
-                library: {id: string; label?: any | null};
-            };
-        } | null;
+        icon?:
+            | {
+                  id: string;
+                  whoAmI: {
+                      id: string;
+                      label?: string | null;
+                      color?: string | null;
+                      preview?: IPreviewScalar | null;
+                      library: {id: string; label?: any | null};
+                  };
+              }
+            | {
+                  id: string;
+                  whoAmI: {
+                      id: string;
+                      label?: string | null;
+                      color?: string | null;
+                      preview?: IPreviewScalar | null;
+                      library: {id: string; label?: any | null};
+                  };
+              }
+            | {
+                  id: string;
+                  whoAmI: {
+                      id: string;
+                      label?: string | null;
+                      color?: string | null;
+                      preview?: IPreviewScalar | null;
+                      library: {id: string; label?: any | null};
+                  };
+              }
+            | null;
         previewsSettings?: Array<{
             label: any;
             description?: any | null;
@@ -1679,6 +1855,7 @@ export const LibraryDetailsFragmentDoc = gql`
         }
         recordIdentityConf {
             label
+            subLabel
             color
             preview
             treeColorPreview
@@ -2066,6 +2243,7 @@ export const GetAttributesDocument = gql`
                 label
                 type
                 format
+                system
             }
         }
     }

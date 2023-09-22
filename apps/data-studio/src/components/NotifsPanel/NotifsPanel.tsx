@@ -4,14 +4,14 @@
 import {useMutation} from '@apollo/client';
 import {Button, Col, Drawer, List, Row} from 'antd';
 import {cancelTaskMutation} from 'graphQL/mutations/tasks/cancelTask';
-import {deleteTaskMutation} from 'graphQL/mutations/tasks/deleteTask';
+import {deleteTasksMutation} from 'graphQL/mutations/tasks/deleteTasks';
 import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setIsPanelOpen} from 'reduxStore/notifications';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
-import {deleteTask} from 'reduxStore/tasks';
+import {deleteTasks} from 'reduxStore/tasks';
 import {CANCEL_TASK, CANCEL_TASKVariables} from '_gqlTypes/CANCEL_TASK';
-import {DELETE_TASK, DELETE_TASKVariables} from '_gqlTypes/DELETE_TASK';
+import {DELETE_TASKS, DELETE_TASKSVariables} from '_gqlTypes/DELETE_TASKS';
 import TaskItem from './TaskItem';
 import {isCompletedTask, isInProgressTask} from './TaskItem/TaskItem';
 
@@ -39,7 +39,7 @@ function NotifsPanel({setNbNotifs}: INotifsPanelProps): JSX.Element {
     const [panel, setPanel] = useState<{inProgress: INotif[]; completed: INotif[]}>({inProgress: [], completed: []});
 
     const [runCancelTask] = useMutation<CANCEL_TASK, CANCEL_TASKVariables>(cancelTaskMutation);
-    const [runDeleteTask] = useMutation<DELETE_TASK, DELETE_TASKVariables>(deleteTaskMutation);
+    const [runDeleteTasks] = useMutation<DELETE_TASKS, DELETE_TASKSVariables>(deleteTasksMutation);
 
     const _onClose = () => {
         dispatch(setIsPanelOpen(false));
@@ -70,24 +70,24 @@ function NotifsPanel({setNbNotifs}: INotifsPanelProps): JSX.Element {
 
     const _onDelete = async (notif: INotif) => {
         if (notif.type === NotifTypes.TASK) {
-            await runDeleteTask({
-                variables: {taskId: notif.data.id, archive: true}
+            await runDeleteTasks({
+                variables: {tasks: [{id: notif.data.id, archive: true}]}
             });
 
-            dispatch(deleteTask({id: notif.data.id}));
+            dispatch(deleteTasks([{id: notif.data.id}]));
         }
     };
 
     const _onDeleteAll = async () => {
-        for (const n of panel.completed) {
-            if (n.type === NotifTypes.TASK) {
-                await runDeleteTask({
-                    variables: {taskId: n.data.id, archive: true}
-                });
+        const tasksToDel = panel.completed
+            .filter(n => n.type === NotifTypes.TASK)
+            .map(n => ({id: n.data.id, archive: true}));
 
-                dispatch(deleteTask({id: n.data.id}));
-            }
-        }
+        await runDeleteTasks({
+            variables: {tasks: tasksToDel}
+        });
+
+        dispatch(deleteTasks(tasksToDel.map(ttd => ({id: ttd.id}))));
     };
 
     const _onNotifInfoClick = ({type, ellipsis, data: task}: INotif, index: ['inProgress' | 'completed', number]) => {

@@ -9,7 +9,7 @@ import ValidationError from '../../../errors/ValidationError';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../../_types/attribute';
 import {Errors} from '../../../_types/errors';
 import {AttributeCondition} from '../../../_types/record';
-import {IRecordFilterLight} from '../recordDomain';
+import {IRecordFilterLight} from '../_types';
 
 interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;

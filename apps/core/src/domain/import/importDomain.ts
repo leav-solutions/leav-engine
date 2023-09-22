@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {extractArgsFromString} from '@leav/utils';
-import * as Config from '_types/config';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
-import {IRecordDomain, IRecordFilterLight} from 'domain/record/recordDomain';
+import {IRecordDomain} from 'domain/record/recordDomain';
+import {IRecordFilterLight} from 'domain/record/_types';
 import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
@@ -20,26 +20,27 @@ import {nanoid} from 'nanoid';
 import path from 'path';
 import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
+import * as Config from '_types/config';
+import PermissionError from '../../errors/PermissionError';
+import ValidationError from '../../errors/ValidationError';
+import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {
     Action,
     IData,
     IElement,
-    IValue as IImportValue,
     IMatch,
-    ITree,
     ImportMode,
-    ImportType
+    ImportType,
+    ITree,
+    IValue as IImportValue
 } from '../../_types/import';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {AttributeCondition, Operator} from '../../_types/record';
 import {ITaskFuncParams, TaskCallbackType, TaskPriority, TaskType} from '../../_types/tasksManager';
 import {ITreeElement} from '../../_types/tree';
 import {IValue} from '../../_types/value';
-import PermissionError from '../../errors/PermissionError';
-import ValidationError from '../../errors/ValidationError';
-import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {IValidateHelper} from '../helpers/validate';
 
 export const IMPORT_DATA_SCHEMA_PATH = path.resolve(__dirname, './import-data-schema.json');
@@ -810,7 +811,7 @@ export default function ({
 
                         // Create the record if it does not exist
                         if (!recordIds.length) {
-                            recordIds = [(await recordDomain.createRecord(element.library, ctx)).id];
+                            recordIds = [(await recordDomain.createRecord({library: element.library, ctx})).record.id];
                             action = ImportAction.CREATED;
                         } else {
                             action = ImportAction.UPDATED;
@@ -833,15 +834,15 @@ export default function ({
 
                         // Caching element links, to treat them later
                         // TODO: Improvement: if no links no cache.
-                        await cacheService.getCache(ECacheType.DISK).storeData(
-                            index.toString(),
-                            JSON.stringify({
+                        await cacheService.getCache(ECacheType.DISK).storeData({
+                            key: index.toString(),
+                            data: JSON.stringify({
                                 library: element.library,
                                 recordIds,
                                 links: element.links
                             } as ICachedLinks),
-                            cacheDataPath
-                        );
+                            path: cacheDataPath
+                        });
 
                         if (typeof lastCacheIndex === 'undefined' || index > lastCacheIndex) {
                             lastCacheIndex = index;

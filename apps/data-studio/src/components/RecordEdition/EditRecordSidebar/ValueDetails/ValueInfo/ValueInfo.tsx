@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import {checkTypeIsLink, getValueVersionLabel, isTypeStandard} from 'utils';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
 import {PreviewSize} from '_types/types';
+import isEmpty from 'lodash/isEmpty';
 
 const Wrapper = styled.div`
     padding: 1rem;
@@ -26,6 +27,15 @@ const Title = styled.div`
     margin-bottom: 1rem;
     display: flex;
     gap: 1rem;
+`;
+
+const DisplayValueId = styled.div`
+    font-style: italic;
+    color: rgba(0, 0, 0, 0.4);
+    font-size: 10px;
+    position: relative;
+    left: 81%;
+    margin-bottom: 10px;
 `;
 
 function ValueInfo(): JSX.Element {
@@ -52,10 +62,17 @@ function ValueInfo(): JSX.Element {
           ]
         : [];
 
-    if (value?.version) {
+    if (value?.version && !isEmpty(value?.version)) {
         valueDetailsContent.push({
             title: t('values_version.version'),
             value: getValueVersionLabel(value.version)
+        });
+    }
+
+    if (state?.record && value?.id_value && !isEmpty(value?.id_value)) {
+        valueDetailsContent.push({
+            title: t('record_edition.attribute.id'),
+            value: value?.id_value
         });
     }
 

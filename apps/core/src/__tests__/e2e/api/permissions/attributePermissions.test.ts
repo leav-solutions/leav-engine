@@ -108,11 +108,11 @@ describe('AttributePermissions', () => {
         beforeAll(async () => {
             // Create 2 users groups
             const resCreateGroups = await makeGraphQlCall(`mutation {
-                r1: createRecord(library: "users_groups") {id},
-                r2: createRecord(library: "users_groups") {id}
+                r1: createRecord(library: "users_groups") { record { id } },
+                r2: createRecord(library: "users_groups") { record { id } }
             }`);
-            userGroupId1 = resCreateGroups.data.data.r1.id;
-            userGroupId2 = resCreateGroups.data.data.r2.id;
+            userGroupId1 = resCreateGroups.data.data.r1.record.id;
+            userGroupId2 = resCreateGroups.data.data.r2.record.id;
 
             // Add users groups to tree
             nodeUserGroup1 = await gqlAddElemToTree('users_groups', {id: userGroupId1, library: 'users_groups'});

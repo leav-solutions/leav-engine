@@ -43,6 +43,7 @@ describe('AppHandler', () => {
                             whoAmI: {
                                 id: '1',
                                 label: 'admin',
+                                subLabel: 'null',
                                 color: null,
                                 library: {
                                     id: 'users',

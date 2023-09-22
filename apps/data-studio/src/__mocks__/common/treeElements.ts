@@ -16,6 +16,7 @@ export const mockTreeRecord: RecordIdentity = {
         id: 'id',
         color: 'color',
         label: 'label',
+        subLabel: 'sublabel',
         preview: mockPreviews,
         library: {
             id: 'library-id',
@@ -38,6 +39,7 @@ export const mockTreeRecordChild: RecordIdentity = {
         id: 'child',
         color: 'color',
         label: 'label-child',
+        subLabel: 'sulabel-child',
         preview: mockPreviews,
         library: {
             id: 'library-id',

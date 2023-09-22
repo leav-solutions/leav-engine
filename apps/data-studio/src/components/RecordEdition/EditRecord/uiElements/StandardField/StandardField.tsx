@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ErrorDisplay} from '@leav/ui';
 import {AnyPrimitive, ErrorTypes, ICommonFieldsSettings} from '@leav/utils';
 import CreationErrorContext from 'components/RecordEdition/EditRecordModal/creationErrorContext';
 import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
 import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
-import {ErrorDisplay} from '@leav/ui';
 import {RecordFormElementsValueStandardValue} from 'hooks/useGetRecordForm/useGetRecordForm';
 import useRefreshFieldValues from 'hooks/useRefreshFieldValues';
 import {useContext, useEffect, useMemo, useReducer} from 'react';
@@ -55,7 +55,7 @@ function StandardField({
 
     const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
     const {state: editRecordState} = useEditRecordModalReducer();
-    const {dispatch: editRecordModalDispatch} = useEditRecordModalReducer();
+    const {state: editRecordModalState, dispatch: editRecordModalDispatch} = useEditRecordModalReducer();
 
     const {fetchValues} = useRefreshFieldValues(
         editRecordState.record?.library?.id,
@@ -84,18 +84,18 @@ function StandardField({
 
     useEffect(() => {
         if (creationErrors[attribute.id]) {
-            const idValue =
-                Object.values(state.values[state.activeScope].values).filter(
-                    val => val.editingValue === creationErrors[attribute.id].input
-                )?.[0].idValue ?? null;
+            // Affect error to each invalid value to display it on form
+            for (const fieldError of creationErrors[attribute.id]) {
+                const idValue = fieldError.id_value ?? null;
 
-            dispatch({
-                type: StandardFieldReducerActionsTypes.SET_ERROR,
-                idValue,
-                error: creationErrors[attribute.id].message
-            });
+                dispatch({
+                    type: StandardFieldReducerActionsTypes.SET_ERROR,
+                    idValue,
+                    error: fieldError.message
+                });
+            }
         }
-    }, [creationErrors, attribute.id, state.values]);
+    }, [creationErrors, attribute.id]);
 
     const _handleSubmit = async (idValue: IdValue, valueToSave: AnyPrimitive) => {
         const isSavingNewValue = idValue === newValueId;
@@ -112,13 +112,26 @@ function StandardField({
 
         if (submitRes.status === APICallStatus.SUCCESS) {
             const submitResValue = submitRes.values[0] as SAVE_VALUE_BATCH_saveValueBatch_values_Value;
-            const resultValue = state.metadataEdit
-                ? {
-                      ...submitResValue.metadata.find(({name}) => name === element.attribute.id).value,
-                      metadata: null,
-                      attribute
-                  }
-                : submitResValue;
+
+            let resultValue;
+            if (state.metadataEdit) {
+                const metadataValue =
+                    (submitResValue.metadata ?? []).find(({name}) => name === element.attribute.id)?.value ?? null;
+                resultValue = {
+                    id_value: null,
+                    created_at: null,
+                    modified_at: null,
+                    created_by: null,
+                    modified_by: null,
+                    version: null,
+                    raw_value: metadataValue.raw_value ?? metadataValue.value,
+                    value: metadataValue.value,
+                    metadata: null,
+                    attribute
+                };
+            } else {
+                resultValue = submitResValue;
+            }
 
             dispatch({
                 type: StandardFieldReducerActionsTypes.UPDATE_AFTER_SUBMIT,
@@ -126,12 +139,30 @@ function StandardField({
                 idValue
             });
 
-            if (!state.metadataEdit) {
-                editRecordModalDispatch({
-                    type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-                    value: null
-                });
-            }
+            const newActiveValue = state.metadataEdit
+                ? {
+                      ...editRecordModalState.activeValue,
+                      value: {
+                          ...editRecordModalState.activeValue.value,
+                          metadata: [
+                              ...(editRecordModalState.activeValue?.value?.metadata ?? []),
+                              {
+                                  name: element.attribute.id,
+                                  value: {
+                                      ...resultValue,
+                                      version: null,
+                                      metadata: null
+                                  }
+                              }
+                          ]
+                      }
+                  }
+                : null;
+
+            editRecordModalDispatch({
+                type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
+                value: newActiveValue
+            });
 
             return;
         }

@@ -188,7 +188,7 @@ export default function (deps: IDeps): ITreeBasedPermissionHelper {
             }, null);
 
             const permToStore = perm === null ? PERMISSIONS_NULL_PLACEHOLDER : perm.toString();
-            await cacheService.getCache(ECacheType.RAM).storeData(cacheKey, permToStore);
+            await cacheService.getCache(ECacheType.RAM).storeData({key: cacheKey, data: permToStore});
         }
 
         return perm;

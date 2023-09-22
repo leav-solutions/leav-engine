@@ -59,6 +59,7 @@ export interface IAuth {
     key: string;
     algorithm: string;
     tokenExpiration: string;
+    refreshTokenExpiration: string;
     cookie: {
         sameSite: 'none' | 'lax' | 'strict';
         secure: boolean;

@@ -27,6 +27,7 @@ export interface UPLOAD_upload_record_whoAmI_library {
 export interface UPLOAD_upload_record_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: UPLOAD_upload_record_whoAmI_library;
     preview: Preview | null;

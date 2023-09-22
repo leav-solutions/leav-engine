@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedResponse} from '@apollo/client/testing';
 import {cancelTaskMutation} from 'graphQL/mutations/tasks/cancelTask';
-import {deleteTaskMutation} from 'graphQL/mutations/tasks/deleteTask';
+import {deleteTasksMutation} from 'graphQL/mutations/tasks/deleteTasks';
 import {BrowserRouter as Router} from 'react-router-dom';
 import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
 import {TaskStatus, TaskType} from '_gqlTypes/globalTypes';
@@ -38,7 +38,7 @@ describe('Notifs panel', () => {
             },
             {
                 request: {
-                    query: deleteTaskMutation
+                    query: deleteTasksMutation
                 },
                 result: {
                     data: {

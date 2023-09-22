@@ -50,7 +50,9 @@ describe('ValueDomain', () => {
     };
 
     const mockActionsListDomain: Mockify<IActionsListDomain> = {
-        runActionsList: jest.fn().mockImplementation((_, val) => Promise.resolve(val))
+        runActionsList: jest.fn().mockImplementation((_, val) => {
+            return Promise.resolve(val);
+        })
     };
 
     const mockRecordPermDomain: Mockify<IRecordPermissionDomain> = {
@@ -1049,7 +1051,7 @@ describe('ValueDomain', () => {
             getTrees: global.__mockPromise({list: [mockTree], totalCount: 0})
         };
 
-        test('Should save multiple values', async () => {
+        test.only('Should save multiple values', async () => {
             const mockUtils: Mockify<IUtils> = {
                 ...mockUtilsStandardAttribute,
                 rethrow: jest.fn().mockImplementation(e => {

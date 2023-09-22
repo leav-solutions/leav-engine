@@ -3,15 +3,15 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import cacache from 'cacache';
 import {IConfig} from '_types/config';
-import {ICacheService} from './cacheService';
+import {ICacheService, IStoreDataParams} from './cacheService';
 
 interface IDeps {
     config?: IConfig;
 }
 
-export default function({config = null}: IDeps): ICacheService {
+export default function ({config = null}: IDeps): ICacheService {
     return {
-        async storeData(key: string, data: string, path?: string): Promise<void> {
+        async storeData({key, data, path}: IStoreDataParams): Promise<void> {
             await cacache.put(`${config.diskCache.directory}/${path}`, key, data);
         },
         async getData(keys: string[], path?: string): Promise<string[]> {

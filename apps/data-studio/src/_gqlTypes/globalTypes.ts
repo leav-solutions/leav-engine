@@ -209,6 +209,16 @@ export interface ApplicationEventFiltersInput {
     events?: ApplicationEventTypes[] | null;
 }
 
+export interface DeleteTaskInput {
+    id: string;
+    archive: boolean;
+}
+
+export interface CreateRecordDataInput {
+    version?: ValueVersionInput[] | null;
+    values?: ValueBatchInput[] | null;
+}
+
 export interface FileInput {
     data: Upload;
     uid: string;

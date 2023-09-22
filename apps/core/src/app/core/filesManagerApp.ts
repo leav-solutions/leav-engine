@@ -2,21 +2,21 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FileType} from '@leav/utils';
+import {IAuthApp} from 'app/auth/authApp';
+import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {IRecordFilterLight} from 'domain/record/_types';
+import express, {Express, NextFunction, Response} from 'express';
+import {withFilter} from 'graphql-subscriptions';
+import {FileUpload} from 'graphql-upload';
+import winston from 'winston';
 import {IConfig} from '_types/config';
 import {IRequestWithContext} from '_types/express';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
-import {IAuthApp} from 'app/auth/authApp';
-import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {IRecordFilterLight} from 'domain/record/recordDomain';
-import express, {Express, NextFunction, Response} from 'express';
-import {withFilter} from 'graphql-subscriptions';
-import {FileUpload} from 'graphql-upload';
-import winston from 'winston';
-import {API_KEY_PARAM_NAME} from '../../_types/auth';
 import {IFilesManagerDomain, TRIGGER_NAME_UPLOAD_FILE} from '../../domain/filesManager/filesManagerDomain';
+import {API_KEY_PARAM_NAME} from '../../_types/auth';
 
 export interface IFilesManagerApp {
     init(): Promise<void>;
@@ -100,13 +100,16 @@ export default function ({
                         doesFileExistAsChild(treeId: ID!, parentNode: ID, filename: String!): Boolean
                     }
 
+
+
                     extend type Mutation {
                         # Force previews generation for the given records. If filters is specified, it will perform a search applying these filters and generate previews for results. If both filters and recordIds are specified, filters will be ignored. If failedOnly is true, only failed previews will be generated.
                         forcePreviewsGeneration(
                             libraryId: ID!,
                             recordIds: [ID!],
                             filters: [RecordFilterInput],
-                            failedOnly: Boolean
+                            failedOnly: Boolean,
+                            previewVersionSizeNames: [String!]
                         ): Boolean!
                         upload(library: String!, nodeId: String!, files: [FileInput!]!): [UploadData!]!
                         createDirectory(library: String!, nodeId: String!, name: String!): Record!
@@ -160,12 +163,14 @@ export default function ({
                                 libraryId,
                                 recordIds,
                                 filters,
-                                failedOnly
+                                failedOnly,
+                                previewVersionSizeNames
                             }: {
                                 libraryId: string;
-                                recordIds: string[];
-                                filters: IRecordFilterLight[];
-                                failedOnly: boolean;
+                                recordIds?: string[];
+                                filters?: IRecordFilterLight[];
+                                failedOnly?: boolean;
+                                previewVersionSizeNames?: string[];
                             },
                             ctx: IQueryInfos
                         ): Promise<boolean> {
@@ -174,6 +179,7 @@ export default function ({
                                 recordIds,
                                 filters,
                                 failedOnly,
+                                previewVersionSizeNames,
                                 ctx
                             });
                         }
@@ -213,7 +219,7 @@ export default function ({
 
                     try {
                         const payload = await authApp.validateRequestToken({
-                            apiKey: String(req.query[API_KEY_PARAM_NAME]),
+                            ...(req.query[API_KEY_PARAM_NAME] && {apiKey: String(req.query[API_KEY_PARAM_NAME])}),
                             cookies: req.cookies
                         });
                         req.ctx.userId = payload.userId;

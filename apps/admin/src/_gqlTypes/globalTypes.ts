@@ -165,6 +165,13 @@ export enum TaskStatus {
     RUNNING = 'RUNNING'
 }
 
+export enum TaskType {
+    EXPORT = 'EXPORT',
+    IMPORT_CONFIG = 'IMPORT_CONFIG',
+    IMPORT_DATA = 'IMPORT_DATA',
+    INDEXATION = 'INDEXATION'
+}
+
 export enum TreeBehavior {
     files = 'files',
     standard = 'standard'
@@ -259,6 +266,11 @@ export interface AttributeInput {
     values_list?: ValuesListConfInput | null;
     reverse_link?: string | null;
     unique?: boolean | null;
+}
+
+export interface DeleteTaskInput {
+    id: string;
+    archive: boolean;
 }
 
 export interface EmbeddedAttributeInput {
@@ -395,6 +407,7 @@ export interface RecordIdentityConfInput {
     color?: string | null;
     preview?: string | null;
     treeColorPreview?: string | null;
+    subLabel?: string | null;
 }
 
 export interface SortApiKeysInput {
@@ -417,6 +430,7 @@ export interface TaskFiltersInput {
     created_by?: string | null;
     status?: TaskStatus | null;
     archive?: boolean | null;
+    type?: TaskType | null;
 }
 
 export interface TreeElementInput {

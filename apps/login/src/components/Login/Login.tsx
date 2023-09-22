@@ -6,12 +6,14 @@ import {useTranslation} from 'react-i18next';
 import {useParams} from 'react-router-dom';
 import LoginForm from './LoginForm';
 import {AUTH_URL} from '../../constants';
+import {useRefreshToken} from '@leav/ui';
 
 const Login = (): JSX.Element => {
     const params = useParams<{dest?: string}>();
     const {t} = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [loginError, setLoginError] = useState('');
+    const {setRefreshToken} = useRefreshToken();
 
     const redirectTo = params.dest ?? '/';
 
@@ -36,6 +38,9 @@ const Login = (): JSX.Element => {
             if (!response.ok) {
                 throw new Error(t('error.no_server_response'));
             }
+
+            const data = await response.json();
+            setRefreshToken(data.refreshToken);
 
             window.location.replace(redirectTo);
         } catch (err) {

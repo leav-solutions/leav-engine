@@ -38,6 +38,7 @@ export const validateConfig = (conf: IConfig) => {
             key: Joi.string(),
             algorithm: Joi.string().required(),
             tokenExpiration: Joi.string().required(),
+            refreshTokenExpiration: Joi.string().required(),
             cookie: {
                 sameSite: Joi.string().valid('none', 'lax', 'strict'),
                 secure: Joi.boolean()

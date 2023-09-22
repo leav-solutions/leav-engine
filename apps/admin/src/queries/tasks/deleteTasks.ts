@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import gql from 'graphql-tag';
 
-export const deleteTaskMutation = gql`
-    mutation DELETE_TASK($taskId: ID!, $archive: Boolean!) {
-        deleteTask(taskId: $taskId, archive: $archive)
+export const deleteTasksMutation = gql`
+    mutation DELETE_TASKS($tasks: [DeleteTaskInput!]!) {
+        deleteTasks(tasks: $tasks)
     }
 `;

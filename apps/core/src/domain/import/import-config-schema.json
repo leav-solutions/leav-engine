@@ -131,6 +131,9 @@
                         "label": {
                             "type": "string"
                         },
+                        "subLabel": {
+                            "type": "string"
+                        },
                         "preview": {
                             "type": "string"
                         },

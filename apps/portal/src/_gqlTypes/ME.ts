@@ -18,6 +18,7 @@ export interface ME_me_whoAmI_library {
 export interface ME_me_whoAmI {
     id: string;
     label: string | null;
+    subLabel: string | null;
     color: string | null;
     library: ME_me_whoAmI_library;
     preview: Preview | null;
