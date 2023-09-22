@@ -7,7 +7,9 @@
     "build": "tsc --build",
     "tscheck": "tsc --noEmit -p .",
     "tscheck:watch": "tsc -w --noEmit -p .",
-    "test": "jest -c jest-config.json"
+    "test": "jest -c jest-config.json",
+    "test:ci": "jest -c jest-config.json",
+    "test:commit": "jest -c jest-config.json --maxWorkers=50% --onlyChanged "
   },
   "main": "dist/index",
   "keywords": [

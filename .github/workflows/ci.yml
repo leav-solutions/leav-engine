@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
 
+  install:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
@@ -20,13 +20,62 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
+      - name: Cache NPM dependencies
+        uses: actions/cache@v3
+        with:
+          path: '**/node_modules'
+          key: |
+            ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
+            ${{ runner.OS }}-yarn
+      - name: Install dependency
+        run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
+      - name: install node module
+        run: yarn install
+
+  setup-workspaces-list-name:
+    runs-on: ubuntu-latest
+    needs:
+      - install
+    outputs:
+      workspaces_name: ${{ steps.set-workspaces-list-name.outputs.workspaces_name }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          node-version: 18.x
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+          cache: 'yarn'
+      - name: Set workspaces list name
+        id: set-workspaces-list-name
+        run: echo "workspaces_name=$(yarn workspaces list --json | jq '.name' | jq -s | jq -c)" >> "$GITHUB_OUTPUT" 
+
+  lint:
+    runs-on: ubuntu-latest
+    needs:
+      - install
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          node-version: 18.x
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.x
+          cache: 'yarn'
+      - name: Cache NPM dependencies
+        uses: actions/cache@v3
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
       - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
-      - run: yarn install
       - run: yarn lint
 
   tscheck:
     runs-on: ubuntu-latest
-
+    needs:
+      - install
     steps:
       - uses: actions/checkout@v2
         with:
@@ -36,13 +85,23 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
+      - name: Cache NPM dependencies
+        uses: actions/cache@v3
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
       - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
-      - run: yarn install
       - run: yarn tscheck
 
-  unit-tests:
+  workspace-unit-tests:
     runs-on: ubuntu-latest
-
+    name: Workspace ${{ matrix.name }}
+    needs: 
+      - setup-workspaces-list-name
+      - install 
+    strategy:
+      matrix:
+        name: ${{ fromJson(needs.setup-workspaces-list-name.outputs.workspaces_name) }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -52,14 +111,19 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
-      - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
-      - run: yarn install
-      - run: yarn test --all
-        env:
-          SKIP_PREFLIGHT_CHECK: 'true'
+      - name: Cache NPM dependencies
+        uses: actions/cache@v3
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
+      - name: run workspace test
+        id: run-workspace-test
+        run: yarn workspace ${{ matrix.name }} run test:ci
 
   e2e-api:
     runs-on: ubuntu-latest
+    needs:
+      - install
     services:
       arangodb:
         image: arangodb:3.9
@@ -75,7 +139,6 @@ jobs:
         image: redis
         ports:
           - "6379:6379"
-
     steps:
       - uses: actions/checkout@v2
         with:
@@ -96,8 +159,12 @@ jobs:
         with:
           stack-version: 8.5.3
           security-enabled: false
+      - name: Cache NPM dependencies
+        uses: actions/cache@v3
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
       - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
-      - run: yarn install
       - name: Run e2e tests
         working-directory: ./apps/core
         run: yarn run test:e2e:api
@@ -119,6 +186,8 @@ jobs:
 
   e2e-indexation-manager:
     runs-on: ubuntu-latest
+    needs:
+      - install
     services:
       arangodb:
         image: arangodb:3.9
@@ -134,7 +203,6 @@ jobs:
         image: redis
         ports:
           - "6379:6379"
-
     steps:
       - uses: actions/checkout@v2
         with:
@@ -155,8 +223,12 @@ jobs:
         with:
           stack-version: 8.5.3
           security-enabled: false
+      - name: Cache NPM dependencies
+        uses: actions/cache@v3
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
       - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
-      - run: yarn install
       - name: Run e2e tests
         working-directory: ./apps/core
         run: yarn run test:e2e:indexationManager
@@ -172,16 +244,17 @@ jobs:
           ELASTICSEARCH_URL: "http://localhost:9200"
           REDIS_HOST: localhost
           REDIS_PORT: 6379
-
+  
   e2e-sync-scan:
     timeout-minutes: 20
     runs-on: ubuntu-latest
+    needs:
+      - install
     services:
       rabbitmq:
         image: rabbitmq:3-management-alpine
         ports:
           - "5672:5672"
-
     steps:
       - uses: actions/checkout@v2
         with:
@@ -191,8 +264,12 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
+      - name: Cache NPM dependencies
+        uses: actions/cache@v3
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
       - run: sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
-      - run: yarn install
       - name: Run e2e tests
         working-directory: ./apps/sync-scan
         run: yarn run test:e2e

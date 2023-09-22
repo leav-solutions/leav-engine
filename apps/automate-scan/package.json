@@ -11,6 +11,8 @@
         "dev": "npm run start:watch",
         "build": "tsc -b tsconfig.build.json",
         "test": "jest -c jest-unit-config.json",
+        "test:ci": "jest -c jest-unit-config.json",
+        "test:commit": "jest -c jest-unit-config.json --maxWorkers=50% --onlyChanged ",
         "test:watch": "jest -c jest-unit-config.json --watch",
         "test:integration": "NODE_ENV=test-integration jest -c jest-integration-config.json",
         "lint": "tslint --fix -p .",
