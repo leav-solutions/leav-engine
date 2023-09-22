@@ -12,6 +12,8 @@ export default function (): IActionsListFunction {
         input_types: [ActionsListIOTypes.OBJECT],
         output_types: [ActionsListIOTypes.OBJECT],
         action: (value: ActionsListValueType): IDateRangeValue<number> => {
+            const test = 1;
+
             const dateRangeValue = value as IDateRangeValue<string>;
             return {from: Number(dateRangeValue.from ?? ''), to: Number(dateRangeValue.to ?? '')};
         }

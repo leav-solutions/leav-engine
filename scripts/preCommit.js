@@ -11,7 +11,7 @@ const {spawn} = require('child_process');
         const rootPath = `${__dirname}/..`;
         const packagesFolders = ['apps', 'libs'];
         // Get changed files
-        const {stdout, stderr} = await exec('git diff --diff-filter=ACMR --name-only');
+        const {stdout, stderr} = await exec('git diff HEAD --name-only');
         if (stderr) {
             process.exit(1);
         }
