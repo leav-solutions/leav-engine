@@ -41,6 +41,8 @@ const {spawn} = require('child_process');
 const runRecursiveCommand = (workspacesList) => {
     if(workspacesList.length > 0){
         const workspace = workspacesList.shift();
+        // eslint-disable-next-line no-restricted-syntax
+        console.log('\n----------------  RUN TESTS RELATED TO CHANGE ON WORKSPACE ' + workspace.toUpperCase() + '  ----------------\n');
         const runProcess = spawn(
             'yarn',
             ['workspace', workspace, 'run', 'test:commit'],
@@ -51,6 +53,8 @@ const runRecursiveCommand = (workspacesList) => {
         runProcess.on('exit', code => {
             if(code === 0){
                 runRecursiveCommand(workspacesList);
+            } else {
+                process.exit(code);
             }
         });
     }
