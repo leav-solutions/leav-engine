@@ -12,6 +12,7 @@
         "@leav/ui": "workspace:libs/ui",
         "@leav/utils": "workspace:libs/utils",
         "@reduxjs/toolkit": "1.9.2",
+        "@types/dompurify": "3.0.3",
         "antd": "5.8.4",
         "apollo-cache-inmemory": "1.6.6",
         "apollo-upload-client": "14.1.3",

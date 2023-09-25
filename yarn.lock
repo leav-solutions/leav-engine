@@ -7660,6 +7660,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/dompurify@npm:3.0.3":
+  version: 3.0.3
+  resolution: "@types/dompurify@npm:3.0.3"
+  dependencies:
+    "@types/trusted-types": "*"
+  checksum: ff629277db4d19d836b0d878e93efb27d876d1073db81507c39d44d509b30ee3bcdc9e951dbbf9574b1fc6c52e1eaa95abf4279fa45aca281868717f8a7298da
+  languageName: node
+  linkType: hard
+
 "@types/draft-js@npm:*":
   version: 0.11.9
   resolution: "@types/draft-js@npm:0.11.9"
@@ -8443,6 +8452,13 @@ __metadata:
   version: 4.0.2
   resolution: "@types/tough-cookie@npm:4.0.2"
   checksum: e055556ffdaa39ad85ede0af192c93f93f986f4bd9e9426efdc2948e3e2632db3a4a584d4937dbf6d7620527419bc99e6182d3daf2b08685e710f2eda5291905
+  languageName: node
+  linkType: hard
+
+"@types/trusted-types@npm:*":
+  version: 2.0.4
+  resolution: "@types/trusted-types@npm:2.0.4"
+  checksum: 5256c4576cd1c90d33ddd9cc9cbd4f202b39c98cbe8b7f74963298f9eb2159c285ea5c25a6181b4c594d8d75641765bff85d72c2d251ad076e6529ce0eeedd1c
   languageName: node
   linkType: hard
 
@@ -12823,6 +12839,7 @@ __metadata:
     "@testing-library/jest-dom": 4.2.4
     "@testing-library/react": 13.4.0
     "@testing-library/user-event": 13.0.4
+    "@types/dompurify": 3.0.3
     "@types/i18next-browser-languagedetector": 3.0.0
     "@types/i18next-xhr-backend": 1.4.2
     "@types/jest": 27.5.2
