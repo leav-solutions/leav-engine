@@ -78,7 +78,7 @@ function performOperation(operationType: string, value1: number, value2: number)
     }
 ```
 - Prefer clean and explicit code over comments. If necessary, explain the why, not the how.
-- [https://en.wikipedia.org/wiki/Functional_programming](Functional programming) is preferred. Classes are allowed only for specific situations (like a custom `Error` class)
+- [Functional programming](https://en.wikipedia.org/wiki/Functional_programming) is preferred. Classes are allowed only for specific situations (like a custom `Error` class)
 - Use pure functions as much as possible. Avoid mutating params.
 
 ## Naming
