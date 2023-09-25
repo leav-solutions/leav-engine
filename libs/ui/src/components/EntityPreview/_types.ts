@@ -8,18 +8,18 @@ export interface IEntityPreviewProps {
     label: string;
     color?: string;
     image?: string;
-    style?: CSSObject;
-    imageStyle?: CSSObject;
-    placeholderStyle?: CSSObject;
+    style?: React.CSSProperties & CSSObject;
+    imageStyle?: React.CSSProperties & CSSObject;
+    placeholderStyle?: React.CSSProperties & CSSObject;
     tile?: boolean;
     size?: PreviewSize;
     simplistic?: boolean;
 }
 
 export interface IGeneratedPreviewProps {
-    bgColor: string;
-    fontColor: string;
-    size?: PreviewSize;
-    style?: CSSObject;
-    simplistic?: boolean;
+    $bgColor: string;
+    $fontColor: string;
+    $size?: PreviewSize;
+    style?: React.CSSProperties & CSSObject;
+    $simplistic?: boolean;
 }

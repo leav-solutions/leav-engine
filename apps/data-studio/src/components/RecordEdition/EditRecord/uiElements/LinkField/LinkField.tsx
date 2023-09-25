@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AntdThemeToken, RecordCard, themeVars, useLang} from '@leav/ui';
-import {AnyPrimitive, ICommonFieldsSettings, IFormLinkFieldSettings} from '@leav/utils';
-import {Popover, Skeleton, Switch, Table, theme} from 'antd';
+import {AntdThemeToken,RecordCard,themeVars,useLang} from '@leav/ui';
+import {AnyPrimitive,ICommonFieldsSettings,IFormLinkFieldSettings} from '@leav/utils';
+import {Popover,Skeleton,Switch,Table,theme} from 'antd';
 import {ColumnsType} from 'antd/lib/table';
 import {GlobalToken} from 'antd/lib/theme/interface';
 import Paragraph from 'antd/lib/typography/Paragraph';
@@ -18,18 +18,18 @@ import {
     IRecordColumnValueTree,
     RecordColumnValue
 } from 'graphQL/queries/records/getRecordColumnsValues';
-import {IRecordPropertyLink, RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
+import {IRecordPropertyLink,RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {RecordFormElementsValueLinkValue} from 'hooks/useGetRecordForm/useGetRecordForm';
 import {useGetRecordValuesQuery} from 'hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 import useRefreshFieldValues from 'hooks/useRefreshFieldValues';
-import {Reducer, useContext, useEffect, useReducer} from 'react';
+import {Reducer,useContext,useEffect,useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {arrayValueVersionToObject, localizedTranslation} from 'utils';
-import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {arrayValueVersionToObject,localizedTranslation} from 'utils';
+import {RecordIdentity,RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {RECORD_FORM_recordForm_elements_attribute_LinkAttribute} from '_gqlTypes/RECORD_FORM';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue} from '_gqlTypes/SAVE_VALUE_BATCH';
-import {IRecordIdentityWhoAmI, PreviewSize} from '_types/types';
+import {IRecordIdentityWhoAmI,PreviewSize} from '_types/types';
 import getActiveFieldValues from '../../helpers/getActiveFieldValues';
 import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
 import linkFieldReducer from '../../reducers/linkFieldReducer';
@@ -47,13 +47,13 @@ import NoValue from '../../shared/NoValue';
 import ValueDetailsBtn from '../../shared/ValueDetailsBtn';
 import ValuesVersionBtn from '../../shared/ValuesVersionBtn';
 import ValuesVersionIndicator from '../../shared/ValuesVersionIndicator';
-import {APICallStatus, FieldScope, IFormElementProps} from '../../_types';
+import {APICallStatus,FieldScope,IFormElementProps} from '../../_types';
 import FloatingMenuHandler from './FloatingMenuHandler';
 import ValuesAdd from './ValuesAdd';
 
-const TableWrapper = styled.div<{isValuesAddVisible: boolean; $themeToken: AntdThemeToken}>`
+const TableWrapper = styled.div<{$isValuesAddVisible: boolean; $themeToken: AntdThemeToken}>`
     position: relative;
-    z-index: ${p => (p.isValuesAddVisible ? 1 : 'auto')};
+    z-index: ${p => (p.$isValuesAddVisible ? 1 : 'auto')};
     border: 1px solid ${themeVars.borderColor};
     margin-bottom: 1.5em;
     border-radius: ${p => p.$themeToken.borderRadius}px;
@@ -447,7 +447,7 @@ function LinkField({
     return (
         <>
             {state.isValuesAddVisible && <Dimmer onClick={_handleCloseValuesAdd} />}
-            <TableWrapper isValuesAddVisible={state.isValuesAddVisible} $themeToken={token}>
+            <TableWrapper $isValuesAddVisible={state.isValuesAddVisible} $themeToken={token}>
                 <FieldLabel ellipsis={{rows: 1, tooltip: true}} $themeToken={token}>
                     {element.settings.label}
                     {state.activeScope === FieldScope.INHERITED && (

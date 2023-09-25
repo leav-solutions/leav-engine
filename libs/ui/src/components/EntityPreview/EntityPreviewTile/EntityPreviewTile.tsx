@@ -39,8 +39,8 @@ const ImageComp = styled.img<{$loaded: boolean}>`
 
 const GeneratedPreviewTile = styled.div<IGeneratedPreviewProps>`
     ${props => props.style || ''}
-    background-color: ${props => props.bgColor};
-    color: ${props => props.fontColor};
+    background-color: ${props => props.$bgColor};
+    color: ${props => props.$fontColor};
     font-size: 4em;
     padding: 5px;
     height: 10rem;
@@ -66,7 +66,6 @@ function RecordPreviewTile({
     if (image) {
         return (
             <ImagePreviewWrapper style={{position: 'relative', ...style}}>
-                {' '}
                 {!imageLoaded && <ImageLoading />}
                 {!hasFailed ? (
                     <ImageComp
@@ -94,8 +93,8 @@ function RecordPreviewTile({
         <GeneratedPreviewTile
             data-testid="generated-preview"
             className="initial"
-            bgColor={bgColor}
-            fontColor={fontColor}
+            $bgColor={bgColor}
+            $fontColor={fontColor}
             style={placeholderStyle}
         >
             {getInitials(label)}

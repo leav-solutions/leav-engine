@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import {isTypeStandard} from 'utils';
 import {RECORD_FORM_recordForm_elements_attribute} from '_gqlTypes/RECORD_FORM';
 
-const AttributeDetailsCollapse = styled(Collapse)<{themeToken: GlobalToken}>`
+const AttributeDetailsCollapse = styled(Collapse)<{$themeToken: GlobalToken}>`
     &&& {
         margin: 1rem;
         background: none;
@@ -22,7 +22,7 @@ const AttributeDetailsCollapse = styled(Collapse)<{themeToken: GlobalToken}>`
         .ant-collapse-content {
             background: ${themeVars.defaultBg};
             border: 1px solid ${themeVars.borderColor};
-            border-radius: ${p => p.themeToken.borderRadius}px;
+            border-radius: ${p => p.$themeToken.borderRadius}px;
         }
     }
 `;
@@ -54,7 +54,7 @@ function AttributeDetails({attribute}: IAttributeDetailsProps): JSX.Element {
     }
 
     return (
-        <AttributeDetailsCollapse destroyInactivePanel bordered={false} ghost themeToken={token}>
+        <AttributeDetailsCollapse destroyInactivePanel bordered={false} ghost $themeToken={token}>
             <Collapse.Panel key="attribute" header={t('record_edition.attribute_details_section')}>
                 <PropertiesList items={attributeDetailsContent} />
             </Collapse.Panel>

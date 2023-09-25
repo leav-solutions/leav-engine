@@ -40,13 +40,13 @@ import {APICallStatus, FieldScope, IFormElementProps} from '../../_types';
 import TreeFieldValue from './TreeFieldValue';
 import ValuesAdd from './ValuesAdd';
 
-const Wrapper = styled.div<{isValuesAddVisible: boolean; themeToken: GlobalToken}>`
+const Wrapper = styled.div<{$isValuesAddVisible: boolean; $themeToken: GlobalToken}>`
     position: relative;
     border: 1px solid ${themeVars.borderColor};
     margin-bottom: 1.5em;
-    border-radius: ${p => p.themeToken.borderRadius}px;
+    border-radius: ${p => p.$themeToken.borderRadius}px;
     background: ${themeVars.defaultBg};
-    z-index: ${p => (p.isValuesAddVisible ? 1 : 'auto')};
+    z-index: ${p => (p.$isValuesAddVisible ? 1 : 'auto')};
 
     .ant-list-items {
         max-height: 320px;
@@ -55,7 +55,7 @@ const Wrapper = styled.div<{isValuesAddVisible: boolean; themeToken: GlobalToken
 
     .ant-list-footer {
         padding: 0;
-        border-radius: ${p => p.themeToken.borderRadius}px;
+        border-radius: ${p => p.$themeToken.borderRadius}px;
     }
 `;
 
@@ -305,7 +305,7 @@ function TreeField({
     return (
         <>
             {state.isValuesAddVisible && <Dimmer onClick={_handleCloseValuesAdd} />}
-            <Wrapper isValuesAddVisible={state.isValuesAddVisible} themeToken={token}>
+            <Wrapper $isValuesAddVisible={state.isValuesAddVisible} $themeToken={token}>
                 <FieldLabel ellipsis={{rows: 1, tooltip: true}}>
                     {element.settings.label}
                     {state.activeScope === FieldScope.INHERITED && (

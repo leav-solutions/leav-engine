@@ -6,12 +6,12 @@ import EntityPreviewList from './EntityPreviewList';
 import EntityPreviewTile from './EntityPreviewTile';
 import {IEntityPreviewProps} from './_types';
 
-function EntityPreview(props: IEntityPreviewProps): JSX.Element {
+const comp = React.memo(function EntityPreview(props: IEntityPreviewProps): JSX.Element {
     if (props.tile) {
         return <EntityPreviewTile {...props} />;
     }
 
     return <EntityPreviewList {...props} />;
-}
+});
 
-export default React.memo(EntityPreview);
+export default comp;

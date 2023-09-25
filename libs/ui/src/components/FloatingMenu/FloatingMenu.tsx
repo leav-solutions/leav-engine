@@ -13,7 +13,7 @@ export interface IFloatingMenuProps {
     actions: FloatingMenuAction[];
     moreActions?: IFloatingMenuActionWithIcon[];
     size?: SizeType;
-    style?: CSSObject;
+    style?: React.CSSProperties;
 }
 
 const FloatingMenuWrapper = styled.div<{overrideStyle?: CSSObject}>`

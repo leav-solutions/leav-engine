@@ -11,8 +11,8 @@ import {IEntityData} from './_types';
 interface IEntityCardProps {
     entity: IEntityData;
     size?: PreviewSize;
-    style?: CSSObject;
-    previewStyle?: CSSObject;
+    style?: React.CSSProperties & CSSObject;
+    previewStyle?: React.CSSProperties & CSSObject;
     tile?: boolean;
     simplistic?: boolean;
     withPreview?: boolean;
@@ -21,14 +21,14 @@ interface IEntityCardProps {
 }
 
 interface IWrapperProps {
-    color: string | null;
-    size: PreviewSize;
-    withPreview: boolean;
-    withSubLabel: boolean;
-    withColor: boolean;
-    tile: boolean;
-    style?: CSSObject;
-    simplistic?: boolean;
+    $color: string | null;
+    $size: PreviewSize;
+    $withPreview: boolean;
+    $withSubLabel: boolean;
+    $withColor: boolean;
+    $tile: boolean;
+    style?: React.CSSProperties & CSSObject;
+    $simplistic?: boolean;
 }
 
 const _getGridTemplateAreas = (withPreview: boolean, withSubLabel: boolean, tile: boolean): string => {
@@ -88,33 +88,32 @@ const marginBySize: Record<PreviewSize, string> = {
 };
 
 const Wrapper = styled.div<IWrapperProps>`
-    border-left: ${props => (props.withColor ? `5px solid ${props.color ? props.color : 'transparent'}` : 'none')};
+    border-left: ${props => (props.$withColor ? `5px solid ${props.$color ? props.$color : 'transparent'}` : 'none')};
     display: grid;
-    grid-template-areas: ${props => _getGridTemplateAreas(props.withPreview, props.withSubLabel, props.tile)};}};
+    grid-template-areas: ${props => _getGridTemplateAreas(props.$withPreview, props.$withSubLabel, props.$tile)};
 
-    grid-template-columns:
-        ${props => {
-            if (!props.withPreview || props.tile) {
-                return '100%';
-            }
+    grid-template-columns: ${props => {
+        if (!props.$withPreview || props.$tile) {
+            return '100%';
+        }
 
-            const previewSize = getPreviewSize(props.size, props?.simplistic ?? false);
-            const previewColSize = `calc(${previewSize} + calc(2*${marginBySize[props.size]}))`;
-            return `${previewColSize} calc(100% - ${previewColSize})`;
-        }}
+        const previewSize = getPreviewSize(props.$size, props?.$simplistic ?? false);
+        const previewColSize = `calc(${previewSize} + calc(2*${marginBySize[props.$size]}))`;
+        return `${previewColSize} calc(100% - ${previewColSize})`;
+    }};
 `;
 
-const PreviewWrapper = styled.div<{tile: boolean; size: PreviewSize}>`
+const PreviewWrapper = styled.div<{$tile: boolean; $size: PreviewSize}>`
     grid-area: preview;
-    margin: ${props => (props.tile ? '0.3rem 0' : `0 ${marginBySize[props.size]}`)};
+    margin: ${props => (props.$tile ? '0.3rem 0' : `0 ${marginBySize[props.$size]}`)};
     justify-self: center;
 `;
 
-const EntityLabel = styled.div<{simplistic: boolean; withSubLabel: boolean}>`
+const EntityLabel = styled.div<{$simplistic: boolean; $withSubLabel: boolean}>`
     grid-area: label;
     font-weight: bold;
     overflow: hidden;
-    align-self: ${props => (props.simplistic || !props.withSubLabel ? 'center' : 'end')};
+    align-self: ${props => (props.$simplistic || !props.$withSubLabel ? 'center' : 'end')};
     line-height: 1.3em;
 `;
 
@@ -140,17 +139,17 @@ function EntityCard({
     return (
         <Wrapper
             data-testid="entity-card"
-            color={entity.color}
+            $color={entity.color}
             style={style}
-            size={size}
-            withPreview={withPreview}
-            withColor={withColor}
-            withSubLabel={withSubLabel}
-            tile={tile}
-            simplistic={simplistic}
+            $size={size}
+            $withPreview={withPreview}
+            $withColor={withColor}
+            $withSubLabel={withSubLabel}
+            $tile={tile}
+            $simplistic={simplistic}
         >
             {withPreview && (
-                <PreviewWrapper className="preview" tile={tile} size={size}>
+                <PreviewWrapper className="preview" $tile={tile} $size={size}>
                     <EntityPreview
                         label={entity.label}
                         color={entity.color}
@@ -162,7 +161,7 @@ function EntityCard({
                     />
                 </PreviewWrapper>
             )}
-            <EntityLabel className="label" simplistic={simplistic} withSubLabel={withSubLabel}>
+            <EntityLabel className="label" $simplistic={simplistic} $withSubLabel={withSubLabel}>
                 <Typography.Paragraph
                     ellipsis={{rows: 1, tooltip: entity.label}}
                     style={{marginBottom: 0, color: style?.color ?? null}}

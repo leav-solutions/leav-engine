@@ -41,6 +41,7 @@ import {
     StandardFieldValueState
 } from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import CheckboxInput from './Inputs/CheckboxInput';
+import ColorInput from './Inputs/ColorInput';
 import DateInput from './Inputs/DateInput';
 import DateRangeInput from './Inputs/DateRangeInput';
 import EncryptedInput from './Inputs/EncryptedInput';
@@ -48,19 +49,18 @@ import NumberInput from './Inputs/NumberInput';
 import TextInput from './Inputs/TextInput';
 import ValuesList from './ValuesList';
 import {IValueOfValuesList} from './ValuesList/ValuesList';
-import ColorInput from './Inputs/ColorInput';
 
 const ErrorMessage = styled.div`
     color: ${themeVars.errorColor};
     font-weight: bold;
 `;
 
-const FormWrapper = styled.div<{isEditing: boolean}>`
+const FormWrapper = styled.div<{$isEditing: boolean}>`
     position: relative;
-    z-index: ${p => (p.isEditing ? 2 : 0)};
+    z-index: ${p => (p.$isEditing ? 2 : 0)};
 `;
 
-const InputWrapper = styled.div<{isEditing: boolean}>`
+const InputWrapper = styled.div<{$isEditing: boolean}>`
     position: relative;
 
     && input {
@@ -561,12 +561,12 @@ function StandardFieldValue({
     return (
         <>
             {fieldValue.isEditing && <Dimmer onClick={_handleCancel} />}
-            <FormWrapper isEditing={fieldValue.isEditing} className={!fieldValue.index ? 'first-value' : ''}>
+            <FormWrapper $isEditing={fieldValue.isEditing} className={!fieldValue.index ? 'first-value' : ''}>
                 <Form>
                     <FormItem>
                         <Popover placement="topLeft" open={isErrorVisible} content={errorContent}>
                             <InputWrapper
-                                isEditing={fieldValue.isEditing}
+                                $isEditing={fieldValue.isEditing}
                                 className={wrapperClasses}
                                 data-testid="input-wrapper"
                             >

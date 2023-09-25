@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {DeleteOutlined, DownloadOutlined, InfoCircleOutlined} from '@ant-design/icons';
+import {DeleteOutlined,DownloadOutlined,InfoCircleOutlined} from '@ant-design/icons';
 import {useLang} from '@leav/ui';
-import {Button, List, Popconfirm, Progress, Space, Tooltip, Typography} from 'antd';
+import {Button,List,Popconfirm,Progress,Space,Tooltip,Typography} from 'antd';
 import moment from 'moment';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -13,9 +13,9 @@ import {TaskStatus} from '_gqlTypes/globalTypes';
 import {getFileUrl} from '../../../utils';
 import {INotif} from '../NotifsPanel';
 
-const WrapperProgress = styled.div<{isCanceled: boolean}>`
+const WrapperProgress = styled.div<{$isCanceled: boolean}>`
     & .ant-progress-text {
-        color: ${props => (props.isCanceled ? '#F2C037 !important' : '')};
+        color: ${props => (props.$isCanceled ? '#F2C037 !important' : '')};
     }
 `;
 
@@ -95,7 +95,7 @@ function TaskItem({notif, index, onNotifInfoClick, onCancel, onDelete}: ITaskIte
                             size={'large'}
                         />
                     ) : (
-                        <WrapperProgress isCanceled={task.status === TaskStatus.CANCELED}>
+                        <WrapperProgress $isCanceled={task.status === TaskStatus.CANCELED}>
                             <Progress
                                 size={45}
                                 type="circle"

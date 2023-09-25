@@ -1,24 +1,24 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery, useSubscription} from '@apollo/client';
-import {themeVars, ErrorDisplay, Loading} from '@leav/ui';
+import {useQuery,useSubscription} from '@apollo/client';
+import {ErrorDisplay,Loading,themeVars} from '@leav/ui';
 import {Pagination} from 'antd';
 import {treeNavigationPageSize} from 'constants/constants';
 import {treeNodeChildrenQuery} from 'graphQL/queries/trees/getTreeNodeChildren';
 import {getTreeEvents} from 'graphQL/subscribes/trees/getTreeEvents';
-import {createRef, useEffect, useState} from 'react';
+import {createRef,useEffect,useState} from 'react';
 import {setNavigationPath} from 'reduxStore/navigation';
 import {INavigationElement} from 'reduxStore/stateType';
-import {useAppDispatch, useAppSelector} from 'reduxStore/store';
+import {useAppDispatch,useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
-import {TREE_EVENTS, TREE_EVENTSVariables} from '_gqlTypes/TREE_EVENTS';
-import {TREE_NODE_CHILDREN, TREE_NODE_CHILDRENVariables} from '_gqlTypes/TREE_NODE_CHILDREN';
+import {TREE_EVENTS,TREE_EVENTSVariables} from '_gqlTypes/TREE_EVENTS';
+import {TREE_NODE_CHILDREN,TREE_NODE_CHILDRENVariables} from '_gqlTypes/TREE_NODE_CHILDREN';
 import DetailNavigation from './DetailNavigation';
 import HeaderColumnNavigation from './HeaderColumnNavigation';
 import Row from './Row';
 
-const ColumnWrapper = styled.div<{showDetails: boolean}>`
+const ColumnWrapper = styled.div<{$showDetails: boolean}>`
     border-right: 1px solid ${themeVars.borderLightColor};
     width: ${themeVars.navigationColumnWidth};
     height: 100%;
@@ -126,7 +126,7 @@ const Column = ({treeId, treeElement, depth, isActive: columnActive}: IColumnPro
         <ColumnWrapper
             ref={ref}
             data-testid={`navigation-column${showDetails ? '-with-details' : ''}`}
-            showDetails={showDetails}
+            $showDetails={showDetails}
         >
             <HeaderColumnNavigation
                 depth={depth}
