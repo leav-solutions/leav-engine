@@ -7,9 +7,78 @@ Apply the boy-scout rule:
 
 
 # Generalities
-- Keep the code DRY and simple. Respect the Separation of Concern principle
-- Prefer clean and explicit code over comments.
-- Functional programming is preferred. Classes are allowed only for specific situations (like a custom `Error` class)
+- Keep the code [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) but don't overinterpret it and avoid bad abstractions.
+```ts
+/** Good application of the DRY principle */
+// Define a base Shape class with a common area calculation method
+abstract class Shape {
+  abstract calculateArea(): number;
+}
+
+// Create specific shape classes (Circle and Rectangle) that inherit from Shape
+class Circle extends Shape {
+  constructor(private radius: number) {
+    super();
+  }
+
+  calculateArea(): number {
+    return Math.PI * this.radius ** 2;
+  }
+}
+
+class Rectangle extends Shape {
+  constructor(private width: number, private height: number) {
+    super();
+  }
+
+  calculateArea(): number {
+    return this.width * this.height;
+  }
+}
+
+/** Overabstraction */
+function performOperation(operationType: string, value1: number, value2: number): number {
+  if (operationType === 'add') {
+    return value1 + value2;
+  } else if (operationType === 'subtract') {
+    return value1 - value2;
+  } else if (operationType === 'multiply') {
+    return value1 * value2;
+  } else if (operationType === 'divide') {
+    return value1 / value2;
+  } else {
+    throw new Error('Invalid operation type');
+  }
+}
+```
+- Respect the Separation of Concern principle
+```ts
+    // Bad
+    function calculateSumAndAverage(numbers: number[]): [number, number] {
+      let sum = 0;
+      for (const num of numbers) {
+        sum += num;
+      }
+      const average = sum / numbers.length;
+      return [sum, average];
+    }
+
+    // Good
+    function calculateSum(numbers: number[]): number {
+      let sum = 0;
+      for (const num of numbers) {
+        sum += num;
+      }
+      return sum;
+    }
+    
+    function calculateAverage(numbers: number[]): number {
+      const sum = calculateSum(numbers);
+      return sum / numbers.length;
+    }
+```
+- Prefer clean and explicit code over comments. If necessary, explain the why, not the how.
+- [https://en.wikipedia.org/wiki/Functional_programming](Functional programming) is preferred. Classes are allowed only for specific situations (like a custom `Error` class)
 - Use pure functions as much as possible. Avoid mutating params.
 
 ## Naming
@@ -17,7 +86,8 @@ Apply the boy-scout rule:
 - Prefer long names over short but hard to read or understand names. Too much abbreviation might actually make reading more difficult. Rule of thumbs: if you cannot pronounce it out loud, it's probably not a good name.
 - Types names must use PascalCase
 - All types interfaces must start with a `I` (enforced by eslint).
-- Private functions are prefixed by a _
+- Enum names must be uppercase
+- Internal (= not exported) functions are prefixed by a _
 
 ## Tests
 - Test Driven Development is encouraged.
@@ -43,6 +113,7 @@ Following rules apply to frontend development only, specifically on a React app.
 	- `index.ts` exporting `useMyHook`
 - Folder is named after hook's name
 - Each hook must be unit-tested
+- All reusable hooks are in the hooks folder, at projet root
 
 ## Props
 - Props are named in camelCase
