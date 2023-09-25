@@ -4,10 +4,10 @@
   "private": true,
   "homepage": ".",
   "dependencies": {
-    "@ant-design/icons": "5.1.4",
+    "@ant-design/icons": "5.2.6",
     "@leav/ui": "workspace:libs/ui",
     "antd": "5.8.4",
-    "aristid-ds": "0.6.2",
+    "aristid-ds": "0.6.8",
     "i18next": "22.5.0",
     "i18next-browser-languagedetector": "7.0.2",
     "i18next-http-backend": "2.1.1",
@@ -16,7 +16,7 @@
     "react-dom": "18.2.0",
     "react-i18next": "12",
     "react-router-dom": "5.3.3",
-    "styled-components": "5.3.5",
+    "styled-components": "6.0.8",
     "web-vitals": "2.1.4"
   },
   "devDependencies": {

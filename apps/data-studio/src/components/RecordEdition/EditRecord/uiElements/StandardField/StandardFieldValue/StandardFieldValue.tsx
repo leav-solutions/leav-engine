@@ -56,12 +56,12 @@ const ErrorMessage = styled.div`
     font-weight: bold;
 `;
 
-const FormWrapper = styled.div<{isEditing: boolean}>`
+const FormWrapper = styled.div<{$isEditing: boolean}>`
     position: relative;
-    z-index: ${p => (p.isEditing ? 2 : 0)};
+    z-index: ${p => (p.$isEditing ? 2 : 0)};
 `;
 
-const InputWrapper = styled.div<{isEditing: boolean}>`
+const InputWrapper = styled.div<{$isEditing: boolean}>`
     position: relative;
 
     && input {
@@ -569,12 +569,12 @@ function StandardFieldValue({
     return (
         <>
             {fieldValue.isEditing && <Dimmer onClick={_handleCancel} />}
-            <FormWrapper isEditing={fieldValue.isEditing} className={!fieldValue.index ? 'first-value' : ''}>
+            <FormWrapper $isEditing={fieldValue.isEditing} className={!fieldValue.index ? 'first-value' : ''}>
                 <Form>
                     <FormItem>
                         <Popover placement="topLeft" open={isErrorVisible} content={errorContent}>
                             <InputWrapper
-                                isEditing={fieldValue.isEditing}
+                                $isEditing={fieldValue.isEditing}
                                 className={wrapperClasses}
                                 data-testid="input-wrapper"
                             >

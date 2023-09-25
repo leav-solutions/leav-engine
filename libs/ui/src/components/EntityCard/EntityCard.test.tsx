@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import 'jest-styled-components';
 import {render, screen} from '../../_tests/testUtils';
 import EntityCard from './EntityCard';
 
@@ -18,9 +19,7 @@ describe('EntityCard', () => {
         expect(screen.getByText(mockEntity.label)).toBeInTheDocument();
         expect(screen.getByText(mockEntity.subLabel)).toBeInTheDocument();
         expect(screen.getByRole('img', {hidden: true})).toHaveAttribute('src', mockEntity.preview);
-        expect(screen.getByTestId('entity-card')).toHaveStyle({
-            borderLeft: `5px solid ${mockEntity.color}`
-        });
+        expect(screen.getByTestId('entity-card')).toHaveStyleRule('border-left', `5px solid ${mockEntity.color}`);
     });
 
     test('Can hide sub-label', async () => {

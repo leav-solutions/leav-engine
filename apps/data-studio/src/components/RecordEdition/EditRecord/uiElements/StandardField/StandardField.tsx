@@ -28,8 +28,8 @@ import ValuesVersionBtn from '../../shared/ValuesVersionBtn';
 import {APICallStatus, FieldScope, IFormElementProps} from '../../_types';
 import StandardFieldValue from './StandardFieldValue';
 
-const Wrapper = styled.div<{metadataEdit: boolean}>`
-    margin-bottom: ${props => (props.metadataEdit ? 0 : '1.5em')};
+const Wrapper = styled.div<{$metadataEdit: boolean}>`
+    margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
 `;
 
 export const emptyValue: RECORD_FORM_recordForm_elements_values = {
@@ -293,7 +293,7 @@ function StandardField({
     };
 
     return (
-        <Wrapper metadataEdit={metadataEdit}>
+        <Wrapper $metadataEdit={metadataEdit}>
             {valuesToDisplay.map(value => (
                 <StandardFieldValue
                     key={value.idValue}
