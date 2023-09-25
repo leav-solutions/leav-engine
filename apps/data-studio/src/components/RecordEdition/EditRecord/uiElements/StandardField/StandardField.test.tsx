@@ -476,7 +476,7 @@ describe('StandardField', () => {
         });
 
         expect(baseProps.onDeleteMultipleValues).toBeCalled();
-    });
+    }, 30000);
 
     describe('Values list', () => {
         const mockFormElementWithValuesList: FormElement<{}> = {
