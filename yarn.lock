@@ -12861,6 +12861,7 @@ __metadata:
     apollo-upload-client: 14.1.3
     commander: 5.1.0
     dayjs: 1.11.7
+    dompurify: 3.0.5
     graphql: 15.0.0
     graphql-tag: 2.12.6
     graphql-ws: 5.10.2
@@ -13380,6 +13381,13 @@ __metadata:
   dependencies:
     domelementtype: ^2.2.0
   checksum: 4c665ceed016e1911bf7d1dadc09dc888090b64dee7851cccd2fcf5442747ec39c647bb1cb8c8919f8bbdd0f0c625a6bafeeed4b2d656bbecdbae893f43ffaaa
+  languageName: node
+  linkType: hard
+
+"dompurify@npm:3.0.5":
+  version: 3.0.5
+  resolution: "dompurify@npm:3.0.5"
+  checksum: 2d9421570c833ce26ce7022955241749b646d41e8bf453f42ede9f22d0e98af482cedb7dfbf8129419eb48b351c1d677a08fc9f1cd91836ce7f6c1807a0676b2
   languageName: node
   linkType: hard
 
