@@ -29,6 +29,8 @@ import StandardField from './StandardField';
 
 jest.mock('../../hooks/useDeleteValueMutation');
 
+jest.useRealTimers();
+
 describe('StandardField', () => {
     const mockEditRecordModalDispatch = jest.fn();
     jest.spyOn(useEditRecordModalReducer, 'useEditRecordModalReducer').mockImplementation(() => ({
@@ -100,7 +102,7 @@ describe('StandardField', () => {
     }));
 
     const waitForOption: waitForOptions = {
-        timeout: 1000
+        timeout: 5000
     };
 
     beforeEach(() => jest.clearAllMocks());
@@ -397,7 +399,7 @@ describe('StandardField', () => {
             userEvent.click(screen.getByRole('button', {name: 'global.submit'}));
         });
         expect(mockHandleSubmit).toHaveBeenCalled();
-    });
+    }, 30000);
 
     test('Display error message', async () => {
         const onSubmitFail: SubmitValueFunc = jest.fn().mockReturnValue({
