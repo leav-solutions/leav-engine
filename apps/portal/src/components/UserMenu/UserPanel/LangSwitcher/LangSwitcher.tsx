@@ -4,12 +4,6 @@
 import {useLang} from '@leav/ui';
 import {Button} from 'antd';
 import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
-
-const Wrapper = styled.div`
-    display: flex;
-    align-items: center;
-`;
 
 function LangSwitcher(): JSX.Element {
     const {t} = useTranslation();

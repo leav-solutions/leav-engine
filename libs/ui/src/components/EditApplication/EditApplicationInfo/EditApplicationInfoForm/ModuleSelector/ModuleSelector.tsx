@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Form, FormItemProps, Select} from 'antd';
+import {Form, FormItemProps} from 'antd';
+import {KitSelect} from 'aristid-ds';
 import styled from 'styled-components';
 import {themeVars} from '../../../../../antdTheme';
 import {useGetApplicationModulesQuery} from '../../../../../_gqlTypes';
@@ -20,19 +21,20 @@ interface IModuleSelectorProps extends FormItemProps {
 
 function ModuleSelector({disabled, ...itemProps}: IModuleSelectorProps): JSX.Element {
     const {loading, data} = useGetApplicationModulesQuery();
+    const form = Form.useFormInstance();
+    const selectedModule = Form.useWatch('module', form);
 
     const modules = data?.applicationsModules ?? [];
+    const options = modules.map(module => ({
+        label: module.id,
+        value: module.id,
+        description: module.description
+    }));
+    const helper = modules.find(m => m.id === selectedModule)?.description;
 
     return (
         <Form.Item {...itemProps}>
-            <Select loading={loading} disabled={disabled} aria-label="">
-                {modules.map(module => (
-                    <Select.Option value={module.id} key={module.id}>
-                        <OptionLabel>{module.id}</OptionLabel>
-                        <OptionDescription>{module.description}</OptionDescription>
-                    </Select.Option>
-                ))}
-            </Select>
+            <KitSelect loading={loading} disabled={disabled} aria-label="" options={options} helper={helper} />
         </Form.Item>
     );
 }

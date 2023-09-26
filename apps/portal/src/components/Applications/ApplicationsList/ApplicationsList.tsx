@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AppstoreOutlined, ClockCircleOutlined, StarFilled} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
-import {Divider, message} from 'antd';
 import {Loading} from '@leav/ui';
+import {Divider, message} from 'antd';
 import {getUserDataQuery} from 'queries/userData/getUserData';
 import {saveUserData} from 'queries/userData/saveUserData';
 import {useState} from 'react';
@@ -31,6 +31,7 @@ const ListWrapper = styled.div`
     flex-wrap: wrap;
     justify-content: flex-start;
     align-content: flex-start;
+    gap: 1rem;
 `;
 
 const dividerIconStyle = {marginRight: '0.5em'};

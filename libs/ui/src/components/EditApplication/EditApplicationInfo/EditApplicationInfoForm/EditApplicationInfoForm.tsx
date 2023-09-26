@@ -2,12 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {endpointFormatRegex, formatId, idFormatRegex} from '@leav/utils';
-import {Form, FormInstance, Input, Select} from 'antd';
+import {Form, FormInstance} from 'antd';
+import {KitInput, KitSelect} from 'aristid-ds';
 import React, {useState} from 'react';
 import styled from 'styled-components';
-import {ApplicationType, GetApplicationByIdQuery} from '../../../../_gqlTypes';
 import {useLang} from '../../../../hooks';
 import {useSharedTranslation} from '../../../../hooks/useSharedTranslation';
+import {ApplicationType, GetApplicationByIdQuery} from '../../../../_gqlTypes';
 import FieldsGroup from '../../../FieldsGroup';
 import {SubmitStateNotifier} from '../../../SubmitStateNotifier';
 import ModuleSelector from './ModuleSelector';
@@ -145,7 +146,12 @@ function EditApplicationInfoForm({
         }
     };
 
-    const appsBaseUrl = window.location.origin + '/app';
+    const appsBaseUrl = window.location.origin + '/app/';
+
+    const typeSelectOptions = Object.values(ApplicationType).map(type => ({
+        label: t(`applications.type_${type}`),
+        value: type
+    }));
 
     return (
         <Form
@@ -168,7 +174,7 @@ function EditApplicationInfoForm({
                         rules={[{required: lang === defaultLang, message: t('errors.default_language_required')}]}
                         style={{marginBottom: '0.5rem'}}
                     >
-                        <Input
+                        <KitInput
                             aria-label={`label_${lang}`}
                             onChange={_handleLabelChange(lang)}
                             onBlur={_handleBlur(`label_${lang}`)}
@@ -195,7 +201,7 @@ function EditApplicationInfoForm({
                             />
                         }
                     >
-                        <Input.TextArea
+                        <KitInput.TextArea
                             aria-label={`description_${lang}`}
                             onBlur={_handleBlur(`description_${lang}`)}
                             onKeyDown={_handleSubmitOnEnter(`description_${lang}`)}
@@ -220,7 +226,7 @@ function EditApplicationInfoForm({
                 ]}
                 hasFeedback
             >
-                <Input disabled={isReadOnly || isEditing} onChange={_handleIdChange} aria-label="id" />
+                <KitInput disabled={isReadOnly || isEditing} onChange={_handleIdChange} aria-label="id" />
             </Form.Item>
             <Form.Item
                 name="type"
@@ -228,18 +234,16 @@ function EditApplicationInfoForm({
                 label={t('applications.type')}
                 rules={[{required: true, message: _getRequiredMessage('type')}]}
             >
-                <Select onChange={_handleTypeChange} disabled={isReadOnly || isEditing} aria-label="">
-                    {Object.values(ApplicationType).map(type => (
-                        <Select.Option key={type} value={type}>
-                            {t(`applications.type_${type}`)}
-                        </Select.Option>
-                    ))}
-                </Select>
+                <KitSelect
+                    onChange={_handleTypeChange}
+                    disabled={isReadOnly || isEditing}
+                    aria-label=""
+                    options={typeSelectOptions}
+                />
             </Form.Item>
             {isInternalApp && (
                 <ModuleSelector
                     name="module"
-                    key="module"
                     label={t('applications.module')}
                     disabled={isReadOnly || isEditing}
                     rules={[{required: true, message: _getRequiredMessage('module')}]}
@@ -271,9 +275,8 @@ function EditApplicationInfoForm({
                 ]}
                 hasFeedback
             >
-                <Input
-                    type={isInternalApp ? 'text' : 'url'}
-                    addonBefore={isInternalApp ? appsBaseUrl : null}
+                <KitInput
+                    prefix={isInternalApp ? appsBaseUrl : null}
                     onBlur={_handleBlur('endpoint')}
                     onKeyDown={_handleSubmitOnEnter('endpoint')}
                     suffix={<SubmitStateNotifier state={_getFieldState('endpoint')} />}
