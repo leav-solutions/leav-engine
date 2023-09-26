@@ -32,7 +32,8 @@
         "trees": "Arbres accessibles",
         "all_trees": "Tous les arbres",
         "no_trees": "Aucun  arbre",
-        "info": "Informations"
+        "info": "Informations",
+        "color": "Couleur"
     },
     "libraries": {
         "library": "Bibliothèque",
@@ -49,7 +50,7 @@
         "preview": "Aperçu",
         "color": "Couleur",
         "treeColorPreview": "Arbre pour couleur et aperçu par défaut",
-        "subLabel":"Sous Libellé", 
+        "subLabel":"Sous Libellé",
         "info": "Informations",
         "attributes": "Attributs",
         "delete": "Supprimer la bibliothèque",

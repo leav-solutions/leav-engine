@@ -2,7 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {endpointFormatRegex, formatId, idFormatRegex} from '@leav/utils';
-import {Form, FormInstance} from 'antd';
+import {ColorPicker, Form, FormInstance} from 'antd';
+import {Color} from 'antd/lib/color-picker';
 import {KitInput, KitSelect} from 'aristid-ds';
 import React, {useState} from 'react';
 import styled from 'styled-components';
@@ -86,6 +87,12 @@ function EditApplicationInfoForm({
         setProcessedFieldsSubmit([...processedFieldsSubmit, field]);
 
         setRunningFieldsSubmit(runningFieldsSubmit.filter(f => f !== field));
+    };
+
+    const _handleColorChange = (value: Color) => {
+        if (isEditing) {
+            _handleFieldSubmit('color', value.toHexString());
+        }
     };
 
     const _handleBlur = (field: string) => async (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -282,6 +289,14 @@ function EditApplicationInfoForm({
                     suffix={<SubmitStateNotifier state={_getFieldState('endpoint')} />}
                     disabled={isReadOnly}
                 />
+            </Form.Item>
+            <Form.Item
+                name="color"
+                label={t('applications.color')}
+                validateTrigger={['onBlur', 'onChange', 'onSubmit']}
+                hasFeedback
+            >
+                <ColorPicker format="hex" onChangeComplete={_handleColorChange} disabled={isReadOnly} />
             </Form.Item>
         </Form>
     );
