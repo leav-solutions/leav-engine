@@ -20,7 +20,7 @@ import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecord
 import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import Dimmer from 'components/shared/Dimmer';
 import moment from 'moment';
-import {MutableRefObject, useEffect, useRef} from 'react';
+import React, {MutableRefObject, useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled, {CSSObject} from 'styled-components';
 import {stringifyDateRangeValue} from 'utils';
@@ -177,6 +177,8 @@ const FormItem = styled(Form.Item)`
     }
 `;
 
+const RichTextEditorInput = React.lazy(() => import('./Inputs/RichTextEditorInput'));
+
 const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInputProps) => JSX.Element} = {
     [AttributeFormat.text]: TextInput,
     [AttributeFormat.date]: DateInput,
@@ -185,7 +187,8 @@ const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInp
     [AttributeFormat.numeric]: NumberInput,
     [AttributeFormat.encrypted]: EncryptedInput,
     [AttributeFormat.extended]: TextInput,
-    [AttributeFormat.color]: ColorInput
+    [AttributeFormat.color]: ColorInput,
+    [AttributeFormat.rich_text]: RichTextEditorInput
 };
 
 type IStringValuesListConf = RECORD_FORM_recordForm_elements_attribute_StandardAttribute_values_list_StandardStringValuesListConf;
@@ -337,7 +340,11 @@ function StandardFieldValue({
 
     const _getInput = (): JSX.Element => {
         let inputStyle: React.CSSProperties = {};
-        if (!fieldValue.isEditing && attribute.format !== AttributeFormat.boolean) {
+        if (
+            !fieldValue.isEditing &&
+            attribute.format !== AttributeFormat.boolean &&
+            attribute.format !== AttributeFormat.rich_text
+        ) {
             let displayedValue = String(fieldValue.displayValue);
             let prefixValue;
             if (

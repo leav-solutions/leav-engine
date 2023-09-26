@@ -82,6 +82,12 @@ const allowedConditionByFormat: {[format in AttributeFormat]: AttributeCondition
         AttributeConditionFilter.NOT_EQUAL,
         AttributeConditionFilter.IS_EMPTY,
         AttributeConditionFilter.IS_NOT_EMPTY
+    ],
+    [AttributeFormat.rich_text]: [
+        AttributeConditionFilter.CONTAINS,
+        AttributeConditionFilter.NOT_CONTAINS,
+        AttributeConditionFilter.IS_EMPTY,
+        AttributeConditionFilter.IS_NOT_EMPTY
     ]
 };
 

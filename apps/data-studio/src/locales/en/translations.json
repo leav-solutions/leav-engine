@@ -517,7 +517,8 @@
             "format_extended": "Extended",
             "format_numeric": "Numeric",
             "format_text": "Text",
-            "format_color": "Color"
+            "format_color": "Color",
+            "format_rich_text": "Rich Text"
         },
         "date_range_value": "From {{from}} to {{to}}"
     },

@@ -72,4 +72,14 @@ describe('validateFormatAction', () => {
         const badColorValue = 'FFFFFFFFFFFFFFFFFFF';
         expect(() => action(badColorValue, {}, {attribute: attrColor})).toThrow(ValidationError);
     });
+
+    test('validateFormat RICH TEXT', async () => {
+        const RichTextValue = '<p>salut</p>';
+        expect(action(RichTextValue, {}, {attribute: attrText})).toBe(RichTextValue);
+    });
+
+    test('validateFormat RICH TEXT', async () => {
+        const RichTextValue = false;
+        expect(() => action(RichTextValue, {}, {attribute: attrText})).toThrow(ValidationError);
+    });
 });

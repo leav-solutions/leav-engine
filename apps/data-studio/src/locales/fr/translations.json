@@ -518,7 +518,8 @@
             "format_extended": "Étendu",
             "format_numeric": "Numérique",
             "format_text": "Texte",
-            "format_color": "Couleur"
+            "format_color": "Couleur",
+            "format_rich_text": "Texte Enrichi"
         },
         "date_range_value": "Du {{from}} au {{to}}"
     },
