@@ -28,6 +28,7 @@ export enum AttributeFormat {
     encrypted = 'encrypted',
     extended = 'extended',
     numeric = 'numeric',
+    rich_text = 'rich_text',
     text = 'text'
 }
 
