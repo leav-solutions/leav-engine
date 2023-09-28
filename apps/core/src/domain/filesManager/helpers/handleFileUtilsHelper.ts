@@ -79,12 +79,12 @@ export const updateRecordFile = async (
     recordId: string,
     library: string,
     deps: {
-        valueDomain?: IValueDomain;
-        recordRepo?: IRecordRepo;
-        updateRecordLastModif?: UpdateRecordLastModifFunc;
-        sendRecordUpdateEvent?: SendRecordUpdateEventHelper;
-        config?: Config.IConfig;
-        logger?: winston.Winston;
+        valueDomain: IValueDomain;
+        recordRepo: IRecordRepo;
+        updateRecordLastModif: UpdateRecordLastModifFunc;
+        sendRecordUpdateEvent: SendRecordUpdateEventHelper;
+        config: Config.IConfig;
+        logger: winston.Winston;
     },
     ctx: IQueryInfos
 ) => {
@@ -96,7 +96,7 @@ export const updateRecordFile = async (
     dataToSave.id = recordId;
 
     try {
-        await deps.recordRepo.updateRecord({
+        const updatedRecord = await deps.recordRepo.updateRecord({
             libraryId: library,
             recordData: dataToSave
         });
@@ -104,7 +104,7 @@ export const updateRecordFile = async (
         await deps.updateRecordLastModif(library, recordId, ctx);
 
         await deps.sendRecordUpdateEvent(
-            {...dataToSave, library},
+            updatedRecord,
             Object.keys(recordData).map(attributeId => ({
                 id_value: null,
                 attribute: attributeId,

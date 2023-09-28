@@ -268,6 +268,7 @@ export default function ({
                 valueDomain,
                 recordRepo,
                 updateRecordLastModif,
+                sendRecordUpdateEvent,
                 config,
                 logger,
                 utils
