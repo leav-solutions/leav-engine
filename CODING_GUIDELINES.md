@@ -88,6 +88,7 @@ function performOperation(operationType: string, value1: number, value2: number)
 - All types interfaces must start with a `I` (enforced by eslint).
 - Enum names must be uppercase
 - Internal (= not exported) functions are prefixed by a _
+- Folder name: plural if several modules inside
 
 ## Tests
 - Test Driven Development is encouraged.
@@ -131,7 +132,8 @@ const _handleSubmit = () => { /* Handle submit... */ };
 
 ## Testing
 - Use [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) through the wrapper available in `_tests/testUtils.tsx`. It includes automatically all global providers (like Apollo or Redux)
-- Prefer using `getByRole` : it encourages to use accessibility best practices
+- Prefer using `getByRole` : it encourages to use accessibility best practices (possible roles are available [here](https://www.w3.org/TR/html-aria/#docconformance))
+- Use the [Testing Playground](https://testing-playground.com/) to find the best selector for your use case
 - Use `getByTestId` only on last resort
 - Don't use non-standard roles (eg. `<div role="myOwnRole">...</div>`)
 - Small integration tests, testing a whole feature, might make more sense than testing all presentational components individually
