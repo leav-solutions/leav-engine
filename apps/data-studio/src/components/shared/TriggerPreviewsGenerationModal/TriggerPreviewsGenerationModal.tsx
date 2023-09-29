@@ -18,6 +18,7 @@ import {IFilter, InfoChannel, InfoType} from '_types/types';
 
 interface ITriggerPreviewsGenerationModalProps {
     libraryId: string;
+    filesLibraryId?: string;
     recordIds?: string[];
     filters?: IFilter[];
     onClose: () => void;
@@ -25,6 +26,7 @@ interface ITriggerPreviewsGenerationModalProps {
 
 function TriggerPreviewsGenerationModal({
     libraryId,
+    filesLibraryId,
     recordIds,
     filters,
     onClose
@@ -49,7 +51,7 @@ function TriggerPreviewsGenerationModal({
     >(getLibrariesListQuery, {
         variables: {
             filters: {
-                id: [libraryId]
+                id: [filesLibraryId || libraryId]
             }
         },
         onCompleted: getLibrariesData => {
@@ -142,7 +144,7 @@ function TriggerPreviewsGenerationModal({
             {!getLibrariesLoading && !getLibrariesError && (
                 <>
                     <Checkbox onChange={onChange} checked={checkedSizes.length === allSizes.length}>
-                        Select All
+                        {t('files.previews_generation_select_all')}
                     </Checkbox>
                     <Tree
                         checkable
