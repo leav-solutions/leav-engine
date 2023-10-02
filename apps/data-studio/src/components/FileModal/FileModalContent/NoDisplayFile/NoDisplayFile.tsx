@@ -13,7 +13,7 @@ interface INoDisplayFileProps extends IFileViewerProps {
     noPreviewMessage?: boolean;
 }
 
-const Wrapper = styled.div<{$themeToken: GlobalToken}>`
+const Wrapper = styled.div<{$themeToken: GlobalToken; $background: string; $color: string}>`
     width: 80%;
     height: 80%;
     display: flex;
@@ -21,6 +21,8 @@ const Wrapper = styled.div<{$themeToken: GlobalToken}>`
     align-items: center;
     justify-content: center;
     border-radius: ${p => p.$themeToken.borderRadius}px;
+    background-color: ${p => p.$background};
+    color: ${p => p.$color};
 `;
 
 const ExtensionWrapper = styled.div<{$isDirectory: boolean}>`
@@ -57,7 +59,7 @@ function NoDisplayFile({fileData, noPreviewMessage = false}: INoDisplayFileProps
     }
 
     return (
-        <Wrapper style={{backgroundColor: bgColor, color: fontColor}} $themeToken={token}>
+        <Wrapper $background={bgColor} $color={fontColor} $themeToken={token}>
             <ExtensionWrapper $isDirectory={isDirectory}>
                 {isDirectory ? (
                     <Space>
