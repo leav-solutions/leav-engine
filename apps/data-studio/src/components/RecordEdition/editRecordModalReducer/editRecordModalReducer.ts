@@ -4,7 +4,12 @@
 import {RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {RECORD_FORM_recordForm_elements_attribute} from '_gqlTypes/RECORD_FORM';
+import {
+    SUB_RECORD_UPDATE_recordUpdate_updatedValues,
+    SUB_RECORD_UPDATE_recordUpdate_updatedValues_value
+} from '_gqlTypes/SUB_RECORD_UPDATE';
 import {IValueVersion} from '_types/types';
+import {IRecordIdentityWhoAmI} from '../../../../../../libs/ui/src/types/RecordIdentity';
 import {StandardValueTypes} from '../EditRecord/_types';
 
 export interface IRecordPropertyWithAttribute {
@@ -21,6 +26,12 @@ export interface IEditRecordReducerState {
     valuesVersion: IValueVersion;
     originValuesVersion: IValueVersion;
     refreshRequested: boolean;
+    externalUpdate: {
+        modifiers: IRecordIdentityWhoAmI[];
+        updatedValues: {
+            [attribute: string]: SUB_RECORD_UPDATE_recordUpdate_updatedValues_value[];
+        };
+    };
 }
 
 export enum EditRecordReducerActionsTypes {
@@ -30,7 +41,9 @@ export enum EditRecordReducerActionsTypes {
     SET_VALUES_VERSION = 'SET_VALUES_VERSION',
     SET_EDITING_VALUE = 'SET_CURRENT_VALUE_CONTENT',
     REQUEST_REFRESH = 'REQUEST_REFRESH',
-    REFRESH_DONE = 'REFRESH_DONE'
+    REFRESH_DONE = 'REFRESH_DONE',
+    ADD_EXTERNAL_UPDATE = 'ADD_EXTERNAL_UPDATE',
+    CLEAR_EXTERNAL_UPDATE = 'CLEAR_EXTERNAL_UPDATE'
 }
 
 export type IEditRecordReducerActions =
@@ -59,6 +72,14 @@ export type IEditRecordReducerActions =
       }
     | {
           type: EditRecordReducerActionsTypes.REFRESH_DONE;
+      }
+    | {
+          type: EditRecordReducerActionsTypes.ADD_EXTERNAL_UPDATE;
+          modifier: IRecordIdentityWhoAmI;
+          updatedValues: SUB_RECORD_UPDATE_recordUpdate_updatedValues[];
+      }
+    | {
+          type: EditRecordReducerActionsTypes.CLEAR_EXTERNAL_UPDATE;
       };
 
 export type EditRecordDispatchFunc = (action: IEditRecordReducerActions) => void;
@@ -70,7 +91,11 @@ export const initialState: IEditRecordReducerState = {
     sidebarContent: 'summary',
     valuesVersion: null,
     originValuesVersion: null,
-    refreshRequested: false
+    refreshRequested: false,
+    externalUpdate: {
+        modifiers: [],
+        updatedValues: {}
+    }
 };
 
 const editRecordModalReducer = (
@@ -102,6 +127,31 @@ const editRecordModalReducer = (
             return {...state, refreshRequested: true};
         case EditRecordReducerActionsTypes.REFRESH_DONE:
             return {...state, refreshRequested: false};
+        case EditRecordReducerActionsTypes.ADD_EXTERNAL_UPDATE:
+            const newState = {...state};
+            const newModifiers = state.externalUpdate?.modifiers.find(m => m.id === action.modifier.id)
+                ? newState.externalUpdate?.modifiers ?? []
+                : [...(newState.externalUpdate?.modifiers ?? []), action.modifier];
+
+            const newValues = action.updatedValues.reduce(
+                (acc, updatedValue) => ({
+                    ...acc,
+                    [updatedValue.attribute]: [
+                        ...(newState.externalUpdate?.[updatedValue.attribute] ?? []),
+                        updatedValue.value
+                    ]
+                }),
+                {}
+            );
+
+            newState.externalUpdate = {
+                modifiers: newModifiers,
+                updatedValues: {...(state.externalUpdate?.updatedValues ?? {}), ...newValues}
+            };
+
+            return newState;
+        case EditRecordReducerActionsTypes.CLEAR_EXTERNAL_UPDATE:
+            return {...state, externalUpdate: {...initialState.externalUpdate}};
         default:
             return state;
     }

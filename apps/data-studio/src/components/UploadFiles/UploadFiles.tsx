@@ -1,43 +1,43 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {InboxOutlined, LoadingOutlined, FileOutlined, CheckCircleTwoTone} from '@ant-design/icons';
+import {CheckCircleTwoTone, FileOutlined, InboxOutlined, LoadingOutlined} from '@ant-design/icons';
+import {useLazyQuery, useMutation, useQuery, useSubscription} from '@apollo/client';
+import {getLibraryGraphqlNames} from '@leav/utils';
 import {
-    Upload,
-    Modal,
+    Alert,
     Button,
+    Checkbox,
+    Divider,
+    Modal,
+    Row,
+    Space,
+    StepProps,
     Steps,
     theme,
-    StepProps,
-    Alert,
-    Divider,
-    UploadFile,
     Tooltip,
-    Space,
-    Row,
-    Checkbox
+    Upload,
+    UploadFile
 } from 'antd';
-import {useEffect, useState} from 'react';
-import {useTranslation} from 'react-i18next';
-import {useQuery, useSubscription, useMutation, useLazyQuery} from '@apollo/client';
-import {getUploadUpdates} from 'graphQL/subscribes/upload/getUploadUpdates';
-import {UPLOAD, UPLOADVariables} from '_gqlTypes/UPLOAD';
-import {uploadMutation} from '../../graphQL/mutations/upload/uploadMutation';
-import {ITreeNodeWithRecord} from '../../_types/types';
-import SelectTreeNode from '../shared/SelectTreeNode';
-import {getTreeLibraries} from 'graphQL/queries/trees/getTreeLibraries';
-import {GET_TREE_LIBRARIES, GET_TREE_LIBRARIESVariables} from '_gqlTypes/GET_TREE_LIBRARIES';
-import {LibraryBehavior, TreeBehavior} from '_gqlTypes/globalTypes';
-import {DOES_FILE_EXIST_AS_CHILD, DOES_FILE_EXIST_AS_CHILDVariables} from '_gqlTypes/DOES_FILE_EXIST_AS_CHILD';
 import {doesFileExistAsChild} from 'graphQL/queries/records/doesFileExistAsChild';
-import {useUser} from '../../hooks/UserHook/UserHook';
-import {v4 as uuidv4} from 'uuid';
 import {
     getDirectoryDataQuery,
     IDirectoryDataQuery,
     IDirectoryDataQueryVariables
 } from 'graphQL/queries/records/getDirectoryDataQuery';
-import {getLibraryGraphqlNames} from '@leav/utils';
+import {getTreeLibraries} from 'graphQL/queries/trees/getTreeLibraries';
+import {getUploadUpdates} from 'graphQL/subscribes/upload/getUploadUpdates';
+import {useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import {v4 as uuidv4} from 'uuid';
+import {DOES_FILE_EXIST_AS_CHILD, DOES_FILE_EXIST_AS_CHILDVariables} from '_gqlTypes/DOES_FILE_EXIST_AS_CHILD';
+import {GET_TREE_LIBRARIES, GET_TREE_LIBRARIESVariables} from '_gqlTypes/GET_TREE_LIBRARIES';
+import {LibraryBehavior, TreeBehavior} from '_gqlTypes/globalTypes';
+import {UPLOAD, UPLOADVariables} from '_gqlTypes/UPLOAD';
+import {uploadMutation} from '../../graphQL/mutations/upload/uploadMutation';
+import {useUser} from '../../hooks/UserHook/UserHook';
+import {ITreeNodeWithRecord} from '../../_types/types';
+import SelectTreeNode from '../shared/SelectTreeNode';
 
 const {confirm} = Modal;
 
@@ -189,8 +189,8 @@ function UploadFiles({
     useSubscription(getUploadUpdates, {
         variables: {filters: {userId: user?.userId}},
         skip: !user?.userId,
-        onSubscriptionData: subData => {
-            const uploadData = subData.subscriptionData.data.upload;
+        onData: subData => {
+            const uploadData = subData.data.data.upload;
 
             setFiles(prevState =>
                 prevState.map(f => {

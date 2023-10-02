@@ -4,28 +4,21 @@
 import {ApolloError, useMutation} from '@apollo/client';
 import {ErrorTypes} from '@leav/utils';
 import {deleteValueMutation} from 'graphQL/mutations/values/deleteValueMutation';
+import {useValuesCacheUpdate} from 'hooks/useValuesCacheUpdate';
 import {useTranslation} from 'react-i18next';
 import {DELETE_VALUE, DELETE_VALUEVariables} from '_gqlTypes/DELETE_VALUE';
 import {IRecordIdentityWhoAmI} from '_types/types';
 import {APICallStatus, DeleteValueFunc} from '../_types';
-import getPropertyCacheFieldName from './helpers/getPropertyCacheFieldName';
 
 export interface ISaveValueHook {
     deleteValue: DeleteValueFunc;
 }
 
 export default function useDeleteValueMutation(record: IRecordIdentityWhoAmI): ISaveValueHook {
+    const updateValuesCache = useValuesCacheUpdate();
     const [executeDeleteValue] = useMutation<DELETE_VALUE, DELETE_VALUEVariables>(deleteValueMutation, {
         update: (cache, {data: {deleteValue}}) => {
-            const recordWithTypename = {...record, __typename: record.library.gqlNames.type};
-            cache.modify({
-                id: cache.identify(recordWithTypename),
-                fields: {
-                    [getPropertyCacheFieldName(deleteValue.attribute.id)]: cacheValue => {
-                        return cacheValue.filter(val => val.id_value !== deleteValue.id_value);
-                    }
-                }
-            });
+            updateValuesCache(record, [deleteValue]);
         }
     });
     const {t} = useTranslation();

@@ -20,11 +20,11 @@ import {
     IGetCoreApplicationsParams
 } from '../../_types/application';
 import {ErrorFieldDetail, Errors} from '../../_types/errors';
+import {TriggerNames} from '../../_types/eventsManager';
 import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 
 export const MAX_CONSULTATION_HISTORY_SIZE = 10;
-export const TRIGGER_NAME_APPLICATION_EVENT = 'applicationEvent';
 
 export interface IApplicationDomain {
     getApplicationProperties(params: {id: string; ctx: IQueryInfos}): Promise<IApplication>;
@@ -97,7 +97,7 @@ export default function ({
                         application
                     }
                 },
-                triggerName: TRIGGER_NAME_APPLICATION_EVENT
+                triggerName: TriggerNames.APPLICATION_EVENT
             },
             ctx
         );

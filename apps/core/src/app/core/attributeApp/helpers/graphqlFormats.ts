@@ -38,6 +38,7 @@ export const getFormatFromAttribute = (format: AttributeFormats): string => {
         case AttributeFormats.TEXT:
         case AttributeFormats.ENCRYPTED:
         case AttributeFormats.COLOR:
+        case AttributeFormats.RICH_TEXT:
             return 'String';
         case AttributeFormats.NUMERIC:
             return 'Float';

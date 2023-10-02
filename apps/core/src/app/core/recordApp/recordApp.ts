@@ -3,18 +3,29 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ConvertVersionFromGqlFormatFunc} from 'app/helpers/convertVersionFromGqlFormat';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IRecordFilterLight} from 'domain/record/_types';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {GraphQLScalarType} from 'graphql';
+import {withFilter} from 'graphql-subscriptions';
 import {IUtils} from 'utils/utils';
+import {PublishedEvent} from '_types/event';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {ITree} from '_types/tree';
+import {TriggerNames} from '../../../_types/eventsManager';
 import {RecordPermissionsActions} from '../../../_types/permissions';
-import {AttributeCondition, IRecord, TreeCondition} from '../../../_types/record';
+import {
+    AttributeCondition,
+    IRecord,
+    IRecordUpdateEvent,
+    IRecordUpdateEventFilters,
+    TreeCondition
+} from '../../../_types/record';
 import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreAttributeApp} from '../attributeApp/attributeApp';
+import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from '../helpers/subscriptions';
 import {IIndexationManagerApp} from '../indexationManagerApp';
 import {ICreateRecordParams} from './_types';
 
@@ -26,21 +37,25 @@ interface IDeps {
     'core.domain.record'?: IRecordDomain;
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.tree'?: ITreeDomain;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.utils'?: IUtils;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.core.attribute'?: ICoreAttributeApp;
     'core.app.core.indexationManager'?: IIndexationManagerApp;
     'core.app.helpers.convertVersionFromGqlFormat'?: ConvertVersionFromGqlFormatFunc;
+    'core.app.core.subscriptionsHelper'?: ICoreSubscriptionsHelpersApp;
 }
 
-export default function({
+export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.tree': treeDomain = null,
+    'core.domain.eventsManager': eventsManagerDomain = null,
     'core.utils': utils = null,
     'core.app.core.attribute': attributeApp = null,
     'core.app.core.indexationManager': indexationManagerApp = null,
-    'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat = null
+    'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat = null,
+    'core.app.core.subscriptionsHelper': subscriptionsHelper = null
 }: IDeps = {}): ICoreRecordApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
@@ -173,6 +188,22 @@ export default function({
                         order: SortOrder!
                     }
 
+                    type RecordUpdateEvent {
+                        record: Record!
+                        updatedValues: [RecordUpdatedValues!]!
+                    }
+
+                    type RecordUpdatedValues {
+                        attribute: String!,
+                        value: GenericValue!
+                    }
+
+                    input RecordUpdateFilterInput {
+                        libraries: [ID!],
+                        records: [ID!],
+                        ignoreOwnEvents: Boolean
+                    }
+
                     input CreateRecordDataInput {
                         version: [ValueVersionInput!],
                         values: [ValueBatchInput!]
@@ -197,6 +228,10 @@ export default function({
                         indexRecords(libraryId: String!, records: [String!]): Boolean!
                         deactivateRecords(libraryId: String!, recordsIds: [String!], filters: [RecordFilterInput!]): [Record!]!
                         purgeInactiveRecords(libraryId: String!): [Record!]!
+                    }
+
+                    extend type Subscription {
+                        recordUpdate(filters: RecordUpdateFilterInput): RecordUpdateEvent!
                     }
                 `,
                 resolvers: {
@@ -248,6 +283,35 @@ export default function({
                         },
                         async purgeInactiveRecords(parent, {libraryId}, ctx): Promise<IRecord[]> {
                             return recordDomain.purgeInactiveRecords({libraryId, ctx});
+                        }
+                    },
+
+                    Subscription: {
+                        recordUpdate: {
+                            subscribe: withFilter(
+                                () => eventsManagerDomain.subscribe([TriggerNames.RECORD_UPDATE]),
+                                (
+                                    event: PublishedEvent<{recordUpdate: IRecordUpdateEvent}>,
+                                    {filters}: {filters: ICommonSubscriptionFilters & IRecordUpdateEventFilters},
+                                    ctx: IQueryInfos
+                                ) => {
+                                    if (filters?.ignoreOwnEvents && subscriptionsHelper.isOwnEvent(event, ctx)) {
+                                        return false;
+                                    }
+
+                                    const {recordUpdate} = event;
+                                    let mustReturn = true;
+                                    if (filters?.records?.length) {
+                                        mustReturn = filters?.records.includes(recordUpdate?.record.id);
+                                    }
+
+                                    if (mustReturn && filters?.libraries?.length) {
+                                        mustReturn = filters?.libraries.includes(recordUpdate?.record.library);
+                                    }
+
+                                    return mustReturn;
+                                }
+                            )
                         }
                     },
                     RecordFilter: {

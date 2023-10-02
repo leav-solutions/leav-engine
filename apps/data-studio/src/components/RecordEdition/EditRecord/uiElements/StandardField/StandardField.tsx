@@ -7,7 +7,7 @@ import CreationErrorContext from 'components/RecordEdition/EditRecordModal/creat
 import {EditRecordReducerActionsTypes} from 'components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
 import {useEditRecordModalReducer} from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import {RecordFormElementsValueStandardValue} from 'hooks/useGetRecordForm/useGetRecordForm';
-import useRefreshFieldValues from 'hooks/useRefreshFieldValues';
+import {useRefreshFieldValues} from 'hooks/useRefreshFieldValues';
 import {useContext, useEffect, useMemo, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';

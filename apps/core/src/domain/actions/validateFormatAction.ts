@@ -40,6 +40,7 @@ export default function ({'core.domain.actionsList': actionsListDomain = null}: 
                 let schema;
                 switch (attribute.format) {
                     case AttributeFormats.TEXT:
+                    case AttributeFormats.RICH_TEXT:
                     case AttributeFormats.ENCRYPTED:
                         schema = Joi.string().allow('', null);
 

@@ -13,7 +13,7 @@ import Dimmer from 'components/shared/Dimmer';
 import ErrorMessage from 'components/shared/ErrorMessage';
 import {IRecordPropertyTree} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {RecordFormElementsValueTreeValue} from 'hooks/useGetRecordForm/useGetRecordForm';
-import useRefreshFieldValues from 'hooks/useRefreshFieldValues';
+import {useRefreshFieldValues} from 'hooks/useRefreshFieldValues';
 import {Reducer, useContext, useEffect, useReducer} from 'react';
 import styled from 'styled-components';
 import {arrayValueVersionToObject} from 'utils';
@@ -33,6 +33,7 @@ import DeleteAllValuesBtn from '../../shared/DeleteAllValuesBtn';
 import FieldFooter from '../../shared/FieldFooter';
 import InheritedFieldLabel from '../../shared/InheritedFieldLabel';
 import NoValue from '../../shared/NoValue';
+import UpdatedFieldIcon from '../../shared/UpdatedFieldIcon';
 import ValueDetailsBtn from '../../shared/ValueDetailsBtn';
 import ValuesVersionBtn from '../../shared/ValuesVersionBtn';
 import ValuesVersionIndicator from '../../shared/ValuesVersionIndicator';
@@ -308,6 +309,7 @@ function TreeField({
             <Wrapper $isValuesAddVisible={state.isValuesAddVisible} $themeToken={token}>
                 <FieldLabel ellipsis={{rows: 1, tooltip: true}}>
                     {element.settings.label}
+                    {editRecordModalState.externalUpdate.updatedValues[attribute?.id] && <UpdatedFieldIcon />}
                     {state.activeScope === FieldScope.INHERITED && (
                         <InheritedFieldLabel version={state.values[FieldScope.INHERITED].version} />
                     )}

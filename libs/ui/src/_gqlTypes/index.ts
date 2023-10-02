@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import * as Apollo from '@apollo/client';
-import {gql} from '@apollo/client';
 import {IPreviewScalar} from '@leav/utils';
+import {gql} from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends {[key: string]: unknown}> = {[K in keyof T]: T[K]};
@@ -133,6 +133,7 @@ export enum AttributeFormat {
     encrypted = 'encrypted',
     extended = 'extended',
     numeric = 'numeric',
+    rich_text = 'rich_text',
     text = 'text'
 }
 
@@ -529,6 +530,12 @@ export type RecordSortInput = {
     order: SortOrder;
 };
 
+export type RecordUpdateFilterInput = {
+    ignoreOwnEvents?: InputMaybe<Scalars['Boolean']>;
+    libraries?: InputMaybe<Array<Scalars['ID']>>;
+    records?: InputMaybe<Array<Scalars['ID']>>;
+};
+
 /**
  * Records support on both offset and cursor. Cannot use both at the same time.
  * If none is supplied, it will apply an offset 0. Cursors are always returned along the results
@@ -807,6 +814,7 @@ export type DetailsApplicationFragment = {
               whoAmI: {
                   id: string;
                   label?: string | null;
+                  subLabel?: string | null;
                   color?: string | null;
                   preview?: IPreviewScalar | null;
                   library: {id: string; label?: any | null};
@@ -817,6 +825,7 @@ export type DetailsApplicationFragment = {
               whoAmI: {
                   id: string;
                   label?: string | null;
+                  subLabel?: string | null;
                   color?: string | null;
                   preview?: IPreviewScalar | null;
                   library: {id: string; label?: any | null};
@@ -827,6 +836,7 @@ export type DetailsApplicationFragment = {
               whoAmI: {
                   id: string;
                   label?: string | null;
+                  subLabel?: string | null;
                   color?: string | null;
                   preview?: IPreviewScalar | null;
                   library: {id: string; label?: any | null};
@@ -841,6 +851,7 @@ export type RecordIdentityCjX1ctHtayKw3UvL3SxXwpZmvJocudQk0mb3YeupLuFragment = {
     whoAmI: {
         id: string;
         label?: string | null;
+        subLabel?: string | null;
         color?: string | null;
         preview?: IPreviewScalar | null;
         library: {id: string; label?: any | null};
@@ -852,6 +863,7 @@ export type RecordIdentityNoK32r5S4GHrWvJrDbbZyQxNwU9KsPBsGItOGtQz4Fragment = {
     whoAmI: {
         id: string;
         label?: string | null;
+        subLabel?: string | null;
         color?: string | null;
         preview?: IPreviewScalar | null;
         library: {id: string; label?: any | null};
@@ -863,6 +875,7 @@ export type RecordIdentityGdlFf7fowe20o0yE7yTvP85fHnPz4Ad88WmUdVAuYwFragment = {
     whoAmI: {
         id: string;
         label?: string | null;
+        subLabel?: string | null;
         color?: string | null;
         preview?: IPreviewScalar | null;
         library: {id: string; label?: any | null};
@@ -1006,6 +1019,7 @@ export type LibraryDetailsFragment = {
               whoAmI: {
                   id: string;
                   label?: string | null;
+                  subLabel?: string | null;
                   color?: string | null;
                   preview?: IPreviewScalar | null;
                   library: {id: string; label?: any | null};
@@ -1016,6 +1030,7 @@ export type LibraryDetailsFragment = {
               whoAmI: {
                   id: string;
                   label?: string | null;
+                  subLabel?: string | null;
                   color?: string | null;
                   preview?: IPreviewScalar | null;
                   library: {id: string; label?: any | null};
@@ -1026,6 +1041,7 @@ export type LibraryDetailsFragment = {
               whoAmI: {
                   id: string;
                   label?: string | null;
+                  subLabel?: string | null;
                   color?: string | null;
                   preview?: IPreviewScalar | null;
                   library: {id: string; label?: any | null};
@@ -1112,6 +1128,7 @@ export type GetApplicationByIdQuery = {
                       whoAmI: {
                           id: string;
                           label?: string | null;
+                          subLabel?: string | null;
                           color?: string | null;
                           preview?: IPreviewScalar | null;
                           library: {id: string; label?: any | null};
@@ -1122,6 +1139,7 @@ export type GetApplicationByIdQuery = {
                       whoAmI: {
                           id: string;
                           label?: string | null;
+                          subLabel?: string | null;
                           color?: string | null;
                           preview?: IPreviewScalar | null;
                           library: {id: string; label?: any | null};
@@ -1132,6 +1150,7 @@ export type GetApplicationByIdQuery = {
                       whoAmI: {
                           id: string;
                           label?: string | null;
+                          subLabel?: string | null;
                           color?: string | null;
                           preview?: IPreviewScalar | null;
                           library: {id: string; label?: any | null};
@@ -1170,6 +1189,7 @@ export type SaveApplicationMutation = {
                   whoAmI: {
                       id: string;
                       label?: string | null;
+                      subLabel?: string | null;
                       color?: string | null;
                       preview?: IPreviewScalar | null;
                       library: {id: string; label?: any | null};
@@ -1180,6 +1200,7 @@ export type SaveApplicationMutation = {
                   whoAmI: {
                       id: string;
                       label?: string | null;
+                      subLabel?: string | null;
                       color?: string | null;
                       preview?: IPreviewScalar | null;
                       library: {id: string; label?: any | null};
@@ -1190,6 +1211,7 @@ export type SaveApplicationMutation = {
                   whoAmI: {
                       id: string;
                       label?: string | null;
+                      subLabel?: string | null;
                       color?: string | null;
                       preview?: IPreviewScalar | null;
                       library: {id: string; label?: any | null};
@@ -1477,6 +1499,7 @@ export type GetLibraryByIdQuery = {
                       whoAmI: {
                           id: string;
                           label?: string | null;
+                          subLabel?: string | null;
                           color?: string | null;
                           preview?: IPreviewScalar | null;
                           library: {id: string; label?: any | null};
@@ -1487,6 +1510,7 @@ export type GetLibraryByIdQuery = {
                       whoAmI: {
                           id: string;
                           label?: string | null;
+                          subLabel?: string | null;
                           color?: string | null;
                           preview?: IPreviewScalar | null;
                           library: {id: string; label?: any | null};
@@ -1497,6 +1521,7 @@ export type GetLibraryByIdQuery = {
                       whoAmI: {
                           id: string;
                           label?: string | null;
+                          subLabel?: string | null;
                           color?: string | null;
                           preview?: IPreviewScalar | null;
                           library: {id: string; label?: any | null};
@@ -1562,6 +1587,7 @@ export type SaveLibraryMutation = {
                   whoAmI: {
                       id: string;
                       label?: string | null;
+                      subLabel?: string | null;
                       color?: string | null;
                       preview?: IPreviewScalar | null;
                       library: {id: string; label?: any | null};
@@ -1572,6 +1598,7 @@ export type SaveLibraryMutation = {
                   whoAmI: {
                       id: string;
                       label?: string | null;
+                      subLabel?: string | null;
                       color?: string | null;
                       preview?: IPreviewScalar | null;
                       library: {id: string; label?: any | null};
@@ -1582,6 +1609,7 @@ export type SaveLibraryMutation = {
                   whoAmI: {
                       id: string;
                       label?: string | null;
+                      subLabel?: string | null;
                       color?: string | null;
                       preview?: IPreviewScalar | null;
                       library: {id: string; label?: any | null};
@@ -1683,6 +1711,7 @@ export type UserInfoQuery = {
         whoAmI: {
             id: string;
             label?: string | null;
+            subLabel?: string | null;
             color?: string | null;
             preview?: IPreviewScalar | null;
             library: {id: string; label?: any | null};
@@ -1697,6 +1726,7 @@ export const RecordIdentityFragmentDoc = gql`
         whoAmI {
             id
             label
+            subLabel
             color
             library {
                 id

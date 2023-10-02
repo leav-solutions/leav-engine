@@ -11,7 +11,8 @@ import {IAppGraphQLSchema} from '_types/graphql';
 import {IList, IPaginationParams, ISortParams} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
-import {ITasksManagerDomain, TRIGGER_NAME_TASK} from '../../domain/tasksManager/tasksManagerDomain';
+import {ITasksManagerDomain} from '../../domain/tasksManager/tasksManagerDomain';
+import {TriggerNames} from '../../_types/eventsManager';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition} from '../../_types/record';
 import {ITask, TaskPriority, TaskStatus, TaskType} from '../../_types/tasksManager';
@@ -185,7 +186,7 @@ export default function ({
                     Subscription: {
                         task: {
                             subscribe: withFilter(
-                                () => eventsManager.subscribe([TRIGGER_NAME_TASK]),
+                                () => eventsManager.subscribe([TriggerNames.TASK]),
                                 (payload, variables) => {
                                     let toReturn = true;
 

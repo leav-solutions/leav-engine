@@ -2,14 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {mockFormAttribute} from '__mocks__/common/attribute';
-import {mockFormElementInput} from '__mocks__/common/form';
-import {mockRecord} from '__mocks__/common/record';
-import {mockModifier} from '__mocks__/common/value';
-import {RECORD_FORM_recordForm_elements_attribute_StandardAttribute} from '_gqlTypes/RECORD_FORM';
-import {SAVE_VALUE_BATCH_saveValueBatch_values_Value_attribute} from '_gqlTypes/SAVE_VALUE_BATCH';
-import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
-import {act, render, screen, waitFor} from '_tests/testUtils';
 import {
     EditRecordReducerActionsTypes,
     initialState
@@ -17,6 +9,14 @@ import {
 import * as useEditRecordModalReducer from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import {IRecordPropertyAttribute} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import * as useRefreshFieldValues from 'hooks/useRefreshFieldValues/useRefreshFieldValues';
+import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
+import {RECORD_FORM_recordForm_elements_attribute_StandardAttribute} from '_gqlTypes/RECORD_FORM';
+import {SAVE_VALUE_BATCH_saveValueBatch_values_Value_attribute} from '_gqlTypes/SAVE_VALUE_BATCH';
+import {act, render, screen, waitFor, waitForOptions} from '_tests/testUtils';
+import {mockFormAttribute} from '__mocks__/common/attribute';
+import {mockFormElementInput} from '__mocks__/common/form';
+import {mockRecord} from '__mocks__/common/record';
+import {mockModifier} from '__mocks__/common/value';
 import {
     APICallStatus,
     DeleteMultipleValuesFunc,
@@ -28,6 +28,9 @@ import {
 import StandardField from './StandardField';
 
 jest.mock('../../hooks/useDeleteValueMutation');
+
+jest.useRealTimers();
+jest.setTimeout(15000);
 
 describe('StandardField', () => {
     const mockEditRecordModalDispatch = jest.fn();
@@ -91,6 +94,16 @@ describe('StandardField', () => {
         onValueSubmit: mockHandleSubmit,
         onValueDelete: mockHandleDelete,
         onDeleteMultipleValues: mockHandleMultipleValues
+    };
+
+    global.ResizeObserver = jest.fn().mockImplementation(() => ({
+        observe: jest.fn(),
+        unobserve: jest.fn(),
+        disconnect: jest.fn()
+    }));
+
+    const waitForOption: waitForOptions = {
+        timeout: 5000
     };
 
     beforeEach(() => jest.clearAllMocks());
@@ -347,6 +360,46 @@ describe('StandardField', () => {
         userEvent.click(inputElem);
 
         expect(screen.getByRole('spinbutton')).toBeInTheDocument();
+    });
+
+    test('Render Rich Text field', async () => {
+        const recordValuesDate = [
+            {
+                ...mockRecordValuesCommon,
+                value: '<p>rich text editor test<p>',
+                raw_value: 'new rich text editor test'
+            }
+        ];
+        render(
+            <StandardField
+                element={{
+                    ...mockFormElementInput,
+                    attribute: {...mockFormAttribute, format: AttributeFormat.rich_text},
+                    values: recordValuesDate
+                }}
+                {...baseProps}
+            />
+        );
+
+        await waitFor(() => {
+            screen.getByTestId('ckeditor');
+        }, waitForOption);
+        const richTextElem = screen.getByTestId('ckeditor');
+        await act(async () => {
+            userEvent.click(richTextElem);
+        });
+        const richTextElemOpen = screen.getByRole('textbox');
+        expect(richTextElemOpen).toBeInTheDocument();
+        await act(async () => {
+            userEvent.click(richTextElemOpen);
+        });
+        const toolBarelem = screen.getByRole('toolbar');
+        expect(toolBarelem).toBeInTheDocument();
+
+        await act(async () => {
+            userEvent.click(screen.getByRole('button', {name: 'global.submit'}));
+        });
+        expect(mockHandleSubmit).toHaveBeenCalled();
     });
 
     test('Display error message', async () => {

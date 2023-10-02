@@ -57,6 +57,8 @@ describe('RecordDomain', () => {
         sendDatabaseEvent: global.__mockPromise()
     };
 
+    const mockSendRecordUpdateEventHelper = jest.fn();
+
     beforeEach(() => {
         jest.clearAllMocks();
     });
@@ -266,7 +268,8 @@ describe('RecordDomain', () => {
             const recDomain = recordDomain({
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
-                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain
+                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper
             });
 
             const updatedRecord = await recDomain.updateRecord({

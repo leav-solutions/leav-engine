@@ -92,7 +92,8 @@ export enum AttributeFormats {
     ENCRYPTED = 'encrypted',
     BOOLEAN = 'boolean',
     EXTENDED = 'extended',
-    COLOR = 'color'
+    COLOR = 'color',
+    RICH_TEXT = 'rich_text'
 }
 
 export enum IOTypes {

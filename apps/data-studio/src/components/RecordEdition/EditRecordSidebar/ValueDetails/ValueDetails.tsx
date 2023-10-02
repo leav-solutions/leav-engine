@@ -59,6 +59,31 @@ function ValueDetails({attribute, value, onMetadataSubmit}: IValueDetailsProps):
     const metadataFields = (attribute?.metadata_fields ?? []).filter(field => field.permissions.access_attribute);
     const hasMetadata = metadataFields.length > 0 && value !== null;
 
+    const collapseItems = [];
+
+    if (hasMetadata) {
+        collapseItems.push({
+            key: 'metadata',
+            label: isTypeStandard(attribute.type)
+                ? t('record_edition.metadata_section')
+                : t('record_edition.metadata_section_link'),
+            children: <ValueMetadata value={value} attribute={attribute} onMetadataSubmit={onMetadataSubmit} />
+        });
+    }
+
+    if (attribute.type === AttributeType.tree && value) {
+        collapseItems.push({
+            key: 'path',
+            label: t('record_edition.path_section'),
+            children: (
+                <TreeValuePath
+                    value={value as IRecordPropertyTree}
+                    attribute={attribute as RECORD_FORM_recordForm_elements_attribute_TreeAttribute}
+                />
+            )
+        });
+    }
+
     return (
         <>
             <CloseButton onClick={_handleClose} />
@@ -71,32 +96,12 @@ function ValueDetails({attribute, value, onMetadataSubmit}: IValueDetailsProps):
             <Divider style={{margin: '.5em 0'}} />
             <ValueInfo />
             <Collapse
+                items={collapseItems}
                 bordered={false}
                 defaultActiveKey={['value', 'metadata']}
                 style={{background: 'none'}}
                 destroyInactivePanel
-            >
-                {hasMetadata && (
-                    <Panel
-                        key="metadata"
-                        header={
-                            isTypeStandard(attribute.type)
-                                ? t('record_edition.metadata_section')
-                                : t('record_edition.metadata_section_link')
-                        }
-                    >
-                        <ValueMetadata value={value} attribute={attribute} onMetadataSubmit={onMetadataSubmit} />
-                    </Panel>
-                )}
-                {attribute.type === AttributeType.tree && value && (
-                    <Panel key="path" header={t('record_edition.path_section')}>
-                        <TreeValuePath
-                            value={value as IRecordPropertyTree}
-                            attribute={attribute as RECORD_FORM_recordForm_elements_attribute_TreeAttribute}
-                        />
-                    </Panel>
-                )}
-            </Collapse>
+            />
         </>
     );
 }

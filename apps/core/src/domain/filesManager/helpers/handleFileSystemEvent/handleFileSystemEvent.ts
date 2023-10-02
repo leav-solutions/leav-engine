@@ -4,6 +4,7 @@
 import {IAmqpService} from '@leav/message-broker';
 import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {SendRecordUpdateEventHelper} from 'domain/record/helpers/sendRecordUpdateEvent';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
@@ -25,6 +26,7 @@ interface IDeps {
     'core.domain.value'?: IValueDomain;
     'core.domain.tree'?: ITreeDomain;
     'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
+    'core.domain.record.helpers.sendRecordUpdateEvent'?: SendRecordUpdateEventHelper;
     'core.infra.record'?: IRecordRepo;
     'core.infra.amqpService'?: IAmqpService;
     'core.infra.filesManager'?: IFilesManagerRepo;
@@ -40,6 +42,7 @@ export default function (deps: IDeps): HandleFileSystemEventFunc {
         'core.domain.value': valueDomain = null,
         'core.domain.tree': treeDomain = null,
         'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
+        'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent = null,
         'core.infra.record': recordRepo = null,
         'core.infra.amqpService': amqpService = null,
         'core.infra.filesManager': filesManagerRepo = null,
@@ -59,10 +62,12 @@ export default function (deps: IDeps): HandleFileSystemEventFunc {
             filesManagerRepo,
             amqpService,
             updateRecordLastModif,
+            sendRecordUpdateEvent,
             logger,
             config,
             utils
         };
+
         switch (event) {
             case FileEvents.CREATE:
                 await handleCreateEvent(scanMsg, resources, helperDeps, ctx);

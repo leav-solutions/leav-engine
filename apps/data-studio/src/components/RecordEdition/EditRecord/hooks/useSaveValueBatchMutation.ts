@@ -4,14 +4,10 @@
 import {ApolloError, useApolloClient, useMutation} from '@apollo/client';
 import {ErrorTypes, objectToNameValueArray} from '@leav/utils';
 import {saveValueBatchMutation} from 'graphQL/mutations/values/saveValueBatchMutation';
+import {useValuesCacheUpdate} from 'hooks/useValuesCacheUpdate';
 import {useTranslation} from 'react-i18next';
-import {
-    SAVE_VALUE_BATCH,
-    SAVE_VALUE_BATCHVariables,
-    SAVE_VALUE_BATCH_saveValueBatch_values
-} from '_gqlTypes/SAVE_VALUE_BATCH';
+import {SAVE_VALUE_BATCH, SAVE_VALUE_BATCHVariables} from '_gqlTypes/SAVE_VALUE_BATCH';
 import {APICallStatus, FieldSubmitMultipleFunc} from '../_types';
-import getPropertyCacheFieldName from './helpers/getPropertyCacheFieldName';
 
 export interface ISaveValueBatchHook {
     saveValues: FieldSubmitMultipleFunc;
@@ -23,6 +19,7 @@ export default function useSaveValueBatchMutation(): ISaveValueBatchHook {
     const [executeSaveValueBatch, {loading}] = useMutation<SAVE_VALUE_BATCH, SAVE_VALUE_BATCHVariables>(
         saveValueBatchMutation
     );
+    const updateValuesCache = useValuesCacheUpdate();
     const {t} = useTranslation();
 
     return {
@@ -51,31 +48,7 @@ export default function useSaveValueBatchMutation(): ISaveValueBatchHook {
                 });
                 const {values: savedValues, errors} = saveRes.data.saveValueBatch;
 
-                // Update cache
-                const recordWithTypename = {...record, __typename: record.library.gqlNames.type};
-                for (const savedValue of savedValues) {
-                    cache.modify({
-                        id: cache.identify(recordWithTypename),
-                        fields: {
-                            [getPropertyCacheFieldName(savedValue.attribute.id)]: (
-                                cacheValue: SAVE_VALUE_BATCH_saveValueBatch_values[]
-                            ) => {
-                                const newCacheValue = [...cacheValue];
-
-                                // Update or add each saved value to the cache
-                                const cacheIndex = cacheValue.findIndex(val => val.id_value === savedValue.id_value);
-
-                                if (cacheIndex !== -1) {
-                                    newCacheValue[cacheIndex] = savedValue;
-                                } else {
-                                    newCacheValue.push(savedValue);
-                                }
-
-                                return newCacheValue;
-                            }
-                        }
-                    });
-                }
+                updateValuesCache(record, savedValues);
 
                 const status =
                     errors?.length && savedValues.length

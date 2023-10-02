@@ -141,6 +141,9 @@ describe('FilesManager', () => {
             previewsSettingsToVersions: jest.fn().mockReturnValue(systemPreviewsSettings)
         };
 
+        const mockUpdateLastRecordModif = jest.fn();
+        const mockSendRecordUpdate = jest.fn();
+
         test('Force preview generation one file', async () => {
             const mockRecordDomain: Mockify<IRecordDomain> = {
                 find: global.__mockPromise({
@@ -156,6 +159,8 @@ describe('FilesManager', () => {
                 'core.utils.logger': logger as winston.Winston,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
+                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService as IAmqpService,
                 'core.infra.record': mockRecordRepo as IRecordRepo
             });
@@ -196,6 +201,8 @@ describe('FilesManager', () => {
                 'core.utils.logger': logger as winston.Winston,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
+                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService as IAmqpService,
                 'core.infra.record': mockRecordRepo as IRecordRepo
             });
@@ -272,8 +279,10 @@ describe('FilesManager', () => {
                 'core.utils.logger': logger as winston.Winston,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomainForDirectories as ILibraryDomain,
-                'core.infra.amqpService': mockAmqpService as IAmqpService,
                 'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
+                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
+                'core.infra.amqpService': mockAmqpService as IAmqpService,
                 'core.infra.record': mockRecordRepo as IRecordRepo
             });
 
@@ -318,6 +327,8 @@ describe('FilesManager', () => {
                 'core.utils.logger': logger as winston.Winston,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
+                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService as IAmqpService,
                 'core.infra.record': mockRecordRepo as IRecordRepo
             });
@@ -378,6 +389,8 @@ describe('FilesManager', () => {
                 'core.utils.logger': logger as winston.Winston,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
+                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService as IAmqpService,
                 'core.infra.record': mockRecordRepo as IRecordRepo
             });
@@ -419,6 +432,8 @@ describe('FilesManager', () => {
                 'core.utils.logger': logger as winston.Winston,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
+                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService as IAmqpService,
                 'core.infra.record': mockRecordRepo as IRecordRepo
             });

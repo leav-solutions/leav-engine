@@ -11,6 +11,7 @@ import {StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
 import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
+import {SendRecordUpdateEventHelper} from 'domain/record/helpers/sendRecordUpdateEvent';
 import {IRecordFilterLight} from 'domain/record/_types';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
@@ -30,6 +31,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {USERS_GROUP_LIB_NAME, USERS_GROUP_TREE_NAME} from '../../infra/permission/permissionRepo';
 import {Errors} from '../../_types/errors';
+import {TriggerNames} from '../../_types/eventsManager';
 import {FileEvents, FilesAttributes, IFileEventData, IFileMetadata} from '../../_types/filesManager';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {LibraryPermissionsActions} from '../../_types/permissions';
@@ -75,8 +77,6 @@ interface IIsFileExistsAsChild {
     filename: string;
 }
 
-export const TRIGGER_NAME_UPLOAD_FILE = 'UPLOAD_FILE';
-
 export interface IFilesManagerDomain {
     init(): Promise<void>;
     getPreviewVersion(): ILibrary['previewsSettings'];
@@ -103,6 +103,7 @@ interface IDeps {
     'core.domain.filesManager.helpers.messagesHandler'?: IMessagesHandlerHelper;
     'core.domain.library'?: ILibraryDomain;
     'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
+    'core.domain.record.helpers.sendRecordUpdateEvent'?: SendRecordUpdateEventHelper;
     'core.domain.helpers.storeUploadFile'?: StoreUploadFileFunc;
     'core.domain.helpers.createDirectory'?: CreateDirectoryFunc;
     'core.infra.record'?: IRecordRepo;
@@ -124,6 +125,7 @@ export default function ({
     'core.domain.helpers.createDirectory': createDirectory = null,
     'core.domain.library': libraryDomain = null,
     'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
+    'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent = null,
     'core.domain.eventsManager': eventsManager = null,
     'core.infra.record': recordRepo = null,
     translator = null
@@ -266,6 +268,7 @@ export default function ({
                 valueDomain,
                 recordRepo,
                 updateRecordLastModif,
+                sendRecordUpdateEvent,
                 config,
                 logger,
                 utils
@@ -495,7 +498,7 @@ export default function ({
 
                     await eventsManager.sendPubSubEvent(
                         {
-                            triggerName: TRIGGER_NAME_UPLOAD_FILE,
+                            triggerName: TriggerNames.UPLOAD_FILE,
                             data: {upload: {uid: file.uid, userId: ctx.userId, progress}}
                         },
                         ctx
@@ -620,6 +623,7 @@ export default function ({
                         {
                             recordRepo,
                             updateRecordLastModif,
+                            sendRecordUpdateEvent,
                             valueDomain,
                             config,
                             logger

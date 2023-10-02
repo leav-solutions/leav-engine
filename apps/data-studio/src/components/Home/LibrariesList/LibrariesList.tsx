@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloudUploadOutlined, DatabaseOutlined} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
-import {ErrorDisplay, FloatingMenu, FloatingMenuAction, useLang} from '@leav/ui';
+import {ErrorDisplay, FloatingMenu, FloatingMenuAction, Loading, useLang} from '@leav/ui';
 import {Table} from 'antd';
 import {ColumnsType} from 'antd/lib/table';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
@@ -68,6 +68,10 @@ function LibrariesList(): JSX.Element {
     });
 
     const [updateFavoritesMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData);
+
+    if (librariesLoading || userDataQuery.loading) {
+        return <Loading />;
+    }
 
     if (librariesError || userDataQuery.error) {
         return <ErrorDisplay message={librariesError || userDataQuery.error?.message} />;

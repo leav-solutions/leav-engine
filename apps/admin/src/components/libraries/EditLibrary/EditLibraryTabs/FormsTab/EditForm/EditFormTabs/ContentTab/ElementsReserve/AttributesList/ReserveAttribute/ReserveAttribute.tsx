@@ -42,7 +42,8 @@ function ReserveAttribute({attribute}: IReserveAttributeProps): JSX.Element {
             [AttributeFormat.extended]: formElements[FieldTypes.TEXT_INPUT],
             [AttributeFormat.numeric]: formElements[FieldTypes.TEXT_INPUT],
             [AttributeFormat.text]: formElements[FieldTypes.TEXT_INPUT],
-            [AttributeFormat.date_range]: formElements[FieldTypes.TEXT_INPUT]
+            [AttributeFormat.date_range]: formElements[FieldTypes.TEXT_INPUT],
+            [AttributeFormat.rich_text]: formElements[FieldTypes.TEXT_INPUT]
         };
 
         let uiElement: IUIElement;

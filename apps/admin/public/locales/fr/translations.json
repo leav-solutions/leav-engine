@@ -156,7 +156,8 @@
             "date_range": "Période",
             "encrypted": "Crypté",
             "numeric": "Numérique",
-            "color": "Couleur"
+            "color": "Couleur",
+            "rich_text": "Texte Enrichi"
         },
         "values_list_enable": "Activer",
         "allow_free_entry": "Autoriser la saisie libre",

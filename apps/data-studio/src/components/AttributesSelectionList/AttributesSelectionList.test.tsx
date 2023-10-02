@@ -40,15 +40,12 @@ describe('AttributesSelectionList', () => {
             }
         ];
 
-        await act(async () => {
-            render(
-                <AttributesSelectionList selectedAttributes={[]} library="test_lib" onSelectionChange={jest.fn()} />,
-                {apolloMocks: mocks}
-            );
+        render(<AttributesSelectionList selectedAttributes={[]} library="test_lib" onSelectionChange={jest.fn()} />, {
+            apolloMocks: mocks
         });
 
         const attributesList = await screen.findByTestId('attributes-list');
-        const attributeElem = within(attributesList).getByText('test attribute');
+        const attributeElem = await within(attributesList).findByText('test attribute');
 
         expect(attributeElem).toBeInTheDocument();
 
@@ -57,7 +54,7 @@ describe('AttributesSelectionList', () => {
         });
 
         const selectedAttributesList = screen.getByTestId('attributes-list');
-        expect(within(selectedAttributesList).getByText('test attribute')).toBeInTheDocument();
+        expect(await within(selectedAttributesList).findByText('test attribute')).toBeInTheDocument();
     });
 
     test('Can filter list of attributes', async () => {
@@ -100,16 +97,13 @@ describe('AttributesSelectionList', () => {
             }
         ];
 
-        await act(async () => {
-            render(
-                <AttributesSelectionList selectedAttributes={[]} library="test_lib" onSelectionChange={jest.fn()} />,
-                {apolloMocks: mocks}
-            );
+        render(<AttributesSelectionList selectedAttributes={[]} library="test_lib" onSelectionChange={jest.fn()} />, {
+            apolloMocks: mocks
         });
 
         const attributesList = await screen.findByTestId('attributes-list');
 
-        expect(within(attributesList).getAllByTestId('attribute-in-list')).toHaveLength(2);
+        expect(await within(attributesList).findAllByTestId('attribute-in-list')).toHaveLength(2);
 
         await act(async () => {
             userEvent.type(screen.getByRole('textbox', {name: /search/}), 'attributeb');

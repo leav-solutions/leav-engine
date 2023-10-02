@@ -156,7 +156,8 @@
             "date_range": "Period",
             "encrypted": "Encrypted",
             "numeric": "Numeric",
-            "color": "Color"
+            "color": "Color",
+            "rich_text": "Rich Text"
         },
         "values_list_enable": "Enable",
         "allow_free_entry": "Allow free entry",

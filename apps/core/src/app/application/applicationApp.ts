@@ -26,7 +26,7 @@ import {IAppGraphQLSchema} from '_types/graphql';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IKeyValue} from '_types/shared';
-import {IApplicationDomain, TRIGGER_NAME_APPLICATION_EVENT} from '../../domain/application/applicationDomain';
+import {IApplicationDomain} from '../../domain/application/applicationDomain';
 import ApplicationError, {ApplicationErrorType} from '../../errors/ApplicationError';
 import {
     ApplicationEventTypes,
@@ -38,6 +38,7 @@ import {
     IApplicationModule
 } from '../../_types/application';
 import {API_KEY_PARAM_NAME} from '../../_types/auth';
+import {TriggerNames} from '../../_types/eventsManager';
 import {ApplicationPermissionsActions, PermissionTypes} from '../../_types/permissions';
 import {AttributeCondition, IRecord} from '../../_types/record';
 
@@ -61,7 +62,7 @@ interface IDeps {
     config?: any;
 }
 
-export default function({
+export default function ({
     'core.app.auth': authApp = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.helpers.initQueryContext': initQueryContext = null,
@@ -184,7 +185,6 @@ export default function({
                 extend type Mutation {
                     saveApplication(application: ApplicationInput!): Application!
                     deleteApplication(id: ID!): Application!
-      
                 }
 
                 extend type Subscription {
@@ -223,7 +223,7 @@ export default function({
                     Subscription: {
                         applicationEvent: {
                             subscribe: withFilter(
-                                () => eventsManagerDomain.subscribe([TRIGGER_NAME_APPLICATION_EVENT]),
+                                () => eventsManagerDomain.subscribe([TriggerNames.APPLICATION_EVENT]),
                                 (
                                     event: PublishedEvent<{applicationEvent: IApplicationEvent}>,
                                     {filters}: {filters: ICommonSubscriptionFilters & IApplicationEventFilters},

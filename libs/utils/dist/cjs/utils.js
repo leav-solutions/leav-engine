@@ -26,19 +26,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.formatId = exports._getInitialEngine = exports.getInitials = exports.getCallStack = exports.getFileType = exports.getLibraryGraphqlNames = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
+exports.simpleStringHash = exports.formatId = exports._getInitialEngine = exports.getInitials = exports.getCallStack = exports.getFileType = exports.getLibraryGraphqlNames = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 const camelCase_1 = __importDefault(require("lodash/camelCase"));
 const flow_1 = __importDefault(require("lodash/flow"));
+const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const partialRight_1 = __importDefault(require("lodash/partialRight"));
 const trimEnd_1 = __importDefault(require("lodash/trimEnd"));
 const upperFirst_1 = __importDefault(require("lodash/upperFirst"));
 const minimatch_1 = __importDefault(require("minimatch"));
 const extensions = __importStar(require("./MIMEByExtension.json"));
 const files_1 = require("./types/files");
-const isEmpty_1 = __importDefault(require("lodash/isEmpty"));
 const getGraphqlTypeFromLibraryName = (library) => {
     return (0, flow_1.default)([camelCase_1.default, upperFirst_1.default, trimEnd_1.default, (0, partialRight_1.default)(trimEnd_1.default, 's')])(library);
 };
@@ -261,4 +261,22 @@ const formatId = (id) => {
         .replace(/^_/g, ''); // Remove underscore at the beginning
 };
 exports.formatId = formatId;
+/**
+ * Returns a hash code from a string
+ * @param  {String} str The string to hash.
+ * @return {Number}    A 32bit integer
+ * @see http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
+ */
+const simpleStringHash = (str) => {
+    let hash = 0;
+    for (let i = 0, len = str.length; i < len; i++) {
+        const chr = str.charCodeAt(i);
+        // eslint-disable-next-line no-bitwise
+        hash = (hash << 5) - hash + chr;
+        // eslint-disable-next-line no-bitwise
+        hash |= 0; // Convert to 32bit integer
+    }
+    return Math.abs(hash);
+};
+exports.simpleStringHash = simpleStringHash;
 //# sourceMappingURL=utils.js.map

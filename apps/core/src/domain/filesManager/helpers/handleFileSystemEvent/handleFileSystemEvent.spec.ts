@@ -88,8 +88,13 @@ describe('handleFileSystemEvent', () => {
             const mockRequestPreviewGeneration = jest.fn();
             jest.spyOn(handlePreview, 'requestPreviewGeneration').mockImplementation(mockRequestPreviewGeneration);
 
+            const mockUpdatedLastRecordModif = jest.fn();
+            const mockSendRecordUpdate = jest.fn();
+
             const func = handleFileSystemEvent({
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
+                'core.domain.helpers.updateRecordLastModif': mockUpdatedLastRecordModif,
+                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.filesManager': mockFilesManagerRepo as IFilesManagerRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.utils': mockUtils as IUtils,
@@ -116,7 +121,7 @@ describe('handleFileSystemEvent', () => {
             expect(mockLogger.warn).not.toBeCalled();
             expect(mockRequestPreviewGeneration).toBeCalled();
             expect(mockExtractFileMetadata).toBeCalled();
-            expect(mockRecordRepo.updateRecord).toBeCalledTimes(2);
+            expect(mockRecordRepo.updateRecord).toBeCalled();
             expect(mockRecordRepo.updateRecord.mock.calls[0][0].recordData).toMatchObject({
                 color_profile: 'Some Profile',
                 color_space: 'sRGB',

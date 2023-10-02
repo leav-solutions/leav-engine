@@ -94,6 +94,7 @@
         "format_numeric": "Numeric",
         "format_text": "Text",
         "format_color": "Color",
+        "format_rich_text": "Rich Text",
         "delete_confirm": "Do you really want to delete this attribute?",
         "add_attribute": "Add attribute",
         "select_attributes": "Select attributes",

@@ -49,13 +49,11 @@ export default function ({
         try {
             const appSchema = {typeDefs: [], resolvers: {}};
             const modules = Object.keys(depsManager.registrations).filter(modName => modName.match(/^core\.app*/));
-
             for (const modName of modules) {
                 const appModule = depsManager.cradle[modName];
 
                 if (typeof appModule.getGraphQLSchema === 'function') {
                     const schemaToAdd = await appModule.getGraphQLSchema();
-
                     appSchema.typeDefs.push(schemaToAdd.typeDefs);
                     appSchema.resolvers = merge(appSchema.resolvers, schemaToAdd.resolvers);
                 }

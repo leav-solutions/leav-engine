@@ -14,7 +14,7 @@ COPY libs/ ./libs/
 COPY assets/ ./assets
 
 # Dependencies needed to retrieve metadata
-RUN apk --update --no-cache add alpine-sdk perl pkgconfig poppler poppler-dev poppler-utils
+RUN apk --update --no-cache add alpine-sdk perl pkgconfig poppler poppler-dev poppler-utils python3
 
 ### BUILDER ###
 FROM base AS builder
@@ -30,10 +30,6 @@ COPY --from=builder /app/apps/core/dist ./apps/core/dist/
 
 # Install production only modules
 RUN yarn workspaces focus core --production
-
-RUN rm -rf ./apps/core/src \
-    && rm -rf .yarn/cache \
-    && apk del alpine-sdk pkgconfig poppler-dev poppler-utils
 
 COPY ./docker/scripts ./scripts
 COPY libs ./libs
@@ -66,6 +62,9 @@ RUN rm -rf ./apps/login \
     && rm -rf ./apps/portal \
     && rm -rf ./apps/preview-generator/src \
     && rm -rf ./apps/automate-scan/src \
-    && rm -rf ./apps/sync-scan/src
+    && rm -rf ./apps/sync-scan/src \
+    && rm -rf ./apps/core/src \
+    && rm -rf .yarn/cache \
+    && apk del alpine-sdk pkgconfig poppler-dev poppler-utils python3
 
 WORKDIR /app/apps/core

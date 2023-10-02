@@ -38,7 +38,8 @@ const _inputTypeByFormat: {[format in AttributeFormat]: FormFieldTypes} = {
     [AttributeFormat.date_range]: FormFieldTypes.DATE,
     [AttributeFormat.encrypted]: FormFieldTypes.TEXT_INPUT,
     [AttributeFormat.extended]: FormFieldTypes.TEXT_INPUT,
-    [AttributeFormat.color]: FormFieldTypes.TEXT_INPUT
+    [AttributeFormat.color]: FormFieldTypes.TEXT_INPUT,
+    [AttributeFormat.rich_text]: FormFieldTypes.TEXT_INPUT
 };
 
 function ValueMetadata({value: parentValue, attribute, onMetadataSubmit}: IValueMetadataProps): JSX.Element {

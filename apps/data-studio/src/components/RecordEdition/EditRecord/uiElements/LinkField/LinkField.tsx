@@ -21,7 +21,7 @@ import {
 import {IRecordPropertyLink,RecordProperty} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {RecordFormElementsValueLinkValue} from 'hooks/useGetRecordForm/useGetRecordForm';
 import {useGetRecordValuesQuery} from 'hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
-import useRefreshFieldValues from 'hooks/useRefreshFieldValues';
+import {useRefreshFieldValues} from 'hooks/useRefreshFieldValues';
 import {Reducer,useContext,useEffect,useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -44,6 +44,7 @@ import DeleteAllValuesBtn from '../../shared/DeleteAllValuesBtn';
 import FieldFooter from '../../shared/FieldFooter';
 import InheritedFieldLabel from '../../shared/InheritedFieldLabel';
 import NoValue from '../../shared/NoValue';
+import UpdatedFieldIcon from '../../shared/UpdatedFieldIcon';
 import ValueDetailsBtn from '../../shared/ValueDetailsBtn';
 import ValuesVersionBtn from '../../shared/ValuesVersionBtn';
 import ValuesVersionIndicator from '../../shared/ValuesVersionIndicator';
@@ -450,6 +451,7 @@ function LinkField({
             <TableWrapper $isValuesAddVisible={state.isValuesAddVisible} $themeToken={token}>
                 <FieldLabel ellipsis={{rows: 1, tooltip: true}} $themeToken={token}>
                     {element.settings.label}
+                    {editRecordModalState.externalUpdate.updatedValues[attribute?.id] && <UpdatedFieldIcon />}
                     {state.activeScope === FieldScope.INHERITED && (
                         <InheritedFieldLabel version={state.values[FieldScope.INHERITED].version} />
                     )}

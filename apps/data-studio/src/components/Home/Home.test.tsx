@@ -2,15 +2,15 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {mockApplicationDetails} from '__mocks__/common/applications';
-import {mockLibrary} from '__mocks__/common/library';
-import {mockTree} from '__mocks__/common/tree';
-import {LibraryBehavior, TreeBehavior} from '_gqlTypes/globalTypes';
-import {act, render, screen, waitFor, within} from '_tests/testUtils';
 import {getLibrariesListQuery} from 'graphQL/queries/libraries/getLibrariesListQuery';
 import {getTreeListQuery} from 'graphQL/queries/trees/getTreeListQuery';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {MemoryRouter} from 'react-router-dom';
+import {LibraryBehavior, TreeBehavior} from '_gqlTypes/globalTypes';
+import {act, render, screen, waitFor, within} from '_tests/testUtils';
+import {mockApplicationDetails} from '__mocks__/common/applications';
+import {mockLibrary} from '__mocks__/common/library';
+import {mockTree} from '__mocks__/common/tree';
 import Home from './Home';
 import {FAVORITE_LIBRARIES_KEY} from './LibrariesList/LibrariesList';
 import {FAVORITE_TREES_KEY} from './TreeList/TreeList';
@@ -206,16 +206,14 @@ describe('Home', () => {
     });
 
     test('Display favorites first in libraries', async () => {
-        await act(async () => {
-            render(
-                <MemoryRouter>
-                    <Home />
-                </MemoryRouter>,
-                {apolloMocks: mocks, currentApp}
-            );
-        });
+        render(
+            <MemoryRouter>
+                <Home />
+            </MemoryRouter>,
+            {apolloMocks: mocks, currentApp}
+        );
 
-        const librariesListBlock = screen.getByTestId('libraries-list');
+        const librariesListBlock = await screen.findByTestId('libraries-list');
 
         expect(librariesListBlock).toBeInTheDocument();
 
@@ -259,16 +257,14 @@ describe('Home', () => {
     });
 
     test('Can import data', async () => {
-        await act(async () => {
-            render(
-                <MemoryRouter>
-                    <Home />
-                </MemoryRouter>,
-                {apolloMocks: mocks, currentApp}
-            );
-        });
+        render(
+            <MemoryRouter>
+                <Home />
+            </MemoryRouter>,
+            {apolloMocks: mocks, currentApp}
+        );
 
-        const librariesListBlock = screen.getByTestId('libraries-list');
+        const librariesListBlock = await screen.findByTestId('libraries-list');
 
         expect(librariesListBlock).toBeInTheDocument();
 

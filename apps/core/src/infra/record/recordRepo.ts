@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IQueryInfos} from '_types/queryInfos';
-import {GeneratedAqlQuery, aql, join, literal} from 'arangojs/aql';
+import {aql, GeneratedAqlQuery, join, literal} from 'arangojs/aql';
 import {GetConditionPart} from 'infra/attributeTypes/helpers/getConditionPart';
 import {IDbDocument, IExecuteWithCount} from 'infra/db/_types';
 import {GetSearchQuery} from 'infra/indexation/helpers/getSearchQuery';
+import {IQueryInfos} from '_types/queryInfos';
 import {
     CursorDirection,
     ICursorPaginationParams,
@@ -311,21 +311,21 @@ export default function ({
 
             return dbUtils.cleanup(deletedRecord);
         },
-        async updateRecord({libraryId, recordData, mergeObjects = true}): Promise<IRecord> {
-            const collection = dbService.db.collection(libraryId);
+        async updateRecord({libraryId, recordData, mergeObjects = true}) {
+            const collection = dbService.db.collection<IRecord>(libraryId);
             const dataToSave = {...recordData};
             const recordId = dataToSave.id;
             delete dataToSave.id; // Don't save ID
 
-            const updatedRecord: IRecord = await collection.update({_key: String(recordId)}, dataToSave, {
+            const {new: updatedRecord} = await collection.update({_key: String(recordId)}, dataToSave, {
                 mergeObjects,
-                returnOld: true,
+                returnNew: true,
                 keepNull: false
             });
 
             updatedRecord.library = updatedRecord._id.split('/')[0];
 
-            return dbUtils.cleanup(updatedRecord);
+            return dbUtils.cleanup(updatedRecord) as IRecord;
         }
     };
 }
