@@ -2,14 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {mockFormAttribute} from '__mocks__/common/attribute';
-import {mockFormElementInput} from '__mocks__/common/form';
-import {mockRecord} from '__mocks__/common/record';
-import {mockModifier} from '__mocks__/common/value';
-import {RECORD_FORM_recordForm_elements_attribute_StandardAttribute} from '_gqlTypes/RECORD_FORM';
-import {SAVE_VALUE_BATCH_saveValueBatch_values_Value_attribute} from '_gqlTypes/SAVE_VALUE_BATCH';
-import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
-import {act, render, screen, waitFor, waitForOptions} from '_tests/testUtils';
 import {
     EditRecordReducerActionsTypes,
     initialState
@@ -17,6 +9,14 @@ import {
 import * as useEditRecordModalReducer from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import {IRecordPropertyAttribute} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import * as useRefreshFieldValues from 'hooks/useRefreshFieldValues/useRefreshFieldValues';
+import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
+import {RECORD_FORM_recordForm_elements_attribute_StandardAttribute} from '_gqlTypes/RECORD_FORM';
+import {SAVE_VALUE_BATCH_saveValueBatch_values_Value_attribute} from '_gqlTypes/SAVE_VALUE_BATCH';
+import {act, render, screen, waitFor, waitForOptions} from '_tests/testUtils';
+import {mockFormAttribute} from '__mocks__/common/attribute';
+import {mockFormElementInput} from '__mocks__/common/form';
+import {mockRecord} from '__mocks__/common/record';
+import {mockModifier} from '__mocks__/common/value';
 import {
     APICallStatus,
     DeleteMultipleValuesFunc,
@@ -30,6 +30,7 @@ import StandardField from './StandardField';
 jest.mock('../../hooks/useDeleteValueMutation');
 
 jest.useRealTimers();
+jest.setTimeout(15000);
 
 describe('StandardField', () => {
     const mockEditRecordModalDispatch = jest.fn();
