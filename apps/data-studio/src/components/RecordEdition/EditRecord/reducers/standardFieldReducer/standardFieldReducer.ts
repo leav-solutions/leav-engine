@@ -243,12 +243,12 @@ export const computeInitialState = (params: {
     const {element, record, metadataEdit, isRecordReadOnly, formVersion} = params;
     const attribute = element.attribute;
 
-    const fieldValues = (element.values as RecordFormElementsValueStandardValue[]) ?? [];
+    const fieldValues = [...(element.values as RecordFormElementsValueStandardValue[])] ?? [];
 
     const initialState: IStandardFieldReducerState = {
         attribute,
         record,
-        formElement: element,
+        formElement: {...element},
         isReadOnly: attribute?.readonly || isRecordReadOnly || !attribute.permissions.edit_value,
         metadataEdit,
         ..._computeScopeAndValues({attribute, values: fieldValues, formVersion})

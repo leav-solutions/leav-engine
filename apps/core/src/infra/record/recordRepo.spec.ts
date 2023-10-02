@@ -84,7 +84,7 @@ describe('RecordRepo', () => {
             };
 
             const mockDbCollec = {
-                update: global.__mockPromise(updatedRecordData)
+                update: global.__mockPromise({new: updatedRecordData})
             };
 
             const mockDbServ = {db: new Database()};
@@ -105,7 +105,7 @@ describe('RecordRepo', () => {
             expect(mockDbCollec.update).toBeCalledWith(
                 {_key: String(recordData.id)},
                 {...recordData, id: undefined},
-                {returnOld: true, keepNull: false, mergeObjects: true}
+                {returnNew: true, keepNull: false, mergeObjects: true}
             );
 
             expect(mockDbUtils.cleanup.mock.calls.length).toBe(1);

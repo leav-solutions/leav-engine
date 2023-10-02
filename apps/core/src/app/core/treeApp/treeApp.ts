@@ -1,11 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {PublishedEvent} from '_types/event';
-import {IAppGraphQLSchema} from '_types/graphql';
-import {IList, IPaginationParams} from '_types/list';
-import {IQueryInfos} from '_types/queryInfos';
-import {IKeyValue} from '_types/shared';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
@@ -13,6 +8,13 @@ import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {GraphQLResolveInfo, GraphQLScalarType} from 'graphql';
 import {withFilter} from 'graphql-subscriptions';
 import {omit} from 'lodash';
+import {PublishedEvent} from '_types/event';
+import {IAppGraphQLSchema} from '_types/graphql';
+import {IList, IPaginationParams} from '_types/list';
+import {IQueryInfos} from '_types/queryInfos';
+import {IKeyValue} from '_types/shared';
+import {ITreeDomain} from '../../../domain/tree/treeDomain';
+import {TriggerNames} from '../../../_types/eventsManager';
 import {PermissionTypes, TreeNodePermissionsActions, TreePermissionsActions} from '../../../_types/permissions';
 import {IQueryField, IRecord} from '../../../_types/record';
 import {
@@ -24,7 +26,6 @@ import {
     TreeEventTypes,
     TreePaths
 } from '../../../_types/tree';
-import {ITreeDomain, TRIGGER_NAME_TREE_EVENT} from '../../../domain/tree/treeDomain';
 import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
 import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from '../helpers/subscriptions';
@@ -54,7 +55,7 @@ interface IDeps {
     'core.domain.library'?: ILibraryDomain;
 }
 
-export default function ({
+export default function({
     'core.domain.tree': treeDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission': permissionDomain = null,
@@ -486,7 +487,7 @@ export default function ({
                     Subscription: {
                         treeEvent: {
                             subscribe: withFilter(
-                                () => eventsManagerDomain.subscribe([TRIGGER_NAME_TREE_EVENT]),
+                                () => eventsManagerDomain.subscribe([TriggerNames.TREE_EVENT]),
                                 (
                                     event: PublishedEvent<{treeEvent: ITreeEvent}>,
                                     {filters}: {filters: ICommonSubscriptionFilters & ITreeEventFilters},

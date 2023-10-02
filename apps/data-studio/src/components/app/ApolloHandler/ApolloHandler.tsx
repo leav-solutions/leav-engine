@@ -187,7 +187,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
                     fields: {
                         preview: {
                             merge(existing, incoming) {
-                                return !incoming && !existing ? null : {...existing, ...incoming};
+                                return !incoming && !existing ? null : incoming;
                             }
                         }
                     }

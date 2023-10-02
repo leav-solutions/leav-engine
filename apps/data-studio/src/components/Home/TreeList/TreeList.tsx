@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation, useQuery} from '@apollo/client';
-import {useLang, ErrorDisplay} from '@leav/ui';
+import {ErrorDisplay, Loading, useLang} from '@leav/ui';
 import {Table} from 'antd';
 import {ColumnsType} from 'antd/lib/table';
 import TreeIcon from 'components/shared/TreeIcon';
@@ -56,6 +56,10 @@ function TreeList(): JSX.Element {
     const [updateFavoritesMutation] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData, {
         ignoreResults: true
     });
+
+    if (treesLoading || userDataQuery.loading) {
+        return <Loading />;
+    }
 
     if (treesError || userDataQuery.error) {
         return <ErrorDisplay message={treesError || userDataQuery.error.message} />;

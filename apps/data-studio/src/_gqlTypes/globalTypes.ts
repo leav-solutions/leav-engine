@@ -264,6 +264,12 @@ export interface RecordSortInput {
     order: SortOrder;
 }
 
+export interface RecordUpdateFilterInput {
+    libraries?: string[] | null;
+    records?: string[] | null;
+    ignoreOwnEvents?: boolean | null;
+}
+
 export interface SheetInput {
     type: ImportType;
     mode: ImportMode;

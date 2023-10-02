@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DownOutlined, FieldTimeOutlined, LoadingOutlined, RightOutlined, UploadOutlined} from '@ant-design/icons';
 import {ServerError, useLazyQuery, useMutation} from '@apollo/client';
-import {Button, Dropdown, message, Modal, Space, Steps} from 'antd';
 import {ErrorDisplay, Loading} from '@leav/ui';
+import {Button, Dropdown, message, Modal, Space, Steps} from 'antd';
 import dayjs from 'dayjs';
 import {useApplicationLibraries} from 'hooks/useApplicationLibraries';
 import useNotification from 'hooks/useNotification';
@@ -89,7 +89,7 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
         onError: error => {
             // Extract human friendly error message
             let errorMessage = error?.message;
-            const serverErrors = (error?.networkError as ServerError)?.result?.errors ?? [];
+            const serverErrors = ((error?.networkError as ServerError)?.result as Record<string, any>)?.errors ?? [];
             if (serverErrors.length) {
                 errorMessage = serverErrors.map(serverError => serverError.message).join('\n');
             }

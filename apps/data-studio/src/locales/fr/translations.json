@@ -521,7 +521,9 @@
             "format_color": "Couleur",
             "format_rich_text": "Texte Enrichi"
         },
-        "date_range_value": "Du {{from}} au {{to}}"
+        "date_range_value": "Du {{from}} au {{to}}",
+        "external_update_warning": "Cet élément a été modifié par {{modifiers}}",
+        "field_external_update": "Ce champ a été modifié"
     },
     "record_summary": {
         "id": "Identifiant",

@@ -5,6 +5,7 @@ import {IAmqpService} from '@leav/message-broker';
 import * as amqp from 'amqplib';
 import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {SendRecordUpdateEventHelper} from 'domain/record/helpers/sendRecordUpdateEvent';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
@@ -23,6 +24,7 @@ export interface IHandlePreviewResponseDeps {
     valueDomain: IValueDomain;
     recordRepo: IRecordRepo;
     updateRecordLastModif: UpdateRecordLastModifFunc;
+    sendRecordUpdateEvent: SendRecordUpdateEventHelper;
     config: Config.IConfig;
     logger: winston.Winston;
     utils: IUtils;
@@ -91,6 +93,7 @@ const _onMessage = async (msg: amqp.ConsumeMessage, logger: winston.Winston, dep
             valueDomain: deps.valueDomain,
             recordRepo: deps.recordRepo,
             updateRecordLastModif: deps.updateRecordLastModif,
+            sendRecordUpdateEvent: deps.sendRecordUpdateEvent,
             config: deps.config,
             logger: deps.logger
         },

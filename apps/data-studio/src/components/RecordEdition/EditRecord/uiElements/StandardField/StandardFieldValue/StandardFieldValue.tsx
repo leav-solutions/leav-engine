@@ -7,6 +7,7 @@ import {AnyPrimitive} from '@leav/utils';
 import {Button, Form, Input, InputRef, Popover, Space, theme} from 'antd';
 import DeleteValueBtn from 'components/RecordEdition/EditRecord/shared/DeleteValueBtn';
 import InheritedFieldLabel from 'components/RecordEdition/EditRecord/shared/InheritedFieldLabel';
+import UpdatedFieldIcon from 'components/RecordEdition/EditRecord/shared/UpdatedFieldIcon';
 import ValueDetailsBtn from 'components/RecordEdition/EditRecord/shared/ValueDetailsBtn';
 import ValuesVersionBtn from 'components/RecordEdition/EditRecord/shared/ValuesVersionBtn';
 import ValuesVersionIndicator from 'components/RecordEdition/EditRecord/shared/ValuesVersionIndicator';
@@ -41,6 +42,7 @@ import {
     StandardFieldValueState
 } from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import CheckboxInput from './Inputs/CheckboxInput';
+import ColorInput from './Inputs/ColorInput';
 import DateInput from './Inputs/DateInput';
 import DateRangeInput from './Inputs/DateRangeInput';
 import EncryptedInput from './Inputs/EncryptedInput';
@@ -48,7 +50,6 @@ import NumberInput from './Inputs/NumberInput';
 import TextInput from './Inputs/TextInput';
 import ValuesList from './ValuesList';
 import {IValueOfValuesList} from './ValuesList/ValuesList';
-import ColorInput from './Inputs/ColorInput';
 
 const ErrorMessage = styled.div`
     color: ${themeVars.errorColor};
@@ -584,6 +585,9 @@ function StandardFieldValue({
                                 {!fieldValue.index && (
                                     <label className="attribute-label" onClick={_handleFocus}>
                                         {state.formElement.settings.label}
+                                        {editRecordState.externalUpdate.updatedValues[attribute?.id] && (
+                                            <UpdatedFieldIcon />
+                                        )}
                                         {state.activeScope === FieldScope.INHERITED && (
                                             <InheritedFieldLabel version={state.values[FieldScope.INHERITED].version} />
                                         )}

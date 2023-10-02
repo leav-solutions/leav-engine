@@ -51,13 +51,6 @@ const BreadcrumbRoot = styled(Breadcrumb)`
     align-items: center;
 `;
 
-const BreadcrumbItem = styled(Breadcrumb.Item)`
-    display: flex;
-    align-items: center;
-
-    padding: 0.5em 0;
-`;
-
 type ValueFromList = RECORD_FORM_recordForm_elements_values_TreeValue_treeValue;
 
 function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
@@ -122,10 +115,23 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
         const parents = pathToDisplay.slice(0, -1);
         const element = pathToDisplay.slice(-1)[0];
         const recordCardSettings = {withLibrary: false, withPreview: false};
+
+        const breadcrumbItems = parents.map(ancestor => {
+            return {
+                key: ancestor.record.id,
+                title: <RecordCard record={ancestor.record.whoAmI} size={PreviewSize.small} {...recordCardSettings} />
+            };
+        });
+
+        breadcrumbItems.push({
+            key: element.record.id,
+            title: <RecordCard record={element.record.whoAmI} size={PreviewSize.small} {...recordCardSettings} />
+        });
+
         return (
             <BreadcrumbWrapper>
-                <BreadcrumbRoot separator="">
-                    {parents.map(ancestor => {
+                <BreadcrumbRoot items={breadcrumbItems} separator=">" />
+                {/* {parents.map(ancestor => {
                         return (
                             <BreadcrumbItem key={ancestor.record.id}>
                                 <RecordCard
@@ -140,7 +146,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
                     <BreadcrumbItem key={element.record.id}>
                         <RecordCard record={element.record.whoAmI} size={PreviewSize.small} {...recordCardSettings} />
                     </BreadcrumbItem>
-                </BreadcrumbRoot>
+                </BreadcrumbRoot> */}
             </BreadcrumbWrapper>
         );
     };

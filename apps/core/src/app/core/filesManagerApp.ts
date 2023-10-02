@@ -15,8 +15,9 @@ import {IRequestWithContext} from '_types/express';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
-import {IFilesManagerDomain, TRIGGER_NAME_UPLOAD_FILE} from '../../domain/filesManager/filesManagerDomain';
+import {IFilesManagerDomain} from '../../domain/filesManager/filesManagerDomain';
 import {API_KEY_PARAM_NAME} from '../../_types/auth';
+import {TriggerNames} from '../../_types/eventsManager';
 
 export interface IFilesManagerApp {
     init(): Promise<void>;
@@ -187,7 +188,7 @@ export default function ({
                     Subscription: {
                         upload: {
                             subscribe: withFilter(
-                                () => eventsManager.subscribe([TRIGGER_NAME_UPLOAD_FILE]),
+                                () => eventsManager.subscribe([TriggerNames.UPLOAD_FILE]),
                                 (payload, variables) => {
                                     let toReturn = true;
 

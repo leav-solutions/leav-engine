@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
-import {IAttribute} from './attribute';
 import {ILibrary} from './library';
 import {IPreview} from './preview';
+import {IValue} from './value';
 
 export interface IRecord {
     id?: string;
@@ -96,4 +96,17 @@ export interface IRecordIdentityConf {
     preview?: string;
     treeColorPreview?: string;
     subLabel?: string;
+}
+
+export interface IRecordUpdateEvent {
+    record: IRecord;
+    updatedValues: Array<{
+        attribute: string;
+        value: IValue;
+    }>;
+}
+
+export interface IRecordUpdateEventFilters {
+    libraries?: string[];
+    records?: string[];
 }

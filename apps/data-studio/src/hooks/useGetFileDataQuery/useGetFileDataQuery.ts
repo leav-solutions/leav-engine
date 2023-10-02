@@ -9,7 +9,7 @@ import {
     IFileDataQueryVariables,
     IFileDataWithPreviewsStatus
 } from 'graphQL/queries/records/getFileDataQuery';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 
 export interface IUseGetFileDataQueryHook {
     loading: boolean;
@@ -20,11 +20,14 @@ export interface IUseGetFileDataQueryHook {
 export default function useGetFileDataQuery(libraryId: string, fileId: string): IUseGetFileDataQueryHook {
     const [fileData, setFileData] = useState<IFileDataWithPreviewsStatus>();
 
-    const query = useQuery<IFileDataQuery, IFileDataQueryVariables>(getFileDataQuery(libraryId), {
+    const {data, error, loading} = useQuery<IFileDataQuery, IFileDataQueryVariables>(getFileDataQuery(libraryId), {
         fetchPolicy: 'cache-and-network',
         skip: !fileId,
-        variables: {fileId},
-        onCompleted: data => {
+        variables: {fileId}
+    });
+
+    useEffect(() => {
+        if (data) {
             // Convert preview status to an object
             if (!data[libraryId]?.list?.length) {
                 setFileData(null);
@@ -43,11 +46,11 @@ export default function useGetFileDataQuery(libraryId: string, fileId: string): 
 
             setFileData(file);
         }
-    });
+    }, [data]);
 
     return {
-        error: query.error,
-        loading: query.loading || (!query.loading && typeof fileData === undefined),
+        error,
+        loading: loading || (!loading && typeof fileData === undefined),
         fileData
     };
 }

@@ -19,6 +19,7 @@ import {IValue} from '_types/value';
 import {IIndexationService} from '../../infra/indexation/indexationService';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {EventAction, IDbEvent, ILibraryPayload, IRecordPayload, IValuePayload} from '../../_types/event';
+import {TriggerNames} from '../../_types/eventsManager';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
 
@@ -34,8 +35,6 @@ export interface IIndexationManagerDomain {
     indexDatabase(params: IIndexDatabaseParams, task?: ITaskFuncParams): Promise<string>;
 }
 
-export const TRIGGER_NAME_INDEXATION = 'INDEXATION';
-
 interface IDeps {
     config?: Config.IConfig;
     'core.infra.amqpService'?: IAmqpService;
@@ -48,7 +47,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.domain.record': recordDomain = null,
@@ -393,7 +392,7 @@ export default function({
             for (const libraryId of findRecordParams.map(e => e.library)) {
                 await eventsManager.sendPubSubEvent(
                     {
-                        triggerName: TRIGGER_NAME_INDEXATION,
+                        triggerName: TriggerNames.INDEXATION,
                         data: {indexation: {userId: params.ctx.userId, libraryId, inProgress}}
                     },
                     params.ctx

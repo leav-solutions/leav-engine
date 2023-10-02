@@ -1,10 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {RedoOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
 import {ErrorDisplay, ErrorDisplayTypes, Loading, RecordCard, themeVars} from '@leav/ui';
-import {Button, Modal, Space, Tooltip} from 'antd';
+import {Button, Modal, Space} from 'antd';
 import ErrorBoundary from 'components/shared/ErrorBoundary';
 import createRecordMutation from 'graphQL/mutations/records/createRecordMutation';
 import {
@@ -13,9 +12,9 @@ import {
     IRecordPropertyTree
 } from 'graphQL/queries/records/getRecordPropertiesQuery';
 import {useCanEditRecord} from 'hooks/useCanEditRecord/useCanEditRecord';
-import {useReducer, useState} from 'react';
+import isEqual from 'lodash/isEqual';
+import {useEffect, useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {VscLayers} from 'react-icons/vsc';
 import styled from 'styled-components';
 import {CREATE_RECORD, CREATE_RECORDVariables, CREATE_RECORD_createRecord_record_whoAmI} from '_gqlTypes/CREATE_RECORD';
 import {AttributeType, ValueBatchInput} from '_gqlTypes/globalTypes';
@@ -48,6 +47,7 @@ import editRecordModalReducer, {
 import {EditRecordModalReducerContext} from '../editRecordModalReducer/editRecordModalReducerContext';
 import EditRecordSidebar from '../EditRecordSidebar';
 import CreationErrorContext, {ICreationErrorByField} from './creationErrorContext';
+import EditRecordModalHeader from './EditRecordModalHeader';
 import ValuesVersionSummary from './ValuesVersionSummary';
 
 interface IEditRecordModalProps {
@@ -87,17 +87,6 @@ const Title = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-`;
-
-const HeaderIcons = styled.div`
-    margin-right: 60px;
-    font-size: 1.5em;
-    display: flex;
-    align-items: center;
-
-    > * {
-        cursor: pointer;
-    }
 `;
 
 const Content = styled.div`
@@ -162,6 +151,16 @@ function EditRecordModal({
 
     const [pendingValues, setPendingValues] = useState<IPendingValues>({});
     const hasPendingValues = !!Object.keys(pendingValues).length;
+
+    // Update record in reducer when it changes. Might happen on record identity change (after value save)
+    useEffect(() => {
+        if (record && !isEqual(record, state.record)) {
+            dispatch({
+                type: EditRecordReducerActionsTypes.SET_RECORD,
+                record
+            });
+        }
+    }, [record]);
 
     const _handleValueSubmit: SubmitValueFunc = async (values, version) => {
         if (!isCreationMode) {
@@ -491,15 +490,7 @@ function EditRecordModal({
                             <CreationErrorContext.Provider value={creationErrors}>
                                 <Container>
                                     <Title>
-                                        {title}
-                                        <HeaderIcons>
-                                            <Tooltip title={t('values_version.title')}>
-                                                <VscLayers onClick={_handleClickValuesVersions} />
-                                            </Tooltip>
-                                            <Tooltip title={t('global.refresh')}>
-                                                <RedoOutlined onClick={_handleClickRefresh} />
-                                            </Tooltip>
-                                        </HeaderIcons>
+                                        <EditRecordModalHeader />
                                     </Title>
                                     <Content className="content">
                                         {canEdit ? (

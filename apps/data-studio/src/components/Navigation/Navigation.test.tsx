@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import {treeNavigationPageSize} from 'constants/constants';
 import {getTreeLibraries} from 'graphQL/queries/trees/getTreeLibraries';
 import {treeNodeChildrenQuery} from 'graphQL/queries/trees/getTreeNodeChildren';
+import {getTreeEvents} from 'graphQL/subscribes/trees/getTreeEvents';
 import {LibraryBehavior, TreeBehavior} from '_gqlTypes/globalTypes';
 import {act, render, screen, waitFor, within} from '_tests/testUtils';
 import {SharedStateSelectionType} from '_types/types';
@@ -33,6 +34,14 @@ jest.mock('../../hooks/ActiveTreeHook/ActiveTreeHook', () => ({
         },
         jest.fn()
     ]
+}));
+
+jest.mock('../../hooks/useRecordUpdateSubscription', () => ({
+    useRecordUpdateSubscription: jest.fn()
+}));
+
+jest.mock('../../hooks/useTreeEventsSubscription', () => ({
+    useTreeEventsSubscription: jest.fn()
 }));
 
 describe('Navigation', () => {
@@ -348,17 +357,50 @@ describe('Navigation', () => {
                     }
                 },
                 result: getTreeNodeChildrenMockResultSecondPage
+            },
+            {
+                request: {
+                    query: getTreeEvents,
+                    variables: {filters: {ignoreOwnEvents: true, treeId: 'my_tree', nodes: [null]}}
+                },
+                result: {
+                    data: {
+                        treeEvents: {}
+                    }
+                }
+            },
+            {
+                request: {
+                    query: getTreeLibraries,
+                    variables: {treeId: ['my_tree']}
+                },
+                result: {
+                    data: {
+                        trees: {
+                            __typename: 'TreesList',
+                            totalCount: 1,
+                            list: [
+                                {
+                                    ...mockTree,
+                                    __typename: 'Tree',
+                                    id: 'my_tree',
+                                    libraries: [mockTreeLibrary],
+                                    behavior: TreeBehavior.standard,
+                                    system: false
+                                }
+                            ]
+                        }
+                    }
+                }
             }
         ];
 
-        await act(async () => {
-            render(<Navigation tree="my_tree" />, {...renderOptions, apolloMocks: mocksForPagination});
-        });
+        render(<Navigation tree="my_tree" />, {...renderOptions, apolloMocks: mocksForPagination});
 
         expect(await screen.findAllByText('child-first-page')).toHaveLength(treeNavigationPageSize);
 
         // Go next page
-        const nextPageButton = screen.getByRole('listitem', {name: /Next/});
+        const nextPageButton = await screen.findByRole('listitem', {name: /Next/});
         await act(async () => {
             userEvent.click(nextPageButton);
         });

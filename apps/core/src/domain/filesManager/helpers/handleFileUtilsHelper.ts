@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
+import {SendRecordUpdateEventHelper} from 'domain/record/helpers/sendRecordUpdateEvent';
 import {IValueDomain} from 'domain/value/valueDomain';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {basename, dirname} from 'path';
@@ -10,7 +11,6 @@ import {ILibrary} from '_types/library';
 import {IQueryInfos} from '_types/queryInfos';
 import {IFileMetadata, IPreviews, IPreviewsStatus} from '../../../_types/filesManager';
 import {IRecord} from '../../../_types/record';
-import updateRecordLastModif from '../../value/helpers/updateRecordLastModif';
 import {IHandleFileSystemEventDeps} from './handleFileSystemEvent/_types';
 import winston = require('winston');
 
@@ -79,11 +79,12 @@ export const updateRecordFile = async (
     recordId: string,
     library: string,
     deps: {
-        valueDomain?: IValueDomain;
-        recordRepo?: IRecordRepo;
-        updateRecordLastModif?: UpdateRecordLastModifFunc;
-        config?: Config.IConfig;
-        logger?: winston.Winston;
+        valueDomain: IValueDomain;
+        recordRepo: IRecordRepo;
+        updateRecordLastModif: UpdateRecordLastModifFunc;
+        sendRecordUpdateEvent: SendRecordUpdateEventHelper;
+        config: Config.IConfig;
+        logger: winston.Winston;
     },
     ctx: IQueryInfos
 ) => {
@@ -95,12 +96,28 @@ export const updateRecordFile = async (
     dataToSave.id = recordId;
 
     try {
-        await deps.recordRepo.updateRecord({
+        const updatedRecord = await deps.recordRepo.updateRecord({
             libraryId: library,
             recordData: dataToSave
         });
 
-        await updateRecordLastModif(library, recordId, deps, ctx);
+        await deps.updateRecordLastModif(library, recordId, ctx);
+
+        await deps.sendRecordUpdateEvent(
+            updatedRecord,
+            Object.keys(recordData).map(attributeId => ({
+                id_value: null,
+                attribute: attributeId,
+                value: {value: recordData[attributeId], raw_value: recordData[attributeId], attribute: attributeId},
+                modified_at: null,
+                modified_by: null,
+                created_at: null,
+                created_by: null,
+                version: null,
+                metadata: null
+            })),
+            ctx
+        );
     } catch (e) {
         deps.logger.warn(`[${ctx.queryId}] Error when updating record: ${recordId}, ${e.message}`);
         deps.logger.warn(`[${ctx.queryId}] ${e.stack}`);

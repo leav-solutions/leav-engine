@@ -2,37 +2,25 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
-import {IQueryInfos} from '_types/queryInfos';
-import {nanoid} from 'nanoid';
-import Joi from 'joi';
-import {
-    Payload,
-    ITaskOrder,
-    TaskStatus,
-    ITask,
-    TaskPriority,
-    TaskCallbackType,
-    OrderType,
-    ITaskCreatePayload,
-    ITaskCancelPayload,
-    ITaskFuncParams,
-    ITaskDeletePayload,
-    TaskCallbackStatus,
-    ITaskCallback,
-    TaskType
-} from '../../_types/tasksManager';
-import winston from 'winston';
-import {IList, SortOrder} from '../../_types/list';
-import {IGetCoreEntitiesParams} from '_types/shared';
-import {ITaskRepo} from '../../infra/task/taskRepo';
+import * as amqp from 'amqplib';
 import {AwilixContainer} from 'awilix';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {IUtils} from 'utils/utils';
+import Joi from 'joi';
+import {nanoid} from 'nanoid';
 import process from 'process';
+import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
+import winston from 'winston';
 import * as Config from '_types/config';
+import {IQueryInfos} from '_types/queryInfos';
+import {IGetCoreEntitiesParams} from '_types/shared';
 import {ISystemTranslation} from '_types/systemTranslation';
-import * as amqp from 'amqplib';
+import {ITaskRepo} from '../../infra/task/taskRepo';
+import {TriggerNames} from '../../_types/eventsManager';
+import {IList,SortOrder} from '../../_types/list';
+import {
+    ITask,ITaskCallback,ITaskCancelPayload,ITaskCreatePayload,ITaskDeletePayload,ITaskFuncParams,ITaskOrder,OrderType,Payload,TaskCallbackStatus,TaskCallbackType,TaskPriority,TaskStatus,TaskType
+} from '../../_types/tasksManager';
 
 export interface IUpdateData {
     status?: TaskStatus;
@@ -80,8 +68,6 @@ interface IDeps {
     'core.utils.logger'?: winston.Winston;
     'core.utils'?: IUtils;
 }
-
-export const TRIGGER_NAME_TASK = 'TASK';
 
 type DepsManagerFunc = <T extends any[]>(...args: [...args: T, task: ITaskFuncParams] | [...args: T]) => Promise<any>;
 
@@ -291,7 +277,7 @@ export default function ({
             ctx
         );
 
-        await eventsManager.sendPubSubEvent({triggerName: TRIGGER_NAME_TASK, data: {task}}, ctx);
+        await eventsManager.sendPubSubEvent({triggerName: TriggerNames.TASK, data: {task}}, ctx);
 
         return task;
     };
@@ -375,7 +361,7 @@ export default function ({
             (({dbProfiler, ...c}) => c)(ctx)
         );
 
-        await eventsManager.sendPubSubEvent({triggerName: TRIGGER_NAME_TASK, data: {task}}, ctx);
+        await eventsManager.sendPubSubEvent({triggerName: TriggerNames.TASK, data: {task}}, ctx);
 
         return task.id;
     };

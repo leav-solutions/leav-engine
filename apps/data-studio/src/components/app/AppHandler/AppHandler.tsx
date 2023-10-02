@@ -2,11 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery, useSubscription} from '@apollo/client';
-import {ErrorDisplay, ErrorDisplayTypes, LangContext, Loading, customTheme, useAntdLocale, useAppLang} from '@leav/ui';
+import {customTheme, ErrorDisplay, ErrorDisplayTypes, LangContext, Loading, useAntdLocale, useAppLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {GET_APPLICATION_BY_ENDPOINT, GET_APPLICATION_BY_ENDPOINTVariables} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
-import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
-import {GET_LANGS} from '_gqlTypes/GET_LANGS';
 import {ConfigProvider, theme} from 'antd';
 import ApplicationContext from 'context/ApplicationContext';
 import dayjs from 'dayjs';
@@ -22,11 +19,14 @@ import {useTranslation} from 'react-i18next';
 import {useAppDispatch} from 'reduxStore/store';
 import {addTask} from 'reduxStore/tasks';
 import {ThemeProvider} from 'styled-components';
-import {ME} from '../../../_gqlTypes/ME';
+import {GET_APPLICATION_BY_ENDPOINT, GET_APPLICATION_BY_ENDPOINTVariables} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
+import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
+import {GET_LANGS} from '_gqlTypes/GET_LANGS';
 import {APP_ENDPOINT} from '../../../constants';
 import {getMe} from '../../../graphQL/queries/userData/me';
 import {initialActiveLibrary, useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useUser} from '../../../hooks/UserHook/UserHook';
+import {ME} from '../../../_gqlTypes/ME';
 import Router from '../../Router';
 
 function AppHandler(): JSX.Element {
@@ -81,8 +81,8 @@ function AppHandler(): JSX.Element {
     useSubscription(getTaskUpdates, {
         variables: {filters: {created_by: userData?.me?.id, archive: false}},
         skip: !userData?.me?.id,
-        onSubscriptionData: subData => {
-            const task = subData.subscriptionData.data.task;
+        onData: subData => {
+            const task = subData.data.data.task;
             dispatch(addTask(task));
         }
     });

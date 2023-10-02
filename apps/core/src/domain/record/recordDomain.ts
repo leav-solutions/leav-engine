@@ -42,6 +42,7 @@ import {
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import getAttributesFromField from './helpers/getAttributesFromField';
+import {SendRecordUpdateEventHelper} from './helpers/sendRecordUpdateEvent';
 import {ICreateRecordResult, IFindRecordParams, IRecordFilterLight} from './_types';
 
 /**
@@ -153,6 +154,7 @@ interface IDeps {
     'core.domain.permission.library'?: ILibraryPermissionDomain;
     'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
     'core.domain.helpers.validate'?: IValidateHelper;
+    'core.domain.record.helpers.sendRecordUpdateEvent'?: SendRecordUpdateEventHelper;
     'core.infra.library'?: ILibraryRepo;
     'core.infra.tree'?: ITreeRepo;
     'core.infra.value'?: IValueRepo;
@@ -161,7 +163,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.record': recordRepo = null,
     'core.domain.attribute': attributeDomain = null,
@@ -170,6 +172,7 @@ export default function({
     'core.domain.permission.library': libraryPermissionDomain = null,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
     'core.domain.helpers.validate': validateHelper = null,
+    'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent = null,
     'core.infra.library': libraryRepo = null,
     'core.infra.tree': treeRepo = null,
     'core.infra.value': valueRepo = null,
@@ -895,6 +898,8 @@ export default function({
                 },
                 ctx
             );
+
+            await sendRecordUpdateEvent({recordData, library}, null, ctx);
 
             return savedRecord;
         },

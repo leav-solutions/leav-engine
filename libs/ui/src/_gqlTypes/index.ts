@@ -530,6 +530,12 @@ export type RecordSortInput = {
     order: SortOrder;
 };
 
+export type RecordUpdateFilterInput = {
+    ignoreOwnEvents?: InputMaybe<Scalars['Boolean']>;
+    libraries?: InputMaybe<Array<Scalars['ID']>>;
+    records?: InputMaybe<Array<Scalars['ID']>>;
+};
+
 /**
  * Records support on both offset and cursor. Cannot use both at the same time.
  * If none is supplied, it will apply an offset 0. Cursors are always returned along the results
@@ -802,29 +808,84 @@ export type DetailsApplicationFragment = {
     color?: string | null;
     module?: string | null;
     settings?: any | null;
-    icon?: {
-        id: string;
-        whoAmI: {
-            id: string;
-            label?: string | null;
-            color?: string | null;
-            preview?: IPreviewScalar | null;
-            library: {id: string; label?: any | null};
-        };
-    } | null;
+    icon?:
+        | {
+              id: string;
+              whoAmI: {
+                  id: string;
+                  label?: string | null;
+                  subLabel?: string | null;
+                  color?: string | null;
+                  preview?: IPreviewScalar | null;
+                  library: {id: string; label?: any | null};
+              };
+          }
+        | {
+              id: string;
+              whoAmI: {
+                  id: string;
+                  label?: string | null;
+                  subLabel?: string | null;
+                  color?: string | null;
+                  preview?: IPreviewScalar | null;
+                  library: {id: string; label?: any | null};
+              };
+          }
+        | {
+              id: string;
+              whoAmI: {
+                  id: string;
+                  label?: string | null;
+                  subLabel?: string | null;
+                  color?: string | null;
+                  preview?: IPreviewScalar | null;
+                  library: {id: string; label?: any | null};
+              };
+          }
+        | null;
     permissions: {access_application: boolean; admin_application: boolean};
 };
 
-export type RecordIdentityFragment = {
+export type RecordIdentityCjX1ctHtayKw3UvL3SxXwpZmvJocudQk0mb3YeupLuFragment = {
     id: string;
     whoAmI: {
         id: string;
         label?: string | null;
+        subLabel?: string | null;
         color?: string | null;
         preview?: IPreviewScalar | null;
         library: {id: string; label?: any | null};
     };
 };
+
+export type RecordIdentityNoK32r5S4GHrWvJrDbbZyQxNwU9KsPBsGItOGtQz4Fragment = {
+    id: string;
+    whoAmI: {
+        id: string;
+        label?: string | null;
+        subLabel?: string | null;
+        color?: string | null;
+        preview?: IPreviewScalar | null;
+        library: {id: string; label?: any | null};
+    };
+};
+
+export type RecordIdentityGdlFf7fowe20o0yE7yTvP85fHnPz4Ad88WmUdVAuYwFragment = {
+    id: string;
+    whoAmI: {
+        id: string;
+        label?: string | null;
+        subLabel?: string | null;
+        color?: string | null;
+        preview?: IPreviewScalar | null;
+        library: {id: string; label?: any | null};
+    };
+};
+
+export type RecordIdentityFragment =
+    | RecordIdentityCjX1ctHtayKw3UvL3SxXwpZmvJocudQk0mb3YeupLuFragment
+    | RecordIdentityNoK32r5S4GHrWvJrDbbZyQxNwU9KsPBsGItOGtQz4Fragment
+    | RecordIdentityGdlFf7fowe20o0yE7yTvP85fHnPz4Ad88WmUdVAuYwFragment;
 
 export type AttributeDetailsLinkAttributeFragment = {
     reverse_link?: string | null;
@@ -907,7 +968,11 @@ export type AttributeDetailsFragment =
 export type LibraryLightFragment = {
     id: string;
     label?: any | null;
-    icon?: {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}} | null;
+    icon?:
+        | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
+        | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
+        | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
+        | null;
 };
 
 export type LibraryDetailsFragment = {
@@ -948,16 +1013,41 @@ export type LibraryDetailsFragment = {
         edit_record: boolean;
         delete_record: boolean;
     } | null;
-    icon?: {
-        id: string;
-        whoAmI: {
-            id: string;
-            label?: string | null;
-            color?: string | null;
-            preview?: IPreviewScalar | null;
-            library: {id: string; label?: any | null};
-        };
-    } | null;
+    icon?:
+        | {
+              id: string;
+              whoAmI: {
+                  id: string;
+                  label?: string | null;
+                  subLabel?: string | null;
+                  color?: string | null;
+                  preview?: IPreviewScalar | null;
+                  library: {id: string; label?: any | null};
+              };
+          }
+        | {
+              id: string;
+              whoAmI: {
+                  id: string;
+                  label?: string | null;
+                  subLabel?: string | null;
+                  color?: string | null;
+                  preview?: IPreviewScalar | null;
+                  library: {id: string; label?: any | null};
+              };
+          }
+        | {
+              id: string;
+              whoAmI: {
+                  id: string;
+                  label?: string | null;
+                  subLabel?: string | null;
+                  color?: string | null;
+                  preview?: IPreviewScalar | null;
+                  library: {id: string; label?: any | null};
+              };
+          }
+        | null;
     previewsSettings?: Array<{
         label: any;
         description?: any | null;
@@ -1032,16 +1122,41 @@ export type GetApplicationByIdQuery = {
             color?: string | null;
             module?: string | null;
             settings?: any | null;
-            icon?: {
-                id: string;
-                whoAmI: {
-                    id: string;
-                    label?: string | null;
-                    color?: string | null;
-                    preview?: IPreviewScalar | null;
-                    library: {id: string; label?: any | null};
-                };
-            } | null;
+            icon?:
+                | {
+                      id: string;
+                      whoAmI: {
+                          id: string;
+                          label?: string | null;
+                          subLabel?: string | null;
+                          color?: string | null;
+                          preview?: IPreviewScalar | null;
+                          library: {id: string; label?: any | null};
+                      };
+                  }
+                | {
+                      id: string;
+                      whoAmI: {
+                          id: string;
+                          label?: string | null;
+                          subLabel?: string | null;
+                          color?: string | null;
+                          preview?: IPreviewScalar | null;
+                          library: {id: string; label?: any | null};
+                      };
+                  }
+                | {
+                      id: string;
+                      whoAmI: {
+                          id: string;
+                          label?: string | null;
+                          subLabel?: string | null;
+                          color?: string | null;
+                          preview?: IPreviewScalar | null;
+                          library: {id: string; label?: any | null};
+                      };
+                  }
+                | null;
             permissions: {access_application: boolean; admin_application: boolean};
         }>;
     } | null;
@@ -1068,16 +1183,41 @@ export type SaveApplicationMutation = {
         color?: string | null;
         module?: string | null;
         settings?: any | null;
-        icon?: {
-            id: string;
-            whoAmI: {
-                id: string;
-                label?: string | null;
-                color?: string | null;
-                preview?: IPreviewScalar | null;
-                library: {id: string; label?: any | null};
-            };
-        } | null;
+        icon?:
+            | {
+                  id: string;
+                  whoAmI: {
+                      id: string;
+                      label?: string | null;
+                      subLabel?: string | null;
+                      color?: string | null;
+                      preview?: IPreviewScalar | null;
+                      library: {id: string; label?: any | null};
+                  };
+              }
+            | {
+                  id: string;
+                  whoAmI: {
+                      id: string;
+                      label?: string | null;
+                      subLabel?: string | null;
+                      color?: string | null;
+                      preview?: IPreviewScalar | null;
+                      library: {id: string; label?: any | null};
+                  };
+              }
+            | {
+                  id: string;
+                  whoAmI: {
+                      id: string;
+                      label?: string | null;
+                      subLabel?: string | null;
+                      color?: string | null;
+                      preview?: IPreviewScalar | null;
+                      library: {id: string; label?: any | null};
+                  };
+              }
+            | null;
         permissions: {access_application: boolean; admin_application: boolean};
     };
 };
@@ -1293,7 +1433,11 @@ export type GetLibrariesQuery = {
         list: Array<{
             id: string;
             label?: any | null;
-            icon?: {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}} | null;
+            icon?:
+                | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
+                | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
+                | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
+                | null;
         }>;
     } | null;
 };
@@ -1349,16 +1493,41 @@ export type GetLibraryByIdQuery = {
                 edit_record: boolean;
                 delete_record: boolean;
             } | null;
-            icon?: {
-                id: string;
-                whoAmI: {
-                    id: string;
-                    label?: string | null;
-                    color?: string | null;
-                    preview?: IPreviewScalar | null;
-                    library: {id: string; label?: any | null};
-                };
-            } | null;
+            icon?:
+                | {
+                      id: string;
+                      whoAmI: {
+                          id: string;
+                          label?: string | null;
+                          subLabel?: string | null;
+                          color?: string | null;
+                          preview?: IPreviewScalar | null;
+                          library: {id: string; label?: any | null};
+                      };
+                  }
+                | {
+                      id: string;
+                      whoAmI: {
+                          id: string;
+                          label?: string | null;
+                          subLabel?: string | null;
+                          color?: string | null;
+                          preview?: IPreviewScalar | null;
+                          library: {id: string; label?: any | null};
+                      };
+                  }
+                | {
+                      id: string;
+                      whoAmI: {
+                          id: string;
+                          label?: string | null;
+                          subLabel?: string | null;
+                          color?: string | null;
+                          preview?: IPreviewScalar | null;
+                          library: {id: string; label?: any | null};
+                      };
+                  }
+                | null;
             previewsSettings?: Array<{
                 label: any;
                 description?: any | null;
@@ -1412,16 +1581,41 @@ export type SaveLibraryMutation = {
             edit_record: boolean;
             delete_record: boolean;
         } | null;
-        icon?: {
-            id: string;
-            whoAmI: {
-                id: string;
-                label?: string | null;
-                color?: string | null;
-                preview?: IPreviewScalar | null;
-                library: {id: string; label?: any | null};
-            };
-        } | null;
+        icon?:
+            | {
+                  id: string;
+                  whoAmI: {
+                      id: string;
+                      label?: string | null;
+                      subLabel?: string | null;
+                      color?: string | null;
+                      preview?: IPreviewScalar | null;
+                      library: {id: string; label?: any | null};
+                  };
+              }
+            | {
+                  id: string;
+                  whoAmI: {
+                      id: string;
+                      label?: string | null;
+                      subLabel?: string | null;
+                      color?: string | null;
+                      preview?: IPreviewScalar | null;
+                      library: {id: string; label?: any | null};
+                  };
+              }
+            | {
+                  id: string;
+                  whoAmI: {
+                      id: string;
+                      label?: string | null;
+                      subLabel?: string | null;
+                      color?: string | null;
+                      preview?: IPreviewScalar | null;
+                      library: {id: string; label?: any | null};
+                  };
+              }
+            | null;
         previewsSettings?: Array<{
             label: any;
             description?: any | null;
@@ -1517,6 +1711,7 @@ export type UserInfoQuery = {
         whoAmI: {
             id: string;
             label?: string | null;
+            subLabel?: string | null;
             color?: string | null;
             preview?: IPreviewScalar | null;
             library: {id: string; label?: any | null};
@@ -1531,6 +1726,7 @@ export const RecordIdentityFragmentDoc = gql`
         whoAmI {
             id
             label
+            subLabel
             color
             library {
                 id
