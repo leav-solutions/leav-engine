@@ -24,6 +24,7 @@ export SKIP_PREFLIGHT_CHECK=true
 
 echo '### Install dependencies ###'
 yarn install
+checkExitCode
 
 # login
 echo '### Build login ###'

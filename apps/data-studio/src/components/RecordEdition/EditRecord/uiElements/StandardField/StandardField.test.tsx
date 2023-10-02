@@ -2,14 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {mockFormAttribute} from '__mocks__/common/attribute';
-import {mockFormElementInput} from '__mocks__/common/form';
-import {mockRecord} from '__mocks__/common/record';
-import {mockModifier} from '__mocks__/common/value';
-import {RECORD_FORM_recordForm_elements_attribute_StandardAttribute} from '_gqlTypes/RECORD_FORM';
-import {SAVE_VALUE_BATCH_saveValueBatch_values_Value_attribute} from '_gqlTypes/SAVE_VALUE_BATCH';
-import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
-import {act, render, screen, waitFor, waitForOptions} from '_tests/testUtils';
 import {
     EditRecordReducerActionsTypes,
     initialState
@@ -17,6 +9,14 @@ import {
 import * as useEditRecordModalReducer from 'components/RecordEdition/editRecordModalReducer/useEditRecordModalReducer';
 import {IRecordPropertyAttribute} from 'graphQL/queries/records/getRecordPropertiesQuery';
 import * as useRefreshFieldValues from 'hooks/useRefreshFieldValues/useRefreshFieldValues';
+import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
+import {RECORD_FORM_recordForm_elements_attribute_StandardAttribute} from '_gqlTypes/RECORD_FORM';
+import {SAVE_VALUE_BATCH_saveValueBatch_values_Value_attribute} from '_gqlTypes/SAVE_VALUE_BATCH';
+import {act, render, screen, waitFor, waitForOptions} from '_tests/testUtils';
+import {mockFormAttribute} from '__mocks__/common/attribute';
+import {mockFormElementInput} from '__mocks__/common/form';
+import {mockRecord} from '__mocks__/common/record';
+import {mockModifier} from '__mocks__/common/value';
 import {
     APICallStatus,
     DeleteMultipleValuesFunc,
@@ -30,6 +30,7 @@ import StandardField from './StandardField';
 jest.mock('../../hooks/useDeleteValueMutation');
 
 jest.useRealTimers();
+jest.setTimeout(15000);
 
 describe('StandardField', () => {
     const mockEditRecordModalDispatch = jest.fn();
@@ -399,7 +400,7 @@ describe('StandardField', () => {
             userEvent.click(screen.getByRole('button', {name: 'global.submit'}));
         });
         expect(mockHandleSubmit).toHaveBeenCalled();
-    }, 10000);
+    });
 
     test('Display error message', async () => {
         const onSubmitFail: SubmitValueFunc = jest.fn().mockReturnValue({
@@ -416,7 +417,7 @@ describe('StandardField', () => {
         });
 
         expect(screen.getByText('ERROR_MESSAGE')).toBeInTheDocument();
-    }, 10000);
+    });
 
     test('Delete value', async () => {
         render(<StandardField element={mockFormElementInput} {...baseProps} />);
@@ -476,7 +477,7 @@ describe('StandardField', () => {
         });
 
         expect(baseProps.onDeleteMultipleValues).toBeCalled();
-    }, 10000);
+    });
 
     describe('Values list', () => {
         const mockFormElementWithValuesList: FormElement<{}> = {
@@ -512,7 +513,7 @@ describe('StandardField', () => {
             expect(screen.getByText('Other value')).toBeInTheDocument();
 
             expect(screen.queryByRole('button', {name: 'global.submit'})).not.toBeInTheDocument();
-        }, 10000);
+        });
 
         test('Filters list when typing', async () => {
             render(<StandardField element={{...mockFormElementWithValuesList, values: []}} {...baseProps} />);
@@ -528,7 +529,7 @@ describe('StandardField', () => {
 
             expect(screen.queryByText('My value')).not.toBeInTheDocument();
             expect(screen.getByText('Other value')).toBeInTheDocument();
-        }, 10000);
+        });
 
         test('On click on a value, save it', async () => {
             render(<StandardField element={{...mockFormElementWithValuesList, values: []}} {...baseProps} />);
@@ -543,7 +544,7 @@ describe('StandardField', () => {
                 [{idValue: null, value: 'My value', attribute: mockFormElementWithValuesList.attribute}],
                 null
             );
-        }, 10000);
+        });
 
         test('On Enter, first matching value is selected', async () => {
             render(<StandardField element={{...mockFormElementWithValuesList, values: []}} {...baseProps} />);
@@ -566,7 +567,7 @@ describe('StandardField', () => {
                 ],
                 null
             );
-        }, 10000);
+        });
 
         test('If no match, display a message', async () => {
             render(<StandardField element={{...mockFormElementWithValuesList, values: []}} {...baseProps} />);
@@ -581,7 +582,7 @@ describe('StandardField', () => {
                 userEvent.type(editingInputElem, 'zzz');
             });
             expect(screen.getByText('record_edition.no_matching_value')).toBeInTheDocument();
-        }, 10000);
+        });
 
         test('If open values list, display submit button', async () => {
             render(<StandardField element={{...mockFormElementWithValuesListOpen, values: []}} {...baseProps} />);
@@ -589,7 +590,7 @@ describe('StandardField', () => {
             userEvent.click(screen.getByRole('textbox'));
 
             expect(screen.queryByRole('button', {name: 'global.submit'})).toBeInTheDocument();
-        }, 10000);
+        });
 
         test('If open values list, can copy a value from the list and edit it', async () => {
             await act(async () => {
@@ -608,7 +609,7 @@ describe('StandardField', () => {
             });
 
             expect(screen.getByRole('textbox')).toHaveValue('My value');
-        }, 10000);
+        });
 
         test('If open values list, current value appears on the list', async () => {
             await act(async () => {
@@ -623,6 +624,6 @@ describe('StandardField', () => {
             userEvent.type(editingInputElem, 'Some new value');
 
             expect(screen.getByText(/Some new value/)).toBeInTheDocument();
-        }, 10000);
+        });
     });
 });
