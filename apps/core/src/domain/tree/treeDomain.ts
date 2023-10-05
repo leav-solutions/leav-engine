@@ -17,6 +17,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {Errors} from '../../_types/errors';
+import {EventAction} from '../../_types/event';
 import {TriggerNames} from '../../_types/eventsManager';
 import {IList, IPaginationParams, SortOrder} from '../../_types/list';
 import {
@@ -323,30 +324,53 @@ export default function({
             treeId: string;
             type: TreeEventTypes;
             element?: ITreeNodeLight;
+            record: IRecord;
             parentNode: string;
             parentNodeBefore?: string;
             order: number;
         },
         ctx: IQueryInfos
     ): Promise<void> => {
-        const {treeId, type, element, parentNode, parentNodeBefore, order} = params;
+        const {treeId, type, record, element, parentNode, parentNodeBefore, order} = params;
+        const actionByType: {[key in TreeEventTypes]: EventAction} = {
+            [TreeEventTypes.ADD]: EventAction.TREE_ADD_ELEMENT,
+            [TreeEventTypes.REMOVE]: EventAction.TREE_DELETE_ELEMENT,
+            [TreeEventTypes.MOVE]: EventAction.TREE_MOVE_ELEMENT
+        };
 
-        return eventsManagerDomain.sendPubSubEvent(
-            {
-                data: {
-                    treeEvent: {
-                        type,
-                        treeId,
-                        element: {...element, treeId},
-                        parentNode: parentNode ? {id: parentNode, treeId} : null,
-                        parentNodeBefore: parentNodeBefore ? {id: parentNodeBefore, treeId} : null,
-                        order
-                    }
+        await Promise.all([
+            eventsManagerDomain.sendPubSubEvent(
+                {
+                    data: {
+                        treeEvent: {
+                            type,
+                            treeId,
+                            element: {...element, treeId},
+                            parentNode: parentNode ? {id: parentNode, treeId} : null,
+                            parentNodeBefore: parentNodeBefore ? {id: parentNodeBefore, treeId} : null,
+                            order
+                        }
+                    },
+                    triggerName: TriggerNames.TREE_EVENT
                 },
-                triggerName: TriggerNames.TREE_EVENT
-            },
-            ctx
-        );
+                ctx
+            ),
+            eventsManagerDomain.sendDatabaseEvent(
+                {
+                    action: actionByType[type],
+                    topic: {
+                        tree: treeId,
+                        record: {
+                            id: record.id,
+                            libraryId: record.library
+                        }
+                    },
+                    before: parentNodeBefore ?? null,
+                    after: parentNode ?? null
+                },
+                ctx
+            )
+        ]);
     };
 
     return {
@@ -393,6 +417,18 @@ export default function({
                 ? await treeRepo.updateTree({treeData: dataToSave as ITree, ctx})
                 : await treeRepo.createTree({treeData: dataToSave as ITree, ctx});
 
+            await eventsManagerDomain.sendDatabaseEvent(
+                {
+                    action: EventAction.TREE_SAVE,
+                    topic: {
+                        tree: savedTree.id
+                    },
+                    after: savedTree,
+                    before: isExistingTree ? treeProps : null
+                },
+                ctx
+            );
+
             if (isExistingTree) {
                 const cacheKey = utils.getCoreEntityCacheKey('tree', dataToSave.id);
                 await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey]);
@@ -402,7 +438,7 @@ export default function({
 
             return savedTree;
         },
-        async deleteTree(id: string, ctx: IQueryInfos): Promise<ITree> {
+        async deleteTree(id, ctx) {
             // Check permissions
             const action = AdminPermissionsActions.DELETE_TREE;
             const canSaveTree = await adminPermissionDomain.getAdminPermission({action, userId: ctx.userId, ctx});
@@ -442,7 +478,18 @@ export default function({
                 );
             }
 
-            const deletedTree = treeRepo.deleteTree({id, ctx});
+            const deletedTree = await treeRepo.deleteTree({id, ctx});
+
+            await eventsManagerDomain.sendDatabaseEvent(
+                {
+                    action: EventAction.TREE_DELETE,
+                    topic: {
+                        tree: id
+                    },
+                    before: treeProps
+                },
+                ctx
+            );
 
             const cacheKey = utils.getCoreEntityCacheKey('tree', id);
             await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey, `${cacheKey}:*`]);
@@ -529,7 +576,7 @@ export default function({
             });
 
             await _sendTreeEvent(
-                {type: TreeEventTypes.ADD, treeId, element: addedElement, parentNode: parent, order},
+                {type: TreeEventTypes.ADD, treeId, record: element, element: addedElement, parentNode: parent, order},
                 ctx
             );
 
@@ -551,8 +598,8 @@ export default function({
             let nodeExists;
             let treeProps;
             let parentElement;
-            let nodeRecord;
             let nodeElement;
+            const nodeRecord = await treeRepo.getRecordByNodeId({treeId, nodeId, ctx});
             if (!skipChecks) {
                 treeProps = await getCoreEntityById<ITree>('tree', treeId, ctx);
                 treeExists = !!treeProps;
@@ -571,7 +618,6 @@ export default function({
                     errors.parentTo = Errors.UNKNOWN_PARENT;
                 }
 
-                nodeRecord = await treeRepo.getRecordByNodeId({treeId, nodeId, ctx});
                 nodeElement = {id: nodeRecord.id, library: nodeRecord.library};
                 const parentRecord = parentTo
                     ? await treeRepo.getRecordByNodeId({treeId, nodeId: parentTo, ctx})
@@ -646,6 +692,7 @@ export default function({
                 {
                     type: TreeEventTypes.MOVE,
                     treeId,
+                    record: nodeRecord,
                     element: movedElement,
                     parentNode: parentTo ?? null,
                     parentNodeBefore: parentBefore?.id ?? null,
@@ -687,13 +734,14 @@ export default function({
 
             const parents = await this.getElementAncestors({treeId, nodeId, ctx});
             const parentBefore = parents.length > 1 ? [...parents].splice(-2, 1)[0] : null;
-
+            const nodeRecord = await treeRepo.getRecordByNodeId({treeId, nodeId, ctx});
             const deletedElement = await treeRepo.deleteElement({treeId, nodeId, deleteChildren, ctx});
 
             await _sendTreeEvent(
                 {
                     type: TreeEventTypes.REMOVE,
                     treeId,
+                    record: nodeRecord,
                     element: deletedElement,
                     parentNode: null,
                     parentNodeBefore: parentBefore?.id ?? null,

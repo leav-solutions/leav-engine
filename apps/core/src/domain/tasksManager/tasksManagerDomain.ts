@@ -16,6 +16,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import {ISystemTranslation} from '_types/systemTranslation';
 import {ITaskRepo} from '../../infra/task/taskRepo';
+import {EventAction} from '../../_types/event';
 import {TriggerNames} from '../../_types/eventsManager';
 import {IList,SortOrder} from '../../_types/list';
 import {
@@ -466,6 +467,13 @@ export default function ({
             for (const t of tasks) {
                 await _deleteTask(t, ctx);
             }
+
+            await eventsManager.sendDatabaseEvent({
+                action: EventAction.TASKS_DELETE,
+                topic: {
+                    tasks
+                }
+            }, ctx);
         },
         // Master
         async initMaster(): Promise<NodeJS.Timer> {

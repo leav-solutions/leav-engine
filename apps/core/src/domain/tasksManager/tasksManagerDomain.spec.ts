@@ -3,14 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
 import * as amqp from 'amqplib';
-import {IConfig} from '_types/config';
-import tasksManager from './tasksManagerDomain';
-import {ITaskRepo} from 'infra/task/taskRepo';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {mockTask} from '../../__tests__/mocks/task';
-import {mockCtx} from '../../__tests__/mocks/shared';
+import {ITaskRepo} from 'infra/task/taskRepo';
 import {IUtils} from 'utils/utils';
+import {IConfig} from '_types/config';
 import {TaskCallbackStatus, TaskStatus} from '../../_types/tasksManager';
+import {mockCtx} from '../../__tests__/mocks/shared';
+import {mockTask} from '../../__tests__/mocks/task';
+import tasksManager from './tasksManagerDomain';
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     assertExchange: jest.fn(),
@@ -61,11 +61,12 @@ describe('Tasks Manager', () => {
         }
     };
 
-    test('Create task', async () => {
-        const mockEventsManager = {
-            sendPubSubEvent: global.__mockPromise()
-        };
+    const mockEventsManager: Mockify<IEventsManagerDomain> = {
+        sendDatabaseEvent: global.__mockPromise(),
+        sendPubSubEvent: global.__mockPromise()
+    };
 
+    test('Create task', async () => {
         const mockTaskRepo: Mockify<ITaskRepo> = {
             createTask: global.__mockPromise({})
         };
@@ -83,10 +84,6 @@ describe('Tasks Manager', () => {
     });
 
     test('Delete task', async () => {
-        const mockEventsManager = {
-            sendPubSubEvent: global.__mockPromise()
-        };
-
         const mockTaskRepo: Mockify<ITaskRepo> = {
             getTasks: global.__mockPromise({totalCount: 1, list: [mockTask]}),
             deleteTask: global.__mockPromise()
@@ -104,10 +101,6 @@ describe('Tasks Manager', () => {
     });
 
     test('Archive task', async () => {
-        const mockEventsManager = {
-            sendPubSubEvent: global.__mockPromise()
-        };
-
         const mockTaskRepo: Mockify<ITaskRepo> = {
             getTasks: global.__mockPromise({totalCount: 1, list: [mockTask]}),
             updateTask: global.__mockPromise()
@@ -126,10 +119,6 @@ describe('Tasks Manager', () => {
     });
 
     test('Cancel task', async () => {
-        const mockEventsManager = {
-            sendPubSubEvent: global.__mockPromise()
-        };
-
         const mockTaskRepo: Mockify<ITaskRepo> = {
             getTasks: global.__mockPromise({totalCount: 1, list: [mockTask]}),
             updateTask: global.__mockPromise()
@@ -169,10 +158,6 @@ describe('Tasks Manager', () => {
 
     test('Init Master / Task to execute', async () => {
         jest.setTimeout(conf.tasksManager.checkingInterval + 500);
-
-        const mockEventsManager = {
-            sendPubSubEvent: global.__mockPromise()
-        };
 
         const mockAmqpService: Mockify<IAmqpService> = {
             consume: jest.fn(),
@@ -227,10 +212,6 @@ describe('Tasks Manager', () => {
     test('Init Master / Task to cancel', async () => {
         jest.setTimeout(conf.tasksManager.checkingInterval + 500);
 
-        const mockEventsManager = {
-            sendPubSubEvent: global.__mockPromise()
-        };
-
         const mockAmqpService: Mockify<IAmqpService> = {
             consume: jest.fn(),
             consumer: {
@@ -272,10 +253,6 @@ describe('Tasks Manager', () => {
 
     test('Init Master / Pending callback', async () => {
         jest.setTimeout(conf.tasksManager.checkingInterval + 500);
-
-        const mockEventsManager = {
-            sendPubSubEvent: global.__mockPromise()
-        };
 
         const mockAmqpService: Mockify<IAmqpService> = {
             consume: jest.fn(),
@@ -350,10 +327,6 @@ describe('Tasks Manager', () => {
     });
 
     test('Update progress', async () => {
-        const mockEventsManager = {
-            sendPubSubEvent: global.__mockPromise()
-        };
-
         const mockTaskRepo: Mockify<ITaskRepo> = {
             getTasks: global.__mockPromise({totalCount: 1, list: [mockTask]}),
             updateTask: global.__mockPromise()
@@ -391,10 +364,6 @@ describe('Tasks Manager', () => {
     });
 
     test('Set link', async () => {
-        const mockEventsManager = {
-            sendPubSubEvent: global.__mockPromise()
-        };
-
         const mockTaskRepo: Mockify<ITaskRepo> = {
             getTasks: global.__mockPromise({totalCount: 1, list: [mockTask]}),
             updateTask: global.__mockPromise()

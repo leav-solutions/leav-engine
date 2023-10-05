@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {i18n} from 'i18next';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {IConfig} from '_types/config';
@@ -9,6 +10,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {Errors} from '../../_types/errors';
+import {EventAction} from '../../_types/event';
 import {
     AdminPermissionsActions,
     ApplicationPermissionsActions,
@@ -81,13 +83,14 @@ interface IDeps {
     'core.domain.permission.treeNode'?: ITreeNodePermissionDomain;
     'core.domain.permission.treeLibrary'?: ITreeLibraryPermissionDomain;
     'core.domain.permission.application'?: IApplicationPermissionDomain;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.infra.permission'?: IPermissionRepo;
     'core.infra.cache.cacheService'?: ICachesService;
     translator?: i18n;
     config?: IConfig;
 }
 
-export default function (deps: IDeps = {}): IPermissionDomain {
+export default function(deps: IDeps = {}): IPermissionDomain {
     const _pluginPermissions: {[type in PermissionTypes]?: Array<{name: string; applyOn?: string[]}>} = {};
 
     const {
@@ -100,6 +103,7 @@ export default function (deps: IDeps = {}): IPermissionDomain {
         'core.domain.permission.treeNode': treeNodePermissionDomain = null,
         'core.domain.permission.treeLibrary': treeLibraryPermissionDomain = null,
         'core.domain.permission.application': applicationPermissionDomain = null,
+        'core.domain.eventsManager': eventsManagerDomain = null,
         'core.infra.permission': permissionRepo = null,
         'core.infra.cache.cacheService': cacheService = null,
         config = null
@@ -167,7 +171,7 @@ export default function (deps: IDeps = {}): IPermissionDomain {
         }
     };
 
-    const savePermission = async (permData: IPermission, ctx: IQueryInfos): Promise<IPermission> => {
+    const savePermission: IPermissionDomain['savePermission'] = async (permData, ctx) => {
         // Does user have the permission to save permissions?
         const action = AdminPermissionsActions.EDIT_PERMISSION;
         const canSavePermission = await adminPermissionDomain.getAdminPermission({
@@ -182,7 +186,21 @@ export default function (deps: IDeps = {}): IPermissionDomain {
 
         await _cleanCacheOnSavingPermissions(permData);
 
-        return permissionRepo.savePermission({permData, ctx});
+        const savedPermission = await permissionRepo.savePermission({permData, ctx});
+
+        await eventsManagerDomain.sendDatabaseEvent(
+            {
+                action: EventAction.PERMISSION_SAVE,
+                topic: {
+                    type: permData.type,
+                    applyTo: permData.applyTo
+                },
+                after: savedPermission.actions
+            },
+            ctx
+        );
+
+        return savedPermission;
     };
 
     const getPermissionsByActions = async (params: IGetPermissionsByActionsParams): Promise<PermByActionsRes> => {

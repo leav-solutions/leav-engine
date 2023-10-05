@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import bcrypt from 'bcryptjs';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IApiKeyRepo} from 'infra/apiKey/apiKeyRepo';
 import {IUtils} from 'utils/utils';
@@ -24,6 +25,10 @@ describe('apiKeyDomain', () => {
 
     const mockAdminPermissionDomainForbidden: Mockify<IAdminPermissionDomain> = {
         getAdminPermission: global.__mockPromise(false)
+    };
+
+    const mockEventsManager: Mockify<IEventsManagerDomain> = {
+        sendDatabaseEvent: global.__mockPromise()
     };
 
     beforeEach(() => {
@@ -110,7 +115,8 @@ describe('apiKeyDomain', () => {
                 const domain = apiKeyDomain({
                     'core.infra.apiKey': mockRepo as IApiKeyRepo,
                     'core.utils': mockUtils as IUtils,
-                    'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain
+                    'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
                 });
 
                 const keyToSave: IApiKey = {
@@ -142,7 +148,8 @@ describe('apiKeyDomain', () => {
                 const domain = apiKeyDomain({
                     'core.infra.apiKey': mockRepo as IApiKeyRepo,
                     'core.utils': mockUtils as IUtils,
-                    'core.domain.permission.admin': mockAdminPermissionDomainForbidden as IAdminPermissionDomain
+                    'core.domain.permission.admin': mockAdminPermissionDomainForbidden as IAdminPermissionDomain,
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
                 });
 
                 const keyToSave: IApiKey = {
@@ -172,7 +179,8 @@ describe('apiKeyDomain', () => {
                 const domain = apiKeyDomain({
                     'core.infra.apiKey': mockRepo as IApiKeyRepo,
                     'core.utils': mockUtils as IUtils,
-                    'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain
+                    'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
                 });
                 domain.getApiKeyProperties = global.__mockPromise({...mockApiKey});
 
@@ -204,7 +212,8 @@ describe('apiKeyDomain', () => {
                 const domain = apiKeyDomain({
                     'core.infra.apiKey': mockRepo as IApiKeyRepo,
                     'core.utils': mockUtils as IUtils,
-                    'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain
+                    'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
                 });
                 domain.getApiKeyProperties = jest.fn().mockRejectedValue(new ValidationError({}));
 
@@ -223,7 +232,8 @@ describe('apiKeyDomain', () => {
                 const domain = apiKeyDomain({
                     'core.infra.apiKey': mockRepo as IApiKeyRepo,
                     'core.utils': mockUtils as IUtils,
-                    'core.domain.permission.admin': mockAdminPermissionDomainForbidden as IAdminPermissionDomain
+                    'core.domain.permission.admin': mockAdminPermissionDomainForbidden as IAdminPermissionDomain,
+                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
                 });
                 domain.getApiKeyProperties = global.__mockPromise({...mockApiKey});
 
@@ -250,7 +260,8 @@ describe('apiKeyDomain', () => {
             const domain = apiKeyDomain({
                 'core.infra.apiKey': mockRepo as IApiKeyRepo,
                 'core.utils': mockUtils as IUtils,
-                'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain
+                'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
             });
 
             const deletedKey = await domain.deleteApiKey({id: mockApiKey.id, ctx: mockCtx});
@@ -270,7 +281,8 @@ describe('apiKeyDomain', () => {
             const domain = apiKeyDomain({
                 'core.infra.apiKey': mockRepo as IApiKeyRepo,
                 'core.utils': mockUtils as IUtils,
-                'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain
+                'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
             });
             domain.getApiKeyProperties = jest.fn().mockRejectedValue(new ValidationError({}));
 
@@ -288,7 +300,8 @@ describe('apiKeyDomain', () => {
             const domain = apiKeyDomain({
                 'core.infra.apiKey': mockRepo as IApiKeyRepo,
                 'core.utils': mockUtils as IUtils,
-                'core.domain.permission.admin': mockAdminPermissionDomainForbidden as IAdminPermissionDomain
+                'core.domain.permission.admin': mockAdminPermissionDomainForbidden as IAdminPermissionDomain,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
             });
 
             await expect(() => domain.deleteApiKey({id: mockApiKey.id, ctx: mockCtx})).rejects.toThrow(PermissionError);

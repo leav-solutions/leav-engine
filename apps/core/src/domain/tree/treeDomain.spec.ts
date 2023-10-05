@@ -17,6 +17,7 @@ import ValidationError from '../../errors/ValidationError';
 import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {ITree} from '../../_types/tree';
+import {mockRecord} from '../../__tests__/mocks/record';
 import {mockFilesTree, mockTree} from '../../__tests__/mocks/tree';
 import {mockVersionProfile} from '../../__tests__/mocks/versionProfile';
 import {IAttributeDomain} from '../attribute/attributeDomain';
@@ -78,7 +79,8 @@ describe('treeDomain', () => {
     const mockGetEntityByIdHelperFilesTree = jest.fn().mockReturnValue({...mockFilesTree});
 
     const mockEventsManagerDomain: Mockify<IEventsManagerDomain> = {
-        sendPubSubEvent: jest.fn()
+        sendPubSubEvent: jest.fn(),
+        sendDatabaseEvent: jest.fn()
     };
 
     const mockUtils: Mockify<IUtils> = {
@@ -99,6 +101,7 @@ describe('treeDomain', () => {
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperNoResult,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -139,7 +142,8 @@ describe('treeDomain', () => {
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 'core.domain.tree.helpers.handleRemovedLibraries': mockHandleRemovedLibraries,
                 'core.utils': mockUtils as IUtils,
-                'core.infra.cache.cacheService': mockCachesService as ICachesService
+                'core.infra.cache.cacheService': mockCachesService as ICachesService,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain
             });
 
             const newTree = await domain.saveTree(mockTree, ctx);
@@ -168,6 +172,7 @@ describe('treeDomain', () => {
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.permission.admin': mockAdminPermForbiddenDomain as IAdminPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -193,6 +198,7 @@ describe('treeDomain', () => {
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperNoResult,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -211,6 +217,7 @@ describe('treeDomain', () => {
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 'core.domain.tree.helpers.handleRemovedLibraries': mockHandleRemovedLibraries,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 'core.utils': mockUtils as IUtils
             });
@@ -221,7 +228,7 @@ describe('treeDomain', () => {
     });
 
     describe('deleteTree', () => {
-        test('Should delete a tree and return deleted tree', async function () {
+        test('Should delete a tree and return deleted tree', async function() {
             const mockAttributesDomain: Mockify<IAttributeDomain> = {
                 getAttributes: global.__mockPromise({
                     totalCount: 2,
@@ -269,6 +276,7 @@ describe('treeDomain', () => {
                 'core.infra.versionProfile': mockVersionProfileRepo as IVersionProfileRepo,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -288,7 +296,7 @@ describe('treeDomain', () => {
             expect(mockVersionProfileRepo.updateVersionProfile).toBeCalled();
         });
 
-        test('Should throw if unknown tree', async function () {
+        test('Should throw if unknown tree', async function() {
             const treeRepo: Mockify<ITreeRepo> = {
                 getTrees: global.__mockPromise({list: [], totalCount: 0}),
                 deleteTree: global.__mockPromise(mockTree)
@@ -298,13 +306,14 @@ describe('treeDomain', () => {
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperNoResult
             });
 
             await expect(domain.deleteTree(mockTree.id, ctx)).rejects.toThrow(ValidationError);
         });
 
-        test('Should throw if system tree', async function () {
+        test('Should throw if system tree', async function() {
             const treeData = {...mockTree, system: true};
 
             const treeRepo: Mockify<ITreeRepo> = {
@@ -317,13 +326,14 @@ describe('treeDomain', () => {
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperSystemTree
             });
 
             await expect(domain.deleteTree(mockTree.id, ctx)).rejects.toThrow(ValidationError);
         });
 
-        test('Should throw if action forbidden', async function () {
+        test('Should throw if action forbidden', async function() {
             const treeData = {...mockTree, system: true};
 
             const treeRepo: Mockify<ITreeRepo> = {
@@ -334,6 +344,7 @@ describe('treeDomain', () => {
             const domain = treeDomain({
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.permission.admin': mockAdminPermForbiddenDomain as IAdminPermissionDomain
             });
 
@@ -833,6 +844,7 @@ describe('treeDomain', () => {
                 })
             ).rejects.toHaveProperty('fields.element');
         });
+
         test('Should ignore tests if skipChecks is true', async () => {
             const treeRepo: Mockify<ITreeRepo> = {
                 moveElement: global.__mockPromise({id: '1345', library: 'lib1'}),
@@ -951,7 +963,7 @@ describe('treeDomain', () => {
                 }
             });
 
-            const treeRepo: Mockify<ITreeRepo> = {
+            const mockTreeRepo: Mockify<ITreeRepo> = {
                 deleteElement: global.__mockPromise({id: '1345', library: 'lib1'}),
                 getTrees: global.__mockPromise({
                     list: [
@@ -965,12 +977,13 @@ describe('treeDomain', () => {
                     totalCount: 0
                 }),
                 getElementAncestors: global.__mockPromise([]),
-                isNodePresent: global.__mockPromise(true)
+                isNodePresent: global.__mockPromise(true),
+                getRecordByNodeId: global.__mockPromise(mockRecord)
             };
 
             const domain = treeDomain({
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
-                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.permission.treeNode': mockTreeNodePermissionDomain as ITreeNodePermissionDomain,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
@@ -990,7 +1003,7 @@ describe('treeDomain', () => {
             });
 
             expect(mockCacheService.deleteData).toBeCalledTimes(3);
-            expect(treeRepo.deleteElement).toBeCalled();
+            expect(mockTreeRepo.deleteElement).toBeCalled();
             expect(mockEventsManagerDomain.sendPubSubEvent).toBeCalled();
         });
 
