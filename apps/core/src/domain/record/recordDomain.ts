@@ -163,7 +163,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.infra.record': recordRepo = null,
     'core.domain.attribute': attributeDomain = null,
@@ -873,11 +873,13 @@ export default function ({
             await eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.RECORD_SAVE,
-                    data: {
-                        id: newRecord.id,
-                        libraryId: newRecord.library,
-                        new: newRecord
-                    }
+                    topic: {
+                        record: {
+                            id: newRecord.id,
+                            libraryId: newRecord.library
+                        }
+                    },
+                    after: newRecord
                 },
                 ctx
             );
@@ -890,11 +892,13 @@ export default function ({
             await eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.RECORD_SAVE,
-                    data: {
-                        id: recordData.id,
-                        libraryId: library,
-                        new: recordData
-                    }
+                    topic: {
+                        record: {
+                            id: savedRecord.id,
+                            libraryId: savedRecord.library
+                        }
+                    },
+                    after: recordData
                 },
                 ctx
             );
@@ -975,11 +979,13 @@ export default function ({
             await eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.RECORD_DELETE,
-                    data: {
-                        id: deletedRecord.id,
-                        libraryId: deletedRecord.library,
-                        old: deletedRecord.old
-                    }
+                    topic: {
+                        record: {
+                            libraryId: deletedRecord.library,
+                            id: deletedRecord.id
+                        }
+                    },
+                    before: deletedRecord
                 },
                 ctx
             );

@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IGlobalSettingsRepo} from 'infra/globalSettings/globalSettingsRepo';
 import PermissionError from '../../errors/PermissionError';
@@ -11,7 +12,12 @@ import {default as globalSettingsDomain} from './globalSettingsDomain';
 describe('getSettingsRepo', () => {
     describe('saveSettings', () => {
         const mockGlobalSettingsRepo: Mockify<IGlobalSettingsRepo> = {
-            saveSettings: global.__mockPromise(mockGlobalSettings)
+            saveSettings: global.__mockPromise(mockGlobalSettings),
+            getSettings: global.__mockPromise(mockGlobalSettings)
+        };
+
+        const mockEventsManager: Mockify<IEventsManagerDomain> = {
+            sendDatabaseEvent: global.__mockPromise()
         };
 
         beforeEach(() => {
@@ -25,6 +31,7 @@ describe('getSettingsRepo', () => {
 
             const domain = globalSettingsDomain({
                 'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.globalSettings': mockGlobalSettingsRepo as IGlobalSettingsRepo
             });
 
@@ -41,6 +48,7 @@ describe('getSettingsRepo', () => {
 
             const domain = globalSettingsDomain({
                 'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.globalSettings': mockGlobalSettingsRepo as IGlobalSettingsRepo
             });
 

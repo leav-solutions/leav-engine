@@ -18,7 +18,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import {IValue} from '_types/value';
 import {IIndexationService} from '../../infra/indexation/indexationService';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
-import {EventAction, IDbEvent, ILibraryPayload, IRecordPayload, IValuePayload} from '../../_types/event';
+import {EventAction, IDbEvent} from '../../_types/event';
 import {TriggerNames} from '../../_types/eventsManager';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
@@ -47,7 +47,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.domain.record': recordDomain = null,
@@ -235,16 +235,13 @@ export default function ({
             console.error(e);
         }
 
-        let data: any;
-
+        const payload = event.payload;
         switch (event.payload.action) {
             case EventAction.RECORD_SAVE: {
-                data = (event.payload as IRecordPayload).data;
-
                 await _indexDatabase({
                     findRecordParams: {
-                        library: data.libraryId,
-                        filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: data.id}]
+                        library: payload.topic.library,
+                        filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.topic.record.id}]
                     },
                     ctx,
                     forceNoTask: true
@@ -253,75 +250,84 @@ export default function ({
                 break;
             }
             case EventAction.LIBRARY_SAVE: {
-                data = (event.payload as ILibraryPayload).data;
+                const oldSettings = payload.before;
+                const newSettings = payload.after;
+                const attrsToDel = difference(
+                    oldSettings?.fullTextAttributes,
+                    newSettings?.fullTextAttributes
+                ) as string[];
+                const attrsToAdd = difference(
+                    newSettings?.fullTextAttributes,
+                    oldSettings?.fullTextAttributes
+                ) as string[];
 
-                const attrsToDel = difference(data.old?.fullTextAttributes, data.new?.fullTextAttributes) as string[];
-                const attrsToAdd = difference(data.new?.fullTextAttributes, data.old?.fullTextAttributes) as string[];
-
-                if (!isEqual(data.old?.fullTextAttributes?.sort(), data.new?.fullTextAttributes?.sort())) {
+                if (!isEqual(oldSettings?.fullTextAttributes?.sort(), newSettings?.fullTextAttributes?.sort())) {
                     await _indexDatabase({
-                        findRecordParams: {library: data.new.id},
+                        findRecordParams: {library: payload.topic.library},
                         ctx,
                         attributes: {up: attrsToAdd, del: attrsToDel}
                     });
                 }
 
                 // if label change we re-index all linked libraries
-                if (data.new.recordIdentityConf?.label !== data.old?.recordIdentityConf?.label) {
-                    await _indexLinkedLibraries(data.new.id, ctx);
+                if (newSettings.recordIdentityConf?.label !== newSettings?.recordIdentityConf?.label) {
+                    await _indexLinkedLibraries(newSettings.id, ctx);
                 }
 
                 break;
             }
             case EventAction.VALUE_SAVE: {
-                data = (event.payload as IValuePayload).data;
+                const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(
+                    payload.topic.library,
+                    ctx
+                );
 
-                const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(data.libraryId, ctx);
-
-                const isActivated = data.attributeId === 'active' && data.value.new.value === true;
-                const isAttrToIndex = fullTextAttributes.map(a => a.id).includes(data.attributeId);
+                const isActivated = payload.topic.attribute === 'active' && payload.after.value === true;
+                const isAttrToIndex = fullTextAttributes.map(a => a.id).includes(payload.topic.attribute);
 
                 if (isActivated || isAttrToIndex) {
                     await _indexDatabase({
                         findRecordParams: {
-                            library: data.libraryId,
-                            filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: data.recordId}]
+                            library: payload.topic.library,
+                            filters: [
+                                {field: 'id', condition: AttributeCondition.EQUAL, value: payload.topic.record.id}
+                            ]
                         },
                         ctx,
-                        attributes: isActivated || !isAttrToIndex ? null : {up: [data.attributeId]},
+                        attributes: isActivated || !isAttrToIndex ? null : {up: [payload.topic.attribute]},
                         forceNoTask: true
                     });
                 }
 
                 // if the new attribute's value is the label of the library
                 // we have to re-index all linked libraries
-                const library = await libraryDomain.getLibraryProperties(data.libraryId, ctx);
-                if (library.recordIdentityConf?.label === data.attributeId) {
-                    await _indexLinkedLibraries(data.libraryId, ctx, data.recordId);
+                const library = await libraryDomain.getLibraryProperties(payload.topic.library, ctx);
+                if (library.recordIdentityConf?.label === payload.topic.attribute) {
+                    await _indexLinkedLibraries(payload.topic.library, ctx, payload.topic.record.id);
                 }
 
                 break;
             }
             case EventAction.VALUE_DELETE: {
-                data = (event.payload as IValuePayload).data;
-
-                const attrProps = await attributeDomain.getAttributeProperties({id: data.attributeId, ctx});
+                const attrProps = await attributeDomain.getAttributeProperties({id: payload.topic.attributeId, ctx});
 
                 await _indexDatabase({
                     findRecordParams: {
-                        library: data.libraryId,
-                        filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: data.recordId}]
+                        library: payload.topic.library,
+                        filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.topic.record.id}]
                     },
                     ctx,
-                    attributes: attrProps.multiple_values ? {up: [data.attributeId]} : {del: [data.attributeId]},
+                    attributes: attrProps.multiple_values
+                        ? {up: [payload.topic.attributeId]}
+                        : {del: [payload.topic.attributeId]},
                     forceNoTask: true
                 });
 
                 // if the updated/deleted attribute is the label of the library
                 // we have to re-index all linked libraries
-                const library = await libraryDomain.getLibraryProperties(data.libraryId, ctx);
-                if (library.recordIdentityConf?.label === data.attributeId) {
-                    await _indexLinkedLibraries(data.libraryId, ctx, data.recordId);
+                const library = await libraryDomain.getLibraryProperties(payload.topic.library, ctx);
+                if (library.recordIdentityConf?.label === payload.topic.attributeId) {
+                    await _indexLinkedLibraries(payload.topic.library, ctx, payload.topic.record.id);
                 }
 
                 break;
@@ -330,19 +336,35 @@ export default function ({
     };
 
     const _validateMsg = (msg: IDbEvent) => {
-        const msgBodySchema = Joi.object().keys({
-            time: Joi.number().required(),
-            userId: Joi.string().required(),
-            emitter: Joi.string().required(),
-            payload: Joi.object()
-                .keys({
-                    action: Joi.string()
-                        .valid(...Object.values(EventAction))
-                        .required(),
-                    data: Joi.object().required()
-                })
-                .required()
-        });
+        const msgBodySchema = Joi.object()
+            .keys({
+                time: Joi.number().required(),
+                userId: Joi.string().required(),
+                emitter: Joi.string().required(),
+                payload: Joi.object()
+                    .keys({
+                        trigger: Joi.string(),
+                        action: Joi.string()
+                            .valid(...Object.values(EventAction))
+                            .required(),
+                        topic: Joi.object()
+                            .keys({
+                                record: Joi.object().keys({
+                                    id: Joi.string().required(),
+                                    libraryId: Joi.string().required()
+                                }),
+                                library: Joi.string(),
+                                attribute: Joi.string(),
+                                tree: Joi.string()
+                            })
+                            .unknown(true),
+                        before: Joi.any(),
+                        after: Joi.any(),
+                        metadata: Joi.any()
+                    })
+                    .required()
+            })
+            .unknown(true);
 
         const isValid = msgBodySchema.validate(msg);
 

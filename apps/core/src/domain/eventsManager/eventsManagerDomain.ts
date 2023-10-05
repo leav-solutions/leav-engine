@@ -2,17 +2,17 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
-import * as Config from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
 import * as amqp from 'amqplib';
 import {PubSub} from 'graphql-subscriptions';
 import Joi from 'joi';
 import {IUtils} from 'utils/utils';
 import winston from 'winston';
-import {DbPayload, IPubSubEvent, IPubSubPayload} from '../../_types/event';
+import * as Config from '_types/config';
+import {IQueryInfos} from '_types/queryInfos';
+import {IDbPayload, IPubSubEvent, IPubSubPayload} from '../../_types/event';
 
 export interface IEventsManagerDomain {
-    sendDatabaseEvent(payload: DbPayload, ctx: IQueryInfos): Promise<void>;
+    sendDatabaseEvent(payload: IDbPayload, ctx: IQueryInfos): Promise<void>;
     sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos): Promise<void>;
     subscribe(triggersName: string[]): AsyncIterator<any>;
     initPubSubEventsConsumer(): Promise<void>;
@@ -30,7 +30,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.utils.logger': logger = null,
@@ -43,6 +43,8 @@ export default function ({
             time: Joi.number().required(),
             userId: Joi.string().required(),
             emitter: Joi.string().required(),
+            queryId: Joi.string().required(),
+            trigger: Joi.string(),
             payload: Joi.object().keys({
                 triggerName: Joi.string().required(),
                 data: Joi.any().required()
@@ -81,7 +83,14 @@ export default function ({
         await amqpService.publish(
             config.amqp.exchange,
             routingKey,
-            JSON.stringify({time: Date.now(), userId: ctx.userId, emitter: utils.getProcessIdentifier(), payload})
+            JSON.stringify({
+                time: Date.now(),
+                userId: ctx.userId,
+                queryId: ctx.queryId,
+                emitter: utils.getProcessIdentifier(),
+                trigger: ctx.trigger,
+                payload
+            })
         );
     };
 
@@ -108,7 +117,7 @@ export default function ({
 
             await amqpService.consume(queue, routingKey, msg => onMessage(msg, amqpService.consumer.channel));
         },
-        async sendDatabaseEvent(payload: DbPayload, ctx: IQueryInfos): Promise<void> {
+        async sendDatabaseEvent(payload: IDbPayload, ctx: IQueryInfos): Promise<void> {
             await _send(config.eventsManager.routingKeys.data_events, payload, ctx);
         },
         async sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos): Promise<void> {

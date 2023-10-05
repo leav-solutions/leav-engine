@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {i18n} from 'i18next';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {IConfig} from '_types/config';
@@ -42,6 +43,10 @@ describe('PermissionDomain', () => {
         getInheritedAdminPermission: global.__mockPromise(true)
     };
 
+    const mockEventsManagerDomain: Mockify<IEventsManagerDomain> = {
+        sendDatabaseEvent: global.__mockPromise()
+    };
+
     beforeEach(() => jest.clearAllMocks());
 
     describe('savePermission', () => {
@@ -63,6 +68,7 @@ describe('PermissionDomain', () => {
 
             const permDomain = permissionDomain({
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.infra.permission': mockPermRepo as IPermissionRepo,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService
             });

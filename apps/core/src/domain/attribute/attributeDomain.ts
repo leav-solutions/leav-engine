@@ -1,10 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IFormStrict} from '_types/forms';
-import {ILibrary} from '_types/library';
-import {IQueryInfos} from '_types/queryInfos';
-import {IDateRangeValue} from '_types/value';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
@@ -14,14 +10,18 @@ import {IFormRepo} from 'infra/form/formRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
+import {IFormStrict} from '_types/forms';
+import {ILibrary} from '_types/library';
+import {IQueryInfos} from '_types/queryInfos';
+import {IDateRangeValue} from '_types/value';
+import PermissionError from '../../errors/PermissionError';
+import ValidationError from '../../errors/ValidationError';
+import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {AttributeFormats, IAttribute, IGetCoreAttributesParams, IOAllowedTypes} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {EventAction} from '../../_types/event';
 import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions, PermissionTypes} from '../../_types/permissions';
-import PermissionError from '../../errors/PermissionError';
-import ValidationError from '../../errors/ValidationError';
-import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import getPermissionCachePatternKey from '../permission/helpers/getPermissionCachePatternKey';
 import {getActionsListToSave, getAllowedInputTypes, getAllowedOutputTypes} from './helpers/attributeALHelper';
@@ -72,7 +72,7 @@ interface IDeps {
     config?: any;
 }
 
-export default function ({
+export default function({
     'core.infra.attribute': attributeRepo = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.permission.admin': adminPermissionDomain = null,
@@ -246,19 +246,18 @@ export default function ({
                 await cacheService.getCache(ECacheType.RAM).deleteData([keyAttr, keyRecAttr]);
             }
 
-            const attr = isExistingAttr
+            const savedAttribute = isExistingAttr
                 ? await attributeRepo.updateAttribute({attrData: attrToSave, ctx})
                 : await attributeRepo.createAttribute({attrData: attrToSave, ctx});
 
             await eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.ATTRIBUTE_SAVE,
-                    data: {
-                        new: attr,
-                        ...(isExistingAttr && {
-                            old: attrProps
-                        })
-                    }
+                    topic: {
+                        attribute: savedAttribute.id
+                    },
+                    after: savedAttribute,
+                    before: isExistingAttr ? attrProps : null
                 },
                 ctx
             );
@@ -266,7 +265,7 @@ export default function ({
             const cacheKey = utils.getCoreEntityCacheKey('attribute', attrToSave.id);
             await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey]);
 
-            return attr;
+            return savedAttribute;
         },
         async deleteAttribute({id, ctx}): Promise<IAttribute> {
             // Check permissions
@@ -317,7 +316,10 @@ export default function ({
             await eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.ATTRIBUTE_DELETE,
-                    data: {old: deletedAttribute}
+                    topic: {
+                        attribute: id
+                    },
+                    before: deletedAttribute
                 },
                 ctx
             );

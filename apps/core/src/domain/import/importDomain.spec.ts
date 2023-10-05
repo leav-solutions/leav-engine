@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
 import {IValidateHelper} from 'domain/helpers/validate';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
@@ -55,6 +56,10 @@ describe('importDomain', () => {
         }
     });
 
+    const mockEventsManager: Mockify<IEventsManagerDomain> = {
+        sendDatabaseEvent: global.__mockPromise()
+    };
+
     describe('Import config', () => {
         test('file doesnt exist', async () => {
             const imprtDomain = importDomain({
@@ -83,7 +88,8 @@ describe('importDomain', () => {
 
             const imprtDomain = importDomain({
                 config: mockConfig as Config.IConfig,
-                'core.domain.library': mockLibDomain as ILibraryDomain
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
             });
 
             await expect(imprtDomain.importConfig({filepath, ctx, forceNoTask: true})).rejects.toThrow();
@@ -116,7 +122,8 @@ describe('importDomain', () => {
 
             const imprtDomain = importDomain({
                 config: mockConfig as Config.IConfig,
-                'core.domain.library': mockLibDomain as ILibraryDomain
+                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
             });
 
             await imprtDomain.importConfig({filepath, ctx, forceNoTask: true});
@@ -145,7 +152,8 @@ describe('importDomain', () => {
 
             const imprtDomain = importDomain({
                 config: mockConfig as Config.IConfig,
-                'core.domain.attribute': mockAttrDomain as IAttributeDomain
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
             });
 
             await imprtDomain.importConfig({filepath, ctx, forceNoTask: true});
@@ -174,7 +182,8 @@ describe('importDomain', () => {
 
             const imprtDomain = importDomain({
                 config: mockConfig as Config.IConfig,
-                'core.domain.tree': mockTreeDomain as ITreeDomain
+                'core.domain.tree': mockTreeDomain as ITreeDomain,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
             });
 
             await imprtDomain.importConfig({filepath, ctx, forceNoTask: true});
@@ -203,7 +212,8 @@ describe('importDomain', () => {
 
             const imprtDomain = importDomain({
                 config: mockConfig as Config.IConfig,
-                'core.domain.tree': mockTreeDomain as ITreeDomain
+                'core.domain.tree': mockTreeDomain as ITreeDomain,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
             });
 
             await imprtDomain.importConfig({filepath, ctx, forceNoTask: true});
@@ -346,6 +356,7 @@ describe('importDomain', () => {
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain,
                 'core.domain.helpers.updateTaskProgress': mockUpdateTaskProgress as UpdateTaskProgress,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 translator: mockTranslator as i18n
             });
 
@@ -453,6 +464,7 @@ describe('importDomain', () => {
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain,
                 'core.domain.helpers.updateTaskProgress': mockUpdateTaskProgress as UpdateTaskProgress,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 translator: mockTranslator as i18n
             });
 
@@ -525,6 +537,7 @@ describe('importDomain', () => {
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain,
                 'core.domain.helpers.updateTaskProgress': mockUpdateTaskProgress as UpdateTaskProgress,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 translator: mockTranslator as i18n
             });
 
@@ -606,6 +619,7 @@ describe('importDomain', () => {
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain,
                 'core.domain.helpers.updateTaskProgress': mockUpdateTaskProgress as UpdateTaskProgress,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 translator: mockTranslator as i18n
             });
 
@@ -686,6 +700,7 @@ describe('importDomain', () => {
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain,
                 'core.domain.helpers.updateTaskProgress': mockUpdateTaskProgress as UpdateTaskProgress,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 translator: mockTranslator as i18n
             });
 
@@ -770,6 +785,7 @@ describe('importDomain', () => {
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain,
                 'core.domain.helpers.updateTaskProgress': mockUpdateTaskProgress as UpdateTaskProgress,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.utils': mockUtils as IUtils,
                 translator: mockTranslator as i18n
             });
