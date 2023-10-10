@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {EventAction} from '@leav/utils';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IGlobalSettingsRepo} from 'infra/globalSettings/globalSettingsRepo';
 import {IGlobalSettings} from '_types/globalSettings';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
-import {EventAction} from '../../_types/event';
 import {AdminPermissionsActions} from '../../_types/permissions';
 
 export interface IGlobalSettingsDomain {
@@ -21,7 +21,7 @@ interface IDeps {
     'core.infra.globalSettings'?: IGlobalSettingsRepo;
 }
 
-export default function({
+export default function ({
     'core.domain.permission.admin': adminPermissionDomain = null,
     'core.domain.eventsManager': eventsManagerDomain = null,
     'core.infra.globalSettings': globalSettingsRepo = null

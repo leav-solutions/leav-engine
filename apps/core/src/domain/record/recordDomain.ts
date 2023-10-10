@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {EventAction} from '@leav/utils';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IValidateHelper} from 'domain/helpers/validate';
@@ -25,7 +26,6 @@ import {getPreviewUrl} from '../../utils/preview/preview';
 import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
-import {EventAction} from '../../_types/event';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {LibraryPermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
@@ -163,7 +163,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.record': recordRepo = null,
     'core.domain.attribute': attributeDomain = null,

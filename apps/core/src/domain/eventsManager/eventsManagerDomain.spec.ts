@@ -2,11 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
+import {EventAction} from '@leav/utils';
 import * as amqp from 'amqplib';
 import {IUtils} from 'utils/utils';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
-import {EventAction} from '../../_types/event';
 import eventsManager from './eventsManagerDomain';
 import winston = require('winston');
 

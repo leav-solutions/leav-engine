@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
+import {IDbPayload, IPubSubEvent, IPubSubPayload} from '@leav/utils';
 import * as amqp from 'amqplib';
 import {PubSub} from 'graphql-subscriptions';
 import Joi from 'joi';
@@ -9,7 +10,6 @@ import {IUtils} from 'utils/utils';
 import winston from 'winston';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
-import {IDbPayload, IPubSubEvent, IPubSubPayload} from '../../_types/event';
 
 export interface IEventsManagerDomain {
     sendDatabaseEvent(payload: IDbPayload, ctx: IQueryInfos): Promise<void>;
@@ -30,7 +30,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.utils.logger': logger = null,
@@ -40,6 +40,7 @@ export default function({
 
     const _validateMsg = (msg: IPubSubEvent) => {
         const msgBodySchema = Joi.object().keys({
+            instanceId: Joi.string().required(),
             time: Joi.number().required(),
             userId: Joi.string().required(),
             emitter: Joi.string().required(),
@@ -84,6 +85,7 @@ export default function({
             config.amqp.exchange,
             routingKey,
             JSON.stringify({
+                instanceId: config.instanceId,
                 time: Date.now(),
                 userId: ctx.userId,
                 queryId: ctx.queryId,

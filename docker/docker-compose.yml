@@ -15,6 +15,7 @@ x-dir-portal: &dir-portal /app/apps/portal
 x-dir-automate_scan: &dir-automate_scan /app/apps/automate-scan
 x-dir-preview_generator: &dir-preview_generator /app/apps/preview-generator
 x-dir-sync_scan: &dir-sync_scan /app/apps/sync-scan
+x-dir-logs_collector: &dir-logs_collector /app/apps/logs-collector
 
 x-volume-yarn-cache: &volume-yarn-cache yarn_cache:/app/.yarn/cache
 x-volume-shared-modules: &volume-shared-modules node_modules_shared:/app/node_modules
@@ -26,6 +27,7 @@ x-volume-portal-modules: &volume-portal-modules node_modules_portal:/app/apps/po
 x-volume-preview_generator-modules: &volume-preview_generator-modules node_modules_preview-generator:/app/apps/preview-generator/node_modules
 x-volume-automate_scan-modules: &volume-automate_scan-modules node_modules_automate-scan:/app/apps/automate-scan/node_modules
 x-volume-sync_scan-modules: &volume-sync_scan-modules node_modules_sync-scan:/app/apps/sync-scan/node_modules
+x-volume-logs_collector-modules: &volume-logs_collector-modules node_modules_logs-collector:/app/apps/logs-collector/node_modules
 x-volume-config_manager-modules: &volume-config_manager-modules node_modules_config-manager:/app/libs/config-manager/node_modules
 x-volume-app_root_path-modules: &volume-app_root_path-modules node_modules_app-root-path:/app/libs/app-root-path/node_modules
 x-volume-utils-modules: &volume-utils-modules node_modules_utils:/app/libs/utils/node_modules
@@ -434,6 +436,32 @@ services:
       - *volume-message_broker-modules
     working_dir: *dir-sync_scan
 
+  # Feel free to comment out logs-collector and elasticsearch if don't need logs
+  logs-collector:
+    image: *node_image
+    labels:
+      - traefik.enable=true
+    environment:
+      <<: [*env-amqp]
+      APP_ROOT_PATH: *dir-logs_collector
+      DEBUG: true
+    depends_on:
+      - message-broker
+    volumes:
+      - *mount_point-repo
+      - *mount_point-scripts
+      - *volume-yarn-cache
+      - *volume-shared-modules
+      - *volume-logs_collector-modules
+      - *volume-config_manager-modules
+      - *volume-message_broker-modules
+    working_dir: *dir-logs_collector
+    command: [
+        sh,
+        -c,
+        "/scripts/wait-for-it.sh message-broker:5672 -t 1000 -- yarn run start:dev",
+      ]
+
   # Proxy
   traefik:
     image: *traefik_image
@@ -499,8 +527,31 @@ services:
     depends_on:
       - redis
 
+  elasticsearch:
+    image: elasticsearch:8.10.2
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+
+  ## Kibana is used for debugging essentially. Uncommnent following lines if needed
+  # kibana:
+  #   image: kibana:8.10.2
+  #   environment:
+  #     - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.kibana.rule=Host(`kibana.leav.localhost`)"
+  #     - "traefik.http.routers.kibana.entrypoints=web"
+  #   depends_on:
+  #     - elasticsearch
+
 volumes:
   arango_data:
+    driver: local
+  elasticsearch_data:
     driver: local
   yarn_cache:
     driver: local
@@ -521,6 +572,8 @@ volumes:
   node_modules_automate-scan:
     driver: local
   node_modules_sync-scan:
+    driver: local
+  node_modules_logs-collector:
     driver: local
   node_modules_config-manager:
     driver: local

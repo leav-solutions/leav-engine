@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {PublishedEvent} from '@leav/utils';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
@@ -8,7 +9,6 @@ import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {GraphQLResolveInfo, GraphQLScalarType} from 'graphql';
 import {withFilter} from 'graphql-subscriptions';
 import {omit} from 'lodash';
-import {PublishedEvent} from '_types/event';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IList, IPaginationParams} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
@@ -55,7 +55,7 @@ interface IDeps {
     'core.domain.library'?: ILibraryDomain;
 }
 
-export default function({
+export default function ({
     'core.domain.tree': treeDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission': permissionDomain = null,
