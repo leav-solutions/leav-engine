@@ -1,0 +1,39 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+      "types": ["node"],
+      "baseUrl": "src",
+      "rootDir": "src",
+      "outDir": "dist",
+      "isolatedModules": false,
+      "declarationMap": false,
+      "declaration": false,
+      "sourceMap": false,
+      "composite": false,
+      "resolveJsonModule": true,
+      "typeRoots": ["./src/_types"]
+  },
+  "references": [
+      {
+          "path": "../../libs/app-root-path"
+      },
+      {
+          "path": "../../libs/config-manager"
+      },
+      {
+          "path": "../../libs/utils"
+      },
+      {
+          "path": "../../libs/message-broker"
+      }
+  ],
+  "include": ["src/**/*"],
+  "exclude": [
+      "node_modules",
+      "**/*.spec.ts",
+      "**/__tests__",
+      "applications",
+      "scripts",
+      "dist"
+  ]
+}

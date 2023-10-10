@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {EventAction} from '@leav/utils';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
@@ -14,7 +15,6 @@ import {IGetCoreVersionProfileParams, IVersionProfile} from '_types/versionProfi
 import PermissionError from '../../errors/PermissionError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {Errors} from '../../_types/errors';
-import {EventAction} from '../../_types/event';
 import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 
@@ -40,7 +40,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     'core.domain.permission.admin': adminPermissionDomain,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
     'core.domain.eventsManager': eventsManagerDomain = null,

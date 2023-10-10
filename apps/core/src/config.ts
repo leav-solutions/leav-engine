@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {appRootPath} from '@leav/app-root-path';
 import {loadConfig} from '@leav/config-manager';
-import {IConfig} from '_types/config';
 import Joi from 'joi';
+import {IConfig} from '_types/config';
 import {env as appEnv} from './env';
 
 export const validateConfig = (conf: IConfig) => {
@@ -155,7 +155,8 @@ export const validateConfig = (conf: IConfig) => {
         }),
         dbProfiler: Joi.object().keys({
             enable: Joi.boolean().required()
-        })
+        }),
+        instanceId: Joi.string().required()
     });
 
     const isValid = configSchema.validate(conf);

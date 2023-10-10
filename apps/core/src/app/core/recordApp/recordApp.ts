@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {PublishedEvent} from '@leav/utils';
 import {ConvertVersionFromGqlFormatFunc} from 'app/helpers/convertVersionFromGqlFormat';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
@@ -10,7 +11,6 @@ import {ITreeDomain} from 'domain/tree/treeDomain';
 import {GraphQLScalarType} from 'graphql';
 import {withFilter} from 'graphql-subscriptions';
 import {IUtils} from 'utils/utils';
-import {PublishedEvent} from '_types/event';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {ITree} from '_types/tree';

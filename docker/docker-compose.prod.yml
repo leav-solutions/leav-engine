@@ -187,6 +187,22 @@ services:
     volumes:
       - *mount_point-files
 
+  logs-collector:
+    image: leav_logs_local
+    restart: always
+    labels:
+      - traefik.enable=true
+    environment:
+      <<: [*env-amqp]
+    depends_on:
+      - message-broker
+      - elasticsearch
+    command: [
+        sh,
+        -c,
+        "/app/scripts/wait-for-it.sh message-broker:5672 -t 1000 -- yarn run start",
+      ]
+
   # Proxy
   traefik:
     image: *traefik_image
@@ -235,6 +251,17 @@ services:
       - traefik.enable=true
       - traefik.http.services.redis.loadbalancer.server.port=6379
 
+  elasticsearch:
+    image: elasticsearch:8.10.2
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - elasticsearch_data_prod:/usr/share/elasticsearch/data
+
 volumes:
   arango_data_prod:
+    driver: local
+  elasticsearch_data_prod:
     driver: local

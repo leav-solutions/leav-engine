@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {EventAction} from '@leav/utils';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IValidateHelper} from 'domain/helpers/validate';
@@ -22,7 +23,6 @@ import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import getDefaultAttributes from '../../utils/helpers/getLibraryDefaultAttributes';
 import {Errors} from '../../_types/errors';
-import {EventAction} from '../../_types/event';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions, PermissionTypes} from '../../_types/permissions';
@@ -67,7 +67,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function({
+export default function ({
     'core.domain.attribute': attributeDomain = null,
     'core.domain.eventsManager': eventsManager = null,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
