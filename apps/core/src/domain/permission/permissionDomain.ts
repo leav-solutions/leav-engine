@@ -192,8 +192,10 @@ export default function(deps: IDeps = {}): IPermissionDomain {
             {
                 action: EventAction.PERMISSION_SAVE,
                 topic: {
-                    type: permData.type,
-                    applyTo: permData.applyTo
+                    permission: {
+                        type: permData.type,
+                        applyTo: permData.applyTo
+                    }
                 },
                 after: savedPermission.actions
             },

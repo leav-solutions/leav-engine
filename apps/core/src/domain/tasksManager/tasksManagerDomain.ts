@@ -484,7 +484,8 @@ export default function ({
             eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.TASKS_DELETE,
-                    topic: {
+                    topic: null,
+                    metadata: {
                         tasks
                     }
                 },

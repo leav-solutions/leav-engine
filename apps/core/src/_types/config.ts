@@ -30,6 +30,7 @@ export interface IConfig {
     files: IFilesConfig;
     dbProfiler: IDbProfilerConfig;
     instanceId: string;
+    elasticSearch: IElasticSearchConfig;
 }
 
 export interface IServer {
@@ -187,4 +188,8 @@ export interface IFilesConfig {
 
 export interface IDbProfilerConfig {
     enable: boolean;
+}
+
+export interface IElasticSearchConfig {
+    url: string;
 }
