@@ -46,8 +46,8 @@ export enum EventAction {
 export interface IDbPayload {
     trigger?: string; // The high level action that triggered the event: an import, a plugin action, a mass action...
     action: EventAction;
+    // To identify which element is concerned by the event
     topic: {
-        // Any data to identify which element is concerned by the event
         record?: {
             id: string;
             libraryId: string;
@@ -55,7 +55,14 @@ export interface IDbPayload {
         library?: string;
         attribute?: string;
         tree?: string;
-        [key: string]: any;
+        profile?: string;
+        permission?: {
+            type: string;
+            applyTo?: any;
+        };
+        apiKey?: string;
+        application?: string;
+        filename?: string;
     };
     before?: any; // Value before the event
     after?: any; // Value after the event

@@ -47,7 +47,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.domain.record': recordDomain = null,
@@ -309,7 +309,7 @@ export default function ({
                 break;
             }
             case EventAction.VALUE_DELETE: {
-                const attrProps = await attributeDomain.getAttributeProperties({id: payload.topic.attributeId, ctx});
+                const attrProps = await attributeDomain.getAttributeProperties({id: payload.topic.attribute, ctx});
 
                 await _indexDatabase({
                     findRecordParams: {
@@ -318,15 +318,15 @@ export default function ({
                     },
                     ctx,
                     attributes: attrProps.multiple_values
-                        ? {up: [payload.topic.attributeId]}
-                        : {del: [payload.topic.attributeId]},
+                        ? {up: [payload.topic.attribute]}
+                        : {del: [payload.topic.attribute]},
                     forceNoTask: true
                 });
 
                 // if the updated/deleted attribute is the label of the library
                 // we have to re-index all linked libraries
                 const library = await libraryDomain.getLibraryProperties(payload.topic.library, ctx);
-                if (library.recordIdentityConf?.label === payload.topic.attributeId) {
+                if (library.recordIdentityConf?.label === payload.topic.attribute) {
                     await _indexLinkedLibraries(payload.topic.library, ctx, payload.topic.record.id);
                 }
 
@@ -357,7 +357,8 @@ export default function ({
                                 attribute: Joi.string(),
                                 tree: Joi.string()
                             })
-                            .unknown(true),
+                            .unknown(true)
+                            .allow(null),
                         before: Joi.any(),
                         after: Joi.any(),
                         metadata: Joi.any()

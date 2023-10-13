@@ -256,7 +256,6 @@ export const formatId = (id: string): string => {
  * Returns a hash code from a string
  * @param  {String} str The string to hash.
  * @return {Number}    A 32bit integer
- * @see http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
  */
 export const simpleStringHash = (str: string) => {
     let hash = 0;
@@ -285,4 +284,8 @@ export const getFlagByLang = (lang: string): string => {
     };
 
     return flagsByLang[lang] ?? '';
+};
+
+export const getLogsIndexName = (instanceId: string): string => {
+    return `logs-${instanceId}`;
 };
