@@ -14034,6 +14034,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "core@workspace:apps/core"
   dependencies:
+    "@elastic/elasticsearch": 8.10.0
     "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
     "@leav/message-broker": "workspace:libs/message-broker"

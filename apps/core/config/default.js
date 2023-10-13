@@ -152,5 +152,8 @@ module.exports = {
     },
     dbProfiler: {
         enable: typeof process.env.DB_PROFILER_ENABLE !== 'undefined' ? !!Number(process.env.DB_PROFILER_ENABLE) : false
+    },
+    elasticSearch: {
+        url: process.env.ELASTIC_SEARCH_URL || 'http://elasticsearch:9200'
     }
 };

@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Client} from '@elastic/elasticsearch';
+import {getLogsIndexName} from '@leav/utils';
 import * as amqp from 'amqplib';
 import {IConfig} from '_types/config';
 import {writeData} from '../elasticsearchService';
@@ -21,7 +22,7 @@ export const handleMessage = async (
 
         const {payload, emitter, ...msgMetadata} = msgContent;
 
-        const indexName = `logs-${msgMetadata.instanceId}`;
+        const indexName = getLogsIndexName(msgMetadata.instanceId);
         const dataToSave = {
             ...msgMetadata,
             ...payload

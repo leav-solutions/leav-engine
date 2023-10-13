@@ -13,6 +13,7 @@ export {default as subscriptionsHelper} from './helpers/subscriptions';
 export {default as import} from './importApp';
 export {default as indexationManager} from './indexationManagerApp';
 export {default as library} from './libraryApp/libraryApp';
+export {default as log} from './logApp';
 export {default as permission} from './permissionApp/permissionApp';
 export {default as plugins} from './pluginsApp';
 export {default as record} from './recordApp/recordApp';
