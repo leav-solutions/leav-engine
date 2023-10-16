@@ -6,7 +6,7 @@ import {Alert, Card, Form, Spin} from 'antd';
 import {KitButton, KitInput} from 'aristid-ds';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {NavLink} from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 import styled from 'styled-components';
 
 const extractValueFromEventAndThen = (next: any) => (event: any) => {
@@ -35,11 +35,16 @@ interface ILoginFormProps {
 
 const LoginForm = ({onSubmit, loading, loginError}: ILoginFormProps): JSX.Element => {
     const {t} = useTranslation();
+    const history = useHistory();
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
 
     const _processLogin = async () => {
         onSubmit(login, password);
+    };
+
+    const _handleClickForgotPassword = () => {
+        history.push('/forgot-password');
     };
 
     return (
@@ -98,10 +103,10 @@ const LoginForm = ({onSubmit, loading, loginError}: ILoginFormProps): JSX.Elemen
                             </KitButton>
                         </Form.Item>
                     )}
-                    <Form.Item>
-                        <NavLink style={{float: 'right'}} to={'/forgot-password'}>
+                    <Form.Item style={{textAlign: 'right'}}>
+                        <KitButton onClick={_handleClickForgotPassword} type="link">
                             {t('login.forgot_password')}
-                        </NavLink>
+                        </KitButton>
                     </Form.Item>
                 </Form>
             </LoginBlock>
