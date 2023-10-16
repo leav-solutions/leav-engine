@@ -138,5 +138,9 @@
         "delete": "Delete tree",
         "delete_confirm": "Do you really want to delete this tree?",
         "delete_confirm_warning": "Warning: this action is irreversible"
+    },
+    "lang": {
+        "fr": "French",
+        "en": "English"
     }
 }

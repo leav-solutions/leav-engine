@@ -36,7 +36,7 @@ const Header = styled(Layout.Header)`
 const Content = styled(Layout.Content)`
     display: grid;
     grid-template-rows: 3rem 1fr;
-    height: calc(100vh - 3rem);
+    height: calc(100vh - 4.5rem);
     overflow-y: auto;
     background: #fff;
 `;

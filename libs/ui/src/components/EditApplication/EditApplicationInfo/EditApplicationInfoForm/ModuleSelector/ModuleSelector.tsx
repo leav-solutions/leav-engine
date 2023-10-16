@@ -5,6 +5,7 @@ import {Form, FormItemProps} from 'antd';
 import {KitSelect} from 'aristid-ds';
 import styled from 'styled-components';
 import {themeVars} from '../../../../../antdTheme';
+import {useSharedTranslation} from '../../../../../hooks/useSharedTranslation';
 import {useGetApplicationModulesQuery} from '../../../../../_gqlTypes';
 
 const OptionLabel = styled.div`
@@ -20,6 +21,7 @@ interface IModuleSelectorProps extends FormItemProps {
 }
 
 function ModuleSelector({disabled, ...itemProps}: IModuleSelectorProps): JSX.Element {
+    const {t} = useSharedTranslation();
     const {loading, data} = useGetApplicationModulesQuery();
     const form = Form.useFormInstance();
     const selectedModule = Form.useWatch('module', form);
@@ -34,7 +36,14 @@ function ModuleSelector({disabled, ...itemProps}: IModuleSelectorProps): JSX.Ele
 
     return (
         <Form.Item {...itemProps}>
-            <KitSelect loading={loading} disabled={disabled} aria-label="" options={options} helper={helper} />
+            <KitSelect
+                label={t('applications.module')}
+                loading={loading}
+                disabled={disabled}
+                aria-label=""
+                options={options}
+                helper={helper}
+            />
         </Form.Item>
     );
 }

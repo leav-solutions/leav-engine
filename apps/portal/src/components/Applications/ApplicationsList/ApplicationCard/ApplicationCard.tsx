@@ -4,7 +4,7 @@
 import {StarFilled, StarOutlined} from '@ant-design/icons';
 import {useLang} from '@leav/ui';
 import {getInitials, localizedTranslation} from '@leav/utils';
-import {KitAvatar, KitButton, KitCard, KitImage} from 'aristid-ds';
+import {KitAvatar, KitButton, KitImage, KitItemCard} from 'aristid-ds';
 import EditApplicationModal, {
     IEditApplicationModalProps
 } from 'components/Applications/EditApplicationModal/EditApplicationModal';
@@ -58,16 +58,14 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
             preview={{src: String(application.icon?.whoAmI?.preview?.huge), toolbarRender: () => null}}
         />
     ) : (
-        <KitAvatar shape="square" size={214}>
-            {initials}
-        </KitAvatar>
+        <KitAvatar shape="square">{initials}</KitAvatar>
     );
 
     const actions = [<KitButton onClick={_toggleFavorite}>{isFavorite ? <StarFilled /> : <StarOutlined />}</KitButton>];
 
     return (
         <>
-            <KitCard
+            <KitItemCard
                 vertical
                 title={<ClickableWrapper onClick={_handleClick}>{label}</ClickableWrapper>}
                 description={<ClickableWrapper onClick={_handleClick}>{description}</ClickableWrapper>}
@@ -76,6 +74,7 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
                 onEdit={_handleOpenEditAppModal}
                 colors={[{label: null, color: application.color}]}
                 data-testid={`app-card-${application.id}`}
+                fullWidthAvatar
             />
             {isEditAppModalOpen && (
                 <EditApplicationModal

@@ -2,7 +2,8 @@
     "global": {
         "submit": "Submit",
         "cancel": "Cancel",
-        "close": "Close"
+        "close": "Close",
+        "language": "Language"
     },
     "document_title": "LEAV Engine - {{appLabel}}",
     "header_title": "LEAV Engine",
@@ -22,5 +23,9 @@
     "application": {
         "new_app": "New app",
         "create": "Create an app"
+    },
+    "lang": {
+        "fr": "French",
+        "en": "English"
     }
 }
