@@ -2,7 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {objectToNameValueArray} from '@leav/utils';
+import {defaultLinkAttributeFilterFormat, infosCol} from 'constants/constants';
 import {gql} from 'graphql-tag';
+import {IActiveTree} from 'graphQL/queries/cache/activeTree/getActiveTreeQuery';
 import {i18n, TFunction} from 'i18next';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
@@ -10,10 +12,9 @@ import {getFiltersFromRequest} from 'utils/getFiltersFromRequest';
 import {ADD_VIEW_saveView} from '_gqlTypes/ADD_VIEW';
 import {GET_APPLICATION_BY_ENDPOINT_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
 import {GET_VIEW_view, GET_VIEW_view_display, GET_VIEW_view_sort} from '_gqlTypes/GET_VIEW';
-import {AttributeFormat, AttributeType, ValueVersionInput, ViewSizes} from '_gqlTypes/globalTypes';
+import {AttributeFormat, AttributeType, LibraryBehavior, ValueVersionInput, ViewSizes} from '_gqlTypes/globalTypes';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import {RECORD_FORM_recordForm_elements_values_Value_version} from '_gqlTypes/RECORD_FORM';
-import {defaultLinkAttributeFilterFormat, infosCol} from '../constants/constants';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
 import {
     AttributeConditionFilter,
@@ -495,6 +496,11 @@ export const objectValueVersionToArray = (version: IValueVersion): ValueVersionI
           }))
         : null;
 };
+
+export const getFilesLibraryId = (tree: IActiveTree): string => {
+    return (tree.libraries ?? []).find(l => l.behavior === LibraryBehavior.files)?.id ?? null;
+};
+
 export const getPropertyCacheFieldName = (attributeId: string): string => {
     return `property({"attribute":"${attributeId}"})`;
 };

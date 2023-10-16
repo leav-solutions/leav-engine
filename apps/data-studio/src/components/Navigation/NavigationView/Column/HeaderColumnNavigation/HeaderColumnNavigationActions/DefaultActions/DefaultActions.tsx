@@ -5,11 +5,11 @@ import {
     CloudUploadOutlined,
     DeleteOutlined,
     ExpandAltOutlined,
+    FolderAddOutlined,
     InfoCircleOutlined,
     OrderedListOutlined,
     PictureOutlined,
-    SearchOutlined,
-    FolderAddOutlined
+    SearchOutlined
 } from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
 import {Button, Dropdown, message} from 'antd';
@@ -27,6 +27,7 @@ import {useTranslation} from 'react-i18next';
 import {addInfo} from 'reduxStore/infos';
 import {setNavigationPath} from 'reduxStore/navigation';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
+import {getFilesLibraryId} from 'utils';
 import {GET_TREE_LIBRARIES_trees_list_libraries} from '_gqlTypes/GET_TREE_LIBRARIES';
 import {LibraryBehavior, TreeBehavior} from '_gqlTypes/globalTypes';
 import {REMOVE_TREE_ELEMENT, REMOVE_TREE_ELEMENTVariables} from '_gqlTypes/REMOVE_TREE_ELEMENT';
@@ -203,6 +204,8 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
         refreshTreeContent();
     };
 
+    const filesLibraryId = getFilesLibraryId(activeTree);
+
     return (
         <>
             {isUploadFilesModalVisible && (
@@ -258,10 +261,8 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
             )}
             {displayPreviewConfirm && (
                 <TriggerPreviewsGenerationModal
-                    libraryId={
-                        parent?.record.whoAmI.library.id ||
-                        activeTree.libraries.filter(l => l.behavior === LibraryBehavior.files)[0].id
-                    }
+                    libraryId={parent?.record?.whoAmI?.library?.id}
+                    filesLibraryId={filesLibraryId}
                     {...(parent && {recordIds: [parent?.record.id]})}
                     onClose={_handleClosePreviewGenerationConfirm}
                 />

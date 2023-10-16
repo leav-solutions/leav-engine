@@ -590,7 +590,8 @@
         "previews_generation_confirm": "Do you really want to generate previews?",
         "previews_generation_failed_only": "Only if previous generation failed",
         "previews_generation_success": "Previews generation started",
-        "previews_generation_nothing_to_do": "No preview to generate"
+        "previews_generation_nothing_to_do": "No preview to generate",
+        "previews_generation_select_all": "All versions"
     },
     "app_settings": {
         "title": "Settings",

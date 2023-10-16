@@ -1,11 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IActiveTree} from 'graphQL/queries/cache/activeTree/getActiveTreeQuery';
+import {LibraryBehavior} from '_gqlTypes/globalTypes';
+import {IValueVersion} from '_types/types';
+import {mockActiveTree} from '__mocks__/common/activeTree';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockTreeRecord} from '__mocks__/common/treeElements';
-import {IValueVersion} from '_types/types';
 import {mockSelectedAttributeB} from '../__mocks__/common/attribute';
 import {
+    getFilesLibraryId,
     getInitials,
     getTreeRecordKey,
     getValueVersionLabel,
@@ -87,6 +91,34 @@ describe('utils', () => {
 
             expect(getValueVersionLabel(version)).toBe('Node title / Other Node');
             expect(getValueVersionLabel(null)).toBe('');
+        });
+    });
+
+    describe('getFilesLibraryId', () => {
+        test('Return files library ID if any', async () => {
+            const activeTree: IActiveTree = {
+                ...mockActiveTree,
+                libraries: [
+                    {
+                        id: 'directories_library_id',
+                        behavior: LibraryBehavior.directories
+                    },
+                    {
+                        id: 'files_library_id',
+                        behavior: LibraryBehavior.files
+                    }
+                ]
+            };
+
+            expect(getFilesLibraryId(activeTree)).toBe('files_library_id');
+        });
+
+        test('If no files library, return null', async () => {
+            const activeTree: IActiveTree = {
+                ...mockActiveTree
+            };
+
+            expect(getFilesLibraryId(activeTree)).toBe(null);
         });
     });
 });
