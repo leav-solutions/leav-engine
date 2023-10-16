@@ -59,7 +59,7 @@ const ForgotPasswordForm = ({
                 headStyle={{textAlign: 'center', padding: '1rem'}}
                 style={{width: '30rem'}}
             >
-                <KitTypography.Title level={3}>{t('forgotPassword.header')}</KitTypography.Title>
+                <KitTypography.Title level="h3">{t('forgotPassword.header')}</KitTypography.Title>
                 <Form onFinish={_processForgotPassword}>
                     <Form.Item
                         hasFeedback

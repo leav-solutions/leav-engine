@@ -48,7 +48,7 @@ const ResetPasswordForm = ({onSubmit, loading, resetPasswordError}: IResetPasswo
                 headStyle={{textAlign: 'center', padding: '1rem'}}
                 style={{width: '30rem'}}
             >
-                <KitTypography.Title level={3}> {t('resetPassword.header')}</KitTypography.Title>
+                <KitTypography.Title level="h3"> {t('resetPassword.header')}</KitTypography.Title>
                 <Form onFinish={_processResetPassword}>
                     <Form.Item
                         hasFeedback
