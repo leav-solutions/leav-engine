@@ -240,7 +240,7 @@ export default function ({
             case EventAction.RECORD_SAVE: {
                 await _indexDatabase({
                     findRecordParams: {
-                        library: payload.topic.library,
+                        library: payload.topic.record.libraryId,
                         filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.topic.record.id}]
                     },
                     ctx,
