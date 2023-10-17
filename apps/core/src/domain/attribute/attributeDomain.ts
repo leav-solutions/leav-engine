@@ -72,7 +72,7 @@ interface IDeps {
     config?: any;
 }
 
-export default function({
+export default function ({
     'core.infra.attribute': attributeRepo = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.permission.admin': adminPermissionDomain = null,
@@ -250,7 +250,7 @@ export default function({
                 ? await attributeRepo.updateAttribute({attrData: attrToSave, ctx})
                 : await attributeRepo.createAttribute({attrData: attrToSave, ctx});
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.ATTRIBUTE_SAVE,
                     topic: {
@@ -313,7 +313,7 @@ export default function({
 
             const deletedAttribute = await attributeRepo.deleteAttribute({attrData: attrProps, ctx});
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.ATTRIBUTE_DELETE,
                     topic: {

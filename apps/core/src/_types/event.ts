@@ -6,7 +6,7 @@
 export interface IEvent {
     time: number;
     userId: string;
-    emitter: string;
+    emitter: string; // Unique ID of the process emitting the event. Used to figure out if the event is coming from current process
     queryId: string;
 }
 

@@ -125,7 +125,7 @@ interface IDeps {
     'core.domain.tree'?: ITreeDomain;
 }
 
-const valueDomain = function({
+const valueDomain = function ({
     config = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -362,7 +362,7 @@ const valueDomain = function({
         // Make sure attribute is returned here
         res.attribute = attribute;
 
-        await eventsManager.sendDatabaseEvent(
+        eventsManager.sendDatabaseEvent(
             {
                 action: EventAction.VALUE_DELETE,
                 topic: {
@@ -460,7 +460,7 @@ const valueDomain = function({
             }
         }
 
-        await eventsManager.sendDatabaseEvent(
+        eventsManager.sendDatabaseEvent(
             {
                 action: EventAction.VALUE_SAVE,
                 topic: {

@@ -47,7 +47,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.domain.record': recordDomain = null,
@@ -410,9 +410,9 @@ export default function({
             return newTaskId;
         }
 
-        const _updateLibraryIndexationStatus = async (inProgress: boolean) => {
+        const _updateLibraryIndexationStatus = (inProgress: boolean) => {
             for (const libraryId of findRecordParams.map(e => e.library)) {
-                await eventsManager.sendPubSubEvent(
+                eventsManager.sendPubSubEvent(
                     {
                         triggerName: TriggerNames.INDEXATION,
                         data: {indexation: {userId: params.ctx.userId, libraryId, inProgress}}
@@ -422,13 +422,13 @@ export default function({
             }
         };
 
-        await _updateLibraryIndexationStatus(true);
+        _updateLibraryIndexationStatus(true);
 
         for (const frp of findRecordParams) {
             await _indexRecords(frp, params.ctx);
         }
 
-        await _updateLibraryIndexationStatus(false);
+        _updateLibraryIndexationStatus(false);
 
         return task.id;
     };

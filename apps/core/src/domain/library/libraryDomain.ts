@@ -67,7 +67,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function({
+export default function ({
     'core.domain.attribute': attributeDomain = null,
     'core.domain.eventsManager': eventsManager = null,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
@@ -298,7 +298,7 @@ export default function({
             }
 
             // sending indexation event
-            await eventsManager.sendDatabaseEvent(
+            eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.LIBRARY_SAVE,
                     topic: {
@@ -354,7 +354,7 @@ export default function({
             const deletedLibrary = await libraryRepo.deleteLibrary({id, ctx});
 
             // sending indexation event
-            await eventsManager.sendDatabaseEvent(
+            eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.LIBRARY_DELETE,
                     topic: {

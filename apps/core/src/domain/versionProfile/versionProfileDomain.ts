@@ -40,7 +40,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     'core.domain.permission.admin': adminPermissionDomain,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
     'core.domain.eventsManager': eventsManagerDomain = null,
@@ -130,7 +130,7 @@ export default function({
                 ? await versionProfileRepo.createVersionProfile({profileData: profileToSave, ctx})
                 : await versionProfileRepo.updateVersionProfile({profileData: profileToSave, ctx});
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.VERSION_PROFILE_SAVE,
                     topic: {
@@ -196,7 +196,7 @@ export default function({
 
             const deletedProfile = await versionProfileRepo.deleteVersionProfile({id, ctx});
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.VERSION_PROFILE_DELETE,
                     topic: {

@@ -48,7 +48,7 @@ interface IDeps {
     config?: Config.IConfig;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.domain.record': recordDomain = null,
     'core.domain.helpers.validate': validateHelper = null,
@@ -181,7 +181,7 @@ export default function({
                 return newTaskId;
             }
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.EXPORT_START,
                     topic: null,
@@ -281,10 +281,7 @@ export default function({
                 await _updateTaskProgress(1, 'tasks.export_description.excel_writing');
             }
 
-            const filename = `${library}_${new Date()
-                .toLocaleDateString()
-                .split('/')
-                .join('')}_${Date.now()}.xlsx`;
+            const filename = `${library}_${new Date().toLocaleDateString().split('/').join('')}_${Date.now()}.xlsx`;
 
             await workbook.xlsx.writeFile(`${path.resolve(config.export.directory)}/${filename}`);
 
@@ -293,7 +290,7 @@ export default function({
             const url = `/${config.export.endpoint}/${filename}`;
             await tasksManager.setLink(task.id, {name: 'export file', url}, ctx);
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.EXPORT_END,
                     topic: {

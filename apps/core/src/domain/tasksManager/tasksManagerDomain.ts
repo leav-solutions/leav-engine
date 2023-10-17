@@ -18,9 +18,22 @@ import {ISystemTranslation} from '_types/systemTranslation';
 import {ITaskRepo} from '../../infra/task/taskRepo';
 import {EventAction} from '../../_types/event';
 import {TriggerNames} from '../../_types/eventsManager';
-import {IList,SortOrder} from '../../_types/list';
+import {IList, SortOrder} from '../../_types/list';
 import {
-    ITask,ITaskCallback,ITaskCancelPayload,ITaskCreatePayload,ITaskDeletePayload,ITaskFuncParams,ITaskOrder,OrderType,Payload,TaskCallbackStatus,TaskCallbackType,TaskPriority,TaskStatus,TaskType
+    ITask,
+    ITaskCallback,
+    ITaskCancelPayload,
+    ITaskCreatePayload,
+    ITaskDeletePayload,
+    ITaskFuncParams,
+    ITaskOrder,
+    OrderType,
+    Payload,
+    TaskCallbackStatus,
+    TaskCallbackType,
+    TaskPriority,
+    TaskStatus,
+    TaskType
 } from '../../_types/tasksManager';
 
 export interface IUpdateData {
@@ -278,7 +291,7 @@ export default function ({
             ctx
         );
 
-        await eventsManager.sendPubSubEvent({triggerName: TriggerNames.TASK, data: {task}}, ctx);
+        eventsManager.sendPubSubEvent({triggerName: TriggerNames.TASK, data: {task}}, ctx);
 
         return task;
     };
@@ -362,7 +375,7 @@ export default function ({
             (({dbProfiler, ...c}) => c)(ctx)
         );
 
-        await eventsManager.sendPubSubEvent({triggerName: TriggerNames.TASK, data: {task}}, ctx);
+        eventsManager.sendPubSubEvent({triggerName: TriggerNames.TASK, data: {task}}, ctx);
 
         return task.id;
     };
@@ -468,12 +481,15 @@ export default function ({
                 await _deleteTask(t, ctx);
             }
 
-            await eventsManager.sendDatabaseEvent({
-                action: EventAction.TASKS_DELETE,
-                topic: {
-                    tasks
-                }
-            }, ctx);
+            eventsManager.sendDatabaseEvent(
+                {
+                    action: EventAction.TASKS_DELETE,
+                    topic: {
+                        tasks
+                    }
+                },
+                ctx
+            );
         },
         // Master
         async initMaster(): Promise<NodeJS.Timer> {

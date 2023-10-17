@@ -21,7 +21,7 @@ interface IDeps {
     'core.infra.globalSettings'?: IGlobalSettingsRepo;
 }
 
-export default function({
+export default function ({
     'core.domain.permission.admin': adminPermissionDomain = null,
     'core.domain.eventsManager': eventsManagerDomain = null,
     'core.infra.globalSettings': globalSettingsRepo = null
@@ -43,7 +43,7 @@ export default function({
             // Save settings
             const savedSettings = await globalSettingsRepo.saveSettings({settings, ctx});
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.GLOBAL_SETTINGS_SAVE,
                     topic: null,
