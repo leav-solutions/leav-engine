@@ -66,9 +66,9 @@ export const dsTheme: ComponentProps<typeof KitApp>['customTheme'] = {
     general: {
         colors: {
             primary: {
-                primary100: customTheme.token.colorPrimary,
-                primary200: customTheme.token.colorPrimary,
-                primary300: customTheme.token.colorPrimary,
+                primary100: themeVars.primaryColorLighter,
+                primary200: themeVars.primaryColorLighter,
+                primary300: themeVars.primaryColorLighter,
                 primary400: customTheme.token.colorPrimary,
                 primary500: customTheme.token.colorPrimary,
                 primary600: customTheme.token.colorPrimary,
@@ -81,8 +81,6 @@ export const dsTheme: ComponentProps<typeof KitApp>['customTheme'] = {
             primary: {
                 colors: {
                     background: {
-                        active: customTheme.token.colorPrimary,
-                        default: customTheme.token.colorPrimary,
                         hover: themeVars.primaryColorLighter
                     },
                     border: {

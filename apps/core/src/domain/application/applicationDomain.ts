@@ -55,7 +55,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.domain.permission.admin': adminPermissionDomain = null,
     'core.domain.user': userDomain = null,
     'core.domain.eventsManager': eventsManagerDomain = null,

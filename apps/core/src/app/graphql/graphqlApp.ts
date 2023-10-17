@@ -33,7 +33,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.depsManager': depsManager = null,
     'core.domain.eventsManager': eventsManagerDomain = null,
     'core.utils': utils = null,

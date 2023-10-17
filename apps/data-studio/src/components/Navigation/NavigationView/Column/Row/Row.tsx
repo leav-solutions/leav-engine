@@ -15,13 +15,15 @@ import Checkbox from 'antd/lib/checkbox/Checkbox';
 import {SizeType} from 'antd/lib/config-provider/SizeContext';
 import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
 import TriggerPreviewsGenerationModal from 'components/shared/TriggerPreviewsGenerationModal';
+import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setNavigationPath} from 'reduxStore/navigation';
 import {setSelection} from 'reduxStore/selection';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import styled, {CSSObject} from 'styled-components';
-import {localizedTranslation} from 'utils';
+import {getFilesLibraryId, localizedTranslation} from 'utils';
+import {TreeBehavior} from '_gqlTypes/globalTypes';
 import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {
     IRecordIdentityWhoAmI,
@@ -128,6 +130,7 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
     }));
     const dispatch = useAppDispatch();
     const [displayPreviewConfirm, setDisplayPreviewConfirm] = useState(false);
+    const [activeTree] = useActiveTree();
 
     const parentElement = navigation.path[depth - 1];
     const recordLabel = treeElement.record.whoAmI.label;
@@ -235,14 +238,19 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
                   title: t('navigation.actions.classified_in'),
                   icon: <SearchOutlined />,
                   onClick: _handleClickClassifiedIn
-              },
-              {
-                  title: t('files.generate_previews'),
-                  icon: <PictureOutlined />,
-                  onClick: _handleClickGeneratePreviews
               }
           ]
         : [];
+
+    if (activeTree.behavior === TreeBehavior.files) {
+        moreMenuActions.push({
+            title: t('files.generate_previews'),
+            icon: <PictureOutlined />,
+            onClick: _handleClickGeneratePreviews
+        });
+    }
+
+    const filesLibraryId = getFilesLibraryId(activeTree);
 
     return (
         <RowWrapper onClick={addPath} isInPath={isInPath} isActive={isActive} isRecordActive={isRecordActive}>
@@ -296,6 +304,7 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
             )}
             {displayPreviewConfirm && (
                 <TriggerPreviewsGenerationModal
+                    filesLibraryId={filesLibraryId}
                     libraryId={record.library.id}
                     recordIds={[record.id]}
                     onClose={_handleClosePreviewGenerationConfirm}

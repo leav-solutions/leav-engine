@@ -17,9 +17,22 @@ import {IGetCoreEntitiesParams} from '_types/shared';
 import {ISystemTranslation} from '_types/systemTranslation';
 import {ITaskRepo} from '../../infra/task/taskRepo';
 import {TriggerNames} from '../../_types/eventsManager';
-import {IList,SortOrder} from '../../_types/list';
+import {IList, SortOrder} from '../../_types/list';
 import {
-    ITask,ITaskCallback,ITaskCancelPayload,ITaskCreatePayload,ITaskDeletePayload,ITaskFuncParams,ITaskOrder,OrderType,Payload,TaskCallbackStatus,TaskCallbackType,TaskPriority,TaskStatus,TaskType
+    ITask,
+    ITaskCallback,
+    ITaskCancelPayload,
+    ITaskCreatePayload,
+    ITaskDeletePayload,
+    ITaskFuncParams,
+    ITaskOrder,
+    OrderType,
+    Payload,
+    TaskCallbackStatus,
+    TaskCallbackType,
+    TaskPriority,
+    TaskStatus,
+    TaskType
 } from '../../_types/tasksManager';
 
 export interface IUpdateData {
