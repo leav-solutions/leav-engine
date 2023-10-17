@@ -241,7 +241,7 @@ function EditApplicationInfoForm({
                     label={t('applications.type')}
                     onChange={_handleTypeChange}
                     disabled={isReadOnly || isEditing}
-                    aria-label=""
+                    aria-label={t('applications.type')}
                     options={typeSelectOptions}
                 />
             </Form.Item>

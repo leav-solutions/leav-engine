@@ -5,6 +5,7 @@ import {InMemoryCache, InMemoryCacheConfig} from '@apollo/client';
 import {MockedProvider, MockedResponse} from '@apollo/client/testing';
 import {MockedLangContextProvider} from '@leav/ui';
 import {render, RenderOptions, RenderResult} from '@testing-library/react';
+import {KitApp} from 'aristid-ds';
 import ApplicationContext from 'context/ApplicationContext';
 import {IApplicationContext} from 'context/ApplicationContext/_types';
 import {PropsWithChildren, ReactElement} from 'react';
@@ -47,7 +48,11 @@ const Providers = ({
     return (
         <MockedLangContextProvider>
             <MockedProvider mocks={apolloMocks} cache={mockCache}>
-                <ApplicationContext.Provider value={appContextData}>{children ?? <></>}</ApplicationContext.Provider>
+                <KitApp>
+                    <ApplicationContext.Provider value={appContextData}>
+                        {children ?? <></>}
+                    </ApplicationContext.Provider>
+                </KitApp>
             </MockedProvider>
         </MockedLangContextProvider>
     );

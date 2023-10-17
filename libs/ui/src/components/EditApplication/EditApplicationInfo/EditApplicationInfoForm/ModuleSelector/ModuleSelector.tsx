@@ -40,7 +40,7 @@ function ModuleSelector({disabled, ...itemProps}: IModuleSelectorProps): JSX.Ele
                 label={t('applications.module')}
                 loading={loading}
                 disabled={disabled}
-                aria-label=""
+                aria-label={t('applications.module')}
                 options={options}
                 helper={helper}
             />
