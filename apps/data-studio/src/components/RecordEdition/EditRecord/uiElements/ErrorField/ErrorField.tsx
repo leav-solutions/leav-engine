@@ -2,18 +2,18 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FrownFilled} from '@ant-design/icons';
-import {AntdThemeToken, themeVars} from '@leav/ui';
+import {AntdThemeToken,themeVars} from '@leav/ui';
 import {ICommonFieldsSettings} from '@leav/utils';
 import {theme} from 'antd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {IFormElementProps} from '../../_types';
 
-const Wrapper = styled.div<{themeToken: AntdThemeToken}>`
+const Wrapper = styled.div<{$themeToken: AntdThemeToken}>`
     position: relative;
     border: 1px solid ${themeVars.errorColor};
     margin-bottom: 1.5em;
-    border-radius: ${p => p.themeToken.borderRadius}px;
+    border-radius: ${p => p.$themeToken.borderRadius}px;
 
     label {
         font-size: 0.9em;
@@ -66,7 +66,7 @@ function ErrorField({element}: IFormElementProps<ICommonFieldsSettings>): JSX.El
     const {token} = theme.useToken();
 
     return (
-        <Wrapper themeToken={token}>
+        <Wrapper $themeToken={token}>
             <label>{element.settings.label}</label>
             <ErrorContent>
                 <IconWrapper>

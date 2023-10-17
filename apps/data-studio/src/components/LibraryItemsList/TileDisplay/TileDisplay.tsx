@@ -22,14 +22,14 @@ const LoadingWrapper = styled.div`
     align-items: center;
 `;
 
-const Wrapper = styled.div<{size: string}>`
+const Wrapper = styled.div<{$size: string}>`
     grid-area: data;
     height: 100%;
     overflow-y: scroll;
     border-radius: 0.25rem 0.25rem 0 0;
     border-bottom: none;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(calc(${({size}) => size} + 1rem), 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(${({$size: size}) => size} + 1rem), 1fr));
     align-content: flex-start;
 `;
 
@@ -58,7 +58,7 @@ function TileDisplay(): JSX.Element {
 
     return (
         <>
-            <Wrapper size={itemPreviewSize} onClick={_handleClick}>
+            <Wrapper $size={itemPreviewSize} onClick={_handleClick}>
                 {searchState.loading ? (
                     <LoadingWrapper>
                         <Spin size="large" />

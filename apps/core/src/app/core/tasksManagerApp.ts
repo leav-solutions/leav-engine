@@ -42,7 +42,7 @@ export interface IGetTasksArgs {
     sort?: ISortParams;
 }
 
-export default function({
+export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.tasksManager': tasksManagerDomain = null,
     'core.domain.eventsManager': eventsManager = null

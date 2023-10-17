@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {ORIGIN_URL} from '../../../constants';
 import styled, {CSSObject} from 'styled-components';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {ORIGIN_URL} from '../../../constants';
 import RecordPreview from './RecordPreview';
 
 interface IRecordCardProps {

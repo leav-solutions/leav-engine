@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {themeVars} from '@leav/ui';
-import {Collapse, theme} from 'antd';
+import {Collapse,theme} from 'antd';
 import {GlobalToken} from 'antd/lib/theme/interface';
 import PropertiesList from 'components/shared/PropertiesList';
 import {useTranslation} from 'react-i18next';
@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import {isTypeStandard} from 'utils';
 import {RECORD_FORM_recordForm_elements_attribute} from '_gqlTypes/RECORD_FORM';
 
-const AttributeDetailsCollapse = styled(Collapse)<{themeToken: GlobalToken}>`
+const AttributeDetailsCollapse = styled(Collapse)<{$themeToken: GlobalToken}>`
     &&& {
         margin: 1rem;
         background: none;
@@ -22,7 +22,7 @@ const AttributeDetailsCollapse = styled(Collapse)<{themeToken: GlobalToken}>`
         .ant-collapse-content {
             background: ${themeVars.defaultBg};
             border: 1px solid ${themeVars.borderColor};
-            border-radius: ${p => p.themeToken.borderRadius}px;
+            border-radius: ${p => p.$themeToken.borderRadius}px;
         }
     }
 `;
@@ -67,7 +67,7 @@ function AttributeDetails({attribute}: IAttributeDetailsProps): JSX.Element {
             destroyInactivePanel
             bordered={false}
             ghost
-            themeToken={token}
+            $themeToken={token}
         />
     );
 }

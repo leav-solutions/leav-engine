@@ -2,7 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined} from '@ant-design/icons';
-import {Alert, Button, Card, Form, Input, Spin} from 'antd';
+import {Alert, Card, Form, Spin} from 'antd';
+import {KitButton, KitInput, KitTypography} from 'aristid-ds';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -47,14 +48,14 @@ const ResetPasswordForm = ({onSubmit, loading, resetPasswordError}: IResetPasswo
                 headStyle={{textAlign: 'center', padding: '1rem'}}
                 style={{width: '30rem'}}
             >
-                <h3> {t('resetPassword.header')}</h3>
+                <KitTypography.Title level="h3"> {t('resetPassword.header')}</KitTypography.Title>
                 <Form onFinish={_processResetPassword}>
                     <Form.Item
                         hasFeedback
                         name="newPassword"
                         rules={[{required: true, message: t('resetPassword.new_password_required')}]}
                     >
-                        <Input.Password
+                        <KitInput.Password
                             aria-label={t('resetPassword.new_password')}
                             placeholder={t('resetPassword.new_password')}
                             autoFocus
@@ -77,7 +78,7 @@ const ResetPasswordForm = ({onSubmit, loading, resetPasswordError}: IResetPasswo
                             })
                         ]}
                     >
-                        <Input.Password
+                        <KitInput.Password
                             aria-label={t('resetPassword.confirm_password')}
                             placeholder={t('resetPassword.confirm_password')}
                             value={confirmPassword}
@@ -106,17 +107,10 @@ const ResetPasswordForm = ({onSubmit, loading, resetPasswordError}: IResetPasswo
                         </Form.Item>
                     )}
                     {!loading && (
-                        <Form.Item>
-                            <Button
-                                size="large"
-                                type="primary"
-                                loading={loading}
-                                disabled={loading}
-                                htmlType="submit"
-                                block
-                            >
+                        <Form.Item style={{textAlign: 'center'}}>
+                            <KitButton type="primary" loading={loading} disabled={loading} htmlType="submit" block>
                                 {t('resetPassword.submit')}
-                            </Button>
+                            </KitButton>
                         </Form.Item>
                     )}
                 </Form>

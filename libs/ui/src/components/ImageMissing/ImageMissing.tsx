@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PictureOutlined} from '@ant-design/icons';
-import styled, {CSSObject} from 'styled-components';
+import styled from 'styled-components';
 import {themeVars} from '../../antdTheme';
 
 const Wrapper = styled.div`
@@ -16,7 +16,7 @@ const Wrapper = styled.div`
 `;
 
 interface IImageMissingProps {
-    style?: CSSObject;
+    style?: React.CSSProperties;
 }
 
 function ImageMissing({style}: IImageMissingProps): JSX.Element {

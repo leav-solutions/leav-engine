@@ -16,13 +16,13 @@ const Wrapper = styled.div`
     position: relative;
 `;
 
-const Cover = styled.div<{hasIcon: boolean; $themeToken: AntdThemeToken}>`
+const Cover = styled.div<{$hasIcon: boolean; $themeToken: AntdThemeToken}>`
     font-size: 3.5em;
     font-weight!: bold;
     letter-spacing: 0.5em;
     text-align: center;
     text-transform: uppercase;
-    text-indent: ${props => (props.hasIcon ? '0' : '0.5em')};
+    text-indent: ${props => (props.$hasIcon ? '0' : '0.5em')};
     overflow: hidden;
     height: 6rem;
     display: flex;
@@ -56,7 +56,7 @@ function ApplicationCover({application}: IApplicationCoverProps): JSX.Element {
 
     return (
         <Wrapper>
-            <Cover style={{background: bgColor, color: fontColor}} hasIcon={!!appIcon} $themeToken={token}>
+            <Cover style={{background: bgColor, color: fontColor}} $hasIcon={!!appIcon} $themeToken={token}>
                 {appIcon ? <AppImage src={appIcon} height="3rem" /> : initials}
             </Cover>
         </Wrapper>
