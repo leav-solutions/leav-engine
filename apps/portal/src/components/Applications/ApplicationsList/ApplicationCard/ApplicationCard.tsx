@@ -38,11 +38,11 @@ const EditIconWrapper = styled.div`
     }
 `;
 
-const FavoritesIconWrapper = styled.div<{isFavorite: boolean}>`
+const FavoritesIconWrapper = styled.div<{$isFavorite: boolean}>`
     position: absolute;
     top: 1em;
     right: 1em;
-    display: ${props => (props.isFavorite ? 'block' : 'none')};
+    display: ${props => (props.$isFavorite ? 'block' : 'none')};
 
     ${AppCard}:hover & {
         display: block;
@@ -103,7 +103,7 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
                 <EditIconWrapper onClick={_handleOpenEditAppModal}>
                     <SettingOutlined />
                 </EditIconWrapper>
-                <FavoritesIconWrapper onClick={_toggleFavorite} isFavorite={isFavorite}>
+                <FavoritesIconWrapper onClick={_toggleFavorite} $isFavorite={isFavorite}>
                     {isFavorite ? <StarFilled /> : <StarOutlined />}
                 </FavoritesIconWrapper>
             </AppCard>

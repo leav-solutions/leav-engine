@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {useLang, ErrorDisplay} from '@leav/ui';
+import {ErrorDisplay, useLang} from '@leav/ui';
 import {Input, List, Spin} from 'antd';
 import {useEffect, useReducer, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -26,9 +26,9 @@ const ListWrapper = styled.div`
     height: calc(100vh - 15rem);
 `;
 
-const Wrapper = styled.div<{multiple: boolean}>`
+const Wrapper = styled.div<{$multiple: boolean}>`
     display: Grid;
-    grid-template-columns: repeat(${props => (props.multiple ? 2 : 1)}, 1fr);
+    grid-template-columns: repeat(${props => (props.$multiple ? 2 : 1)}, 1fr);
     grid-column-gap: 0.3rem;
 `;
 
@@ -98,7 +98,7 @@ function AttributesSelectionList({
 
     return (
         <AttributesSelectionListStateContext.Provider value={{state, dispatch}}>
-            <Wrapper multiple={state.multiple}>
+            <Wrapper $multiple={state.multiple}>
                 <ListWrapper data-testid="attributes-list">
                     <CustomForm>
                         <Input.Search

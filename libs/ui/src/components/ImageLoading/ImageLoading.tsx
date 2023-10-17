@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Skeleton} from 'antd';
-import styled, {CSSObject} from 'styled-components';
+import styled from 'styled-components';
 
 const CustomSkeletonImage = styled(Skeleton.Image)`
     &&& {
@@ -20,7 +20,7 @@ const CustomSkeletonImage = styled(Skeleton.Image)`
 `;
 
 interface IImageLoadingProps {
-    style?: CSSObject;
+    style?: React.CSSProperties;
 }
 
 function ImageLoading({style}: IImageLoadingProps): JSX.Element {

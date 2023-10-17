@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Loading} from '@leav/ui';
-import {WorkspacePanels} from '_types/types';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import {lazy, Suspense, useEffect} from 'react';
@@ -10,9 +9,10 @@ import {useParams} from 'react-router-dom';
 import {setActivePanel} from 'reduxStore/activePanel';
 import {useAppDispatch} from 'reduxStore/store';
 import styled from 'styled-components';
+import {WorkspacePanels} from '_types/types';
 
-const VisibilityHandler = styled.div<{isActive: boolean}>`
-    display: ${p => (p.isActive ? 'block' : 'none')};
+const VisibilityHandler = styled.div<{$isActive: boolean}>`
+    display: ${p => (p.$isActive ? 'block' : 'none')};
 `;
 
 const Wrapper = styled.div`
@@ -51,13 +51,13 @@ function Workspace(): JSX.Element {
     return (
         <Wrapper>
             <Suspense fallback={<Loading />}>
-                <VisibilityHandler isActive={isHomeActive} className={WorkspacePanels.HOME}>
+                <VisibilityHandler $isActive={isHomeActive} className={WorkspacePanels.HOME}>
                     <Home />
                 </VisibilityHandler>
-                <VisibilityHandler isActive={isLibraryActive} className={WorkspacePanels.LIBRARY}>
+                <VisibilityHandler $isActive={isLibraryActive} className={WorkspacePanels.LIBRARY}>
                     <LibraryHome library={libraryId} key={libraryId} />
                 </VisibilityHandler>
-                <VisibilityHandler isActive={isTreeActive} className={WorkspacePanels.TREE}>
+                <VisibilityHandler $isActive={isTreeActive} className={WorkspacePanels.TREE}>
                     <Navigation tree={treeId} key={treeId} />
                 </VisibilityHandler>
             </Suspense>

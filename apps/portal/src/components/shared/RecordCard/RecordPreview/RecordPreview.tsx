@@ -9,13 +9,13 @@ interface IRecordPreviewProps {
     label: string;
     color: string | null;
     image: string | null;
-    style?: CSSObject;
+    style?: React.CSSProperties & CSSObject;
 }
 
 interface IGeneratedPreviewProps {
     bgColor: string;
     fontColor: string;
-    style?: CSSObject;
+    style?: React.CSSProperties & CSSObject;
 }
 
 const GeneratedPreview = styled.div<IGeneratedPreviewProps>`
@@ -46,7 +46,12 @@ const ImagePreview = styled.div`
 `;
 ImagePreview.displayName = 'ImagePreview';
 
-function RecordPreview({label, color, image, style}: IRecordPreviewProps): JSX.Element {
+const RecordPreviewComp = React.memo(function RecordPreview({
+    label,
+    color,
+    image,
+    style
+}: IRecordPreviewProps): JSX.Element {
     if (image) {
         return (
             <ImagePreview>
@@ -65,6 +70,6 @@ function RecordPreview({label, color, image, style}: IRecordPreviewProps): JSX.E
             {initial}
         </GeneratedPreview>
     );
-}
+});
 
-export default React.memo(RecordPreview);
+export default RecordPreviewComp;

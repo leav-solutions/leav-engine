@@ -4,12 +4,13 @@ exports[`DefineTreePermissionsView Snapshot test 1`] = `
 LoadedCheerio {
   "0": Node {
     "attribs": {
-      "class": "sc-bczRLJ inimdH",
+      "class": "sc-beyTiQ efrmPj",
     },
     "children": [
       Node {
         "attribs": {
-          "class": "sc-gsnTZi icQJRz",
+          "class": "sc-guDMob jydUqb",
+          "columnsnumber": "3",
         },
         "children": [
           Node {
@@ -43,7 +44,8 @@ LoadedCheerio {
         "namespace": "http://www.w3.org/1999/xhtml",
         "next": Node {
           "attribs": {
-            "class": "sc-gsnTZi icQJRz",
+            "class": "sc-guDMob jydUqb",
+            "columnsnumber": "3",
           },
           "children": [
             Node {
@@ -77,7 +79,8 @@ LoadedCheerio {
           "namespace": "http://www.w3.org/1999/xhtml",
           "next": Node {
             "attribs": {
-              "class": "sc-gsnTZi icQJRz",
+              "class": "sc-guDMob jydUqb",
+              "columnsnumber": "3",
             },
             "children": [
               Node {
@@ -115,9 +118,11 @@ LoadedCheerio {
             "type": "tag",
             "x-attribsNamespace": {
               "class": undefined,
+              "columnsnumber": undefined,
             },
             "x-attribsPrefix": {
               "class": undefined,
+              "columnsnumber": undefined,
             },
           },
           "parent": [Circular],
@@ -125,9 +130,11 @@ LoadedCheerio {
           "type": "tag",
           "x-attribsNamespace": {
             "class": undefined,
+            "columnsnumber": undefined,
           },
           "x-attribsPrefix": {
             "class": undefined,
+            "columnsnumber": undefined,
           },
         },
         "parent": [Circular],
@@ -135,14 +142,17 @@ LoadedCheerio {
         "type": "tag",
         "x-attribsNamespace": {
           "class": undefined,
+          "columnsnumber": undefined,
         },
         "x-attribsPrefix": {
           "class": undefined,
+          "columnsnumber": undefined,
         },
       },
       Node {
         "attribs": {
-          "class": "sc-gsnTZi icQJRz",
+          "class": "sc-guDMob jydUqb",
+          "columnsnumber": "3",
         },
         "children": [
           Node {
@@ -176,7 +186,8 @@ LoadedCheerio {
         "namespace": "http://www.w3.org/1999/xhtml",
         "next": Node {
           "attribs": {
-            "class": "sc-gsnTZi icQJRz",
+            "class": "sc-guDMob jydUqb",
+            "columnsnumber": "3",
           },
           "children": [
             Node {
@@ -214,15 +225,18 @@ LoadedCheerio {
           "type": "tag",
           "x-attribsNamespace": {
             "class": undefined,
+            "columnsnumber": undefined,
           },
           "x-attribsPrefix": {
             "class": undefined,
+            "columnsnumber": undefined,
           },
         },
         "parent": [Circular],
         "prev": Node {
           "attribs": {
-            "class": "sc-gsnTZi icQJRz",
+            "class": "sc-guDMob jydUqb",
+            "columnsnumber": "3",
           },
           "children": [
             Node {
@@ -260,22 +274,27 @@ LoadedCheerio {
           "type": "tag",
           "x-attribsNamespace": {
             "class": undefined,
+            "columnsnumber": undefined,
           },
           "x-attribsPrefix": {
             "class": undefined,
+            "columnsnumber": undefined,
           },
         },
         "type": "tag",
         "x-attribsNamespace": {
           "class": undefined,
+          "columnsnumber": undefined,
         },
         "x-attribsPrefix": {
           "class": undefined,
+          "columnsnumber": undefined,
         },
       },
       Node {
         "attribs": {
-          "class": "sc-gsnTZi icQJRz",
+          "class": "sc-guDMob jydUqb",
+          "columnsnumber": "3",
         },
         "children": [
           Node {
@@ -311,7 +330,8 @@ LoadedCheerio {
         "parent": [Circular],
         "prev": Node {
           "attribs": {
-            "class": "sc-gsnTZi icQJRz",
+            "class": "sc-guDMob jydUqb",
+            "columnsnumber": "3",
           },
           "children": [
             Node {
@@ -347,7 +367,8 @@ LoadedCheerio {
           "parent": [Circular],
           "prev": Node {
             "attribs": {
-              "class": "sc-gsnTZi icQJRz",
+              "class": "sc-guDMob jydUqb",
+              "columnsnumber": "3",
             },
             "children": [
               Node {
@@ -385,25 +406,31 @@ LoadedCheerio {
             "type": "tag",
             "x-attribsNamespace": {
               "class": undefined,
+              "columnsnumber": undefined,
             },
             "x-attribsPrefix": {
               "class": undefined,
+              "columnsnumber": undefined,
             },
           },
           "type": "tag",
           "x-attribsNamespace": {
             "class": undefined,
+            "columnsnumber": undefined,
           },
           "x-attribsPrefix": {
             "class": undefined,
+            "columnsnumber": undefined,
           },
         },
         "type": "tag",
         "x-attribsNamespace": {
           "class": undefined,
+          "columnsnumber": undefined,
         },
         "x-attribsPrefix": {
           "class": undefined,
+          "columnsnumber": undefined,
         },
       },
     ],

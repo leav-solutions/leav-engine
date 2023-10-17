@@ -8,8 +8,8 @@ import {IRecordIdentityWhoAmI} from '../../types/RecordIdentity';
 export interface IRecordCardProps {
     record: IRecordIdentityWhoAmI;
     size: PreviewSize;
-    style?: CSSObject;
-    previewStyle?: CSSObject;
+    style?: React.CSSProperties & CSSObject;
+    previewStyle?: React.CSSProperties & CSSObject;
     lang?: string[];
     withPreview?: boolean;
     withLibrary?: boolean;
