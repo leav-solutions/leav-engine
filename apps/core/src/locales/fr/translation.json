@@ -201,7 +201,8 @@
         "export_description": {
             "elements_retrieval": "Récupération des fichiers",
             "excel_writing": "Ecriture du fichier excel"
-        }
+        },
+        "preview_label": "Génération de previews {{library}}"
     },
     "import": {
         "add_value_error": "Impossible d'ajouter la valeur '{{value}}' à l'attribut '{{attributeId}}'",

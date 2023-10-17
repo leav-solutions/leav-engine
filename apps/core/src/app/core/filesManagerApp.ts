@@ -46,7 +46,7 @@ interface ICreateDirectoryParams {
     nodeId: string;
 }
 
-export default function ({
+export default function({
     'core.domain.filesManager': filesManagerDomain = null,
     'core.app.helpers.initQueryContext': initQueryContext,
     'core.app.auth': authApp = null,
@@ -175,7 +175,7 @@ export default function ({
                             },
                             ctx: IQueryInfos
                         ): Promise<boolean> {
-                            return filesManagerDomain.forcePreviewsGeneration({
+                            await filesManagerDomain.forcePreviewsGeneration({
                                 libraryId,
                                 recordIds,
                                 filters,
@@ -183,6 +183,8 @@ export default function ({
                                 previewVersionSizeNames,
                                 ctx
                             });
+
+                            return true;
                         }
                     },
                     Subscription: {

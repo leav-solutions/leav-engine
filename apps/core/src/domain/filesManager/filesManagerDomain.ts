@@ -43,6 +43,8 @@ import {requestPreviewGeneration} from './helpers/handlePreview';
 import {initPreviewResponseHandler} from './helpers/handlePreviewResponse';
 import {IMessagesHandlerHelper} from './helpers/messagesHandler/messagesHandler';
 import {systemPreviewsSettings} from './_constants';
+import {ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
+import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 
 interface IForcePreviewsGenerationParams {
     ctx: IQueryInfos;
@@ -80,7 +82,7 @@ interface IIsFileExistsAsChild {
 export interface IFilesManagerDomain {
     init(): Promise<void>;
     getPreviewVersion(): ILibrary['previewsSettings'];
-    forcePreviewsGeneration(params: IForcePreviewsGenerationParams): Promise<boolean>;
+    forcePreviewsGeneration(params: IForcePreviewsGenerationParams, task?: ITaskFuncParams): Promise<string>;
     getRootPathByKey(rootKey: string): string;
     getOriginalPath(params: IGetOriginalPathParams): Promise<string>;
     storeFiles(
@@ -107,11 +109,12 @@ interface IDeps {
     'core.domain.helpers.storeUploadFile'?: StoreUploadFileFunc;
     'core.domain.helpers.createDirectory'?: CreateDirectoryFunc;
     'core.infra.record'?: IRecordRepo;
+    'core.domain.tasksManager'?: ITasksManagerDomain;
     'core.domain.eventsManager'?: IEventsManagerDomain;
     translator?: i18n;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.utils': utils = null,
     'core.infra.amqpService': amqpService = null,
@@ -124,6 +127,7 @@ export default function ({
     'core.domain.helpers.storeUploadFile': storeUploadFile = null,
     'core.domain.helpers.createDirectory': createDirectory = null,
     'core.domain.library': libraryDomain = null,
+    'core.domain.tasksManager': tasksManagerDomain = null,
     'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
     'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent = null,
     'core.domain.eventsManager': eventsManager = null,
@@ -515,19 +519,46 @@ export default function ({
         getPreviewVersion() {
             return systemPreviewsSettings;
         },
-        async forcePreviewsGeneration({
-            ctx,
-            libraryId,
-            failedOnly,
-            filters,
-            recordIds = [],
-            previewVersionSizeNames
-        }: IForcePreviewsGenerationParams): Promise<boolean> {
+        async forcePreviewsGeneration(params: IForcePreviewsGenerationParams, task?: ITaskFuncParams): Promise<string> {
+            const {ctx, libraryId, failedOnly, filters, recordIds = [], previewVersionSizeNames} = params;
+
+            if (typeof task?.id === 'undefined') {
+                const newTaskId = uuidv4();
+
+                await tasksManagerDomain.createTask(
+                    {
+                        id: newTaskId,
+                        label: config.lang.available.reduce((labels, lang) => {
+                            labels[lang] = `${translator.t('tasks.preview_label', {
+                                lng: lang,
+                                library: params.libraryId
+                            })}`;
+                            return labels;
+                        }, {}),
+                        func: {
+                            moduleName: 'domain',
+                            subModuleName: 'filesManager',
+                            name: 'forcePreviewsGeneration',
+                            args: params
+                        },
+                        role: {
+                            type: TaskType.IMPORT_DATA
+                        },
+                        priority: TaskPriority.MEDIUM,
+                        startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
+                        ...(!!task?.callbacks && {callbacks: task.callbacks})
+                    },
+                    ctx
+                );
+
+                return newTaskId;
+            }
+
             const libraryProps = await libraryDomain.getLibraryProperties(libraryId, ctx);
 
             if (!recordIds.length && !filters && libraryProps.behavior === LibraryBehavior.DIRECTORIES) {
                 // Nothing to do if we ask to generate previews for directories
-                return false;
+                return task.id;
             }
 
             // If we have both filters and recordIds, ignore filters
@@ -555,7 +586,7 @@ export default function ({
 
             if (!records.length) {
                 // No records found, nothing to do
-                return false;
+                return task.id;
             }
 
             // If library is a directory library: recreate all previews of subfiles
@@ -643,7 +674,7 @@ export default function ({
                 }
             }
 
-            return generationRequested > 0;
+            return task.id;
         },
         getRootPathByKey(rootKey) {
             return getRootPathByKey(rootKey, config);

@@ -199,7 +199,8 @@
         "export_description": {
             "elements_retrieval": "Elements retrieval",
             "excel_writing": "Excel file writing"
-        }
+        },
+        "preview_label": "{{library}} previews generation"
     },
     "import": {
         "add_value_error": "Cannot add value '{{value}}' to attribute '{{attributeId}}'",
