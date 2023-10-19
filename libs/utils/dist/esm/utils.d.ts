@@ -84,3 +84,4 @@ export declare const formatId: (id: string) => string;
  * @see http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
  */
 export declare const simpleStringHash: (str: string) => number;
+export declare const getFlagByLang: (lang: string) => string;

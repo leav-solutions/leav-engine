@@ -35,9 +35,9 @@ import {
 
 interface IRowProps {
     style?: CSSObject;
-    isInPath: boolean;
-    isActive: boolean;
-    isRecordActive: boolean;
+    $isInPath: boolean;
+    $isActive: boolean;
+    $isRecordActive: boolean;
 }
 
 const _getGridTemplateColumns = (isActive: boolean, isRecordActive) => {
@@ -65,17 +65,17 @@ const RowWrapper = styled.div<IRowProps>`
     max-width: ${themeVars.navigationColumnWidth};
     overflow: hidden;
 
-    grid-template-columns: ${props => _getGridTemplateColumns(props.isActive, props.isRecordActive)};
+    grid-template-columns: ${props => _getGridTemplateColumns(props.$isActive, props.$isRecordActive)};
     padding: 1rem 0.5rem;
     background: ${props => {
-        if (props.isInPath) {
+        if (props.$isInPath) {
             return themeVars.activeColor;
         }
         return 'none';
     }};
 
     &:hover {
-        ${props => (props.isInPath ? '' : `background: ${themeVars.activeColor}`)};
+        ${props => (props.$isInPath ? '' : `background: ${themeVars.activeColor}`)};
 
         .checkbox-wrapper {
             opacity: 1;
@@ -86,7 +86,7 @@ const RowWrapper = styled.div<IRowProps>`
         justify-self: flex-end;
     }
 
-    :not(:hover) .floating-menu {
+    &:not(:hover) .floating-menu {
         display: none;
     }
 `;
@@ -102,11 +102,11 @@ const RecordCardWrapper = styled.div`
 `;
 
 interface ICheckboxWrapperProps {
-    selectionActive: boolean;
+    $selectionActive: boolean;
 }
 
 const CheckboxWrapper = styled.div<ICheckboxWrapperProps>`
-    opacity: ${({selectionActive}) => (selectionActive ? 1 : 0)};
+    opacity: ${({$selectionActive: selectionActive}) => (selectionActive ? 1 : 0)};
     transition: 100ms ease;
 
     :hover {
@@ -242,7 +242,7 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
           ]
         : [];
 
-    if (activeTree.behavior === TreeBehavior.files) {
+    if (activeTree?.behavior === TreeBehavior.files) {
         moreMenuActions.push({
             title: t('files.generate_previews'),
             icon: <PictureOutlined />,
@@ -253,7 +253,7 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
     const filesLibraryId = getFilesLibraryId(activeTree);
 
     return (
-        <RowWrapper onClick={addPath} isInPath={isInPath} isActive={isActive} isRecordActive={isRecordActive}>
+        <RowWrapper onClick={addPath} $isInPath={isInPath} $isActive={isActive} $isRecordActive={isRecordActive}>
             <FloatingMenu
                 actions={menuActions}
                 moreActions={moreMenuActions}
@@ -273,7 +273,7 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
                         e.stopPropagation();
                     }}
                     className="checkbox-wrapper"
-                    selectionActive={!!selectionState.selection.selected.length}
+                    $selectionActive={!!selectionState.selection.selected.length}
                 >
                     <Checkbox onClick={handleCheckboxOnClick} checked={isChecked} />
                 </CheckboxWrapper>

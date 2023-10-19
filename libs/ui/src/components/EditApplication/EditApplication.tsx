@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Tabs, TabsProps} from 'antd';
+import {KitTabs} from 'aristid-ds';
+import {ComponentProps} from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {useSharedTranslation} from '../../hooks/useSharedTranslation';
 import {useGetApplicationByIdQuery} from '../../_gqlTypes';
@@ -48,7 +49,7 @@ function EditApplication({
         return appInfoComp;
     }
 
-    const tabs: TabsProps['items'] = [
+    const tabs: ComponentProps<typeof KitTabs>['items'] = [
         {
             key: 'info',
             label: t('applications.info'),
@@ -57,7 +58,7 @@ function EditApplication({
         ...additionalTabs
     ];
 
-    return <Tabs items={tabs} defaultActiveKey={activeTab} />;
+    return <KitTabs items={tabs} defaultActiveKey={activeTab} />;
 }
 
 export default EditApplication;

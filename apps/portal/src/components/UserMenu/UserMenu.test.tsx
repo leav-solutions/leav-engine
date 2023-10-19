@@ -36,13 +36,16 @@ describe('UserMenu', () => {
         userEvent.click(userLabel);
 
         await act(async () => {
-            userEvent.click(screen.getByRole('menuitem', {name: /logout/}));
+            userEvent.click(screen.getByText(/logout/i));
         });
         expect(mockLogout).toHaveBeenCalled();
 
         userEvent.click(userLabel);
 
-        userEvent.click(screen.getByRole('button', {name: 'fr', hidden: true}));
+        // Hover "more" to display flag actions
+        userEvent.click(screen.getByRole('img', {name: 'more', hidden: true}));
+
+        userEvent.click(await screen.findByText(/fr/i));
         expect(mockLangContext.setLang).toHaveBeenCalled();
     });
 });

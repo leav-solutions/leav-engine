@@ -3,8 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AppstoreOutlined, ClockCircleOutlined, StarFilled} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
-import {Divider, message} from 'antd';
 import {Loading} from '@leav/ui';
+import {message} from 'antd';
+import {KitDivider} from 'aristid-ds';
 import {getUserDataQuery} from 'queries/userData/getUserData';
 import {saveUserData} from 'queries/userData/saveUserData';
 import {useState} from 'react';
@@ -31,6 +32,7 @@ const ListWrapper = styled.div`
     flex-wrap: wrap;
     justify-content: flex-start;
     align-content: flex-start;
+    gap: 1rem;
 `;
 
 const dividerIconStyle = {marginRight: '0.5em'};
@@ -133,10 +135,10 @@ function ApplicationsList({applications}: IApplicationsListProps): JSX.Element {
         <Wrapper>
             {!!favoriteApps.length && (
                 <>
-                    <Divider orientation="left" orientationMargin="0">
+                    <KitDivider orientation="left">
                         <StarFilled style={dividerIconStyle} />
                         {t('favorites')}
-                    </Divider>
+                    </KitDivider>
                     <ListWrapper data-testid="favorites-list">
                         {sortedFavorites.map(app => (
                             <ApplicationCard
@@ -151,10 +153,10 @@ function ApplicationsList({applications}: IApplicationsListProps): JSX.Element {
             )}
             {!!consultedApps.length && (
                 <>
-                    <Divider orientation="left" orientationMargin="0">
+                    <KitDivider orientation="left">
                         <ClockCircleOutlined style={dividerIconStyle} />
                         {t('consulted_apps')}
-                    </Divider>
+                    </KitDivider>
                     <ListWrapper data-testid="consulted-list">
                         {sortedConsulted.map(app => (
                             <ApplicationCard application={app} key={app.id} onChangeFavorite={_handleChangeFavorite} />
@@ -164,10 +166,10 @@ function ApplicationsList({applications}: IApplicationsListProps): JSX.Element {
             )}
             {!!otherApps.length && (
                 <>
-                    <Divider orientation="left" orientationMargin="0">
+                    <KitDivider orientation="left">
                         <AppstoreOutlined style={dividerIconStyle} />
                         {t('other_applications')}
-                    </Divider>
+                    </KitDivider>
                     <ListWrapper data-testid="others-list">
                         {otherApps.map(app => (
                             <ApplicationCard application={app} key={app.id} onChangeFavorite={_handleChangeFavorite} />

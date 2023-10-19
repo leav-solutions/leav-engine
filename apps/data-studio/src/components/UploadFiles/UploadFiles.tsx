@@ -117,7 +117,7 @@ function UploadFiles({
         iconRender: (file: UploadFile) => {
             if (file.status === 'uploading') {
                 return <LoadingOutlined />;
-            } else if (file.status === 'success') {
+            } else if (file.status === 'done') {
                 return <CheckCircleTwoTone twoToneColor={token.colorSuccess} />;
             }
 
@@ -196,7 +196,7 @@ function UploadFiles({
                 prevState.map(f => {
                     if (f.uid === uploadData.uid) {
                         f.percent = uploadData.progress.percentage;
-                        f.status = uploadData.progress.percentage === 100 ? 'success' : 'uploading';
+                        f.status = uploadData.progress.percentage === 100 ? 'done' : 'uploading';
                     }
 
                     return f;

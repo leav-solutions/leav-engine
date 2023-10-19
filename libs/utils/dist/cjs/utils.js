@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.simpleStringHash = exports.formatId = exports._getInitialEngine = exports.getInitials = exports.getCallStack = exports.getFileType = exports.getLibraryGraphqlNames = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
+exports.getFlagByLang = exports.simpleStringHash = exports.formatId = exports._getInitialEngine = exports.getInitials = exports.getCallStack = exports.getFileType = exports.getLibraryGraphqlNames = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
@@ -279,4 +279,20 @@ const simpleStringHash = (str) => {
     return Math.abs(hash);
 };
 exports.simpleStringHash = simpleStringHash;
+const getFlagByLang = (lang) => {
+    var _a;
+    const flagsByLang = {
+        en: '🇬🇧',
+        es: '🇪🇸',
+        fr: '🇫🇷',
+        de: '🇩🇪',
+        zh: '🇨🇳',
+        ru: '🇷🇺',
+        pt: '🇵🇹',
+        ja: '🇯🇵',
+        ko: '🇰🇷' // Korean
+    };
+    return (_a = flagsByLang[lang]) !== null && _a !== void 0 ? _a : '';
+};
+exports.getFlagByLang = getFlagByLang;
 //# sourceMappingURL=utils.js.map

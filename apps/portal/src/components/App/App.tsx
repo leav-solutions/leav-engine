@@ -2,16 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {ErrorDisplay, LangContext, Loading, customTheme, useAntdLocale, useAppLang} from '@leav/ui';
+import {dsTheme, ErrorDisplay, LangContext, Loading, themeVars, useAntdLocale, useAppLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {GET_APPLICATIONS, GET_APPLICATIONSVariables} from '_gqlTypes/GET_APPLICATIONS';
-import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
-import {GET_LANGS} from '_gqlTypes/GET_LANGS';
-import {ME} from '_gqlTypes/ME';
 import {ConfigProvider, Layout, theme} from 'antd';
+import {KitApp} from 'aristid-ds';
 import Applications from 'components/Applications';
-import UserMenu from 'components/UserMenu';
 import AppIcon from 'components/shared/AppIcon';
+import UserMenu from 'components/UserMenu';
 import ApplicationContext from 'context/ApplicationContext';
 import UserContext from 'context/UserContext';
 import {useApplicationEventsSubscription} from 'hooks/useApplicationEventsSubscription';
@@ -23,6 +20,10 @@ import {getMe} from 'queries/me/me';
 import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled, {ThemeProvider} from 'styled-components';
+import {GET_APPLICATIONS, GET_APPLICATIONSVariables} from '_gqlTypes/GET_APPLICATIONS';
+import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
+import {GET_LANGS} from '_gqlTypes/GET_LANGS';
+import {ME} from '_gqlTypes/ME';
 import {APP_ENDPOINT} from '../../constants';
 
 const Header = styled(Layout.Header)`
@@ -35,7 +36,7 @@ const Header = styled(Layout.Header)`
 const Content = styled(Layout.Content)`
     display: grid;
     grid-template-rows: 3rem 1fr;
-    height: calc(100vh - 3rem);
+    height: calc(100vh - 4.5rem);
     overflow-y: auto;
     background: #fff;
 `;
@@ -127,16 +128,18 @@ function App(): JSX.Element {
             >
                 <ApplicationContext.Provider value={appContextData}>
                     <UserContext.Provider value={userData.me}>
-                        <ConfigProvider theme={customTheme} locale={locale}>
-                            <Layout>
-                                <Header>
-                                    <AppIcon size="tiny" style={{maxHeight: '2rem', margin: 'auto'}} />
-                                    <UserMenu />
-                                </Header>
-                                <Content>
-                                    <Applications />
-                                </Content>
-                            </Layout>
+                        <ConfigProvider locale={locale}>
+                            <KitApp customTheme={dsTheme}>
+                                <Layout>
+                                    <Header style={{background: themeVars.secondaryBg}}>
+                                        <AppIcon size="tiny" style={{maxHeight: '2rem', margin: 'auto'}} />
+                                        <UserMenu />
+                                    </Header>
+                                    <Content>
+                                        <Applications />
+                                    </Content>
+                                </Layout>
+                            </KitApp>
                         </ConfigProvider>
                     </UserContext.Provider>
                 </ApplicationContext.Provider>

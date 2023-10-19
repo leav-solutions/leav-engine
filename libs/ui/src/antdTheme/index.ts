@@ -45,7 +45,7 @@ export const customTheme: ThemeConfig = {
     },
     components: {
         Layout: {
-            colorBgHeader: themeVars.secondaryBg,
+            headerBg: themeVars.secondaryBg,
             controlHeight: 24 // Used by antd to compute the height of the header (2 * controlHeight)
         },
         Dropdown: {
@@ -66,13 +66,13 @@ export const dsTheme: ComponentProps<typeof KitApp>['customTheme'] = {
     general: {
         colors: {
             primary: {
-                primary100: themeVars.primaryColorLighter,
-                primary200: themeVars.primaryColorLighter,
-                primary300: themeVars.primaryColorLighter,
-                primary400: customTheme.token.colorPrimary,
-                primary500: customTheme.token.colorPrimary,
-                primary600: customTheme.token.colorPrimary,
-                primary700: customTheme.token.colorPrimary
+                primary100: '#ddf1fd',
+                primary200: '#98d6f8',
+                primary300: '#54baf4',
+                primary400: themeVars.primaryColor,
+                primary500: '#0d80c2',
+                primary600: '#0b6aa0',
+                primary700: '#08537d'
             }
         }
     },

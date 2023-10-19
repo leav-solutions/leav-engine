@@ -3,17 +3,26 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined} from '@ant-design/icons';
 import {useQuery} from '@apollo/client';
-import {ErrorDisplay, Loading, useLang} from '@leav/ui';
+import {dsTheme, ErrorDisplay, Loading, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {FloatButton} from 'antd';
 import {useApplicationsPermissions} from 'hooks/useApplicationsPermissions';
 import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
+import {styled} from 'styled-components';
 import {GET_APPLICATIONS, GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
 import ApplicationsList from './ApplicationsList';
 import ApplicationsSearch from './ApplicationsSearch';
 import {EditApplicationModal} from './EditApplicationModal';
+
+const PrimaryFloatButton = styled(FloatButton)`
+    background-color: ${dsTheme.general.colors.primary.primary400};
+
+    .ant-float-btn-body {
+        background-color: ${dsTheme.general.colors.primary.primary400};
+    }
+`;
 
 function Applications(): JSX.Element {
     const {t} = useTranslation();
@@ -69,7 +78,7 @@ function Applications(): JSX.Element {
             <ApplicationsSearch onSearch={_handleSearch} />
             <ApplicationsList applications={applications} />
             {canCreate && (
-                <FloatButton
+                <PrimaryFloatButton
                     data-testid="create-app-button"
                     tooltip={t('application.create')}
                     type="primary"
