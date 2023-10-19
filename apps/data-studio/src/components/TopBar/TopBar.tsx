@@ -33,7 +33,7 @@ const MenuItem = styled.div<IMenuItemProps>`
     align-items: center;
     transition: 275ms ease-out;
     padding: 0 0.5rem;
-    background: ${props => (props.isActive ? themeVars.primaryColor : 'none')};
+    background: ${props => (props.$isActive ? themeVars.primaryColor : 'none')};
 
     & > * {
         margin: 0;
@@ -58,7 +58,7 @@ const WrapperHeaderInfo = styled.div`
 `;
 
 interface IMenuItemProps {
-    isActive?: boolean;
+    $isActive?: boolean;
 }
 
 const InfoButton = styled(Button)`
@@ -112,7 +112,7 @@ function TopBar({userPanelVisible, toggleUserPanelVisible, nbNotifs}: ITopBarPro
                 data-testid="MenuItemUser"
                 key={userPanelKey}
                 onClick={handleUserPanelClick}
-                isActive={userPanelVisible}
+                $isActive={userPanelVisible}
             >
                 <UserMenu data-testid="UserMenu" />
             </MenuItemUser>

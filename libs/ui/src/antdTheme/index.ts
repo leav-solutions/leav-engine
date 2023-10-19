@@ -45,7 +45,7 @@ export const customTheme: ThemeConfig = {
     },
     components: {
         Layout: {
-            colorBgHeader: themeVars.secondaryBg,
+            headerBg: themeVars.secondaryBg,
             controlHeight: 24 // Used by antd to compute the height of the header (2 * controlHeight)
         },
         Dropdown: {

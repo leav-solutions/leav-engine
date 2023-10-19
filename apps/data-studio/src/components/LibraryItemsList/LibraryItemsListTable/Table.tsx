@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {themeVars, useLang, Loading} from '@leav/ui';
+import {Loading, themeVars, useLang} from '@leav/ui';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import useSearchReducer from 'hooks/useSearchReducer';
 import get from 'lodash/get';
@@ -29,7 +29,7 @@ interface ITableColumn extends UseTableColumnOptions<ITableRow> {
 }
 
 interface ICustomTableProps {
-    scrollHorizontalActive: boolean;
+    $scrollHorizontalActive: boolean;
 }
 
 export const INFOS_COLUMN_WIDTH = '350px';
@@ -272,7 +272,7 @@ const Table = () => {
                 className="table sticky"
                 data-testid="table"
                 onScroll={handleScroll}
-                scrollHorizontalActive={scrollHorizontalActive}
+                $scrollHorizontalActive={scrollHorizontalActive}
             >
                 <TableHead className="header sticky">
                     {headerGroups.map(headerGroup => (

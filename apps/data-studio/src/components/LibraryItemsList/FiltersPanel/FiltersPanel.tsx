@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DownOutlined} from '@ant-design/icons';
 import {themeVars} from '@leav/ui';
-import {Button, Dropdown} from 'antd';
+import {Button, Dropdown, Space} from 'antd';
 import AvailableSoon from 'components/shared/AvailableSoon';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
@@ -47,7 +47,7 @@ const Header = styled.div`
         :last-of-type {
             display: flex;
             align-items: center;
-            justify-content: flex-end;
+            justify-content: center;
             column-gap: 8px;
             grid-template-columns: repeat(2, auto);
         }
@@ -81,7 +81,7 @@ function FiltersPanel(): JSX.Element {
         searchDispatch({type: SearchActionTypes.ENABLE_FILTERS});
     };
 
-    const handleHide = () => {
+    const _handleHide = () => {
         dispatch(
             setDisplaySide({
                 visible: false,
@@ -160,18 +160,17 @@ function FiltersPanel(): JSX.Element {
                         ]
                     }}
                 >
-                    <Button type={'text'}>
+                    <Button type="text" style={{display: 'inline-flex'}}>
                         {t('filters.filters')}
                         <DownOutlined style={{marginTop: '5px', marginLeft: '-3px'}} />
                     </Button>
                 </Dropdown>
-                <div>
+                <Space size="small">
                     <Button disabled={!searchState.filters.length} onClick={_handleApplyFilters}>
                         {t('filters.apply')}
                     </Button>
-
-                    <Button onClick={handleHide} icon={<IconClosePanel />}></Button>
-                </div>
+                    <Button onClick={_handleHide} icon={<IconClosePanel />} />
+                </Space>
             </Header>
 
             <FiltersWrapper>
