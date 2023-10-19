@@ -95,6 +95,7 @@ module.exports = {
         rootKeys: {
             files1: 'files'
         },
+        previewRequestsNumber: process.env.PREVIEW_REQUESTS_NUMBER || 10, // number of previews requested at the same time on manual previews generation
         userId: process.env.FM_USER_ID || '2',
         userGroupsIds: process.env.FM_USER_GROUPS_IDS || '2',
         allowFilesList: process.env.ALLOW_FILES_LIST || '',
@@ -137,7 +138,7 @@ module.exports = {
         directory: process.env.IMPORT_DIR || '/imports',
         endpoint: process.env.IMPORT_ENDPOINT || 'imports',
         sizeLimit: process.env.IMPORT_SIZE_LIMIT || 10, // megabytes
-        groupData: process.env.IMPORT_GROUP_DATA || 50 // number of elements processed at the same time,
+        groupData: process.env.IMPORT_GROUP_DATA || 50 // number of elements processed at the same time
     },
     preview: {
         directory: process.env.PREVIEWS_DIRECTORY || '/results'

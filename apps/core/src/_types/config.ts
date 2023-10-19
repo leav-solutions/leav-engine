@@ -119,6 +119,7 @@ export interface IFilesManager {
     rootKeys: {
         files1: string;
     };
+    previewRequestsNumber: number;
     userId: string;
     userGroupsIds: string;
     allowFilesList: string;

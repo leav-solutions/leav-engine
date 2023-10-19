@@ -14,16 +14,22 @@ export const validateConfig = (conf: IConfig) => {
             port: Joi.number().required(),
             publicUrl: Joi.string().required(),
             wsUrl: Joi.string().required(),
-            uploadLimit: Joi.alternatives().try(Joi.string(), Joi.number()).required(),
+            uploadLimit: Joi.alternatives()
+                .try(Joi.string(), Joi.number())
+                .required(),
             supportEmail: Joi.string().required(),
             allowIntrospection: Joi.boolean().required(),
             admin: {
                 login: Joi.string().required(),
                 password: Joi.string().required(),
-                email: Joi.string().email().required()
+                email: Joi.string()
+                    .email()
+                    .required()
             },
             systemUser: {
-                email: Joi.string().email().required()
+                email: Joi.string()
+                    .email()
+                    .required()
             }
         }),
         db: Joi.object().keys({
@@ -55,7 +61,9 @@ export const validateConfig = (conf: IConfig) => {
             }
         }),
         lang: Joi.object().keys({
-            available: Joi.array().items(Joi.string()).required(),
+            available: Joi.array()
+                .items(Joi.string())
+                .required(),
             default: Joi.string().required()
         }),
         logs: Joi.object().keys({
@@ -97,10 +105,15 @@ export const validateConfig = (conf: IConfig) => {
             rootKeys: Joi.object().keys({
                 files1: Joi.string().required()
             }),
+            previewRequestsNumber: Joi.number().required(),
             userId: Joi.string().required(),
             userGroupsIds: Joi.string().required(),
-            allowFilesList: Joi.string().required().allow(''),
-            ignoreFilesList: Joi.string().required().allow('')
+            allowFilesList: Joi.string()
+                .required()
+                .allow(''),
+            ignoreFilesList: Joi.string()
+                .required()
+                .allow('')
         }),
         indexationManager: Joi.object().keys({
             queues: Joi.object().keys({
@@ -142,7 +155,9 @@ export const validateConfig = (conf: IConfig) => {
             sizeLimit: Joi.number().required(),
             groupData: Joi.number().required()
         }),
-        plugins: Joi.object().keys().unknown(),
+        plugins: Joi.object()
+            .keys()
+            .unknown(),
         preview: Joi.object().keys({
             directory: Joi.string().required()
         }),

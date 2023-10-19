@@ -26,6 +26,7 @@ import filesManager, {IStoreFilesParams} from './filesManagerDomain';
 import {requestPreviewGeneration} from './helpers/handlePreview';
 import {systemPreviewsSettings} from './_constants';
 import winston = require('winston');
+import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 
 const mockConfig: Mockify<Config.IConfig> = {
     amqp: {
@@ -47,6 +48,7 @@ const mockConfig: Mockify<Config.IConfig> = {
         rootKeys: {
             files1: 'files'
         },
+        previewRequestsNumber: 10,
         userId: '0',
         userGroupsIds: '1',
         allowFilesList: '',
@@ -59,9 +61,11 @@ const mockConfig: Mockify<Config.IConfig> = {
 };
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
+    ack: jest.fn(),
     assertExchange: jest.fn(),
     checkExchange: jest.fn(),
     assertQueue: jest.fn(),
+    deleteQueue: jest.fn(),
     bindQueue: jest.fn(),
     consume: jest.fn(),
     publish: jest.fn(),
@@ -92,6 +96,10 @@ describe('FilesManager', () => {
     const ctx: IQueryInfos = {
         userId: '1',
         queryId: 'filesManagerTest'
+    };
+
+    const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
+        updateProgress: global.__mockPromise()
     };
 
     const mockLibraryDomain: Mockify<ILibraryDomain> = {
@@ -130,6 +138,11 @@ describe('FilesManager', () => {
     });
 
     describe('forcePreviewsGeneration', () => {
+        afterAll(() => {
+            mockAmqpChannel.consume = jest.fn();
+            mockAmqpService.consume = jest.fn();
+        });
+
         const mockRecordRepo: Mockify<IRecordRepo> = {
             updateRecord: jest.fn()
         };
@@ -143,6 +156,11 @@ describe('FilesManager', () => {
 
         const mockUpdateLastRecordModif = jest.fn();
         const mockSendRecordUpdate = jest.fn();
+
+        let callbackConsume: (msg: Pick<amqp.ConsumeMessage, 'content'>) => void;
+        mockAmqpService.consume = jest.fn((queue, routingKey, onMessage) => {
+            callbackConsume = onMessage;
+        });
 
         test('Force preview generation one file', async () => {
             const mockRecordDomain: Mockify<IRecordDomain> = {
@@ -162,10 +180,28 @@ describe('FilesManager', () => {
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService as IAmqpService,
-                'core.infra.record': mockRecordRepo as IRecordRepo
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain
             });
 
-            await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', recordIds: ['id']});
+            await Promise.all([
+                files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', recordIds: ['id']}, {id: 'fakeTaskId'}),
+                new Promise(resolve => {
+                    setTimeout(() => {
+                        callbackConsume({
+                            content: Buffer.from(
+                                JSON.stringify({
+                                    context: {
+                                        recordId: 'id'
+                                    }
+                                })
+                            )
+                        });
+
+                        resolve(true);
+                    }, 1000);
+                })
+            ]);
 
             expect(mockRecordDomain.find.mock.calls[0][0].params.filters).toEqual([
                 {field: 'id', value: 'id', condition: AttributeCondition.EQUAL}
@@ -204,10 +240,33 @@ describe('FilesManager', () => {
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService as IAmqpService,
-                'core.infra.record': mockRecordRepo as IRecordRepo
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain
             });
 
-            await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', recordIds: ['id1', 'id2', 'id3']});
+            await Promise.all([
+                files.forcePreviewsGeneration(
+                    {ctx, libraryId: 'libraryId', recordIds: ['id1', 'id2', 'id3']},
+                    {id: 'fakeTaskId'}
+                ),
+                new Promise(resolve => {
+                    setTimeout(() => {
+                        for (let i = 1; i <= 3; i++) {
+                            callbackConsume({
+                                content: Buffer.from(
+                                    JSON.stringify({
+                                        context: {
+                                            recordId: 'id' + i
+                                        }
+                                    })
+                                )
+                            });
+                        }
+
+                        resolve(true);
+                    }, 1000);
+                })
+            ]);
 
             expect(mockRecordDomain.find.mock.calls[0][0].params.filters).toEqual([
                 {field: 'id', value: 'id1', condition: AttributeCondition.EQUAL},
@@ -283,10 +342,33 @@ describe('FilesManager', () => {
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService as IAmqpService,
-                'core.infra.record': mockRecordRepo as IRecordRepo
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain
             });
 
-            await files.forcePreviewsGeneration({ctx, libraryId: 'directoriesLibrary', recordIds: ['id']});
+            await Promise.all([
+                files.forcePreviewsGeneration(
+                    {ctx, libraryId: 'directoriesLibrary', recordIds: ['id']},
+                    {id: 'fakeTaskId'}
+                ),
+                new Promise(resolve => {
+                    setTimeout(() => {
+                        for (let i = 1; i <= 2; i++) {
+                            callbackConsume({
+                                content: Buffer.from(
+                                    JSON.stringify({
+                                        context: {
+                                            recordId: 'file' + i
+                                        }
+                                    })
+                                )
+                            });
+                        }
+
+                        resolve(true);
+                    }, 1000);
+                })
+            ]);
 
             expect(requestPreviewGeneration).toBeCalledTimes(2);
 
@@ -330,10 +412,30 @@ describe('FilesManager', () => {
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService as IAmqpService,
-                'core.infra.record': mockRecordRepo as IRecordRepo
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain
             });
 
-            await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId'});
+            await Promise.all([
+                files.forcePreviewsGeneration({ctx, libraryId: 'libraryId'}, {id: 'fakeTaskId'}),
+                new Promise(resolve => {
+                    setTimeout(() => {
+                        for (let i = 1; i <= 2; i++) {
+                            callbackConsume({
+                                content: Buffer.from(
+                                    JSON.stringify({
+                                        context: {
+                                            recordId: 'file' + i
+                                        }
+                                    })
+                                )
+                            });
+                        }
+
+                        resolve(true);
+                    }, 1000);
+                })
+            ]);
 
             expect(requestPreviewGeneration).toBeCalledTimes(2);
 
@@ -392,10 +494,28 @@ describe('FilesManager', () => {
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService as IAmqpService,
-                'core.infra.record': mockRecordRepo as IRecordRepo
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain
             });
 
-            await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', failedOnly: true});
+            await Promise.all([
+                files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', failedOnly: true}, {id: 'fakeTaskId'}),
+                new Promise(resolve => {
+                    setTimeout(() => {
+                        callbackConsume({
+                            content: Buffer.from(
+                                JSON.stringify({
+                                    context: {
+                                        recordId: 'file2'
+                                    }
+                                })
+                            )
+                        });
+
+                        resolve(true);
+                    }, 1000);
+                })
+            ]);
 
             expect(requestPreviewGeneration).toBeCalledTimes(1);
 
@@ -435,20 +555,41 @@ describe('FilesManager', () => {
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.amqpService': mockAmqpService as IAmqpService,
-                'core.infra.record': mockRecordRepo as IRecordRepo
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain
             });
 
-            await files.forcePreviewsGeneration({
-                ctx,
-                libraryId: 'libraryId',
-                filters: [
+            await Promise.all([
+                files.forcePreviewsGeneration(
                     {
-                        field: 'file_name',
-                        condition: AttributeCondition.EQUAL,
-                        value: 'file_name_1'
-                    }
-                ]
-            });
+                        ctx,
+                        libraryId: 'libraryId',
+                        filters: [
+                            {
+                                field: 'file_name',
+                                condition: AttributeCondition.EQUAL,
+                                value: 'file_name_1'
+                            }
+                        ]
+                    },
+                    {id: 'fakeTaskId'}
+                ),
+                new Promise(resolve => {
+                    setTimeout(() => {
+                        callbackConsume({
+                            content: Buffer.from(
+                                JSON.stringify({
+                                    context: {
+                                        recordId: 'file1'
+                                    }
+                                })
+                            )
+                        });
+
+                        resolve(true);
+                    }, 1000);
+                })
+            ]);
 
             expect(mockRecordDomain.find).toBeCalledTimes(1);
             expect(mockRecordDomain.find.mock.calls[0][0].params.filters).toEqual([

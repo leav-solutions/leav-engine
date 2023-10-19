@@ -32,7 +32,7 @@ import ValidationError from '../../errors/ValidationError';
 import {USERS_GROUP_LIB_NAME, USERS_GROUP_TREE_NAME} from '../../infra/permission/permissionRepo';
 import {Errors} from '../../_types/errors';
 import {TriggerNames} from '../../_types/eventsManager';
-import {FileEvents, FilesAttributes, IFileEventData, IFileMetadata} from '../../_types/filesManager';
+import {FileEvents, FilesAttributes, IFileEventData, IFileMetadata, IPreviewResponse} from '../../_types/filesManager';
 import {ILibrary, LibraryBehavior} from '../../_types/library';
 import {LibraryPermissionsActions} from '../../_types/permissions';
 import {AttributeCondition, IRecord, Operator} from '../../_types/record';
@@ -45,6 +45,7 @@ import {IMessagesHandlerHelper} from './helpers/messagesHandler/messagesHandler'
 import {systemPreviewsSettings} from './_constants';
 import {ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
 import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
+import {onMessageFunc} from '@leav/message-broker/src/_types/amqp';
 
 interface IForcePreviewsGenerationParams {
     ctx: IQueryInfos;
@@ -215,6 +216,21 @@ export default function({
         }
 
         return records;
+    };
+
+    const _initForcePreviewsGenerationQueue = async (taskId: string, onMessage: onMessageFunc): Promise<string> => {
+        const taskQueue = `taskPreviewsGeneration_${taskId}`;
+
+        await amqpService.consumer.channel.assertQueue(taskQueue);
+        await amqpService.consumer.channel.bindQueue(
+            taskQueue,
+            config.amqp.exchange,
+            config.filesManager.routingKeys.previewResponse
+        );
+
+        await amqpService.consume(taskQueue, config.filesManager.routingKeys.previewResponse, onMessage);
+
+        return taskQueue;
     };
 
     /**
@@ -519,162 +535,234 @@ export default function({
         getPreviewVersion() {
             return systemPreviewsSettings;
         },
-        async forcePreviewsGeneration(params: IForcePreviewsGenerationParams, task?: ITaskFuncParams): Promise<string> {
-            const {ctx, libraryId, failedOnly, filters, recordIds = [], previewVersionSizeNames} = params;
+        forcePreviewsGeneration(params: IForcePreviewsGenerationParams, task?: ITaskFuncParams): Promise<string> {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const {ctx, libraryId, failedOnly, filters, recordIds = [], previewVersionSizeNames} = params;
 
-            if (typeof task?.id === 'undefined') {
-                const newTaskId = uuidv4();
+                    if (typeof task?.id === 'undefined') {
+                        const newTaskId = uuidv4();
 
-                await tasksManagerDomain.createTask(
-                    {
-                        id: newTaskId,
-                        label: config.lang.available.reduce((labels, lang) => {
-                            labels[lang] = `${translator.t('tasks.preview_label', {
-                                lng: lang,
-                                library: params.libraryId
-                            })}`;
-                            return labels;
-                        }, {}),
-                        func: {
-                            moduleName: 'domain',
-                            subModuleName: 'filesManager',
-                            name: 'forcePreviewsGeneration',
-                            args: params
-                        },
-                        role: {
-                            type: TaskType.IMPORT_DATA
-                        },
-                        priority: TaskPriority.MEDIUM,
-                        startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
-                        ...(!!task?.callbacks && {callbacks: task.callbacks})
-                    },
-                    ctx
-                );
+                        await tasksManagerDomain.createTask(
+                            {
+                                id: newTaskId,
+                                label: config.lang.available.reduce((labels, lang) => {
+                                    labels[lang] = `${translator.t('tasks.preview_label', {
+                                        lng: lang,
+                                        library: params.libraryId
+                                    })}`;
+                                    return labels;
+                                }, {}),
+                                func: {
+                                    moduleName: 'domain',
+                                    subModuleName: 'filesManager',
+                                    name: 'forcePreviewsGeneration',
+                                    args: params
+                                },
+                                role: {
+                                    type: TaskType.IMPORT_DATA
+                                },
+                                priority: TaskPriority.MEDIUM,
+                                startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
+                                ...(!!task?.callbacks && {callbacks: task.callbacks})
+                            },
+                            ctx
+                        );
 
-                return newTaskId;
-            }
-
-            const libraryProps = await libraryDomain.getLibraryProperties(libraryId, ctx);
-
-            if (!recordIds.length && !filters && libraryProps.behavior === LibraryBehavior.DIRECTORIES) {
-                // Nothing to do if we ask to generate previews for directories
-                return task.id;
-            }
-
-            // If we have both filters and recordIds, ignore filters
-            const recordsFilters =
-                filters && !recordIds.length
-                    ? filters
-                    : recordIds.reduce((allFilters, recordId, index) => {
-                          allFilters.push({
-                              field: 'id',
-                              value: recordId,
-                              condition: AttributeCondition.EQUAL
-                          });
-
-                          if (index !== recordIds.length - 1) {
-                              allFilters.push({
-                                  operator: Operator.OR
-                              });
-                          }
-
-                          return allFilters;
-                      }, []);
-
-            const records = (await recordDomain.find({params: {library: libraryId, filters: recordsFilters}, ctx}))
-                .list;
-
-            if (!records.length) {
-                // No records found, nothing to do
-                return task.id;
-            }
-
-            // If library is a directory library: recreate all previews of subfiles
-            let recordsToProcess: IRecord[];
-            let filesLibraryProps: ILibrary;
-            if (libraryProps.behavior === LibraryBehavior.DIRECTORIES) {
-                // Find tree where this directory belongs
-                const trees = await treeDomain.getTrees({params: {filters: {library: libraryId}}, ctx});
-
-                const tree = trees.list[0];
-                const treeLibraries = await Promise.all(
-                    Object.keys(tree.libraries).map(treeLibraryId =>
-                        libraryDomain.getLibraryProperties(treeLibraryId, ctx)
-                    )
-                );
-                const filesLibraryId = treeLibraries.find(l => l.behavior === LibraryBehavior.FILES).id;
-                filesLibraryProps = await libraryDomain.getLibraryProperties(filesLibraryId, ctx);
-
-                if (trees.list.length) {
-                    const treeId = tree.id;
-
-                    const recordsById = await _getAllChildrenRecords(treeId, records, libraryId, filesLibraryId, ctx);
-
-                    recordsToProcess = Object.values(recordsById);
-                }
-            } else {
-                recordsToProcess = records;
-                filesLibraryProps = libraryProps;
-            }
-
-            let generationRequested = 0;
-
-            let versions = utils.previewsSettingsToVersions(filesLibraryProps.previewsSettings);
-
-            // if preview version size names are specified we generate only theses previews
-            if (previewVersionSizeNames?.length) {
-                versions = versions.reduce((acc, curr) => {
-                    const sizes = curr.sizes.filter(s => previewVersionSizeNames.includes(s.name));
-
-                    if (sizes.length) {
-                        acc.push({...curr, sizes});
+                        resolve(newTaskId);
                     }
 
-                    return acc;
-                }, []);
-            }
+                    const libraryProps = await libraryDomain.getLibraryProperties(libraryId, ctx);
 
-            for (const r of recordsToProcess) {
-                if (
-                    !failedOnly ||
-                    (failedOnly &&
-                        Object.entries(r[utils.getPreviewsStatusAttributeName(libraryProps.id)]).some(
-                            p => (p[1] as {status: number; message: string}).status !== 0
-                        ))
-                ) {
-                    const {previewsStatus, previews} = getPreviewsDefaultData(systemPreviewsSettings);
-                    const recordData: IFileMetadata = {
-                        [utils.getPreviewsStatusAttributeName(libraryProps.id)]: previewsStatus,
-                        [utils.getPreviewsAttributeName(libraryProps.id)]: previews
+                    if (!recordIds.length && !filters && libraryProps.behavior === LibraryBehavior.DIRECTORIES) {
+                        // Nothing to do if we ask to generate previews for directories
+                        resolve(task.id);
+                    }
+
+                    // If we have both filters and recordIds, ignore filters
+                    const recordsFilters =
+                        filters && !recordIds.length
+                            ? filters
+                            : recordIds.reduce((allFilters, recordId, index) => {
+                                  allFilters.push({
+                                      field: 'id',
+                                      value: recordId,
+                                      condition: AttributeCondition.EQUAL
+                                  });
+
+                                  if (index !== recordIds.length - 1) {
+                                      allFilters.push({
+                                          operator: Operator.OR
+                                      });
+                                  }
+
+                                  return allFilters;
+                              }, []);
+
+                    const records = (
+                        await recordDomain.find({params: {library: libraryId, filters: recordsFilters}, ctx})
+                    ).list;
+
+                    if (!records.length) {
+                        // No records found, nothing to do
+                        resolve(task.id);
+                    }
+
+                    // If library is a directory library: recreate all previews of subfiles
+                    let recordsToProcess: IRecord[];
+                    let filesLibraryProps: ILibrary;
+                    if (libraryProps.behavior === LibraryBehavior.DIRECTORIES) {
+                        // Find tree where this directory belongs
+                        const trees = await treeDomain.getTrees({params: {filters: {library: libraryId}}, ctx});
+
+                        const tree = trees.list[0];
+                        const treeLibraries = await Promise.all(
+                            Object.keys(tree.libraries).map(treeLibraryId =>
+                                libraryDomain.getLibraryProperties(treeLibraryId, ctx)
+                            )
+                        );
+                        const filesLibraryId = treeLibraries.find(l => l.behavior === LibraryBehavior.FILES).id;
+                        filesLibraryProps = await libraryDomain.getLibraryProperties(filesLibraryId, ctx);
+
+                        if (trees.list.length) {
+                            const treeId = tree.id;
+
+                            const recordsById = await _getAllChildrenRecords(
+                                treeId,
+                                records,
+                                libraryId,
+                                filesLibraryId,
+                                ctx
+                            );
+
+                            recordsToProcess = Object.values(recordsById);
+                        }
+                    } else {
+                        recordsToProcess = records;
+                        filesLibraryProps = libraryProps;
+                    }
+
+                    let versions = utils.previewsSettingsToVersions(filesLibraryProps.previewsSettings);
+
+                    // if preview version size names are specified we generate only theses previews
+                    if (previewVersionSizeNames?.length) {
+                        versions = versions.reduce((acc, curr) => {
+                            const sizes = curr.sizes.filter(s => previewVersionSizeNames.includes(s.name));
+
+                            if (sizes.length) {
+                                acc.push({...curr, sizes});
+                            }
+
+                            return acc;
+                        }, []);
+                    }
+
+                    const awaitingResponses = [];
+                    let nextRecordIndex = 0;
+
+                    const _generatePreview = async (r: IRecord) => {
+                        const {previewsStatus, previews} = getPreviewsDefaultData(systemPreviewsSettings);
+                        const recordData: IFileMetadata = {
+                            [utils.getPreviewsStatusAttributeName(libraryProps.id)]: previewsStatus,
+                            [utils.getPreviewsAttributeName(libraryProps.id)]: previews
+                        };
+                        await updateRecordFile(
+                            recordData,
+                            r.id,
+                            libraryId,
+                            {
+                                recordRepo,
+                                updateRecordLastModif,
+                                sendRecordUpdateEvent,
+                                valueDomain,
+                                config,
+                                logger
+                            },
+                            ctx
+                        );
+
+                        await requestPreviewGeneration({
+                            recordId: r.id,
+                            pathAfter: `${r[FilesAttributes.FILE_PATH]}/${r[FilesAttributes.FILE_NAME]}`,
+                            libraryId: r.library,
+                            priority: PreviewPriority.MEDIUM,
+                            versions,
+                            deps: {amqpService, config, logger}
+                        });
+
+                        awaitingResponses.push(r.id);
                     };
-                    await updateRecordFile(
-                        recordData,
-                        r.id,
-                        libraryId,
-                        {
-                            recordRepo,
-                            updateRecordLastModif,
-                            sendRecordUpdateEvent,
-                            valueDomain,
-                            config,
-                            logger
-                        },
-                        ctx
-                    );
 
-                    await requestPreviewGeneration({
-                        recordId: r.id,
-                        pathAfter: `${r[FilesAttributes.FILE_PATH]}/${r[FilesAttributes.FILE_NAME]}`,
-                        libraryId: r.library,
-                        priority: PreviewPriority.MEDIUM,
-                        versions,
-                        deps: {amqpService, config, logger}
-                    });
-                    generationRequested++;
+                    const _onResponse = async (msg: amqp.ConsumeMessage): Promise<void> => {
+                        amqpService.consumer.channel.ack(msg);
+
+                        let previewResponse: IPreviewResponse;
+
+                        try {
+                            previewResponse = JSON.parse(msg.content.toString());
+                        } catch (e) {
+                            logger.error(
+                                `[FilesManager] Preview return invalid message:
+                                ${e.message}.
+                                Message was: ${msg}'
+                                `
+                            );
+
+                            return;
+                        }
+
+                        const recordIndex = awaitingResponses.indexOf(previewResponse.context.recordId);
+
+                        // if response is a preview requested in this task
+                        if (recordIndex !== -1) {
+                            awaitingResponses.splice(recordIndex, 1);
+
+                            await tasksManagerDomain.updateProgress(
+                                task.id,
+                                {
+                                    percent: Math.ceil(
+                                        ((nextRecordIndex - awaitingResponses.length) * 100) / recordsToProcess.length
+                                    )
+                                },
+                                ctx
+                            );
+
+                            if (nextRecordIndex < recordsToProcess.length) {
+                                await _nextRecord();
+                            } else if (!awaitingResponses.length) {
+                                await amqpService.consumer.channel.deleteQueue(taskQueue);
+                                resolve(task.id);
+                            }
+                        }
+                    };
+
+                    const _nextRecord = async () => {
+                        const record = recordsToProcess[nextRecordIndex++];
+
+                        if (
+                            !failedOnly ||
+                            (failedOnly &&
+                                Object.entries(record[utils.getPreviewsStatusAttributeName(libraryProps.id)]).some(
+                                    p => (p[1] as {status: number; message: string}).status !== 0
+                                ))
+                        ) {
+                            await _generatePreview(record);
+                        }
+                    };
+
+                    const taskQueue = await _initForcePreviewsGenerationQueue(task.id, _onResponse);
+
+                    // Send n first requests to generate previews
+                    while (
+                        nextRecordIndex < config.filesManager.previewRequestsNumber &&
+                        nextRecordIndex < recordsToProcess.length
+                    ) {
+                        await _nextRecord();
+                    }
+                } catch (err) {
+                    reject(err);
                 }
-            }
-
-            return task.id;
+            });
         },
         getRootPathByKey(rootKey) {
             return getRootPathByKey(rootKey, config);

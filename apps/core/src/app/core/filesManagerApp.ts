@@ -111,7 +111,7 @@ export default function({
                             filters: [RecordFilterInput],
                             failedOnly: Boolean,
                             previewVersionSizeNames: [String!]
-                        ): Boolean!
+                        ): ID!
                         upload(library: String!, nodeId: String!, files: [FileInput!]!): [UploadData!]!
                         createDirectory(library: String!, nodeId: String!, name: String!): Record!
                     }
@@ -174,8 +174,8 @@ export default function({
                                 previewVersionSizeNames?: string[];
                             },
                             ctx: IQueryInfos
-                        ): Promise<boolean> {
-                            await filesManagerDomain.forcePreviewsGeneration({
+                        ): Promise<string> {
+                            return filesManagerDomain.forcePreviewsGeneration({
                                 libraryId,
                                 recordIds,
                                 filters,
@@ -183,8 +183,6 @@ export default function({
                                 previewVersionSizeNames,
                                 ctx
                             });
-
-                            return true;
                         }
                     },
                     Subscription: {
