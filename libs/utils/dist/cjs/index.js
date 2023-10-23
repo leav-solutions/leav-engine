@@ -24,6 +24,7 @@ __exportStar(require("./types/events"), exports);
 __exportStar(require("./types/files"), exports);
 __exportStar(require("./types/forms"), exports);
 __exportStar(require("./types/helpers"), exports);
+__exportStar(require("./types/logs"), exports);
 __exportStar(require("./types/previews"), exports);
 __exportStar(require("./utils"), exports);
 //# sourceMappingURL=index.js.map

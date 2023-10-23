@@ -24,6 +24,7 @@ yarn-error.log*
 # Misc
 .DS_Store
 logs
+!test-apps/logs
 *.log
 
 ### MacOS ###

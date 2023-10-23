@@ -1,0 +1,12 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "types": ["jest", "node", "@types/jest"],
+        "baseUrl": "src",
+        "outDir": "dist",
+        "isolatedModules": true,
+        "strict": true,
+        "strictNullChecks": true,
+        "skipLibCheck": true,
+    }
+}

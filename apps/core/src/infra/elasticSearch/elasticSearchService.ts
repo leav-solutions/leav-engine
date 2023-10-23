@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Client, estypes} from '@elastic/elasticsearch';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
@@ -21,7 +24,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function({config}: IDeps): IElasticSearchService {
+export default function ({config}: IDeps): IElasticSearchService {
     const client = new Client({
         node: config.elasticSearch.url
     });
@@ -29,7 +32,6 @@ export default function({config}: IDeps): IElasticSearchService {
     return {
         client,
         async search({index, offset, limit, sort, query}, ctx) {
-            console.log('query', JSON.stringify(query, null, 2));
             const response = await client.search({
                 index,
                 from: offset,

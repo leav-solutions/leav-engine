@@ -9,18 +9,18 @@ import {IValueDomain} from 'domain/value/valueDomain';
 import {Express, NextFunction, Request, Response} from 'express';
 import useragent from 'express-useragent';
 import jwt, {Algorithm} from 'jsonwebtoken';
+import ms from 'ms';
+import {v4 as uuidv4} from 'uuid';
 import {IConfig} from '_types/config';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {IStandardValue, ITreeValue} from '_types/value';
 import AuthenticationError from '../../errors/AuthenticationError';
+import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {USERS_GROUP_ATTRIBUTE_NAME} from '../../infra/permission/permissionRepo';
 import {ACCESS_TOKEN_COOKIE_NAME, ITokenUserData} from '../../_types/auth';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, IRecord} from '../../_types/record';
-import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
-import ms from 'ms';
-import {v4 as uuidv4} from 'uuid';
 
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
@@ -50,7 +50,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.apiKey': apiKeyDomain = null,
