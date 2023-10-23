@@ -1,0 +1,22 @@
+{
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+        "ts",
+        "js"
+    ],
+    "transform": {
+        "\\.(ts|tsx)$": [
+            "ts-jest",
+            {
+                "isolatedModules": true
+            }
+        ]
+    },
+    "testRegex": "./src\/index.ts$",
+    "setupFiles": ["<rootDir>/src/setup.ts"],
+    "testTimeout": 30000,
+    "passWithNoTests": true,
+    "moduleNameMapper": {
+        "^@leav/(.*)$": "<rootDir>/../../libs/$1/src"
+    }
+}

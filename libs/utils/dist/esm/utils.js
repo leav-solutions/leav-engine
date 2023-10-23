@@ -251,4 +251,15 @@ export const getFlagByLang = (lang) => {
 export const getLogsIndexName = (instanceId) => {
     return `logs-${instanceId}`;
 };
+export const waitFor = async (predicate, options = {}) => {
+    const { timeout = 5000, interval = 250 } = options;
+    const startTime = Date.now();
+    while (!(await predicate())) {
+        if (Date.now() - startTime > timeout) {
+            throw new Error('Timeout expired');
+        }
+        await new Promise(resolve => setTimeout(resolve, interval));
+    }
+    return true;
+};
 //# sourceMappingURL=utils.js.map

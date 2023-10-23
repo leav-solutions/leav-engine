@@ -5,5 +5,6 @@ export * from './types/events';
 export * from './types/files';
 export * from './types/forms';
 export * from './types/helpers';
+export * from './types/logs';
 export * from './types/previews';
 export * from './utils';

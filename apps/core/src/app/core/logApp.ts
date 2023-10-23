@@ -1,4 +1,7 @@
-import {EventAction} from '@leav/utils';
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {EventAction, Log} from '@leav/utils';
 import {IApplicationDomain} from 'domain/application/applicationDomain';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
@@ -6,7 +9,7 @@ import {ILogDomain} from 'domain/log/logDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
 import {IAppGraphQLSchema} from '_types/graphql';
-import {ILogFilters, ILogPagination, ILogSort, Log} from '_types/log';
+import {ILogFilters, ILogPagination, ILogSort} from '_types/log';
 import {IQueryInfos} from '_types/queryInfos';
 import {USERS_LIBRARY} from '../../_types/library';
 
@@ -23,7 +26,7 @@ interface IDeps {
     'core.domain.application'?: IApplicationDomain;
 }
 
-export default function({
+export default function ({
     'core.domain.log': logDomain,
     'core.domain.library': libraryDomain,
     'core.domain.attribute': attributeDomain,
@@ -132,12 +135,14 @@ export default function({
                         ) => {
                             const {filters, sort, pagination} = args;
 
-                            if (filters.time) {
+                            if (filters?.time) {
                                 filters.time.from = filters.time.from ? filters.time.from * 1000 : null;
                                 filters.time.to = filters.time.to ? filters.time.to * 1000 : null;
                             }
 
-                            return logDomain.getLogs({filters, sort, pagination}, ctx);
+                            const logs = await logDomain.getLogs({filters, sort, pagination}, ctx);
+
+                            return logs;
                         }
                     },
                     Log: {
