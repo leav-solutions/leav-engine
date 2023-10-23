@@ -29,7 +29,13 @@ export default () => {
             }),
             reactVirtualized()
         ],
-        base: process.env.NODE_ENV === 'production' ? '/__dynamic_base__/' : '/app/admin'
+        base: process.env.NODE_ENV === 'production' ? '/__dynamic_base__/' : '/app/admin',
+        build: {
+            ...conf.build,
+            rollupOptions: {
+                external: ['react-dom/client'] // To avoid error due to old version of react used in admin
+            }
+        }
     });
 };
 
