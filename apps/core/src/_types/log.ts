@@ -1,6 +1,7 @@
-import {EventAction, IDbEvent, IDbPayload} from '@leav/utils';
-
-export type Log = Omit<IDbEvent, 'payload' | 'emitter'> & IDbPayload;
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {EventAction} from '@leav/utils';
 
 export interface ILogTopicFilter {
     record?: {
@@ -22,7 +23,7 @@ export interface ILogTopicFilter {
 
 export interface ILogFilters {
     action?: EventAction;
-    time: {
+    time?: {
         from?: number;
         to?: number;
     };

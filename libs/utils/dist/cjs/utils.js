@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLogsIndexName = exports.getFlagByLang = exports.simpleStringHash = exports.formatId = exports._getInitialEngine = exports.getInitials = exports.getCallStack = exports.getFileType = exports.getLibraryGraphqlNames = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
+exports.waitFor = exports.getLogsIndexName = exports.getFlagByLang = exports.simpleStringHash = exports.formatId = exports._getInitialEngine = exports.getInitials = exports.getCallStack = exports.getFileType = exports.getLibraryGraphqlNames = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
@@ -298,4 +298,16 @@ const getLogsIndexName = (instanceId) => {
     return `logs-${instanceId}`;
 };
 exports.getLogsIndexName = getLogsIndexName;
+const waitFor = async (predicate, options = {}) => {
+    const { timeout = 5000, interval = 250 } = options;
+    const startTime = Date.now();
+    while (!(await predicate())) {
+        if (Date.now() - startTime > timeout) {
+            throw new Error('Timeout expired');
+        }
+        await new Promise(resolve => setTimeout(resolve, interval));
+    }
+    return true;
+};
+exports.waitFor = waitFor;
 //# sourceMappingURL=utils.js.map

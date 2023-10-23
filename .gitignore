@@ -26,6 +26,7 @@ dist-artifact-**.zip
 # Misc
 .DS_Store
 logs
+!test-apps/logs
 *.log
 
 ### MacOS ###
