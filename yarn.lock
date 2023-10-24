@@ -10481,7 +10481,6 @@ __metadata:
   resolution: "admin@workspace:apps/admin"
   dependencies:
     "@apollo/client": 3.3.7
-    "@leav/ui": "workspace:libs/ui"
     "@reduxjs/toolkit": 1.7.1
     "@rushstack/eslint-patch": 1.0.6
     "@semantic-ui-react/craco-less": 2.0.2
