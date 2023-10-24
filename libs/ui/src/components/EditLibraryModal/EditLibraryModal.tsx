@@ -27,6 +27,10 @@ interface IEditLibraryModalProps {
     onClose?: () => void;
     width?: ModalProps['width'];
     indexationTask?: string;
+    previews?: {
+        task?: string;
+        onGenerationResult: (isSuccess: boolean) => void;
+    };
 }
 
 function EditLibraryModal({
@@ -35,7 +39,8 @@ function EditLibraryModal({
     onClose,
     onPostCreate,
     width,
-    indexationTask
+    indexationTask,
+    previews
 }: IEditLibraryModalProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
@@ -169,6 +174,7 @@ function EditLibraryModal({
                     onSetSubmitFunction={_handleSetSubmitFunction}
                     readOnly={isReadOnly}
                     indexationTask={indexationTask}
+                    previews={previews}
                 />
             )}
         </Modal>

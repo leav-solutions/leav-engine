@@ -17,9 +17,11 @@ import {DraggableProvided} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
-import {useAppSelector} from 'reduxStore/store';
+import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import {TaskStatus, TaskType} from '_gqlTypes/globalTypes';
 import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
+import {addInfo} from 'reduxStore/infos';
+import {InfoChannel, InfoType} from '_types/types';
 
 const Wrapper = styled.div`
     position: relative;
@@ -73,10 +75,12 @@ function LibraryBlock({
     dragProvided
 }: ILibraryBlockProps): JSX.Element {
     const {t} = useTranslation();
+    const dispatch = useAppDispatch();
     const {lang} = useLang();
     const {tasks} = useAppSelector(state => state.tasks);
     const [isEditLibraryModalVisible, setIsEditLibraryModalVisible] = useState(false);
     const [indexationTask, setIndexationTask] = useState<string>();
+    const [previewsTask, setPreviewsTask] = useState<string>();
 
     const _handleOpenEditLibraryModal = () => setIsEditLibraryModalVisible(true);
     const _handleCloseEditLibraryModal = () => setIsEditLibraryModalVisible(false);
@@ -104,16 +108,30 @@ function LibraryBlock({
         task.status === TaskStatus.RUNNING;
 
     useEffect(() => {
-        const task = Object.values(tasks).filter(e => {
-            return (
-                e.role?.type === TaskType.INDEXATION &&
-                e.role?.detail.split(',').includes(library.id) &&
-                isTaskInProgress(e)
-            );
-        })[0];
+        const tasksLibrary = Object.values(tasks).filter(
+            e => e.role?.detail?.split(',')?.includes(library.id) && isTaskInProgress(e)
+        );
 
-        setIndexationTask(task?.id);
+        const currentIndexationTask = tasksLibrary.filter(e => e.role?.type === TaskType.INDEXATION)[0];
+        const currentPreviewsTask = tasksLibrary.filter(e => e.role?.type === TaskType.PREVIEWS_GENERATION)[0];
+
+        setIndexationTask(currentIndexationTask?.id);
+        setPreviewsTask(currentPreviewsTask?.id);
     }, [tasks, useAppSelector]);
+
+    const _onPreviewsGenerationResult = (isSuccess: boolean) => {
+        const message = isSuccess
+            ? t('files.previews_generation_success')
+            : t('files.previews_generation_nothing_to_do');
+
+        dispatch(
+            addInfo({
+                type: InfoType.success,
+                channel: InfoChannel.passive,
+                content: message
+            })
+        );
+    };
 
     return (
         <Wrapper
@@ -138,6 +156,7 @@ function LibraryBlock({
                     onClose={_handleCloseEditLibraryModal}
                     open={isEditLibraryModalVisible}
                     indexationTask={indexationTask}
+                    previews={{task: previewsTask, onGenerationResult: _onPreviewsGenerationResult}}
                 />
             )}
         </Wrapper>

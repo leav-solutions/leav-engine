@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import {mockLibrarySimple} from '../../__mocks__/common/library';
-import {GetLibrariesDocument, IsAllowedDocument, PermissionsActions, PermissionTypes} from '../../_gqlTypes';
+import {GetLibrariesLightDocument, IsAllowedDocument, PermissionsActions, PermissionTypes} from '../../_gqlTypes';
 import {render, screen, waitFor, within} from '../../_tests/testUtils';
 import LibraryPicker from './LibraryPicker';
 
@@ -48,7 +48,7 @@ describe('LibraryPicker', () => {
     const mocks = [
         {
             request: {
-                query: GetLibrariesDocument,
+                query: GetLibrariesLightDocument,
                 variables: {}
             },
             result: {

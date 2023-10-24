@@ -620,7 +620,8 @@ export enum TaskType {
     EXPORT = 'EXPORT',
     IMPORT_CONFIG = 'IMPORT_CONFIG',
     IMPORT_DATA = 'IMPORT_DATA',
-    INDEXATION = 'INDEXATION'
+    INDEXATION = 'INDEXATION',
+    PREVIEWS_GENERATION = 'PREVIEWS_GENERATION'
 }
 
 export enum TreeBehavior {
@@ -808,45 +809,21 @@ export type DetailsApplicationFragment = {
     color?: string | null;
     module?: string | null;
     settings?: any | null;
-    icon?:
-        | {
-              id: string;
-              whoAmI: {
-                  id: string;
-                  label?: string | null;
-                  subLabel?: string | null;
-                  color?: string | null;
-                  preview?: IPreviewScalar | null;
-                  library: {id: string; label?: any | null};
-              };
-          }
-        | {
-              id: string;
-              whoAmI: {
-                  id: string;
-                  label?: string | null;
-                  subLabel?: string | null;
-                  color?: string | null;
-                  preview?: IPreviewScalar | null;
-                  library: {id: string; label?: any | null};
-              };
-          }
-        | {
-              id: string;
-              whoAmI: {
-                  id: string;
-                  label?: string | null;
-                  subLabel?: string | null;
-                  color?: string | null;
-                  preview?: IPreviewScalar | null;
-                  library: {id: string; label?: any | null};
-              };
-          }
-        | null;
+    icon?: {
+        id: string;
+        whoAmI: {
+            id: string;
+            label?: string | null;
+            subLabel?: string | null;
+            color?: string | null;
+            preview?: IPreviewScalar | null;
+            library: {id: string; label?: any | null};
+        };
+    } | null;
     permissions: {access_application: boolean; admin_application: boolean};
 };
 
-export type RecordIdentityCjX1ctHtayKw3UvL3SxXwpZmvJocudQk0mb3YeupLuFragment = {
+export type RecordIdentityFragment = {
     id: string;
     whoAmI: {
         id: string;
@@ -857,35 +834,6 @@ export type RecordIdentityCjX1ctHtayKw3UvL3SxXwpZmvJocudQk0mb3YeupLuFragment = {
         library: {id: string; label?: any | null};
     };
 };
-
-export type RecordIdentityNoK32r5S4GHrWvJrDbbZyQxNwU9KsPBsGItOGtQz4Fragment = {
-    id: string;
-    whoAmI: {
-        id: string;
-        label?: string | null;
-        subLabel?: string | null;
-        color?: string | null;
-        preview?: IPreviewScalar | null;
-        library: {id: string; label?: any | null};
-    };
-};
-
-export type RecordIdentityGdlFf7fowe20o0yE7yTvP85fHnPz4Ad88WmUdVAuYwFragment = {
-    id: string;
-    whoAmI: {
-        id: string;
-        label?: string | null;
-        subLabel?: string | null;
-        color?: string | null;
-        preview?: IPreviewScalar | null;
-        library: {id: string; label?: any | null};
-    };
-};
-
-export type RecordIdentityFragment =
-    | RecordIdentityCjX1ctHtayKw3UvL3SxXwpZmvJocudQk0mb3YeupLuFragment
-    | RecordIdentityNoK32r5S4GHrWvJrDbbZyQxNwU9KsPBsGItOGtQz4Fragment
-    | RecordIdentityGdlFf7fowe20o0yE7yTvP85fHnPz4Ad88WmUdVAuYwFragment;
 
 export type AttributeDetailsLinkAttributeFragment = {
     reverse_link?: string | null;
@@ -968,11 +916,7 @@ export type AttributeDetailsFragment =
 export type LibraryLightFragment = {
     id: string;
     label?: any | null;
-    icon?:
-        | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
-        | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
-        | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
-        | null;
+    icon?: {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}} | null;
 };
 
 export type LibraryDetailsFragment = {
@@ -1013,41 +957,17 @@ export type LibraryDetailsFragment = {
         edit_record: boolean;
         delete_record: boolean;
     } | null;
-    icon?:
-        | {
-              id: string;
-              whoAmI: {
-                  id: string;
-                  label?: string | null;
-                  subLabel?: string | null;
-                  color?: string | null;
-                  preview?: IPreviewScalar | null;
-                  library: {id: string; label?: any | null};
-              };
-          }
-        | {
-              id: string;
-              whoAmI: {
-                  id: string;
-                  label?: string | null;
-                  subLabel?: string | null;
-                  color?: string | null;
-                  preview?: IPreviewScalar | null;
-                  library: {id: string; label?: any | null};
-              };
-          }
-        | {
-              id: string;
-              whoAmI: {
-                  id: string;
-                  label?: string | null;
-                  subLabel?: string | null;
-                  color?: string | null;
-                  preview?: IPreviewScalar | null;
-                  library: {id: string; label?: any | null};
-              };
-          }
-        | null;
+    icon?: {
+        id: string;
+        whoAmI: {
+            id: string;
+            label?: string | null;
+            subLabel?: string | null;
+            color?: string | null;
+            preview?: IPreviewScalar | null;
+            library: {id: string; label?: any | null};
+        };
+    } | null;
     previewsSettings?: Array<{
         label: any;
         description?: any | null;
@@ -1122,41 +1042,17 @@ export type GetApplicationByIdQuery = {
             color?: string | null;
             module?: string | null;
             settings?: any | null;
-            icon?:
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          subLabel?: string | null;
-                          color?: string | null;
-                          preview?: IPreviewScalar | null;
-                          library: {id: string; label?: any | null};
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          subLabel?: string | null;
-                          color?: string | null;
-                          preview?: IPreviewScalar | null;
-                          library: {id: string; label?: any | null};
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          subLabel?: string | null;
-                          color?: string | null;
-                          preview?: IPreviewScalar | null;
-                          library: {id: string; label?: any | null};
-                      };
-                  }
-                | null;
+            icon?: {
+                id: string;
+                whoAmI: {
+                    id: string;
+                    label?: string | null;
+                    subLabel?: string | null;
+                    color?: string | null;
+                    preview?: IPreviewScalar | null;
+                    library: {id: string; label?: any | null};
+                };
+            } | null;
             permissions: {access_application: boolean; admin_application: boolean};
         }>;
     } | null;
@@ -1183,41 +1079,17 @@ export type SaveApplicationMutation = {
         color?: string | null;
         module?: string | null;
         settings?: any | null;
-        icon?:
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      subLabel?: string | null;
-                      color?: string | null;
-                      preview?: IPreviewScalar | null;
-                      library: {id: string; label?: any | null};
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      subLabel?: string | null;
-                      color?: string | null;
-                      preview?: IPreviewScalar | null;
-                      library: {id: string; label?: any | null};
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      subLabel?: string | null;
-                      color?: string | null;
-                      preview?: IPreviewScalar | null;
-                      library: {id: string; label?: any | null};
-                  };
-              }
-            | null;
+        icon?: {
+            id: string;
+            whoAmI: {
+                id: string;
+                label?: string | null;
+                subLabel?: string | null;
+                color?: string | null;
+                preview?: IPreviewScalar | null;
+                library: {id: string; label?: any | null};
+            };
+        } | null;
         permissions: {access_application: boolean; admin_application: boolean};
     };
 };
@@ -1414,6 +1286,16 @@ export type SaveAttributeMutation = {
           };
 };
 
+export type ForcePreviewsGenerationMutationVariables = Exact<{
+    libraryId: Scalars['ID'];
+    filters?: InputMaybe<Array<RecordFilterInput> | RecordFilterInput>;
+    recordIds?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
+    failedOnly?: InputMaybe<Scalars['Boolean']>;
+    previewVersionSizeNames?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+}>;
+
+export type ForcePreviewsGenerationMutation = {forcePreviewsGeneration: string};
+
 export type CheckLibraryExistenceQueryVariables = Exact<{
     id?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
 }>;
@@ -1426,18 +1308,53 @@ export type DeleteLibraryMutationVariables = Exact<{
 
 export type DeleteLibraryMutation = {deleteLibrary: {id: string}};
 
-export type GetLibrariesQueryVariables = Exact<{[key: string]: never}>;
+export type GetLibrariesLightQueryVariables = Exact<{[key: string]: never}>;
 
-export type GetLibrariesQuery = {
+export type GetLibrariesLightQuery = {
     libraries?: {
         list: Array<{
             id: string;
             label?: any | null;
-            icon?:
-                | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
-                | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
-                | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
-                | null;
+            icon?: {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}} | null;
+        }>;
+    } | null;
+};
+
+export type GetLibrariesListQueryVariables = Exact<{
+    filters?: InputMaybe<LibrariesFiltersInput>;
+}>;
+
+export type GetLibrariesListQuery = {
+    libraries?: {
+        list: Array<{
+            id: string;
+            label?: any | null;
+            behavior: LibraryBehavior;
+            icon?: {
+                id: string;
+                whoAmI: {
+                    id: string;
+                    label?: string | null;
+                    subLabel?: string | null;
+                    color?: string | null;
+                    preview?: IPreviewScalar | null;
+                    library: {id: string; label?: any | null};
+                };
+            } | null;
+            gqlNames: {query: string; filter: string; searchableFields: string};
+            previewsSettings?: Array<{
+                description?: any | null;
+                label: any;
+                system: boolean;
+                versions: {background: string; density: number; sizes: Array<{name: string; size: number}>};
+            }> | null;
+            permissions?: {
+                access_library: boolean;
+                access_record: boolean;
+                create_record: boolean;
+                edit_record: boolean;
+                delete_record: boolean;
+            } | null;
         }>;
     } | null;
 };
@@ -1493,41 +1410,17 @@ export type GetLibraryByIdQuery = {
                 edit_record: boolean;
                 delete_record: boolean;
             } | null;
-            icon?:
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          subLabel?: string | null;
-                          color?: string | null;
-                          preview?: IPreviewScalar | null;
-                          library: {id: string; label?: any | null};
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          subLabel?: string | null;
-                          color?: string | null;
-                          preview?: IPreviewScalar | null;
-                          library: {id: string; label?: any | null};
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          subLabel?: string | null;
-                          color?: string | null;
-                          preview?: IPreviewScalar | null;
-                          library: {id: string; label?: any | null};
-                      };
-                  }
-                | null;
+            icon?: {
+                id: string;
+                whoAmI: {
+                    id: string;
+                    label?: string | null;
+                    subLabel?: string | null;
+                    color?: string | null;
+                    preview?: IPreviewScalar | null;
+                    library: {id: string; label?: any | null};
+                };
+            } | null;
             previewsSettings?: Array<{
                 label: any;
                 description?: any | null;
@@ -1581,41 +1474,17 @@ export type SaveLibraryMutation = {
             edit_record: boolean;
             delete_record: boolean;
         } | null;
-        icon?:
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      subLabel?: string | null;
-                      color?: string | null;
-                      preview?: IPreviewScalar | null;
-                      library: {id: string; label?: any | null};
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      subLabel?: string | null;
-                      color?: string | null;
-                      preview?: IPreviewScalar | null;
-                      library: {id: string; label?: any | null};
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      subLabel?: string | null;
-                      color?: string | null;
-                      preview?: IPreviewScalar | null;
-                      library: {id: string; label?: any | null};
-                  };
-              }
-            | null;
+        icon?: {
+            id: string;
+            whoAmI: {
+                id: string;
+                label?: string | null;
+                subLabel?: string | null;
+                color?: string | null;
+                preview?: IPreviewScalar | null;
+                library: {id: string; label?: any | null};
+            };
+        } | null;
         previewsSettings?: Array<{
             label: any;
             description?: any | null;
@@ -2400,6 +2269,64 @@ export type SaveAttributeMutationOptions = Apollo.BaseMutationOptions<
     SaveAttributeMutation,
     SaveAttributeMutationVariables
 >;
+export const ForcePreviewsGenerationDocument = gql`
+    mutation FORCE_PREVIEWS_GENERATION(
+        $libraryId: ID!
+        $filters: [RecordFilterInput!]
+        $recordIds: [ID!]
+        $failedOnly: Boolean
+        $previewVersionSizeNames: [String!]
+    ) {
+        forcePreviewsGeneration(
+            libraryId: $libraryId
+            filters: $filters
+            recordIds: $recordIds
+            failedOnly: $failedOnly
+            previewVersionSizeNames: $previewVersionSizeNames
+        )
+    }
+`;
+export type ForcePreviewsGenerationMutationFn = Apollo.MutationFunction<
+    ForcePreviewsGenerationMutation,
+    ForcePreviewsGenerationMutationVariables
+>;
+
+/**
+ * __useForcePreviewsGenerationMutation__
+ *
+ * To run a mutation, you first call `useForcePreviewsGenerationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useForcePreviewsGenerationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [forcePreviewsGenerationMutation, { data, loading, error }] = useForcePreviewsGenerationMutation({
+ *   variables: {
+ *      libraryId: // value for 'libraryId'
+ *      filters: // value for 'filters'
+ *      recordIds: // value for 'recordIds'
+ *      failedOnly: // value for 'failedOnly'
+ *      previewVersionSizeNames: // value for 'previewVersionSizeNames'
+ *   },
+ * });
+ */
+export function useForcePreviewsGenerationMutation(
+    baseOptions?: Apollo.MutationHookOptions<ForcePreviewsGenerationMutation, ForcePreviewsGenerationMutationVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useMutation<ForcePreviewsGenerationMutation, ForcePreviewsGenerationMutationVariables>(
+        ForcePreviewsGenerationDocument,
+        options
+    );
+}
+export type ForcePreviewsGenerationMutationHookResult = ReturnType<typeof useForcePreviewsGenerationMutation>;
+export type ForcePreviewsGenerationMutationResult = Apollo.MutationResult<ForcePreviewsGenerationMutation>;
+export type ForcePreviewsGenerationMutationOptions = Apollo.BaseMutationOptions<
+    ForcePreviewsGenerationMutation,
+    ForcePreviewsGenerationMutationVariables
+>;
 export const CheckLibraryExistenceDocument = gql`
     query CHECK_LIBRARY_EXISTENCE($id: [ID!]) {
         libraries(filters: {id: $id}) {
@@ -2486,8 +2413,8 @@ export type DeleteLibraryMutationOptions = Apollo.BaseMutationOptions<
     DeleteLibraryMutation,
     DeleteLibraryMutationVariables
 >;
-export const GetLibrariesDocument = gql`
-    query GET_LIBRARIES {
+export const GetLibrariesLightDocument = gql`
+    query GET_LIBRARIES_LIGHT {
         libraries {
             list {
                 ...LibraryLight
@@ -2498,35 +2425,113 @@ export const GetLibrariesDocument = gql`
 `;
 
 /**
- * __useGetLibrariesQuery__
+ * __useGetLibrariesLightQuery__
  *
- * To run a query within a React component, call `useGetLibrariesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetLibrariesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetLibrariesLightQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLibrariesLightQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetLibrariesQuery({
+ * const { data, loading, error } = useGetLibrariesLightQuery({
  *   variables: {
  *   },
  * });
  */
-export function useGetLibrariesQuery(
-    baseOptions?: Apollo.QueryHookOptions<GetLibrariesQuery, GetLibrariesQueryVariables>
+export function useGetLibrariesLightQuery(
+    baseOptions?: Apollo.QueryHookOptions<GetLibrariesLightQuery, GetLibrariesLightQueryVariables>
 ) {
     const options = {...defaultOptions, ...baseOptions};
-    return Apollo.useQuery<GetLibrariesQuery, GetLibrariesQueryVariables>(GetLibrariesDocument, options);
+    return Apollo.useQuery<GetLibrariesLightQuery, GetLibrariesLightQueryVariables>(GetLibrariesLightDocument, options);
 }
-export function useGetLibrariesLazyQuery(
-    baseOptions?: Apollo.LazyQueryHookOptions<GetLibrariesQuery, GetLibrariesQueryVariables>
+export function useGetLibrariesLightLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<GetLibrariesLightQuery, GetLibrariesLightQueryVariables>
 ) {
     const options = {...defaultOptions, ...baseOptions};
-    return Apollo.useLazyQuery<GetLibrariesQuery, GetLibrariesQueryVariables>(GetLibrariesDocument, options);
+    return Apollo.useLazyQuery<GetLibrariesLightQuery, GetLibrariesLightQueryVariables>(
+        GetLibrariesLightDocument,
+        options
+    );
 }
-export type GetLibrariesQueryHookResult = ReturnType<typeof useGetLibrariesQuery>;
-export type GetLibrariesLazyQueryHookResult = ReturnType<typeof useGetLibrariesLazyQuery>;
-export type GetLibrariesQueryResult = Apollo.QueryResult<GetLibrariesQuery, GetLibrariesQueryVariables>;
+export type GetLibrariesLightQueryHookResult = ReturnType<typeof useGetLibrariesLightQuery>;
+export type GetLibrariesLightLazyQueryHookResult = ReturnType<typeof useGetLibrariesLightLazyQuery>;
+export type GetLibrariesLightQueryResult = Apollo.QueryResult<GetLibrariesLightQuery, GetLibrariesLightQueryVariables>;
+export const GetLibrariesListDocument = gql`
+    query GET_LIBRARIES_LIST($filters: LibrariesFiltersInput) {
+        libraries(filters: $filters) {
+            list {
+                id
+                label
+                behavior
+                icon {
+                    ...RecordIdentity
+                }
+                gqlNames {
+                    query
+                    filter
+                    searchableFields
+                }
+                previewsSettings {
+                    description
+                    label
+                    system
+                    versions {
+                        background
+                        density
+                        sizes {
+                            name
+                            size
+                        }
+                    }
+                }
+                permissions {
+                    access_library
+                    access_record
+                    create_record
+                    edit_record
+                    delete_record
+                }
+            }
+        }
+    }
+    ${RecordIdentityFragmentDoc}
+`;
+
+/**
+ * __useGetLibrariesListQuery__
+ *
+ * To run a query within a React component, call `useGetLibrariesListQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLibrariesListQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLibrariesListQuery({
+ *   variables: {
+ *      filters: // value for 'filters'
+ *   },
+ * });
+ */
+export function useGetLibrariesListQuery(
+    baseOptions?: Apollo.QueryHookOptions<GetLibrariesListQuery, GetLibrariesListQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useQuery<GetLibrariesListQuery, GetLibrariesListQueryVariables>(GetLibrariesListDocument, options);
+}
+export function useGetLibrariesListLazyQuery(
+    baseOptions?: Apollo.LazyQueryHookOptions<GetLibrariesListQuery, GetLibrariesListQueryVariables>
+) {
+    const options = {...defaultOptions, ...baseOptions};
+    return Apollo.useLazyQuery<GetLibrariesListQuery, GetLibrariesListQueryVariables>(
+        GetLibrariesListDocument,
+        options
+    );
+}
+export type GetLibrariesListQueryHookResult = ReturnType<typeof useGetLibrariesListQuery>;
+export type GetLibrariesListLazyQueryHookResult = ReturnType<typeof useGetLibrariesListLazyQuery>;
+export type GetLibrariesListQueryResult = Apollo.QueryResult<GetLibrariesListQuery, GetLibrariesListQueryVariables>;
 export const GetLibraryByIdDocument = gql`
     query GET_LIBRARY_BY_ID($id: [ID!]) {
         libraries(filters: {id: $id}) {

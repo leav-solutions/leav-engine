@@ -1,28 +1,45 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {gql} from '@apollo/client';
+import gql from 'graphql-tag';
+import {recordIdentityFragment} from '../../gqlFragments';
 
-export const getLibrariesQuery = gql`
-    fragment LibraryLight on Library {
-        id
-        label
-        icon {
-            id
-            whoAmI {
-                id
-                library {
-                    id
-                }
-                preview
-            }
-        }
-    }
-
-    query GET_LIBRARIES {
-        libraries {
+export const getLibrariesListQuery = gql`
+    ${recordIdentityFragment}
+    query GET_LIBRARIES_LIST($filters: LibrariesFiltersInput) {
+        libraries(filters: $filters) {
             list {
-                ...LibraryLight
+                id
+                label
+                behavior
+                icon {
+                    ...RecordIdentity
+                }
+                gqlNames {
+                    query
+                    filter
+                    searchableFields
+                }
+                previewsSettings {
+                    description
+                    label
+                    system
+                    versions {
+                        background
+                        density
+                        sizes {
+                            name
+                            size
+                        }
+                    }
+                }
+                permissions {
+                    access_library
+                    access_record
+                    create_record
+                    edit_record
+                    delete_record
+                }
             }
         }
     }

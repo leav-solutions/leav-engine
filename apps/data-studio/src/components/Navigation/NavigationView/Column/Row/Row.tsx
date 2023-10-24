@@ -9,18 +9,18 @@ import {
     SearchOutlined,
     WarningOutlined
 } from '@ant-design/icons';
-import {FloatingMenu, FloatingMenuAction, RecordCard, themeVars, useLang} from '@leav/ui';
+import {FloatingMenu, FloatingMenuAction, PreviewsGenerationModal, RecordCard, themeVars, useLang} from '@leav/ui';
 import {Badge, message, Tooltip} from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
 import {SizeType} from 'antd/lib/config-provider/SizeContext';
 import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
-import TriggerPreviewsGenerationModal from 'components/shared/TriggerPreviewsGenerationModal';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setNavigationPath} from 'reduxStore/navigation';
 import {setSelection} from 'reduxStore/selection';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
+import useDispatchPreviewsGenerationResult from 'hooks/useDispatchPreviewsGenerationResult/useDispatchPreviewsGenerationResult';
 import styled, {CSSObject} from 'styled-components';
 import {getFilesLibraryId, localizedTranslation} from 'utils';
 import {TreeBehavior} from '_gqlTypes/globalTypes';
@@ -122,7 +122,7 @@ interface IActiveRowNavigationProps {
 
 function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Element {
     const {lang} = useLang();
-
+    const dispatchPreviewsGenerationResult = useDispatchPreviewsGenerationResult();
     const {t} = useTranslation();
     const {selectionState, navigation} = useAppSelector(state => ({
         selectionState: state.selection,
@@ -252,6 +252,10 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
 
     const filesLibraryId = getFilesLibraryId(activeTree);
 
+    const _onPreviewsGenerationResult = (isSuccess: boolean) => {
+        dispatchPreviewsGenerationResult(isSuccess);
+    };
+
     return (
         <RowWrapper onClick={addPath} $isInPath={isInPath} $isActive={isActive} $isRecordActive={isRecordActive}>
             <FloatingMenu
@@ -303,11 +307,12 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
                 </>
             )}
             {displayPreviewConfirm && (
-                <TriggerPreviewsGenerationModal
+                <PreviewsGenerationModal
                     filesLibraryId={filesLibraryId}
                     libraryId={record.library.id}
                     recordIds={[record.id]}
                     onClose={_handleClosePreviewGenerationConfirm}
+                    onResult={_onPreviewsGenerationResult}
                 />
             )}
         </RowWrapper>

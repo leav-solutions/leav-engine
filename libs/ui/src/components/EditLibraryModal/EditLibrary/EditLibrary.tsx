@@ -18,6 +18,10 @@ interface IEditLibraryProps {
     onSetSubmitFunction?: (submitFunction: () => Promise<SaveLibraryMutation['saveLibrary']>) => void;
     readOnly?: boolean;
     indexationTask?: string;
+    previews?: {
+        task?: string;
+        onGenerationResult: (isSuccess: boolean) => void;
+    };
 }
 
 const TabContentWrapper = styled.div`
@@ -29,7 +33,8 @@ function EditLibrary({
     libraryId,
     onSetSubmitFunction,
     readOnly: isReadOnly,
-    indexationTask
+    indexationTask,
+    previews
 }: IEditLibraryProps): JSX.Element {
     const {t} = useSharedTranslation();
     const isEditing = !!libraryId;
@@ -104,10 +109,15 @@ function EditLibrary({
     if (isEditing && libraryData.behavior === LibraryBehavior.files) {
         tabs.push({
             key: 'previews_settings',
-            label: t('libraries.previews_settings.title'),
+            label: (
+                <span>
+                    {!!previews.task && <LoadingOutlined spin />}
+                    {t('libraries.previews_settings.title')}
+                </span>
+            ),
             children: (
                 <TabContentWrapper>
-                    <EditLibraryPreviewsSettings library={libraryData} readOnly={isReadOnly} />
+                    <EditLibraryPreviewsSettings library={libraryData} previews={previews} readOnly={isReadOnly} />
                 </TabContentWrapper>
             )
         });

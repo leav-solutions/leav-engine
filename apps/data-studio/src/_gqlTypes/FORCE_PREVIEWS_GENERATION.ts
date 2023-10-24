@@ -16,7 +16,7 @@ export interface FORCE_PREVIEWS_GENERATION {
     /**
      * Force previews generation for the given records. If filters is specified, it will perform a search applying these filters and generate previews for results. If both filters and recordIds are specified, filters will be ignored. If failedOnly is true, only failed previews will be generated.
      */
-    forcePreviewsGeneration: boolean;
+    forcePreviewsGeneration: string;
 }
 
 export interface FORCE_PREVIEWS_GENERATIONVariables {

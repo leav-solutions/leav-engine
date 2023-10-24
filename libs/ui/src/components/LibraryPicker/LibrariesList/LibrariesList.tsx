@@ -12,15 +12,15 @@ import {extractPermissionFromQuery} from '../../../helpers/extractPermissionFrom
 import {useLang} from '../../../hooks';
 import {useSharedTranslation} from '../../../hooks/useSharedTranslation';
 import {
-    GetLibrariesQuery,
+    GetLibrariesLightQuery,
     LibraryLightFragment,
     PermissionsActions,
     PermissionTypes,
     SaveLibraryMutation,
-    useGetLibrariesQuery,
+    useGetLibrariesLightQuery,
     useIsAllowedQuery
 } from '../../../_gqlTypes';
-import {getLibrariesQuery} from '../../../_queries/libraries/getLibrariesQuery';
+import {getLibrariesLightQuery} from '../../../_queries/libraries/getLibrariesLightQuery';
 import {EditLibraryModal} from '../../EditLibraryModal';
 import {EntityCard, IEntityData} from '../../EntityCard';
 import {ErrorDisplay} from '../../ErrorDisplay';
@@ -54,7 +54,7 @@ function LibrariesList({
 }: ILibrariesListProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
-    const {loading, error, data} = useGetLibrariesQuery();
+    const {loading, error, data} = useGetLibrariesLightQuery();
 
     const isAllowedQueryResult = useIsAllowedQuery({
         fetchPolicy: 'cache-and-network',
@@ -103,12 +103,12 @@ function LibrariesList({
     const _handleCloseNewLibrary = () => setIsNewLibraryModalOpen(false);
 
     const _handlePostCreate = async (newLibrary: SaveLibraryMutation['saveLibrary']) => {
-        const allLibrariesData = client.readQuery<GetLibrariesQuery>({query: getLibrariesQuery});
+        const allLibrariesData = client.readQuery<GetLibrariesLightQuery>({query: getLibrariesLightQuery});
 
         const newLibsList = [newLibrary, ...(allLibrariesData?.libraries?.list ?? [])];
         if (allLibrariesData) {
             client.writeQuery({
-                query: getLibrariesQuery,
+                query: getLibrariesLightQuery,
                 data: {
                     libraries: {
                         ...allLibrariesData.libraries,

@@ -62,7 +62,9 @@
         "sync_indexation": "Synchronize",
         "indexed_attributes": "Indexed attributes",
         "previews_settings": {
-            "title": "Previews settings",
+            "title": "Previews",
+            "settings": "Previews settings",
+            "generate": "Generate previews",
             "label": "Label",
             "description": "Description",
             "background": "Background",

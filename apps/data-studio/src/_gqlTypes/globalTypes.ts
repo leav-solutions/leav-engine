@@ -178,7 +178,8 @@ export enum TaskType {
     EXPORT = 'EXPORT',
     IMPORT_CONFIG = 'IMPORT_CONFIG',
     IMPORT_DATA = 'IMPORT_DATA',
-    INDEXATION = 'INDEXATION'
+    INDEXATION = 'INDEXATION',
+    PREVIEWS_GENERATION = 'PREVIEWS_GENERATION'
 }
 
 export enum TreeBehavior {
@@ -210,14 +211,14 @@ export interface ApplicationEventFiltersInput {
     events?: ApplicationEventTypes[] | null;
 }
 
-export interface DeleteTaskInput {
-    id: string;
-    archive: boolean;
-}
-
 export interface CreateRecordDataInput {
     version?: ValueVersionInput[] | null;
     values?: ValueBatchInput[] | null;
+}
+
+export interface DeleteTaskInput {
+    id: string;
+    archive: boolean;
 }
 
 export interface FileInput {

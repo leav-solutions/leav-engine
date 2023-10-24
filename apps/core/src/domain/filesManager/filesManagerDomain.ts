@@ -115,7 +115,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.utils': utils = null,
     'core.infra.amqpService': amqpService = null,
@@ -560,7 +560,8 @@ export default function({
                                     args: params
                                 },
                                 role: {
-                                    type: TaskType.IMPORT_DATA
+                                    type: TaskType.PREVIEWS_GENERATION,
+                                    detail: params.libraryId
                                 },
                                 priority: TaskPriority.MEDIUM,
                                 startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),

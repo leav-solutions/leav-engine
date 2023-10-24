@@ -17,8 +17,9 @@ import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import {IconEllipsisVertical} from 'assets/icons/IconEllipsisVertical';
 import CreateDirectory from 'components/CreateDirectory';
 import EditRecordModal from 'components/RecordEdition/EditRecordModal';
-import TriggerPreviewsGenerationModal from 'components/shared/TriggerPreviewsGenerationModal';
+import {PreviewsGenerationModal} from '@leav/ui';
 import UploadFiles from 'components/UploadFiles';
+import useDispatchPreviewsGenerationResult from 'hooks/useDispatchPreviewsGenerationResult/useDispatchPreviewsGenerationResult';
 import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeElementMutation';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
@@ -47,6 +48,7 @@ interface IDefaultActionsProps {
 function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}: IDefaultActionsProps): JSX.Element {
     const {t} = useTranslation();
     const dispatch = useAppDispatch();
+    const dispatchPreviewsGenerationResult = useDispatchPreviewsGenerationResult();
     const {selectionState, navigation} = useAppSelector(state => ({
         selectionState: state.selection,
         navigation: state.navigation
@@ -204,6 +206,10 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
         refreshTreeContent();
     };
 
+    const _onPreviewsGenerationResult = (isSuccess: boolean) => {
+        dispatchPreviewsGenerationResult(isSuccess);
+    };
+
     const filesLibraryId = getFilesLibraryId(activeTree);
 
     return (
@@ -260,11 +266,12 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
                 </>
             )}
             {displayPreviewConfirm && (
-                <TriggerPreviewsGenerationModal
+                <PreviewsGenerationModal
                     libraryId={parent?.record?.whoAmI?.library?.id}
                     filesLibraryId={filesLibraryId}
                     {...(parent && {recordIds: [parent?.record.id]})}
                     onClose={_handleClosePreviewGenerationConfirm}
+                    onResult={_onPreviewsGenerationResult}
                 />
             )}
         </>

@@ -2,10 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PictureOutlined} from '@ant-design/icons';
-import {BasicButton, themeVars} from '@leav/ui';
+import {BasicButton, themeVars, PreviewsGenerationModal} from '@leav/ui';
+import {InfoChannel, InfoType} from '_types/types';
 import {Descriptions} from 'antd';
-import TriggerPreviewsGenerationModal from 'components/shared/TriggerPreviewsGenerationModal';
 import {IFileDataWithPreviewsStatus} from 'graphQL/queries/records/getFileDataQuery';
+import useDispatchPreviewsGenerationResult from 'hooks/useDispatchPreviewsGenerationResult/useDispatchPreviewsGenerationResult';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -44,6 +45,7 @@ const ActionsWrapper = styled.div`
 
 function FileModalSidebar({fileData}: IFileModalSidebarProps): JSX.Element {
     const {t} = useTranslation();
+    const dispatchPreviewsGenerationResult = useDispatchPreviewsGenerationResult();
     const [displayPreviewConfirm, setDisplayPreviewConfirm] = useState(false);
 
     const _handleClickGeneratePreviews = () => {
@@ -85,6 +87,10 @@ function FileModalSidebar({fileData}: IFileModalSidebarProps): JSX.Element {
         }
     ];
 
+    const _onPreviewsGenerationResult = (isSuccess: boolean) => {
+        dispatchPreviewsGenerationResult(isSuccess);
+    };
+
     return (
         <>
             <Sidebar data-testid="sidebar-section">
@@ -113,10 +119,11 @@ function FileModalSidebar({fileData}: IFileModalSidebarProps): JSX.Element {
                 )}
             </Sidebar>
             {displayPreviewConfirm && (
-                <TriggerPreviewsGenerationModal
+                <PreviewsGenerationModal
                     libraryId={fileData.whoAmI.library.id}
                     recordIds={[fileData.id]}
                     onClose={_handleClosePreviewGenerationConfirm}
+                    onResult={_onPreviewsGenerationResult}
                 />
             )}
         </>

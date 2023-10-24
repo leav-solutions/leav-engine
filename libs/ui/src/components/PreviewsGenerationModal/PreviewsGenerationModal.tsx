@@ -1,36 +1,36 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useMutation, useQuery} from '@apollo/client';
-import {ErrorDisplay, Loading, useLang} from '@leav/ui';
+import useLang from '../../hooks/useLang';
+import {ErrorDisplay} from '../ErrorDisplay';
+import {Loading} from '../Loading';
 import {localizedTranslation} from '@leav/utils';
 import {Checkbox, Divider, Modal, Tree} from 'antd';
-import {forcePreviewsGenerationMutation} from 'graphQL/mutations/files/forcePreviewsGenerationMutation';
-import {getLibrariesListQuery} from 'graphQL/queries/libraries/getLibrariesListQuery';
-import {useState} from 'react';
+import {
+    useForcePreviewsGenerationMutation,
+    useGetLibrariesListQuery,
+    ForcePreviewsGenerationMutationVariables
+} from '../../_gqlTypes';
+import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {addInfo} from 'reduxStore/infos';
-import {useAppDispatch} from 'reduxStore/store';
-import {getRequestFromFilters} from 'utils/getRequestFromFilter';
-import {FORCE_PREVIEWS_GENERATION, FORCE_PREVIEWS_GENERATIONVariables} from '_gqlTypes/FORCE_PREVIEWS_GENERATION';
-import {GET_LIBRARIES_LIST, GET_LIBRARIES_LISTVariables} from '_gqlTypes/GET_LIBRARIES_LIST';
-import {IFilter, InfoChannel, InfoType} from '_types/types';
 
-interface ITriggerPreviewsGenerationModalProps {
+interface IPreviewsGenerationModalProps {
     libraryId: string;
     filesLibraryId?: string;
     recordIds?: string[];
-    filters?: IFilter[];
+    filters?: ForcePreviewsGenerationMutationVariables['filters'];
     onClose: () => void;
+    onResult: (isSuccess: boolean) => void; // FIXME: data type IInfo
 }
 
-function TriggerPreviewsGenerationModal({
+function PreviewsGenerationModal({
     libraryId,
     filesLibraryId,
     recordIds,
     filters,
-    onClose
-}: ITriggerPreviewsGenerationModalProps): JSX.Element {
+    onClose,
+    onResult
+}: IPreviewsGenerationModalProps): JSX.Element {
     const {t} = useTranslation();
     const {lang} = useLang();
 
@@ -39,40 +39,34 @@ function TriggerPreviewsGenerationModal({
     const [treeData, setTreeData] = useState([]);
     const [allSizes, setAllSizes] = useState<string[]>([]);
 
-    const [startPreviewsGeneration, {loading, data}] = useMutation<
-        FORCE_PREVIEWS_GENERATION,
-        FORCE_PREVIEWS_GENERATIONVariables
-    >(forcePreviewsGenerationMutation);
-    const dispatch = useAppDispatch();
+    const [startPreviewsGeneration, {loading}] = useForcePreviewsGenerationMutation();
 
-    const {error: getLibrariesError, loading: getLibrariesLoading} = useQuery<
-        GET_LIBRARIES_LIST,
-        GET_LIBRARIES_LISTVariables
-    >(getLibrariesListQuery, {
+    const {data: getLibrariesData, error: getLibrariesError, loading: getLibrariesLoading} = useGetLibrariesListQuery({
         variables: {
             filters: {
                 id: [filesLibraryId || libraryId]
             }
-        },
-        onCompleted: getLibrariesData => {
-            const previewSettings = getLibrariesData.libraries.list?.[0].previewsSettings || [];
-            const sizes = [];
-
-            const td = previewSettings.map(s => {
-                const children = s.versions.sizes.map(vs => ({title: `${vs.name} (${vs.size}px)`, key: vs.name}));
-                sizes.push(...children.map(c => c.key));
-
-                return {
-                    title: localizedTranslation(s.label, lang),
-                    key: localizedTranslation(s.label, lang),
-                    children
-                };
-            });
-
-            setTreeData(td);
-            setAllSizes(sizes);
         }
     });
+
+    useEffect(() => {
+        const previewSettings = getLibrariesData.libraries.list?.[0].previewsSettings || [];
+        const sizes = [];
+
+        const td = previewSettings.map(s => {
+            const children = s.versions.sizes.map(vs => ({title: `${vs.name} (${vs.size}px)`, key: vs.name}));
+            sizes.push(...children.map(c => c.key));
+
+            return {
+                title: localizedTranslation(s.label, lang),
+                key: localizedTranslation(s.label, lang),
+                children
+            };
+        });
+
+        setTreeData(td);
+        setAllSizes(sizes);
+    }, [getLibrariesData]);
 
     const _triggerPreviewsGeneration = async () => {
         try {
@@ -80,25 +74,15 @@ function TriggerPreviewsGenerationModal({
                 variables: {
                     libraryId,
                     recordIds,
-                    filters: filters ? getRequestFromFilters(filters) : null,
+                    filters,
                     failedOnly: isFailedOnlyChecked,
                     previewVersionSizeNames: checkedSizes
                 }
             });
 
-            const isSuccess = result.data?.forcePreviewsGeneration ?? false;
+            const isSuccess = !!result.data?.forcePreviewsGeneration;
 
-            const message = isSuccess
-                ? t('files.previews_generation_success')
-                : t('files.previews_generation_nothing_to_do');
-
-            dispatch(
-                addInfo({
-                    type: InfoType.success,
-                    channel: InfoChannel.passive,
-                    content: message
-                })
-            );
+            onResult(isSuccess);
 
             onClose();
         } catch (e) {
@@ -163,4 +147,4 @@ function TriggerPreviewsGenerationModal({
     );
 }
 
-export default TriggerPreviewsGenerationModal;
+export default PreviewsGenerationModal;

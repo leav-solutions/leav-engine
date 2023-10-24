@@ -17,3 +17,4 @@ export * from './Loading';
 export * from './RecordCard';
 export * from './SubmitStateNotifier';
 export * from './TreePicker';
+export * from './PreviewsGenerationModal';

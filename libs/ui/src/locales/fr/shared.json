@@ -61,7 +61,9 @@
         "sync_indexation": "Synchroniser",
         "indexed_attributes": "Attributs indexés",
         "previews_settings": {
-            "title": "Configuration des aperçus",
+            "title": "Aperçus",
+            "settings": "Configuration des aperçus",
+            "generate": "Générer les aperçus",
             "label": "Libellé",
             "description": "Description",
             "background": "Arrière-plan",

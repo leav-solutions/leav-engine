@@ -72,7 +72,8 @@ describe('handleFileSystemEvent', () => {
             ignoreFilesList: null,
             rootKeys: null,
             routingKeys: null,
-            userGroupsIds: null
+            userGroupsIds: null,
+            previewRequestsNumber: null
         }
     };
 
