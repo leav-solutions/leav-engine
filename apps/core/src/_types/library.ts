@@ -49,6 +49,7 @@ export interface ILibraryFilterOptions extends ICoreEntityFilterOptions {
 }
 
 export interface ILibraryPreviewsSettings {
+    id: string;
     label: ISystemTranslation;
     description?: ISystemTranslation;
     system: boolean;

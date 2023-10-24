@@ -45,7 +45,7 @@ interface IDeps {
     'core.app.core'?: ICoreApp;
 }
 
-export default function({
+export default function ({
     'core.domain.library': libraryDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -101,6 +101,7 @@ export default function({
                     }
 
                     type LibraryPreviewsSettings {
+                        id: ID!,
                         label: SystemTranslation!,
                         description: SystemTranslation,
                         versions: PreviewVersion!,
@@ -142,6 +143,7 @@ export default function({
                     }
 
                     input LibraryPreviewsSettingsInput {
+                        id: ID!,
                         label: SystemTranslation!,
                         description: SystemTranslationOptional,
                         versions: PreviewVersionInput!

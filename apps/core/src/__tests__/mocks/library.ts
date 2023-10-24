@@ -18,6 +18,7 @@ export const mockLibraryFiles: ILibrary = {
     label: {fr: 'Test lib'},
     previewsSettings: [
         {
+            id: 'test',
             label: {fr: 'test'},
             description: {fr: 'test'},
             system: false,
@@ -33,6 +34,7 @@ export const mockLibraryFiles: ILibrary = {
             }
         },
         {
+            id: 'test2',
             label: {fr: 'test 2'},
             description: {fr: 'test 2'},
             system: false,

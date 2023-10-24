@@ -371,6 +371,7 @@ describe('LibraryDomain', () => {
 
                     const previewsSettings: ILibrary['previewsSettings'] = [
                         {
+                            id: 'test',
                             label: {fr: 'test'},
                             description: {fr: 'test'},
                             system: false,
@@ -449,6 +450,7 @@ describe('LibraryDomain', () => {
 
                     const previewsSettings: ILibrary['previewsSettings'] = [
                         {
+                            id: 'test',
                             label: {fr: 'test'},
                             description: {fr: 'test'},
                             system: false,

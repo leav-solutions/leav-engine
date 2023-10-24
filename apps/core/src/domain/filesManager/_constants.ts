@@ -5,6 +5,7 @@ import {ILibrary} from '_types/library';
 
 export const systemPreviewsSettings: ILibrary['previewsSettings'] = [
     {
+        id: 'system_preview',
         label: {
             fr: 'Aperçu système',
             en: 'System preview'

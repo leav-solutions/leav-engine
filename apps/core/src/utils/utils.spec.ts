@@ -353,6 +353,7 @@ describe('Utils', () => {
                 ...mockLibraryFiles,
                 previewsSettings: [
                     {
+                        id: 'Previews',
                         label: {fr: 'Previews'},
                         system: false,
                         versions: {
