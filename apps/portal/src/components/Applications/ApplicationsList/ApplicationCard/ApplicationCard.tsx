@@ -56,9 +56,10 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
             src={appIcon}
             alt={label}
             preview={{src: String(application.icon?.whoAmI?.preview?.huge), toolbarRender: () => null}}
+            style={{width: '100%', objectFit: 'scale-down', background: application?.color, padding: '3px 0'}}
         />
     ) : (
-        <KitAvatar shape="square">{initials}</KitAvatar>
+        <KitAvatar color={application?.color ?? undefined}>{initials}</KitAvatar>
     );
 
     const actions = [<KitButton onClick={_toggleFavorite}>{isFavorite ? <StarFilled /> : <StarOutlined />}</KitButton>];
@@ -72,7 +73,6 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
                 picture={cover}
                 actions={actions}
                 onEdit={_handleOpenEditAppModal}
-                colors={[{label: null, color: application.color}]}
                 data-testid={`app-card-${application.id}`}
                 fullWidthAvatar
             />
