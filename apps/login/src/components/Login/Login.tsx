@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {useRefreshToken} from '@leav/ui';
+import {useQueryParams} from 'hooks/useQueryParams';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useParams} from 'react-router-dom';
-import LoginForm from './LoginForm';
 import {AUTH_URL} from '../../constants';
-import {useRefreshToken} from '@leav/ui';
+import LoginForm from './LoginForm';
 
 const Login = (): JSX.Element => {
-    const params = useParams<{dest?: string}>();
+    const params = useQueryParams();
     const {t} = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [loginError, setLoginError] = useState('');
