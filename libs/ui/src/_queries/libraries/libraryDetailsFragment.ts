@@ -24,6 +24,7 @@ export const libraryDetailsFragment = gql`
     }
 
     fragment LibraryPreviewsSettings on LibraryPreviewsSettings {
+        id
         label
         description
         system

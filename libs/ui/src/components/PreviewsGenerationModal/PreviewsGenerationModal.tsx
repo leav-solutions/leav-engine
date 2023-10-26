@@ -50,23 +50,25 @@ function PreviewsGenerationModal({
     });
 
     useEffect(() => {
-        const previewSettings = getLibrariesData.libraries.list?.[0].previewsSettings || [];
-        const sizes = [];
+        if (getLibrariesData) {
+            const previewSettings = getLibrariesData.libraries.list?.[0].previewsSettings || [];
+            const sizes = [];
 
-        const td = previewSettings.map(s => {
-            const children = s.versions.sizes.map(vs => ({title: `${vs.name} (${vs.size}px)`, key: vs.name}));
-            sizes.push(...children.map(c => c.key));
+            const td = previewSettings.map(s => {
+                const children = s.versions.sizes.map(vs => ({title: `${vs.name} (${vs.size}px)`, key: vs.name}));
+                sizes.push(...children.map(c => c.key));
 
-            return {
-                title: localizedTranslation(s.label, lang),
-                key: localizedTranslation(s.label, lang),
-                children
-            };
-        });
+                return {
+                    title: localizedTranslation(s.label, lang),
+                    key: localizedTranslation(s.label, lang),
+                    children
+                };
+            });
 
-        setTreeData(td);
-        setAllSizes(sizes);
-    }, [getLibrariesData]);
+            setTreeData(td);
+            setAllSizes(sizes);
+        }
+    }, [getLibrariesData, useGetLibrariesListQuery]);
 
     const _triggerPreviewsGeneration = async () => {
         try {

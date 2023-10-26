@@ -24,7 +24,7 @@ export const sendPreviewMessage = async (
 export const generatePreviewMsg = (
     recordId: string,
     pathAfter: string,
-    versions: IPreviewVersion[],
+    versions: Array<IPreviewVersion & {previewId: string}>,
     context: any
 ): IPreviewMessage => {
     const input = pathAfter;
@@ -40,7 +40,10 @@ export const generatePreviewMsg = (
     const versionsWithOutput = versions.map(version => ({
         ...version,
         pdf: `${pdfFolderName}/${output}.pdf`,
-        sizes: version.sizes.map(size => ({...size, output: `${size.name}/${output}.${extension}`}))
+        sizes: version.sizes.map(size => ({
+            ...size,
+            output: `${version.previewId}/${size.name}/${output}.${extension}`
+        }))
     }));
 
     const previewMsg = {
@@ -63,14 +66,14 @@ export const requestPreviewGeneration = async ({
     recordId: string;
     pathAfter: string;
     libraryId: string;
-    versions: IPreviewVersion[];
+    versions: Array<IPreviewVersion & {previewId: string}>;
     priority?: PreviewPriority;
     deps: {logger: winston.Winston; amqpService: IAmqpService; config: Config.IConfig};
 }): Promise<void> => {
     const context: IPreviewResponseContext = {library: libraryId, recordId};
 
     const previewMessage = generatePreviewMsg(recordId, pathAfter, versions, context);
-    sendPreviewMessage(previewMessage, priority, {...deps}).catch(function (e) {
+    sendPreviewMessage(previewMessage, priority, {...deps}).catch(function(e) {
         deps.logger.warn(`[FilesManager] error sending prevew request ${e.message}`);
     });
 };

@@ -121,7 +121,9 @@ export interface IUtils {
     getPreviewsAttributeName(libraryId: string): string;
     getPreviewsStatusAttributeName(libraryId: string): string;
     getPreviewAttributesSettings(library: ILibrary): IPreviewAttributesSettings;
-    previewsSettingsToVersions(previewsSettings: ILibraryPreviewsSettings[]): IPreviewVersion[];
+    previewsSettingsToVersions(
+        previewsSettings: ILibraryPreviewsSettings[]
+    ): Array<IPreviewVersion & {previewId: string}>;
 }
 
 export interface IUtilsDeps {
@@ -129,7 +131,7 @@ export interface IUtilsDeps {
     translator?: i18n;
 }
 
-export default function ({config = null, translator = null}: IUtilsDeps = {}): IUtils {
+export default function({config = null, translator = null}: IUtilsDeps = {}): IUtils {
     return {
         getFileExtension(filename) {
             if (filename.lastIndexOf('.') === -1) {
@@ -330,8 +332,10 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
                 }
             );
         },
-        previewsSettingsToVersions(previewsSettings) {
-            return previewsSettings.map(settings => settings.versions);
+        previewsSettingsToVersions(
+            previewsSettings: ILibraryPreviewsSettings[]
+        ): Array<IPreviewVersion & {previewId: string}> {
+            return previewsSettings.map(settings => ({previewId: settings.id, ...settings.versions}));
         }
     };
 }

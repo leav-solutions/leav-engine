@@ -4,6 +4,7 @@
 import {ColorPicker, Form, Input, InputNumber, Modal, Radio, Space} from 'antd';
 import {ComponentProps, useState} from 'react';
 import {useLang} from '../../../../../hooks';
+import {formatId, idFormatRegex} from '@leav/utils';
 import {useSharedTranslation} from '../../../../../hooks/useSharedTranslation';
 import {LibraryPreviewsSettingsFragment} from '../../../../../_gqlTypes';
 import FieldsGroup from '../../../../FieldsGroup';
@@ -20,6 +21,7 @@ interface IEditPreviewsSettingsModalProps {
     onClose: () => void;
     onSubmit: (previewsSetting: LibraryPreviewsSettingsFragment) => Promise<void>;
     readOnly?: boolean;
+    onCheckPreviewUniqueness: (value: string) => Promise<boolean>;
 }
 
 function EditPreviewsSettingsModal({
@@ -27,13 +29,16 @@ function EditPreviewsSettingsModal({
     readOnly,
     open,
     onClose,
-    onSubmit
+    onSubmit,
+    onCheckPreviewUniqueness
 }: IEditPreviewsSettingsModalProps): JSX.Element {
     const {t} = useSharedTranslation();
+    const [hasIdBeenEdited, setHasIdBeenEdited] = useState(false);
     const {availableLangs, defaultLang} = useLang();
     const isReadOnly = readOnly || previewsSetting?.system;
     const hasBackground = previewsSetting?.versions?.background !== 'false';
     const [isSubmitLoading, setIsSubmitLoading] = useState(false);
+    const isEditing = !!previewsSetting;
 
     const formInitValues: LibraryPreviewsSettingsFragment = previewsSetting
         ? {
@@ -47,6 +52,7 @@ function EditPreviewsSettingsModal({
               }
           }
         : {
+              id: null,
               label: null,
               description: null,
               system: false,
@@ -56,6 +62,23 @@ function EditPreviewsSettingsModal({
                   sizes: []
               }
           };
+
+    const _handleLabelChange = (labelLang: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+        // If ID hasn't been edited manually, generate it from label
+        if (!isEditing && labelLang === defaultLang && !hasIdBeenEdited) {
+            form.setFieldsValue({id: formatId(e.target.value)});
+        }
+    };
+
+    const _handlePreviewUniquenessValidation = async (rule, value) => {
+        if (value && (!isEditing || value !== formInitValues.id)) {
+            const isPreviewUnique = await onCheckPreviewUniqueness(value);
+
+            if (!isPreviewUnique) {
+                throw new Error();
+            }
+        }
+    };
 
     const [backgroundMode, setBackgroundMode] = useState<BackgroundMode>(
         hasBackground ? BackgroundMode.color : BackgroundMode.transparent
@@ -67,9 +90,19 @@ function EditPreviewsSettingsModal({
         form.setFieldValue(['versions', 'sizes'], sizes);
     };
 
+    const _getRequiredMessage = (field: string) =>
+        t('errors.field_required', {
+            interpolation: {escapeValue: false},
+            fieldName: t(`libraries.${field}`)
+        });
+
     const _handleBackgroundChange: ComponentProps<typeof ColorPicker>['onChange'] = color => {
         const hexColor = color.toHexString();
         form.setFieldValue(['versions', 'background'], hexColor);
+    };
+
+    const _handleIdChange = () => {
+        setHasIdBeenEdited(true);
     };
 
     const _handleSubmit = async () => {
@@ -116,10 +149,32 @@ function EditPreviewsSettingsModal({
                             ]}
                             style={{marginBottom: '0.5rem'}}
                         >
-                            <Input aria-label={`label_${availableLang}`} disabled={isReadOnly} />
+                            <Input
+                                aria-label={`label_${availableLang}`}
+                                onChange={_handleLabelChange(availableLang)}
+                                disabled={isReadOnly}
+                            />
                         </Form.Item>
                     ))}
                 </FieldsGroup>
+                <Form.Item
+                    name="id"
+                    key="id"
+                    label={t('global.id')}
+                    validateTrigger={['onChange', 'onSubmit']}
+                    rules={[
+                        {required: true, message: _getRequiredMessage('id')},
+                        {pattern: idFormatRegex, message: t('errors.invalid_id_format')},
+                        {
+                            validateTrigger: ['onSubmit'],
+                            validator: _handlePreviewUniquenessValidation,
+                            message: t('errors.id_already_exists')
+                        }
+                    ]}
+                    hasFeedback
+                >
+                    <Input disabled={isReadOnly || isEditing} onChange={_handleIdChange} />
+                </Form.Item>
                 <FieldsGroup label={t('libraries.previews_settings.description')}>
                     {availableLangs.map(availableLang => (
                         <Form.Item

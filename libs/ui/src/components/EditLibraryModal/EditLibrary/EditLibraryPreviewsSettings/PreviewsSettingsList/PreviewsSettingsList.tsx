@@ -6,7 +6,7 @@ import {getInvertColor, localizedTranslation} from '@leav/utils';
 import {Button, Input, Popconfirm, Space, Table, TableColumnsType, Tag, Tooltip} from 'antd';
 import {useState} from 'react';
 import styled from 'styled-components';
-import {useLang} from '../../../../../hooks';
+import {useCheckPreviewExistence, useLang} from '../../../../../hooks';
 import {useSharedTranslation} from '../../../../../hooks/useSharedTranslation';
 import {LibraryPreviewsSettingsFragment} from '../../../../../_gqlTypes';
 import {BasicButton} from '../../../../BasicButton';
@@ -35,12 +35,14 @@ const LabelCellWrapper = styled.div`
 `;
 
 interface IPreviewsSettingsListProps {
+    libraryId: string;
     previewsSettings: LibraryPreviewsSettingsFragment[];
     readOnly: boolean;
     onChange: (previewSettings: LibraryPreviewsSettingsFragment[]) => void;
 }
 
 function PreviewsSettingsList({
+    libraryId,
     previewsSettings,
     readOnly,
     onChange: onChangePreviewSettings
@@ -214,6 +216,10 @@ function PreviewsSettingsList({
         _handleCloseEditModal();
     };
 
+    const _isPreviewUnique = async (previewId: string) => {
+        return useCheckPreviewExistence(libraryId, previewId);
+    };
+
     return (
         <>
             <Table
@@ -232,6 +238,7 @@ function PreviewsSettingsList({
                     onSubmit={_handleSubmit}
                     readOnly={readOnly}
                     previewsSetting={previewsSettings[editModalDataIndex] ?? null}
+                    onCheckPreviewUniqueness={_isPreviewUnique}
                 />
             )}
         </>

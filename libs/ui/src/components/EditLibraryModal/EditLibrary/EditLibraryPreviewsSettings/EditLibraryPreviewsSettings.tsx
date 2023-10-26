@@ -41,6 +41,7 @@ function EditLibraryPreviewsSettings({library, readOnly, previews}: IEditLibrary
         return previewsSettings
             .filter(settings => !settings.system) // Don't save system settings
             .map(previewSetting => ({
+                id: previewSetting.id,
                 label: previewSetting.label,
                 description: previewSetting.description,
                 versions: {
@@ -93,6 +94,7 @@ function EditLibraryPreviewsSettings({library, readOnly, previews}: IEditLibrary
                 )}
                 <Divider orientation="left">{t('libraries.previews_settings.settings')}</Divider>
                 <PreviewsSettingsList
+                    libraryId={library.id}
                     readOnly={readOnly}
                     previewsSettings={library.previewsSettings}
                     onChange={_handleChange}

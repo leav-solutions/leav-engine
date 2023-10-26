@@ -21,6 +21,7 @@ export const getLibrariesListQuery = gql`
                     searchableFields
                 }
                 previewsSettings {
+                    id
                     description
                     label
                     system
