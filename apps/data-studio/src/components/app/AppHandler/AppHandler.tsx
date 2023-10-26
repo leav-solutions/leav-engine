@@ -2,9 +2,19 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery, useSubscription} from '@apollo/client';
-import {customTheme, ErrorDisplay, ErrorDisplayTypes, LangContext, Loading, useAntdLocale, useAppLang} from '@leav/ui';
+import {
+    customTheme,
+    dsTheme,
+    ErrorDisplay,
+    ErrorDisplayTypes,
+    LangContext,
+    Loading,
+    useAntdLocale,
+    useAppLang
+} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {ConfigProvider, theme} from 'antd';
+import {KitApp} from 'aristid-ds';
 import ApplicationContext from 'context/ApplicationContext';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en';
@@ -159,9 +169,11 @@ function AppHandler(): JSX.Element {
                 }}
             >
                 <ApplicationContext.Provider value={appContextData}>
-                    <ConfigProvider theme={customTheme} locale={locale}>
-                        <Router />
-                    </ConfigProvider>
+                    <KitApp customTheme={dsTheme}>
+                        <ConfigProvider theme={customTheme} locale={locale}>
+                            <Router />
+                        </ConfigProvider>
+                    </KitApp>
                 </ApplicationContext.Provider>
             </LangContext.Provider>
         </ThemeProvider>

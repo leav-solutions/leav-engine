@@ -8,19 +8,17 @@ import EntityPreview from './EntityPreview';
 
 describe('RecordPreview', () => {
     test('Show an image, first placeholder then image when its loaded', async () => {
-        await act(async () => {
-            render(<EntityPreview image="http://fake-image-url.com" label="TestLabel" tile />);
-        });
+        render(<EntityPreview image="http://fake-image-url.com" label="TestLabel" tile />);
 
         const imageElem = screen.getByAltText('record preview');
         expect(imageElem).toBeInTheDocument();
-        expect(imageElem).not.toBeVisible();
+        expect(imageElem).toHaveStyleRule('display', 'none');
 
         await act(async () => {
             fireEvent.load(imageElem);
         });
 
-        expect(imageElem).toBeVisible();
+        expect(imageElem).toHaveStyleRule('display', 'block');
     });
 
     test('Show initial with color if no image', async () => {

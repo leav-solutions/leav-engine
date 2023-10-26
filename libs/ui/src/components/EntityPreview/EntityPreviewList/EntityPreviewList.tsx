@@ -17,11 +17,11 @@ interface IImagePreviewProps {
 
 const GeneratedPreview = styled.div<IGeneratedPreviewProps>`
     ${props => props.style || ''}
-    background-color: ${props => props.bgColor};
-    color: ${props => props.fontColor};
-    font-size: ${({size}) => `calc(${getPreviewSize(size)} / 2.6)`};
-    height: ${({size}) => getPreviewSize(size)};
-    width: ${({size}) => getPreviewSize(size)};
+    background-color: ${props => props.$bgColor};
+    color: ${props => props.$fontColor};
+    font-size: ${({$size: size}) => `calc(${getPreviewSize(size)} / 2.6)`};
+    height: ${({$size: size}) => getPreviewSize(size)};
+    width: ${({$size: size}) => getPreviewSize(size)};
     padding: 5px;
     text-align: center;
     display: flex;
@@ -93,9 +93,9 @@ function EntityPreviewList({label, color, image, size, style, simplistic = false
         <GeneratedPreview
             data-testid="generated-preview"
             className="initial"
-            bgColor={bgColor}
-            fontColor={fontColor}
-            size={size}
+            $bgColor={bgColor}
+            $fontColor={fontColor}
+            $size={size}
             style={{...style}}
         >
             {getInitials(label)}

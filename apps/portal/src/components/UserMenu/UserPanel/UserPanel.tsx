@@ -2,11 +2,17 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FlagOutlined, LogoutOutlined} from '@ant-design/icons';
-import {Drawer, Menu} from 'antd';
+import {useLang} from '@leav/ui';
+import {Drawer} from 'antd';
+import {KitMenu} from 'aristid-ds';
 import useAuth from 'hooks/useAuth/useAuth';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
-import LangSwitcher from './LangSwitcher';
+import {styled} from 'styled-components';
+import {getFlagByLang} from '../../../../../../libs/utils/src/utils';
+
+const FlagWrapper = styled.span`
+    margin-right: 0.5rem;
+`;
 
 interface IUserPanelProps {
     isVisible: boolean;
@@ -16,23 +22,25 @@ interface IUserPanelProps {
 function UserPanel({isVisible, onClose}: IUserPanelProps): JSX.Element {
     const {t} = useTranslation();
     const {logout} = useAuth();
+    const {availableLangs, lang: activeLang, setLang} = useLang();
     const _handleLogout = () => {
         logout();
     };
+    const currentLang = activeLang[0];
 
-    const menuItems = [
-        {
-            key: 'lang-switcher',
-            icon: <FlagOutlined />,
-            label: <LangSwitcher />
-        },
-        {
-            key: 'logout',
-            label: t('logout'),
-            icon: <LogoutOutlined />,
-            onClick: _handleLogout
-        }
-    ];
+    const currentLangAction = {
+        icon: <FlagWrapper>{getFlagByLang(currentLang)}</FlagWrapper>,
+        label: t(`lang.${currentLang}`),
+        onClick: null,
+        isActive: true
+    };
+
+    const langMenuActions = availableLangs.map(lang => ({
+        icon: <FlagWrapper>{getFlagByLang(lang)}</FlagWrapper>,
+        label: t(`lang.${lang}`),
+        onClick: () => setLang(lang),
+        isActive: activeLang.indexOf(lang) !== -1
+    }));
 
     return (
         <Drawer
@@ -43,13 +51,12 @@ function UserPanel({isVisible, onClose}: IUserPanelProps): JSX.Element {
             open={isVisible}
             bodyStyle={{padding: 0}}
         >
-            <Menu
-                style={{
-                    height: '100%'
-                }}
-                mode="inline"
-                items={menuItems}
+            <KitMenu.Item
+                icon={<FlagOutlined />}
+                actions={[currentLangAction, ...langMenuActions]}
+                title={t('global.language')}
             />
+            <KitMenu.Item icon={<LogoutOutlined />} title={t('logout')} onClick={_handleLogout} />
         </Drawer>
     );
 }

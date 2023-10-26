@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Input} from 'antd';
+import {SearchOutlined} from '@ant-design/icons';
+import {KitInput} from 'aristid-ds';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -25,9 +26,9 @@ function ApplicationsSearch({onSearch}: IApplicationsSearchProps): JSX.Element {
 
     return (
         <Wrapper>
-            <Input.Search
+            <KitInput
+                suffix={<SearchOutlined />}
                 placeholder={t('search_placeholder')}
-                onSearch={onSearch}
                 onChange={_handleChange}
                 style={{width: '50vw'}}
             />

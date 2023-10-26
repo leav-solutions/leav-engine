@@ -1,14 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {endpointFormatRegex, formatId, idFormatRegex} from '@leav/utils';
-import {Form, FormInstance, Input, Select} from 'antd';
+import {endpointFormatRegex, formatId, getFlagByLang, idFormatRegex} from '@leav/utils';
+import {ColorPicker, Form, FormInstance} from 'antd';
+import {Color} from 'antd/lib/color-picker';
+import {KitInput, KitSelect} from 'aristid-ds';
 import React, {useState} from 'react';
 import styled from 'styled-components';
-import {ApplicationType, GetApplicationByIdQuery} from '../../../../_gqlTypes';
 import {useLang} from '../../../../hooks';
 import {useSharedTranslation} from '../../../../hooks/useSharedTranslation';
-import FieldsGroup from '../../../FieldsGroup';
+import {ApplicationType, GetApplicationByIdQuery} from '../../../../_gqlTypes';
 import {SubmitStateNotifier} from '../../../SubmitStateNotifier';
 import ModuleSelector from './ModuleSelector';
 
@@ -87,6 +88,12 @@ function EditApplicationInfoForm({
         setRunningFieldsSubmit(runningFieldsSubmit.filter(f => f !== field));
     };
 
+    const _handleColorChange = (value: Color) => {
+        if (isEditing) {
+            _handleFieldSubmit('color', value.toHexString());
+        }
+    };
+
     const _handleBlur = (field: string) => async (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         if (isEditing) {
             _handleFieldSubmit(field, e.target.value);
@@ -145,7 +152,12 @@ function EditApplicationInfoForm({
         }
     };
 
-    const appsBaseUrl = window.location.origin + '/app';
+    const appsBaseUrl = window.location.origin + '/app/';
+
+    const typeSelectOptions = Object.values(ApplicationType).map(type => ({
+        label: t(`applications.type_${type}`),
+        value: type
+    }));
 
     return (
         <Form
@@ -157,57 +169,54 @@ function EditApplicationInfoForm({
             labelWrap
             disabled={!isEditing && loading}
         >
-            <FieldsGroup label={t('applications.label')} key="app_label">
-                {availableLangs.map(lang => (
-                    <Form.Item
-                        key={`label_${lang}`}
-                        name={`label_${lang}`}
-                        label={lang.toLowerCase()}
-                        labelCol={{span: 2}}
-                        wrapperCol={{span: 22}}
-                        rules={[{required: lang === defaultLang, message: t('errors.default_language_required')}]}
-                        style={{marginBottom: '0.5rem'}}
-                    >
-                        <Input
-                            aria-label={`label_${lang}`}
-                            onChange={_handleLabelChange(lang)}
-                            onBlur={_handleBlur(`label_${lang}`)}
-                            onKeyPress={_handleSubmitOnEnter(`label_${lang}`)}
-                            disabled={isReadOnly || !!runningFieldsSubmit.find(f => f === `label_${lang}`)}
-                            suffix={<SubmitStateNotifier state={_getFieldState(`label_${lang}`)} />}
+            {availableLangs.map((lang, index) => (
+                <Form.Item
+                    key={`label_${lang}`}
+                    name={`label_${lang}`}
+                    rules={[{required: lang === defaultLang, message: t('errors.default_language_required')}]}
+                    style={{marginBottom: '0.5rem'}}
+                >
+                    <KitInput
+                        label={!index ? t('applications.label') : null}
+                        placeholder={t(`lang.${lang.toLowerCase()}`)}
+                        title={t(`lang.${lang.toLowerCase()}`)}
+                        aria-label={`label_${lang}`}
+                        onChange={_handleLabelChange(lang)}
+                        onBlur={_handleBlur(`label_${lang}`)}
+                        onKeyPress={_handleSubmitOnEnter(`label_${lang}`)}
+                        disabled={isReadOnly || !!runningFieldsSubmit.find(f => f === `label_${lang}`)}
+                        suffix={<SubmitStateNotifier state={_getFieldState(`label_${lang}`)} />}
+                        prefix={getFlagByLang(lang)}
+                    />
+                </Form.Item>
+            ))}
+            {availableLangs.map((lang, index) => (
+                <DescriptionFormItem
+                    key={`description_${lang}`}
+                    name={`description_${lang}`}
+                    style={{marginBottom: '0.5rem'}}
+                    extra={
+                        <SubmitStateNotifier
+                            style={{position: 'absolute', top: '0.5rem', right: '0.5rem'}}
+                            state={_getFieldState(`description_${lang}`)}
                         />
-                    </Form.Item>
-                ))}
-            </FieldsGroup>
-            <FieldsGroup label={t('applications.description')} key="description">
-                {availableLangs.map(lang => (
-                    <DescriptionFormItem
-                        key={`description_${lang}`}
-                        name={`description_${lang}`}
-                        label={lang.toLowerCase()}
-                        labelCol={{span: 2}}
-                        wrapperCol={{span: 22}}
-                        style={{marginBottom: '0.5rem'}}
-                        extra={
-                            <SubmitStateNotifier
-                                style={{position: 'absolute', top: '0.5rem', right: '0.5rem'}}
-                                state={_getFieldState(`description_${lang}`)}
-                            />
-                        }
-                    >
-                        <Input.TextArea
-                            aria-label={`description_${lang}`}
-                            onBlur={_handleBlur(`description_${lang}`)}
-                            onKeyDown={_handleSubmitOnEnter(`description_${lang}`)}
-                            disabled={isReadOnly}
-                        />
-                    </DescriptionFormItem>
-                ))}
-            </FieldsGroup>
+                    }
+                >
+                    <KitInput.TextArea
+                        label={!index ? t('applications.description') : null}
+                        placeholder={t(`lang.${lang.toLowerCase()}`)}
+                        title={t(`lang.${lang.toLowerCase()}`)}
+                        aria-label={`description_${lang}`}
+                        onBlur={_handleBlur(`description_${lang}`)}
+                        onKeyDown={_handleSubmitOnEnter(`description_${lang}`)}
+                        disabled={isReadOnly}
+                        prefix="🇫🇷"
+                    />
+                </DescriptionFormItem>
+            ))}
             <Form.Item
                 name="id"
                 key="id"
-                label={t('applications.id')}
                 validateTrigger={['onBlur', 'onChange', 'onSubmit']}
                 rules={[
                     {required: true, message: _getRequiredMessage('id')},
@@ -220,27 +229,25 @@ function EditApplicationInfoForm({
                 ]}
                 hasFeedback
             >
-                <Input disabled={isReadOnly || isEditing} onChange={_handleIdChange} aria-label="id" />
+                <KitInput
+                    label={t('applications.id')}
+                    disabled={isReadOnly || isEditing}
+                    onChange={_handleIdChange}
+                    aria-label="id"
+                />
             </Form.Item>
-            <Form.Item
-                name="type"
-                key="type"
-                label={t('applications.type')}
-                rules={[{required: true, message: _getRequiredMessage('type')}]}
-            >
-                <Select onChange={_handleTypeChange} disabled={isReadOnly || isEditing} aria-label="">
-                    {Object.values(ApplicationType).map(type => (
-                        <Select.Option key={type} value={type}>
-                            {t(`applications.type_${type}`)}
-                        </Select.Option>
-                    ))}
-                </Select>
+            <Form.Item name="type" key="type" rules={[{required: true, message: _getRequiredMessage('type')}]}>
+                <KitSelect
+                    label={t('applications.type')}
+                    onChange={_handleTypeChange}
+                    disabled={isReadOnly || isEditing}
+                    aria-label={t('applications.type')}
+                    options={typeSelectOptions}
+                />
             </Form.Item>
             {isInternalApp && (
                 <ModuleSelector
                     name="module"
-                    key="module"
-                    label={t('applications.module')}
                     disabled={isReadOnly || isEditing}
                     rules={[{required: true, message: _getRequiredMessage('module')}]}
                 />
@@ -248,7 +255,6 @@ function EditApplicationInfoForm({
             <Form.Item
                 name="endpoint"
                 key="endpoint"
-                label={t(isInternalApp ? 'applications.endpoint' : 'applications.url')}
                 validateTrigger={['onBlur', 'onChange', 'onSubmit']}
                 rules={[
                     {
@@ -271,14 +277,22 @@ function EditApplicationInfoForm({
                 ]}
                 hasFeedback
             >
-                <Input
-                    type={isInternalApp ? 'text' : 'url'}
-                    addonBefore={isInternalApp ? appsBaseUrl : null}
+                <KitInput
+                    label={t(isInternalApp ? 'applications.endpoint' : 'applications.url')}
+                    prefix={isInternalApp ? appsBaseUrl : null}
                     onBlur={_handleBlur('endpoint')}
                     onKeyDown={_handleSubmitOnEnter('endpoint')}
                     suffix={<SubmitStateNotifier state={_getFieldState('endpoint')} />}
                     disabled={isReadOnly}
                 />
+            </Form.Item>
+            <Form.Item
+                name="color"
+                label={t('applications.color')}
+                validateTrigger={['onBlur', 'onChange', 'onSubmit']}
+                hasFeedback
+            >
+                <ColorPicker format="hex" onChangeComplete={_handleColorChange} disabled={isReadOnly} />
             </Form.Item>
         </Form>
     );

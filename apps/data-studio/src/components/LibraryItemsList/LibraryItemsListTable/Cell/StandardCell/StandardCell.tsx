@@ -4,13 +4,13 @@
 import {CheckOutlined, CloseOutlined, FileTextOutlined} from '@ant-design/icons';
 import {AnyPrimitive} from '@leav/utils';
 import {Switch, Tag, Tooltip, Typography} from 'antd';
+import isEmpty from 'lodash/isEmpty';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {getInvertColor, stringifyDateRangeValue} from 'utils';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
 import {IDateRangeValue, ITableCell} from '_types/types';
-import isEmpty from 'lodash/isEmpty';
-import React from 'react';
 
 const RichTextDisplay = React.lazy(() => import('./ElementsToDisplay/RichTextDisplay'));
 
@@ -31,10 +31,10 @@ const alignmentByFormat: Record<AttributeFormat, 'left' | 'right' | 'center'> = 
     [AttributeFormat.rich_text]: 'center'
 };
 
-const Wrapper = styled.div<{format: AttributeFormat}>`
+const Wrapper = styled.div<{$format: AttributeFormat}>`
     padding: 5px;
     width: 100%;
-    text-align: ${props => alignmentByFormat[props.format]};
+    text-align: ${props => alignmentByFormat[props.$format]};
 `;
 
 function StandardCell({cellData, values}: ISimpleCellProps): JSX.Element {
@@ -94,7 +94,7 @@ function StandardCell({cellData, values}: ISimpleCellProps): JSX.Element {
     };
 
     return (
-        <Wrapper format={cellData.format}>
+        <Wrapper $format={cellData.format}>
             {cellData.format === AttributeFormat.extended ? (
                 <Tooltip overlay={displayedValues}>
                     <FileTextOutlined size={256} style={{fontSize: '2em'}} />

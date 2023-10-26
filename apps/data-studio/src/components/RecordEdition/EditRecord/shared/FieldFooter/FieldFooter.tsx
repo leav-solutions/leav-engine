@@ -13,14 +13,14 @@ interface IFieldFooterProps {
     style?: CSSObject;
 }
 
-const FooterWrapper = styled.div<{style: CSSObject; $bordered?: boolean; themeToken: GlobalToken}>`
+const FooterWrapper = styled.div<{style: CSSObject; $bordered?: boolean; $themeToken: GlobalToken}>`
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-direction: row-reverse;
     padding: 0.25rem;
     background: ${themeVars.lightBg};
-    border-radius: ${p => p.themeToken.borderRadius}px;
+    border-radius: ${p => p.$themeToken.borderRadius}px;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 
@@ -33,7 +33,7 @@ function FieldFooter({children, bordered, style}: IFieldFooterProps): JSX.Elemen
     const {token} = theme.useToken();
 
     return (
-        <FooterWrapper style={style} $bordered={bordered} themeToken={token}>
+        <FooterWrapper style={style} $bordered={bordered} $themeToken={token}>
             {children}
         </FooterWrapper>
     );

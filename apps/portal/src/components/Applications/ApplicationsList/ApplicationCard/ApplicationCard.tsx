@@ -1,16 +1,16 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {SettingOutlined, StarFilled, StarOutlined} from '@ant-design/icons';
+import {StarFilled, StarOutlined} from '@ant-design/icons';
 import {useLang} from '@leav/ui';
-import {localizedTranslation} from '@leav/utils';
-import {Card, Typography} from 'antd';
-import {EditApplicationModal} from 'components/Applications/EditApplicationModal';
-import {IEditApplicationModalProps} from 'components/Applications/EditApplicationModal/EditApplicationModal';
+import {getInitials, localizedTranslation} from '@leav/utils';
+import {KitAvatar, KitButton, KitImage, KitItemCard} from 'aristid-ds';
+import EditApplicationModal, {
+    IEditApplicationModalProps
+} from 'components/Applications/EditApplicationModal/EditApplicationModal';
 import {SyntheticEvent, useState} from 'react';
 import styled from 'styled-components';
 import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
-import ApplicationCover from './ApplicationCover';
 
 interface IApplicationCardProps {
     isFavorite?: boolean;
@@ -18,35 +18,8 @@ interface IApplicationCardProps {
     onChangeFavorite: (application: GET_APPLICATIONS_applications_list, isFavorite: boolean) => void;
 }
 
-const AppCard = styled(Card)`
-    width: 200px;
-    height: 200px;
-    margin: 0.5rem;
-    padding: 0;
-    cursor: 'pointer';
-`;
-
-const EditIconWrapper = styled.div`
+const ClickableWrapper = styled.div`
     cursor: pointer;
-    position: absolute;
-    top: 1em;
-    left: 1em;
-    display: none;
-
-    ${AppCard}:hover & {
-        display: block;
-    }
-`;
-
-const FavoritesIconWrapper = styled.div<{isFavorite: boolean}>`
-    position: absolute;
-    top: 1em;
-    right: 1em;
-    display: ${props => (props.isFavorite ? 'block' : 'none')};
-
-    ${AppCard}:hover & {
-        display: block;
-    }
 `;
 
 function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IApplicationCardProps): JSX.Element {
@@ -61,10 +34,7 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
         window.location.assign(application.url);
     };
 
-    const _handleOpenEditAppModal = (e: SyntheticEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-
+    const _handleOpenEditAppModal = () => {
         setIsEditAppModalOpen(true);
     };
 
@@ -79,34 +49,33 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
         onChangeFavorite(application, !isFavorite);
     };
 
+    const initials = getInitials(label);
+    const appIcon = application.icon?.whoAmI?.preview?.medium as string;
+    const cover = appIcon ? (
+        <KitImage
+            src={appIcon}
+            alt={label}
+            preview={{src: String(application.icon?.whoAmI?.preview?.huge), toolbarRender: () => null}}
+        />
+    ) : (
+        <KitAvatar shape="square">{initials}</KitAvatar>
+    );
+
+    const actions = [<KitButton onClick={_toggleFavorite}>{isFavorite ? <StarFilled /> : <StarOutlined />}</KitButton>];
+
     return (
         <>
-            <AppCard
-                hoverable
-                cover={<ApplicationCover application={application} />}
-                onClick={_handleClick}
-                bodyStyle={{padding: '.5em'}}
+            <KitItemCard
+                vertical
+                title={<ClickableWrapper onClick={_handleClick}>{label}</ClickableWrapper>}
+                description={<ClickableWrapper onClick={_handleClick}>{description}</ClickableWrapper>}
+                picture={cover}
+                actions={actions}
+                onEdit={_handleOpenEditAppModal}
+                colors={[{label: null, color: application.color}]}
                 data-testid={`app-card-${application.id}`}
-            >
-                <Card.Meta
-                    title={
-                        <Typography.Paragraph ellipsis={{rows: 1, tooltip: label}} style={{marginBottom: 0}}>
-                            {label}
-                        </Typography.Paragraph>
-                    }
-                    description={
-                        <Typography.Paragraph ellipsis={{rows: 3, tooltip: description}} style={{marginBottom: 0}}>
-                            {description}
-                        </Typography.Paragraph>
-                    }
-                />
-                <EditIconWrapper onClick={_handleOpenEditAppModal}>
-                    <SettingOutlined />
-                </EditIconWrapper>
-                <FavoritesIconWrapper onClick={_toggleFavorite} isFavorite={isFavorite}>
-                    {isFavorite ? <StarFilled /> : <StarOutlined />}
-                </FavoritesIconWrapper>
-            </AppCard>
+                fullWidthAvatar
+            />
             {isEditAppModalOpen && (
                 <EditApplicationModal
                     applicationId={application.id}

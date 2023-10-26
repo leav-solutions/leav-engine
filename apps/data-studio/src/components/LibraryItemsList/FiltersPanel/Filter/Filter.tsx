@@ -61,8 +61,8 @@ const Wrapper = styled.div<IWrapperProps>`
     ${({active}) =>
         active
             ? `
-        :hover,
-        :active {
+        &:hover,
+        &:active {
             border: 2px solid ${themeVars.primaryColor};
 
             &&& .filter-handle {
@@ -94,9 +94,9 @@ const Handle = styled.div`
     }
 `;
 
-const Content = styled.div<{hasParent: boolean}>`
+const Content = styled.div<{$hasParent: boolean}>`
     display: grid;
-    grid-template-rows: ${p => (p.hasParent ? 'auto auto 1fr' : 'auto 1fr')};
+    grid-template-rows: ${p => (p.$hasParent ? 'auto auto 1fr' : 'auto 1fr')};
     row-gap: 8px;
 `;
 
@@ -481,7 +481,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
             )}
             <Wrapper data-testid="filter" active={filter.active}>
                 <Handle className="filter-handle" {...handleProps} />
-                <Content hasParent={hasParent}>
+                <Content $hasParent={hasParent}>
                     {hasParent && (
                         <ParentLabel>
                             <span>{t('filters.through')}:&nbsp;</span>

@@ -15,7 +15,7 @@ interface IErrorBoundaryContentProps {
     showRecoveryButtons?: boolean;
 }
 
-const ErrorResult = styled(Result)<{themeToken: AntdThemeToken}>`
+const ErrorResult = styled(Result)<{$themeToken: AntdThemeToken}>`
     font-size: 1rem;
 
     .ant-result-content {
@@ -24,7 +24,7 @@ const ErrorResult = styled(Result)<{themeToken: AntdThemeToken}>`
 
         details {
             border: 1px solid ${themeVars.borderColor};
-            border-radius: ${p => p.themeToken.borderRadius}px;
+            border-radius: ${p => p.$themeToken.borderRadius}px;
             padding: 1rem;
         }
     }
@@ -54,7 +54,7 @@ function ErrorBoundaryContent({error, errorInfo, showRecoveryButtons = true}: IE
 
     return (
         <ConfigProvider theme={customTheme}>
-            <ErrorResult status="error" title={t('error.error_occurred')} icon={<FrownOutlined />} themeToken={token}>
+            <ErrorResult status="error" title={t('error.error_occurred')} icon={<FrownOutlined />} $themeToken={token}>
                 {showRecoveryButtons && (
                     <ButtonsWrapper>
                         <Button onClick={_handleRefresh} type="primary" icon={<ReloadOutlined />}>

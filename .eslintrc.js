@@ -5,7 +5,7 @@ module.exports = {
     ignorePatterns: ['**/_gqlTypes/*.ts', '**/dist/*'],
     parser: '@typescript-eslint/parser',
     parserOptions: {tsconfigRootDir: __dirname},
-    plugins: ['@typescript-eslint', 'react-app'],
+    plugins: ['@typescript-eslint', 'react-app', 'react-refresh'],
     settings: {react: {version: 'latest'}},
     rules: {
         '@typescript-eslint/adjacent-overload-signatures': 'error',
@@ -130,6 +130,7 @@ module.exports = {
         ],
         'brace-style': ['error', '1tbs'],
         'object-curly-spacing': ['error', 'never'],
-        'func-call-spacing': ['error', 'never']
+        'func-call-spacing': ['error', 'never'],
+        'react-refresh/only-export-components': 'warn'
     }
 };

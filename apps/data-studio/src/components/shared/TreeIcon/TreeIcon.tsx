@@ -2,11 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ShareAltOutlined} from '@ant-design/icons';
-import React from 'react';
-import {CSSObject} from 'styled-components';
+import {CSSProperties} from 'react';
 
 interface ITreeIconProps {
-    style?: CSSObject;
+    style?: CSSProperties;
     [key: string]: any; // antd doesn't provide a usable type for icon props
 }
 

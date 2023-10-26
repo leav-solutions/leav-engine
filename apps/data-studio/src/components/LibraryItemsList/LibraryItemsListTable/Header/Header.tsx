@@ -15,8 +15,8 @@ import {getSortFieldByAttributeType} from '../../../../utils';
 import ChooseTableColumns from '../ChooseTableColumns';
 
 interface IWrapperProps {
-    isHover: boolean;
-    isInfoColumn: boolean;
+    $isHover: boolean;
+    $isInfoColumn: boolean;
 }
 
 const Wrapper = styled.div<IWrapperProps>`
@@ -49,8 +49,8 @@ const DropdownContent = styled.div`
 `;
 
 interface IWrapperArrowProps {
-    filterDirection?: SortOrder;
-    filterActive: boolean;
+    $filterDirection?: SortOrder;
+    $filterActive: boolean;
 }
 
 const WrapperArrow = styled.div<IWrapperArrowProps>`
@@ -71,11 +71,13 @@ const WrapperArrow = styled.div<IWrapperArrowProps>`
     }
 
     & > span:first-child {
-        opacity: ${({filterDirection, filterActive}) => (filterActive && filterDirection === SortOrder.asc ? 1 : 0.5)};
+        opacity: ${({$filterDirection: filterDirection, $filterActive: filterActive}) =>
+            filterActive && filterDirection === SortOrder.asc ? 1 : 0.5};
     }
 
     & > span:last-child {
-        opacity: ${({filterDirection, filterActive}) => (filterActive && filterDirection === SortOrder.desc ? 1 : 0.5)};
+        opacity: ${({$filterDirection: filterDirection, $filterActive: filterActive}) =>
+            filterActive && filterDirection === SortOrder.desc ? 1 : 0.5};
     }
 `;
 
@@ -132,7 +134,7 @@ const Header = ({id, children, type}: IHeaderProps) => {
     const _handleCloseChooseTableColumns = () => setOpenChangeColumns(false);
 
     return (
-        <Wrapper isHover={isHover} isInfoColumn={infosCol === id} id={id}>
+        <Wrapper $isHover={isHover} $isInfoColumn={infosCol === id} id={id}>
             {children}
             <Dropdown
                 placement="bottom"
@@ -176,8 +178,8 @@ const Header = ({id, children, type}: IHeaderProps) => {
                     <WrapperArrow
                         className="wrapper-arrow"
                         data-testid={`wrapper-arrow-${searchState.sort?.order}`}
-                        filterDirection={searchState.sort?.order}
-                        filterActive={searchState.sort?.field === id}
+                        $filterDirection={searchState.sort?.order}
+                        $filterActive={searchState.sort?.field === id}
                         style={{fontSize: '130%'}}
                     >
                         <CaretUpOutlined />

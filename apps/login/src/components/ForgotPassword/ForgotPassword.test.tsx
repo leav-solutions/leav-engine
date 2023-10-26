@@ -3,10 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {act, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import {KitApp} from 'aristid-ds';
+import {enableFetchMocks} from 'jest-fetch-mock';
 import {MemoryRouter} from 'react-router-dom';
 import ForgotPassword from './ForgotPassword';
 global.ASYNC_VALIDATOR_NO_WARNING = 1; // Suppress some really weird warning coming from ant-design during testing
-import {enableFetchMocks} from 'jest-fetch-mock';
 
 enableFetchMocks();
 
@@ -23,9 +24,11 @@ window.matchMedia = query => ({
 
 const _renderComponent = () =>
     render(
-        <MemoryRouter>
-            <ForgotPassword />
-        </MemoryRouter>
+        <KitApp>
+            <MemoryRouter>
+                <ForgotPassword />
+            </MemoryRouter>
+        </KitApp>
     );
 
 const _enterValidEmailAndSubmit = () => {

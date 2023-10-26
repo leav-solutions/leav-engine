@@ -2,10 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Switch} from 'antd';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {ImportMode, ImportType} from '_gqlTypes/globalTypes';
+import {ImportMode,ImportType} from '_gqlTypes/globalTypes';
 import {ISheet} from '../../_types';
 
 interface IImportKeysSelectorProps {
@@ -14,7 +13,7 @@ interface IImportKeysSelectorProps {
     onChange: (keyType: 'key' | 'keyTo', value: boolean) => void;
 }
 
-const Wrapper = styled.div<{hasKeyTo: boolean}>`
+const Wrapper = styled.div<{$hasKeyTo: boolean}>`
     display: grid;
     grid-template-columns: 7rem 3rem;
     grid-column-gap: 0.5em;
@@ -41,7 +40,7 @@ function ImportKeysSelector({columnIndex, sheet, onChange}: IImportKeysSelectorP
     }
 
     return (
-        <Wrapper hasKeyTo={isLinkImport}>
+        <Wrapper $hasKeyTo={isLinkImport}>
             {displayImportKey && (
                 <>
                     <label>{t('import.import_key')}: </label>

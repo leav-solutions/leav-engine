@@ -3,9 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {act, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import {KitApp} from 'aristid-ds';
+import {enableFetchMocks} from 'jest-fetch-mock';
 import {MemoryRouter} from 'react-router-dom';
 import ResetPassword from './ResetPassword';
-import {enableFetchMocks} from 'jest-fetch-mock';
 
 enableFetchMocks();
 
@@ -27,9 +28,11 @@ jest.mock('react-router-dom', () => ({
 
 const _renderComponent = (url: string = '/') =>
     render(
-        <MemoryRouter initialEntries={[url]}>
-            <ResetPassword />
-        </MemoryRouter>
+        <KitApp>
+            <MemoryRouter initialEntries={[url]}>
+                <ResetPassword />
+            </MemoryRouter>
+        </KitApp>
     );
 
 const _enterPasswordsAndSubmit = () => {

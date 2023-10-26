@@ -43,15 +43,15 @@ const MenuWrapper = styled.div`
 `;
 
 interface IWrapperProps {
-    showSide: boolean;
+    $showSide: boolean;
     style?: CSSObject;
 }
 
 const Wrapper = styled.div<IWrapperProps>`
     display: grid;
 
-    ${({showSide}) =>
-        showSide
+    ${({$showSide}) =>
+        $showSide
             ? `
             grid-template-columns: ${panelSize} calc(100% - ${panelSize});
             grid-template-rows: 92% auto;
@@ -254,7 +254,7 @@ function LibraryItemsListContent({
                 </MenuWrapper>
 
                 <Wrapper
-                    showSide={display.side.visible}
+                    $showSide={display.side.visible}
                     className={display.side.visible ? 'wrapper-open' : 'wrapper-close'}
                     style={style}
                 >

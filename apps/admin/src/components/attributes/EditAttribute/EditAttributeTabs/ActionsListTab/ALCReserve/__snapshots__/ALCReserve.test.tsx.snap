@@ -19,7 +19,7 @@ LoadedCheerio {
     "namespace": "http://www.w3.org/1999/xhtml",
     "next": Node {
       "attribs": {
-        "class": "sc-eCYdqJ PqYLT",
+        "class": "sc-eDLKEg uJmyi",
       },
       "children": [
         Node {
@@ -58,7 +58,7 @@ LoadedCheerio {
         [Circular],
         Node {
           "attribs": {
-            "class": "sc-eCYdqJ PqYLT",
+            "class": "sc-eDLKEg uJmyi",
           },
           "children": [
             Node {
@@ -100,7 +100,7 @@ LoadedCheerio {
   },
   "1": Node {
     "attribs": {
-      "class": "sc-eCYdqJ PqYLT",
+      "class": "sc-eDLKEg uJmyi",
     },
     "children": [
       Node {

@@ -15,7 +15,7 @@ const CustomBodyCell = styled.div<{id?: string | number; selected: boolean}>`
     background-color: inherit;
     padding: 4px 0;
 
-    :not(:first-child) {
+    &:not(:first-child) {
         border-left: 1px solid ${props => (props.selected ? themeVars.activeColor : themeVars.borderLightColor)};
     }
 

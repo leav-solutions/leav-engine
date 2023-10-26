@@ -4,19 +4,21 @@ exports[`ALCOutputConnector Snapshot test 1`] = `
 LoadedCheerio {
   "0": Node {
     "attribs": {
-      "class": "sc-gsnTZi hEMQZf",
+      "class": "sc-guDMob hufcgN",
+      "connectionstate": "connected",
     },
     "children": [
       Node {
         "attribs": {
-          "class": "sc-dkzDqf hxLpTO",
+          "class": "sc-dmyDmy iGzLSv",
+          "conncolor": "",
         },
         "children": [],
         "name": "div",
         "namespace": "http://www.w3.org/1999/xhtml",
         "next": Node {
           "attribs": {
-            "class": "sc-bczRLJ etimha",
+            "class": "sc-beyTiQ brojHi",
             "style": "width:40px",
           },
           "children": [],
@@ -40,14 +42,16 @@ LoadedCheerio {
         "type": "tag",
         "x-attribsNamespace": {
           "class": undefined,
+          "conncolor": undefined,
         },
         "x-attribsPrefix": {
           "class": undefined,
+          "conncolor": undefined,
         },
       },
       Node {
         "attribs": {
-          "class": "sc-bczRLJ etimha",
+          "class": "sc-beyTiQ brojHi",
           "style": "width:40px",
         },
         "children": [],
@@ -57,7 +61,8 @@ LoadedCheerio {
         "parent": [Circular],
         "prev": Node {
           "attribs": {
-            "class": "sc-dkzDqf hxLpTO",
+            "class": "sc-dmyDmy iGzLSv",
+            "conncolor": "",
           },
           "children": [],
           "name": "div",
@@ -68,9 +73,11 @@ LoadedCheerio {
           "type": "tag",
           "x-attribsNamespace": {
             "class": undefined,
+            "conncolor": undefined,
           },
           "x-attribsPrefix": {
             "class": undefined,
+            "conncolor": undefined,
           },
         },
         "type": "tag",
@@ -101,9 +108,11 @@ LoadedCheerio {
     "type": "tag",
     "x-attribsNamespace": {
       "class": undefined,
+      "connectionstate": undefined,
     },
     "x-attribsPrefix": {
       "class": undefined,
+      "connectionstate": undefined,
     },
   },
   "_root": LoadedCheerio {

@@ -3,9 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {act, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import {KitApp} from 'aristid-ds';
+import {enableFetchMocks} from 'jest-fetch-mock';
 import {MemoryRouter} from 'react-router-dom';
 import Login from './Login';
-import {enableFetchMocks} from 'jest-fetch-mock';
 
 enableFetchMocks();
 
@@ -38,9 +39,11 @@ jest.mock('@leav/ui', () => ({
 
 const _renderComponent = (url: string = '/') =>
     render(
-        <MemoryRouter initialEntries={[url]}>
-            <Login />
-        </MemoryRouter>
+        <KitApp>
+            <MemoryRouter initialEntries={[url]}>
+                <Login />
+            </MemoryRouter>
+        </KitApp>
     );
 
 const _enterCredentialsAndSubmit = () => {

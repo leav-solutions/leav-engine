@@ -17,12 +17,12 @@ export interface IListProps<D> extends Omit<ListProps<D>, 'renderItem'> {
     onSelectionChange?: (selectedItems: D[]) => void;
 }
 
-const Wrapper = styled.div<{maxHeight: string}>`
+const Wrapper = styled.div<{$maxHeight: string}>`
     background-color: ${themeVars.defaultBg};
     border-radius: 5px;
 
     .ant-list-items {
-        max-height: ${p => p.maxHeight || 'auto'};
+        max-height: ${p => p.$maxHeight || 'auto'};
         overflow-y: auto;
     }
 `;
@@ -86,7 +86,7 @@ function List({
     const wrapperMaxHeight = typeof maxHeight === 'number' ? `${maxHeight}px` : String(maxHeight);
 
     return (
-        <Wrapper maxHeight={wrapperMaxHeight}>
+        <Wrapper $maxHeight={wrapperMaxHeight}>
             <AntdList {...props} />
         </Wrapper>
     );
