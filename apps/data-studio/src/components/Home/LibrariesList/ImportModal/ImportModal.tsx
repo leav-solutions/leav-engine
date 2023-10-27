@@ -32,6 +32,8 @@ export interface IImportModalProps {
 }
 const Content = styled.div`
     margin-top: 2em;
+    height: calc(100% - 4rem);
+    overflow-y: auto;
 `;
 
 const NOTIFICATION_DURATION = 2.5; // seconds
