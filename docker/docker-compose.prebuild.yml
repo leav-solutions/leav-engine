@@ -1,0 +1,8 @@
+version: '3'
+services:
+    prebuild:
+        container_name: prebuild
+        build:
+            context: ..
+            dockerfile: ./docker/DOCKERFILES/build/prebuild.Dockerfile
+        stdin_open: true
