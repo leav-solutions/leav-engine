@@ -84,7 +84,7 @@ describe('RecordRepo', () => {
             };
 
             const mockDbCollec = {
-                update: global.__mockPromise({new: updatedRecordData})
+                update: global.__mockPromise({old: updatedRecordData, new: updatedRecordData})
             };
 
             const mockDbServ = {db: new Database()};
@@ -99,18 +99,19 @@ describe('RecordRepo', () => {
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
-            const updatedRecord = await recRepo.updateRecord({libraryId: 'test', recordData});
+            const res = await recRepo.updateRecord({libraryId: 'test', recordData});
 
             expect(mockDbCollec.update.mock.calls.length).toBe(1);
             expect(mockDbCollec.update).toBeCalledWith(
                 {_key: String(recordData.id)},
                 {...recordData, id: undefined},
-                {returnNew: true, keepNull: false, mergeObjects: true}
+                {returnNew: true, returnOld: true, keepNull: false, mergeObjects: true}
             );
 
-            expect(mockDbUtils.cleanup.mock.calls.length).toBe(1);
+            expect(mockDbUtils.cleanup.mock.calls.length).toBe(2); // 1 for old, 1 for new
 
-            expect(updatedRecord).toMatchObject(cleanUpdatedRecordData);
+            expect(res.old).toMatchObject(cleanUpdatedRecordData);
+            expect(res.new).toMatchObject(cleanUpdatedRecordData);
         });
     });
 

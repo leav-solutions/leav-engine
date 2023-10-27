@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
@@ -13,6 +14,7 @@ import {IGetCoreVersionProfileParams, IVersionProfile} from '_types/versionProfi
 import PermissionError from '../../errors/PermissionError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {Errors} from '../../_types/errors';
+import {EventAction} from '../../_types/event';
 import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 
@@ -30,6 +32,7 @@ export interface IVersionProfileDomain {
 interface IDeps {
     'core.domain.permission.admin'?: IAdminPermissionDomain;
     'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.infra.versionProfile'?: IVersionProfileRepo;
     'core.infra.tree'?: ITreeRepo;
     'core.infra.attribute'?: IAttributeRepo;
@@ -40,6 +43,7 @@ interface IDeps {
 export default function ({
     'core.domain.permission.admin': adminPermissionDomain,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
+    'core.domain.eventsManager': eventsManagerDomain = null,
     'core.infra.versionProfile': versionProfileRepo = null,
     'core.infra.tree': treeRepo = null,
     'core.infra.attribute': attributeRepo = null,
@@ -75,6 +79,7 @@ export default function ({
             });
 
             const isNewProfile = !existingVersionProfile.list.length;
+            const existingProfileProps = existingVersionProfile.list[0] ?? null;
 
             const actionToCheck = isNewProfile
                 ? AdminPermissionsActions.CREATE_VERSION_PROFILE
@@ -105,7 +110,7 @@ export default function ({
                 ? {...defaultParams, ...versionProfile}
                 : {
                       ...defaultParams,
-                      ...existingVersionProfile.list[0],
+                      ...existingProfileProps,
                       ...versionProfile
                   };
 
@@ -124,6 +129,18 @@ export default function ({
             const savedProfile = isNewProfile
                 ? await versionProfileRepo.createVersionProfile({profileData: profileToSave, ctx})
                 : await versionProfileRepo.updateVersionProfile({profileData: profileToSave, ctx});
+
+            eventsManagerDomain.sendDatabaseEvent(
+                {
+                    action: EventAction.VERSION_PROFILE_SAVE,
+                    topic: {
+                        profile: savedProfile.id
+                    },
+                    before: existingProfileProps,
+                    after: savedProfile
+                },
+                ctx
+            );
 
             if (!isNewProfile) {
                 const cacheKey = utils.getCoreEntityCacheKey('versionProfile', savedProfile.id);
@@ -177,7 +194,20 @@ export default function ({
                 );
             }
 
-            return versionProfileRepo.deleteVersionProfile({id, ctx});
+            const deletedProfile = await versionProfileRepo.deleteVersionProfile({id, ctx});
+
+            eventsManagerDomain.sendDatabaseEvent(
+                {
+                    action: EventAction.VERSION_PROFILE_DELETE,
+                    topic: {
+                        profile: id
+                    },
+                    before: deletedProfile
+                },
+                ctx
+            );
+
+            return deletedProfile;
         },
         async getAttributesUsingProfile({id, ctx}) {
             return versionProfileRepo.getAttributesUsingProfile({id, ctx});

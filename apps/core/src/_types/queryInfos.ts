@@ -14,4 +14,5 @@ export interface IQueryInfos {
     groupsId?: string[];
     applicationId?: string;
     dbProfiler?: IDbProfiler;
+    trigger?: string;
 }

@@ -2,13 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IRecordFilterLight} from 'domain/record/_types';
 import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
-import {ITreeDomain} from 'domain/tree/treeDomain';
-import {IValueDomain} from 'domain/value/valueDomain';
 import ExcelJS from 'exceljs';
 import {i18n} from 'i18next';
 import {pick} from 'lodash';
@@ -18,6 +17,7 @@ import {v4 as uuidv4} from 'uuid';
 import * as Config from '_types/config';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
+import {EventAction} from '../../_types/event';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {IRecord} from '../../_types/record';
 import {ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
@@ -37,13 +37,12 @@ export interface IExportDomain {
 
 interface IDeps {
     'core.domain.record'?: IRecordDomain;
-    'core.domain.helpers.validate'?: IValidateHelper;
     'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.value'?: IValueDomain;
-    'core.domain.tree'?: ITreeDomain;
     'core.domain.library'?: ILibraryDomain;
     'core.domain.tasksManager'?: ITasksManagerDomain;
+    'core.domain.helpers.validate'?: IValidateHelper;
     'core.domain.helpers.updateTaskProgress'?: UpdateTaskProgress;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.utils'?: IUtils;
     translator?: i18n;
     config?: Config.IConfig;
@@ -57,6 +56,7 @@ export default function ({
     'core.domain.library': libraryDomain = null,
     'core.domain.tasksManager': tasksManager = null,
     'core.domain.helpers.updateTaskProgress': updateTaskProgress = null,
+    'core.domain.eventsManager': eventsManagerDomain = null,
     'core.utils': utils = null,
     translator = null
 }: IDeps = {}): IExportDomain {
@@ -181,6 +181,20 @@ export default function ({
                 return newTaskId;
             }
 
+            eventsManagerDomain.sendDatabaseEvent(
+                {
+                    action: EventAction.EXPORT_START,
+                    topic: null,
+                    metadata: {
+                        params: {
+                            attributes,
+                            filters
+                        }
+                    }
+                },
+                ctx
+            );
+
             const progress = {
                 recordsNb: 0,
                 position: 0,
@@ -275,6 +289,23 @@ export default function ({
             // It must match the route defined in the server.
             const url = `/${config.export.endpoint}/${filename}`;
             await tasksManager.setLink(task.id, {name: 'export file', url}, ctx);
+
+            eventsManagerDomain.sendDatabaseEvent(
+                {
+                    action: EventAction.EXPORT_END,
+                    topic: {
+                        library
+                    },
+                    metadata: {
+                        file: url,
+                        params: {
+                            attributes,
+                            filters
+                        }
+                    }
+                },
+                ctx
+            );
 
             return task.id;
         }

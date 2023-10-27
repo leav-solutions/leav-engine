@@ -49,7 +49,7 @@ jobs:
           cache: 'yarn'
       - name: Set workspaces list name
         id: set-workspaces-list-name
-        run: echo "workspaces_name=$(yarn workspaces list --json | jq '.name' | jq -s | jq -c)" >> "$GITHUB_OUTPUT" 
+        run: echo "workspaces_name=$(yarn workspaces list --json | jq '.name' | jq -s | jq -c)" >> "$GITHUB_OUTPUT"
 
   lint:
     runs-on: ubuntu-latest
@@ -96,10 +96,11 @@ jobs:
   workspace-unit-tests:
     runs-on: ubuntu-latest
     name: Workspace ${{ matrix.name }}
-    needs: 
+    needs:
       - setup-workspaces-list-name
-      - install 
+      - install
     strategy:
+      fail-fast: false
       matrix:
         name: ${{ fromJson(needs.setup-workspaces-list-name.outputs.workspaces_name) }}
     steps:
@@ -244,7 +245,7 @@ jobs:
           ELASTICSEARCH_URL: "http://localhost:9200"
           REDIS_HOST: localhost
           REDIS_PORT: 6379
-  
+
   e2e-sync-scan:
     timeout-minutes: 20
     runs-on: ubuntu-latest

@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as bcrypt from 'bcryptjs';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {i18n} from 'i18next';
 import {IApiKeyRepo} from 'infra/apiKey/apiKeyRepo';
@@ -13,6 +14,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import AuthenticationError from '../../errors/AuthenticationError';
 import PermissionError from '../../errors/PermissionError';
 import {Errors} from '../../_types/errors';
+import {EventAction} from '../../_types/event';
 import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 
@@ -26,13 +28,15 @@ export interface IApiKeyDomain {
 
 interface IDeps {
     'core.domain.permission.admin'?: IAdminPermissionDomain;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.infra.apiKey'?: IApiKeyRepo;
     'core.utils'?: IUtils;
     translator?: i18n;
 }
 
-export default function({
+export default function ({
     'core.domain.permission.admin': adminPermissionDomain = null,
+    'core.domain.eventsManager': eventsManagerDomain = null,
     'core.infra.apiKey': apiKeyRepo = null,
     'core.utils': utils = null
 }: IDeps): IApiKeyDomain {
@@ -151,6 +155,18 @@ export default function({
                 savedKey = _hideSecrets(savedKey);
             }
 
+            eventsManagerDomain.sendDatabaseEvent(
+                {
+                    action: EventAction.API_KEY_SAVE,
+                    topic: {
+                        apiKey: savedKey.id
+                    },
+                    before: _hideSecrets(existingKeyProps) ?? null,
+                    after: _hideSecrets(savedKey)
+                },
+                ctx
+            );
+
             return savedKey;
         },
         async deleteApiKey({id, ctx}) {
@@ -165,7 +181,21 @@ export default function({
 
             const deletedKey = await apiKeyRepo.deleteApiKey({id: keyProps.id, ctx});
 
-            return _hideSecrets(deletedKey);
+            const keyToReturn = _hideSecrets(deletedKey);
+
+            eventsManagerDomain.sendDatabaseEvent(
+                {
+                    action: EventAction.API_KEY_DELETE,
+                    topic: {
+                        apiKey: keyToReturn.id
+                    },
+                    before: _hideSecrets(keyProps),
+                    after: null
+                },
+                ctx
+            );
+
+            return keyToReturn;
         },
         async validateApiKey({apiKey, ctx}) {
             // Get key hash
