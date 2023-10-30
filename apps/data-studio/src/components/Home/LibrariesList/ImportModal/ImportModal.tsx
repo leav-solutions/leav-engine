@@ -1,10 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {DownOutlined, FieldTimeOutlined, LoadingOutlined, RightOutlined, UploadOutlined} from '@ant-design/icons';
+import {DownOutlined, FieldTimeOutlined, RightOutlined, UploadOutlined} from '@ant-design/icons';
 import {ServerError, useLazyQuery, useMutation} from '@apollo/client';
 import {ErrorDisplay, Loading} from '@leav/ui';
 import {Button, Dropdown, message, Modal, Space, Steps} from 'antd';
+import {KitSteps} from 'aristid-ds';
+import {IKitStep} from 'aristid-ds/dist/Kit/Navigation/Steps/types';
 import dayjs from 'dayjs';
 import {useApplicationLibraries} from 'hooks/useApplicationLibraries';
 import useNotification from 'hooks/useNotification';
@@ -32,7 +34,7 @@ export interface IImportModalProps {
 }
 const Content = styled.div`
     margin-top: 2em;
-    height: calc(100% - 4rem);
+    height: calc(100% - 6rem);
     overflow-y: auto;
 `;
 
@@ -231,6 +233,56 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
         _onOk();
     };
 
+    const modalFooter = (
+        <Space direction="horizontal">
+            {currentStep === ImportSteps.CONFIG ? (
+                <Dropdown.Button
+                    disabled={!okBtn}
+                    className="submit-btn"
+                    title={buttonTitle}
+                    type="primary"
+                    onClick={_onOk}
+                    icon={<DownOutlined />}
+                    menu={{
+                        items: [
+                            {
+                                label: t('import.import_schedule'),
+                                key: '1',
+                                icon: <FieldTimeOutlined />
+                            }
+                        ],
+                        onClick: _onScheduleImportBtnClick
+                    }}
+                >
+                    {validateButtonLabel}
+                </Dropdown.Button>
+            ) : (
+                <Button disabled={!okBtn} className="submit-btn" title={buttonTitle} type="primary" onClick={_onOk}>
+                    {validateButtonLabel}
+                </Button>
+            )}
+            <Button disabled={currentStep === ImportSteps.DONE} onClick={onClose}>
+                {t('global.cancel')}
+            </Button>
+        </Space>
+    );
+
+    const stepsItems: IKitStep[] = [
+        {
+            title: t('import.file_selection')
+        },
+        {
+            title: t('import.file_configuration')
+        },
+        {
+            title: t('import.in_progress')
+        },
+        {
+            title: t('import.import_done'),
+            status: importError ? 'error' : 'finish'
+        }
+    ];
+
     return (
         <>
             {showImportScheduleModal && (
@@ -258,55 +310,9 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
                     okButtonProps={{disabled: !okBtn, className: 'submit-btn', title: buttonTitle}}
                     cancelButtonProps={{disabled: currentStep === ImportSteps.DONE}}
                     destroyOnClose={true}
-                    footer={
-                        <Space direction="horizontal">
-                            {currentStep === ImportSteps.CONFIG ? (
-                                <Dropdown.Button
-                                    disabled={!okBtn}
-                                    className="submit-btn"
-                                    title={buttonTitle}
-                                    type="primary"
-                                    onClick={_onOk}
-                                    icon={<DownOutlined />}
-                                    menu={{
-                                        items: [
-                                            {
-                                                label: t('import.import_schedule'),
-                                                key: '1',
-                                                icon: <FieldTimeOutlined />
-                                            }
-                                        ],
-                                        onClick: _onScheduleImportBtnClick
-                                    }}
-                                >
-                                    {validateButtonLabel}
-                                </Dropdown.Button>
-                            ) : (
-                                <Button
-                                    disabled={!okBtn}
-                                    className="submit-btn"
-                                    title={buttonTitle}
-                                    type="primary"
-                                    onClick={_onOk}
-                                >
-                                    {validateButtonLabel}
-                                </Button>
-                            )}
-                            <Button disabled={currentStep === ImportSteps.DONE} onClick={onClose}>
-                                {t('global.cancel')}
-                            </Button>
-                        </Space>
-                    }
+                    footer={modalFooter}
                 >
-                    <Steps current={currentStep} style={{marginBottom: '2em'}}>
-                        <Step title={t('import.file_selection')}></Step>
-                        <Step title={t('import.file_configuration')}></Step>
-                        <Step
-                            title={t('import.in_progress')}
-                            icon={currentStep === ImportSteps.PROCESSING ? <LoadingOutlined /> : null}
-                        ></Step>
-                        <Step title={t('import.import_done')} status={importError ? 'error' : undefined}></Step>
-                    </Steps>
+                    <KitSteps current={currentStep} style={{marginBottom: '2em'}} items={stepsItems} />
                     <Content>
                         <Suspense fallback={<Loading />}>{_getStepContent()}</Suspense>
                     </Content>

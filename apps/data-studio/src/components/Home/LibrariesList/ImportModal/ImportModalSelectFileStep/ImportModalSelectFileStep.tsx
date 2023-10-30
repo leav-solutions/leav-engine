@@ -1,9 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {InboxOutlined} from '@ant-design/icons';
 import {extractArgsFromString} from '@leav/utils';
-import {message, Spin, Upload} from 'antd';
+import {message, Spin} from 'antd';
+import {KitUpload} from 'aristid-ds';
+import {IKitDragger} from 'aristid-ds/dist/Kit/DataEntry/Upload/types';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {read as xlsxRead, utils as xlsxUtils} from 'xlsx';
@@ -161,11 +162,13 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
 
     const [loading, setLoading] = useState(false);
 
-    const draggerProps = {
+    const draggerProps: IKitDragger = {
         name: 'file',
         multiple: false,
         accept: '.xlsx',
         showUploadList: false,
+        description: '',
+        title: file?.name ?? t('import.file_selection_instruction'),
         beforeUpload: fileToImport => {
             // Read file to read mapping and display a preview on next step
             const reader = new FileReader();
@@ -194,12 +197,7 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
 
     return (
         <Spin spinning={loading}>
-            <Upload.Dragger {...draggerProps}>
-                <p className="ant-upload-drag-icon">
-                    <InboxOutlined />
-                </p>
-                <p className="ant-upload-text">{file?.name || t('import.file_selection_instruction')}</p>
-            </Upload.Dragger>
+            <KitUpload.KitDragger {...draggerProps} />
         </Spin>
     );
 }
