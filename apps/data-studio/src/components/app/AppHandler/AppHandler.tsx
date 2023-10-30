@@ -53,6 +53,11 @@ function AppHandler(): JSX.Element {
 
     const locale = useAntdLocale(lang[0]);
 
+    const localeByLang = {
+        fr: 'frFR',
+        en: 'enUS'
+    };
+
     const {data: availableLangs, loading: langsLoading, error: langsError} = useQuery<GET_LANGS>(getLangs);
 
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
@@ -169,7 +174,10 @@ function AppHandler(): JSX.Element {
                 }}
             >
                 <ApplicationContext.Provider value={appContextData}>
-                    <KitApp customTheme={dsTheme}>
+                    <KitApp
+                        customTheme={dsTheme}
+                        locale={{locale: localeByLang[lang[0]], ItemCard: null, ItemList: null}}
+                    >
                         <ConfigProvider theme={customTheme} locale={locale}>
                             <Router />
                         </ConfigProvider>

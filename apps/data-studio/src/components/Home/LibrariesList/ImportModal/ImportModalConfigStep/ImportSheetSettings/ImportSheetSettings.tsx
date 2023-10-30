@@ -3,7 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {Form, Select, Space} from 'antd';
+import {Form, Space} from 'antd';
+import {KitSelect} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {
@@ -63,73 +64,77 @@ function ImportSheetSettings({
               }))
             : null;
 
+    const typeOptions = Object.values(ImportType).map(type => ({
+        key: type,
+        value: type,
+        label: t(`import.types.${type}`)
+    }));
+
+    const modeOptions = Object.values(ImportMode).map(mode => ({
+        key: mode,
+        value: mode,
+        label: t(`import.modes.${mode}`)
+    }));
+
+    const librariesOptions = libraries.map(l => ({
+        key: l.id,
+        value: l.id,
+        label: localizedTranslation(l.label, lang) || l.id
+    }));
+
+    const linkAttributeOptions = sheet.attributes.filter(isLinkAttribute).map(a => ({
+        key: a.id,
+        value: a.id,
+        label: localizedTranslation(a.label, lang) || a.id
+    }));
+
     return (
         <Form layout="vertical">
             <SettingsWrapper direction="horizontal" size="middle" wrap>
                 <Form.Item label={t('import.type')} required>
-                    <Select
+                    <KitSelect
                         style={{minWidth: 200}}
                         defaultValue={sheet.type}
                         placeholder={t('import.select_type')}
                         onChange={value => onImportTypeSelect(sheetIndex, value)}
-                    >
-                        {Object.values(ImportType).map(type => (
-                            <Select.Option key={type} value={type}>
-                                {t(`import.types.${type}`)}
-                            </Select.Option>
-                        ))}
-                    </Select>
+                        options={typeOptions}
+                    />
                 </Form.Item>
                 {!isSheetIgnored && (
                     <>
                         <Form.Item label={t('import.mode')} required>
-                            <Select
+                            <KitSelect
                                 style={{minWidth: 240}}
                                 defaultValue={sheet.mode}
                                 placeholder={t('import.select_mode')}
                                 onChange={value => onImportModeSelect(sheetIndex, value)}
-                            >
-                                {Object.values(ImportMode).map(mode => (
-                                    <Select.Option key={mode} value={mode}>
-                                        {t(`import.modes.${mode}`)}
-                                    </Select.Option>
-                                ))}
-                            </Select>
+                                options={modeOptions}
+                            />
                         </Form.Item>
                         <Form.Item label={t('import.library')} required>
-                            <Select
+                            <KitSelect
                                 style={{minWidth: 200}}
                                 defaultValue={sheet.library ?? state.defaultLibrary}
                                 placeholder={t('import.select_library')}
                                 onChange={value => onLibrarySelect(sheetIndex, value)}
-                            >
-                                {libraries.map(l => (
-                                    <Select.Option value={l.id} key={l.id}>
-                                        {localizedTranslation(l.label, lang) || l.id}
-                                    </Select.Option>
-                                ))}
-                            </Select>
+                                options={librariesOptions}
+                            />
                         </Form.Item>
                         {sheet.type === ImportType.LINK && sheet.library && (
                             <Form.Item label={t('import.link_attribute')} required>
-                                <Select
+                                <KitSelect
                                     style={{minWidth: 200}}
                                     defaultValue={sheet.linkAttribute}
                                     value={sheet.linkAttribute}
                                     placeholder={t('import.select_link_attribute')}
                                     onChange={value => onLinkAttributeSelect(sheetIndex, value)}
-                                >
-                                    {sheet.attributes.filter(isLinkAttribute).map(a => (
-                                        <Select.Option key={a.id} value={a.id}>
-                                            {localizedTranslation(a.label, lang) || a.id}
-                                        </Select.Option>
-                                    ))}
-                                </Select>
+                                    options={linkAttributeOptions}
+                                />
                             </Form.Item>
                         )}
                         {sheet.type === ImportType.LINK && sheet.linkAttributeProps?.type === AttributeType.tree && (
                             <Form.Item label={t('import.tree_link_library')} required>
-                                <Select
+                                <KitSelect
                                     style={{minWidth: 200}}
                                     value={sheet.treeLinkLibrary}
                                     placeholder={t('import.select_library')}
