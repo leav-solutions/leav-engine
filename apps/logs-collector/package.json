@@ -1,0 +1,46 @@
+{
+    "name": "logs-collector",
+    "version": "1.0.0-beta6",
+    "description": "",
+    "main": "dist/index.js",
+    "scripts": {
+        "start": "node .",
+        "start:dev": "ts-node-dev --respawn ./src ",
+        "build": "tsc -b tsconfig.build.json",
+        "test": "jest -c jest-unit-config.json",
+        "test:ci": "jest -c jest-unit-config.json",
+        "test:commit": "jest -c jest-unit-config.json --maxWorkers=50% --onlyChanged ",
+        "test:watch": "jest -c jest-unit-config.json --watch",
+        "lint": "tslint --fix -p .",
+        "prettier": "prettier --write 'src/**/*.ts'",
+        "tscheck": "tsc --noEmit -p .",
+        "tscheck:watch": "tsc -w --noEmit -p ."
+    },
+    "repository": {
+        "type": "git",
+        "url": ""
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/amqplib": "0.8.2",
+        "@types/jest": "29.0.3",
+        "@types/node": "18.7.18",
+        "jest": "29.0.3",
+        "lint-staged": "9.5.0",
+        "prettier": "1.19.1",
+        "ts-jest": "29.0.1",
+        "ts-node-dev": "2.0.0",
+        "typescript": "4.8.3"
+    },
+    "dependencies": {
+        "@elastic/elasticsearch": "8.10.0",
+        "@leav/app-root-path": "workspace:libs/app-root-path",
+        "@leav/config-manager": "workspace:libs/config-manager",
+        "@leav/message-broker": "workspace:*",
+        "@leav/utils": "workspace:*",
+        "amqplib": "0.8.0",
+        "joi": "17.11.0",
+        "lodash": "4.17.21"
+    }
+}

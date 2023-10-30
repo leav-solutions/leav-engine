@@ -29,6 +29,7 @@ export interface IConfig {
     applications: IApplicationsConfig;
     files: IFilesConfig;
     dbProfiler: IDbProfilerConfig;
+    instanceId: string;
 }
 
 export interface IServer {

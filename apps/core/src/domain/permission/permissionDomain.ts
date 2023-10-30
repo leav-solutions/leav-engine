@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {EventAction} from '@leav/utils';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {i18n} from 'i18next';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
@@ -10,7 +11,6 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {Errors} from '../../_types/errors';
-import {EventAction} from '../../_types/event';
 import {
     AdminPermissionsActions,
     ApplicationPermissionsActions,
@@ -90,7 +90,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function (deps: IDeps = {}): IPermissionDomain {
+export default function(deps: IDeps = {}): IPermissionDomain {
     const _pluginPermissions: {[type in PermissionTypes]?: Array<{name: string; applyOn?: string[]}>} = {};
 
     const {

@@ -1,20 +1,12 @@
-// Copyright LEAV Solutions 2017
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-// Copyright LEAV Solutions 2017
-
 export interface IEvent {
     time: number;
     userId: string;
-    emitter: string; // Unique ID of the process emitting the event. Used to figure out if the event is coming from current process
+    emitter: string;
     queryId: string;
+    instanceId: string;
 }
-
-export type PublishedEvent<T> = IEvent & T;
-
-/* Database events */
-
-export enum EventAction {
+/*** Database events ***/
+export declare enum EventAction {
     API_KEY_DELETE = 'API_KEY_DELETE',
     API_KEY_SAVE = 'API_KEY_SAVE',
     APP_DELETE = 'APP_DELETE',
@@ -45,12 +37,10 @@ export enum EventAction {
     VERSION_PROFILE_DELETE = 'VERSION_PROFILE_DELETE',
     VERSION_PROFILE_SAVE = 'VERSION_PROFILE_SAVE'
 }
-
 export interface IDbPayload {
-    trigger?: string; // The high level action that triggered the event: an import, a plugin action, a mass action...
+    trigger?: string;
     action: EventAction;
     topic: {
-        // Any data to identify which element is concerned by the event
         record?: {
             id: string;
             libraryId: string;
@@ -60,21 +50,18 @@ export interface IDbPayload {
         tree?: string;
         [key: string]: any;
     };
-    before?: any; // Value before the event
-    after?: any; // Value after the event
-    metadata?: any; // Any data that can be useful to the human reading the logs
+    before?: any;
+    after?: any;
+    metadata?: any;
 }
-
 export interface IDbEvent extends IEvent {
     payload: IDbPayload;
 }
-
-/* PubSub events */
-
+/*** PubSub events ***/
+export declare type PublishedEvent<T> = IEvent & T;
 export interface IPubSubEvent extends IEvent {
     payload: IPubSubPayload;
 }
-
 export interface IPubSubPayload {
     triggerName: string;
     data: any;

@@ -1,0 +1,19 @@
+{
+    "moduleFileExtensions": [
+        "ts",
+        "js"
+    ],
+    "transform": {
+        "\\.(ts|tsx)$": [
+            "ts-jest",
+            {
+                "isolatedModules": true
+            }
+        ]
+    },
+    "testRegex": ".spec.(ts)$",
+    "moduleNameMapper": {
+        "^@leav/(.*)$": "<rootDir>/../../libs/$1/src",
+        "__tests__/(.*)$": "<rootDir>/src/__tests__/$1"
+    }
+}

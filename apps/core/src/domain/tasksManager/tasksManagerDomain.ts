@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
+import {EventAction} from '@leav/utils';
 import * as amqp from 'amqplib';
 import {AwilixContainer} from 'awilix';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
@@ -16,9 +17,8 @@ import {IQueryInfos} from '_types/queryInfos';
 import {IGetCoreEntitiesParams} from '_types/shared';
 import {ISystemTranslation} from '_types/systemTranslation';
 import {ITaskRepo} from '../../infra/task/taskRepo';
-import {EventAction} from '../../_types/event';
 import {TriggerNames} from '../../_types/eventsManager';
-import {IList, SortOrder} from '../../_types/list';
+import {IList,SortOrder} from '../../_types/list';
 import {
     ITask,
     ITaskCallback,

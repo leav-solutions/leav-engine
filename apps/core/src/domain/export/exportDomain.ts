@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {EventAction} from '@leav/utils';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
@@ -17,7 +18,6 @@ import {v4 as uuidv4} from 'uuid';
 import * as Config from '_types/config';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
-import {EventAction} from '../../_types/event';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {IRecord} from '../../_types/record';
 import {ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
@@ -48,7 +48,7 @@ interface IDeps {
     config?: Config.IConfig;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.domain.record': recordDomain = null,
     'core.domain.helpers.validate': validateHelper = null,
@@ -281,7 +281,10 @@ export default function ({
                 await _updateTaskProgress(1, 'tasks.export_description.excel_writing');
             }
 
-            const filename = `${library}_${new Date().toLocaleDateString().split('/').join('')}_${Date.now()}.xlsx`;
+            const filename = `${library}_${new Date()
+                .toLocaleDateString()
+                .split('/')
+                .join('')}_${Date.now()}.xlsx`;
 
             await workbook.xlsx.writeFile(`${path.resolve(config.export.directory)}/${filename}`);
 

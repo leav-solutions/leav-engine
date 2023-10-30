@@ -1,9 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IConfig} from '_types/config';
-import {IAppGraphQLSchema} from '_types/graphql';
-import {IAppModule} from '_types/shared';
+import {EventAction, IDbEvent} from '@leav/utils';
 import {ConfirmChannel, ConsumeMessage} from 'amqplib';
 import {makeExecutableSchema} from 'apollo-server';
 import {AwilixContainer} from 'awilix';
@@ -13,7 +11,9 @@ import {GraphQLResolveInfo, GraphQLSchema, Kind} from 'graphql';
 import {merge} from 'lodash';
 import {IUtils} from 'utils/utils';
 import * as winston from 'winston';
-import {EventAction, IDbEvent} from '../../_types/event';
+import {IConfig} from '_types/config';
+import {IAppGraphQLSchema} from '_types/graphql';
+import {IAppModule} from '_types/shared';
 import {IQueryField} from '../../_types/record';
 
 export interface IGraphqlApp extends IAppModule {

@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
+import {EventAction, IDbEvent} from '@leav/utils';
 import * as amqp from 'amqplib';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
@@ -18,7 +19,6 @@ import {IQueryInfos} from '_types/queryInfos';
 import {IValue} from '_types/value';
 import {IIndexationService} from '../../infra/indexation/indexationService';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
-import {EventAction, IDbEvent} from '../../_types/event';
 import {TriggerNames} from '../../_types/eventsManager';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
@@ -47,7 +47,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.domain.record': recordDomain = null,

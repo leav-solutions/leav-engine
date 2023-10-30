@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {appRootPath} from '@leav/app-root-path';
-import {Override} from '@leav/utils';
+import {Override, PublishedEvent} from '@leav/utils';
 import {GraphQLUpload} from 'apollo-server';
 import {IAuthApp} from 'app/auth/authApp';
 import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from 'app/core/helpers/subscriptions';
@@ -20,7 +20,6 @@ import path from 'path';
 import {IUtils} from 'utils/utils';
 import winston from 'winston';
 import {IGetCoreAttributesParams} from '_types/attribute';
-import {PublishedEvent} from '_types/event';
 import {IRequestWithContext} from '_types/express';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IList} from '_types/list';

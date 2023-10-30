@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CONSULTED_APPS_KEY} from '@leav/utils';
+import {CONSULTED_APPS_KEY, EventAction} from '@leav/utils';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IUserDomain} from 'domain/user/userDomain';
@@ -20,7 +20,6 @@ import {
     IGetCoreApplicationsParams
 } from '../../_types/application';
 import {ErrorFieldDetail, Errors} from '../../_types/errors';
-import {EventAction} from '../../_types/event';
 import {TriggerNames} from '../../_types/eventsManager';
 import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
@@ -56,7 +55,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function ({
+export default function({
     'core.domain.permission.admin': adminPermissionDomain = null,
     'core.domain.user': userDomain = null,
     'core.domain.eventsManager': eventsManagerDomain = null,
