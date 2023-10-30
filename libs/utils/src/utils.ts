@@ -270,3 +270,19 @@ export const simpleStringHash = (str: string) => {
 
     return Math.abs(hash);
 };
+
+export const getFlagByLang = (lang: string): string => {
+    const flagsByLang = {
+        en: '🇬🇧', // English
+        es: '🇪🇸', // Spanish
+        fr: '🇫🇷', // French
+        de: '🇩🇪', // German
+        zh: '🇨🇳', // Chinese
+        ru: '🇷🇺', // Russian
+        pt: '🇵🇹', // Portuguese
+        ja: '🇯🇵', // Japanese
+        ko: '🇰🇷' // Korean
+    };
+
+    return flagsByLang[lang] ?? '';
+};

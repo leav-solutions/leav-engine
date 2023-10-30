@@ -19,15 +19,15 @@ import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {IListWithCursor} from '_types/list';
 import {IPreview} from '_types/preview';
-import {IStandardValue, IValue, IValuesOptions} from '_types/value';
+import {IStandardValue,IValue,IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {getPreviewUrl} from '../../utils/preview/preview';
 import {ActionsListEvents} from '../../_types/actionsList';
-import {AttributeFormats, AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
+import {AttributeFormats,AttributeTypes,IAttribute,IAttributeFilterOptions} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
-import {ILibrary, LibraryBehavior} from '../../_types/library';
-import {LibraryPermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
+import {ILibrary,LibraryBehavior} from '../../_types/library';
+import {LibraryPermissionsActions,RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {
     AttributeCondition,
@@ -43,7 +43,7 @@ import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import getAttributesFromField from './helpers/getAttributesFromField';
 import {SendRecordUpdateEventHelper} from './helpers/sendRecordUpdateEvent';
-import {ICreateRecordResult, IFindRecordParams, IRecordFilterLight} from './_types';
+import {ICreateRecordResult,IFindRecordParams,IRecordFilterLight} from './_types';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -870,7 +870,7 @@ export default function ({
                 });
             }
 
-            await eventsManager.sendDatabaseEvent(
+            eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.RECORD_SAVE,
                     topic: {
@@ -887,9 +887,9 @@ export default function ({
             return {record: newRecord, valuesErrors: null};
         },
         async updateRecord({library, recordData, ctx}): Promise<IRecord> {
-            const savedRecord = await recordRepo.updateRecord({libraryId: library, recordData});
+            const {old: oldRecord, new: savedRecord} = await recordRepo.updateRecord({libraryId: library, recordData});
 
-            await eventsManager.sendDatabaseEvent(
+            eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.RECORD_SAVE,
                     topic: {
@@ -898,6 +898,7 @@ export default function ({
                             libraryId: savedRecord.library
                         }
                     },
+                    before: oldRecord,
                     after: recordData
                 },
                 ctx
@@ -976,7 +977,7 @@ export default function ({
             // Everything is clean, we can actually delete the record
             const deletedRecord = await recordRepo.deleteRecord({libraryId: library, recordId: id, ctx});
 
-            await eventsManager.sendDatabaseEvent(
+            eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.RECORD_DELETE,
                     topic: {

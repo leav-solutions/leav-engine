@@ -1,16 +1,16 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CheckOutlined,CloseOutlined,FileTextOutlined} from '@ant-design/icons';
+import {CheckOutlined, CloseOutlined, FileTextOutlined} from '@ant-design/icons';
 import {AnyPrimitive} from '@leav/utils';
-import {Switch,Tag,Tooltip,Typography} from 'antd';
+import {Switch, Tag, Tooltip, Typography} from 'antd';
 import isEmpty from 'lodash/isEmpty';
 import React from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {getInvertColor,stringifyDateRangeValue} from 'utils';
+import {getInvertColor, stringifyDateRangeValue} from 'utils';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
-import {IDateRangeValue,ITableCell} from '_types/types';
+import {IDateRangeValue, ITableCell} from '_types/types';
 
 const RichTextDisplay = React.lazy(() => import('./ElementsToDisplay/RichTextDisplay'));
 

@@ -33,11 +33,12 @@
         "trees": "Accessible trees",
         "all_trees": "All trees",
         "no_trees": "No trees",
-        "info": "Information"
+        "info": "Information",
+        "color": "Color"
     },
     "libraries": {
         "library": "Library",
-        "select_libraries": "Select libraries", 
+        "select_libraries": "Select libraries",
         "id": "Identifier",
         "label": "Label",
         "search": "Search",
@@ -50,7 +51,7 @@
         "preview": "Preview",
         "color": "Color",
         "treeColorPreview": "Tree for default color and preview",
-        "subLabel":"Sub label", 
+        "subLabel":"Sub label",
         "info": "Information",
         "attributes": "Attributes",
         "delete": "Delete library",
@@ -137,5 +138,9 @@
         "delete": "Delete tree",
         "delete_confirm": "Do you really want to delete this tree?",
         "delete_confirm_warning": "Warning: this action is irreversible"
+    },
+    "lang": {
+        "fr": "French",
+        "en": "English"
     }
 }

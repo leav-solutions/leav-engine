@@ -90,7 +90,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function (deps: IDeps = {}): IPermissionDomain {
+export default function(deps: IDeps = {}): IPermissionDomain {
     const _pluginPermissions: {[type in PermissionTypes]?: Array<{name: string; applyOn?: string[]}>} = {};
 
     const {
@@ -188,7 +188,7 @@ export default function (deps: IDeps = {}): IPermissionDomain {
 
         const savedPermission = await permissionRepo.savePermission({permData, ctx});
 
-        await eventsManagerDomain.sendDatabaseEvent(
+        eventsManagerDomain.sendDatabaseEvent(
             {
                 action: EventAction.PERMISSION_SAVE,
                 topic: {

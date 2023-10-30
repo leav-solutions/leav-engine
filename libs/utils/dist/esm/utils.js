@@ -234,4 +234,19 @@ export const simpleStringHash = (str) => {
     }
     return Math.abs(hash);
 };
+export const getFlagByLang = (lang) => {
+    var _a;
+    const flagsByLang = {
+        en: '🇬🇧',
+        es: '🇪🇸',
+        fr: '🇫🇷',
+        de: '🇩🇪',
+        zh: '🇨🇳',
+        ru: '🇷🇺',
+        pt: '🇵🇹',
+        ja: '🇯🇵',
+        ko: '🇰🇷' // Korean
+    };
+    return (_a = flagsByLang[lang]) !== null && _a !== void 0 ? _a : '';
+};
 //# sourceMappingURL=utils.js.map

@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React, {ReactNode} from 'react';
-import styled, {CSSObject} from 'styled-components';
+import {CSSProperties, ReactNode} from 'react';
+import styled from 'styled-components';
 import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
 
 interface IAppLinkProps {
     app: GET_APPLICATIONS_applications_list;
     label: string;
     children: ReactNode;
-    style?: CSSObject;
+    style?: CSSProperties;
 }
 
 const Wrapper = styled.a`

@@ -123,7 +123,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function ({
+export default function({
     'core.domain.library': libraryDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.helpers.validate': validateHelper = null,
@@ -393,7 +393,7 @@ export default function ({
                 fileStream.resume();
             };
 
-            parser.onValue = async function (data: any) {
+            parser.onValue = async function(data: any) {
                 try {
                     if (this.stack[this.stack.length - 1]?.key === 'elements' && !!data.library) {
                         if (callbacks.length >= config.import.groupData) {
@@ -613,7 +613,7 @@ export default function ({
                 return newTaskId;
             }
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.CONFIG_IMPORT_START,
                     topic: null
@@ -684,7 +684,7 @@ export default function ({
                 }
             }
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.CONFIG_IMPORT_END,
                     topic: null
@@ -731,7 +731,7 @@ export default function ({
             }
 
             ctx.trigger = 'data_import';
-            await eventsManagerDomain.sendDatabaseEvent(
+            eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.DATA_IMPORT_START,
                     topic: {filename}
@@ -980,7 +980,7 @@ export default function ({
                 ctx
             );
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.DATA_IMPORT_END,
                     topic: {filename},

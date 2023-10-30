@@ -61,8 +61,8 @@ const Wrapper = styled.div<IWrapperProps>`
     ${({active}) =>
         active
             ? `
-        :hover,
-        :active {
+        &:hover,
+        &:active {
             border: 2px solid ${themeVars.primaryColor};
 
             &&& .filter-handle {

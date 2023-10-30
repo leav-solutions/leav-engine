@@ -34,7 +34,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function ({
+export default function({
     'core.domain.permission.admin': adminPermissionDomain = null,
     'core.domain.eventsManager': eventsManagerDomain = null,
     'core.infra.apiKey': apiKeyRepo = null,
@@ -155,7 +155,7 @@ export default function ({
                 savedKey = _hideSecrets(savedKey);
             }
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.API_KEY_SAVE,
                     topic: {
@@ -183,7 +183,7 @@ export default function ({
 
             const keyToReturn = _hideSecrets(deletedKey);
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.API_KEY_DELETE,
                     topic: {

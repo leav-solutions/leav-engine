@@ -16,7 +16,7 @@ import {useActiveTree} from '../../../../../hooks/ActiveTreeHook/ActiveTreeHook'
 import HeaderColumnNavigationActions from './HeaderColumnNavigationActions';
 
 interface IHeaderColumnProps {
-    isActive: boolean;
+    $isActive: boolean;
 }
 
 const HeaderColumn = styled.header<IHeaderColumnProps>`
@@ -111,7 +111,7 @@ function HeaderColumnNavigation({
     };
 
     return (
-        <HeaderColumn onClick={headerClickFn} isActive={isActive}>
+        <HeaderColumn onClick={headerClickFn} $isActive={isActive}>
             {!!selectionCount && isActive ? (
                 <Tooltip
                     title={t('navigation.header.nb-selection', {

@@ -18,7 +18,7 @@ import {IGetCoreEntitiesParams} from '_types/shared';
 import {ISystemTranslation} from '_types/systemTranslation';
 import {ITaskRepo} from '../../infra/task/taskRepo';
 import {TriggerNames} from '../../_types/eventsManager';
-import {IList, SortOrder} from '../../_types/list';
+import {IList,SortOrder} from '../../_types/list';
 import {
     ITask,
     ITaskCallback,
@@ -291,7 +291,7 @@ export default function ({
             ctx
         );
 
-        await eventsManager.sendPubSubEvent({triggerName: TriggerNames.TASK, data: {task}}, ctx);
+        eventsManager.sendPubSubEvent({triggerName: TriggerNames.TASK, data: {task}}, ctx);
 
         return task;
     };
@@ -375,7 +375,7 @@ export default function ({
             (({dbProfiler, ...c}) => c)(ctx)
         );
 
-        await eventsManager.sendPubSubEvent({triggerName: TriggerNames.TASK, data: {task}}, ctx);
+        eventsManager.sendPubSubEvent({triggerName: TriggerNames.TASK, data: {task}}, ctx);
 
         return task.id;
     };
@@ -481,7 +481,7 @@ export default function ({
                 await _deleteTask(t, ctx);
             }
 
-            await eventsManager.sendDatabaseEvent(
+            eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.TASKS_DELETE,
                     topic: {

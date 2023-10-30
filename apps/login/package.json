@@ -6,7 +6,7 @@
   "dependencies": {
     "@ant-design/icons": "5.2.6",
     "@leav/ui": "workspace:libs/ui",
-    "antd": "5.8.4",
+    "antd": "5.9.1",
     "aristid-ds": "0.7.1",
     "i18next": "22.5.0",
     "i18next-browser-languagedetector": "7.0.2",

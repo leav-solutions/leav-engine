@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined} from '@ant-design/icons';
-import {Alert, Card, Form, Spin} from 'antd';
-import {KitButton, KitInput, KitTypography} from 'aristid-ds';
+import {Alert,Card,Form,Spin} from 'antd';
+import {KitButton,KitInput,KitTypography} from 'aristid-ds';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
