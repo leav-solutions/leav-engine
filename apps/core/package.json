@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node .",
     "start:watch": "npm run start:dev",
-    "start:files": "ts-node-dev --respawn src/ --filesManager",
+    "start:files": "ts-node-dev --inspect=0.0.0.0:9230 --respawn src/ --filesManager",
     "start:prod:files": "node . --respawn src/ --filesManager",
     "start:indexation": "ts-node-dev --respawn src/ --indexationManager",
     "start:prod:indexation": "node . --respawn src/ --indexationManager",
