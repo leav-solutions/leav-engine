@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {extractArgsFromString} from '@leav/utils';
-import {message, Spin} from 'antd';
-import {KitUpload} from 'aristid-ds';
+import {message, Space, Spin} from 'antd';
+import {KitAlert, KitUpload} from 'aristid-ds';
 import {IKitDragger} from 'aristid-ds/dist/Kit/DataEntry/Upload/types';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -167,7 +167,7 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
         multiple: false,
         accept: '.xlsx',
         showUploadList: false,
-        description: '',
+        description: t('import.file_selection_restriction', {allowedFormat: '.xlsx'}),
         title: file?.name ?? t('import.file_selection_instruction'),
         beforeUpload: fileToImport => {
             // Read file to read mapping and display a preview on next step
@@ -196,9 +196,12 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
     };
 
     return (
-        <Spin spinning={loading}>
-            <KitUpload.KitDragger {...draggerProps} />
-        </Spin>
+        <Space direction="vertical" style={{width: '100%'}}>
+            <Spin spinning={loading}>
+                <KitUpload.KitDragger {...draggerProps} />
+            </Spin>
+            <KitAlert message={t('import.first_line_info')} type="info" showIcon />
+        </Space>
     );
 }
 
