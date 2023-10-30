@@ -279,7 +279,7 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
         },
         {
             title: t('import.import_done'),
-            status: importError ? 'error' : 'finish'
+            status: importError ? 'error' : null
         }
     ];
 
