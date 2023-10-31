@@ -444,7 +444,7 @@ services:
     environment:
       <<: [*env-amqp]
       APP_ROOT_PATH: *dir-logs_collector
-      DEBUG: true
+      DEBUG: false
     depends_on:
       - message-broker
     volumes:
