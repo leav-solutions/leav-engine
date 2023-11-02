@@ -11,6 +11,10 @@ export default function useRefreshToken() {
         refreshToken: async () => {
             const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
 
+            if (!refreshToken) {
+                throw new Error('No refresh token available');
+            }
+
             const res = await fetch('/auth/refresh', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},

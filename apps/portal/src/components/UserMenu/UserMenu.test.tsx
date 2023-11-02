@@ -1,20 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ILangContext, LangContext} from '@leav/ui';
+import * as leavUi from '@leav/ui';
 import userEvent from '@testing-library/user-event';
 import UserContext from 'context/UserContext';
 import {mockUser} from '_tests/mocks/user';
 import {act, render, screen} from '_tests/testUtils';
 import UserMenu from './UserMenu';
 
-const mockLogout = jest.fn();
-jest.mock('hooks/useAuth/useAuth', () => () => ({
-    logout: mockLogout
-}));
-
 describe('UserMenu', () => {
-    const mockLangContext: ILangContext = {
+    const mockLangContext: leavUi.ILangContext = {
         lang: ['fr'],
         availableLangs: ['fr', 'en'],
         defaultLang: 'fr',
@@ -22,12 +17,17 @@ describe('UserMenu', () => {
     };
 
     test('Open menu and click on elements', async () => {
+        const mockLogout = jest.fn();
+        jest.spyOn(leavUi, 'useAuth').mockReturnValue({
+            logout: mockLogout
+        });
+
         render(
-            <LangContext.Provider value={mockLangContext}>
+            <leavUi.LangContext.Provider value={mockLangContext}>
                 <UserContext.Provider value={mockUser}>
                     <UserMenu />
                 </UserContext.Provider>
-            </LangContext.Provider>
+            </leavUi.LangContext.Provider>
         );
 
         const userLabel = screen.getByText(mockUser.whoAmI.label);
