@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CarryOutOutlined, DoubleRightOutlined, ExclamationCircleOutlined, LogoutOutlined} from '@ant-design/icons';
+import {useAuth} from '@leav/ui';
 import {Drawer, Menu} from 'antd';
 import AvailableSoon from 'components/shared/AvailableSoon';
 import LEAVEngineIcon from 'components/shared/LEAVEngineIcon';
-import useAuth from 'hooks/useAuth';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import LangSwitcher from './LangSwitcher';
