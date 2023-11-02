@@ -14,7 +14,8 @@ getArtifactList()
     .then((list) => {
         // Find the artifact with the same commit sha1
         artifact = list.artifacts.find((artifact) => {
-            if (artifact.workflow_run.head_sha === commitSha1) return artifact.id;
+            // if artifact.name includes commit Sha1
+            return artifact.name.includes(commitSha1);
         })
 
         if (!artifact) throw new Error(`No artifact found for this commit ${commitSha1}`);

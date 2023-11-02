@@ -1,5 +1,3 @@
-#!/bin/bash
-
 yarn install
 
 # Used to be able to exec "git rev-parse HEAD" in preload.js
