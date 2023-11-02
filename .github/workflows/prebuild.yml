@@ -4,9 +4,9 @@ on:
     pull_request:
         types:
             - opened
-#    issue_comment:
-#        types:
-#            - created
+    issue_comment:
+        types:
+            - created
 
 jobs:
     build:
