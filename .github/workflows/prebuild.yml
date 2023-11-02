@@ -4,24 +4,19 @@ on:
     pull_request:
         types:
             - opened
-    issue_comment:
-        types:
-            - created
+#    issue_comment:
+#        types:
+#            - created
 
 jobs:
     build:
-        if: github.event_name == 'pull_request' || contains(github.event.comment.body, '/build')
+#        if: github.event_name == 'pull_request' || contains(github.event.comment.body, '/build')
         runs-on: ubuntu-latest
         steps:
             - name: Show GitHub context
               env:
                   GITHUB_CONTEXT: ${{ toJson(github) }}
               run: echo "$GITHUB_CONTEXT"
-
-            - name: Show Steps context
-              env:
-               GITHUB_STEPS: ${{ toJson(steps) }}
-              run: echo "GITHUB_STEPS"
 
             - name: Checkout repository
               uses: actions/checkout@v3
