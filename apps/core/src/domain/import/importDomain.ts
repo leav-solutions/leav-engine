@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {extractArgsFromString} from '@leav/utils';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
@@ -26,6 +27,7 @@ import ValidationError from '../../errors/ValidationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
+import {EventAction} from '../../_types/event';
 import {
     Action,
     IData,
@@ -113,9 +115,10 @@ interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.value'?: IValueDomain;
     'core.domain.tree'?: ITreeDomain;
-    'core.infra.cache.cacheService'?: ICachesService;
     'core.domain.tasksManager'?: ITasksManagerDomain;
     'core.domain.helpers.updateTaskProgress'?: UpdateTaskProgress;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
+    'core.infra.cache.cacheService'?: ICachesService;
     config?: Config.IConfig;
     translator?: i18n;
     'core.utils'?: IUtils;
@@ -128,9 +131,10 @@ export default function ({
     'core.domain.attribute': attributeDomain = null,
     'core.domain.value': valueDomain = null,
     'core.domain.tree': treeDomain = null,
-    'core.infra.cache.cacheService': cacheService = null,
     'core.domain.tasksManager': tasksManagerDomain = null,
     'core.domain.helpers.updateTaskProgress': updateTaskProgress = null,
+    'core.domain.eventsManager': eventsManagerDomain = null,
+    'core.infra.cache.cacheService': cacheService = null,
     'core.utils': utils = null,
     config = null,
     translator = null
@@ -610,6 +614,14 @@ export default function ({
                 return newTaskId;
             }
 
+            eventsManagerDomain.sendDatabaseEvent(
+                {
+                    action: EventAction.CONFIG_IMPORT_START,
+                    topic: null
+                },
+                ctx
+            );
+
             const reportFileName = nanoid() + '.config.report.txt';
             const reportFilePath = `${config.import.directory}/${reportFileName}`;
             const lang = ctx.lang || config.lang.default;
@@ -673,6 +685,14 @@ export default function ({
                 }
             }
 
+            eventsManagerDomain.sendDatabaseEvent(
+                {
+                    action: EventAction.CONFIG_IMPORT_END,
+                    topic: null
+                },
+                ctx
+            );
+
             console.info('Configuration import completed.');
 
             if (!forceNoTask) {
@@ -710,6 +730,15 @@ export default function ({
 
                 return newTaskId;
             }
+
+            ctx.trigger = 'data_import';
+            eventsManagerDomain.sendDatabaseEvent(
+                {
+                    action: EventAction.DATA_IMPORT_START,
+                    topic: {filename}
+                },
+                ctx
+            );
 
             const reportFileName = nanoid() + '.data.report.txt';
             const reportFilePath = `${config.import.directory}/${reportFileName}`;
@@ -949,6 +978,15 @@ export default function ({
             await tasksManagerDomain.setLink(
                 task.id,
                 {name: reportFileName, url: `/${config.import.endpoint}/${reportFileName}`},
+                ctx
+            );
+
+            eventsManagerDomain.sendDatabaseEvent(
+                {
+                    action: EventAction.DATA_IMPORT_END,
+                    topic: {filename},
+                    metadata: {stats}
+                },
                 ctx
             );
 

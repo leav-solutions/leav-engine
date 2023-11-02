@@ -9,7 +9,7 @@ import {i18n} from 'i18next';
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
-import {difference, union, intersection} from 'lodash';
+import {difference, intersection, union} from 'lodash';
 import {IUtils} from 'utils/utils';
 import {IAttribute} from '_types/attribute';
 import {IConfig} from '_types/config';
@@ -298,23 +298,24 @@ export default function ({
             }
 
             // sending indexation event
-            await eventsManager.sendDatabaseEvent(
+            eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.LIBRARY_SAVE,
-                    data: {
-                        new: {
-                            ...savedLib,
-                            fullTextAttributes: libFullTextAttributes,
-                            attributes: libAttributes
-                        },
-                        ...(existingLib && {
-                            old: {
-                                ...library,
-                                fullTextAttributes: currentFullTextAttributes,
-                                attributes: currentLibraryAttributes
-                            }
-                        })
-                    }
+                    topic: {
+                        library: savedLib.id
+                    },
+                    after: {
+                        ...savedLib,
+                        fullTextAttributes: libFullTextAttributes,
+                        attributes: libAttributes
+                    },
+                    before: existingLib
+                        ? {
+                              ...library,
+                              fullTextAttributes: currentFullTextAttributes,
+                              attributes: currentLibraryAttributes
+                          }
+                        : null
                 },
                 ctx
             );
@@ -353,10 +354,13 @@ export default function ({
             const deletedLibrary = await libraryRepo.deleteLibrary({id, ctx});
 
             // sending indexation event
-            await eventsManager.sendDatabaseEvent(
+            eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.LIBRARY_DELETE,
-                    data: {old: {...deletedLibrary, attributes: undefined, fullTextAttributes: undefined}}
+                    topic: {
+                        library: id
+                    },
+                    before: {...deletedLibrary, attributes: undefined, fullTextAttributes: undefined}
                 },
                 ctx
             );

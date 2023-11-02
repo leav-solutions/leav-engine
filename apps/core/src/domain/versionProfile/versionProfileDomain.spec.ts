@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ICacheService, ICachesService} from 'infra/cache/cacheService';
@@ -51,6 +52,10 @@ describe('versionProfileDomain', () => {
         isIdValid: jest.fn().mockReturnValue(true),
         generateExplicitValidationError: jest.fn().mockReturnValue(new ValidationError({}, '')),
         getCoreEntityCacheKey: jest.fn().mockReturnValue('coreEntity:versionProfile:42')
+    };
+
+    const mockEventsManager: Mockify<IEventsManagerDomain> = {
+        sendDatabaseEvent: global.__mockPromise()
     };
 
     beforeEach(() => jest.clearAllMocks());
@@ -127,6 +132,7 @@ describe('versionProfileDomain', () => {
 
             const domain = versionProfileDomain({
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.versionProfile': mockVersionProfileRepo as IVersionProfileRepo,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.utils': mockUtils as IUtils
@@ -157,6 +163,7 @@ describe('versionProfileDomain', () => {
 
             const domain = versionProfileDomain({
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.versionProfile': mockVersionProfileRepo as IVersionProfileRepo,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
@@ -275,6 +282,7 @@ describe('versionProfileDomain', () => {
 
             const domain = versionProfileDomain({
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.versionProfile': mockVersionProfileRepo as IVersionProfileRepo,
                 'core.infra.attribute': mockAttributeRepo as IAttributeRepo
             });

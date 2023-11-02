@@ -20,6 +20,7 @@ import {
     IGetCoreApplicationsParams
 } from '../../_types/application';
 import {ErrorFieldDetail, Errors} from '../../_types/errors';
+import {EventAction} from '../../_types/event';
 import {TriggerNames} from '../../_types/eventsManager';
 import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
@@ -83,13 +84,31 @@ export default function ({
     const _sendAppEvent = async (
         params: {
             application: IApplication;
+            applicationBefore?: IApplication;
             type: ApplicationEventTypes;
         },
         ctx: IQueryInfos
     ): Promise<void> => {
-        const {application, type} = params;
+        const {application, applicationBefore, type} = params;
 
-        return eventsManagerDomain.sendPubSubEvent(
+        const actionByType: {[key in ApplicationEventTypes]: EventAction} = {
+            [ApplicationEventTypes.SAVE]: EventAction.APP_SAVE,
+            [ApplicationEventTypes.DELETE]: EventAction.APP_DELETE
+        };
+
+        let appBeforeToSend = null;
+        switch (type) {
+            case ApplicationEventTypes.SAVE:
+                appBeforeToSend = applicationBefore;
+                break;
+            case ApplicationEventTypes.DELETE:
+                appBeforeToSend = application;
+                break;
+            default:
+                break;
+        }
+
+        eventsManagerDomain.sendPubSubEvent(
             {
                 data: {
                     applicationEvent: {
@@ -98,6 +117,18 @@ export default function ({
                     }
                 },
                 triggerName: TriggerNames.APPLICATION_EVENT
+            },
+            ctx
+        );
+
+        eventsManagerDomain.sendDatabaseEvent(
+            {
+                action: actionByType[type],
+                topic: {
+                    application: application.id
+                },
+                before: appBeforeToSend ?? null,
+                after: application ?? null
             },
             ctx
         );
@@ -177,6 +208,7 @@ export default function ({
             await _sendAppEvent(
                 {
                     application: savedApp,
+                    applicationBefore: appProps,
                     type: ApplicationEventTypes.SAVE
                 },
                 ctx

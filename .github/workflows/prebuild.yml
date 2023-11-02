@@ -1,29 +1,49 @@
-name: Prebuild and copy dist folders
+name: Prebuild core & vite apps
 
 on:
-    push:
-        branches:
-            - 'XSTREAM-**'
+    pull_request:
+        types:
+            - opened
+    issue_comment:
+        types:
+            - created
+
 jobs:
     build:
+        if: github.event_name == 'pull_request' || contains(github.event.comment.body, '/build')
         runs-on: ubuntu-latest
         steps:
+            - name: Show GitHub context
+              env:
+                  GITHUB_CONTEXT: ${{ toJson(github) }}
+              run: echo "$GITHUB_CONTEXT"
+
+            - name: Show Steps context
+              env:
+               GITHUB_STEPS: ${{ toJson(steps) }}
+              run: echo "GITHUB_STEPS"
+
             - name: Checkout repository
-              uses: actions/checkout@v2
+              uses: actions/checkout@v3
 
-            - name: Build Docker Compose
-              run: docker-compose -f ./docker/docker-compose.prebuild.yml up --build
+            - name: Build Docker image
+              run: docker build . -t prebuild -f ./docker/DOCKERFILES/build/prebuild.Dockerfile
 
-            - name: Copy "core/dist" from Docker container
+            - name: Run Docker container
+              run: docker run --name prebuild prebuild
+
+            - name: Copy apps/core/dist
               run: docker cp prebuild:/app/apps/core/dist ./apps/core
 
-            - name: Copy "core/applications" from Docker container
+            - name: Copy apps/core/applications
               run: docker cp prebuild:/app/apps/core/applications ./apps/core
 
-            - name: Commit and push 'dist' folder
-              run: |
-                  git config --global user.email "actions@github.com"
-                  git config --global user.name "GitHub Actions"
-                  git add ./apps/core/applications ./apps/core/dist -f
-                  git commit -m "Push 'dist' and 'applications' folder to repository"
-                  git push origin ${{ github.ref }}
+            - name: Create an artifact for core/dist and core/applications
+              uses: actions/upload-artifact@v3
+              with:
+                  #                name: dist-artifact-${{ github.event.pull_request.head.sha }}
+                  name: dist-artifact-${{ github.sha }}
+                  path: |
+                      apps/core/dist
+                      apps/core/applications
+                  retention-days: 30

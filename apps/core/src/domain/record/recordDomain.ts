@@ -870,14 +870,16 @@ export default function ({
                 });
             }
 
-            await eventsManager.sendDatabaseEvent(
+            eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.RECORD_SAVE,
-                    data: {
-                        id: newRecord.id,
-                        libraryId: newRecord.library,
-                        new: newRecord
-                    }
+                    topic: {
+                        record: {
+                            id: newRecord.id,
+                            libraryId: newRecord.library
+                        }
+                    },
+                    after: newRecord
                 },
                 ctx
             );
@@ -885,16 +887,19 @@ export default function ({
             return {record: newRecord, valuesErrors: null};
         },
         async updateRecord({library, recordData, ctx}): Promise<IRecord> {
-            const savedRecord = await recordRepo.updateRecord({libraryId: library, recordData});
+            const {old: oldRecord, new: savedRecord} = await recordRepo.updateRecord({libraryId: library, recordData});
 
-            await eventsManager.sendDatabaseEvent(
+            eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.RECORD_SAVE,
-                    data: {
-                        id: recordData.id,
-                        libraryId: library,
-                        new: recordData
-                    }
+                    topic: {
+                        record: {
+                            id: savedRecord.id,
+                            libraryId: savedRecord.library
+                        }
+                    },
+                    before: oldRecord,
+                    after: recordData
                 },
                 ctx
             );
@@ -972,14 +977,16 @@ export default function ({
             // Everything is clean, we can actually delete the record
             const deletedRecord = await recordRepo.deleteRecord({libraryId: library, recordId: id, ctx});
 
-            await eventsManager.sendDatabaseEvent(
+            eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.RECORD_DELETE,
-                    data: {
-                        id: deletedRecord.id,
-                        libraryId: deletedRecord.library,
-                        old: deletedRecord.old
-                    }
+                    topic: {
+                        record: {
+                            libraryId: deletedRecord.library,
+                            id: deletedRecord.id
+                        }
+                    },
+                    before: deletedRecord
                 },
                 ctx
             );

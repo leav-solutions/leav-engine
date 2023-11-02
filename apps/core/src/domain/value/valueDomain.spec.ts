@@ -143,7 +143,8 @@ describe('ValueDomain', () => {
             const savedValueData = {value: 'test val', attribute: 'test_attr'};
 
             const mockValRepo = {
-                createValue: global.__mockPromise(savedValueData)
+                createValue: global.__mockPromise(savedValueData),
+                getValues: global.__mockPromise([{id_value: '12345'}])
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -405,7 +406,8 @@ describe('ValueDomain', () => {
             const savedValueData = {value: 'test val', attribute: 'test_attr'};
 
             const mockValRepo = {
-                createValue: global.__mockPromise(savedValueData)
+                createValue: global.__mockPromise(savedValueData),
+                getValues: global.__mockPromise([{id_value: '12345'}])
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -1061,7 +1063,7 @@ describe('ValueDomain', () => {
             getTrees: global.__mockPromise({list: [mockTree], totalCount: 0})
         };
 
-        test.only('Should save multiple values', async () => {
+        test('Should save multiple values', async () => {
             const mockUtils: Mockify<IUtils> = {
                 ...mockUtilsStandardAttribute,
                 rethrow: jest.fn().mockImplementation(e => {
@@ -1097,7 +1099,8 @@ describe('ValueDomain', () => {
                 ]),
                 getValueById: global.__mockPromise({
                     id_value: '12345'
-                })
+                }),
+                getValues: global.__mockPromise([{value: 'test', raw_value: 'test', id_value: 12345}])
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {

@@ -241,6 +241,51 @@ const valueDomain = function ({
         return processedValue;
     };
 
+    async function _getExistingValue(params: {
+        value: IValue;
+        attribute: IAttribute;
+        library: string;
+        recordId: string;
+        reverseLink?: IAttribute;
+        ctx: IQueryInfos;
+    }) {
+        const {value, attribute, library, recordId, reverseLink, ctx} = params;
+
+        let v: IValue;
+        if (attribute.type === AttributeTypes.SIMPLE || attribute.type === AttributeTypes.SIMPLE_LINK) {
+            v = (
+                await valueRepo.getValues({
+                    library,
+                    recordId,
+                    attribute: {...attribute, reverse_link: reverseLink},
+                    ctx
+                })
+            ).pop();
+        } else if (
+            attribute.type === AttributeTypes.ADVANCED_LINK &&
+            reverseLink?.type === AttributeTypes.SIMPLE_LINK
+        ) {
+            const values = await valueRepo.getValues({
+                library,
+                recordId,
+                attribute: {...attribute, reverse_link: reverseLink},
+                ctx
+            });
+
+            v = values.filter(val => val.value.id === value.value).pop();
+        } else if (!!value?.id_value) {
+            v = await valueRepo.getValueById({
+                library,
+                recordId,
+                attribute,
+                valueId: value.id_value,
+                ctx
+            });
+        }
+
+        return v;
+    }
+
     const _executeDeleteValue = async ({library, recordId, attribute, value, ctx}: IDeleteValueParams) => {
         // Check permission
         const canUpdateRecord = await recordPermissionDomain.getRecordPermission({
@@ -282,53 +327,29 @@ const valueDomain = function ({
             });
         }
 
-        // if simple attribute type
-        let v: IValue;
-        if (attributeProps.type === AttributeTypes.SIMPLE || attributeProps.type === AttributeTypes.SIMPLE_LINK) {
-            v = (
-                await valueRepo.getValues({
-                    library,
-                    recordId,
-                    attribute: {...attributeProps, reverse_link: reverseLink},
-                    ctx
-                })
-            ).pop();
-        } else if (
-            attributeProps.type === AttributeTypes.ADVANCED_LINK &&
-            reverseLink?.type === AttributeTypes.SIMPLE_LINK
-        ) {
-            const values = await valueRepo.getValues({
-                library,
-                recordId,
-                attribute: {...attributeProps, reverse_link: reverseLink},
-                ctx
-            });
+        const existingValue: IValue = await _getExistingValue({
+            value,
+            attribute: attributeProps,
+            library,
+            recordId,
+            reverseLink,
+            ctx
+        });
 
-            v = values.filter(val => val.value.id === value.value).pop();
-        } else if (!!value?.id_value) {
-            v = await valueRepo.getValueById({
-                library,
-                recordId,
-                attribute: attributeProps,
-                valueId: value.id_value,
-                ctx
-            });
-        }
-
-        if (!v) {
+        if (!existingValue) {
             throw new ValidationError({id: Errors.UNKNOWN_VALUE});
         }
 
         const actionsListRes =
             !!attributeProps.actions_list && !!attributeProps.actions_list.deleteValue
-                ? await actionsListDomain.runActionsList(attributeProps.actions_list.deleteValue, v, {
+                ? await actionsListDomain.runActionsList(attributeProps.actions_list.deleteValue, existingValue, {
                       ...ctx,
                       attribute: attributeProps,
                       recordId,
                       library,
-                      value: v
+                      value: existingValue
                   })
-                : v;
+                : existingValue;
 
         const res: IValue = await valueRepo.deleteValue({
             library,
@@ -341,15 +362,18 @@ const valueDomain = function ({
         // Make sure attribute is returned here
         res.attribute = attribute;
 
-        await eventsManager.sendDatabaseEvent(
+        eventsManager.sendDatabaseEvent(
             {
                 action: EventAction.VALUE_DELETE,
-                data: {
-                    libraryId: library,
-                    recordId,
-                    attributeId: attribute,
-                    value: {old: actionsListRes}
-                }
+                topic: {
+                    library,
+                    record: {
+                        id: recordId,
+                        libraryId: library
+                    },
+                    attribute: attributeProps.id
+                },
+                before: actionsListRes
             },
             ctx
         );
@@ -366,6 +390,14 @@ const valueDomain = function ({
         value: IValue,
         ctx: IQueryInfos
     ) => {
+        const valueBefore = await _getExistingValue({
+            value,
+            attribute,
+            library,
+            recordId: record.id,
+            ctx
+        });
+
         const savedVal = await saveOneValue(
             library,
             record.id,
@@ -427,6 +459,23 @@ const valueDomain = function ({
                 });
             }
         }
+
+        eventsManager.sendDatabaseEvent(
+            {
+                action: EventAction.VALUE_SAVE,
+                topic: {
+                    library,
+                    record: {
+                        id: record.id,
+                        libraryId: library
+                    },
+                    attribute: attribute.id
+                },
+                before: valueBefore,
+                after: savedVal
+            },
+            ctx
+        );
 
         return processedValue;
     };
@@ -602,19 +651,6 @@ const valueDomain = function ({
 
             const savedVal = await _executeSaveValue(library, record, attributeProps, valueToSave, ctx);
 
-            await eventsManager.sendDatabaseEvent(
-                {
-                    action: EventAction.VALUE_SAVE,
-                    data: {
-                        libraryId: library,
-                        recordId,
-                        attributeId: attributeProps.id,
-                        value: {new: savedVal}
-                    }
-                },
-                ctx
-            );
-
             await updateRecordLastModif(library, recordId, ctx);
 
             await sendRecordUpdateEvent(record, [{attribute, value: savedVal}], ctx);
@@ -718,28 +754,14 @@ const valueDomain = function ({
 
                         const savedVal =
                             !keepEmpty && !valToSave.value && !!valToSave.id_value
-                                ? await valueRepo.deleteValue({
+                                ? await _executeDeleteValue({
                                       library,
+                                      value,
                                       recordId,
-                                      attribute: {...attributeProps, reverse_link: reverseLink},
-                                      value: valToSave,
+                                      attribute: value.attribute,
                                       ctx
                                   })
                                 : await _executeSaveValue(library, record, attributeProps, valToSave, ctx);
-
-                        // TODO: get old value ?
-                        await eventsManager.sendDatabaseEvent(
-                            {
-                                action: EventAction.VALUE_SAVE,
-                                data: {
-                                    libraryId: library,
-                                    recordId,
-                                    attributeId: attributeProps.id,
-                                    value: {new: savedVal}
-                                }
-                            },
-                            ctx
-                        );
 
                         prevRes.values.push(savedVal);
                     } catch (e) {

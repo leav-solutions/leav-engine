@@ -27,7 +27,8 @@ describe('applicationDomain', () => {
     };
 
     const mockEventsManager: Mockify<IEventsManagerDomain> = {
-        sendPubSubEvent: global.__mockPromise()
+        sendPubSubEvent: global.__mockPromise(),
+        sendDatabaseEvent: global.__mockPromise()
     };
 
     describe('getApplicationProperties', () => {
