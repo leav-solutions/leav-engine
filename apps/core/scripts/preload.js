@@ -7,7 +7,7 @@ const {getArtifactList, downloadArtifact, initEnvVariables} = require("./utils")
 initEnvVariables();
 
 // Get commit sha1 from git
-const commitSha1 = childProcess.execSync("git rev-parse HEAD").toString().trim();
+const commitSha1 = childProcess.execSync("git symbolic-ref HEAD --short").toString().trim();
 let artifact;
 
 getArtifactList()

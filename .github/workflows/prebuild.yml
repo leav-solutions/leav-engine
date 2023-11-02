@@ -37,7 +37,7 @@ jobs:
 
             - name: Echo head sha
               env:
-                  HEAD_SHA: ${{ fromJSON(steps.get-head-sha.outputs.result).head.sha }}
+                  HEAD_SHA: ${{ fromJSON(steps.get-head-sha.outputs.result).head.ref }}
               run: echo "$HEAD_SHA"
 
             - name: Checkout repository
@@ -58,7 +58,7 @@ jobs:
             - name: Create an artifact for core/dist and core/applications
               uses: actions/upload-artifact@v3
               with:
-                  name: dist-artifact-${{ fromJSON(steps.get-head-sha.outputs.result).head.sha }}
+                  name: dist-artifact-${{ fromJSON(steps.get-head-sha.outputs.result).head.ref }}
                   path: |
                       apps/core/dist
                       apps/core/applications
