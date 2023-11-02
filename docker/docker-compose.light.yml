@@ -1,0 +1,401 @@
+version: "3.4"
+
+##### Common properties #####
+x-node-image: &node_image node:18-alpine
+x-message-broker-image: &message_broker_image "rabbitmq:3.9-management-alpine"
+x-traefik-image: &traefik_image "traefik:2.6"
+x-redis-image: &redis_image "redis"
+x-arango-image: &arango_image "arangodb:3.10"
+
+x-dir-core: &dir-core /app/apps/core
+x-dir-automate_scan: &dir-automate_scan /app/apps/automate-scan
+x-dir-preview_generator: &dir-preview_generator /app/apps/preview-generator
+x-dir-sync_scan: &dir-sync_scan /app/apps/sync-scan
+
+x-volume-yarn-cache: &volume-yarn-cache yarn_cache:/app/.yarn/cache
+x-volume-shared-modules: &volume-shared-modules node_modules_shared:/app/node_modules
+x-volume-core-modules: &volume-core-modules node_modules_core:/app/apps/core/node_modules
+x-volume-admin-modules: &volume-admin-modules node_modules_admin:/app/apps/admin/node_modules
+x-volume-data_studio-modules: &volume-data_studio-modules node_modules_data-studio:/app/apps/data-studio/node_modules
+x-volume-login-modules: &volume-login-modules node_modules_login:/app/apps/login/node_modules
+x-volume-portal-modules: &volume-portal-modules node_modules_portal:/app/apps/portal/node_modules
+x-volume-preview_generator-modules: &volume-preview_generator-modules node_modules_preview-generator:/app/apps/preview-generator/node_modules
+x-volume-automate_scan-modules: &volume-automate_scan-modules node_modules_automate-scan:/app/apps/automate-scan/node_modules
+x-volume-sync_scan-modules: &volume-sync_scan-modules node_modules_sync-scan:/app/apps/sync-scan/node_modules
+x-volume-config_manager-modules: &volume-config_manager-modules node_modules_config-manager:/app/libs/config-manager/node_modules
+x-volume-app_root_path-modules: &volume-app_root_path-modules node_modules_app-root-path:/app/libs/app-root-path/node_modules
+x-volume-utils-modules: &volume-utils-modules node_modules_utils:/app/libs/utils/node_modules
+x-volume-ui-modules: &volume-ui-modules node_modules_utils:/app/libs/ui/node_modules
+x-volume-message_broker-modules: &volume-message_broker-modules node_modules_message-broker:/app/libs/message-broker/node_modules
+
+# Host path is relative to the docker folder
+x-mount_point-repo: &mount_point-repo ../:/app:delegated
+x-mount_point-scripts: &mount_point-scripts ./scripts:/scripts
+x-mount_point-files: &mount_point-files ../files/:/files
+x-mount_point-previews: &mount_point-previews ../previews/:/results
+x-mount_point-exports: &mount_point-exports ../exports:/exports
+x-mount_point-imports: &mount_point-imports ../imports:/imports
+x-mount_point-cache: &mount_point-cache ../cache:/cache
+x-mount_git: &mount_git .git:/.git
+
+# Lists of allowed and ignored files
+# Use ", " characters as separators between files
+# You can use glob pattern (https://github.com/isaacs/node-glob#readme)
+x-allow-files-list: &allow-list ""
+x-ignore-files-list: &ignore-list ""
+
+x-env-core: &env-core
+    NODE_ENV: development
+    ARANGO_URL: http://root:@arangodb:8529
+    DB_NAME: leav_core
+    AUTH_KEY: 999999
+    APP_ROOT_PATH: *dir-core
+    SERVER_HOST: "0.0.0.0"
+    SERVER_PORT: 4001
+    SERVER_PUBLIC_URL: http://core.leav.localhost
+    SERVER_WS_URL: ws://core.leav.localhost
+    SERVER_UPLOAD_LIMIT: "15000mb"
+    SERVER_SUPPORT_EMAIL: support@example.com
+    REDIS_HOST: redis
+    REDIS_PORT: 6379
+    FILES_ROOT_PATHS: files1:/files
+    MAILER_HOST: <your-mailer-host>
+    MAILER_AUTH_USER: <email>
+    MAILER_AUTH_PWD: <password>
+    SERVER_ADMIN_LOGIN: admin
+    SERVER_ADMIN_PASSWORD: admin
+    SERVER_ADMIN_EMAIL: admin@example.com
+    ALLOW_FILES_LIST: *allow-list
+    IGNORE_FILES_LIST: *ignore-list
+
+x-env-amqp: &env-amqp
+    AMQP_PROTOCOL: 'amqp'
+    AMQP_HOST: message-broker
+    AMQP_USERNAME: guest
+    AMQP_PWD: guest
+    AMQP_PORT: 5672
+
+x-env-automate-scan: &env-automate-scan
+    ALLOW_FILES_LIST: *allow-list
+    IGNORE_FILES_LIST: *ignore-list
+    NODE_ENV: development
+    REDIS_HOST: redis
+    REDIS_PORT: 6379
+    ROOT_PATH: /files
+    ROOT_KEY: files1
+    APP_ROOT_PATH: *dir-automate_scan
+
+x-env-sync-scan: &env-sync-scan
+    ALLOW_FILES_LIST: *allow-list
+    IGNORE_FILES_LIST: *ignore-list
+    FILESYSTEM_ABSOLUTE_PATH: /files
+    GRAPHQL_URI: http://core:4001/graphql
+    GRAPHQL_API_KEY: ${GRAPHQL_API_KEY}
+    APP_ROOT_PATH: *dir-sync_scan
+
+x-env-preview-generator: &env-preview-generator
+    NODE_ENV: development
+    INPUT_ROOT_PATH: /files
+    OUTPUT_ROOT_PATH: /results
+    ICC_PATH: /app/apps/preview-generator/profile/
+    APP_ROOT_PATH: *dir-preview_generator
+
+x-env-build-core: &env-build-core
+    context: ../apps/core
+    dockerfile: ../../docker/DOCKERFILES/CORE/Dockerfile
+
+############################
+
+services:
+    # The core is in charge of installing dependencies for ALL services. Each service must for wait the core, and then
+    # just do their job, not having to handle install.
+    core:
+        build: *env-build-core
+        stdin_open: true
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.core.rule=Host(`core.leav.localhost`)
+            - traefik.http.services.core.loadbalancer.server.port=4001
+            - traefik.http.routers.core.entrypoints=web
+        environment:
+            <<: [*env-core, *env-amqp]
+        volumes: # We must load every volumes for install
+            - *mount_point-repo
+            - *mount_point-files
+            - *mount_point-previews
+            - *mount_point-scripts
+            - *mount_point-exports
+            - *mount_point-imports
+            - *mount_point-cache
+            - *mount_git
+            - *volume-yarn-cache
+            - *volume-shared-modules
+            - *volume-core-modules
+            - *volume-admin-modules
+            - *volume-data_studio-modules
+            - *volume-login-modules
+            - *volume-portal-modules
+            - *volume-preview_generator-modules
+            - *volume-automate_scan-modules
+            - *volume-sync_scan-modules
+            - *volume-config_manager-modules
+            - *volume-app_root_path-modules
+            - *volume-utils-modules
+            - *volume-ui-modules
+            - *volume-message_broker-modules
+        ports:
+            - "9229:9229"
+        working_dir: *dir-core
+        command: [
+            sh,
+            -c,
+            "/scripts/start-light-core.sh",
+        ]
+
+    indexation-manager:
+        build: *env-build-core
+        stdin_open: true
+        environment:
+            <<: [*env-core, *env-amqp]
+        volumes:
+            - *mount_point-repo
+            - *mount_point-scripts
+            - *volume-yarn-cache
+            - *volume-shared-modules
+            - *volume-core-modules
+        ports:
+            - "9231:9231"
+        working_dir: *dir-core
+        command: [
+            sh,
+            -c,
+            "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start:prod:indexation",
+        ]
+
+    tasks-manager-master:
+        build: *env-build-core
+        stdin_open: true
+        environment:
+            <<: [*env-core, *env-amqp]
+        volumes:
+            - *mount_point-repo
+            - *mount_point-scripts
+            - *mount_point-imports
+            - *mount_point-exports
+            - *volume-yarn-cache
+            - *volume-shared-modules
+            - *volume-core-modules
+        ports:
+            - "9232:9232"
+        working_dir: *dir-core
+        command: [
+            sh,
+            -c,
+            "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start:prod:tasksMaster",
+        ]
+
+    tasks-manager-worker:
+        build: *env-build-core
+        restart: always
+        environment:
+            <<: [*env-core, *env-amqp]
+        volumes:
+            - *mount_point-repo
+            - *mount_point-scripts
+            - *mount_point-imports
+            - *mount_point-exports
+            - *volume-yarn-cache
+            - *volume-shared-modules
+            - *volume-core-modules
+        working_dir: *dir-core
+        command: [
+            sh,
+            -c,
+            "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start:prod:tasksWorker",
+        ]
+
+    automate-scan:
+        image: *node_image
+        restart: always
+        environment:
+            <<: [*env-automate-scan, *env-amqp]
+        volumes:
+            - *mount_point-repo
+            - *mount_point-files
+            - *mount_point-scripts
+            - *volume-yarn-cache
+            - *volume-shared-modules
+            - *volume-automate_scan-modules
+            - *volume-config_manager-modules
+        working_dir: *dir-automate_scan
+        command: [
+            sh,
+            -c,
+            "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start:watch",
+        ]
+
+    files-manager:
+        build: *env-build-core
+        restart: always
+        environment:
+            <<: [*env-core, *env-amqp]
+        volumes:
+            - *mount_point-repo
+            - *mount_point-files
+            - *mount_point-previews
+            - *mount_point-scripts
+            - *volume-shared-modules
+            - *volume-core-modules
+        ports:
+            - "9230:9230"
+        working_dir: *dir-core
+        command: [
+            sh,
+            -c,
+            "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start:prod:files",
+        ]
+
+    preview-generator:
+        build:
+            context: ../apps/preview-generator
+            dockerfile: ../../docker/DOCKERFILES/PREVIEW_GENERATOR/Dockerfile
+        restart: always
+        environment:
+            <<: [*env-amqp, *env-preview-generator]
+        volumes:
+            - *mount_point-repo
+            - *mount_point-files
+            - *mount_point-previews
+            - *mount_point-scripts
+            - *volume-yarn-cache
+            - *volume-shared-modules
+            - *volume-preview_generator-modules
+            - *volume-config_manager-modules
+        working_dir: *dir-preview_generator
+        command: [
+            sh,
+            -c,
+            "/scripts/wait-for-it.sh core:4001 -t 1000 -- ./start.sh",
+        ]
+
+    # At creation, we just install deps and exit.
+    # Run "docker-compose run --rm sync-scan yarn start" to make the scan
+    # You need to have a GRAPHQL_API_KEY defined as environment variables (eg. in a .env file)
+    sync-scan:
+        image: *node_image
+        labels:
+            - traefik.enable=true
+        environment:
+            <<: [*env-sync-scan, *env-amqp]
+        depends_on:
+            - core
+        volumes:
+            - *mount_point-repo
+            - *mount_point-files
+            - *mount_point-scripts
+            - *volume-yarn-cache
+            - *volume-shared-modules
+            - *volume-sync_scan-modules
+            - *volume-config_manager-modules
+            - *volume-message_broker-modules
+        working_dir: *dir-sync_scan
+
+    # Proxy
+    traefik:
+        image: *traefik_image
+        command:
+            - "--api.insecure"
+            - "--providers.docker=true"
+            - "--providers.docker.exposedbydefault=false"
+            - "--entrypoints.web.address=:80"
+        ports:
+            - "80:80"
+            - "8000:8000"
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+
+    arangodb:
+        image: *arango_image
+        environment:
+            ARANGO_NO_AUTH: 1
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.arangodb.rule=Host(`arango.leav.localhost`)
+            - traefik.http.services.arangodb.loadbalancer.server.port=8529
+        volumes:
+            - arango_data:/var/lib/arangodb3
+            - ./conf/arangodb/arangod.conf:/etc/arangodb3/arangod.conf
+        ports:
+            - "8529:8529"
+
+    message-broker:
+        image: *message_broker_image
+        restart: always
+        ports:
+            - "4369:4369"
+            - "5671:5671"
+            - "5672:5672"
+            - "15672:15672"
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.message-broker.rule=Host(`rabbitmq.leav.localhost`)
+            - traefik.http.services.message-broker.loadbalancer.server.port=5672
+
+    redis:
+        image: *redis_image
+        restart: always
+        labels:
+            - traefik.enable=true
+            - traefik.http.services.redis.loadbalancer.server.port=6379
+
+    redis-commander:
+        container_name: redis-commander
+        hostname: redis-commander
+        image: rediscommander/redis-commander:latest
+        restart: always
+        environment:
+            - REDIS_HOSTS=local:redis:6379
+        ports:
+            - "9876:8081"
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.redis-commander.rule=Host(`redis.leav.localhost`)
+            - traefik.http.services.redis-commander.loadbalancer.server.port=8081
+            - traefik.http.routers.rabbitmq.entrypoints=web
+        depends_on:
+            - redis
+
+volumes:
+    arango_data:
+        driver: local
+    yarn_cache:
+        driver: local
+    node_modules_shared:
+        driver: local
+    node_modules_core:
+        driver: local
+    node_modules_admin:
+        driver: local
+    node_modules_data-studio:
+        driver: local
+    node_modules_login:
+        driver: local
+    node_modules_portal:
+        driver: local
+    node_modules_preview-generator:
+        driver: local
+    node_modules_automate-scan:
+        driver: local
+    node_modules_sync-scan:
+        driver: local
+    node_modules_config-manager:
+        driver: local
+    node_modules_app-root-path:
+        driver: local
+    node_modules_utils:
+        driver: local
+    node_modules_ui:
+        driver: local
+    node_modules_message-broker:
+        driver: local
+

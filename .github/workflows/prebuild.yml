@@ -1,0 +1,65 @@
+name: Prebuild core & vite apps
+
+on:
+    pull_request:
+        types:
+            - opened
+    issue_comment:
+        types:
+            - created
+
+jobs:
+    build:
+        if: github.event_name == 'pull_request' || contains(github.event.comment.body, '/build')
+        runs-on: ubuntu-latest
+        steps:
+            - name: Show GitHub context
+              env:
+                  GITHUB_CONTEXT: ${{ toJson(github) }}
+              run: echo "$GITHUB_CONTEXT"
+
+            - uses: actions/github-script@v6
+              id: get-head-sha
+              with:
+                  script: |
+                      const request = {
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        pull_number: context.issue.number
+                      }
+                      core.info(`Getting PR #${request.pull_number} from ${request.owner}/${request.repo}`)
+                      try {
+                        const result = await github.rest.pulls.get(request)
+                        return result.data
+                      } catch (err) {
+                        core.setFailed(`Request failed with error ${err}`)
+                      }
+
+            - name: Echo head sha
+              env:
+                  HEAD_SHA: ${{ fromJSON(steps.get-head-sha.outputs.result).head.sha }}
+              run: echo "$HEAD_SHA"
+
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
+            - name: Build Docker image
+              run: docker build . -t prebuild -f ./docker/DOCKERFILES/build/prebuild.Dockerfile
+
+            - name: Run Docker container
+              run: docker run --name prebuild prebuild
+
+            - name: Copy apps/core/dist
+              run: docker cp prebuild:/app/apps/core/dist ./apps/core
+
+            - name: Copy apps/core/applications
+              run: docker cp prebuild:/app/apps/core/applications ./apps/core
+
+            - name: Create an artifact for core/dist and core/applications
+              uses: actions/upload-artifact@v3
+              with:
+                  name: dist-artifact-${{ fromJSON(steps.get-head-sha.outputs.result).head.sha }}
+                  path: |
+                      apps/core/dist
+                      apps/core/applications
+                  retention-days: 30

@@ -16,10 +16,12 @@ config/local.js
 
 # Node
 .npm
-.env
+apps/core/.env
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+dist-artifact-**.zip
 
 # Misc
 .DS_Store
@@ -88,3 +90,4 @@ apps/*/dist
 apps/*/build
 libs/ui/dist
 *.tsbuildinfo
+apps/*/dist-artifact-**

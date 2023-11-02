@@ -74,5 +74,7 @@ checkExitCode
 mv $BUILD_DATA_STUDIO_DIR $DEST_DATA_STUDIO_DIR
 checkExitCode
 
+cd /app/apps/core && npx tsc -b ./tsconfig.build.json
+
 echo '### Applications installed ###'
 exit 0
