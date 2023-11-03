@@ -36,7 +36,6 @@ x-mount_point-previews: &mount_point-previews ../previews/:/results
 x-mount_point-exports: &mount_point-exports ../exports:/exports
 x-mount_point-imports: &mount_point-imports ../imports:/imports
 x-mount_point-cache: &mount_point-cache ../cache:/cache
-x-mount_git: &mount_git .git:/.git
 
 # Lists of allowed and ignored files
 # Use ", " characters as separators between files
@@ -127,7 +126,6 @@ services:
             - *mount_point-exports
             - *mount_point-imports
             - *mount_point-cache
-            - *mount_git
             - *volume-yarn-cache
             - *volume-shared-modules
             - *volume-core-modules

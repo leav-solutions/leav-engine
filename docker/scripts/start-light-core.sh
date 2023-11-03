@@ -1,7 +1,5 @@
+# Install dependencies
 yarn install
-
-# Used to be able to exec "git rev-parse HEAD" in preload.js
-git config --system --add safe.directory /app
 
 echo "Download artifact and extract it (contains dist folders)"
 node ./scripts/preload.js

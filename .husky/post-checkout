@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Edit file .env, change value GIT_ARTIFACT_BRANCH with the current branch name
+# Example: GIT_ARTIFACT_BRANCH=develop
+
+# Get current branch name
+CURRENT_BRANCH=$(git branch --show-current)
+
+# Edit file .env and replace GIT_ARTIFACT_BRANCH with the current branch name.
+sed -i "s/GIT_ARTIFACT_BRANCH=.*/GIT_ARTIFACT_BRANCH=$CURRENT_BRANCH/g" ./apps/core/.env
