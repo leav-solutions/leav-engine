@@ -43,7 +43,7 @@ export default function ({
             // Save settings
             const savedSettings = await globalSettingsRepo.saveSettings({settings, ctx});
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.GLOBAL_SETTINGS_SAVE,
                     topic: null,

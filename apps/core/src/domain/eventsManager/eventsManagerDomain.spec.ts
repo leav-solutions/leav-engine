@@ -74,7 +74,7 @@ describe('Events Manager', () => {
             connection: mockAmqpConnection as amqp.Connection,
             channel: mockAmqpChannel as amqp.ConfirmChannel
         },
-        publish: jest.fn(),
+        publish: global.__mockPromise(),
         publisher: {
             connection: mockAmqpConnection as amqp.Connection,
             channel: mockAmqpChannel as amqp.ConfirmChannel

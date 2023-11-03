@@ -52,7 +52,7 @@ export interface IRecordRepo {
         libraryId: string;
         recordData: IRecord;
         mergeObjects?: boolean;
-    }): Promise<IRecord>;
+    }): Promise<{old: IRecord; new: IRecord}>;
     deleteRecord({libraryId, recordId, ctx}: {libraryId: string; recordId: string; ctx: IQueryInfos}): Promise<IRecord>;
     find(params: {
         libraryId: string;
@@ -317,15 +317,17 @@ export default function ({
             const recordId = dataToSave.id;
             delete dataToSave.id; // Don't save ID
 
-            const {new: updatedRecord} = await collection.update({_key: String(recordId)}, dataToSave, {
+            const {old: oldRecord, new: updatedRecord} = await collection.update({_key: String(recordId)}, dataToSave, {
                 mergeObjects,
                 returnNew: true,
+                returnOld: true,
                 keepNull: false
             });
 
             updatedRecord.library = updatedRecord._id.split('/')[0];
+            oldRecord.library = oldRecord._id.split('/')[0];
 
-            return dbUtils.cleanup(updatedRecord) as IRecord;
+            return {old: dbUtils.cleanup(updatedRecord) as IRecord, new: dbUtils.cleanup(updatedRecord) as IRecord};
         }
     };
 }

@@ -338,39 +338,38 @@ export default function ({
             [TreeEventTypes.MOVE]: EventAction.TREE_MOVE_ELEMENT
         };
 
-        await Promise.all([
-            eventsManagerDomain.sendPubSubEvent(
-                {
-                    data: {
-                        treeEvent: {
-                            type,
-                            treeId,
-                            element: {...element, treeId},
-                            parentNode: parentNode ? {id: parentNode, treeId} : null,
-                            parentNodeBefore: parentNodeBefore ? {id: parentNodeBefore, treeId} : null,
-                            order
-                        }
-                    },
-                    triggerName: TriggerNames.TREE_EVENT
+        eventsManagerDomain.sendPubSubEvent(
+            {
+                data: {
+                    treeEvent: {
+                        type,
+                        treeId,
+                        element: {...element, treeId},
+                        parentNode: parentNode ? {id: parentNode, treeId} : null,
+                        parentNodeBefore: parentNodeBefore ? {id: parentNodeBefore, treeId} : null,
+                        order
+                    }
                 },
-                ctx
-            ),
-            eventsManagerDomain.sendDatabaseEvent(
-                {
-                    action: actionByType[type],
-                    topic: {
-                        tree: treeId,
-                        record: {
-                            id: record.id,
-                            libraryId: record.library
-                        }
-                    },
-                    before: parentNodeBefore ?? null,
-                    after: parentNode ?? null
+                triggerName: TriggerNames.TREE_EVENT
+            },
+            ctx
+        );
+
+        eventsManagerDomain.sendDatabaseEvent(
+            {
+                action: actionByType[type],
+                topic: {
+                    tree: treeId,
+                    record: {
+                        id: record.id,
+                        libraryId: record.library
+                    }
                 },
-                ctx
-            )
-        ]);
+                before: parentNodeBefore ?? null,
+                after: parentNode ?? null
+            },
+            ctx
+        );
     };
 
     return {
@@ -417,7 +416,7 @@ export default function ({
                 ? await treeRepo.updateTree({treeData: dataToSave as ITree, ctx})
                 : await treeRepo.createTree({treeData: dataToSave as ITree, ctx});
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.TREE_SAVE,
                     topic: {
@@ -480,7 +479,7 @@ export default function ({
 
             const deletedTree = await treeRepo.deleteTree({id, ctx});
 
-            await eventsManagerDomain.sendDatabaseEvent(
+            eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.TREE_DELETE,
                     topic: {

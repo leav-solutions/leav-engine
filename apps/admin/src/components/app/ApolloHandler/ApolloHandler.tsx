@@ -8,9 +8,9 @@ import {
     defaultDataIdFromObject,
     HttpLink,
     InMemoryCache,
+    Observable,
     ServerError,
-    split,
-    Observable
+    split
 } from '@apollo/client';
 import {onError} from '@apollo/client/link/error';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
@@ -18,7 +18,8 @@ import {getMainDefinition} from '@apollo/client/utilities';
 import fetch from 'cross-fetch';
 import {createClient} from 'graphql-ws';
 import useGraphqlPossibleTypes from 'hooks/useGraphqlPossibleTypes';
-import React, {ReactNode} from 'react';
+import useRefreshToken from 'hooks/useRefreshToken';
+import {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useDispatch} from 'react-redux';
 import {addMessage, MessagesTypes} from 'reduxStore/messages/messages';
@@ -28,7 +29,6 @@ import * as yup from 'yup';
 import {ErrorTypes} from '_types/errors';
 import {API_ENDPOINT, APPS_ENDPOINT, LOGIN_ENDPOINT, ORIGIN_URL, WS_URL} from '../../../constants';
 import Loading from '../../shared/Loading';
-import {useRefreshToken} from '@leav/ui';
 
 interface IApolloHandlerProps {
     children: ReactNode;

@@ -263,7 +263,9 @@ describe('RecordDomain', () => {
                 created_at: 1519303348,
                 modified_at: 987654321
             };
-            const recRepo: Mockify<IRecordRepo> = {updateRecord: global.__mockPromise(updatedRecordData)};
+            const recRepo: Mockify<IRecordRepo> = {
+                updateRecord: global.__mockPromise({old: updatedRecordData, new: updatedRecordData})
+            };
 
             const recDomain = recordDomain({
                 'core.infra.record': recRepo as IRecordRepo,

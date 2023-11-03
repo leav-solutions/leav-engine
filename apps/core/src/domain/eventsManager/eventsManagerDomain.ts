@@ -12,8 +12,8 @@ import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 
 export interface IEventsManagerDomain {
-    sendDatabaseEvent(payload: IDbPayload, ctx: IQueryInfos): Promise<void>;
-    sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos): Promise<void>;
+    sendDatabaseEvent(payload: IDbPayload, ctx: IQueryInfos): void;
+    sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos): void;
     subscribe(triggersName: string[]): AsyncIterator<any>;
     initPubSubEventsConsumer(): Promise<void>;
     initCustomConsumer(
@@ -30,7 +30,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.utils.logger': logger = null,
@@ -44,7 +44,7 @@ export default function({
             time: Joi.number().required(),
             userId: Joi.string().required(),
             emitter: Joi.string().required(),
-            queryId: Joi.string(),
+            queryId: Joi.string().required(),
             trigger: Joi.string(),
             payload: Joi.object().keys({
                 triggerName: Joi.string().required(),
@@ -81,20 +81,24 @@ export default function({
         await pubsub.publish(pubSubEvent.payload.triggerName, publishedPayload);
     };
 
-    const _send = async (routingKey: string, payload: any, ctx: IQueryInfos): Promise<void> => {
-        await amqpService.publish(
-            config.amqp.exchange,
-            routingKey,
-            JSON.stringify({
-                instanceId: config.instanceId,
-                time: Date.now(),
-                userId: ctx.userId,
-                queryId: ctx.queryId,
-                emitter: utils.getProcessIdentifier(),
-                trigger: ctx.trigger,
-                payload
-            })
-        );
+    const _send = (routingKey: string, payload: any, ctx: IQueryInfos) => {
+        amqpService
+            .publish(
+                config.amqp.exchange,
+                routingKey,
+                JSON.stringify({
+                    time: Date.now(),
+                    userId: ctx.userId,
+                    queryId: ctx.queryId,
+                    emitter: utils.getProcessIdentifier(),
+                    trigger: ctx.trigger,
+                    payload
+                })
+            )
+            .catch(err => {
+                // We don't want to have to await the _send function, so we handle the error here.
+                logger.error(err);
+            });
     };
 
     return {
@@ -120,11 +124,11 @@ export default function({
 
             await amqpService.consume(queue, routingKey, msg => onMessage(msg, amqpService.consumer.channel));
         },
-        async sendDatabaseEvent(payload: IDbPayload, ctx: IQueryInfos): Promise<void> {
-            await _send(config.eventsManager.routingKeys.data_events, payload, ctx);
+        sendDatabaseEvent(payload: IDbPayload, ctx: IQueryInfos) {
+            _send(config.eventsManager.routingKeys.data_events, payload, ctx);
         },
-        async sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos): Promise<void> {
-            await _send(config.eventsManager.routingKeys.pubsub_events, payload, ctx);
+        sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos) {
+            _send(config.eventsManager.routingKeys.pubsub_events, payload, ctx);
         },
         subscribe(triggersName: string[]): AsyncIterator<any> {
             return pubsub.asyncIterator(triggersName);

@@ -107,31 +107,30 @@ export default function ({
                 break;
         }
 
-        await Promise.allSettled([
-            eventsManagerDomain.sendPubSubEvent(
-                {
-                    data: {
-                        applicationEvent: {
-                            type,
-                            application
-                        }
-                    },
-                    triggerName: TriggerNames.APPLICATION_EVENT
+        eventsManagerDomain.sendPubSubEvent(
+            {
+                data: {
+                    applicationEvent: {
+                        type,
+                        application
+                    }
                 },
-                ctx
-            ),
-            eventsManagerDomain.sendDatabaseEvent(
-                {
-                    action: actionByType[type],
-                    topic: {
-                        application: application.id
-                    },
-                    before: appBeforeToSend ?? null,
-                    after: application ?? null
+                triggerName: TriggerNames.APPLICATION_EVENT
+            },
+            ctx
+        );
+
+        eventsManagerDomain.sendDatabaseEvent(
+            {
+                action: actionByType[type],
+                topic: {
+                    application: application.id
                 },
-                ctx
-            )
-        ]);
+                before: appBeforeToSend ?? null,
+                after: application ?? null
+            },
+            ctx
+        );
     };
 
     return {

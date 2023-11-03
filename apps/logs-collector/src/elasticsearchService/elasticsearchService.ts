@@ -12,8 +12,10 @@ export const initClient = async (config: IConfig) => {
 };
 
 export const writeData = async (indexName: string, data: WritableMessage, esClient: Client) => {
-    await esClient.indices.create(
-        {
+    // Check if index exists and create it if needed
+    const indexExists = await esClient.indices.exists({index: indexName});
+    if (!indexExists) {
+        await esClient.indices.create({
             index: indexName,
             body: {
                 mappings: {
@@ -31,9 +33,8 @@ export const writeData = async (indexName: string, data: WritableMessage, esClie
                     }
                 }
             }
-        },
-        {ignore: [400]} // To ignore errors if index already exists
-    );
+        });
+    }
 
     await esClient.index({
         index: indexName,

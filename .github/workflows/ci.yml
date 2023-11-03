@@ -53,7 +53,7 @@ jobs:
           cache: 'yarn'
       - name: Set workspaces list name
         id: set-workspaces-list-name
-        run: echo "workspaces_name=$(yarn workspaces list --json | jq 'select(.location | contains("test-apps") | not)' | jq '.name' | jq -s | jq -c)" >> "$GITHUB_OUTPUT"
+        run: echo "workspaces_name=$(yarn workspaces list --json | jq 'select(.location | contains("test-apps") | not)' | jq '.name' | jq -s | jq -c)" >>"$GITHUB_OUTPUT"
 
   lint:
     runs-on: ubuntu-latest
