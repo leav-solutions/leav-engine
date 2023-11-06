@@ -1,4 +1,6 @@
-# Install dependencies
+#bin/sh
+
+echo "Install dependencies"
 yarn install
 
 echo "Download artifact and extract it (contains dist folders)"
