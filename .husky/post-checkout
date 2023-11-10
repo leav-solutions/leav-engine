@@ -6,5 +6,10 @@
 # Get current branch name
 CURRENT_BRANCH=$(git branch --show-current)
 
+# Create .env file is not exists
+if [ ! -f ./apps/core/.env ]; then
+    cp ./apps/core/.env.example ./apps/core/.env
+fi
+
 # Edit file .env and replace GIT_ARTIFACT_BRANCH with the current branch name.
-sed -i "s/GIT_ARTIFACT_BRANCH=.*/GIT_ARTIFACT_BRANCH=$CURRENT_BRANCH/g" ./apps/core/.env
+awk -v var="$CURRENT_BRANCH" '{ gsub(/GIT_ARTIFACT_BRANCH=.*/, "GIT_ARTIFACT_BRANCH="var) }1' ./apps/core/.env > ./apps/core/.env.tmp && mv ./apps/core/.env.tmp ./apps/core/.env

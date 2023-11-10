@@ -90,4 +90,3 @@ apps/*/dist
 apps/*/build
 libs/ui/dist
 *.tsbuildinfo
-apps/*/dist-artifact-**

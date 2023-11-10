@@ -13,25 +13,25 @@ services:
         command: [
             sh,
             -c,
-            "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start:prod:indexation"
+            "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start --indexationManager"
         ]
     tasks-manager-master:
         command: [
             sh,
             -c,
-            "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start:prod:tasksMaster"
+            "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start --tasksManager=master"
         ]
     tasks-manager-worker:
         command: [
             sh,
             -c,
-            "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start:prod:tasksWorker",
+            "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start --tasksManager=worker",
         ]
     files-manager:
         command: [
             sh,
             -c,
-            "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start:prod:files",
+            "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start --filesManager",
         ]
 
     # Override apps service, to not start them
