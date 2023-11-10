@@ -32,7 +32,7 @@ jobs:
                       core.info(`Getting PR #${request.pull_number} from ${request.owner}/${request.repo}`)
                       try {
                         const result = await github.rest.pulls.get(request)
-                        return result.data
+                        core.setOutput('head_ref', result.data.head.ref)
                       } catch (err) {
                         core.setFailed(`Request failed with error ${err}`)
                       }
@@ -52,14 +52,19 @@ jobs:
             - name: Copy apps/core/applications
               run: docker cp prebuild:/app/apps/core/applications ./apps/core
 
-            - name: Store branch variable, if workflow_dispatch get github.ref_name otherwise get head.ref if outputs.outcome is not skipped
+            - name: Store branch variable, if event name == workflow_dispatch or steps.get-head.outputs.result.head.ref is defined
               id: get-branch
               run: |
-                    if [ "${{ steps.get-head-sha.outputs.result }}" ]; then
-                        echo ::set-output name=branch::${{ steps.get-head-sha.outputs.result.head.ref }}
-                    else
-                        echo ::set-output name=branch::${{ github.ref_name }}
-                    fi
+                if [ "${{ github.event_name }}" == 'workflow_dispatch' ]; then
+                   echo ::set-output name=branch::${{ github.ref_name }}
+                else
+                 branch_ref=${{ steps.get-head.outputs.head_ref }}
+                 if [ "$branch_ref" != "null" ]; then
+                   echo ::set-output name=branch::${branch_ref}
+                 else
+                   echo ::set-output name=branch::master
+                 fi
+                fi
 
             - name: Create an artifact for core/dist and core/applications
               uses: actions/upload-artifact@v3
