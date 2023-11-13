@@ -5,9 +5,8 @@ echo "Install dependencies"
 # to use up to 30sec in load time
 yarn install
 
-# Migrate database if needed (usually required if you run it for the first time)
-# sleep 30 # required to wait for the database to start
-# yarn run db:migrate
+# Migrate database if needed
+yarn run db:migrate
 
 echo "Download artifact and extract it (contains dist folders)"
 node ./scripts/preload.js
