@@ -22,7 +22,7 @@ export interface ILogTopicFilter {
 }
 
 export interface ILogFilters {
-    action?: EventAction;
+    action?: EventAction[];
     time?: {
         from?: number;
         to?: number;

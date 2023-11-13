@@ -104,7 +104,7 @@ export default function ({
 
                     input LogFilterInput {
                         topic: LogTopicFilterInput,
-                        action: LogAction,
+                        action: [LogAction!],
                         userId: String,
                         time: LogFilterTimeInput,
                         queryId: String,

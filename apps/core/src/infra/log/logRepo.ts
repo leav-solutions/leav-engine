@@ -69,6 +69,13 @@ export default function ({'core.infra.elasticSearch.service': esService, config}
                         });
                         break;
                     case 'action':
+                        // value is an array of string. I want the field action to match one of them
+                        acc.push({
+                            terms: {
+                                action: value
+                            }
+                        });
+                        break;
                     case 'userId':
                     case 'queryId':
                     case 'instanceId':
