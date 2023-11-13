@@ -36,6 +36,7 @@
         "previews",
         "**/*.icc",
         "**/.env",
+        "**/.env.*",
         "**/build",
         "**/dist",
         "exports",
