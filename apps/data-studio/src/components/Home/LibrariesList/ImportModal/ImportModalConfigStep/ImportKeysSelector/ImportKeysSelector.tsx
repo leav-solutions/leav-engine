@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Switch} from 'antd';
+import {KitSwitch} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {ImportMode,ImportType} from '_gqlTypes/globalTypes';
+import {ImportMode, ImportType} from '_gqlTypes/globalTypes';
 import {ISheet} from '../../_types';
 
 interface IImportKeysSelectorProps {
@@ -44,13 +44,13 @@ function ImportKeysSelector({columnIndex, sheet, onChange}: IImportKeysSelectorP
             {displayImportKey && (
                 <>
                     <label>{t('import.import_key')}: </label>
-                    <Switch checked={sheet.keyColumnIndex === columnIndex} onChange={_handleKeyChange} />
+                    <KitSwitch checked={sheet.keyColumnIndex === columnIndex} onChange={_handleKeyChange} />
                 </>
             )}
             {displayLinkKey && (
                 <>
                     <label>{t('import.link_key')}: </label>
-                    <Switch checked={sheet.keyToColumnIndex === columnIndex} onChange={_handleKeyToChange} />
+                    <KitSwitch checked={sheet.keyToColumnIndex === columnIndex} onChange={_handleKeyToChange} />
                 </>
             )}
         </Wrapper>

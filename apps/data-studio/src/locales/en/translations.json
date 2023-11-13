@@ -403,6 +403,7 @@
         "title": "Data import",
         "file_selection": "Select file",
         "file_selection_instruction": "Click or drag file",
+        "file_selection_restriction": "Allowed format: {{allowedFormat}}",
         "start": "Start import",
         "in_progress": "Import in progress",
         "data_overview": "Data Overview",
@@ -451,7 +452,8 @@
             "LIBRARY": "Please select a library",
             "LINK_ATTRIBUTE": "Please select a link attribute"
         },
-        "tree_link_library": "Linked library"
+        "tree_link_library": "Linked library",
+        "first_line_info": "First line must contain columns names"
     },
     "error": {
         "error_occurred": "An error occurred",

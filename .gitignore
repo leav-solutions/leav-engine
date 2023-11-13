@@ -21,6 +21,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+dist-artifact-**.zip
+
 # Misc
 .DS_Store
 logs

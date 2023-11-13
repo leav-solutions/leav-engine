@@ -404,6 +404,7 @@
         "title": "Importer des données",
         "file_selection": "Sélection du fichier",
         "file_selection_instruction": "Cliquez ou déposez votre fichier",
+        "file_selection_restriction": "Format autorisé: {{allowedFormat}}",
         "start": "Lancer l'import",
         "in_progress": "Upload en cours",
         "data_overview": "Aperçu des données",
@@ -452,7 +453,8 @@
             "LIBRARY": "Veuillez sélectionner une bibliothèque",
             "LINK_ATTRIBUTE": "Veuillez sélectionner un attribut de liaison"
         },
-        "tree_link_library": "Bibliothèque liée"
+        "tree_link_library": "Bibliothèque liée",
+        "first_line_info": "La première ligne du fichier doit contenir les noms de colonnes."
     },
     "error": {
         "error_occurred": "Une erreur est survenue",

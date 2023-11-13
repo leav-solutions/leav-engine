@@ -4,8 +4,9 @@
 import {KeyOutlined, LinkOutlined, WarningOutlined} from '@ant-design/icons';
 import {themeVars, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {Select, Space, Table, Tabs, Typography} from 'antd';
+import {Space, Table, Typography} from 'antd';
 import {ColumnsType} from 'antd/lib/table';
+import {KitSelect, KitTabs, KitTypography} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {
@@ -200,8 +201,10 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
         const sheetColumns: ColumnsType<object> = Object.keys(sheet.data[0]).map((col, index) => ({
             title: col,
             dataIndex: col,
-            onCell: _setStyleOnMappingRow
+            onCell: _setStyleOnMappingRow,
+            render: value => <KitTypography.Paragraph ellipsis={{rows: 2}}>{value}</KitTypography.Paragraph>
         }));
+
         sheetColumns.unshift({
             title: <></>,
             dataIndex: '__root',
@@ -230,7 +233,7 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
 
                     allCols[col] = (
                         <Space direction="vertical" style={{width: '100%'}}>
-                            <Select
+                            <KitSelect
                                 style={{width: '100%'}}
                                 placeholder={t('import.do_not_import')}
                                 value={sheet.mapping?.[idx]}
@@ -286,7 +289,7 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
         };
     });
 
-    return <Tabs type="card" items={tabItems} />;
+    return <KitTabs type="card" items={tabItems} />;
 }
 
 export default ImportModalConfigStep;
