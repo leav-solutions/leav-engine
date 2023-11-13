@@ -90,7 +90,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function(deps: IDeps = {}): IPermissionDomain {
+export default function (deps: IDeps = {}): IPermissionDomain {
     const _pluginPermissions: {[type in PermissionTypes]?: Array<{name: string; applyOn?: string[]}>} = {};
 
     const {
@@ -192,8 +192,7 @@ export default function(deps: IDeps = {}): IPermissionDomain {
             {
                 action: EventAction.PERMISSION_SAVE,
                 topic: {
-                    type: permData.type,
-                    applyTo: permData.applyTo
+                    permission: {type: permData.type, applyTo: permData.applyTo}
                 },
                 after: savedPermission.actions
             },

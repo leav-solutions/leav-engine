@@ -123,7 +123,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     'core.domain.library': libraryDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.helpers.validate': validateHelper = null,
@@ -393,7 +393,7 @@ export default function({
                 fileStream.resume();
             };
 
-            parser.onValue = async function(data: any) {
+            parser.onValue = async function (data: any) {
                 try {
                     if (this.stack[this.stack.length - 1]?.key === 'elements' && !!data.library) {
                         if (callbacks.length >= config.import.groupData) {

@@ -34,7 +34,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function({
+export default function ({
     'core.domain.permission.admin': adminPermissionDomain = null,
     'core.domain.eventsManager': eventsManagerDomain = null,
     'core.infra.apiKey': apiKeyRepo = null,

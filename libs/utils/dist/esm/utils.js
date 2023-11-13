@@ -221,7 +221,6 @@ export const formatId = (id) => {
  * Returns a hash code from a string
  * @param  {String} str The string to hash.
  * @return {Number}    A 32bit integer
- * @see http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
  */
 export const simpleStringHash = (str) => {
     let hash = 0;
@@ -248,5 +247,19 @@ export const getFlagByLang = (lang) => {
         ko: '🇰🇷' // Korean
     };
     return (_a = flagsByLang[lang]) !== null && _a !== void 0 ? _a : '';
+};
+export const getLogsIndexName = (instanceId) => {
+    return `logs-${instanceId}`;
+};
+export const waitFor = async (predicate, options = {}) => {
+    const { timeout = 5000, interval = 250 } = options;
+    const startTime = Date.now();
+    while (!(await predicate())) {
+        if (Date.now() - startTime > timeout) {
+            throw new Error('Timeout expired');
+        }
+        await new Promise(resolve => setTimeout(resolve, interval));
+    }
+    return true;
 };
 //# sourceMappingURL=utils.js.map

@@ -40,7 +40,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     'core.domain.permission.admin': adminPermissionDomain,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
     'core.domain.eventsManager': eventsManagerDomain = null,

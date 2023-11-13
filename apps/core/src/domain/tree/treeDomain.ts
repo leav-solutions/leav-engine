@@ -163,7 +163,7 @@ interface IDeps {
     'core.infra.cache.cacheService'?: ICachesService;
 }
 
-export default function({
+export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission.admin': adminPermissionDomain = null,

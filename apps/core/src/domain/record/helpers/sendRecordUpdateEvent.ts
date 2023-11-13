@@ -16,7 +16,9 @@ interface IDeps {
     'core.domain.eventsManager'?: IEventsManagerDomain;
 }
 
-export default function({'core.domain.eventsManager': eventsManagerDomain = null}: IDeps): SendRecordUpdateEventHelper {
+export default function ({
+    'core.domain.eventsManager': eventsManagerDomain = null
+}: IDeps): SendRecordUpdateEventHelper {
     return (record, updatedValues, ctx) => {
         eventsManagerDomain.sendPubSubEvent(
             {

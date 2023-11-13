@@ -125,7 +125,7 @@ interface IDeps {
     'core.domain.tree'?: ITreeDomain;
 }
 
-const valueDomain = function({
+const valueDomain = function ({
     config = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.attribute': attributeDomain = null,

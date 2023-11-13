@@ -1,17 +1,9 @@
-import {FileType} from './types/files';
-import {IKeyValue} from './types/helpers';
+import { FileType } from './types/files';
+import { IKeyValue } from './types/helpers';
 export declare const getGraphqlTypeFromLibraryName: (library: string) => string;
 export declare const getGraphqlQueryNameFromLibraryName: (library: string) => string;
-export declare const isFileAllowed: (
-    fsPath: string,
-    allowList: string[],
-    ignoreList: string[],
-    filePath: string
-) => boolean;
-export declare const localizedTranslation: (
-    translations: Record<string, string>,
-    availableLanguages: string[]
-) => string;
+export declare const isFileAllowed: (fsPath: string, allowList: string[], ignoreList: string[], filePath: string) => boolean;
+export declare const localizedTranslation: (translations: Record<string, string>, availableLanguages: string[]) => string;
 /**
  *
  * @param str
@@ -19,12 +11,7 @@ export declare const localizedTranslation: (
  * @param saturation in percent, default to 30
  * @param luminosity in percent, default to 80
  */
-export declare const stringToColor: (
-    str?: string | null,
-    format?: string,
-    saturation?: number,
-    luminosity?: number
-) => string;
+export declare const stringToColor: (str?: string | null, format?: string, saturation?: number, luminosity?: number) => string;
 export declare const getInvertColor: (color: string) => string;
 /**
  * Parse string to extract args.
@@ -34,27 +21,17 @@ export declare const getInvertColor: (color: string) => string;
  * eg. "-library product -type link" => {library: product, type: link}
  * @param mapping
  */
-export declare const extractArgsFromString: (
-    mapping: string
-) => {
+export declare const extractArgsFromString: (mapping: string) => {
     [arg: string]: string;
 };
-export declare const objectToNameValueArray: <T>(
-    obj: IKeyValue<T>
-) => {
+export declare const objectToNameValueArray: <T>(obj: IKeyValue<T>) => {
     name: string;
     value: T;
 }[];
-export declare const nameValArrayToObj: (
-    arr?: Array<{}>,
-    keyFieldName?: string,
-    valueFieldName?: string
-) => {
+export declare const nameValArrayToObj: (arr?: Array<{}>, keyFieldName?: string, valueFieldName?: string) => {
     [key: string]: any;
 };
-export declare const getLibraryGraphqlNames: (
-    libraryId: string
-) => {
+export declare const getLibraryGraphqlNames: (libraryId: string) => {
     query: string;
     type: string;
     list: string;
@@ -81,7 +58,11 @@ export declare const formatId: (id: string) => string;
  * Returns a hash code from a string
  * @param  {String} str The string to hash.
  * @return {Number}    A 32bit integer
- * @see http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
  */
 export declare const simpleStringHash: (str: string) => number;
 export declare const getFlagByLang: (lang: string) => string;
+export declare const getLogsIndexName: (instanceId: string) => string;
+export declare const waitFor: (predicate: () => Promise<boolean> | boolean, options?: {
+    timeout?: number;
+    interval?: number;
+}) => Promise<boolean>;

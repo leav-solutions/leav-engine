@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getFlagByLang = exports.simpleStringHash = exports.formatId = exports._getInitialEngine = exports.getInitials = exports.getCallStack = exports.getFileType = exports.getLibraryGraphqlNames = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
+exports.waitFor = exports.getLogsIndexName = exports.getFlagByLang = exports.simpleStringHash = exports.formatId = exports._getInitialEngine = exports.getInitials = exports.getCallStack = exports.getFileType = exports.getLibraryGraphqlNames = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
@@ -265,7 +265,6 @@ exports.formatId = formatId;
  * Returns a hash code from a string
  * @param  {String} str The string to hash.
  * @return {Number}    A 32bit integer
- * @see http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
  */
 const simpleStringHash = (str) => {
     let hash = 0;
@@ -295,4 +294,20 @@ const getFlagByLang = (lang) => {
     return (_a = flagsByLang[lang]) !== null && _a !== void 0 ? _a : '';
 };
 exports.getFlagByLang = getFlagByLang;
+const getLogsIndexName = (instanceId) => {
+    return `logs-${instanceId}`;
+};
+exports.getLogsIndexName = getLogsIndexName;
+const waitFor = async (predicate, options = {}) => {
+    const { timeout = 5000, interval = 250 } = options;
+    const startTime = Date.now();
+    while (!(await predicate())) {
+        if (Date.now() - startTime > timeout) {
+            throw new Error('Timeout expired');
+        }
+        await new Promise(resolve => setTimeout(resolve, interval));
+    }
+    return true;
+};
+exports.waitFor = waitFor;
 //# sourceMappingURL=utils.js.map

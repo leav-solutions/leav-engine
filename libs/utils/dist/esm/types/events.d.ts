@@ -48,7 +48,14 @@ export interface IDbPayload {
         library?: string;
         attribute?: string;
         tree?: string;
-        [key: string]: any;
+        profile?: string;
+        permission?: {
+            type: string;
+            applyTo?: any;
+        };
+        apiKey?: string;
+        application?: string;
+        filename?: string;
     };
     before?: any;
     after?: any;

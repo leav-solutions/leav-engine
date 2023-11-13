@@ -30,7 +30,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.utils.logger': logger = null,
@@ -60,15 +60,16 @@ export default function({
         }
     };
 
-    const _onMessage = async (msg: amqp.ConsumeMessage): Promise<void> => {
+    const _onPubSubMessage = async (msg: amqp.ConsumeMessage): Promise<void> => {
         amqpService.consumer.channel.ack(msg);
+        const msgContent = msg.content.toString();
 
-        const pubSubEvent: IPubSubEvent = JSON.parse(msg.content.toString());
+        const pubSubEvent: IPubSubEvent = JSON.parse(msgContent);
 
         try {
             _validateMsg(pubSubEvent);
         } catch (e) {
-            logger.error(e);
+            logger.error(e + `. Message was: ${msgContent}`);
         }
 
         const publishedPayload = {
@@ -113,7 +114,7 @@ export default function({
             await amqpService.consume(
                 config.eventsManager.queues.pubsub_events,
                 config.eventsManager.routingKeys.pubsub_events,
-                _onMessage
+                _onPubSubMessage
             );
         },
         async initCustomConsumer(queue, routingKey, onMessage) {
