@@ -1,0 +1,53 @@
+version: "3.4"
+
+services:
+    core:
+        command: [
+            sh,
+            -c,
+            "/scripts/wait-for-it.sh message-broker:5672 -t 1000 -- /scripts/wait-for-it.sh arangodb:8529 -t 1000 -- /scripts/start-light-core.sh",
+        ]
+
+    # Start these services in prod mode
+    indexation-manager:
+        command: [
+            sh,
+            -c,
+            "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start --indexationManager"
+        ]
+    tasks-manager-master:
+        command: [
+            sh,
+            -c,
+            "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start --tasksManager=master"
+        ]
+    tasks-manager-worker:
+        command: [
+            sh,
+            -c,
+            "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start --tasksManager=worker",
+        ]
+    files-manager:
+        command: [
+            sh,
+            -c,
+            "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start --filesManager",
+        ]
+
+    # Override apps service, to not start them
+    login:
+        labels:
+            - "traefik.enable=false"
+        command: []
+    admin:
+        labels:
+            - "traefik.enable=false"
+        command: []
+    portal:
+        labels:
+            - "traefik.enable=false"
+        command: []
+    data-studio:
+        labels:
+            - "traefik.enable=false"
+        command: []
