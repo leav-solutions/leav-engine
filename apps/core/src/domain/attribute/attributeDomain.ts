@@ -72,7 +72,7 @@ interface IDeps {
     config?: any;
 }
 
-export default function({
+export default function ({
     'core.infra.attribute': attributeRepo = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.permission.admin': adminPermissionDomain = null,

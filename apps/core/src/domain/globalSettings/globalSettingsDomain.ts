@@ -21,7 +21,7 @@ interface IDeps {
     'core.infra.globalSettings'?: IGlobalSettingsRepo;
 }
 
-export default function({
+export default function ({
     'core.domain.permission.admin': adminPermissionDomain = null,
     'core.domain.eventsManager': eventsManagerDomain = null,
     'core.infra.globalSettings': globalSettingsRepo = null

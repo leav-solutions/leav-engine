@@ -18,7 +18,7 @@ import {IGetCoreEntitiesParams} from '_types/shared';
 import {ISystemTranslation} from '_types/systemTranslation';
 import {ITaskRepo} from '../../infra/task/taskRepo';
 import {TriggerNames} from '../../_types/eventsManager';
-import {IList,SortOrder} from '../../_types/list';
+import {IList, SortOrder} from '../../_types/list';
 import {
     ITask,
     ITaskCallback,
