@@ -5,6 +5,7 @@ export {default as actionList} from './actionListApp';
 export {default as apiKey} from './apiKeyApp/apiKeyApp';
 export {default as attribute} from './attributeApp/attributeApp';
 export {default} from './coreApp';
+export {default as eventsManager} from './eventsManagerApp';
 export {default as export} from './exportApp';
 export {default as filesManager} from './filesManagerApp';
 export {default as form} from './formApp/formApp';

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
-import {IDbPayload, IPubSubEvent, IPubSubPayload} from '@leav/utils';
+import {EventAction, IDbPayload, IPubSubEvent, IPubSubPayload} from '@leav/utils';
 import * as amqp from 'amqplib';
 import {PubSub} from 'graphql-subscriptions';
 import Joi from 'joi';
@@ -21,6 +21,8 @@ export interface IEventsManagerDomain {
         routinKey: string,
         onMessage: (msg: amqp.ConsumeMessage, channel: amqp.ConfirmChannel) => Promise<void>
     ): Promise<void>;
+    registerEventActions(actions: string[]): void;
+    getActions(): string[];
 }
 
 interface IDeps {
@@ -30,12 +32,13 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.utils.logger': logger = null,
     'core.utils': utils = null
 }: IDeps): IEventsManagerDomain {
+    const _customEventActions = new Set<string>(); // Using a Set to avoid duplicates
     const pubsub = new PubSub();
 
     const _validateMsg = (msg: IPubSubEvent) => {
@@ -88,6 +91,7 @@ export default function({
                 routingKey,
                 JSON.stringify({
                     time: Date.now(),
+                    instanceId: config.instanceId,
                     userId: ctx.userId,
                     queryId: ctx.queryId,
                     emitter: utils.getProcessIdentifier(),
@@ -132,6 +136,16 @@ export default function({
         },
         subscribe(triggersName: string[]): AsyncIterator<any> {
             return pubsub.asyncIterator(triggersName);
+        },
+        registerEventActions(actions) {
+            actions.forEach(action => _customEventActions.add(action));
+        },
+        getActions() {
+            // Return the list of all actions: the custom actions (in uppercase) and system action
+            return [
+                ...Array.from(_customEventActions).map(action => action.toUpperCase()),
+                ...Object.values(EventAction)
+            ];
         }
     };
 }

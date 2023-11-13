@@ -66,4 +66,25 @@ describe('Plugins', () => {
             ).toBeDefined();
         });
     });
+
+    describe('Register event actions', () => {
+        test('Plugins should be able to load their own event actions', async () => {
+            // Check if "FAKE_PLUGIN_ACTION" is part of the LogAction allowed values
+            const resLogs = await makeGraphQlCall(`{
+                __schema {
+                    types {
+                        name
+                        enumValues {
+                            name
+                        }
+                    }
+                }
+            }`);
+
+            const logActionEnums: Array<{name: string}> = resLogs.data.data.__schema.types.find(
+                t => t.name === 'LogAction'
+            ).enumValues;
+            expect(logActionEnums.find(e => e.name === 'FAKE_PLUGIN_ACTION')).toBeDefined();
+        });
+    });
 });

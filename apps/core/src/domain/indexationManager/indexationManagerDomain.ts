@@ -47,7 +47,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.domain.record': recordDomain = null,
@@ -345,7 +345,7 @@ export default function({
                     .keys({
                         trigger: Joi.string(),
                         action: Joi.string()
-                            .valid(...Object.values(EventAction))
+                            .valid(...eventsManager.getActions())
                             .required(),
                         topic: Joi.object()
                             .keys({
