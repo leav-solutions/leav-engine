@@ -21,7 +21,7 @@ jobs:
 
             - uses: actions/github-script@v6
               if: github.event_name == 'pull_request' || contains(github.event.comment.body, '/build')
-              id: get-head-sha
+              id: get-head
               with:
                   script: |
                       const request = {
@@ -52,7 +52,7 @@ jobs:
             - name: Copy apps/core/applications
               run: docker cp prebuild:/app/apps/core/applications ./apps/core
 
-            - name: Store branch variable, if event name == workflow_dispatch or steps.get-head.outputs.result.head.ref is defined
+            - name: Store branch variable, if event name == workflow_dispatch or steps.get-head.outputs.head_ref is defined
               id: get-branch
               run: |
                 if [ "${{ github.event_name }}" == 'workflow_dispatch' ]; then
