@@ -3,23 +3,23 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
 import useMessages from 'hooks/useMessages';
-import React, {useCallback, useEffect, useReducer, useState} from 'react';
+import {useCallback, useEffect, useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {MessagesTypes} from 'reduxStore/messages/messages';
 import {Button, Grid, Icon} from 'semantic-ui-react';
-import {SAVE_FORM, SAVE_FORMVariables} from '../../../../../../../../_gqlTypes/SAVE_FORM';
-import {FormElementInput, FormElementsByDepsInput} from '../../../../../../../../_gqlTypes/globalTypes';
 import {saveFormQuery} from '../../../../../../../../queries/forms/saveFormMutation';
-import {useEditFormModalButtonsContext} from '../../../EditFormModal/EditFormModalButtonsContext';
+import {FormElementInput, FormElementsByDepsInput} from '../../../../../../../../_gqlTypes/globalTypes';
+import {SAVE_FORM, SAVE_FORMVariables} from '../../../../../../../../_gqlTypes/SAVE_FORM';
+import {useEditFormModalButtonsContext} from '../../../EditFormModal/useEditFormModalButtonsContext';
 import {useEditFormContext} from '../../hooks/useEditFormContext';
 import BreadcrumbNavigator from './BreadcrumbNavigator';
 import DependencySettings from './DependencySettings';
 import ElementsReserve from './ElementsReserve';
-import FormLayout from './FormLayout';
 import {formBuilderReducer} from './formBuilderReducer';
 import computateInitialState from './formBuilderReducer/computeInitialState';
 import {defaultDepAttribute, defaultDepValue} from './formBuilderReducer/formBuilderReducer';
 import {FormBuilderReducerContext} from './formBuilderReducer/hook/useFormBuilderReducer';
+import FormLayout from './FormLayout';
 
 function ContentTab(): JSX.Element {
     const {t} = useTranslation();

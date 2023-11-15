@@ -34,3 +34,9 @@ export const tagColorByAttributeFormat: {[key in AttributeFormat]: TagProps['col
     [AttributeFormat.color]: 'purple',
     [AttributeFormat.rich_text]: 'volcano'
 };
+
+export enum ErrorDisplayTypes {
+    ERROR = 'error',
+    PERMISSION_ERROR = 'permission_error',
+    PAGE_NOT_FOUND = 'page_not_found_error'
+}

@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import crypto from 'crypto';
 import fs from 'fs';
-import { FilesystemContent, IFilesystemDatas } from '_types/filesystem';
-import { IDbFilesDatas, IRecord } from '_types/queries';
+import {FilesystemContent, IFilesystemDatas} from '_types/filesystem';
+import {IDbFilesDatas, IRecord} from '_types/queries';
 
 export const createHashFromFile = (filePath: string): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -15,12 +15,12 @@ export const createHashFromFile = (filePath: string): Promise<string> =>
             .on('error', err => reject(err));
     });
 
-export const _logMem = (text) => {
+export const _logMem = text => {
     const used = process.memoryUsage().heapUsed / 1024 / 1024;
     console.info(`${text} ${Math.round(used * 100) / 100} MB`);
-}
+};
 
-export const groupFsFilesByDatas = (fsScan: FilesystemContent): IFilesystemDatas =>  {
+export const groupFsFilesByDatas = (fsScan: FilesystemContent): IFilesystemDatas => {
     return fsScan.reduce(
         (acc, f) => {
             const inode = f.ino;
@@ -55,8 +55,8 @@ export const groupFsFilesByDatas = (fsScan: FilesystemContent): IFilesystemDatas
             filesByLevel: {}
         }
     );
-}
-export const groupDbFilesByDatas = (dbScan: IRecord[]): IDbFilesDatas =>  {
+};
+export const groupDbFilesByDatas = (dbScan: IRecord[]): IDbFilesDatas => {
     return dbScan.reduce(
         (acc, f) => {
             const inode = f.record.inode;
@@ -92,4 +92,4 @@ export const groupDbFilesByDatas = (dbScan: IRecord[]): IDbFilesDatas =>  {
             filesByHash: {}
         }
     );
-}
+};

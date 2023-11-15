@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {themeVars, useLang, ErrorDisplay, Loading} from '@leav/ui';
+import {ErrorDisplay, Loading, themeVars, useLang} from '@leav/ui';
 import {Badge, Button, Input} from 'antd';
 import useUpdateViewsOrderMutation from 'graphQL/mutations/views/hooks/useUpdateViewsOrderMutation';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
@@ -18,6 +18,7 @@ import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {GET_VIEWS_LIST, GET_VIEWS_LISTVariables} from '_gqlTypes/GET_VIEWS_LIST';
 import {TypeSideItem} from '_types/types';
 import {IconClosePanel} from '../../../assets/icons/IconClosePanel';
+import {PREFIX_SHARED_VIEWS_ORDER_KEY, PREFIX_USER_VIEWS_ORDER_KEY} from '../../../constants';
 import {getViewsListQuery} from '../../../graphQL/queries/views/getViewsListQuery';
 import {useUser} from '../../../hooks/UserHook/UserHook';
 import {localizedTranslation, prepareView} from '../../../utils';
@@ -104,9 +105,6 @@ const _sortViewFunction = (referenceOrder: string[]) => (viewA: IView, viewB: IV
         return Number(viewA.id) - Number(viewB.id);
     }
 };
-
-export const PREFIX_USER_VIEWS_ORDER_KEY = 'user_views_order_';
-export const PREFIX_SHARED_VIEWS_ORDER_KEY = 'shared_views_order_';
 
 function ViewPanel(): JSX.Element {
     const {t} = useTranslation();

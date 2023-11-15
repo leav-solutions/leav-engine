@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
+import {getLibraryByIdWithAttributes} from 'queries/libraries/getLibraryByIdWithAttributes';
 import {render, screen, waitFor} from '_tests/testUtils';
 import {mockAttrSimple} from '__mocks__/attributes';
-import MainPanel, {QUERY_LIBRARY_CONFIG} from './MainPanel';
+import MainPanel from './MainPanel';
 import {ActionTypes, initialState} from './NavigatorReducer';
 
 const lang = ['fr'];
 export const dataMock = [
     {
         request: {
-            query: QUERY_LIBRARY_CONFIG,
+            query: getLibraryByIdWithAttributes,
             variables: {
                 id: 'test',
                 lang
@@ -88,7 +88,7 @@ const errorText = 'too bad';
 const errorMocks = [
     {
         request: {
-            query: QUERY_LIBRARY_CONFIG,
+            query: getLibraryByIdWithAttributes,
             variables: {
                 id: 'test',
                 lang

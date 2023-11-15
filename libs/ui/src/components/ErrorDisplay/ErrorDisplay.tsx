@@ -6,12 +6,7 @@ import {Button, Result} from 'antd';
 import {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useHistory} from 'react-router-dom';
-
-export enum ErrorDisplayTypes {
-    ERROR = 'error',
-    PERMISSION_ERROR = 'permission_error',
-    PAGE_NOT_FOUND = 'page_not_found_error'
-}
+import {ErrorDisplayTypes} from '../../constants';
 
 interface IErrorProps {
     message?: string;

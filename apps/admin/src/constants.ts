@@ -8,3 +8,6 @@ export const APP_ENDPOINT = window.location.pathname.split('/').filter(e => e)[1
 export const LOGIN_ENDPOINT = 'login';
 export const ORIGIN_URL = window.location.origin;
 export const WS_URL = `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}`;
+export const UNAUTHENTICATED = 'UNAUTHENTICATED';
+export const NEVER_EXPIRATION_DATE = '__never__';
+export const CUSTOM_EXPIRATION_DATE = '__custom__';

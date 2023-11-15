@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import gql from 'graphql-tag';
-import React, {useEffect} from 'react';
+import {getLibraryByIdWithAttributes} from 'queries/libraries/getLibraryByIdWithAttributes';
+import {useEffect} from 'react';
 import {Dimmer, Transition} from 'semantic-ui-react';
 import Loading from '../shared/Loading';
 import FiltersPanel from './FiltersPanel';
@@ -42,29 +42,8 @@ export default function MainPanel({state, dispatch}: IListProps) {
     );
 }
 
-export const QUERY_LIBRARY_CONFIG = gql`
-    query QUERY_LIBRARY_CONFIG($id: [ID!], $lang: [AvailableLanguage!]) {
-        libraries(filters: {id: $id}) {
-            list {
-                id
-                label(lang: $lang)
-                gqlNames {
-                    query
-                    filter
-                }
-                attributes {
-                    id
-                    type
-                    format
-                    label(lang: $lang)
-                }
-            }
-        }
-    }
-`;
-
 function GetLibraryInfos({state, dispatch}: IListProps) {
-    const {loading, error, data} = useQuery(QUERY_LIBRARY_CONFIG, {
+    const {loading, error, data} = useQuery(getLibraryByIdWithAttributes, {
         variables: {
             id: state.selectedRoot,
             lang: state.lang

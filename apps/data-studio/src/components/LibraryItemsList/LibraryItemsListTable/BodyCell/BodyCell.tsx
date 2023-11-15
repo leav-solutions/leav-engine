@@ -4,11 +4,11 @@
 import {themeVars} from '@leav/ui';
 import {Cell as ReactTableTypeCell} from 'react-table';
 import styled from 'styled-components';
+import {INFOS_COLUMN_WIDTH} from '../../../../constants';
 import {infosCol, selectionColumn} from '../../../../constants/constants';
 import {ITableRow} from '../../../../_types/types';
 import Cell from '../Cell';
 import CellSelection from '../Cell/CellSelection';
-import {INFOS_COLUMN_WIDTH} from '../Table';
 
 const CustomBodyCell = styled.div<{id?: string | number; selected: boolean}>`
     // Inherit background from row. If background is transparent, the sticky column won't behave properly

@@ -56,9 +56,6 @@ interface IEditApiKeyFormValues extends Omit<ApiKeyInput, 'userId'> {
     user: RecordIdentity_whoAmI;
 }
 
-export const NEVER_EXPIRATION_DATE = '__never__';
-export const CUSTOM_EXPIRATION_DATE = '__custom__';
-
 function EditApiKeyForm({onSubmit, apiKey, errors, readonly, loading, onClose}: IEditApiKeyFormProps): JSX.Element {
     const {t} = useTranslation();
 

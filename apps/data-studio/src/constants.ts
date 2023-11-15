@@ -8,3 +8,12 @@ export const APP_ENDPOINT = window.location.pathname.split('/').filter(e => e)[1
 export const LOGIN_ENDPOINT = 'login';
 export const ORIGIN_URL = window.location.origin;
 export const WS_URL = `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}`;
+
+export const UNAUTHENTICATED = 'UNAUTHENTICATED';
+export const PREFIX_USER_VIEWS_ORDER_KEY = 'user_views_order_';
+export const PREFIX_SHARED_VIEWS_ORDER_KEY = 'shared_views_order_';
+
+export const FAVORITE_LIBRARIES_KEY = 'favorites_libraries_ids';
+export const FAVORITE_TREES_KEY = 'favorites_trees_ids';
+
+export const INFOS_COLUMN_WIDTH = '350px';

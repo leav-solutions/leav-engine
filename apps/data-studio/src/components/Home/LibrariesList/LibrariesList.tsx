@@ -16,12 +16,11 @@ import styled from 'styled-components';
 import {getLibraryLink, localizedTranslation} from 'utils';
 import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
+import {FAVORITE_LIBRARIES_KEY} from '../../../constants';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '../../../_gqlTypes/SAVE_USER_DATA';
 import FavoriteStar from '../FavoriteStar';
 import ImportModal from './ImportModal';
 import LibraryIcon from './LibraryIcon';
-
-export const FAVORITE_LIBRARIES_KEY = 'favorites_libraries_ids';
 
 const LibraryLink = styled(Link)`
     display: flex;

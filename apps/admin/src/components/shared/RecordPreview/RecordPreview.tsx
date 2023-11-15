@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
+import {useMemo} from 'react';
 import {Image} from 'semantic-ui-react';
 import styled, {CSSObject} from 'styled-components';
 import {getInvertColor, stringToColor} from '../../../utils/utils';
@@ -73,11 +73,14 @@ function RecordPreview({label, color, image, style}: IRecordPreviewProps): JSX.E
     const bgColor = color || stringToColor(label);
     const fontColor = getInvertColor(bgColor);
 
-    return (
-        <GeneratedPreview className="initial" bgColor={bgColor} fontColor={fontColor} style={style}>
-            {initials}
-        </GeneratedPreview>
+    return useMemo(
+        () => (
+            <GeneratedPreview className="initial" bgColor={bgColor} fontColor={fontColor} style={style}>
+                {initials}
+            </GeneratedPreview>
+        ),
+        [initials, bgColor, fontColor, style]
     );
 }
 
-export default React.memo(RecordPreview);
+export default RecordPreview;

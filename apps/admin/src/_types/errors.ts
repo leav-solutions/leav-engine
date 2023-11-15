@@ -18,3 +18,8 @@ export interface IFormError {
         fields?: IErrorByField;
     };
 }
+
+export enum ErrorDisplayTypes {
+    ERROR = 'error',
+    PERMISSION_ERROR = 'permission_error'
+}

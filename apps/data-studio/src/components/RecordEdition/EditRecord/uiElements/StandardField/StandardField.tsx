@@ -12,7 +12,6 @@ import {useContext, useEffect, useMemo, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {AttributeFormat} from '_gqlTypes/globalTypes';
-import {RECORD_FORM_recordForm_elements_values} from '_gqlTypes/RECORD_FORM';
 import {SAVE_VALUE_BATCH_saveValueBatch_values_Value} from '_gqlTypes/SAVE_VALUE_BATCH';
 import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
 import standardFieldReducer, {
@@ -31,18 +30,6 @@ import StandardFieldValue from './StandardFieldValue';
 const Wrapper = styled.div<{$metadataEdit: boolean}>`
     margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
 `;
-
-export const emptyValue: RECORD_FORM_recordForm_elements_values = {
-    id_value: null,
-    created_at: null,
-    modified_at: null,
-    created_by: null,
-    modified_by: null,
-    metadata: null,
-    raw_value: null,
-    value: null,
-    version: null
-};
 
 function StandardField({
     element,
