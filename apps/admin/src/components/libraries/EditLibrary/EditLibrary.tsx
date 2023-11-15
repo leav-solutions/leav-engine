@@ -2,15 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {PermissionsActions} from '_gqlTypes/globalTypes';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
-import {ErrorDisplayTypes} from 'components/shared/ErrorDisplay/ErrorDisplay';
 import useUserData from 'hooks/useUserData';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {match} from 'react-router-dom';
-import {GET_LIB_BY_ID, GET_LIB_BY_IDVariables, GET_LIB_BY_ID_libraries_list} from '../../../_gqlTypes/GET_LIB_BY_ID';
+import {PermissionsActions} from '_gqlTypes/globalTypes';
+import {ErrorDisplayTypes} from '_types/errors';
 import {getLibByIdQuery} from '../../../queries/libraries/getLibraryById';
+import {GET_LIB_BY_ID, GET_LIB_BY_IDVariables, GET_LIB_BY_ID_libraries_list} from '../../../_gqlTypes/GET_LIB_BY_ID';
 import Loading from '../../shared/Loading';
 import EditLibraryTabs from './EditLibraryTabs';
 

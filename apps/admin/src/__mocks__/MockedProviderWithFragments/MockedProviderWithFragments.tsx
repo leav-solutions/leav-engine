@@ -3,13 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {InMemoryCache, InMemoryCacheConfig} from '@apollo/client';
 import {MockedProvider, MockedProviderProps} from '@apollo/client/testing';
-import React, {PropsWithChildren, ReactElement} from 'react';
-import {attributesPossibleTypes} from '../fragmentMatchers/attributesFragmentMatchers';
+import {PropsWithChildren, ReactElement} from 'react';
 
 export interface IMockedProviderWithFragmentsProps extends MockedProviderProps {
     cacheSettings?: InMemoryCacheConfig;
 }
-export const getMockCacheWithFragments = () => new InMemoryCache({possibleTypes: attributesPossibleTypes});
 
 function MockedProviderWithFragments({
     children,

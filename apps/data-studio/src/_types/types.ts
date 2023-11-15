@@ -2,9 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
+import {ReactNode} from 'react';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
-import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
-import {TREE_NODE_CHILDREN_treeNodeChildren_list_permissions} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {
     AttributeFormat,
     AttributeType,
@@ -13,7 +12,8 @@ import {
     ViewSizes,
     ViewTypes
 } from '_gqlTypes/globalTypes';
-import {ReactNode} from 'react';
+import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {TREE_NODE_CHILDREN_treeNodeChildren_list_permissions} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {
     ILibraryDetailExtendedAttributeParentLinkedLibrary,
     ILibraryDetailExtendedAttributeParentLinkedTree
@@ -428,4 +428,8 @@ export interface IApplicationSettings {
     trees?: 'all' | 'none' | string[];
     treesOrder?: string[];
     showTransparency?: boolean;
+}
+
+export enum NotifTypes {
+    TASK = 'TASK'
 }

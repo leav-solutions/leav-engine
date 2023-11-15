@@ -11,9 +11,8 @@ import {act, render, screen, waitFor, within} from '_tests/testUtils';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockLibrary} from '__mocks__/common/library';
 import {mockTree} from '__mocks__/common/tree';
+import {FAVORITE_LIBRARIES_KEY, FAVORITE_TREES_KEY} from '../../constants';
 import Home from './Home';
-import {FAVORITE_LIBRARIES_KEY} from './LibrariesList/LibrariesList';
-import {FAVORITE_TREES_KEY} from './TreeList/TreeList';
 
 jest.mock('./LibrariesList/ImportModal', () => {
     return function ImportModal() {

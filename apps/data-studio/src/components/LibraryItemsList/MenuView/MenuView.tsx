@@ -18,6 +18,7 @@ import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
 import {GET_LIBRARY_DETAIL_EXTENDED_libraries_list} from '_gqlTypes/GET_LIBRARY_DETAIL_EXTENDED';
 import {ViewInput, ViewTypes} from '_gqlTypes/globalTypes';
+import {PREFIX_USER_VIEWS_ORDER_KEY} from '../../../constants';
 import {defaultView, viewSettingsField} from '../../../constants/constants';
 import {useUser} from '../../../hooks/UserHook/UserHook';
 import {localizedTranslation, prepareView} from '../../../utils';
@@ -25,7 +26,6 @@ import {getRequestFromFilters} from '../../../utils/getRequestFromFilter';
 import {InfoChannel, InfoType, TypeSideItem} from '../../../_types/types';
 import IconViewType from '../../IconViewType/IconViewType';
 import FiltersDropdown from '../FiltersDropdown';
-import {PREFIX_USER_VIEWS_ORDER_KEY} from '../ViewPanel/ViewPanel';
 
 interface IMenuViewProps {
     library: GET_LIBRARY_DETAIL_EXTENDED_libraries_list;

@@ -7,14 +7,14 @@ import {
     ApolloProvider,
     defaultDataIdFromObject,
     InMemoryCache,
-    ServerError,
     Observable,
+    ServerError,
     split
 } from '@apollo/client';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {onError} from '@apollo/link-error';
-import {useRefreshToken, ErrorDisplay, Loading} from '@leav/ui';
+import {ErrorDisplay, Loading, useRefreshToken} from '@leav/ui';
 import {createUploadLink} from 'apollo-upload-client';
 import {createClient} from 'graphql-ws';
 import useGraphqlPossibleTypes from 'hooks/useGraphqlPossibleTypes';
@@ -23,13 +23,11 @@ import {useTranslation} from 'react-i18next';
 import {addInfo} from 'reduxStore/infos';
 import {useAppDispatch} from 'reduxStore/store';
 import {IInfo, InfoChannel, InfoType} from '_types/types';
-import {API_ENDPOINT, APPS_ENDPOINT, LOGIN_ENDPOINT, ORIGIN_URL, WS_URL} from '../../../constants';
+import {API_ENDPOINT, APPS_ENDPOINT, LOGIN_ENDPOINT, ORIGIN_URL, UNAUTHENTICATED, WS_URL} from '../../../constants';
 
 interface IApolloHandlerProps {
     children: ReactNode;
 }
-
-export const UNAUTHENTICATED = 'UNAUTHENTICATED';
 
 const _redirectToLogin = () =>
     window.location.replace(`${ORIGIN_URL}/${APPS_ENDPOINT}/${LOGIN_ENDPOINT}/?dest=${window.location.pathname}`);

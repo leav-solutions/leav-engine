@@ -7,22 +7,22 @@ import {objectToNameValueArray} from '@leav/utils';
 import {Button, Tooltip, Typography} from 'antd';
 import useAddViewMutation from 'graphQL/mutations/views/hooks/useAddViewMutation';
 import useDeleteViewMutation from 'graphQL/mutations/views/hooks/useDeleteViewMutation';
+import useUpdateViewsOrderMutation from 'graphQL/mutations/views/hooks/useUpdateViewsOrderMutation';
 import useSearchReducer from 'hooks/useSearchReducer';
 import {SearchActionTypes} from 'hooks/useSearchReducer/searchReducer';
 import omit from 'lodash/omit';
 import {useState} from 'react';
 import {DraggableProvidedDragHandleProps} from 'react-beautiful-dnd';
 import {useTranslation} from 'react-i18next';
+import {RiUserReceivedLine} from 'react-icons/ri';
 import styled from 'styled-components';
 import {ViewInput} from '_gqlTypes/globalTypes';
+import {PREFIX_SHARED_VIEWS_ORDER_KEY, PREFIX_USER_VIEWS_ORDER_KEY} from '../../../../constants';
 import {defaultView} from '../../../../constants/constants';
 import {localizedTranslation} from '../../../../utils';
 import {getRequestFromFilters} from '../../../../utils/getRequestFromFilter';
 import {IView} from '../../../../_types/types';
 import IconViewType from '../../../IconViewType';
-import {RiUserReceivedLine} from 'react-icons/ri';
-import {PREFIX_SHARED_VIEWS_ORDER_KEY, PREFIX_USER_VIEWS_ORDER_KEY} from '../ViewPanel';
-import useUpdateViewsOrderMutation from 'graphQL/mutations/views/hooks/useUpdateViewsOrderMutation';
 
 interface IWrapperProps {
     selected: boolean;

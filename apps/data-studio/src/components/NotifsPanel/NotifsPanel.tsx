@@ -10,17 +10,14 @@ import {useTranslation} from 'react-i18next';
 import {setIsPanelOpen} from 'reduxStore/notifications';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import {deleteTasks} from 'reduxStore/tasks';
+import {isCompletedTask, isInProgressTask} from 'utils';
 import {CANCEL_TASK, CANCEL_TASKVariables} from '_gqlTypes/CANCEL_TASK';
 import {DELETE_TASKS, DELETE_TASKSVariables} from '_gqlTypes/DELETE_TASKS';
+import {NotifTypes} from '_types/types';
 import TaskItem from './TaskItem';
-import {isCompletedTask, isInProgressTask} from './TaskItem/TaskItem';
 
 interface INotifsPanelProps {
     setNbNotifs: (count: number) => void;
-}
-
-export enum NotifTypes {
-    TASK = 'TASK'
 }
 
 export interface INotif {

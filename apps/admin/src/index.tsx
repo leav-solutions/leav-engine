@@ -6,7 +6,7 @@ import App from 'components/app/App';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
 import 'fomantic-ui-less/semantic.less';
-import React, {Suspense, useEffect, useState} from 'react';
+import {Suspense, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {Provider as ReduxProvider} from 'react-redux';
 import {store} from 'reduxStore/store';
@@ -17,6 +17,7 @@ import i18n from './i18n';
 import './index.css';
 import registerServiceWorker from './registerServiceWorker';
 
+// eslint-disable-next-line react-refresh/only-export-components
 function Index() {
     const {lang, loading, error} = useAppLang();
     const [i18nIsInitialized, seti18nIsInitialized] = useState(false);

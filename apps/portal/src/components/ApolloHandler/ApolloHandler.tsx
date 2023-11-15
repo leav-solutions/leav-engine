@@ -7,28 +7,25 @@ import {
     ApolloProvider,
     HttpLink,
     InMemoryCache,
-    PossibleTypesMap,
+    Observable,
     ServerError,
-    split,
-    Observable
+    split
 } from '@apollo/client';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {onError} from '@apollo/link-error';
-import {message, Spin} from 'antd';
 import {ErrorDisplay, useRefreshToken} from '@leav/ui';
-import {API_ENDPOINT, APPS_ENDPOINT, APP_ENDPOINT, LOGIN_ENDPOINT, ORIGIN_URL, WS_URL} from '../../constants';
+import {message, Spin} from 'antd';
 import fetch from 'cross-fetch';
 import {createClient} from 'graphql-ws';
 import useGraphqlPossibleTypes from 'hooks/useGraphqlPossibleTypes';
 import {ReactNode, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
+import {API_ENDPOINT, APPS_ENDPOINT, LOGIN_ENDPOINT, ORIGIN_URL, UNAUTHENTICATED, WS_URL} from '../../constants';
 
 interface IApolloHandlerProps {
     children: ReactNode;
 }
-
-export const UNAUTHENTICATED = 'UNAUTHENTICATED';
 
 const _redirectToLogin = () =>
     window.location.replace(`${ORIGIN_URL}/${APPS_ENDPOINT}/${LOGIN_ENDPOINT}/?dest=${window.location.pathname}`);
