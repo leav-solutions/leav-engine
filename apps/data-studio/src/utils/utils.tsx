@@ -11,8 +11,16 @@ import pick from 'lodash/pick';
 import {getFiltersFromRequest} from 'utils/getFiltersFromRequest';
 import {ADD_VIEW_saveView} from '_gqlTypes/ADD_VIEW';
 import {GET_APPLICATION_BY_ENDPOINT_applications_list} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
+import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
 import {GET_VIEW_view, GET_VIEW_view_display, GET_VIEW_view_sort} from '_gqlTypes/GET_VIEW';
-import {AttributeFormat, AttributeType, LibraryBehavior, ValueVersionInput, ViewSizes} from '_gqlTypes/globalTypes';
+import {
+    AttributeFormat,
+    AttributeType,
+    LibraryBehavior,
+    TaskStatus,
+    ValueVersionInput,
+    ViewSizes
+} from '_gqlTypes/globalTypes';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import {RECORD_FORM_recordForm_elements_values_Value_version} from '_gqlTypes/RECORD_FORM';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list} from '../_gqlTypes/GET_ATTRIBUTES_BY_LIB';
@@ -504,3 +512,12 @@ export const getFilesLibraryId = (tree: IActiveTree): string => {
 export const getPropertyCacheFieldName = (attributeId: string): string => {
     return `property({"attribute":"${attributeId}"})`;
 };
+
+export const isInProgressTask = (task: GET_TASKS_tasks_list) =>
+    task.status === TaskStatus.PENDING || task.status === TaskStatus.RUNNING;
+
+export const isCompletedTask = (task: GET_TASKS_tasks_list) =>
+    task.status === TaskStatus.CANCELED || task.status === TaskStatus.DONE || task.status === TaskStatus.FAILED;
+
+export const isExceptionTask = (task: GET_TASKS_tasks_list) =>
+    task.status === TaskStatus.CANCELED || task.status === TaskStatus.FAILED;

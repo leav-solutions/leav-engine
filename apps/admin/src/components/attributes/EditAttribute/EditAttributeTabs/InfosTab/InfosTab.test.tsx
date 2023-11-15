@@ -3,13 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedProvider, MockedResponse} from '@apollo/client/testing';
 import {mount} from 'enzyme';
-import React from 'react';
 import {wait} from 'utils/testUtils';
 import {act, render, screen} from '_tests/testUtils';
 import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
 import {saveAttributeQuery} from '../../../../../queries/attributes/saveAttributeMutation';
 import {mockAttrAdv} from '../../../../../__mocks__/attributes';
-import {getMockCacheWithFragments} from '../../../../../__mocks__/MockedProviderWithFragments/MockedProviderWithFragments';
+import {getMockCacheWithFragments} from '../../../../../__mocks__/MockedProviderWithFragments/getMockCacheWithFragments';
 import InfosTab from './InfosTab';
 
 jest.mock('../../../../../hooks/useLang');

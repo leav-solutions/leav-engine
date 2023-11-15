@@ -13,6 +13,7 @@ import {useSticky} from 'react-table-sticky';
 import styled from 'styled-components';
 import {isTypeStandard} from 'utils';
 import {AttributeFormat, AttributeType} from '_gqlTypes/globalTypes';
+import {INFOS_COLUMN_WIDTH} from '../../../constants';
 import {infosCol, selectionColumn} from '../../../constants/constants';
 import {IField, ITableCell, ITableRow} from '../../../_types/types';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
@@ -32,7 +33,6 @@ interface ICustomTableProps {
     $scrollHorizontalActive: boolean;
 }
 
-export const INFOS_COLUMN_WIDTH = '350px';
 enum FieldColumnWidth {
     TINY = 125,
     SMALL = 150,

@@ -3,33 +3,65 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedProvider} from '@apollo/client/testing';
 import {mount, ReactWrapper} from 'enzyme';
-import React from 'react';
+import {getLibsQuery} from 'queries/libraries/getLibrariesQuery';
 import {act} from 'react-dom/test-utils';
+import {LibraryBehavior} from '_gqlTypes/globalTypes';
 import {wait} from '../../utils/testUtils';
-import RootSelector, {QUERY} from './RootSelector';
+import RootSelector from './RootSelector';
 
 const lang = ['fr', 'en'];
-const DATAMOCK = [
+const dataMock = [
     {
         request: {
-            query: QUERY,
-            variables: {lang}
+            query: getLibsQuery,
+            variables: {}
         },
         result: {
             data: {
                 libraries: {
+                    totalCount: 3,
                     list: [
                         {
                             id: '1',
-                            label: 'l1'
+                            label: 'l1',
+                            system: false,
+                            behavior: LibraryBehavior.standard,
+                            icon: null,
+                            gqlNames: {
+                                query: 'l1',
+                                type: 'l1',
+                                list: 'l1',
+                                filter: 'l1',
+                                searchableFields: ['id']
+                            }
                         },
                         {
                             id: '2',
-                            label: 'l2'
+                            label: 'l2',
+                            system: false,
+                            behavior: LibraryBehavior.standard,
+                            icon: null,
+                            gqlNames: {
+                                query: 'l2',
+                                type: 'l2',
+                                list: 'l2',
+                                filter: 'l2',
+                                searchableFields: ['id']
+                            }
                         },
                         {
                             id: '3',
-                            label: 'l3'
+                            label: 'l3',
+                            system: false,
+                            behavior: LibraryBehavior.standard,
+                            icon: null,
+                            gqlNames: {
+                                query: 'l3',
+                                type: 'l3',
+                                list: 'l3',
+                                filter: 'l3',
+                                searchableFields: ['id']
+                            }
                         }
                     ]
                 }
@@ -42,6 +74,10 @@ describe('<RootSelector/>', () => {
     const onSelect = () => undefined;
 
     describe('Query states', () => {
+        beforeEach(() => {
+            jest.clearAllMocks();
+        });
+
         test('loading renders a loader', async () => {
             let wrapper;
             await act(async () => {
@@ -53,13 +89,13 @@ describe('<RootSelector/>', () => {
             });
             expect(wrapper.find('Loading')).toHaveLength(1);
         });
+
         test('error state', async () => {
             const errorText = 'too bad';
-            const ERRORMOCKS = [
+            const errorMocks = [
                 {
                     request: {
-                        query: QUERY,
-                        variables: {lang}
+                        query: getLibsQuery
                     },
                     error: new Error(errorText)
                 }
@@ -67,7 +103,7 @@ describe('<RootSelector/>', () => {
             let wrapper: ReactWrapper;
             await act(async () => {
                 wrapper = mount(
-                    <MockedProvider mocks={ERRORMOCKS} addTypename={false}>
+                    <MockedProvider mocks={errorMocks} addTypename={false}>
                         <RootSelector onSelect={onSelect} lang={lang} restrictToRoots={[]} />
                     </MockedProvider>
                 );
@@ -80,11 +116,12 @@ describe('<RootSelector/>', () => {
 
             expect(wrapper.find('[data-testid="error"]').text()).toContain(errorText);
         });
+
         test('loaded data state', async () => {
             let wrapper;
             await act(async () => {
                 wrapper = mount(
-                    <MockedProvider mocks={DATAMOCK} addTypename={false}>
+                    <MockedProvider mocks={dataMock} addTypename={false}>
                         <RootSelector onSelect={onSelect} lang={lang} restrictToRoots={[]} />
                     </MockedProvider>
                 );
@@ -94,13 +131,14 @@ describe('<RootSelector/>', () => {
                 wrapper.update();
             });
             const list = wrapper.find('RootSelectorElem');
-            expect(list).toHaveLength(DATAMOCK[0].result.data.libraries.list.length);
+            expect(list).toHaveLength(dataMock[0].result.data.libraries.list.length);
         });
+
         test('Handles restrictToRoots prop', async () => {
             let wrapper;
             await act(async () => {
                 wrapper = mount(
-                    <MockedProvider mocks={DATAMOCK} addTypename={false}>
+                    <MockedProvider mocks={dataMock} addTypename={false}>
                         <RootSelector onSelect={onSelect} lang={lang} restrictToRoots={['1', '2']} />
                     </MockedProvider>
                 );

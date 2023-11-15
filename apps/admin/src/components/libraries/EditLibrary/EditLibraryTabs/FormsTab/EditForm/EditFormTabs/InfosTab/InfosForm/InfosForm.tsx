@@ -6,13 +6,13 @@ import React, {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Form, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {GET_FORM_forms_list} from '../../../../../../../../../_gqlTypes/GET_FORM';
-import {AttributeType, FormInput} from '../../../../../../../../../_gqlTypes/globalTypes';
 import useLang from '../../../../../../../../../hooks/useLang';
 import {arrayPick, formatIDString, getFieldError, omit, pick} from '../../../../../../../../../utils';
+import {GET_FORM_forms_list} from '../../../../../../../../../_gqlTypes/GET_FORM';
+import {AttributeType, FormInput} from '../../../../../../../../../_gqlTypes/globalTypes';
 import AttributeSelector from '../../../../../../../../attributes/AttributeSelector';
 import FormFieldWrapper from '../../../../../../../../shared/FormFieldWrapper';
-import {useEditFormModalButtonsContext} from '../../../../EditFormModal/EditFormModalButtonsContext';
+import {useEditFormModalButtonsContext} from '../../../../EditFormModal/useEditFormModalButtonsContext';
 import {useEditFormContext} from '../../../hooks/useEditFormContext';
 
 interface IInfosFormProps {

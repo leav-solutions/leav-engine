@@ -14,10 +14,9 @@ import {Link} from 'react-router-dom';
 import styled from 'styled-components';
 import {getTreeLink, localizedTranslation} from 'utils';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
+import {FAVORITE_TREES_KEY} from '../../../constants';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '../../../_gqlTypes/SAVE_USER_DATA';
 import FavoriteStar from '../FavoriteStar';
-
-export const FAVORITE_TREES_KEY = 'favorites_trees_ids';
 
 const TreeLink = styled(Link)`
     display: flex;

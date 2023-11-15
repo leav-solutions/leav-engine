@@ -6,7 +6,7 @@ import {Provider} from 'react-redux';
 import configureStore from 'redux-mock-store';
 import {RootState} from 'reduxStore/store';
 
-export const mockStoreInitialState: RootState = {
+const mockStoreInitialState: RootState = {
     messages: {
         messages: []
     },

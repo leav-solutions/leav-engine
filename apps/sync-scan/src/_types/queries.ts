@@ -54,21 +54,21 @@ export interface IPreviewStatus {
 }
 
 interface IFilesByInode {
-    [key: number] : IRecord[]
+    [key: number]: IRecord[];
 }
 interface IFilesByName {
-    [key: string] : IRecord[]
+    [key: string]: IRecord[];
 }
 interface IFilesByPath {
-    [key: string] : IRecord[]
+    [key: string]: IRecord[];
 }
 interface IFilesByHash {
-    [key: string] : IRecord[]
+    [key: string]: IRecord[];
 }
 
 export interface IDbFilesDatas {
-    filesByInode : IFilesByInode;
-    filesByName : IFilesByName;
-    filesByPath : IFilesByPath;
-    filesByHash : IFilesByHash;
+    filesByInode: IFilesByInode;
+    filesByName: IFilesByName;
+    filesByPath: IFilesByPath;
+    filesByHash: IFilesByHash;
 }

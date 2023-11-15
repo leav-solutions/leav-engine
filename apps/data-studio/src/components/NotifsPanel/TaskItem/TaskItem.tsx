@@ -1,14 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {DeleteOutlined,DownloadOutlined,InfoCircleOutlined} from '@ant-design/icons';
+import {DeleteOutlined, DownloadOutlined, InfoCircleOutlined} from '@ant-design/icons';
 import {useLang} from '@leav/ui';
-import {Button,List,Popconfirm,Progress,Space,Tooltip,Typography} from 'antd';
+import {Button, List, Popconfirm, Progress, Space, Tooltip, Typography} from 'antd';
 import moment from 'moment';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
-import {localizedTranslation} from 'utils';
-import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
+import {isCompletedTask, isExceptionTask, localizedTranslation} from 'utils';
 import {TaskStatus} from '_gqlTypes/globalTypes';
 import {getFileUrl} from '../../../utils';
 import {INotif} from '../NotifsPanel';
@@ -18,13 +17,6 @@ const WrapperProgress = styled.div<{$isCanceled: boolean}>`
         color: ${props => (props.$isCanceled ? '#F2C037 !important' : '')};
     }
 `;
-
-export const isInProgressTask = (task: GET_TASKS_tasks_list) =>
-    task.status === TaskStatus.PENDING || task.status === TaskStatus.RUNNING;
-export const isCompletedTask = (task: GET_TASKS_tasks_list) =>
-    task.status === TaskStatus.CANCELED || task.status === TaskStatus.DONE || task.status === TaskStatus.FAILED;
-export const isExceptionTask = (task: GET_TASKS_tasks_list) =>
-    task.status === TaskStatus.CANCELED || task.status === TaskStatus.FAILED;
 
 const _getTaskDuration = (startedAt: number, completedAt: number): string => {
     const d = moment.duration(moment(completedAt).diff(moment(startedAt)));

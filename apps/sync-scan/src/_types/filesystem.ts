@@ -31,21 +31,21 @@ export interface IFileContent {
 }
 
 interface IFilesByInode {
-    [key: number] : IFileContent[]
+    [key: number]: IFileContent[];
 }
 interface IFilesByName {
-    [key: string] : IFileContent[]
+    [key: string]: IFileContent[];
 }
 interface IFilesByPath {
-    [key: string] : IFileContent[]
+    [key: string]: IFileContent[];
 }
 interface IFilesByLevel {
-    [key: number] : IFileContent[]
+    [key: number]: IFileContent[];
 }
 
 export interface IFilesystemDatas {
-    filesByInode : IFilesByInode;
-    filesByName : IFilesByName;
-    filesByPath : IFilesByPath;
-    filesByLevel : IFilesByLevel;
+    filesByInode: IFilesByInode;
+    filesByName: IFilesByName;
+    filesByPath: IFilesByPath;
+    filesByLevel: IFilesByLevel;
 }

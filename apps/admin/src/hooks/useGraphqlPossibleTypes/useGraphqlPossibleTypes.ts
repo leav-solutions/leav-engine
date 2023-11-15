@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PossibleTypesMap} from '@apollo/client';
 import {IntrospectionResultData} from 'apollo-cache-inmemory';
-import {UNAUTHENTICATED} from 'components/app/ApolloHandler/ApolloHandler';
 import {useCallback, useEffect, useState} from 'react';
+import {UNAUTHENTICATED} from '../../constants';
 
 export interface IUseGraphqlPossibleTypes {
     loading: boolean;

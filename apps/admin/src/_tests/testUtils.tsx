@@ -1,21 +1,22 @@
+/* eslint-disable react-refresh/only-export-components */
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {InMemoryCacheConfig} from '@apollo/client';
 import {MockedResponse} from '@apollo/client/testing';
 import {render, RenderOptions, RenderResult} from '@testing-library/react';
+import ApplicationContext from 'context/CurrentApplicationContext';
+import {ICurrentApplicationContext} from 'context/CurrentApplicationContext/_types';
+import {PropsWithChildren, ReactElement} from 'react';
+import {MemoryRouterProps} from 'react-router';
+import {MemoryRouter} from 'react-router-dom';
+import {RootState} from 'reduxStore/store';
+import {GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import MockedLangContextProvider from '__mocks__/MockedLangContextProvider';
 import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
 import MockedUserContextProvider from '__mocks__/MockedUserContextProvider';
 import {MockStore} from '__mocks__/reduxProvider';
-import {GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETTINGS';
-import ApplicationContext from 'context/CurrentApplicationContext';
-import {ICurrentApplicationContext} from 'context/CurrentApplicationContext/_types';
-import React, {PropsWithChildren, ReactElement} from 'react';
-import {MemoryRouterProps} from 'react-router';
-import {MemoryRouter} from 'react-router-dom';
-import {RootState} from 'reduxStore/store';
 
 interface ICustomRenderOptions extends RenderOptions {
     apolloMocks?: readonly MockedResponse[];

@@ -27,14 +27,12 @@ import {endMutation, startMutation} from 'reduxStore/mutationsWatcher/mutationsW
 import {Message, SemanticICONS} from 'semantic-ui-react';
 import * as yup from 'yup';
 import {ErrorTypes} from '_types/errors';
-import {API_ENDPOINT, APPS_ENDPOINT, LOGIN_ENDPOINT, ORIGIN_URL, WS_URL} from '../../../constants';
+import {API_ENDPOINT, APPS_ENDPOINT, LOGIN_ENDPOINT, ORIGIN_URL, UNAUTHENTICATED, WS_URL} from '../../../constants';
 import Loading from '../../shared/Loading';
 
 interface IApolloHandlerProps {
     children: ReactNode;
 }
-
-export const UNAUTHENTICATED = 'UNAUTHENTICATED';
 
 const _redirectToLogin = () =>
     window.location.replace(`${ORIGIN_URL}/${APPS_ENDPOINT}/${LOGIN_ENDPOINT}/?dest=${window.location.pathname}`);
