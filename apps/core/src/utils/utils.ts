@@ -3,7 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import fs from 'fs';
 import {i18n} from 'i18next';
-import {camelCase, flow, mergeWith, partialRight, trimEnd, upperFirst} from 'lodash';
+import camelCase from 'lodash/camelCase';
+import flow from 'lodash/flow';
+import isEqual from 'lodash/isEqual';
+import mergeWith from 'lodash/mergeWith';
+import partialRight from 'lodash/partialRight';
+import trimEnd from 'lodash/trimEnd';
+import upperFirst from 'lodash/upperFirst';
 import moment from 'moment';
 import os from 'os';
 import {IActionsListConfig} from '_types/actionsList';
@@ -11,6 +17,7 @@ import {IConfig} from '_types/config';
 import {ErrorFieldDetail, ErrorFieldDetailMessage, Errors, IExtendedErrorMsg} from '_types/errors';
 import {ILibrary, ILibraryPreviewsSettings, LibraryBehavior} from '_types/library';
 import {ISystemTranslation} from '_types/systemTranslation';
+import {IValue} from '_types/value';
 import ValidationError from '../errors/ValidationError';
 import {APPS_URL_PREFIX} from '../_types/application';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../_types/attribute';
@@ -122,6 +129,7 @@ export interface IUtils {
     getPreviewsStatusAttributeName(libraryId: string): string;
     getPreviewAttributesSettings(library: ILibrary): IPreviewAttributesSettings;
     previewsSettingsToVersions(previewsSettings: ILibraryPreviewsSettings[]): IPreviewVersion[];
+    areValuesIdentical(value1: IValue, value2: IValue): boolean;
 }
 
 export interface IUtilsDeps {
@@ -332,6 +340,16 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
         },
         previewsSettingsToVersions(previewsSettings) {
             return previewsSettings.map(settings => settings.versions);
+        },
+        areValuesIdentical(value1: IValue, value2: IValue) {
+            const isValue1MetadataEmpty = !value1?.metadata || Object.keys(value1?.metadata).length === 0;
+            const isValue2MetadataEmpty = !value2?.metadata || Object.keys(value2?.metadata).length === 0;
+
+            const isValueIdentical = value1?.value === value2?.value;
+            const isMetadataIdentical =
+                (isValue1MetadataEmpty && isValue2MetadataEmpty) || isEqual(value1?.metadata, value2?.metadata);
+
+            return isValueIdentical && isMetadataIdentical;
         }
     };
 }
