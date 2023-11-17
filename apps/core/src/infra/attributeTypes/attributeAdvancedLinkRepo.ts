@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ILinkValue, IValueEdge} from '_types/value';
-import {AqlQuery, GeneratedAqlQuery, aql, join, literal} from 'arangojs/aql';
+import {aql, AqlQuery, GeneratedAqlQuery, join, literal} from 'arangojs/aql';
 import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IUtils} from 'utils/utils';
+import {ILinkValue, IValueEdge} from '_types/value';
+import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import {IRecord} from '../../_types/record';
-import {VALUES_LINKS_COLLECTION} from '../../infra/value/valueRepo';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
 import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo, IAttributeWithRevLink} from './attributeTypesRepo';
@@ -290,7 +290,7 @@ export default function ({
                 return null;
             }
 
-            return _buildLinkValue(dbUtils.cleanup(res[0].edge.linkedRecord), res[0].edge, !!attribute.reverse_link);
+            return _buildLinkValue(dbUtils.cleanup(res[0].linkedRecord), res[0].edge, !!attribute.reverse_link);
         },
         sortQueryPart({attributes, order}: {attributes: IAttributeWithRevLink[]; order: string}): AqlQuery {
             const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);

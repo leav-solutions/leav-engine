@@ -90,6 +90,7 @@ export default function ({
                     time: Date.now(),
                     userId: ctx.userId,
                     queryId: ctx.queryId,
+                    instanceId: config.instanceId,
                     emitter: utils.getProcessIdentifier(),
                     trigger: ctx.trigger,
                     payload
