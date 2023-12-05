@@ -17,13 +17,6 @@ export const getLibsQuery = gql`
                 icon {
                     ...RecordIdentity
                 }
-                gqlNames {
-                    query
-                    type
-                    list
-                    filter
-                    searchableFields
-                }
             }
         }
     }

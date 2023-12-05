@@ -1,7 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {gqlUnchecked} from 'utils';
+// Copyright LEAV Solutions 2017
+
+import {gql} from '@apollo/client';
 
 export interface IGetRecordsListQueryElement {
     whoAmI: {
@@ -22,7 +24,7 @@ export interface IGetRecordsListQueryElement {
 }
 
 export interface IGetRecordsListQuery {
-    [x: string]: {
+    records: {
         list: IGetRecordsListQueryElement[];
         totalCount: number;
     };
@@ -80,22 +82,23 @@ export interface IRecordsPagination {
 }
 
 export interface IGetRecordsListQueryVariables {
+    library: string;
     filters: IRecordFilterInput[];
     pagination: IRecordsPagination;
 }
 
-export const getRecordsListQuery = (library: string) => gqlUnchecked`
-    query($filters:[RecordFilterInput], $pagination: RecordsPagination) {
-        ${library} (filters:$filters, pagination: $pagination){
+export const getRecordsListQuery = gql`
+    query RECORDS_LIST($library: ID!, $filters: [RecordFilterInput], $pagination: RecordsPagination) {
+        records(library: $library, filters: $filters, pagination: $pagination) {
             totalCount
             list {
-                whoAmI{
-                    id,
-                    label,
-                    color,
-                    preview,
+                whoAmI {
+                    id
+                    label
+                    color
+                    preview
                     library {
-                        id,
+                        id
                         label
                     }
                 }

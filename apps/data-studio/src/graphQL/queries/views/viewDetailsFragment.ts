@@ -20,10 +20,6 @@ const viewDetailsFragment = gql`
                 label
                 library {
                     id
-                    gqlNames {
-                        query
-                        type
-                    }
                 }
             }
         }

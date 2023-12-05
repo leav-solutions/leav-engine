@@ -14,14 +14,13 @@ import {
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {onError} from '@apollo/link-error';
-import {ErrorDisplay, useRefreshToken} from '@leav/ui';
-import {message, Spin} from 'antd';
+import {gqlPossibleTypes, useRefreshToken} from '@leav/ui';
+import {message} from 'antd';
 import fetch from 'cross-fetch';
 import {createClient} from 'graphql-ws';
-import useGraphqlPossibleTypes from 'hooks/useGraphqlPossibleTypes';
 import {ReactNode, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
-import {API_ENDPOINT, APPS_ENDPOINT, LOGIN_ENDPOINT, ORIGIN_URL, UNAUTHENTICATED, WS_URL} from '../../constants';
+import {API_ENDPOINT, APPS_ENDPOINT, LOGIN_ENDPOINT, ORIGIN_URL, WS_URL} from '../../constants';
 
 interface IApolloHandlerProps {
     children: ReactNode;
@@ -33,7 +32,6 @@ const _redirectToLogin = () =>
 function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     const {t} = useTranslation();
     const {refreshToken} = useRefreshToken();
-    const {loading, error, possibleTypes} = useGraphqlPossibleTypes(`${ORIGIN_URL}/${API_ENDPOINT}`);
 
     const wsLink = useMemo(() => {
         return new GraphQLWsLink(
@@ -43,19 +41,6 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
             })
         );
     }, []);
-
-    if (loading) {
-        return <Spin />;
-    }
-
-    if (error) {
-        if (error.includes(UNAUTHENTICATED)) {
-            _redirectToLogin();
-            return <></>;
-        }
-
-        return <ErrorDisplay message={error} />;
-    }
 
     // This function will catch the errors from the exchange between Apollo Client and the server.
     const _handleApolloError = onError(({graphQLErrors, networkError, operation, forward}) => {
@@ -112,7 +97,6 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
             })
         ]),
         cache: new InMemoryCache({
-            possibleTypes,
             typePolicies: {
                 Application: {
                     fields: {
@@ -123,7 +107,8 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
                         }
                     }
                 }
-            }
+            },
+            possibleTypes: gqlPossibleTypes
         })
     });
 

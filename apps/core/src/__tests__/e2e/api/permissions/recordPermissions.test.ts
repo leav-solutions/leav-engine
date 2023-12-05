@@ -72,7 +72,6 @@ describe('Records permissions', () => {
                 id
             }
         }`);
-        await makeGraphQlCall('mutation { refreshSchema }');
 
         testLibRecordId = await gqlCreateRecord(testLibId);
         testLibRecordIdForMultival = await gqlCreateRecord(testLibId);

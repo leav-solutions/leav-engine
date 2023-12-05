@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CheckCircleTwoTone, FileOutlined, InboxOutlined, LoadingOutlined} from '@ant-design/icons';
 import {useLazyQuery, useMutation, useQuery, useSubscription} from '@apollo/client';
-import {getLibraryGraphqlNames} from '@leav/utils';
 import {
     Alert,
     Button,
@@ -83,16 +82,17 @@ function UploadFiles({
         }
     });
 
-    useQuery<IDirectoryDataQuery, IDirectoryDataQueryVariables>(getDirectoryDataQuery(directoriesLibraryId), {
+    useQuery<IDirectoryDataQuery, IDirectoryDataQueryVariables>(getDirectoryDataQuery, {
         skip: !directoriesLibraryId || !selectedNode?.recordId,
         onCompleted: data => {
-            const dirData = data[getLibraryGraphqlNames(directoriesLibraryId).query].list[0];
+            const dirData = data.records.list[0];
             setSelectedDir({
                 path: dirData.file_path,
                 name: dirData.file_name
             });
         },
         variables: {
+            library: directoriesLibraryId,
             directoryId: selectedNode?.recordId
         }
     });

@@ -9,7 +9,7 @@ import {act, render, screen, waitFor} from '_tests/testUtils';
 import {useCanEditRecord} from './useCanEditRecord';
 
 describe('useCanEditRecord', () => {
-    const mockLib = {id: 'my_lib', gqlNames: {type: 'myLib', query: 'MyLib'}};
+    const mockLib = {id: 'my_lib'};
     const mockRecordId = '123456';
 
     test('If record is editable, returns true', async () => {

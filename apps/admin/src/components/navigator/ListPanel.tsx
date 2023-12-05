@@ -7,7 +7,7 @@ import {
     IGetRecordsListQuery,
     IGetRecordsListQueryVariables
 } from 'queries/records/recordsListQuery';
-import React, {useEffect, useMemo} from 'react';
+import {useEffect, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Checkbox, Pagination, Select, Table} from 'semantic-ui-react';
 import Loading from '../shared/Loading';
@@ -21,7 +21,7 @@ export default function ListPanel({state, dispatch}: IListProps) {
         <List state={state} dispatch={dispatch} />
     ) : (
         <ListLoader
-            selectedRootQuery={state.selectedRootQuery}
+            selectedRootQuery={state.selectedRoot}
             filters={state.filters}
             dispatch={dispatch}
             offset={typeof state.offset === 'number' ? state.offset : null}
@@ -32,6 +32,7 @@ export default function ListPanel({state, dispatch}: IListProps) {
 function List({state, dispatch}: IListProps) {
     const {t} = useTranslation();
     const isSelectable = state.selectable;
+
     const getHandleSelectionChanged = useMemo(() => {
         return entity => (event, data) => {
             const actionType = data.checked ? ActionTypes.SELECTION_ADD : ActionTypes.SELECTION_REMOVE;
@@ -41,17 +42,20 @@ function List({state, dispatch}: IListProps) {
             });
         };
     }, [dispatch]);
+
     const isSelected = useMemo(() => {
         return idToSearch => {
             return state.selection.find(elementInSelection => elementInSelection.id === idToSearch) !== undefined;
         };
     }, [state.selection]);
+
     const onEdit = useMemo(() => {
         const callback = state.onEditRecordClick ? state.onEditRecordClick : () => undefined;
         return entity => (event, data) => {
             callback(entity.whoAmI);
         };
     }, [state.onEditRecordClick]);
+
     const _onChange = (e, pageInfo) => {
         const activePage = pageInfo.activePage;
         let offset = 0;
@@ -64,12 +68,14 @@ function List({state, dispatch}: IListProps) {
             data
         });
     };
+
     const _handleLimitChange = (e, data) => {
         dispatch({
             type: ActionTypes.SET_LIMIT,
             data: {limit: data.value}
         });
     };
+
     const totalPages =
         state.totalCount && state.selectedOffset
             ? Math.floor(state.totalCount / state.selectedOffset) + (state.totalCount % state.selectedOffset ? 1 : 0)
@@ -89,7 +95,7 @@ function List({state, dispatch}: IListProps) {
                 </Table.Row>
             </Table.Header>
             <Table.Body>
-                {state.list.map(e => (
+                {(state.list ?? []).map(e => (
                     <Table.Row key={e.whoAmI.id}>
                         {isSelectable && (
                             <Table.Cell width="1">
@@ -144,7 +150,6 @@ function List({state, dispatch}: IListProps) {
 
 function ListLoader({selectedRootQuery, filters, dispatch, offset, limit}) {
     const {t} = useTranslation();
-    const listQuery = getRecordsListQuery(selectedRootQuery);
 
     const filtersVar = filters.reduce((queryFilters, filter, index) => {
         if (filters.length > 1 && index > 0) {
@@ -172,9 +177,10 @@ function ListLoader({selectedRootQuery, filters, dispatch, offset, limit}) {
                   limit
               };
 
-    const {loading, error, data} = useQuery<IGetRecordsListQuery, IGetRecordsListQueryVariables>(listQuery, {
+    const {loading, error, data} = useQuery<IGetRecordsListQuery, IGetRecordsListQueryVariables>(getRecordsListQuery, {
         fetchPolicy: 'network-only',
         variables: {
+            library: selectedRootQuery,
             filters: filtersVar,
             pagination
         }
@@ -187,7 +193,7 @@ function ListLoader({selectedRootQuery, filters, dispatch, offset, limit}) {
 
         dispatch({
             type: ActionTypes.SET_LIST,
-            data: {...data[selectedRootQuery], offset, all}
+            data: {...data.records, offset, all}
         });
     }, [data]);
 

@@ -115,7 +115,6 @@ export const mockFormElementLink: FormElement<{}> = {
             id: 'test_lib',
             behavior: LibraryBehavior.standard,
             label: {fr: 'Lib'},
-            gqlNames: {query: 'test_lib', type: 'TestLib'},
             permissions: {
                 create_record: true
             }

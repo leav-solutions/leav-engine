@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {Pagination, LibraryBehavior} from './globalTypes';
+import {LibraryBehavior, Pagination} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: TREE_NODE_CHILDREN
@@ -21,7 +21,6 @@ export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_library 
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI_library_gqlNames;
 }
 
 export interface TREE_NODE_CHILDREN_treeNodeChildren_list_record_whoAmI {

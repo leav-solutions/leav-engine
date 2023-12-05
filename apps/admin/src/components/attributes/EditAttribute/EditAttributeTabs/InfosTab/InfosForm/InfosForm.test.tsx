@@ -4,7 +4,6 @@
 import userEvent from '@testing-library/user-event';
 import {getLibrariesWithAttributesQuery} from 'queries/libraries/getLibrariesWithAttributesQuery';
 import {saveLibAttributesMutation} from 'queries/libraries/saveLibAttributesMutation';
-import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {fireEvent, render, screen, waitFor, within} from '_tests/testUtils';
 import {mockLibrary} from '__mocks__/libraries';
@@ -52,14 +51,6 @@ describe('InfosForm', () => {
                                 en: '',
                                 fr: 'Produits'
                             },
-                            gqlNames: {
-                                query: 'products',
-                                type: 'products',
-                                list: 'productsList',
-                                filter: 'productsFilter',
-                                searchableFields: 'productsSearchableFields',
-                                __typename: 'LibraryGraphqlNames'
-                            },
                             attributes: [
                                 {
                                     id: 'id',
@@ -77,14 +68,6 @@ describe('InfosForm', () => {
                             label: {
                                 en: '',
                                 fr: 'Categories'
-                            },
-                            gqlNames: {
-                                query: 'categories',
-                                type: 'categories',
-                                list: 'categoriesList',
-                                filter: 'categoriesFilter',
-                                searchableFields: 'categoriesSearchableFields',
-                                __typename: 'LibraryGraphqlNames'
                             },
                             attributes: [
                                 {

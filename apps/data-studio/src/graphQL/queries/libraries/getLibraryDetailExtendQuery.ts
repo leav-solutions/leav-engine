@@ -37,13 +37,6 @@ export interface ILibraryDetailExtendedDefaultView {
     }>;
 }
 
-export interface ILibraryDetailExtendedGqlNames {
-    query: string;
-    type: string;
-    filter: string;
-    searchableFields: string;
-}
-
 export interface ILibraryDetailExtendedAttributeParentLinkedLibrary {
     id: string;
     label: ISystemTranslation;
@@ -86,7 +79,6 @@ export interface ILibraryDetailExtended {
     behavior: LibraryBehavior;
     label: ISystemTranslation;
     attributes: ILibraryDetailExtendedAttributeParent[];
-    gqlNames: ILibraryDetailExtendedGqlNames;
     defaultView?: ILibraryDetailExtendedDefaultView;
 }
 
@@ -193,12 +185,6 @@ export const getLibraryDetailExtendedQuery = (depthEmbeddedFields: number) => gq
                             }
                         }
                     }
-                }
-                gqlNames {
-                    query
-                    type
-                    filter
-                    searchableFields
                 }
                 defaultView {
                     id

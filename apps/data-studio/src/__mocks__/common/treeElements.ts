@@ -24,10 +24,6 @@ export const mockTreeRecord: RecordIdentity = {
             label: {
                 fr: 'library-label',
                 en: 'library-label'
-            },
-            gqlNames: {
-                type: 'library_id',
-                query: 'LibraryId'
             }
         }
     }
@@ -47,10 +43,6 @@ export const mockTreeRecordChild: RecordIdentity = {
             label: {
                 fr: 'library-label',
                 en: 'library-label'
-            },
-            gqlNames: {
-                type: 'library_id',
-                query: 'LibraryId'
             }
         }
     }

@@ -51,7 +51,7 @@ describe('calculationVariable', () => {
     test('run unknown function', async () => {
         const res = calculation.processVariableString({recordId: '1', library: 'meh'}, 'meh()', 'toto');
         res.catch(e => {
-            expect(e).toEqual(Error('Validation error'));
+            expect(e).toEqual(Error('Invalid request'));
         });
     });
 });

@@ -39,12 +39,6 @@ describe('Home', () => {
                                 label: {fr: 'Lib A'},
                                 behavior: LibraryBehavior.standard,
                                 icon: null,
-                                gqlNames: {
-                                    __typename: 'Test',
-                                    query: 'test',
-                                    filter: 'TestFilter',
-                                    searchableFields: 'TestSearch'
-                                },
                                 attributes: {
                                     __typename: 'Attribute',
                                     id: 'string',
@@ -67,12 +61,6 @@ describe('Home', () => {
                                 label: {fr: 'Lib B'},
                                 behavior: LibraryBehavior.standard,
                                 icon: null,
-                                gqlNames: {
-                                    __typename: 'Test2',
-                                    query: 'test2',
-                                    filter: 'Test2Filter',
-                                    searchableFields: 'Test2Search'
-                                },
                                 attributes: {
                                     __typename: 'Attribute',
                                     id: 'string',

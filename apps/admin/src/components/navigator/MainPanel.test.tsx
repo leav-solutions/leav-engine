@@ -26,10 +26,6 @@ export const dataMock = [
                             label: {
                                 fr: 'l1'
                             },
-                            gqlNames: {
-                                query: 'q1',
-                                filter: 'f1'
-                            },
                             attributes: [
                                 {
                                     id: 'a1',
@@ -53,10 +49,6 @@ export const dataMock = [
                             id: '2',
                             label: {
                                 fr: 'l2'
-                            },
-                            gqlNames: {
-                                query: 'q2',
-                                filter: 'f2'
                             },
                             attributes: [
                                 {
@@ -159,7 +151,6 @@ describe('<MainPanel />', () => {
         const state = {
             ...initialState,
             selectedRoot: 'test',
-            selectedRootQuery: 'querytest',
             selectedRootAttributes: [
                 {
                     ...mockAttrSimple,

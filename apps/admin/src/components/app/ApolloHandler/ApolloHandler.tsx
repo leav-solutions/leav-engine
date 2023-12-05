@@ -17,18 +17,16 @@ import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
 import fetch from 'cross-fetch';
 import {createClient} from 'graphql-ws';
-import useGraphqlPossibleTypes from 'hooks/useGraphqlPossibleTypes';
 import useRefreshToken from 'hooks/useRefreshToken';
 import {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useDispatch} from 'react-redux';
 import {addMessage, MessagesTypes} from 'reduxStore/messages/messages';
 import {endMutation, startMutation} from 'reduxStore/mutationsWatcher/mutationsWatcher';
-import {Message, SemanticICONS} from 'semantic-ui-react';
+import {SemanticICONS} from 'semantic-ui-react';
 import * as yup from 'yup';
 import {ErrorTypes} from '_types/errors';
 import {API_ENDPOINT, APPS_ENDPOINT, LOGIN_ENDPOINT, ORIGIN_URL, UNAUTHENTICATED, WS_URL} from '../../../constants';
-import Loading from '../../shared/Loading';
 
 interface IApolloHandlerProps {
     children: ReactNode;
@@ -41,27 +39,6 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
     const dispatch = useDispatch();
     const {t, i18n} = useTranslation();
     const {refreshToken} = useRefreshToken();
-
-    const {loading: possibleTypesLoading, error: possibleTypesError, possibleTypes} = useGraphqlPossibleTypes(
-        `${ORIGIN_URL}/${API_ENDPOINT}`
-    );
-
-    if (possibleTypesLoading) {
-        return <Loading style={{margin: '15rem'}} />;
-    }
-
-    if (possibleTypesError) {
-        if (possibleTypesError.includes(UNAUTHENTICATED)) {
-            _redirectToLogin();
-            return <></>;
-        }
-
-        return (
-            <Message negative style={{margin: '2em'}}>
-                {possibleTypesError}
-            </Message>
-        );
-    }
 
     const _handleApolloError = onError(({graphQLErrors, networkError, operation, forward}) => {
         let title: string;
@@ -178,11 +155,7 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
             // Thus, we have to force Apollo to use the _id field for cache key.
             dataIdFromObject(responseObject) {
                 // If it's not a record, just use regular caching
-                if (
-                    !possibleTypes ||
-                    !possibleTypes.Record.includes(responseObject.__typename) ||
-                    (!responseObject._id && !responseObject.id)
-                ) {
+                if (!responseObject._id && !responseObject.id) {
                     return defaultDataIdFromObject(responseObject);
                 }
 
@@ -202,9 +175,6 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
                 },
                 Library: {
                     fields: {
-                        gqlNames: {
-                            merge: true
-                        },
                         attributes: {
                             merge(existing, incoming) {
                                 return incoming;
@@ -221,8 +191,7 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
                         }
                     }
                 }
-            },
-            possibleTypes
+            }
         })
     });
 

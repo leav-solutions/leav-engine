@@ -27,11 +27,6 @@ export interface ISystemTranslation {
 export interface ILibrary {
     id: string;
     label: ISystemTranslation;
-    gqlNames: {
-        query: string;
-        filter: string;
-        searchableFields: string;
-    };
 }
 
 export enum LinkedType {

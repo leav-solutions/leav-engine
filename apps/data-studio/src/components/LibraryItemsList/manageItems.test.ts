@@ -22,11 +22,7 @@ describe('manageItems', () => {
             library: {
                 id: 'record_lib',
                 behavior: LibraryBehavior.standard,
-                label: {fr: 'Test Lib'},
-                gqlNames: {
-                    query: 'record_lib',
-                    type: 'RecordLib'
-                }
+                label: {fr: 'Test Lib'}
             },
             preview: mockPreviews,
             color: '#123456'

@@ -79,15 +79,16 @@ const _computeScopeAndValues = <ValuesType extends AllowedValuesType>(params: {
 }): Pick<ILinkFieldState<ValuesType>, 'values' | 'activeScope'> => {
     const {attribute, values, formVersion} = params;
 
-    const currentVersion: IValueVersion = attribute?.versions_conf?.versionable
-        ? attribute.versions_conf.profile.trees.reduce((relevantVersion, tree) => {
-              if (formVersion?.[tree.id]) {
-                  relevantVersion[tree.id] = formVersion[tree.id];
-              }
+    const currentVersion: IValueVersion =
+        attribute?.versions_conf?.versionable && attribute?.versions_conf?.profile
+            ? attribute.versions_conf.profile.trees.reduce((relevantVersion, tree) => {
+                  if (formVersion?.[tree.id]) {
+                      relevantVersion[tree.id] = formVersion[tree.id];
+                  }
 
-              return relevantVersion;
-          }, {})
-        : null;
+                  return relevantVersion;
+              }, {})
+            : null;
 
     const hasInheritedValues = attribute?.versions_conf?.versionable
         ? !isCurrentVersion(currentVersion, values?.[0]?.version ?? currentVersion)

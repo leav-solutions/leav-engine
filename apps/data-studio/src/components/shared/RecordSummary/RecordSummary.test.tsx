@@ -11,19 +11,15 @@ describe('RecordSummary', () => {
         const mocks = [
             {
                 request: {
-                    query: getRecordColumnsValues('record_libs', [
-                        'created_at',
-                        'created_by',
-                        'modified_at',
-                        'modified_by'
-                    ]),
+                    query: getRecordColumnsValues(['created_at', 'created_by', 'modified_at', 'modified_by']),
                     variables: {
+                        library: 'record_lib',
                         filters: [{field: 'id', condition: 'EQUAL', value: '123456'}]
                     }
                 },
                 result: {
                     data: {
-                        record_libs: {
+                        records: {
                             list: [
                                 {
                                     _id: 123456,

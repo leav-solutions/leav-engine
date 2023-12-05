@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.waitFor = exports.getLogsIndexName = exports.getFlagByLang = exports.simpleStringHash = exports.formatId = exports._getInitialEngine = exports.getInitials = exports.getCallStack = exports.getFileType = exports.getLibraryGraphqlNames = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
+exports.waitFor = exports.getLogsIndexName = exports.getFlagByLang = exports.simpleStringHash = exports.formatId = exports._getInitialEngine = exports.getInitials = exports.getCallStack = exports.getFileType = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
@@ -176,19 +176,10 @@ const nameValArrayToObj = (arr = [], keyFieldName = 'name', valueFieldName = 'va
         : null;
 };
 exports.nameValArrayToObj = nameValArrayToObj;
-const getLibraryGraphqlNames = (libraryId) => {
-    const libQueryName = (0, exports.getGraphqlQueryNameFromLibraryName)(libraryId);
-    const libTypeName = (0, exports.getGraphqlTypeFromLibraryName)(libraryId);
-    return {
-        query: libQueryName,
-        type: libTypeName,
-        list: libTypeName + 'List',
-        searchableFields: libTypeName + 'SearchableFields',
-        filter: libTypeName + 'Filter'
-    };
-};
-exports.getLibraryGraphqlNames = getLibraryGraphqlNames;
 const getFileType = (fileName) => {
+    if (!fileName) {
+        return null;
+    }
     const extension = fileName.slice(fileName.lastIndexOf('.') + 1).toLowerCase();
     if (!extensions[extension]) {
         return files_1.FileType.OTHER;

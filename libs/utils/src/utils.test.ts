@@ -11,7 +11,6 @@ import {
     getGraphqlTypeFromLibraryName,
     getInitials,
     getInvertColor,
-    getLibraryGraphqlNames,
     localizedTranslation,
     nameValArrayToObj,
     objectToNameValueArray,
@@ -132,18 +131,6 @@ describe('utils', () => {
                 a: 'b',
                 c: 'd'
             });
-        });
-    });
-
-    describe('getLibraryGraphqlNames', () => {
-        test('Return graphql types', async () => {
-            const res = getLibraryGraphqlNames('some_records');
-
-            expect(res.query).toBe('someRecords');
-            expect(res.type).toBe('SomeRecord');
-            expect(res.list).toBe('SomeRecordList');
-            expect(res.searchableFields).toBe('SomeRecordSearchableFields');
-            expect(res.filter).toBe('SomeRecordFilter');
         });
     });
 

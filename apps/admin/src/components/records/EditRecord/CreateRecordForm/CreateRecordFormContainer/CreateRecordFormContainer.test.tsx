@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedProvider} from '@apollo/client/testing';
 import {mount} from 'enzyme';
-import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {createRecordQuery} from '../../../../../queries/records/createRecordMutation';
 import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
@@ -37,7 +36,7 @@ describe('CreateRecordFormContainer', () => {
     test('Calls onPostSave', async () => {
         const onPostSave = jest.fn();
         const attributes = [{...mockAttrSimple}];
-        const recordDataQuery = getRecordDataQuery(mockLibrary, attributes);
+        const recordDataQuery = getRecordDataQuery(attributes);
         const mocks = [
             {
                 request: {
@@ -86,7 +85,7 @@ describe('CreateRecordFormContainer', () => {
             {
                 request: {
                     query: recordDataQuery,
-                    variables: {id: '1234567', version: null, lang: ['fr', 'en']}
+                    variables: {library: mockLibrary.id, id: '1234567', version: null, lang: ['fr', 'en']}
                 },
                 result: {
                     data: {

@@ -15,12 +15,10 @@ import {
 describe('Record identity', () => {
     // For regular identity (=own attribute)
     const testLibraryId = 'record_identity_library_test';
-    const testLibraryTypeName = 'recordIdentityLibraryTest';
     let recordId;
 
     // For identity through link attribute
     const testLinkedIdentityLibraryId = 'record_identity_test_linked_identity';
-    const testLinkedIdentityLibraryTypeName = 'recordIdentityTestLinkedIdentity';
 
     const testLinkedLibraryId = 'record_identity_test_linked_library';
     const testLinkAttributeId = 'record_identity_test_link_attribute';
@@ -29,7 +27,6 @@ describe('Record identity', () => {
 
     // For identity through tree attribute
     const testTreeIdentityLibraryId = 'record_library_test_tree_attribute';
-    const testTreeIdentityLibraryTypeName = 'recordLibraryTestTreeAttribute';
 
     const testTreeId = 'record_identity_test_tree';
     const testTreeRecordLibraryId = 'record_identity_test_tree_record_library';
@@ -138,8 +135,6 @@ describe('Record identity', () => {
             true
         );
 
-        await makeGraphQlCall('mutation { refreshSchema }');
-
         const resCrea = await makeGraphQlCall(`mutation {
             c1: createRecord(library: "${testLibraryId}") { record {id} }
             c2: createRecord(library: "${testLinkedIdentityLibraryId}") { record {id} }
@@ -174,7 +169,10 @@ describe('Record identity', () => {
     test('Retrieve record identity', async () => {
         const res = await makeGraphQlCall(`
             {
-                ${testLibraryTypeName}(filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]) {
+                records(
+                    library: "${testLibraryId}",
+                    filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]
+                ) {
                     list {
                         id
                         whoAmI { id library { id } label }
@@ -185,15 +183,16 @@ describe('Record identity', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data[testLibraryTypeName].list[0].whoAmI.id).toBe(recordId);
-        expect(res.data.data[testLibraryTypeName].list[0].whoAmI.library.id).toBe(testLibraryId);
-        expect(res.data.data[testLibraryTypeName].list[0].whoAmI.label).toBe(null);
+        expect(res.data.data.records.list[0].whoAmI.id).toBe(recordId);
+        expect(res.data.data.records.list[0].whoAmI.library.id).toBe(testLibraryId);
+        expect(res.data.data.records.list[0].whoAmI.label).toBe(null);
     });
 
     test('Retrieve label based on link attribute', async () => {
         const res = await makeGraphQlCall(`
             {
-                ${testLinkedIdentityLibraryTypeName}(
+                records(
+                    library: "${testLinkedIdentityLibraryId}",
                     filters: [
                         {field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordIdLinkIdentity}"}
                     ]
@@ -208,14 +207,16 @@ describe('Record identity', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data[testLinkedIdentityLibraryTypeName].list[0].whoAmI.label).toBe('my linked label');
-        expect(res.data.data[testLinkedIdentityLibraryTypeName].list[0].whoAmI.color).toBe('#123456');
+        expect(res.data.data.records.list[0].whoAmI.label).toBe('my linked label');
+        expect(res.data.data.records.list[0].whoAmI.color).toBe('#123456');
     });
 
     test('Retrieve label based on tree attribute', async () => {
         const res = await makeGraphQlCall(`
             {
-                ${testTreeIdentityLibraryTypeName}(filters: [
+                records(
+                    library: "${testTreeIdentityLibraryId}",
+                    filters: [
                         {field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordIdTreeIdentity}"}
                     ]
                 ) {
@@ -229,7 +230,7 @@ describe('Record identity', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data[testTreeIdentityLibraryTypeName].list[0].whoAmI.label).toBe('my tree label');
-        expect(res.data.data[testTreeIdentityLibraryTypeName].list[0].whoAmI.color).toBe('#654321');
+        expect(res.data.data.records.list[0].whoAmI.label).toBe('my tree label');
+        expect(res.data.data.records.list[0].whoAmI.color).toBe('#654321');
     });
 });

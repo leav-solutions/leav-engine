@@ -81,8 +81,6 @@ export async function gqlSaveLibrary(id: string, label: string, additionalAttrib
         true
     );
 
-    await makeGraphQlCall('mutation { refreshSchema }');
-
     return saveLibRes.data.data;
 }
 
@@ -198,7 +196,6 @@ export async function gqlSaveAttribute(params: {
     }`;
 
     const saveAttrRes = await makeGraphQlCall(query, true);
-    await makeGraphQlCall('mutation { refreshSchema }');
 
     return saveAttrRes.data.data;
 }

@@ -17,11 +17,7 @@ const views: IGetViewListElement[] = [
                     en: 'name'
                 },
                 library: {
-                    id: 'users',
-                    gqlNames: {
-                        query: 'users',
-                        type: 'Users'
-                    }
+                    id: 'users'
                 }
             }
         },

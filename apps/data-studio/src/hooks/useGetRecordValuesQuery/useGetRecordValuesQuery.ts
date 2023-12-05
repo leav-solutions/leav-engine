@@ -35,32 +35,30 @@ const _recordIdsToQueryFilters = (recordIds: string[]): IQueryFilter[] =>
     }, []);
 
 export const useGetRecordValuesQuery = (
-    libraryGqlQueryType: string,
+    libraryId: string,
     columns: string[],
     recordIds: string[]
 ): IUseGetRecordColumnsValuesQueryHook => {
     const [queryData, setQueryData] = useState<IColumnsValuesByRecord>();
 
     const _convertQueryResult = (queryResult: IGetRecordColumnsValues): IColumnsValuesByRecord =>
-        (queryResult[libraryGqlQueryType]?.list ?? []).reduce((valuesByRecord, recordValues) => {
+        (queryResult.records.list ?? []).reduce((valuesByRecord, recordValues) => {
             valuesByRecord[recordValues._id] = recordValues;
             return valuesByRecord;
         }, {});
 
-    const query = useQuery<IGetRecordColumnsValues, IGetRecordColumnsValuesVariables>(
-        getRecordColumnsValues(libraryGqlQueryType, columns),
-        {
-            variables: {
-                // Turn records ids into filters with OR operators
-                filters: _recordIdsToQueryFilters(recordIds)
-            },
-            skip: !libraryGqlQueryType || !columns.length || !recordIds.length,
-            onCompleted: data => {
-                const cleanData: IColumnsValuesByRecord = _convertQueryResult(data);
-                setQueryData(cleanData);
-            }
+    const query = useQuery<IGetRecordColumnsValues, IGetRecordColumnsValuesVariables>(getRecordColumnsValues(columns), {
+        variables: {
+            library: libraryId,
+            // Turn records ids into filters with OR operators
+            filters: _recordIdsToQueryFilters(recordIds)
+        },
+        skip: !libraryId || !columns.length || !recordIds.length,
+        onCompleted: data => {
+            const cleanData: IColumnsValuesByRecord = _convertQueryResult(data);
+            setQueryData(cleanData);
         }
-    );
+    });
 
     const customRefetch = async (refetchRecordIds: string[]) => {
         const customVariables = {

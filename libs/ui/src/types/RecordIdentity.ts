@@ -6,7 +6,7 @@ import {SystemTranslation} from './SystemTranslation';
 
 export interface IRecordIdentityLibrary {
     id: string;
-    label: SystemTranslation | null;
+    label?: SystemTranslation | null;
 }
 
 export interface IRecordIdentityPreview {
@@ -19,11 +19,11 @@ export interface IRecordIdentityPreview {
 
 export interface IRecordIdentityWhoAmI {
     id: string;
-    label: string | null;
-    subLabel: string | null;
-    color: string | null;
-    library: IRecordIdentityLibrary;
-    preview: IPreviewScalar | null;
+    label?: string | null;
+    subLabel?: string | null;
+    color?: string | null;
+    library?: IRecordIdentityLibrary;
+    preview?: IPreviewScalar | null;
 }
 
 export interface IRecordIdentity {

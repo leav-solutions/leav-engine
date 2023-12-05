@@ -41,10 +41,6 @@ export interface IGetViewListElement {
             label: ISystemTranslation;
             library: {
                 id: string;
-                gqlNames: {
-                    query: string;
-                    type: string;
-                };
             };
         };
     };

@@ -110,3 +110,16 @@ export interface IRecordUpdateEventFilters {
     libraries?: string[];
     records?: string[];
 }
+
+export interface IRecordFilterLight {
+    field?: string;
+    value?: string;
+    condition?: AttributeCondition | TreeCondition;
+    operator?: Operator;
+    treeId?: string;
+}
+
+export interface IRecordSortLight {
+    field: string;
+    order: string;
+}

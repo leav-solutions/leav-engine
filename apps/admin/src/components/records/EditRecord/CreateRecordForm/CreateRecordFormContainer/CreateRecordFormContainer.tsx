@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation, useQuery} from '@apollo/client';
 import {NetworkStatus} from 'apollo-client';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import useLang from '../../../../../hooks/useLang';
 import {createRecordQuery} from '../../../../../queries/records/createRecordMutation';
 import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
@@ -90,9 +90,9 @@ function CreateRecordFormContainer({
     const [recordId, setRecordId] = useState<string>(initialRecordId || '');
     const [savePending, setSavePending] = useState<boolean>(false);
 
-    const query = getRecordDataQuery(library, attributes);
+    const query = getRecordDataQuery(attributes);
     const {loading, error, data, refetch: refetchData, networkStatus} = useQuery<IGetRecordData>(query, {
-        variables: {id: recordId, version: versionObjToGraphql(valueVersion || null), lang},
+        variables: {library: library.id, id: recordId, version: versionObjToGraphql(valueVersion || null), lang},
         skip: !recordId || savePending,
         fetchPolicy: 'no-cache'
     });

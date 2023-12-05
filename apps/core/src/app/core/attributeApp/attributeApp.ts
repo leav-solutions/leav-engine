@@ -30,11 +30,9 @@ import {AttributePermissionsActions, PermissionTypes} from '../../../_types/perm
 import {AttributeCondition} from '../../../_types/record';
 import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
-import {getFormatFromALConf, getFormatFromAttribute} from './helpers/graphqlFormats';
 
 export interface ICoreAttributeApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
-    getGraphQLFormat(attribute: IAttribute): Promise<string>;
 }
 
 interface IDeps {
@@ -50,7 +48,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function(deps: IDeps = {}): ICoreAttributeApp {
+export default function (deps: IDeps = {}): ICoreAttributeApp {
     const {
         'core.domain.attribute': attributeDomain = null,
         'core.domain.record': recordDomain = null,
@@ -343,13 +341,13 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                     Mutation: {
                         async saveAttribute(parent, {attribute}, ctx): Promise<IAttribute> {
                             const savedAttr = await attributeDomain.saveAttribute({attrData: attribute, ctx});
-                            graphqlApp.generateSchema();
+                            graphqlApp.getSchema();
 
                             return savedAttr;
                         },
                         async deleteAttribute(parent, {id}, ctx): Promise<IAttribute> {
                             const deletedAttr = await attributeDomain.deleteAttribute({id, ctx});
-                            graphqlApp.generateSchema();
+                            graphqlApp.getSchema();
 
                             return deletedAttr;
                         }
@@ -477,35 +475,6 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
 
             return fullSchema;
-        },
-        async getGraphQLFormat(attribute: IAttribute): Promise<string> {
-            let typeToReturn;
-
-            if (attribute.id === 'id') {
-                typeToReturn = 'ID!';
-            } else if (
-                attribute.type === AttributeTypes.SIMPLE_LINK ||
-                attribute.type === AttributeTypes.ADVANCED_LINK
-            ) {
-                typeToReturn = utils.libNameToTypeName(attribute.linked_library);
-            } else if (attribute.type === AttributeTypes.TREE) {
-                typeToReturn = 'TreeNode';
-            } else {
-                // Get actions list output type if any
-                if ((attribute?.actions_list?.getValue ?? []).length) {
-                    typeToReturn = await getFormatFromALConf([...attribute?.actions_list?.getValue], deps);
-                }
-
-                if (!typeToReturn) {
-                    typeToReturn = getFormatFromAttribute(attribute.format);
-                }
-            }
-
-            if (attribute.multiple_values) {
-                typeToReturn = `[${typeToReturn}!]`;
-            }
-
-            return typeToReturn;
         }
     };
 }

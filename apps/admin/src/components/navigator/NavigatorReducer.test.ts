@@ -27,7 +27,6 @@ describe('Navigator Reducer', () => {
             data: 'test'
         });
         expect(state.selectedRoot).toBe('test');
-        expect(state.selectedRootQuery).toBe(null);
     });
     test('Action SET_ROOT_INFOS', () => {
         const state = reducer(initialState, {
@@ -36,7 +35,7 @@ describe('Navigator Reducer', () => {
                 query: 'test'
             }
         });
-        expect(state.selectedRootQuery).toBe('test');
+        expect(state.selectedRoot).toBe('test');
     });
     test('Action SET_ROOTS', () => {
         const state = reducer(initialState, {

@@ -62,6 +62,15 @@ export interface IGetRecordData {
     };
 }
 
+export interface IGetRecordDataVariables {
+    library: string;
+    id: string;
+    version?: Array<{
+        treeId: string;
+        treeNodeId: string;
+    }>;
+}
+
 export interface IValueVersion {
     [versionName: string]: ITreeElement;
 }

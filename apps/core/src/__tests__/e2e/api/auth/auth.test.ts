@@ -25,12 +25,16 @@ describe('Auth', () => {
         const res = await makeGraphQlCall(`{
             me {
                 id
-                login
+                login: property(attribute: "login") {
+                    ...on Value {
+                        value
+                    }
+                }
             }
         }`);
 
         expect(res.status).toBe(200);
         expect(res.data.data.me.id).toBeTruthy();
-        expect(res.data.data.me.login).toBeTruthy();
+        expect(res.data.data.me.login[0].value).toBeTruthy();
     });
 });

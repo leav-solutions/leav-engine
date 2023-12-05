@@ -1,11 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getLibraryGraphqlNames} from '@leav/utils';
-import {gqlUnchecked} from 'utils';
+import {gql} from '@apollo/client';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import recordIdentityFragment from './recordIdentityFragment';
-import {noopQuery} from '../noopQuery';
 
 export interface IDirectoryDataElement extends RecordIdentity {
     created_at: string;
@@ -20,42 +18,60 @@ export interface IDirectoryDataElement extends RecordIdentity {
 }
 
 export interface IDirectoryDataQuery {
-    [libraryName: string]: {
+    records: {
         list: IDirectoryDataElement[];
     };
 }
 
 export interface IDirectoryDataQueryVariables {
+    library: string;
     directoryId: string;
 }
 
-export const getDirectoryDataQuery = (libraryId: string) => {
-    if (!libraryId) {
-        return noopQuery;
-    }
-
-    return gqlUnchecked`
+export const getDirectoryDataQuery = gql`
     ${recordIdentityFragment}
-    query GET_DIRECTORY_DATA($directoryId: String!) {
-        ${getLibraryGraphqlNames(libraryId).query}(
-            filters: [{field: "id", value: $directoryId, condition: EQUAL}])
-        {
+    query GET_DIRECTORY_DATA($library: ID!, $directoryId: String!) {
+        records(library: $library, filters: [{field: "id", value: $directoryId, condition: EQUAL}]) {
             list {
                 ...RecordIdentity
-                created_at
-                created_by {
-                    ...RecordIdentity
+                created_at: property(attribute: "created_at") {
+                    ... on Value {
+                        value
+                    }
                 }
-                modified_at
-                modified_by {
-                    ...RecordIdentity
+                created_by: property(attribute: "created_by") {
+                    ... on LinkValue {
+                        value {
+                            ...RecordIdentity
+                        }
+                    }
                 }
-                file_name
-                file_path
+                modified_at: property(attribute: "modified_at") {
+                    ... on Value {
+                        value
+                    }
+                }
+                modified_by: property(attribute: "modified_by") {
+                    ... on LinkValue {
+                        value {
+                            ...RecordIdentity
+                        }
+                    }
+                }
+                file_name: property(attribute: "file_name") {
+                    ... on Value {
+                        value
+                    }
+                }
+                file_path: property(attribute: "file_path") {
+                    ... on Value {
+                        value
+                    }
+                }
                 library {
                     behavior
                 }
             }
         }
-    }`;
-};
+    }
+`;

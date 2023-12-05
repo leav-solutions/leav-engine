@@ -18,10 +18,6 @@ export const itemMock: IItem = {
             label: {
                 fr: 'library',
                 en: 'library'
-            },
-            gqlNames: {
-                type: 'LibraryId',
-                query: 'library_id'
             }
         }
     },

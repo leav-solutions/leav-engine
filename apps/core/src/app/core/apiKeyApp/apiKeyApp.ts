@@ -32,11 +32,11 @@ export default function ({
                         label: String,
                         key: String,
                         createdAt: Int!,
-                        createdBy: User!,
+                        createdBy: Record!,
                         modifiedAt: Int!,
-                        modifiedBy: User!
+                        modifiedBy: Record!
                         expiresAt: Int,
-                        user: User!
+                        user: Record!
                     }
 
                     input ApiKeyInput {

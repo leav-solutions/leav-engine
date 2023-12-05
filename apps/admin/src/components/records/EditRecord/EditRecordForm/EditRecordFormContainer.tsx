@@ -19,7 +19,7 @@ function EditRecordFormContainer({
     setRecordIdentity,
     onIdentityUpdate
 }: IEditRecordFormProps): JSX.Element {
-    const attributes = library && library.attributes ? library.attributes : [];
+    const attributes = library?.attributes ?? [];
 
     const formErrors = {};
 

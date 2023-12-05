@@ -1,33 +1,36 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {PublishedEvent} from '@leav/utils';
+import {IKeyValue, PublishedEvent} from '@leav/utils';
 import {ConvertVersionFromGqlFormatFunc} from 'app/helpers/convertVersionFromGqlFormat';
-import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
+import {ILibraryDomain} from 'domain/library/libraryDomain';
+import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
-import {IRecordFilterLight} from 'domain/record/_types';
 import {ITreeDomain} from 'domain/tree/treeDomain';
-import {GraphQLScalarType} from 'graphql';
+import {GraphQLResolveInfo, GraphQLScalarType} from 'graphql';
 import {withFilter} from 'graphql-subscriptions';
 import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
+import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {ITree} from '_types/tree';
+import ValidationError from '../../../errors/ValidationError';
+import {Errors} from '../../../_types/errors';
 import {TriggerNames} from '../../../_types/eventsManager';
-import {RecordPermissionsActions} from '../../../_types/permissions';
+import {PermissionTypes, RecordPermissionsActions} from '../../../_types/permissions';
 import {
     AttributeCondition,
     IRecord,
+    IRecordFilterLight,
     IRecordUpdateEvent,
     IRecordUpdateEventFilters,
     TreeCondition
 } from '../../../_types/record';
 import {IGraphqlApp} from '../../graphql/graphqlApp';
-import {ICoreAttributeApp} from '../attributeApp/attributeApp';
 import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from '../helpers/subscriptions';
 import {IIndexationManagerApp} from '../indexationManagerApp';
-import {ICreateRecordParams} from './_types';
+import {ICreateRecordParams, IRecordsQueryVariables} from './_types';
 
 export interface ICoreRecordApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -35,12 +38,12 @@ export interface ICoreRecordApp {
 
 interface IDeps {
     'core.domain.record'?: IRecordDomain;
-    'core.domain.attribute'?: IAttributeDomain;
     'core.domain.tree'?: ITreeDomain;
     'core.domain.eventsManager'?: IEventsManagerDomain;
+    'core.domain.permission'?: IPermissionDomain;
+    'core.domain.library'?: ILibraryDomain;
     'core.utils'?: IUtils;
     'core.app.graphql'?: IGraphqlApp;
-    'core.app.core.attribute'?: ICoreAttributeApp;
     'core.app.core.indexationManager'?: IIndexationManagerApp;
     'core.app.helpers.convertVersionFromGqlFormat'?: ConvertVersionFromGqlFormatFunc;
     'core.app.core.subscriptionsHelper'?: ICoreSubscriptionsHelpersApp;
@@ -48,38 +51,18 @@ interface IDeps {
 
 export default function ({
     'core.domain.record': recordDomain = null,
-    'core.domain.attribute': attributeDomain = null,
     'core.domain.tree': treeDomain = null,
     'core.domain.eventsManager': eventsManagerDomain = null,
+    'core.domain.permission': permissionDomain = null,
+    'core.domain.library': libraryDomain = null,
     'core.utils': utils = null,
-    'core.app.core.attribute': attributeApp = null,
+    'core.app.graphql': graphqlApp = null,
     'core.app.core.indexationManager': indexationManagerApp = null,
     'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat = null,
     'core.app.core.subscriptionsHelper': subscriptionsHelper = null
 }: IDeps = {}): ICoreRecordApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
-            const systemAttributes = ['created_at', 'created_by', 'modified_at', 'modified_by', 'active'];
-            const recordInterfaceDef = `
-                id: ID!,
-                library: Library!,
-                whoAmI: RecordIdentity!
-                property(attribute: ID!): [GenericValue!]
-                ${await Promise.all(
-                    systemAttributes.map(async a => {
-                        const attrProps = await attributeDomain.getAttributeProperties({
-                            id: a,
-                            ctx: {
-                                userId: '0',
-                                queryId: 'recordAppGenerateBaseSchema'
-                            }
-                        });
-                        return `${a}: ${await attributeApp.getGraphQLFormat(attrProps)}`;
-                    })
-                )},
-                permissions: RecordPermissions!
-            `;
-
             const baseSchema = {
                 typeDefs: `
                     scalar Preview
@@ -90,13 +73,12 @@ export default function ({
                             .join(' ')}
                     }
 
-                    interface Record {
-                        ${recordInterfaceDef}
-                    }
-
-                    interface FileRecord {
-                        ${recordInterfaceDef}
-                        file_type: FileType!
+                    type Record {
+                        id: ID!,
+                        library: Library!,
+                        whoAmI: RecordIdentity!,
+                        property(attribute: ID!): [GenericValue!],
+                        permissions: RecordPermissions!
                     }
 
                     type RecordIdentity {
@@ -146,10 +128,10 @@ export default function ({
                     }
 
                     type RecordsList {
-                        totalCount: Int!,
+                        totalCount: Int,
+                        cursor: RecordsListCursor,
                         list: [Record!]!
                     }
-
 
                     enum RecordFilterOperator {
                         AND
@@ -222,6 +204,18 @@ export default function ({
                         valuesErrors: [CreateRecordValueSaveError!]
                     }
 
+                    extend type Query {
+                        records(
+                            library: ID!,
+                            filters: [RecordFilterInput],
+                            sort: RecordSortInput
+                            version: [ValueVersionInput],
+                            pagination: RecordsPagination,
+                            retrieveInactive: Boolean,
+                            searchQuery: String
+                        ): RecordsList!
+                    }
+
                     extend type Mutation {
                         createRecord(library: ID!, data: CreateRecordDataInput): CreateRecordResult!
                         deleteRecord(library: ID, id: ID): Record!
@@ -235,14 +229,55 @@ export default function ({
                     }
                 `,
                 resolvers: {
-                    Record: {
-                        __resolveType(obj) {
-                            return utils.libNameToTypeName(obj.library);
-                        }
-                    },
-                    FileRecord: {
-                        __resolveType(obj) {
-                            return utils.libNameToTypeName(obj.library);
+                    Query: {
+                        async records(
+                            _,
+                            {
+                                library,
+                                filters,
+                                sort,
+                                version,
+                                pagination,
+                                retrieveInactive = false,
+                                searchQuery
+                            }: IRecordsQueryVariables,
+                            ctx: IQueryInfos,
+                            info: GraphQLResolveInfo
+                        ): Promise<IListWithCursor<IRecord>> {
+                            const fields = graphqlApp.getQueryFields(info).map(f => f.name);
+                            if (
+                                pagination &&
+                                typeof pagination.offset !== 'undefined' &&
+                                typeof pagination.cursor !== 'undefined'
+                            ) {
+                                throw new ValidationError({pagination: Errors.PAGINATION_OFFSET_AND_CURSOR});
+                            }
+
+                            const formattedVersion =
+                                Array.isArray(version) && version.length
+                                    ? version.reduce((allVers, vers) => {
+                                          allVers[vers.treeId] = vers.treeNodeId;
+                                          return allVers;
+                                      }, {})
+                                    : null;
+
+                            ctx.version = formattedVersion;
+
+                            return recordDomain.find({
+                                params: {
+                                    library,
+                                    filters,
+                                    sort,
+                                    pagination: pagination?.cursor
+                                        ? (pagination as ICursorPaginationParams)
+                                        : (pagination as IPaginationParams),
+                                    options: {version: formattedVersion},
+                                    withCount: fields.includes('totalCount'),
+                                    retrieveInactive,
+                                    fulltextSearch: searchQuery
+                                },
+                                ctx
+                            });
                         }
                     },
                     Mutation: {
@@ -285,7 +320,6 @@ export default function ({
                             return recordDomain.purgeInactiveRecords({libraryId, ctx});
                         }
                     },
-
                     Subscription: {
                         recordUpdate: {
                             subscribe: withFilter(
@@ -312,6 +346,50 @@ export default function ({
                                     return mustReturn;
                                 }
                             )
+                        }
+                    },
+                    Record: {
+                        library: async (record: IRecord, _, ctx: IQueryInfos) =>
+                            record.library ? libraryDomain.getLibraryProperties(record.library, ctx) : null,
+                        whoAmI: async (rec: IRecord, _, ctx: IQueryInfos) => {
+                            return recordDomain.getRecordIdentity(rec, ctx);
+                        },
+                        property: async (parent, {attribute}, ctx) => {
+                            return recordDomain.getRecordFieldValue({
+                                library: parent.library,
+                                record: parent,
+                                attributeId: attribute,
+                                options: {
+                                    version: ctx.version,
+                                    forceArray: true
+                                },
+                                ctx
+                            });
+                        },
+                        permissions: (
+                            record: IRecord,
+                            _,
+                            ctx: IQueryInfos,
+                            infos: GraphQLResolveInfo
+                        ): Promise<IKeyValue<boolean>> => {
+                            const requestedActions = graphqlApp.getQueryFields(infos).map(field => field.name);
+
+                            return requestedActions.reduce(async (allPermsProm, action) => {
+                                const allPerms = await allPermsProm;
+
+                                const isAllowed = await permissionDomain.isAllowed({
+                                    type: PermissionTypes.RECORD,
+                                    applyTo: record.library,
+                                    action: action as RecordPermissionsActions,
+                                    userId: ctx.userId,
+                                    target: {
+                                        recordId: record.id
+                                    },
+                                    ctx
+                                });
+
+                                return {...allPerms, [action]: isAllowed};
+                            }, Promise.resolve({}));
                         }
                     },
                     RecordFilter: {

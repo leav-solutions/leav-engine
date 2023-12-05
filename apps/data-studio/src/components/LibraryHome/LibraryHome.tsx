@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useLang, ErrorDisplay, ErrorDisplayTypes, Loading} from '@leav/ui';
+import {ErrorDisplay, ErrorDisplayTypes, Loading, useLang} from '@leav/ui';
 import LibraryItemsList from 'components/LibraryItemsList';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
@@ -47,20 +47,13 @@ function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
         const currentLibLabel = localizedTranslation(currentLibrary.label, lang);
 
         if (library !== activeLibrary?.id) {
-            const {query, type, filter, searchableFields} = currentLibrary.gqlNames;
             const {attributes} = currentLibrary;
 
             updateActiveLibrary({
                 id: library,
                 name: currentLibLabel,
-                filter,
                 behavior: currentLibrary.behavior,
                 attributes,
-                gql: {
-                    searchableFields,
-                    query,
-                    type
-                },
                 trees: currentLibrary.linkedTrees,
                 permissions: currentLibrary.permissions
             });

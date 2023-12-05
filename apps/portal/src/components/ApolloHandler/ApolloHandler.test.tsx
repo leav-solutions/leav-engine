@@ -2,17 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql, useQuery} from '@apollo/client';
-import React from 'react';
+import {enableFetchMocks} from 'jest-fetch-mock';
 import {act} from 'react-dom/test-utils';
 import {render, screen, waitFor} from '_tests/testUtils';
 import ApolloHandler from './ApolloHandler';
-import {enableFetchMocks} from 'jest-fetch-mock';
 
 enableFetchMocks();
 
 console.error = jest.fn();
-
-jest.mock('hooks/useGraphqlPossibleTypes');
 
 const gqlUnchecked = gql;
 describe('ApolloHandler', () => {

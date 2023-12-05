@@ -35,7 +35,8 @@ const NoPreviewMessage = styled(Space)`
 
 function NoDisplayFile({fileData, noPreviewMessage = false}: INoDisplayFileProps): JSX.Element {
     const {t} = useTranslation();
-    const extension = fileData.file_name.split('.').pop().toUpperCase();
+    const fileName = fileData.file_name[0].value;
+    const extension = fileName.split('.').pop().toUpperCase();
     const bgColor = fileData.whoAmI.color || stringToColor(fileData.whoAmI.label);
     const fontColor = getInvertColor(bgColor);
     const isDirectory = fileData.library.behavior === 'directories';

@@ -5,7 +5,6 @@ import {gqlSaveLibrary, makeGraphQlCall} from '../e2eUtils';
 
 describe('Records deletion', () => {
     const testLibName = 'record_deletion_library_test';
-    const testLibNameType = 'recordDeletionLibraryTest';
 
     let recordId1;
     let recordId2;
@@ -28,13 +27,13 @@ describe('Records deletion', () => {
     test('Deactivate and purge records', async () => {
         // Find records
         const resFind = await makeGraphQlCall(`{
-            ${testLibNameType} {
+            records(library: "${testLibName}") {
                 list {
                     id
                 }
             }
         }`);
-        expect(resFind.data.data[testLibNameType].list.length).toBe(3);
+        expect(resFind.data.data.records.list.length).toBe(3);
 
         // Deactivate records by IDs
         await makeGraphQlCall(`mutation {
@@ -57,23 +56,23 @@ describe('Records deletion', () => {
 
         // Check they're not found in standard search
         const resFindAfterDeactivation = await makeGraphQlCall(`{
-            ${testLibNameType} {
+            records(library: "${testLibName}") {
                 list {
                     id
                 }
             }
         }`);
-        expect(resFindAfterDeactivation.data.data[testLibNameType].list.length).toBe(0);
+        expect(resFindAfterDeactivation.data.data.records.list.length).toBe(0);
 
         // Check they're found if explicit filter is specified
         const resFindAfterDeactivationWithFilter = await makeGraphQlCall(`{
-            ${testLibNameType}(filters: [{field: "active", condition: EQUAL, value: "false"}]) {
+            records(library: "${testLibName}", filters: [{field: "active", condition: EQUAL, value: "false"}]) {
                 list {
                     id
                 }
             }
         }`);
-        expect(resFindAfterDeactivationWithFilter.data.data[testLibNameType].list.length).toBe(3);
+        expect(resFindAfterDeactivationWithFilter.data.data.records.list.length).toBe(3);
 
         // Purge records
         await makeGraphQlCall(`mutation {
@@ -84,16 +83,19 @@ describe('Records deletion', () => {
 
         // Check they're not present anymore
         const resFindAfterPurge = await makeGraphQlCall(`{
-            ${testLibNameType}(filters: [
-                {field: "active", condition: EQUAL, value: "false"},
-                {operator: OR},
-                {field: "active", condition: EQUAL, value: "true"}
-            ]) {
+            records(
+                library: "${testLibName}",
+                filters: [
+                    {field: "active", condition: EQUAL, value: "false"},
+                    {operator: OR},
+                    {field: "active", condition: EQUAL, value: "true"}
+                ]
+            ) {
                 list {
                     id
                 }
             }
         }`);
-        expect(resFindAfterPurge.data.data[testLibNameType].list.length).toBe(0);
+        expect(resFindAfterPurge.data.data.records.list.length).toBe(0);
     });
 });

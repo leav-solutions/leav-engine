@@ -7,13 +7,13 @@
 // This file was automatically generated and should not be edited.
 
 import {
-    ViewInput,
-    ViewSizes,
-    ViewTypes,
+    LibraryBehavior,
     RecordFilterCondition,
     RecordFilterOperator,
     SortOrder,
-    LibraryBehavior
+    ViewInput,
+    ViewSizes,
+    ViewTypes
 } from './globalTypes';
 
 // ====================================================
@@ -25,14 +25,8 @@ export interface ADD_VIEW_saveView_display {
     type: ViewTypes;
 }
 
-export interface ADD_VIEW_saveView_created_by_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface ADD_VIEW_saveView_created_by_whoAmI_library {
     id: string;
-    gqlNames: ADD_VIEW_saveView_created_by_whoAmI_library_gqlNames;
 }
 
 export interface ADD_VIEW_saveView_created_by_whoAmI {
@@ -64,16 +58,10 @@ export interface ADD_VIEW_saveView_sort {
     order: SortOrder;
 }
 
-export interface ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI_library_gqlNames;
 }
 
 export interface ADD_VIEW_saveView_valuesVersions_treeNode_record_whoAmI {

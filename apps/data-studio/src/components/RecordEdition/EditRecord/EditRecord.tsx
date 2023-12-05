@@ -50,7 +50,7 @@ function EditRecord({
         if (recordUpdateData) {
             dispatch({
                 type: EditRecordReducerActionsTypes.ADD_EXTERNAL_UPDATE,
-                modifier: recordUpdateData?.recordUpdate?.record?.modified_by?.whoAmI,
+                modifier: recordUpdateData?.recordUpdate?.record?.modified_by?.[0]?.value?.whoAmI,
                 updatedValues: recordUpdateData?.recordUpdate?.updatedValues
             });
         }

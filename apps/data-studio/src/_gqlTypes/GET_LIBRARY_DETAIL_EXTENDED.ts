@@ -215,7 +215,6 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list {
     label: any | null;
     linkedTrees: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_linkedTrees[] | null;
     attributes: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes[] | null;
-    gqlNames: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_gqlNames;
     permissions: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_permissions | null;
     defaultView: GET_LIBRARY_DETAIL_EXTENDED_libraries_list_defaultView | null;
 }

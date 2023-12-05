@@ -44,10 +44,8 @@ describe('searchFilters', () => {
     let treeRecordId3;
 
     const libraryId = 'search_filters_library_id';
-    const libraryGqlQuery = 'searchFiltersLibraryId';
 
     const libraryForOperatorsId = 'search_filters_library_for_operators_id';
-    const libraryForOperatorsGqlQuery = 'searchFiltersLibraryForOperatorsId';
 
     const linkedLibraryId = 'search_filters_linked_library_id';
 
@@ -56,7 +54,6 @@ describe('searchFilters', () => {
 
     // Used for date filters
     const libraryDateId = 'search_filters_date_library_id';
-    const libraryDateGqlQuery = 'searchFiltersDateLibraryId';
 
     const textAttributeId = 'search_filter_text_attribute_id';
     const simpleAttributeId = 'search_filter_simple_attribute_id';
@@ -241,7 +238,8 @@ describe('searchFilters', () => {
 
             test('Equal', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${textAttributeId}",
                             condition: ${AttributeCondition.EQUAL},
@@ -253,13 +251,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId1);
             });
 
             test('Not Equal', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${textAttributeId}",
                             condition: ${AttributeCondition.NOT_EQUAL},
@@ -271,14 +270,15 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
+                expect(res.data.data.records.list.length).toBe(2);
+                expect(res.data.data.records.list[0].id).toBe(recordId3);
+                expect(res.data.data.records.list[1].id).toBe(recordId2);
             });
 
             test('Contains', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${textAttributeId}",
                             condition: ${AttributeCondition.CONTAINS},
@@ -290,14 +290,15 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(2);
+                expect(res.data.data.records.list[0].id).toBe(recordId2);
+                expect(res.data.data.records.list[1].id).toBe(recordId1);
             });
 
             test('Do not contains', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${textAttributeId}",
                             condition: ${AttributeCondition.NOT_CONTAINS},
@@ -309,14 +310,15 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(2);
+                expect(res.data.data.records.list[0].id).toBe(recordId3);
+                expect(res.data.data.records.list[1].id).toBe(recordId1);
             });
 
             test('Start with', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${textAttributeId}",
                             condition: ${AttributeCondition.BEGIN_WITH},
@@ -328,13 +330,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId2);
             });
 
             test('End with', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${textAttributeId}",
                             condition: ${AttributeCondition.END_WITH},
@@ -346,21 +349,23 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(2);
+                expect(res.data.data.records.list[0].id).toBe(recordId2);
+                expect(res.data.data.records.list[1].id).toBe(recordId1);
             });
 
             test('Is empty', async () => {
                 const res = await makeGraphQlCall(`{
-                    onSimple: ${libraryGqlQuery}(
+                    onSimple: records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${textAttributeId}",
                             condition: ${AttributeCondition.IS_EMPTY}
                         }]) {
                             list {id}
                         },
-                    onAdvanced: ${libraryGqlQuery}(
+                    onAdvanced: records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${textAdvancedAttributeId}",
                             condition: ${AttributeCondition.IS_EMPTY}
@@ -381,14 +386,16 @@ describe('searchFilters', () => {
 
             test('Is not empty', async () => {
                 const res = await makeGraphQlCall(`{
-                    onSimple: ${libraryGqlQuery}(
+                    onSimple: records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${textAttributeId}",
                             condition: ${AttributeCondition.IS_NOT_EMPTY}
                         }]) {
                             list {id}
                         },
-                    onAdvanced: ${libraryGqlQuery}(
+                    onAdvanced: records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${textAdvancedAttributeId}",
                             condition: ${AttributeCondition.IS_NOT_EMPTY}
@@ -419,7 +426,8 @@ describe('searchFilters', () => {
 
             test('Greater than', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${numberAttributeId}",
                             condition: ${AttributeCondition.GREATER_THAN},
@@ -431,14 +439,15 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
+                expect(res.data.data.records.list.length).toBe(2);
+                expect(res.data.data.records.list[0].id).toBe(recordId3);
+                expect(res.data.data.records.list[1].id).toBe(recordId2);
             });
 
             test('Lower than', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${numberAttributeId}",
                             condition: ${AttributeCondition.LESS_THAN},
@@ -450,8 +459,8 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId1);
             });
         });
 
@@ -493,7 +502,8 @@ describe('searchFilters', () => {
 
             test('Before', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryDateGqlQuery}(
+                    records(
+                        library: "${libraryDateId}",
                         filters: [{
                             field: "${dateAttributeId}",
                             condition: ${AttributeCondition.LESS_THAN},
@@ -505,14 +515,15 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryDateGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryDateGqlQuery].list[0].id).toBe(recordDateId2);
-                expect(res.data.data[libraryDateGqlQuery].list[1].id).toBe(recordDateId1);
+                expect(res.data.data.records.list.length).toBe(2);
+                expect(res.data.data.records.list[0].id).toBe(recordDateId2);
+                expect(res.data.data.records.list[1].id).toBe(recordDateId1);
             });
 
             test('After', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryDateGqlQuery}(
+                    records(
+                        library: "${libraryDateId}",
                         filters: [{
                             field: "${dateAttributeId}",
                             condition: ${AttributeCondition.GREATER_THAN},
@@ -524,13 +535,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryDateGqlQuery].list.length).toBe(6);
-                expect(res.data.data[libraryDateGqlQuery].list[0].id).toBe(recordDateIdLastMonth);
+                expect(res.data.data.records.list.length).toBe(6);
+                expect(res.data.data.records.list[0].id).toBe(recordDateIdLastMonth);
             });
 
             test('Equal (rounded at day)', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryDateGqlQuery}(
+                    records(
+                        library: "${libraryDateId}",
                         filters: [{
                             field: "${dateAttributeId}",
                             condition: ${AttributeCondition.EQUAL},
@@ -542,14 +554,15 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryDateGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryDateGqlQuery].list[0].id).toBe(recordDateId2);
-                expect(res.data.data[libraryDateGqlQuery].list[1].id).toBe(recordDateId1);
+                expect(res.data.data.records.list.length).toBe(2);
+                expect(res.data.data.records.list[0].id).toBe(recordDateId2);
+                expect(res.data.data.records.list[1].id).toBe(recordDateId1);
             });
 
             test('Not equal (rounded at day)', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryDateGqlQuery}(
+                    records(
+                        library: "${libraryDateId}",
                         filters: [{
                             field: "${dateAttributeId}",
                             condition: ${AttributeCondition.NOT_EQUAL},
@@ -561,12 +574,13 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryDateGqlQuery].list.length).toBe(5);
+                expect(res.data.data.records.list.length).toBe(5);
             });
 
             test('Between', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryDateGqlQuery}(
+                    records(
+                        library: "${libraryDateId}",
                         filters: [{
                             field: "${dateAttributeId}",
                             condition: ${AttributeCondition.BETWEEN},
@@ -578,14 +592,15 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryDateGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryDateGqlQuery].list[0].id).toBe(recordDateId2);
-                expect(res.data.data[libraryDateGqlQuery].list[1].id).toBe(recordDateId1);
+                expect(res.data.data.records.list.length).toBe(2);
+                expect(res.data.data.records.list[0].id).toBe(recordDateId2);
+                expect(res.data.data.records.list[1].id).toBe(recordDateId1);
             });
 
             test('Today', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryDateGqlQuery}(
+                    records(
+                        library: "${libraryDateId}",
                         filters: [{
                             field: "${dateAttributeId}",
                             condition: ${AttributeCondition.TODAY}
@@ -596,13 +611,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryDateGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryDateGqlQuery].list[0].id).toBe(recordDateId3);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordDateId3);
             });
 
             test('Yesterday', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryDateGqlQuery}(
+                    records(
+                        library: "${libraryDateId}",
                         filters: [{
                             field: "${dateAttributeId}",
                             condition: ${AttributeCondition.YESTERDAY}
@@ -613,13 +629,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryDateGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryDateGqlQuery].list[0].id).toBe(recordDateIdYesterday);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordDateIdYesterday);
             });
 
             test('Tomorrow', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryDateGqlQuery}(
+                    records(
+                        library: "${libraryDateId}",
                         filters: [{
                             field: "${dateAttributeId}",
                             condition: ${AttributeCondition.TOMORROW}
@@ -630,13 +647,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryDateGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryDateGqlQuery].list[0].id).toBe(recordDateIdTomorrow);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordDateIdTomorrow);
             });
 
             test('Next month', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryDateGqlQuery}(
+                    records(
+                        library: "${libraryDateId}",
                         filters: [{
                             field: "${dateAttributeId}",
                             condition: ${AttributeCondition.NEXT_MONTH}
@@ -647,12 +665,13 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryDateGqlQuery].list.length).toBe(2);
+                expect(res.data.data.records.list.length).toBe(2);
             });
 
             test('Last month', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryDateGqlQuery}(
+                    records(
+                        library: "${libraryDateId}",
                         filters: [{
                             field: "${dateAttributeId}",
                             condition: ${AttributeCondition.LAST_MONTH}
@@ -663,7 +682,7 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryDateGqlQuery].list.length).toBe(3);
+                expect(res.data.data.records.list.length).toBe(3);
             });
         });
 
@@ -676,7 +695,8 @@ describe('searchFilters', () => {
 
             test('Is true/false', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${booleanAttributeId}",
                             condition: ${AttributeCondition.EQUAL},
@@ -688,9 +708,9 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(2);
+                expect(res.data.data.records.list[0].id).toBe(recordId3);
+                expect(res.data.data.records.list[1].id).toBe(recordId1);
             });
         });
 
@@ -706,7 +726,8 @@ describe('searchFilters', () => {
 
             test('Contains', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${embeddedAttributeId}.field1.field11",
                             condition: ${AttributeCondition.CONTAINS},
@@ -718,8 +739,8 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId1);
             });
         });
 
@@ -749,7 +770,8 @@ describe('searchFilters', () => {
 
             test('Contains', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${dateRangeAttributeId}",
                             condition: ${AttributeCondition.CONTAINS},
@@ -761,13 +783,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId1);
             });
 
             test('Start on (rounded  at day)', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${dateRangeAttributeId}",
                             condition: ${AttributeCondition.START_ON},
@@ -779,13 +802,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId1);
             });
 
             test('Start before', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${dateRangeAttributeId}",
                             condition: ${AttributeCondition.START_BEFORE},
@@ -797,13 +821,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId1);
             });
 
             test('Start after', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${dateRangeAttributeId}",
                             condition: ${AttributeCondition.START_AFTER},
@@ -815,14 +840,15 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
+                expect(res.data.data.records.list.length).toBe(2);
+                expect(res.data.data.records.list[0].id).toBe(recordId3);
+                expect(res.data.data.records.list[1].id).toBe(recordId2);
             });
 
             test('End on (rounded at day)', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${dateRangeAttributeId}",
                             condition: ${AttributeCondition.END_ON},
@@ -834,13 +860,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId1);
             });
 
             test('End before', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${dateRangeAttributeId}",
                             condition: ${AttributeCondition.END_BEFORE},
@@ -852,13 +879,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId1);
             });
 
             test('End after', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${dateRangeAttributeId}",
                             condition: ${AttributeCondition.END_AFTER},
@@ -870,8 +898,8 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId3);
             });
         });
 
@@ -883,7 +911,8 @@ describe('searchFilters', () => {
 
             test('Equal', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${simpleAttributeId}",
                             condition: ${AttributeCondition.VALUES_COUNT_EQUAL},
@@ -895,14 +924,15 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(2);
+                expect(res.data.data.records.list[0].id).toBe(recordId2);
+                expect(res.data.data.records.list[1].id).toBe(recordId1);
             });
 
             test('Greater than', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${simpleAttributeId}",
                             condition: ${AttributeCondition.VALUES_COUNT_GREATER_THAN},
@@ -914,12 +944,13 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(0);
+                expect(res.data.data.records.list.length).toBe(0);
             });
 
             test('Lower than', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${simpleAttributeId}",
                             condition: ${AttributeCondition.VALUES_COUNT_LOWER_THAN},
@@ -931,10 +962,10 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(3);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
-                expect(res.data.data[libraryGqlQuery].list[2].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(3);
+                expect(res.data.data.records.list[0].id).toBe(recordId3);
+                expect(res.data.data.records.list[1].id).toBe(recordId2);
+                expect(res.data.data.records.list[2].id).toBe(recordId1);
             });
         });
 
@@ -952,7 +983,8 @@ describe('searchFilters', () => {
 
             test('Equal', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${textAdvancedMultivalAttributeId}",
                             condition: ${AttributeCondition.VALUES_COUNT_EQUAL},
@@ -964,13 +996,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId2);
             });
 
             test('Greater than', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${textAdvancedMultivalAttributeId}",
                             condition: ${AttributeCondition.VALUES_COUNT_GREATER_THAN},
@@ -982,13 +1015,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId3);
             });
 
             test('Lower than', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${textAdvancedMultivalAttributeId}",
                             condition: ${AttributeCondition.VALUES_COUNT_LOWER_THAN},
@@ -1000,8 +1034,8 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId1);
             });
         });
 
@@ -1013,7 +1047,8 @@ describe('searchFilters', () => {
 
             test('Contains', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${simpleLinkAttributeId}",
                             condition: ${AttributeCondition.CONTAINS},
@@ -1025,13 +1060,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId1);
             });
 
             test('Do not contains', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${simpleLinkAttributeId}",
                             condition: ${AttributeCondition.NOT_CONTAINS},
@@ -1043,13 +1079,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId2);
             });
 
             test('Start with', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${simpleLinkAttributeId}",
                             condition: ${AttributeCondition.BEGIN_WITH},
@@ -1061,13 +1098,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId1);
             });
 
             test('End with', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${simpleLinkAttributeId}",
                             condition: ${AttributeCondition.END_WITH},
@@ -1079,13 +1117,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId1);
             });
 
             test('Is empty', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${simpleLinkAttributeId}",
                             condition: ${AttributeCondition.IS_EMPTY}
@@ -1096,13 +1135,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId3);
             });
 
             test('Is not empty', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${simpleLinkAttributeId}",
                             condition: ${AttributeCondition.IS_NOT_EMPTY}
@@ -1113,15 +1153,16 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(2);
+                expect(res.data.data.records.list[0].id).toBe(recordId2);
+                expect(res.data.data.records.list[1].id).toBe(recordId1);
             });
 
             describe('Values count', () => {
                 test('Equal', async () => {
                     const res = await makeGraphQlCall(`{
-                        ${libraryGqlQuery}(
+                        records(
+                            library: "${libraryId}",
                             filters: [{
                                 field: "${simpleLinkAttributeId}",
                                 condition: ${AttributeCondition.VALUES_COUNT_EQUAL},
@@ -1133,14 +1174,15 @@ describe('searchFilters', () => {
 
                     expect(res.data.errors).toBeUndefined();
                     expect(res.status).toBe(200);
-                    expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                    expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
-                    expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId1);
+                    expect(res.data.data.records.list.length).toBe(2);
+                    expect(res.data.data.records.list[0].id).toBe(recordId2);
+                    expect(res.data.data.records.list[1].id).toBe(recordId1);
                 });
 
                 test('Greater than', async () => {
                     const res = await makeGraphQlCall(`{
-                        ${libraryGqlQuery}(
+                        records(
+                            library: "${libraryId}",
                             filters: [{
                                 field: "${simpleLinkAttributeId}",
                                 condition: ${AttributeCondition.VALUES_COUNT_GREATER_THAN},
@@ -1152,12 +1194,13 @@ describe('searchFilters', () => {
 
                     expect(res.data.errors).toBeUndefined();
                     expect(res.status).toBe(200);
-                    expect(res.data.data[libraryGqlQuery].list.length).toBe(0);
+                    expect(res.data.data.records.list.length).toBe(0);
                 });
 
                 test('Lower than', async () => {
                     const res = await makeGraphQlCall(`{
-                        ${libraryGqlQuery}(
+                        records(
+                            library: "${libraryId}",
                             filters: [{
                                 field: "${simpleLinkAttributeId}",
                                 condition: ${AttributeCondition.VALUES_COUNT_LOWER_THAN},
@@ -1169,10 +1212,10 @@ describe('searchFilters', () => {
 
                     expect(res.data.errors).toBeUndefined();
                     expect(res.status).toBe(200);
-                    expect(res.data.data[libraryGqlQuery].list.length).toBe(3);
-                    expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
-                    expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId2);
-                    expect(res.data.data[libraryGqlQuery].list[2].id).toBe(recordId1);
+                    expect(res.data.data.records.list.length).toBe(3);
+                    expect(res.data.data.records.list[0].id).toBe(recordId3);
+                    expect(res.data.data.records.list[1].id).toBe(recordId2);
+                    expect(res.data.data.records.list[2].id).toBe(recordId1);
                 });
             });
         });
@@ -1185,7 +1228,8 @@ describe('searchFilters', () => {
 
             test('Contains', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${advancedLinkAttributeId}",
                             condition: ${AttributeCondition.CONTAINS},
@@ -1197,13 +1241,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId1);
             });
 
             test('Do not contains', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${advancedLinkAttributeId}",
                             condition: ${AttributeCondition.NOT_CONTAINS},
@@ -1215,13 +1260,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId2);
             });
 
             test('Start with', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${advancedLinkAttributeId}",
                             condition: ${AttributeCondition.BEGIN_WITH},
@@ -1233,13 +1279,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId1);
             });
 
             test('End with', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${advancedLinkAttributeId}",
                             condition: ${AttributeCondition.END_WITH},
@@ -1251,13 +1298,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId1);
             });
 
             test('Is empty', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${advancedLinkAttributeId}",
                             condition: ${AttributeCondition.IS_EMPTY}
@@ -1268,13 +1316,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId3);
             });
 
             test('Is not empty', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${advancedLinkAttributeId}",
                             condition: ${AttributeCondition.IS_NOT_EMPTY}
@@ -1285,9 +1334,9 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(2);
+                expect(res.data.data.records.list[0].id).toBe(recordId2);
+                expect(res.data.data.records.list[1].id).toBe(recordId1);
             });
 
             describe('Values count', () => {
@@ -1304,7 +1353,8 @@ describe('searchFilters', () => {
 
                 test('Equal', async () => {
                     const res = await makeGraphQlCall(`{
-                        ${libraryGqlQuery}(
+                        records(
+                            library: "${libraryId}",
                             filters: [{
                                 field: "${advancedLinkMultivalAttributeId}",
                                 condition: ${AttributeCondition.VALUES_COUNT_EQUAL},
@@ -1316,13 +1366,14 @@ describe('searchFilters', () => {
 
                     expect(res.data.errors).toBeUndefined();
                     expect(res.status).toBe(200);
-                    expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                    expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
+                    expect(res.data.data.records.list.length).toBe(1);
+                    expect(res.data.data.records.list[0].id).toBe(recordId2);
                 });
 
                 test('Greater than', async () => {
                     const res = await makeGraphQlCall(`{
-                        ${libraryGqlQuery}(
+                        records(
+                            library: "${libraryId}",
                             filters: [{
                                 field: "${advancedLinkMultivalAttributeId}",
                                 condition: ${AttributeCondition.VALUES_COUNT_GREATER_THAN},
@@ -1334,13 +1385,14 @@ describe('searchFilters', () => {
 
                     expect(res.data.errors).toBeUndefined();
                     expect(res.status).toBe(200);
-                    expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                    expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
+                    expect(res.data.data.records.list.length).toBe(1);
+                    expect(res.data.data.records.list[0].id).toBe(recordId3);
                 });
 
                 test('Lower than', async () => {
                     const res = await makeGraphQlCall(`{
-                        ${libraryGqlQuery}(
+                        records(
+                            library: "${libraryId}",
                             filters: [{
                                 field: "${advancedLinkMultivalAttributeId}",
                                 condition: ${AttributeCondition.VALUES_COUNT_LOWER_THAN},
@@ -1352,8 +1404,8 @@ describe('searchFilters', () => {
 
                     expect(res.data.errors).toBeUndefined();
                     expect(res.status).toBe(200);
-                    expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                    expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                    expect(res.data.data.records.list.length).toBe(1);
+                    expect(res.data.data.records.list[0].id).toBe(recordId1);
                 });
             });
         });
@@ -1375,7 +1427,8 @@ describe('searchFilters', () => {
 
             test('Contains', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${treeAttributeId}",
                             condition: ${AttributeCondition.CONTAINS},
@@ -1387,13 +1440,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId1);
             });
 
             test('Do not contains', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${treeAttributeId}",
                             condition: ${AttributeCondition.NOT_CONTAINS},
@@ -1405,13 +1459,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId2);
             });
 
             test('Start with', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${treeAttributeId}",
                             condition: ${AttributeCondition.BEGIN_WITH},
@@ -1423,13 +1478,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId1);
             });
 
             test('End with', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${treeAttributeId}",
                             condition: ${AttributeCondition.END_WITH},
@@ -1441,13 +1497,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId1);
             });
 
             test('Is empty', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${treeAttributeId}",
                             condition: ${AttributeCondition.IS_EMPTY}
@@ -1458,13 +1515,14 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(recordId3);
             });
 
             test('Is not empty', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${libraryGqlQuery}(
+                    records(
+                        library: "${libraryId}",
                         filters: [{
                             field: "${advancedLinkAttributeId}",
                             condition: ${AttributeCondition.IS_NOT_EMPTY}
@@ -1475,9 +1533,9 @@ describe('searchFilters', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[libraryGqlQuery].list.length).toBe(2);
-                expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
-                expect(res.data.data[libraryGqlQuery].list[1].id).toBe(recordId1);
+                expect(res.data.data.records.list.length).toBe(2);
+                expect(res.data.data.records.list[0].id).toBe(recordId2);
+                expect(res.data.data.records.list[1].id).toBe(recordId1);
             });
 
             describe('Values count', () => {
@@ -1494,7 +1552,8 @@ describe('searchFilters', () => {
 
                 test('Equal', async () => {
                     const res = await makeGraphQlCall(`{
-                        ${libraryGqlQuery}(
+                        records(
+                            library: "${libraryId}",
                             filters: [{
                                 field: "${treeMultivalAttributeId}",
                                 condition: ${AttributeCondition.VALUES_COUNT_EQUAL},
@@ -1506,13 +1565,14 @@ describe('searchFilters', () => {
 
                     expect(res.data.errors).toBeUndefined();
                     expect(res.status).toBe(200);
-                    expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                    expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId2);
+                    expect(res.data.data.records.list.length).toBe(1);
+                    expect(res.data.data.records.list[0].id).toBe(recordId2);
                 });
 
                 test('Greater than', async () => {
                     const res = await makeGraphQlCall(`{
-                        ${libraryGqlQuery}(
+                        records(
+                            library: "${libraryId}",
                             filters: [{
                                 field: "${treeMultivalAttributeId}",
                                 condition: ${AttributeCondition.VALUES_COUNT_GREATER_THAN},
@@ -1524,13 +1584,14 @@ describe('searchFilters', () => {
 
                     expect(res.data.errors).toBeUndefined();
                     expect(res.status).toBe(200);
-                    expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                    expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId3);
+                    expect(res.data.data.records.list.length).toBe(1);
+                    expect(res.data.data.records.list[0].id).toBe(recordId3);
                 });
 
                 test('Lower than', async () => {
                     const res = await makeGraphQlCall(`{
-                        ${libraryGqlQuery}(
+                        records(
+                            library: "${libraryId}",
                             filters: [{
                                 field: "${treeMultivalAttributeId}",
                                 condition: ${AttributeCondition.VALUES_COUNT_LOWER_THAN},
@@ -1542,8 +1603,8 @@ describe('searchFilters', () => {
 
                     expect(res.data.errors).toBeUndefined();
                     expect(res.status).toBe(200);
-                    expect(res.data.data[libraryGqlQuery].list.length).toBe(1);
-                    expect(res.data.data[libraryGqlQuery].list[0].id).toBe(recordId1);
+                    expect(res.data.data.records.list.length).toBe(1);
+                    expect(res.data.data.records.list[0].id).toBe(recordId1);
                 });
             });
         });
@@ -1558,7 +1619,8 @@ describe('searchFilters', () => {
 
         test('Multiple filters with AND', async () => {
             const res = await makeGraphQlCall(`{
-                ${libraryForOperatorsGqlQuery}(
+                records(
+                    library: "${libraryForOperatorsId}",
                     filters: [
                         {
                             field: "${textAttributeId}",
@@ -1580,13 +1642,14 @@ describe('searchFilters', () => {
 
             expect(res.data.errors).toBeUndefined();
             expect(res.status).toBe(200);
-            expect(res.data.data[libraryForOperatorsGqlQuery].list.length).toBe(1);
-            expect(res.data.data[libraryForOperatorsGqlQuery].list[0].id).toBe(recordIdForOperators1);
+            expect(res.data.data.records.list.length).toBe(1);
+            expect(res.data.data.records.list[0].id).toBe(recordIdForOperators1);
         });
 
         test('Multiple filters with OR', async () => {
             const res = await makeGraphQlCall(`{
-                ${libraryForOperatorsGqlQuery}(
+                records(
+                    library: "${libraryForOperatorsId}",
                     filters: [
                         {
                             field: "${textAttributeId}",
@@ -1608,14 +1671,15 @@ describe('searchFilters', () => {
 
             expect(res.data.errors).toBeUndefined();
             expect(res.status).toBe(200);
-            expect(res.data.data[libraryForOperatorsGqlQuery].list.length).toBe(2);
-            expect(res.data.data[libraryForOperatorsGqlQuery].list[0].id).toBe(recordIdForOperators2);
-            expect(res.data.data[libraryForOperatorsGqlQuery].list[1].id).toBe(recordIdForOperators1);
+            expect(res.data.data.records.list.length).toBe(2);
+            expect(res.data.data.records.list[0].id).toBe(recordIdForOperators2);
+            expect(res.data.data.records.list[1].id).toBe(recordIdForOperators1);
         });
 
         test('Multiple filters with AND and OR', async () => {
             const res = await makeGraphQlCall(`{
-                ${libraryForOperatorsGqlQuery}(
+                records(
+                    library: "${libraryForOperatorsId}",
                     filters: [
                         {
                             field: "${textAttributeId}",
@@ -1651,9 +1715,9 @@ describe('searchFilters', () => {
 
             expect(res.data.errors).toBeUndefined();
             expect(res.status).toBe(200);
-            expect(res.data.data[libraryForOperatorsGqlQuery].list.length).toBe(2);
-            expect(res.data.data[libraryForOperatorsGqlQuery].list[0].id).toBe(recordIdForOperators2);
-            expect(res.data.data[libraryForOperatorsGqlQuery].list[1].id).toBe(recordIdForOperators1);
+            expect(res.data.data.records.list.length).toBe(2);
+            expect(res.data.data.records.list[0].id).toBe(recordIdForOperators2);
+            expect(res.data.data.records.list[1].id).toBe(recordIdForOperators1);
         });
     });
 });

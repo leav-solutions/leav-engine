@@ -41,12 +41,13 @@ export type GetRecordColumnsValuesRecord = {
 };
 
 export interface IGetRecordColumnsValues {
-    [libName: string]: {
+    records: {
         list: GetRecordColumnsValuesRecord[];
     };
 }
 
 export interface IGetRecordColumnsValuesVariables {
+    library: string;
     filters: IQueryFilter[];
 }
 
@@ -72,16 +73,17 @@ const _getColumnQueryPart = (column: string): string => `
     }
 `;
 
-export const getRecordColumnsValues = (libraryGqlType: string, columns: string[]) => {
+export const getRecordColumnsValues = (columns: string[]) => {
     return gqlUnchecked`
-    ${columns.length ? recordIdentityFragment : ''}
-
-    query RECORD_COLUMNS_VALUES_${libraryGqlType}($filters: [RecordFilterInput]) {
-        ${libraryGqlType}(filters: $filters) {
-            list {
-                _id: id
-                ${columns.length ? columns.map(column => _getColumnQueryPart(column)).join('\n') : ''}
+        ${recordIdentityFragment}
+        query RECORD_COLUMNS_VALUES($library: ID!, $filters: [RecordFilterInput]) {
+            records(library: $library, filters: $filters) {
+                list {
+                    _id: id
+                    ...RecordIdentity
+                    ${columns.length ? columns.map(column => _getColumnQueryPart(column)).join('\n') : ''}
+                }
             }
         }
-    }`;
+    `;
 };

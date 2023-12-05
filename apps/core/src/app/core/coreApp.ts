@@ -112,18 +112,6 @@ export default function (
                 }
             };
 
-            if (config.env === 'test') {
-                baseSchema.typeDefs += `
-                    extend type Mutation {
-                        refreshSchema: Boolean
-                    }
-                `;
-
-                baseSchema.resolvers.Mutation.refreshSchema = async () => {
-                    return graphqlApp.generateSchema();
-                };
-            }
-
             const fullSchema = {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
 
             return fullSchema;

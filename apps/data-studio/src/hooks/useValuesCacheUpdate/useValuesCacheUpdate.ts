@@ -20,7 +20,7 @@ export default function (): IValuesCacheUpdateHook {
     const {cache} = useApolloClient();
 
     return (record, savedValues) => {
-        const recordWithTypename = {...record, __typename: record.library.gqlNames.type};
+        const recordWithTypename = {id: record.id, whoAmI: {...record}, __typename: 'Record'};
         for (const savedValue of savedValues) {
             const propertyCacheFieldName = getPropertyCacheFieldName(savedValue.attribute.id);
 

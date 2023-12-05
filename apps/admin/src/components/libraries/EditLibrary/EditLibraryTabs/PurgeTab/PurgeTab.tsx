@@ -44,9 +44,10 @@ interface IPurgeTabProps {
 function PurgeTab({library, readonly}: IPurgeTabProps): JSX.Element {
     const {t} = useTranslation();
     const {loading, error, data, refetch} = useQuery<IGetRecordsListQuery, IGetRecordsListQueryVariables>(
-        getRecordsListQuery(library.gqlNames.query),
+        getRecordsListQuery,
         {
             variables: {
+                library: library.id,
                 pagination: {limit: 1, offset: 0},
                 filters: [{field: 'active', condition: RecordFilterCondition.EQUAL, value: 'false'}]
             }
@@ -81,7 +82,7 @@ function PurgeTab({library, readonly}: IPurgeTabProps): JSX.Element {
         return <ErrorDisplay message={error?.message || purgeError?.message} />;
     }
 
-    const recordsCount = data?.[library.gqlNames.query]?.totalCount ?? 0;
+    const recordsCount = data?.records?.totalCount ?? 0;
 
     const confirmContent = (
         <ConfirmContent>

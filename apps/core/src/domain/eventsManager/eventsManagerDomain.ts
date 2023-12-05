@@ -33,7 +33,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.utils.logger': logger = null,
@@ -94,7 +94,6 @@ export default function ({
                     time: Date.now(),
                     instanceId: config.instanceId,
                     userId: ctx.userId,
-                    instanceId: config.instanceId,
                     queryId: ctx.queryId,
                     emitter: utils.getProcessIdentifier(),
                     trigger: ctx.trigger,

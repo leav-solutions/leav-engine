@@ -90,7 +90,7 @@ export default function ({
                         label: SystemTranslation!,
                         modified_at: Int!,
                         created_at: Int!,
-                        created_by: User!,
+                        created_by: Record!,
                         startAt: Int!,
                         status: TaskStatus!,
                         priority: TaskPriority!,
@@ -100,7 +100,7 @@ export default function ({
                         startedAt: Int,
                         completedAt: Int,
                         link: TaskLink,
-                        canceledBy: User
+                        canceledBy: Record
                     }
 
                     type Progress {

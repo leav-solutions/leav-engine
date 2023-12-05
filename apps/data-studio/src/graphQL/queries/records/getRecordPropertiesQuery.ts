@@ -6,7 +6,6 @@ import {gqlUnchecked} from 'utils';
 import {AttributeFormat, AttributeType, RecordFilterCondition, ValueVersionInput} from '_gqlTypes/globalTypes';
 import {RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linked_library} from '_gqlTypes/RECORD_FORM';
 import {IRecordIdentityWhoAmI, ISystemTranslation, IValueVersion} from '_types/types';
-import {noopQuery} from '../noopQuery';
 import {valuesVersionDetailsFragment} from '../values/valuesVersionFragment';
 import recordIdentityFragment from './recordIdentityFragment';
 
@@ -75,6 +74,7 @@ export interface IGetRecordProperties {
 }
 
 export interface IGetRecordPropertiesVariables {
+    library: string;
     recordId: string;
     version?: ValueVersionInput[];
 }
@@ -137,17 +137,14 @@ const _getFieldQueryPart = (field: IRecordPropertiesField): string => `
     }
 `;
 
-export const getRecordPropertiesQuery = (libraryGqlType: string, fields: IRecordPropertiesField[]) => {
-    if (!libraryGqlType) {
-        return noopQuery;
-    }
-
+export const getRecordPropertiesQuery = (fields: IRecordPropertiesField[]) => {
     return gqlUnchecked`
         ${recordIdentityFragment}
         ${valuesVersionDetailsFragment}
 
-        query RECORD_PROPERTIES_${libraryGqlType}($recordId: String, $version: [ValueVersionInput!]) {
-            ${libraryGqlType}(
+        query RECORD_PROPERTIES($library: ID!, $recordId: String, $version: [ValueVersionInput!]) {
+            records (
+                library: $library,
                 filters: [{field: "id", condition: ${RecordFilterCondition.EQUAL}, value: $recordId}],
                 version: $version
             ) {

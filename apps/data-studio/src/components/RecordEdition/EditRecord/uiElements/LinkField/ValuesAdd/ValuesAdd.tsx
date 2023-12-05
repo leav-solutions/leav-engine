@@ -11,23 +11,14 @@ import {
 } from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
 import {ErrorDisplay, RecordCard, themeVars, useLang} from '@leav/ui';
-import {CREATE_DIRECTORY} from '_gqlTypes/CREATE_DIRECTORY';
-import {
-    RECORD_FORM_recordForm_elements_attribute_LinkAttribute,
-    RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values
-} from '_gqlTypes/RECORD_FORM';
-import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
-import {UPLOAD} from '_gqlTypes/UPLOAD';
-import {LibraryBehavior} from '_gqlTypes/globalTypes';
-import {ISharedStateSelectionSearch, PreviewSize} from '_types/types';
 import {Button, Divider, Input, InputRef, Space, Spin} from 'antd';
 import {PaginationConfig} from 'antd/lib/pagination';
 import CreateDirectory from 'components/CreateDirectory';
 import EditRecordModal from 'components/RecordEdition/EditRecordModal';
 import SearchModal from 'components/SearchModal';
-import UploadFiles from 'components/UploadFiles';
 import List from 'components/shared/List';
 import {IListProps} from 'components/shared/List/List';
+import UploadFiles from 'components/UploadFiles';
 import {getRecordsFromLibraryQuery} from 'graphQL/queries/records/getRecordsFromLibraryQuery';
 import {
     IGetRecordsFromLibraryQuery,
@@ -37,6 +28,15 @@ import {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {localizedTranslation} from 'utils';
+import {CREATE_DIRECTORY} from '_gqlTypes/CREATE_DIRECTORY';
+import {LibraryBehavior} from '_gqlTypes/globalTypes';
+import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
+import {
+    RECORD_FORM_recordForm_elements_attribute_LinkAttribute,
+    RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values
+} from '_gqlTypes/RECORD_FORM';
+import {UPLOAD} from '_gqlTypes/UPLOAD';
+import {ISharedStateSelectionSearch, PreviewSize} from '_types/types';
 
 type ValueFromList = RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values;
 
@@ -139,7 +139,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     const [runSearch, {loading, error, data: searchData}] = useLazyQuery<
         IGetRecordsFromLibraryQuery,
         IGetRecordsFromLibraryQueryVariables
-    >(getRecordsFromLibraryQuery(attribute.linked_library.gqlNames.query, [], true));
+    >(getRecordsFromLibraryQuery([], true));
 
     useEffect(() => {
         wrapperRef.current.scrollIntoView({block: 'nearest'});
@@ -225,6 +225,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
         if (canSearch && submittedSearch) {
             runSearch({
                 variables: {
+                    library: attribute.linked_library.id,
                     fullText: submittedSearch,
                     limit: pageSize,
                     offset: 0
@@ -240,6 +241,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
         setSearchCurrentPage(page);
         runSearch({
             variables: {
+                library: attribute.linked_library.id,
                 fullText: searchInputRef.current.input.value,
                 limit: pageSize,
                 offset: (page - 1) * pageSize
@@ -260,7 +262,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
 
     const searchResult =
         searchData && currentSearch
-            ? searchData[attribute.linked_library.gqlNames.query].list.map(record => ({
+            ? searchData.records.list.map(record => ({
                   id: record.whoAmI.id,
                   whoAmI: record.whoAmI
               }))
@@ -325,7 +327,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
                                     dataSource={searchResult}
                                     pagination={{
                                         ...paginationCommonProps,
-                                        total: searchData?.[attribute.linked_library.gqlNames.query].totalCount ?? 0,
+                                        total: searchData?.records.totalCount ?? 0,
                                         current: searchCurrentPage,
                                         onChange: _handleSearchPageChange
                                     }}

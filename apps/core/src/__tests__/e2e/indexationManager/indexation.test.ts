@@ -8,7 +8,6 @@ jest.setTimeout(20000);
 
 describe('Indexation', () => {
     const testLibName = 'indexation_library_test';
-    const libNameQuery = 'indexationLibraryTest';
     const attrId = 'indexation_attribute_test';
 
     let record1: string;
@@ -34,10 +33,14 @@ describe('Indexation', () => {
         }`);
 
         await makeGraphQlCall(`mutation {
-            saveLibrary(library: {id: "${testLibName}", attributes: ["${attrId}"], fullTextAttributes: ["created_by", "${attrId}"]}) { id }
+            saveLibrary(
+                library: {
+                    id: "${testLibName}",
+                    attributes: ["${attrId}"],
+                    fullTextAttributes: ["created_by", "${attrId}"]
+                }
+            ) { id }
         }`);
-
-        await makeGraphQlCall('mutation { refreshSchema }');
 
         const rec1 = await makeGraphQlCall(`mutation { createRecord(library: "${testLibName}") { record {id} }}`);
         const rec2 = await makeGraphQlCall(`mutation { createRecord(library: "${testLibName}") { record {id} }}`);
@@ -46,25 +49,29 @@ describe('Indexation', () => {
         record2 = rec2.data.data.createRecord.record.id;
 
         await makeGraphQlCall(`mutation {
-                saveValue(
-                       library: "${testLibName}",
-                       recordId: "${record1}",
-                       attribute: "${attrId}",
-                       value: {value: "one two three"}
-                   ) {
-                        attribute {
-                            id
-                        }
-                       id_value
-                   }
-           }`);
+            saveValue(
+                library: "${testLibName}",
+                recordId: "${record1}",
+                attribute: "${attrId}",
+                value: {value: "one two three"}
+            ) {
+                attribute {
+                    id
+                }
+                id_value
+            }
+        }`);
     });
 
     test('Search records', async () => {
         await setTimeout(5000);
 
         const res = await makeGraphQlCall(`{
-            ${libNameQuery}(searchQuery: "admin",sort: {field: "id", order: asc}) {
+            records(
+                library: "${testLibName}",
+                searchQuery: "admin",
+                sort: {field: "id", order: asc}
+            ) {
                 totalCount
                 list {id}
             }
@@ -72,14 +79,15 @@ describe('Indexation', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data[libNameQuery].list.length).toBe(2);
+
+        expect(res.data.data.records.list.length).toBe(2);
     });
 
     test('Search records with start of the word', async () => {
         await setTimeout(5000);
 
         const res = await makeGraphQlCall(`{
-            ${libNameQuery}(searchQuery: "adm",sort: {field: "id", order: asc}) {
+            records(library: "${testLibName}", searchQuery: "adm",sort: {field: "id", order: asc}) {
                 totalCount
                 list {id}
             }
@@ -87,69 +95,71 @@ describe('Indexation', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data[libNameQuery].list.length).toBe(2);
+        expect(res.data.data.records.list.length).toBe(2);
     });
 
     test('Search records with phrase (all words matches)', async () => {
         await setTimeout(5000);
 
         const res = await makeGraphQlCall(`{
-            ${libNameQuery}(searchQuery: "one two three") {
+            records(library: "${testLibName}", searchQuery: "one two three") {
                 totalCount
-                list {id ${attrId}}
+                list {id}
             }
         }`);
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data[libNameQuery].list.length).toBe(1);
+        expect(res.data.data.records.list.length).toBe(1);
     });
 
     test('Search records with phrase (1 word match only)', async () => {
         await setTimeout(5000);
 
         const res = await makeGraphQlCall(`{
-            ${libNameQuery}(searchQuery: "one rrr uuu") {
+            records(library: "${testLibName}", searchQuery: "one rrr uuu") {
                 totalCount
-                list {id ${attrId}}
+                list {id}
             }
         }`);
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data[libNameQuery].list.length).toBe(0);
+        expect(res.data.data.records.list.length).toBe(0);
     });
 
     test('Search records with phrase (no matches)', async () => {
         await setTimeout(5000);
 
         const res = await makeGraphQlCall(`{
-            ${libNameQuery}(searchQuery: "zzz www iii") {
+            records(library: "${testLibName}", searchQuery: "zzz www iii") {
                 totalCount
-                list {id ${attrId}}
+                list {id}
             }
         }`);
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data[libNameQuery].list.length).toBe(0);
+        expect(res.data.data.records.list.length).toBe(0);
     });
 
     test('Search records with from / size params', async () => {
         await setTimeout(5000);
 
         const res = await makeGraphQlCall(`{
-                ${libNameQuery}(
+                records(
+                    library: "${testLibName}",
                     searchQuery: "admin",
                     pagination: { limit: 1, offset: 0},
                     sort: {field: "id", order: asc}
                 ) {
-                        totalCount list {id}
+                        totalCount
+                        list {id}
                 }
             }`);
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data[libNameQuery].list.length).toBe(1);
+        expect(res.data.data.records.list.length).toBe(1);
     });
 });

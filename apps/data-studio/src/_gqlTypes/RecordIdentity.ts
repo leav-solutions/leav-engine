@@ -21,7 +21,6 @@ export interface RecordIdentity_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: RecordIdentity_whoAmI_library_gqlNames;
 }
 
 export interface RecordIdentity_whoAmI {

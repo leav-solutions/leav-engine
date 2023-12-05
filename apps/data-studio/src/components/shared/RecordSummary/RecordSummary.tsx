@@ -31,7 +31,7 @@ function RecordSummary({record}: IRecordSummaryProps): JSX.Element {
     const {lang} = useLang();
 
     const {loading, error, data} = useGetRecordValuesQuery(
-        record?.library?.gqlNames.query,
+        record?.library?.id,
         ['created_at', 'created_by', 'modified_at', 'modified_by'],
         [record?.id]
     );

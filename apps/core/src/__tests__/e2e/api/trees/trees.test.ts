@@ -317,7 +317,7 @@ describe('Trees', () => {
 
         // Get values of this attribute
         const resGetValues = await makeGraphQlCall(`{
-            valElement: ${testLibTypeName} {
+            valElement: records(library: "${testLibName}") {
                 list {
                     id
                     property(attribute: "${attrTreeName}") {
@@ -326,16 +326,14 @@ describe('Trees', () => {
                             value {
                                 id
                                 record {
-                                    ... on User {
-                                        id
-                                    }
+                                    id
                                 }
                             }
                         }
                     }
                 }
             },
-            valParents: ${testLibTypeName} {
+            valParents: records(library: "${testLibName}") {
                 list {
                     id
                     property(attribute: "${attrTreeName}") {
@@ -349,9 +347,7 @@ describe('Trees', () => {
                                 ancestors {
                                     id
                                     record {
-                                        ... on User {
-                                            id
-                                        }
+                                        id
                                     }
                                 }
                             }
@@ -359,7 +355,7 @@ describe('Trees', () => {
                     }
                 }
             },
-            valChildren: ${testLibTypeName} {
+            valChildren: records(library: "${testLibName}") {
                 list {
                     id
                     property(attribute: "${attrTreeName}") {
@@ -373,9 +369,7 @@ describe('Trees', () => {
                                 children {
                                     id
                                     record {
-                                        ... on User {
-                                            id
-                                        }
+                                        id
                                     }
                                 }
                             }
@@ -383,7 +377,7 @@ describe('Trees', () => {
                     }
                 }
             },
-            valLinkedRecords: ${testLibTypeName} {
+            valLinkedRecords: records(library: "${testLibName}") {
                 list {
                     id
                     property(attribute: "${attrTreeName}") {
@@ -404,8 +398,8 @@ describe('Trees', () => {
             }
         }`);
 
-        expect(resGetValues.status).toBe(200);
         expect(resGetValues.data.errors).toBeUndefined();
+        expect(resGetValues.status).toBe(200);
         const resData = resGetValues.data.data;
 
         expect(resData.valElement.list[0].property[0].id_value).toBeTruthy();

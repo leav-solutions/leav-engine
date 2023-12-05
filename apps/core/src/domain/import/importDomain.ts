@@ -7,7 +7,6 @@ import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {UpdateTaskProgress} from 'domain/helpers/updateTaskProgress';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
-import {IRecordFilterLight} from 'domain/record/_types';
 import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
@@ -38,7 +37,7 @@ import {
     IValue as IImportValue
 } from '../../_types/import';
 import {IQueryInfos} from '../../_types/queryInfos';
-import {AttributeCondition, Operator} from '../../_types/record';
+import {AttributeCondition, IRecordFilterLight, Operator} from '../../_types/record';
 import {ITaskFuncParams, TaskCallbackType, TaskPriority, TaskType} from '../../_types/tasksManager';
 import {ITreeElement} from '../../_types/tree';
 import {IValue} from '../../_types/value';

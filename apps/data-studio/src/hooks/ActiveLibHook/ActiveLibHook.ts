@@ -10,16 +10,10 @@ import {
     IGetActiveLibrary
 } from '../../graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 
-export const initialActiveLibrary = {
+export const initialActiveLibrary: IActiveLibrary = {
     id: '',
     name: '',
-    filter: '',
     behavior: LibraryBehavior.standard,
-    gql: {
-        searchableFields: '',
-        query: '',
-        type: ''
-    },
     attributes: [],
     trees: [],
     permissions: {

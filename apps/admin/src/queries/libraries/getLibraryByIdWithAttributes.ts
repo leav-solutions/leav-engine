@@ -9,10 +9,6 @@ export const getLibraryByIdWithAttributes = gql`
             list {
                 id
                 label(lang: $lang)
-                gqlNames {
-                    query
-                    filter
-                }
                 attributes {
                     id
                     type

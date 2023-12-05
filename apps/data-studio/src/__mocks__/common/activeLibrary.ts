@@ -8,14 +8,8 @@ import {mockLibraryPermissions} from './library';
 export const mockActiveLibrary: IActiveLibrary = {
     id: 'activeLibraryId',
     name: 'activeLibraryName',
-    filter: 'activeLibraryFilter',
     behavior: LibraryBehavior.standard,
     attributes: [],
-    gql: {
-        searchableFields: 'activeLibrarySearchableFields',
-        query: 'activeLibraryQuery',
-        type: 'activeLibraryType'
-    },
     trees: [],
     permissions: mockLibraryPermissions
 };

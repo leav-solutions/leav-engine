@@ -19,6 +19,7 @@
         "FORMAT_ERROR": "Format invalide: {{details}}",
         "INVALID_ACTION_TYPE": "Dernière action invalide: une action dont les types de sortie incluent {{expected}} est attendue, reçu {{received}}",
         "INVALID_ATTRIBUTE_FILTER_FORMAT": "Un filtre sur un attribut doit avoir une condition, un champ et une valeur",
+        "INVALID_ATTRIBUTE_FOR_LIBRARY": "L'attribut {{attribute}} n'est pas utilisé par la bibliothèque {{library}}",
         "INVALID_ATTRIBUTES": "Attributs non valides: {{attributes}}",
         "INVALID_DATE_RANGE": "La date de début doit être inférieur à la date de fin",
         "INVALID_EMAIL": "Email non valide",

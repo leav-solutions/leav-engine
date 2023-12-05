@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
 import {AttributeType} from '_gqlTypes/globalTypes';
 import {act, render, screen, waitFor} from '_tests/testUtils';
 import {mockActiveLibrary} from '__mocks__/common/activeLibrary';
@@ -14,6 +15,10 @@ import LibraryItemsList from './LibraryItemsList';
 
 jest.mock('../../hooks/ActiveLibHook/ActiveLibHook', () => ({
     useActiveLibrary: () => [mockActiveLibrary, jest.fn()]
+}));
+
+jest.mock('hooks/useRecordUpdateSubscription', () => ({
+    useRecordUpdateSubscription: jest.fn()
 }));
 
 jest.mock('react-router-dom', () => ({
@@ -71,11 +76,25 @@ describe('LibraryItemsList', () => {
         const mocks = [
             {
                 request: {
-                    query: getRecordsFromLibraryQuery(libQueryName, [], true),
+                    query: getRecordsFromLibraryQuery([], true),
                     variables: mockGetRecordsFromLibraryQueryVar
                 },
                 result: {
                     data: mockGetRecordsFromLibraryQuery(libQueryName, mockStateItem.field)
+                }
+            },
+            {
+                request: {
+                    query: getUserDataQuery,
+                    variables: {keys: ['selected_view_test']}
+                },
+                result: {
+                    data: {
+                        userData: {
+                            global: false,
+                            data: []
+                        }
+                    }
                 }
             }
         ];

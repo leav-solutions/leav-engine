@@ -38,11 +38,6 @@ describe('SelectTreeNode', () => {
                                                 id: 'categories',
                                                 label: {fr: 'Catégories'},
                                                 behavior: LibraryBehavior.standard,
-                                                gqlNames: {
-                                                    type: 'Categorie',
-                                                    query: 'categories',
-                                                    __typename: 'LibraryGraphqlNames'
-                                                },
                                                 __typename: 'Library'
                                             },
                                             preview: null,
@@ -86,11 +81,6 @@ describe('SelectTreeNode', () => {
                                                 id: 'categories',
                                                 label: {fr: 'Catégories'},
                                                 behavior: LibraryBehavior.standard,
-                                                gqlNames: {
-                                                    type: 'Categorie',
-                                                    query: 'categories',
-                                                    __typename: 'LibraryGraphqlNames'
-                                                },
                                                 __typename: 'Library'
                                             },
                                             preview: null

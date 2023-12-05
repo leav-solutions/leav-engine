@@ -182,82 +182,60 @@ describe('inheritanceCalculationAction', () => {
 
     test('Inherit values on simple attribute', async () => {
         const res = await makeGraphQlCall(`{
-            ${libraryGqlType}(filters: [{field: "id", condition: EQUAL, value: "${recordIdForGetValues}"}]) {
+            records(
+                library: "${libraryId}",
+                filters: [{field: "id", condition: EQUAL, value: "${recordIdForGetValues}"}]
+            ) {
                 list {
-                    ${simpleAttributeId}
+                    ${simpleAttributeId}: property(attribute: "${simpleAttributeId}") {
+                        ...on Value {
+                            value
+                        }
+                    }
                 }
             }
         }`);
 
-        expect(res.status).toBe(200);
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data[libraryGqlType].list[0][simpleAttributeId]).toBe('text value');
+        expect(res.status).toBe(200);
+        expect(res.data.data.records.list[0][simpleAttributeId][0].value).toBe('text value');
     });
 
     test('Inherit values on advanced attribute', async () => {
         const res = await makeGraphQlCall(`{
-            ${libraryGqlType}(filters: [{field: "id", condition: EQUAL, value: "${recordIdForGetValues}"}]) {
+            records(
+                library: "${libraryId}",
+                filters: [{field: "id", condition: EQUAL, value: "${recordIdForGetValues}"}]
+            ) {
                 list {
-                    ${advancedAttributeId}
+                    ${advancedAttributeId}: property(attribute: "${advancedAttributeId}") {
+                        ...on Value {
+                            value
+                        }
+                    }
                 }
             }
         }`);
 
-        expect(res.status).toBe(200);
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data[libraryGqlType].list[0][advancedAttributeId]).toBe('text value');
+        expect(res.status).toBe(200);
+        expect(res.data.data.records.list[0][advancedAttributeId][0].value).toBe('text value');
     });
 
     test('Inherit values on simple link attribute', async () => {
         const res = await makeGraphQlCall(`{
-            ${libraryGqlType}(filters: [{field: "id", condition: EQUAL, value: "${recordIdForGetValues}"}]) {
+            records(
+                library: "${libraryId}",
+                filters: [{field: "id", condition: EQUAL, value: "${recordIdForGetValues}"}]
+            ) {
                 list {
-                    ${simpleLinkAttributeId} {
-                        id
-                        library {
-                            id
-                        }
-                    }
-                }
-            }
-        }`);
-
-        expect(res.status).toBe(200);
-        expect(res.data.errors).toBeUndefined();
-        expect(res.data.data[libraryGqlType].list[0][simpleLinkAttributeId].id).toBe('1');
-        expect(res.data.data[libraryGqlType].list[0][simpleLinkAttributeId].library.id).toBe('users');
-    });
-
-    test('Inherit values on advanced link attribute', async () => {
-        const res = await makeGraphQlCall(`{
-            ${libraryGqlType}(filters: [{field: "id", condition: EQUAL, value: "${recordIdForGetValues}"}]) {
-                list {
-                    ${advancedLinkAttributeId} {
-                        id
-                        library {
-                            id
-                        }
-                    }
-                }
-            }
-        }`);
-
-        expect(res.status).toBe(200);
-        expect(res.data.errors).toBeUndefined();
-        expect(res.data.data[libraryGqlType].list[0][advancedLinkAttributeId].id).toBe('1');
-        expect(res.data.data[libraryGqlType].list[0][advancedLinkAttributeId].library.id).toBe('users');
-    });
-
-    test('Inherit values on tree attribute', async () => {
-        const res = await makeGraphQlCall(`{
-            ${libraryGqlType}(filters: [{field: "id", condition: EQUAL, value: "${recordIdForGetValues}"}]) {
-                list {
-                    ${treeAttributeId} {
-                        id
-                        record {
-                            id
-                            library {
+                    ${simpleLinkAttributeId}: property(attribute: "${simpleLinkAttributeId}") {
+                        ...on LinkValue {
+                            value {
                                 id
+                                library {
+                                    id
+                                }
                             }
                         }
                     }
@@ -265,18 +243,83 @@ describe('inheritanceCalculationAction', () => {
             }
         }`);
 
-        expect(res.status).toBe(200);
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data[libraryGqlType].list[0][treeAttributeId].id).toBe('2');
-        expect(res.data.data[libraryGqlType].list[0][treeAttributeId].record.id).toBe('2');
-        expect(res.data.data[libraryGqlType].list[0][treeAttributeId].record.library.id).toBe('users_groups');
+        expect(res.status).toBe(200);
+        expect(res.data.data.records.list[0][simpleLinkAttributeId][0].value.id).toBe('1');
+        expect(res.data.data.records.list[0][simpleLinkAttributeId][0].value.library.id).toBe('users');
+    });
+
+    test('Inherit values on advanced link attribute', async () => {
+        const res = await makeGraphQlCall(`{
+            records(
+                library: "${libraryId}",
+                filters: [{field: "id", condition: EQUAL, value: "${recordIdForGetValues}"}]
+            ) {
+                list {
+                    ${advancedLinkAttributeId}: property(attribute: "${advancedLinkAttributeId}") {
+                        ...on LinkValue {
+                            value {
+                                id
+                                library {
+                                    id
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }`);
+
+        expect(res.data.errors).toBeUndefined();
+        expect(res.status).toBe(200);
+        expect(res.data.data.records.list[0][advancedLinkAttributeId][0].value.id).toBe('1');
+        expect(res.data.data.records.list[0][advancedLinkAttributeId][0].value.library.id).toBe('users');
+    });
+
+    test('Inherit values on tree attribute', async () => {
+        const res = await makeGraphQlCall(`{
+            records(
+                library: "${libraryId}",
+                filters: [{field: "id", condition: EQUAL, value: "${recordIdForGetValues}"}]
+            ) {
+                list {
+                    ${treeAttributeId}: property(attribute: "${treeAttributeId}") {
+                        ...on TreeValue {
+                            value {
+                                id
+                                record {
+                                    id
+                                    library {
+                                        id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }`);
+
+        expect(res.data.errors).toBeUndefined();
+        expect(res.status).toBe(200);
+        expect(res.data.data.records.list[0][treeAttributeId][0].value.id).toBe('2');
+        expect(res.data.data.records.list[0][treeAttributeId][0].value.record.id).toBe('2');
+        expect(res.data.data.records.list[0][treeAttributeId][0].value.record.library.id).toBe('users_groups');
     });
 
     test('If no record to inherit from, return no value', async () => {
         const res = await makeGraphQlCall(`{
-            ${libraryGqlType}(filters: [{field: "id", condition: EQUAL, value: "${recordIdWithNoValues}"}]) {
+            records(
+                library: "${libraryId}",
+                filters: [{field: "id", condition: EQUAL, value: "${recordIdWithNoValues}"}]
+            ) {
                 list {
-                    ${simpleAttributeId}
+                    ${simpleAttributeId}: property(attribute: "${simpleAttributeId}") {
+                        ...on Value {
+                            value
+                        }
+                    }
+
                     library {
                         id
                     }
@@ -284,8 +327,8 @@ describe('inheritanceCalculationAction', () => {
             }
         }`);
 
-        expect(res.status).toBe(200);
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data[libraryGqlType].list[0][simpleAttributeId]).toBeNull();
+        expect(res.status).toBe(200);
+        expect(res.data.data.records.list[0][simpleAttributeId][0].value).toBeNull();
     });
 });

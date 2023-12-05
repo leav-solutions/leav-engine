@@ -9,7 +9,6 @@ export const getMe = gql`
 
     query ME {
         me {
-            login
             ...RecordIdentity
         }
     }
