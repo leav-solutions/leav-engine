@@ -103,8 +103,8 @@ export default function ({
                         id_value: ID,
                         modified_at: Int,
                         created_at: Int,
-                        modified_by: User,
-                        created_by: User,
+                        modified_by: Record,
+                        created_by: Record,
                         version: [ValueVersion],
                         attribute: Attribute,
                         metadata: [ValueMetadata]
@@ -116,8 +116,8 @@ export default function ({
                         raw_value: Any,
                         modified_at: Int,
                         created_at: Int,
-                        modified_by: User,
-                        created_by: User,
+                        modified_by: Record,
+                        created_by: Record,
                         version: [ValueVersion],
                         attribute: Attribute,
                         metadata: [ValueMetadata]
@@ -145,8 +145,8 @@ export default function ({
                         value: Record,
                         modified_at: Int,
                         created_at: Int,
-                        modified_by: User,
-                        created_by: User,
+                        modified_by: Record,
+                        created_by: Record,
                         version: [ValueVersion],
                         attribute: Attribute,
                         metadata: [ValueMetadata]
@@ -156,8 +156,8 @@ export default function ({
                         id_value: ID,
                         modified_at: Int,
                         created_at: Int
-                        modified_by: User,
-                        created_by: User,
+                        modified_by: Record,
+                        created_by: Record,
                         value: TreeNode,
                         version: [ValueVersion],
                         attribute: Attribute,

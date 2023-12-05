@@ -8,22 +8,7 @@ export const getMe = gql`
     ${recordIdentityFragment}
     query ME {
         me {
-            login
             ...RecordIdentity
-        }
-    }
-`;
-
-export const getMeWithPermissions = gql`
-    ${recordIdentityFragment}
-    query ME_AND_PERMISSIONS($type: PermissionTypes!, $actions: [PermissionsActions!]!) {
-        me {
-            login
-            ...RecordIdentity
-        }
-        permissions: isAllowed(type: $type, actions: $actions) {
-            name
-            allowed
         }
     }
 `;

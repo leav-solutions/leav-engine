@@ -5,17 +5,17 @@ import {AwilixContainer} from 'awilix';
 import {StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
 import {IImportDomain} from 'domain/import/importDomain';
 import {FileUpload, GraphQLUpload} from 'graphql-upload';
+import {IDbUtils} from 'infra/db/dbUtils';
 import {nanoid} from 'nanoid';
 import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
-import {IDbUtils} from 'infra/db/dbUtils';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {ImportMode, ImportType} from '../../_types/import';
-import {IGraphqlApp} from '../graphql/graphqlApp';
 import {TaskCallbackType} from '../../_types/tasksManager';
+import {IGraphqlApp} from '../graphql/graphqlApp';
 
 export interface ICoreImportApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -129,7 +129,7 @@ export default function ({
                     true
                 );
             } finally {
-                await graphqlApp.generateSchema();
+                await graphqlApp.getSchema();
             }
         },
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {

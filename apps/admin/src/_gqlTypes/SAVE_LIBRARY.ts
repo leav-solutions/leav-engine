@@ -7,11 +7,11 @@
 // This file was automatically generated and should not be edited.
 
 import {
-    LibraryInput,
+    AttributeFormat,
+    AttributeType,
     AvailableLanguage,
     LibraryBehavior,
-    AttributeType,
-    AttributeFormat,
+    LibraryInput,
     PermissionsRelation,
     ValueVersionMode
 } from './globalTypes';
@@ -281,14 +281,6 @@ export interface SAVE_LIBRARY_saveLibrary_defaultView {
     id: string;
 }
 
-export interface SAVE_LIBRARY_saveLibrary_gqlNames {
-    query: string;
-    type: string;
-    list: string;
-    filter: string;
-    searchableFields: string;
-}
-
 export interface SAVE_LIBRARY_saveLibrary_permissions {
     admin_library: boolean;
     access_library: boolean;
@@ -325,7 +317,6 @@ export interface SAVE_LIBRARY_saveLibrary {
     permissions_conf: SAVE_LIBRARY_saveLibrary_permissions_conf | null;
     recordIdentityConf: SAVE_LIBRARY_saveLibrary_recordIdentityConf | null;
     defaultView: SAVE_LIBRARY_saveLibrary_defaultView | null;
-    gqlNames: SAVE_LIBRARY_saveLibrary_gqlNames;
     permissions: SAVE_LIBRARY_saveLibrary_permissions | null;
     icon: SAVE_LIBRARY_saveLibrary_icon | null;
 }

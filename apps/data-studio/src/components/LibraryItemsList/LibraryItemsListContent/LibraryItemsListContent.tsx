@@ -121,7 +121,7 @@ function LibraryItemsListContent({
     const selectedViewKey = getSelectedViewKey(library.id);
 
     const _applyResults = (data: IGetRecordsFromLibraryQuery) => {
-        const itemsFromQuery = data ? data[library.gqlNames.query || ''].list : [];
+        const itemsFromQuery = data ? data.records.list : [];
 
         const newRecords: ISearchRecord[] = manageItems({
             items: itemsFromQuery,
@@ -131,7 +131,7 @@ function LibraryItemsListContent({
         searchDispatch({
             type: SearchActionTypes.UPDATE_RESULT,
             records: newRecords,
-            totalCount: data?.[library.gqlNames.query]?.totalCount ?? searchState.totalCount
+            totalCount: data?.records.totalCount ?? searchState.totalCount
         });
     };
 
@@ -145,6 +145,7 @@ function LibraryItemsListContent({
     // We were previously using the skip property of useQuery but it was causing issues with data update
     const variables = useMemo(
         () => ({
+            library: library.id,
             limit: searchState.pagination,
             offset: searchState.offset,
             filters: getRequestFromFilters(searchState.filters),
@@ -158,7 +159,7 @@ function LibraryItemsListContent({
     const {loading: getRecordsLoading, data: searchData, fetchMore: getRecordsFetchMore} = useQuery<
         IGetRecordsFromLibraryQuery,
         IGetRecordsFromLibraryQueryVariables
-    >(getRecordsFromLibraryQuery(library.gqlNames.query, searchState.fields, !searchState.offset), {
+    >(getRecordsFromLibraryQuery(searchState.fields, !searchState.offset), {
         fetchPolicy: 'network-only',
         variables,
         onError: err => {
@@ -174,6 +175,7 @@ function LibraryItemsListContent({
             const queryFilters = getRequestFromFilters(searchState.filters);
 
             const currentVariables = {
+                library: library.id,
                 limit: searchState.pagination,
                 offset: searchState.offset,
                 filters: queryFilters,
@@ -185,7 +187,7 @@ function LibraryItemsListContent({
             // Records have already been fetched, we use fetchMore to make sure
             // we request the right fields by passing in a whole new query
             const results = await getRecordsFetchMore({
-                query: getRecordsFromLibraryQuery(library.gqlNames.query, searchState.fields, !searchState.offset),
+                query: getRecordsFromLibraryQuery(searchState.fields, !searchState.offset),
                 variables: currentVariables
             });
 

@@ -66,22 +66,22 @@ function FileModalSidebar({fileData}: IFileModalSidebarProps): JSX.Element {
         {
             title: t('record_summary.created_at'),
             value: t('record_summary.created_at_value', {
-                date: fileData.created_at,
-                user: fileData.created_by.whoAmI.label,
+                date: fileData.created_at?.[0]?.value,
+                user: fileData.created_by?.[0]?.value.whoAmI.label,
                 interpolation: {escapeValue: false}
             })
         },
         {
             title: t('record_summary.modified_at'),
             value: t('record_summary.modified_at_value', {
-                date: fileData.modified_at,
-                user: fileData.modified_by.whoAmI.label,
+                date: fileData.modified_at?.[0]?.value,
+                user: fileData.modified_by?.[0]?.value.whoAmI.label,
                 interpolation: {escapeValue: false}
             })
         },
         {
             title: t('file_data.path'),
-            value: <Path>{'/' + fileData.file_path}</Path>
+            value: <Path>{'/' + fileData.file_path?.[0]?.value}</Path>
         }
     ];
 

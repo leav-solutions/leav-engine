@@ -23,7 +23,7 @@ const useRefreshFieldValues = (
 ): IUseRefetchFieldValuesHook => {
     const libraryGqlName = getGraphqlQueryNameFromLibraryName(libraryId);
     const [getRecordProperty] = useLazyQuery<IGetRecordProperties, IGetRecordPropertiesVariables>(
-        getRecordPropertiesQuery(libraryGqlName, [
+        getRecordPropertiesQuery([
             {
                 attributeId
             }
@@ -37,6 +37,7 @@ const useRefreshFieldValues = (
         fetchValues: async (version?: IValueVersion) => {
             const res = await getRecordProperty({
                 variables: {
+                    library: libraryId,
                     recordId,
                     version: version
                         ? objectToNameValueArray(version).map(v => ({treeId: v.name, treeNodeId: v.value.id}))
@@ -44,14 +45,18 @@ const useRefreshFieldValues = (
                 }
             });
 
-            if (!res.data[libraryGqlName].list.length) {
+            if (!res.data.records.list.length) {
                 return null;
             }
 
-            return res.data[libraryGqlName].list[0][attributeId].map(value => ({
-                ...value,
-                version: arrayValueVersionToObject(value.version ?? [])
-            }));
+            const values = res.data.records.list[0][attributeId].map(value => {
+                const {__typename, ...valueData} = value; // Clear off __typename
+                return {
+                    ...valueData,
+                    version: arrayValueVersionToObject(value.version ?? [])
+                };
+            });
+            return values;
         }
     };
 };

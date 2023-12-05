@@ -1,29 +1,50 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getGraphqlTypeFromLibraryName} from '@leav/utils';
 import {gqlUnchecked} from 'utils';
 import {AttributeType} from '_gqlTypes/globalTypes';
-import {IField, IFieldTypeTree} from '../../../_types/types';
+import {IField} from '../../../_types/types';
 import recordIdentityFragment from './recordIdentityFragment';
 
-const handleType = (field: IField): string => {
+const _handleType = (field: IField): string => {
+    let typePart: string;
     switch (field.type) {
         case AttributeType.simple:
         case AttributeType.advanced:
-            return field.id;
+            typePart = `
+                ...on Value {
+                    value
+                }
+            `;
+            break;
         case AttributeType.simple_link:
         case AttributeType.advanced_link:
-            return `${field.id} {
-                ...RecordIdentity
-            }`;
-        case AttributeType.tree:
-            return `${field.id} {
-                record {
-                    ...RecordIdentity
+            typePart = `
+                ...on LinkValue {
+                    linkValue: value {
+                        ...RecordIdentity
+                    }
                 }
-            }`;
+            `;
+            break;
+        case AttributeType.tree:
+            typePart = `
+                ...on TreeValue {
+                    treeValue: value {
+                        record {
+                            ...RecordIdentity
+                        }
+                    }
+                }
+            `;
+            break;
     }
+
+    return `
+        ${field.id}: property(attribute: "${field.id}") {
+            ${typePart.trim()}
+        }
+    `;
 };
 
 // manage linked elements and extended attributes
@@ -39,53 +60,35 @@ export const getRecordsFields = (fields: IField[] = []) => {
             switch (field.parentAttributeData.type) {
                 case AttributeType.simple:
                 case AttributeType.advanced:
-                    return handleType(field);
+                    return _handleType(field);
                 case AttributeType.simple_link:
                 case AttributeType.advanced_link:
-                    return `${parentAttributeId} {
-                        ${handleType(field)}
+                    return `${parentAttributeId}: property(attribute: "${parentAttributeId}")) {
+                        ${_handleType(field)}
                     }`;
                 case AttributeType.tree:
-                    const libTypeName = getGraphqlTypeFromLibraryName((field as IFieldTypeTree).recordLibrary);
-                    return libTypeName
-                        ? `${parentAttributeId} {
+                    return `${parentAttributeId}: property(attribute: "${parentAttributeId}")) {
                         record {
-                            ...on ${libTypeName} {
-                                ${handleType(field)}
-                            }
+                            ${_handleType(field)}
                         }
-                    }`
-                        : '';
+                    }`;
             }
         } else if (field.embeddedData) {
             const path = [...field.embeddedData.path.split('.')].shift();
             return path;
         }
 
-        return handleType(field);
+        return _handleType(field);
     });
 
     return queryField;
 };
 
-export const getRecordsFromLibraryQuery = (libraryName?: string, fields?: IField[], withTotalCount?: boolean) => {
-    const libQueryName = libraryName?.toUpperCase();
-
-    if (!libQueryName?.length) {
-        return gqlUnchecked`
-            query nothing {
-                libraries {
-                    list {
-                        id
-                    }
-                }
-            }
-        `;
-    }
-
+export const getRecordsFromLibraryQuery = (fields?: IField[], withTotalCount?: boolean) => {
     return gqlUnchecked`
         ${recordIdentityFragment}
-        query ${'GET_RECORDS_FROM_' + libQueryName} (
+        query GET_RECORDS (
+            $library: ID!
             $limit: Int!
             $offset: Int
             $filters: [RecordFilterInput]
@@ -93,7 +96,8 @@ export const getRecordsFromLibraryQuery = (libraryName?: string, fields?: IField
             $fullText: String
             $version: [ValueVersionInput]
         ) {
-            ${libraryName} (
+            records (
+                library: $library
                 pagination: {limit: $limit, offset: $offset}
                 filters: $filters
                 sort: $sort

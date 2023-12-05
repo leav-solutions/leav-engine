@@ -32,6 +32,7 @@ import {IQueryInfos} from '../../_types/queryInfos';
 import {
     AttributeCondition,
     IRecord,
+    IRecordFilterLight,
     IRecordFilterOption,
     IRecordIdentity,
     IRecordIdentityConf,
@@ -43,7 +44,7 @@ import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import getAttributesFromField from './helpers/getAttributesFromField';
 import {SendRecordUpdateEventHelper} from './helpers/sendRecordUpdateEvent';
-import {ICreateRecordResult, IFindRecordParams, IRecordFilterLight} from './_types';
+import {ICreateRecordResult, IFindRecordParams} from './_types';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -990,6 +991,8 @@ export default function ({
             const fullFilters: IRecordFilterOption[] = [];
             let fullSort: IRecordSort;
 
+            await validateHelper.validateLibrary(library, ctx);
+
             const isLibraryAccessible = await libraryPermissionDomain.getLibraryPermission({
                 libraryId: params.library,
                 userId: ctx.userId,
@@ -1127,6 +1130,13 @@ export default function ({
         },
         getRecordIdentity: _getRecordIdentity,
         async getRecordFieldValue({library, record, attributeId, options, ctx}) {
+            const libraryAttributes = await attributeDomain.getLibraryAttributes(library, ctx);
+            if (!libraryAttributes.map(a => a.id).includes(attributeId)) {
+                throw new ValidationError({
+                    [attributeId]: {msg: Errors.INVALID_ATTRIBUTE_FOR_LIBRARY, vars: {attribute: attributeId, library}}
+                });
+            }
+
             const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
             let values = await _extractRecordValue(record, attrProps, library, options, ctx);
 

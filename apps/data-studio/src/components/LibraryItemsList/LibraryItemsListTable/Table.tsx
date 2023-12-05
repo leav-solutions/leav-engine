@@ -210,16 +210,19 @@ const Table = () => {
                         }
 
                         const key = column.key;
-                        let value = record.fields[key];
-                        if (column.embeddedPath && column.embeddedPath.length) {
-                            const pathWithoutRoot = column.embeddedPath.split('.').slice(1).join('.');
-                            try {
-                                const content = JSON.parse(record.fields[key]);
-                                value = get(content, pathWithoutRoot);
-                            } catch (e) {
-                                value = 'error';
+                        const value = (record.fields?.[key] ?? []).map(v => {
+                            if (column.embeddedPath && column.embeddedPath.length) {
+                                const pathWithoutRoot = column.embeddedPath.split('.').slice(1).join('.');
+                                try {
+                                    const content = JSON.parse(record.fields[key]);
+                                    return get(content, pathWithoutRoot);
+                                } catch (e) {
+                                    return 'error';
+                                }
                             }
-                        }
+
+                            return v.value ?? v.linkValue ?? v.treeValue;
+                        });
 
                         acc[column.accessor as string] = {value, type: column.type, format: column.format};
 

@@ -26,42 +26,21 @@ const dataMock = [
                             label: 'l1',
                             system: false,
                             behavior: LibraryBehavior.standard,
-                            icon: null,
-                            gqlNames: {
-                                query: 'l1',
-                                type: 'l1',
-                                list: 'l1',
-                                filter: 'l1',
-                                searchableFields: ['id']
-                            }
+                            icon: null
                         },
                         {
                             id: '2',
                             label: 'l2',
                             system: false,
                             behavior: LibraryBehavior.standard,
-                            icon: null,
-                            gqlNames: {
-                                query: 'l2',
-                                type: 'l2',
-                                list: 'l2',
-                                filter: 'l2',
-                                searchableFields: ['id']
-                            }
+                            icon: null
                         },
                         {
                             id: '3',
                             label: 'l3',
                             system: false,
                             behavior: LibraryBehavior.standard,
-                            icon: null,
-                            gqlNames: {
-                                query: 'l3',
-                                type: 'l3',
-                                list: 'l3',
-                                filter: 'l3',
-                                searchableFields: ['id']
-                            }
+                            icon: null
                         }
                     ]
                 }

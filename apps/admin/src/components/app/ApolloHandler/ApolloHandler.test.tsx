@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import {render, screen, waitFor} from '@testing-library/react';
-import React from 'react';
 import {act} from 'react-dom/test-utils';
 import {gqlUnchecked} from 'utils';
 import ApolloHandler from './ApolloHandler';
@@ -15,8 +14,6 @@ jest.mock('react-redux', () => ({
 }));
 
 console.error = jest.fn();
-
-jest.mock('hooks/useGraphqlPossibleTypes');
 
 describe('ApolloHandler', () => {
     test('should fail and display message', async () => {

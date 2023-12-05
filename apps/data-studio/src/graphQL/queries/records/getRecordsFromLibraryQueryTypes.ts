@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {SortOrder, ValueVersionInput, RecordSortInput} from '_gqlTypes/globalTypes';
+import {RecordSortInput, ValueVersionInput} from '_gqlTypes/globalTypes';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import {IQueryFilter} from '../../../_types/types';
 
@@ -10,13 +10,14 @@ export interface IGetRecordsFromLibraryQueryElement extends RecordIdentity {
 }
 
 export interface IGetRecordsFromLibraryQuery {
-    [x: string]: {
+    records: {
         list: IGetRecordsFromLibraryQueryElement[];
         totalCount: number;
     };
 }
 
 export interface IGetRecordsFromLibraryQueryVariables {
+    library: string;
     limit?: number;
     offset?: number;
     filters?: IQueryFilter[];

@@ -12,8 +12,12 @@ export const getRecordUpdates = gql`
         recordUpdate(filters: $filters) {
             record {
                 ...RecordIdentity
-                modified_by {
-                    ...RecordIdentity
+                modified_by: property(attribute: "modified_by") {
+                    ... on LinkValue {
+                        value {
+                            ...RecordIdentity
+                        }
+                    }
                 }
             }
             updatedValues {

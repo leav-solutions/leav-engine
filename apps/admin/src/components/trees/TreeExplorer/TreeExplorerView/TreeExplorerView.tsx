@@ -5,7 +5,7 @@ import EditRecordModal from 'components/records/EditRecordModal';
 import SelectRecordModal from 'components/records/SelectRecordModal';
 import Loading from 'components/shared/Loading';
 import useLang from 'hooks/useLang';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
     NodeData,
@@ -228,8 +228,8 @@ const TreeExplorerView = ({
                                         icon="edit outline"
                                         onClick={_openEditRecordModal({
                                             parent: rowInfo.parentNode?.id ?? fakeRootId,
-                                            library: rowInfo.node.record.library?.id,
-                                            recordId: rowInfo.node.record.id,
+                                            library: rowInfo.node.record.whoAmI.library?.id,
+                                            recordId: rowInfo.node.record.whoAmI.id,
                                             path: rowInfo.path as string[]
                                         })}
                                     />

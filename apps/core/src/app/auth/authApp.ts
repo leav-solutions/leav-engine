@@ -99,7 +99,7 @@ export default function ({
             return {
                 typeDefs: `
                     extend type Query {
-                        me: User
+                        me: Record
                     }
                 `,
                 resolvers: {

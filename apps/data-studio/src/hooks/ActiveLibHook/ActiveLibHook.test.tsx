@@ -12,14 +12,8 @@ describe('ActiveLibHook', () => {
     const mockActiveLibrary: IActiveLibrary = {
         id: 'test',
         name: 'test',
-        filter: 'test',
         behavior: LibraryBehavior.standard,
         attributes: [],
-        gql: {
-            searchableFields: 'test',
-            query: 'test',
-            type: 'test'
-        },
         trees: [],
         permissions: mockLibraryPermissions
     };

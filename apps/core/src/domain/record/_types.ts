@@ -3,21 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ErrorTypes} from '@leav/utils';
 import {ICursorPaginationParams, IPaginationParams} from '_types/list';
-import {AttributeCondition, IRecord, Operator, TreeCondition} from '_types/record';
+import {IRecord, IRecordFilterLight, IRecordSortLight} from '_types/record';
 import {IValue, IValuesOptions, IValueVersion} from '_types/value';
-
-export interface IRecordFilterLight {
-    field?: string;
-    value?: string;
-    condition?: AttributeCondition | TreeCondition;
-    operator?: Operator;
-    treeId?: string;
-}
-
-export interface IRecordSortLight {
-    field: string;
-    order: string;
-}
 
 export interface IFindRecordParams {
     library: string;

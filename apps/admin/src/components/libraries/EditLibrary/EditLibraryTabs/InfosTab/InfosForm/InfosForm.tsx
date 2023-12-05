@@ -25,7 +25,7 @@ interface IInfosFormProps {
     onCheckIdExists: (val: string) => Promise<boolean>;
 }
 
-type LibraryFormValues = Omit<GET_LIB_BY_ID_libraries_list, 'gqlNames' | 'fullTextAttributes' | 'defaultView'> & {
+type LibraryFormValues = Omit<GET_LIB_BY_ID_libraries_list, 'fullTextAttributes' | 'defaultView'> & {
     defaultView?: string | null;
     fullTextAttributes: string[];
 };

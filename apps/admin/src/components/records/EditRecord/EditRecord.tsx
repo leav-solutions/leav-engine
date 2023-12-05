@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import React from 'react';
 import {getLibByIdQuery} from '../../../queries/libraries/getLibraryById';
 import {GET_LIB_BY_ID, GET_LIB_BY_IDVariables} from '../../../_gqlTypes/GET_LIB_BY_ID';
 import {TreeElementInput} from '../../../_gqlTypes/globalTypes';
@@ -25,7 +24,6 @@ export interface IEditRecordProps {
 function EditRecord({
     library,
     recordId,
-    version,
     onIdentityUpdate,
     setSubmitFunc,
     onPostSave,
@@ -43,13 +41,12 @@ function EditRecord({
         return <p className="error">ERROR</p>;
     }
 
-    if (!data || !data.libraries || !data.libraries.list) {
+    const lib = data?.libraries?.list?.[0];
+    if (!lib) {
         return <p>Unknown library</p>;
     }
 
-    const lib = data.libraries.list[0];
-
-    const attributes = lib.attributes || [];
+    const attributes = lib?.attributes || [];
 
     return (
         <>

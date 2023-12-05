@@ -65,7 +65,7 @@ export default function ({
 
                     type Log {
                         time: Int!
-                        user: User!
+                        user: Record!
                         queryId: String!
                         instanceId: String!
                         trigger: String

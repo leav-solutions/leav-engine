@@ -4,7 +4,6 @@
 import userEvent from '@testing-library/user-event';
 import {purgeRecordsMutation} from 'queries/records/purgeRecords';
 import {getRecordsListQuery} from 'queries/records/recordsListQuery';
-import React from 'react';
 import {render, screen, waitFor} from '_tests/testUtils';
 import {mockLibrary} from '__mocks__/libraries';
 import PurgeTab from './PurgeTab';
@@ -12,20 +11,21 @@ import PurgeTab from './PurgeTab';
 describe('PurgeTab', () => {
     const mockGetRecordsList = {
         request: {
-            query: getRecordsListQuery(mockLibrary.id),
+            query: getRecordsListQuery,
             variables: {
+                library: mockLibrary.id,
                 pagination: {limit: 1, offset: 0},
                 filters: [{field: 'active', condition: 'EQUAL', value: 'false'}]
             }
         },
         result: {
             data: {
-                products: {
-                    __typename: 'ProductList',
+                records: {
+                    __typename: 'RecordList',
                     totalCount: 1337,
                     list: [
                         {
-                            __typename: 'Product',
+                            __typename: 'Record',
                             whoAmI: {
                                 __typename: 'RecordIdentity',
                                 id: '1',

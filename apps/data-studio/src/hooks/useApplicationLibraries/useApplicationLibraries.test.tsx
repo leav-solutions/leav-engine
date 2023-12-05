@@ -11,10 +11,8 @@ import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
 import {useApplicationLibraries} from './useApplicationLibraries';
 
 describe('useApplicationLibraries', () => {
-    const {type, ...mockGqlNamesWithoutType} = mockLibrary.gqlNames;
     const mockLibBase = {
         ...mockLibrary,
-        gqlNames: mockGqlNamesWithoutType,
         permissions: mockLibraryPermissions,
         previewsSettings: [
             {

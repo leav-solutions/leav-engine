@@ -15,11 +15,6 @@ export const getLibrariesListQuery = gql`
                 icon {
                     ...RecordIdentity
                 }
-                gqlNames {
-                    query
-                    filter
-                    searchableFields
-                }
                 previewsSettings {
                     description
                     label

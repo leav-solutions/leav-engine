@@ -20,7 +20,14 @@ import {ValueInput} from '../../../../../_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '../../../../../_gqlTypes/RecordIdentity';
 import {SAVE_VALUE, SAVE_VALUEVariables} from '../../../../../_gqlTypes/SAVE_VALUE';
 import {SAVE_VALUE_BATCH_saveValueBatch_errors} from '../../../../../_gqlTypes/SAVE_VALUE_BATCH';
-import {IGetRecordData, ILinkValue, ITreeLinkValue, IValue, RecordData} from '../../../../../_types/records';
+import {
+    IGetRecordData,
+    IGetRecordDataVariables,
+    ILinkValue,
+    ITreeLinkValue,
+    IValue,
+    RecordData
+} from '../../../../../_types/records';
 import Loading from '../../../../shared/Loading';
 import LinksField from '../../../FormFields/LinksField';
 import StandardValuesWrapper from './StandardValuesWrapper';
@@ -43,8 +50,6 @@ export interface IEditRecordFormError {
 const EditRecordForm = ({
     attributes,
     onIdentityUpdate,
-    errors = {},
-    inModal = false,
     library,
     valueVersion,
     initialRecordId,
@@ -54,10 +59,15 @@ const EditRecordForm = ({
 
     const recordId = initialRecordId === undefined ? '' : initialRecordId;
 
-    const query = getRecordDataQuery(library, attributes);
-    const getRecordDataVariables = {id: recordId, version: versionObjToGraphql(valueVersion || null), lang};
+    const query = getRecordDataQuery(attributes);
+    const getRecordDataVariables = {
+        library: library.id,
+        id: recordId,
+        version: versionObjToGraphql(valueVersion || null),
+        lang
+    };
 
-    const {loading, error, data, networkStatus} = useQuery<IGetRecordData>(query, {
+    const {loading, error, data, networkStatus} = useQuery<IGetRecordData, IGetRecordDataVariables>(query, {
         variables: getRecordDataVariables,
         skip: !recordId
     });

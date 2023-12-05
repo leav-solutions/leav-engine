@@ -9,13 +9,7 @@ export const mockLibrary = {
     id: 'libraryId',
     behavior: LibraryBehavior.standard,
     label: mockLabel('libraryLabel'),
-    icon: null,
-    gqlNames: {
-        query: 'libraryId',
-        type: 'LibraryId',
-        searchableFields: 'LibraryIdSearchableFields',
-        filter: 'LibraryIdFilter'
-    }
+    icon: null
 };
 
 export const mockLibraryPermissions: GET_LIBRARY_PERMISSIONS_libraries_list_permissions = {

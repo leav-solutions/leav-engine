@@ -17,9 +17,6 @@ export interface IGetTreeAttributesQueryAttribute {
 
 export interface IGetTreeAttributesQueryLibrary {
     id: string;
-    gqlNames: {
-        type: string;
-    };
     attributes: IGetTreeAttributesQueryAttribute[];
 }
 
@@ -47,10 +44,6 @@ export const getTreeAttributesQuery = gql`
                     library {
                         id
                         label
-                        gqlNames {
-                            type
-                            type
-                        }
                         attributes {
                             id
                             type

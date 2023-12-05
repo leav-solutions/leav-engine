@@ -1,8 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getLibraryGraphqlNames, Override} from '@leav/utils';
-import {gqlUnchecked} from 'utils';
+import {gql} from '@apollo/client';
+import {Override} from '@leav/utils';
+import {GetFileDataQuery} from '_gqlTypes';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import recordIdentityFragment from './recordIdentityFragment';
 
@@ -16,7 +17,7 @@ export interface IFilePreviewsStatus {
 }
 
 export type IFileDataWithPreviewsStatus = Override<
-    IFileDataElement,
+    GetFileDataQuery['records']['list'][number],
     {
         previews_status: IFilePreviewsStatus;
         isPreviewsGenerationPending: boolean;
@@ -30,7 +31,6 @@ export interface IFileDataElement extends RecordIdentity {
     modified_by: RecordIdentity;
     file_name: string;
     file_path: string;
-    file_type: 'image' | 'video' | 'audio' | 'document' | 'other';
     previews_status: string; // JSON string
     library: {
         behavior: 'standard' | 'files' | 'directories';
@@ -38,35 +38,65 @@ export interface IFileDataElement extends RecordIdentity {
 }
 
 export interface IFileDataQuery {
-    [libraryName: string]: {
+    records: {
         list: IFileDataElement[];
     };
 }
 
 export interface IFileDataQueryVariables {
+    library: string;
     fileId: string;
 }
 
-export const getFileDataQuery = (libraryId: string) => gqlUnchecked`
+export const getFileDataQuery = gql`
     ${recordIdentityFragment}
-    query GET_FILE_DATA($fileId: String!) {
-        ${getLibraryGraphqlNames(libraryId).query}(filters: [{field: "id", value: $fileId, condition: EQUAL}]) {
+    query GET_FILE_DATA($library: ID!, $fileId: String!, $previewsStatusAttribute: ID!) {
+        records(library: $library, filters: [{field: "id", value: $fileId, condition: EQUAL}]) {
             list {
                 ...RecordIdentity
-                created_at
-                created_by {
-                    ...RecordIdentity
+                created_at: property(attribute: "created_at") {
+                    ... on Value {
+                        value
+                    }
                 }
-                modified_at
-                modified_by {
-                    ...RecordIdentity
+                created_by: property(attribute: "created_by") {
+                    ... on LinkValue {
+                        value {
+                            ...RecordIdentity
+                        }
+                    }
                 }
-                file_name
-                file_path
-                file_type
+                modified_at: property(attribute: "modified_at") {
+                    ... on Value {
+                        value
+                    }
+                }
+                modified_by: property(attribute: "modified_by") {
+                    ... on LinkValue {
+                        value {
+                            ...RecordIdentity
+                        }
+                    }
+                }
+                file_name: property(attribute: "file_name") {
+                    ... on Value {
+                        value
+                    }
+                }
+                file_path: property(attribute: "file_path") {
+                    ... on Value {
+                        value
+                    }
+                }
+                previews_status: property(attribute: $previewsStatusAttribute) {
+                    ... on Value {
+                        value
+                    }
+                }
                 library {
                     behavior
                 }
             }
         }
-    }`;
+    }
+`;

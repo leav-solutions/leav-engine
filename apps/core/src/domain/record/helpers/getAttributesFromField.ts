@@ -8,8 +8,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../../errors/ValidationError';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../../_types/attribute';
 import {Errors} from '../../../_types/errors';
-import {AttributeCondition} from '../../../_types/record';
-import {IRecordFilterLight} from '../_types';
+import {AttributeCondition, IRecordFilterLight} from '../../../_types/record';
 
 interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;

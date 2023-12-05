@@ -10,10 +10,8 @@ import {mockLibrary, mockLibraryPermissions} from '__mocks__/common/library';
 import TriggerPreviewsGenerationModal from './TriggerPreviewsGenerationModal';
 
 describe('TriggerPreviewsGenerationModal', () => {
-    const {type, ...mockGqlNamesWithoutType} = mockLibrary.gqlNames;
     const mockLibBase = {
         ...mockLibrary,
-        gqlNames: mockGqlNamesWithoutType,
         permissions: mockLibraryPermissions,
         previewsSettings: [
             {

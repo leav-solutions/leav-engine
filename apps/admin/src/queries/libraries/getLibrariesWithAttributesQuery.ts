@@ -10,13 +10,6 @@ export const getLibrariesWithAttributesQuery = gql`
             list {
                 id
                 label
-                gqlNames {
-                    query
-                    type
-                    list
-                    filter
-                    searchableFields
-                }
                 attributes {
                     id
                     label

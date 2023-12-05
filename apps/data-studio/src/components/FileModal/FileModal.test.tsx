@@ -2,36 +2,49 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {themeVars} from '@leav/ui';
-import {getFileDataQuery, IFileDataElement} from 'graphQL/queries/records/getFileDataQuery';
+import {WithTypename} from '@leav/utils';
+import {getFileDataQuery} from 'graphQL/queries/records/getFileDataQuery';
 import {act, fireEvent, render, screen, waitFor, within} from '_tests/testUtils';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import {mockRecord} from '__mocks__/common/record';
+import {GetFileDataQuery, GetFileDataQueryVariables, LibraryBehavior} from '../../_gqlTypes';
 import FileModal from './FileModal';
 
 describe('FileModal', () => {
-    const mockFileData: IFileDataElement & {__typename: string} = {
-        __typename: 'RecordLib',
+    const mockFileData: WithTypename<GetFileDataQuery['records']['list'][number]> = {
+        __typename: 'Record',
         id: mockRecord.id,
         whoAmI: {
+            __typename: 'RecordIdentity',
             ...mockRecord,
             preview: {
                 ...mockRecord.preview,
                 pdf: '/path/to/file.pdf'
             }
         },
-        created_at: '2020-01-01T00:00:00.000Z',
-        // @ts-ignore
-        created_by: {__typename: 'RecordLib', id: '1', whoAmI: mockRecord},
-        modified_at: '2020-01-02T00:00:00.000Z',
-        // @ts-ignore
-        modified_by: {__typename: 'RecordLib', id: '1', whoAmI: mockRecord},
-        file_path: 'path/to/',
-        file_name: 'my_file.jpg',
-        file_type: 'image',
-        previews_status: '{}',
+        created_at: [{value: '2020-01-01T00:00:00.000Z', __typename: 'Value'}],
+        created_by: [{value: {id: '1', whoAmI: mockRecord, __typename: 'Record'}, __typename: 'LinkValue'}],
+        modified_at: [{value: '2020-01-02T00:00:00.000Z', __typename: 'Value'}],
+        modified_by: [{value: {id: '1', whoAmI: mockRecord, __typename: 'Record'}, __typename: 'LinkValue'}],
+        file_path: [{value: 'path/to/', __typename: 'Value'}],
+        file_name: [{__typename: 'Value', value: 'my_file.jpg'}],
+        previews_status: [
+            {
+                value:
+                    '{"big":{"message":"preview create","status":0},"huge":{"message":"preview create","status":0},"medium":{"message":"preview create","status":0},"small":{"message":"preview create","status":0},"tiny":{"message":"preview create","status":0}}',
+                __typename: 'Value'
+            }
+        ],
         library: {
-            behavior: 'files'
+            behavior: LibraryBehavior.files,
+            __typename: 'Library'
         }
+    };
+
+    const mockVariables: GetFileDataQueryVariables = {
+        library: 'files',
+        fileId: mockRecord.id,
+        previewsStatusAttribute: 'files_previews_status'
     };
 
     const cacheSettings = {
@@ -43,12 +56,10 @@ describe('FileModal', () => {
         const mocks = [
             {
                 request: {
-                    query: getFileDataQuery('files'),
-                    variables: {
-                        fileId: mockRecord.id
-                    }
+                    query: getFileDataQuery,
+                    variables: mockVariables
                 },
-                result: {data: {files: {list: [mockFileData]}}}
+                result: {data: {records: {list: [mockFileData]}}}
             }
         ];
         render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
@@ -60,9 +71,9 @@ describe('FileModal', () => {
         const titleSection = screen.getByTestId('title-section');
         const sidebarSection = screen.getByTestId('sidebar-section');
         expect(within(titleSection).getByText(mockFileData.whoAmI.label)).toBeInTheDocument();
-        expect(within(sidebarSection).getByText('/' + mockFileData.file_path)).toBeInTheDocument();
-        expect(within(sidebarSection).getByText(new RegExp(mockFileData.created_at))).toBeInTheDocument();
-        expect(within(sidebarSection).getByText(mockFileData.created_by.whoAmI.label)).toBeInTheDocument();
+        expect(within(sidebarSection).getByText('/' + mockFileData.file_path[0].value)).toBeInTheDocument();
+        expect(within(sidebarSection).getByText(new RegExp(mockFileData.created_at[0].value))).toBeInTheDocument();
+        expect(within(sidebarSection).getByText(mockFileData.created_by[0].value.whoAmI.label)).toBeInTheDocument();
     });
 
     describe('Image file', () => {
@@ -70,12 +81,10 @@ describe('FileModal', () => {
             const mocks = [
                 {
                     request: {
-                        query: getFileDataQuery('files'),
-                        variables: {
-                            fileId: mockRecord.id
-                        }
+                        query: getFileDataQuery,
+                        variables: mockVariables
                     },
-                    result: {data: {files: {list: [mockFileData]}}}
+                    result: {data: {records: {list: [mockFileData]}}}
                 }
             ];
             render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
@@ -105,13 +114,11 @@ describe('FileModal', () => {
             const mocks = [
                 {
                     request: {
-                        query: getFileDataQuery('files'),
-                        variables: {
-                            fileId: mockRecord.id
-                        }
+                        query: getFileDataQuery,
+                        variables: mockVariables
                     },
                     result: {
-                        data: {files: {list: [{...mockFileData, whoAmI: {...mockFileData.whoAmI, preview: null}}]}}
+                        data: {records: {list: [{...mockFileData, whoAmI: {...mockFileData.whoAmI, preview: null}}]}}
                     }
                 }
             ];
@@ -129,12 +136,10 @@ describe('FileModal', () => {
             const mocks = [
                 {
                     request: {
-                        query: getFileDataQuery('files'),
-                        variables: {
-                            fileId: mockRecord.id
-                        }
+                        query: getFileDataQuery,
+                        variables: mockVariables
                     },
-                    result: {data: {files: {list: [mockFileData]}}}
+                    result: {data: {records: {list: [mockFileData]}}}
                 }
             ];
             render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
@@ -163,12 +168,16 @@ describe('FileModal', () => {
             const mocks = [
                 {
                     request: {
-                        query: getFileDataQuery('files'),
-                        variables: {
-                            fileId: mockRecord.id
-                        }
+                        query: getFileDataQuery,
+                        variables: mockVariables
                     },
-                    result: {data: {files: {list: [{...mockFileData, file_type: 'video'}]}}}
+                    result: {
+                        data: {
+                            records: {
+                                list: [{...mockFileData, file_name: [{__typename: 'Value', value: 'some_file.mp4'}]}]
+                            }
+                        }
+                    }
                 }
             ];
             render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
@@ -185,18 +194,16 @@ describe('FileModal', () => {
             const mocks = [
                 {
                     request: {
-                        query: getFileDataQuery('files'),
-                        variables: {
-                            fileId: mockRecord.id
-                        }
+                        query: getFileDataQuery,
+                        variables: mockVariables
                     },
                     result: {
                         data: {
-                            files: {
+                            records: {
                                 list: [
                                     {
                                         ...mockFileData,
-                                        file_type: 'video',
+                                        file_name: [{__typename: 'Value', value: 'some_file.mp4'}],
                                         whoAmI: {...mockFileData.whoAmI, preview: null}
                                     }
                                 ]
@@ -221,12 +228,16 @@ describe('FileModal', () => {
             const mocks = [
                 {
                     request: {
-                        query: getFileDataQuery('files'),
-                        variables: {
-                            fileId: mockRecord.id
-                        }
+                        query: getFileDataQuery,
+                        variables: mockVariables
                     },
-                    result: {data: {files: {list: [{...mockFileData, file_type: 'audio'}]}}}
+                    result: {
+                        data: {
+                            records: {
+                                list: [{...mockFileData, file_name: [{__typename: 'Value', value: 'some_file.mp3'}]}]
+                            }
+                        }
+                    }
                 }
             ];
             render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
@@ -243,18 +254,16 @@ describe('FileModal', () => {
             const mocks = [
                 {
                     request: {
-                        query: getFileDataQuery('files'),
-                        variables: {
-                            fileId: mockRecord.id
-                        }
+                        query: getFileDataQuery,
+                        variables: mockVariables
                     },
                     result: {
                         data: {
-                            files: {
+                            records: {
                                 list: [
                                     {
                                         ...mockFileData,
-                                        file_type: 'audio',
+                                        file_name: [{__typename: 'Value', value: 'some_file.mp4'}],
                                         whoAmI: {...mockFileData.whoAmI, preview: null}
                                     }
                                 ]
@@ -279,12 +288,16 @@ describe('FileModal', () => {
             const mocks = [
                 {
                     request: {
-                        query: getFileDataQuery('files'),
-                        variables: {
-                            fileId: mockRecord.id
-                        }
+                        query: getFileDataQuery,
+                        variables: mockVariables
                     },
-                    result: {data: {files: {list: [{...mockFileData, file_type: 'document'}]}}}
+                    result: {
+                        data: {
+                            records: {
+                                list: [{...mockFileData, file_name: [{__typename: 'Value', value: 'some_file.pdf'}]}]
+                            }
+                        }
+                    }
                 }
             ];
             render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
@@ -294,25 +307,23 @@ describe('FileModal', () => {
 
             await waitFor(() => screen.getByTestId('content-section'));
             const contentSection = screen.getByTestId('content-section');
-            expect(within(contentSection).getByTestId('document-viewer')).toBeInTheDocument();
+            expect(await within(contentSection).findByTestId('document-viewer')).toBeInTheDocument();
         });
 
         test('Display fallback if document not available', async () => {
             const mocks = [
                 {
                     request: {
-                        query: getFileDataQuery('files'),
-                        variables: {
-                            fileId: mockRecord.id
-                        }
+                        query: getFileDataQuery,
+                        variables: mockVariables
                     },
                     result: {
                         data: {
-                            files: {
+                            records: {
                                 list: [
                                     {
                                         ...mockFileData,
-                                        file_type: 'document',
+                                        file_name: [{__typename: 'Value', value: 'some_file.pdf'}],
                                         whoAmI: {...mockFileData.whoAmI, preview: null}
                                     }
                                 ]
@@ -321,6 +332,7 @@ describe('FileModal', () => {
                     }
                 }
             ];
+
             render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
                 apolloMocks: mocks,
                 cacheSettings
@@ -337,12 +349,16 @@ describe('FileModal', () => {
             const mocks = [
                 {
                     request: {
-                        query: getFileDataQuery('files'),
-                        variables: {
-                            fileId: mockRecord.id
-                        }
+                        query: getFileDataQuery,
+                        variables: mockVariables
                     },
-                    result: {data: {files: {list: [{...mockFileData, file_name: 'some_file.txt', file_type: 'other'}]}}}
+                    result: {
+                        data: {
+                            records: {
+                                list: [{...mockFileData, file_name: [{__typename: 'Value', value: 'some_file.txt'}]}]
+                            }
+                        }
+                    }
                 }
             ];
             render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {

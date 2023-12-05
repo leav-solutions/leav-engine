@@ -14,8 +14,6 @@ import {
 
 describe('Records', () => {
     const testLibName = 'record_library_test';
-    const testLibNameQueryName = 'recordLibraryTest';
-    const testLibNameType = 'RecordLibraryTest';
     const testAttributeId = 'create_record_test_attribute';
     let recordId;
 
@@ -70,8 +68,10 @@ describe('Records', () => {
             }) {
                 record {
                     id
-                    ...on ${testLibNameType} {
-                        ${testAttributeId}
+                    ${testAttributeId}: property(attribute: "${testAttributeId}") {
+                        ...on Value {
+                            value
+                        }
                     }
                 }
             },
@@ -81,42 +81,54 @@ describe('Records', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.c1.record.id).toBeTruthy();
-        expect(res.data.data.c1.record[testAttributeId]).toBe('My value');
+        expect(res.data.data.c1.record[testAttributeId][0].value).toBe('My value');
     });
 
     test('Get records filtered by ID', async () => {
-        const res = await makeGraphQlCall(
-            `{ ${testLibNameQueryName}(filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]) { list {id permissions {edit_record}} } }
-        `
-        );
+        const res = await makeGraphQlCall(`{
+            records(
+                library: "${testLibName}",
+                filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]
+            ) {
+                list {
+                    id
+                    permissions {edit_record}
+                }
+            }
+        }`);
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data[testLibNameQueryName].list.length).toBe(1);
-        expect(res.data.data[testLibNameQueryName].list[0].id).toBe(recordId);
-        expect(res.data.data[testLibNameQueryName].list[0].permissions.edit_record).toBeDefined();
+        expect(res.data.data.records.list.length).toBe(1);
+        expect(res.data.data.records.list[0].id).toBe(recordId);
+        expect(res.data.data.records.list[0].permissions.edit_record).toBeDefined();
     });
 
     test('Get library details on a record', async () => {
-        const res = await makeGraphQlCall(
-            `{ ${testLibNameQueryName}(filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]) {
+        const res = await makeGraphQlCall(`{
+            records(
+                library: "${testLibName}",
+                filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]
+            ) {
                  list {
                      id
                      library { id }
                     }
                 }
-            }`
-        );
+            }`);
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data[testLibNameQueryName].list[0].library.id).toBe(testLibName);
+        expect(res.data.data.records.list[0].library.id).toBe(testLibName);
     });
 
     test('Get record identity', async () => {
         const res = await makeGraphQlCall(`
             {
-                ${testLibNameQueryName}(filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]) {
+                records(
+                    library: "${testLibName}",
+                    filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${recordId}"}]
+                ) {
                     list {
                         id
                         whoAmI { id library { id } label }
@@ -127,42 +139,46 @@ describe('Records', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data[testLibNameQueryName].list[0].whoAmI.id).toBe(recordId);
-        expect(res.data.data[testLibNameQueryName].list[0].whoAmI.library.id).toBe(testLibName);
-        expect(res.data.data[testLibNameQueryName].list[0].whoAmI.label).toBe(null);
+        expect(res.data.data.records.list[0].whoAmI.id).toBe(recordId);
+        expect(res.data.data.records.list[0].whoAmI.library.id).toBe(testLibName);
+        expect(res.data.data.records.list[0].whoAmI.label).toBe(null);
     });
 
     test('Get records paginated', async () => {
-        const firstCallRes = await makeGraphQlCall(
-            `{ ${testLibNameQueryName}(pagination: {limit: 3, offset: 0}) { totalCount cursor {next prev} list {id} } }
-        `
-        );
+        const firstCallRes = await makeGraphQlCall(`{
+            records(
+                library: "${testLibName}",
+                pagination: {limit: 3, offset: 0}
+            ) {
+                totalCount
+                cursor {next prev}
+                list {id}
+            }
+        }`);
 
         expect(firstCallRes.data.errors).toBeUndefined();
         expect(firstCallRes.status).toBe(200);
-        expect(firstCallRes.data.data[testLibNameQueryName].list.length).toBe(3);
-        expect(firstCallRes.data.data[testLibNameQueryName].totalCount).toBeGreaterThan(
-            firstCallRes.data.data[testLibNameQueryName].list.length
-        );
-        expect(firstCallRes.data.data[testLibNameQueryName].cursor.next).toBeTruthy();
+        expect(firstCallRes.data.data.records.list.length).toBe(3);
+        expect(firstCallRes.data.data.records.totalCount).toBeGreaterThan(firstCallRes.data.data.records.list.length);
+        expect(firstCallRes.data.data.records.cursor.next).toBeTruthy();
 
-        const cursorCallRes = await makeGraphQlCall(
-            `{ ${testLibNameQueryName}(
+        const cursorCallRes = await makeGraphQlCall(`{
+            records(
+                library: "${testLibName}",
                 pagination: {
                     limit: 5,
-                    cursor: "${firstCallRes.data.data[testLibNameQueryName].cursor.next}"
+                    cursor: "${firstCallRes.data.data.records.cursor.next}"
                 }) {
                     totalCount
                     cursor {next prev}
                     list {id}
                 }
             }
-        `
-        );
+        `);
 
         expect(cursorCallRes.data.errors).toBeUndefined();
-        expect(cursorCallRes.data.data[testLibNameQueryName].list.length).toBe(5);
-        expect(cursorCallRes.data.data[testLibNameQueryName].cursor.next).toBeTruthy();
+        expect(cursorCallRes.data.data.records.list.length).toBe(5);
+        expect(cursorCallRes.data.data.records.cursor.next).toBeTruthy();
     });
 
     test('Delete a record', async () => {
@@ -179,11 +195,8 @@ describe('Records', () => {
 
     describe('Sort/filter', () => {
         const sfTestLibId = 'records_sort_filter_test_lib';
-        const sfTestLibQueryName = 'recordsSortFilterTestLib';
         const sfTestLibLinkId = 'records_sort_filter_test_lib_linked';
-        const sfTestLibLinkQueryName = 'recordsSortFilterTestLibLinked';
         const sfTestLibTreeId = 'records_sort_filter_test_lib_tree';
-        const sfTestLibTreeIdQueryName = 'recordsSortFilterTestLibTree';
         const testTreeId = 'records_sf_test_tree';
         const testSimpleAttrId = 'records_sort_filter_test_attr_simple';
         const testSimpleExtAttrId = 'records_sort_filter_test_attr_simple_extended';
@@ -402,32 +415,34 @@ describe('Records', () => {
             });
 
             test('Filter', async () => {
-                const res = await makeGraphQlCall(
-                    `{ ${sfTestLibQueryName}(filters: [{field: "${testSimpleAttrId}", condition: ${AttributeCondition.EQUAL}, value: "C"}]) { list {id}} }`
-                );
+                const res = await makeGraphQlCall(`{
+                    records(
+                        library: "${sfTestLibId}",
+                        filters: [{field: "${testSimpleAttrId}", condition: ${AttributeCondition.EQUAL}, value: "C"}]
+                    ) { list {id} }
+                }`);
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[sfTestLibQueryName].list.length).toBe(1);
-                expect(res.data.data[sfTestLibQueryName].list[0].id).toBe(sfRecord1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(sfRecord1);
             });
 
             test('Sort', async () => {
-                const res = await makeGraphQlCall(
-                    `{ ${sfTestLibQueryName}(sort: {field: "${testSimpleAttrId}", order: asc}) {
+                const res = await makeGraphQlCall(`{
+                    records(library: "${sfTestLibId}", sort: {field: "${testSimpleAttrId}", order: asc}) {
                         list {
                             id
                         }
                     }
-                }`
-                );
+                }`);
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[sfTestLibQueryName].list.length).toBe(3);
-                expect(res.data.data[sfTestLibQueryName].list[0].id).toBe(sfRecord2);
-                expect(res.data.data[sfTestLibQueryName].list[1].id).toBe(sfRecord3);
-                expect(res.data.data[sfTestLibQueryName].list[2].id).toBe(sfRecord1);
+                expect(res.data.data.records.list.length).toBe(3);
+                expect(res.data.data.records.list[0].id).toBe(sfRecord2);
+                expect(res.data.data.records.list[1].id).toBe(sfRecord3);
+                expect(res.data.data.records.list[2].id).toBe(sfRecord1);
             });
         });
 
@@ -455,7 +470,12 @@ describe('Records', () => {
 
             test('Filter', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${sfTestLibQueryName}(filters: [{field: "${testSimpleExtAttrId}.name", condition: ${AttributeCondition.EQUAL}, value: "C"}]) {
+                    records(
+                        library: "${sfTestLibId}",
+                        filters: [
+                            {field: "${testSimpleExtAttrId}.name", condition: ${AttributeCondition.EQUAL}, value: "C"}
+                        ]
+                    ) {
                         list {
                             id
                         }
@@ -464,13 +484,13 @@ describe('Records', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[sfTestLibQueryName].list.length).toBe(1);
-                expect(res.data.data[sfTestLibQueryName].list[0].id).toBe(sfRecord1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(sfRecord1);
             });
 
             test('Sort', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${sfTestLibQueryName}(sort: {field: "${testSimpleExtAttrId}.name", order: asc}) {
+                    records(library: "${sfTestLibId}", sort: {field: "${testSimpleExtAttrId}.name", order: asc}) {
                         list {
                             id
                         }
@@ -479,10 +499,10 @@ describe('Records', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[sfTestLibQueryName].list.length).toBe(3);
-                expect(res.data.data[sfTestLibQueryName].list[0].id).toBe(sfRecord2);
-                expect(res.data.data[sfTestLibQueryName].list[1].id).toBe(sfRecord3);
-                expect(res.data.data[sfTestLibQueryName].list[2].id).toBe(sfRecord1);
+                expect(res.data.data.records.list.length).toBe(3);
+                expect(res.data.data.records.list[0].id).toBe(sfRecord2);
+                expect(res.data.data.records.list[1].id).toBe(sfRecord3);
+                expect(res.data.data.records.list[2].id).toBe(sfRecord1);
             });
         });
 
@@ -510,19 +530,30 @@ describe('Records', () => {
 
             test('Filter', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${sfTestLibQueryName}(
-                        filters: [{field: "${testSimpleLinkAttrId}.${testSimpleAttrId}", condition: ${AttributeCondition.EQUAL}, value: "C"}]
-                    ) { list {id}} }`);
+                    records(
+                        library: "${sfTestLibId}",
+                        filters: [
+                            {
+                                field: "${testSimpleLinkAttrId}.${testSimpleAttrId}",
+                                condition: ${AttributeCondition.EQUAL},
+                                value: "C"
+                            }
+                        ]
+                    ) {
+                        list {id}
+                    }
+                }`);
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[sfTestLibQueryName].list.length).toBe(1);
-                expect(res.data.data[sfTestLibQueryName].list[0].id).toBe(sfRecord1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(sfRecord1);
             });
 
             test('Filter on advanced attribute through simple link', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${sfTestLibQueryName}(
+                    records(
+                        library: "${sfTestLibId}",
                         filters: [{
                             field: "${testSimpleLinkAttrId}.${testAdvThroughLinkAttrId}",
                             condition: ${AttributeCondition.EQUAL},
@@ -532,13 +563,16 @@ describe('Records', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[sfTestLibQueryName].list.length).toBe(1);
-                expect(res.data.data[sfTestLibQueryName].list[0].id).toBe(sfRecord1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(sfRecord1);
             });
 
             test('Sort', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${sfTestLibQueryName}(sort: {field: "${testSimpleLinkAttrId}.${testSimpleAttrId}", order: asc}) {
+                    records(
+                        library: "${sfTestLibId}",
+                        sort: {field: "${testSimpleLinkAttrId}.${testSimpleAttrId}", order: asc}
+                    ) {
                         list {
                             id
                         }
@@ -547,10 +581,10 @@ describe('Records', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[sfTestLibQueryName].list.length).toBe(3);
-                expect(res.data.data[sfTestLibQueryName].list[0].id).toBe(sfRecord2);
-                expect(res.data.data[sfTestLibQueryName].list[1].id).toBe(sfRecord3);
-                expect(res.data.data[sfTestLibQueryName].list[2].id).toBe(sfRecord1);
+                expect(res.data.data.records.list.length).toBe(3);
+                expect(res.data.data.records.list[0].id).toBe(sfRecord2);
+                expect(res.data.data.records.list[1].id).toBe(sfRecord3);
+                expect(res.data.data.records.list[2].id).toBe(sfRecord1);
             });
         });
 
@@ -577,32 +611,33 @@ describe('Records', () => {
             });
 
             test('Filter', async () => {
-                const res = await makeGraphQlCall(
-                    `{ ${sfTestLibQueryName}(filters: [{field: "${testAdvAttrId}", condition: ${AttributeCondition.EQUAL}, value: "C"}]) { list {id}} }`
-                );
+                const res = await makeGraphQlCall(`{
+                    records(
+                        library: "${sfTestLibId}",
+                        filters: [{field: "${testAdvAttrId}", condition: ${AttributeCondition.EQUAL}, value: "C"}]
+                    ) { list {id}} }`);
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[sfTestLibQueryName].list.length).toBe(1);
-                expect(res.data.data[sfTestLibQueryName].list[0].id).toBe(sfRecord1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(sfRecord1);
             });
 
             test('Sort', async () => {
-                const res = await makeGraphQlCall(
-                    `{ ${sfTestLibQueryName}(sort: {field: "${testAdvAttrId}", order: asc}) {
+                const res = await makeGraphQlCall(`{
+                    records(library: "${sfTestLibId}", sort: {field: "${testAdvAttrId}", order: asc}) {
                         list {
                             id
                         }
                     }
-                }`
-                );
+                }`);
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[sfTestLibQueryName].list.length).toBe(3);
-                expect(res.data.data[sfTestLibQueryName].list[0].id).toBe(sfRecord2);
-                expect(res.data.data[sfTestLibQueryName].list[1].id).toBe(sfRecord3);
-                expect(res.data.data[sfTestLibQueryName].list[2].id).toBe(sfRecord1);
+                expect(res.data.data.records.list.length).toBe(3);
+                expect(res.data.data.records.list[0].id).toBe(sfRecord2);
+                expect(res.data.data.records.list[1].id).toBe(sfRecord3);
+                expect(res.data.data.records.list[2].id).toBe(sfRecord1);
             });
         });
 
@@ -630,19 +665,27 @@ describe('Records', () => {
 
             test('Filter', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${sfTestLibQueryName}(
-                        filters: [{field: "${testAdvLinkAttrId}.${testSimpleAttrId}", condition: ${AttributeCondition.EQUAL}, value: "C"}]
+                    records(
+                        library: "${sfTestLibId}",
+                        filters: [
+                            {
+                                field: "${testAdvLinkAttrId}.${testSimpleAttrId}",
+                                condition: ${AttributeCondition.EQUAL},
+                                value: "C"
+                            }
+                        ]
                     ) { list {id}} }`);
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[sfTestLibQueryName].list.length).toBe(1);
-                expect(res.data.data[sfTestLibQueryName].list[0].id).toBe(sfRecord1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(sfRecord1);
             });
 
             test('Filter on advanced attribute through advanced link', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${sfTestLibQueryName}(
+                    records(
+                        library: "${sfTestLibId}",
                         filters: [{
                             field: "${testAdvLinkAttrId}.${testAdvThroughLinkAttrId}",
                             condition: ${AttributeCondition.EQUAL},
@@ -652,26 +695,28 @@ describe('Records', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[sfTestLibQueryName].list.length).toBe(1);
-                expect(res.data.data[sfTestLibQueryName].list[0].id).toBe(sfRecord1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(sfRecord1);
             });
 
             test('Sort', async () => {
-                const res = await makeGraphQlCall(
-                    `{ ${sfTestLibQueryName}(sort: {field: "${testAdvLinkAttrId}.${testSimpleAttrId}", order: asc}) {
+                const res = await makeGraphQlCall(`{
+                    records(
+                        library: "${sfTestLibId}",
+                        sort: {field: "${testAdvLinkAttrId}.${testSimpleAttrId}", order: asc}
+                    ) {
                         list {
                             id
                         }
                     }
-                }`
-                );
+                }`);
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[sfTestLibQueryName].list.length).toBe(3);
-                expect(res.data.data[sfTestLibQueryName].list[0].id).toBe(sfRecord2);
-                expect(res.data.data[sfTestLibQueryName].list[1].id).toBe(sfRecord3);
-                expect(res.data.data[sfTestLibQueryName].list[2].id).toBe(sfRecord1);
+                expect(res.data.data.records.list.length).toBe(3);
+                expect(res.data.data.records.list[0].id).toBe(sfRecord2);
+                expect(res.data.data.records.list[1].id).toBe(sfRecord3);
+                expect(res.data.data.records.list[2].id).toBe(sfRecord1);
             });
         });
 
@@ -699,32 +744,41 @@ describe('Records', () => {
 
             test('Filter', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${sfTestLibLinkQueryName}(
-                        filters: [{field: "${testAdvRevLinkAttrId}", condition: ${AttributeCondition.EQUAL}, value: "${sfRecord1}"}]
+                    records(
+                        library: "${sfTestLibLinkId}",
+                        filters: [
+                            {
+                                field: "${testAdvRevLinkAttrId}",
+                                condition: ${AttributeCondition.EQUAL},
+                                value: "${sfRecord1}"
+                            }
+                        ]
                     ) { list {id}} }`);
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[sfTestLibLinkQueryName].list.length).toBe(1);
-                expect(res.data.data[sfTestLibLinkQueryName].list[0].id).toBe(sfLinkedRecord1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(sfLinkedRecord1);
             });
 
             test('Sort', async () => {
-                const res = await makeGraphQlCall(
-                    `{ ${sfTestLibLinkQueryName}(sort: {field: "${testAdvRevLinkAttrId}.${testSimpleAttrId}", order: asc}) {
+                const res = await makeGraphQlCall(`{
+                    records(
+                        library: "${sfTestLibLinkId}",
+                        sort: {field: "${testAdvRevLinkAttrId}.${testSimpleAttrId}", order: asc}
+                    ) {
                         list {
                             id
                         }
                     }
-                }`
-                );
+                }`);
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[sfTestLibLinkQueryName].list.length).toBe(3);
-                expect(res.data.data[sfTestLibLinkQueryName].list[0].id).toBe(sfLinkedRecord2);
-                expect(res.data.data[sfTestLibLinkQueryName].list[1].id).toBe(sfLinkedRecord3);
-                expect(res.data.data[sfTestLibLinkQueryName].list[2].id).toBe(sfLinkedRecord1);
+                expect(res.data.data.records.list.length).toBe(3);
+                expect(res.data.data.records.list[0].id).toBe(sfLinkedRecord2);
+                expect(res.data.data.records.list[1].id).toBe(sfLinkedRecord3);
+                expect(res.data.data.records.list[2].id).toBe(sfLinkedRecord1);
             });
         });
 
@@ -752,32 +806,41 @@ describe('Records', () => {
 
             test('Filter', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${sfTestLibLinkQueryName}(
-                        filters: [{field: "${testAdvRevLinkToSimpleLinkAttrId}", condition: ${AttributeCondition.EQUAL}, value: "${sfRecord1}"}]
+                    records(
+                        library: "${sfTestLibLinkId}",
+                        filters: [
+                            {
+                                field: "${testAdvRevLinkToSimpleLinkAttrId}",
+                                condition: ${AttributeCondition.EQUAL},
+                                value: "${sfRecord1}"
+                            }
+                        ]
                     ) { list {id}} }`);
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[sfTestLibLinkQueryName].list.length).toBe(1);
-                expect(res.data.data[sfTestLibLinkQueryName].list[0].id).toBe(sfLinkedRecord1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(sfLinkedRecord1);
             });
 
             test('Sort', async () => {
-                const res = await makeGraphQlCall(
-                    `{ ${sfTestLibLinkQueryName}(sort: {field: "${testAdvRevLinkToSimpleLinkAttrId}.${testSimpleAttrId}", order: asc}) {
+                const res = await makeGraphQlCall(`{
+                    records(
+                        library: "${sfTestLibLinkId}",
+                        sort: {field: "${testAdvRevLinkToSimpleLinkAttrId}.${testSimpleAttrId}", order: asc}
+                    ) {
                         list {
                             id
                         }
                     }
-                }`
-                );
+                }`);
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[sfTestLibLinkQueryName].list.length).toBe(3);
-                expect(res.data.data[sfTestLibLinkQueryName].list[0].id).toBe(sfLinkedRecord2);
-                expect(res.data.data[sfTestLibLinkQueryName].list[1].id).toBe(sfLinkedRecord3);
-                expect(res.data.data[sfTestLibLinkQueryName].list[2].id).toBe(sfLinkedRecord1);
+                expect(res.data.data.records.list.length).toBe(3);
+                expect(res.data.data.records.list[0].id).toBe(sfLinkedRecord2);
+                expect(res.data.data.records.list[1].id).toBe(sfLinkedRecord3);
+                expect(res.data.data.records.list[2].id).toBe(sfLinkedRecord1);
             });
         });
 
@@ -805,7 +868,8 @@ describe('Records', () => {
 
             test('Filter', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${sfTestLibQueryName}(
+                    records(
+                        library: "${sfTestLibId}",
                         filters: [{
                             field: "${testTreeAttrId}.${sfTestLibTreeId}.${testSimpleAttrId}",
                             condition: ${AttributeCondition.EQUAL},
@@ -815,68 +879,72 @@ describe('Records', () => {
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
-                expect(res.data.data[sfTestLibQueryName].list.length).toBe(1);
-                expect(res.data.data[sfTestLibQueryName].list[0].id).toBe(sfRecord1);
+                expect(res.data.data.records.list.length).toBe(1);
+                expect(res.data.data.records.list[0].id).toBe(sfRecord1);
             });
 
             test('Sort', async () => {
-                const res = await makeGraphQlCall(
-                    `{ ${sfTestLibQueryName}(
-                            sort: {
-                                field: "${testTreeAttrId}.${sfTestLibTreeId}.${testSimpleAttrId}",
-                                order: asc
-                            }
-                        ) {
+                const res = await makeGraphQlCall(`{
+                    records(
+                        library: "${sfTestLibId}",
+                        sort: {
+                            field: "${testTreeAttrId}.${sfTestLibTreeId}.${testSimpleAttrId}",
+                            order: asc
+                        }
+                    ) {
                         list {
                             id
                         }
                     }
-                }`
-                );
+                }`);
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
 
-                expect(res.data.data[sfTestLibQueryName].list.length).toBe(3);
-                expect(res.data.data[sfTestLibQueryName].list[0].id).toBe(sfRecord2);
-                expect(res.data.data[sfTestLibQueryName].list[1].id).toBe(sfRecord3);
-                expect(res.data.data[sfTestLibQueryName].list[2].id).toBe(sfRecord1);
+                expect(res.data.data.records.list.length).toBe(3);
+                expect(res.data.data.records.list[0].id).toBe(sfRecord2);
+                expect(res.data.data.records.list[1].id).toBe(sfRecord3);
+                expect(res.data.data.records.list[2].id).toBe(sfRecord1);
             });
 
             test('Classified', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${sfTestLibTreeIdQueryName}(
+                    records(
+                        library: "${sfTestLibTreeId}",
                         filters: [{
                             value: "${nodeTreeRecord4}",
                             condition: ${TreeCondition.CLASSIFIED_IN},
                             treeId: "${testTreeId}"
-                        }]) { list {id}} }`);
+                        }]
+                    ) { list {id}} }`);
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
 
-                expect(res.data.data[sfTestLibTreeIdQueryName].list).toHaveLength(2);
-                expect(res.data.data[sfTestLibTreeIdQueryName].list[0].id).toBe(sfTreeRecord6);
-                expect(res.data.data[sfTestLibTreeIdQueryName].list[1].id).toBe(sfTreeRecord5);
+                expect(res.data.data.records.list).toHaveLength(2);
+                expect(res.data.data.records.list[0].id).toBe(sfTreeRecord6);
+                expect(res.data.data.records.list[1].id).toBe(sfTreeRecord5);
             });
 
             test('Not Classified', async () => {
                 const res = await makeGraphQlCall(`{
-                    ${sfTestLibTreeIdQueryName}(
+                    records(
+                        library: "${sfTestLibTreeId}",
                         filters: [{
                             value: "${nodeTreeRecord4}",
                             condition: ${TreeCondition.NOT_CLASSIFIED_IN},
                             treeId: "${testTreeId}"
-                        }]) { list {id}} }`);
+                        }]
+                    ) { list {id}} }`);
 
                 expect(res.data.errors).toBeUndefined();
                 expect(res.status).toBe(200);
 
-                expect(res.data.data[sfTestLibTreeIdQueryName].list.length).toBe(4);
-                expect(res.data.data[sfTestLibTreeIdQueryName].list[0].id).toBe(sfTreeRecord4);
-                expect(res.data.data[sfTestLibTreeIdQueryName].list[1].id).toBe(sfTreeRecord3);
-                expect(res.data.data[sfTestLibTreeIdQueryName].list[2].id).toBe(sfTreeRecord2);
-                expect(res.data.data[sfTestLibTreeIdQueryName].list[3].id).toBe(sfTreeRecord1);
+                expect(res.data.data.records.list.length).toBe(4);
+                expect(res.data.data.records.list[0].id).toBe(sfTreeRecord4);
+                expect(res.data.data.records.list[1].id).toBe(sfTreeRecord3);
+                expect(res.data.data.records.list[2].id).toBe(sfTreeRecord2);
+                expect(res.data.data.records.list[3].id).toBe(sfTreeRecord1);
             });
         });
     });

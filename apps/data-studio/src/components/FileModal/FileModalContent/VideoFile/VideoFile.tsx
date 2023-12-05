@@ -21,7 +21,7 @@ function VideoFile({fileData, fallback}: IFileViewerProps): JSX.Element {
         <VideoPlayer
             controls
             src={fileData.whoAmI.preview.original}
-            title={fileData.file_name}
+            title={fileData.file_name[0].value}
             data-testid="video-player"
             onError={() => {
                 setHasFailed(true);

@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {WithTypename} from '@leav/utils';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
-import React from 'react';
 import {GET_VIEWS_LIST_views_list} from '_gqlTypes/GET_VIEWS_LIST';
 import {SortOrder, ViewSizes, ViewTypes} from '_gqlTypes/globalTypes';
 import {act, render, screen} from '_tests/testUtils';
@@ -33,11 +32,7 @@ describe('ViewPanel', () => {
                 id: '1',
                 label: null,
                 library: {
-                    id: 'users',
-                    gqlNames: {
-                        query: 'users',
-                        type: 'Users'
-                    }
+                    id: 'users'
                 }
             }
         },

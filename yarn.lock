@@ -14134,7 +14134,7 @@ __metadata:
     express: 4.17.3
     express-useragent: 1.0.15
     glob: 7.1.6
-    graphql: 16.8.1
+    graphql: 16.6.0
     graphql-subscriptions: 2.0.0
     graphql-type-json: 0.3.2
     graphql-upload: 16.0.2
@@ -17819,7 +17819,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql@npm:16":
+"graphql@npm:16.6":
   version: 16.6.0
   resolution: "graphql@npm:16.6.0"
   checksum: bf1d9e3c1938ce3c1a81e909bd3ead1ae4707c577f91cff1ca2eca474bfbc7873d5d7b942e1e9777ff5a8304421dba57a4b76d7a29eb19de8711cb70e3c2415e

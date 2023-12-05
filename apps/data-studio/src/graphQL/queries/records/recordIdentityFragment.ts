@@ -15,10 +15,6 @@ const recordIdentityFragment = gql`
                 id
                 behavior
                 label
-                gqlNames {
-                    query
-                    type
-                }
             }
             preview
         }

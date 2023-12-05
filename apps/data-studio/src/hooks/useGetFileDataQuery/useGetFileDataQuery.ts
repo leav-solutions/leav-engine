@@ -3,13 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {QueryResult, useQuery} from '@apollo/client';
-import {
-    getFileDataQuery,
-    IFileDataQuery,
-    IFileDataQueryVariables,
-    IFileDataWithPreviewsStatus
-} from 'graphQL/queries/records/getFileDataQuery';
+import {getFileDataQuery, IFileDataWithPreviewsStatus} from 'graphQL/queries/records/getFileDataQuery';
 import {useEffect, useState} from 'react';
+import {GetFileDataQuery, GetFileDataQueryVariables} from '_gqlTypes';
 
 export interface IUseGetFileDataQueryHook {
     loading: boolean;
@@ -20,22 +16,24 @@ export interface IUseGetFileDataQueryHook {
 export default function useGetFileDataQuery(libraryId: string, fileId: string): IUseGetFileDataQueryHook {
     const [fileData, setFileData] = useState<IFileDataWithPreviewsStatus>();
 
-    const {data, error, loading} = useQuery<IFileDataQuery, IFileDataQueryVariables>(getFileDataQuery(libraryId), {
+    const {data, error, loading} = useQuery<GetFileDataQuery, GetFileDataQueryVariables>(getFileDataQuery, {
         fetchPolicy: 'cache-and-network',
         skip: !fileId,
-        variables: {fileId}
+        variables: {library: libraryId, fileId, previewsStatusAttribute: `${libraryId}_previews_status`}
     });
 
     useEffect(() => {
         if (data) {
-            // Convert preview status to an object
-            if (!data[libraryId]?.list?.length) {
+            if (!data.records.list?.length) {
                 setFileData(null);
                 return;
             }
 
-            const rawFileData = data[libraryId]?.list[0];
-            const previewsStatus = rawFileData?.previews_status ? JSON.parse(rawFileData.previews_status) : null;
+            const rawFileData = data.records?.list[0];
+            // Convert preview status to an object
+            const previewsStatus = rawFileData?.previews_status
+                ? JSON.parse(rawFileData.previews_status?.[0]?.value)
+                : null;
             const file: IFileDataWithPreviewsStatus = {
                 ...rawFileData,
                 previews_status: previewsStatus,

@@ -53,8 +53,7 @@ describe('Navigation', () => {
         preview: {...mockRecord.preview, __typename: 'Preview'},
         library: {
             ...mockRecord.library,
-            __typename: 'Library',
-            gqlNames: {...mockRecord.library.gqlNames, __typename: 'LibraryGraphqlNames'}
+            __typename: 'Library'
         }
     };
 

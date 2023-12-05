@@ -24,10 +24,6 @@ export const getUser = gql`
                 id
                 behavior
                 label
-                gqlNames {
-                    query
-                    type
-                }
             }
         }
     }

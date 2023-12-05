@@ -6,7 +6,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ValueVersionInput, FormElementTypes, LibraryBehavior, AttributeType, AttributeFormat} from './globalTypes';
+import {AttributeFormat, AttributeType, FormElementTypes, LibraryBehavior, ValueVersionInput} from './globalTypes';
 
 // ====================================================
 // GraphQL query operation: RECORD_FORM
@@ -20,16 +20,10 @@ export interface RECORD_FORM_recordForm_dependencyAttributes {
     id: string;
 }
 
-export interface RECORD_FORM_recordForm_elements_values_Value_created_by_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface RECORD_FORM_recordForm_elements_values_Value_created_by_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: RECORD_FORM_recordForm_elements_values_Value_created_by_whoAmI_library_gqlNames;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_Value_created_by_whoAmI {
@@ -46,16 +40,10 @@ export interface RECORD_FORM_recordForm_elements_values_Value_created_by {
     whoAmI: RECORD_FORM_recordForm_elements_values_Value_created_by_whoAmI;
 }
 
-export interface RECORD_FORM_recordForm_elements_values_Value_modified_by_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface RECORD_FORM_recordForm_elements_values_Value_modified_by_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: RECORD_FORM_recordForm_elements_values_Value_modified_by_whoAmI_library_gqlNames;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_Value_modified_by_whoAmI {
@@ -120,16 +108,10 @@ export interface RECORD_FORM_recordForm_elements_values_Value {
     raw_value: Any | null;
 }
 
-export interface RECORD_FORM_recordForm_elements_values_LinkValue_created_by_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface RECORD_FORM_recordForm_elements_values_LinkValue_created_by_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: RECORD_FORM_recordForm_elements_values_LinkValue_created_by_whoAmI_library_gqlNames;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_LinkValue_created_by_whoAmI {
@@ -146,16 +128,10 @@ export interface RECORD_FORM_recordForm_elements_values_LinkValue_created_by {
     whoAmI: RECORD_FORM_recordForm_elements_values_LinkValue_created_by_whoAmI;
 }
 
-export interface RECORD_FORM_recordForm_elements_values_LinkValue_modified_by_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface RECORD_FORM_recordForm_elements_values_LinkValue_modified_by_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: RECORD_FORM_recordForm_elements_values_LinkValue_modified_by_whoAmI_library_gqlNames;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_LinkValue_modified_by_whoAmI {
@@ -208,16 +184,10 @@ export interface RECORD_FORM_recordForm_elements_values_LinkValue_version {
     treeNode: RECORD_FORM_recordForm_elements_values_LinkValue_version_treeNode | null;
 }
 
-export interface RECORD_FORM_recordForm_elements_values_LinkValue_linkValue_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface RECORD_FORM_recordForm_elements_values_LinkValue_linkValue_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: RECORD_FORM_recordForm_elements_values_LinkValue_linkValue_whoAmI_library_gqlNames;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_LinkValue_linkValue_whoAmI {
@@ -245,16 +215,10 @@ export interface RECORD_FORM_recordForm_elements_values_LinkValue {
     linkValue: RECORD_FORM_recordForm_elements_values_LinkValue_linkValue | null;
 }
 
-export interface RECORD_FORM_recordForm_elements_values_TreeValue_created_by_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_created_by_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: RECORD_FORM_recordForm_elements_values_TreeValue_created_by_whoAmI_library_gqlNames;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_created_by_whoAmI {
@@ -271,16 +235,10 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue_created_by {
     whoAmI: RECORD_FORM_recordForm_elements_values_TreeValue_created_by_whoAmI;
 }
 
-export interface RECORD_FORM_recordForm_elements_values_TreeValue_modified_by_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_modified_by_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: RECORD_FORM_recordForm_elements_values_TreeValue_modified_by_whoAmI_library_gqlNames;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_modified_by_whoAmI {
@@ -333,16 +291,10 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue_version {
     treeNode: RECORD_FORM_recordForm_elements_values_TreeValue_version_treeNode | null;
 }
 
-export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record_whoAmI_library_gqlNames;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record_whoAmI {
@@ -359,16 +311,10 @@ export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_reco
     whoAmI: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_record_whoAmI;
 }
 
-export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors_record_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors_record_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors_record_whoAmI_library_gqlNames;
 }
 
 export interface RECORD_FORM_recordForm_elements_values_TreeValue_treeValue_ancestors_record_whoAmI {
@@ -595,11 +541,6 @@ export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_metadat
     metadata_fields: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_metadata_fields_metadata_fields[] | null;
 }
 
-export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linked_library_gqlNames {
-    type: string;
-    query: string;
-}
-
 export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linked_library_permissions {
     create_record: boolean;
 }
@@ -608,20 +549,13 @@ export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linked_
     id: string;
     label: SystemTranslation | null;
     behavior: LibraryBehavior;
-    gqlNames: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linked_library_gqlNames;
     permissions: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linked_library_permissions | null;
-}
-
-export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
 }
 
 export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI_library_gqlNames;
 }
 
 export interface RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linkValuesList_values_whoAmI {
@@ -739,16 +673,10 @@ export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_linked_
     label: SystemTranslation | null;
 }
 
-export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_record_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_record_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_record_whoAmI_library_gqlNames;
 }
 
 export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_record_whoAmI {
@@ -765,16 +693,10 @@ export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeVal
     whoAmI: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_record_whoAmI;
 }
 
-export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI_library_gqlNames;
 }
 
 export interface RECORD_FORM_recordForm_elements_attribute_TreeAttribute_treeValuesList_values_ancestors_record_whoAmI {

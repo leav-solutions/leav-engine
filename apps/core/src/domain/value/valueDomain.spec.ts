@@ -1413,7 +1413,7 @@ describe('ValueDomain', () => {
                 values: [],
                 errors: [
                     {attribute: 'test_attr', input: 'test', message: 'ERROR', type: 'VALIDATION_ERROR'},
-                    {attribute: 'test_attr2', input: 'test', message: 'Validation error', type: 'VALIDATION_ERROR'}
+                    {attribute: 'test_attr2', input: 'test', message: 'Invalid request', type: 'VALIDATION_ERROR'}
                 ]
             });
 

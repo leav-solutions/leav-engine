@@ -7,10 +7,10 @@
 // This file was automatically generated and should not be edited.
 
 import {
+    AttributeFormat,
+    AttributeType,
     AvailableLanguage,
     LibraryBehavior,
-    AttributeType,
-    AttributeFormat,
     PermissionsRelation,
     ValueVersionMode
 } from './globalTypes';
@@ -324,7 +324,6 @@ export interface GET_LIB_BY_ID_libraries_list {
     permissions_conf: GET_LIB_BY_ID_libraries_list_permissions_conf | null;
     recordIdentityConf: GET_LIB_BY_ID_libraries_list_recordIdentityConf | null;
     defaultView: GET_LIB_BY_ID_libraries_list_defaultView | null;
-    gqlNames: GET_LIB_BY_ID_libraries_list_gqlNames;
     permissions: GET_LIB_BY_ID_libraries_list_permissions | null;
     icon: GET_LIB_BY_ID_libraries_list_icon | null;
 }

@@ -44,12 +44,6 @@ export const mockGetLibraryDetailExtendedElement: GET_LIBRARY_DETAIL_EXTENDED_li
             system: false
         }
     ],
-    gqlNames: {
-        query: 'test',
-        filter: 'FileFilter',
-        searchableFields: 'FileSearchableFields',
-        type: 'type'
-    },
     permissions: {
         access_library: true,
         access_record: true,

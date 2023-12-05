@@ -18,9 +18,10 @@ export interface IListProps {
 }
 
 export default function MainPanel({state, dispatch}: IListProps) {
-    if (!state.selectedRootQuery || !state.selectedRootAttributes) {
+    if (!state.selectedRootAttributes.length) {
         return <GetLibraryInfos state={state} dispatch={dispatch} />;
     }
+
     return (
         <Dimmer.Dimmable as={'div'} dimmed={state.showFilters} className="height100">
             <div className={`${styles.TopPanelContainer} ${state.showFilters ? styles.blurred : ''}`}>
@@ -59,8 +60,6 @@ function GetLibraryInfos({state, dispatch}: IListProps) {
             type: ActionTypes.SET_ROOT_INFOS,
             data: {
                 label: data.libraries.list[0].label[`${state.lang[0]}`],
-                query: data.libraries.list[0].gqlNames.query,
-                filter: data.libraries.list[0].gqlNames.filter,
                 attributes: data.libraries.list[0].attributes
             }
         });

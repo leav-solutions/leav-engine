@@ -71,7 +71,7 @@ export default function ({
                     type View {
                         id: String!,
                         library: String!,
-                        created_by: User!,
+                        created_by: Record!,
                         shared: Boolean!,
                         created_at: Int!,
                         modified_at: Int!,

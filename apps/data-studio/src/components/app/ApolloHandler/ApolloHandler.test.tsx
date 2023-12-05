@@ -16,8 +16,6 @@ jest.mock('reduxStore/store', () => ({
 
 console.error = jest.fn();
 
-jest.mock('hooks/useGraphqlPossibleTypes');
-
 describe('ApolloHandler', () => {
     test('should fail and display message', async () => {
         const query = gql`

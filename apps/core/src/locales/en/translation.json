@@ -19,6 +19,7 @@
         "FORMAT_ERROR": "Invalid format: {{details}}",
         "INVALID_ACTION_TYPE": "Last action is invalid: expected action with output types including {{expected}}, received {{received}}",
         "INVALID_ATTRIBUTE_FILTER_FORMAT": "Attribute filter must have condition, field and value",
+        "INVALID_ATTRIBUTE_FOR_LIBRARY": "Attribute {{attribute}} is not used by library {{library}}",
         "INVALID_ATTRIBUTES": "Invalid attributes: {{attributes}}",
         "INVALID_DATE_RANGE": "Start date must be less than end date",
         "INVALID_EMAIL": "Invalid email",

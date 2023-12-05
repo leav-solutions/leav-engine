@@ -20,14 +20,6 @@ export const mockLibrary: WithTypename<GET_LIB_BY_ID_libraries_list> = {
     recordIdentityConf: null,
     defaultView: null,
     fullTextAttributes: [],
-    gqlNames: {
-        query: 'products',
-        type: 'Products',
-        list: 'ProductsList',
-        filter: 'ProductsFilter',
-        searchableFields: 'ProductsSearchableFields',
-        __typename: 'LibraryGraphqlNames'
-    },
     attributes: [
         {
             ...mockAttrSimple,

@@ -7,7 +7,6 @@ import {isAllowedQuery} from 'graphQL/queries/permissions/isAllowedQuery';
 import {GET_LIBRARY_PERMISSIONS, GET_LIBRARY_PERMISSIONSVariables} from '_gqlTypes/GET_LIBRARY_PERMISSIONS';
 import {PermissionsActions, PermissionTypes} from '_gqlTypes/globalTypes';
 import {IS_ALLOWED, IS_ALLOWEDVariables} from '_gqlTypes/IS_ALLOWED';
-import {RecordIdentity_whoAmI_library_gqlNames} from '_gqlTypes/RecordIdentity';
 
 export interface IUseCanEditRecordHook {
     loading: boolean;
@@ -15,10 +14,7 @@ export interface IUseCanEditRecordHook {
     isReadOnly: boolean;
 }
 
-export const useCanEditRecord = (
-    library: {id: string; gqlNames?: RecordIdentity_whoAmI_library_gqlNames},
-    recordId?: string
-): IUseCanEditRecordHook => {
+export const useCanEditRecord = (library: {id: string}, recordId?: string): IUseCanEditRecordHook => {
     const isCreationMode = !recordId;
 
     // Query runs if record is specified (= record edition)

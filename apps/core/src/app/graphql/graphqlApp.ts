@@ -2,11 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {makeExecutableSchema} from '@graphql-tools/schema';
-import {EventAction, IDbEvent} from '@leav/utils';
-import {ConfirmChannel, ConsumeMessage} from 'amqplib';
 import {AwilixContainer} from 'awilix';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {EventEmitter} from 'events';
 import {GraphQLResolveInfo, GraphQLSchema, Kind} from 'graphql';
 import {merge} from 'lodash';
 import {IUtils} from 'utils/utils';
@@ -17,12 +14,8 @@ import {IAppModule} from '_types/shared';
 import {IQueryField} from '../../_types/record';
 
 export interface IGraphqlApp extends IAppModule {
-    schema: GraphQLSchema;
-    schemaUpdateEmitter: EventEmitter;
-    SCHEMA_UPDATE_EVENT: string;
-    generateSchema(): Promise<void>;
+    getSchema(): Promise<GraphQLSchema>;
     getQueryFields(info: GraphQLResolveInfo): IQueryField[];
-    initSchemaUpdateConsumer(): Promise<void>;
 }
 
 interface IDeps {
@@ -33,19 +26,15 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function ({
+export default function({
     'core.depsManager': depsManager = null,
     'core.domain.eventsManager': eventsManagerDomain = null,
     'core.utils': utils = null,
     config = null
 }: IDeps = {}): IGraphqlApp {
-    let _fullSchema: GraphQLSchema;
     const _pluginsSchema: IAppGraphQLSchema[] = [];
 
-    const schemaUpdateEmitter = new EventEmitter();
-    const SCHEMA_UPDATE_EVENT = 'schemaUpdate';
-
-    const _generateSchema = async (): Promise<void> => {
+    const _getSchema = async () => {
         try {
             const appSchema = {typeDefs: [], resolvers: {}};
             const modules = Object.keys(depsManager.registrations).filter(modName => modName.match(/^core\.app*/));
@@ -65,23 +54,38 @@ export default function ({
             }
 
             // Put together a schema
-            const schema = makeExecutableSchema(appSchema);
-
-            _fullSchema = schema;
-
-            schemaUpdateEmitter.emit(SCHEMA_UPDATE_EVENT, schema);
+            return makeExecutableSchema(appSchema);
         } catch (e) {
             utils.rethrow(e, 'Error generating schema:');
         }
     };
 
     return {
-        SCHEMA_UPDATE_EVENT,
-        schemaUpdateEmitter,
-        get schema(): GraphQLSchema {
-            return _fullSchema;
+        async getSchema() {
+            try {
+                const appSchema = {typeDefs: [], resolvers: {}};
+                const modules = Object.keys(depsManager.registrations).filter(modName => modName.match(/^core\.app*/));
+                for (const modName of modules) {
+                    const appModule = depsManager.cradle[modName];
+
+                    if (typeof appModule.getGraphQLSchema === 'function') {
+                        const schemaToAdd = await appModule.getGraphQLSchema();
+                        appSchema.typeDefs.push(schemaToAdd.typeDefs);
+                        appSchema.resolvers = merge(appSchema.resolvers, schemaToAdd.resolvers);
+                    }
+                }
+
+                for (const schemaPart of _pluginsSchema) {
+                    appSchema.typeDefs.push(schemaPart.typeDefs);
+                    appSchema.resolvers = merge(appSchema.resolvers, schemaPart.resolvers);
+                }
+
+                // Put together a schema
+                return makeExecutableSchema(appSchema);
+            } catch (e) {
+                utils.rethrow(e, 'Error generating schema:');
+            }
         },
-        generateSchema: _generateSchema,
         getQueryFields(info: GraphQLResolveInfo): IQueryField[] {
             const extractedFields = [];
 
@@ -139,34 +143,6 @@ export default function ({
             }
 
             return extractedFields;
-        },
-        async initSchemaUpdateConsumer() {
-            // Consumer that update GraphQL schema when a library or attribute is saved/deleted
-            await eventsManagerDomain.initCustomConsumer(
-                'schema_update_events',
-                config.eventsManager.routingKeys.data_events,
-                async (msg: ConsumeMessage, channel: ConfirmChannel) => {
-                    channel.ack(msg);
-                    const msgContent: IDbEvent = JSON.parse(msg.content.toString());
-                    if (msgContent.emitter === utils.getProcessIdentifier()) {
-                        // No need to refresh if we are the emitter. Refresh has already been done
-                        return;
-                    }
-
-                    const handledActions: Array<EventAction | string> = [
-                        EventAction.LIBRARY_SAVE,
-                        EventAction.LIBRARY_DELETE,
-                        EventAction.ATTRIBUTE_SAVE,
-                        EventAction.ATTRIBUTE_DELETE
-                    ];
-
-                    if (!handledActions.includes(msgContent.payload.action)) {
-                        return;
-                    }
-
-                    await _generateSchema();
-                }
-            );
         },
         extensionPoints: {
             registerGraphQLSchema: (schemaPart: IAppGraphQLSchema) => {

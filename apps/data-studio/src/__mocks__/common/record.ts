@@ -23,11 +23,7 @@ export const mockPreviews: Preview = {
         library: {
             id: 'files',
             label: {fr: 'Fichiers'},
-            behavior: LibraryBehavior.files,
-            gqlNames: {
-                query: 'files',
-                type: 'Files'
-            }
+            behavior: LibraryBehavior.files
         }
     }
 };
@@ -39,11 +35,7 @@ export const mockRecord: RecordIdentity_whoAmI = {
     library: {
         id: 'record_lib',
         behavior: LibraryBehavior.standard,
-        label: {fr: 'Test Lib'},
-        gqlNames: {
-            query: 'record_libs',
-            type: 'RecordLib'
-        }
+        label: {fr: 'Test Lib'}
     },
     preview: mockPreviews,
     color: 'blue'

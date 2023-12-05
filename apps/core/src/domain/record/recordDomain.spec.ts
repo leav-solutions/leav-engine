@@ -57,6 +57,10 @@ describe('RecordDomain', () => {
         sendDatabaseEvent: global.__mockPromise()
     };
 
+    const mockValidateHelper: Mockify<IValidateHelper> = {
+        validateLibrary: jest.fn()
+    };
+
     const mockSendRecordUpdateEventHelper = jest.fn();
 
     beforeEach(() => {
@@ -301,11 +305,6 @@ describe('RecordDomain', () => {
             };
             const libRepo: Mockify<ILibraryRepo> = {
                 getLibraries: global.__mockPromise({list: [{id: 'test', system: false}], totalCount: 1})
-                // getLibraryFullTextAttributes: global.__mockPromise([])
-            };
-
-            const mockValidateHelper: Mockify<IValidateHelper> = {
-                validateLibrary: jest.fn()
             };
 
             const attrDomain: Mockify<IAttributeDomain> = {
@@ -374,7 +373,8 @@ describe('RecordDomain', () => {
 
             const recDomain = recordDomain({
                 'core.infra.record': recRepo as IRecordRepo,
-                'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain
+                'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
             });
 
             const findRes = await recDomain.find({params: {library: 'test_lib'}, ctx});
@@ -403,7 +403,8 @@ describe('RecordDomain', () => {
             const recDomain = recordDomain({
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
-                'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain
+                'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
             });
 
             await recDomain.find({
@@ -445,7 +446,8 @@ describe('RecordDomain', () => {
             const recDomain = recordDomain({
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
-                'core.domain.permission.library': mockLibraryPermissionDomainForbidden as ILibraryPermissionDomain
+                'core.domain.permission.library': mockLibraryPermissionDomainForbidden as ILibraryPermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
             });
 
             await expect(recDomain.find({params: {library: 'test_lib'}, ctx})).rejects.toThrow(PermissionError);
@@ -476,7 +478,8 @@ describe('RecordDomain', () => {
                 const recDomain = recordDomain({
                     'core.infra.record': recRepo as IRecordRepo,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
-                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain
+                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
                 });
 
                 await recDomain.find({
@@ -541,7 +544,8 @@ describe('RecordDomain', () => {
                     'core.infra.record': recRepo as IRecordRepo,
                     'core.infra.library': mockLibraryRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
-                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain
+                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
                 });
 
                 await recDomain.find({
@@ -621,7 +625,8 @@ describe('RecordDomain', () => {
                     'core.infra.record': recRepo as IRecordRepo,
                     'core.infra.library': mockLibraryRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
-                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain
+                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
                 });
 
                 await recDomain.find({
@@ -672,7 +677,8 @@ describe('RecordDomain', () => {
                 const recDomain = recordDomain({
                     'core.infra.record': recRepo as IRecordRepo,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
-                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain
+                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
                 });
 
                 await recDomain.find({
@@ -738,7 +744,8 @@ describe('RecordDomain', () => {
                     'core.infra.record': recRepo as IRecordRepo,
                     'core.infra.library': mockLibraryRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
-                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain
+                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
                 });
 
                 await recDomain.find({
@@ -835,7 +842,8 @@ describe('RecordDomain', () => {
                     'core.infra.library': mockLibraryRepo as ILibraryRepo,
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
-                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain
+                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
                 });
 
                 await recDomain.find({
@@ -894,7 +902,8 @@ describe('RecordDomain', () => {
                 'core.domain.attribute': attributeDomain as IAttributeDomain,
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.infra.library': libRepo as ILibraryRepo,
-                'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain
+                'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
             });
 
             const findRes = await recDomain.find({
@@ -1101,14 +1110,33 @@ describe('RecordDomain', () => {
             runActionsList: jest.fn(({value}) => Promise.resolve(value))
         };
 
+        const mockAttributeDomainCommon: Mockify<IAttributeDomain> = {
+            getLibraryAttributes: global.__mockPromise([
+                {
+                    ...mockAttrSimpleLink,
+                    id: 'created_at'
+                },
+                {
+                    ...mockAttrSimple,
+                    id: 'label'
+                },
+                {
+                    ...mockAttrSimpleLink,
+                    id: 'created_by'
+                }
+            ])
+        };
+
         test('Return a value present on record', async () => {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
+                ...mockAttributeDomainCommon,
                 getAttributeProperties: global.__mockPromise({
                     id: 'created_at',
                     type: AttributeTypes.SIMPLE,
                     multiple_values: false
                 })
             };
+
             const recDomain = recordDomain({
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.value': mockValueDomainFormatValue as IValueDomain
@@ -1127,6 +1155,7 @@ describe('RecordDomain', () => {
 
         test('Return a value not present on record', async () => {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
+                ...mockAttributeDomainCommon,
                 getAttributeProperties: global.__mockPromise({
                     id: 'label',
                     type: AttributeTypes.ADVANCED,
@@ -1161,6 +1190,7 @@ describe('RecordDomain', () => {
 
         test('Return a formatted value', async () => {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
+                ...mockAttributeDomainCommon,
                 getAttributeProperties: global.__mockPromise({
                     id: 'created_at',
                     type: AttributeTypes.SIMPLE,
@@ -1200,6 +1230,7 @@ describe('RecordDomain', () => {
 
         test('Return a link value', async () => {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
+                ...mockAttributeDomainCommon,
                 getAttributeProperties: global.__mockPromise({
                     id: 'created_by',
                     type: AttributeTypes.SIMPLE_LINK,
@@ -1233,6 +1264,7 @@ describe('RecordDomain', () => {
 
         test('If force array, return an array', async () => {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
+                ...mockAttributeDomainCommon,
                 getAttributeProperties: global.__mockPromise({
                     id: 'created_at',
                     type: AttributeTypes.SIMPLE,

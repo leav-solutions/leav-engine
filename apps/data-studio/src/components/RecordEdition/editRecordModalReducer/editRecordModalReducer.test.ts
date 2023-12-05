@@ -108,7 +108,7 @@ describe('editRecordReducer', () => {
             });
         });
 
-        test.only('Multiple updates from same modifier', async () => {
+        test('Multiple updates from same modifier', async () => {
             const newState = editRecordModalReducer(mockInitialState, {
                 type: EditRecordReducerActionsTypes.ADD_EXTERNAL_UPDATE,
                 modifier: mockRecord,

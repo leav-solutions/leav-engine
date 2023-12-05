@@ -6,22 +6,16 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {ValueVersionInput, ValueBatchInput, LibraryBehavior, AttributeFormat, AttributeType} from './globalTypes';
+import {AttributeFormat, AttributeType, LibraryBehavior, ValueBatchInput, ValueVersionInput} from './globalTypes';
 
 // ====================================================
 // GraphQL mutation operation: SAVE_VALUE_BATCH
 // ====================================================
 
-export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_modified_by_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_modified_by_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: SAVE_VALUE_BATCH_saveValueBatch_values_Value_modified_by_whoAmI_library_gqlNames;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_modified_by_whoAmI {
@@ -38,16 +32,10 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_modified_by {
     whoAmI: SAVE_VALUE_BATCH_saveValueBatch_values_Value_modified_by_whoAmI;
 }
 
-export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_created_by_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_created_by_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: SAVE_VALUE_BATCH_saveValueBatch_values_Value_created_by_whoAmI_library_gqlNames;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_created_by_whoAmI {
@@ -96,16 +84,10 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_attribute {
     system: boolean;
 }
 
-export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_metadata_value_modified_by_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_metadata_value_modified_by_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: SAVE_VALUE_BATCH_saveValueBatch_values_Value_metadata_value_modified_by_whoAmI_library_gqlNames;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_metadata_value_modified_by_whoAmI {
@@ -122,16 +104,10 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_metadata_value_mod
     whoAmI: SAVE_VALUE_BATCH_saveValueBatch_values_Value_metadata_value_modified_by_whoAmI;
 }
 
-export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_metadata_value_created_by_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_metadata_value_created_by_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: SAVE_VALUE_BATCH_saveValueBatch_values_Value_metadata_value_created_by_whoAmI_library_gqlNames;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value_metadata_value_created_by_whoAmI {
@@ -202,16 +178,10 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_Value {
     raw_value: Any | null;
 }
 
-export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_modified_by_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_modified_by_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_modified_by_whoAmI_library_gqlNames;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_modified_by_whoAmI {
@@ -228,16 +198,10 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_modified_by {
     whoAmI: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_modified_by_whoAmI;
 }
 
-export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_created_by_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_created_by_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_created_by_whoAmI_library_gqlNames;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_created_by_whoAmI {
@@ -286,16 +250,10 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_attribute {
     system: boolean;
 }
 
-export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_metadata_value_modified_by_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_metadata_value_modified_by_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_metadata_value_modified_by_whoAmI_library_gqlNames;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_metadata_value_modified_by_whoAmI {
@@ -312,16 +270,10 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_metadata_value
     whoAmI: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_metadata_value_modified_by_whoAmI;
 }
 
-export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_metadata_value_created_by_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_metadata_value_created_by_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_metadata_value_created_by_whoAmI_library_gqlNames;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_metadata_value_created_by_whoAmI {
@@ -379,16 +331,10 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_metadata {
     value: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_metadata_value | null;
 }
 
-export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_linkValue_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_linkValue_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_linkValue_whoAmI_library_gqlNames;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_linkValue_whoAmI {
@@ -417,16 +363,10 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue {
     linkValue: SAVE_VALUE_BATCH_saveValueBatch_values_LinkValue_linkValue | null;
 }
 
-export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_modified_by_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_modified_by_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_modified_by_whoAmI_library_gqlNames;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_modified_by_whoAmI {
@@ -443,16 +383,10 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_modified_by {
     whoAmI: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_modified_by_whoAmI;
 }
 
-export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_created_by_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_created_by_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_created_by_whoAmI_library_gqlNames;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_created_by_whoAmI {
@@ -501,16 +435,10 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_attribute {
     system: boolean;
 }
 
-export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_metadata_value_modified_by_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_metadata_value_modified_by_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_metadata_value_modified_by_whoAmI_library_gqlNames;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_metadata_value_modified_by_whoAmI {
@@ -527,16 +455,10 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_metadata_value
     whoAmI: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_metadata_value_modified_by_whoAmI;
 }
 
-export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_metadata_value_created_by_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_metadata_value_created_by_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_metadata_value_created_by_whoAmI_library_gqlNames;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_metadata_value_created_by_whoAmI {
@@ -594,16 +516,10 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_metadata {
     value: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_metadata_value | null;
 }
 
-export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_record_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_record_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_record_whoAmI_library_gqlNames;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_record_whoAmI {
@@ -620,16 +536,10 @@ export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_reco
     whoAmI: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_record_whoAmI;
 }
 
-export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_ancestors_record_whoAmI_library_gqlNames {
-    query: string;
-    type: string;
-}
-
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_ancestors_record_whoAmI_library {
     id: string;
     behavior: LibraryBehavior;
     label: SystemTranslation | null;
-    gqlNames: SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_ancestors_record_whoAmI_library_gqlNames;
 }
 
 export interface SAVE_VALUE_BATCH_saveValueBatch_values_TreeValue_treeValue_ancestors_record_whoAmI {

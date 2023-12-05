@@ -59,7 +59,7 @@ describe('Values Metadata', () => {
 
         // Read value
         const queryGetVal = `{
-            r: ${metadataLibGqlId} {
+            r: records(library: "${metadataLibId}") {
                 list {
                     property(attribute: "${attrWithMetaId}") {
                         id_value

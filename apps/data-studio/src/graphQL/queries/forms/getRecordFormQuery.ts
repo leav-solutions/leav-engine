@@ -146,10 +146,6 @@ export const getRecordFormQuery = gql`
                             id
                             label
                             behavior
-                            gqlNames {
-                                type
-                                query
-                            }
                             permissions {
                                 create_record
                             }

@@ -41,13 +41,6 @@ export const libraryDetailsFragment = gql`
         defaultView {
             id
         }
-        gqlNames {
-            query
-            type
-            list
-            filter
-            searchableFields
-        }
         permissions {
             admin_library
             access_library

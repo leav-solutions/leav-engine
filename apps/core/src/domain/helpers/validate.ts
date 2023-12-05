@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
@@ -9,7 +10,6 @@ import {AttributeTypes} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {GetCoreEntityByIdFunc} from './getCoreEntityById';
-import {ILibraryRepo} from 'infra/library/libraryRepo';
 
 interface IDeps {
     'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
@@ -66,9 +66,8 @@ export default function ({
         },
         async validateLibrary(library: string, ctx: IQueryInfos): Promise<void> {
             const lib = await getCoreEntityById('library', library, ctx);
-            // Check if exists and can delete
             if (!lib) {
-                throw new ValidationError({library: Errors.UNKNOWN_LIBRARY});
+                throw utils.generateExplicitValidationError('library', Errors.UNKNOWN_LIBRARY, ctx.lang);
             }
         },
         async validateView(view: string, throwIfNotFound: boolean, ctx: IQueryInfos): Promise<boolean> {

@@ -22,8 +22,6 @@ export interface IReducerState {
     selectedRoot: string | null;
     rootsList: GET_LIB_BY_ID_libraries_list[];
     selectedRootLabel: string | null;
-    selectedRootQuery: string | null;
-    selectedRootFilter: string | null;
     selectedRootAttributes: GET_LIB_BY_ID_libraries_list_attributes[];
     lang: string[];
     filters: IFilter[];
@@ -74,8 +72,6 @@ export const initialState = {
     selection: [],
     selectedRoot: null,
     selectedRootLabel: null,
-    selectedRootQuery: null,
-    selectedRootFilter: null,
     selectedRootAttributes: [],
     rootsList: [],
     lang: ['fr'],
@@ -108,7 +104,6 @@ const reducer = (state: IReducerState, action: IReducerAction): IReducerState =>
             return {
                 ...state,
                 selectedRoot: action.data,
-                selectedRootQuery: null,
                 selectedRootAttributes: [],
                 list: [],
                 filters: [],
@@ -123,8 +118,6 @@ const reducer = (state: IReducerState, action: IReducerAction): IReducerState =>
             return {
                 ...state,
                 selectedRootLabel: action.data.label,
-                selectedRootQuery: action.data.query,
-                selectedRootFilter: action.data.filter,
                 selectedRootAttributes: action.data.attributes
             };
         case ActionTypes.SET_FILTERS:

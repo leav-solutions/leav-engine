@@ -2,17 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLazyQuery} from '@apollo/client';
-import {Input, InputRef} from 'antd';
 import {ErrorDisplay} from '@leav/ui';
+import {Input, InputRef} from 'antd';
 import {getRecordsFromLibraryQuery} from 'graphQL/queries/records/getRecordsFromLibraryQuery';
 import {
     IGetRecordsFromLibraryQuery,
     IGetRecordsFromLibraryQueryElement,
     IGetRecordsFromLibraryQueryVariables
 } from 'graphQL/queries/records/getRecordsFromLibraryQueryTypes';
-import React, {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {SortOrder} from '_gqlTypes/globalTypes';
 import {RECORD_FORM_recordForm_elements_attribute_LinkAttribute_linked_library} from '_gqlTypes/RECORD_FORM';
 
 interface IQuickSearchProps {
@@ -30,9 +29,9 @@ function QuickSearch({library, onResult, onClear, pagination}: IQuickSearchProps
     const [runSearch, {loading, error}] = useLazyQuery<
         IGetRecordsFromLibraryQuery,
         IGetRecordsFromLibraryQueryVariables
-    >(getRecordsFromLibraryQuery(library.gqlNames.query, [], true), {
+    >(getRecordsFromLibraryQuery([], true), {
         onCompleted: searchResult => {
-            const {totalCount, list} = searchResult[library.gqlNames.query];
+            const {totalCount, list} = searchResult.records;
             onResult(list, totalCount);
         }
     });
@@ -57,6 +56,7 @@ function QuickSearch({library, onResult, onClear, pagination}: IQuickSearchProps
 
         runSearch({
             variables: {
+                library: library.id,
                 fullText: search,
                 limit: pagination.limit ?? null,
                 offset: pagination.offset ?? null

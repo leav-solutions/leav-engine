@@ -53,7 +53,7 @@ function EditRecordModalHeader(): JSX.Element {
         _handleCloseAlert();
     };
 
-    const externalUpdateModifiers = state.externalUpdate.modifiers.map(modifier => modifier.label).join(', ');
+    const externalUpdateModifiers = state.externalUpdate.modifiers.map(modifier => modifier?.label).join(', ');
 
     return (
         <>

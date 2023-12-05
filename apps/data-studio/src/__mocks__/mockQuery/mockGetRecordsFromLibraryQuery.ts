@@ -6,7 +6,6 @@ import {
     IGetRecordsFromLibraryQueryElement,
     IGetRecordsFromLibraryQueryVariables
 } from 'graphQL/queries/records/getRecordsFromLibraryQueryTypes';
-import {SortOrder} from '_gqlTypes/globalTypes';
 import {IField} from '_types/types';
 import {mockLibrary} from '__mocks__/common/library';
 import {mockPreviews} from '__mocks__/common/record';
@@ -25,16 +24,18 @@ export const mockGetRecordsFromLibraryQueryElement: IGetRecordsFromLibraryQueryE
 };
 
 export const mockGetRecordsFromLibraryQuery = (libraryName: string, fields: IField[]): IGetRecordsFromLibraryQuery => ({
-    [libraryName]: {
+    records: {
         totalCount: 1,
         list: [mockGetRecordsFromLibraryQueryElement]
     }
 });
 
 export const mockGetRecordsFromLibraryQueryVar: IGetRecordsFromLibraryQueryVariables = {
+    library: 'test',
     limit: 20,
     offset: 0,
     filters: [],
+    sort: null,
     fullText: '',
     version: []
 };

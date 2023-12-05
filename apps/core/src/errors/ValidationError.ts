@@ -13,7 +13,7 @@ export default class ValidationError<T> extends LeavError<T> {
 
     public constructor(
         fields: ErrorFieldDetail<T>,
-        message: string = 'Validation error',
+        message: string = 'Invalid request',
         isCustomMessage: boolean = false,
         context?: any
     ) {

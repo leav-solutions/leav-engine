@@ -136,7 +136,8 @@ describe('Versions', () => {
         expect(resSaveValue.data.data.v1.version[0].treeNode.id).toBe(nodeElement1);
 
         const resGetValues1 = await makeGraphQlCall(`{
-            r1: ${testLibNameFormatted}(
+            r1: records(
+                library: "${testLibName}",
                 version: {
                     treeId: "${treeName}",
                     treeNodeId: "${nodeElement1}"
@@ -164,7 +165,8 @@ describe('Versions', () => {
         expect(resGetValues1.data.data.r1.list[0].property[0].version[0].treeNode.id).toBe(nodeElement1);
 
         const resGetValues2 = await makeGraphQlCall(`{
-            r2: ${testLibNameFormatted}(
+            r2: records(
+                library: "${testLibName}",
                 version: {
                     treeId: "${treeName}",
                     treeNodeId: "${nodeElement2}"
@@ -193,7 +195,8 @@ describe('Versions', () => {
         expect(resGetValues2.data.data.r2.list[0].property[0].version[0].treeNode.id).toBe(nodeElement2);
 
         const resGetValues3 = await makeGraphQlCall(`{
-            r3: ${testLibNameFormatted}(
+            r3: records(
+                library: "${testLibName}",
                 version: {
                     treeId: "${treeName}",
                     treeNodeId: "${nodeElement3}"
@@ -215,6 +218,7 @@ describe('Versions', () => {
                 }
             }
         }`);
+
         expect(resGetValues3.status).toBe(200);
         expect(resGetValues3.data.errors).toBeUndefined();
         expect(resGetValues3.data.data.r3.list[0].property[0].version).toBeDefined();

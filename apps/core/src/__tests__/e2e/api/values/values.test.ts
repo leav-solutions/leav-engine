@@ -196,8 +196,6 @@ describe('Values', () => {
                 }) { id }
             }`);
 
-        await makeGraphQlCall('mutation { refreshSchema }');
-
         // Create records
         const resRecord = await makeGraphQlCall(`mutation {
             c1: createRecord(library: "${testLibName}") { record {id} },

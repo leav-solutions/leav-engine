@@ -17,11 +17,7 @@ export const mockModifier: RecordIdentity = {
         library: {
             id: 'users',
             behavior: LibraryBehavior.standard,
-            label: {fr: 'Utilisateurs'},
-            gqlNames: {
-                query: 'users',
-                type: 'User'
-            }
+            label: {fr: 'Utilisateurs'}
         },
         preview: mockPreviews,
         color: '#123456'

@@ -138,18 +138,10 @@ export const nameValArrayToObj = (arr = [], keyFieldName = 'name', valueFieldNam
         }, {})
         : null;
 };
-export const getLibraryGraphqlNames = (libraryId) => {
-    const libQueryName = getGraphqlQueryNameFromLibraryName(libraryId);
-    const libTypeName = getGraphqlTypeFromLibraryName(libraryId);
-    return {
-        query: libQueryName,
-        type: libTypeName,
-        list: libTypeName + 'List',
-        searchableFields: libTypeName + 'SearchableFields',
-        filter: libTypeName + 'Filter'
-    };
-};
 export const getFileType = (fileName) => {
+    if (!fileName) {
+        return null;
+    }
     const extension = fileName.slice(fileName.lastIndexOf('.') + 1).toLowerCase();
     if (!extensions[extension]) {
         return FileType.OTHER;

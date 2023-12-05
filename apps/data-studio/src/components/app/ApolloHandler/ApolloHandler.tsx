@@ -14,10 +14,9 @@ import {
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {onError} from '@apollo/link-error';
-import {ErrorDisplay, Loading, useRefreshToken} from '@leav/ui';
+import {gqlPossibleTypes, useRefreshToken} from '@leav/ui';
 import {createUploadLink} from 'apollo-upload-client';
 import {createClient} from 'graphql-ws';
-import useGraphqlPossibleTypes from 'hooks/useGraphqlPossibleTypes';
 import {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {addInfo} from 'reduxStore/infos';
@@ -36,20 +35,6 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     const {t, i18n} = useTranslation();
     const dispatch = useAppDispatch();
     const {refreshToken} = useRefreshToken();
-    const {loading, error, possibleTypes} = useGraphqlPossibleTypes(`${ORIGIN_URL}/${API_ENDPOINT}`);
-
-    if (loading) {
-        return <Loading />;
-    }
-
-    if (error) {
-        if (error.includes(UNAUTHENTICATED)) {
-            _redirectToLogin();
-            return <></>;
-        }
-
-        return <ErrorDisplay message={error} />;
-    }
 
     // This function will catch the errors from the exchange between Apollo Client and the server.
     const _handleApolloError = onError(({graphQLErrors, networkError, operation, forward}) => {
@@ -170,11 +155,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
             // Thus, we have to force Apollo to use the _id field for cache key.
             dataIdFromObject(responseObject) {
                 // If it's not a record, just use regular caching
-                if (
-                    !possibleTypes ||
-                    !possibleTypes.Record.includes(responseObject.__typename) ||
-                    (!responseObject._id && !responseObject.id)
-                ) {
+                if (!responseObject._id && !responseObject.id) {
                     return defaultDataIdFromObject(responseObject);
                 }
 
@@ -184,6 +165,9 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
             typePolicies: {
                 EmbeddedAttribute: {
                     keyFields: false
+                },
+                Record: {
+                    keyFields: ['id', 'whoAmI', ['library', ['id']]]
                 },
                 RecordIdentity: {
                     keyFields: ['id', 'library', ['id']],
@@ -197,11 +181,6 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
                 },
                 Library: {
                     fields: {
-                        gqlNames: {
-                            merge(existing, incoming) {
-                                return {...existing, ...incoming};
-                            }
-                        },
                         permissions: {
                             merge(existing, incoming) {
                                 return {...existing, ...incoming};
@@ -264,7 +243,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
                     keyFields: false
                 }
             },
-            possibleTypes
+            possibleTypes: gqlPossibleTypes
         })
     });
 
