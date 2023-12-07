@@ -32,7 +32,7 @@ export interface IValue {
     library?: string; // only for tree attributes
     value: string | IMatch[];
     metadata?: IValueMetadata;
-    versions?: IImportValueVersion[];
+    version?: IImportValueVersion[];
 }
 
 export interface IImportValueVersion {
@@ -69,4 +69,10 @@ export interface ITree {
 export interface IFile {
     elements: IElement[];
     trees: ITree[];
+}
+
+export interface ICacheParams {
+    cacheDataPath: string,
+    cacheKey: number,
+    isCacheActive: boolean,
 }

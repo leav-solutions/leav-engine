@@ -261,8 +261,9 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
     },
     translateError(error: ErrorFieldDetailMessage, lang: string): string {
       // if error is undefined
-      if (typeof error === 'undefined')
-        error = 'Unknown error';
+      if (typeof error === 'undefined') {
+          error = 'Unknown error';
+      }
 
       const toTranslate = typeof error === 'string' ? {msg: error, vars: {}} : (error as IExtendedErrorMsg);
 

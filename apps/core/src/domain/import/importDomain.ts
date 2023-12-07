@@ -29,6 +29,7 @@ import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {
     Action,
+    ICacheParams,
     IData,
     IElement,
     IMatch,
@@ -180,9 +181,9 @@ export default function ({
             }
         }
 
-        // if versions, search record id (from leav) then node id (from tree)
+        // if version, search record id (from leav) then node id (from tree)
         // with that construct the version object
-        const version = await value.versions?.reduce(async (accProm, v) => {
+        const version = await value.version?.reduce(async (accProm, v) => {
             const acc = await accProm;
 
             // if element is null, we must send a null value for leav to define the root path
@@ -232,10 +233,8 @@ export default function ({
     const _treatElement = async (
         element: IElement,
         recordIds: string[],
-        ctx: IQueryInfos,
-        cacheDataPath: string,
-        cacheKey: number,
-        isCacheActive = false
+        cacheParams: ICacheParams,
+        ctx: IQueryInfos
     ): Promise<any> => {
         for (const data of [...element.data, ...element.links]) {
             const attrs = await attributeDomain.getLibraryAttributes(element.library, ctx);
@@ -244,14 +243,14 @@ export default function ({
             const isTypeLink = libraryAttribute?.type === AttributeTypes.SIMPLE_LINK || libraryAttribute?.type === AttributeTypes.ADVANCED_LINK;
 
             // if cacheData = true, we cache data that is not versionable and is not a link type
-            const hasVersionableValue = data.values.some(v => v.versions?.length);
-            const isCachedData = isCacheActive && (hasVersionableValue || isTypeLink);
+            const hasVersionableValue = data.values.some(v => v.version?.length);
+            const isCachedData = cacheParams.isCacheActive && (hasVersionableValue || isTypeLink);
             if (isCachedData) {
                 // Store in cache
                 await cacheService.getCache(ECacheType.DISK).storeData({
-                    key: cacheKey.toString(),
+                    key: cacheParams.cacheKey.toString(),
                     data: JSON.stringify(data),
-                    path: cacheDataPath
+                    path: cacheParams.cacheDataPath
                 });
 
                 return;
@@ -263,7 +262,7 @@ export default function ({
                 });
             }
 
-            // call treatData only if data.versions.length === 0
+            // call treatData only if data.version.length === 0
             await _treatData(element.library, data, recordIds, ctx, libraryAttribute);
         }
     };
@@ -881,7 +880,6 @@ export default function ({
                 filename,
                 async (element: IElement, index: number): Promise<void> => {
                     progress.elementsNb++;
-                    // progress.elementsNb += element.matches.length + element.data.length;
                     progress.linksNb += element.links?.length;
                 },
                 async (tree: ITree, index: number) => {
@@ -932,8 +930,10 @@ export default function ({
                         } else {
                             action = ImportAction.UPDATED;
                         }
-
-                        await _treatElement(element, recordIds, ctx, cacheDataPath, index, true);
+                        const cacheParams: ICacheParams = {
+                            cacheDataPath, cacheKey: index, isCacheActive: true
+                        }
+                        await _treatElement(element, recordIds, cacheParams, ctx);
 
                         // update import stats
                         if (element.data.length) {
@@ -1023,7 +1023,10 @@ export default function ({
                     const data: ICachedData = JSON.parse(cacheStringifiedObject);
 
                     try {
-                        await _treatElement(data.element, data.recordIds, ctx, cacheDataPath, cacheKey, false);
+                        const cacheParams: ICacheParams = {
+                            cacheDataPath, cacheKey, isCacheActive: false
+                        }
+                        await _treatElement(data.element, data.recordIds, cacheParams, ctx);
 
                             if (excelMapping) {
                                 const sheetIndex = excelMapping[cacheKey]?.sheet;

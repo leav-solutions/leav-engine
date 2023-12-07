@@ -250,7 +250,6 @@ export default function ({
                 ? await attributeRepo.updateAttribute({attrData: attrToSave, ctx})
                 : await attributeRepo.createAttribute({attrData: attrToSave, ctx});
 
-            // TODO: Too many events are sent, after an importConfig, core loads up to 100% for 10mins
             eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.ATTRIBUTE_SAVE,

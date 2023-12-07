@@ -554,7 +554,7 @@ describe('importDomain', () => {
             expect(mockTreeDomain.addElement.mock.calls.length).toBe(1);
         });
 
-        test('test import elements - versions data', async () => {
+        test('test import elements - version data', async () => {
             const element = {
                 library: 'users_groups',
                 matches: [],
@@ -564,14 +564,14 @@ describe('importDomain', () => {
                     attribute: 'simple',
                     values: [{
                         value: 'one',
-                        versions: [{
+                        version: [{
                             treeId: "treeprojects",
                             library: "treeprojects",
                             element: null
                         }]
                     }, {
                         value: 'two',
-                        versions: [{
+                        version: [{
                             treeId: "treeprojects",
                             library: "treeprojects",
                             element: [{
@@ -616,7 +616,7 @@ describe('importDomain', () => {
                     .fn()
                     .mockReturnValueOnce(
                         Promise.resolve([
-                            // cache data object with versions
+                            // cache data object with version
                             JSON.stringify({
                                 library: 'users_groups',
                                 recordIds: ['1'],

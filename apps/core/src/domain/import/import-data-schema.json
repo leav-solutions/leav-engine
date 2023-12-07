@@ -8,6 +8,7 @@
         "treeId": {
           "type": "string"
         },
+
         "element": {
           "description": "Object representing the element to process",
           "type": ["array", "null"],
@@ -25,9 +26,6 @@
       "description": "Attribute/value pair used to find an element",
       "type": "object",
       "properties": {
-          "library": {
-            "type": "string"
-          },
         "attribute": {
           "type": "string",
           "description": "Attribute key"
