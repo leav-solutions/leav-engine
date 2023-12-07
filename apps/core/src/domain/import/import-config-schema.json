@@ -330,39 +330,27 @@
                     }
                 },
                 "libraries": {
-                    "type": "array",
+                    "type": "object",
                     "items": {
                         "type": "object",
                         "properties": {
-                            "library": {
-                                "type": "string"
+                            "allowMultiplePositions": {
+                                "type": "boolean"
                             },
-                            "settings": {
-                                "type": "object",
-                                "properties": {
-                                    "allowMultiplePositions": {
-                                        "type": "boolean"
-                                    },
-                                    "allowedAtRoot": {
-                                        "type": "boolean"
-                                    },
-                                    "allowedChildren": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string"
-                                        }
-                                    }
-                                },
-                                "required": [
-                                    "allowMultiplePositions",
-                                    "allowedAtRoot",
-                                    "allowedChildren"
-                                ]
+                            "allowedAtRoot": {
+                                "type": "boolean"
+                            },
+                            "allowedChildren": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
                             }
                         },
                         "required": [
-                            "library",
-                            "settings"
+                            "allowMultiplePositions",
+                            "allowedAtRoot",
+                            "allowedChildren"
                         ]
                     }
                 }
@@ -370,6 +358,26 @@
             "required": [
                 "id"
             ]
+        },
+        "version_profile": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "$ref": "#/$defs/id"
+                },
+                "label": {
+                    "$ref": "#/$defs/systemTranslation"
+                },
+                "description": {
+                    "$ref": "#/$defs/systemTranslation"
+                },
+                "trees": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
         }
     },
     "properties": {
@@ -389,6 +397,12 @@
             "type": "array",
             "items": {
                 "$ref": "#/definitions/tree"
+            }
+        },
+        "version_profiles": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/version_profile"
             }
         }
     }

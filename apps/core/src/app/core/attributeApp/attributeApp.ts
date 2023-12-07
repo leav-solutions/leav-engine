@@ -394,7 +394,7 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                             // TODO: this could be optimized if find() would allow searching for multiple IDs at once
                             return {
                                 ...attributeData.values_list,
-                                values: (attributeData.values_list.values as string[])
+                                values: (attributeData.values_list.values as string[]) || []
                                     .map(async recId => {
                                         const record = await recordDomain.find({
                                             params: {

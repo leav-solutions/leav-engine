@@ -32,7 +32,13 @@ export interface IValue {
     library?: string; // only for tree attributes
     value: string | IMatch[];
     metadata?: IValueMetadata;
-    version?: IValueVersion;
+    versions?: IImportValueVersion[];
+}
+
+export interface IImportValueVersion {
+    treeId: string;
+    element: IMatch[];
+    library?: string;
 }
 
 export interface IData {

@@ -236,6 +236,8 @@ services:
       - *volume-shared-modules
       - *volume-core-modules
     working_dir: *dir-core
+    ports:
+        - "9234:9234"
     command: [
         sh,
         -c,

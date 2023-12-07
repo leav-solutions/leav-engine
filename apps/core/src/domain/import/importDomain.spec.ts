@@ -362,11 +362,13 @@ describe('importDomain', () => {
 
             await imprtDomain.importData({filename: 'test.json', ctx}, {id: 'fakeTaskId'});
 
-            expect(mockRecordDomain.createRecord.mock.calls.length).toBe(2);
-            expect(mockAttrDomain.getLibraryAttributes.mock.calls.length).toBe(3);
-            expect(mockValidateHelper.validateLibrary.mock.calls.length).toBe(2);
-            expect(mockValueDomain.saveValue.mock.calls.length).toBe(3);
-            expect(mockValueDomain.getValues.mock.calls.length).toBe(1);
+            expect(mockRecordDomain.createRecord).toBeCalledTimes(2);
+            expect(mockAttrDomain.getLibraryAttributes).toBeCalledTimes(3);
+            expect(mockValidateHelper.validateLibrary).toBeCalledTimes(2);
+            expect(mockValueDomain.saveValue).toBeCalledTimes(3);
+            expect(mockValueDomain.getValues).toBeCalledTimes(1);
+            expect(mockCacheService.getData).toBeCalledTimes(2);
+            expect(mockCacheService.storeData).toBeCalledTimes(2);
         });
 
         test('test import elements - simple link with matches', async () => {
@@ -470,11 +472,14 @@ describe('importDomain', () => {
 
             await imprtDomain.importData({filename: 'test.json', ctx}, {id: 'fakeTaskId'});
 
-            expect(mockRecordDomain.createRecord.mock.calls.length).toBe(1);
-            expect(mockRecordDomain.find.mock.calls.length).toBe(1);
-            expect(mockAttrDomain.getLibraryAttributes.mock.calls.length).toBe(1);
-            expect(mockValidateHelper.validateLibrary.mock.calls.length).toBe(1);
-            expect(mockValueDomain.saveValue.mock.calls.length).toBe(1);
+            expect(mockRecordDomain.createRecord).toBeCalledTimes(1);
+            expect(mockRecordDomain.find).toBeCalledTimes(1);
+            expect(mockAttrDomain.getLibraryAttributes).toBeCalledTimes(1);
+            expect(mockValidateHelper.validateLibrary).toBeCalledTimes(1);
+            expect(mockValueDomain.saveValue).toBeCalledTimes(1);
+            expect(mockCacheService.getData).toBeCalledTimes(1);
+            expect(mockCacheService.storeData).toBeCalledTimes(1);
+            expect(mockCacheService.deleteAll).toBeCalledTimes(1);
         });
 
         test('test import trees', async () => {
@@ -547,6 +552,125 @@ describe('importDomain', () => {
             expect(mockValidateHelper.validateLibrary.mock.calls.length).toBe(1);
             expect(mockTreeDomain.getNodesByRecord.mock.calls.length).toBe(1);
             expect(mockTreeDomain.addElement.mock.calls.length).toBe(1);
+        });
+
+        test('test import elements - versions data', async () => {
+            const element = {
+                library: 'users_groups',
+                matches: [],
+                links: [],
+                mode: ImportMode.UPSERT,
+                data: [{
+                    attribute: 'simple',
+                    values: [{
+                        value: 'one',
+                        versions: [{
+                            treeId: "treeprojects",
+                            library: "treeprojects",
+                            element: null
+                        }]
+                    }, {
+                        value: 'two',
+                        versions: [{
+                            treeId: "treeprojects",
+                            library: "treeprojects",
+                            element: [{
+                                attribute: "id",
+                                value: "1"
+                            }]
+                        }]
+                    }],
+                    action: Action.ADD
+                }]
+            };
+
+            const data = {
+                elements: [element],
+                trees: []
+            }
+
+            await fs.promises.writeFile(`${mockConfig.import.directory}/test.json`, JSON.stringify(data, null, '\t'));
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getLibraryAttributes: global.__mockPromise([{id: 'simple'}])
+            };
+
+            const mockValueDomain: Mockify<IValueDomain> = {
+                saveValue: global.__mockPromise([{
+                    test: 'test'
+                }]),
+                getValues: global.__mockPromise([])
+            };
+
+            const mockRecordDomain: Mockify<IRecordDomain> = {
+                createRecord: global.__mockPromise({record: {id: '1'}}),
+                find: global.__mockPromise({totalCount: 1, list: [{id: '1'}]})
+            };
+
+            const mockValidateHelper: Mockify<IValidateHelper> = {
+                validateLibrary: global.__mockPromise()
+            };
+
+            const mockCacheService: Mockify<ICacheService> = {
+                getData: jest
+                    .fn()
+                    .mockReturnValueOnce(
+                        Promise.resolve([
+                            // cache data object with versions
+                            JSON.stringify({
+                                library: 'users_groups',
+                                recordIds: ['1'],
+                                element,
+                            })
+                        ])
+                    ),
+                storeData: global.__mockPromise(),
+                deleteAll: global.__mockPromise()
+            };
+
+            const mockCachesService: Mockify<ICachesService> = {
+                getCache: jest.fn().mockReturnValue(mockCacheService)
+            };
+
+            const mockTasksManagerDomain: Mockify<ITasksManagerDomain> = {
+                createTask: global.__mockPromise(),
+                updateProgress: global.__mockPromise(),
+                setLink: global.__mockPromise()
+            };
+
+            // mock tree domain
+            const mockTreeDomain: Mockify<ITreeDomain> = {
+                getNodesByRecord: global.__mockPromise(['1']),
+            };
+
+            const mockUpdateTaskProgress: Mockify<UpdateTaskProgress> = global.__mockPromise();
+
+            const imprtDomain = importDomain({
+                config: mockConfig as Config.IConfig,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.value': mockValueDomain as IValueDomain,
+                'core.infra.cache.cacheService': mockCachesService as ICachesService,
+                'core.domain.tasksManager': mockTasksManagerDomain as ITasksManagerDomain,
+                'core.domain.helpers.updateTaskProgress': mockUpdateTaskProgress as UpdateTaskProgress,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                'core.domain.tree': mockTreeDomain as ITreeDomain,
+                translator: mockTranslator as i18n
+            });
+
+            await imprtDomain.importData({filename: 'test.json', ctx}, {id: 'fakeTaskId'});
+
+            expect(mockRecordDomain.createRecord.mock.calls.length).toBe(1);
+            expect(mockAttrDomain.getLibraryAttributes.mock.calls.length).toBe(2);
+            expect(mockCacheService.storeData).toBeCalledTimes(2);
+            expect(mockValidateHelper.validateLibrary.mock.calls.length).toBe(1);
+            expect(mockCacheService.getData).toBeCalledTimes(1);
+            expect(mockRecordDomain.find).toBeCalledTimes(1);
+            expect(mockValueDomain.saveValue).toBeCalledTimes(2);
+            expect(mockCacheService.deleteAll).toBeCalledTimes(1);
+
+
         });
 
         test('test import elements - Upsert mode', async () => {

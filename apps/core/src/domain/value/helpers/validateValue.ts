@@ -125,7 +125,7 @@ const _validateVersion = async (
             nodeId: value.version[treeName],
             ctx
         });
-        if (!isPresent) {
+        if (!isPresent && value.version[treeName] !== null) {
             errors[treeName] = {
                 msg: Errors.ELEMENT_NOT_IN_TREE,
                 vars: {element: value.version[treeName], tree: treeName}

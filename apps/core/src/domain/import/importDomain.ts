@@ -43,6 +43,7 @@ import {ITaskFuncParams, TaskCallbackType, TaskPriority, TaskType} from '../../_
 import {ITreeElement} from '../../_types/tree';
 import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
+import {IVersionProfileDomain} from '../versionProfile/versionProfileDomain';
 
 export const IMPORT_DATA_SCHEMA_PATH = path.resolve(__dirname, './import-data-schema.json');
 export const IMPORT_CONFIG_SCHEMA_PATH = path.resolve(__dirname, './import-config-schema.json');
@@ -86,11 +87,10 @@ interface IExcelMapping {
     [elementIndex: number]: {sheet: number; line: number};
 }
 
-interface ICachedLinks {
-    library: string;
+interface ICachedData {
     recordIds: string[];
-    links: IElement['links'];
     JSONLine: number;
+    element: IElement;
 }
 
 enum ImportAction {
@@ -114,6 +114,7 @@ interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.value'?: IValueDomain;
     'core.domain.tree'?: ITreeDomain;
+    'core.domain.versionProfile'?: IVersionProfileDomain;
     'core.domain.tasksManager'?: ITasksManagerDomain;
     'core.domain.helpers.updateTaskProgress'?: UpdateTaskProgress;
     'core.domain.eventsManager'?: IEventsManagerDomain;
@@ -130,6 +131,7 @@ export default function ({
     'core.domain.attribute': attributeDomain = null,
     'core.domain.value': valueDomain = null,
     'core.domain.tree': treeDomain = null,
+    'core.domain.versionProfile': versionProfileDomain = null,
     'core.domain.tasksManager': tasksManagerDomain = null,
     'core.domain.helpers.updateTaskProgress': updateTaskProgress = null,
     'core.domain.eventsManager': eventsManagerDomain = null,
@@ -159,6 +161,11 @@ export default function ({
 
             value.value = recordsList.list[0]?.id;
 
+            // if value is undefined, it means that we have no record for this match
+            if (typeof value.value === 'undefined') {
+                throw new Error('No record found for match');
+            }
+
             if (attribute.type === AttributeTypes.TREE) {
                 const node = await treeDomain.getNodesByRecord({
                     treeId: attribute.linked_tree,
@@ -171,37 +178,103 @@ export default function ({
 
                 value.value = node[0];
             }
-
-            if (typeof value.value === 'undefined') {
-                // TODO: Throw
-                return;
-            }
         }
+
+        // if versions, search record id (from leav) then node id (from tree)
+        // with that construct the version object
+        const version = await value.versions?.reduce(async (accProm, v) => {
+            const acc = await accProm;
+
+            // if element is null, we must send a null value for leav to define the root path
+            if (!v.element?.length) {
+                acc[v.treeId] = null;
+                return acc;
+            }
+
+            const recordsList = await recordDomain.find({
+                params: {
+                    library: v.library,
+                    filters: _matchesToFilters(v.element as IMatch[])
+                },
+                ctx
+            });
+
+            // get recordId from match
+            const recordIdFound = recordsList.list[0]?.id;
+
+            if(!recordIdFound){
+                console.warn(`No record found for match ${JSON.stringify(v.element)}`);
+            }
+
+            const treeNode = await treeDomain.getNodesByRecord({
+                treeId: v.treeId,
+                record: {
+                    id: recordIdFound,
+                    library: v.library
+                },
+                ctx
+            });
+
+            // get treeNodeId from recordId
+            acc[v.treeId] = treeNode[0];
+            return acc;
+        }, Promise.resolve({}));
 
         await valueDomain.saveValue({
             library,
             recordId,
             attribute: attribute.id,
-            value: {value: value.value, id_value: valueId, metadata: value.metadata, version: value.version},
+            value: {value: value.value, id_value: valueId, metadata: value.metadata, version},
             ctx
         });
     };
 
     const _treatElement = async (
+        element: IElement,
+        recordIds: string[],
+        ctx: IQueryInfos,
+        cacheDataPath: string,
+        cacheKey: number,
+        isCacheActive = false
+    ): Promise<any> => {
+        for (const data of [...element.data, ...element.links]) {
+            const attrs = await attributeDomain.getLibraryAttributes(element.library, ctx);
+            const libraryAttribute = attrs.find(a => a.id === data.attribute);
+
+            const isTypeLink = libraryAttribute?.type === AttributeTypes.SIMPLE_LINK || libraryAttribute?.type === AttributeTypes.ADVANCED_LINK;
+
+            // if cacheData = true, we cache data that is not versionable and is not a link type
+            const hasVersionableValue = data.values.some(v => v.versions?.length);
+            const isCachedData = isCacheActive && (hasVersionableValue || isTypeLink);
+            if (isCachedData) {
+                // Store in cache
+                await cacheService.getCache(ECacheType.DISK).storeData({
+                    key: cacheKey.toString(),
+                    data: JSON.stringify(data),
+                    path: cacheDataPath
+                });
+
+                return;
+            }
+
+            if (typeof libraryAttribute === 'undefined') {
+                throw new ValidationError<IAttribute>({
+                    id: {msg: Errors.UNKNOWN_ATTRIBUTE, vars: {attribute: data.attribute}}
+                });
+            }
+
+            // call treatData only if data.versions.length === 0
+            await _treatData(element.library, data, recordIds, ctx, libraryAttribute);
+        }
+    };
+
+    const _treatData = async (
         library: string,
         data: IData,
         recordIds: string[],
-        ctx: IQueryInfos
-    ): Promise<void> => {
-        const attrs = await attributeDomain.getLibraryAttributes(library, ctx);
-        const libraryAttribute = attrs.find(a => a.id === data.attribute);
-
-        if (typeof libraryAttribute === 'undefined') {
-            throw new ValidationError<IAttribute>({
-                id: {msg: Errors.UNKNOWN_ATTRIBUTE, vars: {attribute: data.attribute}}
-            });
-        }
-
+        ctx: IQueryInfos,
+        libraryAttribute: IAttribute
+    ): Promise<any> => {
         for (const recordId of recordIds) {
             let currentValues: IValue[];
 
@@ -250,12 +323,15 @@ export default function ({
                     );
                 }
             }
+
+            // Treat link
+
         }
     };
 
     const _matchesToFilters = (matches: IMatch[]): IRecordFilterLight[] => {
         // add AND operator between matches
-        const filters: Array<IMatch & {operator: Operator}> = matches.reduce(
+        const filters: Array<IMatch & { operator: Operator }> = matches.reduce(
             (acc, m) => acc.concat(m, {operator: Operator.AND}),
             []
         );
@@ -662,6 +738,21 @@ export default function ({
                 }
             }
 
+            console.info('Processing trees...');
+            if ('trees' in elements) {
+                for (const tree of elements.trees) {
+                    await treeDomain.saveTree(tree, ctx);
+                }
+            }
+
+
+            console.info('Processing version profiles...');
+            if ('version_profiles' in elements) {
+                for (const version_profile of elements.version_profiles) {
+                    await versionProfileDomain.saveVersionProfile({versionProfile: version_profile, ctx});
+                }
+            }
+
             console.info('Processing attributes...');
             if ('attributes' in elements) {
                 for (const attribute of elements.attributes) {
@@ -674,13 +765,6 @@ export default function ({
                 for (const library of elements.libraries) {
                     library.attributes = library.attributes?.map((id: string) => ({id}));
                     await libraryDomain.saveLibrary({id: library.id, attributes: library.attributes}, ctx);
-                }
-            }
-
-            console.info('Processing trees...');
-            if ('trees' in elements) {
-                for (const tree of elements.trees) {
-                    await treeDomain.saveTree(tree, ctx);
                 }
             }
 
@@ -796,8 +880,9 @@ export default function ({
             await _getStoredFileData(
                 filename,
                 async (element: IElement, index: number): Promise<void> => {
-                    progress.elementsNb += element.matches.length + element.data.length;
-                    progress.linksNb += element.links.length;
+                    progress.elementsNb++;
+                    // progress.elementsNb += element.matches.length + element.data.length;
+                    progress.linksNb += element.links?.length;
                 },
                 async (tree: ITree, index: number) => {
                     progress.treesNb += 1;
@@ -805,7 +890,7 @@ export default function ({
                 params.ctx
             );
 
-            const cacheDataPath = `${filename}-links`;
+            const cacheDataPath = `${filename}-data`;
             let lastCacheIndex: number;
 
             let action: ImportAction;
@@ -825,13 +910,16 @@ export default function ({
                             throw new ValidationError({element: Errors.NO_IMPORT_MATCHES});
                         }
 
+                        // required to update an existing record (find it from the matches array)
                         let recordIds = await _getMatchRecords(element.library, element.matches, ctx);
                         const recordFound = !!recordIds.length;
 
+                        // cannot update the record if not found
                         if (!recordFound && importMode === ImportMode.UPDATE) {
                             throw new ValidationError({element: Errors.MISSING_ELEMENTS});
                         }
 
+                        // cannot add a found record
                         if (recordFound && importMode === ImportMode.INSERT) {
                             action = ImportAction.IGNORED;
                             return;
@@ -845,9 +933,7 @@ export default function ({
                             action = ImportAction.UPDATED;
                         }
 
-                        for (const data of element.data) {
-                            await _treatElement(element.library, data, recordIds, ctx);
-                        }
+                        await _treatElement(element, recordIds, ctx, cacheDataPath, index, true);
 
                         // update import stats
                         if (element.data.length) {
@@ -865,10 +951,9 @@ export default function ({
                         await cacheService.getCache(ECacheType.DISK).storeData({
                             key: index.toString(),
                             data: JSON.stringify({
-                                library: element.library,
                                 recordIds,
-                                links: element.links
-                            } as ICachedLinks),
+                                element
+                            } as ICachedData),
                             path: cacheDataPath
                         });
 
@@ -928,18 +1013,17 @@ export default function ({
                 _updateTaskProgress
             );
 
-            // Treat links
+            // Treat cache (links and versionable values)
             for (let cacheKey = 0; cacheKey <= lastCacheIndex; cacheKey++) {
                 try {
                     const cacheStringifiedObject = (
                         await cacheService.getCache(ECacheType.DISK).getData([cacheKey.toString()], cacheDataPath)
                     )[0];
 
-                    const element: ICachedLinks = JSON.parse(cacheStringifiedObject);
+                    const data: ICachedData = JSON.parse(cacheStringifiedObject);
 
-                    for (const link of element.links) {
-                        try {
-                            await _treatElement(element.library, link, element.recordIds, ctx);
+                    try {
+                        await _treatElement(data.element, data.recordIds, ctx, cacheDataPath, cacheKey, false);
 
                             if (excelMapping) {
                                 const sheetIndex = excelMapping[cacheKey]?.sheet;
@@ -958,11 +1042,12 @@ export default function ({
                                 ? _getExcelPos(cacheKey)
                                 : translator.t('import.element_pos', {lng: lang, index: cacheKey});
 
-                            _writeReport(fd, pos, e, lang);
-                        }
+                        _writeReport(fd, pos, e, lang);
                     }
 
-                    await _updateTaskProgress(element.links.length, 'tasks.import_description.links_process');
+                    // calculate the number of data and links
+                    const nbData = data.element.data.length + data.element.links.length;
+                    await _updateTaskProgress(nbData, 'tasks.import_description.elements_process');
                 } catch (err) {
                     continue;
                 }
@@ -1223,3 +1308,4 @@ export default function ({
         }
     };
 }
+

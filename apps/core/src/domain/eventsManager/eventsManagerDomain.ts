@@ -65,7 +65,7 @@ export default function ({
         const msgContent = msg.content.toString();
 
         const pubSubEvent: IPubSubEvent = JSON.parse(msgContent);
-
+        pubSubEvent.instanceId = config.instanceId;
         try {
             _validateMsg(pubSubEvent);
         } catch (e) {
@@ -136,3 +136,4 @@ export default function ({
         }
     };
 }
+
