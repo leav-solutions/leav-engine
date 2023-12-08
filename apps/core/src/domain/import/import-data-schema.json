@@ -8,7 +8,9 @@
         "treeId": {
           "type": "string"
         },
-
+        "library": {
+          "type": "string"
+        },
         "element": {
           "description": "Object representing the element to process",
           "type": ["array", "null"],
@@ -19,6 +21,7 @@
       },
       "required": [
         "treeId",
+        "library",
         "element"
       ]
     },
@@ -68,7 +71,7 @@
             "type": "string"
           }
         },
-        "versions":{
+        "version":{
           "type": "array",
           "items": {
             "$ref": "#/definitions/valueVersion"

@@ -186,7 +186,6 @@ export default function ({
         const version = await value.version?.reduce(async (accProm, v) => {
             const acc = await accProm;
 
-            // if element is null, we must send a null value for leav to define the root path
             if (!v.element?.length) {
                 acc[v.treeId] = null;
                 return acc;
@@ -200,7 +199,6 @@ export default function ({
                 ctx
             });
 
-            // get recordId from match
             const recordIdFound = recordsList.list[0]?.id;
 
             if(!recordIdFound){
@@ -216,7 +214,6 @@ export default function ({
                 ctx
             });
 
-            // get treeNodeId from recordId
             acc[v.treeId] = treeNode[0];
             return acc;
         }, Promise.resolve({}));
@@ -235,7 +232,7 @@ export default function ({
         recordIds: string[],
         cacheParams: ICacheParams,
         ctx: IQueryInfos
-    ): Promise<any> => {
+    ): Promise<boolean> => {
         for (const data of [...element.data, ...element.links]) {
             const attrs = await attributeDomain.getLibraryAttributes(element.library, ctx);
             const libraryAttribute = attrs.find(a => a.id === data.attribute);
@@ -253,7 +250,7 @@ export default function ({
                     path: cacheParams.cacheDataPath
                 });
 
-                return;
+                return false;
             }
 
             if (typeof libraryAttribute === 'undefined') {
@@ -273,7 +270,7 @@ export default function ({
         recordIds: string[],
         ctx: IQueryInfos,
         libraryAttribute: IAttribute
-    ): Promise<any> => {
+    ): Promise<void> => {
         for (const recordId of recordIds) {
             let currentValues: IValue[];
 
@@ -322,9 +319,6 @@ export default function ({
                     );
                 }
             }
-
-            // Treat link
-
         }
     };
 

@@ -668,9 +668,11 @@ describe('importDomain', () => {
             expect(mockCacheService.getData).toBeCalledTimes(1);
             expect(mockRecordDomain.find).toBeCalledTimes(1);
             expect(mockValueDomain.saveValue).toBeCalledTimes(2);
+            // First call of saveValue version must be : { treeprojects: null }
+            expect(mockValueDomain.saveValue.mock.calls[0][0].value.version).toEqual({ treeprojects: null });
+            // Second call of saveValue version must be : { treeprojects: '1' }
+            expect(mockValueDomain.saveValue.mock.calls[1][0].value.version).toEqual({ treeprojects: '1' });
             expect(mockCacheService.deleteAll).toBeCalledTimes(1);
-
-
         });
 
         test('test import elements - Upsert mode', async () => {
