@@ -42,7 +42,7 @@ describe('logRepo', () => {
                 {
                     filters: {
                         userId: '1',
-                        action: [EventAction.VALUE_SAVE],
+                        actions: [EventAction.VALUE_SAVE],
                         topic: {
                             library: 'my_lib',
                             attribute: 'my_attribute',

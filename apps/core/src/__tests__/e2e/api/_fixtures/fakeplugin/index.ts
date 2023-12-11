@@ -35,7 +35,7 @@ export default function ({translator = null}: IDeps): IPluginInitModule {
 
             extensionPoints.registerPermissionActions(PermissionTypes.LIBRARY, ['fake_plugin_permission']);
 
-            extensionPoints.registerEventActions(Object.values(FakePluginActions));
+            extensionPoints.registerEventActions(Object.values(FakePluginActions), 'fakeplugin');
         }
     };
 }

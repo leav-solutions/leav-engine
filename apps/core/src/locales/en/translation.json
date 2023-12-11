@@ -38,6 +38,7 @@
         "INVALID_VERSION": "Invalid version: ",
         "LIBRARY_FORBIDDEN_AS_CHILD": "Library forbidden as child",
         "METADATA_PERMISSION_ERROR": "Forbidden action on fields {{fields}}",
+        "MISSING_ACTION_PREFIX": "Missing prefix on actions: {{actions}}",
         "MISSING ELEMENTS": "Missing elements",
         "MISSING_FIELDS": "Missing fields: {{fields}}",
         "MISSING_LIBRARY_ID": "Missing library ID",

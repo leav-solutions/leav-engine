@@ -67,7 +67,7 @@ describe('Logs', () => {
             async () => {
                 // Filter on time to have only relevant logs for this run
                 const logsResult = await gqlClient.makeCall(`{
-                    logs(filters: {time: {from: ${Math.floor(now / 1000) - 1}}, action: [LIBRARY_SAVE]}) {
+                    logs(filters: {time: {from: ${Math.floor(now / 1000) - 1}}, actions: [LIBRARY_SAVE]}) {
                         action
                         time
                     }

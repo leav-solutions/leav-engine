@@ -10,6 +10,7 @@ import {IUtils} from 'utils/utils';
 import winston from 'winston';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
+import {Errors} from '../../_types/errors';
 
 export interface IEventsManagerDomain {
     sendDatabaseEvent(payload: IDbPayload, ctx: IQueryInfos): void;
@@ -21,7 +22,7 @@ export interface IEventsManagerDomain {
         routinKey: string,
         onMessage: (msg: amqp.ConsumeMessage, channel: amqp.ConfirmChannel) => Promise<void>
     ): Promise<void>;
-    registerEventActions(actions: string[]): void;
+    registerEventActions(actions: string[], prefix: string, ctx: IQueryInfos): void;
     getActions(): string[];
 }
 
@@ -94,7 +95,6 @@ export default function ({
                     instanceId: config.instanceId,
                     userId: ctx.userId,
                     queryId: ctx.queryId,
-                    instanceId: config.instanceId,
                     emitter: utils.getProcessIdentifier(),
                     trigger: ctx.trigger,
                     payload
@@ -138,15 +138,22 @@ export default function ({
         subscribe(triggersName: string[]): AsyncIterator<any> {
             return pubsub.asyncIterator(triggersName);
         },
-        registerEventActions(actions) {
+        registerEventActions(actions, prefix, ctx) {
+            // Check if all actions are prefixed
+            const invalidActions = actions.filter(action => !action.startsWith(prefix + '_'));
+            if (invalidActions.length) {
+                throw utils.generateExplicitValidationError(
+                    'action',
+                    {msg: Errors.MISSING_ACTION_PREFIX, vars: {actions: invalidActions.join(', ')}},
+                    ctx.lang
+                );
+            }
+
             actions.forEach(action => _customEventActions.add(action));
         },
         getActions() {
-            // Return the list of all actions: the custom actions (in uppercase) and system action
-            return [
-                ...Array.from(_customEventActions).map(action => action.toUpperCase()),
-                ...Object.values(EventAction)
-            ];
+            // Return the list of all actions: the custom actions and system action
+            return [...Array.from(_customEventActions), ...Object.values(EventAction)];
         }
     };
 }

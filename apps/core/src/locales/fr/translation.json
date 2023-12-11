@@ -38,6 +38,7 @@
         "INVALID_VERSION": "Version non valide: ",
         "LIBRARY_FORBIDDEN_AS_CHILD": "Librairie non autorisée pour les parents sélectionnés",
         "METADATA_PERMISSION_ERROR": "Action interdite sur les champs {{fields}}",
+        "MISSING_ACTION_PREFIX": "Préfixe manquant sur les actions: {{actions}}",
         "MISSING_ELEMENTS": "Eléments manquants",
         "MISSING_FIELDS": "Champs manquants : {{fields}}",
         "MISSING_LIBRARY_ID": "ID bibliothèque manquant",
