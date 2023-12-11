@@ -5,6 +5,7 @@
 export {useSaveApplicationMutation} from '../_gqlTypes';
 export {useAntdLocale} from './useAntdLocale';
 export {default as useAppLang} from './useAppLang';
+export {default as useAuth} from './useAuth';
 export {default as useLang} from './useLang';
 export {default as useLocalStorage} from './useLocalStorage';
 export {default as useRefreshToken} from './useRefreshToken';

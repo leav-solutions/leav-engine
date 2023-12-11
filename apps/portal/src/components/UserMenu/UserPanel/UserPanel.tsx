@@ -2,10 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FlagOutlined, LogoutOutlined} from '@ant-design/icons';
-import {useLang} from '@leav/ui';
+import {useAuth, useLang} from '@leav/ui';
 import {Drawer} from 'antd';
 import {KitMenu} from 'aristid-ds';
-import useAuth from 'hooks/useAuth/useAuth';
 import {useTranslation} from 'react-i18next';
 import {styled} from 'styled-components';
 import {getFlagByLang} from '../../../../../../libs/utils/src/utils';

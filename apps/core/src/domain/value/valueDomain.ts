@@ -398,25 +398,36 @@ const valueDomain = function ({
             ctx
         });
 
-        const savedVal = await saveOneValue(
-            library,
-            record.id,
-            attribute,
-            value,
-            {
-                valueRepo,
-                recordRepo,
-                treeRepo,
-                getDefaultElementHelper,
-                actionsListDomain,
-                attributeDomain,
-                versionProfileDomain
-            },
-            ctx
-        );
+        const valueBeforeToCheck =
+            utils.isLinkAttribute(attribute) || utils.isTreeAttribute(attribute)
+                ? {...valueBefore, value: valueBefore?.value?.id}
+                : valueBefore;
+        const areValuesIdentical = utils.areValuesIdentical(valueBeforeToCheck, value);
 
-        // Apply actions list on value
+        // If values are identical, don't save it again. Consider DB value as saved value
+        let savedVal: IValue;
+        if (areValuesIdentical) {
+            savedVal = valueBefore;
+        } else {
+            savedVal = await saveOneValue(
+                library,
+                record.id,
+                attribute,
+                value,
+                {
+                    valueRepo,
+                    recordRepo,
+                    treeRepo,
+                    getDefaultElementHelper,
+                    actionsListDomain,
+                    attributeDomain,
+                    versionProfileDomain
+                },
+                ctx
+            );
+        }
 
+        // Apply actions list and format value before returning it
         let processedValue = await _runActionsList({
             listName: ActionsListEvents.GET_VALUE,
             value: savedVal,
@@ -460,24 +471,26 @@ const valueDomain = function ({
             }
         }
 
-        eventsManager.sendDatabaseEvent(
-            {
-                action: EventAction.VALUE_SAVE,
-                topic: {
-                    library,
-                    record: {
-                        id: record.id,
-                        libraryId: library
+        if (!areValuesIdentical) {
+            eventsManager.sendDatabaseEvent(
+                {
+                    action: EventAction.VALUE_SAVE,
+                    topic: {
+                        library,
+                        record: {
+                            id: record.id,
+                            libraryId: library
+                        },
+                        attribute: attribute.id
                     },
-                    attribute: attribute.id
+                    before: valueBefore,
+                    after: savedVal
                 },
-                before: valueBefore,
-                after: savedVal
-            },
-            ctx
-        );
+                ctx
+            );
+        }
 
-        return processedValue;
+        return {value: processedValue, areValuesIdentical};
     };
 
     return {
@@ -649,11 +662,18 @@ const valueDomain = function ({
                 ctx
             });
 
-            const savedVal = await _executeSaveValue(library, record, attributeProps, valueToSave, ctx);
+            const {value: savedVal, areValuesIdentical} = await _executeSaveValue(
+                library,
+                record,
+                attributeProps,
+                valueToSave,
+                ctx
+            );
 
-            await updateRecordLastModif(library, recordId, ctx);
-
-            await sendRecordUpdateEvent(record, [{attribute, value: savedVal}], ctx);
+            if (!areValuesIdentical) {
+                await updateRecordLastModif(library, recordId, ctx);
+                sendRecordUpdateEvent(record, [{attribute, value: savedVal}], ctx);
+            }
 
             return savedVal;
         },
@@ -761,7 +781,7 @@ const valueDomain = function ({
                                       attribute: value.attribute,
                                       ctx
                                   })
-                                : await _executeSaveValue(library, record, attributeProps, valToSave, ctx);
+                                : (await _executeSaveValue(library, record, attributeProps, valToSave, ctx)).value;
 
                         prevRes.values.push(savedVal);
                     } catch (e) {

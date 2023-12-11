@@ -69,6 +69,7 @@ function ImportModal({onClose, library, open}: IImportModalProps): JSX.Element {
     const [runGetAttributes] = useLazyQuery<GET_ATTRIBUTES_BY_LIB, GET_ATTRIBUTES_BY_LIBVariables>(
         getAttributesByLibQuery,
         {
+            fetchPolicy: 'cache-and-network',
             onError: error => message.error(error.message)
         }
     );

@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {i18n} from 'i18next';
 import {IConfig} from '_types/config';
+import {IValue} from '_types/value';
 import {AttributeFormats} from '../_types/attribute';
 import {Errors} from '../_types/errors';
 import {
@@ -447,6 +448,82 @@ describe('Utils', () => {
                     ]
                 }
             ]);
+        });
+    });
+
+    describe('areValuesIdentical', () => {
+        test('should return true if values and metadata are identical', () => {
+            const utilsModule = utils();
+            const value1 = {value: 'hello', metadata: {foo: 'bar'}};
+            const value2 = {value: 'hello', metadata: {foo: 'bar'}};
+            expect(utilsModule.areValuesIdentical(value1, value2)).toBe(true);
+
+            const value3 = {value: 'hello'};
+            const value4 = {value: 'hello'};
+            expect(utilsModule.areValuesIdentical(value3, value4)).toBe(true);
+        });
+
+        test('should return false if values are different', () => {
+            const utilsModule = utils();
+            const value1: IValue = {value: 'hello', metadata: {foo: 'bar'}};
+            const value2: IValue = {value: 'world', metadata: {foo: 'bar'}};
+            expect(utilsModule.areValuesIdentical(value1, value2)).toBe(false);
+        });
+
+        test('should return false if metadata is different', () => {
+            const utilsModule = utils();
+            const value1: IValue = {value: 'hello', metadata: {foo: 'bar'}};
+            const value2: IValue = {value: 'hello', metadata: {bar: 'baz'}};
+            expect(utilsModule.areValuesIdentical(value1, value2)).toBe(false);
+
+            const value3: IValue = {value: 'hello'};
+            const value4: IValue = {value: 'hello', metadata: {bar: 'baz'}};
+            expect(utilsModule.areValuesIdentical(value3, value4)).toBe(false);
+        });
+
+        test('should return true if metadata are falsy on both values', () => {
+            const utilsModule = utils();
+            const value1: IValue = {value: 'hello'};
+            const value2: IValue = {value: 'hello'};
+            expect(utilsModule.areValuesIdentical(value1, value2)).toBe(true);
+
+            const value3: IValue = {value: 'hello', metadata: null};
+            const value4: IValue = {value: 'hello', metadata: null};
+            expect(utilsModule.areValuesIdentical(value3, value4)).toBe(true);
+
+            const value5: IValue = {value: 'hello', metadata: undefined};
+            const value6: IValue = {value: 'hello', metadata: undefined};
+            expect(utilsModule.areValuesIdentical(value5, value6)).toBe(true);
+
+            const value7: IValue = {value: 'hello', metadata: {}};
+            const value8: IValue = {value: 'hello', metadata: null};
+            expect(utilsModule.areValuesIdentical(value7, value8)).toBe(true);
+
+            const value9: IValue = {value: 'hello'};
+            const value10: IValue = {value: 'hello', metadata: null};
+            expect(utilsModule.areValuesIdentical(value9, value10)).toBe(true);
+        });
+
+        test('should return false if both values and metadata are different', () => {
+            const utilsModule = utils();
+            const value1: IValue = {value: 'hello', metadata: {foo: 'bar'}};
+            const value2: IValue = {value: 'world', metadata: {bar: 'baz'}};
+            expect(utilsModule.areValuesIdentical(value1, value2)).toBe(false);
+        });
+
+        test('should return false if one of the values is null or undefined', () => {
+            const utilsModule = utils();
+            const value1: IValue = {value: 'hello', metadata: {foo: 'bar'}};
+            const value2: IValue = {value: null, metadata: {foo: 'bar'}};
+            expect(utilsModule.areValuesIdentical(value1, value2)).toBe(false);
+
+            const value3: IValue = {value: 'hello', metadata: {foo: 'bar'}};
+            const value4: IValue = {value: undefined, metadata: {foo: 'bar'}};
+            expect(utilsModule.areValuesIdentical(value3, value4)).toBe(false);
+
+            const value5: IValue = {value: null, metadata: {foo: 'bar'}};
+            const value6: IValue = {value: undefined, metadata: {foo: 'bar'}};
+            expect(utilsModule.areValuesIdentical(value5, value6)).toBe(false);
         });
     });
 });

@@ -1,10 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IConfig} from '_types/config';
-import {IQueryInfos} from '_types/queryInfos';
 import {ApolloServerPluginCacheControlDisabled} from 'apollo-server-core';
-import {AuthenticationError as ApolloAuthenticationError, ApolloServer} from 'apollo-server-express';
+import {ApolloServer, AuthenticationError as ApolloAuthenticationError} from 'apollo-server-express';
 import {IApplicationApp} from 'app/application/applicationApp';
 import {IAuthApp} from 'app/auth/authApp';
 import {ICoreApp} from 'app/core/coreApp';
@@ -14,17 +12,20 @@ import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import express, {NextFunction, Request, Response} from 'express';
 import fs from 'fs';
-import {GraphQLFormattedError, execute} from 'graphql';
+import {execute, GraphQLFormattedError} from 'graphql';
 import {graphqlUploadExpress} from 'graphql-upload';
+import {ServerOptions} from 'graphql-ws';
 import * as graphqlWS from 'graphql-ws/lib/use/ws';
 import {createServer} from 'http';
 import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
 import * as winston from 'winston';
 import {WebSocketServer} from 'ws';
+import {IConfig} from '_types/config';
+import {IQueryInfos} from '_types/queryInfos';
+import AuthenticationError from '../errors/AuthenticationError';
 import {ACCESS_TOKEN_COOKIE_NAME, API_KEY_PARAM_NAME} from '../_types/auth';
 import {ErrorTypes, IExtendedErrorMsg} from '../_types/errors';
-import AuthenticationError from '../errors/AuthenticationError';
 
 export interface IServer {
     init(): Promise<void>;
@@ -42,7 +43,7 @@ interface IDeps {
     'core.depsManager'?: AwilixContainer;
 }
 
-export default function({
+export default function ({
     config: config = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.auth': authApp = null,
@@ -154,9 +155,7 @@ export default function({
                     express.static(config.preview.directory, {fallthrough: false}),
                     async (err, req, res, next) => {
                         const htmlContent = await fs.promises.readFile(__dirname + '/preview404.html', 'utf8');
-                        res.status(404)
-                            .type('html')
-                            .send(htmlContent);
+                        res.status(404).type('html').send(htmlContent);
                     }
                 ]);
                 app.use(`/${config.export.endpoint}`, [_checkAuth, express.static(config.export.directory)]);
@@ -190,51 +189,60 @@ export default function({
                         variableValues: args.request.variables
                     }) as Promise<any>;
 
+                const wsServerOptions: ServerOptions<null, {leavCtx?: IQueryInfos} & graphqlWS.Extra> = {
+                    schema: graphqlApp.schema,
+                    onConnect: async ctx => {
+                        // Check auth
+                        try {
+                            // Recreate headers object from rawHeaders array
+                            const headers: Record<string, string> = ctx.extra.request.rawHeaders.reduce(
+                                (prev, curr, i, arr) => {
+                                    return !(i % 2) ? {...prev, [curr]: arr[i + 1]} : prev;
+                                },
+                                {}
+                            );
+
+                            const apiKeyIncluded = ctx.extra.request.url.includes(`${API_KEY_PARAM_NAME}=`);
+                            const cookieIncluded = headers.Cookie?.includes(ACCESS_TOKEN_COOKIE_NAME);
+
+                            const payload = await authApp.validateRequestToken({
+                                apiKey: apiKeyIncluded ? ctx.extra.request.url.split('key=')[1] : null,
+                                cookies: cookieIncluded
+                                    ? {
+                                          [ACCESS_TOKEN_COOKIE_NAME]: headers.Cookie.split('=')[
+                                              headers.Cookie.split('=').indexOf(ACCESS_TOKEN_COOKIE_NAME) + 1
+                                          ]
+                                      }
+                                    : null
+                            });
+
+                            const context: IQueryInfos = {
+                                userId: payload.userId,
+                                groupsId: payload.groupsId
+                            };
+
+                            // Store context in extra to retrieve it later on
+                            ctx.extra = {...ctx.extra, leavCtx: context};
+
+                            return true;
+                        } catch (e) {
+                            return false; // Will close connection with a "4403 Forbidden" error
+                        }
+                    },
+                    context: async ctx => {
+                        // Extract relevant context from extra
+                        return ctx.extra.leavCtx;
+                    }
+                };
+
                 // Create Web Socket Server
                 const wsServer = new WebSocketServer({
                     server: httpServer,
                     path: '/graphql'
                 });
 
-                // Hand in the schema we just created and have the
-                // WebSocketServer start listening.
-                const serverCleanup = graphqlWS.useServer(
-                    {
-                        schema: graphqlApp.schema,
-                        context: async (ctx: any) => {
-                            try {
-                                // recreate headers object from rawHeaders array
-                                const headers = ctx.extra.request.rawHeaders.reduce((prev, curr, i, arr) => {
-                                    return !(i % 2) ? {...prev, [curr]: arr[i + 1]} : prev;
-                                }, {});
-
-                                const apiKeyIncluded = ctx.extra.request.url.includes(`${API_KEY_PARAM_NAME}=`);
-                                const cookieIncluded = headers.Cookie?.includes(ACCESS_TOKEN_COOKIE_NAME);
-
-                                const payload = await authApp.validateRequestToken({
-                                    apiKey: apiKeyIncluded ? ctx.extra.request.url.split('key=')[1] : null,
-                                    cookies: cookieIncluded
-                                        ? {
-                                              [ACCESS_TOKEN_COOKIE_NAME]: headers.Cookie.split('=')[
-                                                  headers.Cookie.split('=').indexOf(ACCESS_TOKEN_COOKIE_NAME) + 1
-                                              ]
-                                          }
-                                        : null
-                                });
-
-                                const context: IQueryInfos = {
-                                    userId: payload.userId,
-                                    groupsId: payload.groupsId
-                                };
-
-                                return context;
-                            } catch (e) {
-                                throw new ApolloAuthenticationError('you must be logged in');
-                            }
-                        }
-                    },
-                    wsServer
-                );
+                // Init GraphQL WS server
+                const serverCleanup = graphqlWS.useServer(wsServerOptions, wsServer);
 
                 const plugins = [
                     ApolloServerPluginCacheControlDisabled(),

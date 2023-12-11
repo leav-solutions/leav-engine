@@ -83,7 +83,10 @@ describe('ValueDomain', () => {
     };
 
     const mockUtilsStandardAttribute: Mockify<IUtils> = {
-        isStandardAttribute: jest.fn(() => true)
+        isStandardAttribute: jest.fn(() => true),
+        isLinkAttribute: jest.fn(() => false),
+        isTreeAttribute: jest.fn(() => false),
+        areValuesIdentical: jest.fn(() => false)
     };
 
     const mockElementAncestorsHelper: Mockify<IElementAncestorsHelper> = {
@@ -771,6 +774,64 @@ describe('ValueDomain', () => {
             ).rejects.toThrow(ValidationError);
         });
 
+        test('If value is identical to DB value, do not save it', async () => {
+            const dbValueData = {
+                id_value: '1337',
+                value: 'test val',
+                attribute: 'test_attr',
+                modified_at: 123456,
+                created_at: 123456
+            };
+
+            const mockValRepo: Mockify<IValueRepo> = {
+                updateValue: jest.fn(),
+                getValueById: global.__mockPromise(dbValueData)
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.ADVANCED}),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+            };
+
+            const mockUtils: Mockify<IUtils> = {
+                ...mockUtilsStandardAttribute,
+                areValuesIdentical: jest.fn(() => true)
+            };
+
+            const valDomain = valueDomain({
+                config: mockConfig as Config.IConfig,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
+                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
+                'core.utils': mockUtils as IUtils
+            });
+
+            const savedValue = await valDomain.saveValue({
+                library: 'test_lib',
+                recordId: '12345',
+                attribute: 'test_attr',
+                value: {
+                    id_value: '12345',
+                    value: 'test val'
+                },
+                ctx
+            });
+
+            expect(mockValRepo.updateValue).not.toBeCalled();
+            expect(mockEventsManagerDomain.sendDatabaseEvent).not.toBeCalled();
+            expect(mockUpdateRecordLastModif).not.toBeCalled();
+            expect(mockSendRecordUpdateEventHelper).not.toBeCalled();
+            expect(savedValue).toEqual(dbValueData);
+        });
+
         describe('Metadata', () => {
             test('Save metadata on value', async () => {
                 const savedValueData = {
@@ -1155,6 +1216,122 @@ describe('ValueDomain', () => {
                         attribute: 'test_attr',
                         value: 'test',
                         raw_value: 'test',
+                        id_value: 12345
+                    },
+                    {
+                        attribute: 'test_attr2',
+                        value: 'test',
+                        raw_value: 'test',
+                        id_value: 12345
+                    },
+                    {
+                        attribute: 'test_attr3',
+                        value: 'test',
+                        raw_value: 'test',
+                        id_value: null
+                    }
+                ],
+                errors: null
+            });
+        });
+
+        test('Should ignore values that are identical to DB value', async () => {
+            const mockUtils: Mockify<IUtils> = {
+                ...mockUtilsStandardAttribute,
+                areValuesIdentical: jest.fn().mockImplementation(
+                    (val1, val2) => val2?.value === 'identical' // Consider values for test_attr as identical
+                ),
+                rethrow: jest.fn().mockImplementation(e => {
+                    throw e;
+                })
+            };
+            const values: IValue[] = [
+                {
+                    attribute: 'test_attr',
+                    value: 'identical',
+                    raw_value: 'identical',
+                    id_value: '12345'
+                },
+                {
+                    attribute: 'test_attr2',
+                    value: 'test',
+                    raw_value: 'test',
+                    id_value: null
+                },
+                {
+                    attribute: 'test_attr3',
+                    value: 'test',
+                    raw_value: 'test',
+                    id_value: null
+                }
+            ];
+
+            const mockValRepo: Mockify<IValueRepo> = {
+                updateValue: global.__mockPromise({value: 'test', raw_value: 'test', id_value: 12345}),
+                createValue: global.__mockPromiseMultiple([
+                    {value: 'test', raw_value: 'test', id_value: 12345},
+                    {value: 'test', raw_value: 'test', id_value: null}
+                ]),
+                getValueById: global.__mockPromise({
+                    id_value: 12345,
+                    value: 'identical',
+                    raw_value: 'identical'
+                }),
+                getValues: global.__mockPromise([{value: 'test', raw_value: 'test', id_value: 12345}])
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: jest.fn().mockImplementation(({id, ctx: ct}) => {
+                    let attrProps;
+
+                    switch (id) {
+                        case 'test_attr':
+                        case 'test_attr2':
+                            attrProps = {...mockAttrAdv, id};
+                            break;
+                        case 'test_attr3':
+                            attrProps = {...mockAttrSimple, id};
+                            break;
+                    }
+
+                    return Promise.resolve(attrProps);
+                }),
+                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
+            };
+
+            const valDomain = valueDomain({
+                config: mockConfig as Config.IConfig,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.infra.tree': mockTreeRepo as ITreeRepo,
+                'core.utils': mockUtils as IUtils,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
+                'core.domain.tree.helpers.getDefaultElement': mockGetDefaultElementHelper as IGetDefaultElementHelper,
+                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper
+            });
+
+            const res = await valDomain.saveValueBatch({
+                library: 'test_lib',
+                recordId: '123456',
+                values,
+                ctx
+            });
+
+            expect(mockValRepo.updateValue.mock.calls.length).toBe(0);
+            expect(mockValRepo.createValue.mock.calls.length).toBe(2);
+
+            expect(res).toStrictEqual({
+                values: [
+                    {
+                        attribute: 'test_attr',
+                        value: 'identical',
+                        raw_value: 'identical',
                         id_value: 12345
                     },
                     {
@@ -1794,10 +1971,6 @@ describe('ValueDomain', () => {
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable)
-            };
-
-            const mockUtils: Mockify<IUtils> = {
-                isStandardAttribute: global.__mockPromise(true)
             };
 
             const valDomain = valueDomain({
