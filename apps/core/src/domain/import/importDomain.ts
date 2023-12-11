@@ -90,7 +90,6 @@ interface IExcelMapping {
 
 interface ICachedData {
     recordIds: string[];
-    JSONLine: number;
     element: IElement;
 }
 
@@ -125,7 +124,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function ({
+export default function({
     'core.domain.library': libraryDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.helpers.validate': validateHelper = null,
@@ -182,7 +181,7 @@ export default function ({
         }
 
         // if version, search record id (from leav) then node id (from tree)
-        // with that construct the version object
+        // with that, construct the version object
         const version = await value.version?.reduce(async (accProm, v) => {
             const acc = await accProm;
 
@@ -201,8 +200,9 @@ export default function ({
 
             const recordIdFound = recordsList.list[0]?.id;
 
-            if(!recordIdFound){
+            if (!recordIdFound) {
                 console.warn(`No record found for match ${JSON.stringify(v.element)}`);
+                return acc;
             }
 
             const treeNode = await treeDomain.getNodesByRecord({
@@ -232,26 +232,12 @@ export default function ({
         recordIds: string[],
         cacheParams: ICacheParams,
         ctx: IQueryInfos
-    ): Promise<boolean> => {
-        for (const data of [...element.data, ...element.links]) {
+    ): Promise<void> => {
+        const tmpData = [];
+
+        for (const data of element.data) {
             const attrs = await attributeDomain.getLibraryAttributes(element.library, ctx);
             const libraryAttribute = attrs.find(a => a.id === data.attribute);
-
-            const isTypeLink = libraryAttribute?.type === AttributeTypes.SIMPLE_LINK || libraryAttribute?.type === AttributeTypes.ADVANCED_LINK;
-
-            // if cacheData = true, we cache data that is not versionable and is not a link type
-            const hasVersionableValue = data.values.some(v => v.version?.length);
-            const isCachedData = cacheParams.isCacheActive && (hasVersionableValue || isTypeLink);
-            if (isCachedData) {
-                // Store in cache
-                await cacheService.getCache(ECacheType.DISK).storeData({
-                    key: cacheParams.cacheKey.toString(),
-                    data: JSON.stringify(data),
-                    path: cacheParams.cacheDataPath
-                });
-
-                return false;
-            }
 
             if (typeof libraryAttribute === 'undefined') {
                 throw new ValidationError<IAttribute>({
@@ -259,8 +245,29 @@ export default function ({
                 });
             }
 
+            const isTypeLink =
+                libraryAttribute?.type === AttributeTypes.SIMPLE_LINK ||
+                libraryAttribute?.type === AttributeTypes.ADVANCED_LINK;
+
+            // if cacheData = true, we cache data that is not versionable and is not a link type
+            const hasVersionableValue = data.values.some(v => v.version?.length);
+            const isCachedData = cacheParams.isCacheActive && (hasVersionableValue || isTypeLink);
+            if (isCachedData) {
+                tmpData.push(data);
+                continue;
+            }
+
             // call treatData only if data.version.length === 0
             await _treatData(element.library, data, recordIds, ctx, libraryAttribute);
+        }
+
+        // if we have cached data, we cache it
+        if (tmpData.length) {
+            await cacheService.getCache(ECacheType.DISK).storeData({
+                key: cacheParams.cacheKey.toString(),
+                data: JSON.stringify({element: {...element, data: tmpData}, recordIds}),
+                path: cacheParams.cacheDataPath
+            });
         }
     };
 
@@ -324,7 +331,7 @@ export default function ({
 
     const _matchesToFilters = (matches: IMatch[]): IRecordFilterLight[] => {
         // add AND operator between matches
-        const filters: Array<IMatch & { operator: Operator }> = matches.reduce(
+        const filters: Array<IMatch & {operator: Operator}> = matches.reduce(
             (acc, m) => acc.concat(m, {operator: Operator.AND}),
             []
         );
@@ -462,7 +469,7 @@ export default function ({
                 fileStream.resume();
             };
 
-            parser.onValue = async function (data: any) {
+            parser.onValue = async function(data: any) {
                 try {
                     if (this.stack[this.stack.length - 1]?.key === 'elements' && !!data.library) {
                         if (callbacks.length >= config.import.groupData) {
@@ -738,7 +745,6 @@ export default function ({
                 }
             }
 
-
             console.info('Processing version profiles...');
             if ('version_profiles' in elements) {
                 for (const version_profile of elements.version_profiles) {
@@ -853,7 +859,6 @@ export default function ({
             const progress = {
                 elementsNb: 0,
                 treesNb: 0,
-                linksNb: 0,
                 position: 0,
                 percent: 0
             };
@@ -863,7 +868,7 @@ export default function ({
                 progress.percent = await updateTaskProgress(task.id, progress.percent, ctx, {
                     position: {
                         index: progress.position,
-                        total: progress.elementsNb + progress.treesNb + progress.linksNb
+                        total: progress.elementsNb + progress.treesNb
                     },
                     ...(translationKey && {translationKey})
                 });
@@ -874,7 +879,6 @@ export default function ({
                 filename,
                 async (element: IElement, index: number): Promise<void> => {
                     progress.elementsNb++;
-                    progress.linksNb += element.links?.length;
                 },
                 async (tree: ITree, index: number) => {
                     progress.treesNb += 1;
@@ -925,8 +929,10 @@ export default function ({
                             action = ImportAction.UPDATED;
                         }
                         const cacheParams: ICacheParams = {
-                            cacheDataPath, cacheKey: index, isCacheActive: true
-                        }
+                            cacheDataPath,
+                            cacheKey: index,
+                            isCacheActive: true
+                        };
                         await _treatElement(element, recordIds, cacheParams, ctx);
 
                         // update import stats
@@ -1018,32 +1024,34 @@ export default function ({
 
                     try {
                         const cacheParams: ICacheParams = {
-                            cacheDataPath, cacheKey, isCacheActive: false
-                        }
+                            cacheDataPath,
+                            cacheKey,
+                            isCacheActive: false
+                        };
                         await _treatElement(data.element, data.recordIds, cacheParams, ctx);
 
-                            if (excelMapping) {
-                                const sheetIndex = excelMapping[cacheKey]?.sheet;
-                                stats[sheetIndex] = stats[sheetIndex] || {};
-                                stats[sheetIndex].links = stats[sheetIndex].links + 1 || 1;
-                            } else {
-                                (stats as IStat).links += 1;
-                            }
-                        } catch (e) {
-                            if (!(e instanceof ValidationError) && !(e instanceof PermissionError)) {
-                                throw e;
-                            }
+                        if (excelMapping) {
+                            const sheetIndex = excelMapping[cacheKey]?.sheet;
+                            stats[sheetIndex] = stats[sheetIndex] || {};
+                            stats[sheetIndex].links = stats[sheetIndex].links + 1 || 1;
+                        } else {
+                            (stats as IStat).links += 1;
+                        }
+                    } catch (e) {
+                        if (!(e instanceof ValidationError) && !(e instanceof PermissionError)) {
+                            throw e;
+                        }
 
-                            // cacheKey is equal to element index here
-                            const pos = excelMapping
-                                ? _getExcelPos(cacheKey)
-                                : translator.t('import.element_pos', {lng: lang, index: cacheKey});
+                        // cacheKey is equal to element index here
+                        const pos = excelMapping
+                            ? _getExcelPos(cacheKey)
+                            : translator.t('import.element_pos', {lng: lang, index: cacheKey});
 
                         _writeReport(fd, pos, e, lang);
                     }
 
-                    // calculate the number of data and links
-                    const nbData = data.element.data.length + data.element.links.length;
+                    // calculate the number of data
+                    const nbData = data.element.data.length;
                     await _updateTaskProgress(nbData, 'tasks.import_description.elements_process');
                 } catch (err) {
                     continue;
@@ -1305,4 +1313,3 @@ export default function ({
         }
     };
 }
-

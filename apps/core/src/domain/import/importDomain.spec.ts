@@ -248,9 +248,7 @@ describe('importDomain', () => {
                                     }
                                 ],
                                 action: Action.ADD
-                            }
-                        ],
-                        links: [
+                            },
                             {
                                 attribute: 'advanced_link',
                                 values: [
@@ -276,8 +274,7 @@ describe('importDomain', () => {
                                 ],
                                 action: Action.ADD
                             }
-                        ],
-                        links: []
+                        ]
                     }
                 ],
                 trees: []
@@ -310,7 +307,7 @@ describe('importDomain', () => {
                             JSON.stringify({
                                 library: 'users_groups',
                                 recordIds: ['1'],
-                                links: []
+                                data: []
                             })
                         ])
                     )
@@ -318,7 +315,7 @@ describe('importDomain', () => {
                         JSON.stringify({
                             library: 'test_import',
                             recordIds: ['1'],
-                            links: [
+                            data: [
                                 {
                                     attribute: 'advanced_link',
                                     values: [
@@ -377,8 +374,7 @@ describe('importDomain', () => {
                     {
                         library: 'test_import',
                         matches: [],
-                        data: [],
-                        links: [
+                        data: [
                             {
                                 attribute: 'simple_link',
                                 values: [
@@ -423,7 +419,7 @@ describe('importDomain', () => {
                     JSON.stringify({
                         library: 'test_import',
                         recordIds: ['1'],
-                        links: [
+                        data: [
                             {
                                 attribute: 'simple_link',
                                 values: [
@@ -558,36 +554,61 @@ describe('importDomain', () => {
             const element = {
                 library: 'users_groups',
                 matches: [],
-                links: [],
                 mode: ImportMode.UPSERT,
-                data: [{
-                    attribute: 'simple',
-                    values: [{
-                        value: 'one',
-                        version: [{
-                            treeId: "treeprojects",
-                            library: "treeprojects",
-                            element: null
-                        }]
-                    }, {
-                        value: 'two',
-                        version: [{
-                            treeId: "treeprojects",
-                            library: "treeprojects",
-                            element: [{
-                                attribute: "id",
-                                value: "1"
-                            }]
-                        }]
-                    }],
-                    action: Action.ADD
-                }]
+                data: [
+                    {
+                        attribute: 'simple',
+                        values: [
+                            {
+                                value: 'one',
+                                version: [
+                                    {
+                                        treeId: 'treeprojects',
+                                        library: 'treeprojects',
+                                        element: null
+                                    }
+                                ]
+                            },
+                            {
+                                value: 'two',
+                                version: [
+                                    {
+                                        treeId: 'treeprojects',
+                                        library: 'treeprojects',
+                                        element: [
+                                            {
+                                                attribute: 'id',
+                                                value: '1'
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                value: 'three',
+                                version: [
+                                    {
+                                        treeId: 'treeprojects',
+                                        library: 'treeprojects',
+                                        element: [
+                                            {
+                                                attribute: 'id',
+                                                value: '2'
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ],
+                        action: Action.ADD
+                    }
+                ]
             };
 
             const data = {
                 elements: [element],
                 trees: []
-            }
+            };
 
             await fs.promises.writeFile(`${mockConfig.import.directory}/test.json`, JSON.stringify(data, null, '\t'));
 
@@ -596,9 +617,11 @@ describe('importDomain', () => {
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
-                saveValue: global.__mockPromise([{
-                    test: 'test'
-                }]),
+                saveValue: global.__mockPromise([
+                    {
+                        test: 'test'
+                    }
+                ]),
                 getValues: global.__mockPromise([])
             };
 
@@ -612,18 +635,16 @@ describe('importDomain', () => {
             };
 
             const mockCacheService: Mockify<ICacheService> = {
-                getData: jest
-                    .fn()
-                    .mockReturnValueOnce(
-                        Promise.resolve([
-                            // cache data object with version
-                            JSON.stringify({
-                                library: 'users_groups',
-                                recordIds: ['1'],
-                                element,
-                            })
-                        ])
-                    ),
+                getData: jest.fn().mockReturnValue(
+                    Promise.resolve([
+                        // cache data object with version
+                        JSON.stringify({
+                            library: 'users_groups',
+                            recordIds: ['1'],
+                            element
+                        })
+                    ])
+                ),
                 storeData: global.__mockPromise(),
                 deleteAll: global.__mockPromise()
             };
@@ -640,7 +661,7 @@ describe('importDomain', () => {
 
             // mock tree domain
             const mockTreeDomain: Mockify<ITreeDomain> = {
-                getNodesByRecord: global.__mockPromise(['1']),
+                getNodesByRecord: global.__mockPromise(['1'])
             };
 
             const mockUpdateTaskProgress: Mockify<UpdateTaskProgress> = global.__mockPromise();
@@ -666,12 +687,16 @@ describe('importDomain', () => {
             expect(mockCacheService.storeData).toBeCalledTimes(2);
             expect(mockValidateHelper.validateLibrary.mock.calls.length).toBe(1);
             expect(mockCacheService.getData).toBeCalledTimes(1);
-            expect(mockRecordDomain.find).toBeCalledTimes(1);
-            expect(mockValueDomain.saveValue).toBeCalledTimes(2);
+            expect(mockRecordDomain.find).toBeCalledTimes(2);
+            expect(mockValueDomain.saveValue).toBeCalledTimes(3);
             // First call of saveValue version must be : { treeprojects: null }
-            expect(mockValueDomain.saveValue.mock.calls[0][0].value.version).toEqual({ treeprojects: null });
+            expect(mockValueDomain.saveValue.mock.calls[0][0].value.version).toEqual({treeprojects: null});
             // Second call of saveValue version must be : { treeprojects: '1' }
-            expect(mockValueDomain.saveValue.mock.calls[1][0].value.version).toEqual({ treeprojects: '1' });
+            expect(mockValueDomain.saveValue.mock.calls[1][0].value.version).toEqual({treeprojects: '1'});
+            expect(mockValueDomain.saveValue.mock.calls[1][0].value.value).toEqual('two');
+            // Third call of saveValue version must be : { treeprojects: '1' }
+            expect(mockValueDomain.saveValue.mock.calls[2][0].value.version).toEqual({treeprojects: '1'});
+            expect(mockValueDomain.saveValue.mock.calls[2][0].value.value).toEqual('three');
             expect(mockCacheService.deleteAll).toBeCalledTimes(1);
         });
 
@@ -682,15 +707,13 @@ describe('importDomain', () => {
                         library: 'test_import',
                         matches: [{attribute: 'id', value: 'existingId'}],
                         mode: ImportMode.UPSERT,
-                        data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}],
-                        links: []
+                        data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}]
                     },
                     {
                         library: 'test_import',
                         matches: [{attribute: 'id', value: 'nonExistingId'}],
                         mode: ImportMode.UPSERT,
-                        data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}],
-                        links: []
+                        data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}]
                     }
                 ],
                 trees: []
@@ -763,15 +786,13 @@ describe('importDomain', () => {
                         library: 'test_import',
                         matches: [{attribute: 'id', value: 'existingId'}],
                         mode: ImportMode.INSERT,
-                        data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}],
-                        links: []
+                        data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}]
                     },
                     {
                         library: 'test_import',
                         matches: [{attribute: 'id', value: 'nonExistingId'}],
                         mode: ImportMode.INSERT,
-                        data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}],
-                        links: []
+                        data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}]
                     }
                 ],
                 trees: []
@@ -844,15 +865,13 @@ describe('importDomain', () => {
                         library: 'test_import',
                         matches: [{attribute: 'id', value: 'existingId'}],
                         mode: ImportMode.UPDATE,
-                        data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}],
-                        links: []
+                        data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}]
                     },
                     {
                         library: 'test_import',
                         matches: [{attribute: 'id', value: 'nonExistingId'}],
                         mode: ImportMode.UPDATE,
-                        data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}],
-                        links: []
+                        data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}]
                     }
                 ],
                 trees: []

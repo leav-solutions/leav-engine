@@ -52,7 +52,6 @@ export interface IElement {
     matches: IMatch[];
     mode: ImportMode;
     data: IData[];
-    links: IData[];
 }
 
 export interface ITree {
