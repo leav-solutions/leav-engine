@@ -194,6 +194,7 @@
         "import_label": "Import du fichier {{filename}}",
         "import_description": {
             "elements_process": "Import des éléments",
+            "elements_in_cache_process": "Import des éléments en cache",
             "tree_elements_process": "Placement des éléments dans les arbres",
             "links_process": "Etablissement des liaisons"
         },

@@ -107,6 +107,14 @@ interface IStat {
 
 type Stat = {[sheetIndex: number]: IStat} | IStat;
 
+interface IProgress {
+    elements: number;
+    elementsCached: number;
+    treesNb: number;
+    position: number;
+    percent: number;
+}
+
 interface IDeps {
     'core.domain.library'?: ILibraryDomain;
     'core.domain.record'?: IRecordDomain;
@@ -231,6 +239,7 @@ export default function({
         element: IElement,
         recordIds: string[],
         cacheParams: ICacheParams,
+        progress: IProgress,
         ctx: IQueryInfos
     ): Promise<void> => {
         const tmpData = [];
@@ -268,6 +277,7 @@ export default function({
                 data: JSON.stringify({element: {...element, data: tmpData}, recordIds}),
                 path: cacheParams.cacheDataPath
             });
+            progress.elementsCached += 1;
         }
     };
 
@@ -448,8 +458,7 @@ export default function({
         filename: string,
         callbackElement: (element: IElement, index: number) => Promise<void>,
         callbackTree: (element: ITree, index: number) => Promise<void>,
-        ctx: IQueryInfos,
-        updateProgress?: (increasePos: number, translationKey?: string) => Promise<void>
+        ctx: IQueryInfos
     ): Promise<boolean> => {
         return new Promise((resolve, reject) => {
             const parser = new JsonParser();
@@ -477,13 +486,6 @@ export default function({
                         }
 
                         callbacks.push(async () => callbackElement(data, elementIndex++));
-
-                        if (typeof updateProgress !== 'undefined') {
-                            await updateProgress(
-                                data.matches.length + data.data.length,
-                                'tasks.import_description.elements_process'
-                            );
-                        }
                     } else if (this.stack[this.stack.length - 1]?.key === 'trees' && !!data.treeId) {
                         // If the first tree has never been reached before we check if callbacks for
                         // elements are still pending and call them before processing the trees.
@@ -498,10 +500,6 @@ export default function({
                         fileStream.pause();
 
                         await callbackTree(data, treeIndex++);
-
-                        if (typeof updateProgress !== 'undefined') {
-                            await updateProgress(1, 'tasks.import_description.tree_elements_process');
-                        }
 
                         fileStream.resume();
                     }
@@ -652,6 +650,23 @@ export default function({
     };
 
     const _isExcelMapped = (stats: Stat): boolean => !(stats as IStat).elements;
+
+    const _updateTaskProgress = async (
+        progress: IProgress,
+        increasePosition: number,
+        translationKey: string,
+        taskId: string,
+        ctx: IQueryInfos
+    ) => {
+        progress.position += increasePosition;
+        progress.percent = await updateTaskProgress(taskId, progress.percent, ctx, {
+            position: {
+                index: progress.position,
+                total: progress.elements + progress.treesNb + progress.elementsCached
+            },
+            ...(translationKey && {translationKey})
+        });
+    };
 
     return {
         async importConfig(params: IImportConfigParams, task?: ITaskFuncParams): Promise<string> {
@@ -856,29 +871,19 @@ export default function({
                 throw new Error(`Invalid JSON data. See ${reportFilePath} file for more details.`);
             }
 
-            const progress = {
-                elementsNb: 0,
+            const progress: IProgress = {
+                elements: 0,
+                elementsCached: 0,
                 treesNb: 0,
                 position: 0,
                 percent: 0
-            };
-
-            const _updateTaskProgress = async (increasePosition: number, translationKey?: string) => {
-                progress.position += increasePosition;
-                progress.percent = await updateTaskProgress(task.id, progress.percent, ctx, {
-                    position: {
-                        index: progress.position,
-                        total: progress.elementsNb + progress.treesNb
-                    },
-                    ...(translationKey && {translationKey})
-                });
             };
 
             // We call iterate on file a first time to estimate time of import
             await _getStoredFileData(
                 filename,
                 async (element: IElement, index: number): Promise<void> => {
-                    progress.elementsNb++;
+                    progress.elements += 1;
                 },
                 async (tree: ITree, index: number) => {
                     progress.treesNb += 1;
@@ -933,7 +938,14 @@ export default function({
                             cacheKey: index,
                             isCacheActive: true
                         };
-                        await _treatElement(element, recordIds, cacheParams, ctx);
+                        await _updateTaskProgress(
+                            progress,
+                            1,
+                            'tasks.import_description.elements_process',
+                            task.id,
+                            ctx
+                        );
+                        await _treatElement(element, recordIds, cacheParams, progress, ctx);
 
                         // update import stats
                         if (element.data.length) {
@@ -945,17 +957,6 @@ export default function({
                                 (stats as IStat).elements[action] += 1;
                             }
                         }
-
-                        // Caching element links, to treat them later
-                        // TODO: Improvement: if no links no cache.
-                        await cacheService.getCache(ECacheType.DISK).storeData({
-                            key: index.toString(),
-                            data: JSON.stringify({
-                                recordIds,
-                                element
-                            } as ICachedData),
-                            path: cacheDataPath
-                        });
 
                         if (typeof lastCacheIndex === 'undefined' || index > lastCacheIndex) {
                             lastCacheIndex = index;
@@ -992,6 +993,13 @@ export default function({
                             throw new ValidationError<IAttribute>({id: Errors.MISSING_ELEMENTS});
                         }
 
+                        await _updateTaskProgress(
+                            progress,
+                            1,
+                            'tasks.import_description.elements_process',
+                            task.id,
+                            ctx
+                        );
                         await _treatTree(tree.library, tree.treeId, parent, recordIds, tree.action, ctx, tree.order);
 
                         if (!excelMapping) {
@@ -1008,9 +1016,7 @@ export default function({
                         _writeReport(fd, pos, e, lang);
                     }
                 },
-                ctx,
-                // For each element we check if it increases the progress, and update it if necessary
-                _updateTaskProgress
+                ctx
             );
 
             // Treat cache (links and versionable values)
@@ -1028,8 +1034,8 @@ export default function({
                             cacheKey,
                             isCacheActive: false
                         };
-                        await _treatElement(data.element, data.recordIds, cacheParams, ctx);
 
+                        await _treatElement(data.element, data.recordIds, cacheParams, progress, ctx);
                         if (excelMapping) {
                             const sheetIndex = excelMapping[cacheKey]?.sheet;
                             stats[sheetIndex] = stats[sheetIndex] || {};
@@ -1048,11 +1054,15 @@ export default function({
                             : translator.t('import.element_pos', {lng: lang, index: cacheKey});
 
                         _writeReport(fd, pos, e, lang);
+                    } finally {
+                        await _updateTaskProgress(
+                            progress,
+                            1,
+                            'tasks.import_description.elements_in_cache_process',
+                            task.id,
+                            ctx
+                        );
                     }
-
-                    // calculate the number of data
-                    const nbData = data.element.data.length;
-                    await _updateTaskProgress(nbData, 'tasks.import_description.elements_process');
                 } catch (err) {
                     continue;
                 }
@@ -1274,8 +1284,7 @@ export default function({
                             library,
                             matches,
                             mode,
-                            data: elementData,
-                            links: elementLinks
+                            data: [...elementData, ...elementLinks]
                         };
 
                         // Adding element to JSON file.

@@ -535,7 +535,7 @@ export default function ({
             progress: {percent?: number; description?: ISystemTranslation},
             ctx: IQueryInfos
         ): Promise<void> {
-            if (typeof progress.percent !== 'undefined' && progress.percent === 100) {
+            if (typeof progress.percent !== 'undefined' && progress.percent >= 100) {
                 // If percent update is equal to 100, task is completed but not yet updated
                 // Only the task manager can update task status to completed
                 progress.percent = 99;

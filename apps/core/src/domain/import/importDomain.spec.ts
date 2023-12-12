@@ -241,7 +241,7 @@ describe('importDomain', () => {
                         mode: ImportMode.UPSERT,
                         data: [
                             {
-                                attribute: 'simple',
+                                attribute: 'fake_simple',
                                 values: [
                                     {
                                         value: 'one'
@@ -250,7 +250,7 @@ describe('importDomain', () => {
                                 action: Action.ADD
                             },
                             {
-                                attribute: 'advanced_link',
+                                attribute: 'fake_advanced_link',
                                 values: [
                                     {
                                         value: '1'
@@ -266,7 +266,7 @@ describe('importDomain', () => {
                         mode: ImportMode.UPSERT,
                         data: [
                             {
-                                attribute: 'simple',
+                                attribute: 'fake_simple',
                                 values: [
                                     {
                                         value: 'test'
@@ -283,7 +283,7 @@ describe('importDomain', () => {
             await fs.promises.writeFile(`${mockConfig.import.directory}/test.json`, JSON.stringify(data, null, '\t'));
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getLibraryAttributes: global.__mockPromise([{id: 'simple'}, {id: 'advanced_link'}])
+                getLibraryAttributes: global.__mockPromise([{type: 'simple', id: 'fake_simple'}, {type: 'advanced_link', id: 'fake_advanced_link'}])
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
@@ -305,27 +305,33 @@ describe('importDomain', () => {
                     .mockReturnValue(
                         Promise.resolve([
                             JSON.stringify({
-                                library: 'users_groups',
                                 recordIds: ['1'],
-                                data: []
+                                element: {
+                                    library: 'users_groups',
+                                    recordIds: ['1'],
+                                    data: []
+                                }
                             })
                         ])
                     )
                     .mockReturnValueOnce([
                         JSON.stringify({
-                            library: 'test_import',
                             recordIds: ['1'],
-                            data: [
-                                {
-                                    attribute: 'advanced_link',
-                                    values: [
-                                        {
-                                            value: '1'
-                                        }
-                                    ],
-                                    action: Action.REPLACE
-                                }
-                            ]
+                            element: {
+                                library: 'test_import',
+                                recordIds: ['1'],
+                                data: [
+                                    {
+                                        attribute: 'fake_advanced_link',
+                                        values: [
+                                            {
+                                                value: '1'
+                                            }
+                                        ],
+                                        action: Action.REPLACE
+                                    }
+                                ]
+                            }
                         })
                     ]),
                 storeData: global.__mockPromise(),
@@ -360,12 +366,12 @@ describe('importDomain', () => {
             await imprtDomain.importData({filename: 'test.json', ctx}, {id: 'fakeTaskId'});
 
             expect(mockRecordDomain.createRecord).toBeCalledTimes(2);
-            expect(mockAttrDomain.getLibraryAttributes).toBeCalledTimes(3);
+            expect(mockAttrDomain.getLibraryAttributes).toBeCalledTimes(4);
             expect(mockValidateHelper.validateLibrary).toBeCalledTimes(2);
             expect(mockValueDomain.saveValue).toBeCalledTimes(3);
             expect(mockValueDomain.getValues).toBeCalledTimes(1);
             expect(mockCacheService.getData).toBeCalledTimes(2);
-            expect(mockCacheService.storeData).toBeCalledTimes(2);
+            expect(mockCacheService.storeData).toBeCalledTimes(1);
         });
 
         test('test import elements - simple link with matches', async () => {
@@ -376,7 +382,7 @@ describe('importDomain', () => {
                         matches: [],
                         data: [
                             {
-                                attribute: 'simple_link',
+                                attribute: 'fake_simple_link',
                                 values: [
                                     {
                                         value: [
@@ -398,7 +404,7 @@ describe('importDomain', () => {
             await fs.promises.writeFile(`${mockConfig.import.directory}/test.json`, JSON.stringify(data, null, '\t'));
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getLibraryAttributes: global.__mockPromise([{id: 'simple_link'}])
+                getLibraryAttributes: global.__mockPromise([{type: 'simple_link', id: 'fake_simple_link'}])
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
@@ -417,24 +423,27 @@ describe('importDomain', () => {
             const mockCacheService: Mockify<ICacheService> = {
                 getData: global.__mockPromise([
                     JSON.stringify({
-                        library: 'test_import',
                         recordIds: ['1'],
-                        data: [
-                            {
-                                attribute: 'simple_link',
-                                values: [
-                                    {
-                                        value: [
-                                            {
-                                                attribute: 'login',
-                                                value: 'admin'
-                                            }
-                                        ]
-                                    }
-                                ],
-                                action: Action.ADD
-                            }
-                        ]
+                        element: {
+                            library: 'test_import',
+                            recordIds: ['1'],
+                            data: [
+                                {
+                                    attribute: 'fake_simple_link',
+                                    values: [
+                                        {
+                                            value: [
+                                                {
+                                                    attribute: 'login',
+                                                    value: 'admin'
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    action: Action.ADD
+                                }
+                            ]
+                        }
                     })
                 ]),
                 storeData: global.__mockPromise(),
@@ -470,7 +479,7 @@ describe('importDomain', () => {
 
             expect(mockRecordDomain.createRecord).toBeCalledTimes(1);
             expect(mockRecordDomain.find).toBeCalledTimes(1);
-            expect(mockAttrDomain.getLibraryAttributes).toBeCalledTimes(1);
+            expect(mockAttrDomain.getLibraryAttributes).toBeCalledTimes(2);
             expect(mockValidateHelper.validateLibrary).toBeCalledTimes(1);
             expect(mockValueDomain.saveValue).toBeCalledTimes(1);
             expect(mockCacheService.getData).toBeCalledTimes(1);
@@ -557,7 +566,7 @@ describe('importDomain', () => {
                 mode: ImportMode.UPSERT,
                 data: [
                     {
-                        attribute: 'simple',
+                        attribute: 'fake_simple',
                         values: [
                             {
                                 value: 'one',
@@ -613,7 +622,7 @@ describe('importDomain', () => {
             await fs.promises.writeFile(`${mockConfig.import.directory}/test.json`, JSON.stringify(data, null, '\t'));
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getLibraryAttributes: global.__mockPromise([{id: 'simple'}])
+                getLibraryAttributes: global.__mockPromise([{type: 'simple', id: 'fake_simple'}])
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
@@ -684,7 +693,7 @@ describe('importDomain', () => {
 
             expect(mockRecordDomain.createRecord.mock.calls.length).toBe(1);
             expect(mockAttrDomain.getLibraryAttributes.mock.calls.length).toBe(2);
-            expect(mockCacheService.storeData).toBeCalledTimes(2);
+            expect(mockCacheService.storeData).toBeCalledTimes(1);
             expect(mockValidateHelper.validateLibrary.mock.calls.length).toBe(1);
             expect(mockCacheService.getData).toBeCalledTimes(1);
             expect(mockRecordDomain.find).toBeCalledTimes(2);
@@ -707,13 +716,13 @@ describe('importDomain', () => {
                         library: 'test_import',
                         matches: [{attribute: 'id', value: 'existingId'}],
                         mode: ImportMode.UPSERT,
-                        data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}]
+                        data: [{attribute: 'fake_simple', values: [{value: 'one'}], action: Action.ADD}]
                     },
                     {
                         library: 'test_import',
                         matches: [{attribute: 'id', value: 'nonExistingId'}],
                         mode: ImportMode.UPSERT,
-                        data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}]
+                        data: [{attribute: 'fake_simple', values: [{value: 'one'}], action: Action.ADD}]
                     }
                 ],
                 trees: []
@@ -722,7 +731,7 @@ describe('importDomain', () => {
             await fs.promises.writeFile(`${mockConfig.import.directory}/test.json`, JSON.stringify(data, null, '\t'));
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getLibraryAttributes: global.__mockPromise([{id: 'simple'}])
+                getLibraryAttributes: global.__mockPromise([{type: 'simple', id: 'fake_simple'}])
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
@@ -786,13 +795,13 @@ describe('importDomain', () => {
                         library: 'test_import',
                         matches: [{attribute: 'id', value: 'existingId'}],
                         mode: ImportMode.INSERT,
-                        data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}]
+                        data: [{attribute: 'fake_simple', values: [{value: 'one'}], action: Action.ADD}]
                     },
                     {
                         library: 'test_import',
                         matches: [{attribute: 'id', value: 'nonExistingId'}],
                         mode: ImportMode.INSERT,
-                        data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}]
+                        data: [{attribute: 'fake_simple', values: [{value: 'one'}], action: Action.ADD}]
                     }
                 ],
                 trees: []
@@ -801,7 +810,7 @@ describe('importDomain', () => {
             await fs.promises.writeFile(`${mockConfig.import.directory}/test.json`, JSON.stringify(data, null, '\t'));
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getLibraryAttributes: global.__mockPromise([{id: 'simple'}])
+                getLibraryAttributes: global.__mockPromise([{type: 'simple', id: 'fake_simple'}])
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
@@ -865,13 +874,13 @@ describe('importDomain', () => {
                         library: 'test_import',
                         matches: [{attribute: 'id', value: 'existingId'}],
                         mode: ImportMode.UPDATE,
-                        data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}]
+                        data: [{attribute: 'fake_simple', values: [{value: 'one'}], action: Action.ADD}]
                     },
                     {
                         library: 'test_import',
                         matches: [{attribute: 'id', value: 'nonExistingId'}],
                         mode: ImportMode.UPDATE,
-                        data: [{attribute: 'simple', values: [{value: 'one'}], action: Action.ADD}]
+                        data: [{attribute: 'fake_simple', values: [{value: 'one'}], action: Action.ADD}]
                     }
                 ],
                 trees: []
@@ -880,7 +889,7 @@ describe('importDomain', () => {
             await fs.promises.writeFile(`${mockConfig.import.directory}/test.json`, JSON.stringify(data, null, '\t'));
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getLibraryAttributes: global.__mockPromise([{id: 'simple'}])
+                getLibraryAttributes: global.__mockPromise([{type: 'simple', id: 'fake_simple'}])
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
