@@ -10,11 +10,11 @@ interface IDeps {
 }
 
 enum FakePluginActions {
-    FAKE_PLUGIN_ACTION = 'FAKE_PLUGIN_ACTION',
-    FAKE_PLUGIN_ACTION2 = 'FAKE_PLUGIN_ACTION2'
+    FAKE_PLUGIN_ACTION = 'fakeplugin_FAKE_PLUGIN_ACTION',
+    FAKE_PLUGIN_ACTION2 = 'fakeplugin_FAKE_PLUGIN_ACTION2'
 }
 
-export default function ({translator = null}: IDeps): IPluginInitModule {
+export default function({translator = null}: IDeps): IPluginInitModule {
     return {
         async init(extensionPoints) {
             await extensionPoints.registerTranslations(__dirname + '/locales');

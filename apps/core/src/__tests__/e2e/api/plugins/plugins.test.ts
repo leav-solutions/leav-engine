@@ -84,7 +84,7 @@ describe('Plugins', () => {
             const logActionEnums: Array<{name: string}> = resLogs.data.data.__schema.types.find(
                 t => t.name === 'LogAction'
             ).enumValues;
-            expect(logActionEnums.find(e => e.name === 'FAKE_PLUGIN_ACTION')).toBeDefined();
+            expect(logActionEnums.find(e => e.name === 'fakeplugin_FAKE_PLUGIN_ACTION')).toBeDefined();
         });
     });
 });
