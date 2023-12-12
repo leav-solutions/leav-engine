@@ -12,8 +12,6 @@ import {AwilixContainer} from 'awilix';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import PermissionError from 'errors/PermissionError';
-import ValidationError from 'errors/ValidationError';
 import express, {NextFunction, Request, Response} from 'express';
 import fs from 'fs';
 import {GraphQLError, GraphQLFormattedError} from 'graphql';
@@ -28,6 +26,8 @@ import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import AuthenticationError from '../errors/AuthenticationError';
 import LeavError from '../errors/LeavError';
+import PermissionError from '../errors/PermissionError';
+import ValidationError from '../errors/ValidationError';
 import {ACCESS_TOKEN_COOKIE_NAME, API_KEY_PARAM_NAME} from '../_types/auth';
 import {ErrorTypes, IExtendedErrorMsg} from '../_types/errors';
 
@@ -179,12 +179,16 @@ export default function({
                         return next ? next() : res.end();
                     }
 
-                    if (err instanceof SyntaxError) {
-                        return res.status(400).json({message: err.name});
+                    if (err instanceof ValidationError) {
+                        return res.status(400).json({error: err.message});
                     }
 
                     if (err instanceof AuthenticationError) {
-                        return res.status(401).send('Unauthorized');
+                        return res.status(401).json({error: err.message});
+                    }
+
+                    if (err instanceof PermissionError) {
+                        return res.status(403).json({error: 'FORBIDDEN'});
                     }
 
                     logger.error(err);
