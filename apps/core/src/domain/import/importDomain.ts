@@ -996,7 +996,7 @@ export default function({
                         await _updateTaskProgress(
                             progress,
                             1,
-                            'tasks.import_description.elements_process',
+                            'tasks.import_description.tree_elements_process',
                             task.id,
                             ctx
                         );
@@ -1058,7 +1058,7 @@ export default function({
                         await _updateTaskProgress(
                             progress,
                             1,
-                            'tasks.import_description.elements_in_cache_process',
+                            'tasks.import_description.links_and_versions_process',
                             task.id,
                             ctx
                         );

@@ -192,7 +192,7 @@
         "import_label": "Import file {{filename}}",
         "import_description": {
             "elements_process": "Import of elements",
-            "elements_in_cache_process": "Import of elements in cache",
+            "links_and_versions_process": "Importing links and versionable values",
             "tree_elements_process": "Positioning tree elements",
             "links_process": "Setting up links"
         },
