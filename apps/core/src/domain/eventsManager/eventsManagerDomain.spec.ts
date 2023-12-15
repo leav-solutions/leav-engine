@@ -7,6 +7,7 @@ import * as amqp from 'amqplib';
 import {IUtils} from 'utils/utils';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
+import {mockCtx} from '../../__tests__/mocks/shared';
 import eventsManager from './eventsManagerDomain';
 import winston = require('winston');
 
@@ -123,5 +124,36 @@ describe('Events Manager', () => {
         await events.sendPubSubEvent({triggerName: 'test', data: {}}, ctx);
 
         expect(mockAmqpService.publish).toBeCalledTimes(1);
+    });
+
+    describe('registerEventActions', () => {
+        test('registerEventActions', () => {
+            const events = eventsManager({
+                config: conf as IConfig,
+                'core.utils.logger': logger as winston.Winston,
+                'core.infra.amqpService': mockAmqpService as IAmqpService
+            });
+
+            const actions = ['myplugin_ACTION1', 'myplugin_ACTION2', 'myplugin_ACTION3'];
+            events.registerEventActions(actions, 'myplugin', mockCtx);
+
+            const actionsSaved = events.getActions();
+
+            expect(actionsSaved).toContain('myplugin_ACTION1');
+            expect(actionsSaved).toContain('myplugin_ACTION2');
+            expect(actionsSaved).toContain('myplugin_ACTION3');
+        });
+
+        test('Should throw if actions are not prefixed', async () => {
+            const events = eventsManager({
+                config: conf as IConfig,
+                'core.utils.logger': logger as winston.Winston,
+                'core.infra.amqpService': mockAmqpService as IAmqpService
+            });
+
+            const actions = ['action1', 'action2', 'action3'];
+
+            expect(() => events.registerEventActions(actions, 'myplugin', mockCtx)).toThrow();
+        });
     });
 });

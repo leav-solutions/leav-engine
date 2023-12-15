@@ -153,7 +153,7 @@ export default function ({
                         return;
                     }
 
-                    const handledActions: EventAction[] = [
+                    const handledActions: Array<EventAction | string> = [
                         EventAction.LIBRARY_SAVE,
                         EventAction.LIBRARY_DELETE,
                         EventAction.ATTRIBUTE_SAVE,

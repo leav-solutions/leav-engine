@@ -68,7 +68,13 @@ export default function ({'core.infra.elasticSearch.service': esService, config}
                             }
                         });
                         break;
-                    case 'action':
+                    case 'actions':
+                        acc.push({
+                            terms: {
+                                action: value
+                            }
+                        });
+                        break;
                     case 'userId':
                     case 'queryId':
                     case 'instanceId':

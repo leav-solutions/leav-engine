@@ -8,7 +8,13 @@ import {PermissionTypes} from '../../../../../_types/permissions';
 interface IDeps {
     translator?: i18n;
 }
-export default function ({translator = null}: IDeps): IPluginInitModule {
+
+enum FakePluginActions {
+    FAKE_PLUGIN_ACTION = 'fakeplugin_FAKE_PLUGIN_ACTION',
+    FAKE_PLUGIN_ACTION2 = 'fakeplugin_FAKE_PLUGIN_ACTION2'
+}
+
+export default function({translator = null}: IDeps): IPluginInitModule {
     return {
         async init(extensionPoints) {
             await extensionPoints.registerTranslations(__dirname + '/locales');
@@ -28,6 +34,8 @@ export default function ({translator = null}: IDeps): IPluginInitModule {
             });
 
             extensionPoints.registerPermissionActions(PermissionTypes.LIBRARY, ['fake_plugin_permission']);
+
+            extensionPoints.registerEventActions(Object.values(FakePluginActions), 'fakeplugin');
         }
     };
 }

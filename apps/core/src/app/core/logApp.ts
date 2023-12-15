@@ -1,9 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {EventAction, Log} from '@leav/utils';
+import {Log} from '@leav/utils';
 import {IApplicationDomain} from 'domain/application/applicationDomain';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
+import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {ILogDomain} from 'domain/log/logDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
@@ -11,14 +12,16 @@ import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain'
 import {IAppGraphQLSchema} from '_types/graphql';
 import {ILogFilters, ILogPagination, ILogSort} from '_types/log';
 import {IQueryInfos} from '_types/queryInfos';
+import {IAppModule} from '_types/shared';
 import {USERS_LIBRARY} from '../../_types/library';
 
-export interface ICoreLogApp {
+export interface ICoreLogApp extends IAppModule {
     getGraphQLSchema(): IAppGraphQLSchema;
 }
 
 interface IDeps {
     'core.domain.log'?: ILogDomain;
+    'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.domain.library'?: ILibraryDomain;
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.tree'?: ITreeDomain;
@@ -28,6 +31,7 @@ interface IDeps {
 
 export default function ({
     'core.domain.log': logDomain,
+    'core.domain.eventsManager': eventsManagerDomain,
     'core.domain.library': libraryDomain,
     'core.domain.attribute': attributeDomain,
     'core.domain.tree': treeDomain,
@@ -39,7 +43,7 @@ export default function ({
             const baseSchema = {
                 typeDefs: `
                     enum LogAction {
-                        ${Object.keys(EventAction).join(' ')}
+                        ${eventsManagerDomain.getActions().join('\n')}
                     }
 
                     type PermissionTopic {
@@ -100,7 +104,7 @@ export default function ({
 
                     input LogFilterInput {
                         topic: LogTopicFilterInput,
-                        action: LogAction,
+                        actions: [LogAction!],
                         userId: String,
                         time: LogFilterTimeInput,
                         queryId: String,

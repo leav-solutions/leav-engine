@@ -42,7 +42,7 @@ describe('logRepo', () => {
                 {
                     filters: {
                         userId: '1',
-                        action: EventAction.VALUE_SAVE,
+                        actions: [EventAction.VALUE_SAVE],
                         topic: {
                             library: 'my_lib',
                             attribute: 'my_attribute',
@@ -61,7 +61,7 @@ describe('logRepo', () => {
                 bool: {
                     must: [
                         {match: {userId: '1'}},
-                        {match: {action: EventAction.VALUE_SAVE}},
+                        {terms: {action: [EventAction.VALUE_SAVE]}},
                         {match: {'topic.library': 'my_lib'}},
                         {match: {'topic.attribute': 'my_attribute'}},
                         {match: {'topic.record.libraryId': 'my_lib'}},

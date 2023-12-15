@@ -345,7 +345,7 @@ export default function ({
                     .keys({
                         trigger: Joi.string(),
                         action: Joi.string()
-                            .valid(...Object.values(EventAction))
+                            .valid(...eventsManager.getActions())
                             .required(),
                         topic: Joi.object()
                             .keys({
@@ -357,7 +357,8 @@ export default function ({
                                 attribute: Joi.string(),
                                 tree: Joi.string()
                             })
-                            .unknown(true),
+                            .unknown(true)
+                            .allow(null),
                         before: Joi.any(),
                         after: Joi.any(),
                         metadata: Joi.any()

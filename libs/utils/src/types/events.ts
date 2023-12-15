@@ -45,7 +45,7 @@ export enum EventAction {
 
 export interface IDbPayload {
     trigger?: string; // The high level action that triggered the event: an import, a plugin action, a mass action...
-    action: EventAction;
+    action: EventAction | string; // The action that triggered the event
     // To identify which element is concerned by the event
     topic: {
         record?: {
