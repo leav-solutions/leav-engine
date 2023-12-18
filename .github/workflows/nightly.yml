@@ -57,6 +57,10 @@ jobs:
                         LEAV Engine
                         Core
                     tags: "leavengine/core:nightly"
+                    
+            -
+                 name: Logs
+                 run: cat /tmp/*.log
 
     # Build preview-generator and deploy it to Docker Hub
     preview-generator:
@@ -92,9 +96,6 @@ jobs:
                         LEAV Engine
                         Preview Generator
                     tags: "leavengine/core:nightly"
-            -
-                 name: Logs
-                 run: cat /tmp/*.log
 
     # Build automate-scan and deploy it to Docker Hub
     automate-scan:
