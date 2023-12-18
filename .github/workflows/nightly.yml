@@ -62,7 +62,7 @@ jobs:
             -
                  name: Logs
                  continue-on-error: true
-                 run: cat /tmp/*.log
+                 run: cat /tmp/*/build.log
 
     # Build preview-generator and deploy it to Docker Hub
     preview-generator:
