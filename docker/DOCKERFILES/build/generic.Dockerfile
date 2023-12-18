@@ -6,7 +6,7 @@
 # More info here: https://docs.docker.com/build/building/multi-stage/#differences-between-legacy-builder-and-buildkit
 
 ### BASE ###
-FROM node:18-alpine AS base
+FROM node:18-alpine3.18 AS base
 
 # The name of the service we are building (core, automate-scan, ...)
 ARG APP

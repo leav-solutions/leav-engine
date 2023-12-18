@@ -2,7 +2,7 @@
 # We're using the "multi-stage build" feature of Docker in order to limit the size of the final image.
 
 ### BASE ###
-FROM node:18-alpine AS base
+FROM node:18-alpine3.18 AS base
 
 WORKDIR /app
 
