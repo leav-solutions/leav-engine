@@ -16,7 +16,7 @@ COPY libs/ ./libs/
 COPY assets/ ./assets
 
 # Dependencies needed to retrieve metadata
-RUN apk --update --no-cache add alpine-sdk perl pkgconfig poppler=23.05.0-r0 poppler-dev=23.05.0-r0 poppler-utils=23.05.0-r0 python3
+RUN apk --update --no-cache add alpine-sdk perl pkgconfig poppler poppler-dev poppler-utils python3
 
 ### BUILDER ###
 FROM base AS builder
