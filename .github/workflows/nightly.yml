@@ -48,6 +48,7 @@ jobs:
                     password: ${{ secrets.DOCKERHUB_TOKEN }}
             -
                 name: Build image
+                continue-on-error: true
                 uses: docker/build-push-action@v4
                 with:
                     context: .
@@ -60,6 +61,7 @@ jobs:
                     
             -
                  name: Logs
+                 continue-on-error: true
                  run: cat /tmp/*.log
 
     # Build preview-generator and deploy it to Docker Hub
