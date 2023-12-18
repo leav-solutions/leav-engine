@@ -41,7 +41,10 @@ function EditRecord({
 
     useRecordsConsultationHistory(record?.library?.id ?? null, record?.id ?? null);
 
-    const {data: recordUpdateData} = useRecordUpdateSubscription({records: [record?.id], ignoreOwnEvents: true});
+    const {data: recordUpdateData} = useRecordUpdateSubscription(
+        {records: [record?.id], ignoreOwnEvents: true},
+        !record?.id
+    );
 
     useEffect(() => {
         if (recordUpdateData) {
