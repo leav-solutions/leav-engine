@@ -6,6 +6,8 @@ FROM node:18-alpine AS base
 
 WORKDIR /app
 
+ENV YARN_ENABLE_INLINE_BUILDS=1
+
 # Copy required files for builds
 COPY .yarn ./.yarn
 COPY *.json yarn.lock .yarnrc.yml vite-config-common.js ./
