@@ -91,7 +91,7 @@ jobs:
                     labels:
                         LEAV Engine
                         Preview Generator
-                    tags: "leavengine/core:nightly"
+                    tags: "leavengine/preview-generator:nightly"
 
     # Build automate-scan and deploy it to Docker Hub
     automate-scan:
@@ -126,7 +126,7 @@ jobs:
                     labels:
                         LEAV Engine
                         Automate Scan
-                    tags: "leavengine/core:nightly"
+                    tags: "leavengine/automate-scan:nightly"
 
     # Build sync-scan and deploy it to Docker Hub
     sync-scan:
@@ -161,4 +161,4 @@ jobs:
                     labels:
                         LEAV Engine
                         Sync scan
-                    tags: "leavengine/core:nightly"
+                    tags: "leavengine/sync-scan:nightly"
