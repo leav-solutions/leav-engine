@@ -10,7 +10,7 @@
         "dayjs": "1.10.6",
         "fomantic-ui-less": "2.8.8",
         "formik": "1.5.8",
-        "graphql": "14.7.0",
+        "graphql": "16.8.1",
         "graphql-tag": "2.10.1",
         "hex-rgba": "1.0.2",
         "i18next": "22.5.0",
