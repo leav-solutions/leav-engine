@@ -5,7 +5,8 @@
         "close": "Fermer",
         "id": "Identifiant",
         "search": "Rechercher",
-        "info": "Informations"
+        "info": "Informations",
+        "total_count": "{{total}} éléments"
     },
     "errors": {
         "default_language_required": "La langue par défaut est requise",

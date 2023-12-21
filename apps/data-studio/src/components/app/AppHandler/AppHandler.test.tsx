@@ -23,7 +23,8 @@ jest.mock(
         }
 );
 
-jest.mock('../../../constants', () => ({
+jest.mock('@leav/ui', () => ({
+    ...jest.requireActual('@leav/ui'),
     APP_ENDPOINT: 'data-studio'
 }));
 

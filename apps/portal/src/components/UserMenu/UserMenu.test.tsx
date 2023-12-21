@@ -43,7 +43,9 @@ describe('UserMenu', () => {
         userEvent.click(userLabel);
 
         // Hover "more" to display flag actions
-        userEvent.click(screen.getByRole('img', {name: 'more', hidden: true}));
+        // FIXME: not the cleanest way to retrieve the "more" button, but on v0.8.0 of aristid-ds,
+        // the button as no accessible name we can use
+        userEvent.click(screen.getByTestId('user-panel').getElementsByClassName('kit-action-more')[0]);
 
         userEvent.click(await screen.findByText(/fr/i));
         expect(mockLangContext.setLang).toHaveBeenCalled();

@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery, useSubscription} from '@apollo/client';
 import {
+    APP_ENDPOINT,
     customTheme,
     dsTheme,
     ErrorDisplay,
@@ -32,7 +33,6 @@ import {ThemeProvider} from 'styled-components';
 import {GET_APPLICATION_BY_ENDPOINT, GET_APPLICATION_BY_ENDPOINTVariables} from '_gqlTypes/GET_APPLICATION_BY_ENDPOINT';
 import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 import {GET_LANGS} from '_gqlTypes/GET_LANGS';
-import {APP_ENDPOINT} from '../../../constants';
 import {getMe} from '../../../graphQL/queries/userData/me';
 import {initialActiveLibrary, useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
 import {useUser} from '../../../hooks/UserHook/UserHook';
@@ -176,7 +176,7 @@ function AppHandler(): JSX.Element {
                 <ApplicationContext.Provider value={appContextData}>
                     <KitApp
                         customTheme={dsTheme}
-                        locale={{locale: localeByLang[lang[0]], ItemCard: null, ItemList: null}}
+                        locale={{locale: localeByLang[lang[0]], ItemCard: null, ItemList: null, Image: null}}
                     >
                         <ConfigProvider theme={customTheme} locale={locale}>
                             <Router />

@@ -102,6 +102,7 @@ export default function ({
             params?: IGetCoreAttributesParams;
             ctx: IQueryInfos;
         }): Promise<IList<IAttribute>> {
+            // Will retrieve attributes that are linked to given libraries
             const _generateLibrariesFilterConds = (filterKey: string, filterVal: string | boolean | string[]) => {
                 if (typeof filterVal === 'boolean') {
                     return aql``;
@@ -123,6 +124,33 @@ export default function ({
                     FILTER ${libKeyCond}
                     RETURN v._key
                 ) > 0`;
+            };
+
+            // Will retrieve attributes that are **not** linked to given libraries
+            const _generateLibrariesExcludedFilterConds = (
+                filterKey: string,
+                filterVal: string | boolean | string[]
+            ) => {
+                if (typeof filterVal === 'boolean') {
+                    return aql``;
+                }
+
+                if (!filterVal) {
+                    return null;
+                }
+
+                const libs = utils.forceArray(filterVal);
+
+                const valParts = libs.map(l => aql`v._key == ${l}`);
+                const libKeyCond = join(valParts, ' OR ');
+
+                // Check if there is there is no links between given libraries and attribute
+                return aql`LENGTH(
+                    FOR v IN 1 INBOUND el
+                    core_edge_libraries_attributes
+                    FILTER ${libKeyCond}
+                    RETURN v._key
+                ) == 0`;
             };
 
             const _generateVersionableFilterConds: CustomFilterConditionsFunc = (filterKey, filterVal) => {
@@ -160,6 +188,7 @@ export default function ({
                 collectionName: ATTRIB_COLLECTION_NAME,
                 customFilterConditions: {
                     libraries: _generateLibrariesFilterConds,
+                    librariesExcluded: _generateLibrariesExcludedFilterConds,
                     versionable: _generateVersionableFilterConds,
                     metadata_fields: _generateMetadataFilterConds
                 },

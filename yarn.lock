@@ -76,7 +76,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ant-design/icons@npm:5.2.6, @ant-design/icons@npm:^5.2.5":
+"@ant-design/icons@npm:5.2.6":
   version: 5.2.6
   resolution: "@ant-design/icons@npm:5.2.6"
   dependencies:
@@ -5741,6 +5741,52 @@ __metadata:
     react: ^16.8.0 || ^17
     react-dom: ^16.8.0 || ^17
   checksum: 030380d5ea00234e5aa7e014d4e1d268a3dee2d59a2564e4d6a4083cab9ece84f3f3643a8474b53a18a855a0894e91d33d0e0d756008046d59e750603b5b1557
+  languageName: node
+  linkType: hard
+
+"@fortawesome/fontawesome-common-types@npm:6.5.1":
+  version: 6.5.1
+  resolution: "@fortawesome/fontawesome-common-types@npm:6.5.1"
+  checksum: c597062de8903aae591b652aa03b9b7aaa66e8c71e5950dc34a8b2812851a7f4ad743fba7396bab87d787c5359bb121496769a165bd3399d039dc214434f6f0c
+  languageName: node
+  linkType: hard
+
+"@fortawesome/fontawesome-svg-core@npm:^6.4.2":
+  version: 6.5.1
+  resolution: "@fortawesome/fontawesome-svg-core@npm:6.5.1"
+  dependencies:
+    "@fortawesome/fontawesome-common-types": 6.5.1
+  checksum: e17f995abe215d288163b2cd009f935c7f96bc896ab4ea7a75de72789d52a1275bd112eeb60cadd63bb20017a05ed765232157079bfb7efda7347a5614e04ce1
+  languageName: node
+  linkType: hard
+
+"@fortawesome/free-regular-svg-icons@npm:^6.4.2":
+  version: 6.5.1
+  resolution: "@fortawesome/free-regular-svg-icons@npm:6.5.1"
+  dependencies:
+    "@fortawesome/fontawesome-common-types": 6.5.1
+  checksum: c1809fae5f3bffff2f06d414f552e38acf385f79bb1b1a8e34b6b9c1138e9e6be7f8ed1503da0f72e225079138b8377f95f279d0079bb04ba8d3bfb3025ec512
+  languageName: node
+  linkType: hard
+
+"@fortawesome/free-solid-svg-icons@npm:^6.4.2":
+  version: 6.5.1
+  resolution: "@fortawesome/free-solid-svg-icons@npm:6.5.1"
+  dependencies:
+    "@fortawesome/fontawesome-common-types": 6.5.1
+  checksum: c544b8389bab4ab375d172feeb334d4a591bd7c594acdcc546b5197f2bcc80be22be119a03994dbe7f13d133c11b41c471b62c92dd318fbe0378202c43c09d7d
+  languageName: node
+  linkType: hard
+
+"@fortawesome/react-fontawesome@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@fortawesome/react-fontawesome@npm:0.2.0"
+  dependencies:
+    prop-types: ^15.8.1
+  peerDependencies:
+    "@fortawesome/fontawesome-svg-core": ~1 || ~6
+    react: ">=16.3"
+  checksum: f652a0c2172e7b209e2d9e7e511f9b8c17abad85f55e0bd09bb1175ea1927693215da47eb6cd95b1f3a23bd124368553c677907fa76cb17c5093afc1fcffe338
   languageName: node
   linkType: hard
 
@@ -11663,15 +11709,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aristid-ds@npm:0.7.1":
-  version: 0.7.1
-  resolution: "aristid-ds@npm:0.7.1"
+"aristid-ds@npm:0.8.0":
+  version: 0.8.0
+  resolution: "aristid-ds@npm:0.8.0"
   dependencies:
-    "@ant-design/icons": ^5.2.5
+    "@fortawesome/fontawesome-svg-core": ^6.4.2
+    "@fortawesome/free-regular-svg-icons": ^6.4.2
+    "@fortawesome/free-solid-svg-icons": ^6.4.2
+    "@fortawesome/react-fontawesome": ^0.2.0
     antd: ^5.8.1
     antd-img-crop: ^4.12.2
     axe-core: ^4.8.1
     classnames: ^2.3.2
+    color-convert: ^2.0.1
     color-string: ^1.9.1
     copyfiles: ^2.4.1
     dayjs: ^1.11.9
@@ -11686,6 +11736,7 @@ __metadata:
     react-uuid: ^2.0.0
     remark-gfm: ^3.0.1
     short-unique-id: ^5.0.2
+    storybook-addon-pseudo-states: ^2.1.2
     styled-components: ^6.0.7
     typescript-json-schema: ^0.61.0
     updeep: ^1.2.4
@@ -11699,7 +11750,7 @@ __metadata:
     react-uuid: ^2.0.0
     remark-gfm: ^3.0.1
     styled-components: ^6.0.7
-  checksum: 5c46d4c576698ebfe32ec211a9df583875c82c4e7733f89b95c25547c9889ee85ee1cca1efdd4e379b95450b948175332e2655514609a1e196a805cc09eae5ee
+  checksum: caf3fcd92cf1599bdb5cea8359d52d5b05153ec3298cbab71fce7b4880cccc90c1ba71904c5c36182c2dbdeb94cf72a5e83598e015e44608f2cd4e01a85418d5
   languageName: node
   linkType: hard
 
@@ -14568,7 +14619,7 @@ __metadata:
     apollo: 2.34.0
     apollo-cache-inmemory: 1.6.6
     apollo-upload-client: 14.1.3
-    aristid-ds: 0.7.1
+    aristid-ds: 0.8.0
     commander: 5.1.0
     dayjs: 1.11.7
     dompurify: 3.0.5
@@ -22244,7 +22295,7 @@ __metadata:
     "@types/react-router-dom": 5.3.3
     "@vitejs/plugin-react": 3.1.0
     antd: 5.9.1
-    aristid-ds: 0.7.1
+    aristid-ds: 0.8.0
     i18next: 22.5.0
     i18next-browser-languagedetector: 7.0.2
     i18next-http-backend: 2.1.1
@@ -24788,7 +24839,7 @@ __metadata:
     "@vitejs/plugin-react": 3.1.0
     antd: 5.9.1
     apollo: 2.34.0
-    aristid-ds: 0.7.1
+    aristid-ds: 0.8.0
     commander: 10.0.0
     cross-fetch: 3.1.5
     graphql-ws: 5.12.0
@@ -28142,6 +28193,26 @@ __metadata:
   version: 1.5.0
   resolution: "statuses@npm:1.5.0"
   checksum: c469b9519de16a4bb19600205cffb39ee471a5f17b82589757ca7bd40a8d92ebb6ed9f98b5a540c5d302ccbc78f15dc03cc0280dd6e00df1335568a5d5758a5c
+  languageName: node
+  linkType: hard
+
+"storybook-addon-pseudo-states@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "storybook-addon-pseudo-states@npm:2.1.2"
+  peerDependencies:
+    "@storybook/components": ^7.4.6
+    "@storybook/core-events": ^7.4.6
+    "@storybook/manager-api": ^7.4.6
+    "@storybook/preview-api": ^7.4.6
+    "@storybook/theming": ^7.4.6
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: a0272593dd494165b7e8c9d4defa4eea20611d56e4b1d9ef3598e60b776428b876917779718b7a6c5c23ed733cadd5daf43c88cb718ad18ce5c3d5094a090737
   languageName: node
   linkType: hard
 

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {themeVars} from '@leav/ui';
+import {APPS_ENDPOINT, APP_ENDPOINT, themeVars} from '@leav/ui';
 import {Layout} from 'antd';
 import Sidebar from 'components/Sidebar';
 import TopBar from 'components/TopBar';
@@ -10,7 +10,6 @@ import {BrowserRouter} from 'react-router-dom';
 import NotifsPanel from '../NotifsPanel';
 import UserPanel from '../UserPanel';
 import Routes from './Routes';
-import {APPS_ENDPOINT, APP_ENDPOINT} from '../../constants';
 
 const {Header, Content, Sider} = Layout;
 

@@ -45,10 +45,10 @@ function EditLibraryAttributes({library, readOnly}: IEditLibraryAttributesProps)
 
     return (
         <AttributesList
+            library={library.id}
             readOnly={isReadOnly}
             onAddAttributes={_handleAddAttributes}
             onDeleteAttribute={_handleDeleteAttribute}
-            attributes={library.attributes}
         />
     );
 }

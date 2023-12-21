@@ -5,7 +5,8 @@
         "close": "Close",
         "id": "Identifier",
         "search": "Search",
-        "info": "Information"
+        "info": "Information",
+        "total_count": "{{total}} elements"
     },
     "errors": {
         "default_language_required": "The default language is required",
