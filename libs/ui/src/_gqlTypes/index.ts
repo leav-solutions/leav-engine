@@ -24,12 +24,13 @@ export type Scalars = {
     JSONObject: any;
     Preview: IPreviewScalar;
     SystemTranslation: any;
+    SystemTranslationOptional: any;
     TaskPriority: any;
     Upload: any;
 };
 
 export type ActionConfigurationInput = {
-    error_message?: InputMaybe<Scalars['SystemTranslation']>;
+    error_message?: InputMaybe<Scalars['SystemTranslationOptional']>;
     id: Scalars['ID'];
     params?: InputMaybe<Array<ActionConfigurationParamInput>>;
 };
@@ -93,7 +94,7 @@ export type ApplicationIconInput = {
 
 export type ApplicationInput = {
     color?: InputMaybe<Scalars['String']>;
-    description?: InputMaybe<Scalars['SystemTranslation']>;
+    description?: InputMaybe<Scalars['SystemTranslationOptional']>;
     endpoint?: InputMaybe<Scalars['String']>;
     icon?: InputMaybe<ApplicationIconInput>;
     id: Scalars['ID'];
@@ -139,7 +140,7 @@ export enum AttributeFormat {
 
 export type AttributeInput = {
     actions_list?: InputMaybe<ActionsListConfigurationInput>;
-    description?: InputMaybe<Scalars['SystemTranslation']>;
+    description?: InputMaybe<Scalars['SystemTranslationOptional']>;
     embedded_fields?: InputMaybe<Array<InputMaybe<EmbeddedAttributeInput>>>;
     format?: InputMaybe<AttributeFormat>;
     id: Scalars['ID'];
@@ -175,6 +176,7 @@ export type AttributesFiltersInput = {
     id?: InputMaybe<Scalars['ID']>;
     label?: InputMaybe<Scalars['String']>;
     libraries?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+    librariesExcluded?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
     multiple_values?: InputMaybe<Scalars['Boolean']>;
     system?: InputMaybe<Scalars['Boolean']>;
     type?: InputMaybe<Array<InputMaybe<AttributeType>>>;
@@ -206,7 +208,7 @@ export type DeleteTaskInput = {
 };
 
 export type EmbeddedAttributeInput = {
-    description?: InputMaybe<Scalars['SystemTranslation']>;
+    description?: InputMaybe<Scalars['SystemTranslationOptional']>;
     embedded_fields?: InputMaybe<Array<InputMaybe<EmbeddedAttributeInput>>>;
     format?: InputMaybe<AttributeFormat>;
     id: Scalars['ID'];
@@ -346,9 +348,91 @@ export type LibraryInput = {
 };
 
 export type LibraryPreviewsSettingsInput = {
-    description?: InputMaybe<Scalars['SystemTranslation']>;
+    description?: InputMaybe<Scalars['SystemTranslationOptional']>;
     label: Scalars['SystemTranslation'];
     versions: PreviewVersionInput;
+};
+
+export enum LogAction {
+    API_KEY_DELETE = 'API_KEY_DELETE',
+    API_KEY_SAVE = 'API_KEY_SAVE',
+    APP_DELETE = 'APP_DELETE',
+    APP_SAVE = 'APP_SAVE',
+    ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
+    ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+    CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
+    CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
+    DATA_IMPORT_END = 'DATA_IMPORT_END',
+    DATA_IMPORT_START = 'DATA_IMPORT_START',
+    EXPORT_END = 'EXPORT_END',
+    EXPORT_START = 'EXPORT_START',
+    GLOBAL_SETTINGS_SAVE = 'GLOBAL_SETTINGS_SAVE',
+    LIBRARY_DELETE = 'LIBRARY_DELETE',
+    LIBRARY_PURGE = 'LIBRARY_PURGE',
+    LIBRARY_SAVE = 'LIBRARY_SAVE',
+    PERMISSION_SAVE = 'PERMISSION_SAVE',
+    RECORD_DELETE = 'RECORD_DELETE',
+    RECORD_SAVE = 'RECORD_SAVE',
+    TASKS_DELETE = 'TASKS_DELETE',
+    TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
+    TREE_DELETE = 'TREE_DELETE',
+    TREE_DELETE_ELEMENT = 'TREE_DELETE_ELEMENT',
+    TREE_MOVE_ELEMENT = 'TREE_MOVE_ELEMENT',
+    TREE_SAVE = 'TREE_SAVE',
+    VALUE_DELETE = 'VALUE_DELETE',
+    VALUE_SAVE = 'VALUE_SAVE',
+    VERSION_PROFILE_DELETE = 'VERSION_PROFILE_DELETE',
+    VERSION_PROFILE_SAVE = 'VERSION_PROFILE_SAVE'
+}
+
+export type LogFilterInput = {
+    actions?: InputMaybe<Array<LogAction>>;
+    instanceId?: InputMaybe<Scalars['String']>;
+    queryId?: InputMaybe<Scalars['String']>;
+    time?: InputMaybe<LogFilterTimeInput>;
+    topic?: InputMaybe<LogTopicFilterInput>;
+    trigger?: InputMaybe<Scalars['String']>;
+    userId?: InputMaybe<Scalars['String']>;
+};
+
+export type LogFilterTimeInput = {
+    from?: InputMaybe<Scalars['Int']>;
+    to?: InputMaybe<Scalars['Int']>;
+};
+
+export type LogSortInput = {
+    field: LogSortableField;
+    order: SortOrder;
+};
+
+export enum LogSortableField {
+    action = 'action',
+    instanceId = 'instanceId',
+    queryId = 'queryId',
+    time = 'time',
+    trigger = 'trigger',
+    userId = 'userId'
+}
+
+export type LogTopicFilterInput = {
+    apiKey?: InputMaybe<Scalars['String']>;
+    attribute?: InputMaybe<Scalars['String']>;
+    filename?: InputMaybe<Scalars['String']>;
+    library?: InputMaybe<Scalars['String']>;
+    permission?: InputMaybe<LogTopicPermissionFilterInput>;
+    profile?: InputMaybe<Scalars['String']>;
+    record?: InputMaybe<LogTopicRecordFilterInput>;
+    tree?: InputMaybe<Scalars['String']>;
+};
+
+export type LogTopicPermissionFilterInput = {
+    applyTo?: InputMaybe<Scalars['String']>;
+    type?: InputMaybe<Scalars['String']>;
+};
+
+export type LogTopicRecordFilterInput = {
+    id?: InputMaybe<Scalars['String']>;
+    libraryId?: InputMaybe<Scalars['String']>;
 };
 
 export type Pagination = {
@@ -361,11 +445,6 @@ export type PermissionActionInput = {
     name: PermissionsActions;
 };
 
-/**
- * If users group is not specified, permission will be saved at root level.
- * If saving a tree-based permission (record or attribute) and tree target's id is not specified,
- * permission will be saved at root level for any element of the tree.
- */
 export type PermissionInput = {
     actions: Array<PermissionActionInput>;
     applyTo?: InputMaybe<Scalars['ID']>;
@@ -374,11 +453,6 @@ export type PermissionInput = {
     usersGroup?: InputMaybe<Scalars['ID']>;
 };
 
-/**
- * Element on which we want to retrieve record or attribute permission. Record ID is mandatory,
- * attributeId is only required for attribute permission
- * libraryId and recordId are mandatory for tree node permission
- */
 export type PermissionTarget = {
     attributeId?: InputMaybe<Scalars['ID']>;
     libraryId?: InputMaybe<Scalars['ID']>;
@@ -450,7 +524,6 @@ export enum PermissionsRelation {
     or = 'or'
 }
 
-/** If id and library are not specified, permission will apply to tree root */
 export type PermissionsTreeTargetInput = {
     nodeId?: InputMaybe<Scalars['ID']>;
     tree: Scalars['ID'];
@@ -536,11 +609,6 @@ export type RecordUpdateFilterInput = {
     records?: InputMaybe<Array<Scalars['ID']>>;
 };
 
-/**
- * Records support on both offset and cursor. Cannot use both at the same time.
- * If none is supplied, it will apply an offset 0. Cursors are always returned along the results
- * ⚠️Sorting is disallowed when using cursor pagination
- */
 export type RecordsPagination = {
     cursor?: InputMaybe<Scalars['String']>;
     limit: Scalars['Int'];
@@ -636,7 +704,6 @@ export type TreeElementInput = {
 export type TreeEventFiltersInput = {
     events?: InputMaybe<Array<TreeEventTypes>>;
     ignoreOwnEvents?: InputMaybe<Scalars['Boolean']>;
-    /** Nodes concerned by the event, whether be the source or the target */
     nodes?: InputMaybe<Array<InputMaybe<Scalars['ID']>>>;
     treeId: Scalars['ID'];
 };
@@ -741,7 +808,7 @@ export type ValuesVersionsConfInput = {
 };
 
 export type VersionProfileInput = {
-    description?: InputMaybe<Scalars['SystemTranslation']>;
+    description?: InputMaybe<Scalars['SystemTranslationOptional']>;
     id: Scalars['String'];
     label?: InputMaybe<Scalars['SystemTranslation']>;
     trees?: InputMaybe<Array<Scalars['String']>>;
@@ -764,7 +831,7 @@ export type ViewDisplayInput = {
 
 export type ViewInput = {
     color?: InputMaybe<Scalars['String']>;
-    description?: InputMaybe<Scalars['SystemTranslation']>;
+    description?: InputMaybe<Scalars['SystemTranslationOptional']>;
     display: ViewDisplayInput;
     filters?: InputMaybe<Array<RecordFilterInput>>;
     id?: InputMaybe<Scalars['String']>;
@@ -808,45 +875,21 @@ export type DetailsApplicationFragment = {
     color?: string | null;
     module?: string | null;
     settings?: any | null;
-    icon?:
-        | {
-              id: string;
-              whoAmI: {
-                  id: string;
-                  label?: string | null;
-                  subLabel?: string | null;
-                  color?: string | null;
-                  preview?: IPreviewScalar | null;
-                  library: {id: string; label?: any | null};
-              };
-          }
-        | {
-              id: string;
-              whoAmI: {
-                  id: string;
-                  label?: string | null;
-                  subLabel?: string | null;
-                  color?: string | null;
-                  preview?: IPreviewScalar | null;
-                  library: {id: string; label?: any | null};
-              };
-          }
-        | {
-              id: string;
-              whoAmI: {
-                  id: string;
-                  label?: string | null;
-                  subLabel?: string | null;
-                  color?: string | null;
-                  preview?: IPreviewScalar | null;
-                  library: {id: string; label?: any | null};
-              };
-          }
-        | null;
+    icon?: {
+        id: string;
+        whoAmI: {
+            id: string;
+            label?: string | null;
+            subLabel?: string | null;
+            color?: string | null;
+            preview?: IPreviewScalar | null;
+            library: {id: string; label?: any | null};
+        };
+    } | null;
     permissions: {access_application: boolean; admin_application: boolean};
 };
 
-export type RecordIdentityCjX1ctHtayKw3UvL3SxXwpZmvJocudQk0mb3YeupLuFragment = {
+export type RecordIdentityFragment = {
     id: string;
     whoAmI: {
         id: string;
@@ -857,35 +900,6 @@ export type RecordIdentityCjX1ctHtayKw3UvL3SxXwpZmvJocudQk0mb3YeupLuFragment = {
         library: {id: string; label?: any | null};
     };
 };
-
-export type RecordIdentityNoK32r5S4GHrWvJrDbbZyQxNwU9KsPBsGItOGtQz4Fragment = {
-    id: string;
-    whoAmI: {
-        id: string;
-        label?: string | null;
-        subLabel?: string | null;
-        color?: string | null;
-        preview?: IPreviewScalar | null;
-        library: {id: string; label?: any | null};
-    };
-};
-
-export type RecordIdentityGdlFf7fowe20o0yE7yTvP85fHnPz4Ad88WmUdVAuYwFragment = {
-    id: string;
-    whoAmI: {
-        id: string;
-        label?: string | null;
-        subLabel?: string | null;
-        color?: string | null;
-        preview?: IPreviewScalar | null;
-        library: {id: string; label?: any | null};
-    };
-};
-
-export type RecordIdentityFragment =
-    | RecordIdentityCjX1ctHtayKw3UvL3SxXwpZmvJocudQk0mb3YeupLuFragment
-    | RecordIdentityNoK32r5S4GHrWvJrDbbZyQxNwU9KsPBsGItOGtQz4Fragment
-    | RecordIdentityGdlFf7fowe20o0yE7yTvP85fHnPz4Ad88WmUdVAuYwFragment;
 
 export type AttributeDetailsLinkAttributeFragment = {
     reverse_link?: string | null;
@@ -968,11 +982,7 @@ export type AttributeDetailsFragment =
 export type LibraryLightFragment = {
     id: string;
     label?: any | null;
-    icon?:
-        | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
-        | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
-        | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
-        | null;
+    icon?: {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}} | null;
 };
 
 export type LibraryDetailsFragment = {
@@ -1013,41 +1023,17 @@ export type LibraryDetailsFragment = {
         edit_record: boolean;
         delete_record: boolean;
     } | null;
-    icon?:
-        | {
-              id: string;
-              whoAmI: {
-                  id: string;
-                  label?: string | null;
-                  subLabel?: string | null;
-                  color?: string | null;
-                  preview?: IPreviewScalar | null;
-                  library: {id: string; label?: any | null};
-              };
-          }
-        | {
-              id: string;
-              whoAmI: {
-                  id: string;
-                  label?: string | null;
-                  subLabel?: string | null;
-                  color?: string | null;
-                  preview?: IPreviewScalar | null;
-                  library: {id: string; label?: any | null};
-              };
-          }
-        | {
-              id: string;
-              whoAmI: {
-                  id: string;
-                  label?: string | null;
-                  subLabel?: string | null;
-                  color?: string | null;
-                  preview?: IPreviewScalar | null;
-                  library: {id: string; label?: any | null};
-              };
-          }
-        | null;
+    icon?: {
+        id: string;
+        whoAmI: {
+            id: string;
+            label?: string | null;
+            subLabel?: string | null;
+            color?: string | null;
+            preview?: IPreviewScalar | null;
+            library: {id: string; label?: any | null};
+        };
+    } | null;
     previewsSettings?: Array<{
         label: any;
         description?: any | null;
@@ -1122,41 +1108,17 @@ export type GetApplicationByIdQuery = {
             color?: string | null;
             module?: string | null;
             settings?: any | null;
-            icon?:
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          subLabel?: string | null;
-                          color?: string | null;
-                          preview?: IPreviewScalar | null;
-                          library: {id: string; label?: any | null};
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          subLabel?: string | null;
-                          color?: string | null;
-                          preview?: IPreviewScalar | null;
-                          library: {id: string; label?: any | null};
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          subLabel?: string | null;
-                          color?: string | null;
-                          preview?: IPreviewScalar | null;
-                          library: {id: string; label?: any | null};
-                      };
-                  }
-                | null;
+            icon?: {
+                id: string;
+                whoAmI: {
+                    id: string;
+                    label?: string | null;
+                    subLabel?: string | null;
+                    color?: string | null;
+                    preview?: IPreviewScalar | null;
+                    library: {id: string; label?: any | null};
+                };
+            } | null;
             permissions: {access_application: boolean; admin_application: boolean};
         }>;
     } | null;
@@ -1183,41 +1145,17 @@ export type SaveApplicationMutation = {
         color?: string | null;
         module?: string | null;
         settings?: any | null;
-        icon?:
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      subLabel?: string | null;
-                      color?: string | null;
-                      preview?: IPreviewScalar | null;
-                      library: {id: string; label?: any | null};
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      subLabel?: string | null;
-                      color?: string | null;
-                      preview?: IPreviewScalar | null;
-                      library: {id: string; label?: any | null};
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      subLabel?: string | null;
-                      color?: string | null;
-                      preview?: IPreviewScalar | null;
-                      library: {id: string; label?: any | null};
-                  };
-              }
-            | null;
+        icon?: {
+            id: string;
+            whoAmI: {
+                id: string;
+                label?: string | null;
+                subLabel?: string | null;
+                color?: string | null;
+                preview?: IPreviewScalar | null;
+                library: {id: string; label?: any | null};
+            };
+        } | null;
         permissions: {access_application: boolean; admin_application: boolean};
     };
 };
@@ -1315,10 +1253,15 @@ export type GetAttributeByIdQuery = {
     } | null;
 };
 
-export type GetAttributesQueryVariables = Exact<{[key: string]: never}>;
+export type GetAttributesQueryVariables = Exact<{
+    pagination?: InputMaybe<Pagination>;
+    sort?: InputMaybe<SortAttributes>;
+    filters?: InputMaybe<AttributesFiltersInput>;
+}>;
 
 export type GetAttributesQuery = {
     attributes?: {
+        totalCount: number;
         list: Array<{
             id: string;
             label?: any | null;
@@ -1433,11 +1376,7 @@ export type GetLibrariesQuery = {
         list: Array<{
             id: string;
             label?: any | null;
-            icon?:
-                | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
-                | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
-                | {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}}
-                | null;
+            icon?: {id: string; whoAmI: {id: string; preview?: IPreviewScalar | null; library: {id: string}}} | null;
         }>;
     } | null;
 };
@@ -1493,41 +1432,17 @@ export type GetLibraryByIdQuery = {
                 edit_record: boolean;
                 delete_record: boolean;
             } | null;
-            icon?:
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          subLabel?: string | null;
-                          color?: string | null;
-                          preview?: IPreviewScalar | null;
-                          library: {id: string; label?: any | null};
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          subLabel?: string | null;
-                          color?: string | null;
-                          preview?: IPreviewScalar | null;
-                          library: {id: string; label?: any | null};
-                      };
-                  }
-                | {
-                      id: string;
-                      whoAmI: {
-                          id: string;
-                          label?: string | null;
-                          subLabel?: string | null;
-                          color?: string | null;
-                          preview?: IPreviewScalar | null;
-                          library: {id: string; label?: any | null};
-                      };
-                  }
-                | null;
+            icon?: {
+                id: string;
+                whoAmI: {
+                    id: string;
+                    label?: string | null;
+                    subLabel?: string | null;
+                    color?: string | null;
+                    preview?: IPreviewScalar | null;
+                    library: {id: string; label?: any | null};
+                };
+            } | null;
             previewsSettings?: Array<{
                 label: any;
                 description?: any | null;
@@ -1581,41 +1496,17 @@ export type SaveLibraryMutation = {
             edit_record: boolean;
             delete_record: boolean;
         } | null;
-        icon?:
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      subLabel?: string | null;
-                      color?: string | null;
-                      preview?: IPreviewScalar | null;
-                      library: {id: string; label?: any | null};
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      subLabel?: string | null;
-                      color?: string | null;
-                      preview?: IPreviewScalar | null;
-                      library: {id: string; label?: any | null};
-                  };
-              }
-            | {
-                  id: string;
-                  whoAmI: {
-                      id: string;
-                      label?: string | null;
-                      subLabel?: string | null;
-                      color?: string | null;
-                      preview?: IPreviewScalar | null;
-                      library: {id: string; label?: any | null};
-                  };
-              }
-            | null;
+        icon?: {
+            id: string;
+            whoAmI: {
+                id: string;
+                label?: string | null;
+                subLabel?: string | null;
+                color?: string | null;
+                preview?: IPreviewScalar | null;
+                library: {id: string; label?: any | null};
+            };
+        } | null;
         previewsSettings?: Array<{
             label: any;
             description?: any | null;
@@ -1697,27 +1588,6 @@ export type SaveTreeMutation = {
             settings: {allowMultiplePositions: boolean; allowedAtRoot: boolean; allowedChildren: Array<string>};
         }>;
     };
-};
-
-export type UserInfoQueryVariables = Exact<{
-    type: PermissionTypes;
-    actions: Array<PermissionsActions> | PermissionsActions;
-}>;
-
-export type UserInfoQuery = {
-    me?: {
-        id: string;
-        login?: string | null;
-        whoAmI: {
-            id: string;
-            label?: string | null;
-            subLabel?: string | null;
-            color?: string | null;
-            preview?: IPreviewScalar | null;
-            library: {id: string; label?: any | null};
-        };
-    } | null;
-    permissions?: Array<{name: PermissionsActions; allowed?: boolean | null}> | null;
 };
 
 export const RecordIdentityFragmentDoc = gql`
@@ -2266,8 +2136,9 @@ export type GetAttributeByIdQueryHookResult = ReturnType<typeof useGetAttributeB
 export type GetAttributeByIdLazyQueryHookResult = ReturnType<typeof useGetAttributeByIdLazyQuery>;
 export type GetAttributeByIdQueryResult = Apollo.QueryResult<GetAttributeByIdQuery, GetAttributeByIdQueryVariables>;
 export const GetAttributesDocument = gql`
-    query GET_ATTRIBUTES {
-        attributes {
+    query GET_ATTRIBUTES($pagination: Pagination, $sort: SortAttributes, $filters: AttributesFiltersInput) {
+        attributes(pagination: $pagination, sort: $sort, filters: $filters) {
+            totalCount
             list {
                 id
                 label
@@ -2291,6 +2162,9 @@ export const GetAttributesDocument = gql`
  * @example
  * const { data, loading, error } = useGetAttributesQuery({
  *   variables: {
+ *      pagination: // value for 'pagination'
+ *      sort: // value for 'sort'
+ *      filters: // value for 'filters'
  *   },
  * });
  */
@@ -2919,45 +2793,3 @@ export function useSaveTreeMutation(
 export type SaveTreeMutationHookResult = ReturnType<typeof useSaveTreeMutation>;
 export type SaveTreeMutationResult = Apollo.MutationResult<SaveTreeMutation>;
 export type SaveTreeMutationOptions = Apollo.BaseMutationOptions<SaveTreeMutation, SaveTreeMutationVariables>;
-export const UserInfoDocument = gql`
-    query USER_INFO($type: PermissionTypes!, $actions: [PermissionsActions!]!) {
-        me {
-            login
-            ...RecordIdentity
-        }
-        permissions: isAllowed(type: $type, actions: $actions) {
-            name
-            allowed
-        }
-    }
-    ${RecordIdentityFragmentDoc}
-`;
-
-/**
- * __useUserInfoQuery__
- *
- * To run a query within a React component, call `useUserInfoQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserInfoQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUserInfoQuery({
- *   variables: {
- *      type: // value for 'type'
- *      actions: // value for 'actions'
- *   },
- * });
- */
-export function useUserInfoQuery(baseOptions: Apollo.QueryHookOptions<UserInfoQuery, UserInfoQueryVariables>) {
-    const options = {...defaultOptions, ...baseOptions};
-    return Apollo.useQuery<UserInfoQuery, UserInfoQueryVariables>(UserInfoDocument, options);
-}
-export function useUserInfoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserInfoQuery, UserInfoQueryVariables>) {
-    const options = {...defaultOptions, ...baseOptions};
-    return Apollo.useLazyQuery<UserInfoQuery, UserInfoQueryVariables>(UserInfoDocument, options);
-}
-export type UserInfoQueryHookResult = ReturnType<typeof useUserInfoQuery>;
-export type UserInfoLazyQueryHookResult = ReturnType<typeof useUserInfoLazyQuery>;
-export type UserInfoQueryResult = Apollo.QueryResult<UserInfoQuery, UserInfoQueryVariables>;

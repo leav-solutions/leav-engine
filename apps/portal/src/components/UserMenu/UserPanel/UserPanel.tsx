@@ -49,6 +49,7 @@ function UserPanel({isVisible, onClose}: IUserPanelProps): JSX.Element {
             onClose={onClose}
             open={isVisible}
             bodyStyle={{padding: 0}}
+            data-testid="user-panel"
         >
             <KitMenu.Item
                 icon={<FlagOutlined />}

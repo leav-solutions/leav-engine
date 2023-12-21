@@ -105,6 +105,18 @@ describe('Attributes', () => {
         expect(res.data.errors).toBeUndefined();
     });
 
+    test('Filter attributes by excluded libraries', async () => {
+        // Search attributes not linked to users library, should not find "login"
+        const res = await makeGraphQlCall(`{
+            notUsersAttrs: attributes(filters: {librariesExcluded: ["users"]}) {list {id}}
+        }`);
+
+        expect(res.status).toBe(200);
+        expect(res.data.errors).toBeUndefined();
+        expect(res.data.data.notUsersAttrs.list.length).toBeGreaterThanOrEqual(0);
+        expect(res.data.data.notUsersAttrs.list.filter(attr => attr.id === 'login').length).toBe(0);
+    });
+
     test('Get error if deleting system attribute', async () => {
         const res = await makeGraphQlCall('mutation {deleteAttribute(id: "modified_by") { id }}');
 

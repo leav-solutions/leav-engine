@@ -13,7 +13,7 @@ describe('AttributeRepo', () => {
         userId: '0',
         queryId: 'attributeRepoTest'
     };
-    describe('getAttribute', () => {
+    describe('getAttributes', () => {
         test('Get all attributes', async function () {
             const mockDbServ = {db: null, execute: global.__mockPromise([])};
             const mockDbUtils: Mockify<IDbUtils> = {

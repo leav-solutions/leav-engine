@@ -4,16 +4,18 @@
 import {Modal} from 'antd';
 import {useState} from 'react';
 import {useSharedTranslation} from '../../hooks/useSharedTranslation';
+import {GetAttributesQueryVariables} from '../../_gqlTypes';
+import {ErrorBoundary} from '../ErrorBoundary';
 import {AttributesList} from './AttributesList';
 
 interface IAttributePickerProps {
     open: boolean;
     onClose: () => void;
     onSubmit: (selectedAttributes: string[]) => Promise<void>;
-    canCreate?: boolean;
+    showCreateButton?: boolean;
     selected?: string[];
     multiple?: boolean;
-    system?: boolean;
+    baseFilters?: GetAttributesQueryVariables['filters'];
 }
 
 function AttributePicker({
@@ -21,9 +23,9 @@ function AttributePicker({
     onClose,
     onSubmit,
     selected = [],
-    canCreate = true,
+    showCreateButton = true,
     multiple = true,
-    system = false
+    baseFilters
 }: IAttributePickerProps): JSX.Element {
     const {t} = useSharedTranslation();
     const [selectedAttributes, setSelectedAttributes] = useState<string[]>([]);
@@ -53,7 +55,15 @@ function AttributePicker({
             confirmLoading={isLoading}
             centered
         >
-            <AttributesList onSelect={_handleSelect} selected={selected} multiple={multiple} system={system} />
+            <ErrorBoundary showRecoveryButtons={false}>
+                <AttributesList
+                    onSelect={_handleSelect}
+                    selected={selected}
+                    multiple={multiple}
+                    showCreateButton={showCreateButton}
+                    baseFilters={baseFilters}
+                />
+            </ErrorBoundary>
         </Modal>
     );
 }

@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {mockAttributeSimple} from '../../__mocks__/common/attribute';
 import {GetAttributesDocument, IsAllowedDocument, PermissionsActions, PermissionTypes} from '../../_gqlTypes';
 import {render, screen, waitFor, within} from '../../_tests/testUtils';
+import {mockAttributeSimple} from '../../__mocks__/common/attribute';
 import AttributePicker from './AttributePicker';
 
 window.matchMedia = query => ({
@@ -29,26 +29,30 @@ jest.mock('../EditAttributeModal', () => {
 jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
 
 describe('AttributePicker', () => {
-    const mocks = [
+    const baseMocks = [
         {
             request: {
                 query: GetAttributesDocument,
-                variables: {}
+                variables: {pagination: {limit: 20, offset: 0}, filters: {}}
             },
             result: {
                 data: {
                     attributes: {
+                        totalCount: 3,
                         list: [
                             {
                                 ...mockAttributeSimple,
+                                format: 'text',
                                 id: 'attributeA'
                             },
                             {
                                 ...mockAttributeSimple,
+                                format: 'numeric',
                                 id: 'attributeB'
                             },
                             {
                                 ...mockAttributeSimple,
+                                format: 'text',
                                 id: 'attributeC'
                             }
                         ]
@@ -79,7 +83,7 @@ describe('AttributePicker', () => {
 
     test('Display attributes', async () => {
         const mockHandleSubmit = jest.fn();
-        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
+        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks: baseMocks});
 
         await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
 
@@ -89,8 +93,31 @@ describe('AttributePicker', () => {
     });
 
     test('Can filter list', async () => {
+        const mocksWithFilters = [
+            ...baseMocks,
+            {
+                request: {
+                    query: GetAttributesDocument,
+                    variables: {pagination: {limit: 20, offset: 0}, filters: {label: '%attributeA%'}}
+                },
+                result: {
+                    data: {
+                        attributes: {
+                            totalCount: 1,
+                            list: [
+                                {
+                                    ...mockAttributeSimple,
+                                    id: 'attributeA'
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        ];
+
         const mockHandleSubmit = jest.fn();
-        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
+        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks: mocksWithFilters});
 
         await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
 
@@ -98,7 +125,7 @@ describe('AttributePicker', () => {
         expect(screen.getByText('attributeB')).toBeInTheDocument();
         expect(screen.getByText('attributeC')).toBeInTheDocument();
 
-        await userEvent.type(screen.getByRole('textbox'), 'attributeA');
+        await userEvent.type(screen.getByRole('textbox'), 'attributeA{Enter}');
         expect(screen.getByRole('textbox')).toHaveValue('attributeA');
 
         expect(screen.getByText('attributeA')).toBeInTheDocument();
@@ -106,9 +133,61 @@ describe('AttributePicker', () => {
         expect(screen.queryByText('attributeC')).not.toBeInTheDocument();
     });
 
+    test('Can sort list', async () => {
+        const mocksWithSort = [
+            ...baseMocks,
+            {
+                request: {
+                    query: GetAttributesDocument,
+                    variables: {pagination: {limit: 20, offset: 0}, sort: {field: 'type', order: 'asc'}, filters: {}}
+                },
+                result: {
+                    data: {
+                        attributes: {
+                            totalCount: 3,
+                            list: [
+                                {
+                                    ...mockAttributeSimple,
+                                    format: 'text',
+                                    id: 'attributeA'
+                                },
+                                {
+                                    ...mockAttributeSimple,
+                                    format: 'text',
+                                    id: 'attributeC'
+                                },
+                                {
+                                    ...mockAttributeSimple,
+                                    format: 'numeric',
+                                    id: 'attributeB'
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        ];
+
+        const mockHandleSubmit = jest.fn();
+        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks: mocksWithSort});
+
+        await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
+
+        const rows = screen.getAllByRole('row');
+        expect(rows[0]).toHaveTextContent('attributeA');
+        expect(rows[1]).toHaveTextContent('attributeB');
+        expect(rows[2]).toHaveTextContent('attributeC');
+
+        await userEvent.click(screen.getByText('attributes.type'));
+        const newRows = screen.getAllByRole('row');
+        expect(newRows[0]).toHaveTextContent('attributeA');
+        expect(newRows[1]).toHaveTextContent('attributeC');
+        expect(newRows[2]).toHaveTextContent('attributeB');
+    });
+
     test('Select elements and submit', async () => {
         const mockHandleSubmit = jest.fn();
-        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
+        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks: baseMocks});
 
         await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
 
@@ -142,7 +221,9 @@ describe('AttributePicker', () => {
 
     test('If not multiple, only one element can be selected', async () => {
         const mockHandleSubmit = jest.fn();
-        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open multiple={false} />, {mocks});
+        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open multiple={false} />, {
+            mocks: baseMocks
+        });
 
         await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
 
@@ -158,7 +239,7 @@ describe('AttributePicker', () => {
 
     test('Can create new attribute', async () => {
         const mockHandleSubmit = jest.fn();
-        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
+        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks: baseMocks});
 
         await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
 
@@ -171,7 +252,7 @@ describe('AttributePicker', () => {
 
     test('If not allowed, cannot create new attribute', async () => {
         const mocksNotAllowed = [
-            mocks[0],
+            baseMocks[0],
             {
                 request: {
                     query: IsAllowedDocument,
@@ -194,7 +275,7 @@ describe('AttributePicker', () => {
         ];
 
         const mockHandleSubmit = jest.fn();
-        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open canCreate={false} />, {
+        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open showCreateButton={false} />, {
             mocks: mocksNotAllowed
         });
 

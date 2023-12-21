@@ -1,31 +1,40 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {PlusOutlined} from '@ant-design/icons';
+import {PlusOutlined, SearchOutlined} from '@ant-design/icons';
 import {useApolloClient} from '@apollo/client';
 import {localizedTranslation, Override} from '@leav/utils';
-import {Button, Input, Table, TableColumnsType, Tag} from 'antd';
-import {Key, useState} from 'react';
+import {Table, TableColumnsType, TablePaginationConfig} from 'antd';
+import {FilterValue, SorterResult} from 'antd/lib/table/interface';
+import {KitButton, KitInput, KitTag} from 'aristid-ds';
+import {Key, useEffect, useRef, useState} from 'react';
 import styled from 'styled-components';
+import {
+    defaultPaginationPageSize,
+    PreviewSize,
+    tagColorByAttributeFormat,
+    tagColorByAttributeType
+} from '../../../constants';
+import {extractPermissionFromQuery} from '../../../helpers/extractPermissionFromQuery';
+import {useLang} from '../../../hooks';
+import {useSharedTranslation} from '../../../hooks/useSharedTranslation';
 import {
     AttributeDetailsFragment,
     AttributeFormat,
+    AttributesSortableFields,
     AttributeType,
     GetAttributesQuery,
+    GetAttributesQueryVariables,
     PermissionsActions,
     PermissionTypes,
+    SortOrder,
     useGetAttributesQuery,
     useIsAllowedQuery
 } from '../../../_gqlTypes';
 import {getAttributesQuery} from '../../../_queries/attributes/getAttributesQuery';
-import {PreviewSize, tagColorByAttributeFormat, tagColorByAttributeType} from '../../../constants';
-import {extractPermissionFromQuery} from '../../../helpers/extractPermissionFromQuery';
-import {useLang} from '../../../hooks';
-import {useSharedTranslation} from '../../../hooks/useSharedTranslation';
 import {EditAttributeModal} from '../../EditAttributeModal';
 import {EntityCard, IEntityData} from '../../EntityCard';
 import {ErrorDisplay} from '../../ErrorDisplay';
-import {Loading} from '../../Loading';
 
 const HeaderWrapper = styled.div`
     display: flex;
@@ -33,7 +42,7 @@ const HeaderWrapper = styled.div`
     align-items: center;
     gap: 0.5rem;
 
-    > input {
+    .kit-input-wrapper {
         flex-grow: 1;
     }
 `;
@@ -44,13 +53,41 @@ interface IAttributesListProps {
     onSelect: (selectedAttributes: string[]) => void;
     selected?: string[];
     multiple?: boolean;
-    system?: boolean;
+    showCreateButton?: boolean;
+    baseFilters?: GetAttributesQueryVariables['filters'];
 }
 
-function AttributesList({onSelect, selected = [], multiple = true, system = false}: IAttributesListProps): JSX.Element {
+function AttributesList({
+    onSelect,
+    selected = [],
+    multiple = true,
+    showCreateButton = true,
+    baseFilters
+}: IAttributesListProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
-    const {loading, error, data} = useGetAttributesQuery();
+
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    const [pageSize, setPageSize] = useState(defaultPaginationPageSize);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [sort, setSort] = useState<GetAttributesQueryVariables['sort']>();
+    const [filters, setFilters] = useState<GetAttributesQueryVariables['filters']>({});
+    const [tableData, setTableData] = useState<ListAttributeType[]>([]);
+
+    const {loading, error, data} = useGetAttributesQuery({
+        variables: {
+            pagination: {
+                limit: pageSize,
+                offset: (currentPage - 1) * pageSize
+            },
+            sort,
+            filters: {
+                ...filters,
+                ...baseFilters
+            }
+        }
+    });
 
     const isAllowedQueryResult = useIsAllowedQuery({
         fetchPolicy: 'cache-and-network',
@@ -59,10 +96,10 @@ function AttributesList({onSelect, selected = [], multiple = true, system = fals
             actions: [PermissionsActions.admin_create_attribute]
         }
     });
-    const canCreate = extractPermissionFromQuery(isAllowedQueryResult, PermissionsActions.admin_create_attribute);
+    const canCreate =
+        showCreateButton && extractPermissionFromQuery(isAllowedQueryResult, PermissionsActions.admin_create_attribute);
 
-    const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
-    const [search, setSearch] = useState('');
+    const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>(selected);
     const [isNewAttributeModalOpen, setIsNewAttributeModalOpen] = useState(false);
     const client = useApolloClient();
 
@@ -84,8 +121,18 @@ function AttributesList({onSelect, selected = [], multiple = true, system = fals
         onSelect(newSelection as string[]);
     };
 
+    const _handleSearchSubmit = (e: React.SyntheticEvent<HTMLInputElement>) => {
+        setFilters({
+            ...filters,
+            label: `%${e.currentTarget.value}%`
+        });
+    };
+
     const _handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearch(e.currentTarget.value);
+        // Handle clearing input only. Submitting input is otherwise handled by "onPressEnter"
+        if (!e.currentTarget.value) {
+            _handleSearchSubmit(e);
+        }
     };
 
     const _handleClickNewAttribute = () => {
@@ -112,9 +159,31 @@ function AttributesList({onSelect, selected = [], multiple = true, system = fals
         setSelectedRowKeys(newSelection);
     };
 
-    if (loading) {
-        return <Loading />;
-    }
+    const _handleChange = (
+        pagination: TablePaginationConfig,
+        filter: Record<string, FilterValue | null>,
+        sorter: SorterResult<ListAttributeType> | Array<SorterResult<ListAttributeType>>
+    ) => {
+        setCurrentPage(pagination.current);
+        setPageSize(pagination.pageSize);
+
+        const relevantSorter = Array.isArray(sorter) ? sorter[0] : sorter;
+        if (relevantSorter.column && relevantSorter.order) {
+            const newSort = {
+                field: AttributesSortableFields[relevantSorter.columnKey],
+                order: relevantSorter.order === 'ascend' ? SortOrder.asc : SortOrder.desc
+            };
+            setSort(newSort);
+        }
+
+        const newFilters: GetAttributesQueryVariables['filters'] = {};
+        for (const [field, filterValue] of Object.entries(filter)) {
+            if (filterValue) {
+                newFilters[field] = filterValue;
+            }
+        }
+        setFilters(newFilters);
+    };
 
     if (error || isAllowedQueryResult.error) {
         return <ErrorDisplay message={error?.message || isAllowedQueryResult?.error?.message} />;
@@ -140,7 +209,7 @@ function AttributesList({onSelect, selected = [], multiple = true, system = fals
             key: 'type',
             width: '150px',
             render: (type: AttributeType) => (
-                <Tag color={tagColorByAttributeType[type]}>{t(`attributes.type_${type}`)}</Tag>
+                <KitTag color={tagColorByAttributeType[type]}>{t(`attributes.type_${type}`)}</KitTag>
             ),
             filters: Object.values(AttributeType).map(type => ({
                 text: t(`attributes.type_${type}`),
@@ -160,7 +229,9 @@ function AttributesList({onSelect, selected = [], multiple = true, system = fals
             key: 'format',
             width: '150px',
             render: (format: AttributeFormat) =>
-                format ? <Tag color={tagColorByAttributeFormat[format]}>{t(`attributes.format_${format}`)}</Tag> : null,
+                format ? (
+                    <KitTag color={tagColorByAttributeFormat[format]}>{t(`attributes.format_${format}`)}</KitTag>
+                ) : null,
             filters: Object.values(AttributeFormat).map(format => ({
                 text: t(`attributes.format_${format}`),
                 value: format
@@ -175,37 +246,44 @@ function AttributesList({onSelect, selected = [], multiple = true, system = fals
         }
     ];
 
-    const tableData: ListAttributeType[] = ([...data?.attributes?.list] ?? [])
-        .filter(attribute => {
-            if (!system && attribute.system) {
-                return false;
-            }
+    useEffect(() => {
+        // To avoid temporary display of "no data" when pagination changes
+        if (loading || !data) {
+            return;
+        }
 
-            // Do not display already selected libraries
-            if (selected.find(selectedAttribute => selectedAttribute === attribute.id)) {
-                return false;
-            }
+        const newTableData = data?.attributes?.list
+            ? [...data.attributes.list].map(attribute => ({
+                  ...attribute,
+                  key: attribute.id,
+                  label: localizedTranslation(attribute.label, lang)
+              }))
+            : [];
 
-            // Filter based on search
-            const label = localizedTranslation(attribute.label, lang);
-            const searchStr = search.toLowerCase();
+        setTableData(newTableData);
+    }, [loading, data]);
 
-            // Search on id or label
-            return attribute.id.toLowerCase().includes(searchStr) || label.toLowerCase().includes(searchStr);
-        })
-        .map(attribute => ({
-            ...attribute,
-            key: attribute.id,
-            label: localizedTranslation(attribute.label, lang)
-        }));
+    useEffect(() => {
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [inputRef]);
 
     const tableHeader = (
         <HeaderWrapper>
-            <Input.Search onChange={_handleSearchChange} placeholder={t('global.search') + '...'} allowClear />
+            <KitInput
+                onPressEnter={_handleSearchSubmit}
+                onChange={_handleSearchChange}
+                placeholder={t('global.search') + '...'}
+                allowClear
+                suffix={<SearchOutlined />}
+                // @ts-ignore - ref is a valid prop
+                ref={inputRef}
+            />
             {canCreate && (
-                <Button type="primary" icon={<PlusOutlined />} onClick={_handleClickNewAttribute}>
+                <KitButton type="primary" icon={<PlusOutlined />} onClick={_handleClickNewAttribute}>
                     {t('attributes.new_attribute')}
-                </Button>
+                </KitButton>
             )}
         </HeaderWrapper>
     );
@@ -213,6 +291,7 @@ function AttributesList({onSelect, selected = [], multiple = true, system = fals
     return (
         <>
             <Table
+                loading={loading}
                 size="middle"
                 rowSelection={{
                     type: multiple ? 'checkbox' : 'radio',
@@ -222,12 +301,19 @@ function AttributesList({onSelect, selected = [], multiple = true, system = fals
                 columns={columns}
                 dataSource={tableData}
                 bordered
-                pagination={false}
+                pagination={{
+                    position: ['bottomCenter'],
+                    pageSize,
+                    current: currentPage,
+                    total: data?.attributes?.totalCount ?? 0,
+                    showTotal: total => t('global.total_count', {total})
+                }}
                 scroll={{y: 'calc(95vh - 20rem)'}}
                 title={() => tableHeader}
                 onRow={record => ({
                     onClick: () => _handleRowClick(record)
                 })}
+                onChange={_handleChange}
             />
             {isNewAttributeModalOpen && (
                 <EditAttributeModal

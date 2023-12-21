@@ -290,7 +290,8 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         system: Boolean,
                         multiple_values: Boolean,
                         versionable: Boolean,
-                        libraries: [String]
+                        libraries: [String],
+                        librariesExcluded: [String]
                     }
 
                     type AttributesList {

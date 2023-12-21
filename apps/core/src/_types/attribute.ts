@@ -58,6 +58,7 @@ export interface IAttributeFilterOptions extends ICoreEntityFilterOptions {
     linked_tree?: string;
     multiple_values?: boolean;
     libraries?: string[];
+    librariesExcluded?: string[];
     versionable?: boolean;
     metadata_fields?: string[];
 }
