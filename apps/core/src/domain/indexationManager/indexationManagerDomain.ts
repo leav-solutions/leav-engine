@@ -375,40 +375,49 @@ export default function ({
         }
     };
 
+    async function _createIndexationTask(
+        findRecordParams: IFindRecordParams[],
+        params: IIndexDatabaseParams,
+        task: ITaskFuncParams
+    ) {
+        const newTaskId = uuidv4();
+
+        await tasksManagerDomain.createTask(
+            {
+                id: newTaskId,
+                label: config.lang.available.reduce((labels, lang) => {
+                    labels[lang] = `${translator.t('indexation.index_database', {
+                        lng: lang,
+                        library: findRecordParams.map(e => e.library).join(', ')
+                    })}`;
+                    return labels;
+                }, {}),
+                func: {
+                    moduleName: 'domain',
+                    subModuleName: 'indexationManager',
+                    name: 'indexDatabase',
+                    args: params
+                },
+                role: {
+                    type: TaskType.INDEXATION,
+                    detail: findRecordParams.map(e => e.library).join(',')
+                },
+                priority: TaskPriority.MEDIUM,
+                startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
+                ...(!!task?.callbacks && {callbacks: task.callbacks})
+            },
+            params.ctx
+        );
+
+        return newTaskId;
+    }
+
     const _indexDatabase = async (params: IIndexDatabaseParams, task?: ITaskFuncParams): Promise<string> => {
         const findRecordParams = [].concat(params.findRecordParams || []);
+        const mustCreateTask = !params.forceNoTask && typeof task?.id === 'undefined';
 
-        if (!params.forceNoTask && typeof task?.id === 'undefined') {
-            const newTaskId = uuidv4();
-
-            await tasksManagerDomain.createTask(
-                {
-                    id: newTaskId,
-                    label: config.lang.available.reduce((labels, lang) => {
-                        labels[lang] = `${translator.t('indexation.index_database', {
-                            lng: lang,
-                            library: findRecordParams.map(e => e.library).join(', ')
-                        })}`;
-                        return labels;
-                    }, {}),
-                    func: {
-                        moduleName: 'domain',
-                        subModuleName: 'indexationManager',
-                        name: 'indexDatabase',
-                        args: params
-                    },
-                    role: {
-                        type: TaskType.INDEXATION,
-                        detail: findRecordParams.map(e => e.library).join(',')
-                    },
-                    priority: TaskPriority.MEDIUM,
-                    startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
-                    ...(!!task?.callbacks && {callbacks: task.callbacks})
-                },
-                params.ctx
-            );
-
-            return newTaskId;
+        if (mustCreateTask) {
+            return _createIndexationTask(findRecordParams, params, task);
         }
 
         const _updateLibraryIndexationStatus = (inProgress: boolean) => {
@@ -430,8 +439,6 @@ export default function ({
         }
 
         _updateLibraryIndexationStatus(false);
-
-        return task.id;
     };
 
     return {
