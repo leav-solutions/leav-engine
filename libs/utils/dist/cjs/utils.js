@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.waitFor = exports.getLogsIndexName = exports.getFlagByLang = exports.simpleStringHash = exports.formatId = exports._getInitialEngine = exports.getInitials = exports.getCallStack = exports.getFileType = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
+exports.waitFor = exports.getLogsIndexName = exports.getFlagByLang = exports.simpleStringHash = exports.slugifyString = exports._getInitialEngine = exports.getInitials = exports.getCallStack = exports.getFileType = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
@@ -239,19 +239,19 @@ exports._getInitialEngine = _getInitialEngine;
  * @param id
  * @returns formatted ID
  */
-const formatId = (id) => {
+const slugifyString = (id, separator = '_') => {
     return id
         .normalize('NFD') // Decompose the string in the base and the accents
         .toLowerCase() // Lowercase the string
         .replace(/[\u0300-\u036f]/g, '') // Remove accents
-        .replace(/[^a-zA-Z0-9\s]/g, '_') // Transform any special character into an underscore
+        .replace(/[^a-zA-Z0-9\s]/g, separator) // Transform any special character into an underscore
         .trim() // Remove spaces at the beginning and the end
-        .replace(/\s/g, '_') // Replace spaces by underscore
-        .replace(/__+/g, '_') // Remove double underscores
-        .replace(/_$/g, '') // Remove underscore at the end
-        .replace(/^_/g, ''); // Remove underscore at the beginning
+        .replace(/\s/g, separator) // Replace spaces by underscore
+        .replace(new RegExp(`${separator}${separator}+`, 'g'), separator) // Remove double underscores
+        .replace(new RegExp(`${separator}$`, 'g'), '') // Remove separator at the end
+        .replace(new RegExp(`^${separator}`, 'g'), ''); // Remove underscore at the beginning
 };
-exports.formatId = formatId;
+exports.slugifyString = slugifyString;
 /**
  * Returns a hash code from a string
  * @param  {String} str The string to hash.

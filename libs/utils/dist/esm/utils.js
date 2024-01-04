@@ -197,17 +197,17 @@ export const _getInitialEngine = (words, length) => {
  * @param id
  * @returns formatted ID
  */
-export const formatId = (id) => {
+export const slugifyString = (id, separator = '_') => {
     return id
         .normalize('NFD') // Decompose the string in the base and the accents
         .toLowerCase() // Lowercase the string
         .replace(/[\u0300-\u036f]/g, '') // Remove accents
-        .replace(/[^a-zA-Z0-9\s]/g, '_') // Transform any special character into an underscore
+        .replace(/[^a-zA-Z0-9\s]/g, separator) // Transform any special character into an underscore
         .trim() // Remove spaces at the beginning and the end
-        .replace(/\s/g, '_') // Replace spaces by underscore
-        .replace(/__+/g, '_') // Remove double underscores
-        .replace(/_$/g, '') // Remove underscore at the end
-        .replace(/^_/g, ''); // Remove underscore at the beginning
+        .replace(/\s/g, separator) // Replace spaces by underscore
+        .replace(new RegExp(`${separator}${separator}+`, 'g'), separator) // Remove double underscores
+        .replace(new RegExp(`${separator}$`, 'g'), '') // Remove separator at the end
+        .replace(new RegExp(`^${separator}`, 'g'), ''); // Remove underscore at the beginning
 };
 /**
  * Returns a hash code from a string

@@ -67,7 +67,7 @@ export declare const _getInitialEngine: (words: string[], length: number) => str
  * @param id
  * @returns formatted ID
  */
-export declare const formatId: (id: string) => string;
+export declare const slugifyString: (id: string, separator?: '-' | '_') => string;
 /**
  * Returns a hash code from a string
  * @param  {String} str The string to hash.

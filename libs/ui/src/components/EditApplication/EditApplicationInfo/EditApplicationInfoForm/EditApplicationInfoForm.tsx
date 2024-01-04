@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {endpointFormatRegex, formatId, getFlagByLang, idFormatRegex} from '@leav/utils';
+import {endpointFormatRegex, getFlagByLang, idFormatRegex, slugifyString} from '@leav/utils';
 import {ColorPicker, Form, FormInstance} from 'antd';
 import {Color} from 'antd/lib/color-picker';
 import {KitInput, KitSelect} from 'aristid-ds';
@@ -40,6 +40,7 @@ function EditApplicationInfoForm({
 
     const [isInternalApp, setIsInternalApp] = useState(true);
     const [hasIdBeenEdited, setHasIdBeenEdited] = useState(false);
+    const [hasEndpointBeenEdited, setHasEndpointBeenEdited] = useState(false);
     const [runningFieldsSubmit, setRunningFieldsSubmit] = useState<string[]>([]);
     const [processedFieldsSubmit, setProcessedFieldsSubmit] = useState<string[]>([]);
     const isReadOnly = isEditing && !application?.permissions?.admin_application;
@@ -51,14 +52,26 @@ function EditApplicationInfoForm({
         });
 
     const _handleLabelChange = (lang: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        // If ID hasn't been edited manually, generate it from label
-        if (!isEditing && lang === defaultLang && !hasIdBeenEdited) {
-            form.setFieldsValue({id: formatId(e.target.value)});
+        if (isEditing || lang !== defaultLang) {
+            return;
+        }
+
+        // If ID or endpoint hasn't been edited manually, generate it from label
+        if (!hasIdBeenEdited) {
+            form.setFieldsValue({id: slugifyString(e.target.value)});
+        }
+
+        if (!hasEndpointBeenEdited) {
+            form.setFieldsValue({endpoint: slugifyString(e.target.value, '-')});
         }
     };
 
     const _handleIdChange = () => {
         setHasIdBeenEdited(true);
+    };
+
+    const _handleEndpointChange = () => {
+        setHasEndpointBeenEdited(true);
     };
 
     const _handleTypeChange = (value: ApplicationType) => {
@@ -282,8 +295,10 @@ function EditApplicationInfoForm({
                     prefix={isInternalApp ? appsBaseUrl : null}
                     onBlur={_handleBlur('endpoint')}
                     onKeyDown={_handleSubmitOnEnter('endpoint')}
+                    onChange={_handleEndpointChange}
                     suffix={<SubmitStateNotifier state={_getFieldState('endpoint')} />}
                     disabled={isReadOnly}
+                    aria-label="endpoint"
                 />
             </Form.Item>
             <Form.Item
