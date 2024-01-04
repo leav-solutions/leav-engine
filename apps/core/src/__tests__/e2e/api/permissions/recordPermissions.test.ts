@@ -6,7 +6,7 @@ import {
     gqlAddElemToTree,
     gqlAddUserToGroup,
     gqlCreateRecord,
-    gqlGetAllUsersGroupNodeId,
+    gqlGetAdminsGroupNodeId,
     gqlSaveAttribute,
     gqlSaveLibrary,
     gqlSaveTree,
@@ -22,7 +22,10 @@ describe('Records permissions', () => {
     let permTreeElemId: string;
     let permTreeElemIdForMultiVal1: string;
     let permTreeElemIdForMultiVal2: string;
-    let allUsersTreeElemId: string;
+    let adminsTreeElemId: string;
+
+    let usersGroupRecordId: string;
+    let usersGroupElemId: string;
 
     let testLibRecordId: string;
     let testLibRecordIdForMultival: string;
@@ -49,8 +52,16 @@ describe('Records permissions', () => {
             library: permTreeLibName
         });
 
-        allUsersTreeElemId = await gqlGetAllUsersGroupNodeId();
-        await gqlAddUserToGroup(allUsersTreeElemId);
+        adminsTreeElemId = await gqlGetAdminsGroupNodeId();
+        await gqlAddUserToGroup(adminsTreeElemId);
+
+        // Add a group under admins group
+        usersGroupRecordId = await gqlCreateRecord('users_groups');
+        usersGroupElemId = await gqlAddElemToTree(
+            'users_groups',
+            {id: usersGroupRecordId, library: 'users_groups'},
+            adminsTreeElemId
+        );
 
         // Create library using permission tree
         await gqlSaveAttribute({
@@ -114,7 +125,7 @@ describe('Records permissions', () => {
                 permission: {
                     type: record,
                     applyTo: "${testLibId}",
-                    usersGroup: "${allUsersTreeElemId}",
+                    usersGroup: "${adminsTreeElemId}",
                     permissionTreeTarget: {
                         tree: "${permTreeName}", nodeId: "${nodePermTreeElem}"
                     },
@@ -143,7 +154,7 @@ describe('Records permissions', () => {
             permissions(
                 type: record,
                 applyTo: "${testLibId}",
-                usersGroup: "${allUsersTreeElemId}",
+                usersGroup: "${adminsTreeElemId}",
                 permissionTreeTarget: {
                     tree: "${permTreeName}", nodeId: "${nodePermTreeElem}"
                 },
@@ -205,6 +216,59 @@ describe('Records permissions', () => {
         expect(resDelRecord.data.errors.length).toBeGreaterThanOrEqual(1);
     });
 
+    test('Handle inheritance on subgroups', async () => {
+        // Save a permission on the root of "perm tree" and admins group
+        await makeGraphQlCall(`mutation {
+            savePermission(
+                permission: {
+                    type: record,
+                    applyTo: "${testLibId}",
+                    usersGroup: "${adminsTreeElemId}",
+                    permissionTreeTarget: {
+                        tree: "${permTreeName}", nodeId: null
+                    },
+                    actions: [
+                        {name: create_record, allowed: false}
+                    ]
+                }
+            ) {
+                type
+                applyTo
+                usersGroup
+                permissionTreeTarget {
+                    tree
+                    nodeId
+                }
+            }
+        }`);
+
+        // Check permissions on first element of "perm tree": it should be inherited on admins group and its subgroup
+        const resIsAllowed = await makeGraphQlCall(`query {
+            inheritedOnAdmins: inheritedPermissions(
+                type: record,
+                applyTo: "${testLibId}",
+                actions: [create_record],
+                userGroupNodeId: "${adminsTreeElemId}",
+                permissionTreeTarget: {
+                    tree: "${permTreeName}", nodeId: "${nodePermTreeElem}"
+                }
+            ) { name allowed }
+            inheritedOnSubgroup: inheritedPermissions(
+                type: record,
+                applyTo: "${testLibId}",
+                actions: [create_record],
+                userGroupNodeId: "${usersGroupElemId}",
+                permissionTreeTarget: {
+                    tree: "${permTreeName}", nodeId: "${nodePermTreeElem}"
+                }
+            ) { name allowed }
+        }`);
+
+        expect(resIsAllowed.status).toBe(200);
+        expect(resIsAllowed.data.data.inheritedOnAdmins).toEqual([{name: 'create_record', allowed: false}]);
+        expect(resIsAllowed.data.data.inheritedOnSubgroup).toEqual([{name: 'create_record', allowed: false}]);
+    });
+
     test('Handle multivalues tree attributes', async () => {
         // We save 2 contradictory permissions (false and true) for the 2 values of our attributes
         // We expect to be allowed
@@ -214,7 +278,7 @@ describe('Records permissions', () => {
                 permission: {
                     type: record,
                     applyTo: "${testLibId}",
-                    usersGroup: "${allUsersTreeElemId}",
+                    usersGroup: "${adminsTreeElemId}",
                     permissionTreeTarget: {
                         tree: "${permTreeName}", nodeId: "${nodePermTreeElemForMultival1}"
                     },
@@ -227,7 +291,7 @@ describe('Records permissions', () => {
                 permission: {
                     type: record,
                     applyTo: "${testLibId}",
-                    usersGroup: "${allUsersTreeElemId}",
+                    usersGroup: "${adminsTreeElemId}",
                     permissionTreeTarget: {
                         tree: "${permTreeName}", nodeId: "${nodePermTreeElemForMultival2}"
                     },

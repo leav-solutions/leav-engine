@@ -16,7 +16,7 @@ export interface IPermissionByUserGroupsHelper {
     getPermissionByUserGroups: (params: IGetPermissionByUserGroupsParams) => Promise<boolean | null>;
 }
 
-export default function (deps: IDeps): IPermissionByUserGroupsHelper {
+export default function(deps: IDeps): IPermissionByUserGroupsHelper {
     const {
         'core.domain.permission.helpers.simplePermission': simplePermHelper = null,
         'core.domain.permission.helpers.reducePermissionsArray': reducePermissionsArrayHelper
@@ -31,6 +31,7 @@ export default function (deps: IDeps): IPermissionByUserGroupsHelper {
             permissionTreeTarget = null,
             ctx
         }: IGetPermissionByUserGroupsParams): Promise<boolean | null> {
+            // Used to retrieve permission for root level ("all users")
             const _getRootPermission = () =>
                 simplePermHelper.getSimplePermission({
                     type,
@@ -46,35 +47,40 @@ export default function (deps: IDeps): IPermissionByUserGroupsHelper {
             const userPerms = userGroupsPaths.length
                 ? await Promise.all(
                       userGroupsPaths.map(
-                          async (groupPath): Promise<boolean> => {
-                              return groupPath.length
-                                  ? groupPath.slice().reduce(async (pathPermProm, pathNode): Promise<
-                                        boolean | null
-                                    > => {
-                                        const pathPerm: boolean | null = await pathPermProm;
+                          async (userGroupPath): Promise<boolean | null> => {
+                              let userGroupPermission = null;
+                              if (userGroupPath.length) {
+                                  for (const groupNode of userGroupPath) {
+                                      // Check if this group node has a permission defined on it
+                                      const groupNodePermission = await simplePermHelper.getSimplePermission({
+                                          type,
+                                          applyTo,
+                                          action,
+                                          usersGroupNodeId: groupNode.id,
+                                          permissionTreeTarget,
+                                          ctx
+                                      });
 
-                                        const perm = await simplePermHelper.getSimplePermission({
-                                            type,
-                                            applyTo,
-                                            action,
-                                            usersGroupNodeId: pathNode.id,
-                                            permissionTreeTarget,
-                                            ctx
-                                        });
+                                      // We stop on the first group node with a permission defined (null == inherited)
+                                      if (groupNodePermission !== null) {
+                                          userGroupPermission = groupNodePermission;
+                                          break;
+                                      }
+                                  }
+                              }
 
-                                        if (perm !== null) {
-                                            return pathPerm || perm;
-                                        }
+                              // If no permission was found on any group, retrieve permission for root level ("all users")
+                              if (userGroupPermission === null) {
+                                  userGroupPermission = await _getRootPermission();
+                              }
 
-                                        // Nothing found in tree, check on root level
-                                        return _getRootPermission();
-                                    }, Promise.resolve<boolean | null>(null))
-                                  : _getRootPermission();
+                              return userGroupPermission;
                           }
                       )
                   )
                 : [await _getRootPermission()];
 
+            // The user may have multiple groups with different permissions. We must reduce them to a single permission
             return reducePermissionsArrayHelper.reducePermissionsArray(userPerms);
         }
     };
