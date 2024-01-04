@@ -4,7 +4,6 @@
 import {FileType} from './types/files';
 import {
     extractArgsFromString,
-    formatId,
     getCallStack,
     getFileType,
     getGraphqlQueryNameFromLibraryName,
@@ -14,6 +13,7 @@ import {
     localizedTranslation,
     nameValArrayToObj,
     objectToNameValueArray,
+    slugifyString,
     stringToColor
 } from './utils';
 
@@ -181,21 +181,21 @@ describe('utils', () => {
         });
     });
 
-    describe('formatID', () => {
-        test('Return formatted ID', async () => {
-            expect(formatId('123456789')).toBe('123456789');
-            expect(formatId('foo')).toBe('foo');
-            expect(formatId('foo_bar')).toBe('foo_bar');
-            expect(formatId('My ID')).toBe('my_id');
-            expect(formatId('Méh bàèrùçû')).toBe('meh_baerucu');
-            expect(formatId('Foo-bar')).toBe('foo_bar');
-            expect(formatId('   foo   ')).toBe('foo');
-            expect(formatId('foo bar')).toBe('foo_bar');
-            expect(formatId('foo   bar')).toBe('foo_bar');
-            expect(formatId('foo   ')).toBe('foo');
-            expect(formatId('foo^$$bar')).toBe('foo_bar');
-            expect(formatId('foo_bar99')).toBe('foo_bar99');
-            expect(formatId('# my string-not"  ok\'!  ')).toBe('my_string_not_ok');
+    describe('slugifyString', () => {
+        test('Return slugified string', async () => {
+            expect(slugifyString('123456789')).toBe('123456789');
+            expect(slugifyString('foo')).toBe('foo');
+            expect(slugifyString('foo_bar')).toBe('foo_bar');
+            expect(slugifyString('My ID')).toBe('my_id');
+            expect(slugifyString('Méh bàèrùçû')).toBe('meh_baerucu');
+            expect(slugifyString('Foo-bar')).toBe('foo_bar');
+            expect(slugifyString('   foo   ')).toBe('foo');
+            expect(slugifyString('foo bar')).toBe('foo_bar');
+            expect(slugifyString('foo   bar')).toBe('foo_bar');
+            expect(slugifyString('foo   ')).toBe('foo');
+            expect(slugifyString('foo^$$bar')).toBe('foo_bar');
+            expect(slugifyString('foo_bar99')).toBe('foo_bar99');
+            expect(slugifyString('# my string-not"  ok\'!  ')).toBe('my_string_not_ok');
         });
     });
 });

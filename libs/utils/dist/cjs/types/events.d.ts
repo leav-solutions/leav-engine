@@ -39,7 +39,7 @@ export declare enum EventAction {
 }
 export interface IDbPayload {
     trigger?: string;
-    action: EventAction;
+    action: EventAction | string;
     topic: {
         record?: {
             id: string;

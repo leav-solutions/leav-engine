@@ -1,10 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {formatId, idFormatRegex, Override} from '@leav/utils';
+import {idFormatRegex, Override, slugifyString} from '@leav/utils';
 import {Form, FormInstance, Input, Select, Switch} from 'antd';
 import React, {useState} from 'react';
 import styled from 'styled-components';
+import {useLang} from '../../../../../hooks';
+import {useSharedTranslation} from '../../../../../hooks/useSharedTranslation';
 import {
     AttributeDetailsFragment,
     AttributeDetailsLinkAttributeFragment,
@@ -14,8 +16,6 @@ import {
     AttributeType,
     ValueVersionMode
 } from '../../../../../_gqlTypes';
-import {useLang} from '../../../../../hooks';
-import {useSharedTranslation} from '../../../../../hooks/useSharedTranslation';
 import FieldsGroup from '../../../../FieldsGroup';
 import {SubmitStateNotifier} from '../../../../SubmitStateNotifier';
 import {LinkedLibraryForm} from './LinkedLibraryForm';
@@ -93,7 +93,7 @@ function EditAttributeInfoForm({
     const _handleLabelChange = (labelLang: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
         // If ID hasn't been edited manually, generate it from label
         if (!isEditing && labelLang === defaultLang && !hasIdBeenEdited) {
-            form.setFieldsValue({id: formatId(e.target.value)});
+            form.setFieldsValue({id: slugifyString(e.target.value)});
         }
     };
 
@@ -303,7 +303,7 @@ function EditAttributeInfoForm({
                 rules={[{required: true, message: _getRequiredMessage('type')}]}
                 hasFeedback
             >
-                <Select options={typeSelectOptions} disabled={isReadOnly || isEditing} aria-label=""/>
+                <Select options={typeSelectOptions} disabled={isReadOnly || isEditing} aria-label="" />
             </Form.Item>
             {isTypeStandard && (
                 <Form.Item
@@ -314,7 +314,7 @@ function EditAttributeInfoForm({
                     rules={[{required: true, message: _getRequiredMessage('format')}]}
                     hasFeedback
                 >
-                    <Select options={formatSelectOptions} disabled={isReadOnly || isEditing} aria-label=""/>
+                    <Select options={formatSelectOptions} disabled={isReadOnly || isEditing} aria-label="" />
                 </Form.Item>
             )}
             {isTypeLink && (

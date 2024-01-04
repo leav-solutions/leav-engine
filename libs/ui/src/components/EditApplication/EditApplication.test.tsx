@@ -63,6 +63,19 @@ describe('EditApplication', () => {
                     applications: []
                 }
             }
+        },
+        {
+            request: {
+                query: CheckApplicationExistenceDocument,
+                variables: {
+                    endpoint: 'test-app-fr-edited'
+                }
+            },
+            result: {
+                data: {
+                    applications: []
+                }
+            }
         }
     ];
 
@@ -81,6 +94,9 @@ describe('EditApplication', () => {
             const idField = screen.getByRole('textbox', {name: /id/});
             expect(idField).toHaveValue('test_app_fr');
 
+            const endpointField = screen.getByRole('textbox', {name: /endpoint/});
+            expect(endpointField).toHaveValue('test-app-fr');
+
             //Hide some fields based on type
             expect(screen.getByRole('combobox', {name: /module/})).toBeInTheDocument();
 
@@ -93,15 +109,20 @@ describe('EditApplication', () => {
 
         test('Do not generate id if user has modified it', async () => {
             render(<EditApplication />, {mocks: commonMocks});
+            const idField = screen.getByRole('textbox', {name: /id/});
+            const labelFrField = screen.getByRole('textbox', {name: /label_fr/});
+            const endpointField = screen.getByRole('textbox', {name: /endpoint/});
 
-            await userEvent.type(screen.getByRole('textbox', {name: 'label_fr'}), 'Test app fr');
+            await userEvent.type(labelFrField, 'Test app fr');
 
-            expect(screen.getByRole('textbox', {name: /id/})).toHaveValue('test_app_fr');
+            expect(idField).toHaveValue('test_app_fr');
 
-            await userEvent.type(screen.getByRole('textbox', {name: /id/}), '_edited');
-            await userEvent.type(screen.getByRole('textbox', {name: /label_fr/}), 'Test app fr updated');
+            await userEvent.type(idField, '_edited');
+            await userEvent.type(endpointField, '-edited');
+            await userEvent.type(labelFrField, 'Test app fr updated');
 
-            expect(screen.getByRole('textbox', {name: /id/})).toHaveValue('test_app_fr_edited');
+            expect(idField).toHaveValue('test_app_fr_edited');
+            expect(endpointField).toHaveValue('test-app-fr-edited');
             cleanup();
         });
     });

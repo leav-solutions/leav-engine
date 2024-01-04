@@ -1,12 +1,12 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {formatId, idFormatRegex} from '@leav/utils';
+import {idFormatRegex, slugifyString} from '@leav/utils';
 import {Form, FormInstance, Input, Select} from 'antd';
 import React, {useState} from 'react';
-import {TreeBehavior, TreeDetailsFragment} from '../../../../../_gqlTypes';
 import {useLang} from '../../../../../hooks';
 import {useSharedTranslation} from '../../../../../hooks/useSharedTranslation';
+import {TreeBehavior, TreeDetailsFragment} from '../../../../../_gqlTypes';
 import FieldsGroup from '../../../../FieldsGroup';
 import {SubmitStateNotifier} from '../../../../SubmitStateNotifier';
 import {TreeLibrariesForm} from './TreeLibrariesForm';
@@ -47,7 +47,7 @@ function EditTreeInfoForm({
     const _handleLabelChange = (labelLang: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
         // If ID hasn't been edited manually, generate it from label
         if (!isEditing && labelLang === defaultLang && !hasIdBeenEdited) {
-            form.setFieldsValue({id: formatId(e.target.value)});
+            form.setFieldsValue({id: slugifyString(e.target.value)});
         }
     };
 
@@ -200,7 +200,7 @@ function EditTreeInfoForm({
                 rules={[{required: true, message: _getRequiredMessage('behavior')}]}
                 hasFeedback
             >
-                <Select options={behaviorSelectOptions} disabled={isReadOnly || isEditing} aria-label=""/>
+                <Select options={behaviorSelectOptions} disabled={isReadOnly || isEditing} aria-label="" />
             </Form.Item>
             <Form.Item name="libraries" key="libraries">
                 <TreeLibrariesForm

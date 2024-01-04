@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined} from '@ant-design/icons';
-import {formatId, idFormatRegex, localizedTranslation} from '@leav/utils';
+import {idFormatRegex, localizedTranslation, slugifyString} from '@leav/utils';
 import {Form, FormInstance, Input, Select} from 'antd';
 import React, {useState} from 'react';
 import styled from 'styled-components';
@@ -58,7 +58,7 @@ function EditLibraryInfoForm({
     const _handleLabelChange = (labelLang: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
         // If ID hasn't been edited manually, generate it from label
         if (!isEditing && labelLang === defaultLang && !hasIdBeenEdited) {
-            form.setFieldsValue({id: formatId(e.target.value)});
+            form.setFieldsValue({id: slugifyString(e.target.value)});
         }
     };
 
