@@ -239,7 +239,7 @@ export async function gqlCreateRecord(library: string): Promise<string> {
     return res.data.data.c.record.id;
 }
 
-export async function gqlGetAllUsersGroupNodeId() {
+export async function gqlGetAdminsGroupNodeId() {
     return adminsGroupId;
 }
 

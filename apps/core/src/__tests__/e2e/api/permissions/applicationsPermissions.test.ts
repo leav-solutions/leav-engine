@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {gqlAddUserToGroup, gqlGetAllUsersGroupNodeId, gqlSaveApplication, makeGraphQlCall} from '../e2eUtils';
+import {gqlAddUserToGroup, gqlGetAdminsGroupNodeId, gqlSaveApplication, makeGraphQlCall} from '../e2eUtils';
 
 describe('ApplicationsPermissions', () => {
     const testAppId = 'test_permissions_app';
@@ -12,7 +12,7 @@ describe('ApplicationsPermissions', () => {
         // Create library to use in permissions tree
         await gqlSaveApplication(testAppId, 'Test app permissions', 'permission-app');
 
-        allUsersTreeElemNodeId = await gqlGetAllUsersGroupNodeId();
+        allUsersTreeElemNodeId = await gqlGetAdminsGroupNodeId();
         await gqlAddUserToGroup(allUsersTreeElemNodeId);
     });
 

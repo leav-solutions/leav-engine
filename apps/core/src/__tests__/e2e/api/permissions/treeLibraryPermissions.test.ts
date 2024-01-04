@@ -4,7 +4,7 @@
 import {
     gqlAddElemToTree,
     gqlAddUserToGroup,
-    gqlGetAllUsersGroupNodeId,
+    gqlGetAdminsGroupNodeId,
     gqlSaveLibrary,
     makeGraphQlCall
 } from '../e2eUtils';
@@ -33,7 +33,7 @@ describe('TreeLibraryPermissions', () => {
             }
         }`);
 
-        allUsersTreeElemId = await gqlGetAllUsersGroupNodeId();
+        allUsersTreeElemId = await gqlGetAdminsGroupNodeId();
         await gqlAddUserToGroup(allUsersTreeElemId);
     });
 

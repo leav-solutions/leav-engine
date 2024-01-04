@@ -6,7 +6,7 @@ import {
     gqlAddElemToTree,
     gqlAddUserToGroup,
     gqlCreateRecord,
-    gqlGetAllUsersGroupNodeId,
+    gqlGetAdminsGroupNodeId,
     gqlSaveAttribute,
     gqlSaveLibrary,
     gqlSaveTree,
@@ -36,7 +36,7 @@ describe('Permissions', () => {
         permTreeElemId = await gqlCreateRecord(permTreeLibName);
         nodePermTreeElem = await gqlAddElemToTree(permTreeName, {id: permTreeElemId, library: permTreeLibName});
 
-        allUsersTreeElemNodeId = await gqlGetAllUsersGroupNodeId();
+        allUsersTreeElemNodeId = await gqlGetAdminsGroupNodeId();
         await gqlAddUserToGroup(allUsersTreeElemNodeId);
 
         // Create a library using this perm tree

@@ -5,7 +5,7 @@ import {
     gqlAddElemToTree,
     gqlAddUserToGroup,
     gqlCreateRecord,
-    gqlGetAllUsersGroupNodeId,
+    gqlGetAdminsGroupNodeId,
     gqlSaveTree,
     makeGraphQlCall
 } from '../e2eUtils';
@@ -18,7 +18,7 @@ describe('TreePermissions', () => {
         // Create tree
         await gqlSaveTree(permTreeName, 'Test tree', ['users']);
 
-        allUsersTreeElemId = await gqlGetAllUsersGroupNodeId();
+        allUsersTreeElemId = await gqlGetAdminsGroupNodeId();
         await gqlAddUserToGroup(allUsersTreeElemId);
     });
 
