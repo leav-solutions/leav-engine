@@ -2,9 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {mockApplication} from '../../__mocks__/common/application';
-import {GetApplicationByIdDocument, SaveApplicationDocument} from '../../_gqlTypes';
+import {
+    CheckApplicationExistenceDocument,
+    GetApplicationByIdDocument,
+    GetApplicationModulesDocument,
+    SaveApplicationDocument
+} from '../../_gqlTypes';
 import {cleanup, render, screen, waitFor} from '../../_tests/testUtils';
+import {mockApplication} from '../../__mocks__/common/application';
 import EditApplication from './EditApplication';
 
 window.matchMedia = query => ({
@@ -28,9 +33,42 @@ describe('EditApplication', () => {
         jest.resetAllMocks();
     });
 
+    const commonMocks = [
+        {
+            request: {
+                query: GetApplicationModulesDocument,
+                variables: {}
+            },
+            result: {
+                data: {
+                    applicationsModules: [
+                        {
+                            id: 'module1',
+                            description: 'Module 1',
+                            version: 'v1.0'
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            request: {
+                query: CheckApplicationExistenceDocument,
+                variables: {
+                    id: 'test_app_fr_edited'
+                }
+            },
+            result: {
+                data: {
+                    applications: []
+                }
+            }
+        }
+    ];
+
     describe('Create new app', () => {
         test('Display creation form', async () => {
-            render(<EditApplication />);
+            render(<EditApplication />, {mocks: commonMocks});
 
             // Get all at once for performance reason
             const inputs = await screen.findAllByRole('textbox', {name: /label|description/});
@@ -54,7 +92,7 @@ describe('EditApplication', () => {
         });
 
         test('Do not generate id if user has modified it', async () => {
-            render(<EditApplication />);
+            render(<EditApplication />, {mocks: commonMocks});
 
             await userEvent.type(screen.getByRole('textbox', {name: 'label_fr'}), 'Test app fr');
 
@@ -70,6 +108,7 @@ describe('EditApplication', () => {
 
     describe('Edit existing app', () => {
         const mocks = [
+            ...commonMocks,
             {
                 request: {
                     query: GetApplicationByIdDocument,
@@ -154,6 +193,7 @@ describe('EditApplication', () => {
             test('Can edit application', async () => {
                 let saveCalled = false;
                 const mockSave = [
+                    ...commonMocks,
                     {
                         request: {
                             query: SaveApplicationDocument,
@@ -208,6 +248,7 @@ describe('EditApplication', () => {
 
             test('If app administration is not allowed, cannot edit anything', async () => {
                 const mocksNotAllowed = [
+                    ...commonMocks,
                     {
                         request: {
                             query: GetApplicationByIdDocument,
