@@ -101,7 +101,6 @@ enum ImportAction {
 
 interface IStat {
     elements: {[key in ImportAction]?: number};
-    links: number;
     trees: number;
 }
 
@@ -633,14 +632,6 @@ export default function({
 
             fs.writeSync(
                 fd,
-                `${translator.t('import.stats_links', {
-                    lng: lang,
-                    links: (stats as IStat).links
-                })}\n`
-            );
-
-            fs.writeSync(
-                fd,
                 `${translator.t('import.stats_trees', {
                     lng: lang,
                     trees: (stats as IStat).trees
@@ -897,7 +888,7 @@ export default function({
             let action: ImportAction;
             const stats: Stat = excelMapping
                 ? {}
-                : {elements: {created: 0, updated: 0, ignored: 0}, links: 0, trees: 0};
+                : {elements: {created: 0, updated: 0, ignored: 0}, trees: 0};
 
             await _getStoredFileData(
                 filename,
@@ -1039,9 +1030,7 @@ export default function({
                         if (excelMapping) {
                             const sheetIndex = excelMapping[cacheKey]?.sheet;
                             stats[sheetIndex] = stats[sheetIndex] || {};
-                            stats[sheetIndex].links = stats[sheetIndex].links + 1 || 1;
-                        } else {
-                            (stats as IStat).links += 1;
+                            stats[sheetIndex].links = stats[sheetIndex].links + data.element.data.length || 1;
                         }
                     } catch (e) {
                         if (!(e instanceof ValidationError) && !(e instanceof PermissionError)) {
