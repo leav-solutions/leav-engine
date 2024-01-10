@@ -32,7 +32,13 @@ export interface IValue {
     library?: string; // only for tree attributes
     value: string | IMatch[];
     metadata?: IValueMetadata;
-    version?: IValueVersion;
+    version?: IImportValueVersion[];
+}
+
+export interface IImportValueVersion {
+    treeId: string;
+    element: IMatch[];
+    library?: string;
 }
 
 export interface IData {
@@ -46,7 +52,6 @@ export interface IElement {
     matches: IMatch[];
     mode: ImportMode;
     data: IData[];
-    links: IData[];
 }
 
 export interface ITree {
@@ -63,4 +68,10 @@ export interface ITree {
 export interface IFile {
     elements: IElement[];
     trees: ITree[];
+}
+
+export interface ICacheParams {
+    cacheDataPath: string,
+    cacheKey: number,
+    isCacheActive: boolean,
 }

@@ -199,6 +199,7 @@
         "import_label": "Import du fichier {{filename}}",
         "import_description": {
             "elements_process": "Import des éléments",
+            "links_and_versions_process": "Import des liaisons et des valeurs versionnables",
             "tree_elements_process": "Placement des éléments dans les arbres",
             "links_process": "Etablissement des liaisons"
         },
@@ -217,7 +218,6 @@
         "stats_sheet_elements": "Feuille {{sheet}}: {{created}} éléments créés, {{updated}} éléments mis à jour, {{ignored}} éléments ignorés",
         "stats_sheet_links": "Feuille {{sheet}}: {{links}} liaisons créées",
         "stats_elements": "{{created}} éléments créés, {{updated}} éléments mis à jour, {{ignored}} éléments ignorés",
-        "stats_links": "{{links}} liaisons créées",
         "stats_trees": "{{trees}} éléments placés dans un arbre"
     },
     "indexation": {

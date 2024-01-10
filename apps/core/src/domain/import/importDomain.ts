@@ -28,6 +28,7 @@ import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {
     Action,
+    ICacheParams,
     IData,
     IElement,
     IMatch,
@@ -42,6 +43,7 @@ import {ITaskFuncParams, TaskCallbackType, TaskPriority, TaskType} from '../../_
 import {ITreeElement} from '../../_types/tree';
 import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
+import {IVersionProfileDomain} from '../versionProfile/versionProfileDomain';
 
 export const IMPORT_DATA_SCHEMA_PATH = path.resolve(__dirname, './import-data-schema.json');
 export const IMPORT_CONFIG_SCHEMA_PATH = path.resolve(__dirname, './import-config-schema.json');
@@ -85,11 +87,9 @@ interface IExcelMapping {
     [elementIndex: number]: {sheet: number; line: number};
 }
 
-interface ICachedLinks {
-    library: string;
+interface ICachedData {
     recordIds: string[];
-    links: IElement['links'];
-    JSONLine: number;
+    element: IElement;
 }
 
 enum ImportAction {
@@ -100,11 +100,18 @@ enum ImportAction {
 
 interface IStat {
     elements: {[key in ImportAction]?: number};
-    links: number;
     trees: number;
 }
 
 type Stat = {[sheetIndex: number]: IStat} | IStat;
+
+interface IProgress {
+    elements: number;
+    elementsCached: number;
+    treesNb: number;
+    position: number;
+    percent: number;
+}
 
 interface IDeps {
     'core.domain.library'?: ILibraryDomain;
@@ -113,6 +120,7 @@ interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
     'core.domain.value'?: IValueDomain;
     'core.domain.tree'?: ITreeDomain;
+    'core.domain.versionProfile'?: IVersionProfileDomain;
     'core.domain.tasksManager'?: ITasksManagerDomain;
     'core.domain.helpers.updateTaskProgress'?: UpdateTaskProgress;
     'core.domain.eventsManager'?: IEventsManagerDomain;
@@ -122,13 +130,14 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function ({
+export default function({
     'core.domain.library': libraryDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.helpers.validate': validateHelper = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.value': valueDomain = null,
     'core.domain.tree': treeDomain = null,
+    'core.domain.versionProfile': versionProfileDomain = null,
     'core.domain.tasksManager': tasksManagerDomain = null,
     'core.domain.helpers.updateTaskProgress': updateTaskProgress = null,
     'core.domain.eventsManager': eventsManagerDomain = null,
@@ -158,6 +167,11 @@ export default function ({
 
             value.value = recordsList.list[0]?.id;
 
+            // if value is undefined, it means that we have no record for this match
+            if (typeof value.value === 'undefined') {
+                throw new Error('No record found for match');
+            }
+
             if (attribute.type === AttributeTypes.TREE) {
                 const node = await treeDomain.getNodesByRecord({
                     treeId: attribute.linked_tree,
@@ -170,37 +184,108 @@ export default function ({
 
                 value.value = node[0];
             }
-
-            if (typeof value.value === 'undefined') {
-                // TODO: Throw
-                return;
-            }
         }
+
+        // if version, search record id (from leav) then node id (from tree)
+        // with that, construct the version object
+        const version = await value.version?.reduce(async (accProm, v) => {
+            const acc = await accProm;
+
+            if (!v.element?.length) {
+                acc[v.treeId] = null;
+                return acc;
+            }
+
+            const recordsList = await recordDomain.find({
+                params: {
+                    library: v.library,
+                    filters: _matchesToFilters(v.element as IMatch[])
+                },
+                ctx
+            });
+
+            const recordIdFound = recordsList.list[0]?.id;
+
+            if (!recordIdFound) {
+                console.warn(`No record found for match ${JSON.stringify(v.element)}`);
+                return acc;
+            }
+
+            const treeNode = await treeDomain.getNodesByRecord({
+                treeId: v.treeId,
+                record: {
+                    id: recordIdFound,
+                    library: v.library
+                },
+                ctx
+            });
+
+            acc[v.treeId] = treeNode[0];
+            return acc;
+        }, Promise.resolve({}));
 
         await valueDomain.saveValue({
             library,
             recordId,
             attribute: attribute.id,
-            value: {value: value.value, id_value: valueId, metadata: value.metadata, version: value.version},
+            value: {value: value.value, id_value: valueId, metadata: value.metadata, version},
             ctx
         });
     };
 
     const _treatElement = async (
+        element: IElement,
+        recordIds: string[],
+        cacheParams: ICacheParams,
+        progress: IProgress,
+        ctx: IQueryInfos
+    ): Promise<void> => {
+        const tmpData = [];
+
+        for (const data of element.data) {
+            const attrs = await attributeDomain.getLibraryAttributes(element.library, ctx);
+            const libraryAttribute = attrs.find(a => a.id === data.attribute);
+
+            if (typeof libraryAttribute === 'undefined') {
+                throw new ValidationError<IAttribute>({
+                    id: {msg: Errors.UNKNOWN_ATTRIBUTE, vars: {attribute: data.attribute}}
+                });
+            }
+
+            const isTypeLink =
+                libraryAttribute?.type === AttributeTypes.SIMPLE_LINK ||
+                libraryAttribute?.type === AttributeTypes.ADVANCED_LINK;
+
+            // if cacheData = true, we cache data that is not versionable and is not a link type
+            const hasVersionableValue = data.values.some(v => v.version?.length);
+            const isCachedData = cacheParams.isCacheActive && (hasVersionableValue || isTypeLink);
+            if (isCachedData) {
+                tmpData.push(data);
+                continue;
+            }
+
+            // call treatData only if data.version.length === 0
+            await _treatData(element.library, data, recordIds, ctx, libraryAttribute);
+        }
+
+        // if we have cached data, we cache it
+        if (tmpData.length) {
+            await cacheService.getCache(ECacheType.DISK).storeData({
+                key: cacheParams.cacheKey.toString(),
+                data: JSON.stringify({element: {...element, data: tmpData}, recordIds}),
+                path: cacheParams.cacheDataPath
+            });
+            progress.elementsCached += 1;
+        }
+    };
+
+    const _treatData = async (
         library: string,
         data: IData,
         recordIds: string[],
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
+        libraryAttribute: IAttribute
     ): Promise<void> => {
-        const attrs = await attributeDomain.getLibraryAttributes(library, ctx);
-        const libraryAttribute = attrs.find(a => a.id === data.attribute);
-
-        if (typeof libraryAttribute === 'undefined') {
-            throw new ValidationError<IAttribute>({
-                id: {msg: Errors.UNKNOWN_ATTRIBUTE, vars: {attribute: data.attribute}}
-            });
-        }
-
         for (const recordId of recordIds) {
             let currentValues: IValue[];
 
@@ -371,8 +456,7 @@ export default function ({
         filename: string,
         callbackElement: (element: IElement, index: number) => Promise<void>,
         callbackTree: (element: ITree, index: number) => Promise<void>,
-        ctx: IQueryInfos,
-        updateProgress?: (increasePos: number, translationKey?: string) => Promise<void>
+        ctx: IQueryInfos
     ): Promise<boolean> => {
         return new Promise((resolve, reject) => {
             const parser = new JsonParser();
@@ -392,7 +476,7 @@ export default function ({
                 fileStream.resume();
             };
 
-            parser.onValue = async function (data: any) {
+            parser.onValue = async function(data: any) {
                 try {
                     if (this.stack[this.stack.length - 1]?.key === 'elements' && !!data.library) {
                         if (callbacks.length >= config.import.groupData) {
@@ -400,13 +484,6 @@ export default function ({
                         }
 
                         callbacks.push(async () => callbackElement(data, elementIndex++));
-
-                        if (typeof updateProgress !== 'undefined') {
-                            await updateProgress(
-                                data.matches.length + data.data.length,
-                                'tasks.import_description.elements_process'
-                            );
-                        }
                     } else if (this.stack[this.stack.length - 1]?.key === 'trees' && !!data.treeId) {
                         // If the first tree has never been reached before we check if callbacks for
                         // elements are still pending and call them before processing the trees.
@@ -421,10 +498,6 @@ export default function ({
                         fileStream.pause();
 
                         await callbackTree(data, treeIndex++);
-
-                        if (typeof updateProgress !== 'undefined') {
-                            await updateProgress(1, 'tasks.import_description.tree_elements_process');
-                        }
 
                         fileStream.resume();
                     }
@@ -558,14 +631,6 @@ export default function ({
 
             fs.writeSync(
                 fd,
-                `${translator.t('import.stats_links', {
-                    lng: lang,
-                    links: (stats as IStat).links
-                })}\n`
-            );
-
-            fs.writeSync(
-                fd,
                 `${translator.t('import.stats_trees', {
                     lng: lang,
                     trees: (stats as IStat).trees
@@ -575,6 +640,23 @@ export default function ({
     };
 
     const _isExcelMapped = (stats: Stat): boolean => !(stats as IStat).elements;
+
+    const _updateTaskProgress = async (
+        progress: IProgress,
+        increasePosition: number,
+        translationKey: string,
+        taskId: string,
+        ctx: IQueryInfos
+    ) => {
+        progress.position += increasePosition;
+        progress.percent = await updateTaskProgress(taskId, progress.percent, ctx, {
+            position: {
+                index: progress.position,
+                total: progress.elements + progress.treesNb + progress.elementsCached
+            },
+            ...(translationKey && {translationKey})
+        });
+    };
 
     return {
         async importConfig(params: IImportConfigParams, task?: ITaskFuncParams): Promise<string> {
@@ -661,6 +743,20 @@ export default function ({
                 }
             }
 
+            console.info('Processing trees...');
+            if ('trees' in elements) {
+                for (const tree of elements.trees) {
+                    await treeDomain.saveTree(tree, ctx);
+                }
+            }
+
+            console.info('Processing version profiles...');
+            if ('version_profiles' in elements) {
+                for (const version_profile of elements.version_profiles) {
+                    await versionProfileDomain.saveVersionProfile({versionProfile: version_profile, ctx});
+                }
+            }
+
             console.info('Processing attributes...');
             if ('attributes' in elements) {
                 for (const attribute of elements.attributes) {
@@ -673,13 +769,6 @@ export default function ({
                 for (const library of elements.libraries) {
                     library.attributes = library.attributes?.map((id: string) => ({id}));
                     await libraryDomain.saveLibrary({id: library.id, attributes: library.attributes}, ctx);
-                }
-            }
-
-            console.info('Processing trees...');
-            if ('trees' in elements) {
-                for (const tree of elements.trees) {
-                    await treeDomain.saveTree(tree, ctx);
                 }
             }
 
@@ -772,31 +861,19 @@ export default function ({
                 throw new Error(`Invalid JSON data. See ${reportFilePath} file for more details.`);
             }
 
-            const progress = {
-                elementsNb: 0,
+            const progress: IProgress = {
+                elements: 0,
+                elementsCached: 0,
                 treesNb: 0,
-                linksNb: 0,
                 position: 0,
                 percent: 0
-            };
-
-            const _updateTaskProgress = async (increasePosition: number, translationKey?: string) => {
-                progress.position += increasePosition;
-                progress.percent = await updateTaskProgress(task.id, progress.percent, ctx, {
-                    position: {
-                        index: progress.position,
-                        total: progress.elementsNb + progress.treesNb + progress.linksNb
-                    },
-                    ...(translationKey && {translationKey})
-                });
             };
 
             // We call iterate on file a first time to estimate time of import
             await _getStoredFileData(
                 filename,
                 async (element: IElement, index: number): Promise<void> => {
-                    progress.elementsNb += element.matches.length + element.data.length;
-                    progress.linksNb += element.links.length;
+                    progress.elements += 1;
                 },
                 async (tree: ITree, index: number) => {
                     progress.treesNb += 1;
@@ -804,13 +881,13 @@ export default function ({
                 params.ctx
             );
 
-            const cacheDataPath = `${filename}-links`;
+            const cacheDataPath = `${filename}-data`;
             let lastCacheIndex: number;
 
             let action: ImportAction;
             const stats: Stat = excelMapping
                 ? {}
-                : {elements: {created: 0, updated: 0, ignored: 0}, links: 0, trees: 0};
+                : {elements: {created: 0, updated: 0, ignored: 0}, trees: 0};
 
             await _getStoredFileData(
                 filename,
@@ -824,13 +901,16 @@ export default function ({
                             throw new ValidationError({element: Errors.NO_IMPORT_MATCHES});
                         }
 
+                        // required to update an existing record (find it from the matches array)
                         let recordIds = await _getMatchRecords(element.library, element.matches, ctx);
                         const recordFound = !!recordIds.length;
 
+                        // cannot update the record if not found
                         if (!recordFound && importMode === ImportMode.UPDATE) {
                             throw new ValidationError({element: Errors.MISSING_ELEMENTS});
                         }
 
+                        // cannot add a found record
                         if (recordFound && importMode === ImportMode.INSERT) {
                             action = ImportAction.IGNORED;
                             return;
@@ -843,10 +923,19 @@ export default function ({
                         } else {
                             action = ImportAction.UPDATED;
                         }
-
-                        for (const data of element.data) {
-                            await _treatElement(element.library, data, recordIds, ctx);
-                        }
+                        const cacheParams: ICacheParams = {
+                            cacheDataPath,
+                            cacheKey: index,
+                            isCacheActive: true
+                        };
+                        await _updateTaskProgress(
+                            progress,
+                            1,
+                            'tasks.import_description.elements_process',
+                            task.id,
+                            ctx
+                        );
+                        await _treatElement(element, recordIds, cacheParams, progress, ctx);
 
                         // update import stats
                         if (element.data.length) {
@@ -858,18 +947,6 @@ export default function ({
                                 (stats as IStat).elements[action] += 1;
                             }
                         }
-
-                        // Caching element links, to treat them later
-                        // TODO: Improvement: if no links no cache.
-                        await cacheService.getCache(ECacheType.DISK).storeData({
-                            key: index.toString(),
-                            data: JSON.stringify({
-                                library: element.library,
-                                recordIds,
-                                links: element.links
-                            } as ICachedLinks),
-                            path: cacheDataPath
-                        });
 
                         if (typeof lastCacheIndex === 'undefined' || index > lastCacheIndex) {
                             lastCacheIndex = index;
@@ -906,6 +983,13 @@ export default function ({
                             throw new ValidationError<IAttribute>({id: Errors.MISSING_ELEMENTS});
                         }
 
+                        await _updateTaskProgress(
+                            progress,
+                            1,
+                            'tasks.import_description.tree_elements_process',
+                            task.id,
+                            ctx
+                        );
                         await _treatTree(tree.library, tree.treeId, parent, recordIds, tree.action, ctx, tree.order);
 
                         if (!excelMapping) {
@@ -922,46 +1006,51 @@ export default function ({
                         _writeReport(fd, pos, e, lang);
                     }
                 },
-                ctx,
-                // For each element we check if it increases the progress, and update it if necessary
-                _updateTaskProgress
+                ctx
             );
 
-            // Treat links
+            // Treat cache (links and versionable values)
             for (let cacheKey = 0; cacheKey <= lastCacheIndex; cacheKey++) {
                 try {
                     const cacheStringifiedObject = (
                         await cacheService.getCache(ECacheType.DISK).getData([cacheKey.toString()], cacheDataPath)
                     )[0];
 
-                    const element: ICachedLinks = JSON.parse(cacheStringifiedObject);
+                    const data: ICachedData = JSON.parse(cacheStringifiedObject);
 
-                    for (const link of element.links) {
-                        try {
-                            await _treatElement(element.library, link, element.recordIds, ctx);
+                    try {
+                        const cacheParams: ICacheParams = {
+                            cacheDataPath,
+                            cacheKey,
+                            isCacheActive: false
+                        };
 
-                            if (excelMapping) {
-                                const sheetIndex = excelMapping[cacheKey]?.sheet;
-                                stats[sheetIndex] = stats[sheetIndex] || {};
-                                stats[sheetIndex].links = stats[sheetIndex].links + 1 || 1;
-                            } else {
-                                (stats as IStat).links += 1;
-                            }
-                        } catch (e) {
-                            if (!(e instanceof ValidationError) && !(e instanceof PermissionError)) {
-                                throw e;
-                            }
-
-                            // cacheKey is equal to element index here
-                            const pos = excelMapping
-                                ? _getExcelPos(cacheKey)
-                                : translator.t('import.element_pos', {lng: lang, index: cacheKey});
-
-                            _writeReport(fd, pos, e, lang);
+                        await _treatElement(data.element, data.recordIds, cacheParams, progress, ctx);
+                        if (excelMapping) {
+                            const sheetIndex = excelMapping[cacheKey]?.sheet;
+                            stats[sheetIndex] = stats[sheetIndex] || {};
+                            stats[sheetIndex].links = stats[sheetIndex].links + data.element.data.length || 1;
                         }
-                    }
+                    } catch (e) {
+                        if (!(e instanceof ValidationError) && !(e instanceof PermissionError)) {
+                            throw e;
+                        }
 
-                    await _updateTaskProgress(element.links.length, 'tasks.import_description.links_process');
+                        // cacheKey is equal to element index here
+                        const pos = excelMapping
+                            ? _getExcelPos(cacheKey)
+                            : translator.t('import.element_pos', {lng: lang, index: cacheKey});
+
+                        _writeReport(fd, pos, e, lang);
+                    } finally {
+                        await _updateTaskProgress(
+                            progress,
+                            1,
+                            'tasks.import_description.links_and_versions_process',
+                            task.id,
+                            ctx
+                        );
+                    }
                 } catch (err) {
                     continue;
                 }
@@ -1183,8 +1272,7 @@ export default function ({
                             library,
                             matches,
                             mode,
-                            data: elementData,
-                            links: elementLinks
+                            data: [...elementData, ...elementLinks]
                         };
 
                         // Adding element to JSON file.

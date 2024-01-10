@@ -120,16 +120,19 @@ const _validateVersion = async (
             return errors;
         }
 
-        const isPresent = await deps.treeRepo.isNodePresent({
-            treeId: treeName,
-            nodeId: value.version[treeName],
-            ctx
-        });
-        if (!isPresent) {
-            errors[treeName] = {
-                msg: Errors.ELEMENT_NOT_IN_TREE,
-                vars: {element: value.version[treeName], tree: treeName}
-            };
+        if (value.version[treeName] !== null) {
+            const isPresent = await deps.treeRepo.isNodePresent({
+                treeId: treeName,
+                nodeId: value.version[treeName],
+                ctx
+            });
+
+            if (!isPresent) {
+                errors[treeName] = {
+                    msg: Errors.ELEMENT_NOT_IN_TREE,
+                    vars: {element: value.version[treeName], tree: treeName}
+                };
+            }
         }
 
         return errors;

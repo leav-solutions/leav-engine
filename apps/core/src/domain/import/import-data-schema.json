@@ -2,6 +2,29 @@
   "$id": "import-data",
   "title": "LEAV Import Data",
   "definitions": {
+    "valueVersion": {
+      "type": "object",
+      "properties": {
+        "treeId": {
+          "type": "string"
+        },
+        "library": {
+          "type": "string"
+        },
+        "element": {
+          "description": "Object representing the element to process",
+          "type": ["array", "null"],
+          "items": {
+            "$ref": "#/definitions/match"
+          }
+        }
+      },
+      "required": [
+        "treeId",
+        "library",
+        "element"
+      ]
+    },
     "match": {
       "description": "Attribute/value pair used to find an element",
       "type": "object",
@@ -11,7 +34,7 @@
           "description": "Attribute key"
         },
         "value": {
-          "type": "string",
+          "type": ["string", "null"],
           "description": "Attribute value to search"
         }
       },
@@ -46,6 +69,12 @@
           "description": "Metadata values on linked attributes",
           "additionalProperties": {
             "type": "string"
+          }
+        },
+        "version":{
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/valueVersion"
           }
         }
       },
@@ -98,7 +127,9 @@
         "mode": {
           "type": "string",
           "enum": [
-            "update", "insert", "upsert"
+            "update",
+            "insert",
+            "upsert"
           ]
         },
         "data": {
@@ -107,20 +138,12 @@
           "items": {
             "$ref": "#/definitions/data"
           }
-        },
-        "links": {
-          "type": "array",
-          "description": "List of simple/advanced links attributes data to process",
-          "items": {
-            "$ref": "#/definitions/data"
-          }
         }
       },
       "required": [
         "library",
         "matches",
-        "data",
-        "links"
+        "data"
       ]
     },
     "tree": {

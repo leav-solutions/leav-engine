@@ -1208,6 +1208,7 @@ export default function ({
                 formattedValues = formattedValues.filter(
                     v =>
                         v.value !== null &&
+                        typeof v.value !== 'undefined' &&
                         typeof v.value === 'object' &&
                         v.value.hasOwnProperty('id') &&
                         v.value.hasOwnProperty('library')
