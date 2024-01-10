@@ -188,7 +188,7 @@ services:
       - *mount_point-files
 
   logs-collector:
-    image: leav_logs_local
+    image: leavengine/logs-collector:latest
     restart: always
     labels:
       - traefik.enable=true
