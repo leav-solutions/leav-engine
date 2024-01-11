@@ -346,7 +346,7 @@ export default function({
 
                 applicationApp.registerRoute(app);
 
-                await new Promise<void>(resolve => httpServer.listen(config.server.port, resolve));
+                await new Promise<void>(resolve => httpServer.listen(config.server.port, resolve).setTimeout(config.server.timeout));
                 logger.info(`🚀 Server ready at http://localhost:${config.server.port}/graphql`);
             } catch (e) {
                 utils.rethrow(e, 'Server init error:');
