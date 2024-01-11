@@ -117,8 +117,8 @@ export default function ({
             return fullSchema;
         },
         extensionPoints: {
-            registerActions: (actionArray?: IActionsListFunction[]) => {
-                actionsListDomain.registerActions(actionArray);
+            registerActions: (actions: IActionsListFunction[]) => {
+                actionsListDomain.registerActions(actions);
             }
         }
     };
