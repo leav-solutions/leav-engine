@@ -9,6 +9,7 @@ import {
     HttpLink,
     InMemoryCache,
     Observable,
+    PossibleTypesMap,
     ServerError,
     split
 } from '@apollo/client';
@@ -34,6 +35,12 @@ interface IApolloHandlerProps {
 
 const _redirectToLogin = () =>
     window.location.replace(`${ORIGIN_URL}/${APPS_ENDPOINT}/${LOGIN_ENDPOINT}/?dest=${window.location.pathname}`);
+
+const gqlPossibleTypes: PossibleTypesMap = {
+    Attribute: ['StandardAttribute', 'LinkAttribute', 'TreeAttribute'],
+    StandardValuesListConf: ['StandardStringValuesListConf', 'StandardDateRangeValuesListConf'],
+    GenericValue: ['Value', 'LinkValue', 'TreeValue']
+};
 
 const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
     const dispatch = useDispatch();
@@ -191,7 +198,8 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
                         }
                     }
                 }
-            }
+            },
+            possibleTypes: gqlPossibleTypes
         })
     });
 
