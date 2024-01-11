@@ -10,6 +10,7 @@
     "ignore":[
         "**/[!*.(ts|js|tsx|jsx)]",
         "apps/core/applications",
+        "apps/core/src/plugins",
         "imports",
         ".git",
         ".*",
