@@ -15,6 +15,7 @@ module.exports = {
          * the value is passed to the bytes library for parsing (https://www.npmjs.com/package/bytes).
          */
         uploadLimit: process.env.SERVER_UPLOAD_LIMIT || '100mb',
+        timeout: process.env.SERVER_TIMEOUT || 300000,
         supportEmail: process.env.SERVER_SUPPORT_EMAIL,
         admin: {
             login: process.env.SERVER_ADMIN_LOGIN,

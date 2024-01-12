@@ -40,6 +40,7 @@ export interface IServer {
     allowIntrospection: boolean;
     wsUrl: string;
     uploadLimit: number | string;
+    timeout: number;
     supportEmail: string;
     admin: {
         login: string;
