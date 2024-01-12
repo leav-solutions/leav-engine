@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import fs from 'fs';
 import {AwilixContainer} from 'awilix';
 import {StoreUploadFileFunc} from 'domain/helpers/storeUploadFile';
 import {IImportDomain} from 'domain/import/importDomain';
@@ -119,26 +120,36 @@ export default function ({
 
     return {
         importConfig: async (filepath: string, clear: boolean): Promise<void> => {
-            try {
-                await _importConfig(
-                    filepath,
-                    clear,
-                    {
-                        userId: config.defaultUserId,
-                        queryId: 'ImportConfig'
-                    },
-                    true
-                );
-            } finally {
-                await graphqlApp.getSchema();
-            }
+            await _importConfig(
+                filepath,
+                clear,
+                {
+                    userId: config.defaultUserId,
+                    queryId: 'ImportConfig'
+                },
+                true
+            );
         },
         importData: async (filepath: string): Promise<void> => {
-            try {
-                await importDomain.importData({filename: filepath, ctx: {userId: config.defaultUserId, queryId: 'ImportData'}});
-            } finally {
-                await graphqlApp.getSchema();
+            // extract filename from filepath
+            let filename = filepath.split('/').pop();
+            // check if filepath is a valid file
+            if(!fs.existsSync(filepath)) {
+                throw new Error('File not found');
             }
+
+            // check if file extension is allowed and rename file
+            const allowedExtensions = ['json'];
+            _validateFileFormat(filename, allowedExtensions);
+            filename = nanoid() + '.' + utils.getFileExtension(filename);
+
+            // copy filepath to import directory
+            await fs.promises.copyFile(filepath, `${config.import.directory}/${filename}`);
+
+            // delete original filepath
+            fs.unlinkSync(filepath);
+
+            await importDomain.importData({filename, ctx: {userId: config.defaultUserId, queryId: 'ImportData'}});
         },
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
