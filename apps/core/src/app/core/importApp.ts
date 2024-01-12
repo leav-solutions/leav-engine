@@ -20,6 +20,7 @@ import {IGraphqlApp} from '../graphql/graphqlApp';
 export interface ICoreImportApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
     importConfig(filepath: string, clear: boolean): Promise<void>;
+    importData(filepath: string): Promise<void>;
 }
 
 interface IDeps {
@@ -128,6 +129,13 @@ export default function ({
                     },
                     true
                 );
+            } finally {
+                await graphqlApp.getSchema();
+            }
+        },
+        importData: async (filepath: string): Promise<void> => {
+            try {
+                await importDomain.importData({filename: filepath, ctx: {userId: config.defaultUserId, queryId: 'ImportData'}});
             } finally {
                 await graphqlApp.getSchema();
             }
