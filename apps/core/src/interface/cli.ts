@@ -9,21 +9,41 @@ interface IDeps {
 }
 
 export default function ({'core.app.core.import': importApp = null}: IDeps = {}) {
+    const defineImportConfigCommand = () => {
+        program
+            .command('importConfig <file>')
+            .description('Import config from a JSON file')
+            .option('--clear', 'Empty database before import')
+            .action(async (filepath, options) => {
+                try {
+                    await importApp.importConfig(filepath, options.clear);
+                    process.exit(0);
+                } catch (e) {
+                    console.error(e);
+                    process.exit(1);
+                }
+            });
+    };
+
+    const defineImportDataCommand = () => {
+        program
+            .command('importData <file>')
+            .description('Import Data from a JSON file')
+            .action(async filepath => {
+                try {
+                    await importApp.importData(filepath);
+                    process.exit(0);
+                } catch (e) {
+                    console.error(e);
+                    process.exit(1);
+                }
+            });
+    };
+
     return {
-        run(args) {
-            program
-                .command('import <file>')
-                .description('Import data from a JSON file')
-                .option('--clear', 'Empty database before import')
-                .action(async (filepath, options) => {
-                    try {
-                        await importApp.importConfig(filepath, options.clear);
-                        process.exit(0);
-                    } catch (e) {
-                        console.error(e);
-                        process.exit(1);
-                    }
-                });
+        run() {
+            defineImportDataCommand();
+            defineImportConfigCommand();
 
             program.parse(process.argv);
 
