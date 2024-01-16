@@ -20,32 +20,37 @@ export const jsonHmr = () => {
     };
 };
 
-export const commonConfig = rootPath => ({
-    plugins: [svgr(), react(), jsonHmr(), splitVendorChunkPlugin()],
-    resolve: {
-        alias: {
-            '@leav/ui': path.resolve(__dirname, 'libs/ui/src'),
-            components: path.resolve(rootPath, './src/components'),
-            context: path.resolve(rootPath, './src/context'),
-            hooks: path.resolve(rootPath, './src/hooks'),
-            graphQL: path.resolve(rootPath, './src/graphQL'),
-            queries: path.resolve(rootPath, './src/queries'),
-            assets: path.resolve(rootPath, './src/assets'),
-            reduxStore: path.resolve(rootPath, './src/reduxStore'),
-            _gqlTypes: path.resolve(rootPath, './src/_gqlTypes'),
-            _tests: path.resolve(rootPath, './src/_tests'),
-            __mocks__: path.resolve(rootPath, './src/__mocks__'),
-            _types: path.resolve(rootPath, './src/_types'),
-            constants: path.resolve(rootPath, './src/constants'),
-            utils: path.resolve(rootPath, './src/utils'),
-            'react-i18next': path.resolve(__dirname, 'node_modules/react-i18next')
+export const commonConfig = rootPath => {
+    console.log('rootPath', rootPath);
+    return {
+        root: '.',
+        plugins: [svgr(), react(), jsonHmr(), splitVendorChunkPlugin()],
+        resolve: {
+            alias: [
+                {find: '@leav/ui', replacement: path.resolve(__dirname, 'libs/ui/src')},
+                {find: 'components', replacement: path.resolve(rootPath, './src/components')},
+                {find: 'context', replacement: path.resolve(rootPath, './src/context')},
+                {find: 'hooks', replacement: path.resolve(rootPath, './src/hooks')},
+                {find: 'graphQL', replacement: path.resolve(rootPath, './src/graphQL')},
+                {find: 'queries', replacement: path.resolve(rootPath, './src/queries')},
+                {find: 'assets', replacement: path.resolve(rootPath, './src/assets')},
+                {find: 'reduxStore', replacement: path.resolve(rootPath, './src/reduxStore')},
+                {find: '_gqlTypes', replacement: path.resolve(rootPath, './src/_gqlTypes')},
+                {find: '_tests', replacement: path.resolve(rootPath, './src/_tests')},
+                {find: '__mocks__', replacement: path.resolve(rootPath, './src/__mocks__')},
+                {find: '_types', replacement: path.resolve(rootPath, './src/_types')},
+                {find: 'constants', replacement: path.resolve(rootPath, './src/constants')},
+                {find: 'utils', replacement: path.resolve(rootPath, './src/utils')},
+                {find: 'react-i18next', replacement: path.resolve(__dirname, 'node_modules/react-i18next')},
+                {
+                    find: /_ui\/(.*)/,
+                    replacement: path.resolve(__dirname, 'libs/ui/src/$1')
+                }
+            ]
+        },
+        server: {
+            port: 3000,
+            host: true
         }
-    },
-    server: {
-        port: 3000,
-        host: true
-    },
-    build: {
-        minify: 'terser'
-    }
-});
+    };
+};

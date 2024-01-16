@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
+import useLang from '_ui/hooks/useLang';
 import {PreviewSize} from '../../constants';
-import useLang from '../../hooks/useLang';
 import {IRecordIdentityWhoAmI} from '../../types/RecordIdentity';
 import {EntityCard, IEntityData} from '../EntityCard';
 import {IRecordCardProps} from './_types';
