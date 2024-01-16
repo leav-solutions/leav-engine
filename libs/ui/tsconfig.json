@@ -8,7 +8,10 @@
     "skipLibCheck": true,
     "types": ["jest", "@types/jest", "@testing-library/jest-dom"],
     "jsx": "react-jsx",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "_ui/*": ["./src/*"]
+    }
   },
   "include": [
     "src",

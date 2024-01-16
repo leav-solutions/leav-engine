@@ -15,12 +15,12 @@ export default () => {
     return defineConfig({
         ...conf,
         resolve: {
-            alias: {
+            alias: [
                 ...conf.resolve.alias,
-                themingVar: path.resolve(__dirname, './src/themingVar'),
-                '../../theme.config': path.resolve(__dirname, './src/semantic-ui/theme.config'),
-                'semantic-ui/site': path.resolve(__dirname, './src/semantic-ui/site')
-            }
+                {find: 'themingVar', replacement: path.resolve(__dirname, './src/themingVar')},
+                {find: '../../theme.config', replacement: path.resolve(__dirname, './src/semantic-ui/theme.config')},
+                {find: 'semantic-ui/site', replacement: path.resolve(__dirname, './src/semantic-ui/site')}
+            ]
         },
         plugins: [
             react(),
