@@ -5,8 +5,8 @@ import {getInitials, getInvertColor, stringToColor} from '@leav/utils';
 import {Skeleton} from 'antd';
 import {useState} from 'react';
 import styled, {CSSObject} from 'styled-components';
+import {getPreviewSize} from '_ui/_utils';
 import {PreviewSize} from '../../../constants';
-import {getPreviewSize} from '../../../helpers/getPreviewSize';
 import {IEntityPreviewProps, IGeneratedPreviewProps} from '../_types';
 import SimplisticEntityPreview from './SimplisticEntityPreview';
 

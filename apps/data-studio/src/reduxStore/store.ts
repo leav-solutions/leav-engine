@@ -4,16 +4,14 @@
 import {configureStore} from '@reduxjs/toolkit';
 import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
 import activePanelReducer from './activePanel';
-import displayReducer from './display';
-import navigationReducer from './navigation';
 import infosReducer from './infos';
+import navigationReducer from './navigation';
+import notificationsReducer from './notifications';
 import selectionReducer from './selection';
 import tasksReducer from './tasks';
-import notificationsReducer from './notifications';
 
 const store = configureStore({
     reducer: {
-        display: displayReducer,
         selection: selectionReducer,
         navigation: navigationReducer,
         info: infosReducer,

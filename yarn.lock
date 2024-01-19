@@ -7774,7 +7774,7 @@ __metadata:
     typescript: "npm:4.8.3"
   peerDependencies:
     "@ant-design/icons": ">=5.2"
-    "@apollo/client": ">=3.7"
+    "@apollo/client": ">=3.8.1"
     antd: 5.9.1
     aristid-ds: ^0.7.1
     i18next: 22.5
@@ -24747,6 +24747,7 @@ __metadata:
     "@ant-design/icons": "npm:5.2.6"
     "@apollo/client": "npm:3.8.1"
     "@leav/ui": "workspace:libs/ui"
+    "@leav/utils": "workspace:libs/utils"
     "@testing-library/jest-dom": "npm:5.16.4"
     "@testing-library/react": "npm:13.1.1"
     "@testing-library/react-hooks": "npm:8.0.0"

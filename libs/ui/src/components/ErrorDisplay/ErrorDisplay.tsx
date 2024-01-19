@@ -4,8 +4,8 @@
 import {CloseCircleFilled, FrownOutlined, MinusCircleFilled} from '@ant-design/icons';
 import {Button, Result} from 'antd';
 import {ReactNode} from 'react';
-import {useTranslation} from 'react-i18next';
 import {useHistory} from 'react-router-dom';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ErrorDisplayTypes} from '../../constants';
 
 interface IErrorProps {
@@ -21,7 +21,7 @@ function ErrorDisplay({
     showActionButton = true,
     type = ErrorDisplayTypes.ERROR
 }: IErrorProps): JSX.Element {
-    const {t, i18n} = useTranslation();
+    const {t, i18n} = useSharedTranslation();
     const history = useHistory();
 
     const _handleBackHomeClick = () => history.replace('/');

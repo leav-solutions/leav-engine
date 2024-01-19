@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Modal} from 'antd';
 import {useState} from 'react';
-import {LibraryLightFragment} from '../../_gqlTypes';
-import {useSharedTranslation} from '../../hooks/useSharedTranslation';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {LibraryLightFragment} from '_ui/_gqlTypes';
 import {LibrariesList} from './LibrariesList';
 
 interface ILibraryPickerProps {

@@ -17,3 +17,5 @@ window.matchMedia = query => ({
     removeEventListener: jest.fn(),
     dispatchEvent: jest.fn()
 });
+
+jest.mock('_ui/hooks/useSharedTranslation');

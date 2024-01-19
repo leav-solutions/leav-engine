@@ -10,9 +10,12 @@ import {
     mockGetLibraryDetailExtendedQueryVar
 } from '__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
 
-jest.mock('components/LibraryItemsList', () => {
-    return function LibraryItemsList() {
-        return <div>LibraryItemsList</div>;
+jest.mock('@leav/ui', () => {
+    return {
+        ...jest.requireActual('@leav/ui'),
+        LibraryItemsList: () => {
+            return <div>LibraryItemsList</div>;
+        }
     };
 });
 

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DeleteOutlined} from '@ant-design/icons';
 import userEvent from '@testing-library/user-event';
-import {act} from 'react-dom/test-utils';
+import {act} from '_ui/_tests/testUtils';
 import {render, screen} from '../../_tests/testUtils';
 import FloatingMenu from './FloatingMenu';
 import {FloatingMenuAction, IFloatingMenuActionWithIcon} from './_types';

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloudUploadOutlined, DatabaseOutlined} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
-import {ErrorDisplay, FloatingMenu, FloatingMenuAction, Loading, useLang} from '@leav/ui';
+import {ErrorDisplay, FloatingMenu, FloatingMenuAction, ImportModal, Loading, useLang} from '@leav/ui';
 import {Table} from 'antd';
 import {ColumnsType} from 'antd/lib/table';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
@@ -19,7 +19,6 @@ import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {FAVORITE_LIBRARIES_KEY} from '../../../constants';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '../../../_gqlTypes/SAVE_USER_DATA';
 import FavoriteStar from '../FavoriteStar';
-import ImportModal from './ImportModal';
 import LibraryIcon from './LibraryIcon';
 
 const LibraryLink = styled(Link)`

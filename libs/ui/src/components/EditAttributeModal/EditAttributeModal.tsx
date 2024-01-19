@@ -10,14 +10,14 @@ import {Button, Modal, ModalProps, Popconfirm} from 'antd';
 import {useState} from 'react';
 import {
     AttributeDetailsFragment,
-    PermissionTypes,
     PermissionsActions,
+    PermissionTypes,
     useDeleteAttributeMutation,
     useIsAllowedQuery
-} from '../../_gqlTypes';
-import {extractPermissionFromQuery} from '../../helpers/extractPermissionFromQuery';
+} from '_ui/_gqlTypes';
 import {useLang} from '../../hooks';
 import {useSharedTranslation} from '../../hooks/useSharedTranslation';
+import {extractPermissionFromQuery} from '../../_utils';
 import {ErrorDisplay} from '../ErrorDisplay';
 import {Loading} from '../Loading';
 import EditAttribute from './EditAttribute/EditAttribute';

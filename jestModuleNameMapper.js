@@ -7,5 +7,6 @@ module.exports = {
     '^_gqlTypes/(.*)$': '<rootDir>/src/_gqlTypes/$1',
     '^__mocks__/(.*)$': '<rootDir>/src/__mocks__/$1',
     '^_tests/(.*)$': '<rootDir>/src/_tests/$1',
-    '^@leav/(.*)$': '<rootDir>/../../libs/$1/src'
+    '^@leav/(.*)$': '<rootDir>/../../libs/$1/src',
+    '^_ui/(.*)': '<rootDir>/../../libs/ui/src/$1'
 };

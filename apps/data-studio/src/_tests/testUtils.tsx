@@ -4,7 +4,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {InMemoryCacheConfig} from '@apollo/client';
 import {MockedResponse} from '@apollo/client/testing';
-import {ILangContext, LangContext} from '@leav/ui';
+import {ILangContext, IUserContext, LangContext, UserContext} from '@leav/ui';
 import {render, RenderOptions, RenderResult} from '@testing-library/react';
 import ApplicationContext from 'context/ApplicationContext';
 import {IApplicationContext} from 'context/ApplicationContext/_types';
@@ -14,6 +14,7 @@ import {GET_APPLICATION_BY_ENDPOINT_applications_list} from '_gqlTypes/GET_APPLI
 import {GET_GLOBAL_SETTINGS_globalSettings} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import MockStore from '__mocks__/common/mockRedux/mockStore';
+import {mockRecord} from '__mocks__/common/record';
 import MockedProviderWithFragments from '__mocks__/MockedProviderWithFragments';
 
 export interface ICustomRenderOptions extends RenderOptions {
@@ -56,13 +57,25 @@ const Providers = ({
         setLang: jest.fn()
     };
 
+    const mockUserContext: IUserContext = {
+        userData: {
+            userId: '123',
+            userWhoAmI: {
+                ...mockRecord
+            }
+        },
+        setUserData: jest.fn()
+    };
+
     return (
         <MockedProviderWithFragments mocks={apolloMocks} cacheSettings={cacheSettings}>
             <MockStore state={storeState}>
                 <LangContext.Provider value={mockLang}>
-                    <ApplicationContext.Provider value={appContextData}>
-                        {children ?? <></>}
-                    </ApplicationContext.Provider>
+                    <UserContext.Provider value={mockUserContext}>
+                        <ApplicationContext.Provider value={appContextData}>
+                            {children ?? <></>}
+                        </ApplicationContext.Provider>
+                    </UserContext.Provider>
                 </LangContext.Provider>
             </MockStore>
         </MockedProviderWithFragments>

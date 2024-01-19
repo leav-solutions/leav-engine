@@ -6,7 +6,8 @@
     "rootDir": "./",
     /* /!\ Paths are relative to the src folder of each app. Each app must set its baseUrl to src */
     "paths": {
-      "@leav/*": ["../../../libs/*/src"]
+      "@leav/*": ["../../../libs/*/src"],
+      "_ui/*": ["../../../libs/ui/src/*"]
     },
     "strict": true,
     "noImplicitAny": false,

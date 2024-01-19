@@ -13,6 +13,7 @@ import {
     localizedTranslation,
     nameValArrayToObj,
     objectToNameValueArray,
+    omit,
     slugifyString,
     stringToColor
 } from './utils';
@@ -196,6 +197,33 @@ describe('utils', () => {
             expect(slugifyString('foo^$$bar')).toBe('foo_bar');
             expect(slugifyString('foo_bar99')).toBe('foo_bar99');
             expect(slugifyString('# my string-not"  ok\'!  ')).toBe('my_string_not_ok');
+        });
+    });
+
+    describe('omit', () => {
+        test('Should omit specified keys from an object', () => {
+            const obj = {a: 1, b: 2, c: 3};
+            const result = omit(obj, 'a', 'c');
+            expect(result).toEqual({b: 2});
+        });
+
+        test('Should return a new object without modifying the original object', () => {
+            const obj = {a: 1, b: 2, c: 3};
+            const result = omit(obj, 'a', 'c');
+            expect(result).toEqual({b: 2});
+            expect(obj).toEqual({a: 1, b: 2, c: 3});
+        });
+
+        test('Should handle omitting all keys', () => {
+            const obj = {a: 1, b: 2, c: 3};
+            const result = omit(obj, 'a', 'b', 'c');
+            expect(result).toEqual({});
+        });
+
+        test('Should handle omitting keys of different types', () => {
+            const obj = {a: 1, b: 'two', c: true};
+            const result = omit(obj, 'a', 'b');
+            expect(result).toEqual({c: true});
         });
     });
 });

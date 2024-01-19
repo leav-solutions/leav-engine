@@ -1,8 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ErrorDisplay, ErrorDisplayTypes, Loading, useLang} from '@leav/ui';
-import LibraryItemsList from 'components/LibraryItemsList';
+import {ErrorDisplay, ErrorDisplayTypes, LibraryItemsList, Loading, useLang} from '@leav/ui';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery/useGetLibraryDetailExtendedQuery';

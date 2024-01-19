@@ -64,6 +64,7 @@ interface ILibraryDetailExtendedAttribute {
     label: ISystemTranslation;
     multiple_values: boolean;
     system: boolean;
+    readonly: boolean;
 }
 
 export type ILibraryDetailExtendedAttributeChild = ILibraryDetailExtendedAttribute;

@@ -3,18 +3,18 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getInitials} from '@leav/utils';
 import styled from 'styled-components';
-import {themeVars} from '../../../../antdTheme';
-import {getPreviewSize} from '../../../../helpers/getPreviewSize';
+import {themeVars} from '_ui/antdTheme';
+import {getPreviewSize} from '_ui/_utils';
 
 interface ISimplisticEntityPreviewProps {
     label: string;
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{$size?: string}>`
     border-radius: 50%;
     border: 1px solid ${themeVars.borderColor};
-    width: calc(${getPreviewSize(null, true)} + 0.5rem);
-    height: calc(${getPreviewSize(null, true)} + 0.5rem);
+    width: ${props => `calc(${props.$size} + 0.5rem)`};
+    height: ${props => `calc(${props.$size} + 0.5rem)`};
     display: flex;
     align-items: center;
     justify-content: center;
@@ -22,8 +22,13 @@ const Wrapper = styled.div`
 
 function SimplisticEntityPreview({label}: ISimplisticEntityPreviewProps): JSX.Element {
     const initial = getInitials(label, 1);
+    const previewSize = getPreviewSize(null, true);
 
-    return <Wrapper data-testid="simplistic-preview">{initial}</Wrapper>;
+    return (
+        <Wrapper $size={previewSize} data-testid="simplistic-preview">
+            {initial}
+        </Wrapper>
+    );
 }
 
 export default SimplisticEntityPreview;

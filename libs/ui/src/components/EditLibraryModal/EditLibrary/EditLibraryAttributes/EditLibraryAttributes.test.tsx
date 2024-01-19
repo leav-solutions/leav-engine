@@ -4,10 +4,10 @@
 import {QueryResult} from '@apollo/client';
 import {Mockify} from '@leav/utils';
 import userEvent from '@testing-library/user-event';
+import {mockLibraryAttribute} from '_ui/__mocks__/common/attribute';
+import {mockLibraryWithDetails} from '_ui/__mocks__/common/library';
 import * as gqlTypes from '../../../../_gqlTypes';
 import {render, screen, waitFor} from '../../../../_tests/testUtils';
-import {mockLibraryAttribute} from '../../../../__mocks__/common/attribute';
-import {mockLibraryWithDetails} from '../../../../__mocks__/common/library';
 import EditLibraryAttributes from './EditLibraryAttributes';
 
 jest.mock('../../../../hooks/useSharedTranslation/useSharedTranslation');

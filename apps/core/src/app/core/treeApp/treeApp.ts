@@ -55,7 +55,7 @@ interface IDeps {
     'core.domain.library'?: ILibraryDomain;
 }
 
-export default function ({
+export default function({
     'core.domain.tree': treeDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission': permissionDomain = null,
@@ -220,7 +220,7 @@ export default function ({
                         id: ID!,
                         order: Int,
                         childrenCount: Int,
-                        record: Record,
+                        record: Record!,
                         ancestors: [TreeNode!],
                         children: [TreeNode!],
                         linkedRecords(attribute: ID): [Record!],

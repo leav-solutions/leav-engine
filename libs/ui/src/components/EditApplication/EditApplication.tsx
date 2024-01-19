@@ -4,8 +4,8 @@
 import {KitTabs} from 'aristid-ds';
 import {ComponentProps} from 'react';
 import styled, {CSSObject} from 'styled-components';
+import {useGetApplicationByIdQuery} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '../../hooks/useSharedTranslation';
-import {useGetApplicationByIdQuery} from '../../_gqlTypes';
 import {ErrorDisplay} from '../ErrorDisplay';
 import {Loading} from '../Loading';
 import {EditApplicationInfo} from './EditApplicationInfo';

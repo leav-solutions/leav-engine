@@ -4,26 +4,26 @@
 import * as leavUi from '@leav/ui';
 import userEvent from '@testing-library/user-event';
 import {BrowserRouter} from 'react-router-dom';
-import {act, render, screen} from '_tests/testUtils';
+import {render, screen, waitFor} from '_tests/testUtils';
 import UserPanel from './UserPanel';
 
 const mockDeleteToken = jest.fn();
 jest.mock('@leav/utils', () => ({
+    ...jest.requireActual('@leav/utils'),
     useAuthToken: jest.fn(() => ({
         getToken: jest.fn(),
         saveToken: jest.fn(),
         deleteToken: mockDeleteToken
     }))
 }));
+
 describe('UserPanel', () => {
     test('Should display some menu items', async () => {
-        await act(async () => {
-            render(
-                <BrowserRouter>
-                    <UserPanel userPanelVisible hideUserPanel={jest.fn()} />
-                </BrowserRouter>
-            );
-        });
+        render(
+            <BrowserRouter>
+                <UserPanel userPanelVisible hideUserPanel={jest.fn()} />
+            </BrowserRouter>
+        );
 
         expect(screen.getAllByRole('menuitem').length).toBeGreaterThanOrEqual(1);
     });
@@ -39,21 +39,19 @@ describe('UserPanel', () => {
         delete window.location;
         window.location = mockedLocation;
 
-        await act(async () => {
-            render(
-                <BrowserRouter>
-                    <UserPanel userPanelVisible hideUserPanel={jest.fn()} />
-                </BrowserRouter>
-            );
-        });
+        render(
+            <BrowserRouter>
+                <UserPanel userPanelVisible hideUserPanel={jest.fn()} />
+            </BrowserRouter>
+        );
 
         const logoutLink = screen.getByRole('menuitem', {name: /logout/});
 
-        await act(async () => {
-            userEvent.click(logoutLink);
-        });
+        userEvent.click(logoutLink);
 
-        expect(mockLogout).toHaveBeenCalled();
+        await waitFor(() => {
+            expect(mockLogout).toHaveBeenCalled();
+        });
     });
 
     test('Can switch language', async () => {
@@ -65,21 +63,19 @@ describe('UserPanel', () => {
             setLang: mockUpdateLang
         }));
 
-        await act(async () => {
-            render(
-                <BrowserRouter>
-                    <UserPanel userPanelVisible hideUserPanel={jest.fn()} />
-                </BrowserRouter>
-            );
-        });
+        render(
+            <BrowserRouter>
+                <UserPanel userPanelVisible hideUserPanel={jest.fn()} />
+            </BrowserRouter>
+        );
 
         expect(screen.getByRole('button', {name: /🇫🇷/})).toBeInTheDocument();
         expect(screen.getByRole('button', {name: /🇬🇧/})).toBeInTheDocument();
 
-        await act(async () => {
-            userEvent.click(screen.getByRole('button', {name: /🇫🇷/}));
-        });
+        userEvent.click(screen.getByRole('button', {name: /🇫🇷/}));
 
-        expect(mockUpdateLang).toHaveBeenCalled();
+        await waitFor(() => {
+            expect(mockUpdateLang).toHaveBeenCalled();
+        });
     });
 });

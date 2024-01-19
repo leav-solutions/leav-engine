@@ -12,13 +12,10 @@ import {
     SearchOutlined
 } from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
+import {CreateDirectory, EditRecordModal, TriggerPreviewsGenerationModal, UploadFiles} from '@leav/ui';
 import {Button, Dropdown, message} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import {IconEllipsisVertical} from 'assets/icons/IconEllipsisVertical';
-import CreateDirectory from 'components/CreateDirectory';
-import EditRecordModal from 'components/RecordEdition/EditRecordModal';
-import TriggerPreviewsGenerationModal from 'components/shared/TriggerPreviewsGenerationModal';
-import UploadFiles from 'components/UploadFiles';
 import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeElementMutation';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';

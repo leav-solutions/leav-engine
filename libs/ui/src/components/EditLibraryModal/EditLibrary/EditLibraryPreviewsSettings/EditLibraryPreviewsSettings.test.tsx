@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
+import {mockLibraryWithPreviewsSettings} from '_ui/__mocks__/common/library';
 import * as gqlTypes from '../../../../_gqlTypes';
 import {render, screen, waitFor} from '../../../../_tests/testUtils';
-import {mockLibraryWithPreviewsSettings} from '../../../../__mocks__/common/library';
 import EditLibraryPreviewsSettings from './EditLibraryPreviewsSettings';
 
 jest.mock('../../../../hooks/useSharedTranslation/useSharedTranslation');

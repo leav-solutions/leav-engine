@@ -36,12 +36,13 @@ jest.mock('../../hooks/ActiveTreeHook/ActiveTreeHook', () => ({
     ]
 }));
 
-jest.mock('../../hooks/useRecordUpdateSubscription', () => ({
-    useRecordUpdateSubscription: jest.fn()
-}));
-
 jest.mock('../../hooks/useTreeEventsSubscription', () => ({
     useTreeEventsSubscription: jest.fn()
+}));
+
+jest.mock('@leav/ui', () => ({
+    ...jest.requireActual('@leav/ui'),
+    useRecordUpdateSubscription: jest.fn()
 }));
 
 describe('Navigation', () => {
