@@ -4,8 +4,8 @@
 import {QueryResult} from '@apollo/client';
 import {Mockify} from '@leav/utils';
 import userEvent from '@testing-library/user-event';
-import {mockTreeWithDetails} from '../../__mocks__/common/tree';
-import * as gqlTypes from '../../_gqlTypes';
+import * as gqlTypes from '_ui/_gqlTypes';
+import {mockTreeWithDetails} from '_ui/__mocks__/common/tree';
 import {act, fireEvent, render, screen, waitFor, within} from '../../_tests/testUtils';
 import EditTreeModal from './EditTreeModal';
 

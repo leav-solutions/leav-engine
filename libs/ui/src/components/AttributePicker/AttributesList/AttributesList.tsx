@@ -15,7 +15,6 @@ import {
     tagColorByAttributeFormat,
     tagColorByAttributeType
 } from '../../../constants';
-import {extractPermissionFromQuery} from '../../../helpers/extractPermissionFromQuery';
 import {useLang} from '../../../hooks';
 import {useSharedTranslation} from '../../../hooks/useSharedTranslation';
 import {
@@ -32,6 +31,7 @@ import {
     useIsAllowedQuery
 } from '../../../_gqlTypes';
 import {getAttributesQuery} from '../../../_queries/attributes/getAttributesQuery';
+import {extractPermissionFromQuery} from '../../../_utils';
 import {EditAttributeModal} from '../../EditAttributeModal';
 import {EntityCard, IEntityData} from '../../EntityCard';
 import {ErrorDisplay} from '../../ErrorDisplay';

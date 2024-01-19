@@ -14,11 +14,10 @@ import {mockTree} from '__mocks__/common/tree';
 import {FAVORITE_LIBRARIES_KEY, FAVORITE_TREES_KEY} from '../../constants';
 import Home from './Home';
 
-jest.mock('./LibrariesList/ImportModal', () => {
-    return function ImportModal() {
-        return <div>ImportModal</div>;
-    };
-});
+jest.mock('@leav/ui', () => ({
+    ...jest.requireActual('@leav/ui'),
+    ImportModal: () => <div>ImportModal</div>
+}));
 
 describe('Home', () => {
     const mocks = [

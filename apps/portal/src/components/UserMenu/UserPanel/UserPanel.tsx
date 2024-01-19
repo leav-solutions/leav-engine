@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FlagOutlined, LogoutOutlined} from '@ant-design/icons';
 import {useAuth, useLang} from '@leav/ui';
+import {getFlagByLang} from '@leav/utils';
 import {Drawer} from 'antd';
 import {KitMenu} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
 import {styled} from 'styled-components';
-import {getFlagByLang} from '../../../../../../libs/utils/src/utils';
 
 const FlagWrapper = styled.span`
     margin-right: 0.5rem;

@@ -1,13 +1,16 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {ISelectedAttribute} from '_ui/types/attributes';
 import {
     AttributeDetailsFragment,
     AttributeFormat,
     AttributeType,
     GetAttributesQuery,
-    LibraryAttributesFragment
-} from '../../_gqlTypes';
+    LibraryAttributesFragment,
+    RecordFormAttributeFragment,
+    RecordFormAttributeTreeAttributeFragment
+} from '_ui/_gqlTypes';
 
 export const mockLibraryAttribute: LibraryAttributesFragment = {
     id: 'my_attribute',
@@ -47,4 +50,115 @@ export const mockAttributeWithDetails: AttributeDetailsFragment = {
     unique: false,
     readonly: false,
     multiple_values: false
+};
+
+export const mockAttributeLink: AttributeDetailsFragment = {
+    ...mockAttributeWithDetails,
+    type: AttributeType.advanced_link,
+    linked_library: {
+        id: 'my_linked_library',
+        label: {
+            fr: 'Ma biblio',
+            en: 'My library'
+        }
+    }
+};
+
+export const mockAttributeTree: AttributeDetailsFragment = {
+    ...mockAttributeWithDetails,
+    type: AttributeType.tree,
+    linked_tree: {
+        id: 'my_linked_tree',
+        label: {
+            fr: 'Mon arbre',
+            en: 'My tree'
+        }
+    }
+};
+
+export const mockAttributeVersionable: AttributeDetailsFragment = {
+    ...mockAttributeWithDetails,
+    versions_conf: {
+        versionable: true,
+        profile: {
+            id: 'my_profile',
+            label: {
+                fr: 'Mon profil',
+                en: 'My profile'
+            },
+            trees: [
+                {
+                    id: 'my_tree',
+                    label: {
+                        fr: 'Mon arbre',
+                        en: 'My tree'
+                    }
+                }
+            ]
+        }
+    }
+};
+
+export const mockFormAttribute: RecordFormAttributeFragment = {
+    id: 'test_attribute',
+    type: AttributeType.simple,
+    format: AttributeFormat.text,
+    label: {
+        fr: 'test',
+        en: 'test'
+    },
+    description: {
+        fr: 'Mon attribut',
+        en: 'My attribute'
+    },
+    system: false,
+    readonly: false,
+    multiple_values: false,
+    values_list: {
+        enable: false,
+        allowFreeEntry: false,
+        values: []
+    },
+    permissions: {
+        access_attribute: true,
+        edit_value: true
+    },
+    metadata_fields: [
+        {
+            ...mockAttributeWithDetails,
+            permissions: {
+                access_attribute: true,
+                edit_value: true
+            }
+        }
+    ],
+    versions_conf: null
+};
+
+export const mockFormAttributeTree: RecordFormAttributeTreeAttributeFragment = {
+    ...mockFormAttribute,
+    ...mockAttributeTree,
+    metadata_fields: null,
+    treeValuesList: {enable: false, allowFreeEntry: false, values: []}
+};
+
+export const mockSelectedAttributeA: ISelectedAttribute = {
+    id: 'A',
+    type: AttributeType.simple,
+    path: 'A',
+    library: 'test_lib',
+    label: {fr: 'My attribute'},
+    multiple_values: false
+};
+
+export const mockSelectedAttributeB: ISelectedAttribute = {
+    ...mockSelectedAttributeA,
+    id: 'B',
+    path: 'B'
+};
+
+export const mockSelectedAttributeC: ISelectedAttribute = {
+    ...mockSelectedAttributeA,
+    id: 'C',
+    path: 'C'
 };

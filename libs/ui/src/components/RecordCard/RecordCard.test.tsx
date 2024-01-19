@@ -3,10 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import '@testing-library/jest-dom';
 import 'jest-styled-components';
+import {mockRecord} from '_ui/__mocks__/common/record';
 import {PreviewSize} from '../../constants';
-import {IRecordIdentityWhoAmI} from '../../types/RecordIdentity';
+import {IRecordIdentityWhoAmI} from '../../types/records';
 import {act, render, screen} from '../../_tests/testUtils';
-import {mockRecord} from '../../__mocks__/common/record';
 import RecordCard from './RecordCard';
 
 jest.mock('../EntityPreview', () => {

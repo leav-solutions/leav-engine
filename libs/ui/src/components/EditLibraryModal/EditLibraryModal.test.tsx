@@ -4,8 +4,8 @@
 import {QueryResult} from '@apollo/client';
 import {Mockify} from '@leav/utils';
 import userEvent from '@testing-library/user-event';
-import {mockLibraryWithDetails} from '../../__mocks__/common/library';
-import * as gqlTypes from '../../_gqlTypes';
+import * as gqlTypes from '_ui/_gqlTypes';
+import {mockLibraryWithDetails} from '_ui/__mocks__/common/library';
 import {act, fireEvent, render, screen, waitFor} from '../../_tests/testUtils';
 import EditLibraryModal from './EditLibraryModal';
 

@@ -7,6 +7,7 @@ import {localizedTranslation, Override} from '@leav/utils';
 import {Button, Input, Table, TableColumnsType} from 'antd';
 import {ComponentProps, Key, useState} from 'react';
 import styled from 'styled-components';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
     GetTreesQuery,
     PermissionsActions,
@@ -14,12 +15,11 @@ import {
     TreeLightFragment,
     useGetTreesQuery,
     useIsAllowedQuery
-} from '../../../_gqlTypes';
-import {getTreesQuery} from '../../../_queries/trees/getTreesQuery';
+} from '_ui/_gqlTypes';
+import {getTreesQuery} from '_ui/_queries/trees/getTreesQuery';
+import {extractPermissionFromQuery} from '_ui/_utils';
 import {PreviewSize} from '../../../constants';
-import {extractPermissionFromQuery} from '../../../helpers/extractPermissionFromQuery';
 import {useLang} from '../../../hooks';
-import {useSharedTranslation} from '../../../hooks/useSharedTranslation';
 import {EditTreeModal} from '../../EditTreeModal';
 import {EntityCard, IEntityData} from '../../EntityCard';
 import {ErrorDisplay} from '../../ErrorDisplay';

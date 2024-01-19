@@ -4,8 +4,8 @@
 import {FrownOutlined, HomeOutlined, ReloadOutlined} from '@ant-design/icons';
 import {Button, ConfigProvider, Result, Space, theme} from 'antd';
 import {ErrorInfo} from 'react';
-import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {AntdThemeToken, customTheme, themeVars} from '../../../antdTheme';
 import {APPS_ENDPOINT, APP_ENDPOINT} from '../../../constants';
 
@@ -39,7 +39,7 @@ const ButtonsWrapper = styled(Space)`
 `;
 
 function ErrorBoundaryContent({error, errorInfo, showRecoveryButtons = true}: IErrorBoundaryContentProps): JSX.Element {
-    const {t} = useTranslation();
+    const {t} = useSharedTranslation();
     const {token} = theme.useToken();
 
     const homeUrl = `/${APPS_ENDPOINT}/${APP_ENDPOINT}`;

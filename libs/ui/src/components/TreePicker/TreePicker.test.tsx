@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {mockTreeSimple} from '../../__mocks__/common/tree';
-import {GetTreesDocument, IsAllowedDocument, PermissionsActions, PermissionTypes} from '../../_gqlTypes';
+import {GetTreesDocument, IsAllowedDocument, PermissionsActions, PermissionTypes} from '_ui/_gqlTypes';
+import {mockTreeSimple} from '_ui/__mocks__/common/tree';
 import {render, screen, waitFor, within} from '../../_tests/testUtils';
 import TreePicker from './TreePicker';
 

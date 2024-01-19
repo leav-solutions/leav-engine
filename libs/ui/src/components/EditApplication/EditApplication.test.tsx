@@ -7,9 +7,9 @@ import {
     GetApplicationByIdDocument,
     GetApplicationModulesDocument,
     SaveApplicationDocument
-} from '../../_gqlTypes';
+} from '_ui/_gqlTypes';
+import {mockApplication} from '_ui/__mocks__/common/application';
 import {cleanup, render, screen, waitFor} from '../../_tests/testUtils';
-import {mockApplication} from '../../__mocks__/common/application';
 import EditApplication from './EditApplication';
 
 window.matchMedia = query => ({

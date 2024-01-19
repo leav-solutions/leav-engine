@@ -4,7 +4,6 @@
 import {FileType} from '@leav/utils';
 import {LibraryBehavior} from '_gqlTypes/globalTypes';
 import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
-import {IRecordIdentityWhoAmI} from '_types/types';
 
 export const mockPreviews: Preview = {
     tiny: '/fake/url/tiny.jpg',
@@ -39,9 +38,4 @@ export const mockRecord: RecordIdentity_whoAmI = {
     },
     preview: mockPreviews,
     color: 'blue'
-};
-
-export const mockRecordWhoAmI: IRecordIdentityWhoAmI = {
-    ...mockRecord,
-    index: 0
 };

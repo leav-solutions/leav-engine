@@ -38,6 +38,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_StandardA
     multiple_values: boolean;
     system: boolean;
     id: string;
+    readonly: boolean;
 }
 
 export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute_linked_library_attributes_StandardAttribute {
@@ -47,6 +48,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttri
     multiple_values: boolean;
     system: boolean;
     id: string;
+    readonly: boolean;
 }
 
 export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute_linked_library_attributes_LinkAttribute {
@@ -56,6 +58,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttri
     multiple_values: boolean;
     system: boolean;
     id: string;
+    readonly: boolean;
 }
 
 export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute_linked_library_attributes_TreeAttribute {
@@ -65,6 +68,7 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttri
     multiple_values: boolean;
     system: boolean;
     id: string;
+    readonly: boolean;
 }
 
 export type GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_LinkAttribute_linked_library_attributes =
@@ -97,8 +101,8 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttri
     format: AttributeFormat | null;
     label: any | null;
     multiple_values: boolean;
-    system: boolean;
     readonly: boolean;
+    system: boolean;
 }
 
 export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute_linked_tree_libraries_library_attributes_LinkAttribute {
@@ -107,8 +111,8 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttri
     format: AttributeFormat | null;
     label: any | null;
     multiple_values: boolean;
-    system: boolean;
     readonly: boolean;
+    system: boolean;
 }
 
 export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute_linked_tree_libraries_library_attributes_TreeAttribute {
@@ -117,8 +121,8 @@ export interface GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttri
     format: AttributeFormat | null;
     label: any | null;
     multiple_values: boolean;
-    system: boolean;
     readonly: boolean;
+    system: boolean;
 }
 
 export type GET_LIBRARY_DETAIL_EXTENDED_libraries_list_attributes_TreeAttribute_linked_tree_libraries_library_attributes =

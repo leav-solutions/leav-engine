@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import '@testing-library/jest-dom';
-import {act, fireEvent, render, screen} from '@testing-library/react';
 import 'jest-styled-components';
+import {act, fireEvent, render, screen} from '_ui/_tests/testUtils';
 import EntityPreview from './EntityPreview';
 
 describe('RecordPreview', () => {

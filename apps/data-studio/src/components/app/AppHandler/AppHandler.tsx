@@ -8,10 +8,12 @@ import {
     dsTheme,
     ErrorDisplay,
     ErrorDisplayTypes,
+    IUserContext,
     LangContext,
     Loading,
     useAntdLocale,
-    useAppLang
+    useAppLang,
+    UserContext
 } from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {ConfigProvider, theme} from 'antd';
@@ -35,7 +37,6 @@ import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 import {GET_LANGS} from '_gqlTypes/GET_LANGS';
 import {getMe} from '../../../graphQL/queries/userData/me';
 import {initialActiveLibrary, useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
-import {useUser} from '../../../hooks/UserHook/UserHook';
 import {ME} from '../../../_gqlTypes/ME';
 import Router from '../../Router';
 
@@ -61,7 +62,6 @@ function AppHandler(): JSX.Element {
     const {data: availableLangs, loading: langsLoading, error: langsError} = useQuery<GET_LANGS>(getLangs);
 
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
-    const [user, updateUser] = useUser();
     const {data: userData, loading: meLoading, error: meError} = useQuery<ME>(getMe);
 
     const {data: applicationData, loading: applicationLoading, error: applicationError} = useQuery<
@@ -109,17 +109,6 @@ function AppHandler(): JSX.Element {
         }
     }, [updateActiveLibrary, activeLibrary]);
 
-    // Triggered when user data change
-    useEffect(() => {
-        if (!user && userData && !meLoading) {
-            updateUser({
-                userId: userData.me.id,
-                userPermissions: {},
-                userWhoAmI: userData?.me?.whoAmI
-            }); // FIXME: permissions ??
-        }
-    }, [updateUser, user, meLoading, userData]);
-
     // Triggered when lang change, to update document title
     useEffect(() => {
         if (!globalSettings || !currentApp) {
@@ -163,27 +152,34 @@ function AppHandler(): JSX.Element {
         globalSettings
     };
 
+    const userContextData: IUserContext['userData'] = {
+        userId: userData?.me?.id,
+        userWhoAmI: userData?.me?.whoAmI
+    };
+
     return (
         <ThemeProvider theme={{antd: themeToken}}>
-            <LangContext.Provider
-                value={{
-                    lang,
-                    availableLangs: availableLangs.langs,
-                    defaultLang: appLang,
-                    setLang: _handleLanguageChange
-                }}
-            >
-                <ApplicationContext.Provider value={appContextData}>
-                    <KitApp
-                        customTheme={dsTheme}
-                        locale={{locale: localeByLang[lang[0]], ItemCard: null, ItemList: null, Image: null}}
-                    >
-                        <ConfigProvider theme={customTheme} locale={locale}>
-                            <Router />
-                        </ConfigProvider>
-                    </KitApp>
-                </ApplicationContext.Provider>
-            </LangContext.Provider>
+            <UserContext.Provider value={{userData: userContextData}}>
+                <LangContext.Provider
+                    value={{
+                        lang,
+                        availableLangs: availableLangs.langs,
+                        defaultLang: appLang,
+                        setLang: _handleLanguageChange
+                    }}
+                >
+                    <ApplicationContext.Provider value={appContextData}>
+                        <KitApp
+                            customTheme={dsTheme}
+                            locale={{locale: localeByLang[lang[0]], ItemCard: null, ItemList: null, Image: null}}
+                        >
+                            <ConfigProvider theme={customTheme} locale={locale}>
+                                <Router />
+                            </ConfigProvider>
+                        </KitApp>
+                    </ApplicationContext.Provider>
+                </LangContext.Provider>
+            </UserContext.Provider>
         </ThemeProvider>
     );
 }

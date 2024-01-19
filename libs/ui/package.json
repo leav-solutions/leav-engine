@@ -38,7 +38,7 @@
   },
   "peerDependencies": {
     "@ant-design/icons": ">=5.2",
-    "@apollo/client": ">=3.7",
+    "@apollo/client": ">=3.8.1",
     "antd": "5.9.1",
     "aristid-ds": "^0.7.1",
     "i18next": "22.5",

@@ -9,12 +9,18 @@ import {
     SearchOutlined,
     WarningOutlined
 } from '@ant-design/icons';
-import {FloatingMenu, FloatingMenuAction, RecordCard, themeVars, useLang} from '@leav/ui';
+import {
+    EditRecordBtn,
+    FloatingMenu,
+    FloatingMenuAction,
+    RecordCard,
+    themeVars,
+    TriggerPreviewsGenerationModal,
+    useLang
+} from '@leav/ui';
 import {Badge, message, Tooltip} from 'antd';
 import Checkbox from 'antd/lib/checkbox/Checkbox';
 import {SizeType} from 'antd/lib/config-provider/SizeContext';
-import EditRecordBtn from 'components/RecordEdition/EditRecordBtn';
-import TriggerPreviewsGenerationModal from 'components/shared/TriggerPreviewsGenerationModal';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';

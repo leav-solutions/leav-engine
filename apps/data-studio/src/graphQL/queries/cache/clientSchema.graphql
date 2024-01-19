@@ -76,7 +76,4 @@ extend type Query {
     lang: String!,
     availableLangs: [String!]!,
     defaultLang: String!
-    userId: String!,
-    userWhoAmI: RecordIdentity!,
-    userPermissions: [String!]!
 }

@@ -7,4 +7,5 @@ export * from './types/forms';
 export * from './types/helpers';
 export * from './types/logs';
 export * from './types/previews';
+export * from './types/values';
 export * from './utils';

@@ -3,9 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
-import {useLang} from '@leav/ui';
+import {EditRecordModal, IRecordIdentityWhoAmI, useLang} from '@leav/ui';
 import {Button, Dropdown, Tooltip} from 'antd';
-import EditRecordModal from 'components/RecordEdition/EditRecordModal';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
@@ -14,7 +13,6 @@ import {useTranslation} from 'react-i18next';
 import {localizedTranslation} from 'utils';
 import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_ELEMENT';
 import {GET_TREE_LIBRARIES_trees_list_libraries} from '_gqlTypes/GET_TREE_LIBRARIES';
-import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {IInfo, InfoChannel, InfoType} from '_types/types';
 import {IMessages, OnMessagesFunc} from '../../_types';
@@ -42,7 +40,7 @@ function AddByCreationButton({availableLibraries, parent, onMessages}: IAddByCre
     };
     const _handleCloseCreateRecordModal = () => setIsCreateRecordModalVisible(false);
 
-    const _handleAfterCreateRecord = async (newRecord: RecordIdentity_whoAmI) => {
+    const _handleAfterCreateRecord = async (newRecord: IRecordIdentityWhoAmI) => {
         let notification: IInfo;
         let messages: IMessages = {
             countValid: 0,

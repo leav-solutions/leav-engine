@@ -2,9 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
-import {useLang} from '@leav/ui';
+import {SearchModal, useLang} from '@leav/ui';
 import {Button, Dropdown, Tooltip} from 'antd';
-import SearchModal from 'components/SearchModal';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';

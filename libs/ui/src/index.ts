@@ -9,3 +9,4 @@ export * from './gqlFragments';
 export * from './gqlPossibleTypes';
 export * from './hooks';
 export * from './testing';
+export * from './types';

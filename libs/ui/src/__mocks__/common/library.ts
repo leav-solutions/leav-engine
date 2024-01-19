@@ -7,7 +7,7 @@ import {
     GetLibraryByIdQuery,
     LibraryBehavior,
     LibraryLightFragment
-} from '../../_gqlTypes';
+} from '_ui/_gqlTypes';
 
 export const mockLibrarySimple: LibraryLightFragment = {
     id: 'my_library',

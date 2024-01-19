@@ -9,6 +9,7 @@ import trimEnd from 'lodash/trimEnd';
 import upperFirst from 'lodash/upperFirst';
 import minimatch from 'minimatch';
 import * as extensions from './MIMEByExtension.json';
+import {AttributeType} from './types/attributes';
 import {FileType} from './types/files';
 import {IKeyValue} from './types/helpers';
 
@@ -295,4 +296,21 @@ export const waitFor = async (
         await new Promise(resolve => setTimeout(resolve, interval));
     }
     return true;
+};
+
+export const isTypeLink = (type: AttributeType) => {
+    return type === AttributeType.simple_link || type === AttributeType.advanced_link;
+};
+
+export const isTypeStandard = (type: AttributeType) => {
+    return type === AttributeType.simple || type === AttributeType.advanced;
+};
+
+/**
+ * Return a new object without the keys passed in parameter
+ */
+export const omit = <T extends object, K extends keyof T>(obj: T, ...keys: K[]): Omit<T, K> => {
+    const result = {...obj};
+    keys.forEach(key => delete result[key]);
+    return result;
 };

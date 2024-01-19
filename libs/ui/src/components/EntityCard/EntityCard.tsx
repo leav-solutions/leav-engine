@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Typography} from 'antd';
 import styled, {CSSObject} from 'styled-components';
+import {getPreviewSize} from '_ui/_utils';
 import {PreviewSize} from '../../constants';
-import {getPreviewSize} from '../../helpers/getPreviewSize';
 import {EntityPreview} from '../EntityPreview';
 import {IEntityData} from './_types';
 

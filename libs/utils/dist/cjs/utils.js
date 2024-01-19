@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.waitFor = exports.getLogsIndexName = exports.getFlagByLang = exports.simpleStringHash = exports.slugifyString = exports._getInitialEngine = exports.getInitials = exports.getCallStack = exports.getFileType = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
+exports.omit = exports.isTypeStandard = exports.isTypeLink = exports.waitFor = exports.getLogsIndexName = exports.getFlagByLang = exports.simpleStringHash = exports.slugifyString = exports._getInitialEngine = exports.getInitials = exports.getCallStack = exports.getFileType = exports.nameValArrayToObj = exports.objectToNameValueArray = exports.extractArgsFromString = exports.getInvertColor = exports.stringToColor = exports.localizedTranslation = exports.isFileAllowed = exports.getGraphqlQueryNameFromLibraryName = exports.getGraphqlTypeFromLibraryName = void 0;
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
@@ -38,6 +38,7 @@ const trimEnd_1 = __importDefault(require("lodash/trimEnd"));
 const upperFirst_1 = __importDefault(require("lodash/upperFirst"));
 const minimatch_1 = __importDefault(require("minimatch"));
 const extensions = __importStar(require("./MIMEByExtension.json"));
+const attributes_1 = require("./types/attributes");
 const files_1 = require("./types/files");
 const getGraphqlTypeFromLibraryName = (library) => {
     return (0, flow_1.default)([camelCase_1.default, upperFirst_1.default, trimEnd_1.default, (0, partialRight_1.default)(trimEnd_1.default, 's')])(library);
@@ -301,4 +302,21 @@ const waitFor = async (predicate, options = {}) => {
     return true;
 };
 exports.waitFor = waitFor;
+const isTypeLink = (type) => {
+    return type === attributes_1.AttributeType.simple_link || type === attributes_1.AttributeType.advanced_link;
+};
+exports.isTypeLink = isTypeLink;
+const isTypeStandard = (type) => {
+    return type === attributes_1.AttributeType.simple || type === attributes_1.AttributeType.advanced;
+};
+exports.isTypeStandard = isTypeStandard;
+/**
+ * Return a new object without the keys passed in parameter
+ */
+const omit = (obj, ...keys) => {
+    const result = Object.assign({}, obj);
+    keys.forEach(key => delete result[key]);
+    return result;
+};
+exports.omit = omit;
 //# sourceMappingURL=utils.js.map

@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ExpandAltOutlined} from '@ant-design/icons';
 import {useState} from 'react';
-import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {PreviewSize} from '../../../../../../constants';
 import {EditAttributeModal} from '../../../../../EditAttributeModal';
 import {EntityCard, IEntityData} from '../../../../../EntityCard';
@@ -26,7 +26,7 @@ interface IAttributeCellProps {
 }
 
 function AttributeCell({attribute}: IAttributeCellProps): JSX.Element {
-    const {t} = useTranslation();
+    const {t} = useSharedTranslation();
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
     const _handleOpenEditModal = () => setIsEditModalOpen(true);

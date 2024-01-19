@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CSSObject} from 'styled-components';
 import {PreviewSize} from '../../constants';
-import {IRecordIdentityWhoAmI} from '../../types/RecordIdentity';
+import {IRecordIdentityWhoAmI} from '../../types/records';
 
 export interface IRecordCardProps {
     record: IRecordIdentityWhoAmI;

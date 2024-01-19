@@ -4,7 +4,7 @@
 import {localizedTranslation} from '@leav/utils';
 import useLang from '_ui/hooks/useLang';
 import {PreviewSize} from '../../constants';
-import {IRecordIdentityWhoAmI} from '../../types/RecordIdentity';
+import {IRecordIdentityWhoAmI} from '../../types/records';
 import {EntityCard, IEntityData} from '../EntityCard';
 import {IRecordCardProps} from './_types';
 

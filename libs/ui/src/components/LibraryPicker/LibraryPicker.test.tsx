@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {mockLibrarySimple} from '../../__mocks__/common/library';
-import {GetLibrariesDocument, IsAllowedDocument, PermissionsActions, PermissionTypes} from '../../_gqlTypes';
+import {GetLibrariesDocument, IsAllowedDocument, PermissionsActions, PermissionTypes} from '_ui/_gqlTypes';
+import {mockLibrarySimple} from '_ui/__mocks__/common/library';
 import {render, screen, waitFor, within} from '../../_tests/testUtils';
 import LibraryPicker from './LibraryPicker';
 

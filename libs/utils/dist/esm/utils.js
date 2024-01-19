@@ -9,6 +9,7 @@ import trimEnd from 'lodash/trimEnd';
 import upperFirst from 'lodash/upperFirst';
 import minimatch from 'minimatch';
 import * as extensions from './MIMEByExtension.json';
+import { AttributeType } from './types/attributes';
 import { FileType } from './types/files';
 export const getGraphqlTypeFromLibraryName = (library) => {
     return flow([camelCase, upperFirst, trimEnd, partialRight(trimEnd, 's')])(library);
@@ -253,5 +254,19 @@ export const waitFor = async (predicate, options = {}) => {
         await new Promise(resolve => setTimeout(resolve, interval));
     }
     return true;
+};
+export const isTypeLink = (type) => {
+    return type === AttributeType.simple_link || type === AttributeType.advanced_link;
+};
+export const isTypeStandard = (type) => {
+    return type === AttributeType.simple || type === AttributeType.advanced;
+};
+/**
+ * Return a new object without the keys passed in parameter
+ */
+export const omit = (obj, ...keys) => {
+    const result = Object.assign({}, obj);
+    keys.forEach(key => delete result[key]);
+    return result;
 };
 //# sourceMappingURL=utils.js.map

@@ -2,23 +2,14 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-import {ReactNode} from 'react';
 import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
-import {
-    AttributeFormat,
-    AttributeType,
-    RecordFilterCondition,
-    RecordFilterOperator,
-    ViewSizes,
-    ViewTypes
-} from '_gqlTypes/globalTypes';
+import {AttributeFormat, AttributeType, RecordFilterCondition, RecordFilterOperator} from '_gqlTypes/globalTypes';
 import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {TREE_NODE_CHILDREN_treeNodeChildren_list_permissions} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {
     ILibraryDetailExtendedAttributeParentLinkedLibrary,
     ILibraryDetailExtendedAttributeParentLinkedTree
 } from '../graphQL/queries/libraries/getLibraryDetailExtendQuery';
-import {IGetViewListSettings, IGetViewListSort} from '../graphQL/queries/views/getViewsListQuery';
 
 export interface ISystemTranslation {
     [lang: string]: string;
@@ -297,48 +288,10 @@ export interface IInfo extends IBaseInfo {
     channel?: InfoChannel;
 }
 
-export type ILang = string[];
-
 export enum TypeSideItem {
     filters = 'filters',
     view = 'view',
     versions = 'versions'
-}
-
-export interface IView {
-    id: string;
-    library?: string;
-    label: ISystemTranslation;
-    display: IViewDisplay;
-    owner: boolean;
-    shared: boolean;
-    description?: ISystemTranslation;
-    color?: string;
-    filters?: IFilter[];
-    valuesVersions?: IValueVersion;
-    settings?: IGetViewListSettings[];
-    sort?: IGetViewListSort;
-}
-
-export interface IViewDisplay {
-    type: ViewTypes;
-    size: ViewSizes;
-}
-
-export interface ILinkedElement {
-    id: string;
-    linkedType: LinkedType;
-}
-
-export interface ITableCell {
-    value: any;
-    type: AttributeType;
-    format?: AttributeFormat;
-}
-
-export interface ITableRow {
-    record: RecordIdentity_whoAmI;
-    [x: string]: ITableCell | IRecordIdentityWhoAmI | string;
 }
 
 export interface ISharedStateSelectionSearch {
@@ -394,27 +347,6 @@ export interface ITreeContentRecordAndChildren {
     record: RecordIdentity;
     children?: ITreeContentRecordAndChildren[];
     permissions: TREE_NODE_CHILDREN_treeNodeChildren_list_permissions;
-}
-
-export interface ITreeNode {
-    title: string | ReactNode;
-    id: string;
-    key: string | null;
-    children: ITreeNode[];
-}
-
-export interface ITreeNodeWithRecord extends ITreeNode {
-    record: RecordIdentity;
-    children: ITreeNodeWithRecord[];
-}
-
-export interface IValueVersionTreeNode {
-    id: string;
-    label: string;
-}
-
-export interface IValueVersion {
-    [treeId: string]: IValueVersionTreeNode;
 }
 
 export interface IApplicationSettings {

@@ -22,7 +22,7 @@ export default ${name};`;
 
 const _getTestContent = name =>
     `import React from 'react';
-import {act, screen, render} from '_tests/testUtils';
+import {act, screen, render} from '_ui/_tests/testUtils';
 import ${name} from './${name}';
 
 describe('${name}', () => {
