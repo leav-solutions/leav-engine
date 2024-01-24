@@ -133,36 +133,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:3.3.7":
-  version: 3.3.7
-  resolution: "@apollo/client@npm:3.3.7"
-  dependencies:
-    "@graphql-typed-document-node/core": ^3.0.0
-    "@types/zen-observable": ^0.8.0
-    "@wry/context": ^0.5.2
-    "@wry/equality": ^0.3.0
-    fast-json-stable-stringify: ^2.0.0
-    graphql-tag: ^2.11.0
-    hoist-non-react-statics: ^3.3.2
-    optimism: ^0.14.0
-    prop-types: ^15.7.2
-    symbol-observable: ^2.0.0
-    ts-invariant: ^0.6.0
-    tslib: ^1.10.0
-    zen-observable: ^0.8.14
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0
-    react: ^16.8.0 || ^17.0.0
-    subscriptions-transport-ws: ^0.9.0
-  peerDependenciesMeta:
-    react:
-      optional: true
-    subscriptions-transport-ws:
-      optional: true
-  checksum: fee8a574e642c65b1e75b05ae6be11dcd8b174d323094bf693eb80504adadd74513a51f36aff5aec0ce6771d5a195a332fd4cceacb536dfe6d9b143a25589c86
-  languageName: node
-  linkType: hard
-
 "@apollo/client@npm:3.8.1":
   version: 3.8.1
   resolution: "@apollo/client@npm:3.8.1"
@@ -10054,13 +10024,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ungap__global-this@npm:^0.3.1":
-  version: 0.3.1
-  resolution: "@types/ungap__global-this@npm:0.3.1"
-  checksum: d821302064ddc5755ddd6480a34a2ea1ccf1d762b7e806e0dda8318358c80b9a2f567730553933f4e6ce12389d60ccd786e84cddb68fa8432820293574ff0692
-  languageName: node
-  linkType: hard
-
 "@types/unist@npm:*, @types/unist@npm:^2.0.0, @types/unist@npm:^2.0.2, @types/unist@npm:^2.0.3":
   version: 2.0.6
   resolution: "@types/unist@npm:2.0.6"
@@ -10343,13 +10306,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ungap/global-this@npm:^0.4.2":
-  version: 0.4.4
-  resolution: "@ungap/global-this@npm:0.4.4"
-  checksum: 8f42f5a03e8b1e3b65ae9d2dbf95d23d8ccd7af866f9279386aab9870966114085e07222ed687cd737aa9b72e894c9358973f86c4cfae108c1718f39d1c5061d
-  languageName: node
-  linkType: hard
-
 "@vitejs/plugin-react@npm:3.1.0":
   version: 3.1.0
   resolution: "@vitejs/plugin-react@npm:3.1.0"
@@ -10472,15 +10428,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wry/context@npm:^0.5.2":
-  version: 0.5.4
-  resolution: "@wry/context@npm:0.5.4"
-  dependencies:
-    tslib: ^1.14.1
-  checksum: 57a7b00e37a4cbba1b05beb3a3d6bafb6121e4c3ce267df1f6893c2662f398923a786cf3ec82168d06c592f1f16c21d75e0404e630937eb627a2c55eec8c307f
-  languageName: node
-  linkType: hard
-
 "@wry/context@npm:^0.6.0":
   version: 0.6.1
   resolution: "@wry/context@npm:0.6.1"
@@ -10517,15 +10464,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wry/equality@npm:^0.3.0":
-  version: 0.3.4
-  resolution: "@wry/equality@npm:0.3.4"
-  dependencies:
-    tslib: ^1.14.1
-  checksum: d71759d13df6722ee92d969360f16b2c3ff67281553f8c877f57d22b04a96cdb22242de9c5a83f5997ab2775451a11ac41b2edbdb5de1b352477c8aa8a534f87
-  languageName: node
-  linkType: hard
-
 "@wry/equality@npm:^0.5.0":
   version: 0.5.2
   resolution: "@wry/equality@npm:0.5.2"
@@ -10541,15 +10479,6 @@ __metadata:
   dependencies:
     tslib: ^2.3.0
   checksum: 9addf8891bdff5e23eecff03641846e7a56c1de3c9362c25e69c0b2ee3303e74b22e9a0376920283cd9d3bdd1bada12df54be5eaa29c2d801d33d94992672e14
-  languageName: node
-  linkType: hard
-
-"@wry/trie@npm:^0.2.1":
-  version: 0.2.2
-  resolution: "@wry/trie@npm:0.2.2"
-  dependencies:
-    tslib: ^1.14.1
-  checksum: 0e197b98136b0d84cca8a88950745e05842f2f6bcdb8891c6650d9398d847b65553459b00b561422817189b6a21c7f5548a93b9b0ab2c1632a2a0b88fd643ec4
   languageName: node
   linkType: hard
 
@@ -10693,7 +10622,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "admin@workspace:apps/admin"
   dependencies:
-    "@apollo/client": 3.3.7
+    "@apollo/client": 3.8.1
     "@reduxjs/toolkit": 1.7.1
     "@rushstack/eslint-patch": 1.0.6
     "@semantic-ui-react/craco-less": 2.0.2
@@ -24232,16 +24161,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"optimism@npm:^0.14.0":
-  version: 0.14.1
-  resolution: "optimism@npm:0.14.1"
-  dependencies:
-    "@wry/context": ^0.5.2
-    "@wry/trie": ^0.2.1
-  checksum: 3c49d271c771e4d26b383124297fb0420b867857ebc996b16ad1ed8e72d962707f95e952f960ba7852cdc0a725a3b3ce74c38b46a99f544f2f627adae0cb16d4
-  languageName: node
-  linkType: hard
-
 "optimism@npm:^0.16.1":
   version: 0.16.1
   resolution: "optimism@npm:0.16.1"
@@ -28659,13 +28578,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"symbol-observable@npm:^2.0.0":
-  version: 2.0.3
-  resolution: "symbol-observable@npm:2.0.3"
-  checksum: 533dcf7a7925bada60dbaa06d678e7c4966dbf0959ccba7f60c22b0494ba5d9160d6a66f2951d45a80bf20e655a89f8b91c5f0458dd12faef28716b54f91f49c
-  languageName: node
-  linkType: hard
-
 "symbol-observable@npm:^4.0.0":
   version: 4.0.0
   resolution: "symbol-observable@npm:4.0.0"
@@ -29091,17 +29003,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-invariant@npm:^0.6.0":
-  version: 0.6.2
-  resolution: "ts-invariant@npm:0.6.2"
-  dependencies:
-    "@types/ungap__global-this": ^0.3.1
-    "@ungap/global-this": ^0.4.2
-    tslib: ^1.9.3
-  checksum: dd390017664afdb344e53cae623fc69d4a2814303711acc5a0480bf1cb25f66f6a436ce1d0295089b385b393d5f03565cc893e9812ab221bad7988d83c51548d
-  languageName: node
-  linkType: hard
-
 "ts-invariant@npm:^0.9.4":
   version: 0.9.4
   resolution: "ts-invariant@npm:0.9.4"
@@ -29350,7 +29251,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^1.10.0, tslib@npm:^1.14.1, tslib@npm:^1.8.1, tslib@npm:^1.9.0, tslib@npm:^1.9.3":
+"tslib@npm:^1.10.0, tslib@npm:^1.8.1, tslib@npm:^1.9.0, tslib@npm:^1.9.3":
   version: 1.14.1
   resolution: "tslib@npm:1.14.1"
   checksum: dbe628ef87f66691d5d2959b3e41b9ca0045c3ee3c7c7b906cc1e328b39f199bb1ad9e671c39025bd56122ac57dfbf7385a94843b1cc07c60a4db74795829acd
@@ -31201,7 +31102,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zen-observable@npm:0.8.15, zen-observable@npm:^0.8.0, zen-observable@npm:^0.8.14":
+"zen-observable@npm:0.8.15, zen-observable@npm:^0.8.0":
   version: 0.8.15
   resolution: "zen-observable@npm:0.8.15"
   checksum: b7289084bc1fc74a559b7259faa23d3214b14b538a8843d2b001a35e27147833f4107590b1b44bf5bc7f6dfe6f488660d3a3725f268e09b3925b3476153b7821
