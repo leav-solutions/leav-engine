@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {NodeData} from 'react-sortable-tree';
 import {Button, Modal} from 'semantic-ui-react';
@@ -62,7 +62,7 @@ const SelectTreeNodeModal = ({open, tree, onSelect, onClose}: ISelectTreeNodeMod
             </Modal.Content>
             <Modal.Actions>
                 <Button
-                    data-test-id="select_tree_node_close_btn"
+                    data-testid="select_tree_node_close_btn"
                     negative
                     content={t('admin.cancel')}
                     icon="cancel"
@@ -70,7 +70,7 @@ const SelectTreeNodeModal = ({open, tree, onSelect, onClose}: ISelectTreeNodeMod
                 />
                 {currentSelection && currentSelection.length && (
                     <Button
-                        data-test-id="select_tree_node_submit_btn"
+                        data-testid="select_tree_node_submit_btn"
                         positive
                         content={t('admin.submit')}
                         icon="check"

@@ -1,11 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MockedProvider} from '@apollo/client/testing';
-import {mount} from 'enzyme';
-import React from 'react';
-import {act} from 'react-dom/test-utils';
-import {wait} from 'utils/testUtils';
+import {render, screen} from '_tests/testUtils';
 import {getTreeByIdQuery} from '../../../../../../../../../queries/trees/getTreeById';
 import {TreeBehavior} from '../../../../../../../../../_gqlTypes/globalTypes';
 import {mockInitialState} from '../formBuilderReducer/_fixtures/fixtures';
@@ -82,17 +78,7 @@ describe('BreadcrumbNavigator', () => {
             }
         ];
 
-        let comp;
-        await act(async () => {
-            comp = mount(
-                <MockedProvider mocks={mocks} addTypename>
-                    <BreadcrumbNavigator />
-                </MockedProvider>
-            );
-            await wait(0);
-            comp.update();
-        });
-
-        expect(comp.find('BreadcrumbNavigatorView')).toHaveLength(1);
+        render(<BreadcrumbNavigator />, {apolloMocks: mocks});
+        expect(await screen.findByText('BreadcrumbNavigatorView')).toBeInTheDocument();
     });
 });

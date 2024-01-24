@@ -1,11 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {MockedProvider} from '@apollo/client/testing';
-import {mount} from 'enzyme';
-import React from 'react';
-import {wait} from 'utils/testUtils';
-import {act} from '_tests/testUtils';
+import userEvent from '@testing-library/user-event';
+import {render, screen} from '_tests/testUtils';
 import {getTreeByIdQuery} from '../../../queries/trees/getTreeById';
 import {TreeBehavior} from '../../../_gqlTypes/globalTypes';
 import SelectTreeNodeModal from './SelectTreeNodeModal';
@@ -69,42 +66,20 @@ describe('SelectTreeNodeModal', () => {
         }
     ];
     test('Load tree settings', async () => {
-        let comp;
-        await act(async () => {
-            comp = mount(
-                <MockedProvider mocks={mocks} addTypename>
-                    <SelectTreeNodeModal tree="test_tree" onSelect={onSelect} open onClose={onClose} />
-                </MockedProvider>
-            );
+        render(<SelectTreeNodeModal tree="test_tree" onSelect={onSelect} open onClose={onClose} />, {
+            apolloMocks: mocks
         });
 
-        expect(comp.find('Loading')).toHaveLength(1);
-
-        await act(async () => {
-            await wait(0);
-            comp.update();
-        });
-
-        expect(comp.find('Modal').prop('open')).toBe(true);
-        expect(comp.find('TreeExplorer')).toHaveLength(1);
+        expect(screen.getByText(/loading/)).toBeInTheDocument();
+        expect(await screen.findByText('Tree Explorer')).toBeInTheDocument();
     });
 
     test('Calls onClose', async () => {
-        let comp;
-        await act(async () => {
-            comp = mount(
-                <MockedProvider mocks={mocks} addTypename>
-                    <SelectTreeNodeModal tree="test_tree" onSelect={onSelect} open onClose={onClose} />
-                </MockedProvider>
-            );
-            await wait(0);
-            comp.update();
+        render(<SelectTreeNodeModal tree="test_tree" onSelect={onSelect} open onClose={onClose} />, {
+            apolloMocks: mocks
         });
 
-        act(() => {
-            comp.find('[data-test-id="select_tree_node_close_btn"]').first().simulate('click');
-        });
-        await wait(0);
+        userEvent.click(await screen.findByTestId('select_tree_node_close_btn'));
 
         expect(onClose).toBeCalled();
     });
