@@ -5,7 +5,7 @@ import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {
     gqlAddElemToTree,
     gqlAddUserToGroup,
-    gqlGetAllUsersGroupNodeId,
+    gqlGetAdminsGroupNodeId,
     gqlSaveAttribute,
     makeGraphQlCall
 } from '../e2eUtils';
@@ -23,7 +23,7 @@ describe('AttributePermissions', () => {
             format: AttributeFormats.TEXT
         });
 
-        allUsersTreeElemId = await gqlGetAllUsersGroupNodeId();
+        allUsersTreeElemId = await gqlGetAdminsGroupNodeId();
         await gqlAddUserToGroup(allUsersTreeElemId);
     });
 

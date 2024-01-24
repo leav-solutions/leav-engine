@@ -16,14 +16,7 @@ export default function ({
     'core.domain.permission.helpers.permissionsByActions': permsByActionsHelper = null
 }: IDeps): ISimplePermissionHelper {
     return {
-        async getSimplePermission({
-            type,
-            applyTo,
-            action,
-            usersGroupNodeId,
-            permissionTreeTarget = null,
-            ctx
-        }: IGetSimplePermissionsParams): Promise<boolean | null> {
+        async getSimplePermission({type, applyTo, action, usersGroupNodeId, permissionTreeTarget = null, ctx}) {
             const perms = await permsByActionsHelper.getPermissionsByActions({
                 type,
                 applyTo,

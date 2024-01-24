@@ -6,7 +6,7 @@ import {
     gqlAddElemToTree,
     gqlAddUserToGroup,
     gqlCreateRecord,
-    gqlGetAllUsersGroupNodeId,
+    gqlGetAdminsGroupNodeId,
     gqlSaveAttribute,
     gqlSaveLibrary,
     gqlSaveTree,
@@ -38,7 +38,7 @@ describe('RecordAttributePermissions', () => {
         treeElemId1 = await gqlCreateRecord(permTreeLibName);
         treeElemId2 = await gqlCreateRecord(permTreeLibName);
 
-        allUsersTreeElemId = await gqlGetAllUsersGroupNodeId();
+        allUsersTreeElemId = await gqlGetAdminsGroupNodeId();
         await gqlAddUserToGroup(allUsersTreeElemId);
 
         nodeElem1 = await gqlAddElemToTree(permTreeName, {id: treeElemId1, library: permTreeLibName});

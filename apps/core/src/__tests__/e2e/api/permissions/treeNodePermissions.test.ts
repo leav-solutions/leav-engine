@@ -7,7 +7,7 @@ import {
     gqlAddElemToTree,
     gqlAddUserToGroup,
     gqlCreateRecord,
-    gqlGetAllUsersGroupNodeId,
+    gqlGetAdminsGroupNodeId,
     gqlSaveAttribute,
     gqlSaveLibrary,
     gqlSaveTree,
@@ -81,7 +81,7 @@ describe('TreeNodePermissions', () => {
 
         await gqlSaveLibrary(elementsTreeLibId, 'Test', [treeAttrID]);
 
-        allUsersTreeNodeId = await gqlGetAllUsersGroupNodeId();
+        allUsersTreeNodeId = await gqlGetAdminsGroupNodeId();
         await gqlAddUserToGroup(allUsersTreeNodeId);
 
         // Create records for elements tree
