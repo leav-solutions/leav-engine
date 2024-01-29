@@ -167,6 +167,7 @@ export interface IImport {
     endpoint: string;
     sizeLimit: number;
     groupData: number;
+    maxStackedElements: number;
 }
 
 export interface IDiskCache {

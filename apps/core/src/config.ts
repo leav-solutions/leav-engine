@@ -152,7 +152,8 @@ export const validateConfig = (conf: IConfig) => {
             directory: Joi.string().required(),
             endpoint: Joi.string().required(),
             sizeLimit: Joi.number().required(),
-            groupData: Joi.number().required()
+            groupData: Joi.number().required(),
+            maxStackedElements: Joi.number().required()
         }),
         plugins: Joi.object()
             .keys()
