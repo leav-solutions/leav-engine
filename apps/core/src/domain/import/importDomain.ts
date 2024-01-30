@@ -479,6 +479,13 @@ export default function({
             parser.onValue = async function(data: any) {
                 try {
                     if (this.stack[this.stack.length - 1]?.key === 'elements' && !!data.library) {
+                        // Manage memory usage
+                        // if parser.value has more than 10k items, we clear it to avoid memory leak
+                        if(parser.value.length % config.import.maxStackedElements === 0){
+                            parser.value = [];
+                            parser.key = 0;
+                        }
+
                         if (callbacks.length >= config.import.groupData) {
                             await callCallbacks();
                         }
