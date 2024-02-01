@@ -486,7 +486,7 @@ function EditRecordModal({
                 bodyStyle={{height: 'calc(100vh - 12rem)', overflowY: 'auto'}}
                 footer={footer}
             >
-                <ErrorBoundary showRecoveryButtons={false}>
+                <ErrorBoundary>
                     {permissionsLoading ? (
                         <Loading />
                     ) : (

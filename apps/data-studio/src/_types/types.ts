@@ -297,6 +297,7 @@ export enum TypeSideItem {
 export interface ISharedStateSelectionSearch {
     type: SharedStateSelectionType.search;
     selected: ISharedSelected[];
+    filters?: IFilter[];
     allSelected?: boolean;
 }
 

@@ -13,5 +13,5 @@
   },
   "include": [
     "src"
-  ]
+, "../../libs/ui/src/components/LibraryItemsList/MenuItemListSelected/ActionsMenu"  ]
 }

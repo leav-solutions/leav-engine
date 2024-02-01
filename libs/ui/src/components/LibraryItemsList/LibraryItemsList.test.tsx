@@ -4,7 +4,7 @@
 import {AttributeType} from '_ui/_gqlTypes';
 import {getRecordsFromLibraryQuery} from '_ui/_queries/records/getRecordsFromLibraryQuery';
 import {getUserDataQuery} from '_ui/_queries/userData/getUserData';
-import {act, render, screen, waitFor} from '_ui/_tests/testUtils';
+import {render, screen, waitFor} from '_ui/_tests/testUtils';
 import {mockGetLibraryDetailExtendedElement} from '_ui/__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
 import {
     mockGetRecordsFromLibraryQuery,
@@ -67,7 +67,7 @@ describe('LibraryItemsList', () => {
         ]
     };
 
-    test('should call the child', async () => {
+    test('should call the children', async () => {
         const mocks = [
             {
                 request: {
@@ -94,10 +94,8 @@ describe('LibraryItemsList', () => {
             }
         ];
 
-        await act(async () => {
-            render(<LibraryItemsList library={mockGetLibraryDetailExtendedElement} selectionMode={true} />, {
-                mocks
-            });
+        render(<LibraryItemsList library={mockGetLibraryDetailExtendedElement} selectionMode={true} />, {
+            mocks
         });
 
         await waitFor(() => screen.getByText('DisplayTypeSelector'));

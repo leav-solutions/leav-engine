@@ -1,17 +1,17 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FrownOutlined, HomeOutlined, ReloadOutlined} from '@ant-design/icons';
-import {Button, ConfigProvider, Result, Space, theme} from 'antd';
-import {ErrorInfo} from 'react';
+import {FrownOutlined} from '@ant-design/icons';
+import {ConfigProvider, Result, Space, theme} from 'antd';
+import {ErrorInfo, ReactNode} from 'react';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {AntdThemeToken, customTheme, themeVars} from '../../../antdTheme';
-import {APPS_ENDPOINT, APP_ENDPOINT} from '../../../constants';
 
 interface IErrorBoundaryContentProps {
     error?: Error;
     errorInfo?: ErrorInfo;
+    recoveryButtons?: ReactNode[];
     showRecoveryButtons?: boolean;
 }
 
@@ -38,34 +38,15 @@ const ButtonsWrapper = styled(Space)`
     }
 `;
 
-function ErrorBoundaryContent({error, errorInfo, showRecoveryButtons = true}: IErrorBoundaryContentProps): JSX.Element {
-    const {t} = useSharedTranslation();
+function ErrorBoundaryContent({error, errorInfo, recoveryButtons}: IErrorBoundaryContentProps): JSX.Element {
     const {token} = theme.useToken();
-
-    const homeUrl = `/${APPS_ENDPOINT}/${APP_ENDPOINT}`;
-
-    const _handleRefresh = () => {
-        window.location.reload();
-    };
-
-    const _handleGoBack = () => {
-        window.location.replace(homeUrl);
-    };
+    const {t} = useSharedTranslation();
 
     return (
         <ConfigProvider theme={customTheme}>
             <ErrorResult status="error" title={t('error.error_occurred')} icon={<FrownOutlined />} $themeToken={token}>
-                {showRecoveryButtons && (
-                    <ButtonsWrapper>
-                        <Button onClick={_handleRefresh} type="primary" icon={<ReloadOutlined />}>
-                            {t('global.refresh_page')}
-                        </Button>
-                        <Button onClick={_handleGoBack} type="primary" icon={<HomeOutlined />}>
-                            {t('global.go_back_home')}
-                        </Button>
-                    </ButtonsWrapper>
-                )}
-                <details title="toto" style={{whiteSpace: 'pre-wrap'}}>
+                {!!recoveryButtons?.length && <ButtonsWrapper>{recoveryButtons}</ButtonsWrapper>}
+                <details style={{whiteSpace: 'pre-wrap'}}>
                     {error && error.toString()}
                     <br />
                     {errorInfo.componentStack}

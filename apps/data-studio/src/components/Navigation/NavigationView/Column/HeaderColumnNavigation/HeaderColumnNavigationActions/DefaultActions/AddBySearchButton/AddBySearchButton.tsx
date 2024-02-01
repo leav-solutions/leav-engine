@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
-import {SearchModal, useLang} from '@leav/ui';
+import {ISearchSelection, SearchModal, useLang} from '@leav/ui';
 import {Button, Dropdown, Tooltip} from 'antd';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
@@ -17,7 +17,7 @@ import {ADD_TREE_ELEMENT, ADD_TREE_ELEMENTVariables} from '_gqlTypes/ADD_TREE_EL
 import {GET_TREE_LIBRARIES_trees_list_libraries} from '_gqlTypes/GET_TREE_LIBRARIES';
 import {TreeElementInput} from '_gqlTypes/globalTypes';
 import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
-import {InfoChannel, InfoType, ISharedStateSelectionSearch} from '_types/types';
+import {InfoChannel, InfoType} from '_types/types';
 import {IMessages} from '../../_types';
 
 interface IAddBySearchButtonProps {
@@ -42,7 +42,7 @@ function AddBySearchButton({availableLibraries, parent, onMessages}: IAddBySearc
         setSearchModalVisible(true);
     };
 
-    const _handleSubmitAddBySearch = async (selection: ISharedStateSelectionSearch) => {
+    const _handleSubmitAddBySearch = async (selection: ISearchSelection) => {
         if (selection.selected.length) {
             let messages: IMessages = {
                 countValid: 0,

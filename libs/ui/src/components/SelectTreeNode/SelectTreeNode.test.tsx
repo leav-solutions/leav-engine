@@ -5,7 +5,7 @@ import {QueryResult} from '@apollo/client';
 import {Mockify} from '@leav/utils';
 import userEvent from '@testing-library/user-event';
 import * as gqlTypes from '_ui/_gqlTypes';
-import {render,screen,waitFor} from '_ui/_tests/testUtils';
+import {render, screen, waitFor} from '_ui/_tests/testUtils';
 import SelectTreeNode from './SelectTreeNode';
 
 describe('SelectTreeNode', () => {
@@ -79,7 +79,7 @@ describe('SelectTreeNode', () => {
             error: null
         };
 
-        jest.spyOn(gqlTypes, 'useTreeNodeChildrenLazyQuery').mockReturnValue([
+        const spy = jest.spyOn(gqlTypes, 'useTreeNodeChildrenLazyQuery').mockReturnValue([
             jest.fn().mockImplementation(({variables}) => {
                 return variables.node === null ? {data: mockResultFromRoot} : {data: mockResultFromChild};
             }),
@@ -92,7 +92,9 @@ describe('SelectTreeNode', () => {
         expect(screen.getByText('Tree Label')).toBeInTheDocument();
 
         // Expand node => fetch children
-        userEvent.click(screen.getAllByRole('img', {name: 'toggle-children'}).pop());
+        await userEvent.click(screen.getAllByRole('img', {name: 'toggle-children'}).pop());
         await waitFor(() => expect(screen.getByText('label2')).toBeInTheDocument());
+
+        spy.mockRestore();
     });
 });

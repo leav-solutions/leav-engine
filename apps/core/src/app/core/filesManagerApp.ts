@@ -45,7 +45,7 @@ interface ICreateDirectoryParams {
     nodeId: string;
 }
 
-export default function ({
+export default function({
     'core.domain.filesManager': filesManagerDomain = null,
     'core.app.helpers.initQueryContext': initQueryContext,
     'core.app.auth': authApp = null,

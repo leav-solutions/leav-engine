@@ -55,7 +55,7 @@ function AttributePicker({
             confirmLoading={isLoading}
             centered
         >
-            <ErrorBoundary showRecoveryButtons={false}>
+            <ErrorBoundary>
                 <AttributesList
                     onSelect={_handleSelect}
                     selected={selected}

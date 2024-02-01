@@ -1016,6 +1016,15 @@ export type SaveAttributeMutationVariables = Exact<{
 
 export type SaveAttributeMutation = { saveAttribute: { reverse_link?: string | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, linked_library?: { id: string, label?: any | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null } | { unique?: boolean | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null } | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, multiple_values: boolean, linked_tree?: { id: string, label?: any | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null } };
 
+export type ExportQueryVariables = Exact<{
+  library: Scalars['ID'];
+  attributes?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
+  filters?: InputMaybe<Array<RecordFilterInput> | RecordFilterInput>;
+}>;
+
+
+export type ExportQuery = { export: string };
+
 export type CreateDirectoryMutationVariables = Exact<{
   library: Scalars['String'];
   nodeId: Scalars['String'];
@@ -1141,7 +1150,7 @@ export type DeactivateRecordsMutationVariables = Exact<{
 }>;
 
 
-export type DeactivateRecordsMutation = { deactivateRecords: Array<{ id: string }> };
+export type DeactivateRecordsMutation = { deactivateRecords: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }> };
 
 export type DoesFileExistAsChildQueryVariables = Exact<{
   parentNode?: InputMaybe<Scalars['ID']>;
@@ -2292,6 +2301,41 @@ export function useSaveAttributeMutation(baseOptions?: Apollo.MutationHookOption
 export type SaveAttributeMutationHookResult = ReturnType<typeof useSaveAttributeMutation>;
 export type SaveAttributeMutationResult = Apollo.MutationResult<SaveAttributeMutation>;
 export type SaveAttributeMutationOptions = Apollo.BaseMutationOptions<SaveAttributeMutation, SaveAttributeMutationVariables>;
+export const ExportDocument = gql`
+    query EXPORT($library: ID!, $attributes: [ID!], $filters: [RecordFilterInput!]) {
+  export(library: $library, attributes: $attributes, filters: $filters)
+}
+    `;
+
+/**
+ * __useExportQuery__
+ *
+ * To run a query within a React component, call `useExportQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExportQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useExportQuery({
+ *   variables: {
+ *      library: // value for 'library'
+ *      attributes: // value for 'attributes'
+ *      filters: // value for 'filters'
+ *   },
+ * });
+ */
+export function useExportQuery(baseOptions: Apollo.QueryHookOptions<ExportQuery, ExportQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ExportQuery, ExportQueryVariables>(ExportDocument, options);
+      }
+export function useExportLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ExportQuery, ExportQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ExportQuery, ExportQueryVariables>(ExportDocument, options);
+        }
+export type ExportQueryHookResult = ReturnType<typeof useExportQuery>;
+export type ExportLazyQueryHookResult = ReturnType<typeof useExportLazyQuery>;
+export type ExportQueryResult = Apollo.QueryResult<ExportQuery, ExportQueryVariables>;
 export const CreateDirectoryDocument = gql`
     mutation CREATE_DIRECTORY($library: String!, $nodeId: String!, $name: String!) {
   createDirectory(library: $library, nodeId: $nodeId, name: $name) {
@@ -2917,9 +2961,10 @@ export const DeactivateRecordsDocument = gql`
     libraryId: $libraryId
   ) {
     id
+    ...RecordIdentity
   }
 }
-    `;
+    ${RecordIdentityFragmentDoc}`;
 export type DeactivateRecordsMutationFn = Apollo.MutationFunction<DeactivateRecordsMutation, DeactivateRecordsMutationVariables>;
 
 /**

@@ -2,19 +2,18 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as React from 'react';
-import ErrorBoundaryContent from './ErrorBoundaryContent';
+import SimpleErrorBoundaryContent from './SimpleErrorBoundaryContent';
 
-interface IErrorBoundaryProps {
-    recoveryButtons?: React.ReactNode[];
+interface ISimpleErrorBoundaryProps {
     children?: React.ReactNode;
 }
 
-interface IErrorBoundaryState {
+interface ISimpleErrorBoundaryState {
     error: Error;
     errorInfo: React.ErrorInfo;
 }
 
-export class ErrorBoundary extends React.Component<IErrorBoundaryProps, IErrorBoundaryState> {
+export class SimpleErrorBoundary extends React.Component<ISimpleErrorBoundaryProps, ISimpleErrorBoundaryState> {
     private constructor(props) {
         super(props);
         this.state = {error: null, errorInfo: null};
@@ -31,13 +30,7 @@ export class ErrorBoundary extends React.Component<IErrorBoundaryProps, IErrorBo
     public render(): React.ReactNode {
         if (this.state.errorInfo) {
             // Display error
-            return (
-                <ErrorBoundaryContent
-                    error={this.state.error}
-                    errorInfo={this.state.errorInfo}
-                    recoveryButtons={this.props.recoveryButtons}
-                />
-            );
+            return <SimpleErrorBoundaryContent error={this.state.error} errorInfo={this.state.errorInfo} />;
         }
 
         // No error, just render children

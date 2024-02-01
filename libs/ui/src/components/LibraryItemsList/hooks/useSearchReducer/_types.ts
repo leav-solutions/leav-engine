@@ -4,7 +4,7 @@
 import {ApolloError} from '@apollo/client';
 import {ILang} from '_ui/types/misc';
 import {IRecordIdentityWhoAmI} from '_ui/types/records';
-import {IAttribute, IField, IFilter, SearchMode, SidebarContentType} from '_ui/types/search';
+import {IAttribute, IField, IFilter, ISearchSelection, SearchMode, SidebarContentType} from '_ui/types/search';
 import {IValueVersion} from '_ui/types/values';
 import {IView, IViewDisplay} from '_ui/types/views';
 import {SortOrder} from '_ui/_gqlTypes';
@@ -42,17 +42,6 @@ export interface ISearchSort {
     order: SortOrder;
 }
 
-export interface ISelectedRecord {
-    id: string;
-    label: string;
-    library: string;
-}
-
-export interface ISelectionState {
-    selected: ISelectedRecord[];
-    allSelected: boolean;
-}
-
 export interface ISidebarState {
     visible: boolean;
     type: SidebarContentType;
@@ -79,7 +68,7 @@ export interface ISearchState {
     lang: ILang;
     valuesVersions: IValueVersion;
     sideBar: ISidebarState;
-    selection: ISelectionState;
+    selection: ISearchSelection;
     showTransparency: boolean;
     mode: SearchMode;
 }

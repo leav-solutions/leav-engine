@@ -5,7 +5,7 @@ import {FunctionComponent} from 'react';
 import {CSSObject} from 'styled-components';
 import {ErrorDisplay, Loading} from '_ui/components';
 import {ErrorDisplayTypes} from '_ui/constants';
-import {SearchMode} from '_ui/types/search';
+import {IFilter, ISearchSelection, SearchMode} from '_ui/types/search';
 import {ILibraryDetailExtended} from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
 import useLibraryView from './hooks/useLibraryView/useLibraryView';
 import LibraryItemsListContent from './LibraryItemsListContent';
@@ -16,6 +16,7 @@ interface ILibraryItemsListProps {
     style?: CSSObject;
     showTransparency?: boolean;
     mode?: SearchMode;
+    onSelectChange?: (selection: ISearchSelection, filters?: IFilter[]) => void;
 }
 
 export const LibraryItemsList: FunctionComponent<ILibraryItemsListProps> = ({
@@ -23,7 +24,8 @@ export const LibraryItemsList: FunctionComponent<ILibraryItemsListProps> = ({
     library,
     style,
     showTransparency,
-    mode
+    mode,
+    onSelectChange
 }) => {
     const {loading: libraryViewLoading, view: libraryView} = useLibraryView(library);
 
@@ -44,6 +46,7 @@ export const LibraryItemsList: FunctionComponent<ILibraryItemsListProps> = ({
             defaultView={libraryView}
             style={style}
             showTransparency={showTransparency}
+            onSelectChange={onSelectChange}
             mode={mode}
         />
     );

@@ -4,7 +4,7 @@
 import userEvent from '@testing-library/user-event';
 import {SearchContext} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchContext';
 import {initialSearchState} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchReducer';
-import {deactivateRecordsMutation} from '_ui/_queries/records/deactivateRecordsMutation';
+import {DeactivateRecordsDocument} from '_ui/_gqlTypes';
 import {render, screen, waitFor} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import DeactivateRecordBtn from './DeactivateRecordBtn';
@@ -15,7 +15,7 @@ describe('DeactivateRecordBtn', () => {
         const mocks = [
             {
                 request: {
-                    query: deactivateRecordsMutation,
+                    query: DeactivateRecordsDocument,
                     variables: {
                         libraryId: mockRecord.library.id,
                         recordsIds: [mockRecord.id]

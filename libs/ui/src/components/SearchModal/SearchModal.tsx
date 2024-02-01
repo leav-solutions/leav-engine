@@ -2,51 +2,49 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Modal} from 'antd';
-import {FunctionComponent} from 'react';
-import styled from 'styled-components';
+import {FunctionComponent, useState} from 'react';
 import {LibraryItemsList} from '_ui/components/LibraryItemsList';
 import {ErrorDisplayTypes} from '_ui/constants';
 import useGetLibraryDetailExtendedQuery from '_ui/hooks/useGetLibraryDetailExtendedQuery/useGetLibraryDetailExtendedQuery';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {ISearchSelection} from '_ui/types';
 import {ErrorDisplay} from '../ErrorDisplay';
 import {Loading} from '../Loading';
-
-const WrapperItemsList = styled.div`
-    position: relative;
-`;
 
 interface ISearchModalProps {
     libId: string;
     visible: boolean;
     setVisible: (visible: boolean) => void;
-    submitAction: (selection) => void;
+    submitAction: (selection: ISearchSelection) => void;
 }
 
 export const SearchModal: FunctionComponent<ISearchModalProps> = ({visible, setVisible, submitAction, libId}) => {
     const {t} = useSharedTranslation();
+    const [selection, setSelection] = useState<ISearchSelection>({selected: [], allSelected: false});
 
-    //TODO: handle selection
-
-    const handleModalClose = () => {
-        // dispatch(resetSearchSelection());
+    const _handleModalClose = () => {
         setVisible(false);
     };
 
-    const handleOk = () => {
-        // submitAction(selectionState.searchSelection);
-        handleModalClose();
+    const _handleOk = () => {
+        submitAction(selection);
+        _handleModalClose();
+    };
+
+    const _handleSelectionChange = (newSelection: ISearchSelection) => {
+        setSelection(newSelection);
     };
 
     const renderModal = (content: JSX.Element): JSX.Element => (
         <Modal
             open={visible}
-            onCancel={handleModalClose}
+            onCancel={_handleModalClose}
             width="95vw"
             bodyStyle={{height: '90vh', overflow: 'hidden'}}
             style={{
                 top: '1rem'
             }}
-            onOk={handleOk}
+            onOk={_handleOk}
             okText={t('global.apply')}
             cancelText={t('global.cancel')}
         >
@@ -73,13 +71,14 @@ export const SearchModal: FunctionComponent<ISearchModalProps> = ({visible, setV
     }
 
     return renderModal(
-        <WrapperItemsList>
+        <div style={{position: 'relative'}}>
             <LibraryItemsList
                 selectionMode={true}
                 library={data.libraries.list[0]}
                 style={{height: 'calc(100vh - 11rem)'}}
+                onSelectChange={_handleSelectionChange}
             />
-        </WrapperItemsList>
+        </div>
     );
 };
 

@@ -44,7 +44,6 @@ const ViewLabel = styled.span`
 
 function MenuView({library}: IMenuViewProps): JSX.Element {
     const {t} = useSharedTranslation();
-
     const {lang, defaultLang} = useLang();
 
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
@@ -75,7 +74,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
         const visible = !searchState.sideBar.visible || searchState.sideBar.type !== SidebarContentType.filters;
         searchDispatch({
             type: SearchActionTypes.SET_SIDEBAR,
-            sidebarType: SidebarContentType.filters,
+            sidebarType: SidebarContentType.versions,
             visible
         });
     };
@@ -116,28 +115,23 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
 
     const _saveView = async () => {
         if (searchState.view.current.id !== defaultView.id) {
-            try {
-                // save view in backend
-                await addView({
-                    view: {
-                        ..._getNewViewFromSearchState(),
-                        id: searchState.view.current.id,
-                        label: searchState.view.current.label,
-                        description: searchState.view.current.description,
-                        shared: searchState.view.current.shared,
-                        color: searchState.view.current.color,
-                        sort: searchState.sort ?? null
-                    }
-                });
+            // save view in backend
+            await addView({
+                view: {
+                    ..._getNewViewFromSearchState(),
+                    id: searchState.view.current.id,
+                    label: searchState.view.current.label,
+                    description: searchState.view.current.description,
+                    shared: searchState.view.current.shared,
+                    color: searchState.view.current.color,
+                    sort: searchState.sort ?? null
+                }
+            });
 
-                searchDispatch({
-                    type: SearchActionTypes.SET_VIEW_SYNC,
-                    sync: true
-                });
-            } catch (e) {
-                //TODO: display an error message somewhere
-                console.error(e);
-            }
+            searchDispatch({
+                type: SearchActionTypes.SET_VIEW_SYNC,
+                sync: true
+            });
         }
     };
 
