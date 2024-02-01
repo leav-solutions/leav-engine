@@ -1,4 +1,5 @@
 import {IDateRangeValue} from '@leav/utils';
+import {ReactNode} from 'react';
 import {
     AttributeFormat,
     AttributesByLibAttributeStandardAttributeFragment,
@@ -185,4 +186,22 @@ export interface IFilterTree extends IFilter {
 export interface IFilterLibrary extends IFilter {
     library: {id: string; label?: SystemTranslation | null};
     parentAttribute: IAttribute;
+}
+
+export interface ISelectedRecord {
+    id: string;
+    label: string;
+    library: string;
+}
+
+export interface ISearchSelection {
+    selected: ISelectedRecord[];
+    allSelected: boolean;
+}
+
+export interface ISelectionMenuAction {
+    key: string;
+    icon: ReactNode;
+    title: string;
+    onClick: (selection: ISearchSelection, filters?: IFilter[]) => void;
 }

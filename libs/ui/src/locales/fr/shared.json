@@ -16,7 +16,19 @@
         "duplicate": "Dupliquer",
         "refresh": "Rafraîchir",
         "element_not_found": "Élément introuvable",
-        "apply": "Appliquer"
+        "apply": "Appliquer",
+        "processing": "Traitement en cours",
+        "done": "Terminé",
+        "clear": "Effacer",
+        "copy": "Copie",
+        "feature_not_available": "Cette fonctionnalité sera bientôt disponible!",
+        "available_soon": "Bientôt",
+        "refresh_page": "Rafraîchir la page",
+        "document_title": "LEAV Engine - {{appLabel}}",
+        "yes": "Oui",
+        "no": "Non",
+        "create": "Créer",
+        "ok": "Ok"
     },
     "errors": {
         "default_language_required": "La langue par défaut est requise",
@@ -502,7 +514,7 @@
     "records_deactivation": {
         "title": "Désactiver les éléments",
         "title_one": "Désactiver",
-        "confirm": "Êtes-vous sûr de vouloir désactiver les {{count}} éléments sélectionnés?",
+        "confirm": "Êtes-vous sûr de vouloir désactiver les éléments sélectionnés?",
         "confirm_one": "Êtes-vous sûr de vouloir désactiver cet élément?"
     },
     "table-columns-selection": {
@@ -554,5 +566,13 @@
         "previews_generation_success": "La génération des aperçus a bien été lancée",
         "previews_generation_nothing_to_do": "Aucun aperçu à générer",
         "previews_generation_select_all": "Toutes les versions"
+    },
+    "menu-selection": {
+        "nb-selected": "Sélection {{nbSelected}} / {{total}}",
+        "quit": "Quitter le mode sélection",
+        "actions": "Actions",
+        "all-selected-enabled": "Tout sélectionné actif",
+        "all-selected-disabled": "Tout sélectionné inactif",
+        "unselect-all": "Tout désélectionner"
     }
 }

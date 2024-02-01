@@ -14,6 +14,7 @@ import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchRed
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {SearchMode} from '_ui/types/search';
 import {SearchActionTypes} from '../hooks/useSearchReducer/searchReducer';
+import ActionsMenu from './ActionsMenu';
 
 interface IMenuItemListSelectedProps {
     active: boolean;
@@ -46,7 +47,7 @@ const Wrapper = styled.div<IWrapperProps>`
 
     @keyframes moveToBottom {
         from {
-            top: -100px;
+            top: -105px;
         }
         to {
             top: 0;
@@ -172,8 +173,7 @@ function MenuItemListSelected({active}: IMenuItemListSelectedProps): JSX.Element
                     </DropdownButton>
                 </Dropdown>
 
-                {/* TODO: Take actions menu form props}
-                {/* {searchState.mode !== SearchMode.select && <ActionsMenu />} */}
+                {searchState.mode !== SearchMode.select && <ActionsMenu />}
             </div>
         </Wrapper>
     );

@@ -3,12 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ApolloError} from '@apollo/client';
 import getFieldsFromView from '_ui/components/LibraryItemsList/helpers/getFieldsFromView';
-import {IAttribute, IField, IFilter, SearchMode, SidebarContentType} from '_ui/types/search';
+import {IAttribute, IField, IFilter, ISelectedRecord, SearchMode, SidebarContentType} from '_ui/types/search';
 import {IValueVersion} from '_ui/types/values';
 import {IView, IViewDisplay} from '_ui/types/views';
 import {ViewSizes, ViewTypes} from '_ui/_gqlTypes';
 import {defaultView, viewSettingsField} from '../../constants';
-import {ISearchRecord, ISearchSort, ISearchState, ISelectedRecord} from './_types';
+import {ISearchRecord, ISearchSort, ISearchState} from './_types';
 
 export enum SearchActionTypes {
     UPDATE_RESULT = 'UPDATE_RESULT',

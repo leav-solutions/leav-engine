@@ -35,7 +35,12 @@ const useLibraryView = (library: ILibraryDetailExtended): {loading: boolean; err
             color: library.defaultView.color,
             shared: library.defaultView.shared,
             filters: getFiltersFromRequest(library.defaultView.filters ?? [], library.id, attributesFromQuery),
-            sort: library?.defaultView?.sort,
+            sort: library?.defaultView?.sort
+                ? {
+                      field: library.defaultView.sort.field,
+                      order: library.defaultView.sort.order
+                  }
+                : null,
             settings: library.defaultView.settings
         };
     };

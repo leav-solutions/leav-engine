@@ -157,6 +157,7 @@ function LibrariesList(): JSX.Element {
                     open={!!importActiveLibrary}
                     library={importActiveLibrary}
                     onClose={() => setImportActiveLibrary('')}
+                    availableLibraries={libraries}
                 />
             )}
         </Wrapper>

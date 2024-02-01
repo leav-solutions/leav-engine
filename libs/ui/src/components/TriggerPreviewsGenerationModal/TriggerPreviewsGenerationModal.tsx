@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
 import {Checkbox, Divider, Modal, Tree} from 'antd';
+import {useKitNotification} from 'aristid-ds';
 import {useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {RecordFilterInput, useForcePreviewsGenerationMutation, useGetLibraryPreviewsSettingsQuery} from '_ui/_gqlTypes';
@@ -27,6 +28,8 @@ function TriggerPreviewsGenerationModal({
 }: ITriggerPreviewsGenerationModalProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
+
+    const {kitNotification} = useKitNotification();
 
     const [isFailedOnlyChecked, setIsFailedOnlyChecked] = useState(false);
     const [checkedSizes, setCheckedSizes] = useState<string[]>([]);
@@ -71,16 +74,16 @@ function TriggerPreviewsGenerationModal({
 
             const isSuccess = result.data?.forcePreviewsGeneration ?? false;
 
-            const message = isSuccess
-                ? t('files.previews_generation_success')
-                : t('files.previews_generation_nothing_to_do');
-
-            //TODO: display a success message
+            if (isSuccess) {
+                kitNotification.success({description: null, message: t('files.previews_generation_success')});
+            } else {
+                kitNotification.info({description: null, message: t('files.previews_generation_nothing_to_do')});
+            }
 
             onClose();
         } catch (e) {
-            // Nothing to do here, error is handled globally by Apollo. Uncomment next line for easier tests debug
-            console.error(e);
+            // Nothing to do here, error should be handled globally by Apollo. Uncomment next line for easier debugging
+            // console.error(e);
         }
     };
 

@@ -16,7 +16,18 @@
         "duplicate": "Duplicate",
         "refresh": "Refresh",
         "element_not_found": "Element not found",
-        "apply": "Apply"
+        "apply": "Apply",
+        "processing": "Processing",
+        "done": "Done",
+        "clear": "Effacer",
+        "copy": "Copy",
+        "feature_not_available": "This feature will be available soon!",
+        "available_soon": "Soon",
+        "refresh_page": "Refresh Page",
+        "document_title": "LEAV Engine - {{appLabel}}",
+        "yes": "Yes",
+        "no": "No",
+        "create": "Create"
     },
     "errors": {
         "default_language_required": "The default language is required",
@@ -500,7 +511,7 @@
     "records_deactivation": {
         "title": "Deactivate records",
         "title_one": "Deactivate",
-        "confirm": "Do you really want to deactivate the {{count}} records selected?",
+        "confirm": "Do you really want to deactivate the selected records?",
         "confirm_one": "Do you really want to deactivate this record?"
     },
     "table-columns-selection": {
@@ -553,5 +564,13 @@
         "previews_generation_success": "Previews generation started",
         "previews_generation_nothing_to_do": "No preview to generate",
         "previews_generation_select_all": "All versions"
+    },
+    "menu-selection": {
+        "nb-selected": "Selection {{nbSelected}} / {{total}}",
+        "quit": "Quit selection mode",
+        "actions": "Actions",
+        "all-selected-enabled": "All selected mode enabled",
+        "all-selected-disabled": "All selected mode disabled",
+        "unselect-all": "Unselect All"
     }
 }

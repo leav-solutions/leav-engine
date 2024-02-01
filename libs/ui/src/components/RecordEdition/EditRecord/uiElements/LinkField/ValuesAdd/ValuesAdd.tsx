@@ -11,9 +11,9 @@ import {
 } from '@ant-design/icons';
 import {useLazyQuery} from '@apollo/client';
 import {localizedTranslation} from '@leav/utils';
-import {Button,Divider,Input,InputRef,Space,Spin} from 'antd';
+import {Button, Divider, Input, InputRef, Space, Spin} from 'antd';
 import {PaginationConfig} from 'antd/lib/pagination';
-import {useEffect,useRef,useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import {CreateDirectory} from '_ui/components/CreateDirectory';
@@ -27,7 +27,7 @@ import {UploadFiles} from '_ui/components/UploadFiles';
 import {PreviewSize} from '_ui/constants';
 import {useLang} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IRecordIdentity,IRecordIdentityWhoAmI} from '_ui/types/records';
+import {IRecordIdentity, IRecordIdentityWhoAmI} from '_ui/types/records';
 import {
     CreateDirectoryMutation,
     LibraryBehavior,
@@ -190,7 +190,6 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
         setIsCreateRecordModalVisible(false);
     };
 
-    //TODO: handle search select
     const _handleSearchModalSubmit = async ({selected}) => {
         if (!selected.length) {
             return;

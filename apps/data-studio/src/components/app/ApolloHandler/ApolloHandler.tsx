@@ -218,7 +218,9 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
                 Tree: {
                     fields: {
                         permissions: {
-                            merge: true
+                            merge(existing, incoming) {
+                                return {...existing, ...incoming};
+                            }
                         },
                         libraries: {
                             merge(existing, incoming) {

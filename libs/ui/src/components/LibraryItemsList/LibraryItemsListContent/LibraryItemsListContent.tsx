@@ -12,7 +12,7 @@ import searchReducer, {
 } from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchReducer';
 import {ISearchRecord} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/_types';
 import {useGetRecordUpdatesSubscription, useLang} from '_ui/hooks';
-import {IField, SearchMode} from '_ui/types/search';
+import {IField, IFilter, ISearchSelection, SearchMode} from '_ui/types/search';
 import {IView} from '_ui/types/views';
 import {useSaveUserDataMutation} from '_ui/_gqlTypes';
 import {ILibraryDetailExtended} from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
@@ -79,6 +79,7 @@ interface ILibraryItemsListContentProps {
     style?: CSSObject;
     showTransparency?: boolean;
     mode?: SearchMode;
+    onSelectChange?: (selection: ISearchSelection, filters?: IFilter[]) => void;
 }
 
 function LibraryItemsListContent({
@@ -86,6 +87,7 @@ function LibraryItemsListContent({
     library,
     defaultView,
     showTransparency,
+    onSelectChange,
     style
 }: ILibraryItemsListContentProps): JSX.Element {
     const {lang} = useLang();
@@ -118,7 +120,8 @@ function LibraryItemsListContent({
         },
         lang,
         valuesVersions: defaultView.valuesVersions,
-        showTransparency
+        showTransparency,
+        mode: selectionMode ? SearchMode.select : SearchMode.search
     });
 
     useGetRecordUpdatesSubscription({libraries: [library.id]});
@@ -241,13 +244,23 @@ function LibraryItemsListContent({
         searchDispatch({type: SearchActionTypes.SET_VIEW_RELOAD, reload: false});
     }, [selectedViewKey, updateSelectedViewMutation, searchState.view, searchState.fields, searchDispatch, library]);
 
+    /**
+     * Calls onSelectChange when selection changes
+     */
+    useEffect(() => {
+        if (!onSelectChange) {
+            return;
+        }
+
+        onSelectChange(searchState.selection, searchState.selection.allSelected ? searchState.filters : null);
+    }, [searchState.selection]);
+
     const _reload = () => {
         searchDispatch({type: SearchActionTypes.SET_LOADING, loading: true});
     };
 
     // If some elements are selected and the selection type is search, show the selection Menu
-    const menuSelectedActive =
-        (selectionMode && !!searchState.selection.selected.length) || searchState.selection.allSelected;
+    const menuSelectedActive = !!searchState.selection.selected.length || searchState.selection.allSelected;
 
     return (
         <SearchContext.Provider value={{state: searchState, dispatch: searchDispatch}}>

@@ -1,11 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {HomeOutlined, ReloadOutlined} from '@ant-design/icons';
 import {useQuery, useSubscription} from '@apollo/client';
 import {
+    APPS_ENDPOINT,
     APP_ENDPOINT,
     customTheme,
     dsTheme,
+    ErrorBoundary,
     ErrorDisplay,
     ErrorDisplayTypes,
     IUserContext,
@@ -16,7 +19,7 @@ import {
     UserContext
 } from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {ConfigProvider, theme} from 'antd';
+import {Button, ConfigProvider, theme} from 'antd';
 import {KitApp} from 'aristid-ds';
 import ApplicationContext from 'context/ApplicationContext';
 import dayjs from 'dayjs';
@@ -44,6 +47,7 @@ function AppHandler(): JSX.Element {
     const {t, i18n} = useTranslation();
     const dispatch = useAppDispatch();
     const {token: themeToken} = theme.useToken();
+    const homeUrl = `/${APPS_ENDPOINT}/${APP_ENDPOINT}`;
 
     // Add lang infos to the cache
     const userLang = i18n.language.split('-')[0];
@@ -130,6 +134,23 @@ function AppHandler(): JSX.Element {
         setLang([i18n.language, fallbackLng]);
     };
 
+    const _handleRefresh = () => {
+        window.location.reload();
+    };
+
+    const _handleGoBack = () => {
+        window.location.replace(homeUrl);
+    };
+
+    const recoveryButtons = [
+        <Button onClick={_handleRefresh} type="primary" icon={<ReloadOutlined />}>
+            {t('global.refresh_page')}
+        </Button>,
+        <Button onClick={_handleGoBack} type="primary" icon={<HomeOutlined />}>
+            {t('global.go_back_home')}
+        </Button>
+    ];
+
     if (meLoading || applicationLoading || globalSettingsLoading || langsLoading || appLangLoading) {
         return <Loading />;
     }
@@ -168,16 +189,23 @@ function AppHandler(): JSX.Element {
                         setLang: _handleLanguageChange
                     }}
                 >
-                    <ApplicationContext.Provider value={appContextData}>
-                        <KitApp
-                            customTheme={dsTheme}
-                            locale={{locale: localeByLang[lang[0]], ItemCard: null, ItemList: null, Image: null}}
-                        >
-                            <ConfigProvider theme={customTheme} locale={locale}>
-                                <Router />
-                            </ConfigProvider>
-                        </KitApp>
-                    </ApplicationContext.Provider>
+                    <ErrorBoundary recoveryButtons={recoveryButtons}>
+                        <ApplicationContext.Provider value={appContextData}>
+                            <KitApp
+                                customTheme={dsTheme}
+                                locale={{
+                                    locale: localeByLang[lang[0]],
+                                    ItemCard: null,
+                                    ItemList: null,
+                                    Image: null
+                                }}
+                            >
+                                <ConfigProvider theme={customTheme} locale={locale}>
+                                    <Router />
+                                </ConfigProvider>
+                            </KitApp>
+                        </ApplicationContext.Provider>
+                    </ErrorBoundary>
                 </LangContext.Provider>
             </UserContext.Provider>
         </ThemeProvider>

@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {Button} from 'antd';
 import {render, screen} from '../../_tests/testUtils';
 import {ErrorBoundary} from './ErrorBoundary';
 
@@ -13,8 +14,10 @@ describe('ErrorBoundary', () => {
     };
 
     test('Display proper error message with recovery buttons', async () => {
+        const buttons = [<Button>refresh</Button>, <Button>go_back</Button>];
+
         render(
-            <ErrorBoundary>
+            <ErrorBoundary recoveryButtons={buttons}>
                 <ComponentWithError />
             </ErrorBoundary>
         );
@@ -27,11 +30,13 @@ describe('ErrorBoundary', () => {
 
     test('Display error message without recovery buttons', async () => {
         render(
-            <ErrorBoundary showRecoveryButtons={false}>
+            <ErrorBoundary>
                 <ComponentWithError />
             </ErrorBoundary>
         );
 
+        expect(screen.getByText(/error_occurred/)).toBeInTheDocument();
+        expect(screen.getByText(/boom!/)).toBeInTheDocument();
         expect(screen.queryByRole('button', {name: /refresh/i})).not.toBeInTheDocument();
         expect(screen.queryByRole('button', {name: /go_back/i})).not.toBeInTheDocument();
     });

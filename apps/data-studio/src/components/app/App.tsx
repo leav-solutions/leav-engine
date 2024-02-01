@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ErrorBoundary, Loading} from '@leav/ui';
+import {Loading,SimpleErrorBoundary} from '@leav/ui';
 import {Suspense} from 'react';
 import {Provider} from 'react-redux';
 import store from 'reduxStore/store';
@@ -11,7 +11,7 @@ import AppHandler from './AppHandler';
 
 function App() {
     return (
-        <ErrorBoundary>
+        <SimpleErrorBoundary>
             <Provider store={store}>
                 <Suspense fallback={<Loading />}>
                     <ApolloHandler>
@@ -19,7 +19,7 @@ function App() {
                     </ApolloHandler>
                 </Suspense>
             </Provider>
-        </ErrorBoundary>
+        </SimpleErrorBoundary>
     );
 }
 

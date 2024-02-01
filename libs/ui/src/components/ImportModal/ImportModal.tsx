@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DownOutlined, FieldTimeOutlined, RightOutlined} from '@ant-design/icons';
 import {ServerError} from '@apollo/client';
-import {Button, Dropdown, message, Modal, Space, Steps} from 'antd';
+import {Button, Dropdown, message, Modal, Space} from 'antd';
 import {KitSteps} from 'aristid-ds';
 import {IKitStep} from 'aristid-ds/dist/Kit/Navigation/Steps/types';
 import dayjs from 'dayjs';
@@ -17,8 +17,6 @@ import importReducer from './importReducer';
 import {ImportReducerActionTypes, initialState} from './importReducer/importReducer';
 import ImportReducerContext from './importReducer/ImportReducerContext';
 import {ImportSteps} from './_types';
-
-const {Step} = Steps;
 
 export interface IImportModalProps {
     open: boolean;

@@ -15,12 +15,11 @@ import EditRecordBtn from '_ui/components/RecordEdition/EditRecordBtn';
 import {PreviewSize} from '_ui/constants';
 import useLang from '_ui/hooks/useLang';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IItem} from '_ui/types/search';
+import {IItem, ISelectedRecord} from '_ui/types/search';
 import {stopEvent} from '_ui/_utils';
 import EditRecordModal from '../../../RecordEdition/EditRecordModal';
 import {displayTypeToPreviewSize} from '../../helpers/displayTypeToPreviewSize';
 import {SearchActionTypes} from '../../hooks/useSearchReducer/searchReducer';
-import {ISelectedRecord} from '../../hooks/useSearchReducer/_types';
 import getItemPreviewSize from '../helpers/getItemPreviewSize';
 
 const buttonsColor = '#333333';

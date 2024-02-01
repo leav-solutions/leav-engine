@@ -16,6 +16,7 @@ import express, {NextFunction, Request, Response} from 'express';
 import fs from 'fs';
 import {GraphQLError, GraphQLFormattedError} from 'graphql';
 import {graphqlUploadExpress} from 'graphql-upload';
+import {ServerOptions} from 'graphql-ws';
 import * as graphqlWS from 'graphql-ws/lib/use/ws';
 import {createServer} from 'http';
 import {IUtils} from 'utils/utils';
@@ -117,6 +118,14 @@ export default function({
         }
     };
 
+    const _extractAccessTokenFromCookiesString = (cookies: string) => {
+        const accessTokenPart = cookies.split('; ').find(s => s.startsWith('accessToken='));
+        if (!accessTokenPart) {
+            return null;
+        }
+        return accessTokenPart.substring('accessToken='.length);
+    };
+
     return {
         async init(): Promise<void> {
             const app = express();
@@ -197,48 +206,52 @@ export default function({
 
                 const schema = await graphqlApp.getSchema();
 
-                const graphqlWsServer = graphqlWS.useServer(
-                    {
-                        schema,
-                        context: async (ctx: any) => {
-                            try {
-                                // recreate headers object from rawHeaders array
-                                const headers = ctx.extra.request.rawHeaders.reduce((prev, curr, i, arr) => {
+                const wsServerOptions: ServerOptions<null, {leavCtx?: IQueryInfos} & graphqlWS.Extra> = {
+                    schema,
+                    onConnect: async ctx => {
+                        // Check auth
+                        try {
+                            // Recreate headers object from rawHeaders array
+                            const headers: Record<string, string> = ctx.extra.request.rawHeaders.reduce(
+                                (prev, curr, i, arr) => {
                                     return !(i % 2) ? {...prev, [curr]: arr[i + 1]} : prev;
-                                }, {});
+                                },
+                                {}
+                            );
 
-                                const apiKeyIncluded = ctx.extra.request.url.includes(`${API_KEY_PARAM_NAME}=`);
-                                const cookieIncluded = headers.Cookie?.includes(ACCESS_TOKEN_COOKIE_NAME);
+                            const apiKeyIncluded = ctx.extra.request.url.includes(`${API_KEY_PARAM_NAME}=`);
+                            const cookieIncluded = headers.Cookie?.includes(ACCESS_TOKEN_COOKIE_NAME);
+                            const payload = await authApp.validateRequestToken({
+                                apiKey: apiKeyIncluded ? ctx.extra.request.url.split('key=')[1] : null,
+                                cookies: cookieIncluded
+                                    ? {
+                                          [ACCESS_TOKEN_COOKIE_NAME]: _extractAccessTokenFromCookiesString(
+                                              headers.Cookie
+                                          )
+                                      }
+                                    : null
+                            });
 
-                                const payload = await authApp.validateRequestToken({
-                                    apiKey: apiKeyIncluded ? ctx.extra.request.url.split('key=')[1] : null,
-                                    cookies: cookieIncluded
-                                        ? {
-                                              [ACCESS_TOKEN_COOKIE_NAME]: headers.Cookie.split('=')[
-                                                  headers.Cookie.split('=').indexOf(ACCESS_TOKEN_COOKIE_NAME) + 1
-                                              ]
-                                          }
-                                        : null
-                                });
+                            const context: IQueryInfos = {
+                                userId: payload.userId,
+                                groupsId: payload.groupsId
+                            };
 
-                                const context: IQueryInfos = {
-                                    userId: payload.userId,
-                                    groupsId: payload.groupsId
-                                };
+                            // Store context in extra to retrieve it later on
+                            ctx.extra = {...ctx.extra, leavCtx: context};
 
-                                return context;
-                            } catch (e) {
-                                throw new GraphQLError('You must be logged in', {
-                                    extensions: {
-                                        code: 'UNAUTHENTICATED',
-                                        http: {status: 401}
-                                    }
-                                });
-                            }
+                            return true;
+                        } catch (e) {
+                            return false; // Will close connection with a "403 Forbidden" error
                         }
                     },
-                    wsServer
-                );
+                    context: async ctx => {
+                        // Extract relevant context from extra
+                        return ctx.extra.leavCtx;
+                    }
+                };
+
+                const graphqlWsServer = graphqlWS.useServer(wsServerOptions, wsServer);
 
                 const responseFormattingPlugin: ApolloServerPlugin<IQueryInfos> = {
                     async requestDidStart() {
