@@ -51,7 +51,7 @@
   },
   "stableVersion": "1.0.0",
   "dependencies": {
-    "@leav/utils": "workspace:*",
+    "@leav/utils": "1.0.0-beta6",
     "i18next-resources-to-backend": "1.1.4"
   }
 }

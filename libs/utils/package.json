@@ -1,7 +1,11 @@
 {
   "name": "@leav/utils",
   "version": "1.0.0-beta6",
-  "description": "Shared utils and types to use across projects",
+  "files": [
+    "dist"
+  ],
+  "description": "LEAV Engine shared utils and types to use across projects",
+  "main": "dist/esm/index",
   "scripts": {
     "prepublishOnly": "npm run build",
     "build": "tsc --project tsconfig.esm.json & tsc --project tsconfig.json",
@@ -11,7 +15,7 @@
     "test:ci": "jest -c jest-config.json",
     "test:commit": "jest -c jest-config.json --maxWorkers=50% --onlyChanged "
   },
-  "main": "dist/esm/index",
+  "repository": "https://github.com/leav-solutions/leav-engine",
   "author": "",
   "license": "LGPL3",
   "devDependencies": {
