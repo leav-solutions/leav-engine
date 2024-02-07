@@ -45,6 +45,7 @@ import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import getAttributesFromField from './helpers/getAttributesFromField';
 import {SendRecordUpdateEventHelper} from './helpers/sendRecordUpdateEvent';
 import {ICreateRecordResult, IFindRecordParams} from './_types';
+import * as winston from 'winston';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -162,6 +163,7 @@ interface IDeps {
     'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.infra.cache.cacheService'?: ICachesService;
     'core.utils'?: IUtils;
+    'core.utils.logger'?: winston.Winston;
 }
 
 export default function ({
@@ -179,7 +181,8 @@ export default function ({
     'core.infra.value': valueRepo = null,
     'core.domain.eventsManager': eventsManager = null,
     'core.infra.cache.cacheService': cacheService = null,
-    'core.utils': utils = null
+    'core.utils': utils = null,
+    'core.utils.logger': logger = null
 }: IDeps = {}): IRecordDomain {
     /**
      * Extract value from record if it's available (attribute simple), or fetch it from DB
@@ -863,19 +866,24 @@ export default function ({
             }
 
             // await is necessary during importData(), otherwise it will generate a memory leak due to number of events incoming
-            await eventsManager.sendDatabaseEvent(
-                {
-                    action: EventAction.RECORD_SAVE,
-                    topic: {
-                        record: {
-                            id: newRecord.id,
-                            libraryId: newRecord.library
-                        }
+            try {
+                await eventsManager.sendDatabaseEvent(
+                    {
+                        action: EventAction.RECORD_SAVE,
+                        topic: {
+                            record: {
+                                id: newRecord.id,
+                                libraryId: newRecord.library
+                            }
+                        },
+                        after: newRecord
                     },
-                    after: newRecord
-                },
-                ctx
-            );
+                    ctx
+                );
+            } catch (error) {
+                logger.error(`Error while sending ${EventAction.RECORD_SAVE} event`, error);
+            }
+
 
             return {record: newRecord, valuesErrors: null};
         },
