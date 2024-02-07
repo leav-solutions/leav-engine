@@ -7,7 +7,7 @@ import {Location} from 'history';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {AiOutlineFileSearch} from 'react-icons/ai';
-import {useHistory, useLocation} from 'react-router-dom';
+import {useHistory, useLocation} from 'react-router-dom-v5';
 import {Button, Grid, Header, Tab, TabProps} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {indexRecordsMutation} from '../../../../queries/records/indexRecordsMutation';

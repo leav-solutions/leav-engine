@@ -4,14 +4,13 @@
 import userEvent from '@testing-library/user-event';
 import {deleteApplicationQuery} from 'queries/applications/deleteApplicationMutation';
 import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
-import React from 'react';
 import {act, render, screen} from '_tests/testUtils';
 import {mockApplication} from '__mocks__/common/applications';
 import Applications from './Applications';
 
 const mockHistoryPush = jest.fn();
-jest.mock('react-router', () => ({
-    ...jest.requireActual('react-router'),
+jest.mock('react-router-v5', () => ({
+    ...jest.requireActual('react-router-v5'),
     useHistory: () => ({
         push: mockHistoryPush
     })

@@ -19,11 +19,6 @@ jest.mock('@leav/ui', () => {
     };
 });
 
-jest.mock('react-router-dom', () => ({
-    useParams: jest.fn(() => ({libId: 'test', libQueryName: 'test', filterName: 'TestFilter'})),
-    useHistory: jest.fn()
-}));
-
 const mockUpdateActiveLib = jest.fn();
 
 jest.mock('hooks/ActiveLibHook/ActiveLibHook', () => ({

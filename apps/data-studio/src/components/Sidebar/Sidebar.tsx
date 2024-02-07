@@ -16,7 +16,7 @@ import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import {useApplicationLibraries} from 'hooks/useApplicationLibraries';
 import {useApplicationTrees} from 'hooks/useApplicationTrees';
 import {useTranslation} from 'react-i18next';
-import {useHistory} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
 import {getLibraryLink, getTreeLink, localizedTranslation} from 'utils';
@@ -73,7 +73,7 @@ function Sidebar(): JSX.Element {
     const {lang} = useLang();
     const [activeLibrary] = useActiveLibrary();
     const [activeTree] = useActiveTree();
-    const history = useHistory();
+    const navigate = useNavigate();
     const {activePanel} = useAppSelector(state => state);
 
     const {libraries, loading: librariesLoading, error: librariesError} = useApplicationLibraries();
@@ -140,7 +140,7 @@ function Sidebar(): JSX.Element {
         });
     };
 
-    const _goTo = (url: string) => history.push(url);
+    const _goTo = (url: string) => navigate(url);
 
     const _goToActiveLibrary = () => {
         if (!activeLibrary?.id) {

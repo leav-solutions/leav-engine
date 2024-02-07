@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mount} from 'enzyme';
-import React from 'react';
 import {wait} from 'utils/testUtils';
 import {act, render, screen} from '_tests/testUtils';
 import {saveFormQuery} from '../../../../../../../../queries/forms/saveFormMutation';
@@ -19,8 +18,8 @@ jest.mock('./InfosForm', () => {
     };
 });
 
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
+jest.mock('react-router-dom-v5', () => ({
+    ...jest.requireActual('react-router-dom-v5'),
     useLocation: () => ({pathname: '/libraries/edit/products#forms'})
 }));
 

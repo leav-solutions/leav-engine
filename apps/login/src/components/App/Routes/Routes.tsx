@@ -7,7 +7,7 @@ import Login from 'components/Login';
 import ResetPassword from 'components/ResetPassword';
 import useAppName from 'hooks/useAppName';
 import {useEffect} from 'react';
-import {Route, Switch} from 'react-router-dom';
+import {Route, Routes as RouterRoutes} from 'react-router-dom';
 
 export default function Routes() {
     const {name, loading, error} = useAppName();
@@ -25,16 +25,10 @@ export default function Routes() {
     }
 
     return (
-        <Switch>
-            <Route exact path="/">
-                <Login />
-            </Route>
-            <Route path="/reset-password/:token">
-                <ResetPassword />
-            </Route>
-            <Route path="/forgot-password">
-                <ForgotPassword />
-            </Route>
-        </Switch>
+        <RouterRoutes>
+            <Route path="/" element={<Login />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+        </RouterRoutes>
     );
 }

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useHistory, useLocation} from 'react-router-dom';
+import {useHistory, useLocation} from 'react-router-dom-v5';
 import {Header, Tab, TabProps} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {GET_ATTRIBUTE_BY_ID_attributes_list} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';

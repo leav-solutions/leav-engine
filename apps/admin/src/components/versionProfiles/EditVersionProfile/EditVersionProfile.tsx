@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useApolloClient,useMutation,useQuery} from '@apollo/client';
+import {useApolloClient, useMutation, useQuery} from '@apollo/client';
 import {localizedTranslation} from '@leav/utils';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import Loading from 'components/shared/Loading';
@@ -11,15 +11,14 @@ import omit from 'lodash/omit';
 import {getVersionProfileByIdQuery} from 'queries/versionProfiles/getVersionProfileByIdQuery';
 import {getVersionProfilesQuery} from 'queries/versionProfiles/getVersionProfilesQuery';
 import {saveVersionProfileMutation} from 'queries/versionProfiles/saveVersionProfileMutation';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {match,useHistory} from 'react-router';
-import {Divider,Header} from 'semantic-ui-react';
+import {match, useHistory} from 'react-router-v5';
+import {Divider, Header} from 'semantic-ui-react';
 import styled from 'styled-components';
-import {GET_VERSION_PROFILES,GET_VERSION_PROFILESVariables} from '_gqlTypes/GET_VERSION_PROFILES';
-import {GET_VERSION_PROFILE_BY_ID,GET_VERSION_PROFILE_BY_IDVariables} from '_gqlTypes/GET_VERSION_PROFILE_BY_ID';
-import {PermissionsActions,VersionProfileInput} from '_gqlTypes/globalTypes';
-import {SAVE_VERSION_PROFILE,SAVE_VERSION_PROFILEVariables} from '_gqlTypes/SAVE_VERSION_PROFILE';
+import {GET_VERSION_PROFILES, GET_VERSION_PROFILESVariables} from '_gqlTypes/GET_VERSION_PROFILES';
+import {GET_VERSION_PROFILE_BY_ID, GET_VERSION_PROFILE_BY_IDVariables} from '_gqlTypes/GET_VERSION_PROFILE_BY_ID';
+import {PermissionsActions, VersionProfileInput} from '_gqlTypes/globalTypes';
+import {SAVE_VERSION_PROFILE, SAVE_VERSION_PROFILEVariables} from '_gqlTypes/SAVE_VERSION_PROFILE';
 import {IFormError} from '_types/errors';
 import InfoForm from './InfoForm';
 

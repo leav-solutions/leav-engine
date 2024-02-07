@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {act, render, screen} from '_tests/testUtils';
+import {render, screen} from '_tests/testUtils';
 import Router from './Router';
 
 jest.mock(
@@ -44,16 +44,15 @@ jest.mock('./Routes', () => {
 
 jest.mock('reduxStore/notifications', () => jest.fn());
 
-jest.mock('../../constants', () => ({
+jest.mock('@leav/ui', () => ({
+    ...jest.requireActual('@leav/ui'),
     APPS_ENDPOINT: '',
     APP_ENDPOINT: ''
 }));
 
 describe('Router', () => {
     test('Should add a router and layout elements', async () => {
-        await act(async () => {
-            render(<Router />);
-        });
+        render(<Router />);
 
         expect(screen.getByText('Routes')).toBeInTheDocument();
         expect(screen.getByText('Sidebar')).toBeInTheDocument();

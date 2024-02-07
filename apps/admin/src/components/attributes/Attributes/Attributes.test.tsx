@@ -4,8 +4,7 @@
 import {MockedResponse} from '@apollo/client/testing';
 import {History} from 'history';
 import {getAttributesQuery} from 'queries/attributes/getAttributesQuery';
-import React from 'react';
-import {BrowserRouter as Router} from 'react-router-dom';
+import {BrowserRouter as Router} from 'react-router-dom-v5';
 import {act, render, screen} from '_tests/testUtils';
 import {mockAttrSimple} from '__mocks__/attributes';
 import {Mockify} from '../../../_types/Mockify';

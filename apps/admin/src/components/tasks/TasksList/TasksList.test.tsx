@@ -2,13 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedProvider} from '@apollo/client/testing';
-import React from 'react';
-import {BrowserRouter as Router} from 'react-router-dom';
-import {mockTask} from '../../../__mocks__/task';
-import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
-import TasksList from './TasksList';
 import {Button} from 'semantic-ui-react';
 import {act, render, screen} from '_tests/testUtils';
+import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
+import {mockTask} from '../../../__mocks__/task';
+import TasksList from './TasksList';
 
 describe('TasksList', () => {
     const tasks = [

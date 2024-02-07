@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {PermissionTypes, PermissionsActions} from '_gqlTypes/globalTypes';
-import {render, screen} from '_tests/testUtils';
 import {isAllowedQuery} from 'graphQL/queries/permissions/isAllowedQuery';
-import {MemoryRouter, Route} from 'react-router-dom';
+import {MemoryRouter, Route, Routes} from 'react-router-dom';
+import {PermissionsActions, PermissionTypes} from '_gqlTypes/globalTypes';
+import {render, screen} from '_tests/testUtils';
 import Settings from './Settings';
 
 jest.mock('./ApplicationSettings', () => {
@@ -76,9 +76,9 @@ describe('Settings', () => {
     test('Go to active tab passed in URL', async () => {
         render(
             <MemoryRouter initialEntries={['/settings/libraries']}>
-                <Route exact path={'/settings/:tabId?'}>
-                    <Settings />
-                </Route>
+                <Routes>
+                    <Route path={'/settings/:tabId?'} element={<Settings />} />
+                </Routes>
             </MemoryRouter>,
             {apolloMocks: mocks}
         );

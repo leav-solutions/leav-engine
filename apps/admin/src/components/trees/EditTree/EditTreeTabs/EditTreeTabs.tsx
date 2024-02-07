@@ -4,7 +4,7 @@
 import TreeExplorer from 'components/trees/TreeExplorer';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useHistory, useLocation} from 'react-router-dom';
+import {useHistory, useLocation} from 'react-router-dom-v5';
 import {Header, Tab, TabProps} from 'semantic-ui-react';
 import useLang from '../../../../hooks/useLang';
 import {localizedLabel} from '../../../../utils';

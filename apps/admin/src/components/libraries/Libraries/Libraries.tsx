@@ -4,10 +4,10 @@
 import {useQuery} from '@apollo/client';
 import {useCurrentApplicationContext} from 'context/CurrentApplicationContext';
 import {History} from 'history';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {AiOutlineDatabase} from 'react-icons/ai';
-import {Link} from 'react-router-dom';
+import {Link} from 'react-router-dom-v5';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import useUserData from '../../../hooks/useUserData';

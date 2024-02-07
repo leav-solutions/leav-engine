@@ -4,14 +4,13 @@
 import userEvent from '@testing-library/user-event';
 import {deleteVersionProfileMutation} from 'queries/versionProfiles/deleteVersionProfileMutation';
 import {getVersionProfilesQuery} from 'queries/versionProfiles/getVersionProfilesQuery';
-import React from 'react';
 import {render, screen, waitFor} from '_tests/testUtils';
 import {mockVersionProfile} from '__mocks__/common/versionProfiles';
 import VersionProfiles from './VersionProfiles';
 
 const mockHistoryPush = jest.fn();
-jest.mock('react-router', () => ({
-    ...jest.requireActual('react-router'),
+jest.mock('react-router-dom-v5', () => ({
+    ...jest.requireActual('react-router-dom-v5'),
     useHistory: () => ({
         push: mockHistoryPush
     })

@@ -3,14 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery, useSubscription} from '@apollo/client';
 import {ErrorDisplay, Loading} from '@leav/ui';
-import {APPLICATION_EVENTS, APPLICATION_EVENTSVariables} from '_gqlTypes/APPLICATION_EVENTS';
-import {IS_ALLOWED, IS_ALLOWEDVariables} from '_gqlTypes/IS_ALLOWED';
-import {PermissionsActions} from '_gqlTypes/globalTypes';
 import {Tabs, TabsProps} from 'antd';
 import {isAllowedQuery} from 'graphQL/queries/permissions/isAllowedQuery';
 import {getApplicationsEventsSubscription} from 'graphQL/subscribes/applications/getApplicationsEventsSubscription';
 import {useTranslation} from 'react-i18next';
-import {useHistory, useParams, useRouteMatch} from 'react-router-dom';
+import {useLocation, useNavigate, useParams} from 'react-router-dom';
+import {APPLICATION_EVENTS, APPLICATION_EVENTSVariables} from '_gqlTypes/APPLICATION_EVENTS';
+import {PermissionsActions} from '_gqlTypes/globalTypes';
+import {IS_ALLOWED, IS_ALLOWEDVariables} from '_gqlTypes/IS_ALLOWED';
 import {PermissionTypes} from '../../../../../libs/ui/src/_gqlTypes';
 import ApplicationSettings from './ApplicationSettings';
 import LibrariesSettings from './LibrariesSettings';
@@ -19,9 +19,9 @@ import TreesSettings from './TreesSettings';
 function Settings(): JSX.Element {
     const {t} = useTranslation();
     useSubscription<APPLICATION_EVENTS, APPLICATION_EVENTSVariables>(getApplicationsEventsSubscription);
-    const history = useHistory();
+    const navigate = useNavigate();
     const urlParams = useParams<{tabId?: string}>();
-    const routeMatch = useRouteMatch();
+    const location = useLocation();
 
     const {loading: permissionsLoading, error: permissionsError, data: permissionsData} = useQuery<
         IS_ALLOWED,
@@ -63,10 +63,10 @@ function Settings(): JSX.Element {
 
     const _handleTabClick = (key: string) => {
         // Extract base path from url: url minus tabId if any
-        const basePath = routeMatch?.url.replace(`/${urlParams.tabId}`, '');
+        const basePath = location.pathname.replace(`/${urlParams.tabId}`, '');
 
         // Add current tab to url
-        history.push(`${basePath}/${key}`);
+        navigate(`${basePath}/${key}`);
     };
 
     if (permissionsLoading) {

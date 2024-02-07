@@ -3,33 +3,19 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import Settings from 'components/Settings';
 import Workspace from 'components/Workspace';
-import {Route, Switch} from 'react-router-dom';
+import {Route, Routes as RouterRoutes} from 'react-router-dom';
 import RouteNotFound from '../RouteNotFound';
 import {routes} from './ListRoutes';
 
 function Routes(): JSX.Element {
     return (
-        <Switch>
-            <Route exact path={routes.root}>
-                <Workspace />
-            </Route>
-
-            <Route exact path={routes.home}>
-                <Workspace />
-            </Route>
-
-            <Route exact path={routes.workspace}>
-                <Workspace />
-            </Route>
-
-            <Route exact path={routes.settings}>
-                <Settings />
-            </Route>
-
-            <Route>
-                <RouteNotFound />
-            </Route>
-        </Switch>
+        <RouterRoutes>
+            <Route path={routes.root} element={<Workspace />} />
+            <Route path={routes.home} element={<Workspace />} />
+            <Route path={routes.workspace} element={<Workspace />} />
+            <Route path={routes.settings} element={<Settings />} />
+            <Route element={<RouteNotFound />} />
+        </RouterRoutes>
     );
 }
 

@@ -6,7 +6,7 @@ import {Alert, Form, Spin} from 'antd';
 import {KitButton, KitInput} from 'aristid-ds';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useHistory} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 const extractValueFromEventAndThen = (next: any) => (event: any) => {
     next(event.target.value);
@@ -20,7 +20,7 @@ interface ILoginFormProps {
 
 const LoginForm = ({onSubmit, loading, loginError}: ILoginFormProps): JSX.Element => {
     const {t} = useTranslation();
-    const history = useHistory();
+    const navigate = useNavigate();
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
 
@@ -29,7 +29,7 @@ const LoginForm = ({onSubmit, loading, loginError}: ILoginFormProps): JSX.Elemen
     };
 
     const _handleClickForgotPassword = () => {
-        history.push('/forgot-password');
+        navigate('/forgot-password');
     };
 
     return (

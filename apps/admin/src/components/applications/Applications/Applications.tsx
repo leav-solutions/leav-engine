@@ -4,10 +4,10 @@
 import {useQuery} from '@apollo/client';
 import ErrorDisplay from 'components/shared/ErrorDisplay';
 import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useHistory} from 'react-router';
-import {Link} from 'react-router-dom';
+import {Link} from 'react-router-dom-v5';
+import {useHistory} from 'react-router-v5';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import {GET_APPLICATIONS, GET_APPLICATIONSVariables} from '_gqlTypes/GET_APPLICATIONS';
 import useUserData from '../../../hooks/useUserData';

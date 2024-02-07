@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {BrowserRouter} from 'react-router-dom';
 import {LibraryBehavior, TreeBehavior} from '_ui/_gqlTypes';
 import {createDirectoryMutation} from '_ui/_queries/files/createDirectory';
 import {doesFileExistAsChild} from '_ui/_queries/records/doesFileExistAsChild';
@@ -18,11 +17,9 @@ jest.mock('uuid', () => {
     };
 });
 
-jest.mock('_ui/components/SelectTreeNode', () => {
-    return function SelectTreeNode() {
-        return <div>SelectTreeNode</div>;
-    };
-});
+jest.mock('_ui/components/SelectTreeNode', () => ({
+    SelectTreeNode: () => <div>SelectTreeNode</div>
+}));
 
 describe('UploadFiles', () => {
     const commonMocks = [
@@ -67,12 +64,7 @@ describe('UploadFiles', () => {
     ];
 
     test('Should display create directory modal on first step', async () => {
-        render(
-            <BrowserRouter>
-                <CreateDirectory libraryId="files_directories" onClose={jest.fn()} />
-            </BrowserRouter>,
-            {mocks: commonMocks}
-        );
+        render(<CreateDirectory libraryId="files_directories" onClose={jest.fn()} />, {mocks: commonMocks});
 
         expect(screen.getByTestId('create-directory-modal')).toBeInTheDocument();
         expect(screen.getByTestId('select-tree-node')).toBeInTheDocument();
@@ -81,13 +73,11 @@ describe('UploadFiles', () => {
 
     test('Should be on step 2 with default selected key', async () => {
         render(
-            <BrowserRouter>
-                <CreateDirectory
-                    defaultSelectedKey="files_directories"
-                    libraryId="files_directories"
-                    onClose={jest.fn()}
-                />
-            </BrowserRouter>,
+            <CreateDirectory
+                defaultSelectedKey="files_directories"
+                libraryId="files_directories"
+                onClose={jest.fn()}
+            />,
             {mocks: commonMocks}
         );
 
@@ -173,12 +163,9 @@ describe('UploadFiles', () => {
             }
         ];
 
-        render(
-            <BrowserRouter>
-                <CreateDirectory defaultSelectedKey="files_tree" libraryId="files_directories" onClose={jest.fn()} />
-            </BrowserRouter>,
-            {mocks}
-        );
+        render(<CreateDirectory defaultSelectedKey="files_tree" libraryId="files_directories" onClose={jest.fn()} />, {
+            mocks
+        });
 
         fireEvent.change(screen.getByTestId('directory-name-input'), {
             target: {
@@ -269,12 +256,9 @@ describe('UploadFiles', () => {
             }
         ];
 
-        render(
-            <BrowserRouter>
-                <CreateDirectory defaultSelectedKey="files_tree" libraryId="files_directories" onClose={jest.fn()} />
-            </BrowserRouter>,
-            {mocks}
-        );
+        render(<CreateDirectory defaultSelectedKey="files_tree" libraryId="files_directories" onClose={jest.fn()} />, {
+            mocks
+        });
 
         fireEvent.change(screen.getByTestId('directory-name-input'), {
             target: {

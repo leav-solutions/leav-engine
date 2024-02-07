@@ -114,6 +114,7 @@ export const computeInitialState = <ValuesType extends AllowedValuesType>(params
     formVersion: IValueVersion;
 }): ILinkFieldState<ValuesType> => {
     const {element, record, isRecordReadOnly, formVersion} = params;
+
     const attribute = element.attribute;
 
     const fieldValues = (element.values as ValuesType[]) ?? [];
@@ -123,7 +124,7 @@ export const computeInitialState = <ValuesType extends AllowedValuesType>(params
         attribute,
         record,
         formElement: element,
-        isReadOnly: attribute?.readonly || isRecordReadOnly || !attribute.permissions.edit_value,
+        isReadOnly: attribute?.readonly || isRecordReadOnly || !attribute?.permissions?.edit_value,
         ..._computeScopeAndValues<ValuesType>({attribute, values: fieldValues, formVersion})
     };
 
