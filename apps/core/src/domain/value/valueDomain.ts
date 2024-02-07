@@ -378,7 +378,7 @@ const valueDomain = function ({
             ctx
         );
 
-        sendRecordUpdateEvent({id: recordId, library}, [{attribute, value: actionsListRes}], ctx);
+        await sendRecordUpdateEvent({id: recordId, library}, [{attribute, value: actionsListRes}], ctx);
 
         return res;
     };
@@ -815,7 +815,7 @@ const valueDomain = function ({
 
             if (saveRes.values.length) {
                 await updateRecordLastModif(library, recordId, ctx);
-                sendRecordUpdateEvent(
+                await sendRecordUpdateEvent(
                     record,
                     saveRes.values.map(savedValue => ({
                         attribute: savedValue.attribute,
