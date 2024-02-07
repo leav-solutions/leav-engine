@@ -20,7 +20,7 @@ export default function ({
     'core.domain.eventsManager': eventsManagerDomain = null
 }: IDeps): SendRecordUpdateEventHelper {
     return async (record, updatedValues, ctx) => {
-        await eventsManagerDomain.sendPubSubEvent(
+        eventsManagerDomain.sendPubSubEvent(
             {
                 triggerName: TriggerNames.RECORD_UPDATE,
                 data: {recordUpdate: {record, updatedValues}}

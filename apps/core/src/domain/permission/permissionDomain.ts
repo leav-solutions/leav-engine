@@ -188,7 +188,7 @@ export default function(deps: IDeps = {}): IPermissionDomain {
 
         const savedPermission = await permissionRepo.savePermission({permData, ctx});
 
-        await eventsManagerDomain.sendDatabaseEvent(
+        eventsManagerDomain.sendDatabaseEvent(
             {
                 action: EventAction.PERMISSION_SAVE,
                 topic: {
