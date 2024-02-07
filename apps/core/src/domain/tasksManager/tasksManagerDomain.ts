@@ -291,7 +291,7 @@ export default function ({
             ctx
         );
 
-        await eventsManager.sendPubSubEvent({triggerName: TriggerNames.TASK, data: {task}}, ctx);
+        eventsManager.sendPubSubEvent({triggerName: TriggerNames.TASK, data: {task}}, ctx);
 
         return task;
     };
@@ -375,7 +375,7 @@ export default function ({
             (({dbProfiler, ...c}) => c)(ctx)
         );
 
-        await eventsManager.sendPubSubEvent({triggerName: TriggerNames.TASK, data: {task}}, ctx);
+        eventsManager.sendPubSubEvent({triggerName: TriggerNames.TASK, data: {task}}, ctx);
 
         return task.id;
     };
