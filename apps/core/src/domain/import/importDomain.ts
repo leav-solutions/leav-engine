@@ -936,11 +936,11 @@ export default function({
                             isCacheActive: true
                         };
 
-                        // update progress every 500 elements
-                        if(index % 500 === 0){
+                        // update progress every 1% of progress.elements
+                        if (index % (progress.elements / 100) === 0) {
                             await _updateTaskProgress(
                                 progress,
-                                500,
+                                1,
                                 'tasks.import_description.elements_process',
                                 task.id,
                                 ctx

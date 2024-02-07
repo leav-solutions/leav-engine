@@ -481,7 +481,7 @@ export default function ({
                 await _deleteTask(t, ctx);
             }
 
-            await eventsManager.sendDatabaseEvent(
+            eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.TASKS_DELETE,
                     topic: null,

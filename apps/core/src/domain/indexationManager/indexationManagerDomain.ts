@@ -412,14 +412,6 @@ export default function ({
         return newTaskId;
     }
 
-    const _indexDatabase = async (params: IIndexDatabaseParams, task?: ITaskFuncParams): Promise<string> => {
-        const findRecordParams = [].concat(params.findRecordParams || []);
-        const mustCreateTask = !params.forceNoTask && typeof task?.id === 'undefined';
-
-        if (mustCreateTask) {
-            return _createIndexationTask(findRecordParams, params, task);
-        }
-
         const _updateLibraryIndexationStatus = async (inProgress: boolean) => {
             for (const libraryId of findRecordParams.map(e => e.library)) {
                 eventsManager.sendPubSubEvent(

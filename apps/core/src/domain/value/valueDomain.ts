@@ -362,7 +362,7 @@ const valueDomain = function ({
         // Make sure attribute is returned here
         res.attribute = attribute;
 
-        await eventsManager.sendDatabaseEvent(
+        eventsManager.sendDatabaseEvent(
             {
                 action: EventAction.VALUE_DELETE,
                 topic: {
@@ -378,7 +378,7 @@ const valueDomain = function ({
             ctx
         );
 
-        await sendRecordUpdateEvent({id: recordId, library}, [{attribute, value: actionsListRes}], ctx);
+        sendRecordUpdateEvent({id: recordId, library}, [{attribute, value: actionsListRes}], ctx);
 
         return res;
     };
@@ -472,7 +472,7 @@ const valueDomain = function ({
         }
 
         if (!areValuesIdentical) {
-            await eventsManager.sendDatabaseEvent(
+            eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.VALUE_SAVE,
                     topic: {
@@ -815,7 +815,7 @@ const valueDomain = function ({
 
             if (saveRes.values.length) {
                 await updateRecordLastModif(library, recordId, ctx);
-                await sendRecordUpdateEvent(
+                sendRecordUpdateEvent(
                     record,
                     saveRes.values.map(savedValue => ({
                         attribute: savedValue.attribute,

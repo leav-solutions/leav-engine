@@ -862,7 +862,7 @@ export default function ({
                 });
             }
 
-            await eventsManager.sendDatabaseEvent(
+            eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.RECORD_SAVE,
                     topic: {
@@ -881,7 +881,7 @@ export default function ({
         async updateRecord({library, recordData, ctx}): Promise<IRecord> {
             const {old: oldRecord, new: savedRecord} = await recordRepo.updateRecord({libraryId: library, recordData});
 
-            await eventsManager.sendDatabaseEvent(
+            eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.RECORD_SAVE,
                     topic: {
@@ -896,7 +896,7 @@ export default function ({
                 ctx
             );
 
-            await sendRecordUpdateEvent({recordData, library}, [], ctx);
+            sendRecordUpdateEvent({recordData, library}, [], ctx);
 
             return savedRecord;
         },
@@ -969,7 +969,7 @@ export default function ({
             // Everything is clean, we can actually delete the record
             const deletedRecord = await recordRepo.deleteRecord({libraryId: library, recordId: id, ctx});
 
-            await eventsManager.sendDatabaseEvent(
+            eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.RECORD_DELETE,
                     topic: {
