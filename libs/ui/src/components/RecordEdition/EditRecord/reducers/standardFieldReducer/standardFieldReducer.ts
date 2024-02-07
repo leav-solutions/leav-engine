@@ -247,7 +247,7 @@ export const computeInitialState = (params: {
         attribute,
         record,
         formElement: {...element},
-        isReadOnly: attribute?.readonly || isRecordReadOnly || !attribute.permissions.edit_value,
+        isReadOnly: attribute?.readonly || isRecordReadOnly || !attribute?.permissions?.edit_value,
         metadataEdit,
         ..._computeScopeAndValues({attribute, values: fieldValues, formVersion})
     };

@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React, {ReactNode} from 'react';
-import {Route, RouteComponentProps, RouteProps} from 'react-router-dom';
+import {ReactNode} from 'react';
+import {Route, RouteComponentProps, RouteProps} from 'react-router-dom-v5';
 import useUserData from '../../../hooks/useUserData';
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 import ForbiddenRoute from '../ForbiddenRoute';

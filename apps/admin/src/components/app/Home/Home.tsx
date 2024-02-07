@@ -2,14 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import useLocalStorage from 'hooks/useLocalStorage';
-import React from 'react';
-import {BrowserRouter as Router} from 'react-router-dom';
+import {BrowserRouter as Router} from 'react-router-dom-v5';
 import styled from 'styled-components';
 import {greyBackground} from 'themingVar';
+import {APPS_ENDPOINT, APP_ENDPOINT} from '../../../constants';
 import AppMenu from '../AppMenu';
 import Header from '../Header';
 import Routes from '../Routes';
-import {APPS_ENDPOINT, APP_ENDPOINT} from '../../../constants';
 
 const headerHeight = '3rem';
 const LeftCol = styled.div`

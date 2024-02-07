@@ -2,8 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import React from 'react';
-import {MemoryRouter} from 'react-router-dom';
+import {MemoryRouter} from 'react-router-dom-v5';
 import {act, render, screen} from '_tests/testUtils';
 import General from './General';
 
@@ -24,6 +23,11 @@ jest.mock('./GeneralApiKeysTab', () => {
         return <div>GeneralApiKeysTab</div>;
     };
 });
+
+jest.mock('react-router-v5', () => ({
+    ...jest.requireActual('react-router-v5'),
+    useLocation: () => ({hash: ''})
+}));
 
 describe('General', () => {
     test('Render test', async () => {

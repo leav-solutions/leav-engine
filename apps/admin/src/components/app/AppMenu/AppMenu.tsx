@@ -2,8 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import useMenuItems from 'hooks/useMenuItems';
-import React from 'react';
-import {NavLink} from 'react-router-dom';
+import {NavLink} from 'react-router-dom-v5';
 import {Icon, Menu, Transition} from 'semantic-ui-react';
 import styled from 'styled-components';
 

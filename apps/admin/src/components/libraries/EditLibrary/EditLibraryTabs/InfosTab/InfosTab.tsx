@@ -2,8 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLazyQuery, useMutation} from '@apollo/client';
-import React from 'react';
-import {useHistory} from 'react-router-dom';
+import {useHistory} from 'react-router-dom-v5';
 import {getLibByIdQuery} from '../../../../../queries/libraries/getLibraryById';
 import {saveLibQuery} from '../../../../../queries/libraries/saveLibMutation';
 import {clearCacheForQuery} from '../../../../../utils';

@@ -3,8 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import * as useLang from 'hooks/useLang';
-import React from 'react';
-import {BrowserRouter} from 'react-router-dom';
+import {BrowserRouter} from 'react-router-dom-v5';
 import {AvailableLanguage} from '_gqlTypes/globalTypes';
 import {act, render, screen} from '_tests/testUtils';
 import UserPanel from './UserPanel';

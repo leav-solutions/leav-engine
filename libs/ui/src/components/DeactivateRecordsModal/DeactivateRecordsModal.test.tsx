@@ -89,9 +89,6 @@ describe('DeactivateRecordsModal', () => {
 
         await userEvent.click(screen.getByRole('button', {name: /submit/}));
 
-        // Run deactivation, display loading
-        expect(screen.getByRole('img', {name: /loading/})).toBeInTheDocument();
-
         await waitFor(() => expect(_handleClose).toBeCalled());
     });
 

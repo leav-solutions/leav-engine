@@ -7,6 +7,7 @@ import {MockedProvider, MockedResponse} from '@apollo/client/testing';
 import {render, RenderOptions, RenderResult} from '@testing-library/react';
 import {KitApp} from 'aristid-ds';
 import {PropsWithChildren, ReactElement} from 'react';
+import {MemoryRouter, MemoryRouterProps} from 'react-router-dom';
 import {gqlPossibleTypes} from '_ui/gqlPossibleTypes';
 import MockedUserContextProvider from '_ui/testing/MockedUserContextProvider';
 import MockedLangContextProvider from '../testing/MockedLangContextProvider';
@@ -19,16 +20,19 @@ export interface ICustomRenderOptions extends RenderOptions {
 interface IProvidersProps {
     mocks?: readonly MockedResponse[];
     cacheSettings?: InMemoryCacheConfig;
+    routerProps?: MemoryRouterProps;
 }
 
-const Providers = ({children, mocks, cacheSettings}: PropsWithChildren<IProvidersProps>) => {
+const Providers = ({children, mocks, cacheSettings, routerProps}: PropsWithChildren<IProvidersProps>) => {
     const mockCache = new InMemoryCache({possibleTypes: gqlPossibleTypes, ...cacheSettings});
 
     return (
         <MockedLangContextProvider>
             <MockedUserContextProvider>
                 <MockedProvider mocks={mocks} cache={mockCache} addTypename={true}>
-                    <KitApp>{children ?? <></>}</KitApp>
+                    <MemoryRouter {...routerProps}>
+                        <KitApp>{children ?? <></>}</KitApp>
+                    </MemoryRouter>
                 </MockedProvider>
             </MockedUserContextProvider>
         </MockedLangContextProvider>

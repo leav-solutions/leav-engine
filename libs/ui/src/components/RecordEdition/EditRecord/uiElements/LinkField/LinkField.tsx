@@ -1,14 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AnyPrimitive, ICommonFieldsSettings, IFormLinkFieldSettings, localizedTranslation} from '@leav/utils';
-import {Popover, Skeleton, Switch, Table, theme} from 'antd';
+import {AnyPrimitive,ICommonFieldsSettings,IFormLinkFieldSettings,localizedTranslation} from '@leav/utils';
+import {Popover,Skeleton,Switch,Table,theme} from 'antd';
 import {ColumnsType} from 'antd/lib/table';
 import {GlobalToken} from 'antd/lib/theme/interface';
 import Paragraph from 'antd/lib/typography/Paragraph';
-import {Reducer, useContext, useEffect, useReducer} from 'react';
+import {Reducer,useContext,useEffect,useReducer} from 'react';
 import styled from 'styled-components';
-import {AntdThemeToken, themeVars} from '_ui/antdTheme';
+import {AntdThemeToken,themeVars} from '_ui/antdTheme';
 import {RecordCard} from '_ui/components';
 import Dimmer from '_ui/components/Dimmer';
 import ErrorMessage from '_ui/components/ErrorMessage';
@@ -21,15 +21,15 @@ import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm/useGe
 import {useGetRecordValuesQuery} from '_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 import {useRefreshFieldValues} from '_ui/hooks/useRefreshFieldValues';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IRecordIdentity, IRecordIdentityWhoAmI} from '_ui/types/records';
-import {RecordFormAttributeLinkAttributeFragment, ValueDetailsLinkValueFragment} from '_ui/_gqlTypes';
+import {IRecordIdentity,IRecordIdentityWhoAmI} from '_ui/types/records';
+import {RecordFormAttributeLinkAttributeFragment,ValueDetailsLinkValueFragment} from '_ui/_gqlTypes';
 import {
     IRecordColumnValueLink,
     IRecordColumnValueStandard,
     IRecordColumnValueTree,
     RecordColumnValue
 } from '_ui/_queries/records/getRecordColumnsValues';
-import {IRecordPropertyLink, RecordProperty} from '_ui/_queries/records/getRecordPropertiesQuery';
+import {IRecordPropertyLink,RecordProperty} from '_ui/_queries/records/getRecordPropertiesQuery';
 import {arrayValueVersionToObject} from '_ui/_utils';
 import getActiveFieldValues from '../../helpers/getActiveFieldValues';
 import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
@@ -49,7 +49,7 @@ import UpdatedFieldIcon from '../../shared/UpdatedFieldIcon';
 import ValueDetailsBtn from '../../shared/ValueDetailsBtn';
 import ValuesVersionBtn from '../../shared/ValuesVersionBtn';
 import ValuesVersionIndicator from '../../shared/ValuesVersionIndicator';
-import {APICallStatus, FieldScope, IFormElementProps} from '../../_types';
+import {APICallStatus,FieldScope,IFormElementProps} from '../../_types';
 import FloatingMenuHandler from './FloatingMenuHandler';
 import ValuesAdd from './ValuesAdd';
 
@@ -343,7 +343,7 @@ function LinkField({
         });
     };
 
-    const isReadOnly = element.attribute?.readonly || isRecordReadOnly || !attribute.permissions.edit_value;
+    const isReadOnly = element.attribute?.readonly || isRecordReadOnly || !attribute?.permissions?.edit_value;
 
     // If no column is selected, force whoAmI column
     let colsToDisplay = [];

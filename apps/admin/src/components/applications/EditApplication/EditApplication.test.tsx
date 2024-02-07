@@ -2,9 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getApplicationByIdQuery} from 'queries/applications/getApplicationByIdQuery';
-import React from 'react';
-import {match} from 'react-router-dom';
-import {ApplicationType} from '_gqlTypes/globalTypes';
+import {match} from 'react-router-dom-v5';
 import {render, screen} from '_tests/testUtils';
 import {Mockify} from '_types/Mockify';
 import {mockApplicationDetails} from '__mocks__/common/applications';
@@ -28,9 +26,14 @@ jest.mock('./EditApplicationTabs/SettingsTab', () => {
     };
 });
 
+jest.mock('react-router-v5', () => ({
+    ...jest.requireActual('react-router-v5'),
+    useLocation: () => ({hash: ''})
+}));
+
 describe('EditApplication', () => {
     type matchType = match<IEditApplicationMatchParams>;
-    test('Edit existing app', async () => {
+    test.only('Edit existing app', async () => {
         const mockMatch: Mockify<matchType> = {
             params: {id: mockApplicationDetails.id}
         };
@@ -53,7 +56,12 @@ describe('EditApplication', () => {
             }
         ];
 
-        render(<EditApplication match={mockMatch as matchType} />, {apolloMocks: mocks});
+        render(<EditApplication match={mockMatch as matchType} />, {
+            apolloMocks: mocks,
+            routerProps: {
+                initialEntries: [`/applications/edit/${mockApplicationDetails.id}`]
+            }
+        });
 
         expect(screen.getByText(/loading/)).toBeInTheDocument();
 

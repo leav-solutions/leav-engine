@@ -7,11 +7,15 @@
     "module": "esnext",
     "skipLibCheck": true,
     "types": ["jest", "@types/jest", "@testing-library/jest-dom"],
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "resolveJsonModule": true,
+    "paths": {
+      "_ui/*": ["./src/*"]
+    }
   },
   "include": [
     "src",
     "src/**/*.json"
   ],
-  "exclude": ["**/__mocks__", "**/*.test.*"]
+  "exclude": ["**/*.test.*", "**/_tests"]
 }

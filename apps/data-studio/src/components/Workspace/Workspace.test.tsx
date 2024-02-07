@@ -1,8 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
-import {MemoryRouter} from 'react-router-dom';
+import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import {act, render, screen} from '_tests/testUtils';
 import Workspace from './Workspace';
 
@@ -24,18 +23,42 @@ jest.mock('../Navigation', () => {
     };
 });
 
+jest.mock('components/Router/RouteNotFound', () => {
+    return function RouteNotFound() {
+        return <div>RouteNotFound</div>;
+    };
+});
+
 describe('Workspace', () => {
     test('Render workspace', async () => {
-        await act(async () => {
-            render(
-                <MemoryRouter>
-                    <Workspace />
-                </MemoryRouter>
-            );
-        });
+        render(
+            <MemoryRouter initialEntries={['/library']}>
+                <Routes>
+                    <Route path={'/:panel'} element={<Workspace />} />
+                </Routes>
+            </MemoryRouter>
+        );
 
-        expect(screen.getByText('Home')).toBeInTheDocument();
+        expect(await screen.findByText('Home')).toBeInTheDocument();
         expect(screen.getByText('LibraryHome')).toBeInTheDocument();
         expect(screen.getByText('Navigation')).toBeInTheDocument();
+    });
+
+    test('Handle invalid panel', async () => {
+        render(
+            <MemoryRouter initialEntries={['/bad-route']}>
+                <Routes>
+                    <Route path={'/:panel'} element={<Workspace />} />
+                </Routes>
+            </MemoryRouter>
+        );
+
+        await act(async () => {
+            expect(screen.getByText('RouteNotFound')).toBeInTheDocument();
+        });
+
+        expect(screen.queryByText('Home')).not.toBeInTheDocument();
+        expect(screen.queryByText('LibraryHome')).not.toBeInTheDocument();
+        expect(screen.queryByText('Navigation')).not.toBeInTheDocument();
     });
 });

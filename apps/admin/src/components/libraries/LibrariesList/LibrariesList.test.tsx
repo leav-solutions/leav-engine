@@ -3,8 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedProvider} from '@apollo/client/testing';
 import {mount, shallow} from 'enzyme';
-import React from 'react';
-import {BrowserRouter as Router} from 'react-router-dom';
+import {BrowserRouter as Router} from 'react-router-dom-v5';
 import {mockLibrary} from '../../../__mocks__/libraries';
 import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
 import LibrariesList from './LibrariesList';

@@ -2,12 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation} from '@apollo/client';
-import React from 'react';
-import {useHistory, useLocation} from 'react-router-dom';
-import {SAVE_FORM, SAVE_FORMVariables} from '../../../../../../../../_gqlTypes/SAVE_FORM';
-import {FormInput} from '../../../../../../../../_gqlTypes/globalTypes';
+import {useHistory, useLocation} from 'react-router-dom-v5';
 import {saveFormQuery} from '../../../../../../../../queries/forms/saveFormMutation';
 import {clearCacheForQuery} from '../../../../../../../../utils';
+import {FormInput} from '../../../../../../../../_gqlTypes/globalTypes';
+import {SAVE_FORM, SAVE_FORMVariables} from '../../../../../../../../_gqlTypes/SAVE_FORM';
 import {useEditFormContext} from '../../hooks/useEditFormContext';
 import InfosForm from './InfosForm';
 

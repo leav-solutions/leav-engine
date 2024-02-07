@@ -4,7 +4,7 @@
 import {CloseCircleFilled, FrownOutlined, MinusCircleFilled} from '@ant-design/icons';
 import {Button, Result} from 'antd';
 import {ReactNode} from 'react';
-import {useHistory} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ErrorDisplayTypes} from '../../constants';
 
@@ -22,9 +22,9 @@ function ErrorDisplay({
     type = ErrorDisplayTypes.ERROR
 }: IErrorProps): JSX.Element {
     const {t, i18n} = useSharedTranslation();
-    const history = useHistory();
+    const navigate = useNavigate();
 
-    const _handleBackHomeClick = () => history.replace('/');
+    const _handleBackHomeClick = () => navigate('/');
 
     const BackHomeButton = (
         <Button type="primary" onClick={_handleBackHomeClick}>

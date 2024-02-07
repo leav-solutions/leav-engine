@@ -17,6 +17,7 @@ jest.mock('_ui/hooks/useGetRecordUpdatesSubscription', () => ({
 }));
 
 jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
     useParams: jest.fn(() => ({libId: 'test', libQueryName: 'test', filterName: 'TestFilter'})),
     useHistory: jest.fn()
 }));

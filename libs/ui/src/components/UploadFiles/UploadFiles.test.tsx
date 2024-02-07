@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {BrowserRouter} from 'react-router-dom';
 import {LibraryBehavior, TreeBehavior, UploadDocument, UploadUpdateDocument} from '_ui/_gqlTypes';
 import {doesFileExistAsChild} from '_ui/_queries/records/doesFileExistAsChild';
 import {getTreeLibraries} from '_ui/_queries/trees/getTreeLibraries';
@@ -17,11 +16,9 @@ jest.mock('uuid', () => {
     };
 });
 
-jest.mock('_ui/components/SelectTreeNode', () => {
-    return function SelectTreeNode() {
-        return <div>SelectTreeNode</div>;
-    };
-});
+jest.mock('_ui/components/SelectTreeNode', () => ({
+    SelectTreeNode: () => <div>SelectTreeNode</div>
+}));
 
 describe('UploadFiles', () => {
     const commonMocks = [
@@ -66,7 +63,7 @@ describe('UploadFiles', () => {
         {
             request: {
                 query: UploadUpdateDocument,
-                variables: {}
+                variables: {filters: {userId: '123'}}
             },
             result: {
                 data: {
@@ -90,12 +87,7 @@ describe('UploadFiles', () => {
     ];
 
     test('Should display upload modal on first step', async () => {
-        render(
-            <BrowserRouter>
-                <UploadFiles libraryId="files" onClose={jest.fn()} />
-            </BrowserRouter>,
-            {mocks: commonMocks}
-        );
+        render(<UploadFiles libraryId="files" onClose={jest.fn()} />, {mocks: commonMocks});
 
         expect(screen.getByTestId('upload-modal')).toBeInTheDocument();
         expect(screen.getByTestId('select-tree-node')).toBeInTheDocument();
@@ -103,14 +95,9 @@ describe('UploadFiles', () => {
     });
 
     test('Should be on step 2 with default selected key', async () => {
-        render(
-            <BrowserRouter>
-                <UploadFiles defaultSelectedNode={{id: 'files_tree'}} libraryId="files" onClose={jest.fn()} />
-            </BrowserRouter>,
-            {
-                mocks: commonMocks
-            }
-        );
+        render(<UploadFiles defaultSelectedNode={{id: 'files_tree'}} libraryId="files" onClose={jest.fn()} />, {
+            mocks: commonMocks
+        });
 
         expect(screen.getByTestId('upload-modal')).toBeInTheDocument();
         expect(screen.getByTestId('dragger')).toBeInTheDocument();
@@ -168,12 +155,7 @@ describe('UploadFiles', () => {
             }
         ];
 
-        render(
-            <BrowserRouter>
-                <UploadFiles defaultSelectedNode={{id: 'files_tree'}} libraryId="files" onClose={jest.fn()} />
-            </BrowserRouter>,
-            {mocks}
-        );
+        render(<UploadFiles defaultSelectedNode={{id: 'files_tree'}} libraryId="files" onClose={jest.fn()} />, {mocks});
 
         fireEvent.drop(screen.getByTestId('dragger'), {
             dataTransfer: {

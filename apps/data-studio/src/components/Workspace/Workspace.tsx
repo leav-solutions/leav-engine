@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Loading} from '@leav/ui';
+import RouteNotFound from 'components/Router/RouteNotFound';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import {lazy, Suspense, useEffect} from 'react';
@@ -26,8 +27,11 @@ const LibraryHome = lazy(() => import('components/LibraryHome'));
 const Navigation = lazy(() => import('components/Navigation'));
 
 function Workspace(): JSX.Element {
+    const allowedPanels = Object.values(WorkspacePanels);
+
     const dispatch = useAppDispatch();
     const {panel, entityId} = useParams<{panel: WorkspacePanels; entityId?: string}>();
+
     let activePanel = panel?.toLowerCase() as WorkspacePanels;
 
     if (!Object.values(WorkspacePanels).includes(activePanel)) {
@@ -47,6 +51,10 @@ function Workspace(): JSX.Element {
     useEffect(() => {
         dispatch(setActivePanel(activePanel));
     }, [activePanel, dispatch]);
+
+    if (panel && !allowedPanels.includes(panel)) {
+        return <RouteNotFound />;
+    }
 
     return (
         <Wrapper>
