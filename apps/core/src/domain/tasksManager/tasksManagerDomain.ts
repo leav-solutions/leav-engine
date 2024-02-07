@@ -291,7 +291,7 @@ export default function ({
             ctx
         );
 
-        eventsManager.sendPubSubEvent({triggerName: TriggerNames.TASK, data: {task}}, ctx);
+        await eventsManager.sendPubSubEvent({triggerName: TriggerNames.TASK, data: {task}}, ctx);
 
         return task;
     };
@@ -375,7 +375,7 @@ export default function ({
             (({dbProfiler, ...c}) => c)(ctx)
         );
 
-        eventsManager.sendPubSubEvent({triggerName: TriggerNames.TASK, data: {task}}, ctx);
+        await eventsManager.sendPubSubEvent({triggerName: TriggerNames.TASK, data: {task}}, ctx);
 
         return task.id;
     };
@@ -481,7 +481,7 @@ export default function ({
                 await _deleteTask(t, ctx);
             }
 
-            eventsManager.sendDatabaseEvent(
+            await eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.TASKS_DELETE,
                     topic: null,

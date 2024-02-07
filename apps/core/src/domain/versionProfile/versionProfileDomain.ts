@@ -130,7 +130,7 @@ export default function ({
                 ? await versionProfileRepo.createVersionProfile({profileData: profileToSave, ctx})
                 : await versionProfileRepo.updateVersionProfile({profileData: profileToSave, ctx});
 
-            eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.VERSION_PROFILE_SAVE,
                     topic: {
@@ -196,7 +196,7 @@ export default function ({
 
             const deletedProfile = await versionProfileRepo.deleteVersionProfile({id, ctx});
 
-            eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.VERSION_PROFILE_DELETE,
                     topic: {

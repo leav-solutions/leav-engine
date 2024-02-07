@@ -10,7 +10,7 @@ export type SendRecordUpdateEventHelper = (
     record: IRecord,
     updatedValues: IRecordUpdateEvent['updatedValues'],
     ctx: IQueryInfos
-) => void;
+) => Promise<void>;
 
 interface IDeps {
     'core.domain.eventsManager'?: IEventsManagerDomain;
@@ -19,8 +19,8 @@ interface IDeps {
 export default function ({
     'core.domain.eventsManager': eventsManagerDomain = null
 }: IDeps): SendRecordUpdateEventHelper {
-    return (record, updatedValues, ctx) => {
-        eventsManagerDomain.sendPubSubEvent(
+    return async (record, updatedValues, ctx) => {
+        await eventsManagerDomain.sendPubSubEvent(
             {
                 triggerName: TriggerNames.RECORD_UPDATE,
                 data: {recordUpdate: {record, updatedValues}}

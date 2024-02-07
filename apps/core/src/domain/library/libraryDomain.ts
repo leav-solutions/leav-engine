@@ -298,7 +298,7 @@ export default function ({
             }
 
             // sending indexation event
-            eventsManager.sendDatabaseEvent(
+            await eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.LIBRARY_SAVE,
                     topic: {
@@ -354,7 +354,7 @@ export default function ({
             const deletedLibrary = await libraryRepo.deleteLibrary({id, ctx});
 
             // sending indexation event
-            eventsManager.sendDatabaseEvent(
+            await eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.LIBRARY_DELETE,
                     topic: {

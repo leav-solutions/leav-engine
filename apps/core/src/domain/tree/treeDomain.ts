@@ -338,7 +338,7 @@ export default function ({
             [TreeEventTypes.MOVE]: EventAction.TREE_MOVE_ELEMENT
         };
 
-        eventsManagerDomain.sendPubSubEvent(
+        await eventsManagerDomain.sendPubSubEvent(
             {
                 data: {
                     treeEvent: {
@@ -355,7 +355,7 @@ export default function ({
             ctx
         );
 
-        eventsManagerDomain.sendDatabaseEvent(
+        await eventsManagerDomain.sendDatabaseEvent(
             {
                 action: actionByType[type],
                 topic: {
@@ -416,7 +416,7 @@ export default function ({
                 ? await treeRepo.updateTree({treeData: dataToSave as ITree, ctx})
                 : await treeRepo.createTree({treeData: dataToSave as ITree, ctx});
 
-            eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.TREE_SAVE,
                     topic: {
@@ -479,7 +479,7 @@ export default function ({
 
             const deletedTree = await treeRepo.deleteTree({id, ctx});
 
-            eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.TREE_DELETE,
                     topic: {

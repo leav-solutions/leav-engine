@@ -420,9 +420,9 @@ export default function ({
             return _createIndexationTask(findRecordParams, params, task);
         }
 
-        const _updateLibraryIndexationStatus = (inProgress: boolean) => {
+        const _updateLibraryIndexationStatus = async (inProgress: boolean) => {
             for (const libraryId of findRecordParams.map(e => e.library)) {
-                eventsManager.sendPubSubEvent(
+                await eventsManager.sendPubSubEvent(
                     {
                         triggerName: TriggerNames.INDEXATION,
                         data: {indexation: {userId: params.ctx.userId, libraryId, inProgress}}
@@ -432,13 +432,13 @@ export default function ({
             }
         };
 
-        _updateLibraryIndexationStatus(true);
+        await _updateLibraryIndexationStatus(true);
 
         for (const frp of findRecordParams) {
             await _indexRecords(frp, params.ctx);
         }
 
-        _updateLibraryIndexationStatus(false);
+        await _updateLibraryIndexationStatus(false);
     };
 
     return {

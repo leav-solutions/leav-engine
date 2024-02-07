@@ -107,7 +107,7 @@ export default function ({
                 break;
         }
 
-        eventsManagerDomain.sendPubSubEvent(
+        await eventsManagerDomain.sendPubSubEvent(
             {
                 data: {
                     applicationEvent: {
@@ -120,7 +120,7 @@ export default function ({
             ctx
         );
 
-        eventsManagerDomain.sendDatabaseEvent(
+        await eventsManagerDomain.sendDatabaseEvent(
             {
                 action: actionByType[type],
                 topic: {
