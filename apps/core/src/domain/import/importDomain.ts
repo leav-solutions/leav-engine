@@ -701,7 +701,7 @@ export default function({
                 return newTaskId;
             }
 
-            eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.CONFIG_IMPORT_START,
                     topic: null
@@ -779,7 +779,7 @@ export default function({
                 }
             }
 
-            eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.CONFIG_IMPORT_END,
                     topic: null
@@ -826,7 +826,7 @@ export default function({
             }
 
             ctx.trigger = 'data_import';
-            eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.DATA_IMPORT_START,
                     topic: {filename}
@@ -877,16 +877,16 @@ export default function({
             };
 
             // We call iterate on file a first time to estimate time of import
-            await _getStoredFileData(
-                filename,
-                async (element: IElement, index: number): Promise<void> => {
-                    progress.elements += 1;
-                },
-                async (tree: ITree, index: number) => {
-                    progress.treesNb += 1;
-                },
-                params.ctx
-            );
+            // await _getStoredFileData(
+            //     filename,
+            //     async (element: IElement, index: number): Promise<void> => {
+            //         progress.elements += 1;
+            //     },
+            //     async (tree: ITree, index: number) => {
+            //         progress.treesNb += 1;
+            //     },
+            //     params.ctx
+            // );
 
             const cacheDataPath = `${filename}-data`;
             let lastCacheIndex: number;
@@ -1080,7 +1080,7 @@ export default function({
                 ctx
             );
 
-            eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.DATA_IMPORT_END,
                     topic: {filename},

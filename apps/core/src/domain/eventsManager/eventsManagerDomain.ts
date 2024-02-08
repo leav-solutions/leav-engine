@@ -86,19 +86,23 @@ export default function({
     };
 
     const _send = (routingKey: string, payload: any, ctx: IQueryInfos) => {
-        return amqpService.publish(
-            config.amqp.exchange,
-            routingKey,
-            JSON.stringify({
-                time: Date.now(),
-                instanceId: config.instanceId,
-                userId: ctx.userId,
-                queryId: ctx.queryId,
-                emitter: utils.getProcessIdentifier(),
-                trigger: ctx.trigger,
-                payload
-            })
-        );
+        try {
+            return amqpService.publish(
+                config.amqp.exchange,
+                routingKey,
+                JSON.stringify({
+                    time: Date.now(),
+                    instanceId: config.instanceId,
+                    userId: ctx.userId,
+                    queryId: ctx.queryId,
+                    emitter: utils.getProcessIdentifier(),
+                    trigger: ctx.trigger,
+                    payload
+                })
+            );
+        } catch (e) {
+            console.error('Error while sending event to rabbitMQ', e);
+        }
     };
 
     return {

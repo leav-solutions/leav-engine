@@ -250,7 +250,7 @@ export default function ({
                 ? await attributeRepo.updateAttribute({attrData: attrToSave, ctx})
                 : await attributeRepo.createAttribute({attrData: attrToSave, ctx});
 
-            eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.ATTRIBUTE_SAVE,
                     topic: {
@@ -313,7 +313,7 @@ export default function ({
 
             const deletedAttribute = await attributeRepo.deleteAttribute({attrData: attrProps, ctx});
 
-            eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.ATTRIBUTE_DELETE,
                     topic: {

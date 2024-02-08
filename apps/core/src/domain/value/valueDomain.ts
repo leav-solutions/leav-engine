@@ -362,7 +362,7 @@ const valueDomain = function ({
         // Make sure attribute is returned here
         res.attribute = attribute;
 
-        eventsManager.sendDatabaseEvent(
+        await eventsManager.sendDatabaseEvent(
             {
                 action: EventAction.VALUE_DELETE,
                 topic: {
@@ -472,7 +472,7 @@ const valueDomain = function ({
         }
 
         if (!areValuesIdentical) {
-            eventsManager.sendDatabaseEvent(
+            await eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.VALUE_SAVE,
                     topic: {

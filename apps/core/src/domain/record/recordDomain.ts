@@ -866,31 +866,26 @@ export default function ({
             }
 
             // await is necessary during importData(), otherwise it will generate a memory leak due to number of events incoming
-            try {
-                await eventsManager.sendDatabaseEvent(
-                    {
-                        action: EventAction.RECORD_SAVE,
-                        topic: {
-                            record: {
-                                id: newRecord.id,
-                                libraryId: newRecord.library
-                            }
-                        },
-                        after: newRecord
+            await eventsManager.sendDatabaseEvent(
+                {
+                    action: EventAction.RECORD_SAVE,
+                    topic: {
+                        record: {
+                            id: newRecord.id,
+                            libraryId: newRecord.library
+                        }
                     },
-                    ctx
-                );
-            } catch (error) {
-                logger.error(`Error while sending ${EventAction.RECORD_SAVE} event`, error);
-            }
-
+                    after: newRecord
+                },
+                ctx
+            );
 
             return {record: newRecord, valuesErrors: null};
         },
         async updateRecord({library, recordData, ctx}): Promise<IRecord> {
             const {old: oldRecord, new: savedRecord} = await recordRepo.updateRecord({libraryId: library, recordData});
 
-            eventsManager.sendDatabaseEvent(
+            await eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.RECORD_SAVE,
                     topic: {
@@ -978,7 +973,7 @@ export default function ({
             // Everything is clean, we can actually delete the record
             const deletedRecord = await recordRepo.deleteRecord({libraryId: library, recordId: id, ctx});
 
-            eventsManager.sendDatabaseEvent(
+            await eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.RECORD_DELETE,
                     topic: {
