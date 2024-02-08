@@ -151,13 +151,6 @@ export default function ({
 
             await importDomain.importData({filename, ctx: {userId: config.defaultUserId, queryId: 'ImportData'}});
         },
-        importData: async (filepath: string): Promise<void> => {
-            try {
-                await importDomain.importData({filename: filepath, ctx: {userId: config.defaultUserId, queryId: 'ImportData'}});
-            } finally {
-                await graphqlApp.getSchema();
-            }
-        },
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
                 typeDefs: `
