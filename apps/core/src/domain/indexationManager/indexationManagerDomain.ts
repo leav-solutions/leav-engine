@@ -422,7 +422,7 @@ export default function ({
 
         const _updateLibraryIndexationStatus = async (inProgress: boolean) => {
             for (const libraryId of findRecordParams.map(e => e.library)) {
-                eventsManager.sendPubSubEvent(
+                await eventsManager.sendPubSubEvent(
                     {
                         triggerName: TriggerNames.INDEXATION,
                         data: {indexation: {userId: params.ctx.userId, libraryId, inProgress}}
