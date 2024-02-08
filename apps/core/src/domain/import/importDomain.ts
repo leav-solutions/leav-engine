@@ -877,16 +877,16 @@ export default function({
             };
 
             // We call iterate on file a first time to estimate time of import
-            // await _getStoredFileData(
-            //     filename,
-            //     async (element: IElement, index: number): Promise<void> => {
-            //         progress.elements += 1;
-            //     },
-            //     async (tree: ITree, index: number) => {
-            //         progress.treesNb += 1;
-            //     },
-            //     params.ctx
-            // );
+            await _getStoredFileData(
+                filename,
+                async (element: IElement, index: number): Promise<void> => {
+                    progress.elements += 1;
+                },
+                async (tree: ITree, index: number) => {
+                    progress.treesNb += 1;
+                },
+                params.ctx
+            );
 
             const cacheDataPath = `${filename}-data`;
             let lastCacheIndex: number;

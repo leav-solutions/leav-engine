@@ -1,5 +1,5 @@
 import * as amqp from 'amqplib';
-import { IAmqp, onMessageFunc } from './types/amqp';
+import {IAmqp, onMessageFunc} from './types/amqp';
 export interface IAmqpService {
     publisher: {
         connection: amqp.Connection;

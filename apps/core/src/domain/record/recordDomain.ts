@@ -45,7 +45,6 @@ import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import getAttributesFromField from './helpers/getAttributesFromField';
 import {SendRecordUpdateEventHelper} from './helpers/sendRecordUpdateEvent';
 import {ICreateRecordResult, IFindRecordParams} from './_types';
-import * as winston from 'winston';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -163,7 +162,6 @@ interface IDeps {
     'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.infra.cache.cacheService'?: ICachesService;
     'core.utils'?: IUtils;
-    'core.utils.logger'?: winston.Winston;
 }
 
 export default function ({
@@ -181,8 +179,7 @@ export default function ({
     'core.infra.value': valueRepo = null,
     'core.domain.eventsManager': eventsManager = null,
     'core.infra.cache.cacheService': cacheService = null,
-    'core.utils': utils = null,
-    'core.utils.logger': logger = null
+    'core.utils': utils = null
 }: IDeps = {}): IRecordDomain {
     /**
      * Extract value from record if it's available (attribute simple), or fetch it from DB
