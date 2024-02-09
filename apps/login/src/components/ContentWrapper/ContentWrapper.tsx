@@ -39,7 +39,7 @@ export default function ContentWrapper({children}: IContentWrapperProps) {
             <Wrapper>
                 <ContentBlock
                     title={<img src="/global-icon/small" height="100px" />}
-                    headStyle={{textAlign: 'center', padding: '1rem'}}
+                    styles={{header: {textAlign: 'center', padding: '1rem'}}}
                 >
                     <KitApp customTheme={dsTheme}>{children}</KitApp>
                 </ContentBlock>

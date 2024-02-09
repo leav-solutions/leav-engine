@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
+import {Suspense} from 'react';
 import {
     EditRecordReducerActionsTypes,
     initialState
@@ -369,7 +370,7 @@ describe('StandardField', () => {
     });
 
     test('Render Rich Text field', async () => {
-        const recordValuesDate = [
+        const recordValuesRichText = [
             {
                 ...mockRecordValuesCommon,
                 value: '<p>rich text editor test<p>',
@@ -377,14 +378,16 @@ describe('StandardField', () => {
             }
         ];
         render(
-            <StandardField
-                element={{
-                    ...mockFormElementInput,
-                    attribute: {...mockFormAttribute, format: AttributeFormat.rich_text},
-                    values: recordValuesDate
-                }}
-                {...baseProps}
-            />
+            <Suspense fallback={<div>Loading</div>}>
+                <StandardField
+                    element={{
+                        ...mockFormElementInput,
+                        attribute: {...mockFormAttribute, format: AttributeFormat.rich_text},
+                        values: recordValuesRichText
+                    }}
+                    {...baseProps}
+                />
+            </Suspense>
         );
 
         await waitFor(() => {

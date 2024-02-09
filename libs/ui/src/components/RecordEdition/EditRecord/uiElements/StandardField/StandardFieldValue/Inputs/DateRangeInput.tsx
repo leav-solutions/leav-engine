@@ -4,6 +4,7 @@
 import {IDateRangeValue, IFormDateFieldSettings} from '@leav/utils';
 import {DatePicker, Input} from 'antd';
 import dayjs from 'dayjs';
+import {ComponentProps} from 'react';
 import {themeVars} from '_ui/antdTheme';
 import {IStandardInputProps} from '_ui/components/RecordEdition/EditRecord/_types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -18,7 +19,7 @@ function DateRangeInput({state, fieldValue, onFocus, onSubmit, settings}: IStand
     const isValuesListEnabled = !!attribute?.values_list?.enable;
     const isValuesListOpen = !!attribute?.values_list?.allowFreeEntry;
 
-    const _handleDateChange = (selectedDates: [dayjs.Dayjs, dayjs.Dayjs]) => {
+    const _handleDateChange: (dates: [dayjs.Dayjs, dayjs.Dayjs]) => void = selectedDates => {
         const [dateFrom, dateTo] = selectedDates;
         const dateToSave = selectedDates ? {from: String(dateFrom.unix()), to: String(dateTo.unix())} : null;
         onSubmit(dateToSave);
@@ -30,7 +31,7 @@ function DateRangeInput({state, fieldValue, onFocus, onSubmit, settings}: IStand
         : null;
 
     // If we have a values list, picker must be on top to keep list readable
-    const pickerPosition = isValuesListEnabled ? {points: ['bl', 'tl'], offset: [0, -1]} : null;
+    const pickerPosition = isValuesListEnabled ? 'topLeft' : null;
 
     const rangeDisplayValue = displayValue as IDateRangeValue;
 
@@ -45,11 +46,11 @@ function DateRangeInput({state, fieldValue, onFocus, onSubmit, settings}: IStand
             autoFocus
             defaultOpen
             showTime={!!(settings as IFormDateFieldSettings).withTime}
-            onOk={_handleDateChange}
+            onOk={_handleDateChange as ComponentProps<typeof DatePicker.RangePicker>['onOk']}
             popupStyle={{background: themeVars.defaultBg}}
             style={{background: themeVars.defaultBg, width: '100%'}}
             allowClear={false}
-            dropdownAlign={pickerPosition}
+            placement={pickerPosition}
         />
     ) : (
         <Input

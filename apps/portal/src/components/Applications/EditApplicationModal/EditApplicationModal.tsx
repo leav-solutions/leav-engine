@@ -88,7 +88,7 @@ function EditApplicationModal({open, applicationId, onClose, activeTab}: IEditAp
         <Modal
             open={open}
             onCancel={onClose}
-            bodyStyle={{minHeight: '20vh', maxHeight: 'calc(100vh - 10rem)', overflowY: 'auto'}}
+            styles={{body: {minHeight: '20vh', maxHeight: 'calc(100vh - 10rem)', overflowY: 'auto'}}}
             okButtonProps={{style: {backgroundColor: themeVars.primaryColor}}}
             width={800}
             title={isEditing ? localizedTranslation(applicationLabel, lang) : t('application.new_app')}

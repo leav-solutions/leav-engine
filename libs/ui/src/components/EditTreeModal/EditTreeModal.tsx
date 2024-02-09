@@ -150,7 +150,7 @@ function EditTreeModal({open, treeId, onClose, onPostCreate, width}: IEditTreeMo
             width={width ?? 800}
             footer={buttons}
             onCancel={onClose}
-            bodyStyle={{height: 'calc(95vh - 15rem)', overflow: 'auto'}}
+            styles={{body: {height: 'calc(95vh - 15rem)', overflow: 'auto'}}}
             centered
         >
             {permissionsQueryResult.loading ? (
