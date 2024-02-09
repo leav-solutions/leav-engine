@@ -47,9 +47,10 @@ async function default_1({ config }) {
     const publish = async (exchange, routingKey, msg, priority) => {
         try {
             await publisher.channel.checkExchange(exchange);
-            publisher.channel.publish(exchange, routingKey, Buffer.from(msg), { persistent: true, priority });
+            const response = publisher.channel.publish(exchange, routingKey, Buffer.from(msg), { persistent: true, priority });
             await publisher.channel.waitForConfirms();
             retries = 0;
+            return response;
         }
         catch (e) {
             if (!retries) {

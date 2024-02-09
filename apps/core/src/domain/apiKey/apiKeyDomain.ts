@@ -155,7 +155,7 @@ export default function ({
                 savedKey = _hideSecrets(savedKey);
             }
 
-            eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.API_KEY_SAVE,
                     topic: {
@@ -183,7 +183,7 @@ export default function ({
 
             const keyToReturn = _hideSecrets(deletedKey);
 
-            eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.API_KEY_DELETE,
                     topic: {

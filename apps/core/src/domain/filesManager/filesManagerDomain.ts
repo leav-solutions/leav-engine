@@ -495,7 +495,7 @@ export default function ({
                         progress[key] = Math.floor(progress[key]);
                     });
 
-                    eventsManager.sendPubSubEvent(
+                    await eventsManager.sendPubSubEvent(
                         {
                             triggerName: TriggerNames.UPLOAD_FILE,
                             data: {upload: {uid: file.uid, userId: ctx.userId, progress}}

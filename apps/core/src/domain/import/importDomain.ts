@@ -701,7 +701,7 @@ export default function({
                 return newTaskId;
             }
 
-            eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.CONFIG_IMPORT_START,
                     topic: null
@@ -779,7 +779,7 @@ export default function({
                 }
             }
 
-            eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.CONFIG_IMPORT_END,
                     topic: null
@@ -826,7 +826,7 @@ export default function({
             }
 
             ctx.trigger = 'data_import';
-            eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.DATA_IMPORT_START,
                     topic: {filename}
@@ -935,13 +935,18 @@ export default function({
                             cacheKey: index,
                             isCacheActive: true
                         };
-                        await _updateTaskProgress(
-                            progress,
-                            1,
-                            'tasks.import_description.elements_process',
-                            task.id,
-                            ctx
-                        );
+
+                        // update progress every 1% of progress.elements
+                        if (index % (progress.elements / 100) === 0) {
+                            await _updateTaskProgress(
+                                progress,
+                                1,
+                                'tasks.import_description.elements_process',
+                                task.id,
+                                ctx
+                            );
+                        }
+
                         await _treatElement(element, recordIds, cacheParams, progress, ctx);
 
                         // update import stats
@@ -1075,7 +1080,7 @@ export default function({
                 ctx
             );
 
-            eventsManagerDomain.sendDatabaseEvent(
+            await eventsManagerDomain.sendDatabaseEvent(
                 {
                     action: EventAction.DATA_IMPORT_END,
                     topic: {filename},

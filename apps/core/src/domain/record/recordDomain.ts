@@ -862,7 +862,8 @@ export default function ({
                 });
             }
 
-            eventsManager.sendDatabaseEvent(
+            // await is necessary during importData(), otherwise it will generate a memory leak due to number of events incoming
+            await eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.RECORD_SAVE,
                     topic: {
@@ -881,7 +882,7 @@ export default function ({
         async updateRecord({library, recordData, ctx}): Promise<IRecord> {
             const {old: oldRecord, new: savedRecord} = await recordRepo.updateRecord({libraryId: library, recordData});
 
-            eventsManager.sendDatabaseEvent(
+            await eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.RECORD_SAVE,
                     topic: {
@@ -969,7 +970,7 @@ export default function ({
             // Everything is clean, we can actually delete the record
             const deletedRecord = await recordRepo.deleteRecord({libraryId: library, recordId: id, ctx});
 
-            eventsManager.sendDatabaseEvent(
+            await eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.RECORD_DELETE,
                     topic: {

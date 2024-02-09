@@ -7,7 +7,7 @@ import {IAmqp, onMessageFunc} from './types/amqp';
 export interface IAmqpService {
     publisher: {connection: amqp.Connection; channel: amqp.ConfirmChannel};
     consumer: {connection: amqp.Connection; channel: amqp.ConfirmChannel};
-    publish(exchange: string, routingKey: string, msg: string, priority?: number): Promise<void>;
+    publish(exchange: string, routingKey: string, msg: string, priority?: number): Promise<boolean>;
     consume(
         queue: string,
         routingKey: string,
@@ -43,12 +43,14 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
 
     await _init();
 
-    const publish: IAmqpService['publish'] = async (exchange, routingKey, msg, priority): Promise<void> => {
+    const publish: IAmqpService['publish'] = async (exchange, routingKey, msg, priority): Promise<boolean> => {
         try {
             await publisher.channel.checkExchange(exchange);
-            publisher.channel.publish(exchange, routingKey, Buffer.from(msg), {persistent: true, priority});
+            const response = publisher.channel.publish(exchange, routingKey, Buffer.from(msg), {persistent: true, priority});
             await publisher.channel.waitForConfirms();
             retries = 0;
+
+            return response;
         } catch (e) {
             if (!retries) {
                 retries += 1;

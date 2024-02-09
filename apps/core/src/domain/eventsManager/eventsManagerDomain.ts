@@ -13,8 +13,8 @@ import {IQueryInfos} from '_types/queryInfos';
 import {Errors} from '../../_types/errors';
 
 export interface IEventsManagerDomain {
-    sendDatabaseEvent(payload: IDbPayload, ctx: IQueryInfos): void;
-    sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos): void;
+    sendDatabaseEvent(payload: IDbPayload, ctx: IQueryInfos): Promise<boolean>;
+    sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos): Promise<boolean>;
     subscribe(triggersName: string[]): AsyncIterator<any>;
     initPubSubEventsConsumer(): Promise<void>;
     initCustomConsumer(
@@ -86,8 +86,8 @@ export default function({
     };
 
     const _send = (routingKey: string, payload: any, ctx: IQueryInfos) => {
-        amqpService
-            .publish(
+        try {
+            return amqpService.publish(
                 config.amqp.exchange,
                 routingKey,
                 JSON.stringify({
@@ -99,11 +99,10 @@ export default function({
                     trigger: ctx.trigger,
                     payload
                 })
-            )
-            .catch(err => {
-                // We don't want to have to await the _send function, so we handle the error here.
-                logger.error(err);
-            });
+            );
+        } catch (e) {
+            console.error('Error while sending event to rabbitMQ', e);
+        }
     };
 
     return {
@@ -130,10 +129,10 @@ export default function({
             await amqpService.consume(queue, routingKey, msg => onMessage(msg, amqpService.consumer.channel));
         },
         sendDatabaseEvent(payload: IDbPayload, ctx: IQueryInfos) {
-            _send(config.eventsManager.routingKeys.data_events, payload, ctx);
+            return _send(config.eventsManager.routingKeys.data_events, payload, ctx);
         },
         sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos) {
-            _send(config.eventsManager.routingKeys.pubsub_events, payload, ctx);
+            return _send(config.eventsManager.routingKeys.pubsub_events, payload, ctx);
         },
         subscribe(triggersName: string[]): AsyncIterator<any> {
             return pubsub.asyncIterator(triggersName);
