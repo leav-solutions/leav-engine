@@ -56,7 +56,7 @@ function FileModal({fileId, libraryId, open, onClose}: IFileModalProps): JSX.Ele
             width="90vw"
             centered
             style={{padding: 0, maxWidth: `${fileModalWidth}px`}}
-            bodyStyle={{height: 'calc(100vh - 12rem)', overflowY: 'auto', padding: 0}}
+            styles={{body: {height: 'calc(100vh - 12rem)', overflowY: 'auto', padding: 0}}}
             footer={footer}
         >
             {loading && <Loading />}

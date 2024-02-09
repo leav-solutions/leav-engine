@@ -483,7 +483,7 @@ function EditRecordModal({
                 width="90vw"
                 centered
                 style={{maxWidth: `${modalWidth}px`}}
-                bodyStyle={{height: 'calc(100vh - 12rem)', overflowY: 'auto'}}
+                styles={{body: {height: 'calc(100vh - 12rem)', overflowY: 'auto'}}}
                 footer={footer}
             >
                 <ErrorBoundary>

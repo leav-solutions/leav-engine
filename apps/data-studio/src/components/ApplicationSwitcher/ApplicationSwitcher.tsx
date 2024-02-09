@@ -152,7 +152,15 @@ function ApplicationSwitcher(): JSX.Element {
                     onClick={_handleOpen}
                 />
             </Tooltip>
-            <Drawer open={isVisible} onClose={_handleClose} placement="right" closable={false} bodyStyle={{padding: 0}}>
+            <Drawer
+                open={isVisible}
+                onClose={_handleClose}
+                placement="right"
+                closable={false}
+                styles={{
+                    body: {padding: 0}
+                }}
+            >
                 {dropdownContent}
             </Drawer>
         </>

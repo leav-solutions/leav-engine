@@ -166,7 +166,7 @@ function ExportModal({library, onClose, selection, filters, open}: IExportModalP
             width="90vw"
             centered
             confirmLoading={currentStep === ExportSteps.PROCESSING}
-            bodyStyle={{height: 'calc(100vh - 10rem)'}}
+            styles={{body: {height: 'calc(100vh - 10rem)'}}}
             cancelButtonProps={{disabled: currentStep === ExportSteps.DONE}}
             destroyOnClose
         >

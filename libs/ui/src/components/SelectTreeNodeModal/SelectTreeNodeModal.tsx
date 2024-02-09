@@ -52,7 +52,7 @@ export default function SelectTreeNodeModal({
             onCancel={handleCancel}
             title={t('tree-node-selection.title')}
             width="70rem"
-            bodyStyle={{maxHeight: '80vh', overflowY: 'auto'}}
+            styles={{body: {maxHeight: '80vh', overflowY: 'auto'}}}
             centered
             footer={[
                 <Button key="cancel" onClick={handleCancel}>

@@ -268,7 +268,7 @@ function ImportModal({onClose, library, open, availableLibraries, resultExtraBut
                     width="90vw"
                     centered
                     confirmLoading={currentStep === ImportSteps.PROCESSING}
-                    bodyStyle={{height: 'calc(100vh - 10rem)'}}
+                    styles={{body: {height: 'calc(100vh - 10rem)'}}}
                     okButtonProps={{disabled: !okBtn, className: 'submit-btn', title: buttonTitle}}
                     cancelButtonProps={{disabled: currentStep === ImportSteps.DONE}}
                     destroyOnClose={true}

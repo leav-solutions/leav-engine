@@ -95,7 +95,7 @@ function EditPreviewsSettingsModal({
             okText={t('global.submit')}
             cancelText={t('global.cancel')}
             onOk={_handleSubmit}
-            bodyStyle={{height: 'calc(95vh - 15rem)', overflow: 'auto'}}
+            styles={{body: {height: 'calc(95vh - 15rem)', overflow: 'auto'}}}
             title={t('libraries.previews_settings.title')}
             confirmLoading={isSubmitLoading}
         >

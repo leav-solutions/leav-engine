@@ -35,7 +35,9 @@ function UserPanel({userPanelVisible, hideUserPanel}: IUserPanelProps): JSX.Elem
             onClose={hideUserPanel}
             placement="right"
             closable={false}
-            bodyStyle={{padding: 0}}
+            styles={{
+                body: {padding: 0}
+            }}
         >
             <CustomMenu
                 style={{

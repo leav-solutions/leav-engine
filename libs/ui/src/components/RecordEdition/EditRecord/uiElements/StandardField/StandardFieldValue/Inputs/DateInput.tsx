@@ -25,7 +25,7 @@ function DateInput({state, fieldValue, onFocus, onSubmit, settings}: IStandardIn
     const dateValue = editingValue ? dayjs(Number(editingValue) * 1000) : null;
 
     // If we have a values list, picker must be on top to keep list readable
-    const pickerPosition = isValuesListEnabled ? {points: ['bl', 'tl'], offset: [0, -1]} : null;
+    const pickerPosition = isValuesListEnabled ? 'topLeft' : null;
 
     return !isValuesListEnabled || isValuesListOpen ? (
         <DatePicker
@@ -42,7 +42,7 @@ function DateInput({state, fieldValue, onFocus, onSubmit, settings}: IStandardIn
             popupStyle={{background: themeVars.defaultBg}}
             style={{background: themeVars.defaultBg, width: '100%'}}
             allowClear={false}
-            dropdownAlign={pickerPosition}
+            placement={pickerPosition}
         />
     ) : (
         <Input

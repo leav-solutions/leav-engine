@@ -103,7 +103,9 @@ function NotifsPanel({setNbNotifs}: INotifsPanelProps): JSX.Element {
             open={isPanelOpen}
             onClose={_onClose}
             placement="right"
-            bodyStyle={{padding: 0}}
+            styles={{
+                body: {padding: 0}
+            }}
         >
             {!!panel.inProgress.length && (
                 <List

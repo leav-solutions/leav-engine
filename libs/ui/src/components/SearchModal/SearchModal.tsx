@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Modal} from 'antd';
-import {FunctionComponent, useState} from 'react';
+import {FunctionComponent,useState} from 'react';
 import {LibraryItemsList} from '_ui/components/LibraryItemsList';
 import {ErrorDisplayTypes} from '_ui/constants';
 import useGetLibraryDetailExtendedQuery from '_ui/hooks/useGetLibraryDetailExtendedQuery/useGetLibraryDetailExtendedQuery';
@@ -40,7 +40,7 @@ export const SearchModal: FunctionComponent<ISearchModalProps> = ({visible, setV
             open={visible}
             onCancel={_handleModalClose}
             width="95vw"
-            bodyStyle={{height: '90vh', overflow: 'hidden'}}
+            styles={{body: {height: '90vh', overflow: 'hidden'}}}
             style={{
                 top: '1rem'
             }}

@@ -91,6 +91,9 @@ describe('SelectTreeNode', () => {
         await waitFor(() => screen.getByText('Tree Label'));
         expect(screen.getByText('Tree Label')).toBeInTheDocument();
 
+        // First level loaded
+        expect(await screen.findByText('label1')).toBeInTheDocument();
+
         // Expand node => fetch children
         await userEvent.click(screen.getAllByRole('img', {name: 'toggle-children'}).pop());
         await waitFor(() => expect(screen.getByText('label2')).toBeInTheDocument());
