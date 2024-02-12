@@ -148,6 +148,11 @@ export default (attribute: IAttribute): IActionsListConfig => {
                         id: 'validateFormat',
                         name: 'Validate Format',
                         is_system: true
+                    },
+                    {
+                        id: 'validateRegex',
+                        name: 'Validate Regex',
+                        is_system: true
                     }
                 ]
             };
