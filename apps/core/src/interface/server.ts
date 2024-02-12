@@ -47,7 +47,7 @@ interface IDeps {
     'core.depsManager'?: AwilixContainer;
 }
 
-export default function({
+export default function ({
     config: config = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.auth': authApp = null,
@@ -141,14 +141,15 @@ export default function({
                     })
                 );
 
-                // CORS
-                app.use((req, res, next) => {
-                    res.header('Access-Control-Allow-Origin', '*');
-                    res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
-                    res.header('Access-Control-Allow-Headers', 'Origin, Content-Type, Authorization');
-
-                    return req.method === 'OPTIONS' ? res.sendStatus(204) : next();
-                });
+                // CORS - see https://expressjs.com/en/resources/middleware/cors.html#configuring-cors-w-dynamic-origin
+                app.use(
+                    cors<cors.CorsRequest>({
+                        origin: true, // Allows the request origin in Access-Control-Allow-Origin
+                        credentials: true, // Allows client to send cookies in cross-origin request
+                        methods: 'POST, GET, PUT, DELETE, OPTIONS',
+                        allowedHeaders: 'Origin, Content-Type, Authorization'
+                    })
+                );
 
                 // Initialize routes
                 const modules = Object.keys(depsManager.registrations).filter(modName => modName.match(/^core\.app*/));
@@ -165,9 +166,7 @@ export default function({
                     express.static(config.preview.directory, {fallthrough: false}),
                     async (err, req, res, next) => {
                         const htmlContent = await fs.promises.readFile(__dirname + '/preview404.html', 'utf8');
-                        res.status(404)
-                            .type('html')
-                            .send(htmlContent);
+                        res.status(404).type('html').send(htmlContent);
                     }
                 ]);
                 app.use(`/${config.export.endpoint}`, [_checkAuth, express.static(config.export.directory)]);
@@ -314,7 +313,6 @@ export default function({
 
                 app.use(
                     '/graphql',
-                    cors<cors.CorsRequest>(),
                     express.json(),
                     expressMiddleware(server, {
                         context: async ({req, res}): Promise<IQueryInfos> => {
