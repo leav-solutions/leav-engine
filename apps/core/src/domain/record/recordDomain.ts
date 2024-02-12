@@ -19,7 +19,7 @@ import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {IListWithCursor} from '_types/list';
 import {IPreview} from '_types/preview';
-import {IStandardValue, IValue, IValuesOptions} from '_types/value';
+import {IStandardValue, ITreeValue, IValue, IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {getPreviewUrl} from '../../utils/preview/preview';
@@ -45,6 +45,7 @@ import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import getAttributesFromField from './helpers/getAttributesFromField';
 import {SendRecordUpdateEventHelper} from './helpers/sendRecordUpdateEvent';
 import {ICreateRecordResult, IFindRecordParams} from './_types';
+import type {i18n} from 'i18next';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -162,6 +163,7 @@ interface IDeps {
     'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.infra.cache.cacheService'?: ICachesService;
     'core.utils'?: IUtils;
+    translator?: i18n;
 }
 
 export default function ({
@@ -179,7 +181,8 @@ export default function ({
     'core.infra.value': valueRepo = null,
     'core.domain.eventsManager': eventsManager = null,
     'core.infra.cache.cacheService': cacheService = null,
-    'core.utils': utils = null
+    'core.utils': utils = null,
+    translator = null
 }: IDeps = {}): IRecordDomain {
     /**
      * Extract value from record if it's available (attribute simple), or fetch it from DB
@@ -677,8 +680,10 @@ export default function ({
                 return null;
             }
 
+            const value: IValue["value"] | undefined = subLabelValues.pop().value;
+
             if (utils.isLinkAttribute(subLabelAttributeProps)) {
-                const linkValue = subLabelValues.pop().value;
+                const linkValue = value;
 
                 // To avoid infinite loop, we check if the library has already been visited. If so, we return null
                 // For example, if the users' library color is set to "created_by",
@@ -688,13 +693,26 @@ export default function ({
                 }
                 subLabel = await _getSubLabel(linkValue, visitedLibraries, ctx);
             } else if (utils.isTreeAttribute(subLabelAttributeProps)) {
-                const treeValue = subLabelValues.pop().value.record;
+                const treeValue = (value as ITreeValue["value"]).record;
                 subLabel = await _getSubLabel(treeValue, visitedLibraries, ctx);
+            } else if (subLabelAttributeProps.format === AttributeFormats.DATE_RANGE) {
+                subLabel = value != null ? _convertDateRangeToString(value, ctx) : value;
             } else {
-                subLabel = subLabelValues.pop().value;
+                subLabel = value;
             }
         }
         return subLabel;
+    };
+
+    const _convertDateRangeToString = (dateRange: {from: string, to: string}, ctx: IQueryInfos): string => {
+        const from = new Date(dateRange.from).toLocaleDateString(ctx.lang);
+        const to = new Date(dateRange.to).toLocaleDateString(ctx.lang);
+        return translator.t('labels.date_range_sublabel', {
+            from,
+            to,
+            lng: ctx.lang,
+            interpolation: {escapeValue: false}
+        });
     };
 
     const _getRecordIdentity = async (record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity> => {
