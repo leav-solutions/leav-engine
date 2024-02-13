@@ -23,7 +23,13 @@ import {getPreviewUrl} from '../../utils/preview/preview';
 import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition, IRecord, Operator} from '../../_types/record';
-import {mockAttrAdvLink, mockAttrSimple, mockAttrSimpleLink, mockAttrTree} from '../../__tests__/mocks/attribute';
+import {
+    dateRangeAttributeMock,
+    mockAttrAdvLink,
+    mockAttrSimple,
+    mockAttrSimpleLink,
+    mockAttrTree
+} from '../../__tests__/mocks/attribute';
 import {mockLibrary, mockLibraryFiles} from '../../__tests__/mocks/library';
 import {mockRecord} from '../../__tests__/mocks/record';
 import {mockCtx} from '../../__tests__/mocks/shared';
@@ -31,6 +37,8 @@ import {mockTree} from '../../__tests__/mocks/tree';
 import {mockStandardValue} from '../../__tests__/mocks/value';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import recordDomain from './recordDomain';
+import {mockTranslatorWithOptions} from '../../__tests__/mocks/translator';
+import {i18n} from 'i18next';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
     routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'}
@@ -50,7 +58,8 @@ describe('RecordDomain', () => {
     };
     const ctx: IQueryInfos = {
         userId: '1',
-        queryId: 'recordDomainTest'
+        queryId: 'recordDomainTest',
+        lang: 'fr'
     };
 
     const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -68,7 +77,7 @@ describe('RecordDomain', () => {
     });
 
     describe('createRecord', () => {
-        test('Should create a new record', async function () {
+        test('Should create a new record', async function() {
             const createdRecordData = {
                 id: '222435651',
                 library: 'test',
@@ -107,7 +116,7 @@ describe('RecordDomain', () => {
             expect(createdRecord.valuesErrors).toBe(null);
         });
 
-        test('Should create a new record and save its values', async function () {
+        test('Should create a new record and save its values', async function() {
             const createdRecordData = {
                 id: '222435651',
                 library: 'test',
@@ -260,7 +269,7 @@ describe('RecordDomain', () => {
     });
 
     describe('updateRecord', () => {
-        test('Should update a record', async function () {
+        test('Should update a record', async function() {
             const updatedRecordData = {
                 id: '222435651',
                 library: 'test',
@@ -295,7 +304,7 @@ describe('RecordDomain', () => {
     describe('deleteRecord', () => {
         const recordData = {id: '222435651', library: 'test', created_at: 1519303348, modified_at: 1519303348};
 
-        test('Should delete an record and return deleted record', async function () {
+        test('Should delete an record and return deleted record', async function() {
             const recRepo: Mockify<IRecordRepo> = {
                 deleteRecord: global.__mockPromise(recordData)
             };
@@ -368,7 +377,7 @@ describe('RecordDomain', () => {
             getLibraryPermission: global.__mockPromise(true)
         };
 
-        test('Should find records', async function () {
+        test('Should find records', async function() {
             const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
 
             const recDomain = recordDomain({
@@ -778,27 +787,27 @@ describe('RecordDomain', () => {
                         return Promise.resolve(
                             params.filters.id === 'lib1'
                                 ? {
-                                      list: [
-                                          {
-                                              ...mockLibrary,
-                                              id: 'lib1',
-                                              recordIdentityConf: {
-                                                  label: 'first_label_attribute'
-                                              }
-                                          }
-                                      ]
-                                  }
+                                    list: [
+                                        {
+                                            ...mockLibrary,
+                                            id: 'lib1',
+                                            recordIdentityConf: {
+                                                label: 'first_label_attribute'
+                                            }
+                                        }
+                                    ]
+                                }
                                 : {
-                                      list: [
-                                          {
-                                              ...mockLibrary,
-                                              id: 'lib2',
-                                              recordIdentityConf: {
-                                                  label: 'second_label_attribute'
-                                              }
-                                          }
-                                      ]
-                                  }
+                                    list: [
+                                        {
+                                            ...mockLibrary,
+                                            id: 'lib2',
+                                            recordIdentityConf: {
+                                                label: 'second_label_attribute'
+                                            }
+                                        }
+                                    ]
+                                }
                         );
                     })
                 };
@@ -870,7 +879,7 @@ describe('RecordDomain', () => {
             });
         });
 
-        test('Should search records', async function () {
+        test('Should search records', async function() {
             const mockSearchRes = {
                 totalCount: 1,
                 list: [
@@ -999,23 +1008,23 @@ describe('RecordDomain', () => {
                 Promise.resolve([
                     attributeId === 'previews'
                         ? {
-                              raw_value: {
-                                  small: 'small_fake-image',
-                                  medium: 'medium_fake-image',
-                                  big: 'big_fake-image'
-                              }
-                          }
+                            raw_value: {
+                                small: 'small_fake-image',
+                                medium: 'medium_fake-image',
+                                big: 'big_fake-image'
+                            }
+                        }
                         : {
-                              ...mockStandardValue,
-                              value: {
-                                  ...mockRecord,
-                                  previews: {
-                                      small: 'small_fake-image',
-                                      medium: 'medium_fake-image',
-                                      big: 'big_fake-image'
-                                  }
-                              }
-                          }
+                            ...mockStandardValue,
+                            value: {
+                                ...mockRecord,
+                                previews: {
+                                    small: 'small_fake-image',
+                                    medium: 'medium_fake-image',
+                                    big: 'big_fake-image'
+                                }
+                            }
+                        }
                 ])
             );
 
@@ -1044,6 +1053,154 @@ describe('RecordDomain', () => {
                         small: 'small_fake-image'
                     }
                 }
+            });
+        });
+
+        describe('date range attribute sublabel', () => {
+            let mockGetCoreEntityById;
+            let mockLibraryRepo: Mockify<ILibraryRepo>;
+            let mockAttributeDomain: Mockify<IAttributeDomain>;
+            let mockUtils: Mockify<IUtils>;
+
+            const recordWithDateRange = {
+                id: '222536283',
+                library: 'test_lib',
+                created_at: 1520931427,
+                modified_at: 1520931427,
+                ean: '9876543219999999',
+                visual_simple: '222713677'
+            };
+
+            const libData = {
+                recordIdentityConf: {
+                    subLabel: 'unused_content',
+                    preview: 'preview_attr'
+                }
+            };
+
+            beforeEach(() => {
+                mockGetCoreEntityById = jest.fn().mockReturnValue(libData);
+
+                mockLibraryRepo = {
+                    getLibraries: global.__mockPromise({totalCount: 1, list: [mockLibraryFiles]})
+                };
+
+                mockAttributeDomain = {
+                    getAttributeProperties: global.__mockPromise(dateRangeAttributeMock)
+                };
+
+                mockUtils = {
+                    getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
+                    isLinkAttribute: jest.fn().mockReturnValue(false),
+                    isTreeAttribute: jest.fn().mockReturnValue(false)
+                };
+            });
+
+
+            it('should return a string in the sublabel when it is a date range and not null', async () => {
+                const mockValDomain: Mockify<IValueDomain> = {
+                    getValues: global.__mockPromiseMultiple([
+                        [
+                            {
+                                value: {from: '2024-02-16T10:59:52+00:00', to: '2024-02-18T10:59:52+00:00'}
+                            }
+                        ],
+                        [
+                            {
+                                value: {
+                                    small: 'small_fake-image',
+                                    medium: 'medium_fake-image',
+                                    big: 'big_fake-image'
+                                }
+                            }
+                        ]
+                    ])
+                };
+
+                const recDomain = recordDomain({
+                    'core.domain.value': mockValDomain as IValueDomain,
+                    'core.domain.helpers.getCoreEntityById': mockGetCoreEntityById,
+                    'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
+                    'core.utils': mockUtils as IUtils,
+                    'core.infra.library': mockLibraryRepo as ILibraryRepo,
+                    config: mockConfig as Config.IConfig,
+                    translator: mockTranslatorWithOptions as i18n
+                });
+
+                recDomain.getRecordFieldValue = global.__mockPromise([
+                    {
+                        ...mockStandardValue,
+                        value: {
+                            ...mockRecord,
+                            previews: {
+                                small: 'small_fake-image',
+                                medium: 'medium_fake-image',
+                                big: 'big_fake-image'
+                            }
+                        }
+                    }
+                ]);
+
+                const res = await recDomain.getRecordIdentity(recordWithDateRange, ctx);
+
+
+                expect(mockTranslatorWithOptions.t).toBeCalledWith('labels.date_range_sublabel', {
+                    from: '16/02/2024',
+                    to: '18/02/2024',
+                    lng: 'fr',
+                    interpolation: {escapeValue: false}
+                });
+                expect(res).not.toBe(null);
+            });
+
+            it('should return a string in the sublabel when it is a date range and not null', async () => {
+                const mockValDomain: Mockify<IValueDomain> = {
+                    getValues: global.__mockPromiseMultiple([
+                        [
+                            {
+                                value: null
+                            }
+                        ],
+                        [
+                            {
+                                value: {
+                                    small: 'small_fake-image',
+                                    medium: 'medium_fake-image',
+                                    big: 'big_fake-image'
+                                }
+                            }
+                        ]
+                    ])
+                };
+
+                const recDomain = recordDomain({
+                    'core.domain.value': mockValDomain as IValueDomain,
+                    'core.domain.helpers.getCoreEntityById': mockGetCoreEntityById,
+                    'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
+                    'core.utils': mockUtils as IUtils,
+                    'core.infra.library': mockLibraryRepo as ILibraryRepo,
+                    config: mockConfig as Config.IConfig,
+                    translator: mockTranslatorWithOptions as i18n
+                });
+
+                recDomain.getRecordFieldValue = global.__mockPromise([
+                    {
+                        ...mockStandardValue,
+                        value: {
+                            ...mockRecord,
+                            previews: {
+                                small: 'small_fake-image',
+                                medium: 'medium_fake-image',
+                                big: 'big_fake-image'
+                            }
+                        }
+                    }
+                ]);
+
+                const res = await recDomain.getRecordIdentity(recordWithDateRange, ctx);
+
+                expect(mockTranslatorWithOptions.t).toBeCalledTimes(0);
+                expect(res.subLabel).toBe(null);
             });
         });
 

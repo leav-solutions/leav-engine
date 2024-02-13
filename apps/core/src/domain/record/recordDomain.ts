@@ -680,7 +680,7 @@ export default function ({
                 return null;
             }
 
-            const value: IValue["value"] | undefined = subLabelValues.pop().value;
+            const value: IValue['value'] | undefined = subLabelValues.pop().value;
 
             if (utils.isLinkAttribute(subLabelAttributeProps)) {
                 const linkValue = value;
@@ -693,10 +693,10 @@ export default function ({
                 }
                 subLabel = await _getSubLabel(linkValue, visitedLibraries, ctx);
             } else if (utils.isTreeAttribute(subLabelAttributeProps)) {
-                const treeValue = (value as ITreeValue["value"]).record;
+                const treeValue = (value as ITreeValue['value']).record;
                 subLabel = await _getSubLabel(treeValue, visitedLibraries, ctx);
             } else if (subLabelAttributeProps.format === AttributeFormats.DATE_RANGE) {
-                subLabel = value != null ? _convertDateRangeToString(value, ctx) : value;
+                subLabel = value !== null ? _convertDateRangeToString(value, ctx) : value;
             } else {
                 subLabel = value;
             }
@@ -704,7 +704,7 @@ export default function ({
         return subLabel;
     };
 
-    const _convertDateRangeToString = (dateRange: {from: string, to: string}, ctx: IQueryInfos): string => {
+    const _convertDateRangeToString = (dateRange: {from: string; to: string}, ctx: IQueryInfos): string => {
         const from = new Date(dateRange.from).toLocaleDateString(ctx.lang);
         const to = new Date(dateRange.to).toLocaleDateString(ctx.lang);
         return translator.t('labels.date_range_sublabel', {

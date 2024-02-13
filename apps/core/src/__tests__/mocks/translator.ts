@@ -6,3 +6,7 @@ import {i18n} from 'i18next';
 export const mockTranslator: Mockify<i18n> = {
     t: jest.fn(s => s)
 };
+
+export const mockTranslatorWithOptions: Mockify<i18n> = {
+    t: jest.fn((key, options) => 'not implemented!')
+};
