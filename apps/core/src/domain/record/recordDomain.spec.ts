@@ -1056,151 +1056,161 @@ describe('RecordDomain', () => {
             });
         });
 
-        describe('date range attribute sublabel', () => {
-            let mockGetCoreEntityById;
-            let mockLibraryRepo: Mockify<ILibraryRepo>;
-            let mockAttributeDomain: Mockify<IAttributeDomain>;
-            let mockUtils: Mockify<IUtils>;
+        describe('Record entity date range attribute', () => {
+            const checkDateRangeAttribute = (conf: 'label' | 'subLabel'): void => {
+                let mockGetCoreEntityById;
+                let mockLibraryRepo: Mockify<ILibraryRepo>;
+                let mockAttributeDomain: Mockify<IAttributeDomain>;
+                let mockUtils: Mockify<IUtils>;
 
-            const recordWithDateRange = {
-                id: '222536283',
-                library: 'test_lib',
-                created_at: 1520931427,
-                modified_at: 1520931427,
-                ean: '9876543219999999',
-                visual_simple: '222713677'
-            };
-
-            const libData = {
-                recordIdentityConf: {
-                    subLabel: 'unused_content',
-                    preview: 'preview_attr'
-                }
-            };
-
-            beforeEach(() => {
-                mockGetCoreEntityById = jest.fn().mockReturnValue(libData);
-
-                mockLibraryRepo = {
-                    getLibraries: global.__mockPromise({totalCount: 1, list: [mockLibraryFiles]})
+                const recordWithDateRange = {
+                    id: '222536283',
+                    library: 'test_lib',
+                    created_at: 1520931427,
+                    modified_at: 1520931427,
+                    ean: '9876543219999999',
+                    visual_simple: '222713677'
                 };
 
-                mockAttributeDomain = {
-                    getAttributeProperties: global.__mockPromise(dateRangeAttributeMock)
+                const libData = {
+                    recordIdentityConf: {
+                        [conf]: 'unused_content',
+                        preview: 'preview_attr'
+                    }
                 };
 
-                mockUtils = {
-                    getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
-                    isLinkAttribute: jest.fn().mockReturnValue(false),
-                    isTreeAttribute: jest.fn().mockReturnValue(false)
-                };
-            });
+                beforeEach(() => {
+                    mockGetCoreEntityById = jest.fn().mockReturnValue(libData);
+
+                    mockLibraryRepo = {
+                        getLibraries: global.__mockPromise({totalCount: 1, list: [mockLibraryFiles]})
+                    };
+
+                    mockAttributeDomain = {
+                        getAttributeProperties: global.__mockPromise(dateRangeAttributeMock)
+                    };
+
+                    mockUtils = {
+                        getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
+                        isLinkAttribute: jest.fn().mockReturnValue(false),
+                        isTreeAttribute: jest.fn().mockReturnValue(false)
+                    };
+                });
 
 
-            it('should return a string in the sublabel when it is a date range and not null', async () => {
-                const mockValDomain: Mockify<IValueDomain> = {
-                    getValues: global.__mockPromiseMultiple([
-                        [
-                            {
-                                value: {from: '2024-02-16T10:59:52+00:00', to: '2024-02-18T10:59:52+00:00'}
-                            }
-                        ],
-                        [
-                            {
-                                value: {
+                it('should return a string when date range attribute is present and not null', async () => {
+                    const mockValDomain: Mockify<IValueDomain> = {
+                        getValues: global.__mockPromiseMultiple([
+                            [
+                                {
+                                    value: {from: '2024-02-16T10:59:52+00:00', to: '2024-02-18T10:59:52+00:00'}
+                                }
+                            ],
+                            [
+                                {
+                                    value: {
+                                        small: 'small_fake-image',
+                                        medium: 'medium_fake-image',
+                                        big: 'big_fake-image'
+                                    }
+                                }
+                            ]
+                        ])
+                    };
+
+                    const recDomain = recordDomain({
+                        'core.domain.value': mockValDomain as IValueDomain,
+                        'core.domain.helpers.getCoreEntityById': mockGetCoreEntityById,
+                        'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
+                        'core.utils': mockUtils as IUtils,
+                        'core.infra.library': mockLibraryRepo as ILibraryRepo,
+                        config: mockConfig as Config.IConfig,
+                        translator: mockTranslatorWithOptions as i18n
+                    });
+
+                    recDomain.getRecordFieldValue = global.__mockPromise([
+                        {
+                            ...mockStandardValue,
+                            value: {
+                                ...mockRecord,
+                                previews: {
                                     small: 'small_fake-image',
                                     medium: 'medium_fake-image',
                                     big: 'big_fake-image'
                                 }
                             }
-                        ]
-                    ])
-                };
-
-                const recDomain = recordDomain({
-                    'core.domain.value': mockValDomain as IValueDomain,
-                    'core.domain.helpers.getCoreEntityById': mockGetCoreEntityById,
-                    'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
-                    'core.utils': mockUtils as IUtils,
-                    'core.infra.library': mockLibraryRepo as ILibraryRepo,
-                    config: mockConfig as Config.IConfig,
-                    translator: mockTranslatorWithOptions as i18n
-                });
-
-                recDomain.getRecordFieldValue = global.__mockPromise([
-                    {
-                        ...mockStandardValue,
-                        value: {
-                            ...mockRecord,
-                            previews: {
-                                small: 'small_fake-image',
-                                medium: 'medium_fake-image',
-                                big: 'big_fake-image'
-                            }
                         }
-                    }
-                ]);
+                    ]);
 
-                const res = await recDomain.getRecordIdentity(recordWithDateRange, ctx);
+                    const res = await recDomain.getRecordIdentity(recordWithDateRange, ctx);
 
 
-                expect(mockTranslatorWithOptions.t).toBeCalledWith('labels.date_range_sublabel', {
-                    from: '16/02/2024',
-                    to: '18/02/2024',
-                    lng: 'fr',
-                    interpolation: {escapeValue: false}
+                    expect(mockTranslatorWithOptions.t).toBeCalledWith('labels.date_range', {
+                        from: '16/02/2024',
+                        to: '18/02/2024',
+                        lng: 'fr',
+                        interpolation: {escapeValue: false}
+                    });
+                    expect(res).not.toBe(null);
                 });
-                expect(res).not.toBe(null);
-            });
 
-            it('should return a string in the sublabel when it is a date range and not null', async () => {
-                const mockValDomain: Mockify<IValueDomain> = {
-                    getValues: global.__mockPromiseMultiple([
-                        [
-                            {
-                                value: null
-                            }
-                        ],
-                        [
-                            {
-                                value: {
+                it('should return null when date range attribute is present but null', async () => {
+                    const mockValDomain: Mockify<IValueDomain> = {
+                        getValues: global.__mockPromiseMultiple([
+                            [
+                                {
+                                    value: null
+                                }
+                            ],
+                            [
+                                {
+                                    value: {
+                                        small: 'small_fake-image',
+                                        medium: 'medium_fake-image',
+                                        big: 'big_fake-image'
+                                    }
+                                }
+                            ]
+                        ])
+                    };
+
+                    const recDomain = recordDomain({
+                        'core.domain.value': mockValDomain as IValueDomain,
+                        'core.domain.helpers.getCoreEntityById': mockGetCoreEntityById,
+                        'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
+                        'core.utils': mockUtils as IUtils,
+                        'core.infra.library': mockLibraryRepo as ILibraryRepo,
+                        config: mockConfig as Config.IConfig,
+                        translator: mockTranslatorWithOptions as i18n
+                    });
+
+                    recDomain.getRecordFieldValue = global.__mockPromise([
+                        {
+                            ...mockStandardValue,
+                            value: {
+                                ...mockRecord,
+                                previews: {
                                     small: 'small_fake-image',
                                     medium: 'medium_fake-image',
                                     big: 'big_fake-image'
                                 }
                             }
-                        ]
-                    ])
-                };
-
-                const recDomain = recordDomain({
-                    'core.domain.value': mockValDomain as IValueDomain,
-                    'core.domain.helpers.getCoreEntityById': mockGetCoreEntityById,
-                    'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
-                    'core.utils': mockUtils as IUtils,
-                    'core.infra.library': mockLibraryRepo as ILibraryRepo,
-                    config: mockConfig as Config.IConfig,
-                    translator: mockTranslatorWithOptions as i18n
-                });
-
-                recDomain.getRecordFieldValue = global.__mockPromise([
-                    {
-                        ...mockStandardValue,
-                        value: {
-                            ...mockRecord,
-                            previews: {
-                                small: 'small_fake-image',
-                                medium: 'medium_fake-image',
-                                big: 'big_fake-image'
-                            }
                         }
-                    }
-                ]);
+                    ]);
 
-                const res = await recDomain.getRecordIdentity(recordWithDateRange, ctx);
+                    const res = await recDomain.getRecordIdentity(recordWithDateRange, ctx);
 
-                expect(mockTranslatorWithOptions.t).toBeCalledTimes(0);
-                expect(res.subLabel).toBe(null);
+                    expect(mockTranslatorWithOptions.t).toBeCalledTimes(0);
+                    expect(res.subLabel).toBe(null);
+                });
+            };
+
+            describe('Date range on label', () => {
+                checkDateRangeAttribute('label');
+            });
+
+            describe('Date range on sublabel', () => {
+                checkDateRangeAttribute('subLabel');
             });
         });
 

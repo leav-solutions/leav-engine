@@ -196,7 +196,7 @@
         "previews_status": "Statut des aperçus"
     },
     "labels": {
-        "date_range_sublabel": "Du {{from}} au {{to}}"
+        "date_range": "Du {{from}} au {{to}}"
     },
     "tasks": {
         "import_label": "Import du fichier {{filename}}",

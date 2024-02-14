@@ -564,21 +564,23 @@ export default function ({
                 return null;
             }
 
-            if (utils.isLinkAttribute(labelAttributeProps)) {
-                const linkValue = labelValues.pop().value;
+            const value: IValue['value'] | undefined = labelValues.pop().value;
 
-                // To avoid infinite loop, we check if the library has already been visited. If so, we return the id.
+            if (utils.isLinkAttribute(labelAttributeProps)) {
+                // To avoid infinite loop, we check if  the library has already been visited. If so, we return the id.
                 // For example, if the users' library label is set to "created_by",
                 // we'll retrieve the user's creator, then we'll retrieve the creator's creator, and so on...
                 if (visitedLibraries.includes(labelAttributeProps.linked_library)) {
-                    return linkValue.id;
+                    return value.id;
                 }
 
-                label = await _getLabel(linkValue, visitedLibraries, ctx);
+                label = await _getLabel(value, visitedLibraries, ctx);
             } else if (utils.isTreeAttribute(labelAttributeProps)) {
-                label = await _getLabel(labelValues.pop().value.record, visitedLibraries, ctx);
+                label = await _getLabel(value.record, visitedLibraries, ctx);
+            } else if (labelAttributeProps.format === AttributeFormats.DATE_RANGE) {
+                label = value !== null ? _convertDateRangeToString(value, ctx) : value;
             } else {
-                label = labelValues.pop().value;
+                label = value;
             }
         }
 
@@ -707,7 +709,7 @@ export default function ({
     const _convertDateRangeToString = (dateRange: {from: string; to: string}, ctx: IQueryInfos): string => {
         const from = new Date(dateRange.from).toLocaleDateString(ctx.lang);
         const to = new Date(dateRange.to).toLocaleDateString(ctx.lang);
-        return translator.t('labels.date_range_sublabel', {
+        return translator.t('labels.date_range', {
             from,
             to,
             lng: ctx.lang,
