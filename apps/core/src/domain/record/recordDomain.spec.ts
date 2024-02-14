@@ -77,7 +77,7 @@ describe('RecordDomain', () => {
     });
 
     describe('createRecord', () => {
-        test('Should create a new record', async function() {
+        test('Should create a new record', async function () {
             const createdRecordData = {
                 id: '222435651',
                 library: 'test',
@@ -116,7 +116,7 @@ describe('RecordDomain', () => {
             expect(createdRecord.valuesErrors).toBe(null);
         });
 
-        test('Should create a new record and save its values', async function() {
+        test('Should create a new record and save its values', async function () {
             const createdRecordData = {
                 id: '222435651',
                 library: 'test',
@@ -269,7 +269,7 @@ describe('RecordDomain', () => {
     });
 
     describe('updateRecord', () => {
-        test('Should update a record', async function() {
+        test('Should update a record', async function () {
             const updatedRecordData = {
                 id: '222435651',
                 library: 'test',
@@ -304,7 +304,7 @@ describe('RecordDomain', () => {
     describe('deleteRecord', () => {
         const recordData = {id: '222435651', library: 'test', created_at: 1519303348, modified_at: 1519303348};
 
-        test('Should delete an record and return deleted record', async function() {
+        test('Should delete an record and return deleted record', async function () {
             const recRepo: Mockify<IRecordRepo> = {
                 deleteRecord: global.__mockPromise(recordData)
             };
@@ -377,7 +377,7 @@ describe('RecordDomain', () => {
             getLibraryPermission: global.__mockPromise(true)
         };
 
-        test('Should find records', async function() {
+        test('Should find records', async function () {
             const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
 
             const recDomain = recordDomain({
@@ -787,27 +787,27 @@ describe('RecordDomain', () => {
                         return Promise.resolve(
                             params.filters.id === 'lib1'
                                 ? {
-                                    list: [
-                                        {
-                                            ...mockLibrary,
-                                            id: 'lib1',
-                                            recordIdentityConf: {
-                                                label: 'first_label_attribute'
-                                            }
-                                        }
-                                    ]
-                                }
+                                      list: [
+                                          {
+                                              ...mockLibrary,
+                                              id: 'lib1',
+                                              recordIdentityConf: {
+                                                  label: 'first_label_attribute'
+                                              }
+                                          }
+                                      ]
+                                  }
                                 : {
-                                    list: [
-                                        {
-                                            ...mockLibrary,
-                                            id: 'lib2',
-                                            recordIdentityConf: {
-                                                label: 'second_label_attribute'
-                                            }
-                                        }
-                                    ]
-                                }
+                                      list: [
+                                          {
+                                              ...mockLibrary,
+                                              id: 'lib2',
+                                              recordIdentityConf: {
+                                                  label: 'second_label_attribute'
+                                              }
+                                          }
+                                      ]
+                                  }
                         );
                     })
                 };
@@ -879,7 +879,7 @@ describe('RecordDomain', () => {
             });
         });
 
-        test('Should search records', async function() {
+        test('Should search records', async function () {
             const mockSearchRes = {
                 totalCount: 1,
                 list: [
@@ -1008,23 +1008,23 @@ describe('RecordDomain', () => {
                 Promise.resolve([
                     attributeId === 'previews'
                         ? {
-                            raw_value: {
-                                small: 'small_fake-image',
-                                medium: 'medium_fake-image',
-                                big: 'big_fake-image'
-                            }
-                        }
+                              raw_value: {
+                                  small: 'small_fake-image',
+                                  medium: 'medium_fake-image',
+                                  big: 'big_fake-image'
+                              }
+                          }
                         : {
-                            ...mockStandardValue,
-                            value: {
-                                ...mockRecord,
-                                previews: {
-                                    small: 'small_fake-image',
-                                    medium: 'medium_fake-image',
-                                    big: 'big_fake-image'
-                                }
-                            }
-                        }
+                              ...mockStandardValue,
+                              value: {
+                                  ...mockRecord,
+                                  previews: {
+                                      small: 'small_fake-image',
+                                      medium: 'medium_fake-image',
+                                      big: 'big_fake-image'
+                                  }
+                              }
+                          }
                 ])
             );
 
@@ -1097,7 +1097,6 @@ describe('RecordDomain', () => {
                     };
                 });
 
-
                 it('should return a string when date range attribute is present and not null', async () => {
                     const mockValDomain: Mockify<IValueDomain> = {
                         getValues: global.__mockPromiseMultiple([
@@ -1143,7 +1142,6 @@ describe('RecordDomain', () => {
                     ]);
 
                     const res = await recDomain.getRecordIdentity(recordWithDateRange, ctx);
-
 
                     expect(mockTranslatorWithOptions.t).toBeCalledWith('labels.date_range', {
                         from: '16/02/2024',

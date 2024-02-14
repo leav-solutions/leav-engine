@@ -564,7 +564,7 @@ export default function ({
                 return null;
             }
 
-            const value: IValue['value'] | undefined = labelValues.pop().value;
+            const value: IValue['value'] | undefined = labelValues?.[0]?.value;
 
             if (utils.isLinkAttribute(labelAttributeProps)) {
                 // To avoid infinite loop, we check if  the library has already been visited. If so, we return the id.
@@ -578,7 +578,7 @@ export default function ({
             } else if (utils.isTreeAttribute(labelAttributeProps)) {
                 label = await _getLabel(value.record, visitedLibraries, ctx);
             } else if (labelAttributeProps.format === AttributeFormats.DATE_RANGE) {
-                label = value !== null ? _convertDateRangeToString(value, ctx) : value;
+                label = value ? _convertDateRangeToString(value, ctx) : null;
             } else {
                 label = value;
             }
@@ -682,7 +682,7 @@ export default function ({
                 return null;
             }
 
-            const value: IValue['value'] | undefined = subLabelValues.pop().value;
+            const value: IValue['value'] | undefined = subLabelValues?.[0]?.value;
 
             if (utils.isLinkAttribute(subLabelAttributeProps)) {
                 const linkValue = value;
@@ -698,7 +698,7 @@ export default function ({
                 const treeValue = (value as ITreeValue['value']).record;
                 subLabel = await _getSubLabel(treeValue, visitedLibraries, ctx);
             } else if (subLabelAttributeProps.format === AttributeFormats.DATE_RANGE) {
-                subLabel = value !== null ? _convertDateRangeToString(value, ctx) : value;
+                subLabel = value ? _convertDateRangeToString(value, ctx) : null;
             } else {
                 subLabel = value;
             }
@@ -706,13 +706,13 @@ export default function ({
         return subLabel;
     };
 
-    const _convertDateRangeToString = (dateRange: {from: string; to: string}, ctx: IQueryInfos): string => {
-        const from = new Date(dateRange.from).toLocaleDateString(ctx.lang);
-        const to = new Date(dateRange.to).toLocaleDateString(ctx.lang);
+    const _convertDateRangeToString = (dateRange: {from: string; to: string}, {lang}: IQueryInfos): string => {
+        const from = new Date(dateRange.from).toLocaleDateString(lang);
+        const to = new Date(dateRange.to).toLocaleDateString(lang);
         return translator.t('labels.date_range', {
             from,
             to,
-            lng: ctx.lang,
+            lng: lang,
             interpolation: {escapeValue: false}
         });
     };
