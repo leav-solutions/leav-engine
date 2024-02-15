@@ -6,10 +6,6 @@
     "noEmit": true,
     "outDir": "dist",
     "jsx": "react-jsx",
-    "paths": {
-      "react-router": ["/toto"],
-      "react-router-dom": ["./node_modules/react-router-dom"]
-    }
   },
   "include": [
     "src",

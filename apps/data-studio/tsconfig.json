@@ -11,7 +11,5 @@
     ],
     "jsx": "react-jsx"
   },
-  "include": [
-    "src"
-, "../../libs/ui/src/components/LibraryItemsList/MenuItemListSelected/ActionsMenu"  ]
+  "include": ["src"]
 }
