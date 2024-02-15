@@ -86,3 +86,9 @@ export const mockAttrTreeVersionableSimple: IAttribute = {
 };
 
 export const mockAttrTreeMultival: IAttribute = {...mockAttrTree, multiple_values: true};
+
+export const dateRangeAttributeMock: IAttribute = {
+    ...base,
+    format: AttributeFormats.DATE_RANGE,
+    id: 'date_range_attribute'
+};
