@@ -25,7 +25,7 @@ function DateRangeInput({state, fieldValue, onFocus, onSubmit, settings}: IStand
         onSubmit(dateToSave);
     };
 
-    const editingRangeValue = editingValue as IDateRangeValue;
+    const editingRangeValue = typeof editingValue === 'string' && editingValue.length > 0 ? JSON.parse(editingValue) : editingValue as IDateRangeValue;
     const rangeValue: [dayjs.Dayjs, dayjs.Dayjs] = editingRangeValue
         ? [dayjs(Number(editingRangeValue.from) * 1000), dayjs(Number(editingRangeValue.to) * 1000)]
         : null;
