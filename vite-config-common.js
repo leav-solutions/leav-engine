@@ -21,7 +21,6 @@ export const jsonHmr = () => {
 };
 
 export const commonConfig = rootPath => {
-    console.log('rootPath', rootPath);
     return {
         root: '.',
         plugins: [svgr(), react(), jsonHmr(), splitVendorChunkPlugin()],
@@ -47,10 +46,6 @@ export const commonConfig = rootPath => {
                     replacement: path.resolve(__dirname, 'libs/ui/src/$1')
                 }
             ]
-        },
-        server: {
-            port: 3000,
-            host: true
         }
     };
 };

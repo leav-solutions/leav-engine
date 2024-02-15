@@ -33,7 +33,7 @@ jest.mock('react-router-v5', () => ({
 
 describe('EditApplication', () => {
     type matchType = match<IEditApplicationMatchParams>;
-    test.only('Edit existing app', async () => {
+    test('Edit existing app', async () => {
         const mockMatch: Mockify<matchType> = {
             params: {id: mockApplicationDetails.id}
         };
