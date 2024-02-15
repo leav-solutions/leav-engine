@@ -46,6 +46,10 @@ export const commonConfig = rootPath => {
                     replacement: path.resolve(__dirname, 'libs/ui/src/$1')
                 }
             ]
+        },
+        server: {
+            port: 3000,
+            host: true
         }
     };
 };
