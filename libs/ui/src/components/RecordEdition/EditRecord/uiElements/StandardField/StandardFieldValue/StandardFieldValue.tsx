@@ -359,7 +359,15 @@ function StandardFieldValue({
             if (hasValue) {
                 switch (attribute.format) {
                     case AttributeFormat.date_range:
-                        const dateRangeValue = fieldValue.displayValue as IDateRangeValue;
+                        const {editingValue} = fieldValue;
+                        const isParsable = typeof editingValue === 'string' && editingValue.length > 0;
+                        const convertedFieldValue: IDateRangeValue = isParsable
+                            ? JSON.parse(editingValue)
+                            : editingValue;
+                        const dateRangeValue: IDateRangeValue = {
+                            from: new Date(Number(convertedFieldValue.from) * 1000).toLocaleDateString(i18n.language),
+                            to: new Date(Number(convertedFieldValue.to) * 1000).toLocaleDateString(i18n.language)
+                        };
                         displayedValue =
                             dateRangeValue?.from && dateRangeValue?.to
                                 ? stringifyDateRangeValue(dateRangeValue, t)
