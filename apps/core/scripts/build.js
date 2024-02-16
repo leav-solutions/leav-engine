@@ -38,7 +38,7 @@ for (const pkgFile of pkgFiles) {
 }
 
 // Copy html files to build folder
-const htmlFiles = glob.sync('**/*.html', {cwd: root + '/src'});
+const htmlFiles = glob.sync('**/*.html', {cwd: root + '/src', ignore: '**/node_modules/**'});
 for (const htmlFile of htmlFiles) {
     fs.copyFileSync(root + '/src/' + htmlFile, buildFolder + '/' + htmlFile);
 }
