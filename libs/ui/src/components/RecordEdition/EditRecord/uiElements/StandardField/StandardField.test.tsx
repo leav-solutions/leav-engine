@@ -242,6 +242,66 @@ describe('StandardField', () => {
         });
     });
 
+    test('Render range date field', async () => {
+        const recordValuesRangeDate = [
+            {
+                ...mockRecordValuesCommon,
+                value: {
+                    from: '2024-02-05T08:30:50+00:00',
+                    to: '2024-03-08T08:30:50+00:00'
+                },
+                raw_value: {
+                    from: 1707121850,
+                    to: 1709886650
+                }
+            }
+        ];
+
+        const onValueSubmitMock: SubmitValueFunc = jest.fn().mockReturnValue({
+            ...mockSubmitRes,
+            values: [
+                {
+                    ...mockSubmitRes.values[0],
+                    value: {
+                        from: '2024-02-10T08:30:50+00:00',
+                        to: '2024-02-15T08:30:50+00:00'
+                    },
+                    raw_value: {
+                        from: 1707523200,
+                        to: 1707955200
+                    }
+                }
+            ]
+        });
+
+        render(
+            <StandardField
+                element={{
+                    ...mockFormElementInput,
+                    attribute: {...mockFormAttribute, format: AttributeFormat.date_range},
+                    values: recordValuesRangeDate
+                }}
+                {...baseProps}
+                onValueSubmit={onValueSubmitMock}
+            />
+        );
+
+        const inputElem = screen.getByRole('textbox');
+        await userEvent.click(inputElem);
+
+        const calendarElem = screen.getAllByTestId('datepicker');
+        expect(calendarElem).toHaveLength(2);
+
+        await userEvent.click(screen.getByTitle('2024-02-10'));
+        await userEvent.click(screen.getByTitle('2024-02-15'));
+
+        expect(onValueSubmitMock).toHaveBeenCalled();
+
+        await userEvent.click(screen.getByRole('textbox'));
+        expect(screen.getByPlaceholderText('Start date')).toHaveValue('2024-02-10');
+        expect(screen.getByPlaceholderText('End date')).toHaveValue('2024-02-15');
+    });
+
     test('Render color field', async () => {
         const colorValue = 'FFFFFF';
         const newColorValue = '000000';
