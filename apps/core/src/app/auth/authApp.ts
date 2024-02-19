@@ -24,7 +24,9 @@ import {AttributeCondition, IRecord} from '../../_types/record';
 
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
+
     validateRequestToken(params: {apiKey?: string; cookies?: {}}): Promise<ITokenUserData>;
+
     registerRoute(app: Express): void;
 }
 
@@ -50,7 +52,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function ({
+export default function({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.apiKey': apiKeyDomain = null,
@@ -193,6 +195,14 @@ export default function ({
                             expires: new Date(Date.now() + cookieExpires)
                         });
 
+                        res.cookie('refreshToken', refreshToken, {
+                            httpOnly: true,
+                            sameSite: config.auth.cookie.sameSite,
+                            secure: config.auth.cookie.secure,
+                            domain: `${req.headers.host}`,
+                            expires: new Date(Date.now() + ms(String(config.auth.refreshTokenExpiration)))
+                        });
+
                         return res.status(200).json({
                             refreshToken
                         });
@@ -212,6 +222,8 @@ export default function ({
                         secure: config.auth.cookie.secure,
                         domain: req.headers.host
                     });
+
+                    // res.clearCookie(ACCESS_TOKEN_COOKIE_NAME);
 
                     return res.status(200).end();
                 }
@@ -342,7 +354,7 @@ export default function ({
                 '/auth/refresh',
                 async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
                     try {
-                        const {refreshToken} = req.body;
+                        const refreshToken = req.cookies.refreshToken || req.body.refreshToken;
 
                         if (typeof refreshToken === 'undefined') {
                             return res.status(400).send('Missing refresh token');
@@ -421,6 +433,14 @@ export default function ({
                             secure: config.auth.cookie.secure,
                             domain: req.headers.host,
                             expires: new Date(Date.now() + cookieExpires)
+                        });
+
+                        res.cookie('refreshToken', refreshToken, {
+                            httpOnly: true,
+                            sameSite: config.auth.cookie.sameSite,
+                            secure: config.auth.cookie.secure,
+                            domain: `${req.headers.host}`,
+                            expires: new Date(Date.now() + ms(String(config.auth.refreshTokenExpiration)))
                         });
 
                         return res.status(200).json({
