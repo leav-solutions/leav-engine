@@ -23,7 +23,7 @@ describe('Trees', () => {
             saveTree(
                 tree: {
                     id: "${testTreeName}",
-                    label: {fr: "Test tree"},
+                    label: {en: "Test tree"},
                     libraries: [{
                         library: "users",
                         settings: {allowMultiplePositions: true, allowedAtRoot: true,  allowedChildren: ["__all__"]}

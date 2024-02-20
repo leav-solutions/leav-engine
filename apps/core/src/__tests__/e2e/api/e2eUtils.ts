@@ -74,7 +74,7 @@ export async function gqlSaveLibrary(id: string, label: string, additionalAttrib
         `mutation {
         saveLibrary(library: {
             id: "${id}",
-            label: {fr: "${label}"},
+            label: {en: "${label}"},
             attributes: [${libAttributes.map(a => `"${a}"`).join(', ')}]
         }) { id }
     }`,
@@ -89,7 +89,7 @@ export async function gqlSaveApplication(id: string, label: string, endpoint: st
         `mutation {
             saveApplication(application: {
                 id: "${id}",
-                label: {fr: "${label}"},
+                label: {en: "${label}"},
                 endpoint: "${endpoint}",
                 module: "data-studio"
             }) { id }
@@ -136,7 +136,7 @@ export async function gqlSaveAttribute(params: {
             {
                 id: "${field.id}",
                 format: ${field.format ?? 'null'},
-                label: {fr: "${field.id}"},
+                label: {en: "${field.id}"},
                 validation_regex: ${field.validation_regex ? `"${field.validation_regex}"` : 'null'},
                 embedded_fields: ${
                     field.embedded_fields ? `[${field.embedded_fields.map(_convertEmbeddedFields).join(', ')}]` : 'null'
@@ -174,8 +174,8 @@ export async function gqlSaveAttribute(params: {
                 id: "${id}",
                 type: ${type},
                 format: ${format},
-                label: {fr: "${label}"},
-                description: {fr: "${description ? `"${description}"` : 'null'}"},
+                label: {en: "${label}"},
+                description: {en: "${description ? `"${description}"` : 'null'}"},
                 linked_library: ${linkedLibrary ? `"${linkedLibrary}"` : 'null'},
                 reverse_link: ${reverseLink ? `"${reverseLink}"` : 'null'},
                 linked_tree: ${linkedTree ? `"${linkedTree}"` : 'null'},
@@ -206,7 +206,7 @@ export async function gqlSaveTree(id: string, label: string, libraries: string[]
         saveTree(
             tree: {
                 id: "${id}",
-                label: {fr: "${label}"},
+                label: {en: "${label}"},
                 libraries: [${libraries
                     .map(
                         l =>
@@ -304,7 +304,7 @@ export async function gqlSaveVersionProfile(profileId: string, label: string, tr
         `mutation {
             saveVersionProfile(versionProfile: {
                 id: "${profileId}",
-                label: {fr: "label"},
+                label: {en: "label"},
                 trees: [${trees.map(a => `"${a}"`).join(', ')}]
             }) {
             id

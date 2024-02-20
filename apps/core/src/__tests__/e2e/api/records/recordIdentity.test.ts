@@ -69,7 +69,7 @@ describe('Record identity', () => {
             `mutation {
             saveLibrary(library: {
                 id: "${testLinkedLibraryId}",
-                label: {fr: "Test Lib"},
+                label: {en: "Test Lib"},
                 attributes: ["${testLabelAttributeId}", "${testColorAttributeId}"]
                 recordIdentityConf: {
                     label: "${testLabelAttributeId}",
@@ -84,7 +84,7 @@ describe('Record identity', () => {
             `mutation {
             saveLibrary(library: {
                 id: "${testTreeRecordLibraryId}",
-                label: {fr: "Test Lib"},
+                label: {en: "Test Lib"},
                 attributes: ["${testLabelAttributeId}", "${testColorAttributeId}"]
                 recordIdentityConf: {
                     label: "${testLabelAttributeId}",
@@ -99,7 +99,7 @@ describe('Record identity', () => {
             `mutation {
             saveLibrary(library: {
                 id: "${testLinkedIdentityLibraryId}",
-                label: {fr: "Test Lib"},
+                label: {en: "Test Lib"},
                 attributes: ["${testLinkAttributeId}"]
                 recordIdentityConf: {
                     label: "${testLinkAttributeId}",
@@ -124,7 +124,7 @@ describe('Record identity', () => {
             `mutation {
             saveLibrary(library: {
                 id: "${testTreeIdentityLibraryId}",
-                label: {fr: "Test Lib"},
+                label: {en: "Test Lib"},
                 attributes: ["${testTreeAttributeId}"],
                 recordIdentityConf: {
                     label: "${testTreeAttributeId}",

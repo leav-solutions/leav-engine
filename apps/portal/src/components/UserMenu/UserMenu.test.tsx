@@ -10,9 +10,9 @@ import UserMenu from './UserMenu';
 
 describe('UserMenu', () => {
     const mockLangContext: leavUi.ILangContext = {
-        lang: ['fr'],
+        lang: ['en'],
         availableLangs: ['fr', 'en'],
-        defaultLang: 'fr',
+        defaultLang: 'en',
         setLang: jest.fn()
     };
 
@@ -47,7 +47,7 @@ describe('UserMenu', () => {
         // the button as no accessible name we can use
         userEvent.click(screen.getByTestId('user-panel').getElementsByClassName('kit-action-more')[0]);
 
-        userEvent.click(await screen.findByText(/fr/i));
+        userEvent.click(await screen.findByText(/en/i));
         expect(mockLangContext.setLang).toHaveBeenCalled();
     });
 });

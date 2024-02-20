@@ -61,7 +61,7 @@ describe('StandardField', () => {
 
     const mockAttribute: IRecordPropertyAttribute = {
         id: 'test_attribute',
-        label: {fr: 'Test Attribute'},
+        label: {en: 'Test Attribute'},
         format: AttributeFormat.text,
         type: AttributeType.simple,
         system: false

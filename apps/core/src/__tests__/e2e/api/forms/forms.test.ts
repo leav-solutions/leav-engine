@@ -17,18 +17,18 @@ describe('Forms', () => {
         await makeGraphQlCall(`mutation {
             l1: saveLibrary(library: {
                 id: "${libraryId}",
-                label: {fr: "Test lib"}
+                label: {en: "Test lib"}
             }) { id },
             l2: saveLibrary(library: {
                 id: "${libraryId2}",
-                label: {fr: "Test lib"}
+                label: {en: "Test lib"}
             }) { id },
             a: saveAttribute(
                 attribute: {
                     id: "${fieldAttributeId}",
                     type: simple,
                     format: text,
-                    label: {fr: "Test attr simple"}
+                    label: {en: "Test attr simple"}
                 }
             ) {
                 id
@@ -44,7 +44,7 @@ describe('Forms', () => {
                 form: {
                     id: "${formName}"
                     library: "${libraryId}"
-                    label: { fr: "Formulaire édition" }
+                    label: { en: "Formulaire édition" }
                     elements: [
                         {
                             elements: [
@@ -96,7 +96,7 @@ describe('Forms', () => {
                 form: {
                     id: "${formName}"
                     library: "${libraryId}"
-                    label: { fr: "Formulaire édition" }
+                    label: { en: "Formulaire édition" }
                     elements: [
                         {
                             elements: [
@@ -146,7 +146,7 @@ describe('Forms', () => {
                 form: {
                     id: "${formName}"
                     library: "${libraryId2}"
-                    label: { fr: "Formulaire édition" }
+                    label: { en: "Formulaire édition" }
                 }
             ) {
                 id
@@ -203,7 +203,7 @@ describe('Forms', () => {
                 form: {
                     id: "${formName2}"
                     library: "${libraryId}"
-                    label: { fr: "Formulaire édition" }
+                    label: { en: "Formulaire édition" }
                     elements: [
                         {
                             elements: [
@@ -230,7 +230,7 @@ describe('Forms', () => {
                 form: {
                     id: "${formName2}"
                     library: "${libraryId}"
-                    label: { fr: "Formulaire édition modifié" }
+                    label: { en: "Formulaire édition modifié" }
                 }
             ) {
                 id
@@ -273,7 +273,7 @@ describe('Forms', () => {
                 form: {
                     id: "${formName}_for_record_form"
                     library: "${libraryId}"
-                    label: { fr: "Formulaire édition" }
+                    label: { en: "Formulaire édition" }
                     elements: [
                         {
                             elements: [

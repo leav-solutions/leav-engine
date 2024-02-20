@@ -14,7 +14,7 @@ describe('Libraries', () => {
 
     test('Create library', async () => {
         const res = await makeGraphQlCall(`mutation {
-                saveLibrary(library: {id: "libraries_test", label: {fr: "Test lib"}}) {
+                saveLibrary(library: {id: "libraries_test", label: {en: "Test lib"}}) {
                     id
                     attributes {id type}
                     fullTextAttributes { id }
@@ -42,7 +42,7 @@ describe('Libraries', () => {
 
     test('Create files library', async () => {
         const res = await makeGraphQlCall(`mutation {
-                saveLibrary(library: {id: "libraries_files_test", label: {fr: "Test lib"}, behavior: files}) {
+                saveLibrary(library: {id: "libraries_files_test", label: {en: "Test lib"}, behavior: files}) {
                     id
                     attributes {
                         id
