@@ -1,4 +1,4 @@
-FROM node:14-alpine3.15
+FROM node:18-alpine3.18
 
 # imagemagick is use for image
 # ffmpeg is use for convert video
@@ -21,14 +21,14 @@ RUN apk --no-cache add bash mc openjdk8 \
     libreoffice-impress \
     libreoffice-math \
     libreofficekit \
-    ttf-droid-nonlatin \
-    ttf-droid \
+    font-droid-nonlatin \
+    font-droid \
     ttf-dejavu \
     ttf-freefont \
     ttf-liberation \
     && curl -Ls $UNO_URL -o /usr/local/bin/unoconv \
     && chmod +x /usr/local/bin/unoconv \
-    && ln -s /usr/bin/python3 /usr/bin/python \
+    && ln -sf /usr/bin/python3 /usr/bin/python \
     && apk del curl \
     && rm -rf /var/cache/apk/*
 
