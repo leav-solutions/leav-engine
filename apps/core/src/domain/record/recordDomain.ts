@@ -7,6 +7,7 @@ import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
 import {IValidateHelper} from 'domain/helpers/validate';
 import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
+import type {i18n} from 'i18next';
 import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
 import {ICachesService} from 'infra/cache/cacheService';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
@@ -45,7 +46,6 @@ import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import getAttributesFromField from './helpers/getAttributesFromField';
 import {SendRecordUpdateEventHelper} from './helpers/sendRecordUpdateEvent';
 import {ICreateRecordResult, IFindRecordParams} from './_types';
-import type {i18n} from 'i18next';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -707,11 +707,9 @@ export default function ({
     };
 
     const _convertDateRangeToString = (dateRange: {from: string; to: string}, {lang}: IQueryInfos): string => {
-        const from = new Date(dateRange.from).toLocaleDateString(lang);
-        const to = new Date(dateRange.to).toLocaleDateString(lang);
         return translator.t('labels.date_range', {
-            from,
-            to,
+            from: dateRange.from,
+            to: dateRange.to,
             lng: lang,
             interpolation: {escapeValue: false}
         });
