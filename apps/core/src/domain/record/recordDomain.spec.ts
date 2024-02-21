@@ -8,6 +8,7 @@ import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IValidateHelper} from 'domain/helpers/validate';
 import {ILibraryPermissionDomain} from 'domain/permission/libraryPermissionDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
+import {i18n} from 'i18next';
 import {ICachesService} from 'infra/cache/cacheService';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IRecordRepo} from 'infra/record/recordRepo';
@@ -33,12 +34,11 @@ import {
 import {mockLibrary, mockLibraryFiles} from '../../__tests__/mocks/library';
 import {mockRecord} from '../../__tests__/mocks/record';
 import {mockCtx} from '../../__tests__/mocks/shared';
+import {mockTranslatorWithOptions} from '../../__tests__/mocks/translator';
 import {mockTree} from '../../__tests__/mocks/tree';
 import {mockStandardValue} from '../../__tests__/mocks/value';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import recordDomain from './recordDomain';
-import {mockTranslatorWithOptions} from '../../__tests__/mocks/translator';
-import {i18n} from 'i18next';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
     routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'}
@@ -1144,8 +1144,8 @@ describe('RecordDomain', () => {
                     const res = await recDomain.getRecordIdentity(recordWithDateRange, ctx);
 
                     expect(mockTranslatorWithOptions.t).toBeCalledWith('labels.date_range', {
-                        from: '16/02/2024',
-                        to: '18/02/2024',
+                        from: '2024-02-16T10:59:52+00:00',
+                        to: '2024-02-18T10:59:52+00:00',
                         lng: 'fr',
                         interpolation: {escapeValue: false}
                     });
