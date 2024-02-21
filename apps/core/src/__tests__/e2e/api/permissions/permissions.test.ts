@@ -83,7 +83,7 @@ describe('Permissions', () => {
                     id: "${testPermAttrId}",
                     type: simple,
                     format: text,
-                    label: {fr: "Permissions Test Attribute"},
+                    label: {en: "Permissions Test Attribute"},
                     permissions_conf: {permissionTreeAttributes: ["${testLibAttrId}"], relation: and}
                 }) {
                     permissions_conf {
@@ -348,8 +348,8 @@ describe('Permissions', () => {
         beforeAll(async () => {
             // Create new test libs
             await makeGraphQlCall(`mutation {
-                l1: saveLibrary(library: {id: "${inheritTestLibName}", label: {fr: "Test lib"}}) { id },
-                l2: saveLibrary(library: {id: "${inheritTestTreeElemLibName}", label: {fr: "Test lib"}}) { id }
+                l1: saveLibrary(library: {id: "${inheritTestLibName}", label: {en: "Test lib"}}) { id },
+                l2: saveLibrary(library: {id: "${inheritTestTreeElemLibName}", label: {en: "Test lib"}}) { id }
             }`);
 
             // Create test tree

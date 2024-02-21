@@ -51,7 +51,7 @@ describe('TreeNodePermissions', () => {
             saveTree(
                 tree: {
                     id: "${elementsTreeId}",
-                    label: {fr: "${elementsTreeId}"},
+                    label: {en: "${elementsTreeId}"},
                     libraries: [{
                         library: "${elementsTreeLibId}",
                         settings: {allowMultiplePositions: false, allowedAtRoot: true,  allowedChildren: ["__all__"]}

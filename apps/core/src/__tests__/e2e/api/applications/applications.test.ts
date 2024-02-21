@@ -8,7 +8,7 @@ describe('Applications', () => {
         const res = await makeGraphQlCall(`mutation {
                 saveApplication(application: {
                     id: "test_app",
-                    label: {fr: "Test app"},
+                    label: {en: "Test app"},
                     endpoint: "my-app",
                     module: "data-studio"
                 }) {
@@ -49,7 +49,6 @@ describe('Applications', () => {
 
     test('Get applications list', async () => {
         const res = await makeGraphQlCall('{ applications { list { id } } }');
-
         expect(res.status).toBe(200);
         expect(res.data.data.applications.list.length).toBeGreaterThanOrEqual(1);
         expect(res.data.errors).toBeUndefined();

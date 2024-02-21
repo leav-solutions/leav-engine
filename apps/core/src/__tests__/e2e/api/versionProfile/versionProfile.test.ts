@@ -16,8 +16,8 @@ describe('VersionProfiles', () => {
         const resSaveProfile = await makeGraphQlCall(`mutation {
             saveVersionProfile(versionProfile: {
                 id: "${profileId}",
-                label: {fr: "test_profile"},
-                description: {fr: "Best profile ever!"},
+                label: {en: "test_profile"},
+                description: {en: "Best profile ever!"},
                 trees: ["${testTreeName}"],
             }) {
               id
@@ -54,7 +54,7 @@ describe('VersionProfiles', () => {
         const resUpdateProfile = await makeGraphQlCall(`mutation {
             saveVersionProfile(versionProfile: {
               id: "${profileId}",
-              label: {fr: "test_profile modified"},
+              label: {en: "test_profile modified"},
             }) {
               id
               label
@@ -64,7 +64,7 @@ describe('VersionProfiles', () => {
 
         expect(resUpdateProfile.status).toBe(200);
         expect(resUpdateProfile.data.errors).toBeUndefined();
-        expect(resUpdateProfile.data.data.saveVersionProfile.label.fr).toBe('test_profile modified');
+        expect(resUpdateProfile.data.data.saveVersionProfile.label.en).toBe('test_profile modified');
 
         // Delete view
         const resDeleteProfile = await makeGraphQlCall(`mutation {

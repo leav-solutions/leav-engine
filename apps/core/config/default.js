@@ -57,7 +57,7 @@ module.exports = {
     },
     lang: {
         available: process.env.LANG_AVAILABLE || ['fr', 'en'],
-        default: process.env.LANG_DEFAULT || 'fr'
+        default: process.env.LANG_DEFAULT || 'en'
     },
     logs: {
         level: process.env.LOG_LEVEL || 'info',
@@ -139,7 +139,7 @@ module.exports = {
         endpoint: process.env.IMPORT_ENDPOINT || 'imports',
         sizeLimit: process.env.IMPORT_SIZE_LIMIT || 10, // megabytes
         groupData: process.env.IMPORT_GROUP_DATA || 50, // number of elements processed at the same time,
-        maxStackedElements: process.env.IMPORT_MAX_STACKED_ELEMENTS || 10000, // We clear the parser value stack based on the number of elements present
+        maxStackedElements: process.env.IMPORT_MAX_STACKED_ELEMENTS || 10000 // We clear the parser value stack based on the number of elements present
     },
     preview: {
         directory: process.env.PREVIEWS_DIRECTORY || '/results'

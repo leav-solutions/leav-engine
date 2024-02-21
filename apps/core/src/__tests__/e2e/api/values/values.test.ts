@@ -37,7 +37,7 @@ describe('Values', () => {
                         type: simple,
                         format: text,
                         unique: true,
-                        label: {fr: "Test attr simple"},
+                        label: {en: "Test attr simple"},
                         actions_list: {
                             saveValue: [
                                 {id: "validateFormat",},
@@ -56,7 +56,7 @@ describe('Values', () => {
                         id: "${attrSimpleExtendedName}",
                         type: simple,
                         format: extended,
-                        label: {fr: "Test attr simple étendu"},
+                        label: {en: "Test attr simple étendu"},
                         embedded_fields: [
                             {
                                 format: text,
@@ -90,7 +90,7 @@ describe('Values', () => {
                         id: "${attrAdvancedName}",
                         type: advanced,
                         format: text,
-                        label: {fr: "Test attr advanced"}
+                        label: {en: "Test attr advanced"}
                     }
                 ) { id }
             }`);
@@ -102,7 +102,7 @@ describe('Values', () => {
                         type: simple_link,
                         format: text,
                         linked_library: "${testLibName}",
-                        label: {fr: "Test attr simple link"}
+                        label: {en: "Test attr simple link"}
                     }
                 ) { id }
             }`);
@@ -114,7 +114,7 @@ describe('Values', () => {
                         type: advanced_link,
                         format: text,
                         linked_library: "${testLibName}",
-                        label: {fr: "Test attr advanced link"}
+                        label: {en: "Test attr advanced link"}
                     }
                 ) { id }
             }`);
@@ -126,7 +126,7 @@ describe('Values', () => {
                         type: advanced_link,
                         format: text,
                         linked_library: "${testLibName}",
-                        label: {fr: "Test attr advanced link"},
+                        label: {en: "Test attr advanced link"},
                         reverse_link: "${attrAdvancedLinkName}"
                     }
                 ) { id }
@@ -139,7 +139,7 @@ describe('Values', () => {
                         type: advanced_link,
                         format: text,
                         linked_library: "${testLibName}",
-                        label: {fr: "Test attr advanced link"},
+                        label: {en: "Test attr advanced link"},
                         reverse_link: "${attrSimpleLinkName}"
                     }
                 ) { id }
@@ -154,7 +154,7 @@ describe('Values', () => {
 
         // Create library to use in tree
         await makeGraphQlCall(`mutation {
-            saveLibrary(library: {id: "${treeLibName}", label: {fr: "Test tree lib"}}) { id }
+            saveLibrary(library: {id: "${treeLibName}", label: {en: "Test tree lib"}}) { id }
         }`);
 
         // create tree
@@ -167,7 +167,7 @@ describe('Values', () => {
                     id: "${attrTreeName}",
                     type: tree,
                     linked_tree: "${treeName}",
-                    label: {fr: "Test tree attr"}
+                    label: {en: "Test tree attr"}
                 }
             ) { id }
         }`);
@@ -176,7 +176,7 @@ describe('Values', () => {
         await makeGraphQlCall(`mutation {
                 saveLibrary(library: {
                     id: "${testLibName}",
-                    label: {fr: "Test lib"},
+                    label: {en: "Test lib"},
                     attributes: [
                         "id",
                         "modified_by",

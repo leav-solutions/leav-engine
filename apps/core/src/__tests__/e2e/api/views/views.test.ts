@@ -19,8 +19,8 @@ describe('Views', () => {
               library: "${testLibName}",
               display: {type: ${ViewTypes.LIST}, size: ${ViewSizes.MEDIUM}},
               shared: true,
-              label: {fr: "test_first_view"},
-              description: {fr: "Best view ever!"},
+              label: {en: "test_first_view"},
+              description: {en: "Best view ever!"},
               color: "#FFFFFF",
               filters: [
                 {field: "label", value: "Test", condition: ${AttributeCondition.EQUAL}}
@@ -33,8 +33,8 @@ describe('Views', () => {
                 library: "${testLibName}",
                 display: {type: ${ViewTypes.LIST}, size: ${ViewSizes.MEDIUM}},
                 shared: true,
-                label: {fr: "test_second_view"},
-                description: {fr: "Best view ever!"},
+                label: {en: "test_second_view"},
+                description: {en: "Best view ever!"},
                 color: "#FFFFFF",
                 filters: [
                   {field: "label", value: "Test", condition: ${AttributeCondition.EQUAL}}
@@ -83,8 +83,8 @@ describe('Views', () => {
               library: "${testLibName}",
               display: {type: ${ViewTypes.LIST}, size: ${ViewSizes.MEDIUM}},
               shared: true,
-              label: {fr: "My super view!"},
-              description: {fr: "Best view ever!"},
+              label: {en: "My super view!"},
+              description: {en: "Best view ever!"},
               color: "#000000",
               filters: [
                 {field: "label", value: "Test", condition: EQUAL}
