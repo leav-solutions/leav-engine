@@ -3,16 +3,15 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined, RedoOutlined} from '@ant-design/icons';
 import {Button, Space} from 'antd';
-import {useState} from 'react';
+import {useKitNotification} from 'aristid-ds';
+import {FunctionComponent, useState} from 'react';
 import styled from 'styled-components';
-import {CreateDirectory} from '_ui/components/CreateDirectory';
+import {CreateDirectory, EditRecordModal, UploadFiles} from '_ui/components';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
-import EditRecordModal from '_ui/components/RecordEdition/EditRecordModal';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {SearchMode} from '_ui/types/search';
 import {LibraryBehavior} from '_ui/_gqlTypes';
 import {ILibraryDetailExtended} from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
-import {UploadFiles} from '../../UploadFiles';
 import DisplayOptions from '../DisplayOptions';
 import MenuSelection from '../MenuSelection';
 import MenuView from '../MenuView';
@@ -27,9 +26,12 @@ const Wrapper = styled(Space)`
     width: 100%;
 `;
 
-function MenuItemList({refetch, library}: IMenuItemListProps): JSX.Element {
+const MenuItemList: FunctionComponent<IMenuItemListProps> = ({refetch, library}) => {
     const {t} = useSharedTranslation();
     const {state: searchState} = useSearchReducer();
+
+    const {kitNotification} = useKitNotification();
+
     const [isRecordCreationVisible, setIsRecordCreationVisible] = useState<boolean>(false);
     const [isUploadFilesModalVisible, setIsUploadFilesModalVisible] = useState<boolean>(false);
     const [isCreateDirectoryModalVisible, setIsCreateDirectoryModalVisible] = useState<boolean>(false);
@@ -48,6 +50,14 @@ function MenuItemList({refetch, library}: IMenuItemListProps): JSX.Element {
 
     const _handleCreateDirectoryClose = () => {
         setIsCreateDirectoryModalVisible(false);
+    };
+
+    const _notifyNewCreation = () => {
+        refetch?.();
+        kitNotification.success({
+            message: t('items_list.created_in_success.message'),
+            description: ''
+        });
     };
 
     const _handleClickNew = () => {
@@ -89,16 +99,26 @@ function MenuItemList({refetch, library}: IMenuItemListProps): JSX.Element {
                     open={isRecordCreationVisible}
                     onClose={_handleRecordCreationClose}
                     valuesVersion={searchState.valuesVersions}
+                    afterCreate={_notifyNewCreation}
                 />
             )}
             {isUploadFilesModalVisible && (
-                <UploadFiles libraryId={library.id} multiple onClose={_handleUploadFilesClose} />
+                <UploadFiles
+                    libraryId={library.id}
+                    multiple
+                    onClose={_handleUploadFilesClose}
+                    onCompleted={_notifyNewCreation}
+                />
             )}
             {isCreateDirectoryModalVisible && (
-                <CreateDirectory libraryId={library.id} onClose={_handleCreateDirectoryClose} />
+                <CreateDirectory
+                    libraryId={library.id}
+                    onClose={_handleCreateDirectoryClose}
+                    onCompleted={_notifyNewCreation}
+                />
             )}
         </Wrapper>
     );
-}
+};
 
 export default MenuItemList;

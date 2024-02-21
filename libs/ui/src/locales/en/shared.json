@@ -172,6 +172,9 @@
         "groups": "Groups",
         "columns": "Columns",
         "new": "New",
+        "created_in_success": {
+            "message": "Element successfully created!"
+        },
         "display_type": "Display",
         "header_table": "Items from {{libName}}",
         "show-filter-panel": "Show filters",
