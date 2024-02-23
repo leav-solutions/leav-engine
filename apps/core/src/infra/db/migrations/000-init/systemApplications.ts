@@ -33,8 +33,8 @@ export const systemApplications: MigrationApplicationToCreate[] = [
         },
         endpoint: 'data-studio',
         settings: {
-            libraries: [],
-            trees: []
+            libraries: 'all',
+            trees: 'all'
         }
     },
     {
