@@ -447,6 +447,7 @@
         "field_external_update": "Ce champ a été modifié"
     },
     "record_summary": {
+        "preview_title": "Cliquez ici pour voir l’aperçu.",
         "id": "Identifiant",
         "label": "Libellé",
         "library": "Bibliothèque",

@@ -444,6 +444,7 @@
         "field_external_update": "This field has been updated"
     },
     "record_summary": {
+        "preview_title": "Click here to visualize preview.",
         "id": "Identifier",
         "label": "Label",
         "library": "Library",
