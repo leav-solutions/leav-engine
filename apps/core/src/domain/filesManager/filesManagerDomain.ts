@@ -670,7 +670,7 @@ export default function ({
                     {
                         id: Errors.FILE_NOT_FOUND
                     },
-                    translator.t('errors.FILE_NOT_FOUND')
+                    translator.t('errors.FILE_NOT_FOUND', {lng: ctx.lang})
                 );
             }
 
