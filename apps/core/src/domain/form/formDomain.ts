@@ -118,7 +118,7 @@ export default function (deps: IDeps = {}): IFormDomain {
                 order: 0,
                 uiElementType: 'text_block',
                 type: FormElementTypes.layout,
-                settings: {content: translator.t('forms.missing_form_warning', {idForm: id})}
+                settings: {content: translator.t('forms.missing_form_warning', {idForm: id, lng: ctx.lang})}
             },
             {
                 id: uniqueId(),

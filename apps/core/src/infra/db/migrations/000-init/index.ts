@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
+import {CollectionType} from 'arangojs/collection';
 import * as bcrypt from 'bcryptjs';
 import {i18n} from 'i18next';
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
@@ -23,7 +24,6 @@ import {MigrationApplicationToCreate, systemApplications} from './systemApplicat
 import {systemAttributes} from './systemAttributes';
 import {MigrationLibraryToCreate, systemLibraries} from './systemLibraries';
 import {MigrationTreeToCreate, systemTrees} from './systemTrees';
-import {CollectionType} from 'arangojs/collection';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
@@ -34,7 +34,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.library': libraryRepo = null,
     'core.infra.attribute': attributeRepo = null,
@@ -188,12 +188,7 @@ export default function({
 
         // System user password is randomly generated as nobody is supposed to sign in with it
         // It might be changed later on if needed
-        const systemUserPwd = await bcrypt.hash(
-            Math.random()
-                .toString(36)
-                .slice(2),
-            salt
-        );
+        const systemUserPwd = await bcrypt.hash(Math.random().toString(36).slice(2), salt);
 
         const users = [
             {
@@ -276,11 +271,11 @@ export default function({
         const groups = [
             {
                 id: adminsGroupId,
-                label: translator.t('default.admin_users_group_label')
+                label: translator.t('default.admin_users_group_label', {lng: ctx.lang})
             },
             {
                 id: filesAdminsGroupId,
-                label: translator.t('files.default_users_group_label')
+                label: translator.t('files.default_users_group_label', {lng: ctx.lang})
             }
         ];
 
