@@ -17,5 +17,5 @@ export interface IPreviewScalar {
     pdf?: string;
     file: FileRecord;
     original: string;
-    [key: string]: string | FileRecord;
+    [key: string]: string | FileRecord; // FIXME should be only a string
 }

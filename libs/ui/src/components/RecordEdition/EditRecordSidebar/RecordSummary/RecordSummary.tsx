@@ -25,7 +25,7 @@ export const Wrapper = styled(Space)`
 `;
 
 function RecordSummary({record}: IRecordSummaryProps): JSX.Element {
-    const preview = String(record?.preview?.medium);
+    const preview = record?.preview?.medium ? String(record?.preview?.medium) : null;
     const previewFile = record?.preview?.file;
     const {token} = theme.useToken();
 
