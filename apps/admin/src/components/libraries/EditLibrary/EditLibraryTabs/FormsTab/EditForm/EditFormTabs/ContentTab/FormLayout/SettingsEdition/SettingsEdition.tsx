@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import {FormBuilderActionTypes} from '../../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../../formBuilderReducer/hook/useFormBuilderReducer';
 import SettingsField from './SettingsField';
+import {FormElementSettingsInputTypes} from '../../_types';
 
 const SettingsWrapper = styled.div`
     padding: 1.5em;
