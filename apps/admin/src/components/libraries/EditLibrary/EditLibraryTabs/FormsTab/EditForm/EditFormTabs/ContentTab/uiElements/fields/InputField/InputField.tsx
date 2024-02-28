@@ -7,13 +7,14 @@ import {ICommonFieldsSettings, IFormElementProps} from '../../../_types';
 
 interface IInputFieldSettings extends ICommonFieldsSettings {
     type?: 'text' | 'number';
+    required?: boolean;
 }
 
 function InputField(props: IFormElementProps<IInputFieldSettings>): JSX.Element {
-    const {label, type = 'text'} = props.settings;
+    const {label, type = 'text', required} = props.settings;
 
     const fieldProps = {
-        label
+        label: (required ? '* ' : '') + label
     };
 
     return <Input type={type} {...fieldProps} fluid />;
