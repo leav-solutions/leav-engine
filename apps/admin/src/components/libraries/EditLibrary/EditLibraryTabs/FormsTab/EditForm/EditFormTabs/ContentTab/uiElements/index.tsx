@@ -81,7 +81,7 @@ export const layoutElements: {[type in UIElementTypes]: IUIElement} = {
     }
 };
 
-const requiredFieldSetting = {
+const requiredFieldSetting: IFormElementSettings = {
     name: 'required',
     inputType: FormElementSettingsInputTypes.CHECKBOX
 };
@@ -90,13 +90,7 @@ export const formElements: {[type in FieldTypes]: IUIElement} = {
     [FieldTypes.TEXT_INPUT]: {
         type: FieldTypes.TEXT_INPUT,
         component: <InputField settings={{}} />,
-        settings: [
-            ...commonFieldSettings,
-            {
-                name: 'required',
-                inputType: FormElementSettingsInputTypes.CHECKBOX
-            }
-        ],
+        settings: [...commonFieldSettings, requiredFieldSetting],
         canDrop: () => false
     },
     [FieldTypes.CHECKBOX]: {
@@ -110,11 +104,8 @@ export const formElements: {[type in FieldTypes]: IUIElement} = {
         component: <DateField settings={{}} />,
         settings: [
             ...commonFieldSettings,
-            {name: 'withTime', inputType: FormElementSettingsInputTypes.CHECKBOX},
-            {
-                name: 'required',
-                inputType: FormElementSettingsInputTypes.CHECKBOX
-            }
+            requiredFieldSetting,
+            {name: 'withTime', inputType: FormElementSettingsInputTypes.CHECKBOX}
         ],
         canDrop: () => false
     },
@@ -127,13 +118,7 @@ export const formElements: {[type in FieldTypes]: IUIElement} = {
     [FieldTypes.DROPDOWN]: {
         type: FieldTypes.DROPDOWN,
         component: <DropdownField settings={{}} />,
-        settings: [
-            ...commonFieldSettings,
-            {
-                name: 'required',
-                inputType: FormElementSettingsInputTypes.CHECKBOX
-            }
-        ],
+        settings: [...commonFieldSettings, requiredFieldSetting],
         canDrop: () => false
     },
     [FieldTypes.LINK]: {
