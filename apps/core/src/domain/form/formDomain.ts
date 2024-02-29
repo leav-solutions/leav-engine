@@ -132,6 +132,7 @@ export default function (deps: IDeps = {}): IFormDomain {
 
         const attributes = await attributeDomain.getLibraryAttributes(library, ctx);
         const nonReadonlyAttributes = attributes.filter(att => !att?.readonly);
+
         const attributesElements = nonReadonlyAttributes.map(
             (att, index): IFormElement => {
                 const data: IFormElement = {
@@ -141,7 +142,7 @@ export default function (deps: IDeps = {}): IFormDomain {
                     uiElementType: 'input_field',
                     type: FormElementTypes.field,
                     settings: {
-                        label: att.label?.[translator.language] || att.id,
+                        label: att.label?.[ctx.lang] || att.id,
                         attribute: att.id
                     }
                 };
@@ -154,7 +155,7 @@ export default function (deps: IDeps = {}): IFormDomain {
                     case AttributeTypes.ADVANCED_LINK:
                         data.settings = {
                             displayRecordIdentity: true,
-                            label: att.label?.[translator.language] || att.id,
+                            label: att.label?.[ctx.lang] || att.id,
                             attribute: att.id
                         };
                         data.uiElementType = 'link';
