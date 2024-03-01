@@ -302,6 +302,7 @@
         "save_success": "Le formulaire a bien été sauvegardé",
         "settings": {
             "label": "Libellé",
+            "required": "Requis",
             "attribute": "Attribut",
             "content": "Contenu",
             "withTime": "Saisie de l'heure",
