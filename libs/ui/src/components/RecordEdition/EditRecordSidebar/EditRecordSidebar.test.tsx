@@ -7,11 +7,8 @@ import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockTreeRecord, mockTreeRecordChild} from '_ui/__mocks__/common/treeElements';
 import {mockRecordPropertyWithAttribute} from '_ui/__mocks__/common/value';
 import {render, screen} from '../../../_tests/testUtils';
-import {initialState} from '../editRecordModalReducer/editRecordModalReducer';
-import {
-    EditRecordModalReducerContext,
-    IEditRecordModalReducerContext
-} from '../editRecordModalReducer/editRecordModalReducerContext';
+import {initialState} from '../editRecordReducer/editRecordReducer';
+import {EditRecordReducerContext, IEditRecordReducerContext} from '../editRecordReducer/editRecordReducerContext';
 import EditRecordSidebar from './EditRecordSidebar';
 
 jest.mock('_ui/components/RecordEdition/EditRecordSidebar/RecordSummary', () => {
@@ -20,18 +17,18 @@ jest.mock('_ui/components/RecordEdition/EditRecordSidebar/RecordSummary', () => 
     };
 });
 
-jest.mock('_ui/components/RecordEdition/EditRecord/uiElements/StandardField', () => {
+jest.mock('_ui/components/RecordEdition/EditRecordContent/uiElements/StandardField', () => {
     return function StandardField() {
         return <div>StandardField</div>;
     };
 });
 
 describe('EditRecordSidebar', () => {
-    const mockReducer: IEditRecordModalReducerContext = {
+    const mockReducer: IEditRecordReducerContext = {
         state: {...initialState, record: mockRecord},
         dispatch: jest.fn()
     };
-    const mockReducerWithValue: IEditRecordModalReducerContext = {
+    const mockReducerWithValue: IEditRecordReducerContext = {
         ...mockReducer,
         state: {
             ...mockReducer.state,
@@ -41,7 +38,7 @@ describe('EditRecordSidebar', () => {
         }
     };
 
-    const mockReducerWithValueSimple: IEditRecordModalReducerContext = {
+    const mockReducerWithValueSimple: IEditRecordReducerContext = {
         ...mockReducerWithValue,
         state: {
             ...mockReducerWithValue.state,
@@ -58,9 +55,9 @@ describe('EditRecordSidebar', () => {
     describe('Record summary', () => {
         test('Display record summary', async () => {
             render(
-                <EditRecordModalReducerContext.Provider value={mockReducer}>
+                <EditRecordReducerContext.Provider value={mockReducer}>
                     <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
-                </EditRecordModalReducerContext.Provider>
+                </EditRecordReducerContext.Provider>
             );
 
             expect(screen.getByText('RecordSummary')).toBeInTheDocument();
@@ -71,9 +68,9 @@ describe('EditRecordSidebar', () => {
         test('Display active value details', async () => {
             const {value, attribute} = mockReducerWithValue.state.activeValue;
             render(
-                <EditRecordModalReducerContext.Provider value={mockReducerWithValue}>
+                <EditRecordReducerContext.Provider value={mockReducerWithValue}>
                     <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
-                </EditRecordModalReducerContext.Provider>
+                </EditRecordReducerContext.Provider>
             );
 
             expect(screen.queryByText(/created_at/)).toBeInTheDocument();
@@ -91,9 +88,9 @@ describe('EditRecordSidebar', () => {
 
         test("Don't display modifier if not set in value", async () => {
             render(
-                <EditRecordModalReducerContext.Provider value={mockReducerWithValueSimple}>
+                <EditRecordReducerContext.Provider value={mockReducerWithValueSimple}>
                     <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
-                </EditRecordModalReducerContext.Provider>
+                </EditRecordReducerContext.Provider>
             );
 
             expect(screen.queryByText(/modified_at/)).not.toBeInTheDocument();
@@ -119,9 +116,9 @@ describe('EditRecordSidebar', () => {
                 }
             };
             render(
-                <EditRecordModalReducerContext.Provider value={mockReducerWithTreeValue}>
+                <EditRecordReducerContext.Provider value={mockReducerWithTreeValue}>
                     <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
-                </EditRecordModalReducerContext.Provider>
+                </EditRecordReducerContext.Provider>
             );
 
             const collapseBtn = screen.getByRole('button', {name: /path/});
@@ -147,9 +144,9 @@ describe('EditRecordSidebar', () => {
             };
 
             render(
-                <EditRecordModalReducerContext.Provider value={mockReducerWithValueAndMetadata}>
+                <EditRecordReducerContext.Provider value={mockReducerWithValueAndMetadata}>
                     <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
-                </EditRecordModalReducerContext.Provider>
+                </EditRecordReducerContext.Provider>
             );
 
             expect(screen.getByText(/metadata/)).toBeInTheDocument();

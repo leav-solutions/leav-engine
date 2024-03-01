@@ -6,7 +6,7 @@ import {Button, Col, Empty, Row} from 'antd';
 import {FunctionComponent, useState} from 'react';
 import {ImportModal} from '_ui/components/ImportModal';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
-import EditRecordModal from '_ui/components/RecordEdition/EditRecordModal';
+import {EditRecordModal} from '_ui/components/RecordEdition/EditRecordModal';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 interface ILibraryItemsListEmptyProps {

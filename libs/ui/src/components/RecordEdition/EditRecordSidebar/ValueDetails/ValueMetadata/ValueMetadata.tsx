@@ -11,8 +11,8 @@ import {
     RecordFormQuery
 } from '../../../../../_gqlTypes';
 import {RecordProperty} from '../../../../../_queries/records/getRecordPropertiesQuery';
-import {formComponents} from '../../../EditRecord/uiElements';
-import StandardField from '../../../EditRecord/uiElements/StandardField';
+import {formComponents} from '../../../EditRecordContent/uiElements';
+import StandardField from '../../../EditRecordContent/uiElements/StandardField';
 import {
     DeleteValueFunc,
     FormElement,
@@ -20,7 +20,7 @@ import {
     ISubmittedValueStandard,
     MetadataSubmitValueFunc,
     SubmitValueFunc
-} from '../../../EditRecord/_types';
+} from '../../../EditRecordContent/_types';
 
 type MetadataField = RecordFormQuery['recordForm']['elements'][0]['attribute']['metadata_fields'][0];
 

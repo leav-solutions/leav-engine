@@ -12,12 +12,12 @@ import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchRed
 import DeactivateRecordBtn from '_ui/components/LibraryItemsList/shared/DeactivateRecordBtn';
 import SelectCellsBtn, {SelectCellsBtnType} from '_ui/components/LibraryItemsList/shared/SelectCellsBtn';
 import EditRecordBtn from '_ui/components/RecordEdition/EditRecordBtn';
+import {EditRecordModal} from '_ui/components/RecordEdition/EditRecordModal';
 import {PreviewSize} from '_ui/constants';
 import useLang from '_ui/hooks/useLang';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IItem, ISelectedRecord} from '_ui/types/search';
 import {stopEvent} from '_ui/_utils';
-import EditRecordModal from '../../../RecordEdition/EditRecordModal';
 import {displayTypeToPreviewSize} from '../../helpers/displayTypeToPreviewSize';
 import {SearchActionTypes} from '../../hooks/useSearchReducer/searchReducer';
 import getItemPreviewSize from '../helpers/getItemPreviewSize';
@@ -165,7 +165,7 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
 
     const canDeleteRecord = searchState.library.permissions.delete_record;
 
-    const [editRecordModal, setEditRecordModal] = useState<boolean>(false);
+    const [editRecord, setEditRecord] = useState<boolean>(false);
     const previewSize: PreviewSize = displayTypeToPreviewSize(searchState.display.size);
 
     const {lang} = useLang();
@@ -208,7 +208,7 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
     }, [searchState.selection, item, searchState]);
 
     const _handleClose = () => {
-        setEditRecordModal(false);
+        setEditRecord(false);
     };
 
     const _handleSelect = e => {
@@ -224,9 +224,9 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
 
     return (
         <>
-            {editRecordModal && (
+            {editRecord && (
                 <EditRecordModal
-                    open={editRecordModal}
+                    open={editRecord}
                     record={item.whoAmI}
                     library={item.whoAmI.library.id}
                     onClose={_handleClose}
@@ -236,7 +236,7 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
                 $previewSize={itemPreviewSize}
                 size="small"
                 onClick={selectedToggle}
-                onDoubleClick={() => setEditRecordModal(true)}
+                onDoubleClick={() => setEditRecord(true)}
                 cover={
                     <ImageWrapper>
                         <EntityPreview

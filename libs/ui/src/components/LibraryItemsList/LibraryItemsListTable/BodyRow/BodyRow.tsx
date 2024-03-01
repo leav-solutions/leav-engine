@@ -6,8 +6,8 @@ import {Row} from 'react-table';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
+import {EditRecordModal} from '_ui/components/RecordEdition/EditRecordModal';
 import {IItem} from '_ui/types/search';
-import EditRecordModal from '../../../RecordEdition/EditRecordModal';
 import {SearchActionTypes} from '../../hooks/useSearchReducer/searchReducer';
 import BodyCell from '../BodyCell';
 
@@ -35,7 +35,7 @@ interface IBodyRowProps {
 function BodyRow({row}: IBodyRowProps): JSX.Element {
     const props = row.getRowProps();
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
-    const [editRecordModal, setEditRecordModal] = useState<boolean>(false);
+    const [editRecord, setEditRecord] = useState<boolean>(false);
 
     const record = row.cells[0]?.row?.original?.record;
 
@@ -60,11 +60,11 @@ function BodyRow({row}: IBodyRowProps): JSX.Element {
     };
 
     const _handleDoubleClick = () => {
-        setEditRecordModal(true);
+        setEditRecord(true);
     };
 
     const _handleClose = () => {
-        setEditRecordModal(false);
+        setEditRecord(false);
     };
 
     return (
@@ -74,9 +74,9 @@ function BodyRow({row}: IBodyRowProps): JSX.Element {
             onDoubleClick={_handleDoubleClick}
             $selected={isRowSelected}
         >
-            {editRecordModal && (
+            {editRecord && (
                 <EditRecordModal
-                    open={editRecordModal}
+                    open={editRecord}
                     library={record.library.id}
                     record={record}
                     onClose={_handleClose}
