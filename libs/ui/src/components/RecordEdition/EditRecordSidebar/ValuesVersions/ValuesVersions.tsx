@@ -9,8 +9,8 @@ import {themeVars} from '../../../../antdTheme';
 import {IValueVersion} from '../../../../types/values';
 import {BasicButton} from '../../../BasicButton';
 import ValuesVersionConfigurator from '../../../ValuesVersionConfigurator';
-import {EditRecordReducerActionsTypes} from '../../editRecordModalReducer/editRecordModalReducer';
-import {useEditRecordModalReducer} from '../../editRecordModalReducer/useEditRecordModalReducer';
+import {EditRecordReducerActionsTypes} from '../../editRecordReducer/editRecordReducer';
+import {useEditRecordReducer} from '../../editRecordReducer/useEditRecordReducer';
 
 const Wrapper = styled.div`
     display: grid;
@@ -37,7 +37,7 @@ const CloseButton = styled(CloseOutlined)`
 
 function ValuesVersions(): JSX.Element {
     const {t} = useSharedTranslation();
-    const {state, dispatch} = useEditRecordModalReducer();
+    const {state, dispatch} = useEditRecordReducer();
     const isInCreation = !state?.record;
 
     const _handleVersionChange = (version: IValueVersion) => {
@@ -50,7 +50,7 @@ function ValuesVersions(): JSX.Element {
     const _handleClosePanel = () => {
         dispatch({
             type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT,
-            content: 'summary'
+            content: state.sidebarDefaultHidden ? 'none' : 'summary'
         });
     };
 

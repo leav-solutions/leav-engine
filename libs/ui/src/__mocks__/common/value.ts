@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IRecordPropertyWithAttribute} from '../../components/RecordEdition/editRecordModalReducer/editRecordModalReducer';
+import {IRecordPropertyWithAttribute} from '../../components/RecordEdition/editRecordReducer/editRecordReducer';
 import {IRecordPropertyModifier, RecordProperty} from '../../_queries/records/getRecordPropertiesQuery';
 import {mockAttributeSimple} from './attribute';
 import {mockPreviews} from './record';

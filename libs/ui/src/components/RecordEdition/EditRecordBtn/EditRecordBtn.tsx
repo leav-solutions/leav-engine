@@ -6,7 +6,7 @@ import {Button, ButtonProps} from 'antd';
 import {SyntheticEvent, useState} from 'react';
 import {IRecordIdentityWhoAmI} from '_ui/types/records';
 import {IValueVersion} from '_ui/types/values';
-import EditRecordModal from '../EditRecordModal';
+import {EditRecordModal} from '../EditRecordModal';
 
 interface IEditRecordBtnProps extends ButtonProps {
     record: IRecordIdentityWhoAmI;

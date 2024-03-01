@@ -11,7 +11,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {AttributeFormat} from '_ui/_gqlTypes';
 import {IRecordPropertyLink, IRecordPropertyTree} from '_ui/_queries/records/getRecordPropertiesQuery';
 import {getValueVersionLabel} from '_ui/_utils';
-import {useEditRecordModalReducer} from '../../../editRecordModalReducer/useEditRecordModalReducer';
+import {useEditRecordReducer} from '../../../editRecordReducer/useEditRecordReducer';
 import PropertiesList from '../../PropertiesList';
 
 const Wrapper = styled.div`
@@ -33,7 +33,7 @@ const Title = styled.div`
 
 function ValueInfo(): JSX.Element {
     const {t} = useSharedTranslation();
-    const {state} = useEditRecordModalReducer();
+    const {state} = useEditRecordReducer();
     const {value, attribute} = state.activeValue;
 
     const valueDetailsContent = value?.modified_at

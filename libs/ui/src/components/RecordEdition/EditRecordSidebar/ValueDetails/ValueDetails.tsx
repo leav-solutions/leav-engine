@@ -13,9 +13,9 @@ import {
     RecordFormAttributeTreeAttributeFragment
 } from '../../../../_gqlTypes';
 import {IRecordPropertyTree, RecordProperty} from '../../../../_queries/records/getRecordPropertiesQuery';
-import {MetadataSubmitValueFunc} from '../../EditRecord/_types';
-import {EditRecordReducerActionsTypes} from '../../editRecordModalReducer/editRecordModalReducer';
-import {useEditRecordModalReducer} from '../../editRecordModalReducer/useEditRecordModalReducer';
+import {MetadataSubmitValueFunc} from '../../EditRecordContent/_types';
+import {EditRecordReducerActionsTypes} from '../../editRecordReducer/editRecordReducer';
+import {useEditRecordReducer} from '../../editRecordReducer/useEditRecordReducer';
 import AttributeDetails from './AttributeDetails';
 import TreeValuePath from './TreeValuePath';
 import ValueInfo from './ValueInfo';
@@ -52,7 +52,7 @@ const {Panel} = Collapse;
 function ValueDetails({attribute, value, onMetadataSubmit}: IValueDetailsProps): JSX.Element {
     const {lang} = useLang();
     const {t} = useSharedTranslation();
-    const {state, dispatch} = useEditRecordModalReducer();
+    const {state, dispatch} = useEditRecordReducer();
 
     const _handleClose = () => dispatch({type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE, value: null});
 

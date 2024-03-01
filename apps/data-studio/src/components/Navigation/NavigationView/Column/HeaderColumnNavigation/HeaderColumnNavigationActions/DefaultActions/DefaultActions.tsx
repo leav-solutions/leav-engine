@@ -52,7 +52,7 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
     const [activeTree] = useActiveTree();
     const [displayPreviewConfirm, setDisplayPreviewConfirm] = useState(false);
 
-    const [editRecordModalVisible, setEditRecordModalVisible] = useState(false);
+    const [editRecordModalVisible, setEditRecordVisible] = useState(false);
     const [isUploadFilesModalVisible, setIsUploadFilesModalVisible] = useState<boolean>(false);
     const [isCreateDirectoryModalVisible, setIsCreateDirectoryModalVisible] = useState<boolean>(false);
 
@@ -67,8 +67,8 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
         dispatch(setNavigationPath(newPath));
     };
 
-    const _handleOpenEditRecordModal = () => setEditRecordModalVisible(true);
-    const _handleCloseEditRecordModal = () => setEditRecordModalVisible(false);
+    const _handleOpenEditRecord = () => setEditRecordVisible(true);
+    const _handleCloseEditRecord = () => setEditRecordVisible(false);
 
     const _handleClickDetach = async () => {
         const label = parent.record.whoAmI.label;
@@ -150,7 +150,7 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
         {
             key: 'edit',
             icon: <ExpandAltOutlined />,
-            onClick: _handleOpenEditRecordModal,
+            onClick: _handleOpenEditRecord,
             label: t('navigation.actions.edit'),
             displayCondition: !!parent
         },
@@ -230,7 +230,7 @@ function DefaultActions({isDetail, parent, allowedChildrenLibraries, onMessages}
                     open={editRecordModalVisible}
                     library={parent.record.whoAmI.library.id}
                     record={parent.record.whoAmI}
-                    onClose={_handleCloseEditRecordModal}
+                    onClose={_handleCloseEditRecord}
                 />
             )}
             {!hasSelection && (

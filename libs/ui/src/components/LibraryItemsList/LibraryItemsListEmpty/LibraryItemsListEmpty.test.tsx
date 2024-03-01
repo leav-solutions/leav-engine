@@ -9,10 +9,12 @@ import {SearchContext} from '_ui/components/LibraryItemsList/hooks/useSearchRedu
 
 let mockAfterCreate = jest.fn();
 const editRecordModalLabel = 'EditRecordModal label';
-jest.mock('_ui/components/RecordEdition/EditRecordModal', () => ({afterCreate}) => {
-    mockAfterCreate = afterCreate;
-    return <div>{editRecordModalLabel}</div>;
-});
+jest.mock('_ui/components/RecordEdition/EditRecordModal', () => ({
+    EditRecordModal: ({afterCreate}) => {
+        mockAfterCreate = afterCreate;
+        return <div>{editRecordModalLabel}</div>;
+    }
+}));
 
 describe('<LibraryItemsListEmpty/>', () => {
     const notifyNewCreationMock = jest.fn();

@@ -5,7 +5,7 @@ import {PlusOutlined, RedoOutlined} from '@ant-design/icons';
 import {Button, Space} from 'antd';
 import {FunctionComponent, useState} from 'react';
 import styled from 'styled-components';
-import {CreateDirectory, EditRecordModal, UploadFiles} from '_ui/components';
+import {CreateDirectory, UploadFiles, EditRecordModal} from '_ui/components';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {SearchMode} from '_ui/types/search';

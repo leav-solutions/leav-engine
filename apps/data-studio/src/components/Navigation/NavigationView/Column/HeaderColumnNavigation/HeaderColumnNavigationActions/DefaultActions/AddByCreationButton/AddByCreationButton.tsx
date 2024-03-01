@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
-import {EditRecordModal, IRecordIdentityWhoAmI, useLang} from '@leav/ui';
+import {IRecordIdentityWhoAmI, useLang, EditRecordModal} from '@leav/ui';
 import {Button, Dropdown, Tooltip} from 'antd';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
