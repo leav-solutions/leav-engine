@@ -6,24 +6,22 @@ const fs = require('fs');
 const prog = require('commander');
 
 const _getComponentContent = name =>
-    `import React from 'react';
+    `import {FunctionComponent} from 'react';
 
 interface I${name}Props {
 
 }
 
-function ${name}({}: I${name}Props): JSX.Element {
+export const ${name}: FunctionComponent<I${name}Props> = ({}) => {
     return (
         <div></div>
     );
-}
-
-export default ${name};`;
+};`;
 
 const _getTestContent = name =>
     `import React from 'react';
 import {act, screen, render} from '_ui/_tests/testUtils';
-import ${name} from './${name}';
+import {${name}} from './${name}';
 
 describe('${name}', () => {
     test('Render test', async () => {
@@ -55,7 +53,7 @@ prog.version('0.1.0')
         // Create index file
         const indexFile = compFolder + '/index.ts';
         if (!fs.existsSync(indexFile)) {
-            const fileContent = `export {default as ${name}} from './${name}';`;
+            const fileContent = `export {${name}} from './${name}';`;
 
             fs.writeFileSync(indexFile, fileContent);
         }
