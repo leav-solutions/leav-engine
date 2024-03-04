@@ -6,6 +6,10 @@ import {IQueryInfos} from '_types/queryInfos';
 import {IRecord, IRecordUpdateEvent} from '_types/record';
 import {TriggerNames} from '../../../_types/eventsManager';
 
+type RequiredOnField<T, F extends keyof T> = Required<Pick<T, F>> & Omit<T, F>;
+
+export const isRecordWithId = (record: IRecord): record is RequiredOnField<IRecord, 'id'> => 'id' in record;
+
 export type SendRecordUpdateEventHelper = (
     record: IRecord,
     updatedValues: IRecordUpdateEvent['updatedValues'],
