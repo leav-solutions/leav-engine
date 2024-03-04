@@ -212,6 +212,13 @@ export const systemAttributes: IAttributeForRepo[] = [
                     name: 'encrypt',
                     is_system: true
                 }
+            ],
+            getValue: [
+                {
+                    id: 'toBoolean',
+                    name: 'To Boolean',
+                    is_system: true
+                }
             ]
         }
     },
