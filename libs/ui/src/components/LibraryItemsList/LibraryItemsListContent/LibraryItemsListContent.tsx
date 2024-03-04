@@ -279,7 +279,11 @@ function LibraryItemsListContent({
                 {!isLoading && searchState.error && <ErrorDisplay message={searchState.error.message} />}
                 {!isLoading &&
                     !searchState.error &&
-                    (!searchState.records.length ? <LibraryItemsListEmpty /> : <DisplayTypeSelector />)}
+                    (!searchState.records.length ? (
+                        <LibraryItemsListEmpty refetch={_reload} />
+                    ) : (
+                        <DisplayTypeSelector />
+                    ))}
             </Wrapper>
         </SearchContext.Provider>
     );

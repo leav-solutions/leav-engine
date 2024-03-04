@@ -1,17 +1,24 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CloudUploadOutlined,PlusOutlined} from '@ant-design/icons';
-import {Button,Col,Empty,Row} from 'antd';
-import {useState} from 'react';
+import {CloudUploadOutlined, PlusOutlined} from '@ant-design/icons';
+import {Button, Col, Empty, Row} from 'antd';
+import {FunctionComponent, useState} from 'react';
 import {ImportModal} from '_ui/components/ImportModal';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import EditRecordModal from '_ui/components/RecordEdition/EditRecordModal';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {useKitNotification} from 'aristid-ds';
 
-const LibraryItemsListEmpty = () => {
+interface ILibraryItemsListEmptyProps {
+    refetch?: () => void;
+}
+
+const LibraryItemsListEmpty: FunctionComponent<ILibraryItemsListEmptyProps> = ({refetch}) => {
     const {t} = useSharedTranslation();
     const {state: searchState} = useSearchReducer();
+
+    const {kitNotification} = useKitNotification();
 
     const [isRecordCreationVisible, setIsRecordCreationVisible] = useState<boolean>(false);
     const [isImportModalVisible, setIsImportModalVisible] = useState<boolean>(false);
@@ -30,6 +37,14 @@ const LibraryItemsListEmpty = () => {
 
     const _handleImportModalClose = () => {
         setIsImportModalVisible(false);
+    };
+
+    const _notifyNewCreation = () => {
+        refetch?.();
+        kitNotification.success({
+            message: t('items_list.created_in_success.message'),
+            description: ''
+        });
     };
 
     return (
@@ -90,6 +105,7 @@ const LibraryItemsListEmpty = () => {
                     open={isRecordCreationVisible}
                     onClose={_handleRecordCreationClose}
                     valuesVersion={searchState.valuesVersions}
+                    afterCreate={_notifyNewCreation}
                 />
             )}
             {isImportModalVisible && (
