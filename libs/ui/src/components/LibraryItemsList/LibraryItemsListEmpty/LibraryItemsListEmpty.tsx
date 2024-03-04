@@ -1,15 +1,19 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CloudUploadOutlined,PlusOutlined} from '@ant-design/icons';
-import {Button,Col,Empty,Row} from 'antd';
-import {useState} from 'react';
+import {CloudUploadOutlined, PlusOutlined} from '@ant-design/icons';
+import {Button, Col, Empty, Row} from 'antd';
+import {FunctionComponent, useState} from 'react';
 import {ImportModal} from '_ui/components/ImportModal';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import EditRecordModal from '_ui/components/RecordEdition/EditRecordModal';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
-const LibraryItemsListEmpty = () => {
+interface ILibraryItemsListEmptyProps {
+    notifyNewCreation: () => void;
+}
+
+const LibraryItemsListEmpty: FunctionComponent<ILibraryItemsListEmptyProps> = ({notifyNewCreation}) => {
     const {t} = useSharedTranslation();
     const {state: searchState} = useSearchReducer();
 
@@ -90,6 +94,7 @@ const LibraryItemsListEmpty = () => {
                     open={isRecordCreationVisible}
                     onClose={_handleRecordCreationClose}
                     valuesVersion={searchState.valuesVersions}
+                    afterCreate={notifyNewCreation}
                 />
             )}
             {isImportModalVisible && (

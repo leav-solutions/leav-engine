@@ -22,21 +22,15 @@ jest.mock('_ui/components', () => ({
     CreateDirectory: ({onCompleted}) => onCompleted?.()
 }));
 
-const kitNotificationMock = {
-    success: jest.fn()
-};
-jest.mock('aristid-ds', () => ({
-    ...jest.requireActual('aristid-ds'),
-    useKitNotification: () => ({
-        kitNotification: kitNotificationMock
-    })
-}));
-
 describe('MenuItemList', () => {
     test('should have MenuView', async () => {
         render(
             <MockSearchContextProvider>
-                <MenuItemList refetch={jest.fn()} library={mockGetLibraryDetailExtendedElement} />
+                <MenuItemList
+                    notifyNewCreation={jest.fn()}
+                    refetch={jest.fn()}
+                    library={mockGetLibraryDetailExtendedElement}
+                />
             </MockSearchContextProvider>
         );
 
@@ -46,7 +40,11 @@ describe('MenuItemList', () => {
     test('should have MenuSelection', async () => {
         render(
             <MockSearchContextProvider>
-                <MenuItemList refetch={jest.fn()} library={mockGetLibraryDetailExtendedElement} />
+                <MenuItemList
+                    notifyNewCreation={jest.fn()}
+                    refetch={jest.fn()}
+                    library={mockGetLibraryDetailExtendedElement}
+                />
             </MockSearchContextProvider>
         );
 
@@ -56,7 +54,11 @@ describe('MenuItemList', () => {
     test('should have SearchItems', async () => {
         render(
             <MockSearchContextProvider>
-                <MenuItemList refetch={jest.fn()} library={mockGetLibraryDetailExtendedElement} />
+                <MenuItemList
+                    notifyNewCreation={jest.fn()}
+                    refetch={jest.fn()}
+                    library={mockGetLibraryDetailExtendedElement}
+                />
             </MockSearchContextProvider>
         );
 
@@ -66,36 +68,35 @@ describe('MenuItemList', () => {
     test('should have DisplayOptions', async () => {
         render(
             <MockSearchContextProvider>
-                <MenuItemList refetch={jest.fn()} library={mockGetLibraryDetailExtendedElement} />
+                <MenuItemList
+                    notifyNewCreation={jest.fn()}
+                    refetch={jest.fn()}
+                    library={mockGetLibraryDetailExtendedElement}
+                />
             </MockSearchContextProvider>
         );
 
         expect(screen.getByText('DisplayOptions')).toBeInTheDocument();
     });
 
-    describe('refetch after creation', () => {
-        beforeEach(() => {
-            kitNotificationMock.success.mockClear();
-        });
-
+    describe('notifyNewCreation after creation', () => {
         test.each([LibraryBehavior.standard, LibraryBehavior.files, LibraryBehavior.directories])(
             'refetch callback and success notification are called when props are called in modal %s',
             async behavior => {
-                const refetch = jest.fn();
+                const notifyNewCreation = jest.fn();
                 render(
                     <MockSearchContextProvider>
-                        <MenuItemList refetch={refetch} library={{...mockGetLibraryDetailExtendedElement, behavior}} />
+                        <MenuItemList
+                            notifyNewCreation={notifyNewCreation}
+                            refetch={jest.fn()}
+                            library={{...mockGetLibraryDetailExtendedElement, behavior}}
+                        />
                     </MockSearchContextProvider>
                 );
 
                 await userEvent.click(screen.getByRole('button', {name: 'plus items_list.new'}));
 
-                expect(refetch).toHaveBeenCalledTimes(1);
-                expect(kitNotificationMock.success).toHaveBeenCalledTimes(1);
-                expect(kitNotificationMock.success).toHaveBeenCalledWith({
-                    message: 'items_list.created_in_success.message',
-                    description: ''
-                });
+                expect(notifyNewCreation).toHaveBeenCalledTimes(1);
             }
         );
     });
