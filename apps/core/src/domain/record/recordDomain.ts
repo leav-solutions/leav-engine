@@ -44,7 +44,7 @@ import {
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import getAttributesFromField from './helpers/getAttributesFromField';
-import {SendRecordUpdateEventHelper} from './helpers/sendRecordUpdateEvent';
+import {SendRecordUpdateEventHelper, isRecordWithId} from './helpers/sendRecordUpdateEvent';
 import {ICreateRecordResult, IFindRecordParams} from './_types';
 
 /**
@@ -915,7 +915,9 @@ export default function ({
                 ctx
             );
 
-            await sendRecordUpdateEvent({recordData, library}, [], ctx);
+            if (isRecordWithId(recordData)) {
+                await sendRecordUpdateEvent({record: recordData, library}, [], ctx);
+            }
 
             return savedRecord;
         },
