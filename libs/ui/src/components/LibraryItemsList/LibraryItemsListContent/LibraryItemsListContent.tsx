@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
-import {useEffect, useMemo, useReducer} from 'react';
+import {FunctionComponent, useEffect, useMemo, useReducer} from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {ErrorDisplay, Loading} from '_ui/components';
 import {SearchContext} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchContext';
@@ -32,6 +32,8 @@ import {manageItems} from '../manageItems';
 import MenuItemList from '../MenuItemList';
 import MenuItemListSelected from '../MenuItemListSelected';
 import Sidebar from '../Sidebar';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {useKitNotification} from 'aristid-ds';
 
 const MenuWrapper = styled.div`
     border-bottom: 1px solid rgb(235, 237, 240);
@@ -73,24 +75,28 @@ const Wrapper = styled.div<IWrapperProps>`
 `;
 
 interface ILibraryItemsListContentProps {
-    selectionMode?: boolean;
     library: ILibraryDetailExtended;
     defaultView: IView;
+    selectionMode?: boolean;
     style?: CSSObject;
     showTransparency?: boolean;
     mode?: SearchMode;
     onSelectChange?: (selection: ISearchSelection, filters?: IFilter[]) => void;
 }
 
-function LibraryItemsListContent({
+const LibraryItemsListContent: FunctionComponent<ILibraryItemsListContentProps> = ({
     selectionMode,
     library,
     defaultView,
     showTransparency,
     onSelectChange,
     style
-}: ILibraryItemsListContentProps): JSX.Element {
+}) => {
     const {lang} = useLang();
+    const {t} = useSharedTranslation();
+
+    const {kitNotification} = useKitNotification();
+
     const defaultAttributes = extractAttributesFromLibrary(library);
 
     const _getFieldsFromView = (view: IView): IField[] =>
@@ -259,13 +265,21 @@ function LibraryItemsListContent({
         searchDispatch({type: SearchActionTypes.SET_LOADING, loading: true});
     };
 
+    const _notifyNewCreation = () => {
+        _reload();
+        kitNotification.success({
+            message: t('items_list.created_in_success.message'),
+            description: ''
+        });
+    };
+
     // If some elements are selected and the selection type is search, show the selection Menu
     const menuSelectedActive = !!searchState.selection.selected.length || searchState.selection.allSelected;
 
     return (
         <SearchContext.Provider value={{state: searchState, dispatch: searchDispatch}}>
             <MenuWrapper>
-                <MenuItemList refetch={_reload} library={library} />
+                <MenuItemList refetch={_reload} notifyNewCreation={_notifyNewCreation} library={library} />
                 <MenuItemListSelected active={menuSelectedActive} />
             </MenuWrapper>
 
@@ -280,13 +294,13 @@ function LibraryItemsListContent({
                 {!isLoading &&
                     !searchState.error &&
                     (!searchState.records.length ? (
-                        <LibraryItemsListEmpty refetch={_reload} />
+                        <LibraryItemsListEmpty notifyNewCreation={_notifyNewCreation} />
                     ) : (
                         <DisplayTypeSelector />
                     ))}
             </Wrapper>
         </SearchContext.Provider>
     );
-}
+};
 
 export default LibraryItemsListContent;

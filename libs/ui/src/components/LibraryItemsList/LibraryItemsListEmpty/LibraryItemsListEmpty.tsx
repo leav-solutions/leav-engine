@@ -8,17 +8,14 @@ import {ImportModal} from '_ui/components/ImportModal';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import EditRecordModal from '_ui/components/RecordEdition/EditRecordModal';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {useKitNotification} from 'aristid-ds';
 
 interface ILibraryItemsListEmptyProps {
-    refetch?: () => void;
+    notifyNewCreation: () => void;
 }
 
-const LibraryItemsListEmpty: FunctionComponent<ILibraryItemsListEmptyProps> = ({refetch}) => {
+const LibraryItemsListEmpty: FunctionComponent<ILibraryItemsListEmptyProps> = ({notifyNewCreation}) => {
     const {t} = useSharedTranslation();
     const {state: searchState} = useSearchReducer();
-
-    const {kitNotification} = useKitNotification();
 
     const [isRecordCreationVisible, setIsRecordCreationVisible] = useState<boolean>(false);
     const [isImportModalVisible, setIsImportModalVisible] = useState<boolean>(false);
@@ -37,14 +34,6 @@ const LibraryItemsListEmpty: FunctionComponent<ILibraryItemsListEmptyProps> = ({
 
     const _handleImportModalClose = () => {
         setIsImportModalVisible(false);
-    };
-
-    const _notifyNewCreation = () => {
-        refetch?.();
-        kitNotification.success({
-            message: t('items_list.created_in_success.message'),
-            description: ''
-        });
     };
 
     return (
@@ -105,7 +94,7 @@ const LibraryItemsListEmpty: FunctionComponent<ILibraryItemsListEmptyProps> = ({
                     open={isRecordCreationVisible}
                     onClose={_handleRecordCreationClose}
                     valuesVersion={searchState.valuesVersions}
-                    afterCreate={_notifyNewCreation}
+                    afterCreate={notifyNewCreation}
                 />
             )}
             {isImportModalVisible && (

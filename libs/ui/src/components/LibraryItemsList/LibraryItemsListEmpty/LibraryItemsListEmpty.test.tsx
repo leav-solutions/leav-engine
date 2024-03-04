@@ -14,25 +14,14 @@ jest.mock('_ui/components/RecordEdition/EditRecordModal', () => ({afterCreate}) 
     return <div>{editRecordModalLabel}</div>;
 });
 
-const kitNotificationMock = {
-    success: jest.fn()
-};
-jest.mock('aristid-ds', () => ({
-    ...jest.requireActual('aristid-ds'),
-    useKitNotification: () => ({
-        kitNotification: kitNotificationMock
-    })
-}));
-
 describe('<LibraryItemsListEmpty/>', () => {
-    const refreshMock = jest.fn();
+    const notifyNewCreationMock = jest.fn();
 
     let userEvent!: ReturnType<typeof UserEvent.setup>;
 
     beforeEach(() => {
         userEvent = UserEvent.setup({});
-        refreshMock.mockClear();
-        kitNotificationMock.success.mockClear();
+        notifyNewCreationMock.mockClear();
     });
 
     test('should notify a new creation occurs', async () => {
@@ -43,7 +32,7 @@ describe('<LibraryItemsListEmpty/>', () => {
                     dispatch: jest.fn()
                 }}
             >
-                <LibraryItemsListEmpty refetch={refreshMock} />
+                <LibraryItemsListEmpty notifyNewCreation={notifyNewCreationMock} />
             </SearchContext.Provider>
         );
 
@@ -52,11 +41,6 @@ describe('<LibraryItemsListEmpty/>', () => {
         expect(screen.getByText(editRecordModalLabel)).toBeVisible();
 
         mockAfterCreate();
-        expect(refreshMock).toHaveBeenCalledTimes(1);
-        expect(kitNotificationMock.success).toHaveBeenCalledTimes(1);
-        expect(kitNotificationMock.success).toHaveBeenCalledWith({
-            message: 'items_list.created_in_success.message',
-            description: ''
-        });
+        expect(notifyNewCreationMock).toHaveBeenCalledTimes(1);
     });
 });

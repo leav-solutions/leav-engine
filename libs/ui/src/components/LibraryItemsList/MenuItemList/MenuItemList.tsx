@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined, RedoOutlined} from '@ant-design/icons';
 import {Button, Space} from 'antd';
-import {useKitNotification} from 'aristid-ds';
 import {FunctionComponent, useState} from 'react';
 import styled from 'styled-components';
 import {CreateDirectory, EditRecordModal, UploadFiles} from '_ui/components';
@@ -20,17 +19,16 @@ import SearchItems from '../SearchItems';
 interface IMenuItemListProps {
     library: ILibraryDetailExtended;
     refetch?: () => void;
+    notifyNewCreation: () => void;
 }
 
 const Wrapper = styled(Space)`
     width: 100%;
 `;
 
-const MenuItemList: FunctionComponent<IMenuItemListProps> = ({refetch, library}) => {
+const MenuItemList: FunctionComponent<IMenuItemListProps> = ({refetch, library, notifyNewCreation}) => {
     const {t} = useSharedTranslation();
     const {state: searchState} = useSearchReducer();
-
-    const {kitNotification} = useKitNotification();
 
     const [isRecordCreationVisible, setIsRecordCreationVisible] = useState<boolean>(false);
     const [isUploadFilesModalVisible, setIsUploadFilesModalVisible] = useState<boolean>(false);
@@ -50,14 +48,6 @@ const MenuItemList: FunctionComponent<IMenuItemListProps> = ({refetch, library})
 
     const _handleCreateDirectoryClose = () => {
         setIsCreateDirectoryModalVisible(false);
-    };
-
-    const _notifyNewCreation = () => {
-        refetch?.();
-        kitNotification.success({
-            message: t('items_list.created_in_success.message'),
-            description: ''
-        });
     };
 
     const _handleClickNew = () => {
@@ -99,7 +89,7 @@ const MenuItemList: FunctionComponent<IMenuItemListProps> = ({refetch, library})
                     open={isRecordCreationVisible}
                     onClose={_handleRecordCreationClose}
                     valuesVersion={searchState.valuesVersions}
-                    afterCreate={_notifyNewCreation}
+                    afterCreate={notifyNewCreation}
                 />
             )}
             {isUploadFilesModalVisible && (
@@ -107,14 +97,14 @@ const MenuItemList: FunctionComponent<IMenuItemListProps> = ({refetch, library})
                     libraryId={library.id}
                     multiple
                     onClose={_handleUploadFilesClose}
-                    onCompleted={_notifyNewCreation}
+                    onCompleted={notifyNewCreation}
                 />
             )}
             {isCreateDirectoryModalVisible && (
                 <CreateDirectory
                     libraryId={library.id}
                     onClose={_handleCreateDirectoryClose}
-                    onCompleted={_notifyNewCreation}
+                    onCompleted={notifyNewCreation}
                 />
             )}
         </Wrapper>
