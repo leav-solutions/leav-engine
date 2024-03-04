@@ -95,7 +95,7 @@ function ValuesVersionBtn({
     );
 
     return (
-        <Dropdown trigger={['click']} menu={{items: menuItems, activeKey: activeScope}} overlayStyle={{zIndex: 1000}}>
+        <Dropdown trigger={['click']} menu={{items: menuItems, activeKey: activeScope}} >
             {button}
         </Dropdown>
     );
