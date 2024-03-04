@@ -1,12 +1,13 @@
 name: Prebuild core & vite apps
 
 on:
-    pull_request:
-        types:
-            - opened
-    issue_comment:
-        types:
-            - created
+    # Auto triggers are disabled for now as this is not used and causing false-negative in CI
+    # pull_request:
+    #     types:
+    #         - opened
+    # issue_comment:
+    #     types:
+    #         - created
     workflow_dispatch:
 
 jobs:
