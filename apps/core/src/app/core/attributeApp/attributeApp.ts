@@ -48,7 +48,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function (deps: IDeps = {}): ICoreAttributeApp {
+export default function(deps: IDeps = {}): ICoreAttributeApp {
     const {
         'core.domain.attribute': attributeDomain = null,
         'core.domain.record': recordDomain = null,
@@ -185,7 +185,8 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         ${attributesInterfaceSchema}
                         embedded_fields: [EmbeddedAttribute],
                         values_list: StandardValuesListConf,
-                        unique: Boolean
+                        unique: Boolean,
+                        maxLength: Int
                     }
 
                     type LinkAttribute implements Attribute{
@@ -218,7 +219,8 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         metadata_fields: [String!],
                         values_list: ValuesListConfInput,
                         reverse_link: String,
-                        unique: Boolean
+                        unique: Boolean,
+                        maxLength: Int
                     }
 
                     type EmbeddedAttribute {
@@ -393,21 +395,23 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                             // TODO: this could be optimized if find() would allow searching for multiple IDs at once
                             return {
                                 ...attributeData.values_list,
-                                values: (attributeData.values_list.values as string[]) || []
-                                    .map(async recId => {
-                                        const record = await recordDomain.find({
-                                            params: {
-                                                library: attributeData.linked_library,
-                                                filters: [
-                                                    {field: 'id', condition: AttributeCondition.EQUAL, value: recId}
-                                                ]
-                                            },
-                                            ctx
-                                        });
+                                values:
+                                    (attributeData.values_list.values as string[]) ||
+                                    []
+                                        .map(async recId => {
+                                            const record = await recordDomain.find({
+                                                params: {
+                                                    library: attributeData.linked_library,
+                                                    filters: [
+                                                        {field: 'id', condition: AttributeCondition.EQUAL, value: recId}
+                                                    ]
+                                                },
+                                                ctx
+                                            });
 
-                                        return record.list.length ? record.list[0] : null;
-                                    })
-                                    .filter(r => r !== null) // Remove invalid values (unknown records)
+                                            return record.list.length ? record.list[0] : null;
+                                        })
+                                        .filter(r => r !== null) // Remove invalid values (unknown records)
                             };
                         }
                     },

@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {idFormatRegex, Override, slugifyString} from '@leav/utils';
-import {Form, FormInstance, Input, Select, Switch} from 'antd';
+import {Form, FormInstance, Input, InputNumber, Select, Switch} from 'antd';
 import React, {useState} from 'react';
 import styled from 'styled-components';
 import {useLang} from '../../../../../hooks';
@@ -97,6 +97,10 @@ function EditAttributeInfoForm({
         }
     };
 
+    const _handleNumberChange = (field: string) => (value: number) => {
+        form.setFieldsValue({[field]: value});
+    };
+
     const _handleIdChange = () => {
         setHasIdBeenEdited(true);
     };
@@ -183,6 +187,7 @@ function EditAttributeInfoForm({
         type: AttributeType.simple,
         format: AttributeFormat.text,
         readonly: false,
+        maxLength: null,
         unique: false,
         ...attributeSettings,
         ...label,
@@ -354,6 +359,22 @@ function EditAttributeInfoForm({
                 >
                     <Switch disabled={isReadOnly} onChange={_handleCheckboxChange('unique')} />
                 </SwitchFormItem>
+            )}
+            {[AttributeType.simple, AttributeType.advanced].includes(form.getFieldValue('type')) && (
+                <Form.Item
+                    name="maxLength"
+                    label={t('global.max_length')}
+                    validateTrigger={['onBlur', 'onChange', 'onSubmit']}
+                >
+                    <InputNumber
+                        min={1}
+                        disabled={isReadOnly}
+                        onChange={_handleNumberChange('maxLength')}
+                        onBlur={() => {
+                            _handleFieldSubmit('maxLength', form.getFieldValue('maxLength'));
+                        }}
+                    />
+                </Form.Item>
             )}
             {isTypeNotSimple && (
                 <SwitchFormItem

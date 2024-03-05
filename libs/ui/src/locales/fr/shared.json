@@ -28,7 +28,8 @@
         "yes": "Oui",
         "no": "Non",
         "create": "Créer",
-        "ok": "Ok"
+        "ok": "Ok",
+        "max_length": "Longueur maximale"
     },
     "errors": {
         "default_language_required": "La langue par défaut est requise",

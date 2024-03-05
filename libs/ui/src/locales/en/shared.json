@@ -27,7 +27,9 @@
         "document_title": "LEAV Engine - {{appLabel}}",
         "yes": "Yes",
         "no": "No",
-        "create": "Create"
+        "create": "Create",
+        "ok": "Ok",
+        "max_length": "Max length"
     },
     "errors": {
         "default_language_required": "The default language is required",
@@ -39,7 +41,6 @@
         "invalid_url_format": "Invalid URL"
     },
     "applications": {
-        "new_app": "New application",
         "id": "Identifier",
         "label": "Label",
         "description": "Description",
@@ -151,6 +152,8 @@
         "behavior_files": "Files",
         "linked_libraries": "Linked libraries",
         "allowed_multiple_positions": "Allowed multiple positions",
+        "allowed_at_root": "Allowed at root",
+        "allowed_children": "Allowed children",
         "add_libraries": "Add libraries",
         "no_linked_libraries": "No linked libraries",
         "no_children_allowed": "No children allowed",
@@ -387,7 +390,8 @@
     },
     "floating_menu": {
         "more_actions": "More"
-    },"record_edition": {
+    },
+    "record_edition": {
         "no_form_error": "No form available",
         "invalid_format": "Invalid format",
         "missing_attribute": "Missing attribute",
@@ -563,7 +567,6 @@
     },
     "files": {
         "generate_previews": "Generate previews",
-        "previews_generation_confirm": "Do you really want to generate previews?",
         "previews_generation_failed_only": "Only if previous generation failed",
         "previews_generation_success": "Previews generation started",
         "previews_generation_nothing_to_do": "No preview to generate",

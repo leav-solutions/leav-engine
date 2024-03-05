@@ -267,6 +267,7 @@ export interface AttributeInput {
     values_list?: ValuesListConfInput | null;
     reverse_link?: string | null;
     unique?: boolean | null;
+    maxLength?: number | null;
 }
 
 export interface DeleteTaskInput {

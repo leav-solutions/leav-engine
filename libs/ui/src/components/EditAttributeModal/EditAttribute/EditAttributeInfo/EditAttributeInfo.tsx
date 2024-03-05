@@ -65,6 +65,7 @@ function EditAttributeInfo({attribute, onSetSubmitFunction, readOnly}: IEditAttr
                         format: isStandardType ? values.format : null,
                         readonly: values.readonly,
                         unique: values.type === AttributeType.simple ? values.unique : false,
+                        maxLength: values.maxLength ?? null,
                         multiple_values: isTypeNotSimple ? values.multiple_values : false,
                         versions_conf: isTypeNotSimple
                             ? {
