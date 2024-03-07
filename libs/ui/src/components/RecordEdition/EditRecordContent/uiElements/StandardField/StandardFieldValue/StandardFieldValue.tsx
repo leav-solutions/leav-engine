@@ -7,6 +7,8 @@ import {Button, Form, Input, InputRef, Popover, Space, theme} from 'antd';
 import moment from 'moment';
 import React, {MutableRefObject, useEffect, useRef} from 'react';
 import styled, {CSSObject} from 'styled-components';
+import {DSInputWrapper} from './DSInputWrapper';
+import {DSRangePickerWrapper} from './DSRangePickerWrapper';
 import {themeVars} from '_ui/antdTheme';
 import {FloatingMenu, FloatingMenuAction} from '_ui/components';
 import Dimmer from '_ui/components/Dimmer';
@@ -50,6 +52,8 @@ import NumberInput from './Inputs/NumberInput';
 import TextInput from './Inputs/TextInput';
 import ValuesList from './ValuesList';
 import {IValueOfValuesList} from './ValuesList/ValuesList';
+import {useForm} from 'antd/es/form/Form';
+import dayjs from 'dayjs';
 
 const ErrorMessage = styled.div`
     color: ${themeVars.errorColor};
@@ -252,13 +256,13 @@ function StandardFieldValue({
         }
     }, [fieldValue.isEditing, fieldValue.editingValue]);
 
-    const _handleSubmit = async (valueToSave: StandardValueTypes) => {
+    const _handleSubmit = async (valueToSave: StandardValueTypes, id?: string) => {
         if (valueToSave === '') {
             return _handleDelete();
         }
 
         const convertedValue = typeof valueToSave === 'object' ? JSON.stringify(valueToSave) : valueToSave;
-        onSubmit(fieldValue.idValue, convertedValue);
+        onSubmit(fieldValue.idValue ?? id, convertedValue);
     };
 
     const _handlePressEnter = async () => {
@@ -581,12 +585,66 @@ function StandardFieldValue({
         borderRadius: hasMultipleValuesDisplay ? 'none' : token.borderRadius
     };
 
+    const attributeFormatsWithoutDS = [
+        AttributeFormat.boolean,
+        AttributeFormat.color,
+        AttributeFormat.date,
+        AttributeFormat.encrypted,
+        AttributeFormat.extended,
+        AttributeFormat.numeric,
+        AttributeFormat.rich_text
+    ];
+
+    // const resetField = () => {
+    //     antForm.resetFields();
+    // };
+
     return (
         <>
-            {fieldValue.isEditing && <Dimmer onClick={_handleCancel} />}
-            <FormWrapper $isEditing={fieldValue.isEditing} className={!fieldValue.index ? 'first-value' : ''}>
-                <Form>
-                    <FormItem>
+            <Form.Item
+                name={attribute.id}
+                rules={[
+                    {
+                        required: state.formElement.settings.required,
+                        message: t('errors.standard_field_required')
+                    }
+                ]}
+            >
+                {attribute.format === AttributeFormat.text && (
+                    <DSInputWrapper
+                        state={state}
+                        _handleSubmit={_handleSubmit}
+                        infoButton={
+                            <ValueDetailsBtn
+                                value={fieldValue.value}
+                                attribute={attribute}
+                                size="small"
+                                shape="circle"
+                            />
+                        }
+                        // resetField={resetField}
+                    />
+                )}
+                {attribute.format === AttributeFormat.date_range && (
+                    <DSRangePickerWrapper
+                        state={state}
+                        _handleSubmit={_handleSubmit}
+                        infoButton={
+                            <ValueDetailsBtn
+                                value={fieldValue.value}
+                                attribute={attribute}
+                                size="small"
+                                shape="circle"
+                            />
+                        }
+                    />
+                )}
+            </Form.Item>
+
+            {attributeFormatsWithoutDS.includes(attribute.format) && (
+                <>
+                    {fieldValue.isEditing && <Dimmer onClick={_handleCancel} />}
+                    <FormWrapper $isEditing={fieldValue.isEditing} className={!fieldValue.index ? 'first-value' : ''}>
                         <Popover placement="topLeft" open={isErrorVisible} content={errorContent}>
                             <InputWrapper
                                 $isEditing={fieldValue.isEditing}
@@ -634,9 +692,9 @@ function StandardFieldValue({
                                 </ButtonsWrapper>
                             )}
                         </ActionsWrapper>
-                    </FormItem>
-                </Form>
-            </FormWrapper>
+                    </FormWrapper>
+                </>
+            )}
         </>
     );
 }

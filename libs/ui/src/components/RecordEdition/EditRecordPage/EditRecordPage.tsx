@@ -74,7 +74,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
                 library={library}
                 valuesVersion={valuesVersion}
                 afterCreate={afterCreate}
-                buttonsRefs={{submit: submitButtonRef, close: closeButtonRef, refresh: refreshButtonRef}}
+                buttonsRefs={{close: closeButtonRef, refresh: refreshButtonRef}}
                 onClose={onClose}
             />
         </>

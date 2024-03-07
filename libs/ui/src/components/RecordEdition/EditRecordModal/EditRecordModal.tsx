@@ -79,6 +79,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     if (isCreationMode) {
         footerButtons.push(
             <KitButton
+                htmlType="submit"
                 type="primary"
                 aria-label={t('global.submit')}
                 key="submit"
@@ -129,7 +130,6 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
                 afterCreate={afterCreate}
                 valuesVersion={valuesVersion}
                 buttonsRefs={{
-                    submit: submitButtonRef,
                     close: closeButtonRef,
                     refresh: refreshButtonRef,
                     valuesVersions: valuesVersionsButtonRef

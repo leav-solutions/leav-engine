@@ -1,15 +1,18 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID, simpleStringHash} from '@leav/utils';
+import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID, simpleStringHash, IDateRangeValue} from '@leav/utils';
 import {useEffect, useMemo} from 'react';
 import {ErrorDisplay} from '_ui/components';
-import useGetRecordForm from '_ui/hooks/useGetRecordForm';
+import useGetRecordForm, {
+    RecordFormElementsValue,
+    RecordFormElementsValueStandardValue
+} from '_ui/hooks/useGetRecordForm';
 import {useGetRecordUpdatesSubscription} from '_ui/hooks/useGetRecordUpdatesSubscription';
 import useRecordsConsultationHistory from '_ui/hooks/useRecordsConsultationHistory';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IRecordIdentityWhoAmI} from '_ui/types/records';
-import {FormElementTypes} from '_ui/_gqlTypes';
+import {AttributeFormat, FormElementTypes} from '_ui/_gqlTypes';
 import {EditRecordReducerActionsTypes} from '../editRecordReducer/editRecordReducer';
 import {useEditRecordReducer} from '../editRecordReducer/useEditRecordReducer';
 import EditRecordSkeleton from './EditRecordSkeleton';
@@ -17,10 +20,14 @@ import extractFormElements from './helpers/extractFormElements';
 import {RecordEditionContext} from './hooks/useRecordEditionContext';
 import {formComponents} from './uiElements';
 import {DeleteMultipleValuesFunc, DeleteValueFunc, FormElement, SubmitValueFunc} from './_types';
+import {Form} from 'antd';
+import {useForm} from 'antd/es/form/Form';
+import dayjs from 'dayjs';
 
 interface IEditRecordContentProps {
     record: IRecordIdentityWhoAmI | null;
     library: string;
+    handleRecordSubmit: () => void;
     onValueSubmit: SubmitValueFunc;
     onValueDelete: DeleteValueFunc;
     onDeleteMultipleValues: DeleteMultipleValuesFunc;
@@ -30,6 +37,7 @@ interface IEditRecordContentProps {
 function EditRecordContent({
     record,
     library,
+    handleRecordSubmit,
     onValueSubmit,
     onValueDelete,
     onDeleteMultipleValues,
@@ -38,6 +46,7 @@ function EditRecordContent({
     const formId = record ? 'edition' : 'creation';
     const {t} = useSharedTranslation();
     const {state, dispatch} = useEditRecordReducer();
+    const [antForm] = useForm();
 
     useRecordsConsultationHistory(record?.library?.id ?? null, record?.id ?? null);
 
@@ -123,17 +132,49 @@ function EditRecordContent({
         uiElement: formComponents[FormUIElementTypes.FIELDS_CONTAINER]
     };
 
+    const antdFormInitialValues = {};
+    recordForm.elements.forEach(element => {
+        const {attribute, values} = element;
+        const fieldValue = values[0] as RecordFormElementsValueStandardValue;
+        if (attribute.format === AttributeFormat.text) {
+            antdFormInitialValues[attribute.id] = fieldValue?.raw_value || '';
+        }
+
+        const hasDateRangeValues = (dateRange: unknown): dateRange is IDateRangeValue => {
+            return (dateRange as IDateRangeValue).from !== undefined;
+        };
+
+        if (attribute.format === AttributeFormat.date_range) {
+            if (fieldValue?.raw_value) {
+                if (hasDateRangeValues(fieldValue.raw_value)) {
+                    antdFormInitialValues[attribute.id] = [
+                        dayjs.unix(Number(fieldValue.raw_value.from)),
+                        dayjs.unix(Number(fieldValue.raw_value.to))
+                    ];
+                } else if (typeof fieldValue.raw_value === 'string') {
+                    const convertedFieldValue = JSON.parse(fieldValue.raw_value);
+                    antdFormInitialValues[attribute.id] = [
+                        dayjs.unix(Number(convertedFieldValue.from)),
+                        dayjs.unix(Number(convertedFieldValue.to))
+                    ];
+                }
+            }
+        }
+    });
+
     // Use a hash of record form as a key to force a full re-render when the form changes
     return (
-        <RecordEditionContext.Provider value={{elements: elementsByContainer, readOnly: readonly, record}}>
-            <rootElement.uiElement
-                key={recordFormHash}
-                element={rootElement}
-                onValueSubmit={_handleValueSubmit}
-                onValueDelete={_handleValueDelete}
-                onDeleteMultipleValues={onDeleteMultipleValues}
-            />
-        </RecordEditionContext.Provider>
+        <Form form={antForm} initialValues={antdFormInitialValues} onFinish={handleRecordSubmit}>
+            <RecordEditionContext.Provider value={{elements: elementsByContainer, readOnly: readonly, record}}>
+                <rootElement.uiElement
+                    key={recordFormHash}
+                    element={rootElement}
+                    onValueSubmit={_handleValueSubmit}
+                    onValueDelete={_handleValueDelete}
+                    onDeleteMultipleValues={onDeleteMultipleValues}
+                />
+            </RecordEditionContext.Provider>
+        </Form>
     );
 }
 
