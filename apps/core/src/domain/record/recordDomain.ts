@@ -916,7 +916,7 @@ export default function ({
             );
 
             if (isRecordWithId(recordData)) {
-                await sendRecordUpdateEvent({record: recordData, library}, [], ctx);
+                await sendRecordUpdateEvent({...recordData, library}, [], ctx);
             }
 
             return savedRecord;
