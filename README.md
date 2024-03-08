@@ -33,7 +33,7 @@ mkdir ~/leav-engine && cd ~/leav-engine
 
 2. Download the docker-compose file:
 ```
-curl -O https://raw.githubusercontent.com/leav-solutions/leav-engine/master/docker/docker-compose.prod.yml
+curl -O https://raw.githubusercontent.com/leav-solutions/leav-engine/main/docker/docker-compose.prod.yml
 ```
 
 3. Start the services:
@@ -96,7 +96,7 @@ SERVER_WS_URL: wss://<your public domain>
 In order to speed up the DB queries, it's possible to enable ArangoDB's query cache.
 To do so:
 - Create a `conf` folder right beside the `docker-compose.prod.yml` with a `arangodb` folder in it
-- Copy our [arangod.conf](https://github.com/leav-solutions/leav-engine/blob/master/docker/conf/arangodb/arangod.conf) file in it.
+- Copy our [arangod.conf](https://github.com/leav-solutions/leav-engine/blob/main/docker/conf/arangodb/arangod.conf) file in it.
 - Mount this directory in the `arangodb` service, by adding this volume in the `docker-compose.prod.yml` file:
 ```
 - ./conf/arangodb/arangod.conf:/etc/arangodb3/arangod.conf

@@ -15,8 +15,8 @@ fi
 
 
 branch="$(git rev-parse --abbrev-ref HEAD)"
-if [ "$branch" = "master" ]; then
-  echo "Cannot commit to master"
+if [ "$branch" = "develop" ] || [ "$branch" = "main" ]; then
+  echo "Cannot commit to develop and main branches directly. Please create a pull request."
   exit 1
 fi
 
