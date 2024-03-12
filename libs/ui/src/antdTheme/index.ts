@@ -77,26 +77,6 @@ export const dsTheme: ComponentProps<typeof KitApp>['customTheme'] = {
         }
     },
     components: {
-        Button: {
-            primary: {
-                colors: {
-                    background: {
-                        hover: themeVars.primaryColorLighter
-                    },
-                    border: {
-                        default: customTheme.token.colorPrimary,
-                        hover: themeVars.primaryColorLighter
-                    }
-                }
-            },
-            default: {
-                colors: {
-                    border: {
-                        hover: customTheme.token.colorPrimary
-                    }
-                }
-            }
-        },
         Input: {
             colors: {
                 border: {
