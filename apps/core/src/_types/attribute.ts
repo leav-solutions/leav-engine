@@ -26,6 +26,7 @@ export interface IAttribute extends ICoreEntity {
     reverse_link?: string | IAttribute; // linked attribute
     unique?: boolean; // only on simple attribute
     maxLength?: number; //only on text attribute
+    description?: ISystemTranslation;
 }
 
 export enum ValueVersionMode {
