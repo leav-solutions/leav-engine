@@ -84,7 +84,7 @@ const LoginForm = ({onSubmit, loading, loginError}: ILoginFormProps): JSX.Elemen
                 </Form.Item>
             )}
             <Form.Item style={{textAlign: 'right'}}>
-                <KitButton onClick={_handleClickForgotPassword} type="link">
+                <KitButton onClick={_handleClickForgotPassword} type="text">
                     {t('login.forgot_password')}
                 </KitButton>
             </Form.Item>
