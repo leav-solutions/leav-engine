@@ -106,12 +106,9 @@ describe('StandardField', () => {
         disconnect: jest.fn()
     }));
 
-    const waitForOption: waitForOptions = {
-        timeout: 5000
-    };
-
     beforeEach(() => jest.clearAllMocks());
 
+<<<<<<< HEAD
     test('Render text field, type value and submit', async () => {
         render(<StandardField element={mockFormElementInput} {...baseProps} />);
 
@@ -143,6 +140,8 @@ describe('StandardField', () => {
         });
     });
 
+=======
+>>>>>>> bf2a1819 (test(@leav/ui): split standard field test)
     test('Display informations about value', async () => {
         render(<StandardField element={mockFormElementInput} {...baseProps} />);
 
@@ -211,6 +210,7 @@ describe('StandardField', () => {
         expect(inputElem).toBeDisabled();
     });
 
+<<<<<<< HEAD
     test('Render date field', async () => {
         const recordValuesDate = [
             {
@@ -471,6 +471,8 @@ describe('StandardField', () => {
         });
     });
 
+=======
+>>>>>>> bf2a1819 (test(@leav/ui): split standard field test)
     test('Display error message', async () => {
         const onSubmitFail: SubmitValueFunc = jest.fn().mockReturnValue({
             status: APICallStatus.ERROR,
