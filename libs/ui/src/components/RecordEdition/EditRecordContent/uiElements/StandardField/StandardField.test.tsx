@@ -484,9 +484,7 @@ describe('StandardField', () => {
         const submitBtn = await screen.findByRole('button', {name: 'global.submit'});
         await userEvent.click(submitBtn);
 
-        await waitFor(() => {
-            expect(screen.getByText('ERROR_MESSAGE')).toBeInTheDocument();
-        });
+        expect(screen.getByText('ERROR_MESSAGE')).toBeInTheDocument();
     });
 
     test('Delete value', async () => {
@@ -504,9 +502,7 @@ describe('StandardField', () => {
 
         await userEvent.click(confirmDeleteBtn);
 
-        await waitFor(() => {
-            expect(mockHandleDelete).toHaveBeenCalled();
-        });
+        expect(mockHandleDelete).toHaveBeenCalled();
     });
 
     test('On multiple-values attribute, can delete all values', async () => {
