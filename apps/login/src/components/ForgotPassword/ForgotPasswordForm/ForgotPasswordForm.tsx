@@ -91,7 +91,7 @@ const ForgotPasswordForm = ({
                 {!loading && (
                     <Space wrap style={{float: 'right'}} direction="horizontal">
                         <Form.Item>
-                            <KitButton onClick={_handleCancel} type="secondary" block>
+                            <KitButton onClick={_handleCancel} type="primary" block>
                                 {t('forgotPassword.cancel')}
                             </KitButton>
                         </Form.Item>
