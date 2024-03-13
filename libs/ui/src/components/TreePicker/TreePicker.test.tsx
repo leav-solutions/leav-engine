@@ -18,13 +18,9 @@ window.matchMedia = query => ({
     dispatchEvent: jest.fn()
 });
 
-jest.mock('../EditTreeModal', () => {
-    return {
-        EditTreeModal: () => {
-            return <div>EditTree</div>;
-        }
-    };
-});
+jest.mock('../EditTreeModal', () => ({
+    EditTreeModal: () => <div>EditTree</div>
+}));
 
 jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
 
@@ -115,7 +111,7 @@ describe('TreePicker', () => {
 
         await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
 
-        userEvent.click(screen.getByText('treeA'));
+        await userEvent.click(screen.getByText('treeA'));
         const rows = screen.getAllByRole('row');
         const rowAttributeA = rows[0];
         const rowAttributeB = rows[1];
@@ -126,20 +122,20 @@ describe('TreePicker', () => {
         await waitFor(() => expect(checkboxAttributeA).toBeChecked());
 
         // Unselect 'treeA'
-        userEvent.click(checkboxAttributeA);
+        await userEvent.click(checkboxAttributeA);
         await waitFor(() => expect(checkboxAttributeA).not.toBeChecked());
 
         // Select "treeB" and "treeC"
         const checkboxAttributeB = within(rowAttributeB).getByRole('checkbox'); // First checkbox is for the table header
-        userEvent.click(checkboxAttributeB);
+        await userEvent.click(checkboxAttributeB);
 
         const checkboxAttributeC = within(rowAttributeC).getByRole('checkbox'); // First checkbox is for the table header
-        userEvent.click(checkboxAttributeC);
+        await userEvent.click(checkboxAttributeC);
 
-        userEvent.click(screen.getByRole('button', {name: /submit/i}));
+        await userEvent.click(screen.getByRole('button', {name: /submit/i}));
 
         await waitFor(() => expect(mockHandleSubmit).toHaveBeenCalledWith([mockTreeB, mockTreeC]), {
-            timeout: 10000
+            timeout: 10_000
         });
     });
 
@@ -149,14 +145,16 @@ describe('TreePicker', () => {
 
         await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
 
-        userEvent.click(screen.getByText('treeA'));
+        await userEvent.click(screen.getByText('treeA'));
         const radioBtnAttributeA = within(screen.getByRole('row', {name: /treeA/i})).getByRole('radio');
-        const radioBtnAttributeB = within(screen.getByRole('row', {name: /treeA/i})).getByRole('radio');
+        const radioBtnAttributeB = within(screen.getByRole('row', {name: /treeB/i})).getByRole('radio');
         await waitFor(() => expect(radioBtnAttributeA).toBeChecked());
 
-        userEvent.click(screen.getByText('treeB'));
-        await waitFor(() => expect(radioBtnAttributeB).toBeChecked());
-        await waitFor(() => expect(radioBtnAttributeA).not.toBeChecked());
+        await userEvent.click(screen.getByText('treeB'));
+        await waitFor(() => {
+            expect(radioBtnAttributeB).toBeChecked();
+            expect(radioBtnAttributeA).not.toBeChecked();
+        });
     });
 
     test('Can create new tree', async () => {
@@ -168,7 +166,7 @@ describe('TreePicker', () => {
         const newTreeButton = screen.queryByRole('button', {name: /new_tree/i});
         expect(newTreeButton).toBeInTheDocument();
 
-        userEvent.click(newTreeButton);
+        await userEvent.click(newTreeButton);
         expect(await screen.findByText('EditTree')).toBeInTheDocument();
     });
 

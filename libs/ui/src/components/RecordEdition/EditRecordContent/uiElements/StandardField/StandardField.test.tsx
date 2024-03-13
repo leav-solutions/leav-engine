@@ -136,7 +136,7 @@ describe('StandardField', () => {
             expect(editingInputElem).toHaveValue('value modified');
         });
 
-        userEvent.click(submitBtn);
+        await userEvent.click(submitBtn);
 
         await waitFor(() => {
             expect(mockHandleSubmit).toHaveBeenCalled();
@@ -147,7 +147,7 @@ describe('StandardField', () => {
         render(<StandardField element={mockFormElementInput} {...baseProps} />);
 
         const valueDisplayElem = screen.getByRole('textbox');
-        userEvent.click(valueDisplayElem);
+        await userEvent.click(valueDisplayElem);
 
         await waitFor(() => {
             expect(mockEditRecordDispatch).toHaveBeenCalled();
@@ -231,7 +231,7 @@ describe('StandardField', () => {
         );
 
         const inputElem = screen.getByRole('textbox');
-        userEvent.click(inputElem);
+        await userEvent.click(inputElem);
         const calendarElem = await screen.findByTestId('datepicker');
         expect(calendarElem).toBeInTheDocument();
 
@@ -363,7 +363,7 @@ describe('StandardField', () => {
 
         const inputElem = screen.getByRole('checkbox');
 
-        userEvent.click(inputElem);
+        await userEvent.click(inputElem);
 
         await waitFor(() => {
             expect(mockHandleSubmit).toHaveBeenCalled();
@@ -424,7 +424,7 @@ describe('StandardField', () => {
         const inputElem = screen.getByRole('textbox');
         expect(inputElem).toHaveValue('123456');
 
-        userEvent.click(inputElem);
+        await userEvent.click(inputElem);
 
         expect(await screen.findByRole('spinbutton')).toBeInTheDocument();
     });
@@ -493,16 +493,16 @@ describe('StandardField', () => {
         render(<StandardField element={mockFormElementInput} {...baseProps} />);
 
         const inputWrapper = screen.getByTestId('input-wrapper');
-        userEvent.hover(inputWrapper);
+        await userEvent.hover(inputWrapper);
 
         const deleteBtn = screen.getByRole('button', {name: /delete/, hidden: true});
         expect(deleteBtn).toBeInTheDocument();
 
-        userEvent.click(deleteBtn);
+        await userEvent.click(deleteBtn);
 
-        const confirmDeleteBtn = await screen.findByRole('button', {name: 'delete-confirm-button'});
+        const confirmDeleteBtn = screen.getByRole('button', {name: 'delete-confirm-button'});
 
-        userEvent.click(confirmDeleteBtn);
+        await userEvent.click(confirmDeleteBtn);
 
         await waitFor(() => {
             expect(mockHandleDelete).toHaveBeenCalled();
@@ -576,7 +576,7 @@ describe('StandardField', () => {
         test('Display values list', async () => {
             render(<StandardField element={{...mockFormElementWithValuesList, values: []}} {...baseProps} />);
 
-            userEvent.click(screen.getByRole('textbox'));
+            await userEvent.click(screen.getByRole('textbox'));
 
             expect(await screen.findByText('My value')).toBeInTheDocument();
             expect(screen.getByText('Other value')).toBeInTheDocument();
@@ -588,7 +588,7 @@ describe('StandardField', () => {
             render(<StandardField element={{...mockFormElementWithValuesList, values: []}} {...baseProps} />);
 
             const originInputElem = screen.getByRole('textbox');
-            userEvent.click(originInputElem);
+            await userEvent.click(originInputElem);
 
             expect(await screen.findByText('My value')).toBeInTheDocument();
             expect(screen.getByText('Other value')).toBeInTheDocument();
@@ -623,7 +623,7 @@ describe('StandardField', () => {
             render(<StandardField element={{...mockFormElementWithValuesList, values: []}} {...baseProps} />);
 
             const inputElem = screen.getByRole('textbox');
-            userEvent.click(inputElem);
+            await userEvent.click(inputElem);
 
             const editingInputElem = screen.getByRole('textbox');
             await userEvent.type(editingInputElem, '{enter}');
@@ -646,7 +646,7 @@ describe('StandardField', () => {
             render(<StandardField element={{...mockFormElementWithValuesList, values: []}} {...baseProps} />);
 
             const originInputElem = screen.getByRole('textbox');
-            userEvent.click(originInputElem);
+            await userEvent.click(originInputElem);
 
             const editingInputElem = screen.getByRole('textbox');
             await userEvent.type(editingInputElem, 'zzz');
@@ -656,9 +656,9 @@ describe('StandardField', () => {
         test('If open values list, display submit button', async () => {
             render(<StandardField element={{...mockFormElementWithValuesListOpen, values: []}} {...baseProps} />);
 
-            userEvent.click(screen.getByRole('textbox'));
+            await userEvent.click(screen.getByRole('textbox'));
 
-            expect(await screen.findByRole('button', {name: 'global.submit'})).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: 'global.submit'})).toBeInTheDocument();
         });
 
         test('If open values list, can copy a value from the list and edit it', async () => {
@@ -679,12 +679,12 @@ describe('StandardField', () => {
         test('If open values list, current value appears on the list', async () => {
             render(<StandardField element={{...mockFormElementWithValuesListOpen, values: []}} {...baseProps} />);
 
-            userEvent.click(screen.getByRole('textbox'));
+            await userEvent.click(screen.getByRole('textbox'));
 
             const editingInputElem = screen.getByRole('textbox');
             await userEvent.type(editingInputElem, 'Some new value');
 
-            expect(await screen.findByText(/Some new value/)).toBeInTheDocument();
+            expect(screen.getByText(/Some new value/)).toBeInTheDocument();
         });
     });
 });

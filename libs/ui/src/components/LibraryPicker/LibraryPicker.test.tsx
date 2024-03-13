@@ -18,13 +18,9 @@ window.matchMedia = query => ({
     dispatchEvent: jest.fn()
 });
 
-jest.mock('../EditLibraryModal', () => {
-    return {
-        EditLibraryModal: () => {
-            return <div>EditLibrary</div>;
-        }
-    };
-});
+jest.mock('../EditLibraryModal', () => ({
+    EditLibraryModal: () => <div>EditLibrary</div>
+}));
 
 jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
 
@@ -115,7 +111,7 @@ describe('LibraryPicker', () => {
 
         await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
 
-        userEvent.click(screen.getByText('libA'));
+        await userEvent.click(screen.getByText('libA'));
 
         // Select 'libA'
         const rows = screen.getAllByRole('row');
@@ -127,20 +123,20 @@ describe('LibraryPicker', () => {
         await waitFor(() => expect(checkboxLibA).toBeChecked());
 
         // Unselect 'libA'
-        userEvent.click(checkboxLibA);
+        await userEvent.click(checkboxLibA);
         await waitFor(() => expect(checkboxLibA).not.toBeChecked());
 
         // Select "libB" and "libC"
         const checkboxLibB = within(rowLibB).getByRole('checkbox');
-        userEvent.click(checkboxLibB);
+        await userEvent.click(checkboxLibB);
 
         const checkboxLibC = within(rowLibC).getByRole('checkbox');
-        userEvent.click(checkboxLibC);
+        await userEvent.click(checkboxLibC);
 
-        userEvent.click(screen.getByRole('button', {name: /submit/i}));
+        await userEvent.click(screen.getByRole('button', {name: /submit/i}));
 
         await waitFor(() => expect(mockHandleSubmit).toHaveBeenCalledWith([mockLibB, mockLibC]), {
-            timeout: 10000
+            timeout: 10_000
         });
     });
 
@@ -150,14 +146,14 @@ describe('LibraryPicker', () => {
 
         await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
 
-        userEvent.click(screen.getByText('libA'));
+        await userEvent.click(screen.getByText('libA'));
         const radioBtnLibA = within(screen.getByRole('row', {name: /libA/i})).getByRole('radio');
-        const radioBtnLibB = within(screen.getByRole('row', {name: /libA/i})).getByRole('radio');
-        await waitFor(() => expect(radioBtnLibA).toBeChecked());
+        const radioBtnLibB = within(screen.getByRole('row', {name: /libB/i})).getByRole('radio');
+        expect(radioBtnLibA).toBeChecked();
 
-        userEvent.click(screen.getByText('libB'));
-        await waitFor(() => expect(radioBtnLibB).toBeChecked());
-        await waitFor(() => expect(radioBtnLibA).not.toBeChecked());
+        await userEvent.click(screen.getByText('libB'));
+        expect(radioBtnLibB).toBeChecked();
+        expect(radioBtnLibA).not.toBeChecked();
     });
 
     test('Can create new library', async () => {
@@ -169,7 +165,7 @@ describe('LibraryPicker', () => {
         const newLibButton = screen.queryByRole('button', {name: /new_library/i});
         expect(newLibButton).toBeInTheDocument();
 
-        userEvent.click(newLibButton);
+        await userEvent.click(newLibButton);
         expect(await screen.findByText('EditLibrary')).toBeInTheDocument();
     });
 
