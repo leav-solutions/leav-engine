@@ -78,6 +78,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     if (isCreationMode) {
         footerButtons.push(
             <KitButton
+                key="submit"
                 htmlType="submit"
                 type="primary"
                 form="createAndEditRecordForm"

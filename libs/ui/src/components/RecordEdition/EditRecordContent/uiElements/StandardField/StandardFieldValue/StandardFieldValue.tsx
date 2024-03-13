@@ -46,14 +46,11 @@ import {
 import CheckboxInput from './Inputs/CheckboxInput';
 import ColorInput from './Inputs/ColorInput';
 import DateInput from './Inputs/DateInput';
-import DateRangeInput from './Inputs/DateRangeInput';
 import EncryptedInput from './Inputs/EncryptedInput';
 import NumberInput from './Inputs/NumberInput';
 import TextInput from './Inputs/TextInput';
 import ValuesList from './ValuesList';
 import {IValueOfValuesList} from './ValuesList/ValuesList';
-import {useForm} from 'antd/es/form/Form';
-import dayjs from 'dayjs';
 
 const ErrorMessage = styled.div`
     color: ${themeVars.errorColor};
@@ -185,9 +182,9 @@ const FormItem = styled(Form.Item)`
 const RichTextEditorInput = React.lazy(() => import('./Inputs/RichTextEditorInput'));
 
 const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInputProps) => JSX.Element} = {
-    [AttributeFormat.text]: TextInput,
+    [AttributeFormat.text]: null,
     [AttributeFormat.date]: DateInput,
-    [AttributeFormat.date_range]: DateRangeInput,
+    [AttributeFormat.date_range]: null,
     [AttributeFormat.boolean]: CheckboxInput,
     [AttributeFormat.numeric]: NumberInput,
     [AttributeFormat.encrypted]: EncryptedInput,
@@ -595,10 +592,6 @@ function StandardFieldValue({
         AttributeFormat.rich_text
     ];
 
-    // const resetField = () => {
-    //     antForm.resetFields();
-    // };
-
     return (
         <>
             <Form.Item
@@ -622,7 +615,6 @@ function StandardFieldValue({
                                 shape="circle"
                             />
                         }
-                        // resetField={resetField}
                     />
                 )}
                 {attribute.format === AttributeFormat.date_range && (

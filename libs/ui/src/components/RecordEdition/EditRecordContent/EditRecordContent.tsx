@@ -21,7 +21,7 @@ import {RecordEditionContext} from './hooks/useRecordEditionContext';
 import {formComponents} from './uiElements';
 import {DeleteMultipleValuesFunc, DeleteValueFunc, FormElement, SubmitValueFunc} from './_types';
 import {Form} from 'antd';
-import {useForm} from 'antd/es/form/Form';
+import {useForm} from 'antd/lib/form/Form';
 import dayjs from 'dayjs';
 
 interface IEditRecordContentProps {

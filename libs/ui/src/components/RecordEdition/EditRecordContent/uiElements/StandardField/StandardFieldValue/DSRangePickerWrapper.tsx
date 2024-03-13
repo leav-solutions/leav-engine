@@ -1,5 +1,8 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitDatePicker} from 'aristid-ds';
-import {FocusEvent, FunctionComponent, ReactNode} from 'react';
+import {FunctionComponent, ReactNode} from 'react';
 import {IStandardFieldReducerState} from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {Form} from 'antd';
 import dayjs from 'dayjs';
@@ -20,7 +23,7 @@ const InputContainer = styled.div`
     .actions {
         position: absolute;
         top: 53%;
-        right: 38px;
+        right: 36px;
         display: none;
         z-index: 1000;
     }
@@ -65,7 +68,6 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
                 onChange={_handleDateChange}
                 status={errors.length > 0 ? 'error' : undefined}
                 disabled={state.isReadOnly}
-                allowClear={false}
             />
             {/*TODO : Move actions inside KitInput when DS is updated*/}
             <div className="actions">{infoButton}</div>

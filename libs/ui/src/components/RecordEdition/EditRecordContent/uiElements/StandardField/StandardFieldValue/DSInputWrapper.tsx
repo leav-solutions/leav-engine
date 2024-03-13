@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitInput} from 'aristid-ds';
 import {FocusEvent, FunctionComponent, ReactNode} from 'react';
 import {IStandardFieldReducerState} from '../../../reducers/standardFieldReducer/standardFieldReducer';
@@ -11,7 +14,6 @@ interface IDSInputWrapperProps {
     value?: string;
     onChange?: () => void;
     _handleSubmit: (value: string, id?: string) => void;
-    resetField: () => void;
 }
 
 const InputContainer = styled.div`
@@ -20,7 +22,7 @@ const InputContainer = styled.div`
     .actions {
         position: absolute;
         top: 55%;
-        right: 38px;
+        right: 36px;
         display: none;
         z-index: 1000;
     }
@@ -35,17 +37,19 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     value,
     infoButton,
     onChange,
-    _handleSubmit,
-    resetField
+    _handleSubmit
 }) => {
     const {errors} = Form.Item.useStatus();
+    const form = Form.useFormInstance();
+
     const isRequired = state.formElement.settings.required;
 
     const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
         let valuetoSubmit = e.target.value;
         if (isRequired && valuetoSubmit === '' && state.formElement.values[0]) {
             valuetoSubmit = (state.formElement.values[0] as any).raw_value;
-            resetField();
+            form.setFieldValue(state.attribute.id, valuetoSubmit);
+            form.validateFields();
         }
         _handleSubmit(valuetoSubmit, state.attribute.id);
     };
@@ -60,7 +64,6 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
                 status={errors.length > 0 ? 'error' : undefined}
                 disabled={state.isReadOnly}
                 onBlur={handleBlur}
-                allowClear={false}
             />
             {/*TODO : Move actions inside KitInput when DS is updated*/}
             <div className="actions">{infoButton}</div>
