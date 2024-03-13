@@ -164,7 +164,12 @@ function EditRecordContent({
 
     // Use a hash of record form as a key to force a full re-render when the form changes
     return (
-        <Form form={antForm} initialValues={antdFormInitialValues} onFinish={handleRecordSubmit}>
+        <Form
+            id="createAndEditRecordForm"
+            form={antForm}
+            initialValues={antdFormInitialValues}
+            onFinish={handleRecordSubmit}
+        >
             <RecordEditionContext.Provider value={{elements: elementsByContainer, readOnly: readonly, record}}>
                 <rootElement.uiElement
                     key={recordFormHash}

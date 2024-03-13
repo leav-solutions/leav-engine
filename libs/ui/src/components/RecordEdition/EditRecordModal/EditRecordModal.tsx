@@ -59,7 +59,6 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     const isCreationMode = !record;
 
     // Create refs for the buttons to pass them to the EditRecord component
-    const submitButtonRef = useRef<HTMLButtonElement>(null);
     const closeButtonRef = useRef<HTMLButtonElement>(null);
     const refreshButtonRef = useRef<HTMLButtonElement>(null);
     const valuesVersionsButtonRef = useRef<HTMLButtonElement>(null);
@@ -81,9 +80,8 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
             <KitButton
                 htmlType="submit"
                 type="primary"
+                form="createAndEditRecordForm"
                 aria-label={t('global.submit')}
-                key="submit"
-                ref={submitButtonRef}
                 icon={<FontAwesomeIcon icon={faFloppyDisk} />}
             >
                 {t('global.submit')}

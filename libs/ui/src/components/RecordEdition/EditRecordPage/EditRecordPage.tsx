@@ -45,7 +45,6 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     const isInCreateMode = !record;
 
     // Create refs for the buttons to pass them to the EditRecord component
-    const submitButtonRef = useRef<HTMLButtonElement>(null);
     const closeButtonRef = useRef<HTMLButtonElement>(null);
     const refreshButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -63,7 +62,11 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
                         {closeButtonLabel}
                     </KitButton>
                     {isInCreateMode && (
-                        <KitButton type="primary" ref={submitButtonRef} icon={<FontAwesomeIcon icon={faFloppyDisk} />}>
+                        <KitButton
+                            form="createAndEditRecordForm"
+                            type="primary"
+                            icon={<FontAwesomeIcon icon={faFloppyDisk} />}
+                        >
                             {t('global.submit')}
                         </KitButton>
                     )}
