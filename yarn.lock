@@ -7872,7 +7872,7 @@ __metadata:
     "@types/react-beautiful-dnd": "npm:13.1.2"
     "@types/react-table": "npm:7.7.12"
     "@types/uuid": "npm:^9"
-    aristid-ds: "npm:2.0.0-ae6eeaa"
+    aristid-ds: "npm:2.0.0-60b909d"
     babel-jest: "npm:29.3.1"
     commander: "npm:9.5.0"
     dayjs: "npm:1.11.10"
@@ -11843,9 +11843,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aristid-ds@npm:2.0.0-ae6eeaa":
-  version: 2.0.0-ae6eeaa
-  resolution: "aristid-ds@npm:2.0.0-ae6eeaa"
+"aristid-ds@npm:2.0.0-60b909d":
+  version: 2.0.0-60b909d
+  resolution: "aristid-ds@npm:2.0.0-60b909d"
   dependencies:
     "@dnd-kit/core": "npm:^6.1.0"
     "@dnd-kit/modifiers": "npm:^7.0.0"
@@ -11888,7 +11888,7 @@ __metadata:
     react-uuid: ^2.0.0
     remark-gfm: ^3.0.1
     styled-components: ^6.0.7
-  checksum: dad51247f954837c55e077e89bb97a85ca5b75151312f3b390690eea0451103c1e783fb92a77bbf578e04d5c27afba422218e9d896a25a1c630609334a906f4f
+  checksum: aad634976d8bb695e4f39205115f363598bb69cbedca5a9edf68f315e6c74128df4f3ed3de87921fb795822f8404a584dd937a525ca7c7e2da4e1f3161dc5106
   languageName: node
   linkType: hard
 
@@ -14761,7 +14761,7 @@ __metadata:
     apollo: "npm:2.34.0"
     apollo-cache-inmemory: "npm:1.6.6"
     apollo-upload-client: "npm:14.1.3"
-    aristid-ds: "npm:2.0.0-ae6eeaa"
+    aristid-ds: "npm:2.0.0-60b909d"
     commander: "npm:5.1.0"
     dayjs: "npm:1.11.10"
     graphql: "npm:15.0.0"
@@ -22417,7 +22417,7 @@ __metadata:
     "@types/react-dom": "npm:18.2.6"
     "@vitejs/plugin-react": "npm:3.1.0"
     antd: "npm:5.14.0"
-    aristid-ds: "npm:2.0.0-ae6eeaa"
+    aristid-ds: "npm:2.0.0-60b909d"
     i18next: "npm:22.5.0"
     i18next-browser-languagedetector: "npm:7.0.2"
     i18next-http-backend: "npm:2.1.1"
@@ -24974,7 +24974,7 @@ __metadata:
     "@vitejs/plugin-react": "npm:3.1.0"
     antd: "npm:5.14.0"
     apollo: "npm:2.34.0"
-    aristid-ds: "npm:2.0.0-ae6eeaa"
+    aristid-ds: "npm:2.0.0-60b909d"
     commander: "npm:10.0.0"
     cross-fetch: "npm:3.1.5"
     graphql-ws: "npm:5.12.0"
