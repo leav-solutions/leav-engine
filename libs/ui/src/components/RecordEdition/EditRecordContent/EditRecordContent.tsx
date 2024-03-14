@@ -135,6 +135,9 @@ function EditRecordContent({
     const antdFormInitialValues = {};
     recordForm.elements.forEach(element => {
         const {attribute, values} = element;
+        if (!attribute) {
+            return;
+        }
         const fieldValue = values[0] as RecordFormElementsValueStandardValue;
         if (attribute.format === AttributeFormat.text) {
             antdFormInitialValues[attribute.id] = fieldValue?.raw_value || '';
