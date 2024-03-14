@@ -11,6 +11,7 @@ import {RecordIdentityFragment} from '_ui/_gqlTypes';
 import {EditRecord} from '../EditRecord';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark, faFloppyDisk, faRotateRight} from '@fortawesome/free-solid-svg-icons';
+import {EDIT_OR_CREATE_RECORD_FORM_ID} from '../EditRecordContent/formId';
 
 interface IEditRecordPageProps {
     record: RecordIdentityFragment['whoAmI'] | null;
@@ -63,7 +64,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
                     </KitButton>
                     {isInCreateMode && (
                         <KitButton
-                            form="createAndEditRecordForm"
+                            form={EDIT_OR_CREATE_RECORD_FORM_ID}
                             type="primary"
                             icon={<FontAwesomeIcon icon={faFloppyDisk} />}
                         >

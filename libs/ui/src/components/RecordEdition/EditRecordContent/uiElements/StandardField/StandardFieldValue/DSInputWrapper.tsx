@@ -13,7 +13,7 @@ interface IDSInputWrapperProps {
     infoButton: ReactNode;
     value?: InputProps['value'];
     onChange?: InputProps['onChange'];
-    _handleSubmit: (value: string, id?: string) => void;
+    handleSubmit: (value: string, id?: string) => void;
 }
 
 const InputContainer = styled.div`
@@ -37,7 +37,7 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     value,
     infoButton,
     onChange,
-    _handleSubmit
+    handleSubmit
 }) => {
     const {errors} = Form.Item.useStatus();
     const form = Form.useFormInstance();
@@ -51,7 +51,7 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
             form.setFieldValue(state.attribute.id, valuetoSubmit);
             form.validateFields();
         }
-        _handleSubmit(valuetoSubmit, state.attribute.id);
+        handleSubmit(valuetoSubmit, state.attribute.id);
     };
 
     return (

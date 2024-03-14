@@ -5,7 +5,6 @@ import {
     AnyPrimitive,
     FormFieldTypes,
     FormUIElementTypes,
-    ICommonFieldsSettings,
     IRequiredFieldsSettings,
     IDateRangeValue,
     IKeyValue,

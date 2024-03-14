@@ -253,7 +253,7 @@ function StandardFieldValue({
         }
     }, [fieldValue.isEditing, fieldValue.editingValue]);
 
-    const _handleSubmit = async (valueToSave: StandardValueTypes, id?: string) => {
+    const handleSubmit = async (valueToSave: StandardValueTypes, id?: string) => {
         if (valueToSave === '') {
             return _handleDelete();
         }
@@ -264,7 +264,7 @@ function StandardFieldValue({
 
     const _handlePressEnter = async () => {
         if (!isValuesListEnabled) {
-            return _handleSubmit(fieldValue.editingValue);
+            return handleSubmit(fieldValue.editingValue);
         }
 
         const valuesList = _getFilteredValuesList();
@@ -272,7 +272,7 @@ function StandardFieldValue({
             return;
         }
 
-        return _handleSubmit(valuesList[0].value);
+        return handleSubmit(valuesList[0].value);
     };
 
     const _handleDelete = async () => {
@@ -331,7 +331,7 @@ function StandardFieldValue({
     };
 
     const _handleClickSubmit = () => {
-        _handleSubmit(fieldValue.editingValue);
+        handleSubmit(fieldValue.editingValue);
     };
 
     const _handleValueCopy = (value: AnyPrimitive | IDateRangeValue) => {
@@ -405,7 +405,7 @@ function StandardFieldValue({
                 fieldValue={fieldValue}
                 onChange={_handleValueChange}
                 onFocus={_handleFocus}
-                onSubmit={_handleSubmit}
+                onSubmit={handleSubmit}
                 onPressEnter={_handlePressEnter}
                 settings={state.formElement.settings}
                 inputRef={inputRef}
@@ -560,6 +560,8 @@ function StandardFieldValue({
         borderRadius: hasMultipleValuesDisplay ? 'none' : token.borderRadius
     };
 
+    const attributeFormatsWithDS = [AttributeFormat.text, AttributeFormat.date_range];
+
     const attributeFormatsWithoutDS = [
         AttributeFormat.boolean,
         AttributeFormat.color,
@@ -572,44 +574,46 @@ function StandardFieldValue({
 
     return (
         <>
-            <Form.Item
-                name={attribute.id}
-                rules={[
-                    {
-                        required: state.formElement.settings.required,
-                        message: t('errors.standard_field_required')
-                    }
-                ]}
-            >
-                {attribute.format === AttributeFormat.text && (
-                    <DSInputWrapper
-                        state={state}
-                        _handleSubmit={_handleSubmit}
-                        infoButton={
-                            <ValueDetailsBtn
-                                value={fieldValue.value}
-                                attribute={attribute}
-                                size="small"
-                                shape="circle"
-                            />
+            {attributeFormatsWithDS && (
+                <Form.Item
+                    name={attribute.id}
+                    rules={[
+                        {
+                            required: state.formElement.settings.required,
+                            message: t('errors.standard_field_required')
                         }
-                    />
-                )}
-                {attribute.format === AttributeFormat.date_range && (
-                    <DSRangePickerWrapper
-                        state={state}
-                        _handleSubmit={_handleSubmit}
-                        infoButton={
-                            <ValueDetailsBtn
-                                value={fieldValue.value}
-                                attribute={attribute}
-                                size="small"
-                                shape="circle"
-                            />
-                        }
-                    />
-                )}
-            </Form.Item>
+                    ]}
+                >
+                    {attribute.format === AttributeFormat.text && (
+                        <DSInputWrapper
+                            state={state}
+                            handleSubmit={handleSubmit}
+                            infoButton={
+                                <ValueDetailsBtn
+                                    value={fieldValue.value}
+                                    attribute={attribute}
+                                    size="small"
+                                    shape="circle"
+                                />
+                            }
+                        />
+                    )}
+                    {attribute.format === AttributeFormat.date_range && (
+                        <DSRangePickerWrapper
+                            state={state}
+                            handleSubmit={handleSubmit}
+                            infoButton={
+                                <ValueDetailsBtn
+                                    value={fieldValue.value}
+                                    attribute={attribute}
+                                    size="small"
+                                    shape="circle"
+                                />
+                            }
+                        />
+                    )}
+                </Form.Item>
+            )}
 
             {attributeFormatsWithoutDS.includes(attribute.format) && (
                 <>
@@ -645,7 +649,7 @@ function StandardFieldValue({
                                 <ValuesList
                                     attribute={attribute}
                                     valuesList={valuesList}
-                                    onValueSelect={_handleSubmit}
+                                    onValueSelect={handleSubmit}
                                     onValueCopy={_handleValueCopy}
                                 />
                             )}

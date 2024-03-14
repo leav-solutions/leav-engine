@@ -15,7 +15,7 @@ interface IDSRangePickerWrapperProps {
     infoButton: ReactNode;
     value?: RangePickerProps['value'];
     onChange?: RangePickerProps['onChange'];
-    _handleSubmit: (value: StandardValueTypes, id?: string) => void;
+    handleSubmit: (value: StandardValueTypes, id?: string) => void;
 }
 
 const InputContainer = styled.div`
@@ -39,7 +39,7 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
     infoButton,
     value,
     onChange,
-    _handleSubmit
+    handleSubmit
 }) => {
     const {errors} = Form.Item.useStatus();
     const isRequired = state.formElement.settings.required;
@@ -60,7 +60,7 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
             return;
         }
 
-        _handleSubmit(dateToSave, state.attribute.id);
+        handleSubmit(dateToSave, state.attribute.id);
     };
 
     return (

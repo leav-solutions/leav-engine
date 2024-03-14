@@ -4,10 +4,7 @@
 import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID, simpleStringHash, IDateRangeValue} from '@leav/utils';
 import {useEffect, useMemo} from 'react';
 import {ErrorDisplay} from '_ui/components';
-import useGetRecordForm, {
-    RecordFormElementsValue,
-    RecordFormElementsValueStandardValue
-} from '_ui/hooks/useGetRecordForm';
+import useGetRecordForm, {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
 import {useGetRecordUpdatesSubscription} from '_ui/hooks/useGetRecordUpdatesSubscription';
 import useRecordsConsultationHistory from '_ui/hooks/useRecordsConsultationHistory';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -23,6 +20,7 @@ import {DeleteMultipleValuesFunc, DeleteValueFunc, FormElement, SubmitValueFunc}
 import {Form} from 'antd';
 import {useForm} from 'antd/lib/form/Form';
 import dayjs from 'dayjs';
+import {EDIT_OR_CREATE_RECORD_FORM_ID} from './formId';
 
 interface IEditRecordContentProps {
     record: IRecordIdentityWhoAmI | null;
@@ -132,43 +130,45 @@ function EditRecordContent({
         uiElement: formComponents[FormUIElementTypes.FIELDS_CONTAINER]
     };
 
-    const antdFormInitialValues = {};
-    recordForm.elements.forEach(element => {
+    const hasDateRangeValues = (dateRange: unknown): dateRange is IDateRangeValue => {
+        return (dateRange as IDateRangeValue).from !== undefined;
+    };
+
+    const antdFormInitialValues = recordForm.elements.reduce((acc, element) => {
         const {attribute, values} = element;
         if (!attribute) {
-            return;
-        }
-        const fieldValue = values[0] as RecordFormElementsValueStandardValue;
-        if (attribute.format === AttributeFormat.text) {
-            antdFormInitialValues[attribute.id] = fieldValue?.raw_value || '';
+            return acc;
         }
 
-        const hasDateRangeValues = (dateRange: unknown): dateRange is IDateRangeValue => {
-            return (dateRange as IDateRangeValue).from !== undefined;
-        };
+        const fieldValue = values[0] as RecordFormElementsValueStandardValue;
+        if (attribute.format === AttributeFormat.text) {
+            acc[attribute.id] = fieldValue?.raw_value || '';
+        }
 
         if (attribute.format === AttributeFormat.date_range) {
             if (fieldValue?.raw_value) {
                 if (hasDateRangeValues(fieldValue.raw_value)) {
-                    antdFormInitialValues[attribute.id] = [
+                    acc[attribute.id] = [
                         dayjs.unix(Number(fieldValue.raw_value.from)),
                         dayjs.unix(Number(fieldValue.raw_value.to))
                     ];
                 } else if (typeof fieldValue.raw_value === 'string') {
                     const convertedFieldValue = JSON.parse(fieldValue.raw_value);
-                    antdFormInitialValues[attribute.id] = [
+                    acc[attribute.id] = [
                         dayjs.unix(Number(convertedFieldValue.from)),
                         dayjs.unix(Number(convertedFieldValue.to))
                     ];
                 }
             }
         }
-    });
+
+        return acc;
+    }, {});
 
     // Use a hash of record form as a key to force a full re-render when the form changes
     return (
         <Form
-            id="createAndEditRecordForm"
+            id={EDIT_OR_CREATE_RECORD_FORM_ID}
             form={antForm}
             initialValues={antdFormInitialValues}
             onFinish={handleRecordSubmit}

@@ -12,6 +12,7 @@ import {RecordIdentityFragment} from '_ui/_gqlTypes';
 import {EditRecord} from '../EditRecord';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark, faFloppyDisk, faRotateRight, faLayerGroup} from '@fortawesome/free-solid-svg-icons';
+import {EDIT_OR_CREATE_RECORD_FORM_ID} from '../EditRecordContent/formId';
 
 interface IEditRecordModalProps {
     open: boolean;
@@ -81,7 +82,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
                 key="submit"
                 htmlType="submit"
                 type="primary"
-                form="createAndEditRecordForm"
+                form={EDIT_OR_CREATE_RECORD_FORM_ID}
                 aria-label={t('global.submit')}
                 icon={<FontAwesomeIcon icon={faFloppyDisk} />}
             >
