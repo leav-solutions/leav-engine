@@ -8,12 +8,13 @@ import {Form} from 'antd';
 import dayjs from 'dayjs';
 import {StandardValueTypes} from '../../../_types';
 import {styled} from 'styled-components';
+import {RangePickerProps} from 'antd/lib/date-picker';
 
 interface IDSRangePickerWrapperProps {
     state: IStandardFieldReducerState;
     infoButton: ReactNode;
-    value?: string;
-    onChange?: (e) => void;
+    value?: RangePickerProps['value'];
+    onChange?: RangePickerProps['onChange'];
     _handleSubmit: (value: StandardValueTypes, id?: string) => void;
 }
 
@@ -43,14 +44,17 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
     const {errors} = Form.Item.useStatus();
     const isRequired = state.formElement.settings.required;
 
-    const _handleDateChange: (daysjsDates: [dayjs.Dayjs, dayjs.Dayjs]) => void = daysjsDates => {
+    const _handleDateChange: (daysjsDates: [dayjs.Dayjs, dayjs.Dayjs], dateStrings: [string, string]) => void = (
+        daysjsDates,
+        dateStrings
+    ) => {
         let dateToSave = {from: null, to: null};
         if (daysjsDates) {
             const [dateFrom, dateTo] = daysjsDates;
             dateToSave = {from: String(dateFrom.unix()), to: String(dateTo.unix())};
         }
 
-        onChange(daysjsDates);
+        onChange(daysjsDates, dateStrings);
 
         if (isRequired && dateToSave.from === null) {
             return;
@@ -69,7 +73,7 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
                 status={errors.length > 0 ? 'error' : undefined}
                 disabled={state.isReadOnly}
             />
-            {/*TODO : Move actions inside KitInput when DS is updated*/}
+            {/*TODO : Move actions inside KitRangePicker when DS is updated*/}
             <div className="actions">{infoButton}</div>
         </InputContainer>
     );

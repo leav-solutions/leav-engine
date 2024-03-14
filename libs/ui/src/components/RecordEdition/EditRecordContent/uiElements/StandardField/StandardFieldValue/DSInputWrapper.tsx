@@ -4,15 +4,15 @@
 import {KitInput} from 'aristid-ds';
 import {FocusEvent, FunctionComponent, ReactNode} from 'react';
 import {IStandardFieldReducerState} from '../../../reducers/standardFieldReducer/standardFieldReducer';
-
 import {Form} from 'antd';
 import styled from 'styled-components';
+import {InputProps} from 'antd/lib';
 
 interface IDSInputWrapperProps {
     state: IStandardFieldReducerState;
     infoButton: ReactNode;
-    value?: string;
-    onChange?: () => void;
+    value?: InputProps['value'];
+    onChange?: InputProps['onChange'];
     _handleSubmit: (value: string, id?: string) => void;
 }
 
