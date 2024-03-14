@@ -4,9 +4,8 @@
 import {KitInput} from 'aristid-ds';
 import {FocusEvent, FunctionComponent, ReactNode} from 'react';
 import {IStandardFieldReducerState} from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import {Form} from 'antd';
+import {Form, InputProps} from 'antd';
 import styled from 'styled-components';
-import {InputProps} from 'antd/lib';
 
 interface IDSInputWrapperProps {
     state: IStandardFieldReducerState;

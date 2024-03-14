@@ -131,7 +131,7 @@ function EditRecordContent({
     };
 
     const hasDateRangeValues = (dateRange: unknown): dateRange is IDateRangeValue => {
-        return (dateRange as IDateRangeValue).from !== undefined;
+        return (dateRange as IDateRangeValue).from !== undefined && (dateRange as IDateRangeValue).to !== undefined;
     };
 
     const antdFormInitialValues = recordForm.elements.reduce((acc, element) => {

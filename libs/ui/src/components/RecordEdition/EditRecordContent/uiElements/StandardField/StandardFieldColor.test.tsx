@@ -97,13 +97,11 @@ describe('StandardField, Color input', () => {
 
         // Update color value
         colorPickerElem.focus();
-        userEvent.clear(colorPickerElem);
-        userEvent.type(colorPickerElem, newColorValue);
-        userEvent.click(screen.getByRole('button', {name: 'global.submit'}));
+        await userEvent.clear(colorPickerElem);
+        await userEvent.type(colorPickerElem, newColorValue);
+        await userEvent.click(screen.getByRole('button', {name: 'global.submit'}));
 
         expect(colorPickerElem).not.toBeInTheDocument();
-        await waitFor(() => {
-            expect(mockHandleSubmit).toHaveBeenCalled();
-        });
+        expect(mockHandleSubmit).toHaveBeenCalled();
     });
 });

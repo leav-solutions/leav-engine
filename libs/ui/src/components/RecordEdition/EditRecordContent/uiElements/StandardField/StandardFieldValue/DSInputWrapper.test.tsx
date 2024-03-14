@@ -6,7 +6,7 @@ import {
     StandardFieldValueState
 } from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {mockRecord} from '_ui/__mocks__/common/record';
-import {mockFormElementInput} from '_ui/__mocks__/common/form';
+import {formElementBase, mockFormElementInput} from '_ui/__mocks__/common/form';
 import {mockAttributeLink} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
 import {Form} from 'antd';
@@ -66,7 +66,7 @@ describe('DSInputWrapper', () => {
         jest.resetAllMocks();
     });
 
-    test('should not submit default value if field is not required', async () => {
+    test('Should submit empty value if field is not required', async () => {
         const state = getInitialState(false);
         render(
             <Form>
@@ -83,8 +83,8 @@ describe('DSInputWrapper', () => {
         expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
     });
 
-    describe('with required input', () => {
-        test('should submit the value if field is not empty', async () => {
+    describe('With required input', () => {
+        test('Should submit the value if field is not empty', async () => {
             const state = getInitialState(true);
             render(
                 <Form>
@@ -103,7 +103,7 @@ describe('DSInputWrapper', () => {
             expect(mockHandleSubmit).toHaveBeenCalledWith(text, state.attribute.id);
         });
 
-        test('should submit the default value if field is empty', async () => {
+        test('Should submit the default value if field is empty', async () => {
             const state = getInitialState(true);
             render(
                 <Form>
@@ -117,7 +117,7 @@ describe('DSInputWrapper', () => {
             await user.click(input);
             await user.tab();
 
-            expect(mockHandleSubmit).toHaveBeenCalledWith('my_raw_value', state.attribute.id);
+            expect(mockHandleSubmit).toHaveBeenCalledWith(formElementBase.values[0].raw_value, state.attribute.id);
         });
     });
 });

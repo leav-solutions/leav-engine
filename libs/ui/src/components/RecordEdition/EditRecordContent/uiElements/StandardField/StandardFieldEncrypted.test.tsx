@@ -91,9 +91,9 @@ describe('StandardField, Color input', () => {
         expect(inputElem).toHaveValue();
         expect(inputElem).not.toHaveValue('my_hashed_pwd');
 
-        userEvent.click(inputElem);
+        await userEvent.click(inputElem);
 
-        const pwdElem = await screen.findByTestId('encrypted-input');
+        const pwdElem = screen.getByTestId('encrypted-input');
 
         expect(pwdElem).toBeInTheDocument();
         expect(pwdElem).toHaveValue('');

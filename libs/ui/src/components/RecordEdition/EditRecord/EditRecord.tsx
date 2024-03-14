@@ -132,7 +132,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
 
     const [pendingValues, setPendingValues] = useState<IPendingValues>({});
 
-    // As _handleRecordSubmit is called via the callback of an event listener, it won't have access to the latest state.
+    // As __handleRecordSubmit is called via the callback of an event listener, it won't have access to the latest state.
     // We use a ref to store the latest state and access it in the callback
     const pendingValuesRef = useRef(pendingValues);
 
@@ -319,7 +319,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     /**
      * Submit the whole record: create record and batch save all stored values
      */
-    const handleRecordSubmit = async () => {
+    const _handleRecordSubmit = async () => {
         const currentPendingValues = pendingValuesRef.current ?? {};
         if (!!!Object.keys(currentPendingValues).length) {
             return;
@@ -454,7 +454,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                                 <EditRecordContent
                                     record={record}
                                     library={library}
-                                    handleRecordSubmit={handleRecordSubmit}
+                                    handleRecordSubmit={_handleRecordSubmit}
                                     onValueSubmit={_handleValueSubmit}
                                     onValueDelete={_handleDeleteValue}
                                     onDeleteMultipleValues={_handleDeleteAllValues}

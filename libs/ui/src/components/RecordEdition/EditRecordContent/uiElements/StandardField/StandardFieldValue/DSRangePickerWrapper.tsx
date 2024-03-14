@@ -44,23 +44,24 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
     const {errors} = Form.Item.useStatus();
     const isRequired = state.formElement.settings.required;
 
-    const _handleDateChange: (daysjsDates: [dayjs.Dayjs, dayjs.Dayjs], dateStrings: [string, string]) => void = (
-        daysjsDates,
-        dateStrings
-    ) => {
-        let dateToSave = {from: null, to: null};
-        if (daysjsDates) {
-            const [dateFrom, dateTo] = daysjsDates;
-            dateToSave = {from: String(dateFrom.unix()), to: String(dateTo.unix())};
-        }
+    const _handleDateChange: (
+        rangePickerDates: [dayjs.Dayjs, dayjs.Dayjs] | null,
+        rangePickerDatesStrings: [string, string] | null
+    ) => void = (rangePickerDates, rangePickerDatesStrings) => {
+        onChange(rangePickerDates, rangePickerDatesStrings);
 
-        onChange(daysjsDates, dateStrings);
-
-        if (isRequired && dateToSave.from === null) {
+        if (isRequired && rangePickerDates === null) {
             return;
         }
 
-        handleSubmit(dateToSave, state.attribute.id);
+        const datesToSave = {from: null, to: null};
+        if (rangePickerDates !== null) {
+            const [dateFrom, dateTo] = rangePickerDates;
+            datesToSave.from = String(dateFrom.unix());
+            datesToSave.to = String(dateTo.unix());
+        }
+
+        handleSubmit(datesToSave, state.attribute.id);
     };
 
     return (

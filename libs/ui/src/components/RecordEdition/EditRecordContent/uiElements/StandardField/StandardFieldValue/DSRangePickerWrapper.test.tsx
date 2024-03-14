@@ -65,11 +65,12 @@ describe('DSRangePickerWrapper', () => {
 
     beforeEach(() => {
         user = userEvent.setup({});
-        jest.resetAllMocks();
+        mockOnChange.mockReset();
+        mockHandleSubmit.mockReset();
     });
 
-    describe('without required field', () => {
-        test('should call onChange with value', async () => {
+    describe('Without required field', () => {
+        test('Should call onChange with value', async () => {
             const state = getInitialState(false);
             render(
                 <Form>
@@ -90,11 +91,14 @@ describe('DSRangePickerWrapper', () => {
             await user.click(screen.getByTitle(currentDate));
             await user.click(screen.getByTitle(currentDate));
 
-            expect(mockOnChange).toHaveBeenCalled();
+            expect(mockOnChange).toHaveBeenCalledWith(
+                [dayjs(currentDate), dayjs(currentDate)],
+                [currentDate, currentDate]
+            );
             expect(mockHandleSubmit).toHaveBeenCalledWith(expect.anything(), state.attribute.id);
         });
 
-        test('should not save to LEAV if field becomes empty', async () => {
+        test('Should save to LEAV if field becomes empty', async () => {
             const state = getInitialState(false);
             render(
                 <Form>
@@ -125,8 +129,8 @@ describe('DSRangePickerWrapper', () => {
         });
     });
 
-    describe('with required field', () => {
-        test('should submit the value if field is not empty', async () => {
+    describe('With required field', () => {
+        test('Should submit the value if field is not empty', async () => {
             const state = getInitialState(true);
             render(
                 <Form>
@@ -151,7 +155,7 @@ describe('DSRangePickerWrapper', () => {
             expect(mockHandleSubmit).toHaveBeenCalledWith(expect.anything(), state.attribute.id);
         });
 
-        test('should not save to LEAV if field becomes empty', async () => {
+        test('Should not save to LEAV if field becomes empty', async () => {
             const state = getInitialState(true);
             render(
                 <Form>

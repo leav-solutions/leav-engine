@@ -111,12 +111,10 @@ describe('StandardField, Rich Text input', () => {
 
         await userEvent.click(richTextElemOpen);
 
-        const toolBarElem = await screen.findByRole('toolbar');
+        const toolBarElem = screen.getByRole('toolbar');
         expect(toolBarElem).toBeInTheDocument();
 
         await userEvent.click(screen.getByRole('button', {name: 'global.submit'}));
-        await waitFor(() => {
-            expect(mockHandleSubmit).toHaveBeenCalled();
-        });
+        expect(mockHandleSubmit).toHaveBeenCalled();
     });
 });

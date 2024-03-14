@@ -92,8 +92,8 @@ describe('StandardField, Numeric input', () => {
         const inputElem = screen.getByRole('textbox');
         expect(inputElem).toHaveValue('123456');
 
-        userEvent.click(inputElem);
+        await userEvent.click(inputElem);
 
-        expect(await screen.findByRole('spinbutton')).toBeInTheDocument();
+        expect(screen.getByRole('spinbutton')).toBeInTheDocument();
     });
 });

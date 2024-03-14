@@ -173,12 +173,6 @@ const ButtonsWrapper = styled.div`
     }
 `;
 
-const FormItem = styled(Form.Item)`
-    && {
-        margin: 0;
-    }
-`;
-
 const RichTextEditorInput = React.lazy(() => import('./Inputs/RichTextEditorInput'));
 
 const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInputProps) => JSX.Element} = {
@@ -618,7 +612,10 @@ function StandardFieldValue({
             {attributeFormatsWithoutDS.includes(attribute.format) && (
                 <>
                     {fieldValue.isEditing && <Dimmer onClick={_handleCancel} />}
-                    <FormWrapper $isEditing={fieldValue.isEditing} className={!fieldValue.index ? 'first-value' : ''}>
+                    <FormWrapper
+                        $isEditing={fieldValue.isEditing}
+                        className={fieldValue.index === 0 ? 'first-value' : ''}
+                    >
                         <Popover placement="topLeft" open={isErrorVisible} content={errorContent}>
                             <InputWrapper
                                 $isEditing={fieldValue.isEditing}
