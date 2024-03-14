@@ -259,7 +259,7 @@ function StandardFieldValue({
         }
 
         const convertedValue = typeof valueToSave === 'object' ? JSON.stringify(valueToSave) : valueToSave;
-        onSubmit(fieldValue.idValue ?? id, convertedValue);
+        onSubmit(id ?? fieldValue.idValue, convertedValue);
     };
 
     const _handlePressEnter = async () => {
@@ -359,28 +359,6 @@ function StandardFieldValue({
 
             if (hasValue) {
                 switch (attribute.format) {
-                    case AttributeFormat.date_range:
-                        const {editingValue} = fieldValue;
-                        const isCreation = typeof editingValue === 'string' && editingValue.length > 0;
-                        let dateRangeValue = null;
-
-                        if (isCreation) {
-                            const convertedFieldValue: IDateRangeValue = JSON.parse(editingValue);
-                            dateRangeValue = {
-                                from: new Date(Number(convertedFieldValue.from) * 1000).toLocaleDateString(
-                                    i18n.language
-                                ),
-                                to: new Date(Number(convertedFieldValue.to) * 1000).toLocaleDateString(i18n.language)
-                            };
-                        } else {
-                            dateRangeValue = fieldValue.displayValue as IDateRangeValue;
-                        }
-
-                        displayedValue =
-                            dateRangeValue?.from && dateRangeValue?.to
-                                ? stringifyDateRangeValue(dateRangeValue, t)
-                                : '';
-                        break;
                     case AttributeFormat.encrypted:
                         displayedValue = '•••••••••';
                         break;

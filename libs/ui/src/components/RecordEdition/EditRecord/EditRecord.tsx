@@ -107,7 +107,6 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     containerStyle,
     buttonsRefs
 }) => {
-    const {t} = useSharedTranslation();
     const isCreationMode = !record;
 
     const [state, dispatch] = useReducer(editRecordReducer, {
