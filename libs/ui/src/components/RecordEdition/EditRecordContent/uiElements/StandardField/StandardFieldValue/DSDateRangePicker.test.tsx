@@ -78,7 +78,7 @@ describe('DSRangePickerWrapper', () => {
                             state={state}
                             infoButton=""
                             onChange={mockOnChange}
-                            _handleSubmit={mockHandleSubmit}
+                            handleSubmit={mockHandleSubmit}
                         />
                     </Form.Item>
                 </Form>
@@ -103,7 +103,7 @@ describe('DSRangePickerWrapper', () => {
                             state={state}
                             infoButton=""
                             onChange={mockOnChange}
-                            _handleSubmit={mockHandleSubmit}
+                            handleSubmit={mockHandleSubmit}
                         />
                     </Form.Item>
                 </Form>
@@ -135,7 +135,7 @@ describe('DSRangePickerWrapper', () => {
                             state={state}
                             infoButton=""
                             onChange={mockOnChange}
-                            _handleSubmit={mockHandleSubmit}
+                            handleSubmit={mockHandleSubmit}
                         />
                     </Form.Item>
                 </Form>
@@ -160,7 +160,7 @@ describe('DSRangePickerWrapper', () => {
                             state={state}
                             infoButton=""
                             onChange={mockOnChange}
-                            _handleSubmit={mockHandleSubmit}
+                            handleSubmit={mockHandleSubmit}
                         />
                     </Form.Item>
                 </Form>
