@@ -87,15 +87,22 @@ describe('DSRangePickerWrapper', () => {
 
             const rangePickerInputs = screen.getAllByRole('textbox');
             await user.click(rangePickerInputs[0]);
-            const currentDate = dayjs().format('YYYY-MM-DD');
-            await user.click(screen.getByTitle(currentDate));
-            await user.click(screen.getByTitle(currentDate));
+            const startRangeDate = dayjs().format('YYYY-MM-DD');
+            const endRangeDate = dayjs().add(1, 'day').format('YYYY-MM-DD');
+            await user.click(screen.getByTitle(startRangeDate));
+            await user.click(screen.getByTitle(endRangeDate));
+
+            const unixStartRangeDate = dayjs(startRangeDate).unix().toString();
+            const unixEndRangeDate = dayjs(endRangeDate).unix().toString();
 
             expect(mockOnChange).toHaveBeenCalledWith(
-                [dayjs(currentDate), dayjs(currentDate)],
-                [currentDate, currentDate]
+                [dayjs(startRangeDate), dayjs(endRangeDate)],
+                [startRangeDate, endRangeDate]
             );
-            expect(mockHandleSubmit).toHaveBeenCalledWith(expect.anything(), state.attribute.id);
+            expect(mockHandleSubmit).toHaveBeenCalledWith(
+                {from: unixStartRangeDate, to: unixEndRangeDate},
+                state.attribute.id
+            );
         });
 
         test('Should save to LEAV if field becomes empty', async () => {
@@ -147,12 +154,20 @@ describe('DSRangePickerWrapper', () => {
 
             const rangePickerInputs = screen.getAllByRole('textbox');
             await user.click(rangePickerInputs[0]);
-            const currentDate = dayjs().format('YYYY-MM-DD');
-            await user.click(screen.getByTitle(currentDate));
-            await user.click(screen.getByTitle(currentDate));
+            const startRangeDate = dayjs().format('YYYY-MM-DD');
+            const endRangeDate = dayjs().add(1, 'day').format('YYYY-MM-DD');
+
+            await user.click(screen.getByTitle(startRangeDate));
+            await user.click(screen.getByTitle(endRangeDate));
+
+            const unixStartRangeDate = dayjs(startRangeDate).unix().toString();
+            const unixEndRangeDate = dayjs(endRangeDate).unix().toString();
 
             expect(mockOnChange).toHaveBeenCalled();
-            expect(mockHandleSubmit).toHaveBeenCalledWith(expect.anything(), state.attribute.id);
+            expect(mockHandleSubmit).toHaveBeenCalledWith(
+                {from: unixStartRangeDate, to: unixEndRangeDate},
+                state.attribute.id
+            );
         });
 
         test('Should not save to LEAV if field becomes empty', async () => {

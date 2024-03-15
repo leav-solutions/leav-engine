@@ -12,7 +12,7 @@ import {RecordIdentityFragment} from '_ui/_gqlTypes';
 import {EditRecord} from '../EditRecord';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark, faFloppyDisk, faRotateRight, faLayerGroup} from '@fortawesome/free-solid-svg-icons';
-import {EDIT_OR_CREATE_RECORD_FORM_ID} from '../EditRecordContent/formId';
+import {EDIT_OR_CREATE_RECORD_FORM_ID} from '../EditRecordContent/formConstants';
 
 interface IEditRecordModalProps {
     open: boolean;

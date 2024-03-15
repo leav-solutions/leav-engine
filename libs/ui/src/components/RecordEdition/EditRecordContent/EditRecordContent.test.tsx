@@ -89,9 +89,9 @@ describe('EditRecordContent', () => {
             <EditRecordContent
                 record={mockRecord}
                 library={mockRecord.library.id}
+                onRecordSubmit={jest.fn()}
                 onValueDelete={jest.fn()}
                 onValueSubmit={jest.fn()}
-                handleRecordSubmit={jest.fn()}
                 onDeleteMultipleValues={jest.fn()}
                 readonly={false}
             />,
@@ -122,7 +122,7 @@ describe('EditRecordContent', () => {
             <EditRecordContent
                 record={mockRecord}
                 library={mockRecord.library.id}
-                handleRecordSubmit={jest.fn()}
+                onRecordSubmit={jest.fn()}
                 onValueDelete={jest.fn()}
                 onValueSubmit={jest.fn()}
                 onDeleteMultipleValues={jest.fn()}

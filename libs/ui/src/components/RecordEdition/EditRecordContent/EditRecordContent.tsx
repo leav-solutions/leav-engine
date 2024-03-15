@@ -20,12 +20,12 @@ import {DeleteMultipleValuesFunc, DeleteValueFunc, FormElement, SubmitValueFunc}
 import {Form} from 'antd';
 import {useForm} from 'antd/lib/form/Form';
 import dayjs from 'dayjs';
-import {EDIT_OR_CREATE_RECORD_FORM_ID} from './formId';
+import {EDIT_OR_CREATE_RECORD_FORM_ID} from './formConstants';
 
 interface IEditRecordContentProps {
     record: IRecordIdentityWhoAmI | null;
     library: string;
-    handleRecordSubmit: () => void;
+    onRecordSubmit: () => void;
     onValueSubmit: SubmitValueFunc;
     onValueDelete: DeleteValueFunc;
     onDeleteMultipleValues: DeleteMultipleValuesFunc;
@@ -35,7 +35,7 @@ interface IEditRecordContentProps {
 function EditRecordContent({
     record,
     library,
-    handleRecordSubmit,
+    onRecordSubmit,
     onValueSubmit,
     onValueDelete,
     onDeleteMultipleValues,
@@ -141,24 +141,27 @@ function EditRecordContent({
         }
 
         const fieldValue = values[0] as RecordFormElementsValueStandardValue;
+
         if (attribute.format === AttributeFormat.text) {
             acc[attribute.id] = fieldValue?.raw_value || '';
         }
 
         if (attribute.format === AttributeFormat.date_range) {
-            if (fieldValue?.raw_value) {
-                if (hasDateRangeValues(fieldValue.raw_value)) {
-                    acc[attribute.id] = [
-                        dayjs.unix(Number(fieldValue.raw_value.from)),
-                        dayjs.unix(Number(fieldValue.raw_value.to))
-                    ];
-                } else if (typeof fieldValue.raw_value === 'string') {
-                    const convertedFieldValue = JSON.parse(fieldValue.raw_value);
-                    acc[attribute.id] = [
-                        dayjs.unix(Number(convertedFieldValue.from)),
-                        dayjs.unix(Number(convertedFieldValue.to))
-                    ];
-                }
+            if (!fieldValue?.raw_value) {
+                return acc;
+            }
+
+            if (hasDateRangeValues(fieldValue.raw_value)) {
+                acc[attribute.id] = [
+                    dayjs.unix(Number(fieldValue.raw_value.from)),
+                    dayjs.unix(Number(fieldValue.raw_value.to))
+                ];
+            } else if (typeof fieldValue.raw_value === 'string') {
+                const convertedFieldValue = JSON.parse(fieldValue.raw_value);
+                acc[attribute.id] = [
+                    dayjs.unix(Number(convertedFieldValue.from)),
+                    dayjs.unix(Number(convertedFieldValue.to))
+                ];
             }
         }
 
@@ -171,7 +174,7 @@ function EditRecordContent({
             id={EDIT_OR_CREATE_RECORD_FORM_ID}
             form={antForm}
             initialValues={antdFormInitialValues}
-            onFinish={handleRecordSubmit}
+            onFinish={onRecordSubmit}
         >
             <RecordEditionContext.Provider value={{elements: elementsByContainer, readOnly: readonly, record}}>
                 <rootElement.uiElement

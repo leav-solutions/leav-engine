@@ -454,7 +454,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                                 <EditRecordContent
                                     record={record}
                                     library={library}
-                                    handleRecordSubmit={_handleRecordSubmit}
+                                    onRecordSubmit={_handleRecordSubmit}
                                     onValueSubmit={_handleValueSubmit}
                                     onValueDelete={_handleDeleteValue}
                                     onDeleteMultipleValues={_handleDeleteAllValues}

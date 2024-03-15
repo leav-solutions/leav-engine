@@ -11,7 +11,7 @@ import {RecordIdentityFragment} from '_ui/_gqlTypes';
 import {EditRecord} from '../EditRecord';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark, faFloppyDisk, faRotateRight} from '@fortawesome/free-solid-svg-icons';
-import {EDIT_OR_CREATE_RECORD_FORM_ID} from '../EditRecordContent/formId';
+import {EDIT_OR_CREATE_RECORD_FORM_ID} from '../EditRecordContent/formConstants';
 
 interface IEditRecordPageProps {
     record: RecordIdentityFragment['whoAmI'] | null;

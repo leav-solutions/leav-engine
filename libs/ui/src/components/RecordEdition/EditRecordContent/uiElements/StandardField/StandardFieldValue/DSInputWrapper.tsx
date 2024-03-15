@@ -6,6 +6,7 @@ import {FocusEvent, FunctionComponent, ReactNode} from 'react';
 import {IStandardFieldReducerState} from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {Form, InputProps} from 'antd';
 import styled from 'styled-components';
+import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
 
 interface IDSInputWrapperProps {
     state: IStandardFieldReducerState;
@@ -46,7 +47,7 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
         let valuetoSubmit = e.target.value;
         if (isRequired && valuetoSubmit === '' && state.formElement.values[0]) {
-            valuetoSubmit = (state.formElement.values[0] as any).raw_value;
+            valuetoSubmit = (state.formElement.values[0] as RecordFormElementsValueStandardValue).raw_value;
             form.setFieldValue(state.attribute.id, valuetoSubmit);
             form.validateFields();
         }
