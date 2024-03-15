@@ -8,7 +8,7 @@
     "@leav/ui": "workspace:libs/ui",
     "@leav/utils": "workspace:libs/utils",
     "antd": "5.14.0",
-    "aristid-ds": "2.0.0-60b909d",
+    "aristid-ds": "3.0.0-66e1ba6",
     "cross-fetch": "3.1.5",
     "graphql-ws": "5.12.0",
     "i18next": "22.5.0",
