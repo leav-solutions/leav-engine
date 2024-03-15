@@ -1,10 +1,9 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {KitButton, KitSpace, KitTypography} from 'aristid-ds';
-import {FunctionComponent, useRef} from 'react';
+import {KitButton, KitDivider, KitSpace, KitTypography} from 'aristid-ds';
+import {FunctionComponent, ReactNode, useRef} from 'react';
 import styled from 'styled-components';
-import {themeVars} from '_ui/antdTheme';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IValueVersion} from '_ui/types';
 import {RecordIdentityFragment} from '_ui/_gqlTypes';
@@ -15,9 +14,10 @@ import {faXmark, faFloppyDisk, faRotateRight} from '@fortawesome/free-solid-svg-
 interface IEditRecordPageProps {
     record: RecordIdentityFragment['whoAmI'] | null;
     library: string;
-    title?: string;
+    title?: ReactNode;
     afterCreate?: (newRecord: RecordIdentityFragment['whoAmI']) => void;
     valuesVersion?: IValueVersion;
+    showRefreshButton?: boolean;
     onClose: () => void;
 }
 
@@ -25,8 +25,8 @@ const Header = styled.div`
     grid-area: title;
     align-self: center;
     font-size: 1rem;
-    padding: 10px 20px;
-    border-bottom: 1px solid ${themeVars.borderColor};
+    padding: 16px 32px;
+    height: 82px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -38,6 +38,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     afterCreate,
     valuesVersion,
     title,
+    showRefreshButton = true,
     onClose
 }) => {
     const {t} = useSharedTranslation();
@@ -54,11 +55,23 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     return (
         <>
             <Header>
-                <KitTypography.Title level="h2" style={{margin: 0}}>
-                    {title ?? record?.label ?? t('record_edition.new_record')}
-                </KitTypography.Title>
+                {title !== undefined ? (
+                    title
+                ) : (
+                    <KitTypography.Title level="h2" style={{margin: 0}}>
+                        {record?.label ?? t('record_edition.new_record')}
+                    </KitTypography.Title>
+                )}
+
                 <KitSpace>
-                    <KitButton ref={refreshButtonRef} type="text" icon={<FontAwesomeIcon icon={faRotateRight} />} />
+                    {showRefreshButton && (
+                        <KitButton
+                            ref={refreshButtonRef}
+                            aria-label="refresh"
+                            type="text"
+                            icon={<FontAwesomeIcon icon={faRotateRight} />}
+                        />
+                    )}
                     <KitButton ref={closeButtonRef} icon={<FontAwesomeIcon icon={faXmark} />}>
                         {closeButtonLabel}
                     </KitButton>
@@ -69,6 +82,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
                     )}
                 </KitSpace>
             </Header>
+            <KitDivider noMargin color="lightGrey" />
             <EditRecord
                 record={record}
                 library={library}
@@ -76,6 +90,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
                 afterCreate={afterCreate}
                 buttonsRefs={{submit: submitButtonRef, close: closeButtonRef, refresh: refreshButtonRef}}
                 onClose={onClose}
+                containerStyle={{height: 'calc(100% - 82px)'}}
             />
         </>
     );

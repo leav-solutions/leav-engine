@@ -4,7 +4,6 @@
 import isEqual from 'lodash/isEqual';
 import {FunctionComponent, useEffect, useReducer, useRef, useState} from 'react';
 import styled, {CSSObject} from 'styled-components';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {themeVars} from '../../../antdTheme';
 import {ErrorDisplayTypes} from '../../../constants';
 import {useCanEditRecord} from '../../../hooks/useCanEditRecord';
@@ -54,7 +53,6 @@ interface IEditRecordProps {
     valuesVersion?: IValueVersion;
     showSidebar?: boolean;
     containerStyle?: CSSObject;
-
     // Here we're not in charge of buttons position. It might on a modal footer or pretty much anywhere.
     // We're using refs to still be able to handle the click on the buttons
     buttonsRefs: {
@@ -69,23 +67,20 @@ interface IPendingValues {
     [attributeId: string]: {[idValue: string]: ValueDetailsFragment};
 }
 
-const modalWidth = 1200;
 const sidebarWidth = 300;
 
 const Container = styled.div<{$showSidebar: boolean; style: CSSObject}>`
     display: grid;
-    grid-template-columns: ${props =>
-        props.$showSidebar ? `minmax(0, ${modalWidth - sidebarWidth}px) ${sidebarWidth}px` : '1fr'};
+    grid-template-columns: ${props => (props.$showSidebar ? `minmax(0, auto) ${sidebarWidth}px` : '1fr')};
     grid-template-areas: ${props => (props.$showSidebar ? '"content sidebar"' : '"content"')};
     overflow: hidden;
 `;
 
 const Content = styled.div`
     grid-area: content;
-    padding: 1em;
+    padding: 24px;
     overflow-x: hidden;
     overflow-y: scroll;
-    padding-right: 1rem;
 `;
 
 const Sidebar = styled.div`
@@ -108,7 +103,6 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     containerStyle,
     buttonsRefs
 }) => {
-    const {t} = useSharedTranslation();
     const isCreationMode = !record;
 
     const [state, dispatch] = useReducer(editRecordReducer, {
@@ -398,8 +392,6 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                 afterSave(newRecord);
             }
         }
-
-        onClose();
     };
 
     const _handleDeleteValue: DeleteValueFunc = async (value, attribute) => {

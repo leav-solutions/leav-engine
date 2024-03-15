@@ -36,6 +36,11 @@ export const CreateNewRecordButton: FunctionComponent<ICreateNewRecordButtonProp
         setIsCreateDirectoryModalVisible(false);
     };
 
+    const _handleAfterCreate = () => {
+        notifyNewCreation();
+        _handleRecordCreationClose();
+    };
+
     const _handleClickNew = () => {
         switch (libraryBehavior) {
             case LibraryBehavior.standard:
@@ -62,7 +67,7 @@ export const CreateNewRecordButton: FunctionComponent<ICreateNewRecordButtonProp
                     open={isRecordCreationVisible}
                     onClose={_handleRecordCreationClose}
                     valuesVersion={valuesVersions}
-                    afterCreate={notifyNewCreation}
+                    afterCreate={_handleAfterCreate}
                 />
             )}
             {isUploadFilesModalVisible && (

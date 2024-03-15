@@ -15,6 +15,7 @@ describe('EditRecordPage', () => {
 
         expect(screen.getByText('EditRecord')).toBeInTheDocument();
         expect(screen.getByText(/new_record/)).toBeInTheDocument();
+        expect(screen.getByLabelText('refresh')).toBeInTheDocument();
         expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
         expect(screen.getByRole('button', {name: /submit/})).toBeInTheDocument();
     });
@@ -24,14 +25,28 @@ describe('EditRecordPage', () => {
 
         expect(screen.getByText('EditRecord')).toBeInTheDocument();
         expect(screen.getByText(mockRecord.label)).toBeInTheDocument();
+        expect(screen.getByLabelText('refresh')).toBeInTheDocument();
         expect(screen.getByRole('button', {name: /close/})).toBeInTheDocument();
         expect(screen.queryByRole('button', {name: /submit/})).not.toBeInTheDocument();
     });
 
     test('Should display a custom title', async () => {
-        const customTitle = 'Some title';
-        render(<EditRecordPage library="test_lib" onClose={jest.fn()} record={mockRecord} title={customTitle} />);
+        render(<EditRecordPage library="test_lib" onClose={jest.fn()} record={mockRecord} title={'Custom title'} />);
 
-        expect(screen.getByText(customTitle)).toBeInTheDocument();
+        expect(screen.getByText('Custom title')).toBeInTheDocument();
+    });
+
+    test('Should hide refresh button if showRefreshButton is set to false', async () => {
+        render(
+            <EditRecordPage
+                library="test_lib"
+                onClose={jest.fn()}
+                record={mockRecord}
+                title={'Custom title'}
+                showRefreshButton={false}
+            />
+        );
+
+        expect(screen.queryByLabelText('refresh')).not.toBeInTheDocument();
     });
 });
