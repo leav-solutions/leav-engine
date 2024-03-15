@@ -88,8 +88,7 @@ describe('StandardField, Date Input', () => {
 
         const inputElem = screen.getByRole('textbox');
         await userEvent.click(inputElem);
-        const calendarElem = await screen.findByTestId('datepicker');
-        expect(calendarElem).toBeInTheDocument();
+        expect(screen.getByTestId('datepicker')).toBeInTheDocument();
 
         await userEvent.click(screen.getByRole('cell', {name: '2021-03-11'}));
 

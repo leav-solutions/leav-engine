@@ -247,7 +247,7 @@ function StandardFieldValue({
         }
     }, [fieldValue.isEditing, fieldValue.editingValue]);
 
-    const handleSubmit = async (valueToSave: StandardValueTypes, id?: string) => {
+    const _handleSubmit = async (valueToSave: StandardValueTypes, id?: string) => {
         if (valueToSave === '') {
             return _handleDelete();
         }
@@ -258,7 +258,7 @@ function StandardFieldValue({
 
     const _handlePressEnter = async () => {
         if (!isValuesListEnabled) {
-            return handleSubmit(fieldValue.editingValue);
+            return _handleSubmit(fieldValue.editingValue);
         }
 
         const valuesList = _getFilteredValuesList();
@@ -266,7 +266,7 @@ function StandardFieldValue({
             return;
         }
 
-        return handleSubmit(valuesList[0].value);
+        return _handleSubmit(valuesList[0].value);
     };
 
     const _handleDelete = async () => {
@@ -325,7 +325,7 @@ function StandardFieldValue({
     };
 
     const _handleClickSubmit = () => {
-        handleSubmit(fieldValue.editingValue);
+        _handleSubmit(fieldValue.editingValue);
     };
 
     const _handleValueCopy = (value: AnyPrimitive | IDateRangeValue) => {
@@ -399,7 +399,7 @@ function StandardFieldValue({
                 fieldValue={fieldValue}
                 onChange={_handleValueChange}
                 onFocus={_handleFocus}
-                onSubmit={handleSubmit}
+                onSubmit={_handleSubmit}
                 onPressEnter={_handlePressEnter}
                 settings={state.formElement.settings}
                 inputRef={inputRef}
@@ -568,7 +568,7 @@ function StandardFieldValue({
 
     return (
         <>
-            {attributeFormatsWithDS && (
+            {attributeFormatsWithDS.includes(attribute.format) && (
                 <Form.Item
                     name={attribute.id}
                     rules={[
@@ -581,7 +581,7 @@ function StandardFieldValue({
                     {attribute.format === AttributeFormat.text && (
                         <DSInputWrapper
                             state={state}
-                            handleSubmit={handleSubmit}
+                            handleSubmit={_handleSubmit}
                             infoButton={
                                 <ValueDetailsBtn
                                     value={fieldValue.value}
@@ -595,7 +595,7 @@ function StandardFieldValue({
                     {attribute.format === AttributeFormat.date_range && (
                         <DSRangePickerWrapper
                             state={state}
-                            handleSubmit={handleSubmit}
+                            handleSubmit={_handleSubmit}
                             infoButton={
                                 <ValueDetailsBtn
                                     value={fieldValue.value}
@@ -646,7 +646,7 @@ function StandardFieldValue({
                                 <ValuesList
                                     attribute={attribute}
                                     valuesList={valuesList}
-                                    onValueSelect={handleSubmit}
+                                    onValueSelect={_handleSubmit}
                                     onValueCopy={_handleValueCopy}
                                 />
                             )}

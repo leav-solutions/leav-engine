@@ -45,10 +45,10 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
     const isRequired = state.formElement.settings.required;
 
     const _handleDateChange: (
-        rangePickerDates: [dayjs.Dayjs, dayjs.Dayjs] | null,
-        rangePickerDatesStrings: [string, string] | null
-    ) => void = (rangePickerDates, rangePickerDatesStrings) => {
-        onChange(rangePickerDates, rangePickerDatesStrings);
+        rangePickerDates: [from: dayjs.Dayjs, to: dayjs.Dayjs] | null,
+        antOnChangeParams: [from: string, to: string] | null
+    ) => void = (rangePickerDates, ...antOnChangeParams) => {
+        onChange(rangePickerDates, ...antOnChangeParams);
 
         if (isRequired && rangePickerDates === null) {
             return;

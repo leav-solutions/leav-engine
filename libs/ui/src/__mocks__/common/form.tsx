@@ -18,7 +18,7 @@ import {mockAttributeSimple, mockFormAttribute} from './attribute';
 import {mockModifier} from './value';
 import {mockVersionProfile} from './versionProfile';
 
-export const formElementBase = {
+const formElementBase = {
     type: FormElementTypes.layout,
     attribute: null,
     valueError: null,

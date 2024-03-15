@@ -126,10 +126,10 @@ describe('DSRangePickerWrapper', () => {
             await user.click(screen.getByTitle(currentDate));
             await user.click(screen.getByTitle(currentDate));
 
-            expect(mockOnChange).toHaveBeenCalled();
-            expect(mockHandleSubmit).toHaveBeenCalled();
+            expect(mockOnChange).toHaveBeenCalledTimes(1);
+            expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
 
-            await user.click(screen.getByRole('button'));
+            await user.click(screen.getByRole('button')); // click on clear icon
 
             expect(mockOnChange).toHaveBeenCalledTimes(2);
             expect(mockHandleSubmit).toHaveBeenCalledTimes(2);
@@ -137,7 +137,7 @@ describe('DSRangePickerWrapper', () => {
     });
 
     describe('With required field', () => {
-        test('Should submit the value if field is not empty', async () => {
+        test('Should save to LEAV if field is not empty', async () => {
             const state = getInitialState(true);
             render(
                 <Form>
@@ -191,10 +191,10 @@ describe('DSRangePickerWrapper', () => {
             await user.click(screen.getByTitle(currentDate));
             await user.click(screen.getByTitle(currentDate));
 
-            expect(mockOnChange).toHaveBeenCalled();
-            expect(mockHandleSubmit).toHaveBeenCalled();
+            expect(mockOnChange).toHaveBeenCalledTimes(1);
+            expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
 
-            await user.click(screen.getByRole('button'));
+            await user.click(screen.getByRole('button')); // click on clear icon
 
             expect(mockOnChange).toHaveBeenCalledTimes(2);
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);

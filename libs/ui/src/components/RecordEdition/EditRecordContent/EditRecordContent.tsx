@@ -19,6 +19,7 @@ import {formComponents} from './uiElements';
 import {DeleteMultipleValuesFunc, DeleteValueFunc, FormElement, SubmitValueFunc} from './_types';
 import {Form} from 'antd';
 import {useForm} from 'antd/lib/form/Form';
+import {Store} from 'antd/lib/form/interface';
 import dayjs from 'dayjs';
 import {EDIT_OR_CREATE_RECORD_FORM_ID} from './formConstants';
 
@@ -130,12 +131,10 @@ function EditRecordContent({
         uiElement: formComponents[FormUIElementTypes.FIELDS_CONTAINER]
     };
 
-    const hasDateRangeValues = (dateRange: unknown): dateRange is IDateRangeValue => {
-        return (dateRange as IDateRangeValue).from !== undefined && (dateRange as IDateRangeValue).to !== undefined;
-    };
+    const hasDateRangeValues = (dateRange: unknown): dateRange is IDateRangeValue =>
+        (dateRange as IDateRangeValue).from !== undefined && (dateRange as IDateRangeValue).to !== undefined;
 
-    const antdFormInitialValues = recordForm.elements.reduce((acc, element) => {
-        const {attribute, values} = element;
+    const antdFormInitialValues = recordForm.elements.reduce<Store>((acc, {attribute, values}) => {
         if (!attribute) {
             return acc;
         }
@@ -143,7 +142,7 @@ function EditRecordContent({
         const fieldValue = values[0] as RecordFormElementsValueStandardValue;
 
         if (attribute.format === AttributeFormat.text) {
-            acc[attribute.id] = fieldValue?.raw_value || '';
+            acc[attribute.id] = fieldValue?.raw_value ?? '';
         }
 
         if (attribute.format === AttributeFormat.date_range) {

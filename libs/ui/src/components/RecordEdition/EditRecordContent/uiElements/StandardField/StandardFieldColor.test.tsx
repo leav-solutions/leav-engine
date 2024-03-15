@@ -90,7 +90,7 @@ describe('StandardField, Color input', () => {
         );
         // Open ColorPicker Element
         const colorElem = screen.getByRole('textbox');
-        userEvent.click(colorElem);
+        await userEvent.click(colorElem);
 
         const colorPickerElem = screen.getByRole('textbox');
         expect(colorPickerElem).toBeInTheDocument();

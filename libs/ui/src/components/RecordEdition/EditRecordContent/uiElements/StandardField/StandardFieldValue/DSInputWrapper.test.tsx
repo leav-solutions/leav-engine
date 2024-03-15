@@ -6,10 +6,11 @@ import {
     StandardFieldValueState
 } from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {mockRecord} from '_ui/__mocks__/common/record';
-import {formElementBase, mockFormElementInput} from '_ui/__mocks__/common/form';
+import {mockFormElementInput} from '_ui/__mocks__/common/form';
 import {mockAttributeLink} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
 import {Form} from 'antd';
+import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
 
 const label = 'label';
 const idValue = '123';
@@ -63,7 +64,7 @@ describe('DSInputWrapper', () => {
 
     beforeEach(() => {
         user = userEvent.setup({});
-        jest.resetAllMocks();
+        mockHandleSubmit.mockReset();
     });
 
     test('Should submit empty value if field is not required', async () => {
@@ -117,7 +118,10 @@ describe('DSInputWrapper', () => {
             await user.click(input);
             await user.tab();
 
-            expect(mockHandleSubmit).toHaveBeenCalledWith(formElementBase.values[0].raw_value, state.attribute.id);
+            expect(mockHandleSubmit).toHaveBeenCalledWith(
+                (state.formElement.values[0] as RecordFormElementsValueStandardValue).raw_value,
+                state.attribute.id
+            );
         });
     });
 });

@@ -124,7 +124,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         record?.id
     );
 
-    const {saveValues, loading: saveValuesLoading} = useSaveValueBatchMutation();
+    const {saveValues} = useSaveValueBatchMutation();
     const {deleteValue} = useExecuteDeleteValueMutation(record);
     const [createRecord] = useCreateRecordMutation();
 
@@ -132,7 +132,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
 
     const [pendingValues, setPendingValues] = useState<IPendingValues>({});
 
-    // As __handleRecordSubmit is called via the callback of an event listener, it won't have access to the latest state.
+    // As _handleRecordSubmit is called via the callback of an event listener, it won't have access to the latest state.
     // We use a ref to store the latest state and access it in the callback
     const pendingValuesRef = useRef(pendingValues);
 
