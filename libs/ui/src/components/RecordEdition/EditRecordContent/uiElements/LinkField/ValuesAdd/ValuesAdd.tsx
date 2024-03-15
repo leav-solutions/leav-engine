@@ -258,6 +258,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
                 whoAmI: record
             }
         ]);
+        _handleCloseCreateRecordModal();
     };
 
     const currentSearch = searchInputRef?.current?.input?.value;

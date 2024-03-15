@@ -88,6 +88,7 @@ function AddByCreationButton({availableLibraries, parent, onMessages}: IAddByCre
         onMessages('navigation.infos.success-add', 'navigation.infos.error-add', messages);
 
         refreshTreeContent();
+        _handleCloseCreateRecordModal();
     };
 
     const buttonIcon = <PlusOutlined />;
