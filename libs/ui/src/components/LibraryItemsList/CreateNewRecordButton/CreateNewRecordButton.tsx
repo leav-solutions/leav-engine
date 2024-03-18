@@ -11,6 +11,7 @@ interface ICreateNewRecordButtonProps {
     libraryId: string;
     notifyNewCreation: () => void;
     valuesVersions: IValueVersion;
+    canCreateAndEdit?: boolean;
 }
 
 export const CreateNewRecordButton: FunctionComponent<ICreateNewRecordButtonProps> = ({
@@ -18,7 +19,8 @@ export const CreateNewRecordButton: FunctionComponent<ICreateNewRecordButtonProp
     libraryBehavior,
     libraryId,
     notifyNewCreation,
-    valuesVersions
+    valuesVersions,
+    canCreateAndEdit = true
 }) => {
     const [isRecordCreationVisible, setIsRecordCreationVisible] = useState(false);
     const [isUploadFilesModalVisible, setIsUploadFilesModalVisible] = useState(false);
@@ -36,9 +38,13 @@ export const CreateNewRecordButton: FunctionComponent<ICreateNewRecordButtonProp
         setIsCreateDirectoryModalVisible(false);
     };
 
-    const _handleAfterCreate = () => {
+    const _handleCreate = () => {
         notifyNewCreation();
         _handleRecordCreationClose();
+    };
+
+    const _handleCreateAndEdit = () => {
+        notifyNewCreation();
     };
 
     const _handleClickNew = () => {
@@ -67,7 +73,9 @@ export const CreateNewRecordButton: FunctionComponent<ICreateNewRecordButtonProp
                     open={isRecordCreationVisible}
                     onClose={_handleRecordCreationClose}
                     valuesVersion={valuesVersions}
-                    afterCreate={_handleAfterCreate}
+                    onCreate={_handleCreate}
+                    onCreateAndEdit={_handleCreateAndEdit}
+                    submitButtons={canCreateAndEdit ? 'both' : 'create'}
                 />
             )}
             {isUploadFilesModalVisible && (

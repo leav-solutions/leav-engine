@@ -2,21 +2,24 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitButton, KitDivider, KitSpace, KitTypography} from 'aristid-ds';
-import {FunctionComponent, ReactNode, useRef} from 'react';
+import {FunctionComponent, ReactNode, useRef, useState} from 'react';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IValueVersion} from '_ui/types';
 import {RecordIdentityFragment} from '_ui/_gqlTypes';
 import {EditRecord} from '../EditRecord';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faXmark, faFloppyDisk, faRotateRight} from '@fortawesome/free-solid-svg-icons';
-import {EDIT_OR_CREATE_RECORD_FORM_ID} from '../EditRecordContent/formConstants';
+import {faXmark, faRotateRight} from '@fortawesome/free-solid-svg-icons';
+import {possibleSubmitButtons, submitButtonsProp} from '../_types';
+import {useGetSubmitButtons} from '../hooks/useGetSubmitButtons';
 
 interface IEditRecordPageProps {
     record: RecordIdentityFragment['whoAmI'] | null;
     library: string;
     title?: ReactNode;
-    afterCreate?: (newRecord: RecordIdentityFragment['whoAmI']) => void;
+    onCreate?: (newRecord: RecordIdentityFragment['whoAmI']) => void; // Called after submitting via the "create" button
+    onCreateAndEdit?: (newRecord: RecordIdentityFragment['whoAmI']) => void; // Called after submitting via the "create and edit" button
+    submitButtons?: submitButtonsProp;
     valuesVersion?: IValueVersion;
     showRefreshButton?: boolean;
     withInfoButton?: boolean;
@@ -37,22 +40,45 @@ const Header = styled.div`
 export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     record,
     library,
-    afterCreate,
+    onCreate,
+    onCreateAndEdit,
     valuesVersion,
     title,
     showRefreshButton = true,
+    submitButtons = 'create',
     withInfoButton,
     onClose
 }) => {
     const {t} = useSharedTranslation();
+    const [currentRecord, setCurrentRecord] = useState<RecordIdentityFragment['whoAmI'] | null>(record);
+    const [clickedSubmitButton, setClickedSubmitButton] = useState<possibleSubmitButtons | null>(null);
+    const isInCreateMode = !currentRecord;
 
-    const isInCreateMode = !record;
+    const _handleClickSubmit = (button: possibleSubmitButtons) => {
+        setClickedSubmitButton(button);
+    };
+
+    const displayedSubmitButtons = useGetSubmitButtons(submitButtons, isInCreateMode, _handleClickSubmit);
 
     // Create refs for the buttons to pass them to the EditRecord component
     const closeButtonRef = useRef<HTMLButtonElement>(null);
     const refreshButtonRef = useRef<HTMLButtonElement>(null);
 
-    const closeButtonLabel = record ? t('global.close') : t('global.cancel');
+    const closeButtonLabel = isInCreateMode ? t('global.cancel') : t('global.close');
+
+    const _handleCreate = (newRecord: RecordIdentityFragment['whoAmI']) => {
+        setCurrentRecord(newRecord);
+
+        if (onCreateAndEdit && clickedSubmitButton === 'createAndEdit') {
+            onCreateAndEdit(newRecord);
+            return;
+        }
+
+        if (onCreate && clickedSubmitButton === 'create') {
+            onCreate(newRecord);
+            return;
+        }
+    };
 
     return (
         <>
@@ -61,7 +87,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
                     title
                 ) : (
                     <KitTypography.Title level="h2" style={{margin: 0}}>
-                        {record?.label ?? t('record_edition.new_record')}
+                        {currentRecord?.label ?? t('record_edition.new_record')}
                     </KitTypography.Title>
                 )}
 
@@ -77,24 +103,15 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
                     <KitButton ref={closeButtonRef} icon={<FontAwesomeIcon icon={faXmark} />}>
                         {closeButtonLabel}
                     </KitButton>
-                    {isInCreateMode && (
-                        <KitButton
-                            htmlType="submit"
-                            form={EDIT_OR_CREATE_RECORD_FORM_ID}
-                            type="primary"
-                            icon={<FontAwesomeIcon icon={faFloppyDisk} />}
-                        >
-                            {t('global.submit')}
-                        </KitButton>
-                    )}
+                    <KitSpace>{displayedSubmitButtons}</KitSpace>
                 </KitSpace>
             </Header>
             <KitDivider noMargin color="lightGrey" />
             <EditRecord
-                record={record}
+                record={currentRecord}
                 library={library}
                 valuesVersion={valuesVersion}
-                afterCreate={afterCreate}
+                onCreate={_handleCreate}
                 buttonsRefs={{close: closeButtonRef, refresh: refreshButtonRef}}
                 onClose={onClose}
                 containerStyle={{height: 'calc(100% - 82px)'}}
