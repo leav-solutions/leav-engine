@@ -1,6 +1,6 @@
 {
   "name": "@leav/ui",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Shared React components and hooks",
   "scripts": {
     "prepublishOnly": "yarn build",
@@ -62,7 +62,7 @@
     "@ckeditor/ckeditor5-build-inline": "39.0.1",
     "@ckeditor/ckeditor5-react": "6.1.0",
     "@leav/utils": "0.0.1",
-    "aristid-ds": "3.0.0-66e1ba6",
+    "aristid-ds": "3.0.0-c09d0f9",
     "dayjs": "1.11.10",
     "dompurify": "3.0.5",
     "html-react-parser": "4.2.2",
