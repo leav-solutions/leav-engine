@@ -5,7 +5,7 @@ import {
     AnyPrimitive,
     FormFieldTypes,
     FormUIElementTypes,
-    ICommonFieldsSettings,
+    IRequiredFieldsSettings,
     IDateRangeValue,
     IKeyValue,
     Override
@@ -126,7 +126,7 @@ export interface IStandardInputProps {
     onChange: (value: string) => void;
     onSubmit: (valueToSave: StandardValueTypes) => void;
     onPressEnter?: () => void;
-    settings: ICommonFieldsSettings;
+    settings: IRequiredFieldsSettings;
     inputRef: MutableRefObject<InputRefPossibleTypes>;
 }
 
@@ -141,7 +141,7 @@ export enum FieldScope {
 
 export interface ICommonFieldsReducerState<ValuesType> {
     record: IRecordIdentityWhoAmI;
-    formElement: FormElement<ICommonFieldsSettings>;
+    formElement: FormElement<IRequiredFieldsSettings>;
     attribute: IRecordPropertyAttribute;
     isReadOnly: boolean;
     activeScope: FieldScope;

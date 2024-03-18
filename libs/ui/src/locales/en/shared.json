@@ -33,6 +33,7 @@
     },
     "errors": {
         "default_language_required": "The default language is required",
+        "standard_field_required": "This field is required",
         "field_required": "The field {{fieldName}} is required",
         "invalid_id_format": "The identifier must contain only letters, numbers, and underscores (eg. \"my_id\")",
         "invalid_endpoint_format": "The endpoint must contain only letters, numbers, and dashes (eg. \"my-app\")",

@@ -31,6 +31,10 @@ export interface ICommonFieldsSettings {
     attribute?: string;
 }
 
+export interface IRequiredFieldsSettings extends ICommonFieldsSettings {
+    required?: boolean;
+}
+
 export interface IFormDividerSettings {
     title?: string;
 }

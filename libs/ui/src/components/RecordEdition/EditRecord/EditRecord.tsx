@@ -56,7 +56,6 @@ interface IEditRecordProps {
     // Here we're not in charge of buttons position. It might on a modal footer or pretty much anywhere.
     // We're using refs to still be able to handle the click on the buttons
     buttonsRefs: {
-        submit?: React.RefObject<HTMLButtonElement>;
         close?: React.RefObject<HTMLButtonElement>;
         refresh?: React.RefObject<HTMLButtonElement>;
         valuesVersions?: React.RefObject<HTMLButtonElement>;
@@ -120,7 +119,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         record?.id
     );
 
-    const {saveValues, loading: saveValuesLoading} = useSaveValueBatchMutation();
+    const {saveValues} = useSaveValueBatchMutation();
     const {deleteValue} = useExecuteDeleteValueMutation(record);
     const [createRecord] = useCreateRecordMutation();
 
@@ -156,15 +155,6 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
             }
         };
     }, [buttonsRefs]);
-
-    // Handle state (disabled or not) of submit button
-    useEffect(() => {
-        if (!buttonsRefs?.submit?.current) {
-            return;
-        }
-
-        buttonsRefs.submit.current.disabled = !hasPendingValues;
-    }, [hasPendingValues, buttonsRefs.submit]);
 
     // Keep pendingValuesRef in sync with the state
     useEffect(() => {
@@ -431,7 +421,6 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     };
 
     const listenersByButtonsName: Record<keyof IEditRecordProps['buttonsRefs'], () => void> = {
-        submit: _handleRecordSubmit,
         close: onClose,
         refresh: () => {
             dispatch({
@@ -458,6 +447,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                                 <EditRecordContent
                                     record={record}
                                     library={library}
+                                    onRecordSubmit={_handleRecordSubmit}
                                     onValueSubmit={_handleValueSubmit}
                                     onValueDelete={_handleDeleteValue}
                                     onDeleteMultipleValues={_handleDeleteAllValues}

@@ -103,7 +103,7 @@ export const mockAttributeVersionable: AttributeDetailsFragment = {
 export const mockFormAttribute: RecordFormAttributeFragment = {
     id: 'test_attribute',
     type: AttributeType.simple,
-    format: AttributeFormat.text,
+    format: AttributeFormat.extended,
     label: {
         fr: 'test',
         en: 'test'

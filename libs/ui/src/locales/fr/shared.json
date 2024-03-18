@@ -33,6 +33,7 @@
     },
     "errors": {
         "default_language_required": "La langue par défaut est requise",
+        "standard_field_required": "Ce champ est requis",
         "field_required": "Le champ {{fieldName}} est requis",
         "invalid_id_format": "L'identifiant peut être composé uniquement de lettres minuscules, de chiffres et du caractère \"_\" (ex: \"mon_id\")",
         "invalid_endpoint_format": "Le point d'accès peut être composé uniquement de lettres minuscules, de chiffres et du caractère \"-\" (ex: \"mon-app\")",

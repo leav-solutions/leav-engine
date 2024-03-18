@@ -66,7 +66,6 @@ describe('EditRecord', () => {
                         record={mockRecord}
                         onClose={_handleClose}
                         buttonsRefs={{
-                            submit: submitButtonRef,
                             close: closeButtonRef
                         }}
                     />
@@ -96,7 +95,6 @@ describe('EditRecord', () => {
                         record={mockRecord}
                         onClose={_handleClose}
                         buttonsRefs={{
-                            submit: submitButtonRef,
                             close: closeButtonRef
                         }}
                     />

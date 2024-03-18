@@ -7,6 +7,8 @@ import {Button, Form, Input, InputRef, Popover, Space, theme} from 'antd';
 import moment from 'moment';
 import React, {MutableRefObject, useEffect, useRef} from 'react';
 import styled, {CSSObject} from 'styled-components';
+import {DSInputWrapper} from './DSInputWrapper';
+import {DSRangePickerWrapper} from './DSRangePickerWrapper';
 import {themeVars} from '_ui/antdTheme';
 import {FloatingMenu, FloatingMenuAction} from '_ui/components';
 import Dimmer from '_ui/components/Dimmer';
@@ -44,7 +46,6 @@ import {
 import CheckboxInput from './Inputs/CheckboxInput';
 import ColorInput from './Inputs/ColorInput';
 import DateInput from './Inputs/DateInput';
-import DateRangeInput from './Inputs/DateRangeInput';
 import EncryptedInput from './Inputs/EncryptedInput';
 import NumberInput from './Inputs/NumberInput';
 import TextInput from './Inputs/TextInput';
@@ -172,18 +173,12 @@ const ButtonsWrapper = styled.div`
     }
 `;
 
-const FormItem = styled(Form.Item)`
-    && {
-        margin: 0;
-    }
-`;
-
 const RichTextEditorInput = React.lazy(() => import('./Inputs/RichTextEditorInput'));
 
 const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInputProps) => JSX.Element} = {
-    [AttributeFormat.text]: TextInput,
+    [AttributeFormat.text]: null,
     [AttributeFormat.date]: DateInput,
-    [AttributeFormat.date_range]: DateRangeInput,
+    [AttributeFormat.date_range]: null,
     [AttributeFormat.boolean]: CheckboxInput,
     [AttributeFormat.numeric]: NumberInput,
     [AttributeFormat.encrypted]: EncryptedInput,
@@ -252,13 +247,13 @@ function StandardFieldValue({
         }
     }, [fieldValue.isEditing, fieldValue.editingValue]);
 
-    const _handleSubmit = async (valueToSave: StandardValueTypes) => {
+    const _handleSubmit = async (valueToSave: StandardValueTypes, id?: string) => {
         if (valueToSave === '') {
             return _handleDelete();
         }
 
         const convertedValue = typeof valueToSave === 'object' ? JSON.stringify(valueToSave) : valueToSave;
-        onSubmit(fieldValue.idValue, convertedValue);
+        onSubmit(id ?? fieldValue.idValue, convertedValue);
     };
 
     const _handlePressEnter = async () => {
@@ -358,28 +353,6 @@ function StandardFieldValue({
 
             if (hasValue) {
                 switch (attribute.format) {
-                    case AttributeFormat.date_range:
-                        const {editingValue} = fieldValue;
-                        const isCreation = typeof editingValue === 'string' && editingValue.length > 0;
-                        let dateRangeValue = null;
-
-                        if (isCreation) {
-                            const convertedFieldValue: IDateRangeValue = JSON.parse(editingValue);
-                            dateRangeValue = {
-                                from: new Date(Number(convertedFieldValue.from) * 1000).toLocaleDateString(
-                                    i18n.language
-                                ),
-                                to: new Date(Number(convertedFieldValue.to) * 1000).toLocaleDateString(i18n.language)
-                            };
-                        } else {
-                            dateRangeValue = fieldValue.displayValue as IDateRangeValue;
-                        }
-
-                        displayedValue =
-                            dateRangeValue?.from && dateRangeValue?.to
-                                ? stringifyDateRangeValue(dateRangeValue, t)
-                                : '';
-                        break;
                     case AttributeFormat.encrypted:
                         displayedValue = '•••••••••';
                         break;
@@ -581,12 +554,68 @@ function StandardFieldValue({
         borderRadius: hasMultipleValuesDisplay ? 'none' : token.borderRadius
     };
 
+    const attributeFormatsWithDS = [AttributeFormat.text, AttributeFormat.date_range];
+
+    const attributeFormatsWithoutDS = [
+        AttributeFormat.boolean,
+        AttributeFormat.color,
+        AttributeFormat.date,
+        AttributeFormat.encrypted,
+        AttributeFormat.extended,
+        AttributeFormat.numeric,
+        AttributeFormat.rich_text
+    ];
+
     return (
         <>
-            {fieldValue.isEditing && <Dimmer onClick={_handleCancel} />}
-            <FormWrapper $isEditing={fieldValue.isEditing} className={!fieldValue.index ? 'first-value' : ''}>
-                <Form>
-                    <FormItem>
+            {attributeFormatsWithDS.includes(attribute.format) && (
+                <Form.Item
+                    name={attribute.id}
+                    rules={[
+                        {
+                            required: state.formElement.settings.required,
+                            message: t('errors.standard_field_required')
+                        }
+                    ]}
+                >
+                    {attribute.format === AttributeFormat.text && (
+                        <DSInputWrapper
+                            state={state}
+                            handleSubmit={_handleSubmit}
+                            infoButton={
+                                <ValueDetailsBtn
+                                    value={fieldValue.value}
+                                    attribute={attribute}
+                                    size="small"
+                                    shape="circle"
+                                />
+                            }
+                        />
+                    )}
+                    {attribute.format === AttributeFormat.date_range && (
+                        <DSRangePickerWrapper
+                            state={state}
+                            handleSubmit={_handleSubmit}
+                            infoButton={
+                                <ValueDetailsBtn
+                                    value={fieldValue.value}
+                                    attribute={attribute}
+                                    size="small"
+                                    shape="circle"
+                                />
+                            }
+                        />
+                    )}
+                </Form.Item>
+            )}
+
+            {attributeFormatsWithoutDS.includes(attribute.format) && (
+                <>
+                    {fieldValue.isEditing && <Dimmer onClick={_handleCancel} />}
+                    <FormWrapper
+                        $isEditing={fieldValue.isEditing}
+                        className={fieldValue.index === 0 ? 'first-value' : ''}
+                    >
                         <Popover placement="topLeft" open={isErrorVisible} content={errorContent}>
                             <InputWrapper
                                 $isEditing={fieldValue.isEditing}
@@ -634,9 +663,9 @@ function StandardFieldValue({
                                 </ButtonsWrapper>
                             )}
                         </ActionsWrapper>
-                    </FormItem>
-                </Form>
-            </FormWrapper>
+                    </FormWrapper>
+                </>
+            )}
         </>
     );
 }

@@ -10,6 +10,7 @@ import {RecordIdentityFragment} from '_ui/_gqlTypes';
 import {EditRecord} from '../EditRecord';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark, faFloppyDisk, faRotateRight} from '@fortawesome/free-solid-svg-icons';
+import {EDIT_OR_CREATE_RECORD_FORM_ID} from '../EditRecordContent/formConstants';
 
 interface IEditRecordPageProps {
     record: RecordIdentityFragment['whoAmI'] | null;
@@ -46,7 +47,6 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     const isInCreateMode = !record;
 
     // Create refs for the buttons to pass them to the EditRecord component
-    const submitButtonRef = useRef<HTMLButtonElement>(null);
     const closeButtonRef = useRef<HTMLButtonElement>(null);
     const refreshButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -76,7 +76,11 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
                         {closeButtonLabel}
                     </KitButton>
                     {isInCreateMode && (
-                        <KitButton type="primary" ref={submitButtonRef} icon={<FontAwesomeIcon icon={faFloppyDisk} />}>
+                        <KitButton
+                            form={EDIT_OR_CREATE_RECORD_FORM_ID}
+                            type="primary"
+                            icon={<FontAwesomeIcon icon={faFloppyDisk} />}
+                        >
                             {t('global.submit')}
                         </KitButton>
                     )}
@@ -88,7 +92,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
                 library={library}
                 valuesVersion={valuesVersion}
                 afterCreate={afterCreate}
-                buttonsRefs={{submit: submitButtonRef, close: closeButtonRef, refresh: refreshButtonRef}}
+                buttonsRefs={{close: closeButtonRef, refresh: refreshButtonRef}}
                 onClose={onClose}
                 containerStyle={{height: 'calc(100% - 82px)'}}
             />

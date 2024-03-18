@@ -12,6 +12,7 @@ import {RecordIdentityFragment} from '_ui/_gqlTypes';
 import {EditRecord} from '../EditRecord';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark, faFloppyDisk, faRotateRight, faLayerGroup} from '@fortawesome/free-solid-svg-icons';
+import {EDIT_OR_CREATE_RECORD_FORM_ID} from '../EditRecordContent/formConstants';
 
 interface IEditRecordModalProps {
     open: boolean;
@@ -59,7 +60,6 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     const isCreationMode = !record;
 
     // Create refs for the buttons to pass them to the EditRecord component
-    const submitButtonRef = useRef<HTMLButtonElement>(null);
     const closeButtonRef = useRef<HTMLButtonElement>(null);
     const refreshButtonRef = useRef<HTMLButtonElement>(null);
     const valuesVersionsButtonRef = useRef<HTMLButtonElement>(null);
@@ -79,10 +79,11 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     if (isCreationMode) {
         footerButtons.push(
             <KitButton
-                type="primary"
-                aria-label={t('global.submit')}
                 key="submit"
-                ref={submitButtonRef}
+                htmlType="submit"
+                type="primary"
+                form={EDIT_OR_CREATE_RECORD_FORM_ID}
+                aria-label={t('global.submit')}
                 icon={<FontAwesomeIcon icon={faFloppyDisk} />}
             >
                 {t('global.submit')}
@@ -129,7 +130,6 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
                 afterCreate={afterCreate}
                 valuesVersion={valuesVersion}
                 buttonsRefs={{
-                    submit: submitButtonRef,
                     close: closeButtonRef,
                     refresh: refreshButtonRef,
                     valuesVersions: valuesVersionsButtonRef
