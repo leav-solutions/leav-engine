@@ -28,6 +28,7 @@ export interface IEditRecordReducerState {
             [attribute: string]: ValueDetailsFragment[];
         };
     };
+    withInfoButton: boolean;
 }
 
 export enum EditRecordReducerActionsTypes {
@@ -92,7 +93,8 @@ export const initialState: IEditRecordReducerState = {
     externalUpdate: {
         modifiers: [],
         updatedValues: {}
-    }
+    },
+    withInfoButton: false
 };
 
 const editRecordReducer = (

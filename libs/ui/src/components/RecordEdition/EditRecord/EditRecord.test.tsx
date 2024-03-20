@@ -55,13 +55,13 @@ describe('EditRecord', () => {
         const _handleClose = jest.fn();
 
         const CompWithButtons = () => {
-            const submitButtonRef = useRef<HTMLButtonElement>(null);
             const closeButtonRef = useRef<HTMLButtonElement>(null);
 
             return (
                 <>
                     <button ref={closeButtonRef}>Close</button>;
                     <EditRecord
+                        withInfoButton={false}
                         library={mockRecord.library.id}
                         record={mockRecord}
                         onClose={_handleClose}
@@ -84,13 +84,13 @@ describe('EditRecord', () => {
         const _handleClose = jest.fn();
 
         const CompWithButtons = () => {
-            const submitButtonRef = useRef<HTMLButtonElement>(null);
             const closeButtonRef = useRef<HTMLButtonElement>(null);
 
             return (
                 <>
                     <button ref={closeButtonRef}>Close</button>;
                     <EditRecord
+                        withInfoButton={false}
                         library={mockRecord.library.id}
                         record={mockRecord}
                         onClose={_handleClose}

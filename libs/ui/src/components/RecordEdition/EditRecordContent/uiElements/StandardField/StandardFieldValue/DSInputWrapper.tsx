@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {KitInput} from 'aristid-ds';
+import {KitInput, KitInputWrapper} from 'aristid-ds';
 import {FocusEvent, FunctionComponent, ReactNode} from 'react';
 import {IStandardFieldReducerState} from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {Form, InputProps} from 'antd';
@@ -15,22 +15,6 @@ interface IDSInputWrapperProps {
     onChange?: InputProps['onChange'];
     handleSubmit: (value: string, id?: string) => void;
 }
-
-const InputContainer = styled.div`
-    position: relative;
-
-    .actions {
-        position: absolute;
-        top: 55%;
-        right: 36px;
-        display: none;
-        z-index: 1000;
-    }
-
-    &:hover .actions {
-        display: block;
-    }
-`;
 
 export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     state,
@@ -55,18 +39,14 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     };
 
     return (
-        <InputContainer>
-            <KitInput
-                label={state.formElement.settings.label}
-                required={isRequired}
-                value={value}
-                onChange={onChange}
-                status={errors.length > 0 ? 'error' : undefined}
-                disabled={state.isReadOnly}
-                onBlur={handleBlur}
-            />
-            {/*TODO : Move actions inside KitInput when DS is updated*/}
-            <div className="actions">{infoButton}</div>
-        </InputContainer>
+        <KitInputWrapper
+            label={state.formElement.settings.label}
+            required={isRequired}
+            status={errors.length > 0 ? 'error' : undefined}
+            infoIcon={infoButton}
+            onInfoClick={Boolean(infoButton) ? () => void 0 : undefined}
+        >
+            <KitInput value={value} onChange={onChange} disabled={state.isReadOnly} onBlur={handleBlur} />
+        </KitInputWrapper>
     );
 };

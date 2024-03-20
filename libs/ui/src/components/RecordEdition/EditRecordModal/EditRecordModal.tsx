@@ -20,6 +20,7 @@ interface IEditRecordModalProps {
     library: string;
     onClose: () => void;
     afterCreate?: (newRecord: RecordIdentityFragment['whoAmI']) => void;
+    withInfoButton?: boolean;
     valuesVersion?: IValueVersion;
 }
 
@@ -54,7 +55,8 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     library,
     onClose,
     afterCreate,
-    valuesVersion
+    valuesVersion,
+    withInfoButton = true
 }) => {
     const {t} = useSharedTranslation();
     const isCreationMode = !record;
@@ -135,6 +137,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
                     valuesVersions: valuesVersionsButtonRef
                 }}
                 showSidebar
+                withInfoButton={withInfoButton}
                 containerStyle={{height: 'calc(100% - 3.5rem)'}}
             />
         </StyledModal>

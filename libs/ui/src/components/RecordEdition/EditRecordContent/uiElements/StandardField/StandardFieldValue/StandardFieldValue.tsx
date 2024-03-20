@@ -5,7 +5,7 @@ import {CloseOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import {AnyPrimitive, IDateRangeValue} from '@leav/utils';
 import {Button, Form, Input, InputRef, Popover, Space, theme} from 'antd';
 import moment from 'moment';
-import React, {MutableRefObject, useEffect, useRef} from 'react';
+import React, {MutableRefObject, ReactNode, useEffect, useRef} from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {DSInputWrapper} from './DSInputWrapper';
 import {DSRangePickerWrapper} from './DSRangePickerWrapper';
@@ -566,6 +566,10 @@ function StandardFieldValue({
         AttributeFormat.rich_text
     ];
 
+    const _infoButton: ReactNode = editRecordState.withInfoButton ? (
+        <ValueDetailsBtn value={fieldValue.value} attribute={attribute} size="small" shape="circle" />
+    ) : null;
+
     return (
         <>
             {attributeFormatsWithDS.includes(attribute.format) && (
@@ -579,32 +583,10 @@ function StandardFieldValue({
                     ]}
                 >
                     {attribute.format === AttributeFormat.text && (
-                        <DSInputWrapper
-                            state={state}
-                            handleSubmit={_handleSubmit}
-                            infoButton={
-                                <ValueDetailsBtn
-                                    value={fieldValue.value}
-                                    attribute={attribute}
-                                    size="small"
-                                    shape="circle"
-                                />
-                            }
-                        />
+                        <DSInputWrapper state={state} handleSubmit={_handleSubmit} infoButton={_infoButton} />
                     )}
                     {attribute.format === AttributeFormat.date_range && (
-                        <DSRangePickerWrapper
-                            state={state}
-                            handleSubmit={_handleSubmit}
-                            infoButton={
-                                <ValueDetailsBtn
-                                    value={fieldValue.value}
-                                    attribute={attribute}
-                                    size="small"
-                                    shape="circle"
-                                />
-                            }
-                        />
+                        <DSRangePickerWrapper state={state} handleSubmit={_handleSubmit} infoButton={_infoButton} />
                     )}
                 </Form.Item>
             )}

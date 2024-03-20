@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {KitDatePicker} from 'aristid-ds';
+import {KitDatePicker, KitInputWrapper} from 'aristid-ds';
 import {FunctionComponent, ReactNode} from 'react';
 import {IStandardFieldReducerState} from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {Form} from 'antd';
@@ -17,22 +17,6 @@ interface IDSRangePickerWrapperProps {
     onChange?: RangePickerProps['onChange'];
     handleSubmit: (value: StandardValueTypes, id?: string) => void;
 }
-
-const InputContainer = styled.div`
-    position: relative;
-
-    .actions {
-        position: absolute;
-        top: 53%;
-        right: 36px;
-        display: none;
-        z-index: 1000;
-    }
-
-    &:hover .actions {
-        display: block;
-    }
-`;
 
 export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps> = ({
     state,
@@ -65,17 +49,14 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
     };
 
     return (
-        <InputContainer>
-            <KitDatePicker.RangePicker
-                label={state.formElement.settings.label}
-                required={isRequired}
-                value={value}
-                onChange={_handleDateChange}
-                status={errors.length > 0 ? 'error' : undefined}
-                disabled={state.isReadOnly}
-            />
-            {/*TODO : Move actions inside KitRangePicker when DS is updated*/}
-            <div className="actions">{infoButton}</div>
-        </InputContainer>
+        <KitInputWrapper
+            label={state.formElement.settings.label}
+            required={isRequired}
+            status={errors.length > 0 ? 'error' : undefined}
+            infoIcon={infoButton}
+            onInfoClick={Boolean(infoButton) ? () => void 0 : undefined}
+        >
+            <KitDatePicker.RangePicker value={value} onChange={_handleDateChange} disabled={state.isReadOnly} />
+        </KitInputWrapper>
     );
 };
