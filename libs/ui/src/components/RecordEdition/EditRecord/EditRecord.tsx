@@ -53,6 +53,7 @@ interface IEditRecordProps {
     valuesVersion?: IValueVersion;
     showSidebar?: boolean;
     containerStyle?: CSSObject;
+    withInfoButton: boolean;
     // Here we're not in charge of buttons position. It might on a modal footer or pretty much anywhere.
     // We're using refs to still be able to handle the click on the buttons
     buttonsRefs: {
@@ -100,6 +101,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     valuesVersion,
     showSidebar = false,
     containerStyle,
+    withInfoButton,
     buttonsRefs
 }) => {
     const isCreationMode = !record;
@@ -111,7 +113,8 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         valuesVersion,
         originValuesVersion: valuesVersion,
         sidebarContent: showSidebar ? 'summary' : 'none',
-        sidebarDefaultHidden: !showSidebar
+        sidebarDefaultHidden: !showSidebar,
+        withInfoButton
     });
 
     const {loading: permissionsLoading, canEdit, isReadOnly} = useCanEditRecord(

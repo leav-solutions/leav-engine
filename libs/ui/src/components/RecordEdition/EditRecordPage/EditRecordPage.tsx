@@ -19,6 +19,7 @@ interface IEditRecordPageProps {
     afterCreate?: (newRecord: RecordIdentityFragment['whoAmI']) => void;
     valuesVersion?: IValueVersion;
     showRefreshButton?: boolean;
+    withInfoButton?: boolean;
     onClose: () => void;
 }
 
@@ -40,6 +41,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     valuesVersion,
     title,
     showRefreshButton = true,
+    withInfoButton,
     onClose
 }) => {
     const {t} = useSharedTranslation();
@@ -77,6 +79,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
                     </KitButton>
                     {isInCreateMode && (
                         <KitButton
+                            htmlType="submit"
                             form={EDIT_OR_CREATE_RECORD_FORM_ID}
                             type="primary"
                             icon={<FontAwesomeIcon icon={faFloppyDisk} />}
@@ -95,6 +98,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
                 buttonsRefs={{close: closeButtonRef, refresh: refreshButtonRef}}
                 onClose={onClose}
                 containerStyle={{height: 'calc(100% - 82px)'}}
+                withInfoButton={withInfoButton}
             />
         </>
     );
