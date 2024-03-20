@@ -35,7 +35,14 @@ describe('EditRecordPage', () => {
     });
 
     test('Display page in create mode with all submit buttons', async () => {
-        render(<EditRecordPage library="test_lib" onClose={jest.fn()} record={null} submitButtons="both" />);
+        render(
+            <EditRecordPage
+                library="test_lib"
+                onClose={jest.fn()}
+                record={null}
+                submitButtons={['create', 'createAndEdit']}
+            />
+        );
 
         expect(screen.getByLabelText('refresh')).toBeInTheDocument();
         expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
@@ -44,7 +51,9 @@ describe('EditRecordPage', () => {
     });
 
     test('Display page in create mode with "create and edit" button only', async () => {
-        render(<EditRecordPage library="test_lib" onClose={jest.fn()} record={null} submitButtons="createAndEdit" />);
+        render(
+            <EditRecordPage library="test_lib" onClose={jest.fn()} record={null} submitButtons={['createAndEdit']} />
+        );
 
         expect(screen.getByLabelText('refresh')).toBeInTheDocument();
         expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
@@ -60,7 +69,7 @@ describe('EditRecordPage', () => {
                 library="test_lib"
                 onClose={jest.fn()}
                 record={null}
-                submitButtons="createAndEdit"
+                submitButtons={['createAndEdit']}
                 onCreate={onCreate}
                 onCreateAndEdit={onCreateAndEdit}
             />

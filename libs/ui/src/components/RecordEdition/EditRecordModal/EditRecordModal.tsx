@@ -12,7 +12,7 @@ import {RecordIdentityFragment} from '_ui/_gqlTypes';
 import {EditRecord} from '../EditRecord';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark, faRotateRight, faLayerGroup} from '@fortawesome/free-solid-svg-icons';
-import {possibleSubmitButtons, submitButtonsProp} from '../_types';
+import {possibleSubmitButtons, submitButtonsName} from '../_types';
 import {useGetSubmitButtons} from '../hooks/useGetSubmitButtons';
 
 interface IEditRecordModalProps {
@@ -22,7 +22,7 @@ interface IEditRecordModalProps {
     onClose: () => void;
     onCreate?: (newRecord: RecordIdentityFragment['whoAmI']) => void; // Called after submitting via the "create" button
     onCreateAndEdit?: (newRecord: RecordIdentityFragment['whoAmI']) => void; // Called after submitting via the "create and edit" button
-    submitButtons?: submitButtonsProp;
+    submitButtons?: possibleSubmitButtons;
     withInfoButton?: boolean;
     valuesVersion?: IValueVersion;
 }
@@ -59,17 +59,17 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     onClose,
     onCreate,
     onCreateAndEdit,
-    submitButtons = 'create',
+    submitButtons = ['create'],
     valuesVersion,
     withInfoButton = true
 }) => {
     const {t} = useSharedTranslation();
 
     const [currentRecord, setCurrentRecord] = useState<RecordIdentityFragment['whoAmI'] | null>(record);
-    const [clickedSubmitButton, setClickedSubmitButton] = useState<possibleSubmitButtons | null>(null);
+    const [clickedSubmitButton, setClickedSubmitButton] = useState<submitButtonsName | null>(null);
     const isInCreateMode = !currentRecord;
 
-    const _handleClickSubmit = (button: possibleSubmitButtons) => {
+    const _handleClickSubmit = (button: submitButtonsName) => {
         setClickedSubmitButton(button);
     };
 

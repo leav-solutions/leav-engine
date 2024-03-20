@@ -32,7 +32,15 @@ describe('EditRecordModal', () => {
     });
 
     test('Display page in create mode with all submit buttons', async () => {
-        render(<EditRecordModal open library="test_lib" onClose={jest.fn()} record={null} submitButtons="both" />);
+        render(
+            <EditRecordModal
+                open
+                library="test_lib"
+                onClose={jest.fn()}
+                record={null}
+                submitButtons={['create', 'createAndEdit']}
+            />
+        );
 
         expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
         expect(screen.getByRole('button', {name: /create$/})).toBeInTheDocument();
@@ -41,7 +49,13 @@ describe('EditRecordModal', () => {
 
     test('Display page in create mode with "create and edit" button only', async () => {
         render(
-            <EditRecordModal open library="test_lib" onClose={jest.fn()} record={null} submitButtons="createAndEdit" />
+            <EditRecordModal
+                open
+                library="test_lib"
+                onClose={jest.fn()}
+                record={null}
+                submitButtons={['createAndEdit']}
+            />
         );
 
         expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
@@ -58,7 +72,7 @@ describe('EditRecordModal', () => {
                 library="test_lib"
                 onClose={jest.fn()}
                 record={null}
-                submitButtons="createAndEdit"
+                submitButtons={['createAndEdit']}
                 onCreate={onCreate}
                 onCreateAndEdit={onCreateAndEdit}
             />

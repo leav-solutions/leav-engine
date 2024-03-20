@@ -1,9 +1,13 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent, useState} from 'react';
 import {PlusOutlined} from '@ant-design/icons';
 import {Button} from 'antd';
 import {LibraryBehavior} from '_ui/_gqlTypes';
 import {CreateDirectory, EditRecordModal, UploadFiles} from '_ui/components';
 import {IValueVersion} from '_ui/types';
+import {possibleSubmitButtons} from '_ui/components/RecordEdition/_types';
 
 interface ICreateNewRecordButtonProps {
     label: string;
@@ -61,6 +65,11 @@ export const CreateNewRecordButton: FunctionComponent<ICreateNewRecordButtonProp
         }
     };
 
+    const submitButtons: possibleSubmitButtons = ['create'];
+    if (canCreateAndEdit) {
+        submitButtons.push('createAndEdit');
+    }
+
     return (
         <>
             <Button type="primary" block icon={<PlusOutlined />} className="primary-btn" onClick={_handleClickNew}>
@@ -75,7 +84,7 @@ export const CreateNewRecordButton: FunctionComponent<ICreateNewRecordButtonProp
                     valuesVersion={valuesVersions}
                     onCreate={_handleCreate}
                     onCreateAndEdit={_handleCreateAndEdit}
-                    submitButtons={canCreateAndEdit ? 'both' : 'create'}
+                    submitButtons={submitButtons}
                 />
             )}
             {isUploadFilesModalVisible && (

@@ -1,14 +1,17 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitButton} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {possibleSubmitButtons, submitButtonsProp} from '../_types';
+import {possibleSubmitButtons, submitButtonsName} from '../_types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPenToSquare, faCheck} from '@fortawesome/free-solid-svg-icons';
 import {EDIT_OR_CREATE_RECORD_FORM_ID} from '../EditRecordContent/formConstants';
 
 export const useGetSubmitButtons = (
-    buttons: submitButtonsProp,
+    buttons: possibleSubmitButtons,
     isInCreateMode: boolean,
-    onClickSubmit: (button: possibleSubmitButtons) => void
+    onClickSubmit: (button: submitButtonsName) => void
 ) => {
     const {t} = useSharedTranslation();
     const headerSubmitButtons = [];
@@ -17,12 +20,12 @@ export const useGetSubmitButtons = (
         return [];
     }
 
-    if (buttons === 'both' || buttons === 'create') {
+    if (buttons.includes('create')) {
         headerSubmitButtons.push(
             <KitButton
                 key="create"
                 form={EDIT_OR_CREATE_RECORD_FORM_ID}
-                type={buttons === 'create' ? 'primary' : 'secondary'}
+                type={!buttons.includes('createAndEdit') ? 'primary' : 'secondary'}
                 htmlType="submit"
                 icon={<FontAwesomeIcon icon={faCheck} />}
                 onClick={() => onClickSubmit('create')}
@@ -32,7 +35,7 @@ export const useGetSubmitButtons = (
         );
     }
 
-    if (buttons === 'both' || buttons === 'createAndEdit') {
+    if (buttons.includes('createAndEdit')) {
         headerSubmitButtons.push(
             <KitButton
                 key="createAndEdit"

@@ -1,10 +1,13 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {screen, render} from '_ui/_tests/testUtils';
 import {useGetSubmitButtons} from './useGetSubmitButtons';
 
 describe('useGetSubmitButtons', () => {
     test('Return 2 buttons', async () => {
         const TestComp = () => {
-            const buttons = useGetSubmitButtons('both', true, jest.fn());
+            const buttons = useGetSubmitButtons(['create', 'createAndEdit'], true, jest.fn());
             return <div>{buttons}</div>;
         };
 
@@ -15,7 +18,7 @@ describe('useGetSubmitButtons', () => {
 
     test('Return "create" only', async () => {
         const TestComp = () => {
-            const buttons = useGetSubmitButtons('create', true, jest.fn());
+            const buttons = useGetSubmitButtons(['create'], true, jest.fn());
             return <div>{buttons}</div>;
         };
 
@@ -27,7 +30,7 @@ describe('useGetSubmitButtons', () => {
 
     test('Return "createAndEdit" only', async () => {
         const TestComp = () => {
-            const buttons = useGetSubmitButtons('createAndEdit', true, jest.fn());
+            const buttons = useGetSubmitButtons(['createAndEdit'], true, jest.fn());
             return <div>{buttons}</div>;
         };
 
@@ -39,7 +42,7 @@ describe('useGetSubmitButtons', () => {
 
     test('If not in create mode, return nothing', async () => {
         const TestComp = () => {
-            const buttons = useGetSubmitButtons('createAndEdit', false, jest.fn());
+            const buttons = useGetSubmitButtons(['createAndEdit'], false, jest.fn());
             return <div>{buttons}</div>;
         };
 
