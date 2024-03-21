@@ -9,6 +9,7 @@ import {mockRecord} from '_ui/__mocks__/common/record';
 import {IUseCanEditRecordHook} from '../../../hooks/useCanEditRecord/useCanEditRecord';
 import {render, screen} from '../../../_tests/testUtils';
 import {EditRecord} from './EditRecord';
+import {Form} from 'antd';
 
 jest.mock('../EditRecordContent', () => {
     return function EditRecordContent() {
@@ -19,6 +20,12 @@ jest.mock('../EditRecordContent', () => {
 jest.mock('hooks/useCanEditRecord/useCanEditRecord', () => ({
     useCanEditRecord: (): IUseCanEditRecordHook => ({loading: false, canEdit: true, isReadOnly: false})
 }));
+
+const EditRecordWithForm = props => {
+    const [form] = Form.useForm();
+
+    return <EditRecord form={form} {...props} />;
+};
 
 describe('EditRecord', () => {
     const commonMocks = [
@@ -52,22 +59,17 @@ describe('EditRecord', () => {
     });
 
     test('Display form', async () => {
-        const _handleClose = jest.fn();
-
         const CompWithButtons = () => {
             const closeButtonRef = useRef<HTMLButtonElement>(null);
 
             return (
                 <>
                     <button ref={closeButtonRef}>Close</button>;
-                    <EditRecord
+                    <EditRecordWithForm
                         withInfoButton={false}
                         library={mockRecord.library.id}
                         record={mockRecord}
-                        onClose={_handleClose}
-                        buttonsRefs={{
-                            close: closeButtonRef
-                        }}
+                        buttonsRefs={{}}
                     />
                 </>
             );
@@ -78,36 +80,5 @@ describe('EditRecord', () => {
         });
 
         expect(screen.getByText('EditRecordContent')).toBeVisible();
-    });
-
-    test('Close form', async () => {
-        const _handleClose = jest.fn();
-
-        const CompWithButtons = () => {
-            const closeButtonRef = useRef<HTMLButtonElement>(null);
-
-            return (
-                <>
-                    <button ref={closeButtonRef}>Close</button>;
-                    <EditRecord
-                        withInfoButton={false}
-                        library={mockRecord.library.id}
-                        record={mockRecord}
-                        onClose={_handleClose}
-                        buttonsRefs={{
-                            close: closeButtonRef
-                        }}
-                    />
-                </>
-            );
-        };
-
-        render(<CompWithButtons />, {
-            mocks: commonMocks
-        });
-
-        await user.click(screen.getByRole('button', {name: /Close/}));
-
-        expect(_handleClose).toBeCalled();
     });
 });

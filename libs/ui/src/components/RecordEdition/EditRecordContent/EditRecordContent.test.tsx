@@ -7,12 +7,19 @@ import {mockRecordForm} from '_ui/__mocks__/common/form';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {render, screen} from '../../../_tests/testUtils';
 import EditRecordContent from './EditRecordContent';
+import {Form} from 'antd';
 
 jest.mock('./uiElements/StandardField', () => {
     return function StandardField() {
         return <div>StandardField</div>;
     };
 });
+
+const EditRecordContentWithForm = props => {
+    const [form] = Form.useForm();
+
+    return <EditRecordContent form={form} {...props} />;
+};
 
 describe('EditRecordContent', () => {
     const mocks = [
@@ -86,7 +93,7 @@ describe('EditRecordContent', () => {
         }));
 
         render(
-            <EditRecordContent
+            <EditRecordContentWithForm
                 record={mockRecord}
                 library={mockRecord.library.id}
                 onRecordSubmit={jest.fn()}
@@ -119,7 +126,7 @@ describe('EditRecordContent', () => {
         }));
 
         render(
-            <EditRecordContent
+            <EditRecordContentWithForm
                 record={mockRecord}
                 library={mockRecord.library.id}
                 onRecordSubmit={jest.fn()}

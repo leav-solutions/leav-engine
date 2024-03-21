@@ -17,13 +17,13 @@ import extractFormElements from './helpers/extractFormElements';
 import {RecordEditionContext} from './hooks/useRecordEditionContext';
 import {formComponents} from './uiElements';
 import {DeleteMultipleValuesFunc, DeleteValueFunc, FormElement, SubmitValueFunc} from './_types';
-import {Form} from 'antd';
-import {useForm} from 'antd/lib/form/Form';
+import {Form, FormInstance} from 'antd';
 import {Store} from 'antd/lib/form/interface';
 import dayjs from 'dayjs';
 import {EDIT_OR_CREATE_RECORD_FORM_ID} from './formConstants';
 
 interface IEditRecordContentProps {
+    antdForm: FormInstance;
     record: IRecordIdentityWhoAmI | null;
     library: string;
     onRecordSubmit: () => void;
@@ -34,6 +34,7 @@ interface IEditRecordContentProps {
 }
 
 function EditRecordContent({
+    antdForm,
     record,
     library,
     onRecordSubmit,
@@ -45,9 +46,10 @@ function EditRecordContent({
     const formId = record ? 'edition' : 'creation';
     const {t} = useSharedTranslation();
     const {state, dispatch} = useEditRecordReducer();
-    const [antForm] = useForm();
 
     useRecordsConsultationHistory(record?.library?.id ?? null, record?.id ?? null);
+
+    const forminstance = Form.useFormInstance();
 
     const {data: recordUpdateData} = useGetRecordUpdatesSubscription(
         {records: [record?.id], ignoreOwnEvents: true},
@@ -171,7 +173,7 @@ function EditRecordContent({
     return (
         <Form
             id={EDIT_OR_CREATE_RECORD_FORM_ID}
-            form={antForm}
+            form={antdForm}
             initialValues={antdFormInitialValues}
             onFinish={onRecordSubmit}
         >

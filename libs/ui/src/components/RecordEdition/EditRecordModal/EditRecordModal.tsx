@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Modal} from 'antd';
-import {KitButton, KitSpace, KitTypography} from 'aristid-ds';
 import {FunctionComponent, useRef, useState} from 'react';
+import {KitButton, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -14,6 +14,8 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark, faRotateRight, faLayerGroup} from '@fortawesome/free-solid-svg-icons';
 import {possibleSubmitButtons, submitButtonsName} from '../_types';
 import {useGetSubmitButtons} from '../hooks/useGetSubmitButtons';
+import {useForm} from 'antd/lib/form/Form';
+import {useCreateCancelConfirm} from '../hooks/useCreateCancelConfirm';
 
 interface IEditRecordModalProps {
     open: boolean;
@@ -64,30 +66,39 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     withInfoButton = true
 }) => {
     const {t} = useSharedTranslation();
+    const showCancelConfirm = useCreateCancelConfirm(onClose);
 
     const [currentRecord, setCurrentRecord] = useState<RecordIdentityFragment['whoAmI'] | null>(record);
     const [clickedSubmitButton, setClickedSubmitButton] = useState<submitButtonsName | null>(null);
-    const isInCreateMode = !currentRecord;
+    const isCreation = !currentRecord;
 
     const _handleClickSubmit = (button: submitButtonsName) => {
         setClickedSubmitButton(button);
     };
 
-    const displayedSubmitButtons = useGetSubmitButtons(submitButtons, isInCreateMode, _handleClickSubmit);
+    const displayedSubmitButtons = useGetSubmitButtons(submitButtons, isCreation, _handleClickSubmit);
+    const [antdForm] = useForm();
+
+    const _handleClose = () => {
+        if (isCreation && antdForm.isFieldsTouched()) {
+            return showCancelConfirm();
+        }
+
+        return onClose();
+    };
 
     // Create refs for the buttons to pass them to the EditRecord component
-    const closeButtonRef = useRef<HTMLButtonElement>(null);
     const refreshButtonRef = useRef<HTMLButtonElement>(null);
     const valuesVersionsButtonRef = useRef<HTMLButtonElement>(null);
 
-    const closeButtonLabel = isInCreateMode ? t('global.cancel') : t('global.close');
+    const closeButtonLabel = isCreation ? t('global.cancel') : t('global.close');
 
     const footerButtons = [
         <KitButton
             aria-label={closeButtonLabel}
             key="close"
-            ref={closeButtonRef}
             icon={<FontAwesomeIcon icon={faXmark} />}
+            onClick={_handleClose}
         >
             {closeButtonLabel}
         </KitButton>,
@@ -117,7 +128,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     return (
         <StyledModal
             open={open}
-            onCancel={onClose}
+            onCancel={_handleClose}
             destroyOnClose
             cancelText={t('global.cancel')}
             width="90vw"
@@ -141,13 +152,12 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
                 </KitSpace>
             </Header>
             <EditRecord
+                antdForm={antdForm}
                 record={currentRecord}
                 library={library}
-                onClose={onClose}
                 onCreate={_handleCreate}
                 valuesVersion={valuesVersion}
                 buttonsRefs={{
-                    close: closeButtonRef,
                     refresh: refreshButtonRef,
                     valuesVersions: valuesVersionsButtonRef
                 }}

@@ -44,11 +44,12 @@ import editRecordReducer, {EditRecordReducerActionsTypes, initialState} from '..
 import {EditRecordReducerContext} from '../editRecordReducer/editRecordReducerContext';
 import EditRecordSidebar from '../EditRecordSidebar';
 import CreationErrorContext, {ICreationErrorByField} from './creationErrorContext';
+import {FormInstance} from 'antd/lib/form/Form';
 
 interface IEditRecordProps {
+    antdForm: FormInstance;
     record: RecordIdentityFragment['whoAmI'] | null;
     library: string;
-    onClose: () => void;
     onCreate?: (newRecord: RecordIdentityFragment['whoAmI']) => void;
     valuesVersion?: IValueVersion;
     showSidebar?: boolean;
@@ -57,7 +58,6 @@ interface IEditRecordProps {
     // Here we're not in charge of buttons position. It might on a modal footer or pretty much anywhere.
     // We're using refs to still be able to handle the click on the buttons
     buttonsRefs: {
-        close?: React.RefObject<HTMLButtonElement>;
         refresh?: React.RefObject<HTMLButtonElement>;
         valuesVersions?: React.RefObject<HTMLButtonElement>;
     };
@@ -94,9 +94,9 @@ const Sidebar = styled.div`
 `;
 
 export const EditRecord: FunctionComponent<IEditRecordProps> = ({
+    antdForm,
     record,
     library,
-    onClose,
     onCreate,
     valuesVersion,
     showSidebar = false,
@@ -424,7 +424,6 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     };
 
     const listenersByButtonsName: Record<keyof IEditRecordProps['buttonsRefs'], () => void> = {
-        close: onClose,
         refresh: () => {
             dispatch({
                 type: EditRecordReducerActionsTypes.REQUEST_REFRESH
@@ -448,6 +447,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                                 <EditRecordSkeleton rows={5} />
                             ) : canEdit ? (
                                 <EditRecordContent
+                                    antdForm={antdForm}
                                     record={record}
                                     library={library}
                                     onRecordSubmit={_handleRecordSubmit}

@@ -19,7 +19,7 @@
         "apply": "Apply",
         "processing": "Processing",
         "done": "Done",
-        "clear": "Effacer",
+        "clear": "Clear",
         "copy": "Copy",
         "feature_not_available": "This feature will be available soon!",
         "available_soon": "Soon",
@@ -29,7 +29,8 @@
         "no": "No",
         "create": "Create",
         "ok": "Ok",
-        "max_length": "Max length"
+        "max_length": "Max length",
+        "confirm": "Confirm"
     },
     "errors": {
         "default_language_required": "The default language is required",
@@ -446,7 +447,12 @@
         },
         "date_range_value": "From {{from}} to {{to}}",
         "external_update_warning": "This record has been updated by {{modifiers}}",
-        "field_external_update": "This field has been updated"
+        "field_external_update": "This field has been updated",
+        "create": "Create",
+        "create_and_edit": "Create and edit",
+        "cancel_confirm_modal_title": "Confirm cancellation?",
+        "cancel_confirm_modal_content": "You are about to cancel the creation.",
+        "cancel_confirm_modal_question": "Are you sure?"
     },
     "record_summary": {
         "preview_title": "Click here to visualize preview.",
