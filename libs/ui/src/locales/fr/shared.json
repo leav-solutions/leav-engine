@@ -446,7 +446,9 @@
         },
         "date_range_value": "Du {{from}} au {{to}}",
         "external_update_warning": "Cet élément a été modifié par {{modifiers}}",
-        "field_external_update": "Ce champ a été modifié"
+        "field_external_update": "Ce champ a été modifié",
+        "create": "Créer",
+        "create_and_edit": "Créer et éditer"
     },
     "record_summary": {
         "preview_title": "Cliquez ici pour voir l’aperçu.",

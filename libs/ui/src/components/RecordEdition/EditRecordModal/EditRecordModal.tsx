@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Modal} from 'antd';
 import {KitButton, KitSpace, KitTypography} from 'aristid-ds';
-import {FunctionComponent, useRef} from 'react';
+import {FunctionComponent, useRef, useState} from 'react';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -11,15 +11,18 @@ import {IValueVersion} from '_ui/types';
 import {RecordIdentityFragment} from '_ui/_gqlTypes';
 import {EditRecord} from '../EditRecord';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faXmark, faFloppyDisk, faRotateRight, faLayerGroup} from '@fortawesome/free-solid-svg-icons';
-import {EDIT_OR_CREATE_RECORD_FORM_ID} from '../EditRecordContent/formConstants';
+import {faXmark, faRotateRight, faLayerGroup} from '@fortawesome/free-solid-svg-icons';
+import {possibleSubmitButtons, submitButtonsName} from '../_types';
+import {useGetSubmitButtons} from '../hooks/useGetSubmitButtons';
 
 interface IEditRecordModalProps {
     open: boolean;
     record: RecordIdentityFragment['whoAmI'] | null;
     library: string;
     onClose: () => void;
-    afterCreate?: (newRecord: RecordIdentityFragment['whoAmI']) => void;
+    onCreate?: (newRecord: RecordIdentityFragment['whoAmI']) => void; // Called after submitting via the "create" button
+    onCreateAndEdit?: (newRecord: RecordIdentityFragment['whoAmI']) => void; // Called after submitting via the "create and edit" button
+    submitButtons?: possibleSubmitButtons;
     withInfoButton?: boolean;
     valuesVersion?: IValueVersion;
 }
@@ -54,50 +57,62 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
     record,
     library,
     onClose,
-    afterCreate,
+    onCreate,
+    onCreateAndEdit,
+    submitButtons = ['create'],
     valuesVersion,
     withInfoButton = true
 }) => {
     const {t} = useSharedTranslation();
-    const isCreationMode = !record;
+
+    const [currentRecord, setCurrentRecord] = useState<RecordIdentityFragment['whoAmI'] | null>(record);
+    const [clickedSubmitButton, setClickedSubmitButton] = useState<submitButtonsName | null>(null);
+    const isInCreateMode = !currentRecord;
+
+    const _handleClickSubmit = (button: submitButtonsName) => {
+        setClickedSubmitButton(button);
+    };
+
+    const displayedSubmitButtons = useGetSubmitButtons(submitButtons, isInCreateMode, _handleClickSubmit);
 
     // Create refs for the buttons to pass them to the EditRecord component
     const closeButtonRef = useRef<HTMLButtonElement>(null);
     const refreshButtonRef = useRef<HTMLButtonElement>(null);
     const valuesVersionsButtonRef = useRef<HTMLButtonElement>(null);
 
-    const closeButtonLabel = record ? t('global.close') : t('global.cancel');
+    const closeButtonLabel = isInCreateMode ? t('global.cancel') : t('global.close');
+
     const footerButtons = [
         <KitButton
-            aria-label={t('global.close')}
+            aria-label={closeButtonLabel}
             key="close"
             ref={closeButtonRef}
             icon={<FontAwesomeIcon icon={faXmark} />}
         >
             {closeButtonLabel}
-        </KitButton>
+        </KitButton>,
+        ...displayedSubmitButtons
     ];
-
-    if (isCreationMode) {
-        footerButtons.push(
-            <KitButton
-                key="submit"
-                htmlType="submit"
-                type="primary"
-                form={EDIT_OR_CREATE_RECORD_FORM_ID}
-                aria-label={t('global.submit')}
-                icon={<FontAwesomeIcon icon={faFloppyDisk} />}
-            >
-                {t('global.submit')}
-            </KitButton>
-        );
-    }
 
     const footer = (
         <ModalFooter>
             <KitSpace>{footerButtons}</KitSpace>
         </ModalFooter>
     );
+
+    const _handleCreate = (newRecord: RecordIdentityFragment['whoAmI']) => {
+        setCurrentRecord(newRecord);
+
+        if (onCreateAndEdit && clickedSubmitButton === 'createAndEdit') {
+            onCreateAndEdit(newRecord);
+            return;
+        }
+
+        if (onCreate && clickedSubmitButton === 'create') {
+            onCreate(newRecord);
+            return;
+        }
+    };
 
     return (
         <StyledModal
@@ -114,7 +129,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
         >
             <Header>
                 <KitTypography.Title level="h2" style={{margin: 0}}>
-                    {record?.label ?? t('record_edition.new_record')}
+                    {currentRecord?.label ?? t('record_edition.new_record')}
                 </KitTypography.Title>
                 <KitSpace size="xxs">
                     <KitButton
@@ -126,10 +141,10 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
                 </KitSpace>
             </Header>
             <EditRecord
-                record={record}
+                record={currentRecord}
                 library={library}
                 onClose={onClose}
-                afterCreate={afterCreate}
+                onCreate={_handleCreate}
                 valuesVersion={valuesVersion}
                 buttonsRefs={{
                     close: closeButtonRef,

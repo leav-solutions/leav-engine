@@ -395,7 +395,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
                     library={attribute.linked_library.id}
                     record={null}
                     onClose={_handleCloseCreateRecordModal}
-                    afterCreate={_handleAfterCreateRecord}
+                    onCreate={_handleAfterCreateRecord}
                 />
             )}
             {isUploadFilesModalVisible && (

@@ -1,9 +1,13 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent, useState} from 'react';
 import {PlusOutlined} from '@ant-design/icons';
 import {Button} from 'antd';
 import {LibraryBehavior} from '_ui/_gqlTypes';
 import {CreateDirectory, EditRecordModal, UploadFiles} from '_ui/components';
 import {IValueVersion} from '_ui/types';
+import {possibleSubmitButtons} from '_ui/components/RecordEdition/_types';
 
 interface ICreateNewRecordButtonProps {
     label: string;
@@ -11,6 +15,7 @@ interface ICreateNewRecordButtonProps {
     libraryId: string;
     notifyNewCreation: () => void;
     valuesVersions: IValueVersion;
+    canCreateAndEdit?: boolean;
 }
 
 export const CreateNewRecordButton: FunctionComponent<ICreateNewRecordButtonProps> = ({
@@ -18,7 +23,8 @@ export const CreateNewRecordButton: FunctionComponent<ICreateNewRecordButtonProp
     libraryBehavior,
     libraryId,
     notifyNewCreation,
-    valuesVersions
+    valuesVersions,
+    canCreateAndEdit = true
 }) => {
     const [isRecordCreationVisible, setIsRecordCreationVisible] = useState(false);
     const [isUploadFilesModalVisible, setIsUploadFilesModalVisible] = useState(false);
@@ -36,9 +42,13 @@ export const CreateNewRecordButton: FunctionComponent<ICreateNewRecordButtonProp
         setIsCreateDirectoryModalVisible(false);
     };
 
-    const _handleAfterCreate = () => {
+    const _handleCreate = () => {
         notifyNewCreation();
         _handleRecordCreationClose();
+    };
+
+    const _handleCreateAndEdit = () => {
+        notifyNewCreation();
     };
 
     const _handleClickNew = () => {
@@ -55,6 +65,11 @@ export const CreateNewRecordButton: FunctionComponent<ICreateNewRecordButtonProp
         }
     };
 
+    const submitButtons: possibleSubmitButtons = ['create'];
+    if (canCreateAndEdit) {
+        submitButtons.push('createAndEdit');
+    }
+
     return (
         <>
             <Button type="primary" block icon={<PlusOutlined />} className="primary-btn" onClick={_handleClickNew}>
@@ -67,7 +82,9 @@ export const CreateNewRecordButton: FunctionComponent<ICreateNewRecordButtonProp
                     open={isRecordCreationVisible}
                     onClose={_handleRecordCreationClose}
                     valuesVersion={valuesVersions}
-                    afterCreate={_handleAfterCreate}
+                    onCreate={_handleCreate}
+                    onCreateAndEdit={_handleCreateAndEdit}
+                    submitButtons={submitButtons}
                 />
             )}
             {isUploadFilesModalVisible && (

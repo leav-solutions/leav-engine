@@ -40,7 +40,7 @@ function AddByCreationButton({availableLibraries, parent, onMessages}: IAddByCre
     };
     const _handleCloseCreateRecordModal = () => setIsCreateRecordModalVisible(false);
 
-    const _handleAfterCreateRecord = async (newRecord: IRecordIdentityWhoAmI) => {
+    const _handleCreateRecord = async (newRecord: IRecordIdentityWhoAmI) => {
         let notification: IInfo;
         let messages: IMessages = {
             countValid: 0,
@@ -128,7 +128,7 @@ function AddByCreationButton({availableLibraries, parent, onMessages}: IAddByCre
                     library={createRecordLibraryId}
                     record={null}
                     onClose={_handleCloseCreateRecordModal}
-                    afterCreate={_handleAfterCreateRecord}
+                    onCreate={_handleCreateRecord}
                 />
             )}
         </>

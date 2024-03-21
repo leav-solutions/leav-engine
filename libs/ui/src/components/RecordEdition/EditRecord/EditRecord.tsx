@@ -49,7 +49,7 @@ interface IEditRecordProps {
     record: RecordIdentityFragment['whoAmI'] | null;
     library: string;
     onClose: () => void;
-    afterCreate?: (newRecord: RecordIdentityFragment['whoAmI']) => void;
+    onCreate?: (newRecord: RecordIdentityFragment['whoAmI']) => void;
     valuesVersion?: IValueVersion;
     showSidebar?: boolean;
     containerStyle?: CSSObject;
@@ -97,7 +97,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     record,
     library,
     onClose,
-    afterCreate: afterSave,
+    onCreate,
     valuesVersion,
     showSidebar = false,
     containerStyle,
@@ -381,8 +381,8 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
 
             newRecord = creationResult.data.createRecord.record.whoAmI;
 
-            if (afterSave) {
-                afterSave(newRecord);
+            if (onCreate) {
+                onCreate(newRecord);
             }
         }
     };

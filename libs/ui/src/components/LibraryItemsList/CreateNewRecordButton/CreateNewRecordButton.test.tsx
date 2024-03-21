@@ -10,7 +10,7 @@ import {mockGetLibraryDetailExtendedElement} from '_ui/__mocks__/mockQuery/mockG
 import {CreateNewRecordButton} from '_ui/components/LibraryItemsList/CreateNewRecordButton/CreateNewRecordButton';
 
 jest.mock('_ui/components', () => ({
-    EditRecordModal: ({afterCreate}) => afterCreate?.(),
+    EditRecordModal: ({onCreate}) => onCreate?.(),
     UploadFiles: ({onCompleted}) => onCompleted?.(),
     CreateDirectory: ({onCompleted}) => onCompleted?.()
 }));
