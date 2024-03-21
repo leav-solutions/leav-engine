@@ -29,7 +29,8 @@
         "no": "Non",
         "create": "Créer",
         "ok": "Ok",
-        "max_length": "Longueur maximale"
+        "max_length": "Longueur maximale",
+        "confirm": "Confirmer"
     },
     "errors": {
         "default_language_required": "La langue par défaut est requise",
@@ -448,7 +449,10 @@
         "external_update_warning": "Cet élément a été modifié par {{modifiers}}",
         "field_external_update": "Ce champ a été modifié",
         "create": "Créer",
-        "create_and_edit": "Créer et éditer"
+        "create_and_edit": "Créer et éditer",
+        "cancel_confirm_modal_title": "Confirmer l'abandon?",
+        "cancel_confirm_modal_content": "Vous êtes sur le point d'abandonner la création.",
+        "cancel_confirm_modal_question": "Êtes-vous sûr(e)?"
     },
     "record_summary": {
         "preview_title": "Cliquez ici pour voir l’aperçu.",

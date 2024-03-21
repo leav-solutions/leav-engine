@@ -5,112 +5,154 @@ import userEvent from '@testing-library/user-event';
 import {screen, render} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {EditRecordPage} from './EditRecordPage';
+import {Form} from 'antd';
+
+let user!: ReturnType<typeof userEvent.setup>;
 
 jest.mock('../EditRecord', () => ({
-    EditRecord: ({record, onCreate}) => {
+    EditRecord: ({antdForm, record, onCreate}) => {
+        const fields = [{name: 'jeanjau', value: record ? 'EditRecord' : 'CreateRecord'}];
         return (
-            <div>
-                {record ? 'EditRecord' : 'CreateRecord'}
+            <Form form={antdForm} fields={fields}>
+                <Form.Item name="jeanjau">
+                    <input />
+                </Form.Item>
                 <button onClick={() => onCreate(mockRecord)}>simulate_create_record</button>
-            </div>
+            </Form>
         );
     }
 }));
 
 describe('EditRecordPage', () => {
-    let user: ReturnType<typeof userEvent.setup>;
     beforeEach(() => {
         user = userEvent.setup();
     });
 
-    test('Display page in create mode', async () => {
-        render(<EditRecordPage library="test_lib" onClose={jest.fn()} record={null} />);
+    describe('create mode', () => {
+        test('Display page in create mode', async () => {
+            render(<EditRecordPage library="test_lib" onClose={jest.fn()} record={null} />);
 
-        expect(screen.getByText('CreateRecord')).toBeInTheDocument();
-        expect(screen.getByText(/new_record/)).toBeInTheDocument();
-        expect(screen.getByLabelText('refresh')).toBeInTheDocument();
-        expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
-        expect(screen.getByRole('button', {name: /create$/})).toBeInTheDocument();
-        expect(screen.queryByRole('button', {name: /create_and_edit/})).not.toBeInTheDocument();
+            expect(screen.getByDisplayValue('CreateRecord')).toBeInTheDocument();
+            expect(screen.getByText(/new_record/)).toBeInTheDocument();
+            expect(screen.getByLabelText('refresh')).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: /create$/})).toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: /create_and_edit/})).not.toBeInTheDocument();
+        });
+
+        test('Display page in create mode with all submit buttons', async () => {
+            render(
+                <EditRecordPage
+                    library="test_lib"
+                    onClose={jest.fn()}
+                    record={null}
+                    submitButtons={['create', 'createAndEdit']}
+                />
+            );
+
+            expect(screen.getByLabelText('refresh')).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: /create$/})).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: /create_and_edit/})).toBeInTheDocument();
+        });
+
+        test('Display page in create mode with "create and edit" button only', async () => {
+            render(
+                <EditRecordPage
+                    library="test_lib"
+                    onClose={jest.fn()}
+                    record={null}
+                    submitButtons={['createAndEdit']}
+                />
+            );
+
+            expect(screen.getByLabelText('refresh')).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: /create$/})).not.toBeInTheDocument();
+            expect(screen.getByRole('button', {name: /create_and_edit/})).toBeInTheDocument();
+        });
+
+        test('Should call onClose  if fields are not touched on cancel', async () => {
+            const mockOnClose = jest.fn();
+            render(<EditRecordPage library="test_lib" onClose={mockOnClose} record={null} />);
+
+            await userEvent.click(screen.getByRole('button', {name: 'global.cancel'}));
+            expect(mockOnClose).toHaveBeenCalledTimes(1);
+        });
+
+        test('Should open modal and call onClose on click on confirm if antd fields are touched', async () => {
+            const mockOnClose = jest.fn();
+            render(<EditRecordPage library="test_lib" onClose={mockOnClose} record={null} />);
+
+            expect(
+                screen.queryByRole('heading', {level: 2, name: 'record_edition.cancel_confirm_modal_title'})
+            ).not.toBeInTheDocument();
+            await userEvent.type(screen.getByDisplayValue('CreateRecord'), 'Something');
+            await userEvent.click(screen.getByRole('button', {name: 'global.cancel'}));
+
+            expect(screen.queryByText('record_edition.cancel_confirm_modal_title')).toBeInTheDocument();
+            expect(mockOnClose).not.toHaveBeenCalled();
+
+            await userEvent.click(screen.queryByText('global.confirm'));
+            expect(screen.queryByText('record_edition.cancel_confirm_modal_title')).not.toBeInTheDocument();
+            expect(mockOnClose).toHaveBeenCalled();
+        });
     });
 
-    test('Display page in create mode with all submit buttons', async () => {
-        render(
-            <EditRecordPage
-                library="test_lib"
-                onClose={jest.fn()}
-                record={null}
-                submitButtons={['create', 'createAndEdit']}
-            />
-        );
+    describe('edit mode', () => {
+        test('Display page in edit mode', async () => {
+            render(<EditRecordPage library="test_lib" onClose={jest.fn()} record={mockRecord} />);
 
-        expect(screen.getByLabelText('refresh')).toBeInTheDocument();
-        expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
-        expect(screen.getByRole('button', {name: /create$/})).toBeInTheDocument();
-        expect(screen.getByRole('button', {name: /create_and_edit/})).toBeInTheDocument();
-    });
+            expect(screen.getByDisplayValue('EditRecord')).toBeInTheDocument();
+            expect(screen.getByText(mockRecord.label)).toBeInTheDocument();
+            expect(screen.getByLabelText('refresh')).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: /close/})).toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: /submit/})).not.toBeInTheDocument();
+        });
 
-    test('Display page in create mode with "create and edit" button only', async () => {
-        render(
-            <EditRecordPage library="test_lib" onClose={jest.fn()} record={null} submitButtons={['createAndEdit']} />
-        );
+        test('Should display a custom title', async () => {
+            render(
+                <EditRecordPage library="test_lib" onClose={jest.fn()} record={mockRecord} title={'Custom title'} />
+            );
 
-        expect(screen.getByLabelText('refresh')).toBeInTheDocument();
-        expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
-        expect(screen.queryByRole('button', {name: /create$/})).not.toBeInTheDocument();
-        expect(screen.getByRole('button', {name: /create_and_edit/})).toBeInTheDocument();
-    });
+            expect(screen.getByText('Custom title')).toBeInTheDocument();
+        });
 
-    test('Refresh form in edit mode after "create and edit"', async () => {
-        const onCreateAndEdit = jest.fn();
-        const onCreate = jest.fn();
-        render(
-            <EditRecordPage
-                library="test_lib"
-                onClose={jest.fn()}
-                record={null}
-                submitButtons={['createAndEdit']}
-                onCreate={onCreate}
-                onCreateAndEdit={onCreateAndEdit}
-            />
-        );
+        test('Should hide refresh button if showRefreshButton is set to false', async () => {
+            render(
+                <EditRecordPage
+                    library="test_lib"
+                    onClose={jest.fn()}
+                    record={mockRecord}
+                    title={'Custom title'}
+                    showRefreshButton={false}
+                />
+            );
 
-        expect(screen.getByLabelText('refresh')).toBeInTheDocument();
-        expect(screen.getByText('CreateRecord')).toBeInTheDocument();
+            expect(screen.queryByLabelText('refresh')).not.toBeInTheDocument();
+        });
 
-        await user.click(screen.getByText('simulate_create_record'));
+        test('Refresh form in edit mode after "create and edit"', async () => {
+            const onCreateAndEdit = jest.fn();
+            const onCreate = jest.fn();
+            render(
+                <EditRecordPage
+                    library="test_lib"
+                    onClose={jest.fn()}
+                    record={null}
+                    submitButtons={['createAndEdit']}
+                    onCreate={onCreate}
+                    onCreateAndEdit={onCreateAndEdit}
+                />
+            );
 
-        expect(screen.getByText('EditRecord')).toBeInTheDocument();
-    });
+            expect(screen.getByLabelText('refresh')).toBeInTheDocument();
+            expect(screen.getByDisplayValue('CreateRecord')).toBeInTheDocument();
 
-    test('Display page in edit mode', async () => {
-        render(<EditRecordPage library="test_lib" onClose={jest.fn()} record={mockRecord} />);
+            await user.click(screen.getByText('simulate_create_record'));
 
-        expect(screen.getByText('EditRecord')).toBeInTheDocument();
-        expect(screen.getByText(mockRecord.label)).toBeInTheDocument();
-        expect(screen.getByLabelText('refresh')).toBeInTheDocument();
-        expect(screen.getByRole('button', {name: /close/})).toBeInTheDocument();
-        expect(screen.queryByRole('button', {name: /create$/})).not.toBeInTheDocument();
-    });
-
-    test('Should display a custom title', async () => {
-        render(<EditRecordPage library="test_lib" onClose={jest.fn()} record={mockRecord} title={'Custom title'} />);
-
-        expect(screen.getByText('Custom title')).toBeInTheDocument();
-    });
-
-    test('Should hide refresh button if showRefreshButton is set to false', async () => {
-        render(
-            <EditRecordPage
-                library="test_lib"
-                onClose={jest.fn()}
-                record={mockRecord}
-                title={'Custom title'}
-                showRefreshButton={false}
-            />
-        );
-
-        expect(screen.queryByLabelText('refresh')).not.toBeInTheDocument();
+            expect(await screen.findByDisplayValue('EditRecord')).toBeInTheDocument();
+        });
     });
 
     test('Should hide refresh button if showRefreshButton is set to false', async () => {

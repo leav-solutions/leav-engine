@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {KitButton, KitDivider, KitSpace, KitTypography} from 'aristid-ds';
 import {FunctionComponent, ReactNode, useRef, useState} from 'react';
+import {KitButton, KitDivider, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IValueVersion} from '_ui/types';
@@ -12,6 +12,8 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark, faRotateRight} from '@fortawesome/free-solid-svg-icons';
 import {possibleSubmitButtons, submitButtonsName} from '../_types';
 import {useGetSubmitButtons} from '../hooks/useGetSubmitButtons';
+import {useForm} from 'antd/lib/form/Form';
+import {useCreateCancelConfirm} from '../hooks/useCreateCancelConfirm';
 
 interface IEditRecordPageProps {
     record: RecordIdentityFragment['whoAmI'] | null;
@@ -52,19 +54,28 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     const {t} = useSharedTranslation();
     const [currentRecord, setCurrentRecord] = useState<RecordIdentityFragment['whoAmI'] | null>(record);
     const [clickedSubmitButton, setClickedSubmitButton] = useState<submitButtonsName | null>(null);
-    const isInCreateMode = !currentRecord;
+    const showCancelConfirm = useCreateCancelConfirm(onClose);
+    const isCreation = !currentRecord;
 
     const _handleClickSubmit = (button: submitButtonsName) => {
         setClickedSubmitButton(button);
     };
 
-    const displayedSubmitButtons = useGetSubmitButtons(submitButtons, isInCreateMode, _handleClickSubmit);
+    const displayedSubmitButtons = useGetSubmitButtons(submitButtons, isCreation, _handleClickSubmit);
+    const [antdForm] = useForm();
+
+    const _handleClose = () => {
+        if (isCreation && antdForm.isFieldsTouched()) {
+            return showCancelConfirm();
+        }
+
+        return onClose();
+    };
 
     // Create refs for the buttons to pass them to the EditRecord component
-    const closeButtonRef = useRef<HTMLButtonElement>(null);
     const refreshButtonRef = useRef<HTMLButtonElement>(null);
 
-    const closeButtonLabel = isInCreateMode ? t('global.cancel') : t('global.close');
+    const closeButtonLabel = isCreation ? t('global.cancel') : t('global.close');
 
     const _handleCreate = (newRecord: RecordIdentityFragment['whoAmI']) => {
         setCurrentRecord(newRecord);
@@ -100,7 +111,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
                             icon={<FontAwesomeIcon icon={faRotateRight} />}
                         />
                     )}
-                    <KitButton ref={closeButtonRef} icon={<FontAwesomeIcon icon={faXmark} />}>
+                    <KitButton onClick={_handleClose} icon={<FontAwesomeIcon icon={faXmark} />}>
                         {closeButtonLabel}
                     </KitButton>
                     <KitSpace>{displayedSubmitButtons}</KitSpace>
@@ -108,12 +119,12 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
             </Header>
             <KitDivider noMargin color="lightGrey" />
             <EditRecord
+                antdForm={antdForm}
                 record={currentRecord}
                 library={library}
                 valuesVersion={valuesVersion}
                 onCreate={_handleCreate}
-                buttonsRefs={{close: closeButtonRef, refresh: refreshButtonRef}}
-                onClose={onClose}
+                buttonsRefs={{refresh: refreshButtonRef}}
                 containerStyle={{height: 'calc(100% - 82px)'}}
                 withInfoButton={withInfoButton}
             />
