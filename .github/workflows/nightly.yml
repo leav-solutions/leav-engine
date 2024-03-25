@@ -1,35 +1,18 @@
 name: Nightly build
+
 on:
+  push:
+    branches:
+      - develop
   workflow_dispatch:
-  schedule:
-    # Every day at midnight
-    - cron: '0 0 * * *'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-    # Check if a build is needed: if the last successful nightly build has been made on the same commit
-    # as the current one, then a build is not needed
-    check:
-        runs-on: 'ubuntu-latest'
-        steps:
-        -
-            uses: octokit/request-action@v2.x
-            id: check_last_run
-            with:
-                route: GET /repos/${{github.repository}}/actions/workflows/nightly.yml/runs?per_page=1&status=completed
-            env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-        - run: "echo Last nightly build sha: ${{ fromJson(steps.check_last_run.outputs.data).workflow_runs[0].head_sha }}"
-        - run: "echo Current build sha: ${{ github.sha }}"
-        - run: "echo Should run: ${{ fromJson(steps.check_last_run.outputs.data).workflow_runs[0].head_sha != github.sha }}"
-
-        outputs:
-            should_run: ${{ fromJson(steps.check_last_run.outputs.data).workflow_runs[0].head_sha != github.sha }}
-
     # Build core and deploy it to Docker Hub
     core:
-        needs: [check]
-        if: needs.check.outputs.should_run == 'true'
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
@@ -60,8 +43,6 @@ jobs:
 
     # Build preview-generator and deploy it to Docker Hub
     preview-generator:
-        needs: [check]
-        if: needs.check.outputs.should_run == 'true'
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
@@ -95,8 +76,6 @@ jobs:
 
     # Build automate-scan and deploy it to Docker Hub
     automate-scan:
-        needs: [check]
-        if: needs.check.outputs.should_run == 'true'
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
@@ -130,8 +109,6 @@ jobs:
 
     # Build sync-scan and deploy it to Docker Hub
     sync-scan:
-        needs: [check]
-        if: needs.check.outputs.should_run == 'true'
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
@@ -165,8 +142,6 @@ jobs:
 
     # Build logs-collector and deploy it to Docker Hub
     logs-collector:
-        needs: [check]
-        if: needs.check.outputs.should_run == 'true'
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v3
