@@ -89,7 +89,7 @@
     "cors": "2.8.5",
     "exceljs": "4.2.0",
     "exiftool-vendored": "22.0.0",
-    "express": "4.17.3",
+    "express": "4.19.2",
     "express-useragent": "1.0.15",
     "glob": "7.1.6",
     "graphql": "16.6.0",
