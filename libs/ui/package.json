@@ -13,7 +13,7 @@
     "test:ci": "jest --maxWorkers=2",
     "test:commit": "jest --maxWorkers=50% --onlyChanged",
     "create_comp": "scripts/createComponent.js",
-    "publish": "npm publish --access public"
+    "publish-ui": "npm publish --access public"
   },
   "main": "dist/index",
   "files": [
