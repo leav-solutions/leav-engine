@@ -51,6 +51,7 @@ describe('EditPreviewsSettingsModal', () => {
 
         await userEvent.click(screen.getAllByRole('button', {name: /delete/i})[0]);
         await userEvent.click(screen.getByRole('button', {name: /confirm/i}));
+
         expect(screen.getAllByRole('textbox', {name: /size_name/i})).toHaveLength(2);
     });
 
