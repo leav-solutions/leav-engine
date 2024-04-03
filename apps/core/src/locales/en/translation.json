@@ -43,7 +43,7 @@
         "LIBRARY_FORBIDDEN_AS_CHILD": "Library forbidden as child",
         "METADATA_PERMISSION_ERROR": "Forbidden action on fields {{fields}}",
         "MISSING_ACTION_PREFIX": "Missing prefix on actions: {{actions}}",
-        "MISSING ELEMENTS": "Missing elements",
+        "MISSING_ELEMENTS": "Missing elements",
         "MISSING_FIELDS": "Missing fields: {{fields}}",
         "MISSING_LIBRARY_ID": "Missing library ID",
         "MISSING_RECORD_ID": "Missing record ID",
@@ -194,7 +194,9 @@
     },
     "files": {
         "directories": "Directories",
-        "default_users_group_label": "Files admins"
+        "default_users_group_label": "Files admins",
+        "previews": "Previews",
+        "previews_status": "Preview status"
     },
     "tasks": {
         "import_label": "Import file {{filename}}",
