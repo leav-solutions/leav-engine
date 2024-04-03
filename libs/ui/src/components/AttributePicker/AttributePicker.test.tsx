@@ -18,13 +18,9 @@ window.matchMedia = query => ({
     dispatchEvent: jest.fn()
 });
 
-jest.mock('../EditAttributeModal', () => {
-    return {
-        EditAttributeModal: () => {
-            return <div>EditAttribute</div>;
-        }
-    };
-});
+jest.mock('../EditAttributeModal', () => ({
+    EditAttributeModal: () => <div>EditAttribute</div>
+}));
 
 jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
 
@@ -87,9 +83,11 @@ describe('AttributePicker', () => {
             mocks: baseMocks
         });
 
-        await waitFor(() => expect(screen.getByText('attributeA')).toBeInTheDocument());
-        expect(screen.getByText('attributeB')).toBeInTheDocument();
-        expect(screen.getByText('attributeC')).toBeInTheDocument();
+        await waitFor(() => {
+            expect(screen.getByText('attributeA')).toBeInTheDocument();
+            expect(screen.getByText('attributeB')).toBeInTheDocument();
+            expect(screen.getByText('attributeC')).toBeInTheDocument();
+        });
     });
 
     test('Can filter list', async () => {
@@ -119,9 +117,11 @@ describe('AttributePicker', () => {
         const mockHandleSubmit = jest.fn();
         render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks: mocksWithFilters});
 
-        await waitFor(() => expect(screen.getByText('attributeA')).toBeInTheDocument());
-        expect(screen.getByText('attributeB')).toBeInTheDocument();
-        expect(screen.getByText('attributeC')).toBeInTheDocument();
+        await waitFor(() => {
+            expect(screen.getByText('attributeA')).toBeInTheDocument();
+            expect(screen.getByText('attributeB')).toBeInTheDocument();
+            expect(screen.getByText('attributeC')).toBeInTheDocument();
+        });
 
         await userEvent.type(screen.getByRole('textbox'), 'attributeA{Enter}');
         expect(screen.getByRole('textbox')).toHaveValue('attributeA');

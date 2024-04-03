@@ -16,6 +16,6 @@ module.exports = {
     },
     transformIgnorePatterns: ['node_modules'],
     testRegex: '.test.(ts|tsx)$',
-    testTimeout: 60000,
+    testTimeout: 60_000,
     moduleNameMapper: require('../../jestModuleNameMapper')
 };
