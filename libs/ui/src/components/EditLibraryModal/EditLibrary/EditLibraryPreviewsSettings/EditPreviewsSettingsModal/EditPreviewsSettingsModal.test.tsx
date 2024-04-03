@@ -34,14 +34,12 @@ describe('EditPreviewsSettingsModal', () => {
     });
 
     test('Can add/delete sizes', async () => {
-        const mockHandleSubmit = jest.fn();
-
         render(
             <EditPreviewsSettingsModal
                 previewsSetting={{...mockLibraryWithPreviewsSettings.previewsSettings[0], system: false}}
                 open
                 onClose={jest.fn()}
-                onSubmit={mockHandleSubmit}
+                onSubmit={jest.fn()}
             />
         );
 
@@ -57,14 +55,12 @@ describe('EditPreviewsSettingsModal', () => {
     });
 
     test('If readonly, everything is disabled', async () => {
-        const mockHandleSubmit = jest.fn();
-
         render(
             <EditPreviewsSettingsModal
                 previewsSetting={{...mockLibraryWithPreviewsSettings.previewsSettings[0], system: true}}
                 open
                 onClose={jest.fn()}
-                onSubmit={mockHandleSubmit}
+                onSubmit={jest.fn()}
             />
         );
 
