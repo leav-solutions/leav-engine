@@ -452,7 +452,8 @@
         "create_and_edit": "Créer et éditer",
         "cancel_confirm_modal_title": "Confirmer l'abandon?",
         "cancel_confirm_modal_content": "Vous êtes sur le point d'abandonner la création.",
-        "cancel_confirm_modal_question": "Êtes-vous sûr(e)?"
+        "cancel_confirm_modal_question": "Êtes-vous sûr(e)?",
+        "product_select": "Sélectionnez un produit"
     },
     "record_summary": {
         "preview_title": "Cliquez ici pour voir l’aperçu.",

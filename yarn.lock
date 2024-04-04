@@ -142,6 +142,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ant-design/icons@npm:^5.3.3":
+  version: 5.3.6
+  resolution: "@ant-design/icons@npm:5.3.6"
+  dependencies:
+    "@ant-design/colors": "npm:^7.0.0"
+    "@ant-design/icons-svg": "npm:^4.4.0"
+    "@babel/runtime": "npm:^7.11.2"
+    classnames: "npm:^2.2.6"
+    rc-util: "npm:^5.31.1"
+  peerDependencies:
+    react: ">=16.0.0"
+    react-dom: ">=16.0.0"
+  checksum: 5fe41720dd07324a31b2743dc2b558e6eea241afe2c1af623f6f9d45c7fb6051e4178e96f4bf344c76adc5549d53fcd57fe4abb38142108c24e95c4e17b0f8f3
+  languageName: node
+  linkType: hard
+
 "@ant-design/icons@npm:^5.3.5":
   version: 5.3.5
   resolution: "@ant-design/icons@npm:5.3.5"
@@ -4890,6 +4906,15 @@ __metadata:
   dependencies:
     regenerator-runtime: "npm:^0.14.0"
   checksum: 8d32c7e116606ea322b89f9fde8ffae6be9503b549dc0d0abb38bd9dc26e87469b9fb7a66964cc089ee558fd0a97d304fb0a3cfec140694764fb0d71b6a6f5e4
+  languageName: node
+  linkType: hard
+
+"@babel/runtime@npm:^7.24.0":
+  version: 7.24.4
+  resolution: "@babel/runtime@npm:7.24.4"
+  dependencies:
+    regenerator-runtime: "npm:^0.14.0"
+  checksum: 8ec8ce2c145bc7e31dd39ab66df124f357f65c11489aefacb30f431bae913b9aaa66aa5efe5321ea2bf8878af3fcee338c87e7599519a952e3a6f83aa1b03308
   languageName: node
   linkType: hard
 
@@ -11481,6 +11506,65 @@ __metadata:
   languageName: node
   linkType: hard
 
+"antd@npm:5.15.3":
+  version: 5.15.3
+  resolution: "antd@npm:5.15.3"
+  dependencies:
+    "@ant-design/colors": "npm:^7.0.2"
+    "@ant-design/cssinjs": "npm:^1.18.4"
+    "@ant-design/icons": "npm:^5.3.3"
+    "@ant-design/react-slick": "npm:~1.0.2"
+    "@babel/runtime": "npm:^7.24.0"
+    "@ctrl/tinycolor": "npm:^3.6.1"
+    "@rc-component/color-picker": "npm:~1.5.3"
+    "@rc-component/mutate-observer": "npm:^1.1.0"
+    "@rc-component/tour": "npm:~1.14.2"
+    "@rc-component/trigger": "npm:^2.0.0"
+    classnames: "npm:^2.5.1"
+    copy-to-clipboard: "npm:^3.3.3"
+    dayjs: "npm:^1.11.10"
+    qrcode.react: "npm:^3.1.0"
+    rc-cascader: "npm:~3.24.0"
+    rc-checkbox: "npm:~3.2.0"
+    rc-collapse: "npm:~3.7.2"
+    rc-dialog: "npm:~9.4.0"
+    rc-drawer: "npm:~7.1.0"
+    rc-dropdown: "npm:~4.2.0"
+    rc-field-form: "npm:~1.42.1"
+    rc-image: "npm:~7.6.0"
+    rc-input: "npm:~1.4.5"
+    rc-input-number: "npm:~9.0.0"
+    rc-mentions: "npm:~2.11.1"
+    rc-menu: "npm:~9.13.0"
+    rc-motion: "npm:^2.9.0"
+    rc-notification: "npm:~5.3.0"
+    rc-pagination: "npm:~4.0.4"
+    rc-picker: "npm:~4.3.0"
+    rc-progress: "npm:~3.5.1"
+    rc-rate: "npm:~2.12.0"
+    rc-resize-observer: "npm:^1.4.0"
+    rc-segmented: "npm:~2.3.0"
+    rc-select: "npm:~14.13.0"
+    rc-slider: "npm:~10.5.0"
+    rc-steps: "npm:~6.0.1"
+    rc-switch: "npm:~4.1.0"
+    rc-table: "npm:~7.42.0"
+    rc-tabs: "npm:~14.1.1"
+    rc-textarea: "npm:~1.6.3"
+    rc-tooltip: "npm:~6.2.0"
+    rc-tree: "npm:~5.8.5"
+    rc-tree-select: "npm:~5.19.0"
+    rc-upload: "npm:~4.5.2"
+    rc-util: "npm:^5.39.1"
+    scroll-into-view-if-needed: "npm:^3.1.0"
+    throttle-debounce: "npm:^5.0.0"
+  peerDependencies:
+    react: ">=16.9.0"
+    react-dom: ">=16.9.0"
+  checksum: ae0e487fe448f4316066a34786c4536a936c65500dd3388a42c26c1cc659e70fadb0186a4b44519611964ecde5b526551f600aeb3ffe795ce3564b6224639bfb
+  languageName: node
+  linkType: hard
+
 "antd@npm:^5.15.3":
   version: 5.15.4
   resolution: "antd@npm:5.15.4"
@@ -15196,7 +15280,7 @@ __metadata:
     "@types/redux-mock-store": "npm:1.0.3"
     "@types/styled-components": "npm:5.1.26"
     "@vitejs/plugin-react": "npm:3.1.0"
-    antd: "npm:5.14.0"
+    antd: "npm:5.15.3"
     apollo: "npm:2.34.0"
     apollo-cache-inmemory: "npm:1.6.6"
     apollo-upload-client: "npm:14.1.3"

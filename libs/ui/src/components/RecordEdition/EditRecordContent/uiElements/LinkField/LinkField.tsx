@@ -52,6 +52,7 @@ import ValuesVersionIndicator from '../../shared/ValuesVersionIndicator';
 import {APICallStatus, FieldScope, IFormElementProps} from '../../_types';
 import FloatingMenuHandler from './FloatingMenuHandler';
 import ValuesAdd from './ValuesAdd';
+import {MonoValueSelect} from '_ui/components/RecordEdition/EditRecordContent/uiElements/LinkField/MonoValueSelect';
 
 const TableWrapper = styled.div<{$isValuesAddVisible: boolean; $themeToken: AntdThemeToken}>`
     position: relative;
@@ -69,6 +70,7 @@ const TableWrapper = styled.div<{$isValuesAddVisible: boolean; $themeToken: Antd
     }
 
     // Disable some unwanted antd styles
+
     && table > thead > tr:first-child {
         th:first-child,
         th:last-child {
@@ -112,10 +114,11 @@ export interface IRowData {
     key: string;
     whoAmI: IRecordIdentityWhoAmI;
     value: RecordFormElementsValueLinkValue;
+
     [columnName: string]: unknown;
 }
 
-type LinkFieldReducerState = ILinkFieldState<RecordFormElementsValueLinkValue>;
+export type LinkFieldReducerState = ILinkFieldState<RecordFormElementsValueLinkValue>;
 type LinkFieldReducerAction = LinkFieldReducerActions<RecordFormElementsValueLinkValue>;
 
 function LinkField({
@@ -455,37 +458,53 @@ function LinkField({
 
     return (
         <>
-            {state.isValuesAddVisible && <Dimmer onClick={_handleCloseValuesAdd} />}
-            <TableWrapper $isValuesAddVisible={state.isValuesAddVisible} $themeToken={token}>
-                <FieldLabel ellipsis={{rows: 1, tooltip: true}} $themeToken={token}>
-                    {element.settings.label}
-                    {editRecordState.externalUpdate.updatedValues[attribute?.id] && <UpdatedFieldIcon />}
-                    {state.activeScope === FieldScope.INHERITED && (
-                        <InheritedFieldLabel version={state.values[FieldScope.INHERITED].version} />
+            {attribute.multiple_values ? (
+                <>
+                    {state.isValuesAddVisible && <Dimmer onClick={_handleCloseValuesAdd} />}
+                    <TableWrapper $isValuesAddVisible={state.isValuesAddVisible} $themeToken={token}>
+                        <FieldLabel ellipsis={{rows: 1, tooltip: true}} $themeToken={token}>
+                            {element.settings.label}
+                            {editRecordState.externalUpdate.updatedValues[attribute?.id] && <UpdatedFieldIcon />}
+                            {state.activeScope === FieldScope.INHERITED && (
+                                <InheritedFieldLabel version={state.values[FieldScope.INHERITED].version} />
+                            )}
+                        </FieldLabel>
+                        <Table
+                            columns={cols}
+                            dataSource={data}
+                            size="small"
+                            pagination={false}
+                            locale={{
+                                emptyText: <NoValue canAddValue={canAddValue} onAddValue={_handleAddValue} linkField />
+                            }}
+                            data-testid="linked-field-values"
+                            footer={tableFooter}
+                            scroll={{y: 280}}
+                        />
+                        {state.isValuesAddVisible && canAddValue && (
+                            <ValuesAdd
+                                onAdd={_handleAddValueSubmit}
+                                attribute={attribute}
+                                onClose={_handleCloseValuesAdd}
+                            />
+                        )}
+                    </TableWrapper>
+                    {state.errorMessage && (
+                        <Popover
+                            placement="bottomLeft"
+                            open={!!state.errorMessage}
+                            content={<ErrorMessage error={state.errorMessage} onClose={_handleCloseError} />}
+                        />
                     )}
-                </FieldLabel>
-                <Table
-                    columns={cols}
-                    dataSource={data}
-                    size="small"
-                    pagination={false}
-                    locale={{
-                        emptyText: <NoValue canAddValue={canAddValue} onAddValue={_handleAddValue} linkField />
-                    }}
-                    data-testid="linked-field-values"
-                    footer={tableFooter}
-                    scroll={{y: 280}}
+                </>
+            ) : (
+                <MonoValueSelect
+                    activeValue={activeValues[0]}
+                    attribute={attribute}
+                    state={state}
+                    onClearSelect={onValueDelete}
+                    onSelectChange={onValueSubmit}
                 />
-                {state.isValuesAddVisible && canAddValue && (
-                    <ValuesAdd onAdd={_handleAddValueSubmit} attribute={attribute} onClose={_handleCloseValuesAdd} />
-                )}
-            </TableWrapper>
-            {state.errorMessage && (
-                <Popover
-                    placement="bottomLeft"
-                    open={!!state.errorMessage}
-                    content={<ErrorMessage error={state.errorMessage} onClose={_handleCloseError} />}
-                ></Popover>
             )}
         </>
     );
