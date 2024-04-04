@@ -45,7 +45,7 @@ jobs:
           node-version: 18.x
           cache: 'yarn'
       - name: Cache NPM dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: '**/node_modules'
           key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -64,7 +64,7 @@ jobs:
           node-version: 18.x
           cache: 'yarn'
       - name: Cache NPM dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: '**/node_modules'
           key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -89,7 +89,7 @@ jobs:
           node-version: 18.x
           cache: 'yarn'
       - name: Cache NPM dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: '**/node_modules'
           key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -135,7 +135,7 @@ jobs:
           stack-version: 8.5.3
           security-enabled: false
       - name: Cache NPM dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: '**/node_modules'
           key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -197,7 +197,7 @@ jobs:
           stack-version: 8.5.3
           security-enabled: false
       - name: Cache NPM dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: '**/node_modules'
           key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -236,7 +236,7 @@ jobs:
           node-version: 18.x
           cache: 'yarn'
       - name: Cache NPM dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: '**/node_modules'
           key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}

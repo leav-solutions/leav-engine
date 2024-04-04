@@ -63,7 +63,7 @@ jobs:
           field: version
           value: ${{ needs.prepublish.outputs.version }}
       - name: Cache NPM dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: '**/node_modules'
           key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
