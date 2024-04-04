@@ -53,6 +53,7 @@ import {APICallStatus, FieldScope, IFormElementProps} from '../../_types';
 import FloatingMenuHandler from './FloatingMenuHandler';
 import ValuesAdd from './ValuesAdd';
 import {MonoValueSelect} from '_ui/components/RecordEdition/EditRecordContent/uiElements/LinkField/MonoValueSelect';
+import {AntForm} from 'aristid-ds';
 
 const TableWrapper = styled.div<{$isValuesAddVisible: boolean; $themeToken: AntdThemeToken}>`
     position: relative;
@@ -109,6 +110,16 @@ const _isLinkValue = (value: RecordColumnValue): value is IRecordColumnValueLink
 
 const _isTreeValue = (value: RecordColumnValue): value is IRecordColumnValueTree =>
     (value as IRecordColumnValueTree).treeValue !== undefined;
+
+const FormItem = styled(AntForm.Item)`
+    .ant-form-item-explain {
+        display: none;
+
+        & + div {
+            display: none;
+        }
+    }
+`;
 
 export interface IRowData {
     key: string;
@@ -498,13 +509,15 @@ function LinkField({
                     )}
                 </>
             ) : (
-                <MonoValueSelect
-                    activeValue={activeValues[0]}
-                    attribute={attribute}
-                    state={state}
-                    onClearSelect={onValueDelete}
-                    onSelectChange={onValueSubmit}
-                />
+                <FormItem name={attribute.id} rules={[{required: state.formElement.settings.required}]}>
+                    <MonoValueSelect
+                        activeValue={activeValues[0]}
+                        attribute={attribute}
+                        state={state}
+                        onClearSelect={onValueDelete}
+                        onSelectChange={onValueSubmit}
+                    />
+                </FormItem>
             )}
         </>
     );

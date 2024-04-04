@@ -40,7 +40,8 @@
         "invalid_endpoint_format": "The endpoint must contain only letters, numbers, and dashes (eg. \"my-app\")",
         "id_already_exists": "This ID already exists",
         "endpoint_already_used": "This endpoint is already used",
-        "invalid_url_format": "Invalid URL"
+        "invalid_url_format": "Invalid URL",
+        "required": "This field is mandatory"
     },
     "applications": {
         "id": "Identifier",

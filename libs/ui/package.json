@@ -49,7 +49,7 @@
   "peerDependencies": {
     "@ant-design/icons": ">=5.2",
     "@apollo/client": ">=3.8.1",
-    "antd": "5.9.1",
+    "antd": "5.15.3",
     "i18next": "22.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -62,7 +62,7 @@
     "@ckeditor/ckeditor5-build-inline": "39.0.1",
     "@ckeditor/ckeditor5-react": "6.1.0",
     "@leav/utils": "0.0.1",
-    "aristid-ds": "4.0.0-3ef6e97",
+    "aristid-ds": "4.0.0-8683c72",
     "dayjs": "1.11.10",
     "dompurify": "3.0.5",
     "html-react-parser": "4.2.2",

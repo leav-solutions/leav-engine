@@ -5,7 +5,7 @@ import {
     IGetRecordsFromLibraryQuery,
     IGetRecordsFromLibraryQueryVariables
 } from '_ui/_queries/records/getRecordsFromLibraryQuery';
-import {KitAvatar, KitSelect} from 'aristid-ds';
+import {AntForm, KitAvatar, KitSelect} from 'aristid-ds';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 import {LinkFieldReducerState} from '_ui/components/RecordEdition/EditRecordContent/uiElements/LinkField/LinkField';
 import {APICallStatus, DeleteValueFunc, SubmitValueFunc} from '_ui/components/RecordEdition/EditRecordContent/_types';
@@ -37,6 +37,8 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     state
 }) => {
     const {t} = useSharedTranslation();
+    const {errors} = AntForm.Item.useStatus();
+    const form = AntForm.useFormInstance();
 
     const {loading, data} = useQuery<IGetRecordsFromLibraryQuery, IGetRecordsFromLibraryQueryVariables>(
         getRecordsFromLibraryQuery(),
@@ -91,6 +93,8 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
 
         setCurrentLinkValue((res.values[0] as unknown) as RecordFormElementsValueLinkValue);
         setSelectedValue(selectOptions.find(option => option.value === optionValue));
+        form.setFieldValue(state.attribute.id, optionValue);
+        form.validateFields();
     };
 
     const handleClear = async () => {
@@ -126,6 +130,8 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
             required={isRequired}
             label={state.formElement.settings.label}
             options={selectOptions}
+            status={errors.length > 0 && 'error'}
+            helper={errors.length > 0 && t('errors.required')}
             showSearch
             optionFilterProp="label"
             placeholder={t('record_edition.product_select')}
