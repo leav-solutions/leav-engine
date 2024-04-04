@@ -15,7 +15,7 @@ jobs:
     core:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
             - name: Set version # Write version to package.json and manifest.json
               run: |
                     echo "Setting version to \"develop (${{ github.sha }})\""
@@ -45,7 +45,7 @@ jobs:
     preview-generator:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
             - name: Set version # Write version to package.json and manifest.json
               run: |
                     echo "Setting version to \"develop (${{ github.sha }})\""
@@ -78,7 +78,7 @@ jobs:
     automate-scan:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
             - name: Set version # Write version to package.json and manifest.json
               run: |
                     echo "Setting version to \"develop (${{ github.sha }})\""
@@ -111,7 +111,7 @@ jobs:
     sync-scan:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
             - name: Set version # Write version to package.json and manifest.json
               run: |
                     echo "Setting version to \"develop (${{ github.sha }})\""
@@ -144,7 +144,7 @@ jobs:
     logs-collector:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
             - name: Set version # Write version to package.json and manifest.json
               run: |
                     echo "Setting version to \"develop (${{ github.sha }})\""

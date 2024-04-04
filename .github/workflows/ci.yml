@@ -23,7 +23,7 @@ jobs:
     outputs:
       workspaces_name: ${{ steps.set-workspaces-list-name.outputs.workspaces_name }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
@@ -38,7 +38,7 @@ jobs:
     needs:
       - install
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
@@ -57,7 +57,7 @@ jobs:
     needs:
       - install
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
@@ -82,7 +82,7 @@ jobs:
       matrix:
         name: ${{ fromJson(needs.setup-workspaces-list-name.outputs.workspaces_name) }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
@@ -117,7 +117,7 @@ jobs:
         ports:
           - "6379:6379"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
@@ -179,7 +179,7 @@ jobs:
         ports:
           - "6379:6379"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
@@ -229,7 +229,7 @@ jobs:
         ports:
           - "5672:5672"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
