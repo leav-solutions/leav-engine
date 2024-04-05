@@ -179,6 +179,8 @@ describe('utils', () => {
             expect(getInitials('^ - ^456789', 7)).toBe('456789');
             expect(getInitials('987 - 654', 1)).toBe('9');
             expect(getInitials('^ - ^', 2)).toBe('^-');
+            expect(getInitials('Amélie Poulain', 2)).toBe('AP');
+            expect(getInitials('Amé&-lie Poulain', 2)).toBe('AP');
         });
     });
 
