@@ -107,7 +107,9 @@ export default function ({
                         created_by: Record,
                         version: [ValueVersion],
                         attribute: Attribute,
-                        metadata: [ValueMetadata]
+                        metadata: [ValueMetadata],
+                        isInherited: Boolean,
+                        isCalculated: Boolean
                     }
 
                     type Value implements GenericValue {
@@ -120,7 +122,9 @@ export default function ({
                         created_by: Record,
                         version: [ValueVersion],
                         attribute: Attribute,
-                        metadata: [ValueMetadata]
+                        metadata: [ValueMetadata],
+                        isInherited: Boolean,
+                        isCalculated: Boolean
                     }
 
                     type saveValueBatchResult {
@@ -149,7 +153,9 @@ export default function ({
                         created_by: Record,
                         version: [ValueVersion],
                         attribute: Attribute,
-                        metadata: [ValueMetadata]
+                        metadata: [ValueMetadata],
+                        isInherited: Boolean,
+                        isCalculated: Boolean
                     }
 
                     type TreeValue implements GenericValue {
@@ -161,7 +167,9 @@ export default function ({
                         value: TreeNode,
                         version: [ValueVersion],
                         attribute: Attribute,
-                        metadata: [ValueMetadata]
+                        metadata: [ValueMetadata],
+                        isInherited: Boolean,
+                        isCalculated: Boolean
                     }
 
                     type DateRangeValue {

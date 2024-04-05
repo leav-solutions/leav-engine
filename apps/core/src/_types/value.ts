@@ -39,6 +39,8 @@ export interface IGenericValue {
     modified_by?: string;
     version?: IValueVersion;
     metadata?: IValueMetadata;
+    isInherited?: boolean;
+    isCalculated?: boolean;
 }
 
 export interface IStandardValue extends IGenericValue {
