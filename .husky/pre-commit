@@ -23,7 +23,10 @@ fi
 export SKIP_PREFLIGHT_CHECK=true
 export CI=true
 
-echo "Checking types..."
+echo "Checking translations files"
+yarn translations:check
+
+echo "\n Checking types..."
 yarn run tscheck
 
 echo "\n Checking staged files..."

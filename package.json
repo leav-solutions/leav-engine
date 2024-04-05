@@ -18,6 +18,7 @@
     "license:check": "license-check-and-add check -f license-check-config.json",
     "license:add": "license-check-and-add add -f license-check-config.json",
     "license:remove": "license-check-and-add remove -f license-check-config.json",
+    "translations:check": "node ./scripts/compareTranslations.js",
     "postinstall": "husky install",
     "commit": "cz"
   },
