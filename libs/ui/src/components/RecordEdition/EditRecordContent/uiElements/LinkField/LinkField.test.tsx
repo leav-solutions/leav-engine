@@ -134,7 +134,15 @@ describe('LinkField', () => {
     beforeEach(() => jest.clearAllMocks());
 
     test('Display list of values', async () => {
-        _renderLinkField({element: mockFormElementLink});
+        _renderLinkField({
+            element: {
+                ...mockFormElementLink,
+                attribute: {
+                    ...mockFormElementLink.attribute,
+                    multiple_values: true
+                }
+            }
+        });
 
         expect(screen.getByRole('table')).toBeInTheDocument();
         expect(screen.getAllByRole('row')).toHaveLength(1);
@@ -171,7 +179,16 @@ describe('LinkField', () => {
             }
         ];
 
-        _renderLinkField({element: {...mockFormElementLinkWithColumns, values: recordValuesWithColumns}});
+        _renderLinkField({
+            element: {
+                ...mockFormElementLinkWithColumns,
+                values: recordValuesWithColumns,
+                attribute: {
+                    ...mockFormElementLink.attribute,
+                    multiple_values: true
+                }
+            }
+        });
 
         expect(screen.getByRole('table')).toBeInTheDocument();
         expect(screen.getAllByRole('cell')).toHaveLength(3);
@@ -180,7 +197,16 @@ describe('LinkField', () => {
     });
 
     test('If no value, display a button to add a value', async () => {
-        _renderLinkField({element: {...mockFormElementLink, values: []}});
+        _renderLinkField({
+            element: {
+                ...mockFormElementLink,
+                values: [],
+                attribute: {
+                    ...mockFormElementLink.attribute,
+                    multiple_values: true
+                }
+            }
+        });
 
         expect(screen.getAllByRole('table').length).toBeGreaterThanOrEqual(1);
         expect(screen.getByRole('button', {name: /add/, hidden: true})).toBeInTheDocument();
@@ -188,14 +214,26 @@ describe('LinkField', () => {
 
     test('If no value and cannot add, display a message', async () => {
         _renderLinkField({
-            element: {...mockFormElementLink, attribute: {...mockFormElementLink.attribute, readonly: true}, values: []}
+            element: {
+                ...mockFormElementLink,
+                attribute: {...mockFormElementLink.attribute, readonly: true, multiple_values: true},
+                values: []
+            }
         });
 
         expect(screen.getByText('record_edition.no_value')).toBeInTheDocument();
     });
 
     test('Can edit and delete linked record', async () => {
-        _renderLinkField({element: {...mockFormElementLink}});
+        _renderLinkField({
+            element: {
+                ...mockFormElementLink,
+                attribute: {
+                    ...mockFormElementLink.attribute,
+                    multiple_values: true
+                }
+            }
+        });
 
         const row = screen.getByRole('row', {name: /record/});
         userEvent.hover(row);
@@ -205,7 +243,15 @@ describe('LinkField', () => {
     });
 
     test('Can delete all values', async () => {
-        _renderLinkField({element: {...mockFormElementLink}});
+        _renderLinkField({
+            element: {
+                ...mockFormElementLink,
+                attribute: {
+                    ...mockFormElementLink.attribute,
+                    multiple_values: true
+                }
+            }
+        });
 
         const deleteAllValuesButton = screen.getByRole('button', {name: /delete-all-values/, hidden: true});
         expect(deleteAllValuesButton).toBeInTheDocument();
@@ -245,7 +291,15 @@ describe('LinkField', () => {
     });
 
     test('Can display value details', async () => {
-        _renderLinkField({element: {...mockFormElementLink}});
+        _renderLinkField({
+            element: {
+                ...mockFormElementLink,
+                attribute: {
+                    ...mockFormElementLink.attribute,
+                    multiple_values: true
+                }
+            }
+        });
 
         const valueDetailsButtons = screen.getAllByRole('button', {name: /info/, hidden: true});
         expect(valueDetailsButtons).toHaveLength(2);
@@ -253,6 +307,20 @@ describe('LinkField', () => {
         await userEvent.click(valueDetailsButtons[0]);
 
         expect(mockEditRecordDispatch.mock.calls[0][0].type).toBe(EditRecordReducerActionsTypes.SET_ACTIVE_VALUE);
+    });
+
+    it('should render MonoValueSelect', () => {
+        const mockFormElementLinkNoMultivalue: FormElement<{}> = {
+            ...mockFormElementLink,
+            attribute: {
+                ...mockFormElementLink.attribute,
+                multiple_values: false
+            }
+        };
+
+        _renderLinkField({element: {...mockFormElementLinkNoMultivalue}});
+
+        expect(screen.getByRole('combobox')).toBeVisible();
     });
 
     describe('Values list', () => {
