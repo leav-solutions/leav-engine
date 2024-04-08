@@ -167,13 +167,11 @@ describe('TreeField', () => {
         expect(deleteAllButton).toBeInTheDocument();
 
         // Click on the parent, because of the issue on Tooltip. See DeleteAllValuesBtn component file
-        userEvent.click(deleteAllButton.parentElement);
+        await userEvent.click(deleteAllButton.parentElement);
 
-        userEvent.click(await screen.findByRole('button', {name: /confirm/}));
+        await userEvent.click(screen.getByRole('button', {name: /confirm/}));
 
-        await waitFor(() => {
-            expect(baseProps.onDeleteMultipleValues).toBeCalled();
-        });
+        expect(baseProps.onDeleteMultipleValues).toBeCalled();
     });
 
     test('Can edit linked node', async () => {
@@ -192,11 +190,9 @@ describe('TreeField', () => {
         const valueDetailsButtons = screen.getAllByRole('button', {name: /info/, hidden: true});
         expect(valueDetailsButtons).toHaveLength(3); // 1 per value + 1 for the attribute
 
-        userEvent.click(valueDetailsButtons[0]);
+        await userEvent.click(valueDetailsButtons[0]);
 
-        await waitFor(() => {
-            expect(mockEditRecordDispatch).toBeCalled();
-        });
+        expect(mockEditRecordDispatch).toBeCalled();
         expect(mockEditRecordDispatch.mock.calls[0][0].type).toBe(EditRecordReducerActionsTypes.SET_ACTIVE_VALUE);
     });
 
@@ -231,19 +227,15 @@ describe('TreeField', () => {
 
         const addValueBtn = screen.getByRole('button', {name: /add/});
 
-        userEvent.click(addValueBtn);
+        await userEvent.click(addValueBtn);
 
-        const valuesAddBlock = within(await screen.findByTestId('values-add'));
+        const valuesAddBlock = within(screen.getByTestId('values-add'));
 
-        const elementInList = await waitFor(() => valuesAddBlock.getByText(mockRecordFromList.whoAmI.label));
+        const elementInList = valuesAddBlock.getByText(mockRecordFromList.whoAmI.label);
         expect(elementInList).toBeInTheDocument();
 
-        await act(async () => {
-            userEvent.click(elementInList);
-        });
+        await userEvent.click(elementInList);
 
-        await waitFor(() => {
-            expect(mockHandleSubmit).toBeCalled();
-        });
+        expect(mockHandleSubmit).toBeCalled();
     });
 });

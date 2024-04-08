@@ -34,14 +34,12 @@ describe('EditPreviewsSettingsModal', () => {
     });
 
     test('Can add/delete sizes', async () => {
-        const mockHandleSubmit = jest.fn();
-
         render(
             <EditPreviewsSettingsModal
                 previewsSetting={{...mockLibraryWithPreviewsSettings.previewsSettings[0], system: false}}
                 open
                 onClose={jest.fn()}
-                onSubmit={mockHandleSubmit}
+                onSubmit={jest.fn()}
             />
         );
 
@@ -53,18 +51,17 @@ describe('EditPreviewsSettingsModal', () => {
 
         await userEvent.click(screen.getAllByRole('button', {name: /delete/i})[0]);
         await userEvent.click(screen.getByRole('button', {name: /confirm/i}));
+
         expect(screen.getAllByRole('textbox', {name: /size_name/i})).toHaveLength(2);
     });
 
     test('If readonly, everything is disabled', async () => {
-        const mockHandleSubmit = jest.fn();
-
         render(
             <EditPreviewsSettingsModal
                 previewsSetting={{...mockLibraryWithPreviewsSettings.previewsSettings[0], system: true}}
                 open
                 onClose={jest.fn()}
-                onSubmit={mockHandleSubmit}
+                onSubmit={jest.fn()}
             />
         );
 

@@ -77,22 +77,20 @@ describe('EditLibraryAttributes', () => {
 
         render(<EditLibraryAttributes library={mockLibrary} />);
 
-        expect(await screen.findByText('Attribut A')).toBeInTheDocument();
+        await waitFor(() => expect(screen.getByText('Attribut A')).toBeInTheDocument());
         expect(screen.getByText('Attribut B')).toBeInTheDocument();
 
         // Delete attribute A
         await user.click(screen.getAllByRole('button', {name: /delete/i})[0]);
-        user.click(screen.getByRole('button', {name: /submit/i})); // Confirm
+        await user.click(screen.getByRole('button', {name: /submit/i})); // Confirm
 
-        await waitFor(() => {
-            expect(mockSaveLibraryMutation).toBeCalledWith({
-                variables: {
-                    library: {
-                        id: mockLibrary.id,
-                        attributes: ['attributeB']
-                    }
+        expect(mockSaveLibraryMutation).toBeCalledWith({
+            variables: {
+                library: {
+                    id: mockLibrary.id,
+                    attributes: ['attributeB']
                 }
-            });
+            }
         });
     });
 

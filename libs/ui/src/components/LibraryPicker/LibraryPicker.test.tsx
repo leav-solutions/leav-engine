@@ -80,7 +80,7 @@ describe('LibraryPicker', () => {
         const mockHandleSubmit = jest.fn();
         render(<LibraryPicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
 
-        await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
+        await waitFor(() => expect(screen.getByText('libA')).toBeInTheDocument());
 
         expect(screen.getByText('libA')).toBeInTheDocument();
         expect(screen.getByText('libB')).toBeInTheDocument();
@@ -91,7 +91,7 @@ describe('LibraryPicker', () => {
         const mockHandleSubmit = jest.fn();
         render(<LibraryPicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
 
-        await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
+        await waitFor(() => expect(screen.getByText('libA')).toBeInTheDocument());
 
         expect(screen.getByText('libA')).toBeInTheDocument();
         expect(screen.getByText('libB')).toBeInTheDocument();
@@ -109,7 +109,7 @@ describe('LibraryPicker', () => {
         const mockHandleSubmit = jest.fn();
         render(<LibraryPicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
 
-        await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
+        await waitFor(() => expect(screen.getByText('libA')).toBeInTheDocument());
 
         await userEvent.click(screen.getByText('libA'));
 
@@ -120,11 +120,11 @@ describe('LibraryPicker', () => {
         const rowLibC = rows[2];
 
         const checkboxLibA = within(rowLibA).getByRole('checkbox');
-        await waitFor(() => expect(checkboxLibA).toBeChecked());
+        expect(checkboxLibA).toBeChecked();
 
         // Unselect 'libA'
         await userEvent.click(checkboxLibA);
-        await waitFor(() => expect(checkboxLibA).not.toBeChecked());
+        expect(checkboxLibA).not.toBeChecked();
 
         // Select "libB" and "libC"
         const checkboxLibB = within(rowLibB).getByRole('checkbox');
@@ -135,16 +135,14 @@ describe('LibraryPicker', () => {
 
         await userEvent.click(screen.getByRole('button', {name: /submit/i}));
 
-        await waitFor(() => expect(mockHandleSubmit).toHaveBeenCalledWith([mockLibB, mockLibC]), {
-            timeout: 10_000
-        });
+        expect(mockHandleSubmit).toHaveBeenCalledWith([mockLibB, mockLibC]);
     });
 
     test('If not multiple, only one element can be selected', async () => {
         const mockHandleSubmit = jest.fn();
         render(<LibraryPicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open multiple={false} />, {mocks});
 
-        await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
+        await waitFor(() => expect(screen.getByText('libA')).toBeInTheDocument());
 
         await userEvent.click(screen.getByText('libA'));
         const radioBtnLibA = within(screen.getByRole('row', {name: /libA/i})).getByRole('radio');
@@ -160,13 +158,13 @@ describe('LibraryPicker', () => {
         const mockHandleSubmit = jest.fn();
         render(<LibraryPicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
 
-        await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
+        await waitFor(() => expect(screen.getByText('libA')).toBeInTheDocument());
 
         const newLibButton = screen.queryByRole('button', {name: /new_library/i});
         expect(newLibButton).toBeInTheDocument();
 
         await userEvent.click(newLibButton);
-        expect(await screen.findByText('EditLibrary')).toBeInTheDocument();
+        expect(screen.getByText('EditLibrary')).toBeInTheDocument();
     });
 
     test('If not allowed, cannot create new library', async () => {
@@ -196,7 +194,7 @@ describe('LibraryPicker', () => {
         const mockHandleSubmit = jest.fn();
         render(<LibraryPicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks: mocksNotAllowed});
 
-        await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
+        await waitFor(() => expect(screen.getByText('libA')).toBeInTheDocument());
 
         expect(screen.queryByRole('button', {name: /new_library/i})).not.toBeInTheDocument();
     });
