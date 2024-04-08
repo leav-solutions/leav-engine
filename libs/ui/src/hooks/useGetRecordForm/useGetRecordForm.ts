@@ -111,24 +111,20 @@ const useGetRecordForm = ({
             const recordFormFormatted: IRecordForm = {
                 ...data.recordForm,
                 elements: data.recordForm.elements.map(
-                    (element): RecordFormElement => {
-                        return {
-                            ...element,
-                            values: (element?.values ?? []).map(value => {
-                                return {
-                                    ...value,
-                                    version: arrayValueVersionToObject(value.version ?? []),
-                                    metadata: (value.metadata ?? []).map(metadata => ({
-                                        ...metadata,
-                                        value: {
-                                            ...metadata.value,
-                                            version: arrayValueVersionToObject(metadata.value.version ?? [])
-                                        }
-                                    }))
-                                };
-                            })
-                        };
-                    }
+                    (element): RecordFormElement => ({
+                        ...element,
+                        values: (element?.values ?? []).map(value => ({
+                            ...value,
+                            version: arrayValueVersionToObject(value.version ?? []),
+                            metadata: (value.metadata ?? []).map(metadata => ({
+                                ...metadata,
+                                value: {
+                                    ...metadata.value,
+                                    version: arrayValueVersionToObject(metadata.value?.version ?? [])
+                                }
+                            }))
+                        }))
+                    })
                 )
             };
 
