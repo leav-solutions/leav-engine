@@ -12,7 +12,7 @@ import {AttributeType, SortOrder} from '_ui/_gqlTypes';
 import {MockedResponse} from '@apollo/client/testing';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 
-describe('<MonoValueSelect />', () => {
+describe.only('<MonoValueSelect />', () => {
     const onSelectChangeMock = jest.fn();
     const onClearSelectMock = jest.fn();
 
@@ -85,6 +85,11 @@ describe('<MonoValueSelect />', () => {
         }
     };
 
+    afterEach(() => {
+        onSelectChangeMock.mockClear();
+        onClearSelectMock.mockClear();
+    });
+
     it('should display MonoValueSelect with no active value', async () => {
         render(
             <AntForm>
@@ -127,7 +132,7 @@ describe('<MonoValueSelect />', () => {
         );
     });
 
-    it.only('should display MonoValueSelect with active value', async () => {
+    it('should display MonoValueSelect with active value', async () => {
         const id_value = '11051999';
         render(
             <AntForm>
