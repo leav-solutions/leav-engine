@@ -18,13 +18,9 @@ window.matchMedia = query => ({
     dispatchEvent: jest.fn()
 });
 
-jest.mock('../EditAttributeModal', () => {
-    return {
-        EditAttributeModal: () => {
-            return <div>EditAttribute</div>;
-        }
-    };
-});
+jest.mock('../EditAttributeModal', () => ({
+    EditAttributeModal: () => <div>EditAttribute</div>
+}));
 
 jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
 
@@ -83,13 +79,15 @@ describe('AttributePicker', () => {
 
     test('Display attributes', async () => {
         const mockHandleSubmit = jest.fn();
-        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks: baseMocks});
+        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {
+            mocks: baseMocks
+        });
 
-        await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
-
-        expect(screen.getByText('attributeA')).toBeInTheDocument();
-        expect(screen.getByText('attributeB')).toBeInTheDocument();
-        expect(screen.getByText('attributeC')).toBeInTheDocument();
+        await waitFor(() => {
+            expect(screen.getByText('attributeA')).toBeInTheDocument();
+            expect(screen.getByText('attributeB')).toBeInTheDocument();
+            expect(screen.getByText('attributeC')).toBeInTheDocument();
+        });
     });
 
     test('Can filter list', async () => {
@@ -119,11 +117,11 @@ describe('AttributePicker', () => {
         const mockHandleSubmit = jest.fn();
         render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks: mocksWithFilters});
 
-        await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
-
-        expect(screen.getByText('attributeA')).toBeInTheDocument();
-        expect(screen.getByText('attributeB')).toBeInTheDocument();
-        expect(screen.getByText('attributeC')).toBeInTheDocument();
+        await waitFor(() => {
+            expect(screen.getByText('attributeA')).toBeInTheDocument();
+            expect(screen.getByText('attributeB')).toBeInTheDocument();
+            expect(screen.getByText('attributeC')).toBeInTheDocument();
+        });
 
         await userEvent.type(screen.getByRole('textbox'), 'attributeA{Enter}');
         expect(screen.getByRole('textbox')).toHaveValue('attributeA');
@@ -171,8 +169,7 @@ describe('AttributePicker', () => {
         const mockHandleSubmit = jest.fn();
         render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks: mocksWithSort});
 
-        await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
-
+        await waitFor(() => expect(screen.getByText('attributeA')).toBeInTheDocument());
         const rows = screen.getAllByRole('row');
         expect(rows[0]).toHaveTextContent('attributeA');
         expect(rows[1]).toHaveTextContent('attributeB');
@@ -189,9 +186,8 @@ describe('AttributePicker', () => {
         const mockHandleSubmit = jest.fn();
         render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks: baseMocks});
 
-        await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
-
-        userEvent.click(screen.getByText('attributeA'));
+        await waitFor(() => expect(screen.getByText('attributeA')).toBeInTheDocument());
+        await userEvent.click(screen.getByText('attributeA'));
         const rows = screen.getAllByRole('row');
         const rowAttributeA = rows[0];
         const rowAttributeB = rows[1];
@@ -199,24 +195,22 @@ describe('AttributePicker', () => {
 
         // Select 'attributeA'
         const checkboxAttributeA = within(rowAttributeA).getByRole('checkbox'); // First checkbox is for the table header
-        await waitFor(() => expect(checkboxAttributeA).toBeChecked());
+        expect(checkboxAttributeA).toBeChecked();
 
         // Unselect 'attributeA'
-        userEvent.click(checkboxAttributeA);
-        await waitFor(() => expect(checkboxAttributeA).not.toBeChecked());
+        await userEvent.click(checkboxAttributeA);
+        expect(checkboxAttributeA).not.toBeChecked();
 
         // Select "libB" and "libC"
         const checkboxAttributeB = within(rowAttributeB).getByRole('checkbox'); // First checkbox is for the table header
-        userEvent.click(checkboxAttributeB);
+        await userEvent.click(checkboxAttributeB);
 
         const checkboxAttributeC = within(rowAttributeC).getByRole('checkbox'); // First checkbox is for the table header
-        userEvent.click(checkboxAttributeC);
+        await userEvent.click(checkboxAttributeC);
 
-        userEvent.click(screen.getByRole('button', {name: /submit/i}));
+        await userEvent.click(screen.getByRole('button', {name: /submit/i}));
 
-        await waitFor(() => expect(mockHandleSubmit).toHaveBeenCalledWith(['attributeB', 'attributeC']), {
-            timeout: 10000
-        });
+        expect(mockHandleSubmit).toHaveBeenCalledWith(['attributeB', 'attributeC']);
     });
 
     test('If not multiple, only one element can be selected', async () => {
@@ -225,24 +219,23 @@ describe('AttributePicker', () => {
             mocks: baseMocks
         });
 
-        await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
+        await waitFor(() => expect(screen.getByText('attributeA')).toBeInTheDocument());
 
-        userEvent.click(screen.getByText('attributeA'));
+        await userEvent.click(screen.getByText('attributeA'));
         const radioBtnAttributeA = within(screen.getByRole('row', {name: /attributeA/i})).getByRole('radio');
-        const radioBtnAttributeB = within(screen.getByRole('row', {name: /attributeA/i})).getByRole('radio');
-        await waitFor(() => expect(radioBtnAttributeA).toBeChecked());
+        const radioBtnAttributeB = within(screen.getByRole('row', {name: /attributeB/i})).getByRole('radio');
+        expect(radioBtnAttributeA).toBeChecked();
 
-        userEvent.click(screen.getByText('attributeB'));
-        await waitFor(() => expect(radioBtnAttributeB).toBeChecked());
-        await waitFor(() => expect(radioBtnAttributeA).not.toBeChecked());
+        await userEvent.click(screen.getByText('attributeB'));
+        expect(radioBtnAttributeB).toBeChecked();
+        expect(radioBtnAttributeA).not.toBeChecked();
     });
 
     test('Can create new attribute', async () => {
         const mockHandleSubmit = jest.fn();
         render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks: baseMocks});
 
-        await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
-
+        await waitFor(() => expect(screen.getByText('attributeA')).toBeInTheDocument());
         const newAttributeButton = screen.queryByRole('button', {name: /new_attribute/i});
         expect(newAttributeButton).toBeInTheDocument();
 
@@ -279,8 +272,7 @@ describe('AttributePicker', () => {
             mocks: mocksNotAllowed
         });
 
-        await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
-
+        await waitFor(() => expect(screen.getByText('attributeA')).toBeInTheDocument());
         expect(screen.queryByRole('button', {name: /new_attribute/i})).not.toBeInTheDocument();
     });
 });

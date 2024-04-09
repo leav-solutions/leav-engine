@@ -24,7 +24,8 @@
         "yes": "Yes",
         "no": "No",
         "or": "or",
-        "create": "Create"
+        "create": "Create",
+        "ok": "Ok"
     },
     "errors": {
         "INTERNAL_ERROR": "An internal error occurred",

@@ -24,7 +24,7 @@ describe('RecordPreview', () => {
 
         expect(comp.find('Image')).toHaveLength(0);
         expect(comp.find('GeneratedPreview')).toHaveLength(1);
-        expect(comp.find('GeneratedPreview').text()).toBe('T');
+        expect(comp.find('GeneratedPreview').text()).toBe('TE');
         expect(comp.find('GeneratedPreview')).toHaveStyleRule('background-color', '#FF0000');
     });
 
@@ -37,6 +37,6 @@ describe('RecordPreview', () => {
     test('Show uppercase initial', async () => {
         const comp = shallow(<RecordPreview color={null} image={null} label="testLabel" />);
 
-        expect(comp.find('GeneratedPreview').text()).toBe('T');
+        expect(comp.find('GeneratedPreview').text()).toBe('TE');
     });
 });

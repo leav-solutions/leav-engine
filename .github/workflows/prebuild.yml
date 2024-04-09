@@ -39,7 +39,7 @@ jobs:
                       }
 
             - name: Checkout repository
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
               with:
                   # Get the branch name if steps.get-head.outputs.head_ref is defined or github.ref_name if event name == workflow_dispatch
                   ref: ${{ steps.get-head.outputs.head_ref || github.ref_name }}
