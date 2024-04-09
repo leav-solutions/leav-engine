@@ -54,7 +54,8 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
             }
         }
     );
-    const recordList = data?.records.list ?? [];
+
+    const recordList = data?.records?.list ?? [];
 
     const [selectedValue, setSelectedValue] = useState<ISelectOption | null>(null);
     const [currentLinkValue, setCurrentLinkValue] = useState<RecordFormElementsValueLinkValue>({...activeValue});
@@ -70,7 +71,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
                     size={'small'}
                     shape={'square'}
                     imageFit={'contain'}
-                    src={recordItem.whoAmI.preview.small}
+                    src={recordItem.whoAmI?.preview?.small}
                     label={recordItem.whoAmI.label}
                 />
             )
@@ -91,7 +92,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
             null
         );
 
-        setCurrentLinkValue((res.values[0] as unknown) as RecordFormElementsValueLinkValue);
+        setCurrentLinkValue((res?.values[0] as unknown) as RecordFormElementsValueLinkValue);
         setSelectedValue(selectOptions.find(option => option.value === optionValue));
         form.setFieldValue(state.attribute.id, optionValue);
         form.validateFields();
