@@ -111,16 +111,6 @@ const _isLinkValue = (value: RecordColumnValue): value is IRecordColumnValueLink
 const _isTreeValue = (value: RecordColumnValue): value is IRecordColumnValueTree =>
     (value as IRecordColumnValueTree).treeValue !== undefined;
 
-const FormItem = styled(AntForm.Item)`
-    .ant-form-item-explain {
-        display: none;
-
-        & + div {
-            display: none;
-        }
-    }
-`;
-
 export interface IRowData {
     key: string;
     whoAmI: IRecordIdentityWhoAmI;
@@ -509,15 +499,24 @@ function LinkField({
                     )}
                 </>
             ) : (
-                <FormItem name={attribute.id} rules={[{required: state.formElement.settings.required}]}>
+                <AntForm.Item
+                    name={attribute.id}
+                    rules={[
+                        {
+                            required: state.formElement.settings.required,
+                            message: t('errors.standard_field_required')
+                        }
+                    ]}
+                >
                     <MonoValueSelect
                         activeValue={activeValues[0]}
                         attribute={attribute}
-                        state={state}
+                        label={state.formElement.settings.label}
+                        required={state.formElement.settings.required}
                         onClearSelect={onValueDelete}
                         onSelectChange={onValueSubmit}
                     />
-                </FormItem>
+                </AntForm.Item>
             )}
         </>
     );

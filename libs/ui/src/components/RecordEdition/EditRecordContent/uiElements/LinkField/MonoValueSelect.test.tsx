@@ -12,7 +12,7 @@ import {AttributeType, SortOrder} from '_ui/_gqlTypes';
 import {MockedResponse} from '@apollo/client/testing';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 
-describe.only('<MonoValueSelect />', () => {
+describe('<MonoValueSelect />', () => {
     const onSelectChangeMock = jest.fn();
     const onClearSelectMock = jest.fn();
 
@@ -97,7 +97,8 @@ describe.only('<MonoValueSelect />', () => {
                     <MonoValueSelect
                         activeValue={undefined}
                         attribute={mockFormElementLink.attribute}
-                        state={state}
+                        label={state.formElement.settings.label}
+                        required={state.formElement.settings.required}
                         onSelectChange={onSelectChangeMock}
                         onClearSelect={onClearSelectMock}
                     />
@@ -105,6 +106,9 @@ describe.only('<MonoValueSelect />', () => {
             </AntForm>,
             {mocks}
         );
+
+        expect(screen.queryByText('Danette pistache')).not.toBeInTheDocument();
+        expect(screen.queryByText('Danette chocolat')).not.toBeInTheDocument();
 
         const select = screen.getByRole('combobox');
         await userEvent.click(select);
@@ -149,7 +153,8 @@ describe.only('<MonoValueSelect />', () => {
                             }
                         }}
                         attribute={mockFormElementLink.attribute}
-                        state={state}
+                        label={state.formElement.settings.label}
+                        required={state.formElement.settings.required}
                         onSelectChange={onSelectChangeMock}
                         onClearSelect={onClearSelectMock}
                     />
@@ -176,7 +181,7 @@ describe.only('<MonoValueSelect />', () => {
             [
                 {
                     attribute: mockFormElementLink.attribute,
-                    idValue: '11051999',
+                    idValue: id_value,
                     value: records.list[0]
                 }
             ],

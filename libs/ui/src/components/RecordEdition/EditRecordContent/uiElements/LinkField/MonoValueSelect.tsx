@@ -7,7 +7,6 @@ import {
 } from '_ui/_queries/records/getRecordsFromLibraryQuery';
 import {AntForm, KitAvatar, KitSelect} from 'aristid-ds';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
-import {LinkFieldReducerState} from '_ui/components/RecordEdition/EditRecordContent/uiElements/LinkField/LinkField';
 import {APICallStatus, DeleteValueFunc, SubmitValueFunc} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import useSharedTranslation from '_ui/hooks/useSharedTranslation/useSharedTranslation';
 import {RecordFormAttributeLinkAttributeFragment, SortOrder} from '_ui/_gqlTypes';
@@ -15,9 +14,10 @@ import {RecordFormAttributeLinkAttributeFragment, SortOrder} from '_ui/_gqlTypes
 interface IMonoValueSelectProps {
     activeValue: RecordFormElementsValueLinkValue | undefined;
     attribute: RecordFormAttributeLinkAttributeFragment;
+    label: string;
     onClearSelect: DeleteValueFunc;
     onSelectChange: SubmitValueFunc;
-    state: LinkFieldReducerState;
+    required: boolean;
 }
 
 interface ISelectOption {
@@ -32,9 +32,10 @@ interface ISelectOption {
 export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     attribute,
     activeValue,
+    label,
     onSelectChange,
     onClearSelect,
-    state
+    required
 }) => {
     const {t} = useSharedTranslation();
     const {errors} = AntForm.Item.useStatus();
@@ -57,10 +58,11 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
 
     const recordList = data?.records?.list ?? [];
 
-    const [selectedValue, setSelectedValue] = useState<ISelectOption | null>(null);
-    const [currentLinkValue, setCurrentLinkValue] = useState<RecordFormElementsValueLinkValue>({...activeValue});
+    const [selectedValue, setSelectedValue] = useState<ISelectOption | undefined>(undefined);
+    const [currentLinkValue, setCurrentLinkValue] = useState<RecordFormElementsValueLinkValue | undefined>({
+        ...activeValue
+    });
 
-    const isRequired = state.formElement.settings.required;
     const selectOptions: ISelectOption[] = recordList.map(recordItem => ({
         value: recordItem.whoAmI.id,
         label: recordItem.whoAmI.label,
@@ -71,7 +73,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
                     size={'small'}
                     shape={'square'}
                     imageFit={'contain'}
-                    src={recordItem.whoAmI?.preview?.small}
+                    src={recordItem.whoAmI.preview?.small}
                     label={recordItem.whoAmI.label}
                 />
             )
@@ -94,7 +96,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
 
         setCurrentLinkValue((res?.values[0] as unknown) as RecordFormElementsValueLinkValue);
         setSelectedValue(selectOptions.find(option => option.value === optionValue));
-        form.setFieldValue(state.attribute.id, optionValue);
+        form.setFieldValue(attribute.id, optionValue);
         form.validateFields();
     };
 
@@ -111,15 +113,13 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
             throw new Error("Can't delete the value");
         }
 
-        setCurrentLinkValue(null);
-        setSelectedValue(null);
+        setCurrentLinkValue(undefined);
+        setSelectedValue(undefined);
     };
 
     useEffect(() => {
         if (activeValue) {
-            setSelectedValue(
-                selectOptions ? selectOptions.find(option => option.value === activeValue.linkValue.id) : null
-            );
+            setSelectedValue(selectOptions?.find(option => option.value === activeValue.linkValue.id));
         }
     }, [recordList]);
 
@@ -128,17 +128,16 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
             loading={loading}
             defaultValue={selectedValue?.value}
             value={selectedValue}
-            required={isRequired}
-            label={state.formElement.settings.label}
+            required={required}
+            label={label}
             options={selectOptions}
             status={errors.length > 0 && 'error'}
-            helper={errors.length > 0 && t('errors.required')}
             showSearch
             optionFilterProp="label"
             placeholder={t('record_edition.product_select')}
             onSelect={handleSelect}
-            onClear={!isRequired ? handleClear : undefined}
-            allowClear={!isRequired}
+            onClear={required ? undefined : handleClear}
+            allowClear={!required}
         />
     );
 };
