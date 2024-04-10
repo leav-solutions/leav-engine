@@ -3,7 +3,7 @@ import {MonoValueSelect} from './MonoValueSelect';
 import {mockFormElementInput, mockFormElementLink} from '_ui/__mocks__/common/form';
 import {LinkFieldReducerState} from './LinkField';
 import {mockAttributeLink} from '_ui/__mocks__/common/attribute';
-import {FieldScope} from '../../_types';
+import {APICallStatus, FieldScope} from '../../_types';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {AntForm} from 'aristid-ds';
 import userEvent from '@testing-library/user-event';
@@ -137,7 +137,9 @@ describe('<MonoValueSelect />', () => {
     });
 
     it('should display MonoValueSelect with active value', async () => {
+        onClearSelectMock.mockResolvedValueOnce({res: {status: APICallStatus.SUCCESS}});
         const id_value = '11051999';
+
         render(
             <AntForm>
                 <AntForm.Item>
@@ -186,6 +188,44 @@ describe('<MonoValueSelect />', () => {
                 }
             ],
             null
+        );
+    });
+
+    it('should be able to clear selection when attribute is not required', async () => {
+        const id_value = '23051985';
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <MonoValueSelect
+                        activeValue={{
+                            id_value,
+                            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+                            linkValue: {id: records.list[1].id} as RecordFormElementsValueLinkValue['linkValue'],
+                            attribute: {
+                                id: mockFormElementLink.attribute.id,
+                                type: AttributeType.simple_link,
+                                system: false
+                            }
+                        }}
+                        attribute={mockFormElementLink.attribute}
+                        label={state.formElement.settings.label}
+                        required={false}
+                        onSelectChange={onSelectChangeMock}
+                        onClearSelect={onClearSelectMock}
+                    />
+                </AntForm.Item>
+            </AntForm>,
+            {mocks}
+        );
+
+        const defaultValue = await screen.findByText('Danette chocolat');
+        expect(defaultValue).toBeVisible();
+
+        const clearIcon = screen.getByLabelText('clear');
+        await userEvent.click(clearIcon);
+        expect(onClearSelectMock).toHaveBeenCalledWith(
+            {id_value, value: records.list[1].id},
+            mockFormElementLink.attribute.id
         );
     });
 });
