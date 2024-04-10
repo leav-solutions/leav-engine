@@ -4,12 +4,15 @@
 import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID, simpleStringHash, IDateRangeValue} from '@leav/utils';
 import {useEffect, useMemo} from 'react';
 import {ErrorDisplay} from '_ui/components';
-import useGetRecordForm, {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
+import useGetRecordForm, {
+    RecordFormElementsValueLinkValue,
+    RecordFormElementsValueStandardValue
+} from '_ui/hooks/useGetRecordForm';
 import {useGetRecordUpdatesSubscription} from '_ui/hooks/useGetRecordUpdatesSubscription';
 import useRecordsConsultationHistory from '_ui/hooks/useRecordsConsultationHistory';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IRecordIdentityWhoAmI} from '_ui/types/records';
-import {AttributeFormat, FormElementTypes} from '_ui/_gqlTypes';
+import {AttributeFormat, AttributeType, FormElementTypes} from '_ui/_gqlTypes';
 import {EditRecordReducerActionsTypes} from '../editRecordReducer/editRecordReducer';
 import {useEditRecordReducer} from '../editRecordReducer/useEditRecordReducer';
 import EditRecordSkeleton from './EditRecordSkeleton';
@@ -141,13 +144,20 @@ function EditRecordContent({
             return acc;
         }
 
-        const fieldValue = values[0] as RecordFormElementsValueStandardValue;
+        // Quid du simple link ?
+        if (attribute.type === AttributeType.advanced_link && attribute.multiple_values === false) {
+            const fieldValue = values[0] as RecordFormElementsValueLinkValue;
+            acc[attribute.id] = fieldValue?.linkValue?.id ?? '';
+            return acc;
+        }
 
         if (attribute.format === AttributeFormat.text) {
+            const fieldValue = values[0] as RecordFormElementsValueStandardValue;
             acc[attribute.id] = fieldValue?.raw_value ?? '';
         }
 
         if (attribute.format === AttributeFormat.date_range) {
+            const fieldValue = values[0] as RecordFormElementsValueStandardValue;
             if (!fieldValue?.raw_value) {
                 return acc;
             }

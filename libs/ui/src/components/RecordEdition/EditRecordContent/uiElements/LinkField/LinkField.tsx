@@ -513,7 +513,7 @@ function LinkField({
                         attribute={attribute}
                         label={state.formElement.settings.label}
                         required={state.formElement.settings.required}
-                        onClearSelect={onValueDelete}
+                        onSelectClear={onValueDelete}
                         onSelectChange={onValueSubmit}
                     />
                 </AntForm.Item>
