@@ -124,7 +124,7 @@ export interface IRecordDomain {
     find({params, ctx}: {params: IFindRecordParams; ctx: IQueryInfos}): Promise<IListWithCursor<IRecord>>;
 
     /**
-     * Get the value of targeted attribute with actions applied on it.
+     * Get the value of targeted attribute with actions applied on it including metadata.
      *
      * Avoid requesting DB if attribute already found in `record` param.
      *
