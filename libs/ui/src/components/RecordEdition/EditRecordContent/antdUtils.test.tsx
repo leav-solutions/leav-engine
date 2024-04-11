@@ -1,0 +1,93 @@
+import {getAntdFormInitialValues} from '_ui/components/RecordEdition/EditRecordContent/antdUtils';
+import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
+
+describe('getAntdFormInitialValues', () => {
+    test('Should return empty object on empty elements', async () => {
+        const recordForm = {elements: []};
+
+        const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
+
+        expect(antdFormInitialValues).toEqual({});
+    });
+
+    test('Should skip if attribute is undefined', async () => {
+        const elementWithoutAttribute = {values: []};
+        const recordForm = {elements: [elementWithoutAttribute]};
+
+        const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
+
+        expect(antdFormInitialValues).toEqual({});
+    });
+
+    describe.each([{type: AttributeType.simple_link}, {type: AttributeType.advanced_link, multiple_values: false}])(
+        'links',
+        attributeProperties => {
+            test('Should initialize antd form with given value for links (advanced and simple)', async () => {
+                const elementFormId = 'elementFormId';
+                const linkAttributeId = 'linkAttributeId';
+                const linkElement = {
+                    attribute: {...attributeProperties, id: linkAttributeId},
+                    values: [{linkValue: {id: elementFormId}}]
+                };
+                const recordForm = {elements: [linkElement]};
+
+                const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
+
+                expect(antdFormInitialValues).toEqual({
+                    [linkAttributeId]: 'elementFormId'
+                });
+            });
+
+            test('Should initialize antd form with given empty string for links (advanced and simple) when linkValue is not set', async () => {
+                const linkAttributeId = 'linkAttributeId';
+                const linkElement = {
+                    attribute: {...attributeProperties, id: linkAttributeId},
+                    values: [{}]
+                };
+                const recordForm = {elements: [linkElement]};
+
+                const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
+
+                expect(antdFormInitialValues).toEqual({
+                    [linkAttributeId]: ''
+                });
+            });
+        }
+    );
+
+    describe('AttributeFormat.text', () => {
+        test('Should initialize antd form with given value for text attribute', async () => {
+            const rawValue = 'rawValue';
+            const textAttributeId = 'textAttributeId';
+            const textElement = {
+                attribute: {format: AttributeFormat.text, id: textAttributeId},
+                values: [{raw_value: rawValue}]
+            };
+            const recordForm = {elements: [textElement]};
+
+            const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
+
+            expect(antdFormInitialValues).toEqual({
+                [textAttributeId]: rawValue
+            });
+        });
+        test('Should initialize antd form with given empty string for text when raw_value is not set', async () => {
+            const textAttributeId = 'textAttributeId';
+            const textElement = {
+                attribute: {format: AttributeFormat.text, id: textAttributeId},
+                values: [{}]
+            };
+            const recordForm = {elements: [textElement]};
+
+            const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
+
+            expect(antdFormInitialValues).toEqual({
+                [textAttributeId]: ''
+            });
+        });
+    });
+
+    describe('AttributeFormat.date_range', () => {
+        test.todo('');
+    });
+});

@@ -1,18 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID, simpleStringHash, IDateRangeValue} from '@leav/utils';
-import {useEffect, useMemo} from 'react';
+import {FORM_ROOT_CONTAINER_ID, FormUIElementTypes, simpleStringHash} from '@leav/utils';
+import {FunctionComponent, useEffect, useMemo} from 'react';
 import {ErrorDisplay} from '_ui/components';
-import useGetRecordForm, {
-    RecordFormElementsValueLinkValue,
-    RecordFormElementsValueStandardValue
-} from '_ui/hooks/useGetRecordForm';
+import useGetRecordForm from '_ui/hooks/useGetRecordForm';
 import {useGetRecordUpdatesSubscription} from '_ui/hooks/useGetRecordUpdatesSubscription';
 import useRecordsConsultationHistory from '_ui/hooks/useRecordsConsultationHistory';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IRecordIdentityWhoAmI} from '_ui/types/records';
-import {AttributeFormat, AttributeType, FormElementTypes} from '_ui/_gqlTypes';
+import {FormElementTypes} from '_ui/_gqlTypes';
 import {EditRecordReducerActionsTypes} from '../editRecordReducer/editRecordReducer';
 import {useEditRecordReducer} from '../editRecordReducer/useEditRecordReducer';
 import EditRecordSkeleton from './EditRecordSkeleton';
@@ -21,9 +18,8 @@ import {RecordEditionContext} from './hooks/useRecordEditionContext';
 import {formComponents} from './uiElements';
 import {DeleteMultipleValuesFunc, DeleteValueFunc, FormElement, SubmitValueFunc} from './_types';
 import {Form, FormInstance} from 'antd';
-import {Store} from 'antd/lib/form/interface';
-import dayjs from 'dayjs';
 import {EDIT_OR_CREATE_RECORD_FORM_ID} from './formConstants';
+import {getAntdFormInitialValues} from '_ui/components/RecordEdition/EditRecordContent/antdUtils';
 
 interface IEditRecordContentProps {
     antdForm: FormInstance;
@@ -36,7 +32,7 @@ interface IEditRecordContentProps {
     readonly: boolean;
 }
 
-function EditRecordContent({
+const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     antdForm,
     record,
     library,
@@ -45,14 +41,12 @@ function EditRecordContent({
     onValueDelete,
     onDeleteMultipleValues,
     readonly
-}: IEditRecordContentProps): JSX.Element {
+}) => {
     const formId = record ? 'edition' : 'creation';
     const {t} = useSharedTranslation();
     const {state, dispatch} = useEditRecordReducer();
 
     useRecordsConsultationHistory(record?.library?.id ?? null, record?.id ?? null);
-
-    const forminstance = Form.useFormInstance();
 
     const {data: recordUpdateData} = useGetRecordUpdatesSubscription(
         {records: [record?.id], ignoreOwnEvents: true},
@@ -136,50 +130,8 @@ function EditRecordContent({
         uiElement: formComponents[FormUIElementTypes.FIELDS_CONTAINER]
     };
 
-    const hasDateRangeValues = (dateRange: unknown): dateRange is IDateRangeValue =>
-        (dateRange as IDateRangeValue).from !== undefined && (dateRange as IDateRangeValue).to !== undefined;
+    const antdFormInitialValues = getAntdFormInitialValues(recordForm);
 
-    const antdFormInitialValues = recordForm.elements.reduce<Store>((acc, {attribute, values}) => {
-        if (!attribute) {
-            return acc;
-        }
-
-        // Quid du simple link ?
-        if (attribute.type === AttributeType.advanced_link && attribute.multiple_values === false) {
-            const fieldValue = values[0] as RecordFormElementsValueLinkValue;
-            acc[attribute.id] = fieldValue?.linkValue?.id ?? '';
-            return acc;
-        }
-
-        if (attribute.format === AttributeFormat.text) {
-            const fieldValue = values[0] as RecordFormElementsValueStandardValue;
-            acc[attribute.id] = fieldValue?.raw_value ?? '';
-        }
-
-        if (attribute.format === AttributeFormat.date_range) {
-            const fieldValue = values[0] as RecordFormElementsValueStandardValue;
-            if (!fieldValue?.raw_value) {
-                return acc;
-            }
-
-            if (hasDateRangeValues(fieldValue.raw_value)) {
-                acc[attribute.id] = [
-                    dayjs.unix(Number(fieldValue.raw_value.from)),
-                    dayjs.unix(Number(fieldValue.raw_value.to))
-                ];
-            } else if (typeof fieldValue.raw_value === 'string') {
-                const convertedFieldValue = JSON.parse(fieldValue.raw_value);
-                acc[attribute.id] = [
-                    dayjs.unix(Number(convertedFieldValue.from)),
-                    dayjs.unix(Number(convertedFieldValue.to))
-                ];
-            }
-        }
-
-        return acc;
-    }, {});
-
-    // Use a hash of record form as a key to force a full re-render when the form changes
     return (
         <Form
             id={EDIT_OR_CREATE_RECORD_FORM_ID}
@@ -189,6 +141,7 @@ function EditRecordContent({
         >
             <RecordEditionContext.Provider value={{elements: elementsByContainer, readOnly: readonly, record}}>
                 <rootElement.uiElement
+                    // Use a hash of record form as a key to force a full re-render when the form changes
                     key={recordFormHash}
                     element={rootElement}
                     onValueSubmit={_handleValueSubmit}
@@ -198,6 +151,6 @@ function EditRecordContent({
             </RecordEditionContext.Provider>
         </Form>
     );
-}
+};
 
 export default EditRecordContent;

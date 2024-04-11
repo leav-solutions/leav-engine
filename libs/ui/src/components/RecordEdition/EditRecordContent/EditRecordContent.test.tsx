@@ -8,17 +8,16 @@ import {mockRecord} from '_ui/__mocks__/common/record';
 import {render, screen} from '../../../_tests/testUtils';
 import EditRecordContent from './EditRecordContent';
 import {Form} from 'antd';
+import {ComponentProps, FunctionComponent} from 'react';
 
-jest.mock('./uiElements/StandardField', () => {
-    return function StandardField() {
-        return <div>StandardField</div>;
-    };
-});
+jest.mock('./uiElements/StandardField', () => () => <div>StandardField</div>);
 
-const EditRecordContentWithForm = props => {
+const EditRecordContentWithForm: FunctionComponent<
+    Omit<ComponentProps<typeof EditRecordContent>, 'antdForm'>
+> = props => {
     const [form] = Form.useForm();
 
-    return <EditRecordContent form={form} {...props} />;
+    return <EditRecordContent antdForm={form} {...props} />;
 };
 
 describe('EditRecordContent', () => {
