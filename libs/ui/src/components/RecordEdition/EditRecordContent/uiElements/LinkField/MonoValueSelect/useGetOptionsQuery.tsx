@@ -7,10 +7,10 @@ import {
 } from '_ui/_queries/records/getRecordsFromLibraryQuery';
 import {KitAvatar, KitSelect} from 'aristid-ds';
 import {ComponentProps, useMemo} from 'react';
-import {SubmitValueFunc} from '../../_types';
+import {SubmitValueFunc} from '../../../_types';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 
-export const useGetFirstTwentyValuesQuery = ({
+export const useGetOptionsQuery = ({
     activeValue,
     linkedLibraryId,
     onSelectChange
@@ -25,7 +25,7 @@ export const useGetFirstTwentyValuesQuery = ({
             fetchPolicy: 'network-only',
             variables: {
                 library: linkedLibraryId,
-                limit: 1,
+                limit: 20,
                 sort: {
                     field: 'label',
                     order: SortOrder.asc
@@ -59,7 +59,7 @@ export const useGetFirstTwentyValuesQuery = ({
 
     const augmentedSelectOptionsWithActive = selectOptions;
 
-    if (recordList.findIndex(record => record.id === activeValue.linkValue.id) === -1) {
+    if (activeValue && recordList.findIndex(record => record.id === activeValue.linkValue.id) === -1) {
         augmentedSelectOptionsWithActive.push({
             value: activeValue.linkValue.whoAmI.id,
             label: activeValue.linkValue.whoAmI.label,

@@ -1,6 +1,10 @@
 import {getAntdFormInitialValues} from '_ui/components/RecordEdition/EditRecordContent/antdUtils';
 import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
 
+jest.mock('dayjs', () => ({
+    unix: jest.fn(t => t)
+}));
+
 describe('getAntdFormInitialValues', () => {
     test('Should return empty object on empty elements', async () => {
         const recordForm = {elements: []};
@@ -71,6 +75,7 @@ describe('getAntdFormInitialValues', () => {
                 [textAttributeId]: rawValue
             });
         });
+
         test('Should initialize antd form with given empty string for text when raw_value is not set', async () => {
             const textAttributeId = 'textAttributeId';
             const textElement = {
@@ -88,6 +93,50 @@ describe('getAntdFormInitialValues', () => {
     });
 
     describe('AttributeFormat.date_range', () => {
-        test.todo('');
+        test('Should skip when raw_value is not set', async () => {
+            const dateRangeElementWithoutRawValue = {
+                attribute: {format: AttributeFormat.date_range},
+                values: [{}]
+            };
+            const recordForm = {elements: [dateRangeElementWithoutRawValue]};
+
+            const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
+
+            expect(antdFormInitialValues).toEqual({});
+        });
+
+        test('Should initialize antd form with dayjs formatted value for date_range attribute', async () => {
+            const from = '1000';
+            const to = '2000';
+            const dateRangeAttributeId = 'dateRangeAttributeId';
+            const strcturedDateRangeElement = {
+                attribute: {format: AttributeFormat.date_range, id: dateRangeAttributeId},
+                values: [{raw_value: {from, to}}]
+            };
+            const recordForm = {elements: [strcturedDateRangeElement]};
+
+            const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
+
+            expect(antdFormInitialValues).toEqual({
+                [dateRangeAttributeId]: [Number(from), Number(to)]
+            });
+        });
+
+        test('Should initialize antd form with dayjs formatted value for stringified date_range attribute', async () => {
+            const from = '1000';
+            const to = '2000';
+            const dateRangeAttributeId = 'dateRangeAttributeId';
+            const strcturedDateRangeElement = {
+                attribute: {format: AttributeFormat.date_range, id: dateRangeAttributeId},
+                values: [{raw_value: JSON.stringify({from, to})}]
+            };
+            const recordForm = {elements: [strcturedDateRangeElement]};
+
+            const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
+
+            expect(antdFormInitialValues).toEqual({
+                [dateRangeAttributeId]: [Number(from), Number(to)]
+            });
+        });
     });
 });

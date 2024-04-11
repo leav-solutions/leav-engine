@@ -6,7 +6,7 @@ import useSharedTranslation from '_ui/hooks/useSharedTranslation/useSharedTransl
 import {RecordFormAttributeLinkAttributeFragment, SortOrder} from '_ui/_gqlTypes';
 import {SelectProps} from 'antd';
 import {DefaultOptionType} from 'antd/es/select';
-import {useGetFirstTwentyValuesQuery} from './useGetFirstTwentyValuesQuery';
+import {useGetOptionsQuery} from './useGetOptionsQuery';
 
 interface IMonoValueSelectProps {
     activeValue: RecordFormElementsValueLinkValue | undefined;
@@ -32,7 +32,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     const {t} = useSharedTranslation();
     const {errors} = AntForm.Item.useStatus();
 
-    const {loading, selectOptions, updateLeavField} = useGetFirstTwentyValuesQuery({
+    const {loading, selectOptions, updateLeavField} = useGetOptionsQuery({
         activeValue,
         linkedLibraryId: attribute.linked_library.id,
         onSelectChange

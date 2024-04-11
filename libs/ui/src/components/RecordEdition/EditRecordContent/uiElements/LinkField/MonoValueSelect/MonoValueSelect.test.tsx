@@ -211,7 +211,7 @@ describe('<MonoValueSelect />', () => {
                         label={state.formElement.settings.label}
                         required={false}
                         onSelectChange={onSelectChangeMock}
-                        onClearSelect={onClearSelectMock}
+                        onSelectClear={onClearSelectMock}
                     />
                 </AntForm.Item>
             </AntForm>,
