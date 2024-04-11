@@ -42,7 +42,7 @@ describe('getAntdFormInitialValues', () => {
                 });
             });
 
-            test('Should initialize antd form with given empty string for links (advanced and simple) when linkValue is not set', async () => {
+            test('Should initialize antd form with undefined for links (advanced and simple) when linkValue is not set', async () => {
                 const linkAttributeId = 'linkAttributeId';
                 const linkElement = {
                     attribute: {...attributeProperties, id: linkAttributeId},
@@ -53,7 +53,7 @@ describe('getAntdFormInitialValues', () => {
                 const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
 
                 expect(antdFormInitialValues).toEqual({
-                    [linkAttributeId]: ''
+                    [linkAttributeId]: undefined
                 });
             });
         }

@@ -31,6 +31,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
 }) => {
     const {t} = useSharedTranslation();
     const {errors} = AntForm.Item.useStatus();
+    const form = AntForm.useFormInstance();
 
     const {loading, selectOptions, updateLeavField} = useGetOptionsQuery({
         activeValue,
@@ -48,20 +49,16 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
         });
     };
 
-    const handleClear = async () => {
-        const res = await onSelectClear(
+    const handleClear = () => {
+        form.setFieldValue(attribute.id, undefined);
+
+        onSelectClear(
             {
                 value: activeValue.linkValue.id,
                 id_value: activeValue.id_value
             },
             activeValue.attribute.id
         );
-
-        if (res.status === APICallStatus.ERROR) {
-            throw new Error("Can't delete the value");
-        }
-
-        // setSelectedValue(undefined); // Check if ant does correctly its job
     };
 
     return (

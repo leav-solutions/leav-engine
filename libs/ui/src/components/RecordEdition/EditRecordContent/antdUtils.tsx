@@ -27,7 +27,7 @@ export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
         const value = values[0];
 
         if (isRecordFormElementsValueLinkValue(value, attribute)) {
-            acc[attribute.id] = value?.linkValue?.id ?? '';
+            acc[attribute.id] = value?.linkValue?.id;
             return acc;
         }
 
