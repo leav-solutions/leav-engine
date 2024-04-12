@@ -1,9 +1,9 @@
 import {render, screen} from '_ui/_tests/testUtils';
 import {MonoValueSelect} from './MonoValueSelect';
 import {mockFormElementInput, mockFormElementLink} from '_ui/__mocks__/common/form';
-import {LinkFieldReducerState} from './LinkField';
+import {LinkFieldReducerState} from '../LinkField';
 import {mockAttributeLink} from '_ui/__mocks__/common/attribute';
-import {APICallStatus, FieldScope} from '../../_types';
+import {APICallStatus, FieldScope} from '../../../_types';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {AntForm} from 'aristid-ds';
 import userEvent from '@testing-library/user-event';

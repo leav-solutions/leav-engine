@@ -1,7 +1,7 @@
 import {FunctionComponent} from 'react';
 import {AntForm, KitSelect} from 'aristid-ds';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
-import {APICallStatus, DeleteValueFunc, SubmitValueFunc} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {DeleteValueFunc, SubmitValueFunc} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import useSharedTranslation from '_ui/hooks/useSharedTranslation/useSharedTranslation';
 import {RecordFormAttributeLinkAttributeFragment, SortOrder} from '_ui/_gqlTypes';
 import {SelectProps} from 'antd';

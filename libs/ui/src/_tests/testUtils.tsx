@@ -62,7 +62,7 @@ const renderHookWithProviders = <
     BaseElement extends Element | DocumentFragment = Container
 >(
     hook: (initialProps: Props) => Result,
-    options: ICustomRenderHookOptions<Props, Q, Container, BaseElement>
+    options?: ICustomRenderHookOptions<Props, Q, Container, BaseElement>
 ) => renderHook(hook, {wrapper: props => <Providers {...props} {...options} />, ...options});
 
 // Re-export everything from testing-library to improve DX. You can everything you need from this file when you use this
