@@ -123,7 +123,25 @@ export interface IRecordDomain {
      */
     find({params, ctx}: {params: IFindRecordParams; ctx: IQueryInfos}): Promise<IListWithCursor<IRecord>>;
 
-    getRecordFieldValue(params: {
+    /**
+     * Get the value of targeted attribute with actions applied on it including metadata.
+     *
+     * Avoid requesting DB if attribute already found in `record` param.
+     *
+     * @param {Object} params
+     * @param params.library
+     * @param params.record Could be emulated with only `{ id: <real_id> }`
+     * @param params.attributeId
+     * @param params.options
+     * @param params.ctx
+     */
+    getRecordFieldValue({
+        library,
+        record,
+        attributeId,
+        options,
+        ctx
+    }: {
         library: string;
         record: IRecord;
         attributeId: string;
@@ -758,7 +776,7 @@ export default function ({
             });
 
             if (treeValues.length) {
-                // for now we look through first element (discard others if linked to multiple leaves of tree)
+                // for now, we look through first element (discard others if linked to multiple leaves of tree)
                 const treeAttrProps = await attributeDomain.getAttributeProperties({id: conf.treeColorPreview, ctx});
                 const ancestors = await treeRepo.getElementAncestors({
                     treeId: treeAttrProps.linked_tree,

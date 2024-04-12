@@ -49,6 +49,17 @@ export interface ISaveBatchValueResult {
 }
 
 export interface IValueDomain {
+    /**
+     * Call DB to get the value of an attribute.
+     * Prefer to use `recordDomain.getRecordFieldValue()` which is more optimized in certain situations.
+     *
+     * @param {Object} params
+     * @param params.library
+     * @param params.recordId
+     * @param params.attribute
+     * @param params.options
+     * @param params.ctx
+     */
     getValues({
         library,
         recordId,
