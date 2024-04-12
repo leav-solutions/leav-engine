@@ -14,6 +14,7 @@ import {mockAttributeLink} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
 import {Form} from 'antd';
 import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
+import {useForm} from 'antd/lib/form/Form';
 
 const label = 'label';
 const idValue = '123';

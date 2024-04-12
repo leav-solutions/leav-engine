@@ -92,8 +92,8 @@ describe('<MonoValueSelect />', () => {
 
     it('should display MonoValueSelect with no active value', async () => {
         render(
-            <AntForm>
-                <AntForm.Item>
+            <AntForm name="name">
+                <AntForm.Item name="danette">
                     <MonoValueSelect
                         activeValue={undefined}
                         attribute={mockFormElementLink.attribute}
@@ -141,7 +141,7 @@ describe('<MonoValueSelect />', () => {
         const id_value = '11051999';
 
         render(
-            <AntForm initialValues={{danette: records.list[1].id}}>
+            <AntForm name="name" initialValues={{danette: records.list[1].id}}>
                 <AntForm.Item name="danette">
                     <MonoValueSelect
                         activeValue={{
@@ -197,7 +197,7 @@ describe('<MonoValueSelect />', () => {
     it('should be able to clear selection when attribute is not required', async () => {
         const id_value = '23051985';
         render(
-            <AntForm initialValues={{danette: records.list[1].id}}>
+            <AntForm name="name" initialValues={{danette: records.list[1].id}}>
                 <AntForm.Item name="danette">
                     <MonoValueSelect
                         activeValue={{

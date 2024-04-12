@@ -22,6 +22,7 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     onChange,
     handleSubmit
 }) => {
+    console.log('renal - DSInputWrapper : ', value, onChange);
     const {errors} = Form.Item.useStatus();
     const form = Form.useFormInstance();
 
