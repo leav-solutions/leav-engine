@@ -1,12 +1,13 @@
 import {FunctionComponent} from 'react';
 import {AntForm, KitSelect} from 'aristid-ds';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
-import {DeleteValueFunc, SubmitValueFunc} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import useSharedTranslation from '_ui/hooks/useSharedTranslation/useSharedTranslation';
 import {RecordFormAttributeLinkAttributeFragment, SortOrder} from '_ui/_gqlTypes';
 import {SelectProps} from 'antd';
 import {DefaultOptionType} from 'antd/es/select';
 import {useGetOptionsQuery} from './useGetOptionsQuery';
+import {IRecordIdentity} from '_ui/types';
+import {IRecordPropertyLink} from '_ui/_queries/records/getRecordPropertiesQuery';
 
 interface IMonoValueSelectProps {
     activeValue: RecordFormElementsValueLinkValue | undefined;
@@ -14,8 +15,8 @@ interface IMonoValueSelectProps {
     onChange?: SelectProps['onChange'];
     attribute: RecordFormAttributeLinkAttributeFragment;
     label: string;
-    onSelectClear: DeleteValueFunc;
-    onSelectChange: SubmitValueFunc;
+    onSelectClear: (value: IRecordPropertyLink, fetchFreshValues: boolean) => void;
+    onSelectChange: (values: IRecordIdentity[]) => void;
     required: boolean;
 }
 
@@ -29,6 +30,10 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     onSelectClear,
     required
 }) => {
+    if (!onChange) {
+        throw Error('MonoValueSelect should be used inside a antd Form.Item');
+    }
+
     const {t} = useSharedTranslation();
     const {errors} = AntForm.Item.useStatus();
     const form = AntForm.useFormInstance();
@@ -40,29 +45,15 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     });
 
     const handleSelect = (optionValue: string, ...antOnChangeParams: DefaultOptionType[]) => {
-        if (!onChange) {
-            throw Error('MonoValueSelect should be used inside a antd Form.Item');
-        }
-
         onChange(optionValue, antOnChangeParams);
 
-        updateLeavField({
-            attribute,
-            idValue: activeValue?.id_value ?? null,
-            value: optionValue
-        });
+        updateLeavField(optionValue);
     };
 
     const handleClear = () => {
         form.setFieldValue(attribute.id, undefined);
 
-        onSelectClear(
-            {
-                value: activeValue.linkValue.id,
-                id_value: activeValue.id_value
-            },
-            activeValue.attribute.id
-        );
+        onSelectClear(activeValue, false);
     };
 
     return (
@@ -75,7 +66,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
             status={errors.length > 0 && 'error'}
             showSearch
             optionFilterProp="label"
-            placeholder={t('record_edition.product_select')}
+            placeholder={t('record_edition.record_select')}
             onSelect={handleSelect}
             onClear={required ? undefined : handleClear}
             allowClear={!required}

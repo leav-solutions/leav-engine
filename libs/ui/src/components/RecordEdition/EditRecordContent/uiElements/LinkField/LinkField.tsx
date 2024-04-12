@@ -226,7 +226,7 @@ function LinkField({
         });
     };
 
-    const _handleDeleteValue = async (value: IRecordPropertyLink) => {
+    const _handleDeleteValue = async (value: IRecordPropertyLink, fetchFreshValues: boolean = true) => {
         const deleteRes = await onValueDelete({value: value.linkValue.id, id_value: value.id_value}, attribute.id);
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
@@ -235,7 +235,7 @@ function LinkField({
                 idValue: value.id_value
             });
 
-            if (!isInCreationMode) {
+            if (!isInCreationMode && fetchFreshValues) {
                 const freshValues = await fetchValues(state.values[state.activeScope].version);
 
                 dispatch({
@@ -513,8 +513,8 @@ function LinkField({
                         attribute={attribute}
                         label={state.formElement.settings.label}
                         required={state.formElement.settings.required}
-                        onSelectClear={onValueDelete}
-                        onSelectChange={onValueSubmit}
+                        onSelectClear={_handleDeleteValue}
+                        onSelectChange={_handleAddValueSubmit}
                     />
                 </AntForm.Item>
             )}

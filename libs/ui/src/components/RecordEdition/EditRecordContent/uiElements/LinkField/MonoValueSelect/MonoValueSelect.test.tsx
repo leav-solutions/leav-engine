@@ -124,16 +124,7 @@ describe('<MonoValueSelect />', () => {
         await userEvent.click(danetteChocolat);
 
         expect(onSelectChangeMock).toBeCalledTimes(1);
-        expect(onSelectChangeMock).toHaveBeenCalledWith(
-            [
-                {
-                    attribute: mockFormElementLink.attribute,
-                    idValue: null,
-                    value: records.list[1]
-                }
-            ],
-            null
-        );
+        expect(onSelectChangeMock).toHaveBeenCalledWith([records.list[1]]);
     });
 
     it('should display MonoValueSelect with active value', async () => {
@@ -183,37 +174,29 @@ describe('<MonoValueSelect />', () => {
         await userEvent.click(danettePistache);
 
         expect(onSelectChangeMock).toBeCalledTimes(1);
-        expect(onSelectChangeMock).toHaveBeenCalledWith(
-            [
-                {
-                    attribute: mockFormElementLink.attribute,
-                    idValue: id_value,
-                    value: records.list[0]
-                }
-            ],
-            null
-        );
+        expect(onSelectChangeMock).toHaveBeenCalledWith([records.list[0]]);
     });
 
     it('should be able to clear selection when attribute is not required', async () => {
         const id_value = '23051985';
+        const activeValue = {
+            id_value,
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+            linkValue: {
+                id: records.list[1].id,
+                whoAmI: {}
+            } as RecordFormElementsValueLinkValue['linkValue'],
+            attribute: {
+                id: mockFormElementLink.attribute.id,
+                type: AttributeType.simple_link,
+                system: false
+            }
+        };
         render(
             <AntForm name="name" initialValues={{danette: records.list[1].id}}>
                 <AntForm.Item name="danette">
                     <MonoValueSelect
-                        activeValue={{
-                            id_value,
-                            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-                            linkValue: {
-                                id: records.list[1].id,
-                                whoAmI: {}
-                            } as RecordFormElementsValueLinkValue['linkValue'],
-                            attribute: {
-                                id: mockFormElementLink.attribute.id,
-                                type: AttributeType.simple_link,
-                                system: false
-                            }
-                        }}
+                        activeValue={activeValue}
                         attribute={mockFormElementLink.attribute}
                         label={state.formElement.settings.label}
                         required={false}
@@ -231,9 +214,6 @@ describe('<MonoValueSelect />', () => {
 
         const clearIcon = screen.getByLabelText('clear');
         await userEvent.click(clearIcon);
-        expect(onClearSelectMock).toHaveBeenCalledWith(
-            {id_value, value: records.list[1].id},
-            mockFormElementLink.attribute.id
-        );
+        expect(onClearSelectMock).toHaveBeenCalledWith(activeValue, false);
     });
 });

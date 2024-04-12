@@ -1,5 +1,5 @@
 import {useQuery} from '@apollo/client';
-import {RecordFormAttributeLinkAttributeFragment, SortOrder} from '_ui/_gqlTypes';
+import {SortOrder} from '_ui/_gqlTypes';
 import {
     IGetRecordsFromLibraryQuery,
     IGetRecordsFromLibraryQueryVariables,
@@ -7,8 +7,8 @@ import {
 } from '_ui/_queries/records/getRecordsFromLibraryQuery';
 import {KitAvatar, KitSelect} from 'aristid-ds';
 import {ComponentProps, useMemo} from 'react';
-import {SubmitValueFunc} from '../../../_types';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
+import {IRecordIdentity} from '_ui/types';
 
 export const useGetOptionsQuery = ({
     activeValue,
@@ -17,7 +17,7 @@ export const useGetOptionsQuery = ({
 }: {
     activeValue: RecordFormElementsValueLinkValue | undefined;
     linkedLibraryId: string;
-    onSelectChange: SubmitValueFunc;
+    onSelectChange: (values: IRecordIdentity[]) => void;
 }) => {
     const {loading, data} = useQuery<IGetRecordsFromLibraryQuery, IGetRecordsFromLibraryQueryVariables>(
         getRecordsFromLibraryQuery(),
@@ -78,27 +78,10 @@ export const useGetOptionsQuery = ({
         });
     }
 
-    const updateLeavField = ({
-        attribute,
-        idValue,
-        value
-    }: {
-        attribute: RecordFormAttributeLinkAttributeFragment;
-        idValue: string | null;
-        value: string;
-    }) => {
+    const updateLeavField = (value: string) => {
         const selectedLinkValue = recordList.find(record => record.id === value);
 
-        return onSelectChange(
-            [
-                {
-                    attribute,
-                    idValue,
-                    value: selectedLinkValue ?? activeValue.linkValue
-                }
-            ],
-            null
-        );
+        return onSelectChange([selectedLinkValue ?? activeValue.linkValue]);
     };
 
     return {loading, selectOptions: augmentedSelectOptionsWithActive, updateLeavField};

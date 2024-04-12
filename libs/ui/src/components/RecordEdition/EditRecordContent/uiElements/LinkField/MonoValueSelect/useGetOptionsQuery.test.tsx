@@ -215,18 +215,9 @@ describe('useGetOptionsQuery', () => {
             );
 
             await waitFor(() => result.current.selectOptions.length === 3);
-            result.current.updateLeavField({attribute, idValue, value: 'notFound'});
+            result.current.updateLeavField('notFound');
 
-            expect(onSelectChangeMock).toHaveBeenCalledWith(
-                [
-                    {
-                        attribute,
-                        idValue,
-                        value: activeValue.linkValue
-                    }
-                ],
-                null
-            );
+            expect(onSelectChangeMock).toHaveBeenCalledWith([activeValue.linkValue]);
         });
 
         test('Should call onSelectChange with selectedLinkValue if record in list', async () => {
@@ -258,18 +249,9 @@ describe('useGetOptionsQuery', () => {
             await waitFor(() => result.current.selectOptions.length === 3);
 
             const selectedRecord = records.list[0];
-            result.current.updateLeavField({attribute, idValue, value: selectedRecord.id});
+            result.current.updateLeavField(selectedRecord.id);
 
-            expect(onSelectChangeMock).toHaveBeenCalledWith(
-                [
-                    {
-                        attribute,
-                        idValue,
-                        value: records.list[0]
-                    }
-                ],
-                null
-            );
+            expect(onSelectChangeMock).toHaveBeenCalledWith([records.list[0]]);
         });
     });
 });
