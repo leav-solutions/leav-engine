@@ -40,7 +40,9 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     });
 
     const handleSelect = (optionValue: string, ...antOnChangeParams: DefaultOptionType[]) => {
-        onChange(optionValue, antOnChangeParams);
+        if (onChange) {
+            onChange(optionValue, antOnChangeParams);
+        }
 
         updateLeavField({
             attribute,

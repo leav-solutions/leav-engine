@@ -141,13 +141,16 @@ describe('<MonoValueSelect />', () => {
         const id_value = '11051999';
 
         render(
-            <AntForm>
-                <AntForm.Item>
+            <AntForm initialValues={{danette: records.list[1].id}}>
+                <AntForm.Item name="danette">
                     <MonoValueSelect
                         activeValue={{
                             id_value,
                             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-                            linkValue: {id: records.list[1].id} as RecordFormElementsValueLinkValue['linkValue'],
+                            linkValue: {
+                                id: records.list[1].id,
+                                whoAmI: {}
+                            } as RecordFormElementsValueLinkValue['linkValue'],
                             attribute: {
                                 id: mockFormElementLink.attribute.id,
                                 type: AttributeType.simple_link,
@@ -194,13 +197,16 @@ describe('<MonoValueSelect />', () => {
     it('should be able to clear selection when attribute is not required', async () => {
         const id_value = '23051985';
         render(
-            <AntForm>
-                <AntForm.Item>
+            <AntForm initialValues={{danette: records.list[1].id}}>
+                <AntForm.Item name="danette">
                     <MonoValueSelect
                         activeValue={{
                             id_value,
                             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-                            linkValue: {id: records.list[1].id} as RecordFormElementsValueLinkValue['linkValue'],
+                            linkValue: {
+                                id: records.list[1].id,
+                                whoAmI: {}
+                            } as RecordFormElementsValueLinkValue['linkValue'],
                             attribute: {
                                 id: mockFormElementLink.attribute.id,
                                 type: AttributeType.simple_link,

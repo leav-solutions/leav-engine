@@ -5,7 +5,6 @@ import {KitInput, KitInputWrapper} from 'aristid-ds';
 import {FocusEvent, FunctionComponent, ReactNode} from 'react';
 import {IStandardFieldReducerState} from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {Form, InputProps} from 'antd';
-import styled from 'styled-components';
 import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
 
 interface IDSInputWrapperProps {
