@@ -52,6 +52,8 @@ import ValuesVersionIndicator from '../../shared/ValuesVersionIndicator';
 import {APICallStatus, FieldScope, IFormElementProps} from '../../_types';
 import FloatingMenuHandler from './FloatingMenuHandler';
 import ValuesAdd from './ValuesAdd';
+import {MonoValueSelect} from '_ui/components/RecordEdition/EditRecordContent/uiElements/LinkField/MonoValueSelect/MonoValueSelect';
+import {AntForm} from 'aristid-ds';
 
 const TableWrapper = styled.div<{$isValuesAddVisible: boolean; $themeToken: AntdThemeToken}>`
     position: relative;
@@ -69,6 +71,7 @@ const TableWrapper = styled.div<{$isValuesAddVisible: boolean; $themeToken: Antd
     }
 
     // Disable some unwanted antd styles
+
     && table > thead > tr:first-child {
         th:first-child,
         th:last-child {
@@ -112,10 +115,11 @@ export interface IRowData {
     key: string;
     whoAmI: IRecordIdentityWhoAmI;
     value: RecordFormElementsValueLinkValue;
+
     [columnName: string]: unknown;
 }
 
-type LinkFieldReducerState = ILinkFieldState<RecordFormElementsValueLinkValue>;
+export type LinkFieldReducerState = ILinkFieldState<RecordFormElementsValueLinkValue>;
 type LinkFieldReducerAction = LinkFieldReducerActions<RecordFormElementsValueLinkValue>;
 
 function LinkField({
@@ -222,7 +226,7 @@ function LinkField({
         });
     };
 
-    const _handleDeleteValue = async (value: IRecordPropertyLink) => {
+    const _handleDeleteValue = async (value: IRecordPropertyLink, fetchFreshValues: boolean = true) => {
         const deleteRes = await onValueDelete({value: value.linkValue.id, id_value: value.id_value}, attribute.id);
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
@@ -231,7 +235,7 @@ function LinkField({
                 idValue: value.id_value
             });
 
-            if (!isInCreationMode) {
+            if (!isInCreationMode && fetchFreshValues) {
                 const freshValues = await fetchValues(state.values[state.activeScope].version);
 
                 dispatch({
@@ -455,37 +459,64 @@ function LinkField({
 
     return (
         <>
-            {state.isValuesAddVisible && <Dimmer onClick={_handleCloseValuesAdd} />}
-            <TableWrapper $isValuesAddVisible={state.isValuesAddVisible} $themeToken={token}>
-                <FieldLabel ellipsis={{rows: 1, tooltip: true}} $themeToken={token}>
-                    {element.settings.label}
-                    {editRecordState.externalUpdate.updatedValues[attribute?.id] && <UpdatedFieldIcon />}
-                    {state.activeScope === FieldScope.INHERITED && (
-                        <InheritedFieldLabel version={state.values[FieldScope.INHERITED].version} />
+            {attribute.multiple_values ? (
+                <>
+                    {state.isValuesAddVisible && <Dimmer onClick={_handleCloseValuesAdd} />}
+                    <TableWrapper $isValuesAddVisible={state.isValuesAddVisible} $themeToken={token}>
+                        <FieldLabel ellipsis={{rows: 1, tooltip: true}} $themeToken={token}>
+                            {element.settings.label}
+                            {editRecordState.externalUpdate.updatedValues[attribute?.id] && <UpdatedFieldIcon />}
+                            {state.activeScope === FieldScope.INHERITED && (
+                                <InheritedFieldLabel version={state.values[FieldScope.INHERITED].version} />
+                            )}
+                        </FieldLabel>
+                        <Table
+                            columns={cols}
+                            dataSource={data}
+                            size="small"
+                            pagination={false}
+                            locale={{
+                                emptyText: <NoValue canAddValue={canAddValue} onAddValue={_handleAddValue} linkField />
+                            }}
+                            data-testid="linked-field-values"
+                            footer={tableFooter}
+                            scroll={{y: 280}}
+                        />
+                        {state.isValuesAddVisible && canAddValue && (
+                            <ValuesAdd
+                                onAdd={_handleAddValueSubmit}
+                                attribute={attribute}
+                                onClose={_handleCloseValuesAdd}
+                            />
+                        )}
+                    </TableWrapper>
+                    {state.errorMessage && (
+                        <Popover
+                            placement="bottomLeft"
+                            open={!!state.errorMessage}
+                            content={<ErrorMessage error={state.errorMessage} onClose={_handleCloseError} />}
+                        />
                     )}
-                </FieldLabel>
-                <Table
-                    columns={cols}
-                    dataSource={data}
-                    size="small"
-                    pagination={false}
-                    locale={{
-                        emptyText: <NoValue canAddValue={canAddValue} onAddValue={_handleAddValue} linkField />
-                    }}
-                    data-testid="linked-field-values"
-                    footer={tableFooter}
-                    scroll={{y: 280}}
-                />
-                {state.isValuesAddVisible && canAddValue && (
-                    <ValuesAdd onAdd={_handleAddValueSubmit} attribute={attribute} onClose={_handleCloseValuesAdd} />
-                )}
-            </TableWrapper>
-            {state.errorMessage && (
-                <Popover
-                    placement="bottomLeft"
-                    open={!!state.errorMessage}
-                    content={<ErrorMessage error={state.errorMessage} onClose={_handleCloseError} />}
-                ></Popover>
+                </>
+            ) : (
+                <AntForm.Item
+                    name={attribute.id}
+                    rules={[
+                        {
+                            required: state.formElement.settings.required,
+                            message: t('errors.standard_field_required')
+                        }
+                    ]}
+                >
+                    <MonoValueSelect
+                        activeValue={activeValues[0]}
+                        attribute={attribute}
+                        label={state.formElement.settings.label}
+                        required={state.formElement.settings.required}
+                        onSelectClear={_handleDeleteValue}
+                        onSelectChange={_handleAddValueSubmit}
+                    />
+                </AntForm.Item>
             )}
         </>
     );

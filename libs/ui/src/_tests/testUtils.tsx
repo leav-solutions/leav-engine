@@ -4,17 +4,27 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {InMemoryCache, InMemoryCacheConfig} from '@apollo/client';
 import {MockedProvider, MockedResponse} from '@apollo/client/testing';
-import {render, RenderOptions, RenderResult} from '@testing-library/react';
+import {Queries, render, renderHook, RenderHookOptions, RenderOptions, RenderResult} from '@testing-library/react';
 import {KitApp} from 'aristid-ds';
 import {PropsWithChildren, ReactElement} from 'react';
 import {MemoryRouter, MemoryRouterProps} from 'react-router-dom';
 import {gqlPossibleTypes} from '_ui/gqlPossibleTypes';
 import MockedUserContextProvider from '_ui/testing/MockedUserContextProvider';
 import MockedLangContextProvider from '../testing/MockedLangContextProvider';
+import {queries} from '@testing-library/dom';
 
 export interface ICustomRenderOptions extends RenderOptions {
     mocks?: readonly MockedResponse[];
     [key: string]: any;
+}
+
+export interface ICustomRenderHookOptions<
+    Props,
+    Q extends Queries = typeof queries,
+    Container extends Element | DocumentFragment = HTMLElement,
+    BaseElement extends Element | DocumentFragment = Container
+> extends RenderHookOptions<Props, Q, Container, BaseElement> {
+    mocks?: readonly MockedResponse[];
 }
 
 interface IProvidersProps {
@@ -44,7 +54,19 @@ const renderWithProviders = (ui: ReactElement, options?: ICustomRenderOptions): 
     return render(ui, {wrapper: props => <Providers {...props} {...options} />, ...options});
 };
 
+const renderHookWithProviders = <
+    Result,
+    Props,
+    Q extends Queries = typeof queries,
+    Container extends Element | DocumentFragment = HTMLElement,
+    BaseElement extends Element | DocumentFragment = Container
+>(
+    hook: (initialProps: Props) => Result,
+    options?: ICustomRenderHookOptions<Props, Q, Container, BaseElement>
+) => renderHook(hook, {wrapper: props => <Providers {...props} {...options} />, ...options});
+
 // Re-export everything from testing-library to improve DX. You can everything you need from this file when you use this
 // custom render
 export * from '@testing-library/react';
 export {renderWithProviders as render};
+export {renderHookWithProviders as renderHook};

@@ -40,7 +40,7 @@
         "invalid_endpoint_format": "Le point d'accès peut être composé uniquement de lettres minuscules, de chiffres et du caractère \"-\" (ex: \"mon-app\")",
         "id_already_exists": "Cet identifiant existe déjà",
         "endpoint_already_used": "Ce point d'accès est déjà utilisé",
-        "invalid_url_format": "L'URL n'est pas valide"
+        "invalid_url_format": "L’URL n’est pas valide"
     },
     "applications": {
         "id": "Identifiant",
@@ -452,7 +452,8 @@
         "create_and_edit": "Créer et éditer",
         "cancel_confirm_modal_title": "Confirmer l'abandon?",
         "cancel_confirm_modal_content": "Vous êtes sur le point d'abandonner la création.",
-        "cancel_confirm_modal_question": "Êtes-vous sûr(e)?"
+        "cancel_confirm_modal_question": "Êtes-vous sûr(e) ?",
+        "record_select": "Sélectionnez un élément"
     },
     "record_summary": {
         "preview_title": "Cliquez ici pour voir l’aperçu.",
