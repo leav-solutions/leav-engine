@@ -24,7 +24,7 @@ describe('getAntdFormInitialValues', () => {
     });
 
     describe.each([{type: AttributeType.simple_link}, {type: AttributeType.advanced_link, multiple_values: false}])(
-        'links',
+        'Simple link and Advanced link without multiple values',
         attributeProperties => {
             test('Should initialize antd form with given value for links (advanced and simple)', async () => {
                 const elementFormId = 'elementFormId';
@@ -38,7 +38,7 @@ describe('getAntdFormInitialValues', () => {
                 const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
 
                 expect(antdFormInitialValues).toEqual({
-                    [linkAttributeId]: 'elementFormId'
+                    [linkAttributeId]: elementFormId
                 });
             });
 
@@ -58,6 +58,40 @@ describe('getAntdFormInitialValues', () => {
             });
         }
     );
+
+    describe('Advanced link with multiple values', () => {
+        test('Should initialize antd form with given value for links', async () => {
+            const elementFormId = 'elementFormId';
+            const yetAnotherElementFormId = 'yetAnotherElementFormId';
+            const linkAttributeId = 'linkAttributeId';
+            const linkElement = {
+                attribute: {type: AttributeType.advanced_link, multiple_values: true, id: linkAttributeId},
+                values: [{linkValue: {id: elementFormId}}, {linkValue: {id: yetAnotherElementFormId}}]
+            };
+            const recordForm = {elements: [linkElement]};
+
+            const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
+
+            expect(antdFormInitialValues).toEqual({
+                [linkAttributeId]: [elementFormId, yetAnotherElementFormId]
+            });
+        });
+
+        test('Should initialize antd form with empty array for links when linkValue is not set', async () => {
+            const linkAttributeId = 'linkAttributeId';
+            const linkElement = {
+                attribute: {type: AttributeType.advanced_link, multiple_values: true, id: linkAttributeId},
+                values: [{}]
+            };
+            const recordForm = {elements: [linkElement]};
+
+            const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
+
+            expect(antdFormInitialValues).toEqual({
+                [linkAttributeId]: []
+            });
+        });
+    });
 
     describe('AttributeFormat.text', () => {
         test('Should initialize antd form with given value for text attribute', async () => {

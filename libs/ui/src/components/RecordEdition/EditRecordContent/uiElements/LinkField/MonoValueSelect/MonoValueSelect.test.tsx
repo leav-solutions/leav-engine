@@ -214,6 +214,6 @@ describe('<MonoValueSelect />', () => {
 
         const clearIcon = screen.getByLabelText('clear');
         await userEvent.click(clearIcon);
-        expect(onClearSelectMock).toHaveBeenCalledWith(activeValue, false);
+        expect(onClearSelectMock).toHaveBeenCalledWith(activeValue);
     });
 });

@@ -2,7 +2,7 @@ import {FunctionComponent, ReactNode} from 'react';
 import {AntForm, KitSelect} from 'aristid-ds';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 import useSharedTranslation from '_ui/hooks/useSharedTranslation/useSharedTranslation';
-import {RecordFormAttributeLinkAttributeFragment, SortOrder} from '_ui/_gqlTypes';
+import {RecordFormAttributeLinkAttributeFragment} from '_ui/_gqlTypes';
 import {SelectProps} from 'antd';
 import {DefaultOptionType} from 'antd/es/select';
 import {useGetOptionsQuery} from './useGetOptionsQuery';
@@ -14,70 +14,75 @@ interface IProvidedByAntFormItem {
     onChange?: SelectProps['onChange'];
 }
 
-interface IMonoValueSelectProps extends IProvidedByAntFormItem {
-    activeValue: RecordFormElementsValueLinkValue | undefined;
+interface IMultiValueSelectProps extends IProvidedByAntFormItem {
+    activeValues: RecordFormElementsValueLinkValue[] | undefined;
     attribute: RecordFormAttributeLinkAttributeFragment;
     label: string;
-    onSelectClear: (value: IRecordPropertyLink) => void;
+    onValueDeselect: (value: IRecordPropertyLink) => void;
+    onSelectClear: () => void;
     onSelectChange: (values: IRecordIdentity[]) => void;
-    required: boolean;
     infoButton?: ReactNode;
 }
 
-export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
-    activeValue,
+export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
+    activeValues,
     value,
     onChange,
     attribute,
     label,
+    onValueDeselect,
     onSelectChange,
     onSelectClear,
-    required,
     infoButton
 }) => {
     if (!onChange) {
-        throw Error('MonoValueSelect should be used inside a antd Form.Item');
+        throw Error('MultiValueSelect should be used inside a antd Form.Item');
     }
 
     const {t} = useSharedTranslation();
-    const {errors} = AntForm.Item.useStatus();
     const form = AntForm.useFormInstance();
 
     const {loading, selectOptions, updateLeavField} = useGetOptionsQuery({
-        activeValue,
-        linkedLibraryId: attribute.linked_library.id,
+        attribute,
         onSelectChange
     });
 
-    const handleSelect = async (optionValue: string, ...antOnChangeParams: DefaultOptionType[]) => {
-        onChange(optionValue, antOnChangeParams);
-        await form.validateFields([attribute.id]);
+    const _handleSelect = (optionValue: string, ...antOnChangeParams: DefaultOptionType[]) => {
+        const oldValues = Array.isArray(value) ? value : [];
+        onChange([...oldValues, optionValue], antOnChangeParams);
 
         updateLeavField(optionValue);
     };
 
-    const handleClear = async () => {
+    const _handleClear = () => {
         form.setFieldValue(attribute.id, undefined);
-        await form.validateFields([attribute.id]);
 
-        onSelectClear(activeValue);
+        onSelectClear();
+    };
+
+    const _handleDeselect = (valueToDeselect: string) => {
+        const newValues = value.filter(val => val !== valueToDeselect);
+        form.setFieldValue(attribute.id, newValues);
+
+        const linkValueToDeselect = activeValues.find(val => val.linkValue.id === valueToDeselect);
+        onValueDeselect(linkValueToDeselect);
     };
 
     return (
         <KitSelect
             loading={loading}
             value={value}
-            required={required}
+            mode="multiple"
             label={label}
             options={selectOptions}
-            status={errors.length > 0 && 'error'}
             showSearch
             optionFilterProp="label"
             placeholder={t('record_edition.record_select')}
-            onSelect={handleSelect}
+            onSelect={_handleSelect}
+            onClear={_handleClear}
+            // @ts-expect-error
+            onDeselect={_handleDeselect}
             onChange={onChange}
-            onClear={required ? undefined : handleClear}
-            allowClear={!required}
             infoIcon={infoButton}
             onInfoClick={Boolean(infoButton) ? () => void 0 : undefined}
         />

@@ -566,7 +566,7 @@ function StandardFieldValue({
         AttributeFormat.rich_text
     ];
 
-    const _infoButton: ReactNode = editRecordState.withInfoButton ? (
+    const infoButton: ReactNode = editRecordState.withInfoButton ? (
         <ValueDetailsBtn value={fieldValue.value} attribute={attribute} size="small" shape="circle" />
     ) : null;
 
@@ -583,10 +583,10 @@ function StandardFieldValue({
                     ]}
                 >
                     {attribute.format === AttributeFormat.text && (
-                        <DSInputWrapper state={state} handleSubmit={_handleSubmit} infoButton={_infoButton} />
+                        <DSInputWrapper state={state} handleSubmit={_handleSubmit} infoButton={infoButton} />
                     )}
                     {attribute.format === AttributeFormat.date_range && (
-                        <DSRangePickerWrapper state={state} handleSubmit={_handleSubmit} infoButton={_infoButton} />
+                        <DSRangePickerWrapper state={state} handleSubmit={_handleSubmit} infoButton={infoButton} />
                     )}
                 </Form.Item>
             )}
