@@ -84,13 +84,6 @@ export declare const waitFor: (
         interval?: number;
     }
 ) => Promise<boolean>;
-export declare const waitFor: (
-    predicate: () => Promise<boolean> | boolean,
-    options?: {
-        timeout?: number;
-        interval?: number;
-    }
-) => Promise<boolean>;
 export declare const isTypeLink: (type: AttributeType) => boolean;
 export declare const isTypeStandard: (type: AttributeType) => boolean;
 /**

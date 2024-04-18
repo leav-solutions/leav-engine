@@ -213,7 +213,14 @@ const getInitials = (label, length = 2) => {
     */
     const letterRegex = new RegExp(/[A-Za-z]+/g);
     const numberRegex = new RegExp(/[1-9]+/g);
-    const wordsRegex = label.match(letterRegex) ? label.match(letterRegex) : label.match(numberRegex);
+    // Remove accents from the label
+    const sanitizedLabel = label
+        .normalize('NFD')
+        .replace(/\p{Diacritic}/gu, '')
+        .replace(/[^\w\s]/g, '');
+    const wordsRegex = sanitizedLabel.match(letterRegex)
+        ? sanitizedLabel.match(letterRegex)
+        : sanitizedLabel.match(numberRegex);
     return wordsRegex !== null ? (0, exports._getInitialEngine)(wordsRegex, length) : (0, exports._getInitialEngine)(words, length);
 };
 exports.getInitials = getInitials;
