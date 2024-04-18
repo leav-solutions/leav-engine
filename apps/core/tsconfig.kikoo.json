@@ -1,0 +1,14 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "types": ["jest", "node", "@types/jest"],
+        "baseUrl": "src",
+        "outDir": "dist",
+        "isolatedModules": false,
+        "typeRoots": ["./src/_types"]
+    },
+    "exclude": [
+        "applications",
+        "**/*.spec.ts",
+    ]
+}

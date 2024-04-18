@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IActionsListFunctionResult} from '_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import formatNumberAction from './formatNumberAction';
 
@@ -10,19 +11,19 @@ describe('formatNumberAction', () => {
     const ctx = {attribute: attrText};
     test('formatNumber', async () => {
         expect(
-            action(
-                123456.781,
+            (action(
+                [{value: 123456.781}],
                 {thousandsSeparator: ' ', decimalsSeparator: ',', decimals: 2, prefix: '=> ', suffix: ' €'},
                 ctx
-            )
+            ) as IActionsListFunctionResult).values[0].value
         ).toBe('=> 123 456,78 €');
         expect(
-            action(123456.786, {thousandsSeparator: ' ', decimalsSeparator: ',', decimals: 2, suffix: ' €'}, ctx)
+            (action([{value: 123456.786}], {thousandsSeparator: ' ', decimalsSeparator: ',', decimals: 2, suffix: ' €'}, ctx) as IActionsListFunctionResult).values[0].value
         ).toBe('123 456,79 €');
-        expect(action(123456.78, {thousandsSeparator: '.', decimalsSeparator: ',', decimals: 4}, ctx)).toBe(
+        expect((action([{value: 123456.78}], {thousandsSeparator: '.', decimalsSeparator: ',', decimals: 4}, ctx) as IActionsListFunctionResult).values[0].value).toBe(
             '123.456,7800'
         );
-        expect(action('aaa', {}, ctx)).toBe('');
-        expect(action(null, {}, ctx)).toBe(null);
+        expect((action([{value: 'aaa'}], {}, ctx) as IActionsListFunctionResult).values[0].value).toBe('');
+        expect((action([{value: null}], {}, ctx) as IActionsListFunctionResult).values[0].value).toBe(null);
     });
 });

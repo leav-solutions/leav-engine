@@ -4,6 +4,8 @@
 import ValidationError from '../../errors/ValidationError';
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
 import validateURLAction from './validateURLAction';
+import {IActionsListFunctionResult} from '_types/actionsList';
+import exp from 'constants';
 
 describe('validateURLFormatAction', () => {
     const action = validateURLAction().action;
@@ -11,10 +13,12 @@ describe('validateURLFormatAction', () => {
     const ctx = {attribute: {id: 'test_attr', format: AttributeFormats.TEXT, type: AttributeTypes.SIMPLE}};
 
     test('validateURL should throw', async () => {
-        expect(() => action('test', null, ctx)).toThrow(ValidationError);
+        const res = action([{value: 'test'}], null, ctx) as IActionsListFunctionResult;
+        expect(res.errors.length).toBe(1);
     });
 
     test('validateURL should return URL', async () => {
-        expect(action('http://url.com', null, ctx)).toBe('http://url.com');
+        const res = action([{value: 'http://url.com'}], null, ctx) as IActionsListFunctionResult;
+        expect(res.values[0].value).toBe('http://url.com');
     });
 });

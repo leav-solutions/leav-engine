@@ -3,8 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
     ActionsListIOTypes,
-    ActionsListValueType,
-    IActionsListContext,
     IActionsListFunction
 } from '../../_types/actionsList';
 
@@ -15,12 +13,13 @@ export default function (): IActionsListFunction {
         description: 'Convert value to a JSON string',
         input_types: [ActionsListIOTypes.OBJECT],
         output_types: [ActionsListIOTypes.STRING],
-        action: (value: ActionsListValueType, params: any, ctx: IActionsListContext): string => {
-            if (value === null) {
-                return null;
-            }
+        action: (values) => {
+            const computedValues = values.map((value) => {
+                value.value = value?.value === null ? null : JSON.stringify(value.value);
+                return value;
+            });
 
-            return JSON.stringify(value);
+            return {values: computedValues, errors: []};
         }
     };
 }

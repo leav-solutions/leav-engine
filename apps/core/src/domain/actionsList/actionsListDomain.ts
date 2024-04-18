@@ -15,6 +15,7 @@ import {IAttribute} from '../../_types/attribute';
 import {ErrorFieldDetail, Errors} from '../../_types/errors';
 import {IRecord} from '../../_types/record';
 import {IValue} from '../../_types/value';
+import {i18n} from 'i18next';
 
 export interface IActionsListDomain {
     /**
@@ -44,17 +45,18 @@ export interface IActionsListDomain {
      * They're run in the order defined in the actions array.
      *
      * @param actions List of actions to execute
-     * @param value
+     * @param values Array of values to pass to the actions
      * @param ctx     Context transmitted to the function when executed
      */
-    runActionsList(actions: IActionsListSavedAction[], value: IValue, ctx: IRunActionsListCtx): Promise<IValue>;
+    runActionsList(actions: IActionsListSavedAction[], values: IValue[], ctx: IRunActionsListCtx): Promise<IValue[]>;
 }
 
 interface IDeps {
     'core.depsManager'?: AwilixContainer;
+    translator?: i18n;
 }
 
-export default function ({'core.depsManager': depsManager = null}: IDeps = {}): IActionsListDomain {
+export default function({'core.depsManager': depsManager = null, translator = null}: IDeps = {}): IActionsListDomain {
     let _pluginActions = [];
     return {
         getAvailableActions(): IActionsListFunction[] {
@@ -74,10 +76,9 @@ export default function ({'core.depsManager': depsManager = null}: IDeps = {}): 
         registerActions(actions: IActionsListFunction[]): void {
             _pluginActions = [..._pluginActions, ...actions];
         },
-        async runActionsList(actions, value, ctx) {
+        async runActionsList(actions, values, ctx) {
             const availActions: IActionsListFunction[] = this.getAvailableActions();
-
-            let resultAction = value.value;
+            let resultAction = values;
             for (const action of actions) {
                 const params: IActionsListParams = !!action.params
                     ? action.params.reduce((all, p) => {
@@ -85,42 +86,51 @@ export default function ({'core.depsManager': depsManager = null}: IDeps = {}): 
                           return all;
                       }, {})
                     : {};
-                const actionFunc = availActions.find(a => {
-                    const availableActionId = a.id ? a.id : a.name;
-                    const actionId = action.id ? action.id : action.name;
-                    return availableActionId === actionId;
-                }).action;
-                try {
-                    // run each actions separately to catch the context of the error.
-                    resultAction = await actionFunc(resultAction, params, ctx);
-                } catch (error) {
-                    //check if there is a custom message added by a user (also check the default lng message)
+                const actionFunc = availActions.find(availableAction => availableAction.id === action.id).action;
 
+                // run each actions separately to catch the context of the error.
+                const {values: actionFuncValues, errors} = await actionFunc(resultAction, params, ctx);
+                resultAction = actionFuncValues;
+
+                if (errors.length > 0) {
+                    //check if there is a custom message added by a user (also check the default lng message)
                     let customMessage = !isEmpty(action?.error_message?.[ctx.lang]?.trim())
                         ? action.error_message[ctx.lang]
                         : !isEmpty(action?.error_message?.[ctx.defaultLang]?.trim())
                         ? action.error_message[ctx.defaultLang]
                         : '';
+                    if (customMessage) {
+                        customMessage += ': ' + errors.map(error => error.attributeValue.value).join(', ');
+                        throw new ValidationError({[ctx.attribute.id]: customMessage}, customMessage, true);
+                    } else {
+                        const errorsByType = errors.reduce<
+                            Record<Errors, {attributeValues: IValue[]; message: string}> | {}
+                        >((acc, actionError) => {
+                            if (!acc[actionError.errorType]) {
+                                acc[actionError.errorType] = {attributeValues: [], message: actionError.message};
+                            }
+                            acc[actionError.errorType].attributeValues.push(actionError.attributeValue);
+                            return acc;
+                        }, {});
 
-                    //check if there is a joy error message
-                    customMessage =
-                        customMessage === '' && error.fields[ctx.attribute.id]?.vars?.details
-                            ? error.fields[ctx.attribute.id].vars.details
-                            : customMessage;
+                        const errorMessage = Object.entries(errorsByType).reduce(
+                            (message, [errorType, {attributeValues, message: optionalMessage}]) => {
+                                const messageText = optionalMessage ?? translator.t(`error.${errorType}`);
+                                message.push(
+                                    `${messageText}: ${(attributeValues ?? []).map(value => value.value).join(', ')}`
+                                );
+                                return message;
+                            },
+                            []
+                        );
 
-                    let objectValidationError = {[ctx.attribute.id]: error.fields[ctx.attribute.id]};
-                    let isCustomMessage = false;
+                        const formattedErrorMessage = errorMessage.join('\n');
 
-                    if (!isEmpty(customMessage)) {
-                        objectValidationError = {[ctx.attribute.id]: customMessage};
-                        isCustomMessage = true;
+                        throw new ValidationError({[ctx.attribute.id]: formattedErrorMessage}, formattedErrorMessage);
                     }
-
-                    //throw the validation error with a custom message
-                    throw new ValidationError(objectValidationError, error.message, isCustomMessage);
                 }
             }
-            return {...value, value: resultAction};
+            return resultAction;
         }
     };
 }

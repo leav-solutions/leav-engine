@@ -2,14 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import moment from 'moment';
-import {
-    ActionsListIOTypes,
-    ActionsListValueType,
-    IActionsListContext,
-    IActionsListFunction
-} from '../../_types/actionsList';
+import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 
-export default function (): IActionsListFunction {
+export default function(): IActionsListFunction {
     return {
         id: 'formatDate',
         name: 'Format Date',
@@ -32,24 +27,27 @@ export default function (): IActionsListFunction {
                 default_value: 'DD/MM/YYYY HH:mm:ss'
             }
         ],
-        action: (value: ActionsListValueType, params: any, ctx: IActionsListContext): string => {
-            if (value === null) {
-                return null;
-            }
-
+        action: (values, params, ctx) => {
             const format = params.format;
             const auto = params.auto === 'true';
-            const numberVal = Number(value);
 
-            let newValue = '';
+            const computedValues = values.map(value => {
+                if (value.value === null) {
+                    return value;
+                }
+                const numberVal = Number(value.value);
 
-            if (!isNaN(numberVal)) {
-                newValue = auto
-                    ? new Date(numberVal * 1000).toLocaleString(ctx.lang)
-                    : moment.unix(numberVal).format(format);
-            }
+                let newValue = '';
 
-            return newValue;
+                if (!isNaN(numberVal)) {
+                    newValue = auto
+                        ? new Date(numberVal * 1000).toLocaleString(ctx.lang)
+                        : moment.unix(numberVal).format(format);
+                }
+                value.value = newValue;
+                return value;
+            });
+            return {values: computedValues, errors: []};
         }
     };
 }

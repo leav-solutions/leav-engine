@@ -6,7 +6,6 @@ import {gqlCreateRecord, gqlSaveAttribute, gqlSaveLibrary, makeGraphQlCall} from
 
 describe('Values Metadata', () => {
     const metadataLibId = 'metadata_test_lib';
-    const metadataLibGqlId = 'metadataTestLib';
     const metaAttrId = 'metadata_simple_attribute';
     const attrWithMetaId = 'metadata_attribute';
     let recordId;
@@ -54,8 +53,8 @@ describe('Values Metadata', () => {
 
         expect(resSaveValue.status).toBe(200);
         expect(resSaveValue.data.errors).toBeUndefined();
-        expect(resSaveValue.data.data.saveValue.id_value).toBeDefined();
-        expect(resSaveValue.data.data.saveValue.metadata.find(({name}) => name === metaAttrId)).toBeDefined();
+        expect(resSaveValue.data.data.saveValue[0].id_value).toBeDefined();
+        expect(resSaveValue.data.data.saveValue[0].metadata.find(({name}) => name === metaAttrId)).toBeDefined();
 
         // Read value
         const queryGetVal = `{

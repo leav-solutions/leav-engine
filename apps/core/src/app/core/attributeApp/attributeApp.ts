@@ -121,6 +121,7 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                 type: AttributeType!,
                 format: AttributeFormat,
                 system: Boolean!,
+                required: Boolean!,
                 readonly: Boolean!,
                 label(lang: [AvailableLanguage!]): SystemTranslation,
                 description(lang: [AvailableLanguage!]): SystemTranslationOptional,

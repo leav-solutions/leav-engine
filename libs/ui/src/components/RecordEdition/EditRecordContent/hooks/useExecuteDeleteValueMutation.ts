@@ -17,7 +17,7 @@ export default function useExecuteDeleteValueMutation(record: IRecordIdentityWho
     const updateValuesCache = useValuesCacheUpdate();
     const [executeDeleteValue] = useDeleteValueMutation({
         update: (cache, {data: {deleteValue}}) => {
-            updateValuesCache(record, [deleteValue]);
+            updateValuesCache(record, deleteValue);
         }
     });
     const {t} = useSharedTranslation();

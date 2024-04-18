@@ -3,23 +3,15 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import ValidationError from '../../errors/ValidationError';
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
-import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import validateFormatAction from './validateFormatAction';
+import {IActionsListFunctionResult} from '_types/actionsList';
+import e from 'express';
 
 describe('validateFormatAction', () => {
-    const mockActionListDomain: Mockify<IActionsListDomain> = {
-        handleJoiError: jest.fn().mockReturnValue({
-            test_attr: 'error'
-        })
-    };
-
-    const action = validateFormatAction({'core.domain.actionsList': mockActionListDomain as IActionsListDomain}).action;
+    const action = validateFormatAction().action;
 
     const mockAttr = {id: 'test_attr', type: AttributeTypes.SIMPLE};
     const attrText = {...mockAttr, format: AttributeFormats.TEXT};
-    const attrNumeric = {...mockAttr, format: AttributeFormats.NUMERIC};
-    const attrDate = {...mockAttr, format: AttributeFormats.DATE};
-    const attrBoolean = {...mockAttr, format: AttributeFormats.BOOLEAN};
     const attrColor = {...mockAttr, format: AttributeFormats.COLOR};
     const attrExt = {
         ...mockAttr,
@@ -45,41 +37,48 @@ describe('validateFormatAction', () => {
             }
         ]
     };
-    const ctx = {attribute: attrText};
     test('validateFormat', async () => {
         // Extended
-        const extValue = {street: 'test', city: {zipcode: 38000, name: 'Grenoble'}};
-        expect(action(extValue, {}, {attribute: attrExt})).toMatchObject(extValue);
+        const extValue = [{value: {street: 'test', city: {zipcode: 38000, name: 'Grenoble'}}}];
+        expect((action(extValue, {}, {attribute: attrExt}) as IActionsListFunctionResult).values[0]).toBe(extValue[0]);
     });
 
     test('Throw if invalid format', async () => {
         // Extended
-        const badExtValue = {street: 'test', city: {zipcode: 'aaa', name: 'Grenoble'}};
-        expect(() => action(badExtValue, {}, {attribute: attrExt})).toThrow(ValidationError);
+        const badExtValue = [{value: {street: 'test', city: {zipcode: 'aaa', name: 'Grenoble'}}}];
+        const res = action(badExtValue, {}, {attribute: attrExt}) as IActionsListFunctionResult;
+        expect(res.errors.length).toBe(1);
     });
 
     test('validateFormat COLOR', async () => {
-        const colorValue = 'FFFFFF';
-        expect(action(colorValue, {}, {attribute: attrColor})).toBe(colorValue);
+        const colorValue = [{value: 'FFFFFF'}];
+        expect((action(colorValue, {}, {attribute: attrColor}) as IActionsListFunctionResult).values[0]).toBe(
+            colorValue[0]
+        );
     });
 
     test('Throw if invalid format COLOR', async () => {
-        const badColorValue = 'AZERTY';
-        expect(() => action(badColorValue, {}, {attribute: attrColor})).toThrow(ValidationError);
+        const badColorValue = [{value: 'AZERTY'}];
+        const res = action(badColorValue, {}, {attribute: attrColor}) as IActionsListFunctionResult;
+        expect(res.errors.length).toBe(1);
     });
 
     test('Throw if invalid format COLOR, to be less or equal to 6 characters ', async () => {
-        const badColorValue = 'FFFFFFFFFFFFFFFFFFF';
-        expect(() => action(badColorValue, {}, {attribute: attrColor})).toThrow(ValidationError);
+        const badColorValue = [{value: 'FFFFFFFFFFFFFFFFFFF'}];
+        const res = action(badColorValue, {}, {attribute: attrColor}) as IActionsListFunctionResult;
+        expect(res.errors.length).toBe(1);
     });
 
     test('validateFormat RICH TEXT', async () => {
-        const RichTextValue = '<p>salut</p>';
-        expect(action(RichTextValue, {}, {attribute: attrText})).toBe(RichTextValue);
+        const RichTextValue = [{value: '<p>salut</p>'}];
+        expect((action(RichTextValue, {}, {attribute: attrText}) as IActionsListFunctionResult).values[0]).toBe(
+            RichTextValue[0]
+        );
     });
 
     test('validateFormat RICH TEXT', async () => {
-        const RichTextValue = false;
-        expect(() => action(RichTextValue, {}, {attribute: attrText})).toThrow(ValidationError);
+        const RichTextValue = [{value: false}];
+        const res = action(RichTextValue, {}, {attribute: attrText}) as IActionsListFunctionResult;
+        expect(res.errors.length).toBe(1);
     });
 });

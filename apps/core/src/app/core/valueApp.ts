@@ -25,7 +25,7 @@ interface IDeps {
     'core.app.helpers.convertVersionFromGqlFormat'?: ConvertVersionFromGqlFormatFunc;
     'core.utils'?: IUtils;
 }
-export default function ({
+export default function({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -193,7 +193,7 @@ export default function ({
 
                     extend type Mutation {
                         # Save one value
-                        saveValue(library: ID, recordId: ID, attribute: ID, value: ValueInput): GenericValue!
+                        saveValue(library: ID, recordId: ID, attribute: ID, value: ValueInput): [GenericValue!]!
 
                         # Save values for several attributes at once.
                         # If deleteEmpty is true, empty values will be deleted
@@ -205,18 +205,18 @@ export default function ({
                             deleteEmpty: Boolean
                         ): saveValueBatchResult!
 
-                        deleteValue(library: ID!, recordId: ID!, attribute: ID!, value: ValueInput): GenericValue!
+                        deleteValue(library: ID!, recordId: ID!, attribute: ID!, value: ValueInput): [GenericValue!]!
                     }
                 `,
                 resolvers: {
                     Mutation: {
-                        async saveValue(_, {library, recordId, attribute, value}, ctx): Promise<IValue> {
+                        async saveValue(_, {library, recordId, attribute, value}, ctx): Promise<IValue[]> {
                             const valToSave = {
                                 ...value,
                                 version: convertVersionFromGqlFormat(value.version),
                                 metadata: utils.nameValArrayToObj(value.metadata)
                             };
-                            const savedVal = await valueDomain.saveValue({
+                            const saveValueResult = await valueDomain.saveValue({
                                 library,
                                 recordId,
                                 attribute,
@@ -224,7 +224,7 @@ export default function ({
                                 ctx
                             });
 
-                            return {...savedVal};
+                            return saveValueResult;
                         },
                         async saveValueBatch(parent, {library, recordId, version, values, deleteEmpty}, ctx) {
                             // Convert version
@@ -256,7 +256,7 @@ export default function ({
 
                             return res;
                         },
-                        async deleteValue(parent, {library, recordId, attribute, value}, ctx): Promise<IValue> {
+                        async deleteValue(_: never, {library, recordId, attribute, value}, ctx): Promise<IValue[]> {
                             return valueDomain.deleteValue({
                                 library,
                                 recordId,

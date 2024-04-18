@@ -225,25 +225,22 @@ export default function ({
             values = [
                 {
                     value:
-                        attribute.type === AttributeTypes.SIMPLE_LINK && typeof record[attribute.id] === 'string'
-                            ? {id: record[attribute.id]}
-                            : record[attribute.id]
+                    attribute.type === AttributeTypes.SIMPLE_LINK && typeof record[attribute.id] === 'string'
+                    ? {id: record[attribute.id]}
+                    : record[attribute.id]
                 }
             ];
 
             // Apply actionsList
-            values = await Promise.all(
-                values.map(v =>
-                    valueDomain.runActionsList({
-                        listName: ActionsListEvents.GET_VALUE,
-                        value: v,
-                        attribute,
-                        record,
-                        library,
-                        ctx
-                    })
-                )
-            );
+            values = await valueDomain.runActionsList({
+                listName: ActionsListEvents.GET_VALUE,
+                values,
+                attribute,
+                record,
+                library,
+                ctx
+            });
+
         } else {
             values = await valueDomain.getValues({
                 library,
@@ -848,15 +845,23 @@ export default function ({
 
             if (values?.length) {
                 // First, check if values are ok. If not, we won't create the record at all
+                const valuesByAttribute = values.reduce<Record<string, IValue[]>>((acc, value) => {
+                    if (!acc[value.attribute]) {
+                        acc[value.attribute] = [];
+                    }
+                    acc[value.attribute].push(value);
+                    return acc;
+                }, {});
+
                 const res = await Promise.allSettled(
-                    values.map(async v => {
+                    Object.entries(valuesByAttribute).map(async ([attributeId, attributeValues]) => {
                         const attributeProps = await attributeDomain.getAttributeProperties({
-                            id: v.attribute,
+                            id: attributeId,
                             ctx
                         });
                         return valueDomain.runActionsList({
                             listName: ActionsListEvents.SAVE_VALUE,
-                            value: v,
+                            values: attributeValues,
                             attribute: attributeProps,
                             library,
                             ctx
@@ -1216,9 +1221,9 @@ export default function ({
                                 listName: ActionsListEvents.GET_VALUE,
                                 attribute: metadataAttributeProps,
                                 library,
-                                value: formattedValue.metadata[metadataField] as IStandardValue,
+                                values: [formattedValue.metadata[metadataField] as IStandardValue],
                                 ctx
-                            });
+                            })[0];
                         }
                     }
 
@@ -1253,11 +1258,10 @@ export default function ({
                         v.value.hasOwnProperty('library')
                 );
             }
-
-            return attrProps.multiple_values || forceArray ? formattedValues : formattedValues[0] || null;
+            return formattedValues;
         },
         async deactivateRecord(record: IRecord, ctx: IQueryInfos): Promise<IRecord> {
-            const savedVal = await valueDomain.saveValue({
+            const savedValues = await valueDomain.saveValue({
                 library: record.library,
                 recordId: record.id,
                 attribute: 'active',
@@ -1265,10 +1269,10 @@ export default function ({
                 ctx
             });
 
-            return {...record, active: savedVal.value};
+            return {...record, active: savedValues[0].value};
         },
         async activateRecord(record: IRecord, ctx: IQueryInfos): Promise<IRecord> {
-            const savedVal = await valueDomain.saveValue({
+            const savedValues = await valueDomain.saveValue({
                 library: record.library,
                 recordId: record.id,
                 attribute: 'active',
@@ -1276,7 +1280,7 @@ export default function ({
                 ctx
             });
 
-            return {...record, active: savedVal.value};
+            return {...record, active: savedValues[0].value};
         },
         async deactivateRecordsBatch({libraryId, recordsIds, filters, ctx}) {
             let recordsToDeactivate: string[] = recordsIds ?? [];

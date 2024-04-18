@@ -237,8 +237,8 @@ describe('Values', () => {
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.saveValue.id_value).toBeTruthy();
-        expect(res.data.data.saveValue.value.record.id).toBe(treeElemId);
+        expect(res.data.data.saveValue[0].id_value).toBeTruthy();
+        expect(res.data.data.saveValue[0].value.record.id).toBe(treeElemId);
     });
 
     test('Save value simple', async () => {
@@ -265,9 +265,9 @@ describe('Values', () => {
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.saveValue.id_value).toBeNull();
-        expect(res.data.data.saveValue.attribute?.permissions.edit_value).toBeDefined();
-        expect(res.data.data.saveValue.value).toBe('TEST VAL');
+        expect(res.data.data.saveValue[0].id_value).toBeNull();
+        expect(res.data.data.saveValue[0].attribute?.permissions.edit_value).toBeDefined();
+        expect(res.data.data.saveValue[0].value).toBe('TEST VAL');
     });
 
     test('Save same value on unique attribute', async () => {
@@ -335,8 +335,8 @@ describe('Values', () => {
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.saveValue.id_value).toBeNull();
-        expect(res.data.data.saveValue.value).toBeTruthy();
+        expect(res.data.data.saveValue[0].id_value).toBeNull();
+        expect(res.data.data.saveValue[0].value).toBeTruthy();
     });
 
     test("Don't save invalid simple extended", async () => {
@@ -385,8 +385,8 @@ describe('Values', () => {
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.saveValue.id_value).toBeNull();
-        expect(res.data.data.saveValue.value.id).toBe(recordIdLinked);
+        expect(res.data.data.saveValue[0].id_value).toBeNull();
+        expect(res.data.data.saveValue[0].value.id).toBe(recordIdLinked);
     });
 
     test('Save value advanced', async () => {
@@ -407,10 +407,10 @@ describe('Values', () => {
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.saveValue.id_value).toBeTruthy();
-        expect(res.data.data.saveValue.value).toBe('TEST VAL ADV');
+        expect(res.data.data.saveValue[0].id_value).toBeTruthy();
+        expect(res.data.data.saveValue[0].value).toBe('TEST VAL ADV');
 
-        advValueId = res.data.data.saveValue.id_value;
+        advValueId = res.data.data.saveValue[0].id_value;
     });
 
     test('Save value advanced link', async () => {
@@ -433,8 +433,8 @@ describe('Values', () => {
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.saveValue.id_value).toBeTruthy();
-        expect(res.data.data.saveValue.value.id).toBe(recordIdLinked);
+        expect(res.data.data.saveValue[0].id_value).toBeTruthy();
+        expect(res.data.data.saveValue[0].value.id).toBe(recordIdLinked);
     });
 
     test('Save value advanced reverse link', async () => {
@@ -457,8 +457,8 @@ describe('Values', () => {
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.saveValue.id_value).toBeTruthy();
-        expect(res.data.data.saveValue.value.id).toBe(recordIdLinked);
+        expect(res.data.data.saveValue[0].id_value).toBeTruthy();
+        expect(res.data.data.saveValue[0].value.id).toBe(recordIdLinked);
     });
 
     test('Save value advanced reverse link into simple link', async () => {
@@ -481,8 +481,8 @@ describe('Values', () => {
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.saveValue.id_value).toBeFalsy();
-        expect(res.data.data.saveValue.value.id).toBe(recordIdLinked);
+        expect(res.data.data.saveValue[0].id_value).toBeFalsy();
+        expect(res.data.data.saveValue[0].value.id).toBe(recordIdLinked);
     });
 
     test('Delete value advanced', async () => {
@@ -497,7 +497,7 @@ describe('Values', () => {
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.deleteValue.id_value).toBeTruthy();
+        expect(res.data.data.deleteValue[0].id_value).toBeTruthy();
     });
 
     test('Delete value simple', async () => {
@@ -524,7 +524,7 @@ describe('Values', () => {
                 }
             }`);
 
-        const idValue = saveValueRes.data.data.saveValue.id_value;
+        const idValue = saveValueRes.data.data.saveValue[0].id_value;
 
         const res = await makeGraphQlCall(`mutation {
                 deleteValue(
@@ -537,7 +537,7 @@ describe('Values', () => {
         expect(res.status).toBe(200);
 
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.deleteValue.id_value).toBeTruthy();
+        expect(res.data.data.deleteValue[0].id_value).toBeTruthy();
     });
 
     test('Save value batch', async () => {
@@ -596,7 +596,7 @@ describe('Values', () => {
             expect(res.status).toBe(200);
 
             expect(res.data.errors).toBeUndefined();
-            expect(res.data.data.saveValue.value).toEqual({
+            expect(res.data.data.saveValue[0].value).toEqual({
                 from: '1970-01-01T00:16:40+00:00',
                 to: '1970-01-01T00:33:20+00:00'
             });

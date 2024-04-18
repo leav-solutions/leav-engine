@@ -29,7 +29,7 @@
     "benchmark": "ts-node src/ benchmark",
     "build": "scripts/build.js",
     "tscheck": "tsc --noEmit -p .",
-    "tscheck:watch": "tsc -w --noEmit -p ."
+    "tscheck:watch": "tsc -w --noEmit -p tsconfig.json"
   },
   "main": "dist/index.js",
   "author": "",

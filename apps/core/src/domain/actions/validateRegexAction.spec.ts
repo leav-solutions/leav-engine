@@ -3,21 +3,18 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import ValidationError from '../../errors/ValidationError';
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
-import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import validateRegexAction from './validateRegexAction';
+import {IActionsListFunctionResult} from '_types/actionsList';
 
 describe('validateRegexAction', () => {
-    const mockActionListDomain: Mockify<IActionsListDomain> = {
-        handleJoiError: jest.fn().mockReturnValue({
-            test_attr: 'error'
-        })
-    };
-
-    const action = validateRegexAction({'core.domain.actionsList': mockActionListDomain as IActionsListDomain}).action;
+    const action = validateRegexAction().action;
     const attrText = {id: 'test_attr', format: AttributeFormats.TEXT, type: AttributeTypes.SIMPLE};
     const ctx = {attribute: attrText};
     test('validateRegex', async () => {
-        expect(action('test', {regex: '^test$'}, ctx)).toBe('test');
-        expect(() => action('test', {regex: '^toto$'}, ctx)).toThrow(ValidationError);
+        const res = action([{value: 'test'}], {regex: '^test$'}, ctx) as IActionsListFunctionResult;
+        expect(res.values[0].value).toBe('test');
+
+        const resError = action([{value: 'test'}], {regex: '^toto$'}, ctx) as IActionsListFunctionResult;
+        expect(resError.errors.length).toBe(1);
     });
 });

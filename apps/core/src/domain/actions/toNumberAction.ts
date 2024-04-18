@@ -3,8 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
     ActionsListIOTypes,
-    ActionsListValueType,
-    IActionsListContext,
     IActionsListFunction
 } from '../../_types/actionsList';
 
@@ -15,8 +13,12 @@ export default function (): IActionsListFunction {
         description: 'Convert value to number',
         input_types: [ActionsListIOTypes.STRING, ActionsListIOTypes.NUMBER, ActionsListIOTypes.BOOLEAN],
         output_types: [ActionsListIOTypes.NUMBER],
-        action: (value: ActionsListValueType, params: any, ctx: IActionsListContext): number => {
-            return value !== null ? Number(value) : null;
+        action: (values) => {
+            const computedValues = values.map((value) => {
+                value.value = value.value !== null ? Number(value.value) : null;
+                return value;
+            });
+            return {values: computedValues, errors: []};
         }
     };
 }

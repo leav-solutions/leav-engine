@@ -25,49 +25,50 @@ interface IPrepareValueParams {
     ctx: IQueryInfos;
 }
 
-export default async (params: IPrepareValueParams): Promise<IValue> => {
+export default async (params: IPrepareValueParams): Promise<IValue[]> => {
     const {attributeProps, value, library, recordId, deps, ctx} = params;
 
     // Execute actions list. Output value might be different from input value
-    const preparedValue =
-        !!attributeProps.actions_list && !!attributeProps.actions_list.saveValue
-            ? await deps.actionsListDomain.runActionsList(attributeProps.actions_list.saveValue, value, {
-                  ...ctx,
-                  attribute: attributeProps,
-                  recordId,
-                  library
-              })
-            : value;
+    const preparedValues = !!attributeProps.actions_list?.saveValue
+        ? await deps.actionsListDomain.runActionsList(attributeProps.actions_list.saveValue, [value], {
+              ...ctx,
+              attribute: attributeProps,
+              recordId,
+              library
+          })
+        : [value];
 
-    if (preparedValue.metadata) {
-        try {
-            for (const metaFieldName of Object.keys(preparedValue.metadata)) {
-                const metaFieldProps = await deps.attributeDomain.getAttributeProperties({id: metaFieldName, ctx});
+    preparedValues.map(async preparedValue => {
+        if (preparedValue.metadata) {
+            try {
+                for (const metaFieldName of Object.keys(preparedValue.metadata)) {
+                    const metaFieldProps = await deps.attributeDomain.getAttributeProperties({id: metaFieldName, ctx});
 
-                if (metaFieldProps?.actions_list?.[ActionsListEvents.SAVE_VALUE]) {
-                    const processedMetaValue = await deps.actionsListDomain.runActionsList(
-                        metaFieldProps.actions_list[ActionsListEvents.SAVE_VALUE],
-                        {value: preparedValue.metadata[metaFieldName]},
-                        {
-                            ...ctx,
-                            attribute: metaFieldProps,
-                            recordId,
-                            library
-                        }
-                    );
-                    preparedValue.metadata[metaFieldName] = processedMetaValue.value;
+                    if (metaFieldProps?.actions_list?.[ActionsListEvents.SAVE_VALUE]) {
+                        const processedMetaValue = await deps.actionsListDomain.runActionsList(
+                            metaFieldProps.actions_list[ActionsListEvents.SAVE_VALUE],
+                            [{value: preparedValue.metadata[metaFieldName]}],
+                            {
+                                ...ctx,
+                                attribute: metaFieldProps,
+                                recordId,
+                                library
+                            }
+                        );
+                        preparedValue.metadata[metaFieldName] = processedMetaValue[0].value;
+                    }
                 }
-            }
-        } catch (e) {
-            if (!(e instanceof ValidationError)) {
+            } catch (e) {
+                if (!(e instanceof ValidationError)) {
+                    deps.utils.rethrow(e);
+                }
+
+                e.fields = {metadata: {...e.fields}};
+
                 deps.utils.rethrow(e);
             }
-
-            e.fields = {metadata: {...e.fields}};
-
-            deps.utils.rethrow(e);
         }
-    }
+    });
 
-    return preparedValue;
+    return preparedValues;
 };

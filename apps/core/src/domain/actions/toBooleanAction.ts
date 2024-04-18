@@ -3,8 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
     ActionsListIOTypes,
-    ActionsListValueType,
-    IActionsListContext,
     IActionsListFunction
 } from '../../_types/actionsList';
 
@@ -15,8 +13,12 @@ export default function (): IActionsListFunction {
         description: 'Convert value to boolean',
         input_types: [ActionsListIOTypes.STRING, ActionsListIOTypes.NUMBER, ActionsListIOTypes.BOOLEAN],
         output_types: [ActionsListIOTypes.BOOLEAN],
-        action: (value: ActionsListValueType, params: any, ctx: IActionsListContext): boolean => {
-            return value === 'true' ? true : value === 'false' ? false : !!value;
+        action: (values) => {
+            const computedValues = values.map((value) => {
+                value.value =  value.value === 'true' ? true : value.value === 'false' ? false : !!value.value;
+                return value;
+            });
+            return {values: computedValues, errors: []};
         }
     };
 }

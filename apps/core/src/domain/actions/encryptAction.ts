@@ -2,29 +2,35 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as bcrypt from 'bcryptjs';
-import {
-    ActionsListIOTypes,
-    ActionsListValueType,
-    IActionsListContext,
-    IActionsListFunction
-} from '../../_types/actionsList';
+import {Errors} from '../../_types/errors';
+import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 
-export default function (): IActionsListFunction {
+export default function(): IActionsListFunction {
     return {
         id: 'encrypt',
         name: 'Encrypt',
         description: 'Encrypt value',
         input_types: [ActionsListIOTypes.STRING],
         output_types: [ActionsListIOTypes.STRING],
-        action: async (value: ActionsListValueType, params: any, ctx: IActionsListContext): Promise<string> => {
-            if (value === null) {
-                return null;
-            }
+        action: async values => {
+            return values.reduce(async (promAcc, value) => {
+                const acc = await promAcc;
+                try {
+                    if (value.value === null) {
+                        acc.values.push({...value, value: null});
+                        return acc;
+                    }
 
-            const salt = await bcrypt.genSalt(10);
-            const hash = await bcrypt.hash(value, salt);
+                    const salt = await bcrypt.genSalt(10);
+                    const hash = await bcrypt.hash(value.value, salt);
 
-            return hash;
+                    acc.values.push({...value, value: hash});
+                } catch (e) {
+                    acc.errors.push({errorType: Errors, attributeValue: value});
+                }
+
+                return acc;
+            }, Promise.resolve({values: [], errors: []}));
         }
     };
 }

@@ -67,11 +67,7 @@ export default function (): IActionsListFunction {
                 default_value: ''
             }
         ],
-        action: (value: ActionsListValueType, params: any, ctx: IActionsListContext): string => {
-            if (value === null) {
-                return null;
-            }
-
+        action: (values, params) => {
             const defaultParams = {
                 decimals: 2,
                 thousandsSeparator: ',',
@@ -85,14 +81,23 @@ export default function (): IActionsListFunction {
                 ...params
             };
 
-            return isNaN(Number(value))
+            const computedValues = values.map((value) => {
+                if (value.value === null) {
+                    return value;
+                }
+                value.value = isNaN(Number(value.value))
                 ? ''
                 : flow(
                       partialRight(_toString, userParams.decimals),
                       partialRight(_formatSeparators, userParams.thousandsSeparator, userParams.decimalsSeparator),
                       partialRight(_addPrefix, userParams.prefix),
                       partialRight(_addSuffix, userParams.suffix)
-                  )(Number(value));
+                  )(Number(value.value));
+                return value;
+            });
+
+
+            return {values: computedValues, errors: []};
         }
     };
 }

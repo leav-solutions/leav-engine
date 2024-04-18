@@ -1,31 +1,28 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import Joi from 'joi';
-import ValidationError from '../../errors/ValidationError';
-import {
-    ActionsListIOTypes,
-    ActionsListValueType,
-    IActionsListContext,
-    IActionsListFunction
-} from '../../_types/actionsList';
+import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 import {Errors} from '../../_types/errors';
+import {IValue} from '_types/value';
 
-export default function (): IActionsListFunction {
+export default function(): IActionsListFunction {
     return {
         id: 'validateURL',
         name: 'Validate URL',
         description: 'Check if value is a string matching URL format',
         input_types: [ActionsListIOTypes.STRING],
         output_types: [ActionsListIOTypes.STRING],
-        action: (value: ActionsListValueType, params: any, ctx: IActionsListContext): ActionsListValueType => {
-            try {
-                new URL(value as string);
-            } catch (err) {
-                throw new ValidationError({[ctx.attribute.id]: Errors.INVALID_URL});
+        action: (values: IValue[]) => {
+            const errors = [];
+            for (const value of values) {
+                try {
+                    new URL(value as string);
+                } catch (err) {
+                    errors.push({errorType: Errors.INVALID_URL, attributeValue: value});
+                }
             }
 
-            return value;
+            return {values, errors};
         }
     };
 }

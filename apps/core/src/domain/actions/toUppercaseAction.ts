@@ -3,8 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
     ActionsListIOTypes,
-    ActionsListValueType,
-    IActionsListContext,
     IActionsListFunction
 } from '../../_types/actionsList';
 
@@ -15,8 +13,12 @@ export default function (): IActionsListFunction {
         description: 'Convert the string to uppercase',
         input_types: [ActionsListIOTypes.STRING],
         output_types: [ActionsListIOTypes.STRING],
-        action: (value: ActionsListValueType, params: any, ctx: IActionsListContext): string => {
-            return value !== null ? (value as string).toUpperCase() : null;
+        action: (values) => {
+            const computedValues =  values.map(value => {
+                value.value = value.value !== null ? (value.value as string).toUpperCase() : null;
+                return value;
+            });
+            return {values: computedValues, errors: []};
         }
     };
 }
