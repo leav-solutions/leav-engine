@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 
-export default function (): IActionsListFunction {
+export default function(): IActionsListFunction {
     return {
         id: 'maskValue',
         name: 'Mask Value',
@@ -11,15 +11,14 @@ export default function (): IActionsListFunction {
         input_types: [ActionsListIOTypes.STRING, ActionsListIOTypes.NUMBER, ActionsListIOTypes.OBJECT],
         output_types: [ActionsListIOTypes.STRING],
         action: values => {
-            const computedValues = values.map(elementValue => {
-                elementValue.value =
-                    elementValue.value !== null &&
-                    elementValue.value !== '' &&
-                    (typeof elementValue.value !== 'object' || Object.keys(elementValue.value).length)
-                        ? '●●●●●●●'
-                        : '';
-                return elementValue;
-            });
+            const _isValueDefined = value =>
+                value !== null && value !== '' && (typeof value !== 'object' || Object.keys(value).length);
+
+            const computedValues = values.map(elementValue => ({
+                ...elementValue,
+                value: _isValueDefined(elementValue.value) ? '●●●●●●●' : ''
+            }));
+
             return {values: computedValues, errors: []};
         }
     };
