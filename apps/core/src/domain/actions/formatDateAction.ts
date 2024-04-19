@@ -4,7 +4,7 @@
 import moment from 'moment';
 import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 
-export default function(): IActionsListFunction {
+export default function (): IActionsListFunction {
     return {
         id: 'formatDate',
         name: 'Format Date',
@@ -31,11 +31,11 @@ export default function(): IActionsListFunction {
             const format = params.format;
             const auto = params.auto === 'true';
 
-            const computedValues = values.map(value => {
-                if (value.value === null) {
-                    return value;
+            const computedValues = values.map(elementValue => {
+                if (elementValue.value === null) {
+                    return elementValue;
                 }
-                const numberVal = Number(value.value);
+                const numberVal = Number(elementValue.value);
 
                 let newValue = '';
 
@@ -44,8 +44,8 @@ export default function(): IActionsListFunction {
                         ? new Date(numberVal * 1000).toLocaleString(ctx.lang)
                         : moment.unix(numberVal).format(format);
                 }
-                value.value = newValue;
-                return value;
+                elementValue.value = newValue;
+                return elementValue;
             });
             return {values: computedValues, errors: []};
         }

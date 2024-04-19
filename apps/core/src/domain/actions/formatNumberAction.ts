@@ -2,12 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {flow, partialRight} from 'lodash';
-import {
-    ActionsListIOTypes,
-    ActionsListValueType,
-    IActionsListContext,
-    IActionsListFunction
-} from '../../_types/actionsList';
+import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 
 export default function (): IActionsListFunction {
     const _toString = (num, d) =>
@@ -81,21 +76,20 @@ export default function (): IActionsListFunction {
                 ...params
             };
 
-            const computedValues = values.map((value) => {
-                if (value.value === null) {
-                    return value;
+            const computedValues = values.map(elementValue => {
+                if (elementValue.value === null) {
+                    return elementValue;
                 }
-                value.value = isNaN(Number(value.value))
-                ? ''
-                : flow(
-                      partialRight(_toString, userParams.decimals),
-                      partialRight(_formatSeparators, userParams.thousandsSeparator, userParams.decimalsSeparator),
-                      partialRight(_addPrefix, userParams.prefix),
-                      partialRight(_addSuffix, userParams.suffix)
-                  )(Number(value.value));
-                return value;
+                elementValue.value = isNaN(Number(elementValue.value))
+                    ? ''
+                    : flow(
+                          partialRight(_toString, userParams.decimals),
+                          partialRight(_formatSeparators, userParams.thousandsSeparator, userParams.decimalsSeparator),
+                          partialRight(_addPrefix, userParams.prefix),
+                          partialRight(_addSuffix, userParams.suffix)
+                      )(Number(elementValue.value));
+                return elementValue;
             });
-
 
             return {values: computedValues, errors: []};
         }

@@ -25,7 +25,7 @@ interface IDeps {
     'core.app.helpers.convertVersionFromGqlFormat'?: ConvertVersionFromGqlFormatFunc;
     'core.utils'?: IUtils;
 }
-export default function({
+export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -210,13 +210,13 @@ export default function({
                 `,
                 resolvers: {
                     Mutation: {
-                        async saveValue(_, {library, recordId, attribute, value}, ctx): Promise<IValue[]> {
+                        async saveValue(_: never, {library, recordId, attribute, value}, ctx): Promise<IValue[]> {
                             const valToSave = {
                                 ...value,
                                 version: convertVersionFromGqlFormat(value.version),
                                 metadata: utils.nameValArrayToObj(value.metadata)
                             };
-                            const saveValueResult = await valueDomain.saveValue({
+                            const savedValues = await valueDomain.saveValue({
                                 library,
                                 recordId,
                                 attribute,
@@ -224,7 +224,7 @@ export default function({
                                 ctx
                             });
 
-                            return saveValueResult;
+                            return savedValues;
                         },
                         async saveValueBatch(parent, {library, recordId, version, values, deleteEmpty}, ctx) {
                             // Convert version

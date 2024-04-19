@@ -4,7 +4,7 @@
 import {IDateRangeValue} from '_types/value';
 import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 
-export default function(): IActionsListFunction {
+export default function (): IActionsListFunction {
     return {
         id: 'dateRangeToNumber',
         name: 'dateRangeToNumber',
@@ -12,10 +12,10 @@ export default function(): IActionsListFunction {
         input_types: [ActionsListIOTypes.OBJECT],
         output_types: [ActionsListIOTypes.OBJECT],
         action: values => ({
-            values: values.map(value => {
-                const dateRangeValue = value.value as IDateRangeValue<string>;
+            values: values.map(valueElement => {
+                const dateRangeValue = valueElement.value as IDateRangeValue<string>;
                 return {
-                    ...value,
+                    ...valueElement,
                     value: {from: Number(dateRangeValue.from ?? ''), to: Number(dateRangeValue.to ?? '')}
                 };
             }),

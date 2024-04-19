@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import ValidationError from '../../errors/ValidationError';
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
 import validateEmailAction from './validateEmailAction';
 import {IActionsListFunctionResult} from '_types/actionsList';
@@ -17,8 +16,6 @@ describe('validateEmailFormatAction', () => {
     });
 
     test('validateEmail should return email', async () => {
-        expect((action([{value: 'email@domain.com'}], null, ctx) as IActionsListFunctionResult).values[0].value).toBe(
-            'email@domain.com'
-        );
+        expect((await action([{value: 'email@domain.com'}], null, ctx)).values[0].value).toBe('email@domain.com');
     });
 });

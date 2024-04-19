@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import moment from 'moment';
 import {IDateRangeValue} from '_types/value';
-import {ActionsListIOTypes, ActionsListValueType, IActionsListFunction} from '../../_types/actionsList';
+import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 
-export default function(): IActionsListFunction {
+export default function (): IActionsListFunction {
     return {
         id: 'formatDateRange',
         name: 'Format Date Range',
@@ -23,21 +23,21 @@ export default function(): IActionsListFunction {
         ],
         action: (values, params) => {
             const format = params.format || '';
-            const computedValues = values.map(value => {
-                const dateRangeValue = value.value as IDateRangeValue<number>;
+            const computedValues = values.map(elementValue => {
+                const dateRangeValue = elementValue.value as IDateRangeValue<number>;
 
-                if (value.value === null || !dateRangeValue.from || !dateRangeValue.to) {
+                if (elementValue.value === null || !dateRangeValue.from || !dateRangeValue.to) {
                     return {value: null};
                 }
 
                 const numberValFrom = dateRangeValue.from;
                 const numberValTo = dateRangeValue.to;
 
-                value.value = {
+                elementValue.value = {
                     from: !isNaN(numberValFrom) ? moment.unix(numberValFrom).format(format) : '',
                     to: !isNaN(numberValTo) ? moment.unix(numberValTo).format(format) : ''
                 };
-                return value;
+                return elementValue;
             });
 
             return {values: computedValues, errors: [] as any[]};

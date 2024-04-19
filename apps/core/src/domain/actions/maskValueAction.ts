@@ -10,12 +10,15 @@ export default function (): IActionsListFunction {
         description: 'Mask any value by replacing with dots or empty string if no value',
         input_types: [ActionsListIOTypes.STRING, ActionsListIOTypes.NUMBER, ActionsListIOTypes.OBJECT],
         output_types: [ActionsListIOTypes.STRING],
-        action: (values) => {
-            const computedValues = values.map((value) => {
-                value.value = value.value !== null && value.value !== '' && (typeof value.value !== 'object' || Object.keys(value.value).length)
-                ? '●●●●●●●'
-                : '';
-                return value;
+        action: values => {
+            const computedValues = values.map(elementValue => {
+                elementValue.value =
+                    elementValue.value !== null &&
+                    elementValue.value !== '' &&
+                    (typeof elementValue.value !== 'object' || Object.keys(elementValue.value).length)
+                        ? '●●●●●●●'
+                        : '';
+                return elementValue;
             });
             return {values: computedValues, errors: []};
         }

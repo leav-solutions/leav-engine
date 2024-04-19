@@ -7,7 +7,7 @@ import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList
 import {AttributeFormats, IAttribute, IEmbeddedAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 
-export default function(): IActionsListFunction {
+export default function (): IActionsListFunction {
     return {
         id: 'validateFormat',
         name: 'Validate Format',
@@ -42,10 +42,7 @@ export default function(): IActionsListFunction {
                         schema = Joi.number().allow('', null);
                         break;
                     case AttributeFormats.DATE:
-                        schema = Joi.date()
-                            .allow('', null)
-                            .timestamp('unix')
-                            .raw();
+                        schema = Joi.date().allow('', null).timestamp('unix').raw();
                         break;
                     case AttributeFormats.BOOLEAN:
                         schema = Joi.boolean();
@@ -68,20 +65,12 @@ export default function(): IActionsListFunction {
                         break;
                     case AttributeFormats.DATE_RANGE:
                         schema = Joi.object({
-                            from: Joi.date()
-                                .timestamp('unix')
-                                .raw()
-                                .required(),
-                            to: Joi.date()
-                                .timestamp('unix')
-                                .raw()
-                                .required()
+                            from: Joi.date().timestamp('unix').raw().required(),
+                            to: Joi.date().timestamp('unix').raw().required()
                         });
                         break;
                     case AttributeFormats.COLOR:
-                        schema = Joi.string()
-                            .max(6)
-                            .hex();
+                        schema = Joi.string().max(6).hex();
                         break;
                 }
 
@@ -95,28 +84,28 @@ export default function(): IActionsListFunction {
             }
             const formatSchema = attributeSchema.raw();
 
-            const computedValues = values.map(value => {
+            const computedValues = values.map(elementValue => {
                 // Joi might convert value before testing. raw() force it to send back the value we passed in
-                const validationRes = formatSchema.validate(value.value);
+                const validationRes = formatSchema.validate(elementValue.value);
                 if (!!validationRes.error) {
                     errors.push({
                         errorType: Errors.FORMAT_ERROR,
-                        attributeValue: value,
+                        attributeValue: elementValue,
                         message: validationRes.error.message
                     });
                 }
 
                 // Specific Validation for date range
                 if (ctx.attribute.format === AttributeFormats.DATE_RANGE) {
-                    const rangeValue = value.value as IDateRangeValue;
+                    const rangeValue = elementValue.value as IDateRangeValue;
                     if (Number(rangeValue.from) > Number(rangeValue.to)) {
                         errors.push({
                             errorType: Errors.INVALID_DATE_RANGE,
-                            attributeValue: value
+                            attributeValue: elementValue
                         });
                     }
                 }
-                return value;
+                return elementValue;
             });
 
             return {values: computedValues, errors};

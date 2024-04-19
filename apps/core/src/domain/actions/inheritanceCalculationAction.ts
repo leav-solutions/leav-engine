@@ -18,7 +18,7 @@ export interface IActionListInheritanceContext extends IActionsListContext {
     value?: ActionsListInheritanceValueType;
 }
 
-export default function({
+export default function ({
     'core.domain.helpers.calculationVariable': calculationVariable = null,
     'core.domain.attribute': attributeDomain = null
 }: IDeps = {}) {
@@ -66,8 +66,8 @@ export default function({
             }
 
             if (attrProps.type === AttributeTypes.SIMPLE_LINK || attrProps.type === AttributeTypes.ADVANCED_LINK) {
-                inheritedValues = result.map(v => ({
-                    value: {id: String(v.value), library: v.library},
+                inheritedValues = result.map(resultValue => ({
+                    value: {id: String(resultValue.value), library: resultValue.library},
                     isInherited: true
                 }));
             } else {

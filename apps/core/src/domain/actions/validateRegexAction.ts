@@ -4,7 +4,7 @@
 import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 import {Errors} from '../../_types/errors';
 
-export default function(): IActionsListFunction {
+export default function (): IActionsListFunction {
     return {
         id: 'validateRegex',
         name: 'Validate Regex',
@@ -13,9 +13,9 @@ export default function(): IActionsListFunction {
         output_types: [ActionsListIOTypes.STRING],
         params: [{name: 'regex', type: 'string', description: 'Validation regex', required: true, default_value: ''}],
         action: (values, params) => {
-            const allErrors = values.reduce((errors, value) => {
-                if (params.regex && !value.value.match(new RegExp(params.regex))) {
-                    errors.push({errorType: Errors.INVALID_REGEXP, attributeValue: value});
+            const allErrors = values.reduce((errors, elementValue) => {
+                if (params.regex && !elementValue.value.match(new RegExp(params.regex))) {
+                    errors.push({errorType: Errors.INVALID_REGEXP, attributeValue: elementValue});
                 }
                 return errors;
             }, []);

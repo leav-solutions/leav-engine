@@ -5,7 +5,7 @@ import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList
 import {Errors} from '../../_types/errors';
 import {IValue} from '_types/value';
 
-export default function(): IActionsListFunction {
+export default function (): IActionsListFunction {
     return {
         id: 'validateURL',
         name: 'Validate URL',
@@ -13,16 +13,17 @@ export default function(): IActionsListFunction {
         input_types: [ActionsListIOTypes.STRING],
         output_types: [ActionsListIOTypes.STRING],
         action: (values: IValue[]) => {
-            const errors = [];
-            for (const value of values) {
+            const allErrors = values.reduce((errors, elementValue) => {
                 try {
-                    new URL(value as string);
+                    new URL(elementValue as string);
                 } catch (err) {
-                    errors.push({errorType: Errors.INVALID_URL, attributeValue: value});
+                    errors.push({errorType: Errors.INVALID_URL, attributeValue: elementValue});
                 }
-            }
 
-            return {values, errors};
+                return errors;
+            }, []);
+
+            return {values, errors: allErrors};
         }
     };
 }
