@@ -59,7 +59,7 @@ describe('<MonoValueSelect />', () => {
         {
             request: {
                 query: getRecordsFromLibraryQuery(),
-                variables: {library: 'test_lib', limit: 20, sort: {field: 'label', order: SortOrder.asc}}
+                variables: {library: 'test_lib', limit: 20, sort: {field: 'created_at', order: SortOrder.desc}}
             },
             result: {data: {records}}
         }

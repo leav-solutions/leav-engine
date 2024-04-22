@@ -9,6 +9,7 @@ import {KitAvatar, KitSelect} from 'aristid-ds';
 import {ComponentProps, useMemo} from 'react';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 import {IRecordIdentity} from '_ui/types';
+import sortBy from 'lodash/sortBy';
 
 export const useGetOptionsQuery = ({
     activeValue,
@@ -25,16 +26,17 @@ export const useGetOptionsQuery = ({
             fetchPolicy: 'network-only',
             variables: {
                 library: linkedLibraryId,
-                limit: 20,
+                limit: 20, // TODO: should be a xStream configuration
                 sort: {
-                    field: 'label',
-                    order: SortOrder.asc
+                    field: 'created_at',
+                    order: SortOrder.desc
                 }
             }
         }
     );
 
-    const recordList = useMemo(() => data?.records?.list ?? [], [data]);
+    // const recordList = useMemo(() => data?.records?.list.toSorted() ?? [], [data]); // TODO: when toSorted method available (ie. TS >= 5.2.0)
+    const recordList = useMemo(() => sortBy(data?.records?.list, 'whoAmI.label'), [data]);
 
     const selectOptions = useMemo<ComponentProps<typeof KitSelect>['options']>(
         () =>
