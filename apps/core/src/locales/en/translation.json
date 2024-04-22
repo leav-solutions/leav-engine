@@ -1,7 +1,6 @@
 {
     "errors": {
         "ATTRIBUTE_USED_IN_METADATA": "This attribute is used in metadata for these attributes: {{attributes}}",
-        "CANNOT_ADD_SYSTEM_ATTRIBUTES": "Cannot add system attributes: {{attributes}}",
         "CANNOT_SAVE_METADATA": "Cannot save metadata on simple attribute",
         "DUPLICATE_DIRECTORY_NAMES": "Duplicate directory names",
         "DUPLICATE_FILENAMES": "Duplicate filenames",
