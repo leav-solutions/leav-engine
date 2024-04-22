@@ -9,13 +9,13 @@ describe('toBooleanAction', () => {
     const attrText: IAttribute = {id: 'test_attr', format: AttributeFormats.NUMERIC, type: AttributeTypes.SIMPLE};
     const ctx = {attribute: attrText};
     test('toBoolean', async () => {
-        expect(action(true, {}, ctx)).toBe(true);
-        expect(action(false, {}, ctx)).toBe(false);
-        expect(action(1, {}, ctx)).toBe(true);
-        expect(action(0, {}, ctx)).toBe(false);
-        expect(action('true', {}, ctx)).toBe(true);
-        expect(action('false', {}, ctx)).toBe(false);
-        expect(action('totot', {}, ctx)).toBe(true);
-        expect(action(null, {}, ctx)).toBe(false);
+        expect((await action([{value: true}], {}, ctx)).values[0].value).toBe(true);
+        expect((await action([{value: false}], {}, ctx)).values[0].value).toBe(false);
+        expect((await action([{value: 1}], {}, ctx)).values[0].value).toBe(true);
+        expect((await action([{value: 0}], {}, ctx)).values[0].value).toBe(false);
+        expect((await action([{value: 'true'}], {}, ctx)).values[0].value).toBe(true);
+        expect((await action([{value: 'false'}], {}, ctx)).values[0].value).toBe(false);
+        expect((await action([{value: 'totot'}], {}, ctx)).values[0].value).toBe(true);
+        expect((await action([{value: null}], {}, ctx)).values[0].value).toBe(false);
     });
 });

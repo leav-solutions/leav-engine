@@ -131,9 +131,9 @@ describe('Versions', () => {
 
         expect(resSaveValue.status).toBe(200);
         expect(resSaveValue.data.errors).toBeUndefined();
-        expect(resSaveValue.data.data.v1.version).toBeDefined();
-        expect(resSaveValue.data.data.v1.version[0].treeId).toBe(treeName);
-        expect(resSaveValue.data.data.v1.version[0].treeNode.id).toBe(nodeElement1);
+        expect(resSaveValue.data.data.v1[0].version).toBeDefined();
+        expect(resSaveValue.data.data.v1[0].version[0].treeId).toBe(treeName);
+        expect(resSaveValue.data.data.v1[0].version[0].treeNode.id).toBe(nodeElement1);
 
         const resGetValues1 = await makeGraphQlCall(`{
             r1: records(

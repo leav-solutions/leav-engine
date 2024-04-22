@@ -190,6 +190,7 @@ describe('inheritanceCalculationAction', () => {
                     ${simpleAttributeId}: property(attribute: "${simpleAttributeId}") {
                         ...on Value {
                             value
+                            isInherited
                         }
                     }
                 }
@@ -198,7 +199,9 @@ describe('inheritanceCalculationAction', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data.records.list[0][simpleAttributeId][0].value).toBe('text value');
+
+        const inheritedValue = res.data.data.records.list[0][simpleAttributeId].find(v => v.isInherited);
+        expect(inheritedValue.value).toBe('text value');
     });
 
     test('Inherit values on advanced attribute', async () => {

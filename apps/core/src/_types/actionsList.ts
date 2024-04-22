@@ -5,6 +5,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import {IAttribute} from './attribute';
 import {ISystemTranslation} from './systemTranslation';
 import {IValue} from './value';
+import {Errors} from './errors';
 
 export enum ActionsListEvents {
     SAVE_VALUE = 'saveValue',
@@ -46,6 +47,11 @@ export interface IActionsListParamsConfig {
     default_value: string;
 }
 
+export interface IActionsListFunctionResult {
+    values: IValue[];
+    errors: Array<{errorType: Errors; attributeValue: IValue; message?: string}>;
+}
+
 export interface IActionsListFunction {
     id: string;
     name: string;
@@ -54,7 +60,11 @@ export interface IActionsListFunction {
     output_types: ActionsListIOTypes[];
     params?: IActionsListParamsConfig[];
     error_message?: ISystemTranslation;
-    action: (value: ActionsListValueType, params: IActionsListParams, ctx: IActionsListContext) => ActionsListValueType;
+    action: (
+        values: IValue[],
+        params: IActionsListParams,
+        ctx: IActionsListContext
+    ) => IActionsListFunctionResult | Promise<IActionsListFunctionResult>;
 }
 
 export interface IActionsListSavedAction {
@@ -69,5 +79,4 @@ export interface IRunActionsListCtx extends IQueryInfos {
     attribute?: IAttribute;
     recordId?: string;
     library?: string;
-    value?: IValue;
 }

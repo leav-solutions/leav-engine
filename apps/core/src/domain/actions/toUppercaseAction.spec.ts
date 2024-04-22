@@ -9,7 +9,7 @@ describe('toUppercaseAction', () => {
     const ctx = {attribute: {id: 'test_attr', format: AttributeFormats.TEXT, type: AttributeTypes.SIMPLE}};
 
     test('toUppercase', async () => {
-        expect(action('azerty', {}, ctx)).toBe('AZERTY');
-        expect(action(null, {}, ctx)).toBe(null);
+        expect((await action([{value: 'azerty'}], {}, ctx)).values[0].value).toBe('AZERTY');
+        expect((await action([{value: null}], {}, ctx)).values[0].value).toBe(null);
     });
 });

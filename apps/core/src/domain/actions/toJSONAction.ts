@@ -1,12 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {
-    ActionsListIOTypes,
-    ActionsListValueType,
-    IActionsListContext,
-    IActionsListFunction
-} from '../../_types/actionsList';
+import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 
 export default function (): IActionsListFunction {
     return {
@@ -15,12 +10,13 @@ export default function (): IActionsListFunction {
         description: 'Convert value to a JSON string',
         input_types: [ActionsListIOTypes.OBJECT],
         output_types: [ActionsListIOTypes.STRING],
-        action: (value: ActionsListValueType, params: any, ctx: IActionsListContext): string => {
-            if (value === null) {
-                return null;
-            }
+        action: values => {
+            const computedValues = values.map(elementValue => {
+                elementValue.value = elementValue?.value === null ? null : JSON.stringify(elementValue.value);
+                return elementValue;
+            });
 
-            return JSON.stringify(value);
+            return {values: computedValues, errors: []};
         }
     };
 }

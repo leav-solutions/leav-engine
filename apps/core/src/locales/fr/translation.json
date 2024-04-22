@@ -9,6 +9,7 @@
         "ELEMENT_ALREADY_PRESENT": "Cet élément est déjà présent",
         "ELEMENT_NOT_IN_TREE": "Élément {{element}} non présent dans l’arbre {{tree}}",
         "ELEMENT_WITH_SAME_PATH_ALREADY_PRESENT": "Un élement identique avec le même chemin est déjà présent",
+        "ENCRYPT_ERROR": "Erreur lors de l'encryptage",
         "ERROR": "Erreur",
         "EXCEL_CALCULATION_ERROR": "Erreur de calcul Excel: {{error}}. Formule: {{formula}}",
         "FILE_ERROR": "Erreur lors de la lecture du fichier: {{error}}",
@@ -25,7 +26,7 @@
         "INVALID_EMAIL": "Email non valide",
         "INVALID_ENDPOINT_FORMAT": "Format de chemin non valide",
         "INVALID_FILE_FORMAT": "Format de fichier non valide: {{received}}. Format attendu: {{expected}}",
-        "INVALID_FILTER_CONDITION_VALUE" : "La condition d'un filtre n'est pas compatible avec sa valeur associée",
+        "INVALID_FILTER_CONDITION_VALUE": "La condition d'un filtre n'est pas compatible avec sa valeur associée",
         "INVALID_FILTER_FIELDS": "Les champs d'un filtre ne sont pas valides",
         "INVALID_FILTER_FORMAT": "Format de filtre non valide: {{reason}}",
         "INVALID_FILTERS_EXPRESSION": "L'ordre des filtres n'est pas valide",
@@ -33,6 +34,7 @@
         "INVALID_ID_FORMAT": "Format d'ID non valide",
         "INVALID_MAPPING": "Mapping incorrect",
         "INVALID_PERMISSIONS_CONF_LIBRARIES": "Ces bibliothèques ne sont pas liées à cet arbre: {{libraries}}",
+        "INVALID_REGEXP": "La valeur ne correspond pas à l'expression régulière",
         "INVALID_SORT_FIELDS": "Les champs de tri ne sont pas valides",
         "INVALID_TREE_FILTER_FORMAT": "Un filtre sur un arbre doit avoir une condition, un champ et un treeId",
         "INVALID_URL": "URL non valide",
@@ -50,7 +52,7 @@
         "MISSING_REQUIRED_ACTION": "Actions requises manquantes: {{actions}}",
         "MISSING_TARGET": "Cible manquante",
         "MULTIPLE_VALUES_NOT_ALLOWED": "Valeurs multiples non autorisées sur ce type d'attribut",
-        "NO_IMPORT_MATCHES" : "Clé d'import manquante",
+        "NO_IMPORT_MATCHES": "Clé d'import manquante",
         "NON_FILES_LIBRARY": "Impossible de lier une bibliothèque non-fichiers",
         "ONLY_FOLDERS_CAN_BE_SELECTED": "Only folders can be selected",
         "PAGINATION_OFFSET_AND_CURSOR": "Impossible d'utiliser un offset et un curseur en même temps",
@@ -94,7 +96,7 @@
         "VALUE_NOT_UNIQUE": "Cette valeur a déjà été enregistrée"
     },
     "actions": {
-        "names" : {
+        "names": {
             "encrypt": "Encrypter",
             "formatDate": "Formater une Date",
             "formatDateRange": "Formater les dates d'une période",
@@ -114,7 +116,7 @@
             "inheritanceCalculation": "Héritage",
             "toUppercase": "Convertir en majuscules"
         },
-        "descriptions" : {
+        "descriptions": {
             "encrypt": "Encrypter la valeur",
             "formatDate": "Convertir un timestamp en format date",
             "formatDateRange": "Convertir les timestamps en format date",

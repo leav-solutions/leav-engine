@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import moment from 'moment';
 import {IDateRangeValue} from '_types/value';
-import {ActionsListIOTypes, ActionsListValueType, IActionsListFunction} from '../../_types/actionsList';
+import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 
 export default function (): IActionsListFunction {
     return {
@@ -21,21 +21,26 @@ export default function (): IActionsListFunction {
                 default_value: 'DD/MM/YYYY HH:mm:ss'
             }
         ],
-        action: (value: ActionsListValueType, params: any): IDateRangeValue<string> => {
-            const dateRangeValue = value as IDateRangeValue<number>;
-            if (value === null || !dateRangeValue.from || !dateRangeValue.to) {
-                return null;
-            }
-
+        action: (values, params) => {
             const format = params.format || '';
+            const computedValues = values.map(elementValue => {
+                const dateRangeValue = elementValue.value as IDateRangeValue<number>;
 
-            const numberValFrom = dateRangeValue.from;
-            const numberValTo = dateRangeValue.to;
+                if (elementValue.value === null || !dateRangeValue.from || !dateRangeValue.to) {
+                    return {value: null};
+                }
 
-            return {
-                from: !isNaN(numberValFrom) ? moment.unix(numberValFrom).format(format) : '',
-                to: !isNaN(numberValTo) ? moment.unix(numberValTo).format(format) : ''
-            };
+                const numberValFrom = dateRangeValue.from;
+                const numberValTo = dateRangeValue.to;
+
+                elementValue.value = {
+                    from: !isNaN(numberValFrom) ? moment.unix(numberValFrom).format(format) : '',
+                    to: !isNaN(numberValTo) ? moment.unix(numberValTo).format(format) : ''
+                };
+                return elementValue;
+            });
+
+            return {values: computedValues, errors: [] as any[]};
         }
     };
 }

@@ -18,19 +18,24 @@ export interface IVariableValue {
 }
 
 export interface ICalculationVariable {
-    processVariableString: (IActionsListContext, string, ActionsListValueType) => Promise<IVariableValue[]>;
-}
-export default function({'core.domain.helpers.calculationsVariableFunctions': variableFunctions = null}: IDeps = {}) {
-    const processVariableString = async (
+    processVariableString: (
         context: IActionsListContext,
-        variableString: string,
-        initialValue: ActionsListValueType
-    ): Promise<IVariableValue[]> => {
+        variables: string,
+        initialValues: ActionsListValueType[]
+    ) => Promise<IVariableValue[]>;
+}
+
+export default function({'core.domain.helpers.calculationsVariableFunctions': variableFunctions = null}: IDeps = {}) {
+    const processVariableString: ICalculationVariable['processVariableString'] = async (
+        context,
+        variableString,
+        initialValues
+    ) => {
         let passingValue = [
             {
                 recordId: context.recordId,
                 library: context.library,
-                value: initialValue
+                value: initialValues
             }
         ] as IVariableValue[];
 

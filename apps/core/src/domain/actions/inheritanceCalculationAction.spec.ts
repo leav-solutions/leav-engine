@@ -9,11 +9,7 @@ import {AttributeTypes} from '../../_types/attribute';
 import inheritanceCalculationAction from './inheritanceCalculationAction';
 
 const mockCalculationsVariable = {
-    processVariableString: async (
-        ctx: IActionsListContext,
-        variable: string,
-        initialValue: ActionsListValueType
-    ): Promise<IVariableValue[]> => {
+    processVariableString: async (ctx: IActionsListContext, variable: string): Promise<IVariableValue[]> => {
         return [
             {
                 value: `${variable}Value`,
@@ -48,7 +44,7 @@ describe('heritageCalculationAction', () => {
             },
             ctx
         );
-        expect(res).toBe('42Value');
+        expect(res.values[0].value).toBe('42Value');
     });
 
     test('No formula', async () => {
@@ -65,7 +61,8 @@ describe('heritageCalculationAction', () => {
             },
             ctx
         );
-        expect(res).toBe('Value');
+
+        expect(res.values[0].value).toBe('Value');
     });
 
     test('Inherit from link', async () => {
@@ -91,9 +88,11 @@ describe('heritageCalculationAction', () => {
             ctx
         )) as IRecord;
 
-        expect(res).toHaveProperty('id');
-        expect(res).toHaveProperty('library');
-        expect(res.id).toBe('Value');
-        expect(res.library).toBe('meh');
+        const resultValue = res.values[0].value;
+
+        expect(resultValue).toHaveProperty('id');
+        expect(resultValue).toHaveProperty('library');
+        expect(resultValue.id).toBe('Value');
+        expect(resultValue.library).toBe('meh');
     });
 });

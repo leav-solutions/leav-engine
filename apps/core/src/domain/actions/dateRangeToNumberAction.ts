@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IDateRangeValue} from '_types/value';
-import {ActionsListIOTypes, ActionsListValueType, IActionsListFunction} from '../../_types/actionsList';
+import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 
 export default function (): IActionsListFunction {
     return {
@@ -11,9 +11,15 @@ export default function (): IActionsListFunction {
         description: 'Convert date range dates to numbers',
         input_types: [ActionsListIOTypes.OBJECT],
         output_types: [ActionsListIOTypes.OBJECT],
-        action: (value: ActionsListValueType): IDateRangeValue<number> => {
-            const dateRangeValue = value as IDateRangeValue<string>;
-            return {from: Number(dateRangeValue.from ?? ''), to: Number(dateRangeValue.to ?? '')};
-        }
+        action: values => ({
+            values: values.map(valueElement => {
+                const dateRangeValue = valueElement.value as IDateRangeValue<string>;
+                return {
+                    ...valueElement,
+                    value: {from: Number(dateRangeValue.from ?? ''), to: Number(dateRangeValue.to ?? '')}
+                };
+            }),
+            errors: []
+        })
     };
 }

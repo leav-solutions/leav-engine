@@ -10,19 +10,28 @@ describe('formatNumberAction', () => {
     const ctx = {attribute: attrText};
     test('formatNumber', async () => {
         expect(
-            action(
-                123456.781,
-                {thousandsSeparator: ' ', decimalsSeparator: ',', decimals: 2, prefix: '=> ', suffix: ' €'},
-                ctx
-            )
+            (
+                await action(
+                    [{value: 123456.781}],
+                    {thousandsSeparator: ' ', decimalsSeparator: ',', decimals: 2, prefix: '=> ', suffix: ' €'},
+                    ctx
+                )
+            ).values[0].value
         ).toBe('=> 123 456,78 €');
         expect(
-            action(123456.786, {thousandsSeparator: ' ', decimalsSeparator: ',', decimals: 2, suffix: ' €'}, ctx)
+            (
+                await action(
+                    [{value: 123456.786}],
+                    {thousandsSeparator: ' ', decimalsSeparator: ',', decimals: 2, suffix: ' €'},
+                    ctx
+                )
+            ).values[0].value
         ).toBe('123 456,79 €');
-        expect(action(123456.78, {thousandsSeparator: '.', decimalsSeparator: ',', decimals: 4}, ctx)).toBe(
-            '123.456,7800'
-        );
-        expect(action('aaa', {}, ctx)).toBe('');
-        expect(action(null, {}, ctx)).toBe(null);
+        expect(
+            (await action([{value: 123456.78}], {thousandsSeparator: '.', decimalsSeparator: ',', decimals: 4}, ctx))
+                .values[0].value
+        ).toBe('123.456,7800');
+        expect((await action([{value: 'aaa'}], {}, ctx)).values[0].value).toBe('');
+        expect((await action([{value: null}], {}, ctx)).values[0].value).toBe(null);
     });
 });

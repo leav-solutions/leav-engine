@@ -5,6 +5,9 @@ import {ActionsListValueType, IActionsListContext} from '_types/actionsList';
 import {ICalculationVariable, IVariableValue} from 'domain/helpers/calculationVariable';
 import {IUtils} from 'utils/utils';
 import excelCalculationAction from './excelCalculationAction';
+import {IValue} from '_types/value';
+import {Errors} from '../../_types/errors';
+import {mockStandardValue} from '../../__tests__/mocks/value';
 
 const mockCalculationsVariable = {
     processVariableString: async (
@@ -27,65 +30,111 @@ describe('excelCalculationAction', () => {
         translateError: jest.fn().mockReturnValue('Excel calculation error')
     };
 
+    const mockResultValueBase: IValue = {
+        id_value: null,
+        isCalculated: true,
+        modified_at: null,
+        modified_by: null,
+        created_at: null,
+        created_by: null,
+        value: null
+    };
+
     test('Simple excelCalculation', async () => {
         const action = excelCalculationAction().action;
         const ctx = {};
         const res = await action(
-            null,
+            [],
             {
                 Formula: '42'
             },
             ctx
         );
-        expect(res).toBe('42');
+
+        expect(res).toEqual({errors: [], values: [{...mockResultValueBase, value: '42'}]});
         expect(
             await action(
-                null,
+                [],
                 {
                     Formula: '42+42'
                 },
                 ctx
             )
-        ).toBe('84');
+        ).toEqual({errors: [], values: [{...mockResultValueBase, value: '84'}]});
     });
+
     test('no formula', async () => {
         const action = excelCalculationAction().action;
         const ctx = {};
         const res = await action(
-            null,
+            [],
             {
                 Formula: ''
             },
             ctx
         );
-        expect(res).toBe('');
+        expect(res).toEqual({errors: [], values: [{...mockResultValueBase, value: ''}]});
     });
+
     test('Replace variables', async () => {
         const action = excelCalculationAction({
             'core.domain.helpers.calculationVariable': mockCalculationsVariable as ICalculationVariable
         }).action;
         const ctx = {};
         const res = await action(
-            38,
+            [],
             {
                 Formula: '"resultat {toto} {tata} {titi}"'
             },
             ctx
         );
-        expect(res).toBe('resultat totoValue tataValue titiValue');
+
+        expect(res).toEqual({
+            errors: [],
+            values: [{...mockResultValueBase, value: 'resultat totoValue tataValue titiValue'}]
+        });
     });
+
+    test('Return origin values along calculation result', async () => {
+        const action = excelCalculationAction({
+            'core.domain.helpers.calculationVariable': mockCalculationsVariable as ICalculationVariable
+        }).action;
+        const ctx = {};
+        const res = await action(
+            [mockStandardValue],
+            {
+                Formula: '"resultat {toto} {tata} {titi}"'
+            },
+            ctx
+        );
+
+        expect(res).toEqual({
+            errors: [],
+            values: [mockStandardValue, {...mockResultValueBase, value: 'resultat totoValue tataValue titiValue'}]
+        });
+    });
+
     test('Error calculation', async () => {
         const action = excelCalculationAction({
             'core.utils': mockUtils as IUtils
         }).action;
         const ctx = {};
         const res = await action(
-            null,
+            [],
             {
                 Formula: 'UNKNOWN'
             },
             ctx
         );
-        expect(res).toContain('Excel calculation error');
+
+        expect(res).toEqual({
+            errors: [
+                {
+                    errorType: Errors.EXCEL_CALCULATION_ERROR,
+                    attributeValue: null
+                }
+            ],
+            values: []
+        });
     });
 });

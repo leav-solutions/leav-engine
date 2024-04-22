@@ -40,6 +40,7 @@ export const mockAttributeWithDetails: AttributeDetailsFragment = {
         fr: 'Mon attribut',
         en: 'My attribute'
     },
+    required: false,
     format: AttributeFormat.text,
     type: AttributeType.simple,
     system: false,
