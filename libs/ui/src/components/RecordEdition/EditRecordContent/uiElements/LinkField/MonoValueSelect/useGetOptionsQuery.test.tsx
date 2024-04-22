@@ -51,7 +51,7 @@ describe('useGetOptionsQuery', () => {
         {
             request: {
                 query: getRecordsFromLibraryQuery(),
-                variables: {library: linkedLibraryId, limit: 20, sort: {field: 'label', order: SortOrder.asc}}
+                variables: {library: linkedLibraryId, limit: 20, sort: {field: 'created_at', order: SortOrder.desc}}
             },
             result: {data}
         }
@@ -98,18 +98,18 @@ describe('useGetOptionsQuery', () => {
                 {
                     idCard: {
                         avatar: expect.anything(),
-                        title: 'Danette pistache'
-                    },
-                    label: 'Danette pistache',
-                    value: '28121951'
-                },
-                {
-                    idCard: {
-                        avatar: expect.anything(),
                         title: 'Danette chocolat'
                     },
                     label: 'Danette chocolat',
                     value: '15061943'
+                },
+                {
+                    idCard: {
+                        avatar: expect.anything(),
+                        title: 'Danette pistache'
+                    },
+                    label: 'Danette pistache',
+                    value: '28121951'
                 }
             ])
         );
@@ -157,18 +157,18 @@ describe('useGetOptionsQuery', () => {
                 {
                     idCard: {
                         avatar: expect.anything(),
-                        title: 'Danette pistache'
-                    },
-                    label: 'Danette pistache',
-                    value: '28121951'
-                },
-                {
-                    idCard: {
-                        avatar: expect.anything(),
                         title: 'Danette chocolat'
                     },
                     label: 'Danette chocolat',
                     value: '15061943'
+                },
+                {
+                    idCard: {
+                        avatar: expect.anything(),
+                        title: 'Danette pistache'
+                    },
+                    label: 'Danette pistache',
+                    value: '28121951'
                 },
                 {
                     idCard: {
@@ -183,11 +183,6 @@ describe('useGetOptionsQuery', () => {
     });
 
     describe('updateLeavField', () => {
-        const attribute = {
-            id: '12'
-        } as any;
-        const idValue = '12';
-
         test('Should call onSelectChange with linkValue if record not in list', async () => {
             const mock = mockFactory({records});
             const activeValue = {
