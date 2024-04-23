@@ -112,7 +112,7 @@ const _renderListItem = (item: ValueFromList) => (
 function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
-    const valuesList = attribute.linkValuesList.enable ? attribute.linkValuesList.values : [];
+    const valuesList = attribute.linkValuesList?.enable ? attribute.linkValuesList.values : [];
     const [filteredValuesList, setFilteredValuesList] = useState<ValueFromList[]>(valuesList);
 
     const wrapperRef = useRef<HTMLDivElement>();
@@ -126,7 +126,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     const [valuesListCurrentPage, setValuesListCurrentPage] = useState<number>(1);
     const [searchCurrentPage, setSearchCurrentPage] = useState<number>(1);
     const pageSize = 10;
-    const canSearch = !attribute.linkValuesList.enable || attribute.linkValuesList.allowFreeEntry;
+    const canSearch = !attribute.linkValuesList?.enable || attribute.linkValuesList?.allowFreeEntry;
     const canCreateRecord =
         attribute.linked_library.permissions.create_record &&
         attribute.linked_library.behavior !== LibraryBehavior.files &&
