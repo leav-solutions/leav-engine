@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
     IRecordForm,
     RecordFormElementsValue,
@@ -46,23 +49,23 @@ export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
             return acc;
         }
 
-        const fieldValue = value as RecordFormElementsValueStandardValue;
+        const standardValue = value as RecordFormElementsValueStandardValue;
         if (attribute.format === AttributeFormat.text) {
-            acc[attribute.id] = fieldValue?.raw_value ?? '';
+            acc[attribute.id] = standardValue?.raw_value ?? '';
         }
 
         if (attribute.format === AttributeFormat.date_range) {
-            if (!fieldValue?.raw_value) {
+            if (!standardValue?.raw_value) {
                 return acc;
             }
 
-            if (hasDateRangeValues(fieldValue.raw_value)) {
+            if (hasDateRangeValues(standardValue.raw_value)) {
                 acc[attribute.id] = [
-                    dayjs.unix(Number(fieldValue.raw_value.from)),
-                    dayjs.unix(Number(fieldValue.raw_value.to))
+                    dayjs.unix(Number(standardValue.raw_value.from)),
+                    dayjs.unix(Number(standardValue.raw_value.to))
                 ];
-            } else if (typeof fieldValue.raw_value === 'string') {
-                const convertedFieldValue = JSON.parse(fieldValue.raw_value);
+            } else if (typeof standardValue.raw_value === 'string') {
+                const convertedFieldValue = JSON.parse(standardValue.raw_value);
                 acc[attribute.id] = [
                     dayjs.unix(Number(convertedFieldValue.from)),
                     dayjs.unix(Number(convertedFieldValue.to))

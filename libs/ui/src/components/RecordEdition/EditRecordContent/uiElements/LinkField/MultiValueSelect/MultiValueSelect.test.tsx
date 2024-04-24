@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
 import {MultiValueSelect} from './MultiValueSelect';
 import {mockFormElementInput, mockFormElementLink} from '_ui/__mocks__/common/form';

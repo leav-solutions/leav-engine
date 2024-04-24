@@ -6,14 +6,12 @@ import {FunctionComponent, ReactNode} from 'react';
 import {IStandardFieldReducerState} from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {Form} from 'antd';
 import dayjs from 'dayjs';
-import {StandardValueTypes} from '../../../_types';
+import {IProvidedByAntFormItem, StandardValueTypes} from '../../../_types';
 import {RangePickerProps} from 'antd/lib/date-picker';
 
-interface IDSRangePickerWrapperProps {
+interface IDSRangePickerWrapperProps extends IProvidedByAntFormItem<RangePickerProps> {
     state: IStandardFieldReducerState;
     infoButton: ReactNode;
-    value?: RangePickerProps['value'];
-    onChange?: RangePickerProps['onChange'];
     handleSubmit: (value: StandardValueTypes, id?: string) => void;
 }
 

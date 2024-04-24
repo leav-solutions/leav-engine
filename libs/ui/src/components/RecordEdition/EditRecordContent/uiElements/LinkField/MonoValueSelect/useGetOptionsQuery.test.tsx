@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IGetRecordsFromLibraryQuery, getRecordsFromLibraryQuery} from '_ui/_queries/records/getRecordsFromLibraryQuery';
 import {SortOrder} from '_ui/_gqlTypes';
 import {MockedResponse} from '@apollo/client/testing';
