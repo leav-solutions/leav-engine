@@ -97,7 +97,7 @@ describe('useGetOptionsQuery', () => {
             expect(result.current.selectOptions).toEqual([
                 {
                     idCard: {
-                        avatar: expect.anything(),
+                        avatarProps: expect.anything(),
                         title: 'Danette chocolat'
                     },
                     label: 'Danette chocolat',
@@ -105,7 +105,7 @@ describe('useGetOptionsQuery', () => {
                 },
                 {
                     idCard: {
-                        avatar: expect.anything(),
+                        avatarProps: expect.anything(),
                         title: 'Danette pistache'
                     },
                     label: 'Danette pistache',
@@ -144,7 +144,7 @@ describe('useGetOptionsQuery', () => {
         expect(result.current.selectOptions).toEqual([
             {
                 idCard: {
-                    avatar: expect.anything(),
+                    avatarProps: expect.anything(),
                     title: 'une danette à la prune'
                 },
                 label: 'une danette à la prune',
@@ -156,7 +156,7 @@ describe('useGetOptionsQuery', () => {
             expect(result.current.selectOptions).toEqual([
                 {
                     idCard: {
-                        avatar: expect.anything(),
+                        avatarProps: expect.anything(),
                         title: 'Danette chocolat'
                     },
                     label: 'Danette chocolat',
@@ -164,7 +164,7 @@ describe('useGetOptionsQuery', () => {
                 },
                 {
                     idCard: {
-                        avatar: expect.anything(),
+                        avatarProps: expect.anything(),
                         title: 'Danette pistache'
                     },
                     label: 'Danette pistache',
@@ -172,7 +172,7 @@ describe('useGetOptionsQuery', () => {
                 },
                 {
                     idCard: {
-                        avatar: expect.anything(),
+                        avatarProps: expect.anything(),
                         title: 'une danette à la prune'
                     },
                     label: 'une danette à la prune',
