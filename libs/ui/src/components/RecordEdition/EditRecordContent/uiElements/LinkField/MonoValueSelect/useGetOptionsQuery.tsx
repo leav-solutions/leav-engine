@@ -5,7 +5,7 @@ import {
     IGetRecordsFromLibraryQueryVariables,
     getRecordsFromLibraryQuery
 } from '_ui/_queries/records/getRecordsFromLibraryQuery';
-import {KitAvatar, KitSelect} from 'aristid-ds';
+import {KitSelect} from 'aristid-ds';
 import {ComponentProps, useMemo} from 'react';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 import {IRecordIdentity} from '_ui/types';
@@ -45,15 +45,13 @@ export const useGetOptionsQuery = ({
                 label: recordItem.whoAmI.label,
                 idCard: {
                     title: recordItem.whoAmI.label,
-                    avatar: (
-                        <KitAvatar
-                            size={'small'}
-                            shape={'square'}
-                            imageFit={'contain'}
-                            src={recordItem.whoAmI.preview?.small}
-                            label={recordItem.whoAmI.label}
-                        />
-                    )
+                    avatarProps: {
+                        size: 'small',
+                        shape: 'square',
+                        imageFit: 'contain',
+                        src: recordItem.whoAmI.preview?.small,
+                        label: recordItem.whoAmI.label
+                    }
                 }
             })),
         [recordList]
@@ -67,15 +65,13 @@ export const useGetOptionsQuery = ({
             label: activeValue.linkValue.whoAmI.label,
             idCard: {
                 title: activeValue.linkValue.whoAmI.label,
-                avatar: (
-                    <KitAvatar
-                        size={'small'}
-                        shape={'square'}
-                        imageFit={'contain'}
-                        src={activeValue.linkValue.whoAmI.preview?.small}
-                        label={activeValue.linkValue.whoAmI.label}
-                    />
-                )
+                avatarProps: {
+                    size: 'small',
+                    shape: 'square',
+                    imageFit:'contain',
+                    src: activeValue.linkValue.whoAmI.preview?.small,
+                    label:activeValue.linkValue.whoAmI.label
+                }
             }
         });
     }
