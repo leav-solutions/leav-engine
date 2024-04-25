@@ -225,9 +225,9 @@ export default function ({
             values = [
                 {
                     value:
-                    attribute.type === AttributeTypes.SIMPLE_LINK && typeof record[attribute.id] === 'string'
-                    ? {id: record[attribute.id]}
-                    : record[attribute.id]
+                        attribute.type === AttributeTypes.SIMPLE_LINK && typeof record[attribute.id] === 'string'
+                            ? {id: record[attribute.id]}
+                            : record[attribute.id]
                 }
             ];
 
@@ -240,7 +240,6 @@ export default function ({
                 library,
                 ctx
             });
-
         } else {
             values = await valueDomain.getValues({
                 library,
@@ -1217,13 +1216,15 @@ export default function ({
                                 ctx
                             });
 
-                            formattedValue.metadata[metadataField] = await valueDomain.runActionsList({
+                            const computedMetadata = await valueDomain.runActionsList({
                                 listName: ActionsListEvents.GET_VALUE,
                                 attribute: metadataAttributeProps,
                                 library,
                                 values: [formattedValue.metadata[metadataField] as IStandardValue],
                                 ctx
-                            })[0];
+                            });
+
+                            formattedValue.metadata[metadataField] = computedMetadata[0];
                         }
                     }
 
