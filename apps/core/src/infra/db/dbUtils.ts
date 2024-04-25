@@ -21,6 +21,7 @@ import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {IDbService} from './dbService';
 import runMigrationFiles from './helpers/runMigrationFiles';
 import {IExecuteWithCount} from './_types';
+import {CORE_INDEX_FIELD} from '../../infra/indexation/indexationService';
 
 export const MIGRATIONS_COLLECTION_NAME = 'core_db_migrations';
 
@@ -204,7 +205,7 @@ export default function ({
             return Object.keys(obj).reduce((newObj: any, key) => {
                 if (key === '_key') {
                     newObj.id = obj[key];
-                } else if (key[0] !== '_') {
+                } else if (key[0] !== '_' && key !== CORE_INDEX_FIELD) {
                     newObj[key] = obj[key];
                 }
 
