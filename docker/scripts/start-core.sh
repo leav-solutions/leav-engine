@@ -2,7 +2,9 @@
 yarn install
 
 # Install plugins dependencies
-yarn --cwd ./src/plugins/* install
+for plugin in ./src/plugins/*/; do
+  yarn --cwd "$plugin" install
+done
 
 # Start the server
 yarn run db:migrate:dev
