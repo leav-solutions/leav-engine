@@ -441,6 +441,7 @@ services:
 
   # Feel free to comment out logs-collector and elasticsearch if don't need logs
   logs-collector:
+    profiles: ["non-essential"]
     image: *node_image
     labels:
       - traefik.enable=true
@@ -514,6 +515,7 @@ services:
       - traefik.http.services.redis.loadbalancer.server.port=6379
 
   redis-commander:
+    profiles: ["non-essential"]
     container_name: redis-commander
     hostname: redis-commander
     image: rediscommander/redis-commander:latest
@@ -531,6 +533,7 @@ services:
       - redis
 
   elasticsearch:
+    profiles: ["non-essential"]
     image: elasticsearch:8.10.2
     environment:
       - discovery.type=single-node
@@ -541,6 +544,7 @@ services:
 
   ## Kibana is used for debugging essentially. Uncommnent following lines if needed
   kibana:
+    profiles: ["non-essential"]
     image: kibana:8.10.2
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
