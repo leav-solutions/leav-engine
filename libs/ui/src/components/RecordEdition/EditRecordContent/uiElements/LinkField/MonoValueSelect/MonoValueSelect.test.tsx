@@ -58,10 +58,65 @@ describe('<MonoValueSelect />', () => {
         totalCount: 2
     };
 
+    const searchRecords = {
+        __typename: 'RecordList',
+        list: [
+            {
+                id: '25121950',
+                _id: '25121950',
+                whoAmI: {
+                    id: '25121950',
+                    label: 'Yop Fraise',
+                    subLabel: null,
+                    preview: null,
+                    library: {
+                        id: 'id_library',
+                        label: null
+                    },
+                    color: null
+                },
+                __typename: 'Record'
+            },
+            {
+                id: '2571957',
+                _id: '2571957',
+                whoAmI: {
+                    id: '02571957',
+                    label: 'Yop Vanille',
+                    subLabel: null,
+                    preview: null,
+                    library: {
+                        id: 'id_library',
+                        label: null
+                    },
+                    color: null
+                },
+                __typename: 'Record'
+            },
+            {
+                id: '25051988',
+                _id: '25051988',
+                whoAmI: {
+                    id: '25051988',
+                    label: 'Yop Chocolat',
+                    subLabel: null,
+                    preview: null,
+                    library: {
+                        id: 'id_library',
+                        label: null
+                    },
+                    color: null
+                },
+                __typename: 'Record'
+            }
+        ],
+        totalCount: 3
+    };
+
     const mocks: MockedResponse[] = [
         {
             request: {
-                query: getRecordsFromLibraryQuery(),
+                query: getRecordsFromLibraryQuery([], true),
                 variables: {library: 'test_lib', limit: 20, sort: {field: 'created_at', order: SortOrder.desc}}
             },
             result: {data: {records}}
@@ -218,5 +273,53 @@ describe('<MonoValueSelect />', () => {
         const clearIcon = screen.getByLabelText('clear');
         await userEvent.click(clearIcon);
         expect(onClearSelectMock).toHaveBeenCalledWith(activeValue);
+    });
+
+    it('should search more records when typing a value', async () => {
+        const mocksWithSearch = [
+            ...mocks,
+            {
+                request: {
+                    query: getRecordsFromLibraryQuery([], true),
+                    variables: {library: 'test_lib', limit: 20, fullText: 'Yop'}
+                },
+                result: {data: {records: searchRecords}}
+            }
+        ];
+
+        render(
+            <AntForm name="name">
+                <AntForm.Item name="danette">
+                    <MonoValueSelect
+                        activeValue={undefined}
+                        attribute={mockFormElementLink.attribute}
+                        label={state.formElement.settings.label}
+                        required={state.formElement.settings.required}
+                        onSelectChange={onSelectChangeMock}
+                        onSelectClear={onClearSelectMock}
+                    />
+                </AntForm.Item>
+            </AntForm>,
+            {mocks: mocksWithSearch}
+        );
+
+        expect(screen.queryByText('Danette pistache')).not.toBeInTheDocument();
+        expect(screen.queryByText('Danette chocolat')).not.toBeInTheDocument();
+
+        await userEvent.click(screen.getByRole('combobox'));
+
+        const options = screen.getAllByRole('option');
+        expect(options.length).toBe(records.list.length);
+
+        expect(screen.getByText('Danette pistache')).toBeVisible();
+        expect(screen.getByText('Danette chocolat')).toBeVisible();
+        expect(screen.getByText(/suggestions_count|20/)).toBeVisible();
+
+        await userEvent.type(screen.getByRole('combobox'), 'Yop');
+
+        expect(await screen.findByText('Yop Fraise')).toBeVisible();
+        expect(await screen.findByText('Yop Vanille')).toBeVisible();
+        expect(await screen.findByText('Yop Chocolat')).toBeVisible();
+        expect(screen.getByText(/link_search_result_count|3|3/)).toBeVisible();
     });
 });

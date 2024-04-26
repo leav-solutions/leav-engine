@@ -455,7 +455,9 @@
         "cancel_confirm_modal_question": "Êtes-vous sûr(e) ?",
         "record_select": "Sélectionnez un élément",
         "inherited_input_helper": "Valeur héritée : {{- inheritedValue }}",
-        "date_range_from_to": "du {{- from}} au {{- to}}"
+        "date_range_from_to": "du {{- from}} au {{- to}}",
+        "link_search_result_count": "Résultats ({{count}}/{{total}})",
+        "suggestions_count": "Suggestions ({{count}})"
     },
     "record_summary": {
         "preview_title": "Cliquez ici pour voir l’aperçu.",

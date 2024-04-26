@@ -8,11 +8,16 @@ import {
     IGetRecordsFromLibraryQueryVariables,
     getRecordsFromLibraryQuery
 } from '_ui/_queries/records/getRecordsFromLibraryQuery';
-import {KitSelect} from 'aristid-ds';
-import {ComponentProps, useMemo} from 'react';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 import {IRecordIdentity} from '_ui/types';
 import sortBy from 'lodash/sortBy';
+import {KitSelect, AntSkeleton} from 'aristid-ds';
+import {useState, useMemo, ComponentProps} from 'react';
+
+const RECORDS_LIMIT = 20; // TODO: should be configurable
+const MINIMAL_SEARCH_LENGTH = 2;
+
+type RecordOptions = ComponentProps<typeof KitSelect>['options'];
 
 export const useGetOptionsQuery = ({
     activeValue,
@@ -23,17 +28,26 @@ export const useGetOptionsQuery = ({
     linkedLibraryId: string;
     onSelectChange: (values: IRecordIdentity[]) => void;
 }) => {
-    const {loading, data} = useQuery<IGetRecordsFromLibraryQuery, IGetRecordsFromLibraryQueryVariables>(
-        getRecordsFromLibraryQuery(),
+    const initialSearchVariables: IGetRecordsFromLibraryQueryVariables = {
+        library: linkedLibraryId,
+        limit: RECORDS_LIMIT,
+        sort: {
+            field: 'created_at',
+            order: SortOrder.desc
+        }
+    };
+    const [isSearchLoading, setIsSearchLoading] = useState(false);
+    const [totalCount, setTotalCount] = useState(0);
+    const [optionsType, setOptionsType] = useState<'suggestions' | 'search'>('suggestions');
+
+    const {loading, data, refetch} = useQuery<IGetRecordsFromLibraryQuery, IGetRecordsFromLibraryQueryVariables>(
+        getRecordsFromLibraryQuery([], true),
         {
             fetchPolicy: 'network-only',
-            variables: {
-                library: linkedLibraryId,
-                limit: 20, // TODO: should be a xStream configuration
-                sort: {
-                    field: 'created_at',
-                    order: SortOrder.desc
-                }
+            variables: initialSearchVariables,
+            onCompleted: queryData => {
+                // This is called only after the first fetch, so we can store the total count without searching.
+                setTotalCount(queryData?.records?.totalCount ?? 0);
             }
         }
     );
@@ -41,26 +55,37 @@ export const useGetOptionsQuery = ({
     // const recordList = useMemo(() => data?.records?.list.toSorted() ?? [], [data]); // TODO: when toSorted method available (ie. TS >= 5.2.0)
     const recordList = useMemo(() => sortBy(data?.records?.list, 'whoAmI.label'), [data]);
 
-    const selectOptions = useMemo<ComponentProps<typeof KitSelect>['options']>(
+    const selectOptions = useMemo<RecordOptions>(
         () =>
-            recordList.map(recordItem => ({
-                value: recordItem.whoAmI.id,
-                label: recordItem.whoAmI.label,
-                idCard: {
-                    title: recordItem.whoAmI.label,
-                    avatarProps: {
-                        size: 'small',
-                        shape: 'square',
-                        imageFit: 'contain',
-                        src: recordItem.whoAmI.preview?.small,
-                        label: recordItem.whoAmI.label
-                    }
-                }
-            })),
-        [recordList]
+            isSearchLoading
+                ? Array.from({length: 10}).map((_, index): RecordOptions[number] => ({
+                      value: `skeleton-${index}`,
+                      idCard: {
+                          //@ts-expect-error KitIdCard doesn't allow a ReactNode as title, but it's fine at runtime
+                          title: <AntSkeleton.Input active />,
+                          avatarProps: {
+                              src: <AntSkeleton.Avatar active />
+                          }
+                      }
+                  }))
+                : recordList.map(recordItem => ({
+                      value: recordItem.whoAmI.id,
+                      label: recordItem.whoAmI.label,
+                      idCard: {
+                          title: recordItem.whoAmI.label,
+                          avatarProps: {
+                              size: 'small',
+                              shape: 'square',
+                              imageFit: 'contain',
+                              src: recordItem.whoAmI.preview?.small,
+                              label: recordItem.whoAmI.label
+                          }
+                      }
+                  })),
+        [recordList, loading, isSearchLoading]
     );
 
-    const augmentedSelectOptionsWithActive = selectOptions;
+    const augmentedSelectOptionsWithActive = [...selectOptions];
 
     if (activeValue && recordList.findIndex(record => record.id === activeValue.linkValue.id) === -1) {
         augmentedSelectOptionsWithActive.push({
@@ -71,9 +96,9 @@ export const useGetOptionsQuery = ({
                 avatarProps: {
                     size: 'small',
                     shape: 'square',
-                    imageFit:'contain',
+                    imageFit: 'contain',
                     src: activeValue.linkValue.whoAmI.preview?.small,
-                    label:activeValue.linkValue.whoAmI.label
+                    label: activeValue.linkValue.whoAmI.label
                 }
             }
         });
@@ -85,5 +110,34 @@ export const useGetOptionsQuery = ({
         return onSelectChange([selectedLinkValue ?? activeValue.linkValue]);
     };
 
-    return {loading, selectOptions: augmentedSelectOptionsWithActive, updateLeavField};
+    const runFullTextSearch = async (searchText: string) => {
+        const isSearchTextEmpty = searchText === '';
+        if (!isSearchTextEmpty && searchText.length < MINIMAL_SEARCH_LENGTH) {
+            return;
+        }
+
+        setIsSearchLoading(true);
+        await refetch(
+            isSearchTextEmpty
+                ? {...initialSearchVariables, fullText: undefined}
+                : {
+                      ...initialSearchVariables,
+                      sort: undefined,
+                      fullText: searchText
+                  }
+        );
+        setOptionsType(isSearchTextEmpty ? 'suggestions' : 'search');
+        setIsSearchLoading(false);
+    };
+
+    return {
+        loading: loading || isSearchLoading,
+        selectOptions: augmentedSelectOptionsWithActive,
+        updateLeavField,
+        runFullTextSearch,
+        totalCount,
+        searchResultCount: data?.records?.totalCount ?? 0,
+        suggestionsCount: RECORDS_LIMIT,
+        optionsType
+    };
 };

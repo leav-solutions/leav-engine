@@ -1,11 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IGetRecordsFromLibraryQuery, getRecordsFromLibraryQuery} from '_ui/_queries/records/getRecordsFromLibraryQuery';
+import {
+    IGetRecordsFromLibraryQuery,
+    getRecordsFromLibraryQuery,
+    IGetRecordsFromLibraryQueryVariables
+} from '_ui/_queries/records/getRecordsFromLibraryQuery';
 import {SortOrder} from '_ui/_gqlTypes';
 import {MockedResponse} from '@apollo/client/testing';
 import {useGetOptionsQuery} from './useGetOptionsQuery';
-import {renderHook, waitFor} from '_ui/_tests/testUtils';
+import {act, renderHook, waitFor} from '_ui/_tests/testUtils';
 
 describe('useGetOptionsQuery', () => {
     const onSelectChangeMock = jest.fn();
@@ -50,11 +54,19 @@ describe('useGetOptionsQuery', () => {
     };
 
     const linkedLibraryId = 'linkedLibraryId';
-    const mockFactory: (data: IGetRecordsFromLibraryQuery) => MockedResponse[] = data => [
+    const mockFactory: (
+        data: IGetRecordsFromLibraryQuery,
+        variables?: Partial<IGetRecordsFromLibraryQueryVariables>
+    ) => MockedResponse[] = (data, variables) => [
         {
             request: {
-                query: getRecordsFromLibraryQuery(),
-                variables: {library: linkedLibraryId, limit: 20, sort: {field: 'created_at', order: SortOrder.desc}}
+                query: getRecordsFromLibraryQuery([], true),
+                variables: {
+                    library: linkedLibraryId,
+                    limit: 20,
+                    sort: {field: 'created_at', order: SortOrder.desc},
+                    ...variables
+                }
             },
             result: {data}
         }
@@ -79,6 +91,75 @@ describe('useGetOptionsQuery', () => {
         expect(result.current.loading).toBe(true);
 
         await waitFor(() => expect(result.current.loading).toBe(false));
+    });
+
+    test('should return infos about options type and counts', async () => {
+        const mock = mockFactory({records});
+        const refetchMock = mockFactory(
+            {records: {list: [records.list[0]], totalCount: 1}},
+            {sort: undefined, fullText: 'search'}
+        );
+
+        const {result} = renderHook((...props) => useGetOptionsQuery(...props), {
+            initialProps: {
+                activeValue: undefined,
+                linkedLibraryId,
+                onSelectChange: onSelectChangeMock
+            },
+            mocks: [...mock, ...refetchMock]
+        });
+
+        await waitFor(() => expect(result.current.loading).toBe(false));
+
+        expect(result.current.optionsType).toBe('suggestions');
+        expect(result.current.suggestionsCount).toBe(20);
+        expect(result.current.searchResultCount).toBe(2);
+        expect(result.current.totalCount).toBe(2);
+
+        await act(async () => {
+            result.current.runFullTextSearch('search');
+        });
+
+        await waitFor(() => {
+            expect(result.current.optionsType).toBe('search');
+        });
+
+        expect(result.current.suggestionsCount).toBe(20);
+        expect(result.current.searchResultCount).toBe(1);
+        expect(result.current.totalCount).toBe(2);
+    });
+
+    test('Should return fake options with skeleton during loading', async () => {
+        const mock = mockFactory({records: {list: [], totalCount: 0}});
+        const refetchMock = mockFactory({records: {list: [], totalCount: 0}}, {sort: undefined, fullText: 'search'});
+
+        const {result} = renderHook((...props) => useGetOptionsQuery(...props), {
+            initialProps: {
+                activeValue: undefined,
+                linkedLibraryId,
+                onSelectChange: onSelectChangeMock
+            },
+            mocks: [...mock, ...refetchMock]
+        });
+
+        await waitFor(() => {
+            expect(result.current.loading).toBe(false);
+        });
+
+        await act(async () => {
+            result.current.runFullTextSearch('search');
+        });
+
+        expect(result.current.selectOptions).toHaveLength(10);
+        expect(result.current.selectOptions[0]).toEqual({
+            value: expect.stringContaining('skeleton'),
+            idCard: {
+                title: expect.anything(),
+                avatarProps: {
+                    src: expect.anything()
+                }
+            }
+        });
     });
 
     test('Should expose selectOptions ready to display', async () => {
