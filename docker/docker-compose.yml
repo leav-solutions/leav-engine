@@ -141,8 +141,6 @@ services:
   core:
     build: *env-build-core
     stdin_open: true
-    extra_hosts: 
-      - ${EXTRA_HOST}
     labels:
       - traefik.enable=true
       - traefik.http.routers.core.rule=Host(`core.leav.localhost`)
