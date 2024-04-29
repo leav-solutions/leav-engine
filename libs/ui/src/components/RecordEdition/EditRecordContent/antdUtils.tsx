@@ -16,7 +16,7 @@ const hasDateRangeValues = (dateRange: unknown): dateRange is IDateRangeValue =>
     (dateRange as IDateRangeValue).from !== undefined && (dateRange as IDateRangeValue).to !== undefined;
 
 const getInheritedValue = values => values.find(value => value.isInherited);
-const getNotInheritedValue = values => values.find(value => !value.isInherited && value.raw_value !== null);
+const getNotInheritedOrOverrideValue = values => values.find(value => !value.isInherited && value.raw_value !== null);
 
 const isRecordFormElementsValueLinkValue = (
     value: RecordFormElementsValue,
@@ -37,7 +37,7 @@ export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
             return acc;
         }
 
-        const value = getNotInheritedValue(values) || getInheritedValue(values) || null;
+        const value = getNotInheritedOrOverrideValue(values) ?? getInheritedValue(values) ?? null;
 
         if (isRecordFormElementsValueLinkValue(value, attribute)) {
             acc[attribute.id] = value?.linkValue?.id;

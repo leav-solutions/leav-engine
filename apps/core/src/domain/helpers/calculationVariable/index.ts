@@ -11,10 +11,12 @@ import {IVariableFunctions} from '../calculationsVariableFunctions';
 interface IDeps {
     'core.domain.helpers.calculationsVariableFunctions'?: IVariableFunctions;
 }
+
 export interface IVariableValue {
     recordId: string;
     library: string;
-    value: IValue | string | number | boolean;
+    value: IValue | string | number | boolean; // TODO: IValue is never the type of value. Should be the same type as raw_value.
+    raw_value?: string | number | boolean | Record<string, any>;
 }
 
 export interface ICalculationVariable {
@@ -25,7 +27,7 @@ export interface ICalculationVariable {
     ) => Promise<IVariableValue[]>;
 }
 
-export default function({'core.domain.helpers.calculationsVariableFunctions': variableFunctions = null}: IDeps = {}) {
+export default function ({'core.domain.helpers.calculationsVariableFunctions': variableFunctions = null}: IDeps = {}) {
     const processVariableString: ICalculationVariable['processVariableString'] = async (
         context,
         variableString,

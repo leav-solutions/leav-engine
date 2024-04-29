@@ -3,25 +3,18 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ICalculationVariable} from 'domain/helpers/calculationVariable';
-import {ActionsListIOTypes, IActionsListContext} from '../../_types/actionsList';
+import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 import {AttributeTypes} from '../../_types/attribute';
-import {IValue} from '_types/value';
 
 interface IDeps {
     'core.domain.helpers.calculationVariable'?: ICalculationVariable;
     'core.domain.attribute'?: IAttributeDomain;
 }
 
-type ActionsListInheritanceValueType = string | number | boolean | {};
-
-export interface IActionListInheritanceContext extends IActionsListContext {
-    value?: ActionsListInheritanceValueType;
-}
-
 export default function ({
     'core.domain.helpers.calculationVariable': calculationVariable = null,
     'core.domain.attribute': attributeDomain = null
-}: IDeps = {}) {
+}: IDeps = {}): IActionsListFunction {
     return {
         id: 'inheritanceCalculation',
         name: 'Inheritance calculation',
@@ -54,7 +47,7 @@ export default function ({
                 default_value: ''
             }
         ],
-        action: async (values: IValue[], params, ctx) => {
+        action: async (values, params, ctx) => {
             const {Formula: formula} = params;
             const attrProps = await attributeDomain.getAttributeProperties({id: ctx.attribute.id, ctx});
             let inheritedValues = [];
@@ -71,7 +64,11 @@ export default function ({
                     isInherited: true
                 }));
             } else {
-                inheritedValues = result.map(v => ({value: v.value, isInherited: true, raw_value: v.value}));
+                inheritedValues = result.map(v => ({
+                    value: v.value,
+                    isInherited: true,
+                    raw_value: v.raw_value
+                }));
             }
 
             return {values: [...(values ?? []), ...inheritedValues], errors: []};

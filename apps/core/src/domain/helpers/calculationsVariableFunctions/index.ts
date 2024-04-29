@@ -5,6 +5,7 @@ import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IVariableValue} from 'domain/helpers/calculationVariable';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IActionsListContext} from '_types/actionsList';
+import {TypeGuards} from '../../../utils';
 
 interface IDeps {
     'core.domain.record'?: IRecordDomain;
@@ -12,14 +13,15 @@ interface IDeps {
 }
 
 interface IVariableFunction {
-    run: (context: IActionsListContext, initialValue: any, ...params: any[]) => Promise<IVariableValue[]>;
+    run: (context: IActionsListContext, inputValue: any, ...params: any[]) => Promise<IVariableValue[]>;
     after: string[];
 }
+
 export interface IVariableFunctions {
     [key: string]: IVariableFunction;
 }
 
-export default function({
+export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null
 }: IDeps = {}): IVariableFunctions {
@@ -76,7 +78,7 @@ export default function({
 
     const dedup = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => {
         const seen = {};
-        return inputValue.filter(function(v) {
+        return inputValue.filter(function (v) {
             const stringRepresentation = JSON.stringify(v.value);
             return seen.hasOwnProperty(stringRepresentation) ? false : (seen[stringRepresentation] = true);
         });
@@ -86,70 +88,58 @@ export default function({
         context: IActionsListContext,
         inputValue: IVariableValue[],
         attributeKey: string
-    ): Promise<IVariableValue[]> => {
-        const properties = await attributeDomain.getAttributeProperties({id: attributeKey, ctx: context});
-        let returnValue = {...inputValue};
+    ): Promise<IVariableValue[]> =>
+        Promise.all(
+            inputValue.map(async ({library, recordId}) => {
+                let values = await recordDomain.getRecordFieldValue({
+                    library,
+                    record: {
+                        id: recordId,
+                        library
+                    },
+                    attributeId: attributeKey,
+                    ctx: context
+                });
 
-        const tmpPromises = inputValue.map(async inputV => {
-            const recordId = inputV.recordId;
-            const library = inputV.library;
-
-            let values = await recordDomain.getRecordFieldValue({
-                library,
-                record: {
-                    id: recordId,
-                    library
-                },
-                attributeId: attributeKey,
-                ctx: context
-            });
-
-            let currReturnValue = [{...inputV}];
-
-            if (!Array.isArray(values)) {
-                values = [values];
-            }
-
-            if (values.length) {
-                currReturnValue = [];
-
-                if (properties?.linked_library) {
-                    currReturnValue = values
-                        .map(v =>
-                            !!v?.value
-                                ? {
-                                      library: properties?.linked_library,
-                                      recordId: v.value.id,
-                                      value: v.value.id
-                                  }
-                                : null
-                        )
-                        .filter(v => !!v);
-                } else {
-                    currReturnValue = values.map(v => ({
-                        library,
-                        recordId,
-                        value: v?.value ?? null
-                    }));
+                if (!Array.isArray(values)) {
+                    values = [values];
                 }
-            } else {
-                currReturnValue = [];
-            }
 
-            return currReturnValue;
-        });
-        const tmp = await Promise.all(tmpPromises);
-        if (tmp.length) {
-            returnValue = tmp.reduce((acc, v) => {
+                let currReturnValue: IVariableValue[] = [];
+
+                if (values.length) {
+                    const properties = await attributeDomain.getAttributeProperties({id: attributeKey, ctx: context});
+
+                    if (properties?.linked_library) {
+                        currReturnValue = values
+                            .map(v =>
+                                !!v?.value
+                                    ? {
+                                          library: properties?.linked_library,
+                                          recordId: v.value.id,
+                                          value: v.value.id
+                                      }
+                                    : null
+                            )
+                            .filter(v => !!v);
+                    } else {
+                        currReturnValue = values.map(v => ({
+                            library,
+                            recordId,
+                            value: v?.value ?? null,
+                            raw_value: TypeGuards.isIStandardValue(v) ? v?.raw_value : null
+                        }));
+                    }
+                }
+
+                return currReturnValue;
+            })
+        ).then(tmp =>
+            tmp.reduce((acc, v) => {
                 acc = [...acc, ...v];
                 return acc;
-            }, []);
-        } else {
-            returnValue = [];
-        }
-
-        return returnValue;
-    };
+            }, [])
+        );
 
     return {
         input: {

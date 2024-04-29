@@ -59,7 +59,11 @@ const getInitialState = (required: boolean): IStandardFieldReducerState => ({
         },
         [FieldScope.INHERITED]: null
     },
-    metadataEdit: false
+    metadataEdit: false,
+    inheritedValue: null,
+    isInheritedNotOverrideValue: false,
+    isInheritedOverrideValue: false,
+    isInheritedValue: false
 });
 
 describe('DSInputWrapper', () => {

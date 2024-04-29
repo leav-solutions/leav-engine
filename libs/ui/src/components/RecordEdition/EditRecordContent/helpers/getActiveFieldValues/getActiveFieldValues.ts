@@ -3,6 +3,5 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ICommonFieldsReducerState} from '../../_types';
 
-export default <ValuesType = any>(state: ICommonFieldsReducerState<ValuesType>) => {
-    return state.values[state.activeScope].values;
-};
+export default <ValuesType = any>(state: ICommonFieldsReducerState<ValuesType>) =>
+    state.values[state.activeScope].values;

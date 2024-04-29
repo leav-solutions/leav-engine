@@ -3,12 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import getActiveFieldValues from '_ui/components/RecordEdition/EditRecordContent/helpers/getActiveFieldValues';
 import {FieldScope} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
+import {AttributeFormat, AttributeType, FormElementTypes} from '_ui/_gqlTypes';
 import {mockFormElementInput, mockFormElementInputVersionable} from '_ui/__mocks__/common/form';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockModifier} from '_ui/__mocks__/common/value';
 import standardFieldValueReducer from '.';
 import {
+    computeInitialState,
+    InheritedFlags,
     IStandardFieldReducerState,
     newValueId,
     StandardFieldReducerActionsTypes,
@@ -63,21 +65,32 @@ describe('standardFieldReducer', () => {
             },
             [FieldScope.INHERITED]: null
         },
-        metadataEdit: false
+        metadataEdit: false,
+        inheritedValue: null,
+        isInheritedValue: false,
+        isInheritedNotOverrideValue: false,
+        isInheritedOverrideValue: false
     };
 
-    const _getInitialStateWithValues = (values: StandardFieldReducerValues): IStandardFieldReducerState => {
-        return {
-            ...initialState,
-            values: {
-                ...initialState.values,
-                [FieldScope.CURRENT]: {
-                    ...initialState.values[FieldScope.CURRENT],
-                    values: {...values}
-                }
+    const _getInitialStateWithValues = (
+        values: StandardFieldReducerValues,
+        inheritedState: InheritedFlags = {
+            inheritedValue: null,
+            isInheritedValue: false,
+            isInheritedNotOverrideValue: false,
+            isInheritedOverrideValue: false
+        }
+    ): IStandardFieldReducerState => ({
+        ...initialState,
+        values: {
+            ...initialState.values,
+            [FieldScope.CURRENT]: {
+                ...initialState.values[FieldScope.CURRENT],
+                values: {...values}
             }
-        };
-    };
+        },
+        ...inheritedState
+    });
 
     test('ADD_VALUE', async () => {
         const newState = standardFieldValueReducer(initialState, {
@@ -224,6 +237,53 @@ describe('standardFieldReducer', () => {
         });
     });
 
+    test('UPDATE_AFTER_SUBMIT on inherited value, it should toggle override flag', async () => {
+        const newState = standardFieldValueReducer(
+            _getInitialStateWithValues(
+                {
+                    [idValue]: {
+                        ...mockValue,
+                        error: 'boom',
+                        isErrorDisplayed: true,
+                        state: StandardFieldValueState.DIRTY
+                    }
+                },
+                {
+                    isInheritedValue: true,
+                    isInheritedOverrideValue: false,
+                    isInheritedNotOverrideValue: true,
+                    inheritedValue: {value: 'inheritedValue', raw_value: 'inheritedRawValue'}
+                }
+            ),
+            {
+                type: StandardFieldReducerActionsTypes.UPDATE_AFTER_SUBMIT,
+                idValue,
+                newValue: {
+                    id_value: null,
+                    value: 'updated value',
+                    raw_value: 'updated raw value',
+                    modified_at: null,
+                    created_at: null,
+                    created_by: mockModifier,
+                    modified_by: mockModifier,
+                    version: null,
+                    attribute: mockAttribute,
+                    metadata: null
+                }
+            }
+        );
+
+        expect(newState).toMatchObject({
+            isInheritedValue: true,
+            isInheritedOverrideValue: true,
+            isInheritedNotOverrideValue: false,
+            inheritedValue: {
+                raw_value: 'inheritedRawValue',
+                value: 'inheritedValue'
+            }
+        });
+    });
+
     test('UPDATE_AFTER_SUBMIT on new value', async () => {
         const newState = standardFieldValueReducer(
             _getInitialStateWithValues({[newValueId]: {...mockValue, state: StandardFieldValueState.DIRTY}}),
@@ -284,6 +344,38 @@ describe('standardFieldReducer', () => {
         expect(newStateValues[idValue]).toBeUndefined();
     });
 
+    test('UPDATE_AFTER_DELETE on inherited value, it should toggle override flag', async () => {
+        const newState = standardFieldValueReducer(
+            _getInitialStateWithValues(
+                {
+                    [idValue]: {
+                        ...mockValue
+                    }
+                },
+                {
+                    isInheritedValue: true,
+                    isInheritedOverrideValue: true,
+                    isInheritedNotOverrideValue: false,
+                    inheritedValue: {value: 'inheritedValue', raw_value: 'inheritedRawValue'}
+                }
+            ),
+            {
+                type: StandardFieldReducerActionsTypes.UPDATE_AFTER_DELETE,
+                idValue
+            }
+        );
+
+        expect(newState).toMatchObject({
+            isInheritedValue: true,
+            isInheritedOverrideValue: false,
+            isInheritedNotOverrideValue: true,
+            inheritedValue: {
+                raw_value: 'inheritedRawValue',
+                value: 'inheritedValue'
+            }
+        });
+    });
+
     test('UPDATE_AFTER_DELETE if only one value', async () => {
         const newState = standardFieldValueReducer(_getInitialStateWithValues({[idValue]: {...mockValue}}), {
             type: StandardFieldReducerActionsTypes.UPDATE_AFTER_DELETE,
@@ -326,6 +418,40 @@ describe('standardFieldReducer', () => {
             ...mockValue,
             editingValue: 'my raw value',
             state: StandardFieldValueState.PRISTINE
+        });
+    });
+
+    test('CANCEL_EDITING on inherited value, it should toggle override flag', async () => {
+        const newState = standardFieldValueReducer(
+            _getInitialStateWithValues(
+                {
+                    [newValueId]: {
+                        ...mockValue,
+                        editingValue: 'raw value modified',
+                        state: StandardFieldValueState.DIRTY
+                    }
+                },
+                {
+                    isInheritedValue: true,
+                    isInheritedOverrideValue: true,
+                    isInheritedNotOverrideValue: false,
+                    inheritedValue: {value: 'inheritedValue', raw_value: 'inheritedRawValue'}
+                }
+            ),
+            {
+                type: StandardFieldReducerActionsTypes.CANCEL_EDITING,
+                idValue: newValueId
+            }
+        );
+
+        expect(newState).toMatchObject({
+            isInheritedValue: true,
+            isInheritedOverrideValue: false,
+            isInheritedNotOverrideValue: true,
+            inheritedValue: {
+                raw_value: 'inheritedRawValue',
+                value: 'inheritedValue'
+            }
         });
     });
 
@@ -469,5 +595,75 @@ describe('standardFieldReducer', () => {
         expect(newState.values[FieldScope.INHERITED].version).toBe(valuesVersion);
         expect(newState.values[FieldScope.INHERITED].values['123456']).toBeDefined();
         expect(newState.values[FieldScope.CURRENT].values[newValueId]).toBeDefined();
+    });
+
+    describe('computeInitialState', () => {
+        test('_computeInheritedFlags on not inherited value', async () => {
+            const state = computeInitialState({
+                element: {
+                    values: [{isInherited: false}],
+                    attribute: {
+                        format: AttributeFormat.date_range
+                    }
+                }
+            } as any);
+
+            expect(state).toMatchObject({
+                isInheritedValue: false,
+                isInheritedOverrideValue: false,
+                isInheritedNotOverrideValue: false,
+                inheritedValue: null
+            });
+        });
+
+        test('_computeInheritedFlags on inherited value not override yet', async () => {
+            const state = computeInitialState({
+                element: {
+                    values: [
+                        {isInherited: true, value: 'testValue', raw_value: 'testRawValue'},
+                        {isInherited: false, value: null, raw_value: null}
+                    ],
+                    attribute: {
+                        format: AttributeFormat.date_range
+                    }
+                }
+            } as any);
+
+            expect(state).toMatchObject({
+                isInheritedValue: true,
+                isInheritedOverrideValue: false,
+                isInheritedNotOverrideValue: true,
+                inheritedValue: {
+                    isInherited: true,
+                    value: 'testValue',
+                    raw_value: 'testRawValue'
+                }
+            });
+        });
+
+        test('_computeInheritedFlags on inherited override value', async () => {
+            const state = computeInitialState({
+                element: {
+                    values: [
+                        {isInherited: true, value: 'testValue', raw_value: 'testRawValue'},
+                        {isInherited: false, value: 'override_testValue', raw_value: 'override_testRawValue'}
+                    ],
+                    attribute: {
+                        format: AttributeFormat.date_range
+                    }
+                }
+            } as any);
+
+            expect(state).toMatchObject({
+                isInheritedValue: true,
+                isInheritedOverrideValue: true,
+                isInheritedNotOverrideValue: false,
+                inheritedValue: {
+                    isInherited: true,
+                    value: 'testValue',
+                    raw_value: 'testRawValue'
+                }
+            });
+        });
     });
 });
