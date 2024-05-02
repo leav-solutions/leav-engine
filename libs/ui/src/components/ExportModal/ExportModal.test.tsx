@@ -6,11 +6,9 @@ import {ExportDocument} from '_ui/_gqlTypes';
 import {render, screen} from '_ui/_tests/testUtils';
 import ExportModal from './ExportModal';
 
-jest.mock('_ui/components/AttributesSelectionList', () => {
-    return function AttributesSelectionList() {
+jest.mock('_ui/components/AttributesSelectionList', () => function AttributesSelectionList() {
         return <div>AttributesSelectionList</div>;
-    };
-});
+    });
 
 describe('ExportModal', () => {
     test('Run export', async () => {

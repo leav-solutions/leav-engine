@@ -78,7 +78,7 @@ describe('TriggerPreviewsGenerationModal', () => {
             }
         ];
 
-        render(<TriggerPreviewsGenerationModal libraryId={'files'} recordIds={['123456']} onClose={jest.fn()} />, {
+        render(<TriggerPreviewsGenerationModal libraryId="files" recordIds={['123456']} onClose={jest.fn()} />, {
             mocks
         });
 
@@ -104,8 +104,7 @@ describe('TriggerPreviewsGenerationModal', () => {
                     query: getLibraryPreviewsSettingsQuery,
                     variables: {id: 'files'}
                 },
-                result: () => {
-                    return {
+                result: () => ({
                         data: {
                             libraries: {
                                 list: [
@@ -116,8 +115,7 @@ describe('TriggerPreviewsGenerationModal', () => {
                                 ]
                             }
                         }
-                    };
-                }
+                    })
             },
             {
                 request: {

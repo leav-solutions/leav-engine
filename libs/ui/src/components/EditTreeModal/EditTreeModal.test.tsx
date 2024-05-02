@@ -11,13 +11,9 @@ import EditTreeModal from './EditTreeModal';
 
 jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
 
-jest.mock('../LibraryPicker', () => {
-    return {
-        LibraryPicker: () => {
-            return <div>LibraryPicker</div>;
-        }
-    };
-});
+jest.mock('../LibraryPicker', () => ({
+        LibraryPicker: () => <div>LibraryPicker</div>
+    }));
 
 describe('EditTreeModal', () => {
     const mockResultIsAllowed: Mockify<typeof gqlTypes.useIsAllowedQuery> = {

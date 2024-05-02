@@ -103,11 +103,9 @@ function CreateRecordFormContainer({
 
     const [createRecord] = useMutation<CREATE_RECORD, CREATE_RECORDVariables>(createRecordQuery);
 
-    const _extractRecordIdentity = useCallback((dataQueryRes: IGetRecordData): RecordIdentity_whoAmI => {
-        return dataQueryRes && dataQueryRes.record.list[0].whoAmI
+    const _extractRecordIdentity = useCallback((dataQueryRes: IGetRecordData): RecordIdentity_whoAmI => dataQueryRes && dataQueryRes.record.list[0].whoAmI
             ? dataQueryRes.record.list[0].whoAmI
-            : {id: '', library: {id: '', label: null}, label: null, color: null, preview: null};
-    }, []);
+            : {id: '', library: {id: '', label: null}, label: null, color: null, preview: null}, []);
 
     useEffect(() => {
         if (onIdentityUpdate && data && data.record && data.record.list.length) {
@@ -139,8 +137,7 @@ function CreateRecordFormContainer({
                 return allValues;
             }, []);
 
-        const _executeSaveValue = (idRecord: string) => {
-            return saveValueBatch({
+        const _executeSaveValue = (idRecord: string) => saveValueBatch({
                 variables: {
                     library: library.id,
                     recordId: idRecord,
@@ -148,7 +145,6 @@ function CreateRecordFormContainer({
                     values: submittedValues
                 }
             });
-        };
 
         let saveValuesRes;
         const resCreaRecord = await createRecord({

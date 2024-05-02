@@ -429,9 +429,7 @@ function StandardFieldValue({
                 const valuesList = (attribute?.values_list as IDateRangeValuesListConf)?.dateRangeValues ?? [];
 
                 values = valuesList
-                    .filter(val => {
-                        return fieldValue.state === StandardFieldValueState.PRISTINE || !fieldValue.editingValue;
-                    })
+                    .filter(val => fieldValue.state === StandardFieldValueState.PRISTINE || !fieldValue.editingValue)
                     .map(v => {
                         const rangeValue = {
                             from: moment(Number(v.from) * 1000).format('L'),
@@ -446,14 +444,12 @@ function StandardFieldValue({
                 const valuesList = (attribute?.values_list as IStringValuesListConf)?.values ?? [];
 
                 values = valuesList
-                    .filter(val => {
-                        return (
+                    .filter(val => (
                             fieldValue.state === StandardFieldValueState.PRISTINE ||
                             !fieldValue.editingValue ||
                             attribute.format === AttributeFormat.date ||
                             val.match(new RegExp(String(fieldValue.editingValue), 'i'))
-                        );
-                    })
+                        ))
                     .map(v => ({value: v, rawValue: v}));
             }
         }

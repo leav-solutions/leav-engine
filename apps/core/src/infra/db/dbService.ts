@@ -76,20 +76,18 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.infra.db': db = null,
     'core.utils': utils = null,
     config = null
 }: IDeps = {}): IDbService {
-    const collectionExists = async function(name: string): Promise<boolean> {
+    const collectionExists = async function (name: string): Promise<boolean> {
         const collections = await db.listCollections();
 
         return collections.reduce((exists, c) => exists || c.name === name, false);
     };
 
-    const _sleep = (ms: number): Promise<void> => {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    };
+    const _sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
 
     return {
         db,
@@ -111,9 +109,7 @@ export default function({
 
                     // Generate a hash from the query to be able
                     // to group identical queries (exact same query with exact same params)
-                    const queryKey = createHash('md5')
-                        .update(JSON.stringify(query))
-                        .digest('base64');
+                    const queryKey = createHash('md5').update(JSON.stringify(query)).digest('base64');
 
                     if (!dbProfiler.queries) {
                         dbProfiler.queries = {};

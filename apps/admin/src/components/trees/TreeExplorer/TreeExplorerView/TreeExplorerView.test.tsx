@@ -6,13 +6,11 @@ import React from 'react';
 import {mockTree} from '__mocks__/trees';
 import TreeExplorerView from './TreeExplorerView';
 
-jest.mock('react-sortable-tree', () => {
-    return {
+jest.mock('react-sortable-tree', () => ({
         SortableTreeWithoutDndContext() {
             return <div>MOCK TestComponent</div>;
         }
-    };
-});
+    }));
 
 jest.mock('hooks/useLang');
 

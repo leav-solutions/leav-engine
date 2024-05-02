@@ -8,11 +8,9 @@ import Container from '../../uiElements/Container';
 import StandardField from '../../uiElements/StandardField';
 import {extractFormElements} from './extractFormElements';
 
-jest.mock('../../uiElements/StandardField', () => {
-    return function MockStandardField() {
+jest.mock('../../uiElements/StandardField', () => function MockStandardField() {
         return <div>StandardField</div>;
-    };
-});
+    });
 
 describe('extractFormElements', () => {
     test('Return form elements grouped by container', async () => {

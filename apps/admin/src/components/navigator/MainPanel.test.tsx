@@ -90,23 +90,17 @@ const errorMocks = [
     }
 ];
 
-jest.mock('./TopPanel', () => {
-    return function TopPanel() {
+jest.mock('./TopPanel', () => function TopPanel() {
         return <div>TopPanel</div>;
-    };
-});
+    });
 
-jest.mock('./FiltersPanel', () => {
-    return function FiltersPanel() {
+jest.mock('./FiltersPanel', () => function FiltersPanel() {
         return <div>FiltersPanel</div>;
-    };
-});
+    });
 
-jest.mock('./ListPanel', () => {
-    return function ListPanel() {
+jest.mock('./ListPanel', () => function ListPanel() {
         return <div>ListPanel</div>;
-    };
-});
+    });
 
 describe('<MainPanel />', () => {
     describe('Query states', () => {

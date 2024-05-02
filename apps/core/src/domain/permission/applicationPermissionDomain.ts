@@ -22,8 +22,8 @@ export default function ({
         applicationId,
         userId,
         ctx
-    }: IGetApplicationPermissionParams): Promise<boolean> => {
-        return globalPermHelper.getGlobalPermission(
+    }: IGetApplicationPermissionParams): Promise<boolean> =>
+        globalPermHelper.getGlobalPermission(
             {
                 type: PermissionTypes.APPLICATION,
                 action,
@@ -32,15 +32,14 @@ export default function ({
             },
             ctx
         );
-    };
 
     const getInheritedApplicationPermission = async ({
         action,
         applicationId,
         userGroupId,
         ctx
-    }: IGetInheritedApplicationPermissionParams): Promise<boolean> => {
-        return globalPermHelper.getInheritedGlobalPermission(
+    }: IGetInheritedApplicationPermissionParams): Promise<boolean> =>
+        globalPermHelper.getInheritedGlobalPermission(
             {
                 type: PermissionTypes.APPLICATION,
                 action,
@@ -49,7 +48,6 @@ export default function ({
             },
             ctx
         );
-    };
 
     return {
         getApplicationPermission,

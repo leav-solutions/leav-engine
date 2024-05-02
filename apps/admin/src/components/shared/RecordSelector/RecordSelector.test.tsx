@@ -7,11 +7,9 @@ import {act, render, screen} from '_tests/testUtils';
 import {mockRecord} from '__mocks__/common/records';
 import RecordSelector from './RecordSelector';
 
-jest.mock('components/records/SelectRecordModal', () => {
-    return function SelectRecordModal() {
+jest.mock('components/records/SelectRecordModal', () => function SelectRecordModal() {
         return <div>SelectRecordModal</div>;
-    };
-});
+    });
 
 jest.mock('hooks/useLang');
 

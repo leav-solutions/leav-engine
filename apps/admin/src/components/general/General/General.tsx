@@ -34,13 +34,11 @@ function General(): JSX.Element {
         panes.push({
             key: 'admin_permissions',
             menuItem: t('general.admin_permissions'),
-            render: () => {
-                return (
+            render: () => (
                     <Tab.Pane key="permissions" className="grow flex-col height100">
                         <GeneralAdminPermissionsTab />
                     </Tab.Pane>
-                );
-            }
+                )
         });
     }
 
@@ -48,13 +46,11 @@ function General(): JSX.Element {
         panes.push({
             key: 'customization',
             menuItem: t('general.customization.title'),
-            render: () => {
-                return (
+            render: () => (
                     <Tab.Pane key="customization" className="grow flex-col height100">
                         <GeneralCustomizationTab />
                     </Tab.Pane>
-                );
-            }
+                )
         });
     }
 
@@ -62,13 +58,11 @@ function General(): JSX.Element {
         panes.push({
             key: 'api_keys',
             menuItem: t('general.api_keys'),
-            render: () => {
-                return (
+            render: () => (
                     <Tab.Pane key="api_keys" className="grow flex-col">
                         <GeneralApiKeysTab />
                     </Tab.Pane>
-                );
-            }
+                )
         });
     }
 

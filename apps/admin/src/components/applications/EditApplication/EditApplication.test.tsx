@@ -8,23 +8,17 @@ import {Mockify} from '_types/Mockify';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import EditApplication, {IEditApplicationMatchParams} from './EditApplication';
 
-jest.mock('./EditApplicationTabs/InfosTab', () => {
-    return function InfosTab() {
+jest.mock('./EditApplicationTabs/InfosTab', () => function InfosTab() {
         return <div>InfosTab</div>;
-    };
-});
+    });
 
-jest.mock('./EditApplicationTabs/PermissionsTab', () => {
-    return function PermissionsTab() {
+jest.mock('./EditApplicationTabs/PermissionsTab', () => function PermissionsTab() {
         return <div>PermissionsTab</div>;
-    };
-});
+    });
 
-jest.mock('./EditApplicationTabs/SettingsTab', () => {
-    return function SettingsTab() {
+jest.mock('./EditApplicationTabs/SettingsTab', () => function SettingsTab() {
         return <div>SettingsTab</div>;
-    };
-});
+    });
 
 jest.mock('react-router-v5', () => ({
     ...jest.requireActual('react-router-v5'),

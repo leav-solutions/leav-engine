@@ -5,11 +5,9 @@ import React from 'react';
 import {render, screen} from '_tests/testUtils';
 import Header from './Header';
 
-jest.mock('components/applications/ApplicationsSwitcher', () => {
-    return function ApplicationsSwitcher() {
+jest.mock('components/applications/ApplicationsSwitcher', () => function ApplicationsSwitcher() {
         return <div>ApplicationsSwitcher</div>;
-    };
-});
+    });
 
 describe('Header', () => {
     test('Render menu', async () => {

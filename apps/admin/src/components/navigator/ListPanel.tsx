@@ -33,21 +33,15 @@ function List({state, dispatch}: IListProps) {
     const {t} = useTranslation();
     const isSelectable = state.selectable;
 
-    const getHandleSelectionChanged = useMemo(() => {
-        return entity => (event, data) => {
+    const getHandleSelectionChanged = useMemo(() => entity => (event, data) => {
             const actionType = data.checked ? ActionTypes.SELECTION_ADD : ActionTypes.SELECTION_REMOVE;
             dispatch({
                 type: actionType,
                 data: entity.whoAmI
             });
-        };
-    }, [dispatch]);
+        }, [dispatch]);
 
-    const isSelected = useMemo(() => {
-        return idToSearch => {
-            return state.selection.find(elementInSelection => elementInSelection.id === idToSearch) !== undefined;
-        };
-    }, [state.selection]);
+    const isSelected = useMemo(() => idToSearch => state.selection.find(elementInSelection => elementInSelection.id === idToSearch) !== undefined, [state.selection]);
 
     const onEdit = useMemo(() => {
         const callback = state.onEditRecordClick ? state.onEditRecordClick : () => undefined;
@@ -81,9 +75,7 @@ function List({state, dispatch}: IListProps) {
             ? Math.floor(state.totalCount / state.selectedOffset) + (state.totalCount % state.selectedOffset ? 1 : 0)
             : 1;
 
-    const limitOptions = state.availableOffsets.map(x => {
-        return {text: x.toString(), value: x};
-    });
+    const limitOptions = state.availableOffsets.map(x => ({text: x.toString(), value: x}));
 
     return (
         <Table className={styles.ListPanelTable} selectable celled>

@@ -64,7 +64,7 @@ const Libraries = ({history}: ILibrariesProps): JSX.Element => {
                 </Grid.Column>
                 {userData.permissions[PermissionsActions.admin_create_library] && (
                     <Grid.Column floated="right" width={6} textAlign="right" verticalAlign="middle">
-                        <Button primary icon labelPosition="left" size="medium" as={Link} to={'/libraries/edit'}>
+                        <Button primary icon labelPosition="left" size="medium" as={Link} to="/libraries/edit">
                             <Icon name="plus" />
                             {t('libraries.new')}
                         </Button>

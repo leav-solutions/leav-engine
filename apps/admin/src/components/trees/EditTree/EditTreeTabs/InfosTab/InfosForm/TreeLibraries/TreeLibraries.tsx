@@ -91,8 +91,7 @@ function TreeLibraries({onChange, libraries, readonly}: ITreeLibrariesProps): JS
                     </Grid.Column>
                 )}
             </Grid>
-            {libraries.map((treeLib, index) => {
-                return (
+            {libraries.map((treeLib, index) => (
                     <Segment key={index}>
                         <Grid columns={3} stackable>
                             <Grid.Row verticalAlign="middle">
@@ -137,8 +136,7 @@ function TreeLibraries({onChange, libraries, readonly}: ITreeLibrariesProps): JS
                             </Grid.Row>
                         </Grid>
                     </Segment>
-                );
-            })}
+                ))}
         </>
     );
 }

@@ -27,14 +27,12 @@ function PermissionsContent({tree, readonly, onSubmitSettings}: IPermissionsCont
             menuItem: t('permissions.tree_tab_name'),
             render: () => (
                 <Tab.Pane key="treePermissions" className="grow flex-col height100">
-                    {
-                        <DefinePermByUserGroupView
+                    <DefinePermByUserGroupView
                             type={PermissionTypes.tree}
                             key="treePermissions"
                             applyTo={tree.id}
                             readOnly={readonly}
                         />
-                    }
                 </Tab.Pane>
             )
         }

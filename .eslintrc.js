@@ -2,11 +2,12 @@ require('@rushstack/eslint-patch/modern-module-resolution');
 
 module.exports = {
     env: {browser: true, node: true, es6: true},
-    ignorePatterns: ['**/_gqlTypes/*.ts', '**/dist/*'],
+    ignorePatterns: ['**/_gqlTypes/*.ts', '**/dist/*', '**/plugins/*'],
     parser: '@typescript-eslint/parser',
     parserOptions: {tsconfigRootDir: __dirname},
     plugins: ['@typescript-eslint', 'react-app', 'react-refresh'],
     settings: {react: {version: 'latest'}},
+    extends: ['plugin:@aristid/recommended'],
     rules: {
         '@typescript-eslint/adjacent-overload-signatures': 'error',
         '@typescript-eslint/array-type': ['error', {default: 'array-simple', readonly: 'array-simple'}],

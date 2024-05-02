@@ -6,8 +6,6 @@ import React from 'react';
 import CustomIcon from '../../CustomIcon';
 import IconSvg from './ValueVersionsIcon.svg';
 
-const ValueVersionsIcon = (iconProps: Omit<ICustomIconProps, 'svg'>) => {
-    return <CustomIcon svg={String(IconSvg)} label="value versions" {...iconProps} />;
-};
+const ValueVersionsIcon = (iconProps: Omit<ICustomIconProps, 'svg'>) => <CustomIcon svg={String(IconSvg)} label="value versions" {...iconProps} />;
 
 export default ValueVersionsIcon;

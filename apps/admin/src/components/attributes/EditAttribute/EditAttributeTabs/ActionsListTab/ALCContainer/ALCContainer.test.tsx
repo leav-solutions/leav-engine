@@ -39,17 +39,13 @@ const actionsMock = [
 //     return undefined;
 // }
 
-const wait = () => {
-    return new Promise((res, rej) => {
+const wait = () => new Promise((res, rej) => {
         setTimeout(res, 200);
     });
-};
 
-jest.mock('../ALCList', () => {
-    return function ALCList() {
+jest.mock('../ALCList', () => function ALCList() {
         return <></>;
-    };
-});
+    });
 
 describe('ALCContainer', () => {
     test('renders the reserve and the list', () => {

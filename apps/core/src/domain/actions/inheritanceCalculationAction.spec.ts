@@ -9,15 +9,13 @@ import {AttributeTypes} from '../../_types/attribute';
 import inheritanceCalculationAction from './inheritanceCalculationAction';
 
 const mockCalculationsVariable = {
-    processVariableString: async (ctx: IActionsListContext, variable: string): Promise<IVariableValue[]> => {
-        return [
-            {
-                value: `${variable}Value`,
-                recordId: '1',
-                library: 'meh'
-            }
-        ];
-    }
+    processVariableString: async (ctx: IActionsListContext, variable: string): Promise<IVariableValue[]> => [
+        {
+            value: `${variable}Value`,
+            recordId: '1',
+            library: 'meh'
+        }
+    ]
 };
 
 const mockAttributeDomain: Mockify<IAttributeDomain> = {

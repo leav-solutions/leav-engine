@@ -11,10 +11,6 @@ export const routes = {
     settings: '/settings/:tabId?'
 };
 
-export const makeActiveLibraryRoute = (activeLibrary: IActiveLibrary) => {
-    return `/library/${activeLibrary.id}`;
-};
+export const makeActiveLibraryRoute = (activeLibrary: IActiveLibrary) => `/library/${activeLibrary.id}`;
 
-export const makeActiveTreeRoute = (activeTree: IActiveTree) => {
-    return `/tree/${activeTree.id}`;
-};
+export const makeActiveTreeRoute = (activeTree: IActiveTree) => `/tree/${activeTree.id}`;

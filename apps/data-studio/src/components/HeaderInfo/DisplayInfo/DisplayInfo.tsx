@@ -67,9 +67,7 @@ function DisplayInfo({
     triggerInfos,
     setTriggerInfos
 }: IDisplayInfoProps): JSX.Element {
-    const {stack} = useAppSelector(state => {
-        return {stack: state.info.stack};
-    });
+    const {stack} = useAppSelector(state => ({stack: state.info.stack}));
 
     useEffect(() => {
         if (triggerInfos.length) {

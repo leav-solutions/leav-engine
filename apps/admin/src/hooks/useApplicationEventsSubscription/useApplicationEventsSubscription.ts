@@ -9,8 +9,8 @@ import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
 import {ApplicationEventTypes} from '_gqlTypes/globalTypes';
 import {WithTypename} from '../../../../../libs/utils/src/types/helpers';
 
-const useApplicationEventsSubscription = (applicationId: string) => {
-    return useSubscription<APPLICATION_EVENTS, APPLICATION_EVENTSVariables>(getApplicationsEventsSubscription, {
+const useApplicationEventsSubscription = (applicationId: string) =>
+    useSubscription<APPLICATION_EVENTS, APPLICATION_EVENTSVariables>(getApplicationsEventsSubscription, {
         variables: {
             filters: {
                 applicationId
@@ -42,6 +42,5 @@ const useApplicationEventsSubscription = (applicationId: string) => {
             // });
         }
     });
-};
 
 export default useApplicationEventsSubscription;

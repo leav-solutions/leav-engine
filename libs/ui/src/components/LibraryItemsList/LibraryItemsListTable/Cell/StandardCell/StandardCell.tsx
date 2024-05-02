@@ -52,9 +52,7 @@ function StandardCell({cellData, values}: ISimpleCellProps): JSX.Element {
 
     const displayedValues = values.map(val => _getValueByFormat(val)).join(', ');
 
-    const _getTagStyle = (value: string) => {
-        return {color: getInvertColor('#' + value)};
-    };
+    const _getTagStyle = (value: string) => ({color: getInvertColor('#' + value)});
 
     const _getElementToDisplay = () => {
         switch (cellData.format) {

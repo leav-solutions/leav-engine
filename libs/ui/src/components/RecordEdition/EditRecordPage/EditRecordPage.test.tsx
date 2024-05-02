@@ -112,7 +112,7 @@ describe('EditRecordPage', () => {
 
         test('Should display a custom title', async () => {
             render(
-                <EditRecordPage library="test_lib" onClose={jest.fn()} record={mockRecord} title={'Custom title'} />
+                <EditRecordPage library="test_lib" onClose={jest.fn()} record={mockRecord} title="Custom title" />
             );
 
             expect(screen.getByText('Custom title')).toBeInTheDocument();
@@ -124,7 +124,7 @@ describe('EditRecordPage', () => {
                     library="test_lib"
                     onClose={jest.fn()}
                     record={mockRecord}
-                    title={'Custom title'}
+                    title="Custom title"
                     showRefreshButton={false}
                 />
             );
@@ -161,7 +161,7 @@ describe('EditRecordPage', () => {
                 library="test_lib"
                 onClose={jest.fn()}
                 record={mockRecord}
-                title={'Custom title'}
+                title="Custom title"
                 showRefreshButton={false}
             />
         );

@@ -5,11 +5,9 @@ import {shallow} from 'enzyme';
 import React from 'react';
 import AttributeCreationModal from './AttributeCreationModal';
 
-jest.mock('../EditAttribute', () => {
-    return function EditAttribute() {
+jest.mock('../EditAttribute', () => function EditAttribute() {
         return <div>Edit attribute</div>;
-    };
-});
+    });
 
 describe('AttributeCreationModal', () => {
     const onClose = jest.fn();

@@ -106,8 +106,8 @@ const _getSheetErrors = (sheet: ISheet): SheetSettingsError[] => {
     }, []);
 };
 
-const _getSettingsErrors = (sheets: ISheet[]) => {
-    return sheets.reduce((acc, s) => {
+const _getSettingsErrors = (sheets: ISheet[]) =>
+    sheets.reduce((acc, s) => {
         const sheetErrors = _getSheetErrors(s);
         if (sheetErrors.length) {
             acc[s.name] = sheetErrors;
@@ -115,7 +115,6 @@ const _getSettingsErrors = (sheets: ISheet[]) => {
 
         return acc;
     }, {});
-};
 
 const importReducer = (state: IImportReducerState, action: ImportReducerAction): IImportReducerState => {
     switch (action.type) {

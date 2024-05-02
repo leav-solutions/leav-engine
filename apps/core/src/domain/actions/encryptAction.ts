@@ -12,8 +12,8 @@ export default function (): IActionsListFunction {
         description: 'Encrypt value',
         input_types: [ActionsListIOTypes.STRING],
         output_types: [ActionsListIOTypes.STRING],
-        action: async values => {
-            return values.reduce(async (promAcc, valueElement) => {
+        action: async values =>
+            values.reduce(async (promAcc, valueElement) => {
                 const acc = await promAcc;
                 try {
                     if (valueElement.value === null) {
@@ -30,7 +30,6 @@ export default function (): IActionsListFunction {
                 }
 
                 return acc;
-            }, Promise.resolve({values: [], errors: []}));
-        }
+            }, Promise.resolve({values: [], errors: []}))
     };
 }

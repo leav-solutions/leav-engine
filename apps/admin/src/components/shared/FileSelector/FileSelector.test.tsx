@@ -6,11 +6,9 @@ import {LibraryBehavior} from '_gqlTypes/globalTypes';
 import {render, screen} from '_tests/testUtils';
 import FileSelector from './FileSelector';
 
-jest.mock('components/shared/RecordSelector', () => {
-    return function RecordSelector() {
+jest.mock('components/shared/RecordSelector', () => function RecordSelector() {
         return <div>RecordSelector</div>;
-    };
-});
+    });
 
 jest.mock('hooks/useLang');
 

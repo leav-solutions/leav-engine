@@ -357,9 +357,7 @@ describe('dbUtils', () => {
             };
 
             const mockDepsManager = {
-                build: depDefault => {
-                    return depDefault();
-                }
+                build: depDefault => depDefault()
             };
             (asFunction as jest.FunctionLike) = m => m;
 

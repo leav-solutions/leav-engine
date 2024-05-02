@@ -10,10 +10,8 @@ const CustomImg = styled.img`
     transform: translate(0px, -1px) rotate(90deg);
 `;
 
-export const IconEllipsisVertical = () => {
-    return (
+export const IconEllipsisVertical = () => (
         <div>
             <CustomImg src={IconSvg} alt="icon ellipsis vertical" />
         </div>
     );
-};

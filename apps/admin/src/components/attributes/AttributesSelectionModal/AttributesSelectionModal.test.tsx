@@ -11,11 +11,9 @@ import {mockAttrSimple} from '../../../__mocks__/attributes';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import AttributesSelectionModal from './AttributesSelectionModal';
 
-jest.mock('./AttributesSelectionList', () => {
-    return function AttributesSelectionList() {
+jest.mock('./AttributesSelectionList', () => function AttributesSelectionList() {
         return <div>AttributesSelectionList</div>;
-    };
-});
+    });
 
 describe('AttributesSelection', () => {
     test('Loading and success state', async () => {

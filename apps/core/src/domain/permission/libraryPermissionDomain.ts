@@ -22,8 +22,8 @@ export default function ({
         libraryId,
         userId,
         ctx
-    }: IGetLibraryPermissionParams): Promise<boolean> => {
-        return globalPermHelper.getGlobalPermission(
+    }: IGetLibraryPermissionParams): Promise<boolean> =>
+        globalPermHelper.getGlobalPermission(
             {
                 type: PermissionTypes.LIBRARY,
                 action,
@@ -32,15 +32,14 @@ export default function ({
             },
             ctx
         );
-    };
 
     const getInheritedLibraryPermission = async ({
         action,
         libraryId,
         userGroupId,
         ctx
-    }: IGetInheritedLibraryPermissionParams): Promise<boolean> => {
-        return globalPermHelper.getInheritedGlobalPermission(
+    }: IGetInheritedLibraryPermissionParams): Promise<boolean> =>
+        globalPermHelper.getInheritedGlobalPermission(
             {
                 type: PermissionTypes.LIBRARY,
                 action,
@@ -49,7 +48,6 @@ export default function ({
             },
             ctx
         );
-    };
 
     return {
         getLibraryPermission,

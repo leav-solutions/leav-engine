@@ -19,7 +19,7 @@ function AppIcon({style, size}: IAppIconProps): JSX.Element {
         huge: 1024
     };
 
-    return <img src={`/global-icon/${size}`} style={style} height={`${heightBySize[size]}px`} />;
+    return <img src={`/global-icon/${size}`} style={style} height={`${heightBySize[size]}px`} alt="" />;
 }
 
 export default AppIcon;

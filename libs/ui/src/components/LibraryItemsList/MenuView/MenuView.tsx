@@ -86,8 +86,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
         });
     };
 
-    const _getNewViewFromSearchState = (): ViewInput => {
-        return {
+    const _getNewViewFromSearchState = (): ViewInput => ({
             library: library.id,
             label: {
                 [defaultLang]: t('view.add-view.title', {lng: defaultLang})
@@ -110,8 +109,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
                     value: searchState.display.type === ViewTypes.list ? searchState.fields.map(f => f.key) : []
                 }
             ]
-        };
-    };
+        });
 
     const _saveView = async () => {
         if (searchState.view.current.id !== defaultView.id) {
@@ -233,7 +231,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
                     </Button>
                     <FiltersDropdown
                         libraryId={library.id}
-                        button={<Button icon={<PlusOutlined />} type={'default'} />}
+                        button={<Button icon={<PlusOutlined />} type="default" />}
                         attributes={library.attributes}
                         trees={library.linkedTrees}
                         libraries={[]}

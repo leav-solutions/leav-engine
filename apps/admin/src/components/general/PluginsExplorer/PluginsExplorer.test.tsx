@@ -10,17 +10,13 @@ import MockedLangContextProvider from '__mocks__/MockedLangContextProvider';
 import MockedUserContextProvider from '__mocks__/MockedUserContextProvider';
 import PluginsExplorer from './PluginsExplorer';
 
-const wait = () => {
-    return new Promise((res, rej) => {
+const wait = () => new Promise((res, rej) => {
         setTimeout(res, 0);
     });
-};
 
-jest.mock('./PluginsList', () => {
-    return function PluginsList(props) {
+jest.mock('./PluginsList', () => function PluginsList(props) {
         return <div>MOCK PluginsList</div>;
-    };
-});
+    });
 
 const pluginData = {
     author: '',

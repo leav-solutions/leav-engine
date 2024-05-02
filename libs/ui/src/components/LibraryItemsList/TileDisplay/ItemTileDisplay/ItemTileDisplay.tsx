@@ -285,7 +285,7 @@ function ItemTileDisplay({item}: IItemTileDisplayProps): JSX.Element {
                                     </Tooltip>
                                     <Tooltip title={t('global.edit')} key="edit">
                                         <EditRecordBtn
-                                            shape={'circle'}
+                                            shape="circle"
                                             record={item.whoAmI}
                                             valuesVersion={searchState.valuesVersions}
                                         />

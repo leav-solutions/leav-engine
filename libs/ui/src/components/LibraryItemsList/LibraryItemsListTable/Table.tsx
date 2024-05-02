@@ -183,9 +183,7 @@ const Table = () => {
 
         const columns = [...startColumns, ...columnsFromFields];
 
-        setTableColumns(currentColumns => {
-            return !isEqual(currentColumns, columns) ? columns : currentColumns;
-        });
+        setTableColumns(currentColumns => !isEqual(currentColumns, columns) ? columns : currentColumns);
     }, [searchState.fields, searchState.attributes, t]);
 
     // data

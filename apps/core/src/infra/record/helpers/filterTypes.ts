@@ -9,24 +9,21 @@ export interface IFilterTypesHelper {
     isCountFilter(filter: IRecordFilterOption): boolean;
 }
 
-export default function(): IFilterTypesHelper {
-    const _isAttributeFilter = (filter: IRecordFilterOption) => {
-        return (filter as IRecordFilterOption).condition in AttributeCondition;
-    };
+export default function (): IFilterTypesHelper {
+    const _isAttributeFilter = (filter: IRecordFilterOption) =>
+        (filter as IRecordFilterOption).condition in AttributeCondition;
 
-    const _isClassifyingFilter = (filter: IRecordFilterOption) => {
-        return (filter as IRecordFilterOption).condition in TreeCondition;
-    };
+    const _isClassifyingFilter = (filter: IRecordFilterOption) =>
+        (filter as IRecordFilterOption).condition in TreeCondition;
 
-    const _isCountFilter = (filter: IRecordFilterOption) => {
-        return [
+    const _isCountFilter = (filter: IRecordFilterOption) =>
+        [
             AttributeCondition.VALUES_COUNT_EQUAL,
             AttributeCondition.VALUES_COUNT_GREATER_THAN,
             AttributeCondition.VALUES_COUNT_LOWER_THAN,
             AttributeCondition.IS_EMPTY,
             AttributeCondition.IS_NOT_EMPTY
         ].includes(filter.condition as AttributeCondition);
-    };
 
     return {
         isAttributeFilter: _isAttributeFilter,

@@ -39,9 +39,7 @@ const EditLibrary = ({match: routeMatch}: IEditLibraryProps): JSX.Element => {
         return <ErrorDisplay type={ErrorDisplayTypes.PERMISSION_ERROR} />;
     }
 
-    const _getEditLibraryTabs = (libToEdit: GET_LIB_BY_ID_libraries_list | null) => {
-        return <EditLibraryTabs library={libToEdit} readOnly={readOnly} />;
-    };
+    const _getEditLibraryTabs = (libToEdit: GET_LIB_BY_ID_libraries_list | null) => <EditLibraryTabs library={libToEdit} readOnly={readOnly} />;
 
     if (loading) {
         return <Loading />;

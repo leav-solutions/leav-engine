@@ -220,11 +220,9 @@ function FormElementWrapper({element, index, dispatch, state}: IFieldWrapperProp
                     <Button onClick={_handleSettingsClick}>
                         <Icon name="cog" />
                     </Button>
-                    {
-                        <Button onClick={_handleDeleteClick}>
+                    <Button onClick={_handleDeleteClick}>
                             <Icon name="cancel" />
                         </Button>
-                    }
                 </HoverBtnGroup>
             )}
             {!element.herited && !readonly && (

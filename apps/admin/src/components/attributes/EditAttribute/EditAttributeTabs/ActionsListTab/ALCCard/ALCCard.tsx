@@ -85,9 +85,7 @@ function ALCCard({
         collect: monitor => ({
             isDragging: !!monitor.isDragging()
         }),
-        canDrag: monitor => {
-            return !blockedCard;
-        }
+        canDrag: monitor => !blockedCard
     });
 
     const [{isOver}, drop] = useDrop({

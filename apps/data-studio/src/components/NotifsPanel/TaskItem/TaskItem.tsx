@@ -59,7 +59,7 @@ function TaskItem({notif, index, onNotifInfoClick, onCancel, onDelete}: ITaskIte
                             okText={t('global.yes')}
                             cancelText={t('global.no')}
                         >
-                            <Button data-testid="cancelBtn" key={`${task.id}CancelBtn`} size={'small'}>
+                            <Button data-testid="cancelBtn" key={`${task.id}CancelBtn`} size="small">
                                 {t('notifications.task-cancel')}
                             </Button>{' '}
                         </Popconfirm>
@@ -68,7 +68,7 @@ function TaskItem({notif, index, onNotifInfoClick, onCancel, onDelete}: ITaskIte
                             data-testid="deleteBtn"
                             key={`${task.id}DelBtn`}
                             icon={<DeleteOutlined />}
-                            size={'small'}
+                            size="small"
                             onClick={() => onDelete(notif)}
                         />
                     )
@@ -84,7 +84,7 @@ function TaskItem({notif, index, onNotifInfoClick, onCancel, onDelete}: ITaskIte
                             shape="circle"
                             icon={<DownloadOutlined />}
                             href={getFileUrl(task.link.url)}
-                            size={'large'}
+                            size="large"
                         />
                     ) : (
                         <WrapperProgress $isCanceled={task.status === TaskStatus.CANCELED}>
@@ -112,7 +112,7 @@ function TaskItem({notif, index, onNotifInfoClick, onCancel, onDelete}: ITaskIte
                 }
             />
             {!ellipsis && (
-                <Space style={{fontSize: 12}} direction="vertical" size={0} align={'baseline'}>
+                <Space style={{fontSize: 12}} direction="vertical" size={0} align="baseline">
                     {!!task.startedAt ? (
                         <Typography.Text>
                             {`${t('notifications.task-startedAt')} ${new Date(task.startedAt * 1000).toLocaleString()}`}

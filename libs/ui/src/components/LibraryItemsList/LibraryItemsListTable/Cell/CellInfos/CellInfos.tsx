@@ -35,7 +35,7 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
             title: t('global.details'),
             button: (
                 <EditRecordBtn
-                    shape={'circle'}
+                    shape="circle"
                     record={record}
                     size={menuBtnSize}
                     valuesVersion={searchState.valuesVersions}

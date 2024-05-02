@@ -35,16 +35,14 @@ const PluginsList = ({plugins, loading}: IPluginsListProps): JSX.Element => {
                         </Table.Row>
                     )}
                     {plugins.length ? (
-                        plugins.map(p => {
-                            return (
+                        plugins.map(p => (
                                 <Table.Row key={p.name}>
                                     <Table.Cell>{p.name}</Table.Cell>
                                     <Table.Cell>{p.description}</Table.Cell>
                                     <Table.Cell>{p.version}</Table.Cell>
                                     <Table.Cell>{p.author}</Table.Cell>
                                 </Table.Row>
-                            );
-                        })
+                            ))
                     ) : (
                         <Table.Row textAlign="center" disabled>
                             <Table.Cell colSpan={6}>{t('plugins.no_plugins')}</Table.Cell>

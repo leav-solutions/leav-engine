@@ -50,8 +50,7 @@ function NodePermissionTabContent({
               menuItem: localizedLabel(a.label, lang),
               render: () => (
                   <Tab.Pane key="treePermissions" className="grow flex-col height100">
-                      {
-                          <DefineTreePermissionsView
+                      <DefineTreePermissionsView
                               key={a.id}
                               treeAttribute={
                                   a as GET_TREE_BY_ID_trees_list_permissions_conf_permissionsConf_permissionTreeAttributes_TreeAttribute
@@ -60,7 +59,6 @@ function NodePermissionTabContent({
                               applyTo={`${tree.id}/${treeLibraries.library.id}`}
                               readOnly={readonly}
                           />
-                      }
                   </Tab.Pane>
               )
           }))
@@ -71,14 +69,12 @@ function NodePermissionTabContent({
         menuItem: t('permissions.library_tab_name'),
         render: () => (
             <Tab.Pane key="libPermissions" className="grow flex-col height100">
-                {
-                    <DefinePermByUserGroupView
+                <DefinePermByUserGroupView
                         type={PermissionTypes.tree_library}
                         key="libPermissions"
                         applyTo={`${tree.id}/${treeLibraries.library.id}`}
                         readOnly={readonly}
                     />
-                }
             </Tab.Pane>
         )
     });

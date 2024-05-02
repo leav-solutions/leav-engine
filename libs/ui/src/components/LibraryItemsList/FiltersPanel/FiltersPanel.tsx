@@ -87,8 +87,7 @@ function FiltersPanel(): JSX.Element {
         }
 
         const newFilter = searchState.filters
-            .map(filter => {
-                return {
+            .map(filter => ({
                     ...filter,
                     index:
                         result.source.index === filter.index
@@ -96,8 +95,7 @@ function FiltersPanel(): JSX.Element {
                             : result.destination.index === filter.index
                             ? result.source.index
                             : filter.index
-                };
-            })
+                }))
             .sort((a, b) => a.index - b.index);
 
         searchDispatch({
@@ -157,7 +155,7 @@ function FiltersPanel(): JSX.Element {
 
             <FiltersWrapper>
                 <DragDropContext onDragEnd={onDragEnd}>
-                    <Droppable droppableId={'droppable'}>
+                    <Droppable droppableId="droppable">
                         {providedDroppable => (
                             <ListFilters {...providedDroppable.droppableProps} ref={providedDroppable.innerRef}>
                                 {filtersSorted.map(filter => (

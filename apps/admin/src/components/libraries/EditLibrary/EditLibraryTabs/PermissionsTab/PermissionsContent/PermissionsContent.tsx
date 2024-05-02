@@ -78,15 +78,13 @@ function PermissionsContent({library, onSubmitSettings, readonly}: IPermissionsC
         menuItem: t('permissions.default'),
         render: () => (
             <Tab.Pane key="libPermissions" className="grow flex-col height100">
-                {
-                    <DefinePermByUserGroupView
+                <DefinePermByUserGroupView
                         type={PermissionTypes.library}
                         key="libPermissions"
                         actions={groupedLibraryPermissions}
                         applyTo={library.id}
                         readOnly={readonly}
                     />
-                }
             </Tab.Pane>
         )
     });

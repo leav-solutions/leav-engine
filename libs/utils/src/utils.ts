@@ -13,13 +13,10 @@ import {AttributeType} from './types/attributes';
 import {FileType} from './types/files';
 import {IKeyValue} from './types/helpers';
 
-export const getGraphqlTypeFromLibraryName = (library: string): string => {
-    return flow([camelCase, upperFirst, trimEnd, partialRight(trimEnd, 's')])(library);
-};
+export const getGraphqlTypeFromLibraryName = (library: string): string =>
+    flow([camelCase, upperFirst, trimEnd, partialRight(trimEnd, 's')])(library);
 
-export const getGraphqlQueryNameFromLibraryName = (library: string): string => {
-    return flow([camelCase, trimEnd])(library);
-};
+export const getGraphqlQueryNameFromLibraryName = (library: string): string => flow([camelCase, trimEnd])(library);
 
 export const isFileAllowed = (fsPath: string, allowList: string[], ignoreList: string[], filePath: string): boolean => {
     // if allowPatterns is empty it's an implicit allow of all files
@@ -146,23 +143,21 @@ export const extractArgsFromString = (mapping: string): {[arg: string]: string} 
     return args.reduce((acc, value) => ({...acc, [value[0]]: value[1] ?? true}), {});
 };
 
-export const objectToNameValueArray = <T>(obj: IKeyValue<T>): Array<{name: string; value: T}> => {
-    return Object.keys(obj ?? {}).map(key => ({name: key, value: obj[key]}));
-};
+export const objectToNameValueArray = <T>(obj: IKeyValue<T>): Array<{name: string; value: T}> =>
+    Object.keys(obj ?? {}).map(key => ({name: key, value: obj[key]}));
 
 export const nameValArrayToObj = (
     arr: Array<{}> = [],
     keyFieldName = 'name',
     valueFieldName = 'value'
-): {[key: string]: any} => {
-    return Array.isArray(arr) && arr.length
+): {[key: string]: any} =>
+    Array.isArray(arr) && arr.length
         ? arr.reduce((formattedElem, elem) => {
               formattedElem[elem[keyFieldName]] = elem[valueFieldName];
 
               return formattedElem;
           }, {})
         : null;
-};
 
 export const getFileType = (fileName: string): FileType => {
     if (!fileName) {
@@ -239,8 +234,8 @@ export const _getInitialEngine = (words: string[], length: number) => {
  * @param id
  * @returns formatted ID
  */
-export const slugifyString = (id: string, separator: '-' | '_' = '_'): string => {
-    return id
+export const slugifyString = (id: string, separator: '-' | '_' = '_'): string =>
+    id
         .normalize('NFD') // Decompose the string in the base and the accents
         .toLowerCase() // Lowercase the string
         .replace(/[\u0300-\u036f]/g, '') // Remove accents
@@ -250,7 +245,6 @@ export const slugifyString = (id: string, separator: '-' | '_' = '_'): string =>
         .replace(new RegExp(`${separator}${separator}+`, 'g'), separator) // Remove double underscores
         .replace(new RegExp(`${separator}$`, 'g'), '') // Remove separator at the end
         .replace(new RegExp(`^${separator}`, 'g'), ''); // Remove underscore at the beginning
-};
 
 /**
  * Returns a hash code from a string
@@ -286,9 +280,7 @@ export const getFlagByLang = (lang: string): string => {
     return flagsByLang[lang] ?? '';
 };
 
-export const getLogsIndexName = (instanceId: string): string => {
-    return `logs-${instanceId}`;
-};
+export const getLogsIndexName = (instanceId: string): string => `logs-${instanceId}`;
 
 export const waitFor = async (
     predicate: () => Promise<boolean> | boolean,
@@ -305,13 +297,10 @@ export const waitFor = async (
     return true;
 };
 
-export const isTypeLink = (type: AttributeType) => {
-    return type === AttributeType.simple_link || type === AttributeType.advanced_link;
-};
+export const isTypeLink = (type: AttributeType) =>
+    type === AttributeType.simple_link || type === AttributeType.advanced_link;
 
-export const isTypeStandard = (type: AttributeType) => {
-    return type === AttributeType.simple || type === AttributeType.advanced;
-};
+export const isTypeStandard = (type: AttributeType) => type === AttributeType.simple || type === AttributeType.advanced;
 
 /**
  * Return a new object without the keys passed in parameter

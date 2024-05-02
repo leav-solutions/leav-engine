@@ -7,17 +7,13 @@ import {DndProvider} from 'react-dnd';
 import {TestBackend} from 'react-dnd-test-backend';
 import ElementsReserve from './ElementsReserve';
 
-jest.mock('./LayoutElementsList', () => {
-    return function LayoutElementsList() {
+jest.mock('./LayoutElementsList', () => function LayoutElementsList() {
         return <div>LayoutElementsList</div>;
-    };
-});
+    });
 
-jest.mock('./AttributesList', () => {
-    return function AttributesList() {
+jest.mock('./AttributesList', () => function AttributesList() {
         return <div>AttributesList</div>;
-    };
-});
+    });
 
 describe('ElementsReserve', () => {
     test('Snapshot test', async () => {
