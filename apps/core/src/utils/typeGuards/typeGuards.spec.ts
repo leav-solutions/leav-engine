@@ -14,11 +14,7 @@ describe('typeGuards', () => {
             expect(TypeGuards.isVariableIValue(42 as any)).toBe(false);
             expect(TypeGuards.isVariableIValue('' as any)).toBe(false);
             expect(TypeGuards.isVariableIValue(true as any)).toBe(false);
-            expect(
-                TypeGuards.isVariableIValue((() => {
-                    return;
-                }) as any)
-            ).toBe(false);
+            expect(TypeGuards.isVariableIValue((() => null) as any)).toBe(false);
         });
     });
 
