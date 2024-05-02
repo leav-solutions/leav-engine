@@ -11,13 +11,9 @@ import {DefaultOptionType} from 'antd/es/select';
 import {useGetOptionsQuery} from './useGetOptionsQuery';
 import {IRecordIdentity} from '_ui/types';
 import {IRecordPropertyLink} from '_ui/_queries/records/getRecordPropertiesQuery';
+import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
 
-interface IProvidedByAntFormItem {
-    value?: SelectProps<string[]>['value'];
-    onChange?: SelectProps['onChange'];
-}
-
-interface IMonoValueSelectProps extends IProvidedByAntFormItem {
+interface IMonoValueSelectProps extends IProvidedByAntFormItem<SelectProps<string[]>, SelectProps<string>> {
     activeValue: RecordFormElementsValueLinkValue | undefined;
     attribute: RecordFormAttributeLinkAttributeFragment;
     label: string;

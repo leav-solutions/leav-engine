@@ -6,12 +6,11 @@ import {FocusEvent, FunctionComponent, ReactNode} from 'react';
 import {IStandardFieldReducerState} from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {Form, InputProps} from 'antd';
 import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
+import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
 
-interface IDSInputWrapperProps {
+interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputProps> {
     state: IStandardFieldReducerState;
     infoButton: ReactNode;
-    value?: InputProps['value'];
-    onChange?: InputProps['onChange'];
     handleSubmit: (value: string, id?: string) => void;
 }
 

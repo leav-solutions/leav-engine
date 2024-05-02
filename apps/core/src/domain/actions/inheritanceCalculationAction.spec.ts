@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IVariableValue} from 'domain/helpers/calculationVariable';
-import {ActionsListValueType, IActionsListContext} from '_types/actionsList';
+import {IActionsListContext} from '_types/actionsList';
 import {IRecord} from '_types/record';
 import {AttributeTypes} from '../../_types/attribute';
 import inheritanceCalculationAction from './inheritanceCalculationAction';
@@ -12,6 +12,7 @@ const mockCalculationsVariable = {
     processVariableString: async (ctx: IActionsListContext, variable: string): Promise<IVariableValue[]> => [
         {
             value: `${variable}Value`,
+            raw_value: 'testRawValue',
             recordId: '1',
             library: 'meh'
         }
@@ -27,7 +28,7 @@ const action = inheritanceCalculationAction({
     'core.domain.attribute': mockAttributeDomain as IAttributeDomain
 }).action;
 
-describe('heritageCalculationAction', () => {
+describe('inheritanceCalculationAction', () => {
     test('Simply call processVariableString', async () => {
         const ctx: IActionsListContext = {
             attribute: {
@@ -35,6 +36,7 @@ describe('heritageCalculationAction', () => {
                 type: AttributeTypes.SIMPLE
             }
         };
+
         const res = await action(
             null,
             {
@@ -42,7 +44,9 @@ describe('heritageCalculationAction', () => {
             },
             ctx
         );
+
         expect(res.values[0].value).toBe('42Value');
+        expect((res.values[0] as any).raw_value).toBe('testRawValue');
     });
 
     test('No formula', async () => {

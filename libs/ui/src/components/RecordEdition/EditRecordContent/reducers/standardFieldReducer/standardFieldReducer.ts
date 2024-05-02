@@ -39,9 +39,32 @@ export interface IStandardFieldValue {
     state: StandardFieldValueState;
 }
 
-export interface IStandardFieldReducerState extends ICommonFieldsReducerState<StandardFieldReducerValues> {
-    metadataEdit: boolean;
+interface IInheritedNotOverride {
+    isInheritedValue: true;
+    isInheritedOverrideValue: false;
+    isInheritedNotOverrideValue: true;
+    inheritedValue: RecordFormElementsValueStandardValue;
 }
+
+interface IInheritedOverride {
+    isInheritedValue: true;
+    isInheritedOverrideValue: true;
+    isInheritedNotOverrideValue: false;
+    inheritedValue: RecordFormElementsValueStandardValue;
+}
+
+interface INotInherited {
+    isInheritedValue: false;
+    isInheritedOverrideValue: false;
+    isInheritedNotOverrideValue: false;
+    inheritedValue: null;
+}
+
+export type InheritedFlags = INotInherited | IInheritedOverride | IInheritedNotOverride;
+
+export type IStandardFieldReducerState = ICommonFieldsReducerState<StandardFieldReducerValues> & {
+    metadataEdit: boolean;
+} & InheritedFlags;
 
 export enum StandardFieldReducerActionsTypes {
     ADD_VALUE = 'ADD_VALUE',
@@ -231,6 +254,38 @@ const _computeScopeAndValues = (params: {
     };
 };
 
+const _computeInheritedFlags = (fieldValues: RecordFormElementsValueStandardValue[]): InheritedFlags => {
+    const inheritedValue = fieldValues.find(fieldValue => fieldValue.isInherited);
+    const overrideValue = fieldValues.find(fieldValue => !fieldValue.isInherited);
+
+    if (inheritedValue === undefined) {
+        return {
+            inheritedValue: null,
+            isInheritedValue: false,
+            isInheritedOverrideValue: false,
+            isInheritedNotOverrideValue: false
+        };
+    }
+
+    const isInheritedValue = true;
+
+    if (overrideValue.value === null) {
+        return {
+            inheritedValue,
+            isInheritedValue,
+            isInheritedNotOverrideValue: true,
+            isInheritedOverrideValue: false
+        };
+    }
+
+    return {
+        inheritedValue,
+        isInheritedValue,
+        isInheritedNotOverrideValue: false,
+        isInheritedOverrideValue: true
+    };
+};
+
 export const computeInitialState = (params: {
     element: FormElement<unknown>;
     record: IRecordIdentityWhoAmI;
@@ -243,16 +298,15 @@ export const computeInitialState = (params: {
 
     const fieldValues = [...(element.values as RecordFormElementsValueStandardValue[])] ?? [];
 
-    const initialState: IStandardFieldReducerState = {
+    return {
         attribute,
         record,
         formElement: {...element},
         isReadOnly: attribute?.readonly || isRecordReadOnly || !attribute?.permissions?.edit_value,
         metadataEdit,
-        ..._computeScopeAndValues({attribute, values: fieldValues, formVersion})
+        ..._computeScopeAndValues({attribute, values: fieldValues, formVersion}),
+        ..._computeInheritedFlags(fieldValues)
     };
-
-    return initialState;
 };
 
 const standardFieldReducer = (
@@ -344,7 +398,15 @@ const standardFieldReducer = (
             };
 
             if (action.idValue !== newValueId) {
-                return _updateValueData(action, state, newValueData);
+                return _updateValueData(
+                    action,
+                    {
+                        ...state,
+                        isInheritedOverrideValue: state.isInheritedValue ? true : state.isInheritedOverrideValue,
+                        isInheritedNotOverrideValue: state.isInheritedValue ? false : state.isInheritedNotOverrideValue
+                    } as IStandardFieldReducerState,
+                    newValueData
+                );
             }
 
             const newState = {...state};
@@ -362,20 +424,23 @@ const standardFieldReducer = (
             return newState;
         }
         case StandardFieldReducerActionsTypes.UPDATE_AFTER_DELETE: {
-            const newState = {...state};
-            let newStateActiveValues = newState.values[newState.activeScope].values;
+            const newState = {
+                ...state,
+                isInheritedOverrideValue: state.isInheritedValue ? false : state.isInheritedOverrideValue,
+                isInheritedNotOverrideValue: state.isInheritedValue ? true : state.isInheritedNotOverrideValue
+            };
+            const newStateActiveValues = newState.values[newState.activeScope].values;
 
             delete newStateActiveValues[action.idValue];
 
             if (action.allDeleted) {
                 newState.values[newState.activeScope].values = _ensureOneValueIsPresent({});
-                return newState;
+                return newState as IStandardFieldReducerState;
             }
 
-            newStateActiveValues = _ensureOneValueIsPresent(newStateActiveValues);
-
-            // Restore index on all remaining values
-            newStateActiveValues = Object.values(newStateActiveValues).reduce(
+            newState.values[newState.activeScope].values = Object.values(
+                _ensureOneValueIsPresent(newStateActiveValues)
+            ).reduce(
                 (values, value, index) => ({
                     ...values,
                     [value.idValue]: {
@@ -385,9 +450,7 @@ const standardFieldReducer = (
                 }),
                 {}
             );
-
-            newState.values[newState.activeScope].values = newStateActiveValues;
-            return newState;
+            return newState as IStandardFieldReducerState;
         }
         case StandardFieldReducerActionsTypes.CANCEL_EDITING: {
             if (action.idValue !== newValueId) {
@@ -398,7 +461,11 @@ const standardFieldReducer = (
                 });
             }
 
-            const newState = {...state};
+            const newState = {
+                ...state,
+                isInheritedOverrideValue: state.isInheritedValue ? false : state.isInheritedOverrideValue,
+                isInheritedNotOverrideValue: state.isInheritedValue ? true : state.isInheritedNotOverrideValue
+            };
 
             delete newState.values[newState.activeScope].values[newValueId];
 
@@ -406,7 +473,7 @@ const standardFieldReducer = (
                 newState.values[newState.activeScope].values
             );
 
-            return newState;
+            return newState as IStandardFieldReducerState;
         }
         case StandardFieldReducerActionsTypes.CHANGE_VERSION_SCOPE: {
             return {

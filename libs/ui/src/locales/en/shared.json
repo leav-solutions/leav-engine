@@ -453,7 +453,9 @@
         "cancel_confirm_modal_title": "Confirm cancellation?",
         "cancel_confirm_modal_content": "You are about to cancel the creation.",
         "cancel_confirm_modal_question": "Are you sure?",
-        "record_select": "Select a record"
+        "record_select": "Select a record",
+        "inherited_input_helper": "Inherited value: {{- inheritedValue}}",
+        "date_range_from_to": "from {{- from}} to {{- to}}"
     },
     "record_summary": {
         "preview_title": "Click here to visualize preview.",

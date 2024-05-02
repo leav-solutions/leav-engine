@@ -152,3 +152,11 @@ export interface ICommonFieldsReducerState<ValuesType> {
         } | null;
     };
 }
+
+export interface IProvidedByAntFormItem<
+    InputFieldProps extends {value?: unknown; onChange?: unknown},
+    AntNotifier extends {onChange?: unknown} = InputFieldProps
+> {
+    value?: InputFieldProps['value'];
+    onChange?: AntNotifier['onChange'];
+}
