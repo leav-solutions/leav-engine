@@ -33,14 +33,12 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     const {t} = useTranslation();
     const {refreshToken} = useRefreshToken();
 
-    const wsLink = useMemo(() => {
-        return new GraphQLWsLink(
+    const wsLink = useMemo(() => new GraphQLWsLink(
             createClient({
                 url: `${WS_URL}/${API_ENDPOINT}`,
                 shouldRetry: () => true
             })
-        );
-    }, []);
+        ), []);
 
     // This function will catch the errors from the exchange between Apollo Client and the server.
     const _handleApolloError = onError(({graphQLErrors, networkError, operation, forward}) => {

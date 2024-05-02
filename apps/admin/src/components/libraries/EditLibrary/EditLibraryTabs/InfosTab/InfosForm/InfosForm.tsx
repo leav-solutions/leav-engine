@@ -203,9 +203,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             text: t(`libraries.behavior_${b}`)
         }));
 
-        const _onSubmit = () => {
-            return handleSubmit();
-        };
+        const _onSubmit = () => handleSubmit();
 
         return (
             <Form onSubmit={_onSubmit}>

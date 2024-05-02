@@ -8,8 +8,8 @@ import {APPLICATION_EVENTS, APPLICATION_EVENTSVariables} from '_gqlTypes/APPLICA
 import {GET_APPLICATIONS, GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
 import {ApplicationEventTypes} from '_gqlTypes/globalTypes';
 
-const useApplicationEventsSubscription = () => {
-    return useSubscription<APPLICATION_EVENTS, APPLICATION_EVENTSVariables>(getApplicationsEventsSubscription, {
+const useApplicationEventsSubscription = () =>
+    useSubscription<APPLICATION_EVENTS, APPLICATION_EVENTSVariables>(getApplicationsEventsSubscription, {
         onSubscriptionData: ({client, subscriptionData}) => {
             const application = subscriptionData.data.applicationEvent.application;
             const appsList = client.cache.readQuery<GET_APPLICATIONS>({
@@ -45,6 +45,5 @@ const useApplicationEventsSubscription = () => {
             });
         }
     });
-};
 
 export default useApplicationEventsSubscription;

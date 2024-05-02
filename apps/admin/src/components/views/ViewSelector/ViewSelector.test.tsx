@@ -9,11 +9,9 @@ import {getViewsQuery} from '../../../queries/views/getViewsQuery';
 import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 import ViewSelector from './ViewSelector';
 
-jest.mock('./ViewSelectorField', () => {
-    return function ViewSelectorField() {
+jest.mock('./ViewSelectorField', () => function ViewSelectorField() {
         return <div>ViewSelectorField</div>;
-    };
-});
+    });
 
 describe('ViewSelector', () => {
     test('Loading and success state', async () => {

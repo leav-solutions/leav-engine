@@ -59,49 +59,41 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
             key: 'permissions',
             mustBeDisplayed: !isCreationMode,
             menuItem: t('libraries.permissions'),
-            render: () => {
-                return (
+            render: () => (
                     <Tab.Pane key="permissions" className="grow flex-col height100">
                         <PermissionsTab library={library as GET_LIB_BY_ID_libraries_list} readonly={readOnly} />
                     </Tab.Pane>
-                );
-            }
+                )
         },
         {
             key: 'attributes',
             mustBeDisplayed: !isCreationMode,
             menuItem: t('libraries.attributes'),
-            render: () => {
-                return (
+            render: () => (
                     <Tab.Pane key="attributes" className="grow">
                         <AttributesTab library={library} readonly={readOnly} />
                     </Tab.Pane>
-                );
-            }
+                )
         },
         {
             key: 'forms',
             mustBeDisplayed: !isCreationMode,
             menuItem: t('forms.title'),
-            render: () => {
-                return (
+            render: () => (
                     <Tab.Pane key="forms" className="height100" style={{padding: '0', border: '0px none'}}>
                         <FormsTab libraryId={library!.id} readonly={readOnly} />
                     </Tab.Pane>
-                );
-            }
+                )
         },
         {
             key: 'purge',
             mustBeDisplayed: !isCreationMode,
             menuItem: t('libraries.purge.title'),
-            render: () => {
-                return (
+            render: () => (
                     <Tab.Pane key="purge" className="height100" style={{padding: '0', border: '0px none'}}>
                         <PurgeTab library={library} readonly={readOnly} />
                     </Tab.Pane>
-                );
-            }
+                )
         }
     ].filter(p => p.mustBeDisplayed);
 
@@ -127,7 +119,7 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
 
     return (
         <>
-            <Grid padded verticalAlign={'middle'}>
+            <Grid padded verticalAlign="middle">
                 <Grid.Column width={12}>
                     <Title className="no-grow" role="heading" aria-label="title">
                         <LibraryIcon library={library} />

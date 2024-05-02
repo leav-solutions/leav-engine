@@ -49,9 +49,13 @@ export default function ({
      * Return all possibles permissions actions, deduplicated, including plugins actions
      */
     const _graphqlActionsList = (): string => {
-        const actions = Object.values(PermissionTypes).reduce((acc, type): string[] => {
-            return [...acc, ...permissionDomain.getActionsByType({type, skipApplyOn: true}).map(a => a.name)];
-        }, []);
+        const actions = Object.values(PermissionTypes).reduce(
+            (acc, type): string[] => [
+                ...acc,
+                ...permissionDomain.getActionsByType({type, skipApplyOn: true}).map(a => a.name)
+            ],
+            []
+        );
 
         return [...new Set(actions)].join(' ');
     };

@@ -49,12 +49,10 @@ const AttributesTab = ({library, readonly}: IAttributesTabProps): JSX.Element | 
         setShowAddExistingAttrModal(false);
     };
 
-    const saveAttributes = async (attributesToSave: string[]) => {
-        return saveLibAttr({
+    const saveAttributes = async (attributesToSave: string[]) => saveLibAttr({
             variables: {libId: library.id, attributes: attributesToSave},
             refetchQueries: [{query: getLibByIdQuery, variables: {id: library.id}}]
         });
-    };
 
     const _onNewAttributeSaved = async (newAttr: GET_ATTRIBUTES_attributes_list) => {
         if (library === null) {
@@ -67,9 +65,7 @@ const AttributesTab = ({library, readonly}: IAttributesTabProps): JSX.Element | 
         _handleCloseAttributeModal();
     };
 
-    const _onClickUnlink = async (attributesList: string[]) => {
-        return saveAttributes(attributesList);
-    };
+    const _onClickUnlink = async (attributesList: string[]) => saveAttributes(attributesList);
 
     const onExistingAttrAdded = async (selection: string[]) => {
         const newLibAttributes = library.attributes ? library.attributes.map(a => a.id) : [];

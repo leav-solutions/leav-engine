@@ -204,11 +204,9 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
         });
     };
 
-    const _getValueFromNode = (node: ITreeNode): IFilter['value'] => {
-        return typeof node === 'undefined' || node.id === (filter as IFilterTree).tree.id
+    const _getValueFromNode = (node: ITreeNode): IFilter['value'] => typeof node === 'undefined' || node.id === (filter as IFilterTree).tree.id
             ? {value: null}
             : {value: node.id, label: String(node.title)};
-    };
 
     const toggleActiveStatus = () => {
         const newFilters = searchState.filters.map(f => {
@@ -286,8 +284,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
 
     const embeddedFieldsToAttribute = (
         embeddedFields: AttributesByLibAttributeStandardAttributeFragment['embedded_fields']
-    ): AttributesByLibAttributeStandardAttributeFragment[] => {
-        return embeddedFields
+    ): AttributesByLibAttributeStandardAttributeFragment[] => embeddedFields
             ? embeddedFields.map(f => ({
                   ...f,
                   type: AttributeType.simple,
@@ -297,7 +294,6 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
                   readonly: false
               }))
             : [];
-    };
 
     const getAttributes = (): ILibraryDetailExtendedAttribute[] => {
         if (filter.type === FilterType.ATTRIBUTE) {
@@ -438,8 +434,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
         );
     };
 
-    const getParentLabel = () => {
-        return (
+    const getParentLabel = () => (
             localizedTranslation(
                 filter.condition === ThroughConditionFilter.THROUGH
                     ? (filter as IFilterAttribute).attribute?.label
@@ -459,7 +454,6 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
                 lang
             )} `
         );
-    };
 
     const hasParent = !!(
         filter.condition === ThroughConditionFilter.THROUGH ||

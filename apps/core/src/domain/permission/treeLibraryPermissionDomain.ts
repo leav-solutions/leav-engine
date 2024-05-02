@@ -24,8 +24,8 @@ export default function ({
         userId,
         getDefaultPermission,
         ctx
-    }: IGetTreeLibraryPermissionParams): Promise<boolean> => {
-        return globalPermHelper.getGlobalPermission(
+    }: IGetTreeLibraryPermissionParams): Promise<boolean> =>
+        globalPermHelper.getGlobalPermission(
             {
                 type: PermissionTypes.TREE_LIBRARY,
                 action,
@@ -35,7 +35,6 @@ export default function ({
             },
             ctx
         );
-    };
 
     const getInheritedTreeLibraryPermission = async ({
         action,
@@ -44,8 +43,8 @@ export default function ({
         userGroupId,
         getDefaultPermission,
         ctx
-    }: IGetInheritedTreeLibraryPermissionParams): Promise<boolean> => {
-        return globalPermHelper.getInheritedGlobalPermission(
+    }: IGetInheritedTreeLibraryPermissionParams): Promise<boolean> =>
+        globalPermHelper.getInheritedGlobalPermission(
             {
                 type: PermissionTypes.TREE_LIBRARY,
                 action,
@@ -55,7 +54,6 @@ export default function ({
             },
             ctx
         );
-    };
 
     return {
         getTreeLibraryPermission,

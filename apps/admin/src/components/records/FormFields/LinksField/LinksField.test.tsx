@@ -7,17 +7,13 @@ import {ILinkValue, ITreeLinkValue} from '../../../../_types/records';
 import {mockAttrAdvLink, mockAttrTreeMultival} from '../../../../__mocks__/attributes';
 import LinksField from './LinksField';
 
-jest.mock('./LinksFieldElement', () => {
-    return function LinksFieldElement() {
+jest.mock('./LinksFieldElement', () => function LinksFieldElement() {
         return <div data-test-id="record_links_element" />;
-    };
-});
+    });
 
-jest.mock('./LinksFieldTreeElement', () => {
-    return function LinksFieldTreeElement() {
+jest.mock('./LinksFieldTreeElement', () => function LinksFieldTreeElement() {
         return <div data-test-id="record_links_element" />;
-    };
-});
+    });
 
 jest.mock('../../../../hooks/useLang');
 

@@ -60,12 +60,10 @@ export default function ({
         return {id, key: rawKey};
     };
 
-    const _hideSecrets = (apiKey: IApiKey): IApiKey => {
-        return {
-            ...apiKey,
-            key: null
-        };
-    };
+    const _hideSecrets = (apiKey: IApiKey): IApiKey => ({
+        ...apiKey,
+        key: null
+    });
 
     return {
         async getApiKeys({params, ctx}) {

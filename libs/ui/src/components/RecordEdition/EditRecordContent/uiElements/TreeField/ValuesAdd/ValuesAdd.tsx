@@ -117,12 +117,10 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
         const element = pathToDisplay.slice(-1)[0];
         const recordCardSettings = {withLibrary: false, withPreview: false};
 
-        const breadcrumbItems = parents.map(ancestor => {
-            return {
+        const breadcrumbItems = parents.map(ancestor => ({
                 key: ancestor.record.id,
                 title: <RecordCard record={ancestor.record.whoAmI} size={PreviewSize.small} {...recordCardSettings} />
-            };
-        });
+            }));
 
         breadcrumbItems.push({
             key: element.record.id,

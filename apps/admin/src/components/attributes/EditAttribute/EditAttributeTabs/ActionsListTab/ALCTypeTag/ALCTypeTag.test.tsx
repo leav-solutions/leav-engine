@@ -7,7 +7,7 @@ import ALCTypeTag from './ALCTypeTag';
 
 describe('ALCTypeTag', () => {
     test('Snapshot test', async () => {
-        const comp = render(<ALCTypeTag color={[255, 255, 255]} input={'ww'} />);
+        const comp = render(<ALCTypeTag color={[255, 255, 255]} input="ww" />);
 
         expect(comp).toMatchSnapshot();
     });

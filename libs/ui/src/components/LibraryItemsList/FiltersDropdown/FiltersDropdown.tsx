@@ -228,16 +228,12 @@ function FiltersDropdown({
 
     // to verify if a filter is used, we have to get the filter attribute/tree base id
     // and check if one of those is used in the list of filters depending on the filter type
-    const isFilterUsed = (id: string) => {
-        return searchState.filters.some(f => {
-            return (
+    const isFilterUsed = (id: string) => searchState.filters.some(f => (
                 (f as IFilterTree)?.key === id ||
                 (f as IFilterAttribute).attribute?.parentAttribute?.id === id ||
                 (f as IFilterLibrary).parentAttribute?.id === id ||
                 (f as IFilterAttribute).parentTreeLibrary?.parentAttribute?.id === id
-            );
-        });
-    };
+            ));
 
     const menuItems: ItemType[] = [
         {
@@ -263,7 +259,7 @@ function FiltersDropdown({
                     icon: <BranchesOutlined />,
                     onClick: () => addFilter(getTreeFilter(tree)),
                     label: isFilterUsed(tree.id) ? (
-                        <Badge color={'blue'} text={tree.localizedLabel} />
+                        <Badge color="blue" text={tree.localizedLabel} />
                     ) : (
                         tree.localizedLabel
                     )
@@ -284,7 +280,7 @@ function FiltersDropdown({
                     icon: <NumberOutlined />,
                     onClick: () => addFilter(getAttributeFilter(attribute)),
                     label: isFilterUsed(attribute.id) ? (
-                        <Badge color={'blue'} text={attribute.localizedLabel} />
+                        <Badge color="blue" text={attribute.localizedLabel} />
                     ) : (
                         attribute.localizedLabel
                     )
@@ -305,7 +301,7 @@ function FiltersDropdown({
                     icon: <NumberOutlined />,
                     onClick: () => addFilter(getLibraryFilter(library)),
                     label: isFilterUsed(library.id) ? (
-                        <Badge color={'blue'} text={library.localizedLabel} />
+                        <Badge color="blue" text={library.localizedLabel} />
                     ) : (
                         library.localizedLabel
                     )

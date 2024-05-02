@@ -178,8 +178,8 @@ export default function ({
             const attributesUsingProfile = await this.getAttributesUsingProfile({id, ctx});
             if (attributesUsingProfile.length) {
                 await Promise.all(
-                    attributesUsingProfile.map(attribute => {
-                        return attributeRepo.updateAttribute({
+                    attributesUsingProfile.map(attribute =>
+                        attributeRepo.updateAttribute({
                             attrData: {
                                 ...attribute,
                                 multiple_values: attribute.multiple_values,
@@ -189,8 +189,8 @@ export default function ({
                                 }
                             },
                             ctx
-                        });
-                    })
+                        })
+                    )
                 );
             }
 

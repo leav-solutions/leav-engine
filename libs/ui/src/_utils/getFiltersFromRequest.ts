@@ -16,17 +16,14 @@ import {
 } from '_ui/types/search';
 import {AttributeType, RecordFilterCondition, RecordFilterInput} from '_ui/_gqlTypes';
 
-const _isConditionWithNoValue = (condition: RecordFilterCondition): boolean => {
-    return (
-        condition === RecordFilterCondition.IS_EMPTY ||
-        condition === RecordFilterCondition.IS_NOT_EMPTY ||
-        condition === RecordFilterCondition.LAST_MONTH ||
-        condition === RecordFilterCondition.NEXT_MONTH ||
-        condition === RecordFilterCondition.TODAY ||
-        condition === RecordFilterCondition.TOMORROW ||
-        condition === RecordFilterCondition.YESTERDAY
-    );
-};
+const _isConditionWithNoValue = (condition: RecordFilterCondition): boolean =>
+    condition === RecordFilterCondition.IS_EMPTY ||
+    condition === RecordFilterCondition.IS_NOT_EMPTY ||
+    condition === RecordFilterCondition.LAST_MONTH ||
+    condition === RecordFilterCondition.NEXT_MONTH ||
+    condition === RecordFilterCondition.TODAY ||
+    condition === RecordFilterCondition.TOMORROW ||
+    condition === RecordFilterCondition.YESTERDAY;
 
 export const getFiltersFromRequest = (
     queryFilters: RecordFilterInput[],

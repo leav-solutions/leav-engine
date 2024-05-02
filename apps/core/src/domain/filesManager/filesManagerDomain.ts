@@ -221,8 +221,8 @@ export default function ({
         libraryId: string,
         filesLibraryId: string,
         ctx: IQueryInfos
-    ) => {
-        return records.reduce(async (promAcc, record): Promise<Record<string, IRecord>> => {
+    ) =>
+        records.reduce(async (promAcc, record): Promise<Record<string, IRecord>> => {
             const acc = await promAcc;
             const treeNodes = await treeDomain.getNodesByRecord({
                 treeId,
@@ -247,7 +247,6 @@ export default function ({
 
             return acc;
         }, {});
-    };
 
     const _getSplittedListFiles = (list: string): string[] => list.split(',').filter(p => p);
 

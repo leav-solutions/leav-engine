@@ -52,9 +52,7 @@ function ExpandButtons({flatItems, setFlatItems: setTreeItems}: IExpandButtonPro
                 );
                 return {...node, expanded: false};
             },
-            getNodeKey: ({treeIndex}) => {
-                return treeIndex;
-            },
+            getNodeKey: ({treeIndex}) => treeIndex,
             ignoreCollapsed: false
         });
     };

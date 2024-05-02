@@ -68,11 +68,10 @@ describe('Utils', () => {
         test('Shoud pipe async functions', async () => {
             const utilsModule = utils();
 
-            const multiply = factor => async n => {
-                return new Promise((resolve, reject) => {
+            const multiply = factor => async n =>
+                new Promise((resolve, reject) => {
                     resolve(n * factor);
                 });
-            };
 
             const triple = multiply(3);
             const triples = utilsModule.pipe(triple, triple);

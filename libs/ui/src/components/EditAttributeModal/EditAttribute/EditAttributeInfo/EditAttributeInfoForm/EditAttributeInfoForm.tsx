@@ -133,9 +133,7 @@ function EditAttributeInfoForm({
         setRunningFieldsSubmit(runningFieldsSubmit.filter(f => f !== field));
     };
 
-    const _handleSelectChange = (field: string) => (value: string) => {
-        return _handleFieldSubmit(field, value);
-    };
+    const _handleSelectChange = (field: string) => (value: string) => _handleFieldSubmit(field, value);
 
     const _handleCheckboxChange = (field: string) => (value: boolean) => {
         _handleFieldSubmit(field, value);

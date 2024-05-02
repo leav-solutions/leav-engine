@@ -15,11 +15,9 @@ import {render, screen} from '_tests/testUtils';
 // check that it don't crash when there's no actionList or no available actions
 // feu
 
-jest.mock('./ALCContainer', () => {
-    return function ALCContainer() {
+jest.mock('./ALCContainer', () => function ALCContainer() {
         return <>ALCContainer</>;
-    };
-});
+    });
 
 describe('ActionsListTab', () => {
     test('adds the available actions ', async () => {

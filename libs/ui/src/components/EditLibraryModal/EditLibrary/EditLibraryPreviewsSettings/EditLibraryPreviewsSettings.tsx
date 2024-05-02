@@ -12,8 +12,7 @@ interface IEditLibraryPreviewsSettingsProps {
 function EditLibraryPreviewsSettings({library, readOnly}: IEditLibraryPreviewsSettingsProps): JSX.Element {
     const [saveLibrary] = useSaveLibraryMutation();
 
-    const _cleanPreviewsSettings = (previewsSettings: LibraryPreviewsSettingsFragment[]) => {
-        return previewsSettings
+    const _cleanPreviewsSettings = (previewsSettings: LibraryPreviewsSettingsFragment[]) => previewsSettings
             .filter(settings => !settings.system) // Don't save system settings
             .map(previewSetting => ({
                 label: previewSetting.label,
@@ -26,7 +25,6 @@ function EditLibraryPreviewsSettings({library, readOnly}: IEditLibraryPreviewsSe
                         .map(({name, size}) => ({name, size}))
                 }
             }));
-    };
 
     const _handleChange = async (newPreviewsSettings: LibraryPreviewsSettingsFragment[]) => {
         await saveLibrary({

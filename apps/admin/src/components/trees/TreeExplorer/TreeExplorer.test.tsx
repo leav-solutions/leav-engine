@@ -9,11 +9,9 @@ import TreeExplorer from './TreeExplorer';
 
 jest.mock('../../../hooks/useLang');
 
-jest.mock('./TreeExplorerView', () => {
-    return function TreeExplorerView() {
+jest.mock('./TreeExplorerView', () => function TreeExplorerView() {
         return <div>TreeExplorerView</div>;
-    };
-});
+    });
 
 describe('EditTreeExplorer', () => {
     test('Render tree explorer', async () => {

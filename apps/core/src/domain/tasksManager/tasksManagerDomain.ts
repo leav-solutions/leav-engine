@@ -101,9 +101,9 @@ export default function ({
         queryId: 'TasksManagerWorker'
     };
 
-    const _monitorTasks = (ctx: IQueryInfos): NodeJS.Timer => {
+    const _monitorTasks = (ctx: IQueryInfos): NodeJS.Timer =>
         // check if tasks waiting for execution and execute them
-        return setInterval(async () => {
+        setInterval(async () => {
             const taskToExecute = (await taskRepo.getTasksToExecute(ctx))?.list[0];
             const taskToCancel = (await taskRepo.getTasksToCancel(ctx))?.list[0];
             const taskWithPendingCallbacks = (await taskRepo.getTasksWithPendingCallbacks(ctx))?.list[0];
@@ -121,8 +121,6 @@ export default function ({
                 await _sendOrder(config.tasksManager.routingKeys.execOrders, taskToExecute, ctx);
             }
         }, config.tasksManager.checkingInterval);
-    };
-
     const _executeTask = async (task: ITask, ctx: IQueryInfos): Promise<ITask> => {
         await _attachWorker(task.id, process.pid, workerCtx);
         await _updateTask(

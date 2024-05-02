@@ -349,38 +349,28 @@ export default function ({
         return linkedValuesToDel;
     };
 
-    const _isRelativeDateCondition = (condition: AttributeCondition): boolean => {
-        return (
-            condition === AttributeCondition.TODAY ||
-            condition === AttributeCondition.TOMORROW ||
-            condition === AttributeCondition.YESTERDAY ||
-            condition === AttributeCondition.NEXT_MONTH ||
-            condition === AttributeCondition.LAST_MONTH
-        );
-    };
+    const _isRelativeDateCondition = (condition: AttributeCondition): boolean =>
+        condition === AttributeCondition.TODAY ||
+        condition === AttributeCondition.TOMORROW ||
+        condition === AttributeCondition.YESTERDAY ||
+        condition === AttributeCondition.NEXT_MONTH ||
+        condition === AttributeCondition.LAST_MONTH;
 
-    const _isNumericCondition = (condition: AttributeCondition): boolean => {
-        return (
-            condition === AttributeCondition.VALUES_COUNT_EQUAL ||
-            condition === AttributeCondition.VALUES_COUNT_GREATER_THAN ||
-            condition === AttributeCondition.VALUES_COUNT_LOWER_THAN
-        );
-    };
+    const _isNumericCondition = (condition: AttributeCondition): boolean =>
+        condition === AttributeCondition.VALUES_COUNT_EQUAL ||
+        condition === AttributeCondition.VALUES_COUNT_GREATER_THAN ||
+        condition === AttributeCondition.VALUES_COUNT_LOWER_THAN;
 
-    const _isAttributeFilter = (filter: IRecordFilterLight): boolean => {
-        return (
-            filter.condition in AttributeCondition &&
-            typeof filter.field !== 'undefined' &&
-            (typeof filter.value !== 'undefined' ||
-                filter.condition === AttributeCondition.IS_EMPTY ||
-                filter.condition === AttributeCondition.IS_NOT_EMPTY ||
-                _isRelativeDateCondition(filter.condition as AttributeCondition))
-        );
-    };
+    const _isAttributeFilter = (filter: IRecordFilterLight): boolean =>
+        filter.condition in AttributeCondition &&
+        typeof filter.field !== 'undefined' &&
+        (typeof filter.value !== 'undefined' ||
+            filter.condition === AttributeCondition.IS_EMPTY ||
+            filter.condition === AttributeCondition.IS_NOT_EMPTY ||
+            _isRelativeDateCondition(filter.condition as AttributeCondition));
 
-    const _isClassifiedFilter = (filter: IRecordFilterLight): boolean => {
-        return filter.condition in TreeCondition && typeof filter.treeId !== 'undefined';
-    };
+    const _isClassifiedFilter = (filter: IRecordFilterLight): boolean =>
+        filter.condition in TreeCondition && typeof filter.treeId !== 'undefined';
 
     const _isOperatorFilter = (filter: IRecordFilterLight): boolean => filter.operator in Operator;
 
@@ -720,14 +710,13 @@ export default function ({
         return subLabel;
     };
 
-    const _convertDateRangeToString = (dateRange: {from: string; to: string}, {lang}: IQueryInfos): string => {
-        return translator.t('labels.date_range', {
+    const _convertDateRangeToString = (dateRange: {from: string; to: string}, {lang}: IQueryInfos): string =>
+        translator.t('labels.date_range', {
             from: dateRange.from,
             to: dateRange.to,
             lng: lang,
             interpolation: {escapeValue: false}
         });
-    };
 
     const _getRecordIdentity = async (record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity> => {
         const lib = await getCoreEntityById<ILibrary>('library', record.library, ctx);

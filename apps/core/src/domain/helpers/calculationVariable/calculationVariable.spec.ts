@@ -4,27 +4,23 @@
 import calculationVariable, {IVariableValue} from '.';
 const mockCalculationsVariableFunctions = {
     test: {
-        run: async (): Promise<IVariableValue[]> => {
-            return [
-                {
-                    recordId: '1',
-                    library: 'meh',
-                    value: 42
-                }
-            ];
-        },
+        run: async (): Promise<IVariableValue[]> => [
+            {
+                recordId: '1',
+                library: 'meh',
+                value: 42
+            }
+        ],
         after: []
     },
     test2: {
-        run: async (_, initialValues: any[]): Promise<IVariableValue[]> => {
-            return [
-                {
-                    recordId: '1',
-                    library: 'meh',
-                    value: initialValues[0].value + 10
-                }
-            ];
-        },
+        run: async (_, initialValues: any[]): Promise<IVariableValue[]> => [
+            {
+                recordId: '1',
+                library: 'meh',
+                value: initialValues[0].value + 10
+            }
+        ],
         after: []
     }
 };

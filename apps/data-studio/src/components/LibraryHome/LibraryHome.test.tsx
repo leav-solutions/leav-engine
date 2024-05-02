@@ -10,14 +10,10 @@ import {
     mockGetLibraryDetailExtendedQueryVar
 } from '__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
 
-jest.mock('@leav/ui', () => {
-    return {
+jest.mock('@leav/ui', () => ({
         ...jest.requireActual('@leav/ui'),
-        LibraryItemsList: () => {
-            return <div>LibraryItemsList</div>;
-        }
-    };
-});
+        LibraryItemsList: () => <div>LibraryItemsList</div>
+    }));
 
 const mockUpdateActiveLib = jest.fn();
 

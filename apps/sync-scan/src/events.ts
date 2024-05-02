@@ -18,19 +18,17 @@ const _getEventMsg = (
     rootKey: string,
     hash?: string,
     recordId?: string
-): IEventMsg => {
-    return {
-        event,
-        time: Math.round(Date.now() / 1000),
-        pathAfter,
-        pathBefore,
-        isDirectory,
-        inode,
-        rootKey,
-        ...(!!hash && {hash}),
-        ...(!!recordId && {recordId})
-    };
-};
+): IEventMsg => ({
+    event,
+    time: Math.round(Date.now() / 1000),
+    pathAfter,
+    pathBefore,
+    isDirectory,
+    inode,
+    rootKey,
+    ...(!!hash && {hash}),
+    ...(!!recordId && {recordId})
+});
 
 export const create = async (path: string, inode: number, isDirectory: boolean, amqp: IAmqpService, hash?: string) => {
     const cfg = await getConfig();

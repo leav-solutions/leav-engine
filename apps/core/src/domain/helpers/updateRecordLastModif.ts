@@ -13,8 +13,8 @@ interface IDeps {
 export type UpdateRecordLastModifFunc = (library: string, recordId: string, ctx: IQueryInfos) => Promise<IRecord>;
 
 export default function ({'core.infra.record': recordRepo = null}: IDeps): UpdateRecordLastModifFunc {
-    return (library, recordId, ctx) => {
-        return recordRepo.updateRecord({
+    return (library, recordId, ctx) =>
+        recordRepo.updateRecord({
             libraryId: library,
             recordData: {
                 id: recordId,
@@ -22,5 +22,4 @@ export default function ({'core.infra.record': recordRepo = null}: IDeps): Updat
                 modified_by: String(ctx.userId)
             }
         });
-    };
 }

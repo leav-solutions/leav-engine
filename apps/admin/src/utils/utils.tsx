@@ -37,27 +37,25 @@ export const getSysTranslationQueryLanguage = (i18next: i18n): AvailableLanguage
     return [userLang, fallbackLang];
 };
 
-export const formatIDString = (s: string): string => {
-    return removeAccents(s)
+export const formatIDString = (s: string): string =>
+     removeAccents(s)
         .toLowerCase()
         .replace(/\W/g, ' ') // Convert any non-word character to space (anything not a letter, a _ or a number)
         .trim() // Trim spaces
         .replace(/ /g, '_') // Convert spaces to _
-        .replace(/(_){2,}/g, '_'); // Remove any __, ___, ....
-};
+        .replace(/(_){2,}/g, '_') // Remove any __, ___, ....
+;
 
 /**
  * Add wildcards (%) around filter values. By default process only label and id
  */
-export const addWildcardToFilters = (filters, keysToProcess = ['label', 'id']) => {
-    return Object.keys(filters).reduce((allFilters, k) => {
+export const addWildcardToFilters = (filters, keysToProcess = ['label', 'id']) => Object.keys(filters).reduce((allFilters, k) => {
         const val = keysToProcess.indexOf(k) !== -1 ? '%' + filters[k] + '%' : filters[k];
 
         allFilters[k] = val;
 
         return allFilters;
     }, {});
-};
 
 export const getRandomColor = (): string => '#' + Math.random().toString(16).substr(-6);
 /**
@@ -146,17 +144,13 @@ export const getInvertColor = (color: string): string => {
     return yiq >= 128 ? '#000000' : '#FFFFFF';
 };
 
-export const getTreeNodeKey = (nodeData: TreeNode | null): string => {
-    return String(nodeData?.node?.id ?? '');
-};
+export const getTreeNodeKey = (nodeData: TreeNode | null): string => String(nodeData?.node?.id ?? '');
 
-export const permsArrayToObject = (perms: IS_ALLOWED_isAllowed[]): {[name: string]: boolean} => {
-    return perms.reduce((allPerms, perm) => {
+export const permsArrayToObject = (perms: IS_ALLOWED_isAllowed[]): {[name: string]: boolean} => perms.reduce((allPerms, perm) => {
         allPerms[perm.name] = perm.allowed;
 
         return allPerms;
     }, {});
-};
 
 export function getFieldError<T>(
     fieldName: string,
@@ -225,25 +219,17 @@ export function getRecordIdentityCacheKey(libId: string, recordId: string): stri
 }
 
 /*** Values type guards ***/
-export const isStandardValue = (value: IGenericValue): value is IValue => {
-    return typeof (value as IValue).value !== 'undefined';
-};
+export const isStandardValue = (value: IGenericValue): value is IValue => typeof (value as IValue).value !== 'undefined';
 
-export const isLinkValue = (value: IGenericValue): value is ILinkValue => {
-    return typeof (value as ILinkValue).linkValue !== 'undefined';
-};
+export const isLinkValue = (value: IGenericValue): value is ILinkValue => typeof (value as ILinkValue).linkValue !== 'undefined';
 
-export const isTreeValue = (value: IGenericValue): value is ITreeLinkValue => {
-    return typeof (value as ITreeLinkValue).treeValue !== 'undefined';
-};
+export const isTreeValue = (value: IGenericValue): value is ITreeLinkValue => typeof (value as ITreeLinkValue).treeValue !== 'undefined';
 
-export const isValueNull = (val: IGenericValue): boolean => {
-    return (
+export const isValueNull = (val: IGenericValue): boolean => (
         (isStandardValue(val) && val.value === null) ||
         (isLinkValue(val) && val.linkValue === null) ||
         (isTreeValue(val) && val.treeValue === null)
     );
-};
 /*************/
 
 /** Convert an array to an object, using given field as key **/

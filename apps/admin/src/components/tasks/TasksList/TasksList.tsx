@@ -28,9 +28,7 @@ const _getTaskDuration = (startedAt: number, completedAt: number): string => {
     return `${d.hours() + 'h'} ${d.minutes() + 'm'} ${d.seconds() + 's'}`;
 };
 
-const _resolveColumn = (path, obj) => {
-    return path.split('.').reduce((prev, curr) => (prev ? prev[curr] : null), obj);
-};
+const _resolveColumn = (path, obj) => path.split('.').reduce((prev, curr) => (prev ? prev[curr] : null), obj);
 
 const TasksList = ({
     striped = false,

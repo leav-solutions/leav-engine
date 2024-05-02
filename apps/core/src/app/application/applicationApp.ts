@@ -267,9 +267,8 @@ export default function ({
                                 return {...allPerms, [action]: isAllowed};
                             }, Promise.resolve({}));
                         },
-                        url: (appData: IApplication, _, ctx: IQueryInfos): string => {
-                            return applicationDomain.getApplicationUrl({application: appData, ctx});
-                        },
+                        url: (appData: IApplication, _, ctx: IQueryInfos): string =>
+                            applicationDomain.getApplicationUrl({application: appData, ctx}),
                         icon: async (
                             appData: Override<IApplication, {icon: {libraryId: string; recordId: string}}>,
                             _,

@@ -21,8 +21,8 @@ export default function (deps: IDeps = {}): IAttributePermissionDomain {
         action,
         attributeId,
         ctx
-    }: IGetAttributePermissionParams): Promise<boolean> => {
-        return globalPermHelper.getGlobalPermission(
+    }: IGetAttributePermissionParams): Promise<boolean> =>
+        globalPermHelper.getGlobalPermission(
             {
                 type: PermissionTypes.ATTRIBUTE,
                 action,
@@ -31,15 +31,14 @@ export default function (deps: IDeps = {}): IAttributePermissionDomain {
             },
             ctx
         );
-    };
 
     const getInheritedAttributePermission = async ({
         action,
         attributeId,
         userGroupId,
         ctx
-    }: IGetInheritedAttributePermissionParams): Promise<boolean> => {
-        return globalPermHelper.getInheritedGlobalPermission(
+    }: IGetInheritedAttributePermissionParams): Promise<boolean> =>
+        globalPermHelper.getInheritedGlobalPermission(
             {
                 type: PermissionTypes.ATTRIBUTE,
                 action,
@@ -48,7 +47,6 @@ export default function (deps: IDeps = {}): IAttributePermissionDomain {
             },
             ctx
         );
-    };
 
     return {
         getAttributePermission,

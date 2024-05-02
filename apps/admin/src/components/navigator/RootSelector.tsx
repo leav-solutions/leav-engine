@@ -41,9 +41,7 @@ function RootSelectorContainer({restrictToRoots, onSelect, lang}: IRootSelectorC
             <div className="ui two column relaxed stackable grid">
                 <div className="middle aligned column">
                     <List selection>
-                        {librariesList.map(lib => {
-                            return <RootSelectorElem key={lib.id} onSelect={onSelect} elem={lib} />;
-                        })}
+                        {librariesList.map(lib => <RootSelectorElem key={lib.id} onSelect={onSelect} elem={lib} />)}
                     </List>
                 </div>
                 <div className="middle aligned column">

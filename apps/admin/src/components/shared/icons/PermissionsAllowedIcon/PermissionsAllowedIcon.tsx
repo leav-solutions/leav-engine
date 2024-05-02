@@ -5,8 +5,6 @@ import React from 'react';
 import CustomIcon from '../../CustomIcon';
 import IconSvg from './PermissionsAllowedIcon.svg';
 
-const PermissionsAllowedIcon = () => {
-    return <CustomIcon svg={String(IconSvg)} label="permissions allowed" />;
-};
+const PermissionsAllowedIcon = () => <CustomIcon svg={String(IconSvg)} label="permissions allowed" />;
 
 export default PermissionsAllowedIcon;

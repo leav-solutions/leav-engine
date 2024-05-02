@@ -118,11 +118,9 @@ function LibrariesList({
     );
 
     const _handlePostCreate = async (newLibrary: any) => {
-        updateQuery(data => {
-            return {
+        updateQuery(data => ({
                 libraries: {__typename: 'LibrariesList', list: [...(data?.libraries?.list || []), newLibrary]}
-            };
-        });
+            }));
     };
 
     return (

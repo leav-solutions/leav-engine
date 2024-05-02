@@ -217,18 +217,15 @@ export default function ({
                         }
                     },
                     Library: {
-                        attributes: async (parent, args, ctx, info): Promise<ILibrary[]> => {
-                            return attributeDomain.getLibraryAttributes(parent.id, ctx);
-                        },
-                        fullTextAttributes: async (parent, args, ctx, info) => {
-                            return attributeDomain.getLibraryFullTextAttributes(parent.id, ctx);
-                        },
+                        attributes: async (parent, args, ctx, info): Promise<ILibrary[]> =>
+                            attributeDomain.getLibraryAttributes(parent.id, ctx),
+                        fullTextAttributes: async (parent, args, ctx, info) =>
+                            attributeDomain.getLibraryFullTextAttributes(parent.id, ctx),
                         /**
                          * Return library label, potentially filtered by requested language
                          */
-                        label: (libData, args): ISystemTranslation => {
-                            return coreApp.filterSysTranslationField(libData.label, args.lang || []);
-                        },
+                        label: (libData, args): ISystemTranslation =>
+                            coreApp.filterSysTranslationField(libData.label, args.lang || []),
                         icon: async (
                             libData: Override<ILibrary, {icon: {libraryId: string; recordId: string}}>,
                             _,
@@ -262,9 +259,8 @@ export default function ({
 
                             return trees.list;
                         },
-                        defaultView: (library, _, ctx) => {
-                            return library.defaultView ? viewDomain.getViewById(library.defaultView, ctx) : null;
-                        },
+                        defaultView: (library, _, ctx) =>
+                            library.defaultView ? viewDomain.getViewById(library.defaultView, ctx) : null,
                         permissions: (
                             libData: ILibrary,
                             _,

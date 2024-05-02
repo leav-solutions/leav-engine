@@ -21,15 +21,16 @@ export default function ({config}: IDeps): ISystemTranslationGenerator {
         // We accept a key-value object, keys being an available language and value being a string.
         // The default language has to be present
         const validValueSchema = Joi.object().keys(
-            config.lang.available.reduce((acc, lng) => {
-                return {
+            config.lang.available.reduce(
+                (acc, lng) => ({
                     ...acc,
                     [lng]:
                         lng === config.lang.default && !optional
                             ? Joi.string().required()
                             : Joi.string().optional().allow('')
-                };
-            }, {})
+                }),
+                {}
+            )
         );
 
         const isValid = validValueSchema.validate(val);

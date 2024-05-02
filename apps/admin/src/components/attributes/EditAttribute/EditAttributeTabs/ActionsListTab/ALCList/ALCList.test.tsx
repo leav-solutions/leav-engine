@@ -143,11 +143,9 @@ function onSelectorChangeMock(event) {
     return undefined;
 }
 
-jest.mock('../ALCCard', () => {
-    return function ALCCard() {
+jest.mock('../ALCCard', () => function ALCCard() {
         return <div>Card</div>;
-    };
-});
+    });
 
 describe('ALCList', () => {
     test('One action get instanciated in list', async () => {

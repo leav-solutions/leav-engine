@@ -149,13 +149,11 @@ export const getConditionOptionsByType = (
     showThroughCondition: boolean,
     t: TFunction
 ): Array<IFilterConditionOption<AttributeConditionType>> => {
-    const _isValuesCountCondition = (condition: AttributeConditionType): boolean => {
-        return [
+    const _isValuesCountCondition = (condition: AttributeConditionType): boolean => [
             AttributeConditionFilter.VALUES_COUNT_EQUAL,
             AttributeConditionFilter.VALUES_COUNT_GREATER_THAN,
             AttributeConditionFilter.VALUES_COUNT_LOWER_THAN
         ].includes(condition as RecordFilterCondition);
-    };
 
     const attributeConditionOptions = getAttributeConditionOptions(t);
 

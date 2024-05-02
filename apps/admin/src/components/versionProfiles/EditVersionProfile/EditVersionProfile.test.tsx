@@ -16,11 +16,9 @@ import {mockVersionProfile} from '__mocks__/common/versionProfiles';
 import * as useUserData from '../../../hooks/useUserData';
 import EditVersionProfile, {IEditVersionProfileMatchParams} from './EditVersionProfile';
 
-jest.mock('components/attributes/AttributesSelectionModal', () => {
-    return function AttributesSelectionModal() {
+jest.mock('components/attributes/AttributesSelectionModal', () => function AttributesSelectionModal() {
         return <div>AttributesSelectionModal</div>;
-    };
-});
+    });
 describe('EditVersionProfile', () => {
     type matchType = match<IEditVersionProfileMatchParams>;
     const mockMatch: Mockify<matchType> = {
@@ -77,14 +75,12 @@ describe('EditVersionProfile', () => {
     });
 
     test('If editing is not allowed, inputs are disabled', async () => {
-        const spy = jest.spyOn(useUserData, 'default').mockImplementation(() => {
-            return {
+        const spy = jest.spyOn(useUserData, 'default').mockImplementation(() => ({
                 id: '1',
                 name: 'Test',
                 whoAmI: mockRecord,
                 permissions: {admin_edit_version_profile: false}
-            };
-        });
+            }));
 
         render(<EditVersionProfile match={mockMatch as matchType} />, {apolloMocks: mocks});
 
@@ -138,14 +134,12 @@ describe('EditVersionProfile', () => {
     });
 
     test('Validate ID uniqueness', async () => {
-        jest.spyOn(useUserData, 'default').mockImplementation(() => {
-            return {
+        jest.spyOn(useUserData, 'default').mockImplementation(() => ({
                 id: '1',
                 name: 'Test',
                 whoAmI: mockRecord,
                 permissions: {admin_edit_version_profile: true}
-            };
-        });
+            }));
 
         const mocksWithIdCheck = [
             ...mocks,

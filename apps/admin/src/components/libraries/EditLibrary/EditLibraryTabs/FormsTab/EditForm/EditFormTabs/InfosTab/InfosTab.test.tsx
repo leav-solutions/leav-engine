@@ -12,11 +12,9 @@ import {EditFormContext} from '../../hooks/useEditFormContext';
 import {formDataWithTypename} from '../ContentTab/formBuilderReducer/_fixtures/fixtures';
 import InfosTab from './InfosTab';
 
-jest.mock('./InfosForm', () => {
-    return function InfosForm() {
+jest.mock('./InfosForm', () => function InfosForm() {
         return <div>InfosForm</div>;
-    };
-});
+    });
 
 jest.mock('react-router-dom-v5', () => ({
     ...jest.requireActual('react-router-dom-v5'),

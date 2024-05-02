@@ -80,13 +80,11 @@ function TreeList(): JSX.Element {
             title: t('home.label'),
             dataIndex: 'label',
             key: 'label',
-            render: (label, item) => {
-                return (
+            render: (label, item) => (
                     <TreeLink to={getTreeLink(item.id)}>
                         <TreeIcon style={{fontSize: '1.2rem'}} /> {label}
                     </TreeLink>
-                );
-            }
+                )
         },
         {
             title: <></>,

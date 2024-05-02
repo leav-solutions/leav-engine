@@ -10,9 +10,7 @@ import {IInfo, InfoChannel} from '../../_types/types';
 import DisplayInfo from './DisplayInfo';
 
 function HeaderInfo(): JSX.Element {
-    const {stack, base} = useAppSelector(state => {
-        return state.info;
-    });
+    const {stack, base} = useAppSelector(state => state.info);
     const dispatch = useAppDispatch();
 
     const [message, setMessage] = useState<IInfo>(base);

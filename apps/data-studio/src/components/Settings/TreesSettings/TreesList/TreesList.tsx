@@ -65,8 +65,7 @@ function TreesList({trees, onMoveTree, onRemoveTree, onAddTrees, onClearTrees}: 
     );
 
     const _handlePostCreate = async (newTree: any) => {
-        updateQuery(data => {
-            return {
+        updateQuery(data => ({
                 trees: {
                     list: [
                         ...(data?.trees?.list || []),
@@ -76,8 +75,7 @@ function TreesList({trees, onMoveTree, onRemoveTree, onAddTrees, onClearTrees}: 
                         }
                     ]
                 }
-            };
-        });
+            }));
     };
 
     const _handleRemoveTree = (treeId: string) => () => {

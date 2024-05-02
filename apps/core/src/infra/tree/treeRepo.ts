@@ -201,9 +201,8 @@ export default function ({
             return dbUtils.cleanup(treeRes.pop());
         },
         async getTrees({params = {}, ctx}: {params?: IGetCoreTreesParams; ctx: IQueryInfos}): Promise<IList<ITree>> {
-            const _generateLibraryFilter = (filterKey: string, filterVal: string | boolean | string[]) => {
-                return aql`POSITION(ATTRIBUTES(el.libraries), ${filterVal})`;
-            };
+            const _generateLibraryFilter = (filterKey: string, filterVal: string | boolean | string[]) =>
+                aql`POSITION(ATTRIBUTES(el.libraries), ${filterVal})`;
 
             const defaultParams: IGetCoreEntitiesParams = {
                 filters: null,
@@ -337,14 +336,14 @@ export default function ({
 
                 // Move children to element's parent
                 await Promise.all(
-                    children.map(child => {
-                        return this.moveElement({
+                    children.map(child =>
+                        this.moveElement({
                             treeId,
                             nodeId: child._key,
                             parentTo: parentId,
                             ctx
-                        });
-                    })
+                        })
+                    )
                 );
             }
 

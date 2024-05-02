@@ -25,56 +25,46 @@ export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.attribute': attributeDomain = null
 }: IDeps = {}): IVariableFunctions {
-    const first = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => {
-        return [
-            {
-                ...inputValue[0]
-            }
-        ];
-    };
+    const first = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
+        {
+            ...inputValue[0]
+        }
+    ];
     const input = first;
-    const last = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => {
-        return [
-            {
-                ...inputValue[inputValue.length - 1]
-            }
-        ];
-    };
-    const sum = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => {
-        return [
-            {
-                ...inputValue[0],
-                value: inputValue.reduce((acc, v) => {
+    const last = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
+        {
+            ...inputValue[inputValue.length - 1]
+        }
+    ];
+    const sum = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
+        {
+            ...inputValue[0],
+            value: inputValue.reduce((acc, v) => {
+                const value = typeof v.value === 'object' ? v.value.value : v.value;
+                return acc + parseFloat(value);
+            }, 0)
+        }
+    ];
+    const avg = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
+        {
+            ...inputValue[0],
+            value:
+                inputValue.reduce((acc, v) => {
                     const value = typeof v.value === 'object' ? v.value.value : v.value;
                     return acc + parseFloat(value);
-                }, 0)
-            }
-        ];
-    };
-    const avg = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => {
-        return [
-            {
-                ...inputValue[0],
-                value:
-                    inputValue.reduce((acc, v) => {
-                        const value = typeof v.value === 'object' ? v.value.value : v.value;
-                        return acc + parseFloat(value);
-                    }, 0) / inputValue.length
-            }
-        ];
-    };
+                }, 0) / inputValue.length
+        }
+    ];
     const concat = async (
         context: IActionsListContext,
         inputValue: IVariableValue[],
         separator: string
-    ): Promise<IVariableValue[]> => {
-        return [
-            {
-                ...inputValue[0],
-                value: inputValue.map(v => v.value).join(separator)
-            }
-        ];
-    };
+    ): Promise<IVariableValue[]> => [
+        {
+            ...inputValue[0],
+            value: inputValue.map(v => v.value).join(separator)
+        }
+    ];
 
     const dedup = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => {
         const seen = {};

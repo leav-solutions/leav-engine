@@ -62,14 +62,12 @@ function PermissionsContent({attribute, onSubmitSettings, readonly}: IPermission
         menuItem: t('permissions.attribute_tab_name'),
         render: () => (
             <Tab.Pane key="libPermissions" className="grow">
-                {
-                    <DefinePermByUserGroupView
+                <DefinePermByUserGroupView
                         type={PermissionTypes.attribute}
                         key="attrPermissions"
                         applyTo={attribute.id}
                         readOnly={readonly}
                     />
-                }
             </Tab.Pane>
         )
     });

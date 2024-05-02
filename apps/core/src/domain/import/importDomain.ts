@@ -130,7 +130,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({
+export default function ({
     'core.domain.library': libraryDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.helpers.validate': validateHelper = null,
@@ -457,8 +457,8 @@ export default function({
         callbackElement: (element: IElement, index: number) => Promise<void>,
         callbackTree: (element: ITree, index: number) => Promise<void>,
         ctx: IQueryInfos
-    ): Promise<boolean> => {
-        return new Promise((resolve, reject) => {
+    ): Promise<boolean> =>
+        new Promise((resolve, reject) => {
             const parser = new JsonParser();
             const fileStream = fs.createReadStream(`${config.import.directory}/${filename}`, {highWaterMark: 128}); // 128 characters by chunk
             let elementIndex = 0;
@@ -476,12 +476,12 @@ export default function({
                 fileStream.resume();
             };
 
-            parser.onValue = async function(data: any) {
+            parser.onValue = async function (data: any) {
                 try {
                     if (this.stack[this.stack.length - 1]?.key === 'elements' && !!data.library) {
                         // Manage memory usage
                         // if parser.value has more than 10k items, we clear it to avoid memory leak
-                        if(parser.value.length % config.import.maxStackedElements === 0){
+                        if (parser.value.length % config.import.maxStackedElements === 0) {
                             parser.value = [];
                             parser.key = 0;
                         }
@@ -542,7 +542,6 @@ export default function({
                 resolve(true);
             });
         });
-    };
 
     const _getFileDataBuffer = async (filepath: string, ctx: IQueryInfos): Promise<Buffer> => {
         const fileStream = fs.createReadStream(filepath);
@@ -892,9 +891,7 @@ export default function({
             let lastCacheIndex: number;
 
             let action: ImportAction;
-            const stats: Stat = excelMapping
-                ? {}
-                : {elements: {created: 0, updated: 0, ignored: 0}, trees: 0};
+            const stats: Stat = excelMapping ? {} : {elements: {created: 0, updated: 0, ignored: 0}, trees: 0};
 
             await _getStoredFileData(
                 filename,

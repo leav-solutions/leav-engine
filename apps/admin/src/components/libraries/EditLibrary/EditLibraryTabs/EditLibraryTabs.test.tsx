@@ -21,26 +21,18 @@ jest.mock('../../../../hooks/useUserData', () => ({
     }))
 }));
 
-jest.mock('./InfosTab', () => {
-    return function InfosTab() {
+jest.mock('./InfosTab', () => function InfosTab() {
         return <div>InfosTab</div>;
-    };
-});
-jest.mock('./PermissionsTab', () => {
-    return function PermissionsTab() {
+    });
+jest.mock('./PermissionsTab', () => function PermissionsTab() {
         return <div>PermissionsTab</div>;
-    };
-});
-jest.mock('./AttributesTab', () => {
-    return function AttributesTab() {
+    });
+jest.mock('./AttributesTab', () => function AttributesTab() {
         return <div>AttributesTab</div>;
-    };
-});
-jest.mock('./FormsTab', () => {
-    return function FormsTab() {
+    });
+jest.mock('./FormsTab', () => function FormsTab() {
         return <div>FormsTab</div>;
-    };
-});
+    });
 
 describe('EditLibraryForm', () => {
     const attributes: Mockify<GET_LIB_BY_ID_libraries_list_attributes[]> = [

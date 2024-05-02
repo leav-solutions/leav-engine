@@ -11,11 +11,9 @@ import * as useEditFormContext from '../../../hooks/useEditFormContext';
 
 jest.mock('hooks/useLang');
 
-jest.mock('../../../../../../../../attributes/AttributeSelector', () => {
-    return function AttributeSelector() {
+jest.mock('../../../../../../../../attributes/AttributeSelector', () => function AttributeSelector() {
         return <div>AttributeSelector</div>;
-    };
-});
+    });
 
 describe('InfosForm', () => {
     const onSubmit = jest.fn();

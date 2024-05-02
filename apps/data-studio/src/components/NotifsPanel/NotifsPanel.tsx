@@ -138,7 +138,7 @@ function NotifsPanel({setNbNotifs}: INotifsPanelProps): JSX.Element {
                         <Row justify="space-between" align="bottom" style={{padding: '0 0.5rem'}}>
                             <Col>{t('notifications.done')}</Col>
                             <Col>
-                                <Button size={'small'} onClick={_onDeleteAll}>
+                                <Button size="small" onClick={_onDeleteAll}>
                                     {t('notifications.deleteAll')}
                                 </Button>
                             </Col>

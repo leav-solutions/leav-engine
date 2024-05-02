@@ -83,9 +83,7 @@ const Providers = ({
 };
 
 // Wrapper around testing-library's render to automatically render apollo's provider and redux store provider
-const renderWithProviders = (ui: ReactElement, options?: ICustomRenderOptions): RenderResult => {
-    return render(ui, {wrapper: props => <Providers {...props} {...options} />, ...options});
-};
+const renderWithProviders = (ui: ReactElement, options?: ICustomRenderOptions): RenderResult => render(ui, {wrapper: props => <Providers {...props} {...options} />, ...options});
 
 // Re-export everything from testing-library to improve DX. You can everything you need from this file when you use this
 // custom render

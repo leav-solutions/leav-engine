@@ -96,9 +96,7 @@ export const manageInode = async (path: string, stats?: Stats) => {
     return getInode(path);
 };
 
-export const manageIsDirectory = (stats?: Stats): boolean => {
-    return (!!stats && stats.isDirectory()) || false;
-};
+export const manageIsDirectory = (stats?: Stats): boolean => (!!stats && stats.isDirectory()) || false;
 
 const _checkMove = async (event: string, path: string, isDirectory: boolean, inode: any, params: IParamsExtends) => {
     if (inodesTmp[inode] && path !== inodesTmp[inode]) {

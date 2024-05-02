@@ -74,8 +74,7 @@ const _getColumnQueryPart = (column: string): string => `
     }
 `;
 
-export const getRecordColumnsValues = (columns: string[]) => {
-    return gqlUnchecked`
+export const getRecordColumnsValues = (columns: string[]) => gqlUnchecked`
         ${recordIdentityFragment}
         query RECORD_COLUMNS_VALUES($library: ID!, $filters: [RecordFilterInput]) {
             records(library: $library, filters: $filters) {
@@ -87,4 +86,3 @@ export const getRecordColumnsValues = (columns: string[]) => {
             }
         }
     `;
-};

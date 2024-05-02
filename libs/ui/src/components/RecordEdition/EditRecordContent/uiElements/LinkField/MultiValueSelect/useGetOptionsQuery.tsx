@@ -53,9 +53,9 @@ export const useGetOptionsQuery = ({
                     title: recordItem.whoAmI.label,
                     avatar: (
                         <KitAvatar
-                            size={'small'}
-                            shape={'square'}
-                            imageFit={'contain'}
+                            size="small"
+                            shape="square"
+                            imageFit="contain"
                             src={recordItem.whoAmI.preview?.small}
                             label={recordItem.whoAmI.label}
                         />

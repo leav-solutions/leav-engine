@@ -122,16 +122,15 @@ export default function ({
                             viewDomain.getViewById(viewId, ctx)
                     },
                     Mutation: {
-                        saveView: (_, {view}: {view: ViewFromGraphQL}, ctx: IQueryInfos): Promise<IView> => {
-                            return viewDomain.saveView(
+                        saveView: (_, {view}: {view: ViewFromGraphQL}, ctx: IQueryInfos): Promise<IView> =>
+                            viewDomain.saveView(
                                 {
                                     ...view,
                                     valuesVersions: utils.nameValArrayToObj(view.valuesVersions, 'treeId', 'treeNode'),
                                     settings: utils.nameValArrayToObj(view.settings)
                                 },
                                 ctx
-                            );
-                        },
+                            ),
                         deleteView: (_, {viewId}: {viewId: string}, ctx: IQueryInfos): Promise<IView> =>
                             viewDomain.deleteView(viewId, ctx)
                     },
@@ -160,9 +159,8 @@ export default function ({
                             }));
                             return versions;
                         },
-                        settings: (view: IView): IViewSettingsNameVal[] | null => {
-                            return view.settings ? utils.objToNameValArray<IViewSettingsNameVal>(view.settings) : null;
-                        }
+                        settings: (view: IView): IViewSettingsNameVal[] | null =>
+                            view.settings ? utils.objToNameValArray<IViewSettingsNameVal>(view.settings) : null
                     }
                 }
             };

@@ -72,35 +72,29 @@ function EditAttributeTabs({
             {
                 key: 'values_list',
                 menuItem: t('attributes.values_list'),
-                render: () => {
-                    return (
+                render: () => (
                         <Tab.Pane key="values_list" className="grow flex-col height100">
                             <ValuesListTab attributeId={attribute.id} />
                         </Tab.Pane>
-                    );
-                }
+                    )
             },
             {
                 key: 'permissions',
                 menuItem: t('attributes.permissions'),
-                render: () => {
-                    return (
+                render: () => (
                         <Tab.Pane key="permissions" className="" style={{display: 'grid'}}>
                             <PermissionsTab attribute={attribute} readonly={false} />
                         </Tab.Pane>
-                    );
-                }
+                    )
             },
             {
                 key: 'actions_list',
                 menuItem: t('attributes.action_list'),
-                render: () => {
-                    return (
+                render: () => (
                         <Tab.Pane key="actions_list" className="grow flex-col height100">
                             <ActionsListTab attribute={attribute} />
                         </Tab.Pane>
-                    );
-                }
+                    )
             }
         );
 
@@ -108,13 +102,11 @@ function EditAttributeTabs({
             panes.push({
                 key: 'metadata',
                 menuItem: t('attributes.metadata'),
-                render: () => {
-                    return (
+                render: () => (
                         <Tab.Pane key="metadata" className="grow flex-col">
                             <MetadataTab attribute={attribute} readonly={false} />
                         </Tab.Pane>
-                    );
-                }
+                    )
             });
         }
 
@@ -122,13 +114,11 @@ function EditAttributeTabs({
             panes.push({
                 key: 'embeddedFields',
                 menuItem: t('attributes.embedded_fields'),
-                render: () => {
-                    return (
+                render: () => (
                         <Tab.Pane key="EmbeddedFields" className="grow flex-col">
                             <EmbeddedFieldsTab attribute={attribute} />
                         </Tab.Pane>
-                    );
-                }
+                    )
             });
         }
     }

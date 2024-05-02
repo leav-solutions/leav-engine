@@ -54,9 +54,7 @@ const CreateRecordForm = ({
 }: ICreateRecordFormProps): JSX.Element => {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
-    const _isAttributeReadOnly = (attribute: GET_LIB_BY_ID_libraries_list_attributes): boolean => {
-        return attribute.system;
-    };
+    const _isAttributeReadOnly = (attribute: GET_LIB_BY_ID_libraries_list_attributes): boolean => attribute.system;
 
     const submitRef = useRef<RecordEdition.SubmitFunc | null>(null);
     useEffect(() => {
@@ -146,8 +144,7 @@ const CreateRecordForm = ({
                             {t('records.add_value')}
                         </Button>
                     )}
-                    {fieldValues.map((v, i) => {
-                        return (
+                    {fieldValues.map((v, i) => (
                             <Form.Input
                                 key={attr.id + '_' + i}
                                 name={attr.id}
@@ -156,8 +153,7 @@ const CreateRecordForm = ({
                                 onChange={_handleChange}
                                 disabled={readonly}
                             />
-                        );
-                    })}
+                        ))}
                 </>
             );
         };

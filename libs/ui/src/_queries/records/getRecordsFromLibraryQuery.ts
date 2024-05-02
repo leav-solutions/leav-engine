@@ -105,8 +105,7 @@ export const getRecordsFields = (fields: IField[] = []) => {
     return queryField;
 };
 
-export const getRecordsFromLibraryQuery = (fields?: IField[], withTotalCount?: boolean) => {
-    return gqlUnchecked`
+export const getRecordsFromLibraryQuery = (fields?: IField[], withTotalCount?: boolean) => gqlUnchecked`
         ${recordIdentityFragment}
         query GET_RECORDS (
             $library: ID!
@@ -134,4 +133,3 @@ export const getRecordsFromLibraryQuery = (fields?: IField[], withTotalCount?: b
             }
         }
     `;
-};
