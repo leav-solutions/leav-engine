@@ -38,7 +38,7 @@ curl -O https://raw.githubusercontent.com/leav-solutions/leav-engine/main/docker
 
 3. Start the services:
 ```
-docker-compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml up -d
 ```
 
 4. Once the install is done, you can access LEAV-Engine at http://core.leav.localhost. The initial start might take a while. During this time, you might encounter a `Bad gateway` error. Wait a few minutes and try to refresh the page. You can check the docker logs to see what's going on.
@@ -112,11 +112,43 @@ If you want to go deeper into LEAV-Engine or try out the latest features before 
 Then, all you have to do is:
 ```
 cd docker
-docker-compose up -d
+docker compose up -d
 ```
 This will start LEAV-Engine in development mode.
 
 ⚠️ **Docker v.20.10** or higher is required to run the core.
+
+### Profiles
+
+In development mode LEAV-Engine is started without certain services. To do so we use Docker profiles that allow us to define different configurations for your containers based on specific use cases or environments.
+
+Here are some profiles that you can use:
+
+#### Logs
+This profile can be used to retrieve application logs.
+Services concerned: `elasticsearch`, `logs-collector`
+
+```bash
+docker compose --profile logs up
+```
+
+#### Debug
+This profile can be used if you need to get more infos about redis or elasticsearch
+Services concerned: `redis-commander`, `kibana`.
+
+```bash
+docker compose --profile debug up
+```
+
+#### Automate
+This profile can be used if you need all services related to the automate (events scan, previews generation).
+Services concerned: `files-manager`, `preview-generator`, `automate-scan`, `sync-scan`
+
+```bash
+docker compose --profile automate up
+```
+
+More infos about profiles can be found [here](https://docs.docker.com/compose/profiles/)
 
 # Contributing
 We're glad you're interested in contributing to LEAV-Engine!
@@ -216,7 +248,7 @@ Default username is `root` with no password.
 ### ArangoDb Upgrade:
 After an upgrade, ArangoDB might not start, saying it requires a db upgrade. Run this command to fix this:
 ```
-docker-compose run arangodb arangod --database.auto-upgrade
+docker compose run arangodb arangod --database.auto-upgrade
 ```
 
 
@@ -227,7 +259,7 @@ docker-compose run arangodb arangod --database.auto-upgrade
 You can get into containers with a shell:
 
 ```bash
-docker-compose exec <service_name> /bin/sh
+docker compose exec <service_name> /bin/sh
 ```
 
 ---
@@ -318,7 +350,7 @@ GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 - Run the following command in docker folder:
 ```
-docker-compose -f docker-compose.yml -f light.yml up -d
+docker compose -f docker-compose.yml -f light.yml up -d
 ```
 - Then you can access the core at http://core.leav.localhost
 

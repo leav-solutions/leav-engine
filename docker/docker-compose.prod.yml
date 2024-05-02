@@ -2,7 +2,7 @@ version: "3.4"
 # Check https://github.com/leav-solutions/leav-engine/wiki/Configuration for more details about services configuration
 
 ##### Common properties #####
-x-message-broker-image: &message_broker_image "rabbitmq:3.9-management-alpine"
+x-message-broker-image: &message_broker_image "rabbitmq:3.13-management-alpine"
 x-traefik-image: &traefik_image "traefik:2.6"
 x-redis-image: &redis_image "redis"
 x-arango-image: &arango_image "arangodb:3.10"

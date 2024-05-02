@@ -125,7 +125,7 @@ jobs:
         ports:
           - "8529:8529"
       rabbitmq:
-        image: rabbitmq:3-management-alpine
+        image: rabbitmq:3.13-management-alpine
         ports:
           - "5672:5672"
       redis:
@@ -187,7 +187,7 @@ jobs:
         ports:
           - "8529:8529"
       rabbitmq:
-        image: rabbitmq:3-management-alpine
+        image: rabbitmq:3.13-management-alpine
         ports:
           - "5672:5672"
       redis:
@@ -241,7 +241,7 @@ jobs:
       - install
     services:
       rabbitmq:
-        image: rabbitmq:3-management-alpine
+        image: rabbitmq:3.13-management-alpine
         ports:
           - "5672:5672"
     steps:
