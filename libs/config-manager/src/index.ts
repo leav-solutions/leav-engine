@@ -27,9 +27,7 @@ const _getConfigByEnv = async function <T extends object>(dirPath: string, env: 
     return {};
 };
 
-const _isObject = (item: any): item is {} => {
-    return item && typeof item === 'object' && !Array.isArray(item);
-};
+const _isObject = (item: any): item is {} => item && typeof item === 'object' && !Array.isArray(item);
 
 /**
  * Deep merge two objects.

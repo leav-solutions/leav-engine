@@ -277,7 +277,5 @@ export const validateAttributeData = async (
     const validationRes = await Promise.all(validationFuncs);
 
     // Merge all errors into 1 object
-    return validationRes.reduce((errors, res) => {
-        return {...errors, ...res};
-    }, {});
+    return validationRes.reduce((errors, res) => ({...errors, ...res}), {});
 };

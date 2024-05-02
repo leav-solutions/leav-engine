@@ -23,9 +23,7 @@ export default function ({
 
     return {
         getCachedElementAncestors: async ({treeId, nodeId, ctx}) => {
-            const _execute = async () => {
-                return treeRepo.getElementAncestors({treeId, nodeId, ctx});
-            };
+            const _execute = async () => treeRepo.getElementAncestors({treeId, nodeId, ctx});
 
             const cacheKey = _getCacheKey(treeId, nodeId);
             return cacheService.memoize({key: cacheKey, func: _execute, ctx});

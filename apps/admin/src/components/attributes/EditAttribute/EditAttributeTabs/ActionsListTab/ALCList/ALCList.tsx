@@ -66,9 +66,7 @@ function ALCList({
 
     const [collectedProps, drop] = useDrop({
         accept: ItemTypes.ACTION,
-        canDrop: () => {
-            return true;
-        },
+        canDrop: () => true,
         drop: (dragObject: IDragObject) => {
             if (dragObject.origin === 'ALCReserve') {
                 if (currentIndex >= 0) {
@@ -85,12 +83,10 @@ function ALCList({
                 item.id = `${higherId}`;
             }
         },
-        collect: monitor => {
-            return {
+        collect: monitor => ({
                 hovered: monitor.isOver(),
                 canDrop: !!monitor.canDrop()
-            };
-        }
+            })
     });
 
     /////// DRAG / DROP FOR THE HIDDEN DIV

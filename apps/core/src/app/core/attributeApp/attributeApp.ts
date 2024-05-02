@@ -64,12 +64,9 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
         /**
          * Return attribute label, potentially filtered by requested language
          */
-        label: async (attributeData, args) => {
-            return coreApp.filterSysTranslationField(attributeData.label, args.lang || []);
-        },
-        description: async (attributeData, args) => {
-            return coreApp.filterSysTranslationField(attributeData.description, args.lang || []);
-        },
+        label: async (attributeData, args) => coreApp.filterSysTranslationField(attributeData.label, args.lang || []),
+        description: async (attributeData, args) =>
+            coreApp.filterSysTranslationField(attributeData.description, args.lang || []),
         input_types: (attributeData, _, ctx) => attributeDomain.getInputTypes({attrData: attributeData, ctx}),
         output_types: (attributeData, _, ctx) => attributeDomain.getOutputTypes({attrData: attributeData, ctx}),
         metadata_fields: async (attributeData: IAttribute, _, ctx) =>
@@ -372,11 +369,10 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                     },
                     StandardAttribute: {
                         ...commonResolvers,
-                        values_list: (attributeData: IAttribute) => {
-                            return attributeData.values_list
+                        values_list: (attributeData: IAttribute) =>
+                            attributeData.values_list
                                 ? {...attributeData.values_list, attributeFormat: attributeData.format}
-                                : null;
-                        }
+                                : null
                     },
                     LinkAttribute: {
                         ...commonResolvers,
@@ -458,11 +454,10 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         }
                     },
                     StandardValuesListConf: {
-                        __resolveType: (obj: IValuesListConf & {attributeFormat: AttributeFormats}) => {
-                            return obj.attributeFormat === AttributeFormats.DATE_RANGE
+                        __resolveType: (obj: IValuesListConf & {attributeFormat: AttributeFormats}) =>
+                            obj.attributeFormat === AttributeFormats.DATE_RANGE
                                 ? 'StandardDateRangeValuesListConf'
-                                : 'StandardStringValuesListConf';
-                        }
+                                : 'StandardStringValuesListConf'
                     },
                     ValuesVersionsConf: {
                         profile: async (

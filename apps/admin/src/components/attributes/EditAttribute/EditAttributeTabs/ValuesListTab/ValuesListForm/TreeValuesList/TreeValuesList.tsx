@@ -89,8 +89,7 @@ function TreeValuesList({values, onValuesUpdate, linkedTree}: ITreeValuesListPro
                 {t('attributes.add_value')}
             </Button>
             <List data-test-id="values-list-wrapper" style={{width: '100%'}} divided>
-                {values.map((val, i) => {
-                    return (
+                {values.map((val, i) => (
                         <List.Item data-test-id="values-list-value" key={`values_${i}`}>
                             <List.Content floated="left">
                                 <TreeNodeBreadcrumb element={val as ITreeLinkElement} actions={breadcrumbActions} />
@@ -99,8 +98,7 @@ function TreeValuesList({values, onValuesUpdate, linkedTree}: ITreeValuesListPro
                                 <Button data-test-id="link-value-delete-btn" icon="trash" onClick={_deleteValue(i)} />
                             </List.Content>
                         </List.Item>
-                    );
-                })}
+                    ))}
             </List>
             <SelectTreeNodeModal
                 open={isOpenSelectTreeNodeModal}

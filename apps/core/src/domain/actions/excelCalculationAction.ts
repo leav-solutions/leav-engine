@@ -24,7 +24,7 @@ export interface IActionListExcelContext extends IActionsListContext {
     value?: ActionsListExcelValueType;
 }
 
-export default function({
+export default function ({
     'core.domain.helpers.calculationVariable': calculationVariable = null
 }: IDeps = {}): IActionsListFunction {
     const _processReplacement = async (
@@ -33,9 +33,9 @@ export default function({
         variable: string
     ): Promise<ActionsListExcelValueType> => {
         const variableValues = await calculationVariable.processVariableString(context, variable, initialValues);
-        const stringValues = variableValues.map(v => {
-            return v.value === null ? '' : typeof v.value === 'object' ? v.value.value : v.value;
-        });
+        const stringValues = variableValues.map(v =>
+            v.value === null ? '' : typeof v.value === 'object' ? v.value.value : v.value
+        );
 
         return stringValues.join(' ');
     };

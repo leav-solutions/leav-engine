@@ -66,18 +66,16 @@ describe('standardFieldReducer', () => {
         metadataEdit: false
     };
 
-    const _getInitialStateWithValues = (values: StandardFieldReducerValues): IStandardFieldReducerState => {
-        return {
-            ...initialState,
-            values: {
-                ...initialState.values,
-                [FieldScope.CURRENT]: {
-                    ...initialState.values[FieldScope.CURRENT],
-                    values: {...values}
-                }
+    const _getInitialStateWithValues = (values: StandardFieldReducerValues): IStandardFieldReducerState => ({
+        ...initialState,
+        values: {
+            ...initialState.values,
+            [FieldScope.CURRENT]: {
+                ...initialState.values[FieldScope.CURRENT],
+                values: {...values}
             }
-        };
-    };
+        }
+    });
 
     test('ADD_VALUE', async () => {
         const newState = standardFieldValueReducer(initialState, {

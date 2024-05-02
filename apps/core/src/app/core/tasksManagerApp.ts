@@ -146,9 +146,7 @@ export default function ({
                 resolvers: {
                     TaskPriority,
                     Task: {
-                        created_by: async (task: ITask, _, ctx): Promise<IRecord> => {
-                            return _getUser(task.created_by, ctx);
-                        },
+                        created_by: async (task: ITask, _, ctx): Promise<IRecord> => _getUser(task.created_by, ctx),
                         canceledBy: async (task: ITask, _, ctx): Promise<IRecord> => {
                             if (!task.canceledBy) {
                                 return null;

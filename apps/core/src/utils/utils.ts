@@ -147,9 +147,7 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
             return filename.slice(filename.lastIndexOf('.') + 1).toLowerCase();
         },
         getUnixTime: () => Math.floor(Date.now() / 1000),
-        deleteFile: async (path: string): Promise<void> => {
-            return fs.promises.unlink(path);
-        },
+        deleteFile: async (path: string): Promise<void> => fs.promises.unlink(path),
         libNameToQueryName(name: string): string {
             return flow([camelCase, trimEnd])(name);
         },
@@ -215,15 +213,16 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
                 return [];
             }
 
-            return Object.keys(obj).reduce((arr, key) => {
-                return [
+            return Object.keys(obj).reduce(
+                (arr, key) => [
                     ...arr,
                     {
                         [keyFieldName]: key,
                         [valueFieldName]: obj[key]
                     }
-                ];
-            }, []);
+                ],
+                []
+            );
         },
         getLibraryTreeId(library) {
             return `${library}_tree`;
@@ -257,15 +256,15 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
         decomposeValueEdgeDestination(value: string): {library: string; id: string} {
             const [library, id]: [string, string] = value.split('/') as [string, string];
 
-      return {library, id};
-    },
-    translateError(error: ErrorFieldDetailMessage, lang: string): string {
-      // if error is undefined
-      if (typeof error === 'undefined') {
-          error = 'Unknown error';
-      }
+            return {library, id};
+        },
+        translateError(error: ErrorFieldDetailMessage, lang: string): string {
+            // if error is undefined
+            if (typeof error === 'undefined') {
+                error = 'Unknown error';
+            }
 
-      const toTranslate = typeof error === 'string' ? {msg: error, vars: {}} : (error as IExtendedErrorMsg);
+            const toTranslate = typeof error === 'string' ? {msg: error, vars: {}} : (error as IExtendedErrorMsg);
 
             return translator.t(('errors.' + toTranslate.msg) as string, {
                 ...toTranslate.vars,

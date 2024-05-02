@@ -10,11 +10,9 @@ import FormsList from './FormsList';
 jest.mock('../../../../../../hooks/useLang');
 jest.mock('../../../../../../hooks/useUserData');
 
-jest.mock('../../../../../shared/ConfirmedButton', () => {
-    return function ConfirmedButton() {
+jest.mock('../../../../../shared/ConfirmedButton', () => function ConfirmedButton() {
         return <div>ConfirmedButton</div>;
-    };
-});
+    });
 
 describe('FormsList', () => {
     const forms = [

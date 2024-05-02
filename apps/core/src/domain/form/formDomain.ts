@@ -93,8 +93,8 @@ export default function (deps: IDeps = {}): IFormDomain {
         translator = null
     } = deps;
 
-    const _canAccessAttribute = (attribute: string, libraryId: string, recordId: string, ctx: IQueryInfos) => {
-        return recordId && libraryId
+    const _canAccessAttribute = (attribute: string, libraryId: string, recordId: string, ctx: IQueryInfos) =>
+        recordId && libraryId
             ? recordAttributePermissionDomain.getRecordAttributePermission(
                   RecordAttributePermissionsActions.ACCESS_ATTRIBUTE,
                   ctx.userId,
@@ -108,7 +108,6 @@ export default function (deps: IDeps = {}): IFormDomain {
                   attributeId: attribute,
                   ctx
               });
-    };
 
     const _getMissingFormDefaultProps = async ({library, id, ctx}): Promise<IForm> => {
         const defaultElements: IFormElement[] = [

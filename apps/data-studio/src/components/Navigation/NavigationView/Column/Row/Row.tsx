@@ -229,7 +229,7 @@ function Row({isActive, treeElement, depth}: IActiveRowNavigationProps): JSX.Ele
     const menuActions: FloatingMenuAction[] = [
         {
             title: t('global.details'),
-            button: <EditRecordBtn shape={'circle'} record={record} size={menuBtnSize} />
+            button: <EditRecordBtn shape="circle" record={record} size={menuBtnSize} />
         }
     ];
 

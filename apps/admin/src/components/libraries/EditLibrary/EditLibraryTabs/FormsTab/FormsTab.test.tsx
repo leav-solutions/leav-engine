@@ -11,17 +11,13 @@ import {getFormsQuery} from '../../../../../queries/forms/getFormsQuery';
 import {mockFormLight} from '../../../../../__mocks__/forms';
 import FormsTab from './FormsTab';
 
-jest.mock('./FormsList', () => {
-    return function FormsList() {
+jest.mock('./FormsList', () => function FormsList() {
         return <div>FormsList</div>;
-    };
-});
+    });
 
-jest.mock('./EditFormModal', () => {
-    return function EditFormModal() {
+jest.mock('./EditFormModal', () => function EditFormModal() {
         return <div>EditFormModal</div>;
-    };
-});
+    });
 
 describe('FormsTab', () => {
     const mocks: MockedResponse[] = [

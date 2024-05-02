@@ -6,23 +6,17 @@ import {MemoryRouter} from 'react-router-dom-v5';
 import {act, render, screen} from '_tests/testUtils';
 import General from './General';
 
-jest.mock('./GeneralInfosTab', () => {
-    return function GeneralInfosTab() {
+jest.mock('./GeneralInfosTab', () => function GeneralInfosTab() {
         return <div>GeneralInfosTab</div>;
-    };
-});
+    });
 
-jest.mock('./GeneralAdminPermissionsTab', () => {
-    return function GeneralAdminPermissionsTab() {
+jest.mock('./GeneralAdminPermissionsTab', () => function GeneralAdminPermissionsTab() {
         return <div>GeneralAdminPermissionsTab</div>;
-    };
-});
+    });
 
-jest.mock('./GeneralApiKeysTab', () => {
-    return function GeneralApiKeysTab() {
+jest.mock('./GeneralApiKeysTab', () => function GeneralApiKeysTab() {
         return <div>GeneralApiKeysTab</div>;
-    };
-});
+    });
 
 jest.mock('react-router-v5', () => ({
     ...jest.requireActual('react-router-v5'),

@@ -18,9 +18,7 @@ function NavigatorTab({library}: IEditableNavigatorProps): JSX.Element {
     const _onRecordClick = rec => {
         setRecord(rec);
     };
-    const renderModal = rec => {
-        return <EditRecordModal open onClose={_closeEditRecord} recordId={rec.id} library={rec.library.id} />;
-    };
+    const renderModal = rec => <EditRecordModal open onClose={_closeEditRecord} recordId={rec.id} library={rec.library.id} />;
     if (library) {
         return (
             <>

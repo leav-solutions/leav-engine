@@ -20,23 +20,15 @@ export const getRecord = async (
     retrieveInactive: boolean,
     deps: IHandleFileSystemEventDeps,
     ctx: IQueryInfos
-): Promise<IRecord | null> => {
-    return deps.filesManagerRepo.getRecord(
-        {fileName, filePath, fileInode},
-        {recordLibrary, recordId},
-        retrieveInactive,
-        ctx
-    );
-};
+): Promise<IRecord | null> =>
+    deps.filesManagerRepo.getRecord({fileName, filePath, fileInode}, {recordLibrary, recordId}, retrieveInactive, ctx);
 
 export const getParentRecord = async (
     fullParentPath: string,
     library: string,
     deps: IHandleFileSystemEventDeps,
     ctx: IQueryInfos
-): Promise<IRecord | null> => {
-    return deps.filesManagerRepo.getParentRecord(fullParentPath, library, ctx);
-};
+): Promise<IRecord | null> => deps.filesManagerRepo.getParentRecord(fullParentPath, library, ctx);
 
 export const createRecordFile = async (
     recordData: IFileMetadata,

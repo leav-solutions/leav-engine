@@ -32,11 +32,9 @@ jest.mock('_ui/components/SelectTreeNode', () => ({
 }));
 
 // To skip ellipsis in RecordCard, which is not very predictable during tests (sometimes only render "...")
-jest.mock('antd/lib/typography/Paragraph', () => {
-    return function Paragraph({children}) {
+jest.mock('antd/lib/typography/Paragraph', () => function Paragraph({children}) {
         return <div>{children}</div>;
-    };
-});
+    });
 
 describe('TreeField', () => {
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
@@ -62,9 +60,7 @@ describe('TreeField', () => {
             }
         ]
     };
-    const mockHandleSubmit: SubmitValueFunc = jest.fn(async () => {
-        return mockSubmitRes;
-    });
+    const mockHandleSubmit: SubmitValueFunc = jest.fn(async () => mockSubmitRes);
     const mockHandleDelete: DeleteValueFunc = jest.fn().mockReturnValue({status: APICallStatus.SUCCESS});
 
     const mockHandleDeleteMultipleValues: DeleteMultipleValuesFunc = jest

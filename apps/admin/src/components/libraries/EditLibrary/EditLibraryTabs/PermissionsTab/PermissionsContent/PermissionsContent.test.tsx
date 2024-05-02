@@ -11,17 +11,13 @@ import PermissionsContent from './PermissionsContent';
 
 jest.mock('../../../../../../hooks/useLang');
 
-jest.mock('../../../../../permissions/DefinePermByUserGroupView', () => {
-    return function DefinePermByUserGroupView() {
+jest.mock('../../../../../permissions/DefinePermByUserGroupView', () => function DefinePermByUserGroupView() {
         return <div>DefinePermByUserGroupView</div>;
-    };
-});
+    });
 
-jest.mock('../../../../../permissions/DefineTreePermissionsView', () => {
-    return function DefineTreePermissionsView() {
+jest.mock('../../../../../permissions/DefineTreePermissionsView', () => function DefineTreePermissionsView() {
         return <div>DefineTreePermissionsView</div>;
-    };
-});
+    });
 
 describe('PermissionsContent', () => {
     const library: GET_LIB_BY_ID_libraries_list = {

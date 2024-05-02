@@ -4,12 +4,10 @@
 
 import {IUseMessagesHook} from '../useMessages';
 
-const mockUseMessages = (): IUseMessagesHook => {
-    return {
+const mockUseMessages = (): IUseMessagesHook => ({
         messages: [],
         addMessage: jest.fn(),
         removeMessage: jest.fn()
-    };
-};
+    });
 
 export default mockUseMessages;

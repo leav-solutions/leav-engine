@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import * as React from 'react';
+import React from 'react';
 import {useDrop} from 'react-dnd';
 import {useTranslation} from 'react-i18next';
 import {Header} from 'semantic-ui-react';

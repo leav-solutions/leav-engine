@@ -24,18 +24,14 @@ interface ISelectTreeNodeProps {
     selectableLibraries?: string[]; // all by default
 }
 
-const _constructTreeContent = (data: TreeNodeChildrenQuery['treeNodeChildren']['list']): ITreeNodeWithRecord[] => {
-    return data.map(e => {
-        return {
+const _constructTreeContent = (data: TreeNodeChildrenQuery['treeNodeChildren']['list']): ITreeNodeWithRecord[] => data.map(e => ({
             record: e.record,
             title: e.record.whoAmI.label || e.record.whoAmI.id,
             id: e.id,
             key: e.id,
             isLeaf: !e.childrenCount,
             children: []
-        };
-    });
-};
+        }));
 
 const _getTreeNodeByKey = (key: string, treeContent: ITreeNodeWithRecord[]): ITreeNodeWithRecord => {
     for (const node of treeContent) {

@@ -55,7 +55,7 @@ interface IDeps {
     'core.domain.library'?: ILibraryDomain;
 }
 
-export default function({
+export default function ({
     'core.domain.tree': treeDomain = null,
     'core.domain.attribute': attributeDomain = null,
     'core.domain.permission': permissionDomain = null,
@@ -432,9 +432,10 @@ export default function({
                             }
 
                             if (tree.libraries) {
-                                treeToSave.libraries = tree.libraries.reduce((acc, cur) => {
-                                    return {...acc, [cur.library]: cur.settings};
-                                }, {});
+                                treeToSave.libraries = tree.libraries.reduce(
+                                    (acc, cur) => ({...acc, [cur.library]: cur.settings}),
+                                    {}
+                                );
                             }
 
                             return treeDomain.saveTree(treeToSave as ITree, ctx);
@@ -530,25 +531,22 @@ export default function({
                         /**
                          * Return tree label, potentially filtered by requested language
                          */
-                        label: async (treeData, args) => {
-                            return coreApp.filterSysTranslationField(treeData.label, args.lang || []);
-                        },
-                        libraries: async (treeData: ITree, _, ctx: IQueryInfos): Promise<ITreeLibraryForGraphQL[]> => {
-                            return Promise.all(
+                        label: async (treeData, args) =>
+                            coreApp.filterSysTranslationField(treeData.label, args.lang || []),
+                        libraries: async (treeData: ITree, _, ctx: IQueryInfos): Promise<ITreeLibraryForGraphQL[]> =>
+                            Promise.all(
                                 Object.keys(treeData.libraries ?? {}).map(async libId => {
                                     const lib = await libraryDomain.getLibraryProperties(libId, ctx);
                                     return {library: lib, settings: treeData.libraries[libId]};
                                 })
-                            );
-                        },
-                        permissions_conf: (treeData: ITree): ITreePermissionsConfForGraphQL[] | null => {
-                            return treeData.permissions_conf
+                            ),
+                        permissions_conf: (treeData: ITree): ITreePermissionsConfForGraphQL[] | null =>
+                            treeData.permissions_conf
                                 ? Object.keys(treeData.permissions_conf).map(libId => ({
                                       libraryId: libId,
                                       permissionsConf: treeData.permissions_conf[libId]
                                   }))
-                                : null;
-                        },
+                                : null,
                         permissions: (
                             tree: ITree,
                             _,

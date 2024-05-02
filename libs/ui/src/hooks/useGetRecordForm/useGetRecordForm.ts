@@ -132,14 +132,13 @@ const useGetRecordForm = ({
         }
     });
 
-    const refetchRecordForm = () => {
-        return refetch({
+    const refetchRecordForm = () =>
+        refetch({
             libraryId,
             recordId,
             formId,
             version: requestVersion
         });
-    };
 
     // To avoid a moment where loading is done and record form is not available yet, we force loading to be true until
     // record form is available

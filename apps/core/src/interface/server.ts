@@ -212,9 +212,7 @@ export default function ({
                         try {
                             // Recreate headers object from rawHeaders array
                             const headers: Record<string, string> = ctx.extra.request.rawHeaders.reduce(
-                                (prev, curr, i, arr) => {
-                                    return !(i % 2) ? {...prev, [curr]: arr[i + 1]} : prev;
-                                },
+                                (prev, curr, i, arr) => (!(i % 2) ? {...prev, [curr]: arr[i + 1]} : prev),
                                 {}
                             );
 
@@ -244,10 +242,9 @@ export default function ({
                             return false; // Will close connection with a "403 Forbidden" error
                         }
                     },
-                    context: async ctx => {
+                    context: async ctx =>
                         // Extract relevant context from extra
-                        return ctx.extra.leavCtx;
-                    }
+                        ctx.extra.leavCtx
                 };
 
                 const graphqlWsServer = graphqlWS.useServer(wsServerOptions, wsServer);

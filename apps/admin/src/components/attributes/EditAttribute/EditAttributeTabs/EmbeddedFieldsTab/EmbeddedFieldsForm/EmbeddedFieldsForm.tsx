@@ -78,9 +78,7 @@ function EmbeddedFieldsForm({
     };
 
     const _getNewValues = (form: IFormValues) => {
-        const valueFind = values.find(value => {
-            return value.originalId === id;
-        });
+        const valueFind = values.find(value => value.originalId === id);
 
         const newValues = valueFind ? values.map(v => (v.originalId === id ? form : v)) : [...values, form];
 

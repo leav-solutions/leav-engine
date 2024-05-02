@@ -131,8 +131,7 @@ export async function gqlSaveAttribute(params: {
         actionsList
     } = params;
 
-    const _convertEmbeddedFields = (field: IEmbeddedAttribute): string => {
-        return `
+    const _convertEmbeddedFields = (field: IEmbeddedAttribute): string => `
             {
                 id: "${field.id}",
                 format: ${field.format ?? 'null'},
@@ -143,10 +142,8 @@ export async function gqlSaveAttribute(params: {
                 }
             }
         `;
-    };
 
-    const _convertActionsList = (actions: IActionsListConfig): string => {
-        return `
+    const _convertActionsList = (actions: IActionsListConfig): string => `
             {
                 ${Object.keys(actions)
                     .map(eventKey => {
@@ -154,9 +151,7 @@ export async function gqlSaveAttribute(params: {
                             actionConf => `{
                                 id: "${actionConf.id}",
                                 params: [${(actionConf?.params ?? [])
-                                    .map(p => {
-                                        return `{name: "${p.name}", value: "${p.value}"}`;
-                                    })
+                                    .map(p => `{name: "${p.name}", value: "${p.value}"}`)
                                     .join(', ')}]
                             }`
                         );
@@ -166,7 +161,6 @@ export async function gqlSaveAttribute(params: {
                     .join(', ')}
             }
         `;
-    };
 
     const query = `mutation {
         saveAttribute(

@@ -8,23 +8,17 @@ import {PermissionsActions, PermissionTypes} from '_gqlTypes/globalTypes';
 import {render, screen} from '_tests/testUtils';
 import Settings from './Settings';
 
-jest.mock('./ApplicationSettings', () => {
-    return function ApplicationSettings() {
+jest.mock('./ApplicationSettings', () => function ApplicationSettings() {
         return <div>ApplicationSettings</div>;
-    };
-});
+    });
 
-jest.mock('./LibrariesSettings', () => {
-    return function LibrariesSettings() {
+jest.mock('./LibrariesSettings', () => function LibrariesSettings() {
         return <div>LibrariesSettings</div>;
-    };
-});
+    });
 
-jest.mock('./TreesSettings', () => {
-    return function TreesSettings() {
+jest.mock('./TreesSettings', () => function TreesSettings() {
         return <div>TreesSettings</div>;
-    };
-});
+    });
 
 describe('Settings', () => {
     const mocks = [
@@ -77,7 +71,7 @@ describe('Settings', () => {
         render(
             <MemoryRouter initialEntries={['/settings/libraries']}>
                 <Routes>
-                    <Route path={'/settings/:tabId?'} element={<Settings />} />
+                    <Route path="/settings/:tabId?" element={<Settings />} />
                 </Routes>
             </MemoryRouter>,
             {apolloMocks: mocks}

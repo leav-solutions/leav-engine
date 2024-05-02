@@ -14,15 +14,13 @@ const mockCalculationsVariable = {
         ctx: IActionsListContext,
         variable: string,
         initialValue: ActionsListValueType
-    ): Promise<IVariableValue[]> => {
-        return [
-            {
-                value: `${variable}Value`,
-                recordId: '1',
-                library: 'meh'
-            }
-        ];
-    }
+    ): Promise<IVariableValue[]> => [
+        {
+            value: `${variable}Value`,
+            recordId: '1',
+            library: 'meh'
+        }
+    ]
 };
 
 describe('excelCalculationAction', () => {

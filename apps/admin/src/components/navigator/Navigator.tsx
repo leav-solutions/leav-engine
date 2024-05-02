@@ -32,9 +32,7 @@ function Navigator(props: INavigatorProps): JSX.Element {
     });
     useEffect(() => {
         if (props.getSelectionRef) {
-            props.getSelectionRef.current = () => {
-                return state.selection;
-            };
+            props.getSelectionRef.current = () => state.selection;
         }
     }, [props.getSelectionRef, state.selection]);
     const rootSelected = (root: string) =>

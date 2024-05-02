@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useQuery} from '@apollo/client';
 import {RecordFormAttributeLinkAttributeFragment, SortOrder} from '_ui/_gqlTypes';
 import {
@@ -50,9 +53,9 @@ export const useGetOptionsQuery = ({
                     title: recordItem.whoAmI.label,
                     avatar: (
                         <KitAvatar
-                            size={'small'}
-                            shape={'square'}
-                            imageFit={'contain'}
+                            size="small"
+                            shape="square"
+                            imageFit="contain"
                             src={recordItem.whoAmI.preview?.small}
                             label={recordItem.whoAmI.label}
                         />

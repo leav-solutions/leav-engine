@@ -66,20 +66,14 @@ export default function FiltersPanel({state, dispatch}: IListProps) {
         }
     }, [state.filters, state.showFilters]);
 
-    const attributesDropDownOptions = useMemo(() => {
-        return state.selectedRootAttributes.map(attribute => {
-            return {
+    const attributesDropDownOptions = useMemo(() => state.selectedRootAttributes.map(attribute => ({
                 key: attribute.id,
                 text: attribute.label?.fr,
                 value: attribute.id
-            };
-        });
-    }, [state.selectedRootAttributes]);
+            })), [state.selectedRootAttributes]);
 
     const applyFilters = () => {
-        const goodFilters = localState.filter(f => {
-            return f.attribute !== '' && f.operator !== '' && f.value !== '';
-        });
+        const goodFilters = localState.filter(f => f.attribute !== '' && f.operator !== '' && f.value !== '');
         dispatch({
             type: ActionTypes.SET_FILTERS,
             data: goodFilters
@@ -92,8 +86,7 @@ export default function FiltersPanel({state, dispatch}: IListProps) {
             data: null
         });
     };
-    const memoizedFunctions = useMemo(() => {
-        return {
+    const memoizedFunctions = useMemo(() => ({
             removeFilter: (i: number) => {
                 localDispatch({
                     type: LocalActionTypes.REMOVE_FILTER,
@@ -118,11 +111,9 @@ export default function FiltersPanel({state, dispatch}: IListProps) {
                     }
                 });
             }
-        };
-    }, [localDispatch]);
+        }), [localDispatch]);
 
-    const renderFilter = useMemo(() => {
-        return (filterData, index) => {
+    const renderFilter = useMemo(() => (filterData, index) => {
             const onRemove = () => {
                 memoizedFunctions.removeFilter(index);
             };
@@ -163,8 +154,7 @@ export default function FiltersPanel({state, dispatch}: IListProps) {
                     </Button>
                 </Input>
             );
-        };
-    }, [attributesDropDownOptions, memoizedFunctions]);
+        }, [attributesDropDownOptions, memoizedFunctions]);
     const onSubmit = e => {
         e.preventDefault();
         applyFilters();

@@ -12,11 +12,9 @@ import {act, render, screen, waitFor, within} from '_tests/testUtils';
 import {mockApplicationDetails, mockApplicationsModules} from '__mocks__/common/applications';
 import InfosTab from './InfosTab';
 
-jest.mock('components/shared/FileSelector', () => {
-    return function FileSelector() {
+jest.mock('components/shared/FileSelector', () => function FileSelector() {
         return <div>FileSelector</div>;
-    };
-});
+    });
 
 describe('InfosTab', () => {
     test('Display form, edit value and submit on blur', async () => {

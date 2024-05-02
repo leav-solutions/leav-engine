@@ -13,11 +13,9 @@ jest.mock(
         }
 );
 
-jest.mock('../../Workspace', () => {
-    return function Workspace() {
+jest.mock('../../Workspace', () => function Workspace() {
         return <div>Workspace</div>;
-    };
-});
+    });
 
 describe('Routes', () => {
     test('default url call Workspace', async () => {

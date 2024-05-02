@@ -36,26 +36,24 @@ export default function ({
         nodeId: string,
         linkedRecord: IRecord,
         valueEdge: IValueEdge
-    ): ITreeValue => {
-        return {
-            id_value: valueEdge._key,
-            value:
-                linkedRecord && nodeId
-                    ? {
-                          id: nodeId,
-                          record: linkedRecord
-                      }
-                    : null,
-            attribute: valueEdge.attribute,
-            modified_at: valueEdge.modified_at,
-            modified_by: valueEdge.modified_by,
-            created_at: valueEdge.created_at,
-            created_by: valueEdge.created_by,
-            version: valueEdge.version ?? null,
-            metadata: valueEdge.metadata,
-            treeId
-        };
-    };
+    ): ITreeValue => ({
+        id_value: valueEdge._key,
+        value:
+            linkedRecord && nodeId
+                ? {
+                      id: nodeId,
+                      record: linkedRecord
+                  }
+                : null,
+        attribute: valueEdge.attribute,
+        modified_at: valueEdge.modified_at,
+        modified_by: valueEdge.modified_by,
+        created_at: valueEdge.created_at,
+        created_by: valueEdge.created_by,
+        version: valueEdge.version ?? null,
+        metadata: valueEdge.metadata,
+        treeId
+    });
 
     function _getExtendedFilterPart(attributes: IAttribute[], linkedValue: GeneratedAqlQuery): GeneratedAqlQuery {
         return aql`${

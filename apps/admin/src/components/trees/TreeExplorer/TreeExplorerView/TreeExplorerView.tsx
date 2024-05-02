@@ -270,9 +270,7 @@ const TreeExplorerView = ({
         };
     };
 
-    const canDrop = (d: OnDragPreviousAndNextLocation & NodeData) => {
-        return d.nextParent !== null;
-    };
+    const canDrop = (d: OnDragPreviousAndNextLocation & NodeData) => d.nextParent !== null;
 
     const orTxt = t('admin.or');
 

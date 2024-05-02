@@ -58,26 +58,21 @@ export default function ({
     };
 
     const commonValueResolvers = {
-        attribute: (value: IValue, _, ctx: IQueryInfos): Promise<IAttribute> => {
-            return attributeDomain.getAttributeProperties({id: value.attribute, ctx});
-        },
-        created_by: async (value: IValue, _, ctx: IQueryInfos): Promise<IRecord> => {
-            return typeof value.created_by === 'undefined' ? null : _getUser(value.created_by, ctx);
-        },
-        modified_by: async (value: IValue, _, ctx: IQueryInfos): Promise<IRecord> => {
-            return typeof value.modified_by === 'undefined' ? null : _getUser(value.modified_by, ctx);
-        },
-        metadata: (value: IValue, _, ctx: IQueryInfos): Array<{name: string; value: IStandardValue}> => {
-            return value.metadata ? objectToNameValueArray(value.metadata as IKeyValue<IStandardValue>) : [];
-        },
-        version: (value: IValue, _, ctx: IQueryInfos): Array<{treeId: string; treeNode: {id: string}}> => {
-            return value?.version
+        attribute: (value: IValue, _, ctx: IQueryInfos): Promise<IAttribute> =>
+            attributeDomain.getAttributeProperties({id: value.attribute, ctx}),
+        created_by: async (value: IValue, _, ctx: IQueryInfos): Promise<IRecord> =>
+            typeof value.created_by === 'undefined' ? null : _getUser(value.created_by, ctx),
+        modified_by: async (value: IValue, _, ctx: IQueryInfos): Promise<IRecord> =>
+            typeof value.modified_by === 'undefined' ? null : _getUser(value.modified_by, ctx),
+        metadata: (value: IValue, _, ctx: IQueryInfos): Array<{name: string; value: IStandardValue}> =>
+            value.metadata ? objectToNameValueArray(value.metadata as IKeyValue<IStandardValue>) : [],
+        version: (value: IValue, _, ctx: IQueryInfos): Array<{treeId: string; treeNode: {id: string}}> =>
+            value?.version
                 ? objectToNameValueArray(value.version).map(v => ({
                       treeId: v.name,
                       treeNode: {id: v.value, treeId: v.name}
                   }))
-                : [];
-        }
+                : []
     };
 
     return {

@@ -11,11 +11,9 @@ import {render, screen} from '../../../_tests/testUtils';
 import {EditRecord} from './EditRecord';
 import {Form} from 'antd';
 
-jest.mock('../EditRecordContent', () => {
-    return function EditRecordContent() {
+jest.mock('../EditRecordContent', () => function EditRecordContent() {
         return <div>EditRecordContent</div>;
-    };
-});
+    });
 
 jest.mock('hooks/useCanEditRecord/useCanEditRecord', () => ({
     useCanEditRecord: (): IUseCanEditRecordHook => ({loading: false, canEdit: true, isReadOnly: false})

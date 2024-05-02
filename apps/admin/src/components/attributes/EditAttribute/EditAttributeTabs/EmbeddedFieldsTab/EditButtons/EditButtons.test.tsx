@@ -16,7 +16,7 @@ describe('EmbeddedFieldsWrapper', () => {
 
         const comp = render(
             <EditButtons
-                id={'test'}
+                id="test"
                 format={mockFormat}
                 flatItem={mockFlatItem as IFlatItem}
                 expend={jest.fn()}

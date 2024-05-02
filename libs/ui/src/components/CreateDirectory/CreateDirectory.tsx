@@ -203,7 +203,7 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
                             loading={loading}
                             disabled={!directoryName}
                             className="submit-btn"
-                            title={'Create'}
+                            title="Create"
                             type="primary"
                             onClick={_handleCreateClick}
                         >

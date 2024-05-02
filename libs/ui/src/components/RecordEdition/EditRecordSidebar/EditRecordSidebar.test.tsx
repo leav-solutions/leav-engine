@@ -11,17 +11,13 @@ import {initialState} from '../editRecordReducer/editRecordReducer';
 import {EditRecordReducerContext, IEditRecordReducerContext} from '../editRecordReducer/editRecordReducerContext';
 import EditRecordSidebar from './EditRecordSidebar';
 
-jest.mock('_ui/components/RecordEdition/EditRecordSidebar/RecordSummary', () => {
-    return function RecordSummary() {
+jest.mock('_ui/components/RecordEdition/EditRecordSidebar/RecordSummary', () => function RecordSummary() {
         return <div>RecordSummary</div>;
-    };
-});
+    });
 
-jest.mock('_ui/components/RecordEdition/EditRecordContent/uiElements/StandardField', () => {
-    return function StandardField() {
+jest.mock('_ui/components/RecordEdition/EditRecordContent/uiElements/StandardField', () => function StandardField() {
         return <div>StandardField</div>;
-    };
-});
+    });
 
 describe('EditRecordSidebar', () => {
     const mockReducer: IEditRecordReducerContext = {

@@ -9,13 +9,9 @@ import EditLibraryPreviewsSettings from './EditLibraryPreviewsSettings';
 
 jest.mock('../../../../hooks/useSharedTranslation/useSharedTranslation');
 
-jest.mock('./EditPreviewsSettingsModal', () => {
-    return {
-        EditPreviewsSettingsModal: () => {
-            return <div>EditPreviewsSettingsModal</div>;
-        }
-    };
-});
+jest.mock('./EditPreviewsSettingsModal', () => ({
+        EditPreviewsSettingsModal: () => <div>EditPreviewsSettingsModal</div>
+    }));
 
 describe('EditLibraryPreviewsSettings', () => {
     test('Display list of previews settings', async () => {

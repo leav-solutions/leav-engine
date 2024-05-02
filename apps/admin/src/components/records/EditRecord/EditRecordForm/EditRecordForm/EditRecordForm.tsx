@@ -80,11 +80,9 @@ const EditRecordForm = ({
         refetchQueries: [{query, variables: getRecordDataVariables}]
     });
 
-    const _extractRecordIdentity = useCallback((dataQueryRes: IGetRecordData): RecordIdentity_whoAmI => {
-        return dataQueryRes && dataQueryRes.record.list[0].whoAmI
+    const _extractRecordIdentity = useCallback((dataQueryRes: IGetRecordData): RecordIdentity_whoAmI => dataQueryRes && dataQueryRes.record.list[0].whoAmI
             ? dataQueryRes.record.list[0].whoAmI
-            : {id: '', library: {id: '', label: null}, label: null, color: null, preview: null};
-    }, []);
+            : {id: '', library: {id: '', label: null}, label: null, color: null, preview: null}, []);
 
     useEffect(() => {
         if (onIdentityUpdate && data && data.record && data.record.list.length) {

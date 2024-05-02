@@ -6,11 +6,9 @@ import {render, screen} from '_ui/_tests/testUtils';
 import MockSearchContextProvider from '_ui/__mocks__/common/mockSearchContextProvider';
 import ActionsMenu from './ActionsMenu';
 
-jest.mock('_ui/components/ExportModal', () => {
-    return function ExportModal() {
+jest.mock('_ui/components/ExportModal', () => function ExportModal() {
         return <div>ExportModal</div>;
-    };
-});
+    });
 
 describe('ActionsMenu', () => {
     test('Render menu', async () => {

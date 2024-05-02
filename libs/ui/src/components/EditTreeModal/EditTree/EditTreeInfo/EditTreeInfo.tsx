@@ -72,12 +72,10 @@ function EditTreeInfo({tree, onSetSubmitFunction, readOnly}: IEditTreeInfoProps)
         } catch (e) {
             // Display errors in form
             form.setFields(
-                Object.keys(e.graphQLErrors?.[0]?.extensions?.fields ?? {}).map(fieldName => {
-                    return {
+                Object.keys(e.graphQLErrors?.[0]?.extensions?.fields ?? {}).map(fieldName => ({
                         name: fieldName,
                         errors: [e.graphQLErrors[0].extensions.fields[fieldName]]
-                    };
-                })
+                    }))
             );
 
             throw e;

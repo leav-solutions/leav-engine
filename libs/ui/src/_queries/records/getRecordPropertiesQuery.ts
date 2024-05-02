@@ -144,8 +144,7 @@ const _getFieldQueryPart = (field: IRecordPropertiesField): string => `
     }
 `;
 
-export const getRecordPropertiesQuery = (fields: IRecordPropertiesField[]) => {
-    return gqlUnchecked`
+export const getRecordPropertiesQuery = (fields: IRecordPropertiesField[]) => gqlUnchecked`
         ${recordIdentityFragment}
         ${valuesVersionDetailsFragment}
 
@@ -162,4 +161,3 @@ export const getRecordPropertiesQuery = (fields: IRecordPropertiesField[]) => {
             }
         }
     `;
-};

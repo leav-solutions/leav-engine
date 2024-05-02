@@ -171,9 +171,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     const _handleCloseCreateDirectoryModal = () => setIsCreateDirectoryModalVisible(false);
 
     const _onUploadFilesCompleted = async (data: UploadMutation['upload']) => {
-        const toAdd = data.map(d => {
-            return {id: d.record.id, whoAmI: d.record.whoAmI};
-        });
+        const toAdd = data.map(d => ({id: d.record.id, whoAmI: d.record.whoAmI}));
 
         onAdd(toAdd);
     };

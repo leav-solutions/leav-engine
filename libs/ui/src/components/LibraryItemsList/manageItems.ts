@@ -12,8 +12,8 @@ const _extractValueFromParent = (field: IField, linkValue: any) => {
     return linkedElement[field.id];
 };
 
-const manageFields = (fields: IField[], item: IGetRecordsFromLibraryQueryElement) => {
-    return fields.reduce((acc, field) => {
+const manageFields = (fields: IField[], item: IGetRecordsFromLibraryQueryElement) =>
+    fields.reduce((acc, field) => {
         const key: string = field.key;
 
         if (field.format === AttributeFormat.extended) {
@@ -84,9 +84,9 @@ const manageFields = (fields: IField[], item: IGetRecordsFromLibraryQueryElement
 
                 // Parent attribute has multiple values, value is an array
                 if (isArray(item[field.parentAttributeData.id])) {
-                    acc[key] = item[field.parentAttributeData.id].map(linkValue => {
-                        return _extractValueFromParent(field, linkValue);
-                    });
+                    acc[key] = item[field.parentAttributeData.id].map(linkValue =>
+                        _extractValueFromParent(field, linkValue)
+                    );
                     return acc;
                 }
 
@@ -97,7 +97,6 @@ const manageFields = (fields: IField[], item: IGetRecordsFromLibraryQueryElement
                 return acc;
         }
     }, {});
-};
 
 interface IManageItemsProps {
     items: IGetRecordsFromLibraryQueryElement[];

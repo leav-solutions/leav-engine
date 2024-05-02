@@ -32,6 +32,5 @@ export interface IExecuteWithCount<T = IDbDocument> {
     results: T[];
 }
 
-export const isExecuteWithCount = (res: IExecuteWithCount<unknown> | unknown[]): res is IExecuteWithCount<unknown> => {
-    return typeof (res as IExecuteWithCount).results !== 'undefined';
-};
+export const isExecuteWithCount = (res: IExecuteWithCount<unknown> | unknown[]): res is IExecuteWithCount<unknown> =>
+    typeof (res as IExecuteWithCount).results !== 'undefined';

@@ -22,8 +22,8 @@ import {
 } from '_ui/_gqlTypes';
 import {getFiltersFromRequest} from './getFiltersFromRequest';
 
-export const arrayValueVersionToObject = (version: ValueDetailsFragment['version']): IValueVersion => {
-    return version?.reduce((acc: IValueVersion, value) => {
+export const arrayValueVersionToObject = (version: ValueDetailsFragment['version']): IValueVersion =>
+    version?.reduce((acc: IValueVersion, value) => {
         acc[value.treeId] = {
             id: value.treeNode.id,
             label: value.treeNode.record.whoAmI.label
@@ -31,26 +31,23 @@ export const arrayValueVersionToObject = (version: ValueDetailsFragment['version
 
         return acc;
     }, {});
-};
 
-export const objectValueVersionToArray = (version: IValueVersion): ValueVersionInput[] => {
-    return version
+export const objectValueVersionToArray = (version: IValueVersion): ValueVersionInput[] =>
+    version
         ? objectToNameValueArray(version).map(v => ({
               treeId: v.name,
               treeNodeId: v?.value?.id ?? null
           }))
         : null;
-};
 
 export const extractPermissionFromQuery = (
     queryResult: ReturnType<typeof useIsAllowedQuery>,
     action: PermissionsActions,
     fallbackPermission: boolean = false
-): boolean => {
-    return !queryResult.loading && !queryResult.error
+): boolean =>
+    !queryResult.loading && !queryResult.error
         ? queryResult.data?.isAllowed?.find(permission => permission.name === action)?.allowed ?? fallbackPermission
         : fallbackPermission;
-};
 
 export const getPreviewSize = (size?: PreviewSize, simplistic: boolean = false) => {
     if (simplistic) {
@@ -73,11 +70,10 @@ export const getPreviewSize = (size?: PreviewSize, simplistic: boolean = false) 
 
 export const getTreeRecordKey = (record: RecordIdentityFragment): string => `${record.whoAmI.library.id}/${record.id}`;
 
-export const getValueVersionLabel = (version: IValueVersion) => {
-    return Object.values(version ?? {})
+export const getValueVersionLabel = (version: IValueVersion) =>
+    Object.values(version ?? {})
         .map(v => v.label)
         .join(' / ');
-};
 
 export const stringifyDateRangeValue = (value: IDateRangeValue, t: TFunction): string =>
     t('record_edition.date_range_value', {
@@ -93,9 +89,7 @@ export const stringifyDateRangeValue = (value: IDateRangeValue, t: TFunction): s
  */
 export const gqlUnchecked = gql;
 
-export const getPropertyCacheFieldName = (attributeId: string): string => {
-    return `property({"attribute":"${attributeId}"})`;
-};
+export const getPropertyCacheFieldName = (attributeId: string): string => `property({"attribute":"${attributeId}"})`;
 
 /**
  * Prepare view coming from the server to be used in the app

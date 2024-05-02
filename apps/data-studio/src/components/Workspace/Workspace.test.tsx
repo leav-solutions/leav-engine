@@ -5,36 +5,28 @@ import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import {act, render, screen} from '_tests/testUtils';
 import Workspace from './Workspace';
 
-jest.mock('../Home', () => {
-    return function Home() {
+jest.mock('../Home', () => function Home() {
         return <div>Home</div>;
-    };
-});
+    });
 
-jest.mock('../LibraryHome', () => {
-    return function LibraryHome() {
+jest.mock('../LibraryHome', () => function LibraryHome() {
         return <div>LibraryHome</div>;
-    };
-});
+    });
 
-jest.mock('../Navigation', () => {
-    return function Navigation() {
+jest.mock('../Navigation', () => function Navigation() {
         return <div>Navigation</div>;
-    };
-});
+    });
 
-jest.mock('components/Router/RouteNotFound', () => {
-    return function RouteNotFound() {
+jest.mock('components/Router/RouteNotFound', () => function RouteNotFound() {
         return <div>RouteNotFound</div>;
-    };
-});
+    });
 
 describe('Workspace', () => {
     test('Render workspace', async () => {
         render(
             <MemoryRouter initialEntries={['/library']}>
                 <Routes>
-                    <Route path={'/:panel'} element={<Workspace />} />
+                    <Route path="/:panel" element={<Workspace />} />
                 </Routes>
             </MemoryRouter>
         );
@@ -48,7 +40,7 @@ describe('Workspace', () => {
         render(
             <MemoryRouter initialEntries={['/bad-route']}>
                 <Routes>
-                    <Route path={'/:panel'} element={<Workspace />} />
+                    <Route path="/:panel" element={<Workspace />} />
                 </Routes>
             </MemoryRouter>
         );

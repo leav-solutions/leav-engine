@@ -8,11 +8,9 @@ import {AttributeType} from '../../../_gqlTypes/globalTypes';
 import {mockAttrSimple} from '../../../__mocks__/attributes';
 import AttributeSelector from './AttributeSelector';
 
-jest.mock('./AttributeSelectorField', () => {
-    return function AttributeSelectorField() {
+jest.mock('./AttributeSelectorField', () => function AttributeSelectorField() {
         return <div>AttributeSelectorField</div>;
-    };
-});
+    });
 
 describe('AttributeSelector', () => {
     test('Loading and success state', async () => {

@@ -7,8 +7,7 @@ import {initialSearchState} from '_ui/components/LibraryItemsList/hooks/useSearc
 import {ISearchState} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/_types';
 import {mockGetLibraryDetailExtendedElement} from '../mockQuery/mockGetLibraryDetailExtendedQuery';
 
-const MockSearchContextProvider = ({state, children}: PropsWithChildren<{state?: Partial<ISearchState>}>) => {
-    return (
+const MockSearchContextProvider = ({state, children}: PropsWithChildren<{state?: Partial<ISearchState>}>) => (
         <SearchContext.Provider
             value={{
                 state: {...initialSearchState, library: mockGetLibraryDetailExtendedElement, ...state},
@@ -18,6 +17,5 @@ const MockSearchContextProvider = ({state, children}: PropsWithChildren<{state?:
             {children}
         </SearchContext.Provider>
     );
-};
 
 export default MockSearchContextProvider;

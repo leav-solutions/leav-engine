@@ -10,11 +10,9 @@ import {mockAttrSimple} from '__mocks__/attributes';
 import {Mockify} from '../../../_types/Mockify';
 import Attributes from './Attributes';
 
-jest.mock('../AttributesList', () => {
-    return function AttributesList() {
+jest.mock('../AttributesList', () => function AttributesList() {
         return <div>AttributesList</div>;
-    };
-});
+    });
 
 describe('Attributes', () => {
     test('Snapshot test', async () => {

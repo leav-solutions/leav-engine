@@ -14,17 +14,13 @@ import {enableFetchMocks} from 'jest-fetch-mock';
 
 enableFetchMocks();
 
-jest.mock('components/UserMenu', () => {
-    return function UserMenu() {
+jest.mock('components/UserMenu', () => function UserMenu() {
         return <div>UserMenu</div>;
-    };
-});
+    });
 
-jest.mock('components/Applications', () => {
-    return function Applications() {
+jest.mock('components/Applications', () => function Applications() {
         return <div>Applications</div>;
-    };
-});
+    });
 
 jest.mock('../../constants', () => ({
     APP_ENDPOINT: 'portal'

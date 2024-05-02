@@ -272,9 +272,11 @@ describe('TreeBasedPermissionDomain', () => {
 
         test('Return permission on tree root level', async () => {
             const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
-                getPermissionByUserGroups: jest.fn().mockImplementation(({permissionTreeTarget}) => {
-                    return Promise.resolve(permissionTreeTarget.id === null ? true : null);
-                })
+                getPermissionByUserGroups: jest
+                    .fn()
+                    .mockImplementation(({permissionTreeTarget}) =>
+                        Promise.resolve(permissionTreeTarget.id === null ? true : null)
+                    )
             };
 
             const treePermDomain = treeBasedPermissions({

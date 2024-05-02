@@ -286,12 +286,10 @@ function InfosForm({
                         name="type"
                         aria-label="type"
                         onChange={_handleChangeWithSubmit}
-                        options={Object.keys(AttributeType).map(attrType => {
-                            return {
+                        options={Object.keys(AttributeType).map(attrType => ({
                                 text: t('attributes.types.' + attrType),
                                 value: attrType
-                            };
-                        })}
+                            }))}
                         value={values.type}
                     />
                 </FormFieldWrapper>

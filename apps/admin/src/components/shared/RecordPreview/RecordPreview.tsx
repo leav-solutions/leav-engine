@@ -59,6 +59,7 @@ function RecordPreview({label, color, image, style}: IRecordPreviewProps): JSX.E
                 <Image
                     src={image}
                     style={{...style, flexShrink: 0, width: '2rem', height: '2rem', objectFit: 'cover'}}
+                    alt=""
                 />
             </ImagePreview>
         );

@@ -8,12 +8,11 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function(deps: IDeps = {}): Client {
-    const _getClient = (config: IConfig): Client => {
-        return new Client({
+export default function (deps: IDeps = {}): Client {
+    const _getClient = (config: IConfig): Client =>
+        new Client({
             node: config.elasticSearch.url
         });
-    };
 
     return _getClient(deps.config);
 }

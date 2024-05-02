@@ -8,11 +8,10 @@ interface IDeps {
     config?: IConfig;
 }
 
-const _getDbConnection = (config: IConfig): Database => {
-    return new Database({
+const _getDbConnection = (config: IConfig): Database =>
+    new Database({
         url: config.db.url
     });
-};
 
 export default function (deps: IDeps): Database {
     const db = _getDbConnection(deps.config);

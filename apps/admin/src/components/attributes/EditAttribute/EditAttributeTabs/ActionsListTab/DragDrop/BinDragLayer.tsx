@@ -92,9 +92,7 @@ class BinDragLayer extends Component<IBinDragLayerProps> {
                         key={item.id}
                         id={item.id}
                         action={item.action}
-                        findCard={() => {
-                            return item.id;
-                        }}
+                        findCard={() => item.id}
                         origin={item.origin}
                         colorTypeDictionnary={colorTypeDictionnary}
                         dragging

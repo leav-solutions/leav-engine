@@ -17,8 +17,8 @@ interface IDeps {
 export default function ({
     'core.domain.permission.helpers.globalPermission': globalPermHelper = null
 }: IDeps = {}): IAdminPermissionDomain {
-    const getAdminPermission = async ({action, userId, ctx}: IGetAdminPermissionParams): Promise<boolean> => {
-        return globalPermHelper.getGlobalPermission(
+    const getAdminPermission = async ({action, userId, ctx}: IGetAdminPermissionParams): Promise<boolean> =>
+        globalPermHelper.getGlobalPermission(
             {
                 type: PermissionTypes.ADMIN,
                 action,
@@ -26,14 +26,13 @@ export default function ({
             },
             ctx
         );
-    };
 
     const getInheritedAdminPermission = async ({
         action,
         userGroupId,
         ctx
-    }: IGetInheritedAdminPermissionParams): Promise<boolean> => {
-        return globalPermHelper.getInheritedGlobalPermission(
+    }: IGetInheritedAdminPermissionParams): Promise<boolean> =>
+        globalPermHelper.getInheritedGlobalPermission(
             {
                 type: PermissionTypes.ADMIN,
                 action,
@@ -41,7 +40,6 @@ export default function ({
             },
             ctx
         );
-    };
 
     return {
         getAdminPermission,
