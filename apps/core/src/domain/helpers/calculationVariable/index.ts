@@ -15,7 +15,7 @@ interface IDeps {
 export interface IVariableValue {
     recordId: string;
     library: string;
-    value: IValue | string | number | boolean; // TODO: IValue is never the type of value. Should be the same type as raw_value.
+    value: string | number | boolean | Record<string, any>;
     raw_value?: string | number | boolean | Record<string, any>;
 }
 

@@ -6,16 +6,16 @@ import {TypeGuards} from '.';
 describe('typeGuards', () => {
     describe('isIValue', () => {
         test('should return true value is an object', () => {
-            expect(TypeGuards.isIValue({} as any)).toBe(true);
-            expect(TypeGuards.isIValue([] as any)).toBe(true);
-            expect(TypeGuards.isIValue({field: 'value'} as any)).toBe(true);
+            expect(TypeGuards.isVariableIValue({} as any)).toBe(true);
+            expect(TypeGuards.isVariableIValue([] as any)).toBe(true);
+            expect(TypeGuards.isVariableIValue({field: 'value'} as any)).toBe(true);
         });
         test('should return false value is not an object', () => {
-            expect(TypeGuards.isIValue(42 as any)).toBe(false);
-            expect(TypeGuards.isIValue('' as any)).toBe(false);
-            expect(TypeGuards.isIValue(true as any)).toBe(false);
+            expect(TypeGuards.isVariableIValue(42 as any)).toBe(false);
+            expect(TypeGuards.isVariableIValue('' as any)).toBe(false);
+            expect(TypeGuards.isVariableIValue(true as any)).toBe(false);
             expect(
-                TypeGuards.isIValue((() => {
+                TypeGuards.isVariableIValue((() => {
                     return;
                 }) as any)
             ).toBe(false);

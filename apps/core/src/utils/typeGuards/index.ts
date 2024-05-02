@@ -5,6 +5,6 @@ import {IVariableValue} from '../../domain/helpers/calculationVariable';
 import {IStandardValue, IValue} from '../../_types/value';
 
 export const TypeGuards = {
-    isIValue: (value: IVariableValue['value']): value is IValue => typeof value === 'object',
+    isVariableIValue: (value: IVariableValue['value']): value is IValue => typeof value === 'object',
     isIStandardValue: (value: IValue): value is IStandardValue => 'raw_value' in value
 };
