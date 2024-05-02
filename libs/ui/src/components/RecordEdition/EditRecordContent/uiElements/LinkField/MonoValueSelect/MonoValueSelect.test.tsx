@@ -322,4 +322,44 @@ describe('<MonoValueSelect />', () => {
         expect(await screen.findByText('Yop Chocolat')).toBeVisible();
         expect(screen.getByText(/link_search_result_count|3|3/)).toBeVisible();
     });
+
+    it('should display a message if search has no results', async () => {
+        const mocksWithSearch = [
+            ...mocks,
+            {
+                request: {
+                    query: getRecordsFromLibraryQuery([], true),
+                    variables: {library: 'test_lib', limit: 20, fullText: 'Something unknown'}
+                },
+                result: {data: {records: {list: [], totalCount: 0}}}
+            }
+        ];
+
+        render(
+            <AntForm name="name">
+                <AntForm.Item name="danette">
+                    <MonoValueSelect
+                        activeValue={undefined}
+                        attribute={mockFormElementLink.attribute}
+                        label={state.formElement.settings.label}
+                        required={state.formElement.settings.required}
+                        onSelectChange={onSelectChangeMock}
+                        onSelectClear={onClearSelectMock}
+                    />
+                </AntForm.Item>
+            </AntForm>,
+            {mocks: mocksWithSearch}
+        );
+
+        expect(screen.queryByText('Danette pistache')).not.toBeInTheDocument();
+        expect(screen.queryByText('Danette chocolat')).not.toBeInTheDocument();
+
+        const selectInput = screen.getByRole('combobox');
+        await userEvent.click(selectInput);
+
+        await userEvent.type(selectInput, 'Something unknown');
+
+        expect(await screen.findByText('Aucune donnée')).toBeVisible();
+        expect(screen.getByText(/link_search_result_count|0|2/)).toBeVisible();
+    });
 });

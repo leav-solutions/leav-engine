@@ -37,27 +37,27 @@ export const useGetOptionsQuery = ({
         }
     };
     const [isSearchLoading, setIsSearchLoading] = useState(false);
-    const [totalCount, setTotalCount] = useState(0);
+    const [initialQueryTotalCount, setInitialQueryTotalCount] = useState(0);
     const [optionsType, setOptionsType] = useState<'suggestions' | 'search'>('suggestions');
 
-    const {loading, data, refetch} = useQuery<IGetRecordsFromLibraryQuery, IGetRecordsFromLibraryQueryVariables>(
-        getRecordsFromLibraryQuery([], true),
-        {
-            fetchPolicy: 'network-only',
-            variables: initialSearchVariables,
-            onCompleted: queryData => {
-                // This is called only after the first fetch, so we can store the total count without searching.
-                setTotalCount(queryData?.records?.totalCount ?? 0);
-            }
+    const {loading: isQueryLoading, data, refetch} = useQuery<
+        IGetRecordsFromLibraryQuery,
+        IGetRecordsFromLibraryQueryVariables
+    >(getRecordsFromLibraryQuery([], true), {
+        fetchPolicy: 'network-only',
+        variables: initialSearchVariables,
+        onCompleted: queryData => {
+            // This is called only after the first fetch, so we can store the total count without searching.
+            setInitialQueryTotalCount(queryData?.records?.totalCount ?? 0);
         }
-    );
+    });
 
     // const recordList = useMemo(() => data?.records?.list.toSorted() ?? [], [data]); // TODO: when toSorted method available (ie. TS >= 5.2.0)
     const recordList = useMemo(() => sortBy(data?.records?.list, 'whoAmI.label'), [data]);
 
     const selectOptions = useMemo<RecordOptions>(
         () =>
-            isSearchLoading
+            isSearchLoading // Might become unnecessary when DS handles loading better
                 ? Array.from({length: 10}).map((_, index): RecordOptions[number] => ({
                       value: `skeleton-${index}`,
                       idCard: {
@@ -82,7 +82,7 @@ export const useGetOptionsQuery = ({
                           }
                       }
                   })),
-        [recordList, loading, isSearchLoading]
+        [recordList, isSearchLoading]
     );
 
     const augmentedSelectOptionsWithActive = [...selectOptions];
@@ -131,11 +131,11 @@ export const useGetOptionsQuery = ({
     };
 
     return {
-        loading: loading || isSearchLoading,
+        loading: isQueryLoading || isSearchLoading,
         selectOptions: augmentedSelectOptionsWithActive,
         updateLeavField,
         runFullTextSearch,
-        totalCount,
+        totalCount: initialQueryTotalCount,
         searchResultCount: data?.records?.totalCount ?? 0,
         suggestionsCount: RECORDS_LIMIT,
         optionsType
