@@ -77,7 +77,9 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
         form.setFieldValue(attribute.id, undefined);
         try {
             await form.validateFields([attribute.id]);
-        } catch (error) {}
+        } catch (error) {
+            // Do nothing
+        }
         onSelectClear(activeValue);
     };
 
