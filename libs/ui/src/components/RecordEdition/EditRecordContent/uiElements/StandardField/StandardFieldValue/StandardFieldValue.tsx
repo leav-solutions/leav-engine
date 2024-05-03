@@ -253,7 +253,7 @@ function StandardFieldValue({
         }
 
         const convertedValue = typeof valueToSave === 'object' ? JSON.stringify(valueToSave) : valueToSave;
-        onSubmit(id ?? fieldValue.idValue, convertedValue);
+        onSubmit(fieldValue.idValue, convertedValue);
     };
 
     const _handlePressEnter = async () => {
@@ -444,12 +444,13 @@ function StandardFieldValue({
                 const valuesList = (attribute?.values_list as IStringValuesListConf)?.values ?? [];
 
                 values = valuesList
-                    .filter(val => (
+                    .filter(
+                        val =>
                             fieldValue.state === StandardFieldValueState.PRISTINE ||
                             !fieldValue.editingValue ||
                             attribute.format === AttributeFormat.date ||
                             val.match(new RegExp(String(fieldValue.editingValue), 'i'))
-                        ))
+                    )
                     .map(v => ({value: v, rawValue: v}));
             }
         }

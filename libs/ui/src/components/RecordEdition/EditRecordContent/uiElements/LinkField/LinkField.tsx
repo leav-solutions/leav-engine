@@ -22,10 +22,9 @@ import {
 } from '../../reducers/linkFieldReducer/linkFieldReducer';
 import {APICallStatus, IFormElementProps} from '../../_types';
 import {MonoValueSelect} from '_ui/components/RecordEdition/EditRecordContent/uiElements/LinkField/MonoValueSelect/MonoValueSelect';
-import {AntForm, AntSelect} from 'aristid-ds';
+import {AntForm} from 'aristid-ds';
 import {MultiValueSelect} from './MultiValueSelect/MultiValueSelect';
 import ValueDetailsBtn from '../../shared/ValueDetailsBtn';
-import {Option} from 'antd/lib/mentions';
 
 export type LinkFieldReducerState = ILinkFieldState<RecordFormElementsValueLinkValue>;
 type LinkFieldReducerAction = LinkFieldReducerActions<RecordFormElementsValueLinkValue>;
@@ -79,7 +78,7 @@ function LinkField({
     const _handleAddValueSubmit = async (values: IRecordIdentity[]) => {
         const valuesToSave = values.map(value => ({
             attribute,
-            idValue: null,
+            idValue: element.attribute.multiple_values ? null : activeValues[0]?.id_value,
             value
         }));
 
