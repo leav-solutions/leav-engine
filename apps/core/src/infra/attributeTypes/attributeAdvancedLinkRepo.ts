@@ -52,10 +52,10 @@ export default function ({
 
     const _buildLinkValue = (linkedRecord: IRecord, valueEdge: IValueEdge, reverseLink: boolean): ILinkValue => {
         const recordIdField = reverseLink ? '_from' : '_to';
-        const [recordLibrary] = valueEdge[recordIdField].split('/');
+        const [recordLibrary, recordId] = valueEdge[recordIdField].split('/');
         return {
             id_value: valueEdge._key,
-            value: linkedRecord ? {...linkedRecord, library: recordLibrary} : null,
+            value: linkedRecord ? {...linkedRecord, library: recordLibrary, id: recordId} : null,
             attribute: valueEdge.attribute,
             modified_at: valueEdge.modified_at,
             modified_by: valueEdge.modified_by,
@@ -273,7 +273,11 @@ export default function ({
         async getValueById({library, recordId, attribute, valueId, ctx}): Promise<ILinkValue> {
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
-            const edgeAttribute = !!attribute.reverse_link ? (attribute.reverse_link as IAttribute).id : attribute.id;
+            const edgeAttribute = !!attribute.reverse_link
+                ? typeof attribute.reverse_link === 'string'
+                    ? attribute.reverse_link
+                    : attribute.reverse_link.id
+                : attribute.id;
             const direction = !!attribute.reverse_link ? aql`INBOUND` : aql`OUTBOUND`;
 
             const query = aql` FOR linkedRecord, edge
