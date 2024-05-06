@@ -137,7 +137,7 @@ export const useGetOptionsQuery = ({
         runFullTextSearch,
         totalCount: initialQueryTotalCount,
         searchResultCount: data?.records?.totalCount ?? 0,
-        suggestionsCount: RECORDS_LIMIT,
+        suggestionsCount: Math.min(RECORDS_LIMIT, initialQueryTotalCount),
         optionsType
     };
 };

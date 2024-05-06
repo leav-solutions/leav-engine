@@ -94,7 +94,8 @@ describe('useGetOptionsQuery', () => {
     });
 
     test('should return infos about options type and counts', async () => {
-        const mock = mockFactory({records});
+        const fakeTotalCount = 42;
+        const mock = mockFactory({records: {...records, totalCount: fakeTotalCount}});
         const refetchMock = mockFactory(
             {records: {list: [records.list[0]], totalCount: 1}},
             {sort: undefined, fullText: 'search'}
@@ -113,8 +114,8 @@ describe('useGetOptionsQuery', () => {
 
         expect(result.current.optionsType).toBe('suggestions');
         expect(result.current.suggestionsCount).toBe(20);
-        expect(result.current.searchResultCount).toBe(2);
-        expect(result.current.totalCount).toBe(2);
+        expect(result.current.searchResultCount).toBe(fakeTotalCount);
+        expect(result.current.totalCount).toBe(fakeTotalCount);
 
         await act(async () => {
             result.current.runFullTextSearch('search');
@@ -126,7 +127,29 @@ describe('useGetOptionsQuery', () => {
 
         expect(result.current.suggestionsCount).toBe(20);
         expect(result.current.searchResultCount).toBe(1);
-        expect(result.current.totalCount).toBe(2);
+        expect(result.current.totalCount).toBe(fakeTotalCount);
+    });
+
+    test('should handle case where total count is lower than suggestion limit', async () => {
+        const mock = mockFactory({records: {...records}});
+        const refetchMock = mockFactory(
+            {records: {list: [records.list[0]], totalCount: 1}},
+            {sort: undefined, fullText: 'search'}
+        );
+
+        const {result} = renderHook((...props) => useGetOptionsQuery(...props), {
+            initialProps: {
+                activeValue: undefined,
+                linkedLibraryId,
+                onSelectChange: onSelectChangeMock
+            },
+            mocks: [...mock, ...refetchMock]
+        });
+
+        await waitFor(() => expect(result.current.loading).toBe(false));
+
+        expect(result.current.optionsType).toBe('suggestions');
+        expect(result.current.suggestionsCount).toBe(records.totalCount);
     });
 
     test('Should return fake options with skeleton during loading', async () => {
