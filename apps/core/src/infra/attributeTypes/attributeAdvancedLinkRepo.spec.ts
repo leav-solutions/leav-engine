@@ -449,7 +449,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             expect(value).toMatchObject({
                 id_value: '112233',
                 value: {
-                    id: 123456,
+                    id: '123456',
                     created_at: 88888,
                     modified_at: 88888
                 },
@@ -611,7 +611,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             expect(values[0]).toMatchObject({
                 id_value: '112233',
                 value: {
-                    id: 123456,
+                    id: '123456',
                     created_at: 88888,
                     modified_at: 88888
                 },
@@ -626,7 +626,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             expect(values[1]).toMatchObject({
                 id_value: '112234',
                 value: {
-                    id: 123457,
+                    id: '123457',
                     created_at: 77777,
                     modified_at: 77777
                 },
@@ -803,7 +803,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             expect(values[0]).toMatchObject({
                 id_value: '112233',
                 value: {
-                    id: 123456,
+                    id: '123456',
                     created_at: 88888,
                     modified_at: 88888
                 },
