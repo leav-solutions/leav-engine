@@ -879,16 +879,18 @@ export default function ({
 
             const newRecord = await recordRepo.createRecord({libraryId: library, recordData, ctx});
 
+            let valuesErrors = null;
             if (values?.length) {
-                // Make sure we don't any id_value hanging on as we're on creation here
+                // Make sure we don't have any id_value hanging on as we're on creation here
                 const cleanValues = values.map(v => ({...v, id_value: null}));
 
-                await valueDomain.saveValueBatch({
+                const {errors} = await valueDomain.saveValueBatch({
                     library,
                     recordId: newRecord.id,
                     values: cleanValues,
                     ctx
                 });
+                valuesErrors = errors;
             }
 
             // await is necessary during importData(), otherwise it will generate a memory leak due to number of events incoming
@@ -906,7 +908,7 @@ export default function ({
                 ctx
             );
 
-            return {record: newRecord, valuesErrors: null};
+            return {record: newRecord, valuesErrors};
         },
         async updateRecord({library, recordData, ctx}): Promise<IRecord> {
             const {old: oldRecord, new: savedRecord} = await recordRepo.updateRecord({libraryId: library, recordData});
