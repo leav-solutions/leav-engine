@@ -75,11 +75,6 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
 
     const handleClear = async () => {
         form.setFieldValue(attribute.id, undefined);
-        try {
-            await form.validateFields([attribute.id]);
-        } catch (error) {
-            // Do nothing
-        }
         onSelectClear(activeValue);
     };
 
