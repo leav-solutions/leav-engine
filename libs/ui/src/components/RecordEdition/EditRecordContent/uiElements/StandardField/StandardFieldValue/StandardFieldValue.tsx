@@ -51,6 +51,7 @@ import NumberInput from './Inputs/NumberInput';
 import TextInput from './Inputs/TextInput';
 import ValuesList from './ValuesList';
 import {IValueOfValuesList} from './ValuesList/ValuesList';
+import {DSInputNumberWrapper} from './DSInputNumberWrapper';
 
 const ErrorMessage = styled.div`
     color: ${themeVars.errorColor};
@@ -180,7 +181,7 @@ const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInp
     [AttributeFormat.date]: DateInput,
     [AttributeFormat.date_range]: null,
     [AttributeFormat.boolean]: CheckboxInput,
-    [AttributeFormat.numeric]: NumberInput,
+    [AttributeFormat.numeric]: null,
     [AttributeFormat.encrypted]: EncryptedInput,
     [AttributeFormat.extended]: TextInput,
     [AttributeFormat.color]: ColorInput,
@@ -551,7 +552,7 @@ function StandardFieldValue({
         borderRadius: hasMultipleValuesDisplay ? 'none' : token.borderRadius
     };
 
-    const attributeFormatsWithDS = [AttributeFormat.text, AttributeFormat.date_range];
+    const attributeFormatsWithDS = [AttributeFormat.text, AttributeFormat.date_range, AttributeFormat.numeric];
 
     const attributeFormatsWithoutDS = [
         AttributeFormat.boolean,
@@ -559,14 +560,12 @@ function StandardFieldValue({
         AttributeFormat.date,
         AttributeFormat.encrypted,
         AttributeFormat.extended,
-        AttributeFormat.numeric,
         AttributeFormat.rich_text
     ];
 
     const infoButton: ReactNode = editRecordState.withInfoButton ? (
         <ValueDetailsBtn value={fieldValue.value} attribute={attribute} size="small" shape="circle" />
     ) : null;
-
     return (
         <>
             {attributeFormatsWithDS.includes(attribute.format) && (
@@ -584,6 +583,9 @@ function StandardFieldValue({
                     )}
                     {attribute.format === AttributeFormat.date_range && (
                         <DSRangePickerWrapper state={state} handleSubmit={_handleSubmit} infoButton={infoButton} />
+                    )}
+                    {attribute.format === AttributeFormat.numeric && (
+                        <DSInputNumberWrapper state={state} handleSubmit={_handleSubmit} infoButton={infoButton} />
                     )}
                 </Form.Item>
             )}
