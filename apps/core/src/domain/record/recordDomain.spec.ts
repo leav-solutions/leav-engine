@@ -134,7 +134,7 @@ describe('RecordDomain', () => {
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
-                saveValueBatch: global.__mockPromise(),
+                saveValueBatch: global.__mockPromise({values: [], errors: null}),
                 runActionsList: global.__mockPromise()
             };
 
