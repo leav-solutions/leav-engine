@@ -2,17 +2,32 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitInputNumber} from 'aristid-ds';
-import {FocusEvent, FunctionComponent, ReactNode} from 'react';
+import {FocusEvent, FunctionComponent, ReactNode, useState} from 'react';
 import {IStandardFieldReducerState} from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {Form, InputNumberProps} from 'antd';
-import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import styled from 'styled-components';
+import {KitInputNumberProps} from 'aristid-ds/dist/Kit/DataEntry/InputNumber/types';
 
 interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputNumberProps> {
     state: IStandardFieldReducerState;
     infoButton: ReactNode;
     handleSubmit: (value: string, id?: string) => void;
 }
+
+const KitInputNumberStyled = styled(KitInputNumber)<{$shouldHighlightColor: boolean}>`
+    .ant-input-number-input-wrap .ant-input-number-input {
+        color: ${({$shouldHighlightColor}) =>
+            $shouldHighlightColor ? 'var(--general-colors-primary-primary400)' : 'initial'};
+    }
+
+    .kit-input-wrapper-helper {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+`;
 
 export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     state,
@@ -21,32 +36,60 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     onChange,
     handleSubmit
 }) => {
+    const {t} = useSharedTranslation();
     const {errors} = Form.Item.useStatus();
     const form = Form.useFormInstance();
+    const [hasChanged, setHasChanged] = useState(false);
 
     const isRequired = state.formElement.settings.required;
 
-    const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
-        let valuetoSubmit = e.target.value;
-        if (isRequired && valuetoSubmit === '' && state.formElement.values[0]) {
-            valuetoSubmit = (state.formElement.values[0] as RecordFormElementsValueStandardValue).raw_value;
-            form.setFieldValue(state.attribute.id, valuetoSubmit);
-            form.validateFields();
+    const _resetToInheritedValue = () => {
+        setHasChanged(false);
+        form.setFieldValue(state.attribute.id, state.inheritedValue.raw_value);
+        form.validateFields();
+        handleSubmit('', state.attribute.id);
+    };
+
+    const _handleOnBlur = (event: FocusEvent<HTMLInputElement>) => {
+        const valueToSubmit = event.target.value;
+        if (state.formElement.settings.required && valueToSubmit === '' && state.inheritedValue) {
+            _resetToInheritedValue();
+            return;
         }
-        handleSubmit(valuetoSubmit, state.attribute.id);
+        if (hasChanged || !state.inheritedValue) {
+            handleSubmit(valueToSubmit, state.attribute.id);
+        }
+        if (onChange) {
+            onChange(valueToSubmit);
+        }
+    };
+
+    const _handleOnChange: KitInputNumberProps['onChange'] = inputValue => {
+        setHasChanged(true);
+        if (onChange) {
+            onChange(inputValue);
+        }
     };
 
     return (
-        <KitInputNumber
+        <KitInputNumberStyled
             label={state.formElement.settings.label}
             required={isRequired}
-            status={errors.length > 0 ? 'error' : undefined}
+            status={errors.length > 0 ? 'error' : ''}
+            helper={
+                state.isInheritedOverrideValue
+                    ? t('record_edition.inherited_input_helper', {
+                          inheritedValue: state.inheritedValue.raw_value
+                      })
+                    : undefined
+            }
             infoIcon={infoButton}
             onInfoClick={Boolean(infoButton) ? () => void 0 : undefined}
             value={value}
-            onChange={onChange}
+            onChange={_handleOnChange}
             disabled={state.isReadOnly}
-            onBlur={handleBlur}
+            onBlur={_handleOnBlur}
+            $shouldHighlightColor={state.isInheritedNotOverrideValue}
         />
     );
 };
