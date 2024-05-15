@@ -46,7 +46,11 @@ module.exports = {
         oidc: {
             providerUrl: 'http://localhost:8080/realms/Generic/protocol/openid-connect/auth',
             clientId: 'portail',
-            redirectUri: 'http://core.leav.localhost/auth/oidc/verify'
+            redirectUri: 'http://core.leav.localhost/auth/oidc/verify',
+            cookie: {
+                sameSite: process.env.AUTH_COOKIE_SAMESITE || 'lax',
+                secure: process.env.AUTH_COOKIE_SECURE || false
+            }
         }
     },
     mailer: {

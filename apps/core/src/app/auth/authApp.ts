@@ -18,17 +18,21 @@ import {IStandardValue, ITreeValue} from '_types/value';
 import AuthenticationError from '../../errors/AuthenticationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {USERS_GROUP_ATTRIBUTE_NAME} from '../../infra/permission/permissionRepo';
-import {ACCESS_TOKEN_COOKIE_NAME, ITokenUserData} from '../../_types/auth';
+import {ACCESS_TOKEN_COOKIE_NAME, ITokenUserData, REFRESH_TOKEN_COOKIE_NAME} from '../../_types/auth';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import axios from 'axios';
 import {generateCodeChallenge} from '../../utils/oidc';
 import {IRequestWithContext} from '../../_types/express';
+import winston from 'winston';
 
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
+
     validateRequestToken(params: {apiKey?: string; cookies?: {}}): Promise<ITokenUserData>;
+
     registerRoute(app: Express): void;
+
     authenticateWithOIDCService(req: IRequestWithContext, res: Response<unknown>): void;
 }
 
@@ -56,6 +60,7 @@ interface IDeps {
     'core.domain.apiKey'?: IApiKeyDomain;
     'core.domain.user'?: IUserDomain;
     'core.infra.cache.cacheService'?: ICachesService;
+    'core.utils.logger'?: winston.Winston;
     config?: IConfig;
 }
 
@@ -64,6 +69,7 @@ export default function ({
     'core.domain.record': recordDomain = null,
     'core.domain.apiKey': apiKeyDomain = null,
     'core.domain.user': userDomain = null,
+    'core.utils.logger': logger = null,
     'core.infra.cache.cacheService': cacheService = null,
     config = null
 }: IDeps = {}): IAuthApp {
@@ -136,6 +142,10 @@ export default function ({
             app.get(
                 '/auth/oidc/verify/*',
                 async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+                    if (config.auth.oidc === null) {
+                        return res.status(401);
+                    }
+
                     const {code} = req.query;
                     const payloadBase64Encoded = req.params[0];
 
@@ -156,6 +166,7 @@ export default function ({
 
                     try {
                         const {data} = await axios.post(
+                            // TODO: make 'keycloak' it variable
                             'http://keycloak:8080/realms/Generic/protocol/openid-connect/token',
                             body,
                             {
@@ -182,7 +193,7 @@ export default function ({
                         });
 
                         if (userRecords.list.length < 1) {
-                            return res.status(401).send('Invalid user');
+                            return res.status(401).json({reason: 'Invalid user'});
                         }
 
                         const user = userRecords.list[0];
@@ -197,10 +208,18 @@ export default function ({
 
                         // store refresh token in cache
                         const cacheKey = `${SESSION_CACHE_HEADER}:${refreshToken}`;
+                        const refreshExpires = ms(config.auth.refreshTokenExpiration);
                         await cacheService.getCache(ECacheType.RAM).storeData({
                             key: cacheKey,
                             data: user.id,
-                            expiresIn: ms(config.auth.refreshTokenExpiration)
+                            expiresIn: refreshExpires
+                        });
+                        res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, {
+                            httpOnly: true,
+                            sameSite: config.auth.oidc.cookie.sameSite,
+                            secure: config.auth.oidc.cookie.secure,
+                            domain: req.headers.host,
+                            expires: new Date(Date.now() + refreshExpires)
                         });
 
                         // We need the milliseconds value to set cookie expiration
@@ -214,12 +233,10 @@ export default function ({
                             expires: new Date(Date.now() + cookieExpires)
                         });
 
-                        // TODO trouver un moyen de renvoyer le refresh token
-
                         return res.redirect(originalUrl);
                     } catch (err) {
-                        console.error('AXIOS ERROR', err);
-                        return res.status(500).send(err);
+                        logger.error(err);
+                        return res.status(401);
                     }
                 }
             );
@@ -314,6 +331,8 @@ export default function ({
                         secure: config.auth.cookie.secure,
                         domain: req.headers.host
                     });
+
+                    // TODO logout on oidc server
 
                     return res.status(200).end();
                 }
@@ -556,6 +575,7 @@ export default function ({
                 try {
                     payload = jwt.verify(token, config.auth.key) as IAccessTokenPayload;
                 } catch (e) {
+                    // TODO: check if error if just expired access token, if so renew it with refresh cookie
                     throw new AuthenticationError('Invalid token');
                 }
 
@@ -608,6 +628,9 @@ export default function ({
             };
         },
         authenticateWithOIDCService: (req, res) => {
+            if (config.auth.oidc === null) {
+                return res.status(401);
+            }
             const {redirectUri, providerUrl, clientId} = config.auth.oidc;
 
             const codeVerifier = [uuidv4(), uuidv4(), uuidv4()].map(uuid => uuid.replaceAll('-', '')).join('');
