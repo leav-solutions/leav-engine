@@ -47,7 +47,7 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
 
     const _handleOnBlur = (event: FocusEvent<HTMLInputElement>) => {
         const valueToSubmit = event.target.value;
-        if (state.formElement.settings.required && valueToSubmit === '' && state.inheritedValue) {
+        if (valueToSubmit === '' && state.inheritedValue) {
             _resetToInheritedValue();
             return;
         }
@@ -86,7 +86,7 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
             allowClear={!state.isInheritedNotOverrideValue}
             onBlur={_handleOnBlur}
             onChange={_handleOnChange}
-            $shouldHighlightColor={state.isInheritedNotOverrideValue}
+            $shouldHighlightColor={!hasChanged && state.isInheritedNotOverrideValue}
         />
     );
 };
