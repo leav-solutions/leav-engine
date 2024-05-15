@@ -71,6 +71,10 @@ export interface IAuth {
         providerUrl: string;
         clientId: string;
         redirectUri: string;
+        cookie: {
+            sameSite: 'none' | 'lax' | 'strict';
+            secure: boolean;
+        };
     };
 }
 

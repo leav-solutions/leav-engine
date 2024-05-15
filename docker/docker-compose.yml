@@ -645,6 +645,7 @@ volumes:
     driver: local
 
 networks:
+    # TODO: fix this for local and prod
     oidc-service:
         name: amp-dev-keycloak_default
         external: true

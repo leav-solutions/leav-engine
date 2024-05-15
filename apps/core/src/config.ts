@@ -44,11 +44,17 @@ export const validateConfig = (conf: IConfig) => {
                 secure: Joi.boolean()
             },
             resetPasswordExpiration: Joi.string().required(),
-            oidc: Joi.object().allow(null).keys({
-                providerUrl: Joi.string().required(),
-                clientId: Joi.string().required(),
-                redirectUri: Joi.string().required()
-            })
+            oidc: Joi.object()
+                .allow(null)
+                .keys({
+                    providerUrl: Joi.string().required(),
+                    clientId: Joi.string().required(),
+                    redirectUri: Joi.string().required(),
+                    cookie: {
+                        sameSite: Joi.string().valid('none', 'lax', 'strict'),
+                        secure: Joi.boolean()
+                    }
+                })
         }),
         mailer: Joi.object().keys({
             host: Joi.string(),
