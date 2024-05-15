@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Modal, Tooltip} from 'antd';
-import React from 'react';
+import React, {FunctionComponent} from 'react';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import {RecordCard} from '_ui/components';
@@ -11,6 +11,8 @@ import {PreviewSize} from '_ui/constants';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {AttributeType} from '_ui/_gqlTypes';
 import {stopEvent} from '_ui/_utils';
+import {TypeGuards} from '../typeGuards';
+import {IRecordIdentityWhoAmI} from '_ui/types';
 
 interface IAllValuesCountProps {
     values: any[];
@@ -30,7 +32,7 @@ const MoreValuesCount = styled.span`
     cursor: pointer;
 `;
 
-function AllValuesCount({values, attributeType}: IAllValuesCountProps): JSX.Element {
+const AllValuesCount: FunctionComponent<IAllValuesCountProps> = ({values, attributeType}) => {
     const {t} = useSharedTranslation();
     const [modal, contextHolder] = Modal.useModal();
 
@@ -40,9 +42,19 @@ function AllValuesCount({values, attributeType}: IAllValuesCountProps): JSX.Elem
             icon: null,
             content: (
                 <List
-                    dataSource={values.map(val =>
-                        val?.whoAmI ? <RecordCard record={val?.whoAmI} size={PreviewSize.small} /> : val
-                    )}
+                    dataSource={values.map(value => {
+                        let whoAmI = null;
+
+                        if (TypeGuards.isTreeCellValues(values)) {
+                            whoAmI = value?.treeValue?.record?.whoAmI;
+                        }
+
+                        if (TypeGuards.isLinkCellValues(values)) {
+                            whoAmI = value.linkValue?.whoAmI;
+                        }
+
+                        return whoAmI ? <RecordCard record={whoAmI} size={PreviewSize.small} /> : value;
+                    })}
                     size="small"
                     maxHeight="50vh"
                 />
@@ -53,8 +65,16 @@ function AllValuesCount({values, attributeType}: IAllValuesCountProps): JSX.Elem
 
     const otherValuesData = values
         .slice(0, 5)
-        .map(val => {
-            const whoAmI = attributeType === AttributeType.tree ? val?.record?.whoAmI : val?.whoAmI;
+        .map(value => {
+            let whoAmI: IRecordIdentityWhoAmI = null;
+
+            if (TypeGuards.isTreeCellValue(value)) {
+                whoAmI = value.treeValue?.record?.whoAmI;
+            }
+
+            if (TypeGuards.isLinkCellValue(value)) {
+                whoAmI = value.linkValue?.whoAmI;
+            }
 
             if (!whoAmI) {
                 return null;
@@ -83,6 +103,6 @@ function AllValuesCount({values, attributeType}: IAllValuesCountProps): JSX.Elem
             {contextHolder}
         </>
     );
-}
+};
 
 export default AllValuesCount;

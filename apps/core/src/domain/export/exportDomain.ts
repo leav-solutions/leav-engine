@@ -47,7 +47,7 @@ interface IDeps {
     config?: Config.IConfig;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.domain.record': recordDomain = null,
     'core.domain.helpers.validate': validateHelper = null,
@@ -104,12 +104,12 @@ export default function ({
 
         if (res !== null && asRecord) {
             if (attribute.type === AttributeTypes.TREE) {
-                res = Array.isArray(res) ? res.map(e => e.value.record) : res.value.record;
+                res = res.map(e => e.value.record);
             } else if (
                 attribute.type === AttributeTypes.SIMPLE_LINK ||
                 attribute.type === AttributeTypes.ADVANCED_LINK
             ) {
-                res = Array.isArray(res) ? res.map(e => e.value) : res.value;
+                res = res.map(e => e.value);
             }
         }
 
@@ -280,7 +280,10 @@ export default function ({
                 await _updateTaskProgress(1, 'tasks.export_description.excel_writing');
             }
 
-            const filename = `${library}_${new Date().toLocaleDateString().split('/').join('')}_${Date.now()}.xlsx`;
+            const filename = `${library}_${new Date()
+                .toLocaleDateString()
+                .split('/')
+                .join('')}_${Date.now()}.xlsx`;
 
             await workbook.xlsx.writeFile(`${path.resolve(config.export.directory)}/${filename}`);
 

@@ -46,6 +46,7 @@ import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import getAttributesFromField from './helpers/getAttributesFromField';
 import {SendRecordUpdateEventHelper, isRecordWithId} from './helpers/sendRecordUpdateEvent';
 import {ICreateRecordResult, IFindRecordParams} from './_types';
+import { TypeGuards } from '../../utils/typeGuards';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -147,7 +148,7 @@ export interface IRecordDomain {
         attributeId: string;
         options?: IValuesOptions;
         ctx: IQueryInfos;
-    }): Promise<IValue | IValue[]>;
+    }): Promise<IValue[]>;
 
     getRecordIdentity(record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity>;
 
@@ -475,6 +476,10 @@ export default function ({
             options: {forceArray: true},
             ctx
         });
+
+        if (!TypeGuards.isIStandardValue(filePreviewsValue[0])) {
+            return null;
+        }
 
         const previews = filePreviewsValue[0]?.raw_value ?? {};
 

@@ -47,7 +47,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function ({
+export default function({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.domain.record': recordDomain = null,
@@ -101,9 +101,9 @@ export default function ({
 
             val = await _getFormattedValuesAndLabels(attribute, val, ctx);
 
-            const value = Array.isArray(val) ? val.map(v => v?.value).filter(e => e) : val?.value;
+            const value = val.map(v => v?.value).filter(e => e);
 
-            if (value === null || (Array.isArray(value) && !value.length)) {
+            if (value.length === 0) {
                 return {[attribute.id]: null};
             }
 
@@ -130,16 +130,14 @@ export default function ({
 
     const _getFormattedValuesAndLabels = async (
         attribute: IAttribute,
-        values: IValue | IValue[],
+        values: IValue[],
         ctx: IQueryInfos
-    ): Promise<IValue | IValue[]> => {
+    ): Promise<IValue[]> => {
         if (attribute.type === AttributeTypes.TREE) {
-            values = Array.isArray(values)
-                ? values.map(v => ({
-                      ...v,
-                      value: v.value?.record
-                  }))
-                : {...values, value: values.value.record};
+            values = values.map(v => ({
+                ...v,
+                value: v.value?.record
+            }));
         }
 
         if (
@@ -147,26 +145,19 @@ export default function ({
             attribute.type === AttributeTypes.ADVANCED_LINK ||
             attribute.type === AttributeTypes.TREE
         ) {
-            if (Array.isArray(values)) {
-                for (const [i, v] of values.entries()) {
-                    const recordIdentity = await recordDomain.getRecordIdentity(
-                        {id: v.value.id, library: attribute.linked_library || v.value.library},
-                        ctx
-                    );
-
-                    values[i].value = recordIdentity.label || v.value.id;
-                }
-            } else {
+            const promises = values.map(async v => {
                 const recordIdentity = await recordDomain.getRecordIdentity(
-                    {
-                        id: values.value.id,
-                        library: attribute.linked_library || values.value.library
-                    },
+                    {id: v.value.id, library: attribute.linked_library || v.value.library},
                     ctx
                 );
 
-                values.value = recordIdentity.label || values.value.id;
-            }
+                return {
+                    ...v,
+                    value: recordIdentity.label || v.value.id
+                };
+            });
+
+            values = await Promise.all(promises);
         }
 
         return values;
