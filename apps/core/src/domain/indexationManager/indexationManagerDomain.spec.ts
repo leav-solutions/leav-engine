@@ -98,7 +98,7 @@ describe('Indexation Manager', () => {
                     }
                 ]
             }),
-            getRecordFieldValue: global.__mockPromise({value: '1337'})
+            getRecordFieldValue: global.__mockPromise([{value: '1337'}])
         };
 
         const mockAttributeDomain: Mockify<IAttributeDomain> = {

@@ -2,22 +2,18 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CheckOutlined, CloseOutlined, FileTextOutlined} from '@ant-design/icons';
-import {AnyPrimitive, getInvertColor, IDateRangeValue} from '@leav/utils';
+import {getInvertColor, IDateRangeValue} from '@leav/utils';
 import {Switch, Tag, Tooltip, Typography} from 'antd';
 import isEmpty from 'lodash/isEmpty';
 import React from 'react';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ITableCell} from '_ui/types/search';
 import {AttributeFormat} from '_ui/_gqlTypes';
 import {stringifyDateRangeValue} from '_ui/_utils';
+import {ISimpleCellProps} from '../types';
+import {getValuesToDisplayInCell} from '../utils';
 
 const RichTextDisplay = React.lazy(() => import('./ElementsToDisplay/RichTextDisplay'));
-
-interface ISimpleCellProps {
-    cellData: ITableCell;
-    values: AnyPrimitive[];
-}
 
 const alignmentByFormat: Record<AttributeFormat, 'left' | 'right' | 'center'> = {
     [AttributeFormat.text]: 'left',
@@ -50,7 +46,9 @@ function StandardCell({cellData, values}: ISimpleCellProps): JSX.Element {
         }
     };
 
-    const displayedValues = values.map(val => _getValueByFormat(val)).join(', ');
+    const formattedValuesToDisplay = getValuesToDisplayInCell(values)
+        .map(valueData => _getValueByFormat(valueData?.value))
+        .join(', ');
 
     const _getTagStyle = (value: string) => ({color: getInvertColor('#' + value)});
 
@@ -77,31 +75,31 @@ function StandardCell({cellData, values}: ISimpleCellProps): JSX.Element {
                         </>
                     );
                 } else {
-                    return displayedValues;
+                    return formattedValuesToDisplay;
                 }
             case AttributeFormat.rich_text:
-                if (!isEmpty(displayedValues)) {
-                    return <RichTextDisplay displayedValue={displayedValues} />;
+                if (isEmpty(formattedValuesToDisplay)) {
+                    return formattedValuesToDisplay;
                 } else {
-                    return displayedValues;
+                    return <RichTextDisplay displayedValue={formattedValuesToDisplay} />;
                 }
 
             default:
-                return displayedValues;
+                return formattedValuesToDisplay;
         }
     };
 
     return (
         <Wrapper $format={cellData.format}>
             {cellData.format === AttributeFormat.extended ? (
-                <Tooltip overlay={displayedValues}>
+                <Tooltip overlay={formattedValuesToDisplay}>
                     <FileTextOutlined size={256} style={{fontSize: '2em'}} />
                 </Tooltip>
             ) : (
                 <Typography.Paragraph
                     ellipsis={{
                         rows: 1,
-                        tooltip: displayedValues
+                        tooltip: formattedValuesToDisplay
                     }}
                     style={{margin: 0}}
                 >

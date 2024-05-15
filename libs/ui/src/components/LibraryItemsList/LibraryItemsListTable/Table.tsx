@@ -183,7 +183,7 @@ const Table = () => {
 
         const columns = [...startColumns, ...columnsFromFields];
 
-        setTableColumns(currentColumns => !isEqual(currentColumns, columns) ? columns : currentColumns);
+        setTableColumns(currentColumns => (!isEqual(currentColumns, columns) ? columns : currentColumns));
     }, [searchState.fields, searchState.attributes, t]);
 
     // data
@@ -220,7 +220,7 @@ const Table = () => {
                                 }
                             }
 
-                            return v.value ?? v.linkValue ?? v.treeValue;
+                            return v;
                         });
 
                         acc[column.accessor as string] = {value, type: column.type, format: column.format};
