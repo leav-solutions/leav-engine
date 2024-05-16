@@ -44,8 +44,6 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     const form = Form.useFormInstance();
     const [hasChanged, setHasChanged] = useState(false);
 
-    const isRequired = state.formElement.settings.required;
-
     const _resetToInheritedValue = () => {
         setHasChanged(false);
         form.setFieldValue(state.attribute.id, state.inheritedValue.raw_value);
@@ -73,7 +71,7 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     return (
         <KitInputNumberStyled
             label={state.formElement.settings.label}
-            required={isRequired}
+            required={state.formElement.settings.required}
             status={errors.length > 0 ? 'error' : ''}
             helper={
                 state.isInheritedOverrideValue
