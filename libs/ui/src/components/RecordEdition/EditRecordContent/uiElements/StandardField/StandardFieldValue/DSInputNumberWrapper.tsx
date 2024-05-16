@@ -46,8 +46,7 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
 
     const _resetToInheritedValue = () => {
         setHasChanged(false);
-        form.setFieldValue(state.attribute.id, state.inheritedValue.raw_value);
-        form.validateFields();
+        onChange(state.inheritedValue.raw_value);
         handleSubmit('', state.attribute.id);
     };
 
