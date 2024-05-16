@@ -47,11 +47,11 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
 
     const _handleOnBlur = (event: FocusEvent<HTMLInputElement>) => {
         const valueToSubmit = event.target.value;
-        if (valueToSubmit === '' && state.inheritedValue) {
+        if (valueToSubmit === '' && state.isInheritedValue) {
             _resetToInheritedValue();
             return;
         }
-        if (hasChanged || !state.inheritedValue) {
+        if (hasChanged || !state.isInheritedValue) {
             handleSubmit(valueToSubmit, state.attribute.id);
         }
         onChange(event);

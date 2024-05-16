@@ -2,13 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitInputNumber} from 'aristid-ds';
-import {FocusEvent, FunctionComponent, ReactNode, useState} from 'react';
+import {ComponentPropsWithRef, FocusEvent, FunctionComponent, ReactNode, useState} from 'react';
 import {IStandardFieldReducerState} from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {Form, InputNumberProps} from 'antd';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import styled from 'styled-components';
-import {KitInputNumberProps} from 'aristid-ds/dist/Kit/DataEntry/InputNumber/types';
 
 interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputNumberProps> {
     state: IStandardFieldReducerState;
@@ -36,6 +35,10 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     onChange,
     handleSubmit
 }) => {
+    if (!onChange) {
+        throw Error('MonoValueSelect should be used inside a antd Form.Item');
+    }
+
     const {t} = useSharedTranslation();
     const {errors} = Form.Item.useStatus();
     const form = Form.useFormInstance();
@@ -52,23 +55,19 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
 
     const _handleOnBlur = (event: FocusEvent<HTMLInputElement>) => {
         const valueToSubmit = event.target.value;
-        if (valueToSubmit === '' && state.inheritedValue) {
+        if (valueToSubmit === '' && state.isInheritedValue) {
             _resetToInheritedValue();
             return;
         }
-        if (hasChanged || !state.inheritedValue) {
+        if (hasChanged || !state.isInheritedValue) {
             handleSubmit(valueToSubmit, state.attribute.id);
         }
-        if (onChange) {
-            onChange(valueToSubmit);
-        }
+        onChange(valueToSubmit);
     };
 
-    const _handleOnChange: KitInputNumberProps['onChange'] = inputValue => {
+    const _handleOnChange: ComponentPropsWithRef<typeof KitInputNumberStyled>['onChange'] = inputValue => {
         setHasChanged(true);
-        if (onChange) {
-            onChange(inputValue);
-        }
+        onChange(inputValue);
     };
 
     return (

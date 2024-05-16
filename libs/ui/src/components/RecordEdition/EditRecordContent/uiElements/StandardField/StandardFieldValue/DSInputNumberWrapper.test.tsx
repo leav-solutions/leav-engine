@@ -120,7 +120,7 @@ describe('DSInputNumberWrapper', () => {
         );
 
         const input = screen.getByRole('spinbutton');
-        await user.click(input);
+        await user.clear(input);
         await user.tab();
 
         expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
@@ -143,9 +143,8 @@ describe('DSInputNumberWrapper', () => {
                 </AntForm>
             );
 
-            const text = 'text';
+            const text = '7.4';
             const input = screen.getByRole('spinbutton');
-            await user.click(input);
             await user.type(input, text);
             await user.tab();
 
@@ -153,7 +152,7 @@ describe('DSInputNumberWrapper', () => {
             expect(mockOnChange).toHaveBeenCalled();
         });
 
-        test('Should submit the default value if field is empty', async () => {
+        test('Should submit the empty value if field is empty', async () => {
             const state = getInitialState(true);
             render(
                 <AntForm>
@@ -170,10 +169,10 @@ describe('DSInputNumberWrapper', () => {
             );
 
             const input = screen.getByRole('spinbutton');
-            await user.click(input);
+            await user.clear(input);
             await user.tab();
 
-            expect(mockHandleSubmit).toHaveBeenCalledWith(mockValue.originRawValue, state.attribute.id);
+            expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
         });
     });
 
@@ -232,7 +231,66 @@ describe('DSInputNumberWrapper', () => {
             const input = screen.getByRole('spinbutton');
             const helperText = screen.getByText(/3.5/);
             expect(input).toHaveValue(inheritedValues[0].raw_value);
-            expect(helperText).toBeInTheDocument();
+            expect(helperText).toBeVisible();
+        });
+    });
+
+    describe('With required and inheritance', () => {
+        test("Should display the inherited value by default and not save if we don't change it", async () => {
+            let state = getInitialState(true);
+            state = {
+                ...state,
+                ...inheritedNotOverrideValue,
+                formElement: {...state.formElement, values: inheritedValues}
+            };
+            render(
+                <AntForm>
+                    <AntForm.Item>
+                        <DSInputNumberWrapper
+                            state={state}
+                            infoButton=""
+                            handleSubmit={mockHandleSubmit}
+                            onChange={mockOnChange}
+                            value={inheritedValues[1].raw_value}
+                        />
+                    </AntForm.Item>
+                </AntForm>
+            );
+            const input = screen.getByRole('spinbutton');
+            expect(input).toHaveValue(inheritedValues[1].raw_value);
+
+            await user.click(input);
+            await user.tab();
+
+            expect(mockHandleSubmit).not.toHaveBeenCalled();
+        });
+
+        test('Should display the override value in the input and inherited value under it', async () => {
+            let state = getInitialState(false);
+            state = {
+                ...state,
+                ...inheritedOverrideValue,
+                formElement: {...state.formElement, values: inheritedValues}
+            };
+
+            render(
+                <AntForm>
+                    <AntForm.Item>
+                        <DSInputNumberWrapper
+                            state={state}
+                            infoButton=""
+                            handleSubmit={mockHandleSubmit}
+                            onChange={mockOnChange}
+                            value={inheritedValues[0].raw_value}
+                        />
+                    </AntForm.Item>
+                </AntForm>
+            );
+
+            const input = screen.getByRole('spinbutton');
+            const helperText = screen.getByText(/3.5/);
+            expect(input).toHaveValue(inheritedValues[0].raw_value);
+            expect(helperText).toBeVisible();
         });
     });
 });
