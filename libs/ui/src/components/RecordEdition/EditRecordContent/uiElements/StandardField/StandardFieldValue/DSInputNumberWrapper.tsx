@@ -36,12 +36,11 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     handleSubmit
 }) => {
     if (!onChange) {
-        throw Error('MonoValueSelect should be used inside a antd Form.Item');
+        throw Error('DSInputNumberWrapper should be used inside a antd Form.Item');
     }
 
     const {t} = useSharedTranslation();
     const {errors} = Form.Item.useStatus();
-    const form = Form.useFormInstance();
     const [hasChanged, setHasChanged] = useState(false);
 
     const _resetToInheritedValue = () => {

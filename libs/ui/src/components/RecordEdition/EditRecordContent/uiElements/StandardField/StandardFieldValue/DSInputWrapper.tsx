@@ -35,13 +35,11 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
 }) => {
     const {t} = useSharedTranslation();
     const {errors} = Form.Item.useStatus();
-    const form = Form.useFormInstance();
     const [hasChanged, setHasChanged] = useState(false);
 
     const _resetToInheritedValue = () => {
         setHasChanged(false);
-        form.setFieldValue(state.attribute.id, state.inheritedValue.raw_value);
-        form.validateFields();
+        onChange(state.inheritedValue.raw_value);
         handleSubmit('', state.attribute.id);
     };
 
