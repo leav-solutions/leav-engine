@@ -7,7 +7,7 @@ import StandardField from '../StandardField';
 import {mockModifier} from '_ui/__mocks__/common/value';
 import {AttributeFormat, AttributeType, ValueDetailsValueFragment} from '_ui/_gqlTypes';
 import {IRecordPropertyAttribute} from '_ui/_queries/records/getRecordPropertiesQuery';
-import {mockFormElementInput} from '_ui/__mocks__/common/form';
+import {mockFormElementContainer, mockFormElementInput} from '_ui/__mocks__/common/form';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import {
     APICallStatus,
@@ -16,6 +16,9 @@ import {
     ISubmitMultipleResult,
     SubmitValueFunc
 } from '../../_types';
+import {AntForm} from 'aristid-ds';
+import {getAntdFormInitialValues} from '../../antdUtils';
+import {IRecordForm} from '_ui/hooks/useGetRecordForm';
 
 describe('StandardField, Numeric input', () => {
     const mockRecordValuesCommon = {
@@ -81,18 +84,46 @@ describe('StandardField, Numeric input', () => {
             }
         ];
 
-        render(
-            <StandardField
-                element={{
+        const recordForm: IRecordForm = {
+            dependencyAttributes: [],
+            elements: [
+                {
+                    ...mockFormElementContainer,
+                    settings: [{key: 'content', value: ''}]
+                },
+                {
                     ...mockFormElementInput,
+                    settings: [
+                        {key: 'label', value: 'test atribute'},
+                        {key: 'attribute', value: 'test_attribute'}
+                    ],
                     attribute: {...mockFormAttribute, format: AttributeFormat.numeric},
                     values: recordValuesNumeric
-                }}
-                {...baseProps}
-            />
+                }
+            ],
+            id: 'edition',
+            recordId: 'recordId',
+            library: {id: 'libraryId'}
+        };
+
+        const antdFormInitialValues = getAntdFormInitialValues(recordForm);
+
+        render(
+            <AntForm initialValues={antdFormInitialValues}>
+                <AntForm.Item>
+                    <StandardField
+                        element={{
+                            ...mockFormElementInput,
+                            attribute: {...mockFormAttribute, format: AttributeFormat.numeric},
+                            values: recordValuesNumeric
+                        }}
+                        {...baseProps}
+                    />
+                </AntForm.Item>
+            </AntForm>
         );
 
-        const inputElem = screen.getByRole('textbox');
+        const inputElem = screen.getByRole('spinbutton');
         expect(inputElem).toHaveValue('123456');
 
         await userEvent.click(inputElem);

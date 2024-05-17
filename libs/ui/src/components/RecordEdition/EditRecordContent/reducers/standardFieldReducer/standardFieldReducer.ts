@@ -409,7 +409,12 @@ const standardFieldReducer = (
                 );
             }
 
-            const newState = {...state};
+            const newState = {
+                ...state
+            };
+            newState.isInheritedOverrideValue = state.isInheritedValue ? true : state.isInheritedOverrideValue;
+            newState.isInheritedNotOverrideValue = state.isInheritedValue ? false : state.isInheritedNotOverrideValue;
+
             const newStateActiveValues = newState.values[newState.activeScope].values;
 
             // Delete new value placeholder, replace it with actual new value with proper ID
