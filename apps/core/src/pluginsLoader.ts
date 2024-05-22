@@ -11,7 +11,7 @@ import {getConfig} from './config';
 export const initPlugins = async (folder: string, depsManager: AwilixContainer) => {
     const pluginsApp: ICorePluginsApp = depsManager.cradle['core.app.core.plugins'];
 
-    // Retrieve extensions points accross all core app files
+    // Retrieve extensions points across all core app files
     // They will be passed to each plugin in init function
     const appModules: IAppModule[] = Object.keys(depsManager.registrations)
         .filter(modName => modName.match(/^core\.app\./))
@@ -62,7 +62,7 @@ export const initPlugins = async (folder: string, depsManager: AwilixContainer) 
             await injectedIndex.init(extensionPoints);
         }
 
-        // Read plugins informations in package.json to register it
+        // Read plugins information in package.json to register it
         const pluginPath = folder + '/' + pluginName;
         const packageInfos = await import(pluginPath + '/package.json');
         pluginsApp.registerPlugin(pluginPath, {

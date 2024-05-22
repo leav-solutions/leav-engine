@@ -50,7 +50,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.apiKey': apiKeyDomain = null,
@@ -124,7 +124,7 @@ export default function({
         registerRoute(app): void {
             app.post(
                 '/auth/authenticate',
-                async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+                async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
                     try {
                         const {login, password} = req.body;
 
@@ -197,7 +197,7 @@ export default function({
                             refreshToken
                         });
                     } catch (err) {
-                        next(err);
+                        return next(err);
                     }
                 }
             );
@@ -219,7 +219,7 @@ export default function({
 
             app.post(
                 '/auth/forgot-password',
-                async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+                async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
                     try {
                         const {email, lang} = req.body;
                         const ua = useragent.parse(req.headers['user-agent']);
@@ -273,14 +273,14 @@ export default function({
 
                         return res.sendStatus(200);
                     } catch (err) {
-                        next(err);
+                        return next(err);
                     }
                 }
             );
 
             app.post(
                 '/auth/reset-password',
-                async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+                async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
                     try {
                         const {token, newPassword} = req.body;
 
@@ -333,14 +333,14 @@ export default function({
 
                         return res.sendStatus(200);
                     } catch (err) {
-                        next(err);
+                        return next(err);
                     }
                 }
             );
 
             app.post(
                 '/auth/refresh',
-                async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
+                async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
                     try {
                         const {refreshToken} = req.body;
 
@@ -427,7 +427,7 @@ export default function({
                             refreshToken: newRefreshToken
                         });
                     } catch (err) {
-                        next(err);
+                        return next(err);
                     }
                 }
             );

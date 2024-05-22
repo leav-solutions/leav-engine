@@ -119,7 +119,7 @@ export default function ({
 
                 req.ctx.userId = config.defaultUserId;
                 req.ctx.groupsId = [];
-                next();
+                return next();
             };
 
             const _handleError = async (err, req, res, next) => {
@@ -143,7 +143,7 @@ export default function ({
 
                         return res.status(200).send(settings.name || APP_DEFAULT_NAME);
                     } catch (err) {
-                        next(err);
+                        return next(err);
                     }
                 },
                 _handleError
@@ -156,7 +156,7 @@ export default function ({
                     try {
                         return res.status(200).send(config.lang.default);
                     } catch (err) {
-                        next(err);
+                        return next(err);
                     }
                 },
                 _handleError
@@ -207,7 +207,7 @@ export default function ({
                         res.set('Cache-Control', 'public, max-age=86400');
                         res.sendFile(filePath);
                     } catch (err) {
-                        next(err);
+                        return next(err);
                     }
                 },
                 _handleError
