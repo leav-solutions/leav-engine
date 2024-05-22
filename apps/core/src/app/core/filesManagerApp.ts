@@ -2,21 +2,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FileType} from '@leav/utils';
-import {IAuthApp} from 'app/auth/authApp';
 import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import express, {Express, NextFunction, Response} from 'express';
 import {withFilter} from 'graphql-subscriptions';
 import {FileUpload} from 'graphql-upload';
-import winston from 'winston';
 import {IConfig} from '_types/config';
 import {IRequestWithContext} from '_types/express';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecord, IRecordFilterLight} from '_types/record';
 import {IFilesManagerDomain} from '../../domain/filesManager/filesManagerDomain';
-import {API_KEY_PARAM_NAME} from '../../_types/auth';
 import {TriggerNames} from '../../_types/eventsManager';
+import AuthenticationError from '../../errors/AuthenticationError';
+import {ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
 
 export interface IFilesManagerApp {
     init(): Promise<void>;
@@ -25,12 +24,11 @@ export interface IFilesManagerApp {
 }
 
 interface IDeps {
-    'core.app.auth'?: IAuthApp;
     'core.app.helpers.initQueryContext'?: InitQueryContextFunc;
+    'core.app.helpers.validateRequestToken'?: ValidateRequestTokenFunc;
     'core.domain.filesManager'?: IFilesManagerDomain;
-    'core.utils.logger'?: winston.Winston;
-    config?: IConfig;
     'core.domain.eventsManager'?: IEventsManagerDomain;
+    config?: IConfig;
 }
 
 interface IUploadParams {
@@ -45,12 +43,11 @@ interface ICreateDirectoryParams {
     nodeId: string;
 }
 
-export default function({
-    'core.domain.filesManager': filesManagerDomain = null,
+export default function ({
     'core.app.helpers.initQueryContext': initQueryContext,
-    'core.app.auth': authApp = null,
+    'core.app.helpers.validateRequestToken': validateRequestToken = null,
+    'core.domain.filesManager': filesManagerDomain = null,
     'core.domain.eventsManager': eventsManager = null,
-    'core.utils.logger': logger = null,
     config = null
 }: IDeps): IFilesManagerApp {
     return {
@@ -218,19 +215,16 @@ export default function({
                     req.ctx = initQueryContext(req);
 
                     try {
-                        const payload = await authApp.validateRequestToken({
-                            ...(req.query[API_KEY_PARAM_NAME] && {apiKey: String(req.query[API_KEY_PARAM_NAME])}),
-                            cookies: req.cookies
-                        });
+                        const payload = await validateRequestToken(req);
                         req.ctx.userId = payload.userId;
                         req.ctx.groupsId = payload.groupsId;
 
-                        next();
+                        return next();
                     } catch {
-                        res.status(403);
+                        return next(new AuthenticationError());
                     }
                 },
-                async (req: IRequestWithContext, res: Response, next: NextFunction): Promise<Response> => {
+                async (req: IRequestWithContext, res: Response, next: NextFunction): Promise<Response | void> => {
                     try {
                         // Retrieve file path from domain
                         const {libraryId, fileId} = req.params;
@@ -243,13 +237,8 @@ export default function({
                         req.url = '/';
                         return express.static(originalPath)(req, res, next);
                     } catch (err) {
-                        next(err);
+                        return next(err);
                     }
-                },
-                async (err, req, res, next) => {
-                    logger.error(`[${req.ctx.queryId}] ${err}`);
-                    logger.error(err.stack);
-                    res.status(err.statusCode ?? 500).send(err.type ?? 'Internal server error');
                 }
             );
         }
