@@ -42,7 +42,10 @@ module.exports = {
             sameSite: process.env.AUTH_COOKIE_SAMESITE || 'lax',
             secure: process.env.AUTH_COOKIE_SECURE || false
         },
-        resetPasswordExpiration: process.env.AUTH_RESET_PWD_TTL || '20m'
+        resetPasswordExpiration: process.env.AUTH_RESET_PWD_TTL || '20m',
+        oidc: {
+            provider: 'keycloak url'
+        }
     },
     mailer: {
         host: process.env.MAILER_HOST || 'localhost',

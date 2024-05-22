@@ -18,7 +18,7 @@ import {initDb} from './infra/db/db';
 import {initMailer} from './infra/mailer';
 import {initPlugins} from './pluginsLoader';
 
-(async function () {
+(async function() {
     const opt = minimist(process.argv.slice(2));
 
     let conf: Config.IConfig;
