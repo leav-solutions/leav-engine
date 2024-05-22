@@ -21,6 +21,7 @@ import {USERS_GROUP_ATTRIBUTE_NAME} from '../../infra/permission/permissionRepo'
 import {ACCESS_TOKEN_COOKIE_NAME, ITokenUserData} from '../../_types/auth';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, IRecord} from '../../_types/record';
+import {Issuer} from 'openid-client';
 
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
@@ -439,7 +440,28 @@ export default function ({
             };
 
             if (config.auth.oidc !== null) {
-                console.log('coucou');
+                console.log('oidc detected');
+                // TODO: move realm + hostname to config
+                try {
+                    // TODO: avoid create new issuer for each request
+                    const oidcIssuer = await Issuer.discover(
+                        'http://keycloak:8080/realms/Generic/.well-known/openid-configuration'
+                    );
+                    const client = new oidcIssuer.Client({
+                        client_id: 'leav'
+                    });
+
+                    // TODO: How to get AMP token?
+                    //  - url searchQuery xstream (new route on xstream)
+                    //  - set cookies in AMP that can be read on LEAVs
+                    // TODO: Do we keep APM token or use LEAV cookie?
+                    // TODO: What we do if user has no token?
+                    const accessToken = cookies?.[ACCESS_TOKEN_COOKIE_NAME];
+                    const userinfo = await client.userinfo(accessToken);
+                    console.log(userinfo);
+                } catch (e) {
+                    console.log(e);
+                }
             }
 
             const token = cookies?.[ACCESS_TOKEN_COOKIE_NAME];

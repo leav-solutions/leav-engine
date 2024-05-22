@@ -179,9 +179,14 @@ services:
         -c,
         "/scripts/wait-for-it.sh message-broker:5672 -t 1000 -- /scripts/wait-for-it.sh arangodb:8529 -t 1000 -- /scripts/start-core.sh",
       ]
+    networks:
+        - oidc-service
+        - default
 
   indexation-manager:
     build: *env-build-core
+    networks:
+        - default
     stdin_open: true
     environment:
       <<: [*env-core, *env-amqp]
@@ -202,6 +207,8 @@ services:
 
   tasks-manager-master:
     build: *env-build-core
+    networks:
+        - default
     stdin_open: true
     environment:
       <<: [*env-core, *env-amqp]
@@ -224,6 +231,8 @@ services:
 
   tasks-manager-worker:
     build: *env-build-core
+    networks:
+        - default
     restart: always
     environment:
       <<: [*env-core, *env-amqp]
@@ -263,6 +272,8 @@ services:
       - *volume-admin-modules
       - *volume-shared-modules
     working_dir: *dir-admin
+    networks:
+        - default
     command: [
         sh,
         -c,
@@ -289,6 +300,8 @@ services:
       - *volume-shared-modules
       - *volume-data_studio-modules
     working_dir: *dir-data_studio
+    networks:
+        - default
     command: [
         sh,
         -c,
@@ -315,6 +328,8 @@ services:
       - *volume-shared-modules
       - *volume-login-modules
     working_dir: *dir-login
+    networks:
+        - default
     command: [
         sh,
         -c,
@@ -343,6 +358,8 @@ services:
       - *volume-shared-modules
       - *volume-portal-modules
     working_dir: *dir-portal
+    networks:
+        - default
     command: [
         sh,
         -c,
@@ -364,6 +381,8 @@ services:
       - *volume-automate_scan-modules
       - *volume-config_manager-modules
     working_dir: *dir-automate_scan
+    networks:
+        - default
     command: [
         sh,
         -c,
@@ -373,6 +392,8 @@ services:
   files-manager:
     profiles: ["automate"]
     build: *env-build-core
+    networks:
+        - default
     restart: always
     environment:
       <<: [*env-core, *env-amqp]
@@ -410,6 +431,8 @@ services:
       - *volume-preview_generator-modules
       - *volume-config_manager-modules
     working_dir: *dir-preview_generator
+    networks:
+        - default
     command: [
         sh,
         -c,
@@ -438,6 +461,8 @@ services:
       - *volume-config_manager-modules
       - *volume-message_broker-modules
     working_dir: *dir-sync_scan
+    networks:
+        - default
 
   # Feel free to comment out logs-collector and elasticsearch if don't need logs
   logs-collector:
@@ -460,6 +485,8 @@ services:
       - *volume-config_manager-modules
       - *volume-message_broker-modules
     working_dir: *dir-logs_collector
+    networks:
+        - default
     command: [
         sh,
         -c,
@@ -479,6 +506,8 @@ services:
       - "8000:8000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+        - default
 
   arangodb:
     image: *arango_image
@@ -494,6 +523,8 @@ services:
       - ./conf/arangodb/arangod.conf:/etc/arangodb3/arangod.conf
     ports:
       - "8529:8529"
+    networks:
+        - default
 
   message-broker:
     image: *message_broker_image
@@ -509,6 +540,8 @@ services:
       - traefik.http.services.message-broker.loadbalancer.server.port=5672
     volumes:
       - message-broker_data:/var/lib/rabbitmq
+    networks:
+        - default
 
   redis:
     image: *redis_image
@@ -518,6 +551,8 @@ services:
       - traefik.http.services.redis.loadbalancer.server.port=6379
     volumes:
       - redis_data:/data
+    networks:
+        - default
 
   redis-commander:
     profiles: ["debug"]
@@ -536,6 +571,8 @@ services:
       - traefik.http.routers.rabbitmq.entrypoints=web
     depends_on:
       - redis
+    networks:
+        - default
 
   elasticsearch:
     profiles: ["logs"]
@@ -546,6 +583,8 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+        - default
 
   ## Kibana is used for debugging essentially. Uncommnent following lines if needed
   kibana:
@@ -559,6 +598,8 @@ services:
       - "traefik.http.routers.kibana.entrypoints=web"
     depends_on:
       - elasticsearch
+    networks:
+        - default
 
 volumes:
   arango_data:
@@ -604,3 +645,8 @@ volumes:
   redis_data:
     driver: local
 
+networks:
+    oidc-service:
+        name: amp-dev-keycloak_default
+        external: true
+    default:
