@@ -438,6 +438,10 @@ export default function ({
                 queryId: 'validateToken'
             };
 
+            if (config.auth.oidc !== null) {
+                console.log('coucou');
+            }
+
             const token = cookies?.[ACCESS_TOKEN_COOKIE_NAME];
             let userId: string;
             let groupsId: string[];

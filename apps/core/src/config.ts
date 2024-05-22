@@ -49,7 +49,12 @@ export const validateConfig = (conf: IConfig) => {
                 sameSite: Joi.string().valid('none', 'lax', 'strict'),
                 secure: Joi.boolean()
             },
-            resetPasswordExpiration: Joi.string().required()
+            resetPasswordExpiration: Joi.string().required(),
+            oidc: Joi.object()
+                .allow(null)
+                .keys({
+                    provider: Joi.string().required()
+                })
         }),
         mailer: Joi.object().keys({
             host: Joi.string(),

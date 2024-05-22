@@ -67,6 +67,9 @@ export interface IAuth {
         secure: boolean;
     };
     resetPasswordExpiration: string;
+    oidc: null | {
+        provider: string;
+    };
 }
 
 export interface IMailer {
