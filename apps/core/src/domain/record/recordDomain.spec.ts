@@ -76,7 +76,7 @@ describe('RecordDomain', () => {
     });
 
     describe('createRecord', () => {
-        test('Should create a new record', async function () {
+        test('Should create a new record', async function() {
             const createdRecordData = {
                 id: '222435651',
                 library: 'test',
@@ -115,7 +115,7 @@ describe('RecordDomain', () => {
             expect(createdRecord.valuesErrors).toBe(null);
         });
 
-        test('Should create a new record and save its values', async function () {
+        test('Should create a new record and save its values', async function() {
             const createdRecordData = {
                 id: '222435651',
                 library: 'test',
@@ -268,7 +268,7 @@ describe('RecordDomain', () => {
     });
 
     describe('updateRecord', () => {
-        test('Should update a record', async function () {
+        test('Should update a record', async function() {
             const updatedRecordData = {
                 id: '222435651',
                 library: 'test',
@@ -303,7 +303,7 @@ describe('RecordDomain', () => {
     describe('deleteRecord', () => {
         const recordData = {id: '222435651', library: 'test', created_at: 1519303348, modified_at: 1519303348};
 
-        test('Should delete an record and return deleted record', async function () {
+        test('Should delete an record and return deleted record', async function() {
             const recRepo: Mockify<IRecordRepo> = {
                 deleteRecord: global.__mockPromise(recordData)
             };
@@ -376,7 +376,7 @@ describe('RecordDomain', () => {
             getLibraryPermission: global.__mockPromise(true)
         };
 
-        test('Should find records', async function () {
+        test('Should find records', async function() {
             const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
 
             const recDomain = recordDomain({
@@ -878,7 +878,7 @@ describe('RecordDomain', () => {
             });
         });
 
-        test('Should search records', async function () {
+        test('Should search records', async function() {
             const mockSearchRes = {
                 totalCount: 1,
                 list: [
@@ -965,15 +965,6 @@ describe('RecordDomain', () => {
                         {
                             value: '#123456'
                         }
-                    ],
-                    [
-                        {
-                            value: {
-                                small: 'small_fake-image',
-                                medium: 'medium_fake-image',
-                                big: 'big_fake-image'
-                            }
-                        }
                     ]
                 ])
             };
@@ -1052,6 +1043,543 @@ describe('RecordDomain', () => {
                         small: 'small_fake-image'
                     }
                 }
+            });
+        });
+
+        describe('Record entity with inherited label', () => {
+            test('Return record identity with inherited label', async () => {
+                const record = {
+                    id: '222536283',
+                    library: 'test_lib',
+                    created_at: 1520931427,
+                    modified_at: 1520931427,
+                    ean: '9876543219999999',
+                    visual_simple: '222713677'
+                };
+
+                const libData = {
+                    id: 'test_lib',
+                    recordIdentityConf: {
+                        label: 'label_attr',
+                        preview: 'preview_attr'
+                    }
+                };
+
+                const mockValDomain: Mockify<IValueDomain> = {
+                    getValues: global.__mockPromiseMultiple([
+                        [
+                            {
+                                value: null
+                            },
+                            {
+                                value: 'Inherited Label Value',
+                                isInherited: true
+                            }
+                        ]
+                    ])
+                };
+
+                const mockLibraryRepo: Mockify<ILibraryRepo> = {
+                    getLibraries: global.__mockPromise({totalCount: 1, list: [mockLibraryFiles]})
+                };
+
+                const mockAttributeDomain: Mockify<IAttributeDomain> = {
+                    getAttributeProperties: global.__mockPromise(mockAttrSimple)
+                };
+
+                const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
+
+                const mockUtils: Mockify<IUtils> = {
+                    getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
+                    isLinkAttribute: jest.fn().mockReturnValue(false),
+                    isTreeAttribute: jest.fn().mockReturnValue(false)
+                };
+
+                const recDomain = recordDomain({
+                    'core.domain.value': mockValDomain as IValueDomain,
+                    'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                    'core.infra.library': mockLibraryRepo as ILibraryRepo,
+                    'core.utils': mockUtils as IUtils,
+                    config: mockConfig as Config.IConfig
+                });
+
+                recDomain.getRecordFieldValue = jest.fn().mockImplementation(({attributeId}) =>
+                    Promise.resolve([
+                        attributeId === 'previews'
+                            ? {
+                                  raw_value: {
+                                      small: 'small_fake-image',
+                                      medium: 'medium_fake-image',
+                                      big: 'big_fake-image'
+                                  }
+                              }
+                            : {
+                                  ...mockStandardValue,
+                                  value: {
+                                      ...mockRecord,
+                                      previews: {
+                                          small: 'small_fake-image',
+                                          medium: 'medium_fake-image',
+                                          big: 'big_fake-image'
+                                      }
+                                  }
+                              }
+                    ])
+                );
+
+                const res = await recDomain.getRecordIdentity(record, ctx);
+
+                expect(res.id).toBe('222536283');
+                expect(res.library).toMatchObject(libData);
+                expect(res.label).toBe('Inherited Label Value');
+            });
+
+            test('Return record identity with override label', async () => {
+                const record = {
+                    id: '222536283',
+                    library: 'test_lib',
+                    created_at: 1520931427,
+                    modified_at: 1520931427,
+                    ean: '9876543219999999',
+                    visual_simple: '222713677'
+                };
+
+                const libData = {
+                    id: 'test_lib',
+                    recordIdentityConf: {
+                        label: 'label_attr',
+                        preview: 'preview_attr'
+                    }
+                };
+
+                const mockValDomain: Mockify<IValueDomain> = {
+                    getValues: global.__mockPromiseMultiple([
+                        [
+                            {
+                                value: 'Override Label Value',
+                                isInherited: false
+                            },
+                            {
+                                value: 'Inherited Label Value',
+                                isInherited: true
+                            }
+                        ]
+                    ])
+                };
+
+                const mockLibraryRepo: Mockify<ILibraryRepo> = {
+                    getLibraries: global.__mockPromise({totalCount: 1, list: [mockLibraryFiles]})
+                };
+
+                const mockAttributeDomain: Mockify<IAttributeDomain> = {
+                    getAttributeProperties: global.__mockPromise(mockAttrSimple)
+                };
+
+                const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
+
+                const mockUtils: Mockify<IUtils> = {
+                    getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
+                    isLinkAttribute: jest.fn().mockReturnValue(false),
+                    isTreeAttribute: jest.fn().mockReturnValue(false)
+                };
+
+                const recDomain = recordDomain({
+                    'core.domain.value': mockValDomain as IValueDomain,
+                    'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                    'core.infra.library': mockLibraryRepo as ILibraryRepo,
+                    'core.utils': mockUtils as IUtils,
+                    config: mockConfig as Config.IConfig
+                });
+
+                recDomain.getRecordFieldValue = jest.fn().mockImplementation(({attributeId}) =>
+                    Promise.resolve([
+                        attributeId === 'previews'
+                            ? {
+                                  raw_value: {
+                                      small: 'small_fake-image',
+                                      medium: 'medium_fake-image',
+                                      big: 'big_fake-image'
+                                  }
+                              }
+                            : {
+                                  ...mockStandardValue,
+                                  value: {
+                                      ...mockRecord,
+                                      previews: {
+                                          small: 'small_fake-image',
+                                          medium: 'medium_fake-image',
+                                          big: 'big_fake-image'
+                                      }
+                                  }
+                              }
+                    ])
+                );
+
+                const res = await recDomain.getRecordIdentity(record, ctx);
+
+                expect(res.id).toBe('222536283');
+                expect(res.library).toMatchObject(libData);
+                expect(res.label).toBe('Override Label Value');
+            });
+        });
+
+        describe('Record entity with inherited subLabel', () => {
+            test('Return record identity with inherited subLabel', async () => {
+                const record = {
+                    id: '222536283',
+                    library: 'test_lib',
+                    created_at: 1520931427,
+                    modified_at: 1520931427,
+                    ean: '9876543219999999',
+                    visual_simple: '222713677'
+                };
+
+                const libData = {
+                    id: 'test_lib',
+                    recordIdentityConf: {
+                        subLabel: 'subLabel_attr',
+                        preview: 'preview_attr'
+                    }
+                };
+
+                const mockValDomain: Mockify<IValueDomain> = {
+                    getValues: global.__mockPromiseMultiple([
+                        [
+                            {
+                                value: null
+                            },
+                            {
+                                value: 'Inherited SubLabel Value',
+                                isInherited: true
+                            }
+                        ]
+                    ])
+                };
+
+                const mockLibraryRepo: Mockify<ILibraryRepo> = {
+                    getLibraries: global.__mockPromise({totalCount: 1, list: [mockLibraryFiles]})
+                };
+
+                const mockAttributeDomain: Mockify<IAttributeDomain> = {
+                    getAttributeProperties: global.__mockPromise(mockAttrSimple)
+                };
+
+                const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
+
+                const mockUtils: Mockify<IUtils> = {
+                    getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
+                    isLinkAttribute: jest.fn().mockReturnValue(false),
+                    isTreeAttribute: jest.fn().mockReturnValue(false)
+                };
+
+                const recDomain = recordDomain({
+                    'core.domain.value': mockValDomain as IValueDomain,
+                    'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                    'core.infra.library': mockLibraryRepo as ILibraryRepo,
+                    'core.utils': mockUtils as IUtils,
+                    config: mockConfig as Config.IConfig
+                });
+
+                recDomain.getRecordFieldValue = jest.fn().mockImplementation(({attributeId}) =>
+                    Promise.resolve([
+                        attributeId === 'previews'
+                            ? {
+                                  raw_value: {
+                                      small: 'small_fake-image',
+                                      medium: 'medium_fake-image',
+                                      big: 'big_fake-image'
+                                  }
+                              }
+                            : {
+                                  ...mockStandardValue,
+                                  value: {
+                                      ...mockRecord,
+                                      previews: {
+                                          small: 'small_fake-image',
+                                          medium: 'medium_fake-image',
+                                          big: 'big_fake-image'
+                                      }
+                                  }
+                              }
+                    ])
+                );
+
+                const res = await recDomain.getRecordIdentity(record, ctx);
+
+                expect(res.id).toBe('222536283');
+                expect(res.library).toMatchObject(libData);
+                expect(res.subLabel).toBe('Inherited SubLabel Value');
+            });
+
+            test('Return record identity with override sublabel', async () => {
+                const record = {
+                    id: '222536283',
+                    library: 'test_lib',
+                    created_at: 1520931427,
+                    modified_at: 1520931427,
+                    ean: '9876543219999999',
+                    visual_simple: '222713677'
+                };
+
+                const libData = {
+                    id: 'test_lib',
+                    recordIdentityConf: {
+                        subLabel: 'subLabel_attr',
+                        preview: 'preview_attr'
+                    }
+                };
+
+                const mockValDomain: Mockify<IValueDomain> = {
+                    getValues: global.__mockPromiseMultiple([
+                        [
+                            {
+                                value: 'Override SubLabel Value',
+                                isInherited: false
+                            },
+                            {
+                                value: 'Inherited SubLabel Value',
+                                isInherited: true
+                            }
+                        ]
+                    ])
+                };
+
+                const mockLibraryRepo: Mockify<ILibraryRepo> = {
+                    getLibraries: global.__mockPromise({totalCount: 1, list: [mockLibraryFiles]})
+                };
+
+                const mockAttributeDomain: Mockify<IAttributeDomain> = {
+                    getAttributeProperties: global.__mockPromise(mockAttrSimple)
+                };
+
+                const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
+
+                const mockUtils: Mockify<IUtils> = {
+                    getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
+                    isLinkAttribute: jest.fn().mockReturnValue(false),
+                    isTreeAttribute: jest.fn().mockReturnValue(false)
+                };
+
+                const recDomain = recordDomain({
+                    'core.domain.value': mockValDomain as IValueDomain,
+                    'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                    'core.infra.library': mockLibraryRepo as ILibraryRepo,
+                    'core.utils': mockUtils as IUtils,
+                    config: mockConfig as Config.IConfig
+                });
+
+                recDomain.getRecordFieldValue = jest.fn().mockImplementation(({attributeId}) =>
+                    Promise.resolve([
+                        attributeId === 'previews'
+                            ? {
+                                  raw_value: {
+                                      small: 'small_fake-image',
+                                      medium: 'medium_fake-image',
+                                      big: 'big_fake-image'
+                                  }
+                              }
+                            : {
+                                  ...mockStandardValue,
+                                  value: {
+                                      ...mockRecord,
+                                      previews: {
+                                          small: 'small_fake-image',
+                                          medium: 'medium_fake-image',
+                                          big: 'big_fake-image'
+                                      }
+                                  }
+                              }
+                    ])
+                );
+
+                const res = await recDomain.getRecordIdentity(record, ctx);
+
+                expect(res.id).toBe('222536283');
+                expect(res.library).toMatchObject(libData);
+                expect(res.subLabel).toBe('Override SubLabel Value');
+            });
+        });
+
+        describe('Record entity with inherited color', () => {
+            test('Return record identity with inherited color', async () => {
+                const record = {
+                    id: '222536283',
+                    library: 'test_lib',
+                    created_at: 1520931427,
+                    modified_at: 1520931427,
+                    ean: '9876543219999999',
+                    visual_simple: '222713677'
+                };
+
+                const libData = {
+                    id: 'test_lib',
+                    recordIdentityConf: {
+                        color: 'color_attr',
+                        preview: 'preview_attr'
+                    }
+                };
+
+                const mockValDomain: Mockify<IValueDomain> = {
+                    getValues: global.__mockPromiseMultiple([
+                        [
+                            {
+                                value: null
+                            },
+                            {
+                                value: '#ff0000',
+                                isInherited: true
+                            }
+                        ]
+                    ])
+                };
+
+                const mockLibraryRepo: Mockify<ILibraryRepo> = {
+                    getLibraries: global.__mockPromise({totalCount: 1, list: [mockLibraryFiles]})
+                };
+
+                const mockAttributeDomain: Mockify<IAttributeDomain> = {
+                    getAttributeProperties: global.__mockPromise(mockAttrSimple)
+                };
+
+                const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
+
+                const mockUtils: Mockify<IUtils> = {
+                    getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
+                    isLinkAttribute: jest.fn().mockReturnValue(false),
+                    isTreeAttribute: jest.fn().mockReturnValue(false)
+                };
+
+                const recDomain = recordDomain({
+                    'core.domain.value': mockValDomain as IValueDomain,
+                    'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                    'core.infra.library': mockLibraryRepo as ILibraryRepo,
+                    'core.utils': mockUtils as IUtils,
+                    config: mockConfig as Config.IConfig
+                });
+
+                recDomain.getRecordFieldValue = jest.fn().mockImplementation(({attributeId}) =>
+                    Promise.resolve([
+                        attributeId === 'previews'
+                            ? {
+                                  raw_value: {
+                                      small: 'small_fake-image',
+                                      medium: 'medium_fake-image',
+                                      big: 'big_fake-image'
+                                  }
+                              }
+                            : {
+                                  ...mockStandardValue,
+                                  value: {
+                                      ...mockRecord,
+                                      previews: {
+                                          small: 'small_fake-image',
+                                          medium: 'medium_fake-image',
+                                          big: 'big_fake-image'
+                                      }
+                                  }
+                              }
+                    ])
+                );
+
+                const res = await recDomain.getRecordIdentity(record, ctx);
+
+                expect(res.id).toBe('222536283');
+                expect(res.library).toMatchObject(libData);
+                expect(res.color).toBe('#ff0000');
+            });
+
+            test('Return record identity with override color', async () => {
+                const record = {
+                    id: '222536283',
+                    library: 'test_lib',
+                    created_at: 1520931427,
+                    modified_at: 1520931427,
+                    ean: '9876543219999999',
+                    visual_simple: '222713677'
+                };
+
+                const libData = {
+                    id: 'test_lib',
+                    recordIdentityConf: {
+                        color: 'color_attr',
+                        preview: 'preview_attr'
+                    }
+                };
+
+                const mockValDomain: Mockify<IValueDomain> = {
+                    getValues: global.__mockPromiseMultiple([
+                        [
+                            {
+                                value: '#ffff00',
+                                isInherited: false
+                            },
+                            {
+                                value: '#ff0000',
+                                isInherited: true
+                            }
+                        ]
+                    ])
+                };
+
+                const mockLibraryRepo: Mockify<ILibraryRepo> = {
+                    getLibraries: global.__mockPromise({totalCount: 1, list: [mockLibraryFiles]})
+                };
+
+                const mockAttributeDomain: Mockify<IAttributeDomain> = {
+                    getAttributeProperties: global.__mockPromise(mockAttrSimple)
+                };
+
+                const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
+
+                const mockUtils: Mockify<IUtils> = {
+                    getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
+                    isLinkAttribute: jest.fn().mockReturnValue(false),
+                    isTreeAttribute: jest.fn().mockReturnValue(false)
+                };
+
+                const recDomain = recordDomain({
+                    'core.domain.value': mockValDomain as IValueDomain,
+                    'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
+                    'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                    'core.infra.library': mockLibraryRepo as ILibraryRepo,
+                    'core.utils': mockUtils as IUtils,
+                    config: mockConfig as Config.IConfig
+                });
+
+                recDomain.getRecordFieldValue = jest.fn().mockImplementation(({attributeId}) =>
+                    Promise.resolve([
+                        attributeId === 'previews'
+                            ? {
+                                  raw_value: {
+                                      small: 'small_fake-image',
+                                      medium: 'medium_fake-image',
+                                      big: 'big_fake-image'
+                                  }
+                              }
+                            : {
+                                  ...mockStandardValue,
+                                  value: {
+                                      ...mockRecord,
+                                      previews: {
+                                          small: 'small_fake-image',
+                                          medium: 'medium_fake-image',
+                                          big: 'big_fake-image'
+                                      }
+                                  }
+                              }
+                    ])
+                );
+
+                const res = await recDomain.getRecordIdentity(record, ctx);
+
+                expect(res.id).toBe('222536283');
+                expect(res.library).toMatchObject(libData);
+                expect(res.color).toBe('#ffff00');
             });
         });
 

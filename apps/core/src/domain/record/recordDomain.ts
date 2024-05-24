@@ -46,7 +46,9 @@ import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import getAttributesFromField from './helpers/getAttributesFromField';
 import {SendRecordUpdateEventHelper, isRecordWithId} from './helpers/sendRecordUpdateEvent';
 import {ICreateRecordResult, IFindRecordParams} from './_types';
-import { TypeGuards } from '../../utils/typeGuards';
+import {TypeGuards} from '../../utils/typeGuards';
+import {getValuesToDisplay} from '../../utils/helpers/getValuesToDisplay';
+
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -422,13 +424,15 @@ export default function ({
             }
             const previewAttributeProps = await attributeDomain.getAttributeProperties({id: previewAttribute, ctx});
 
-            const previewValues = await ret.getRecordFieldValue({
+            let previewValues = await ret.getRecordFieldValue({
                 library: lib.id,
                 record,
                 attributeId: previewAttribute,
                 options: {forceArray: true, version: ctx.version},
                 ctx
             });
+
+            previewValues = getValuesToDisplay(previewValues);
 
             if (!(previewValues as IValue[]).length) {
                 return null;
@@ -561,7 +565,7 @@ export default function ({
         if (conf.label) {
             const labelAttributeProps = await attributeDomain.getAttributeProperties({id: conf.label, ctx});
 
-            const labelValues = await valueDomain.getValues({
+            let labelValues = await valueDomain.getValues({
                 library: lib.id,
                 recordId: record.id,
                 attribute: conf.label,
@@ -572,6 +576,8 @@ export default function ({
             if (!labelValues.length) {
                 return null;
             }
+
+            labelValues = getValuesToDisplay(labelValues);
 
             const value: IValue['value'] | undefined = labelValues?.[0]?.value;
 
@@ -617,13 +623,15 @@ export default function ({
         if (conf.color) {
             const colorAttributeProps = await attributeDomain.getAttributeProperties({id: conf.color, ctx});
 
-            const colorValues = await valueDomain.getValues({
+            let colorValues = await valueDomain.getValues({
                 library: lib.id,
                 recordId: record.id,
                 attribute: conf.color,
                 options: valuesOptions,
                 ctx
             });
+
+            colorValues = getValuesToDisplay(colorValues);
 
             if (!colorValues.length) {
                 return null;
@@ -675,13 +683,15 @@ export default function ({
         if (conf.subLabel) {
             const subLabelAttributeProps = await attributeDomain.getAttributeProperties({id: conf.subLabel, ctx});
 
-            const subLabelValues = await valueDomain.getValues({
+            let subLabelValues = await valueDomain.getValues({
                 library: lib.id,
                 recordId: record.id,
                 attribute: conf.subLabel,
                 options: valuesOptions,
                 ctx
             });
+
+            subLabelValues = getValuesToDisplay(subLabelValues);
 
             if (conf.subLabel === 'id') {
                 subLabelValues[0].value = record.id;
@@ -796,10 +806,7 @@ export default function ({
         }
 
         // If no preview found, or preview is not available, use library icon if any
-        if (
-            preview === null ||
-            !Object.keys(preview?.file?.[utils.getPreviewsAttributeName(preview?.file?.library)] ?? {}).length
-        ) {
+        if (preview === null || !preview.file) {
             preview = await _getLibraryIconPreview(lib, ctx);
         }
 
