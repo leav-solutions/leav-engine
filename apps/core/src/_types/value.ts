@@ -45,7 +45,7 @@ export interface IGenericValue {
 
 export interface IStandardValue extends IGenericValue {
     value?: any;
-    raw_value?: string;
+    raw_value?: any;
 }
 
 export interface ILinkValue extends IGenericValue {
