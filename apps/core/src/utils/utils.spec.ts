@@ -24,6 +24,7 @@ describe('Utils', () => {
             expect(utilsModule.getFileExtension('file')).toEqual(null);
         });
     });
+
     describe('libNameToQueryName', () => {
         test('Should format a string to camelCase', async function () {
             const utilsModule = utils();
@@ -32,6 +33,7 @@ describe('Utils', () => {
             expect(utilsModule.libNameToQueryName('lot       of      space!!!')).toEqual('lotOfSpace');
         });
     });
+
     describe('libNameToTypeName', () => {
         test('Should format a string to CamelCase, upper first with no trailing "s"', async function () {
             const utilsModule = utils();
@@ -40,6 +42,7 @@ describe('Utils', () => {
             expect(utilsModule.libNameToTypeName('lot       of      space!!!')).toEqual('LotOfSpace');
         });
     });
+
     describe('rethrow', () => {
         test('Should throw error with amend message', async () => {
             const utilsModule = utils();
@@ -50,6 +53,7 @@ describe('Utils', () => {
             expect(() => utilsModule.rethrow(error, 'Error prefix')).toThrow('Error prefix, boom');
         });
     });
+
     describe('pipe', () => {
         test('Shoud pipe simple functions', async () => {
             const utilsModule = utils();
@@ -64,11 +68,10 @@ describe('Utils', () => {
         test('Shoud pipe async functions', async () => {
             const utilsModule = utils();
 
-            const multiply = factor => async n => {
-                return new Promise((resolve, reject) => {
+            const multiply = factor => async n =>
+                new Promise((resolve, reject) => {
                     resolve(n * factor);
                 });
-            };
 
             const triple = multiply(3);
             const triples = utilsModule.pipe(triple, triple);
@@ -76,6 +79,7 @@ describe('Utils', () => {
             expect(await triples(3)).toBe(27);
         });
     });
+
     describe('validateID', () => {
         test('Check ID format is correct', async () => {
             const utilsModule = utils();
@@ -136,6 +140,7 @@ describe('Utils', () => {
             });
         });
     });
+
     describe('nameValArrayToObj', () => {
         const utilsModule = utils();
         test('Convert an array of name/value object to an object', async () => {

@@ -22,9 +22,7 @@ export default function ({'core.domain.form': formDomain = null}: IDeps): IUpdat
                     ...form,
                     elements: form.elements.map(depElem => ({
                         ...depElem,
-                        elements: depElem.elements.filter(elem => {
-                            return !deletedAttrs.includes(elem.settings?.attribute);
-                        })
+                        elements: depElem.elements.filter(elem => !deletedAttrs.includes(elem.settings?.attribute))
                     }))
                 };
 

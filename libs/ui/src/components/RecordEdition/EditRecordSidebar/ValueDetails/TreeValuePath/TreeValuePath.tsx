@@ -30,16 +30,14 @@ function TreeValuePath({value, attribute}: ITreeValuePathProps): JSX.Element {
         selectable: false
     };
 
-    const pathToValue = [...ancestorsPath].reverse().reduce((children: DataNode[], node): DataNode[] => {
-        return [
+    const pathToValue = [...ancestorsPath].reverse().reduce((children: DataNode[], node): DataNode[] => [
             {
                 ...nodesProps,
                 title: node.record.whoAmI.label,
                 key: node.record.id,
                 children: children ?? []
             }
-        ];
-    }, []);
+        ], []);
 
     const treeData = [
         {

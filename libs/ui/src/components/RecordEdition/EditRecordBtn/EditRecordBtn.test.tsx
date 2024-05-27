@@ -5,11 +5,9 @@ import {fireEvent, render, screen} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import EditRecordBtn from './EditRecordBtn';
 
-jest.mock('../EditRecordModal', () => {
-    return function EditRecordModal() {
-        return <div>EditRecordModal</div>;
-    };
-});
+jest.mock('../EditRecordModal', () => ({
+    EditRecordModal: () => <div>EditRecordModal</div>
+}));
 
 describe('EditRecordBtn', () => {
     test('Display button', async () => {

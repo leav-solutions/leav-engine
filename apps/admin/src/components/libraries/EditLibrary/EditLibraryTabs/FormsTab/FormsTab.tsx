@@ -58,8 +58,7 @@ function FormsTab({libraryId, readonly}: IFormsTabProps): JSX.Element {
         setOpenEditionModal(true);
     };
 
-    const _handleDelete = (formId: string) => {
-        return deleteForm({
+    const _handleDelete = (formId: string) => deleteForm({
             variables: {
                 formId,
                 library: libraryId
@@ -95,7 +94,6 @@ function FormsTab({libraryId, readonly}: IFormsTabProps): JSX.Element {
                 });
             }
         });
-    };
 
     if (error) {
         return <div className="error">Error {error.message}</div>;

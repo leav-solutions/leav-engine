@@ -89,13 +89,11 @@ function EditLibrary({
             ),
             children: (
                 <TabContentWrapper>
-                    {
-                        <EditLibraryIndexation
+                    <EditLibraryIndexation
                             library={libraryData}
                             indexationTask={indexationTask}
                             readOnly={isReadOnly}
                         />
-                    }
                 </TabContentWrapper>
             )
         }

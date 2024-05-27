@@ -1,10 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
 import {Table} from 'semantic-ui-react';
-import styled from 'styled-components';
 import {ICommonFieldsSettings, IFormElementProps} from '../../../_types';
+import styled from 'styled-components';
+
+interface ILinkFieldSettings extends ICommonFieldsSettings {
+    required?: boolean;
+}
 
 const PreviewSkeleton = styled.div`
     border-radius: 50%;
@@ -27,12 +30,23 @@ const CellWrapper = styled.div`
     align-items: center;
 `;
 
-function LinkField({settings}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
+const StyledLabel = styled.span`
+    &.required::before {
+        content: '* ';
+        color: red;
+    }
+`;
+
+function LinkField({settings}: IFormElementProps<ILinkFieldSettings>): JSX.Element {
+    const {label, required} = settings;
+
     return (
         <Table celled striped>
             <Table.Header>
                 <Table.Row>
-                    <Table.HeaderCell colSpan="3">{settings.label}</Table.HeaderCell>
+                    <Table.HeaderCell colSpan="3">
+                        <StyledLabel className={required ? 'required' : undefined}>{label}</StyledLabel>
+                    </Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
             <Table.Body>

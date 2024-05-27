@@ -2,12 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {flow, partialRight} from 'lodash';
-import {
-    ActionsListIOTypes,
-    ActionsListValueType,
-    IActionsListContext,
-    IActionsListFunction
-} from '../../_types/actionsList';
+import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 
 export default function (): IActionsListFunction {
     const _toString = (num, d) =>
@@ -67,11 +62,7 @@ export default function (): IActionsListFunction {
                 default_value: ''
             }
         ],
-        action: (value: ActionsListValueType, params: any, ctx: IActionsListContext): string => {
-            if (value === null) {
-                return null;
-            }
-
+        action: (values, params) => {
             const defaultParams = {
                 decimals: 2,
                 thousandsSeparator: ',',
@@ -85,14 +76,22 @@ export default function (): IActionsListFunction {
                 ...params
             };
 
-            return isNaN(Number(value))
-                ? ''
-                : flow(
-                      partialRight(_toString, userParams.decimals),
-                      partialRight(_formatSeparators, userParams.thousandsSeparator, userParams.decimalsSeparator),
-                      partialRight(_addPrefix, userParams.prefix),
-                      partialRight(_addSuffix, userParams.suffix)
-                  )(Number(value));
+            const computedValues = values.map(elementValue => {
+                if (elementValue.value === null) {
+                    return elementValue;
+                }
+                elementValue.value = isNaN(Number(elementValue.value))
+                    ? ''
+                    : flow(
+                          partialRight(_toString, userParams.decimals),
+                          partialRight(_formatSeparators, userParams.thousandsSeparator, userParams.decimalsSeparator),
+                          partialRight(_addPrefix, userParams.prefix),
+                          partialRight(_addSuffix, userParams.suffix)
+                      )(Number(elementValue.value));
+                return elementValue;
+            });
+
+            return {values: computedValues, errors: []};
         }
     };
 }

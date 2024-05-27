@@ -5,11 +5,10 @@ import {Client} from '@elastic/elasticsearch';
 import {IConfig} from '_types/config';
 import {WritableMessage} from '_types/message';
 
-export const initClient = async (config: IConfig) => {
-    return new Client({
+export const initClient = async (config: IConfig) =>
+    new Client({
         node: config.elasticsearch.url
     });
-};
 
 export const writeData = async (indexName: string, data: WritableMessage, esClient: Client) => {
     // Check if index exists and create it if needed

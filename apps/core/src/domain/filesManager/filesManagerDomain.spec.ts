@@ -266,11 +266,11 @@ describe('FilesManager', () => {
             };
 
             const mockLibraryDomainForDirectories: Mockify<ILibraryDomain> = {
-                getLibraryProperties: jest.fn(id => {
-                    return id === 'lib2'
+                getLibraryProperties: jest.fn(id =>
+                    id === 'lib2'
                         ? {...mockLibraryFiles, id}
-                        : {...mockLibraryFiles, id, behavior: LibraryBehavior.DIRECTORIES};
-                })
+                        : {...mockLibraryFiles, id, behavior: LibraryBehavior.DIRECTORIES}
+                )
             };
 
             const files = filesManager({

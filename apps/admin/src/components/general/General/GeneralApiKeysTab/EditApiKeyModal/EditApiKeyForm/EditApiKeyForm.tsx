@@ -131,9 +131,7 @@ function EditApiKeyForm({onSubmit, apiKey, errors, readonly, loading, onClose}: 
             }
         };
 
-        const _onSubmit = () => {
-            return handleSubmit();
-        };
+        const _onSubmit = () => handleSubmit();
 
         return (
             <FormWrapper onSubmit={_onSubmit} aria-label="infos-form" $isNewKey={isNewKey}>

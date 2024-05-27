@@ -3,9 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {ICalculationVariable} from 'domain/helpers/calculationVariable';
-import {IRecord} from '_types/record';
-import {IValue} from '_types/value';
-import {ActionsListIOTypes, ActionsListValueType, IActionsListContext} from '../../_types/actionsList';
+import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 import {AttributeTypes} from '../../_types/attribute';
 
 interface IDeps {
@@ -13,16 +11,10 @@ interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
 }
 
-type ActionsListInheritanceValueType = string | number | boolean | {};
-
-export interface IActionListInheritanceContext extends IActionsListContext {
-    value?: ActionsListInheritanceValueType;
-}
-
-export default function({
+export default function ({
     'core.domain.helpers.calculationVariable': calculationVariable = null,
     'core.domain.attribute': attributeDomain = null
-}: IDeps = {}) {
+}: IDeps = {}): IActionsListFunction {
     return {
         id: 'inheritanceCalculation',
         name: 'Inheritance calculation',
@@ -55,29 +47,31 @@ export default function({
                 default_value: ''
             }
         ],
-        action: async (
-            value: ActionsListValueType,
-            params: any,
-            ctx: IActionsListContext
-        ): Promise<string | boolean | number | IValue | IRecord> => {
+        action: async (values, params, ctx) => {
             const {Formula: formula} = params;
             const attrProps = await attributeDomain.getAttributeProperties({id: ctx.attribute.id, ctx});
+            let inheritedValues = [];
 
-            const result = await calculationVariable.processVariableString(ctx, formula, value);
+            const result = await calculationVariable.processVariableString(ctx, formula, []);
 
             if (!result.length) {
-                return null;
+                return {values, errors: []};
             }
 
             if (attrProps.type === AttributeTypes.SIMPLE_LINK || attrProps.type === AttributeTypes.ADVANCED_LINK) {
-                return result.map(v => ({
-                    id: String(v.value),
-                    library: v.library
-                }))[0];
+                inheritedValues = result.map(resultValue => ({
+                    value: {id: String(resultValue.value), library: resultValue.library},
+                    isInherited: true
+                }));
+            } else {
+                inheritedValues = result.map(v => ({
+                    value: v.value,
+                    isInherited: true,
+                    raw_value: v.raw_value
+                }));
             }
 
-            const finalResult = result.map(v => v.value)[0];
-            return finalResult;
+            return {values: [...(values ?? []), ...inheritedValues], errors: []};
         }
     };
 }

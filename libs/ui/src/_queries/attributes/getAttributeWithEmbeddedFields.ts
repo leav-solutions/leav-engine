@@ -3,8 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gqlUnchecked} from '_ui/_utils';
 
-export const getEmbeddedFields = (depth = 0) => {
-    return `
+export const getEmbeddedFields = (depth = 0) => `
         embedded_fields {
             id
             format
@@ -12,10 +11,8 @@ export const getEmbeddedFields = (depth = 0) => {
             ${depth > 0 ? getEmbeddedFields(depth - 1) : ''}
         }
     `;
-};
 
-export const getAttributeWithEmbeddedFields = (depth: number) => {
-    return gqlUnchecked`
+export const getAttributeWithEmbeddedFields = (depth: number) => gqlUnchecked`
         query GET_ATTRIBUTE_WITH_EMBEDDED_FIELDS($attributeId: ID!) {
             attributes(filters: {id: $attributeId}) {
                 list {
@@ -29,4 +26,3 @@ export const getAttributeWithEmbeddedFields = (depth: number) => {
             }
         }
     `;
-};

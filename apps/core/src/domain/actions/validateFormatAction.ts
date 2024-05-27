@@ -3,22 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import Joi from 'joi';
 import {IDateRangeValue} from '_types/value';
-import ValidationError from '../../errors/ValidationError';
-import {
-    ActionsListIOTypes,
-    ActionsListValueType,
-    IActionsListContext,
-    IActionsListFunction
-} from '../../_types/actionsList';
+import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 import {AttributeFormats, IAttribute, IEmbeddedAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
-import {IActionsListDomain} from '../actionsList/actionsListDomain';
 
-interface IDeps {
-    'core.domain.actionsList'?: IActionsListDomain;
-}
-
-export default function ({'core.domain.actionsList': actionsListDomain = null}: IDeps = {}): IActionsListFunction {
+export default function (): IActionsListFunction {
     return {
         id: 'validateFormat',
         name: 'Validate Format',
@@ -35,7 +24,7 @@ export default function ({'core.domain.actionsList': actionsListDomain = null}: 
             ActionsListIOTypes.BOOLEAN,
             ActionsListIOTypes.OBJECT
         ],
-        action: (value: ActionsListValueType, params: any, ctx: IActionsListContext): ActionsListValueType => {
+        action: (values, params, ctx) => {
             const _getSchema = (attribute: IAttribute | IEmbeddedAttribute): Joi.Schema => {
                 let schema;
                 switch (attribute.format) {
@@ -87,29 +76,39 @@ export default function ({'core.domain.actionsList': actionsListDomain = null}: 
 
                 return schema;
             };
-
             const attributeSchema = _getSchema(ctx.attribute);
+            const errors = [];
 
             if (!attributeSchema) {
-                return value;
+                return {values, errors};
             }
-            // Joi might convert value before testing. raw() force it to send back the value we passed in
             const formatSchema = attributeSchema.raw();
 
-            const validationRes = formatSchema.validate(value);
-            if (!!validationRes.error) {
-                throw new ValidationError(actionsListDomain.handleJoiError(ctx.attribute, validationRes.error));
-            }
-
-            // Specific Validation for date range
-            if (ctx.attribute.format === AttributeFormats.DATE_RANGE) {
-                const rangeValue = value as IDateRangeValue;
-                if (Number(rangeValue.from) > Number(rangeValue.to)) {
-                    throw new ValidationError({[ctx.attribute.id]: Errors.INVALID_DATE_RANGE});
+            const computedValues = values.map(elementValue => {
+                // Joi might convert value before testing. raw() force it to send back the value we passed in
+                const validationRes = formatSchema.validate(elementValue.value);
+                if (!!validationRes.error) {
+                    errors.push({
+                        errorType: Errors.FORMAT_ERROR,
+                        attributeValue: elementValue,
+                        message: validationRes.error.message
+                    });
                 }
-            }
 
-            return value;
+                // Specific Validation for date range
+                if (ctx.attribute.format === AttributeFormats.DATE_RANGE) {
+                    const rangeValue = elementValue.value as IDateRangeValue;
+                    if (Number(rangeValue.from) > Number(rangeValue.to)) {
+                        errors.push({
+                            errorType: Errors.INVALID_DATE_RANGE,
+                            attributeValue: elementValue
+                        });
+                    }
+                }
+                return elementValue;
+            });
+
+            return {values: computedValues, errors};
         }
     };
 }

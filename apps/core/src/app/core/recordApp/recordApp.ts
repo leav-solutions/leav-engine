@@ -351,11 +351,9 @@ export default function ({
                     Record: {
                         library: async (record: IRecord, _, ctx: IQueryInfos) =>
                             record.library ? libraryDomain.getLibraryProperties(record.library, ctx) : null,
-                        whoAmI: async (rec: IRecord, _, ctx: IQueryInfos) => {
-                            return recordDomain.getRecordIdentity(rec, ctx);
-                        },
-                        property: async (parent, {attribute}, ctx) => {
-                            return recordDomain.getRecordFieldValue({
+                        whoAmI: async (rec: IRecord, _, ctx: IQueryInfos) => recordDomain.getRecordIdentity(rec, ctx),
+                        property: async (parent, {attribute}, ctx) =>
+                            recordDomain.getRecordFieldValue({
                                 library: parent.library,
                                 record: parent,
                                 attributeId: attribute,
@@ -364,8 +362,7 @@ export default function ({
                                     forceArray: true
                                 },
                                 ctx
-                            });
-                        },
+                            }),
                         permissions: (
                             record: IRecord,
                             _,

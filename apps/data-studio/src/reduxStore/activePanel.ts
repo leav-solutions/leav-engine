@@ -8,9 +8,7 @@ const activePanelSlice = createSlice({
     name: 'activePanel',
     initialState: WorkspacePanels.HOME,
     reducers: {
-        setActivePanel: (_, action: PayloadAction<WorkspacePanels>) => {
-            return action.payload;
-        }
+        setActivePanel: (_, action: PayloadAction<WorkspacePanels>) => action.payload
     }
 });
 

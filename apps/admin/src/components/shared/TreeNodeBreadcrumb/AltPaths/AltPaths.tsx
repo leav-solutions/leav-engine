@@ -22,7 +22,7 @@ function AltPaths({
     onClose: React.Dispatch<React.SetStateAction<boolean>>;
 }): JSX.Element {
     return (
-        <Modal size={'fullscreen'} open onClose={() => onClose(false)}>
+        <Modal size="fullscreen" open onClose={() => onClose(false)}>
             <Modal.Content>
                 <Table>
                     <Table.Body>

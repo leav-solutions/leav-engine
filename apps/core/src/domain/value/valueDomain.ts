@@ -49,6 +49,17 @@ export interface ISaveBatchValueResult {
 }
 
 export interface IValueDomain {
+    /**
+     * Call DB to get the value of an attribute.
+     * Prefer to use `recordDomain.getRecordFieldValue()` which is more optimized in certain situations.
+     *
+     * @param {Object} params
+     * @param params.library
+     * @param params.recordId
+     * @param params.attribute
+     * @param params.options
+     * @param params.ctx
+     */
     getValues({
         library,
         recordId,
@@ -63,6 +74,10 @@ export interface IValueDomain {
         ctx: IQueryInfos;
     }): Promise<IValue[]>;
 
+    /**
+     * Save value takes one value as parameter, apply all actions that can return multiple values and return them
+     * @example [inheritance, calculation, etc].
+     */
     saveValue({
         library,
         recordId,
@@ -75,7 +90,7 @@ export interface IValueDomain {
         attribute: string;
         value: IValue;
         ctx: IQueryInfos;
-    }): Promise<IValue>;
+    }): Promise<IValue[]>;
 
     /**
      * Save multiple values independently (possibly different attributes or versions).
@@ -91,7 +106,7 @@ export interface IValueDomain {
         keepEmpty?: boolean;
     }): Promise<ISaveBatchValueResult>;
 
-    deleteValue(params: IDeleteValueParams): Promise<IValue>;
+    deleteValue(params: IDeleteValueParams): Promise<IValue[]>;
 
     formatValue(params: {
         attribute: IAttribute;
@@ -101,7 +116,7 @@ export interface IValueDomain {
         ctx: IQueryInfos;
     }): Promise<IValue>;
 
-    runActionsList(params: IRunActionListParams): Promise<IValue>;
+    runActionsList(params: IRunActionListParams): Promise<IValue[]>;
 }
 
 interface IDeps {
@@ -125,7 +140,7 @@ interface IDeps {
     'core.domain.tree'?: ITreeDomain;
 }
 
-const valueDomain = function ({
+const valueDomain = function({
     config = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -156,33 +171,33 @@ const valueDomain = function ({
      */
     const _runActionsList: IValueDomain['runActionsList'] = async ({
         listName,
-        value,
+        values,
         attribute: attrProps,
         record,
         library,
         ctx
     }) => {
-        try {
-            const processedValue = await (!!attrProps.actions_list?.[listName] && value !== null
-                ? actionsListDomain.runActionsList(attrProps.actions_list[listName], value, {
-                      ...ctx,
-                      attribute: attrProps,
-                      recordId: record?.id,
-                      library,
-                      value
-                  })
-                : value);
+        const valuesToProcess = utils.isStandardAttribute(attrProps)
+            ? values.map(value => ({...value, raw_value: value.value}))
+            : values;
 
-            if (utils.isStandardAttribute(attrProps)) {
-                (processedValue as IStandardValue).raw_value = value.value;
-            }
-            return processedValue;
+        try {
+            const processedValues =
+                !!attrProps.actions_list?.[listName] && values !== null
+                    ? await actionsListDomain.runActionsList(attrProps.actions_list[listName], valuesToProcess, {
+                          ...ctx,
+                          attribute: attrProps,
+                          recordId: record?.id,
+                          library
+                      })
+                    : valuesToProcess;
+            return processedValues;
         } catch (e) {
             // If ValidationError, add some context about value to the error and throw it again
             if (e.type === ErrorTypes.VALIDATION_ERROR) {
                 e.context = {
                     attributeId: attrProps.id,
-                    value,
+                    values,
                     recordId: record?.id
                 };
             }
@@ -190,7 +205,15 @@ const valueDomain = function ({
         }
     };
 
-    const _formatValue = async ({attribute, value, record, library, ctx}) => {
+    const _formatValue = async ({
+        attribute,
+        value,
+        ctx
+    }: {
+        attribute: IAttribute;
+        value: IValue;
+        ctx: IQueryInfos;
+    }): Promise<IValue> => {
         let processedValue = {...value}; // Don't mutate given value
 
         const isLinkAttribute =
@@ -221,8 +244,6 @@ const valueDomain = function ({
                                 ? await _formatValue({
                                       attribute: metadataAttributeProps,
                                       value: {value: value.metadata?.[metadataField]},
-                                      record,
-                                      library,
                                       ctx
                                   })
                                 : null;
@@ -340,47 +361,51 @@ const valueDomain = function ({
             throw new ValidationError({id: Errors.UNKNOWN_VALUE});
         }
 
-        const actionsListRes =
-            !!attributeProps.actions_list && !!attributeProps.actions_list.deleteValue
-                ? await actionsListDomain.runActionsList(attributeProps.actions_list.deleteValue, existingValue, {
-                      ...ctx,
-                      attribute: attributeProps,
-                      recordId,
-                      library,
-                      value: existingValue
-                  })
-                : existingValue;
+        const actionsListRes = !!attributeProps.actions_list?.deleteValue
+            ? await actionsListDomain.runActionsList(attributeProps.actions_list.deleteValue, [existingValue], {
+                  ...ctx,
+                  attribute: attributeProps,
+                  recordId,
+                  library
+              })
+            : [existingValue];
 
-        const res: IValue = await valueRepo.deleteValue({
-            library,
-            recordId,
-            attribute: {...attributeProps, reverse_link: reverseLink},
-            value: actionsListRes,
-            ctx
-        });
-
-        // Make sure attribute is returned here
-        res.attribute = attribute;
-
-        await eventsManager.sendDatabaseEvent(
-            {
-                action: EventAction.VALUE_DELETE,
-                topic: {
+        const deletedValues = await Promise.all(
+            actionsListRes.map(async actionsListResValue => {
+                const deletedValue = await valueRepo.deleteValue({
                     library,
-                    record: {
-                        id: recordId,
-                        libraryId: library
+                    recordId,
+                    attribute: {...attributeProps, reverse_link: reverseLink},
+                    value: actionsListResValue,
+                    ctx
+                });
+
+                // Make sure attribute is returned here
+                deletedValue.attribute = attribute;
+
+                await eventsManager.sendDatabaseEvent(
+                    {
+                        action: EventAction.VALUE_DELETE,
+                        topic: {
+                            library,
+                            record: {
+                                id: recordId,
+                                libraryId: library
+                            },
+                            attribute: attributeProps.id
+                        },
+                        before: actionsListRes
                     },
-                    attribute: attributeProps.id
-                },
-                before: actionsListRes
-            },
-            ctx
+                    ctx
+                );
+
+                sendRecordUpdateEvent({id: recordId, library}, [{attribute, value: deletedValue}], ctx);
+
+                return deletedValue;
+            })
         );
 
-        await sendRecordUpdateEvent({id: recordId, library}, [{attribute, value: actionsListRes}], ctx);
-
-        return res;
+        return deletedValues;
     };
 
     const _executeSaveValue = async (
@@ -405,11 +430,11 @@ const valueDomain = function ({
         const areValuesIdentical = utils.areValuesIdentical(valueBeforeToCheck, value);
 
         // If values are identical, don't save it again. Consider DB value as saved value
-        let savedVal: IValue;
+        let savedValue: IValue;
         if (areValuesIdentical) {
-            savedVal = valueBefore;
+            savedValue = valueBefore;
         } else {
-            savedVal = await saveOneValue(
+            savedValue = await saveOneValue(
                 library,
                 record.id,
                 attribute,
@@ -428,48 +453,52 @@ const valueDomain = function ({
         }
 
         // Apply actions list and format value before returning it
-        let processedValue = await _runActionsList({
+        let processedValues = await _runActionsList({
             listName: ActionsListEvents.GET_VALUE,
-            value: savedVal,
+            values: [savedValue],
             attribute,
             record,
             library,
             ctx
         });
 
-        processedValue = await _formatValue({
-            attribute,
-            value: processedValue,
-            record,
-            library,
-            ctx
-        });
+        processedValues = await Promise.all(
+            processedValues.map(async processedValue => {
+                const formattedValue = await _formatValue({
+                    attribute,
+                    value: processedValue,
+                    ctx
+                });
 
-        // Runs actionsList on metadata values as well
-        if (attribute.metadata_fields?.length && processedValue.metadata) {
-            for (const metadataField of attribute.metadata_fields) {
-                if (
-                    processedValue.metadata[metadataField] === null ||
-                    typeof processedValue.metadata[metadataField] === 'undefined'
-                ) {
-                    continue;
+                // Runs actionsList on metadata values as well
+                if (attribute.metadata_fields?.length && formattedValue.metadata) {
+                    for (const metadataField of attribute.metadata_fields) {
+                        if (
+                            formattedValue.metadata[metadataField] === null ||
+                            typeof formattedValue.metadata[metadataField] === 'undefined'
+                        ) {
+                            continue;
+                        }
+
+                        const metadataAttributeProps = await attributeDomain.getAttributeProperties({
+                            id: metadataField,
+                            ctx
+                        });
+
+                        const resActionList = await _runActionsList({
+                            listName: ActionsListEvents.GET_VALUE,
+                            values: [formattedValue.metadata[metadataField] as IStandardValue],
+                            attribute: metadataAttributeProps,
+                            record,
+                            library,
+                            ctx
+                        });
+                        formattedValue.metadata[metadataField] = resActionList[0];
+                    }
                 }
-
-                const metadataAttributeProps = await attributeDomain.getAttributeProperties({
-                    id: metadataField,
-                    ctx
-                });
-
-                processedValue.metadata[metadataField] = await _runActionsList({
-                    listName: ActionsListEvents.GET_VALUE,
-                    value: processedValue.metadata[metadataField] as IStandardValue,
-                    attribute: metadataAttributeProps,
-                    record,
-                    library,
-                    ctx
-                });
-            }
-        }
+                return formattedValue;
+            })
+        );
 
         if (!areValuesIdentical) {
             await eventsManager.sendDatabaseEvent(
@@ -484,13 +513,13 @@ const valueDomain = function ({
                         attribute: attribute.id
                     },
                     before: valueBefore,
-                    after: savedVal
+                    after: savedValue
                 },
                 ctx
             );
         }
 
-        return {value: processedValue, areValuesIdentical};
+        return {values: processedValues, areValuesIdentical};
     };
 
     return {
@@ -570,34 +599,18 @@ const valueDomain = function ({
             }
 
             // Runs actionsList
-            values = values.length
-                ? await Promise.all(
-                      values.map(v =>
-                          _runActionsList({
-                              listName: ActionsListEvents.GET_VALUE,
-                              value: v,
-                              attribute: attr,
-                              record: {id: recordId},
-                              library,
-                              ctx
-                          })
-                      )
-                  )
-                : [
-                      // Force running actionsList for actions that generate values (eg. calculation or inheritance)
-                      await _runActionsList({
-                          listName: ActionsListEvents.GET_VALUE,
-                          value: {value: null},
-                          attribute: attr,
-                          record: {id: recordId},
-                          library,
-                          ctx
-                      })
-                  ].filter(v => v?.value !== null);
+            const actionsListRes = await _runActionsList({
+                listName: ActionsListEvents.GET_VALUE,
+                values,
+                attribute: attr,
+                record: {id: recordId},
+                library,
+                ctx
+            });
 
-            return values;
+            return actionsListRes;
         },
-        async saveValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
+        async saveValue({library, recordId, attribute, value, ctx}): Promise<IValue[]> {
             await validate.validateLibrary(library, ctx);
             const attributeProps = await attributeDomain.getAttributeProperties({id: attribute, ctx});
             await validate.validateLibraryAttribute(library, attribute, ctx);
@@ -652,7 +665,7 @@ const valueDomain = function ({
             }
 
             // Prepare value
-            const valueToSave = await prepareValue({
+            const valuesToSave = await prepareValue({
                 ...valueChecksParams,
                 deps: {
                     actionsListDomain,
@@ -662,20 +675,32 @@ const valueDomain = function ({
                 ctx
             });
 
-            const {value: savedVal, areValuesIdentical} = await _executeSaveValue(
-                library,
-                record,
-                attributeProps,
-                valueToSave,
-                ctx
-            );
+            const {allSavedValues, areValuesIdentical} = await valuesToSave.reduce(async (promiseAcc, valueToSave) => {
+                const acc = await promiseAcc;
+                const {values: savedValues, areValuesIdentical: identicalValues} = await _executeSaveValue(
+                    library,
+                    record,
+                    attributeProps,
+                    valueToSave,
+                    ctx
+                );
+
+                if (!identicalValues) {
+                    acc.areValuesIdentical = false;
+                }
+
+                acc.allSavedValues.push(...savedValues);
+                return acc;
+            }, Promise.resolve({allSavedValues: [], areValuesIdentical: true}));
 
             if (!areValuesIdentical) {
                 await updateRecordLastModif(library, recordId, ctx);
-                sendRecordUpdateEvent(record, [{attribute, value: savedVal}], ctx);
+                allSavedValues.forEach(async savedValue => {
+                    sendRecordUpdateEvent(record, [{attribute, value: savedValue}], ctx);
+                });
             }
 
-            return savedVal;
+            return allSavedValues;
         },
         async saveValueBatch({library, recordId, values, ctx, keepEmpty = false}): Promise<ISaveBatchValueResult> {
             await validate.validateLibrary(library, ctx);
@@ -691,7 +716,7 @@ const valueDomain = function ({
                     const prevRes = await promPrevRes;
                     try {
                         if (value.value === null && !keepEmpty) {
-                            const deletedVal = await _executeDeleteValue({
+                            const deletedValues = await _executeDeleteValue({
                                 library,
                                 value,
                                 recordId,
@@ -699,20 +724,12 @@ const valueDomain = function ({
                                 ctx
                             });
 
-                            prevRes.values.push(deletedVal);
+                            prevRes.values.push(...deletedValues);
 
                             return prevRes;
                         }
 
                         const attributeProps = await attributeDomain.getAttributeProperties({id: value.attribute, ctx});
-
-                        let reverseLink: IAttribute;
-                        if (!!attributeProps.reverse_link) {
-                            reverseLink = await attributeDomain.getAttributeProperties({
-                                id: attributeProps.reverse_link as string,
-                                ctx
-                            });
-                        }
 
                         const valueChecksParams = {
                             attributeProps,
@@ -762,7 +779,7 @@ const valueDomain = function ({
                         }
 
                         // Prepare value
-                        const valToSave = await prepareValue({
+                        const valuesToSave = await prepareValue({
                             ...valueChecksParams,
                             deps: {
                                 actionsListDomain,
@@ -772,18 +789,25 @@ const valueDomain = function ({
                             ctx
                         });
 
-                        const savedVal =
-                            !keepEmpty && !valToSave.value && !!valToSave.id_value
-                                ? await _executeDeleteValue({
-                                      library,
-                                      value,
-                                      recordId,
-                                      attribute: value.attribute,
-                                      ctx
-                                  })
-                                : (await _executeSaveValue(library, record, attributeProps, valToSave, ctx)).value;
+                        const saveResult = await valuesToSave.reduce<Promise<IValue[]>>(async (acc, valueToSave) => {
+                            const prevAcc = await acc;
+                            const savedValues =
+                                !keepEmpty && !valueToSave.value && !!valueToSave.id_value
+                                    ? await _executeDeleteValue({
+                                          library,
+                                          value: valueToSave,
+                                          recordId,
+                                          attribute: valueToSave.attribute,
+                                          ctx
+                                      })
+                                    : (await _executeSaveValue(library, record, attributeProps, valueToSave, ctx))
+                                          .values;
 
-                        prevRes.values.push(savedVal);
+                            prevAcc.push(...savedValues);
+                            return prevAcc;
+                        }, Promise.resolve([]));
+
+                        prevRes.values.push(...saveResult);
                     } catch (e) {
                         if (
                             !e.type ||
@@ -827,7 +851,7 @@ const valueDomain = function ({
 
             return saveRes;
         },
-        async deleteValue({library, recordId, attribute, value, ctx}): Promise<IValue> {
+        async deleteValue({library, recordId, attribute, value, ctx}) {
             await validate.validateLibrary(library, ctx);
             await validate.validateRecord(library, recordId, ctx);
 

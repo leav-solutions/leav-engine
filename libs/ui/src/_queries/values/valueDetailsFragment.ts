@@ -6,10 +6,11 @@ import {recordIdentityFragment} from '../../gqlFragments';
 import {valuesVersionDetailsFragment} from './valuesVersionFragment';
 
 export const valueDetailsFragment = gql`
-    ${recordIdentityFragment}
+    ${recordIdentityFragment} 
     ${valuesVersionDetailsFragment}
     fragment ValueDetails on GenericValue {
         id_value
+        isInherited
         modified_at
         modified_by {
             ...RecordIdentity

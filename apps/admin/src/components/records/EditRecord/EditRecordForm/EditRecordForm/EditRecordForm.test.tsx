@@ -157,17 +157,13 @@ const requestAndResult = {
 
 const mocks = [requestAndResult];
 
-jest.mock('../../../FormFields/LinksField', () => {
-    return function LinksField() {
+jest.mock('../../../FormFields/LinksField', () => function LinksField() {
         return <div>LinksField</div>;
-    };
-});
+    });
 
-jest.mock('./StandardValuesWrapper', () => {
-    return function StandardValuesWrapper() {
+jest.mock('./StandardValuesWrapper', () => function StandardValuesWrapper() {
         return <div>StandardValuesWrapper</div>;
-    };
-});
+    });
 
 describe('EditRecordForm', () => {
     test('Renders without error', async () => {
@@ -176,7 +172,7 @@ describe('EditRecordForm', () => {
                 <EditRecordForm
                     attributes={attributes as GET_LIB_BY_ID_libraries_list_attributes[]}
                     library={library}
-                    initialRecordId={'1234567'}
+                    initialRecordId="1234567"
                 />
             </MockedLangContextProvider>,
             {apolloMocks: mocks}

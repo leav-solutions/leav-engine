@@ -1,84 +1,144 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getRecordColumnsValues} from '_ui/_queries/records/getRecordColumnsValues';
-import {fireEvent} from '_ui/_tests/testUtils';
+import userEvent from '@testing-library/user-event';
+import {screen, render} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
-import {IUseCanEditRecordHook} from '../../../hooks/useCanEditRecord/useCanEditRecord';
-import {render, screen} from '../../../_tests/testUtils';
-import EditRecordModal from './EditRecordModal';
+import {EditRecordModal} from './EditRecordModal';
+import {Form} from 'antd';
 
-jest.mock('../EditRecord', () => {
-    return function EditRecord() {
-        return <div>EditRecord</div>;
-    };
-});
+let user!: ReturnType<typeof userEvent.setup>;
 
-jest.mock('hooks/useCanEditRecord/useCanEditRecord', () => ({
-    useCanEditRecord: (): IUseCanEditRecordHook => ({loading: false, canEdit: true, isReadOnly: false})
+jest.mock('../EditRecord', () => ({
+    EditRecord: ({antdForm, record, onCreate}) => {
+        const fields = [{name: 'leonbloum', value: record ? 'EditRecord' : 'CreateRecord'}];
+        return (
+            <Form form={antdForm} fields={fields}>
+                <Form.Item name="leonbloum">
+                    <input />
+                </Form.Item>
+                <button onClick={() => onCreate(mockRecord)}>simulate_create_record</button>
+            </Form>
+        );
+    }
 }));
 
 describe('EditRecordModal', () => {
-    const commonMocks = [
-        {
-            request: {
-                query: getRecordColumnsValues(['created_at', 'created_by', 'modified_at', 'modified_by']),
-                variables: {library: 'record_lib', filters: [{field: 'id', condition: 'EQUAL', value: '123456'}]}
-            },
-            result: {
-                data: {
-                    records: {
-                        list: [
-                            {
-                                _id: '123456',
-                                ...mockRecord,
-                                created_at: 1234567980,
-                                created_by: mockRecord,
-                                modified_at: 1234567980,
-                                modified_by: mockRecord
-                            }
-                        ]
-                    }
-                }
-            }
-        }
-    ];
-
-    test('Display modal', async () => {
-        const _handleClose = jest.fn();
-
-        render(<EditRecordModal library={mockRecord.library.id} record={mockRecord} open onClose={_handleClose} />, {
-            mocks: commonMocks
-        });
-
-        expect(screen.getByRole('dialog')).toBeVisible();
-        expect(screen.getAllByText('record_label')[0]).toBeVisible();
-        expect(screen.getByText('EditRecord')).toBeVisible();
+    beforeEach(() => {
+        user = userEvent.setup();
     });
 
-    test('Close modal', async () => {
-        const _handleClose = jest.fn();
+    describe('create mode', () => {
+        test('Display modal in create mode', async () => {
+            render(<EditRecordModal open library="test_lib" onClose={jest.fn()} record={null} />);
 
-        render(<EditRecordModal library={mockRecord.library.id} record={mockRecord} open onClose={_handleClose} />, {
-            mocks: commonMocks
+            expect(screen.getByDisplayValue('CreateRecord')).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: /create$/})).toBeInTheDocument();
         });
 
-        fireEvent.click(screen.getByRole('button', {name: 'global.close'}));
+        test('Display modal in create mode with all submit buttons', async () => {
+            render(
+                <EditRecordModal
+                    open
+                    library="test_lib"
+                    onClose={jest.fn()}
+                    record={null}
+                    submitButtons={['create', 'createAndEdit']}
+                />
+            );
 
-        expect(_handleClose).toBeCalled();
+            expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: /create$/})).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: /create_and_edit/})).toBeInTheDocument();
+        });
+
+        test('Display modal in create mode with "create and edit" button only', async () => {
+            render(
+                <EditRecordModal
+                    open
+                    library="test_lib"
+                    onClose={jest.fn()}
+                    record={null}
+                    submitButtons={['createAndEdit']}
+                />
+            );
+
+            expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: /create$/})).not.toBeInTheDocument();
+            expect(screen.getByRole('button', {name: /create_and_edit/})).toBeInTheDocument();
+        });
+
+        test('Should call onClose on click on cancel if antd fields are not touched', async () => {
+            const mockOnClose = jest.fn();
+            render(<EditRecordModal open library="test_lib" onClose={mockOnClose} record={null} />);
+
+            await userEvent.click(screen.getByRole('button', {name: 'global.cancel'}));
+            expect(mockOnClose).toHaveBeenCalledTimes(1);
+        });
+
+        test('Should call onClose if some fields are touched on confirm', async () => {
+            const mockOnClose = jest.fn();
+            render(<EditRecordModal open library="test_lib" onClose={mockOnClose} record={null} />);
+
+            expect(
+                screen.queryByRole('heading', {level: 2, name: 'record_edition.cancel_confirm_modal_title'})
+            ).not.toBeInTheDocument();
+            await userEvent.type(screen.getByDisplayValue('CreateRecord'), 'Something');
+            await userEvent.click(screen.getByRole('button', {name: 'global.cancel'}));
+
+            expect(screen.queryByText('record_edition.cancel_confirm_modal_title')).toBeInTheDocument();
+            expect(mockOnClose).not.toHaveBeenCalled();
+
+            await userEvent.click(screen.queryByText('global.confirm'));
+            expect(screen.queryByText('record_edition.cancel_confirm_modal_title')).not.toBeInTheDocument();
+            expect(mockOnClose).toHaveBeenCalled();
+        });
     });
 
-    describe('Creation mode', () => {
-        test('Open modal in creation mode', async () => {
-            const _handleClose = jest.fn();
+    describe('edit mode', () => {
+        test('Display modal in edit mode', async () => {
+            render(<EditRecordModal open library="test_lib" onClose={jest.fn()} record={mockRecord} />);
 
-            render(<EditRecordModal library={mockRecord.library.id} record={null} open onClose={_handleClose} />, {
-                mocks: commonMocks
-            });
+            expect(screen.getByDisplayValue('EditRecord')).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: /close/})).toBeInTheDocument();
+            expect(screen.queryByRole('button', {name: /submit/})).not.toBeInTheDocument();
+        });
 
-            expect(await screen.findByText('EditRecord')).toBeVisible();
-            expect(screen.getByText(/new_record/)).toBeVisible();
-            expect(screen.getByRole('button', {name: /submit/})).toBeInTheDocument();
+        test('Refresh form in edit mode after "create and edit"', async () => {
+            const onCreateAndEdit = jest.fn();
+            const onCreate = jest.fn();
+            render(
+                <EditRecordModal
+                    open
+                    library="test_lib"
+                    onClose={jest.fn()}
+                    record={null}
+                    submitButtons={['createAndEdit']}
+                    onCreate={onCreate}
+                    onCreateAndEdit={onCreateAndEdit}
+                />
+            );
+
+            expect(screen.getByDisplayValue('CreateRecord')).toBeInTheDocument();
+
+            await user.click(screen.getByText('simulate_create_record'));
+
+            expect(screen.getByDisplayValue('EditRecord')).toBeInTheDocument();
+        });
+
+        test('Should not open modal on click on close', async () => {
+            const mockOnClose = jest.fn();
+            render(<EditRecordModal open library="test_lib" onClose={mockOnClose} record={mockRecord} />);
+
+            expect(
+                screen.queryByRole('heading', {level: 2, name: 'record_edition.cancel_confirm_modal_title'})
+            ).not.toBeInTheDocument();
+            await userEvent.type(screen.getByDisplayValue('EditRecord'), 'Something');
+            await userEvent.click(screen.getByRole('button', {name: 'global.close'}));
+
+            expect(screen.queryByText('record_edition.cancel_confirm_modal_title')).not.toBeInTheDocument();
+            expect(mockOnClose).toHaveBeenCalled();
         });
     });
 });

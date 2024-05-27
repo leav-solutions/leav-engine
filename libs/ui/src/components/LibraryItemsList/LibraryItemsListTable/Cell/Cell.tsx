@@ -13,6 +13,10 @@ import {displayTypeToPreviewSize} from '../../helpers/displayTypeToPreviewSize';
 import AllValuesCount from './AllValuesCount';
 import CellInfos from './CellInfos';
 import StandardCell from './StandardCell';
+import {getValuesToDisplayInCell} from './utils';
+import {TypeGuards} from './typeGuards';
+import {FunctionComponent} from 'react';
+import {IRecordIdentityWhoAmI} from '_ui/types';
 
 const RecordCardCellWrapper = styled.div`
     display: flex;
@@ -26,29 +30,39 @@ interface ICellProps {
     data: ITableCell;
 }
 
-const Cell = ({columnName, data}: ICellProps) => {
+const Cell: FunctionComponent<ICellProps> = ({columnName, data}) => {
     const {value, type} = data;
     const {lang} = useLang();
 
     const {state: searchState} = useSearchReducer();
     const previewSize: PreviewSize = displayTypeToPreviewSize(searchState.display.size);
 
-    const valuesToDisplay = Array.isArray(value) ? value : [value];
+    const arrayOfValues = Array.isArray(value) ? value : [value];
 
-    if (!valuesToDisplay.length) {
+    if (arrayOfValues.length === 0) {
         return <></>;
     }
 
     switch (type) {
         case AttributeType.simple:
         case AttributeType.advanced:
-            return <StandardCell cellData={data} values={valuesToDisplay} />;
+            return <StandardCell cellData={data} values={arrayOfValues} />;
         case AttributeType.simple_link:
         case AttributeType.advanced_link:
         case AttributeType.tree:
-            const [firstValue, ...otherValues] = valuesToDisplay;
+            const valuesToDisplay = getValuesToDisplayInCell(arrayOfValues);
 
-            const whoAmI = type === AttributeType.tree ? firstValue?.record?.whoAmI : firstValue?.whoAmI;
+            let whoAmI: IRecordIdentityWhoAmI = null;
+
+            if (TypeGuards.isTreeCellValues(valuesToDisplay)) {
+                whoAmI = valuesToDisplay[0]?.treeValue?.record?.whoAmI;
+            }
+
+            if (TypeGuards.isLinkCellValues(valuesToDisplay)) {
+                whoAmI = valuesToDisplay[0].linkValue?.whoAmI;
+            }
+
+            const numberOfHiddenValues = valuesToDisplay.length - 1;
 
             return whoAmI ? (
                 <RecordCardCellWrapper>
@@ -61,8 +75,7 @@ const Cell = ({columnName, data}: ICellProps) => {
                         withLibrary={false}
                         simplistic
                     />
-
-                    {otherValues.length ?? 0 ? <AllValuesCount values={valuesToDisplay} attributeType={type} /> : <></>}
+                    {numberOfHiddenValues > 0 && <AllValuesCount values={valuesToDisplay} attributeType={type} />}
                 </RecordCardCellWrapper>
             ) : null;
         default:

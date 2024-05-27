@@ -111,24 +111,20 @@ const useGetRecordForm = ({
             const recordFormFormatted: IRecordForm = {
                 ...data.recordForm,
                 elements: data.recordForm.elements.map(
-                    (element): RecordFormElement => {
-                        return {
-                            ...element,
-                            values: (element?.values ?? []).map(value => {
-                                return {
-                                    ...value,
-                                    version: arrayValueVersionToObject(value.version ?? []),
-                                    metadata: (value.metadata ?? []).map(metadata => ({
-                                        ...metadata,
-                                        value: {
-                                            ...metadata.value,
-                                            version: arrayValueVersionToObject(metadata.value.version ?? [])
-                                        }
-                                    }))
-                                };
-                            })
-                        };
-                    }
+                    (element): RecordFormElement => ({
+                        ...element,
+                        values: (element?.values ?? []).map(value => ({
+                            ...value,
+                            version: arrayValueVersionToObject(value.version ?? []),
+                            metadata: (value.metadata ?? []).map(metadata => ({
+                                ...metadata,
+                                value: {
+                                    ...metadata.value,
+                                    version: arrayValueVersionToObject(metadata.value?.version ?? [])
+                                }
+                            }))
+                        }))
+                    })
                 )
             };
 
@@ -136,14 +132,13 @@ const useGetRecordForm = ({
         }
     });
 
-    const refetchRecordForm = () => {
-        return refetch({
+    const refetchRecordForm = () =>
+        refetch({
             libraryId,
             recordId,
             formId,
             version: requestVersion
         });
-    };
 
     // To avoid a moment where loading is done and record form is not available yet, we force loading to be true until
     // record form is available

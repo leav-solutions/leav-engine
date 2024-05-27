@@ -234,7 +234,7 @@ function ViewPanel(): JSX.Element {
             <SubHeader>{t('view.shared-views')}</SubHeader>
 
             <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId={'shared'}>
+                <Droppable droppableId="shared">
                     {providedDroppable => (
                         <Views {...providedDroppable.droppableProps} ref={providedDroppable.innerRef}>
                             {sharedViews.map((view, idx) => (
@@ -266,7 +266,7 @@ function ViewPanel(): JSX.Element {
                 <CustomBadge count={userViews.length} />
             </SubHeader>
             <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId={'user'}>
+                <Droppable droppableId="user">
                     {providedDroppable => (
                         <Views {...providedDroppable.droppableProps} ref={providedDroppable.innerRef}>
                             {userViews.map((view, idx) => (

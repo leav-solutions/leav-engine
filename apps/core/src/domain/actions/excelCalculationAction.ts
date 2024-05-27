@@ -4,7 +4,13 @@
 import {ICalculationVariable} from 'domain/helpers/calculationVariable';
 import {Parser} from 'hot-formula-parser';
 import {IUtils} from 'utils/utils';
-import {ActionsListIOTypes, ActionsListValueType, IActionsListContext} from '../../_types/actionsList';
+import {IValue} from '_types/value';
+import {
+    ActionsListIOTypes,
+    ActionsListValueType,
+    IActionsListContext,
+    IActionsListFunction
+} from '../../_types/actionsList';
 import {Errors} from '../../_types/errors';
 
 interface IDeps {
@@ -19,18 +25,17 @@ export interface IActionListExcelContext extends IActionsListContext {
 }
 
 export default function ({
-    'core.domain.helpers.calculationVariable': calculationVariable = null,
-    'core.utils': utils = null
-}: IDeps = {}) {
+    'core.domain.helpers.calculationVariable': calculationVariable = null
+}: IDeps = {}): IActionsListFunction {
     const _processReplacement = async (
         context: IActionsListContext,
-        initialValue: ActionsListValueType,
+        initialValues: ActionsListValueType[],
         variable: string
     ): Promise<ActionsListExcelValueType> => {
-        const variableValues = await calculationVariable.processVariableString(context, variable, initialValue);
-        const stringValues = variableValues.map(v => {
-            return v.value === null ? '' : typeof v.value === 'object' ? v.value.value : v.value;
-        });
+        const variableValues = await calculationVariable.processVariableString(context, variable, initialValues);
+        const stringValues = variableValues.map(v =>
+            v.value === null ? '' : typeof v.value === 'object' ? v.value.value : v.value
+        );
 
         return stringValues.join(' ');
     };
@@ -40,7 +45,7 @@ export default function ({
         regex: RegExp,
         asyncFn,
         context: IActionsListContext,
-        value: ActionsListValueType
+        values: ActionsListValueType[]
     ): Promise<string> => {
         if (!str) {
             return '';
@@ -48,7 +53,7 @@ export default function ({
 
         const promises = [];
         str.replace(regex, (match, ...args) => {
-            const promise = asyncFn(context, value, ...args);
+            const promise = asyncFn(context, values, ...args);
             promises.push(promise);
             return '';
         });
@@ -61,10 +66,10 @@ export default function ({
     const _replaceVariables = async (
         formula: string,
         context: IActionsListContext,
-        value: ActionsListValueType
+        values: ActionsListValueType[]
     ): Promise<string> => {
         const regExp = /{([^{}]*)}/g;
-        const res = _replaceAsync(formula, regExp, _processReplacement, context, value);
+        const res = _replaceAsync(formula, regExp, _processReplacement, context, values);
         return res;
     };
 
@@ -90,22 +95,40 @@ export default function ({
                 default_value: '21*2'
             }
         ],
-        action: async (value: ActionsListValueType, params: any, ctx: IActionsListContext): Promise<string> => {
+        action: async (values, params, ctx) => {
             const {Formula: formula} = params;
 
-            const finalFormula = await _replaceVariables(formula, ctx, value);
+            const finalFormula = await _replaceVariables(
+                formula,
+                ctx,
+                values.map(v => v.value)
+            );
             const parser = new Parser();
             const {error, result} = parser.parse(finalFormula);
 
             if (error) {
-                return utils.translateError(
-                    {msg: Errors.EXCEL_CALCULATION_ERROR, vars: {error, formula: finalFormula}},
-                    ctx.lang
-                );
+                return {
+                    values,
+                    errors: [
+                        {
+                            errorType: Errors.EXCEL_CALCULATION_ERROR,
+                            attributeValue: null
+                        }
+                    ]
+                };
             }
 
-            const finalResult: string = `${result}`;
-            return finalResult;
+            const finalResult: IValue = {
+                id_value: null,
+                isCalculated: true,
+                modified_at: null,
+                modified_by: null,
+                created_at: null,
+                created_by: null,
+                value: String(result)
+            };
+
+            return {values: [...values, finalResult], errors: []};
         }
     };
 }

@@ -46,6 +46,9 @@ import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import getAttributesFromField from './helpers/getAttributesFromField';
 import {SendRecordUpdateEventHelper, isRecordWithId} from './helpers/sendRecordUpdateEvent';
 import {ICreateRecordResult, IFindRecordParams} from './_types';
+import {TypeGuards} from '../../utils/typeGuards';
+import {getValuesToDisplay} from '../../utils/helpers/getValuesToDisplay';
+
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -123,13 +126,31 @@ export interface IRecordDomain {
      */
     find({params, ctx}: {params: IFindRecordParams; ctx: IQueryInfos}): Promise<IListWithCursor<IRecord>>;
 
-    getRecordFieldValue(params: {
+    /**
+     * Get the value of targeted attribute with actions applied on it including metadata.
+     *
+     * Avoid requesting DB if attribute already found in `record` param.
+     *
+     * @param {Object} params
+     * @param params.library
+     * @param params.record Could be emulated with only `{ id: <real_id> }`
+     * @param params.attributeId
+     * @param params.options
+     * @param params.ctx
+     */
+    getRecordFieldValue({
+        library,
+        record,
+        attributeId,
+        options,
+        ctx
+    }: {
         library: string;
         record: IRecord;
         attributeId: string;
         options?: IValuesOptions;
         ctx: IQueryInfos;
-    }): Promise<IValue | IValue[]>;
+    }): Promise<IValue[]>;
 
     getRecordIdentity(record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity>;
 
@@ -214,18 +235,14 @@ export default function ({
             ];
 
             // Apply actionsList
-            values = await Promise.all(
-                values.map(v =>
-                    valueDomain.runActionsList({
-                        listName: ActionsListEvents.GET_VALUE,
-                        value: v,
-                        attribute,
-                        record,
-                        library,
-                        ctx
-                    })
-                )
-            );
+            values = await valueDomain.runActionsList({
+                listName: ActionsListEvents.GET_VALUE,
+                values,
+                attribute,
+                record,
+                library,
+                ctx
+            });
         } else {
             values = await valueDomain.getValues({
                 library,
@@ -335,38 +352,28 @@ export default function ({
         return linkedValuesToDel;
     };
 
-    const _isRelativeDateCondition = (condition: AttributeCondition): boolean => {
-        return (
-            condition === AttributeCondition.TODAY ||
-            condition === AttributeCondition.TOMORROW ||
-            condition === AttributeCondition.YESTERDAY ||
-            condition === AttributeCondition.NEXT_MONTH ||
-            condition === AttributeCondition.LAST_MONTH
-        );
-    };
+    const _isRelativeDateCondition = (condition: AttributeCondition): boolean =>
+        condition === AttributeCondition.TODAY ||
+        condition === AttributeCondition.TOMORROW ||
+        condition === AttributeCondition.YESTERDAY ||
+        condition === AttributeCondition.NEXT_MONTH ||
+        condition === AttributeCondition.LAST_MONTH;
 
-    const _isNumericCondition = (condition: AttributeCondition): boolean => {
-        return (
-            condition === AttributeCondition.VALUES_COUNT_EQUAL ||
-            condition === AttributeCondition.VALUES_COUNT_GREATER_THAN ||
-            condition === AttributeCondition.VALUES_COUNT_LOWER_THAN
-        );
-    };
+    const _isNumericCondition = (condition: AttributeCondition): boolean =>
+        condition === AttributeCondition.VALUES_COUNT_EQUAL ||
+        condition === AttributeCondition.VALUES_COUNT_GREATER_THAN ||
+        condition === AttributeCondition.VALUES_COUNT_LOWER_THAN;
 
-    const _isAttributeFilter = (filter: IRecordFilterLight): boolean => {
-        return (
-            filter.condition in AttributeCondition &&
-            typeof filter.field !== 'undefined' &&
-            (typeof filter.value !== 'undefined' ||
-                filter.condition === AttributeCondition.IS_EMPTY ||
-                filter.condition === AttributeCondition.IS_NOT_EMPTY ||
-                _isRelativeDateCondition(filter.condition as AttributeCondition))
-        );
-    };
+    const _isAttributeFilter = (filter: IRecordFilterLight): boolean =>
+        filter.condition in AttributeCondition &&
+        typeof filter.field !== 'undefined' &&
+        (typeof filter.value !== 'undefined' ||
+            filter.condition === AttributeCondition.IS_EMPTY ||
+            filter.condition === AttributeCondition.IS_NOT_EMPTY ||
+            _isRelativeDateCondition(filter.condition as AttributeCondition));
 
-    const _isClassifiedFilter = (filter: IRecordFilterLight): boolean => {
-        return filter.condition in TreeCondition && typeof filter.treeId !== 'undefined';
-    };
+    const _isClassifiedFilter = (filter: IRecordFilterLight): boolean =>
+        filter.condition in TreeCondition && typeof filter.treeId !== 'undefined';
 
     const _isOperatorFilter = (filter: IRecordFilterLight): boolean => filter.operator in Operator;
 
@@ -417,13 +424,15 @@ export default function ({
             }
             const previewAttributeProps = await attributeDomain.getAttributeProperties({id: previewAttribute, ctx});
 
-            const previewValues = await ret.getRecordFieldValue({
+            let previewValues = await ret.getRecordFieldValue({
                 library: lib.id,
                 record,
                 attributeId: previewAttribute,
                 options: {forceArray: true, version: ctx.version},
                 ctx
             });
+
+            previewValues = getValuesToDisplay(previewValues);
 
             if (!(previewValues as IValue[]).length) {
                 return null;
@@ -471,6 +480,10 @@ export default function ({
             options: {forceArray: true},
             ctx
         });
+
+        if (!TypeGuards.isIStandardValue(filePreviewsValue[0])) {
+            return null;
+        }
 
         const previews = filePreviewsValue[0]?.raw_value ?? {};
 
@@ -552,7 +565,7 @@ export default function ({
         if (conf.label) {
             const labelAttributeProps = await attributeDomain.getAttributeProperties({id: conf.label, ctx});
 
-            const labelValues = await valueDomain.getValues({
+            let labelValues = await valueDomain.getValues({
                 library: lib.id,
                 recordId: record.id,
                 attribute: conf.label,
@@ -563,6 +576,8 @@ export default function ({
             if (!labelValues.length) {
                 return null;
             }
+
+            labelValues = getValuesToDisplay(labelValues);
 
             const value: IValue['value'] | undefined = labelValues?.[0]?.value;
 
@@ -608,13 +623,15 @@ export default function ({
         if (conf.color) {
             const colorAttributeProps = await attributeDomain.getAttributeProperties({id: conf.color, ctx});
 
-            const colorValues = await valueDomain.getValues({
+            let colorValues = await valueDomain.getValues({
                 library: lib.id,
                 recordId: record.id,
                 attribute: conf.color,
                 options: valuesOptions,
                 ctx
             });
+
+            colorValues = getValuesToDisplay(colorValues);
 
             if (!colorValues.length) {
                 return null;
@@ -666,13 +683,15 @@ export default function ({
         if (conf.subLabel) {
             const subLabelAttributeProps = await attributeDomain.getAttributeProperties({id: conf.subLabel, ctx});
 
-            const subLabelValues = await valueDomain.getValues({
+            let subLabelValues = await valueDomain.getValues({
                 library: lib.id,
                 recordId: record.id,
                 attribute: conf.subLabel,
                 options: valuesOptions,
                 ctx
             });
+
+            subLabelValues = getValuesToDisplay(subLabelValues);
 
             if (conf.subLabel === 'id') {
                 subLabelValues[0].value = record.id;
@@ -706,14 +725,13 @@ export default function ({
         return subLabel;
     };
 
-    const _convertDateRangeToString = (dateRange: {from: string; to: string}, {lang}: IQueryInfos): string => {
-        return translator.t('labels.date_range', {
+    const _convertDateRangeToString = (dateRange: {from: string; to: string}, {lang}: IQueryInfos): string =>
+        translator.t('labels.date_range', {
             from: dateRange.from,
             to: dateRange.to,
             lng: lang,
             interpolation: {escapeValue: false}
         });
-    };
 
     const _getRecordIdentity = async (record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity> => {
         const lib = await getCoreEntityById<ILibrary>('library', record.library, ctx);
@@ -758,7 +776,7 @@ export default function ({
             });
 
             if (treeValues.length) {
-                // for now we look through first element (discard others if linked to multiple leaves of tree)
+                // for now, we look through first element (discard others if linked to multiple leaves of tree)
                 const treeAttrProps = await attributeDomain.getAttributeProperties({id: conf.treeColorPreview, ctx});
                 const ancestors = await treeRepo.getElementAncestors({
                     treeId: treeAttrProps.linked_tree,
@@ -788,10 +806,7 @@ export default function ({
         }
 
         // If no preview found, or preview is not available, use library icon if any
-        if (
-            preview === null ||
-            !Object.keys(preview?.file?.[utils.getPreviewsAttributeName(preview?.file?.library)] ?? {}).length
-        ) {
+        if (preview === null || !preview.file) {
             preview = await _getLibraryIconPreview(lib, ctx);
         }
 
@@ -830,15 +845,23 @@ export default function ({
 
             if (values?.length) {
                 // First, check if values are ok. If not, we won't create the record at all
+                const valuesByAttribute = values.reduce<Record<string, IValue[]>>((acc, value) => {
+                    if (!acc[value.attribute]) {
+                        acc[value.attribute] = [];
+                    }
+                    acc[value.attribute].push(value);
+                    return acc;
+                }, {});
+
                 const res = await Promise.allSettled(
-                    values.map(async v => {
+                    Object.entries(valuesByAttribute).map(async ([attributeId, attributeValues]) => {
                         const attributeProps = await attributeDomain.getAttributeProperties({
-                            id: v.attribute,
+                            id: attributeId,
                             ctx
                         });
                         return valueDomain.runActionsList({
                             listName: ActionsListEvents.SAVE_VALUE,
-                            value: v,
+                            values: attributeValues,
                             attribute: attributeProps,
                             library,
                             ctx
@@ -868,16 +891,18 @@ export default function ({
 
             const newRecord = await recordRepo.createRecord({libraryId: library, recordData, ctx});
 
+            let valuesErrors = null;
             if (values?.length) {
-                // Make sure we don't any id_value hanging on as we're on creation here
+                // Make sure we don't have any id_value hanging on as we're on creation here
                 const cleanValues = values.map(v => ({...v, id_value: null}));
 
-                await valueDomain.saveValueBatch({
+                const {errors} = await valueDomain.saveValueBatch({
                     library,
                     recordId: newRecord.id,
                     values: cleanValues,
                     ctx
                 });
+                valuesErrors = errors;
             }
 
             // await is necessary during importData(), otherwise it will generate a memory leak due to number of events incoming
@@ -895,7 +920,7 @@ export default function ({
                 ctx
             );
 
-            return {record: newRecord, valuesErrors: null};
+            return {record: newRecord, valuesErrors};
         },
         async updateRecord({library, recordData, ctx}): Promise<IRecord> {
             const {old: oldRecord, new: savedRecord} = await recordRepo.updateRecord({libraryId: library, recordData});
@@ -1194,13 +1219,15 @@ export default function ({
                                 ctx
                             });
 
-                            formattedValue.metadata[metadataField] = await valueDomain.runActionsList({
+                            const computedMetadata = await valueDomain.runActionsList({
                                 listName: ActionsListEvents.GET_VALUE,
                                 attribute: metadataAttributeProps,
                                 library,
-                                value: formattedValue.metadata[metadataField] as IStandardValue,
+                                values: [formattedValue.metadata[metadataField] as IStandardValue],
                                 ctx
                             });
+
+                            formattedValue.metadata[metadataField] = computedMetadata[0];
                         }
                     }
 
@@ -1235,11 +1262,10 @@ export default function ({
                         v.value.hasOwnProperty('library')
                 );
             }
-
-            return attrProps.multiple_values || forceArray ? formattedValues : formattedValues[0] || null;
+            return formattedValues;
         },
         async deactivateRecord(record: IRecord, ctx: IQueryInfos): Promise<IRecord> {
-            const savedVal = await valueDomain.saveValue({
+            const savedValues = await valueDomain.saveValue({
                 library: record.library,
                 recordId: record.id,
                 attribute: 'active',
@@ -1247,10 +1273,10 @@ export default function ({
                 ctx
             });
 
-            return {...record, active: savedVal.value};
+            return {...record, active: savedValues[0].value};
         },
         async activateRecord(record: IRecord, ctx: IQueryInfos): Promise<IRecord> {
-            const savedVal = await valueDomain.saveValue({
+            const savedValues = await valueDomain.saveValue({
                 library: record.library,
                 recordId: record.id,
                 attribute: 'active',
@@ -1258,7 +1284,7 @@ export default function ({
                 ctx
             });
 
-            return {...record, active: savedVal.value};
+            return {...record, active: savedValues[0].value};
         },
         async deactivateRecordsBatch({libraryId, recordsIds, filters, ctx}) {
             let recordsToDeactivate: string[] = recordsIds ?? [];

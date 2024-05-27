@@ -379,7 +379,7 @@ function UploadFiles({
                                 loading={loading}
                                 disabled={!files.length}
                                 className="submit-btn"
-                                title={'Upload'}
+                                title="Upload"
                                 type="primary"
                                 onClick={_handleUploadClick}
                             >

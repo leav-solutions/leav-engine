@@ -23,7 +23,7 @@ export default function MainPanel({state, dispatch}: IListProps) {
     }
 
     return (
-        <Dimmer.Dimmable as={'div'} dimmed={state.showFilters} className="height100">
+        <Dimmer.Dimmable as="div" dimmed={state.showFilters} className="height100">
             <div className={`${styles.TopPanelContainer} ${state.showFilters ? styles.blurred : ''}`}>
                 <TopPanel state={state} dispatch={dispatch} />
             </div>

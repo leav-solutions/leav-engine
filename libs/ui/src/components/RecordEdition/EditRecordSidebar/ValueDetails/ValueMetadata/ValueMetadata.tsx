@@ -11,8 +11,8 @@ import {
     RecordFormQuery
 } from '../../../../../_gqlTypes';
 import {RecordProperty} from '../../../../../_queries/records/getRecordPropertiesQuery';
-import {formComponents} from '../../../EditRecord/uiElements';
-import StandardField from '../../../EditRecord/uiElements/StandardField';
+import {formComponents} from '../../../EditRecordContent/uiElements';
+import StandardField from '../../../EditRecordContent/uiElements/StandardField';
 import {
     DeleteValueFunc,
     FormElement,
@@ -20,7 +20,7 @@ import {
     ISubmittedValueStandard,
     MetadataSubmitValueFunc,
     SubmitValueFunc
-} from '../../../EditRecord/_types';
+} from '../../../EditRecordContent/_types';
 
 type MetadataField = RecordFormQuery['recordForm']['elements'][0]['attribute']['metadata_fields'][0];
 
@@ -47,19 +47,15 @@ function ValueMetadata({value: parentValue, attribute, onMetadataSubmit}: IValue
 
     const _handleValueSubmit: (field: MetadataField) => SubmitValueFunc = field => (
         values
-    ): Promise<ISubmitMultipleResult> => {
-        return onMetadataSubmit(parentValue, attribute, {
+    ): Promise<ISubmitMultipleResult> => onMetadataSubmit(parentValue, attribute, {
             [field.id]: (values[0] as ISubmittedValueStandard).value
         });
-    };
 
     const _handleValueDelete: (field: MetadataField) => DeleteValueFunc = field => (
         values
-    ): Promise<ISubmitMultipleResult> => {
-        return onMetadataSubmit(parentValue, attribute, {
+    ): Promise<ISubmitMultipleResult> => onMetadataSubmit(parentValue, attribute, {
             [field.id]: null
         });
-    };
 
     return (
         <Space direction="vertical" style={{width: '100%'}} size="small">

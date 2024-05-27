@@ -41,9 +41,7 @@ const mockConfig: Mockify<Config.IConfig> = {
 };
 
 const mockTranslator: Mockify<i18n> = {
-    t: jest.fn((key: string) => {
-        return key;
-    })
+    t: jest.fn((key: string) => key)
 };
 
 const mockCacheService: Mockify<ICacheService> = {

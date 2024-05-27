@@ -15,8 +15,7 @@ export default function TopPanel({state, dispatch}: IListProps) {
     const {t} = useTranslation();
     const [createRecordOpen, setCreateRecordOpen] = useState(false);
 
-    const {clearRoot, toggleFilters, makeOnFilterRemove, selectedRootAttributesById} = useMemo(() => {
-        return {
+    const {clearRoot, toggleFilters, makeOnFilterRemove, selectedRootAttributesById} = useMemo(() => ({
             clearRoot: () => {
                 dispatch({
                     type: ActionTypes.SET_SELECTED_ROOT,
@@ -41,8 +40,7 @@ export default function TopPanel({state, dispatch}: IListProps) {
                 acc[a.id] = a;
                 return acc;
             }, {})
-        };
-    }, [dispatch, state.selectedRootAttributes]);
+        }), [dispatch, state.selectedRootAttributes]);
 
     const _createNewRecord = () => {
         setCreateRecordOpen(true);

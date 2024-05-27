@@ -5,35 +5,25 @@ import {MemoryRouter} from 'react-router-dom-v5';
 import {act, render, screen} from '_tests/testUtils';
 import Routes from './Routes';
 
-jest.mock('components/shared/ProtectedRoute', () => {
-    return function ProtectedRoute() {
+jest.mock('components/shared/ProtectedRoute', () => function ProtectedRoute() {
         return <div>ProtectedRoute</div>;
-    };
-});
+    });
 
-jest.mock('components/general/General', () => {
-    return function General() {
+jest.mock('components/general/General', () => function General() {
         return <div>General</div>;
-    };
-});
+    });
 
-jest.mock('../Dashboard', () => {
-    return function Dashboard() {
+jest.mock('../Dashboard', () => function Dashboard() {
         return <div>Dashboard</div>;
-    };
-});
+    });
 
-jest.mock('components/applications/Applications', () => {
-    return function Applications() {
+jest.mock('components/applications/Applications', () => function Applications() {
         return <div>Applications</div>;
-    };
-});
+    });
 
-jest.mock('components/applications/EditApplication', () => {
-    return function EditApplication() {
+jest.mock('components/applications/EditApplication', () => function EditApplication() {
         return <div>EditApplication</div>;
-    };
-});
+    });
 
 describe('Routes', () => {
     test('Render test', async () => {

@@ -47,8 +47,7 @@ interface ITreeExplorerProps {
 }
 
 type ConvertTreeRecordNode = WithOptional<TREE_NODE_CHILDREN_treeNodeChildren_list, 'order' | 'ancestors'>;
-const _convertTreeRecord = (nodes: ConvertTreeRecordNode[], compact: boolean): ITreeItem[] => {
-    return nodes.map(
+const _convertTreeRecord = (nodes: ConvertTreeRecordNode[], compact: boolean): ITreeItem[] => nodes.map(
         (n: ConvertTreeRecordNode): ITreeItem => {
             const nodeTitle =
                 n.id !== fakeRootId && !compact ? (
@@ -68,7 +67,6 @@ const _convertTreeRecord = (nodes: ConvertTreeRecordNode[], compact: boolean): I
             };
         }
     );
-};
 
 const RootElem = styled.div`
     height: 100%;
@@ -206,8 +204,7 @@ const TreeExplorer = ({
             if (siblings?.length) {
                 await Promise.all(
                     (siblings as ITreeItem[]).map(
-                        (s, i): Promise<void | FetchResult<MOVE_TREE_ELEMENT>> => {
-                            return getTreeNodeKey({node: s}) !== getTreeNodeKey(moveData) // Skip moved element
+                        (s, i): Promise<void | FetchResult<MOVE_TREE_ELEMENT>> => getTreeNodeKey({node: s}) !== getTreeNodeKey(moveData) // Skip moved element
                                 ? apolloClient.mutate<MOVE_TREE_ELEMENT, MOVE_TREE_ELEMENTVariables>({
                                       mutation: moveTreeElementQuery,
                                       variables: {
@@ -217,8 +214,7 @@ const TreeExplorer = ({
                                           order: i
                                       }
                                   })
-                                : Promise.resolve();
-                        }
+                                : Promise.resolve()
                     )
                 );
             }
@@ -249,9 +245,7 @@ const TreeExplorer = ({
         setError('');
     };
 
-    const _mergeNode = (nodeData: ITreeNode, path: Array<string | number>): ITreeNode[] => {
-        return changeNodeAtPath({treeData, path, newNode: nodeData, getNodeKey: getTreeNodeKey}) as ITreeNode[];
-    };
+    const _mergeNode = (nodeData: ITreeNode, path: Array<string | number>): ITreeNode[] => changeNodeAtPath({treeData, path, newNode: nodeData, getNodeKey: getTreeNodeKey}) as ITreeNode[];
 
     const _handleClickNode: ClickNodeHandler = nodeData => {
         // Add all parents details on selected node
@@ -261,9 +255,7 @@ const TreeExplorer = ({
                 treeData,
                 getNodeKey: getTreeNodeKey,
                 searchQuery: nodeKey,
-                searchMethod: d => {
-                    return d.node.id === nodeKey;
-                }
+                searchMethod: d => d.node.id === nodeKey
             });
 
             return findRes.matches.length ? findRes.matches[0].node : null;

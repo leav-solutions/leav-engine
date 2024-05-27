@@ -27,7 +27,7 @@ import {
     IValuesListConf
 } from '../../../_types/attribute';
 import {AttributePermissionsActions, PermissionTypes} from '../../../_types/permissions';
-import {AttributeCondition} from '../../../_types/record';
+import {AttributeCondition, IRecord} from '../../../_types/record';
 import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
 
@@ -48,7 +48,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function(deps: IDeps = {}): ICoreAttributeApp {
+export default function (deps: IDeps = {}): ICoreAttributeApp {
     const {
         'core.domain.attribute': attributeDomain = null,
         'core.domain.record': recordDomain = null,
@@ -64,12 +64,9 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
         /**
          * Return attribute label, potentially filtered by requested language
          */
-        label: async (attributeData, args) => {
-            return coreApp.filterSysTranslationField(attributeData.label, args.lang || []);
-        },
-        description: async (attributeData, args) => {
-            return coreApp.filterSysTranslationField(attributeData.description, args.lang || []);
-        },
+        label: async (attributeData, args) => coreApp.filterSysTranslationField(attributeData.label, args.lang || []),
+        description: async (attributeData, args) =>
+            coreApp.filterSysTranslationField(attributeData.description, args.lang || []),
         input_types: (attributeData, _, ctx) => attributeDomain.getInputTypes({attrData: attributeData, ctx}),
         output_types: (attributeData, _, ctx) => attributeDomain.getOutputTypes({attrData: attributeData, ctx}),
         metadata_fields: async (attributeData: IAttribute, _, ctx) =>
@@ -121,6 +118,7 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                 type: AttributeType!,
                 format: AttributeFormat,
                 system: Boolean!,
+                required: Boolean!,
                 readonly: Boolean!,
                 label(lang: [AvailableLanguage!]): SystemTranslation,
                 description(lang: [AvailableLanguage!]): SystemTranslationOptional,
@@ -371,11 +369,10 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                     },
                     StandardAttribute: {
                         ...commonResolvers,
-                        values_list: (attributeData: IAttribute) => {
-                            return attributeData.values_list
+                        values_list: (attributeData: IAttribute) =>
+                            attributeData.values_list
                                 ? {...attributeData.values_list, attributeFormat: attributeData.format}
-                                : null;
-                        }
+                                : null
                     },
                     LinkAttribute: {
                         ...commonResolvers,
@@ -386,32 +383,37 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
 
                             return libraryDomain.getLibraryProperties(attributeData.linked_library, ctx);
                         },
-                        values_list: (attributeData: IAttribute, a2, ctx) => {
+                        values_list: async (attributeData: IAttribute, a2, ctx) => {
                             if (!attributeData?.values_list?.enable) {
                                 return attributeData.values_list;
                             }
 
                             // Here, values is a list of record ID. Return record object instead
                             // TODO: this could be optimized if find() would allow searching for multiple IDs at once
+                            const linkedRecords = await Promise.all(
+                                ((attributeData.values_list.values ?? []) as string[]).map(
+                                    async (recId): Promise<IRecord | null> => {
+                                        const record = await recordDomain.find({
+                                            params: {
+                                                library: attributeData.linked_library,
+                                                filters: [
+                                                    {
+                                                        field: 'id',
+                                                        condition: AttributeCondition.EQUAL,
+                                                        value: recId
+                                                    }
+                                                ]
+                                            },
+                                            ctx
+                                        });
+
+                                        return record.list.length ? record.list[0] : null;
+                                    }
+                                )
+                            );
                             return {
                                 ...attributeData.values_list,
-                                values:
-                                    (attributeData.values_list.values as string[]) ||
-                                    []
-                                        .map(async recId => {
-                                            const record = await recordDomain.find({
-                                                params: {
-                                                    library: attributeData.linked_library,
-                                                    filters: [
-                                                        {field: 'id', condition: AttributeCondition.EQUAL, value: recId}
-                                                    ]
-                                                },
-                                                ctx
-                                            });
-
-                                            return record.list.length ? record.list[0] : null;
-                                        })
-                                        .filter(r => r !== null) // Remove invalid values (unknown records)
+                                values: linkedRecords.filter(r => r !== null) // Remove invalid values (unknown records)
                             };
                         }
                     },
@@ -452,11 +454,10 @@ export default function(deps: IDeps = {}): ICoreAttributeApp {
                         }
                     },
                     StandardValuesListConf: {
-                        __resolveType: (obj: IValuesListConf & {attributeFormat: AttributeFormats}) => {
-                            return obj.attributeFormat === AttributeFormats.DATE_RANGE
+                        __resolveType: (obj: IValuesListConf & {attributeFormat: AttributeFormats}) =>
+                            obj.attributeFormat === AttributeFormats.DATE_RANGE
                                 ? 'StandardDateRangeValuesListConf'
-                                : 'StandardStringValuesListConf';
-                        }
+                                : 'StandardStringValuesListConf'
                     },
                     ValuesVersionsConf: {
                         profile: async (

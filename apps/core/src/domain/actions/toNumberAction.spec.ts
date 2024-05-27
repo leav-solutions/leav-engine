@@ -9,12 +9,12 @@ describe('toNumberAction', () => {
     const attrText: IAttribute = {id: 'test_attr', format: AttributeFormats.NUMERIC, type: AttributeTypes.SIMPLE};
     const ctx = {attribute: attrText};
     test('toNumber', async () => {
-        expect(action(12345, {}, ctx)).toBe(12345);
-        expect(action('12345', {}, ctx)).toBe(12345);
-        expect(action('12345.45', {}, ctx)).toBe(12345.45);
-        expect(action(true, {}, ctx)).toBe(1);
-        expect(action(false, {}, ctx)).toBe(0);
-        expect(action('aaaa', {}, ctx)).toBe(NaN);
-        expect(action(null, {}, ctx)).toBe(null);
+        expect((await action([{value: 12345}], {}, ctx)).values[0].value).toBe(12345);
+        expect((await action([{value: '12345'}], {}, ctx)).values[0].value).toBe(12345);
+        expect((await action([{value: '12345.45'}], {}, ctx)).values[0].value).toBe(12345.45);
+        expect((await action([{value: true}], {}, ctx)).values[0].value).toBe(1);
+        expect((await action([{value: false}], {}, ctx)).values[0].value).toBe(0);
+        expect((await action([{value: 'aaaa'}], {}, ctx)).values[0].value).toBe(NaN);
+        expect((await action([{value: null}], {}, ctx)).values[0].value).toBe(null);
     });
 });

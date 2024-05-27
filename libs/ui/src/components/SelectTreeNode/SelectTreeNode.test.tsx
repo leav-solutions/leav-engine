@@ -80,9 +80,7 @@ describe('SelectTreeNode', () => {
         };
 
         const spy = jest.spyOn(gqlTypes, 'useTreeNodeChildrenLazyQuery').mockReturnValue([
-            jest.fn().mockImplementation(({variables}) => {
-                return variables.node === null ? {data: mockResultFromRoot} : {data: mockResultFromChild};
-            }),
+            jest.fn().mockImplementation(({variables}) => variables.node === null ? {data: mockResultFromRoot} : {data: mockResultFromChild}),
             mockResult as QueryResult<gqlTypes.TreeNodeChildrenQuery, gqlTypes.TreeNodeChildrenQueryVariables>
         ]);
 

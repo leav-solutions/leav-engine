@@ -12,7 +12,7 @@ import {AwilixContainer} from 'awilix';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import express, {NextFunction, Request, Response} from 'express';
+import express, {NextFunction, Response} from 'express';
 import fs from 'fs';
 import {GraphQLError, GraphQLFormattedError} from 'graphql';
 import {graphqlUploadExpress} from 'graphql-upload';
@@ -27,10 +27,12 @@ import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import AuthenticationError from '../errors/AuthenticationError';
 import LeavError from '../errors/LeavError';
-import PermissionError from '../errors/PermissionError';
-import ValidationError from '../errors/ValidationError';
 import {ACCESS_TOKEN_COOKIE_NAME, API_KEY_PARAM_NAME} from '../_types/auth';
 import {ErrorTypes, IExtendedErrorMsg} from '../_types/errors';
+import {IRequestWithContext} from '../_types/express';
+import PermissionError from '../errors/PermissionError';
+import ValidationError from '../errors/ValidationError';
+import type {ValidateRequestTokenFunc} from '../app/helpers/validateRequestToken';
 
 export interface IServer {
     init(): Promise<void>;
@@ -43,6 +45,7 @@ interface IDeps {
     'core.app.auth'?: IAuthApp;
     'core.app.application'?: IApplicationApp;
     'core.app.core'?: ICoreApp;
+    'core.app.helpers.validateRequestToken'?: ValidateRequestTokenFunc;
     'core.utils.logger'?: winston.Winston;
     'core.utils'?: IUtils;
     'core.depsManager'?: AwilixContainer;
@@ -54,6 +57,7 @@ export default function ({
     'core.app.auth': authApp = null,
     'core.app.application': applicationApp = null,
     'core.app.core': coreApp = null,
+    'core.app.helpers.validateRequestToken': validateRequestToken = null,
     'core.utils.logger': logger = null,
     'core.utils': utils = null,
     'core.depsManager': depsManager = null
@@ -107,14 +111,11 @@ export default function ({
 
     const _checkAuth = async (req, res, next) => {
         try {
-            await authApp.validateRequestToken({
-                ...(req.query[API_KEY_PARAM_NAME] && {apiKey: String(req.query[API_KEY_PARAM_NAME])}),
-                cookies: req.cookies
-            });
+            await validateRequestToken(req);
 
-            next();
+            return next();
         } catch (err) {
-            next(err);
+            return next(err);
         }
     };
 
@@ -182,26 +183,39 @@ export default function ({
                 app.use(`/${config.import.endpoint}`, [_checkAuth, express.static(config.import.directory)]);
 
                 // Handling errors
-                app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-                    if (!err) {
-                        return next ? next() : res.end();
-                    }
+                app.use(
+                    (
+                        err:
+                            | undefined
+                            | ValidationError<unknown>
+                            | AuthenticationError
+                            | PermissionError<unknown>
+                            | Error,
+                        req: IRequestWithContext<unknown>,
+                        res: Response<unknown>,
+                        next?: NextFunction
+                    ) => {
+                        if (!err) {
+                            return next ? next() : res.end();
+                        }
 
-                    if (err instanceof ValidationError) {
-                        return res.status(400).json({error: err.message});
-                    }
+                        if (err instanceof ValidationError) {
+                            return res.status(400).json({error: err.message});
+                        }
 
-                    if (err instanceof AuthenticationError) {
-                        return res.status(401).json({error: err.message});
-                    }
+                        if (err instanceof AuthenticationError) {
+                            return res.status(401).json({error: err.message});
+                        }
 
-                    if (err instanceof PermissionError) {
-                        return res.status(403).json({error: 'FORBIDDEN'});
-                    }
+                        if (err instanceof PermissionError) {
+                            return res.status(403).json({error: 'FORBIDDEN'});
+                        }
 
-                    logger.error(err);
-                    res.status(500).json({error: 'INTERNAL_SERVER_ERROR'});
-                });
+                        logger.error(`[${req.ctx.queryId}] ${err}`);
+                        logger.error(err.stack);
+                        res.status(500).json({error: 'INTERNAL_SERVER_ERROR'});
+                    }
+                );
 
                 const schema = await graphqlApp.getSchema();
 
@@ -212,9 +226,7 @@ export default function ({
                         try {
                             // Recreate headers object from rawHeaders array
                             const headers: Record<string, string> = ctx.extra.request.rawHeaders.reduce(
-                                (prev, curr, i, arr) => {
-                                    return !(i % 2) ? {...prev, [curr]: arr[i + 1]} : prev;
-                                },
+                                (prev, curr, i, arr) => (!(i % 2) ? {...prev, [curr]: arr[i + 1]} : prev),
                                 {}
                             );
 
@@ -244,10 +256,9 @@ export default function ({
                             return false; // Will close connection with a "403 Forbidden" error
                         }
                     },
-                    context: async ctx => {
+                    context: async ctx =>
                         // Extract relevant context from extra
-                        return ctx.extra.leavCtx;
-                    }
+                        ctx.extra.leavCtx
                 };
 
                 const graphqlWsServer = graphqlWS.useServer(wsServerOptions, wsServer);
@@ -330,10 +341,7 @@ export default function ({
                     expressMiddleware(server, {
                         context: async ({req, res}): Promise<IQueryInfos> => {
                             try {
-                                const payload = await authApp.validateRequestToken({
-                                    apiKey: String(req.query[API_KEY_PARAM_NAME]),
-                                    cookies: req.cookies
-                                });
+                                const payload = await validateRequestToken(req);
 
                                 const ctx: IQueryInfos = {
                                     userId: payload.userId,

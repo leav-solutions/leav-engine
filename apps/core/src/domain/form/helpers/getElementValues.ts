@@ -40,7 +40,7 @@ export const getElementValues = async (params: {
             ctx
         });
 
-        if (values === null || (!Array.isArray(values) && values.value === null)) {
+        if (values === null) {
             return result;
         }
 

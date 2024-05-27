@@ -13,8 +13,8 @@ export default (
         recordRepo?: IRecordRepo;
     },
     ctx: IQueryInfos
-): Promise<IRecord> => {
-    return deps.recordRepo.updateRecord({
+): Promise<IRecord> =>
+    deps.recordRepo.updateRecord({
         libraryId: library,
         recordData: {
             id: recordId,
@@ -22,4 +22,3 @@ export default (
             modified_by: String(ctx.userId)
         }
     });
-};

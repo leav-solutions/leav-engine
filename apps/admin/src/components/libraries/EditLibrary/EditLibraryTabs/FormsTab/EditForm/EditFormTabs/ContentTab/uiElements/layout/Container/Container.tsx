@@ -45,9 +45,7 @@ function Container({elementData, state, dispatch}: IContainerProps): JSX.Element
             DraggableElementTypes.FORM_ELEMENT,
             DraggableElementTypes.RESERVE_LAYOUT_ELEMENT
         ],
-        drop: monitor => {
-            return {containerId: elementData?.id || defaultContainerId};
-        },
+        drop: monitor => ({containerId: elementData?.id || defaultContainerId}),
         collect: monitor => ({
             isOver: monitor.isOver({shallow: true})
         }),

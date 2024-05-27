@@ -1,0 +1,27 @@
+name: "install dependencies"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+          cache: yarn
+      - name: Cache NPM dependencies
+        uses: actions/cache@v4
+        with:
+          path: '**/node_modules'
+          key: |
+            ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
+            ${{ runner.OS }}-yarn
+      - name: Install dependency
+        run: sudo apt-get update && sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
+      - name: install node module
+        run: yarn install

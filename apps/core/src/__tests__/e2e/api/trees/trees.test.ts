@@ -312,8 +312,8 @@ describe('Trees', () => {
 
         expect(res.status).toBe(200);
         expect(res.data.errors).toBeUndefined();
-        expect(res.data.data.saveValue.id_value).toBeTruthy();
-        expect(res.data.data.saveValue.value.record.id).toBe(recordId1);
+        expect(res.data.data.saveValue[0].id_value).toBeTruthy();
+        expect(res.data.data.saveValue[0].value.record.id).toBe(recordId1);
 
         // Get values of this attribute
         const resGetValues = await makeGraphQlCall(`{

@@ -46,7 +46,10 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
     const publish: IAmqpService['publish'] = async (exchange, routingKey, msg, priority): Promise<boolean> => {
         try {
             await publisher.channel.checkExchange(exchange);
-            const response = publisher.channel.publish(exchange, routingKey, Buffer.from(msg), {persistent: true, priority});
+            const response = publisher.channel.publish(exchange, routingKey, Buffer.from(msg), {
+                persistent: true,
+                priority
+            });
             await publisher.channel.waitForConfirms();
             retries = 0;
 
@@ -72,8 +75,8 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
         routingKey: string,
         onMessage: onMessageFunc,
         consumerTag?: string
-    ): Promise<amqp.Replies.Consume> => {
-        return consumer.channel.consume(
+    ): Promise<amqp.Replies.Consume> =>
+        consumer.channel.consume(
             queue,
             async msg => {
                 if (!msg) {
@@ -96,7 +99,6 @@ export default async function ({config}: IDeps): Promise<IAmqpService> {
             },
             {consumerTag}
         );
-    };
 
     const close = async () => {
         await publisher.channel.close();

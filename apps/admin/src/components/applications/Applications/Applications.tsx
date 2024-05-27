@@ -57,7 +57,7 @@ const Applications = (): JSX.Element => {
                 </Grid.Column>
                 {userData.permissions[PermissionsActions.admin_create_application] && (
                     <Grid.Column floated="right" width={6} textAlign="right" verticalAlign="middle">
-                        <Button primary icon labelPosition="left" size="medium" as={Link} to={'/applications/edit/'}>
+                        <Button primary icon labelPosition="left" size="medium" as={Link} to="/applications/edit/">
                             <Icon name="plus" />
                             {t('applications.new')}
                         </Button>

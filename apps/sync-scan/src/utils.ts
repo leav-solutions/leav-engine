@@ -20,8 +20,8 @@ export const _logMem = text => {
     console.info(`${text} ${Math.round(used * 100) / 100} MB`);
 };
 
-export const groupFsFilesByDatas = (fsScan: FilesystemContent): IFilesystemDatas => {
-    return fsScan.reduce(
+export const groupFsFilesByDatas = (fsScan: FilesystemContent): IFilesystemDatas =>
+    fsScan.reduce(
         (acc, f) => {
             const inode = f.ino;
             const name = f.name;
@@ -55,9 +55,8 @@ export const groupFsFilesByDatas = (fsScan: FilesystemContent): IFilesystemDatas
             filesByLevel: {}
         }
     );
-};
-export const groupDbFilesByDatas = (dbScan: IRecord[]): IDbFilesDatas => {
-    return dbScan.reduce(
+export const groupDbFilesByDatas = (dbScan: IRecord[]): IDbFilesDatas =>
+    dbScan.reduce(
         (acc, f) => {
             const inode = f.record.inode;
             const name = f.record.file_name;
@@ -92,4 +91,3 @@ export const groupDbFilesByDatas = (dbScan: IRecord[]): IDbFilesDatas => {
             filesByHash: {}
         }
     );
-};

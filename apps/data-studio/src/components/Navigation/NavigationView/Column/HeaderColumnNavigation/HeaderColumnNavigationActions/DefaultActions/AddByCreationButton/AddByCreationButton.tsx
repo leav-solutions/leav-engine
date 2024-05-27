@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PlusOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
-import {EditRecordModal, IRecordIdentityWhoAmI, useLang} from '@leav/ui';
+import {IRecordIdentityWhoAmI, useLang, EditRecordModal} from '@leav/ui';
 import {Button, Dropdown, Tooltip} from 'antd';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
@@ -40,7 +40,7 @@ function AddByCreationButton({availableLibraries, parent, onMessages}: IAddByCre
     };
     const _handleCloseCreateRecordModal = () => setIsCreateRecordModalVisible(false);
 
-    const _handleAfterCreateRecord = async (newRecord: IRecordIdentityWhoAmI) => {
+    const _handleCreateRecord = async (newRecord: IRecordIdentityWhoAmI) => {
         let notification: IInfo;
         let messages: IMessages = {
             countValid: 0,
@@ -88,6 +88,7 @@ function AddByCreationButton({availableLibraries, parent, onMessages}: IAddByCre
         onMessages('navigation.infos.success-add', 'navigation.infos.error-add', messages);
 
         refreshTreeContent();
+        _handleCloseCreateRecordModal();
     };
 
     const buttonIcon = <PlusOutlined />;
@@ -127,7 +128,7 @@ function AddByCreationButton({availableLibraries, parent, onMessages}: IAddByCre
                     library={createRecordLibraryId}
                     record={null}
                     onClose={_handleCloseCreateRecordModal}
-                    afterCreate={_handleAfterCreateRecord}
+                    onCreate={_handleCreateRecord}
                 />
             )}
         </>

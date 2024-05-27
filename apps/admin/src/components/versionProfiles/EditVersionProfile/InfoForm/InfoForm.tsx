@@ -160,9 +160,7 @@ function InfoForm({readonly, loading, profile, onSubmit, errors, onCheckIdUnique
             }
         };
 
-        const _onSubmit = () => {
-            return handleSubmit();
-        };
+        const _onSubmit = () => handleSubmit();
 
         return (
             <FormWrapper onSubmit={_onSubmit} aria-label="infos-form" isNewProfile={isNewProfile}>

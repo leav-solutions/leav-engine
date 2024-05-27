@@ -1,20 +1,19 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {PlusOutlined, RedoOutlined} from '@ant-design/icons';
+import {RedoOutlined} from '@ant-design/icons';
 import {Button, Space} from 'antd';
-import {FunctionComponent, useState} from 'react';
+import {FunctionComponent} from 'react';
 import styled from 'styled-components';
-import {CreateDirectory, EditRecordModal, UploadFiles} from '_ui/components';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {SearchMode} from '_ui/types/search';
-import {LibraryBehavior} from '_ui/_gqlTypes';
 import {ILibraryDetailExtended} from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
 import DisplayOptions from '../DisplayOptions';
 import MenuSelection from '../MenuSelection';
 import MenuView from '../MenuView';
 import SearchItems from '../SearchItems';
+import {CreateNewRecordButton} from '../CreateNewRecordButton/CreateNewRecordButton';
 
 interface IMenuItemListProps {
     library: ILibraryDetailExtended;
@@ -30,35 +29,9 @@ const MenuItemList: FunctionComponent<IMenuItemListProps> = ({refetch, library, 
     const {t} = useSharedTranslation();
     const {state: searchState} = useSearchReducer();
 
-    const [isRecordCreationVisible, setIsRecordCreationVisible] = useState<boolean>(false);
-    const [isUploadFilesModalVisible, setIsUploadFilesModalVisible] = useState<boolean>(false);
-    const [isCreateDirectoryModalVisible, setIsCreateDirectoryModalVisible] = useState<boolean>(false);
-
     const canCreateRecord = library.permissions.create_record;
 
     const selectionMode = searchState.mode === SearchMode.select;
-
-    const _handleRecordCreationClose = () => {
-        setIsRecordCreationVisible(false);
-    };
-
-    const _handleUploadFilesClose = () => {
-        setIsUploadFilesModalVisible(false);
-    };
-
-    const _handleCreateDirectoryClose = () => {
-        setIsCreateDirectoryModalVisible(false);
-    };
-
-    const _handleClickNew = () => {
-        if (library.behavior === LibraryBehavior.standard) {
-            setIsRecordCreationVisible(true);
-        } else if (library.behavior === LibraryBehavior.files) {
-            setIsUploadFilesModalVisible(true);
-        } else if (library.behavior === LibraryBehavior.directories) {
-            setIsCreateDirectoryModalVisible(true);
-        }
-    };
 
     return (
         <Wrapper>
@@ -71,9 +44,13 @@ const MenuItemList: FunctionComponent<IMenuItemListProps> = ({refetch, library, 
 
             <Space size="large">
                 {!selectionMode && canCreateRecord && (
-                    <Button type="primary" icon={<PlusOutlined />} className="primary-btn" onClick={_handleClickNew}>
-                        {t('items_list.new')}
-                    </Button>
+                    <CreateNewRecordButton
+                        label={t('items_list.new')}
+                        notifyNewCreation={notifyNewCreation}
+                        libraryBehavior={library.behavior}
+                        libraryId={library.id}
+                        valuesVersions={searchState.valuesVersions}
+                    />
                 )}
 
                 <Space size="small">
@@ -81,32 +58,6 @@ const MenuItemList: FunctionComponent<IMenuItemListProps> = ({refetch, library, 
                     <Button icon={<RedoOutlined />} onClick={() => refetch && refetch()} />
                 </Space>
             </Space>
-
-            {isRecordCreationVisible && (
-                <EditRecordModal
-                    record={null}
-                    library={library.id}
-                    open={isRecordCreationVisible}
-                    onClose={_handleRecordCreationClose}
-                    valuesVersion={searchState.valuesVersions}
-                    afterCreate={notifyNewCreation}
-                />
-            )}
-            {isUploadFilesModalVisible && (
-                <UploadFiles
-                    libraryId={library.id}
-                    multiple
-                    onClose={_handleUploadFilesClose}
-                    onCompleted={notifyNewCreation}
-                />
-            )}
-            {isCreateDirectoryModalVisible && (
-                <CreateDirectory
-                    libraryId={library.id}
-                    onClose={_handleCreateDirectoryClose}
-                    onCompleted={notifyNewCreation}
-                />
-            )}
         </Wrapper>
     );
 };

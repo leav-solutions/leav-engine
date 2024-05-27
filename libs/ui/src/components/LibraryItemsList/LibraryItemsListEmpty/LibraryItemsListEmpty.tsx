@@ -1,13 +1,13 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {CloudUploadOutlined, PlusOutlined} from '@ant-design/icons';
+import {CloudUploadOutlined} from '@ant-design/icons';
 import {Button, Col, Empty, Row} from 'antd';
 import {FunctionComponent, useState} from 'react';
 import {ImportModal} from '_ui/components/ImportModal';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
-import EditRecordModal from '_ui/components/RecordEdition/EditRecordModal';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {CreateNewRecordButton} from '../CreateNewRecordButton/CreateNewRecordButton';
 
 interface ILibraryItemsListEmptyProps {
     notifyNewCreation: () => void;
@@ -17,16 +17,7 @@ const LibraryItemsListEmpty: FunctionComponent<ILibraryItemsListEmptyProps> = ({
     const {t} = useSharedTranslation();
     const {state: searchState} = useSearchReducer();
 
-    const [isRecordCreationVisible, setIsRecordCreationVisible] = useState<boolean>(false);
     const [isImportModalVisible, setIsImportModalVisible] = useState<boolean>(false);
-
-    const _handleCreateRecord = () => {
-        setIsRecordCreationVisible(true);
-    };
-
-    const _handleRecordCreationClose = () => {
-        setIsRecordCreationVisible(false);
-    };
 
     const _handleImportModalOpen = () => {
         setIsImportModalVisible(true);
@@ -36,6 +27,9 @@ const LibraryItemsListEmpty: FunctionComponent<ILibraryItemsListEmptyProps> = ({
         setIsImportModalVisible(false);
     };
 
+    // "Create and edit" on create modal is not available here as the modal will be destroyed as soon as the record is
+    // created and the list refreshed. Handling this situation might be complicated and not worth the effort for a
+    // pretty rare use case (creating a record from an empty library and wanting to edit it right away).
     return (
         <>
             <Empty
@@ -49,18 +43,14 @@ const LibraryItemsListEmpty: FunctionComponent<ILibraryItemsListEmptyProps> = ({
                     <Col span={11}>
                         <Row justify="end">
                             <Col>
-                                <Button
-                                    type="primary"
-                                    block
-                                    style={{
-                                        width: 'fit-content'
-                                    }}
-                                    icon={<PlusOutlined />}
-                                    className="primary-btn"
-                                    onClick={_handleCreateRecord}
-                                >
-                                    {t('items_list.new_record')}
-                                </Button>
+                                <CreateNewRecordButton
+                                    label={t('items_list.new_record')}
+                                    notifyNewCreation={notifyNewCreation}
+                                    libraryBehavior={searchState.library.behavior}
+                                    libraryId={searchState.library.id}
+                                    valuesVersions={searchState.valuesVersions}
+                                    canCreateAndEdit={false}
+                                />
                             </Col>
                         </Row>
                     </Col>
@@ -87,16 +77,6 @@ const LibraryItemsListEmpty: FunctionComponent<ILibraryItemsListEmptyProps> = ({
                     </Col>
                 </Row>
             </Empty>
-            {isRecordCreationVisible && (
-                <EditRecordModal
-                    record={null}
-                    library={searchState.library.id}
-                    open={isRecordCreationVisible}
-                    onClose={_handleRecordCreationClose}
-                    valuesVersion={searchState.valuesVersions}
-                    afterCreate={notifyNewCreation}
-                />
-            )}
             {isImportModalVisible && (
                 <ImportModal
                     open={isImportModalVisible}

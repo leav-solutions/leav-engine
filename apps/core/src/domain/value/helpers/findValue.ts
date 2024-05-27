@@ -10,9 +10,8 @@ import {IFindValueTree, IValue, IValueVersion} from '_types/value';
  * @param version
  * @param values
  */
-const _getValuesForVersion = (version: IValueVersion, values: IValue[]): IValue[] => {
-    return values.filter(v => isEqual(v.version, version));
-};
+const _getValuesForVersion = (version: IValueVersion, values: IValue[]): IValue[] =>
+    values.filter(v => isEqual(v.version, version));
 
 /**
  * Find closest values matching given versions trees.

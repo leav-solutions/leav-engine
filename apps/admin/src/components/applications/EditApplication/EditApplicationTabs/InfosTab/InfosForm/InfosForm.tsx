@@ -214,9 +214,7 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
             }
         };
 
-        const _onSubmit = () => {
-            return handleSubmit();
-        };
+        const _onSubmit = () => handleSubmit();
 
         return (
             <FormWrapper onSubmit={_onSubmit} aria-label="infos-form" isNewApp={isNewApp}>
@@ -280,12 +278,10 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
                             name="type"
                             aria-label="type"
                             onChange={_handleChangeWithSubmit}
-                            options={Object.keys(ApplicationType).map(appType => {
-                                return {
+                            options={Object.keys(ApplicationType).map(appType => ({
                                     text: t('applications.types.' + appType),
                                     value: appType
-                                };
-                            })}
+                                }))}
                             value={values.type}
                         />
                     </FormFieldWrapper>

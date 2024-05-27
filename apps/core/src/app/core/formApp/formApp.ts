@@ -74,8 +74,8 @@ export default function ({
 
             return attributeDomain.getAttributeProperties({id: attributeId, ctx});
         },
-        settings: (formElement: IFormElement, _, ctx: IQueryInfos) => {
-            return Object.keys(formElement.settings ?? {}).map(async settingsKey => {
+        settings: (formElement: IFormElement, _, ctx: IQueryInfos) =>
+            Object.keys(formElement.settings ?? {}).map(async settingsKey => {
                 const settingsValue =
                     settingsKey !== 'columns'
                         ? formElement.settings[settingsKey]
@@ -96,8 +96,7 @@ export default function ({
                     key: settingsKey,
                     value: settingsValue
                 };
-            });
-        }
+            })
     };
 
     return {
@@ -291,13 +290,12 @@ export default function ({
                     Form: {
                         library: (form: IForm, _, ctx: IQueryInfos): Promise<ILibrary> =>
                             libraryDomain.getLibraryProperties(form.library, ctx),
-                        dependencyAttributes: (form: IForm, _, ctx: IQueryInfos): Promise<IAttribute[]> => {
-                            return Promise.all(
+                        dependencyAttributes: (form: IForm, _, ctx: IQueryInfos): Promise<IAttribute[]> =>
+                            Promise.all(
                                 form.dependencyAttributes.map(attr =>
                                     attributeDomain.getAttributeProperties({id: attr, ctx})
                                 )
-                            );
-                        }
+                            )
                     },
                     RecordForm: {
                         library: (form: IForm, _, ctx: IQueryInfos): Promise<ILibrary> =>

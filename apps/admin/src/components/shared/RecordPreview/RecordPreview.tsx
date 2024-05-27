@@ -5,6 +5,7 @@ import {useMemo} from 'react';
 import {Image} from 'semantic-ui-react';
 import styled, {CSSObject} from 'styled-components';
 import {getInvertColor, stringToColor} from '../../../utils/utils';
+import {getInitials} from '@leav/utils';
 
 interface IRecordPreviewProps {
     label: string;
@@ -58,17 +59,13 @@ function RecordPreview({label, color, image, style}: IRecordPreviewProps): JSX.E
                 <Image
                     src={image}
                     style={{...style, flexShrink: 0, width: '2rem', height: '2rem', objectFit: 'cover'}}
+                    alt=""
                 />
             </ImagePreview>
         );
     }
 
-    const initials = (label ?? '')
-        .split(' ')
-        .slice(0, 2)
-        .map(word => word[0])
-        .join('')
-        .toUpperCase();
+    const initials = getInitials(label ?? '');
 
     const bgColor = color || stringToColor(label);
     const fontColor = getInvertColor(bgColor);

@@ -13,11 +13,9 @@ import {formElements} from '../../uiElements';
 import {FieldTypes, FormElementSettingsInputTypes} from '../../_types';
 import SettingsEdition from './SettingsEdition';
 
-jest.mock('components/attributes/AttributeSelector', () => {
-    return function AttributeSelector() {
+jest.mock('components/attributes/AttributeSelector', () => function AttributeSelector() {
         return <div>AttributeSelector</div>;
-    };
-});
+    });
 jest.mock('react-rte');
 
 const mockState = {

@@ -4,6 +4,6 @@
 import {Request} from 'express';
 import {IQueryInfos} from './queryInfos';
 
-export interface IRequestWithContext extends Request {
+export interface IRequestWithContext<P = any> extends Request<P> {
     ctx?: IQueryInfos;
 }

@@ -10,9 +10,9 @@ describe('formatDateAction', () => {
     const ctx = {attribute: attrText};
 
     test('formatDate', async () => {
-        expect(action(2119477320, {format: 'D/M/YY HH:mm'}, ctx)).toBeTruthy();
-        expect(action(2119477320, {}, ctx)).toBeTruthy();
-        expect(action('aaaa', {}, ctx)).toBe('');
-        expect(action(null, {}, ctx)).toBe(null);
+        expect((await action([{value: 2119477320}], {format: 'D/M/YY HH:mm'}, ctx)).values[0].value).toBeTruthy();
+        expect((await action([{value: 2119477320}], {}, ctx)).values[0].value).toBeTruthy();
+        expect((await action([{value: 'aaaa'}], {}, ctx)).values[0].value).toBe('');
+        expect((await action([{value: null}], {}, ctx)).values[0].value).toBe(null);
     });
 });

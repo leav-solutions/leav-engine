@@ -1,137 +1,82 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import * as useGetRecordForm from '_ui/hooks/useGetRecordForm';
-import * as gqlTypes from '_ui/_gqlTypes';
-import {mockRecordForm} from '_ui/__mocks__/common/form';
+import userEvent from '@testing-library/user-event';
+import {UserEvent} from '@testing-library/user-event/dist/types/setup/setup';
+import {useRef} from 'react';
+import {getRecordColumnsValues} from '_ui/_queries/records/getRecordColumnsValues';
 import {mockRecord} from '_ui/__mocks__/common/record';
+import {IUseCanEditRecordHook} from '../../../hooks/useCanEditRecord/useCanEditRecord';
 import {render, screen} from '../../../_tests/testUtils';
-import EditRecord from './EditRecord';
+import {EditRecord} from './EditRecord';
+import {Form} from 'antd';
 
-jest.mock('./uiElements/StandardField', () => {
-    return function StandardField() {
-        return <div>StandardField</div>;
-    };
-});
+jest.mock('../EditRecordContent', () => function EditRecordContent() {
+        return <div>EditRecordContent</div>;
+    });
+
+jest.mock('hooks/useCanEditRecord/useCanEditRecord', () => ({
+    useCanEditRecord: (): IUseCanEditRecordHook => ({loading: false, canEdit: true, isReadOnly: false})
+}));
+
+const EditRecordWithForm = props => {
+    const [form] = Form.useForm();
+
+    return <EditRecord form={form} {...props} />;
+};
 
 describe('EditRecord', () => {
-    const mocks = [
+    const commonMocks = [
         {
             request: {
-                query: gqlTypes.RecordUpdateDocument,
-                variables: {
-                    filters: {records: ['123456'], ignoreOwnEvents: true}
-                }
+                query: getRecordColumnsValues(['created_at', 'created_by', 'modified_at', 'modified_by']),
+                variables: {library: 'record_lib', filters: [{field: 'id', condition: 'EQUAL', value: '123456'}]}
             },
             result: {
                 data: {
-                    recordUpdate: {
-                        record: {
-                            whoAmI: {
-                                ...mockRecord
-                            },
-                            modified_by: [{value: mockRecord}]
-                        },
-                        updatedValues: []
-                    }
-                }
-            }
-        },
-        {
-            request: {
-                query: gqlTypes.GetUserDataDocument,
-                variables: {
-                    keys: ['records_consultation_record_lib']
-                }
-            },
-            result: {
-                data: {
-                    userData: {
-                        global: false,
-                        data: []
-                    }
-                }
-            }
-        },
-        {
-            request: {
-                query: gqlTypes.SaveUserDataDocument,
-                variables: {
-                    key: 'records_consultation_record_lib',
-                    value: ['123456'],
-                    global: false
-                }
-            },
-            result: {
-                data: {
-                    userData: {
-                        global: false,
-                        data: ['123465']
+                    records: {
+                        list: [
+                            {
+                                _id: '123456',
+                                ...mockRecord,
+                                created_at: 1234567980,
+                                created_by: mockRecord,
+                                modified_at: 1234567980,
+                                modified_by: mockRecord
+                            }
+                        ]
                     }
                 }
             }
         }
     ];
 
-    afterAll(() => {
-        jest.restoreAllMocks();
+    let user: UserEvent;
+    beforeEach(() => {
+        user = userEvent.setup();
     });
 
-    test('Display skeleton while loading', async () => {
-        jest.spyOn(useGetRecordForm, 'default').mockImplementation(() => ({
-            loading: true,
-            error: null,
-            recordForm: null,
-            refetch: jest.fn()
-        }));
+    test('Display form', async () => {
+        const CompWithButtons = () => {
+            const closeButtonRef = useRef<HTMLButtonElement>(null);
 
-        render(
-            <EditRecord
-                record={mockRecord}
-                library={mockRecord.library.id}
-                onValueDelete={jest.fn()}
-                onValueSubmit={jest.fn()}
-                onDeleteMultipleValues={jest.fn()}
-                readonly={false}
-            />,
-            {
-                mocks
-            }
-        );
+            return (
+                <>
+                    <button ref={closeButtonRef}>Close</button>;
+                    <EditRecordWithForm
+                        withInfoButton={false}
+                        library={mockRecord.library.id}
+                        record={mockRecord}
+                        buttonsRefs={{}}
+                    />
+                </>
+            );
+        };
 
-        expect(screen.getAllByTestId('edit-record-skeleton').length).toBeGreaterThan(0);
-    });
+        render(<CompWithButtons />, {
+            mocks: commonMocks
+        });
 
-    test('Render form after loading', async () => {
-        jest.spyOn(useGetRecordForm, 'default').mockImplementation(() => ({
-            loading: false,
-            error: null,
-            recordForm: {
-                dependencyAttributes: [],
-                id: mockRecordForm.id,
-                recordId: '123456',
-                library: mockRecordForm.library,
-                system: false,
-                elements: mockRecordForm.elements
-            },
-            refetch: jest.fn()
-        }));
-
-        render(
-            <EditRecord
-                record={mockRecord}
-                library={mockRecord.library.id}
-                onValueDelete={jest.fn()}
-                onValueSubmit={jest.fn()}
-                onDeleteMultipleValues={jest.fn()}
-                readonly={false}
-            />,
-            {
-                mocks
-            }
-        );
-
-        expect(await screen.findByTestId('container-child-element')).toBeInTheDocument();
-        expect(screen.getByText('StandardField')).toBeInTheDocument();
+        expect(screen.getByText('EditRecordContent')).toBeVisible();
     });
 });

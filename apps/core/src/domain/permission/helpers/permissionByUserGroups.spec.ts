@@ -113,9 +113,9 @@ describe('getPermissionByUserGroups', () => {
 
     test('Return root permission if nothing found on tree', async () => {
         const mockSimplePermHelper: Mockify<ISimplePermissionHelper> = {
-            getSimplePermission: jest.fn().mockImplementation(({usersGroupNodeId}) => {
-                return Promise.resolve(usersGroupNodeId === null ? false : null);
-            })
+            getSimplePermission: jest
+                .fn()
+                .mockImplementation(({usersGroupNodeId}) => Promise.resolve(usersGroupNodeId === null ? false : null))
         };
 
         const permByGroupHelper = permissionByUserGroupsHelper({
@@ -136,9 +136,9 @@ describe('getPermissionByUserGroups', () => {
 
     test('If user has no group, return root permission', async () => {
         const mockSimplePermHelper: Mockify<ISimplePermissionHelper> = {
-            getSimplePermission: jest.fn().mockImplementation(({usersGroupId}) => {
-                return Promise.resolve(usersGroupId === null ? false : null);
-            })
+            getSimplePermission: jest
+                .fn()
+                .mockImplementation(({usersGroupId}) => Promise.resolve(usersGroupId === null ? false : null))
         };
 
         const permByGroupHelper = permissionByUserGroupsHelper({

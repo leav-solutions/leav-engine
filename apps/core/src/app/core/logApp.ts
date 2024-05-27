@@ -150,54 +150,41 @@ export default function ({
                         }
                     },
                     Log: {
-                        user: async (log: Log, _, ctx: IQueryInfos) => {
-                            return {
-                                id: log.userId,
-                                library: USERS_LIBRARY
-                            };
-                        },
-                        time: (log: Log) => {
-                            return Math.trunc(log.time / 1000);
-                        }
+                        user: async (log: Log, _, ctx: IQueryInfos) => ({
+                            id: log.userId,
+                            library: USERS_LIBRARY
+                        }),
+                        time: (log: Log) => Math.trunc(log.time / 1000)
                     },
                     LogTopic: {
-                        record: async (topic: Log['topic'], _, ctx: IQueryInfos) => {
-                            return topic.record
+                        record: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
+                            topic.record
                                 ? {
                                       id: topic.record.id,
                                       library: topic.record.libraryId
                                   }
-                                : null;
-                        },
-                        library: async (topic: Log['topic'], _, ctx: IQueryInfos) => {
-                            return topic.library ? libraryDomain.getLibraryProperties(topic.library, ctx) : null;
-                        },
-                        attribute: async (topic: Log['topic'], _, ctx: IQueryInfos) => {
-                            return topic.attribute
-                                ? attributeDomain.getAttributeProperties({id: topic.attribute, ctx})
-                                : null;
-                        },
-                        tree: async (topic: Log['topic'], _, ctx: IQueryInfos) => {
-                            return topic.tree ? treeDomain.getTreeProperties(topic.tree, ctx) : null;
-                        },
-                        profile: async (topic: Log['topic'], _, ctx: IQueryInfos) => {
-                            return topic.profile
+                                : null,
+                        library: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
+                            topic.library ? libraryDomain.getLibraryProperties(topic.library, ctx) : null,
+                        attribute: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
+                            topic.attribute ? attributeDomain.getAttributeProperties({id: topic.attribute, ctx}) : null,
+                        tree: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
+                            topic.tree ? treeDomain.getTreeProperties(topic.tree, ctx) : null,
+                        profile: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
+                            topic.profile
                                 ? versionProfileDomain.getVersionProfileProperties({id: topic.profile, ctx})
-                                : null;
-                        },
-                        permission: async (topic: Log['topic'], _, ctx: IQueryInfos) => {
-                            return topic.permission
+                                : null,
+                        permission: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
+                            topic.permission
                                 ? {
                                       type: topic.permission.type,
                                       applyTo: topic.permission.applyTo
                                   }
-                                : null;
-                        },
-                        application: async (topic: Log['topic'], _, ctx: IQueryInfos) => {
-                            return topic.application
+                                : null,
+                        application: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
+                            topic.application
                                 ? applicationDomain.getApplicationProperties({id: topic.application, ctx})
-                                : null;
-                        }
+                                : null
                     }
                 }
             };

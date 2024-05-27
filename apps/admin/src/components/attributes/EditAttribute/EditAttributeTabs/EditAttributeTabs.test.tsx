@@ -12,36 +12,24 @@ jest.mock('../../../../utils/utils', () => ({
 
 jest.mock('../../../../hooks/useLang');
 
-jest.mock('./ActionsListTab', () => {
-    return function ActionsListTab() {
+jest.mock('./ActionsListTab', () => function ActionsListTab() {
         return <div>ActionsListTab</div>;
-    };
-});
-jest.mock('./EmbeddedFieldsTab', () => {
-    return function EmbeddedFieldsTab() {
+    });
+jest.mock('./EmbeddedFieldsTab', () => function EmbeddedFieldsTab() {
         return <div>EmbeddedFieldsTab</div>;
-    };
-});
-jest.mock('./InfosTab', () => {
-    return function InfosTab() {
+    });
+jest.mock('./InfosTab', () => function InfosTab() {
         return <div>InfosTab</div>;
-    };
-});
-jest.mock('./MetadataTab', () => {
-    return function MetadataTab() {
+    });
+jest.mock('./MetadataTab', () => function MetadataTab() {
         return <div>MetadataTab</div>;
-    };
-});
-jest.mock('./PermissionsTab', () => {
-    return function PermissionsTab() {
+    });
+jest.mock('./PermissionsTab', () => function PermissionsTab() {
         return <div>PermissionsTab</div>;
-    };
-});
-jest.mock('./ValuesListTab', () => {
-    return function ValuesListTab() {
+    });
+jest.mock('./ValuesListTab', () => function ValuesListTab() {
         return <div>ValuesListTab</div>;
-    };
-});
+    });
 
 describe('EditAttributeTabs', () => {
     const mockAttribute = {...mockAttrSimple};

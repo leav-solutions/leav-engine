@@ -14,19 +14,13 @@ function placeholder() {
 jest.mock('react-dnd', () => ({
     useDrag: () => {
         const isDragging = false;
-        const drag = () => {
-            return true;
-        };
-        const preview = () => {
-            return true;
-        };
+        const drag = () => true;
+        const preview = () => true;
         return [{isDragging}, drag, preview];
     },
     useDrop: sth => {
         const isOver = false;
-        const drop = () => {
-            return true;
-        };
+        const drop = () => true;
         return [{isOver}, drop];
     },
     DndProvider: ({backend, children}) => children
@@ -37,7 +31,7 @@ describe('ALCReserveCard', () => {
         const comp = render(
             <DndProvider backend={TestBackend}>
                 <ALCReserveCard
-                    id={'0'}
+                    id="0"
                     action={{
                         id: 'action',
                         list_id: 0,

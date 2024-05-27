@@ -40,6 +40,7 @@ export const mockAttributeWithDetails: AttributeDetailsFragment = {
         fr: 'Mon attribut',
         en: 'My attribute'
     },
+    required: false,
     format: AttributeFormat.text,
     type: AttributeType.simple,
     system: false,
@@ -103,7 +104,7 @@ export const mockAttributeVersionable: AttributeDetailsFragment = {
 export const mockFormAttribute: RecordFormAttributeFragment = {
     id: 'test_attribute',
     type: AttributeType.simple,
-    format: AttributeFormat.text,
+    format: AttributeFormat.extended,
     label: {
         fr: 'test',
         en: 'test'

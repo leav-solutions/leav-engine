@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {appRootPath} from '@leav/app-root-path';
 import {Override, PublishedEvent} from '@leav/utils';
-import {IAuthApp} from 'app/auth/authApp';
 import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from 'app/core/helpers/subscriptions';
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
 import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
@@ -11,7 +10,7 @@ import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IApplicationPermissionDomain} from 'domain/permission/applicationPermissionDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
-import express, {Express} from 'express';
+import express, {Express, NextFunction, Response} from 'express';
 import glob from 'glob';
 import {GraphQLResolveInfo} from 'graphql';
 import {withFilter} from 'graphql-subscriptions';
@@ -35,10 +34,10 @@ import {
     IApplicationEventFilters,
     IApplicationModule
 } from '../../_types/application';
-import {API_KEY_PARAM_NAME} from '../../_types/auth';
 import {TriggerNames} from '../../_types/eventsManager';
 import {ApplicationPermissionsActions, PermissionTypes} from '../../_types/permissions';
 import {AttributeCondition, IRecord} from '../../_types/record';
+import {ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
 
 export interface IApplicationApp {
     registerRoute(app: Express): void;
@@ -46,9 +45,9 @@ export interface IApplicationApp {
 }
 
 interface IDeps {
-    'core.app.auth'?: IAuthApp;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.helpers.initQueryContext'?: InitQueryContextFunc;
+    'core.app.helpers.validateRequestToken'?: ValidateRequestTokenFunc;
     'core.app.core.subscriptionsHelper'?: ICoreSubscriptionsHelpersApp;
     'core.domain.application'?: IApplicationDomain;
     'core.domain.permission'?: IPermissionDomain;
@@ -61,9 +60,9 @@ interface IDeps {
 }
 
 export default function ({
-    'core.app.auth': authApp = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.helpers.initQueryContext': initQueryContext = null,
+    'core.app.helpers.validateRequestToken': validateRequestToken = null,
     'core.app.core.subscriptionsHelper': subscriptionsHelper = null,
     'core.domain.application': applicationDomain = null,
     'core.domain.permission': permissionDomain = null,
@@ -267,9 +266,8 @@ export default function ({
                                 return {...allPerms, [action]: isAllowed};
                             }, Promise.resolve({}));
                         },
-                        url: (appData: IApplication, _, ctx: IQueryInfos): string => {
-                            return applicationDomain.getApplicationUrl({application: appData, ctx});
-                        },
+                        url: (appData: IApplication, _, ctx: IQueryInfos): string =>
+                            applicationDomain.getApplicationUrl({application: appData, ctx}),
                         icon: async (
                             appData: Override<IApplication, {icon: {libraryId: string; recordId: string}}>,
                             _,
@@ -303,7 +301,7 @@ export default function ({
             app.get(
                 [`/${APPS_URL_PREFIX}/:endpoint`, `/${APPS_URL_PREFIX}/:endpoint/*`],
                 // Check authentication and parse token
-                async (req: IRequestWithContext, res, next) => {
+                async (req: IRequestWithContext, res: Response<unknown>, next: NextFunction) => {
                     const endpoint = req.params.endpoint;
                     req.ctx = initQueryContext(req);
 
@@ -312,97 +310,90 @@ export default function ({
                     }
 
                     try {
-                        const payload = await authApp.validateRequestToken({
-                            ...(req.query[API_KEY_PARAM_NAME] && {apiKey: String(req.query[API_KEY_PARAM_NAME])}),
-                            cookies: req.cookies
-                        });
+                        const payload = await validateRequestToken(req);
                         req.ctx.userId = payload.userId;
                         req.ctx.groupsId = payload.groupsId;
 
-                        next();
+                        return next();
                     } catch {
                         res.redirect(`/${APPS_URL_PREFIX}/login/?dest=${req.originalUrl}`);
                     }
                 },
                 // Serve application
-                async (req: IRequestWithContext, res, next) => {
-                    try {
-                        // Get available applications
-                        const {endpoint} = req.params;
-                        const application = {id: '', module: ''};
+                async (req: IRequestWithContext, res: Response<unknown>, next: NextFunction) => {
+                    // Get available applications
+                    const {endpoint} = req.params;
+                    const application = {id: '', module: ''};
 
-                        if (['portal', 'login'].includes(endpoint)) {
-                            application.id = endpoint;
-                            application.module = endpoint;
-                        } else {
-                            const applications = await applicationDomain.getApplications({
-                                params: {
-                                    filters: {
-                                        endpoint
-                                    }
-                                },
-                                ctx: req.ctx
-                            });
-
-                            if (!applications.list.length) {
-                                throw new ApplicationError(ApplicationErrorType.UNKNOWN_APP_ERROR, endpoint);
-                            }
-
-                            const requestApplication = applications.list[0];
-                            application.id = requestApplication.id;
-                            application.module = requestApplication.module;
-                        }
-
-                        // Check permissions
-                        const canAccess = await applicationPermissionDomain.getApplicationPermission({
-                            action: ApplicationPermissionsActions.ACCESS_APPLICATION,
-                            applicationId: application.id,
-                            userId: req.ctx.userId,
+                    if (['portal', 'login'].includes(endpoint)) {
+                        application.id = endpoint;
+                        application.module = endpoint;
+                    } else {
+                        const applications = await applicationDomain.getApplications({
+                            params: {
+                                filters: {
+                                    endpoint
+                                }
+                            },
                             ctx: req.ctx
                         });
 
-                        if (!canAccess) {
-                            throw new ApplicationError(ApplicationErrorType.FORBIDDEN_ERROR, endpoint);
+                        if (!applications.list.length) {
+                            return next(new ApplicationError(ApplicationErrorType.UNKNOWN_APP_ERROR, endpoint));
                         }
 
-                        const rootPath = appRootPath();
-                        const appFolder = path.resolve(rootPath, config.applications.rootFolder, application.module);
-
-                        req.ctx.applicationId = application.id;
-
-                        // Request will be handled by express as if it was a regular request to the app folder itself
-                        // Thus, we remove the app endpoint from URL.
-                        // We don't need the query params to render static files.
-                        // Hence, affect path only (=url without query params) to url
-
-                        // Try to locate a file at given path. If not found, serve root path of the app,
-                        // considering it will be handle it client-side (eg. SPAs)
-                        const newPath =
-                            req.path.replace(new RegExp(`^\/${utils.getFullApplicationEndpoint(endpoint)}`), '') || '/';
-
-                        const files: string[] = await new Promise((resolve, reject) =>
-                            glob(`${appFolder}${newPath}`, (err, matches) => {
-                                if (err) {
-                                    return reject(err);
-                                }
-                                resolve(matches);
-                            })
-                        );
-                        const doesPathExists = !!files.length;
-                        req.url = doesPathExists ? newPath : '/';
-                        express.static(appFolder, {
-                            extensions: ['html'],
-                            fallthrough: false
-                        })(req, res, next);
-
-                        next();
-                    } catch (err) {
-                        next(err);
+                        const requestApplication = applications.list[0];
+                        application.id = requestApplication.id;
+                        application.module = requestApplication.module;
                     }
+
+                    // Check permissions
+                    const canAccess = await applicationPermissionDomain.getApplicationPermission({
+                        action: ApplicationPermissionsActions.ACCESS_APPLICATION,
+                        applicationId: application.id,
+                        userId: req.ctx.userId,
+                        ctx: req.ctx
+                    });
+
+                    if (!canAccess) {
+                        return next(new ApplicationError(ApplicationErrorType.FORBIDDEN_ERROR, endpoint));
+                    }
+
+                    const rootPath = appRootPath();
+                    const appFolder = path.resolve(rootPath, config.applications.rootFolder, application.module);
+
+                    req.ctx.applicationId = application.id;
+
+                    // Request will be handled by express as if it was a regular request to the app folder itself
+                    // Thus, we remove the app endpoint from URL.
+                    // We don't need the query params to render static files.
+                    // Hence, affect path only (=url without query params) to url
+
+                    // Try to locate a file at given path. If not found, serve root path of the app,
+                    // considering it will be handled it client-side (e.g. SPAs)
+                    const newPath =
+                        req.path.replace(new RegExp(`^\/${utils.getFullApplicationEndpoint(endpoint)}`), '') || '/';
+
+                    const files: string[] = await new Promise((resolve, reject) =>
+                        glob(`${appFolder}${newPath}`, (err, matches) => {
+                            if (err) {
+                                return reject(err);
+                            }
+                            resolve(matches);
+                        })
+                    );
+                    const doesPathExists = !!files.length;
+                    req.url = doesPathExists ? newPath : '/';
+                    express.static(appFolder, {
+                        extensions: ['html'],
+                        fallthrough: false
+                    })(req, res, next);
+
+                    return next();
                 },
-                async (req: IRequestWithContext, res, next) => {
+                async (req: IRequestWithContext, res: Response<unknown>, next: NextFunction) => {
                     try {
-                        applicationDomain.updateConsultationHistory({
+                        await applicationDomain.updateConsultationHistory({
                             applicationId: req.ctx.applicationId,
                             ctx: req.ctx
                         });
@@ -410,12 +401,16 @@ export default function ({
                         logger.error(`Cannot update applications consultation history: ${err}`);
                     }
                 },
-                async (err, req, res, next) => {
+                async (
+                    err: undefined | ApplicationError | Error,
+                    req: IRequestWithContext<unknown>,
+                    res: Response<unknown>,
+                    next: NextFunction
+                ) => {
                     if (err instanceof ApplicationError && err.appEndpoint !== 'portal') {
                         res.redirect(`/${APPS_URL_PREFIX}/portal/?err=${err.type}&app=${err.appEndpoint}`);
                     } else {
-                        logger.error(`[${req.ctx.queryId}] ${err}`);
-                        res.status(err.statusCode ?? 500).send(err.type ?? 'Internal server error');
+                        return next(err);
                     }
                 }
             );

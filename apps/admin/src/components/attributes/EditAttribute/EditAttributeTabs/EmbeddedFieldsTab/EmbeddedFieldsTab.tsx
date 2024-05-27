@@ -158,9 +158,7 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
         };
 
         const newTreeItem: ITreeItem[] = dQuery?.attributes?.list
-            ? dQuery.attributes.list.map(att => {
-                  return _getTreeData(att as IEmbeddedFields);
-              })
+            ? dQuery.attributes.list.map(att => _getTreeData(att as IEmbeddedFields))
             : [];
         setTreeItems(newTreeItem);
     }, [lQuery, dQuery, flatItems, formValues, attribute.id, save]);
@@ -190,9 +188,7 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
         return 60;
     };
 
-    const _getNodeKey = ({treeIndex}: TreeNode & TreeIndex) => {
-        return treeIndex;
-    };
+    const _getNodeKey = ({treeIndex}: TreeNode & TreeIndex) => treeIndex;
 
     const _genNodeProps = (info: ExtendedNodeData) => {
         const expend = () => {
@@ -359,9 +355,7 @@ const _getNewAttribute = (treeItem: TreeItem, values: IFormValue[]) => {
     const valuesChecked = values.map(value => (!value.originalId ? {...value, originalId: value.id} : value));
 
     const _recreateAttributeFromTree = (nTreeItems: TreeItem, nValues: IFormValue[]) => {
-        const valueFind = nValues.find(value => {
-            return value.originalId === nTreeItems.id;
-        });
+        const valueFind = nValues.find(value => value.originalId === nTreeItems.id);
 
         // remove originalId from value
         const cloneValueFind = valueFind ? (({originalId, ...rest}) => rest)(valueFind) : undefined;

@@ -11,26 +11,33 @@ import {IVariableFunctions} from '../calculationsVariableFunctions';
 interface IDeps {
     'core.domain.helpers.calculationsVariableFunctions'?: IVariableFunctions;
 }
+
 export interface IVariableValue {
     recordId: string;
     library: string;
-    value: IValue | string | number | boolean;
+    value: string | number | boolean | Record<string, any>;
+    raw_value?: string | number | boolean | Record<string, any>;
 }
 
 export interface ICalculationVariable {
-    processVariableString: (IActionsListContext, string, ActionsListValueType) => Promise<IVariableValue[]>;
-}
-export default function({'core.domain.helpers.calculationsVariableFunctions': variableFunctions = null}: IDeps = {}) {
-    const processVariableString = async (
+    processVariableString: (
         context: IActionsListContext,
-        variableString: string,
-        initialValue: ActionsListValueType
-    ): Promise<IVariableValue[]> => {
+        variables: string,
+        initialValues: ActionsListValueType[]
+    ) => Promise<IVariableValue[]>;
+}
+
+export default function ({'core.domain.helpers.calculationsVariableFunctions': variableFunctions = null}: IDeps = {}) {
+    const processVariableString: ICalculationVariable['processVariableString'] = async (
+        context,
+        variableString,
+        initialValues
+    ) => {
         let passingValue = [
             {
                 recordId: context.recordId,
                 library: context.library,
-                value: initialValue
+                value: initialValues
             }
         ] as IVariableValue[];
 

@@ -8,29 +8,21 @@ import EditTreeTabs from './EditTreeTabs';
 
 jest.mock('../../../../hooks/useLang');
 
-jest.mock('./InfosTab', () => {
-    return function TreeInfosTab() {
+jest.mock('./InfosTab', () => function TreeInfosTab() {
         return <div>TreeInfosTab</div>;
-    };
-});
+    });
 
-jest.mock('./PermissionsTab', () => {
-    return function TreePermissionsTab() {
+jest.mock('./PermissionsTab', () => function TreePermissionsTab() {
         return <div>TreePermissionsTab</div>;
-    };
-});
+    });
 
-jest.mock('./TreeStructure', () => {
-    return function TreeStructure() {
+jest.mock('./TreeStructure', () => function TreeStructure() {
         return <div>TreeStructure</div>;
-    };
-});
+    });
 
-jest.mock('components/trees/TreeExplorer', () => {
-    return function TreeExplorer() {
+jest.mock('components/trees/TreeExplorer', () => function TreeExplorer() {
         return <div>TreeExplorer</div>;
-    };
-});
+    });
 
 describe('EditTreeTabs', () => {
     test('Render test', async () => {

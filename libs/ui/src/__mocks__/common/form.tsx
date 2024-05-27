@@ -12,7 +12,7 @@ import {
 import {IRecordForm, RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
 import {AttributeType, FormElementTypes, LibraryBehavior} from '_ui/_gqlTypes';
 import {mockRecord} from '_ui/__mocks__/common/record';
-import {FormElement, IFormElementProps} from '../../components/RecordEdition/EditRecord/_types';
+import {FormElement, IFormElementProps} from '../../components/RecordEdition/EditRecordContent/_types';
 import {IRecordPropertyTree} from '../../_queries/records/getRecordPropertiesQuery';
 import {mockAttributeSimple, mockFormAttribute} from './attribute';
 import {mockModifier} from './value';

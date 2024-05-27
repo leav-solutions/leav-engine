@@ -71,7 +71,7 @@ export interface IFile {
 }
 
 export interface ICacheParams {
-    cacheDataPath: string,
-    cacheKey: number,
-    isCacheActive: boolean,
+    cacheDataPath: string;
+    cacheKey: number;
+    isCacheActive: boolean;
 }

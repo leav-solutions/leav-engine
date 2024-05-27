@@ -22,7 +22,7 @@ describe('TreeLibraryPermissions', () => {
             saveTree(
                 tree: {
                     id: "${permTreeName}",
-                    label: {fr: "Test tree"},
+                    label: {fr: "Test tree", en: "Test tree"},
                     libraries: [{
                         library: "${treeLibId}",
                         settings: {allowMultiplePositions: true, allowedAtRoot: true,  allowedChildren: ["__all__"]}

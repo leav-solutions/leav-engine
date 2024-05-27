@@ -50,9 +50,7 @@ describe('ValueDomain', () => {
     };
 
     const mockActionsListDomain: Mockify<IActionsListDomain> = {
-        runActionsList: jest.fn().mockImplementation((_, val) => {
-            return Promise.resolve(val);
-        })
+        runActionsList: jest.fn().mockImplementation((_, val) => Promise.resolve(val))
     };
 
     const mockRecordPermDomain: Mockify<IRecordPermissionDomain> = {
@@ -181,7 +179,7 @@ describe('ValueDomain', () => {
 
             expect(mockValRepo.createValue.mock.calls.length).toBe(1);
             expect(mockActionsListDomain.runActionsList.mock.calls.length).toBe(2);
-            expect(savedValue).toMatchObject(savedValueData);
+            expect(savedValue[0]).toMatchObject(savedValueData);
         });
 
         test('Should save a new standard value', async function () {
@@ -230,11 +228,11 @@ describe('ValueDomain', () => {
             expect(mockValRepo.createValue.mock.calls[0][0].value.modified_at).toBeDefined();
             expect(mockValRepo.createValue.mock.calls[0][0].value.created_at).toBeDefined();
 
-            expect(savedValue).toMatchObject(savedValueData);
-            expect(savedValue.id_value).toBeTruthy();
-            expect(savedValue.attribute).toBeTruthy();
-            expect(savedValue.modified_at).toBeTruthy();
-            expect(savedValue.created_at).toBeTruthy();
+            expect(savedValue[0]).toMatchObject(savedValueData);
+            expect(savedValue[0].id_value).toBeTruthy();
+            expect(savedValue[0].attribute).toBeTruthy();
+            expect(savedValue[0].modified_at).toBeTruthy();
+            expect(savedValue[0].created_at).toBeTruthy();
         });
 
         test('Should update a standard value', async function () {
@@ -289,11 +287,11 @@ describe('ValueDomain', () => {
             expect(mockValRepo.updateValue.mock.calls[0][0].value.modified_at).toBeDefined();
             expect(mockValRepo.updateValue.mock.calls[0][0].value.created_at).toBeUndefined();
 
-            expect(savedValue).toMatchObject(savedValueData);
-            expect(savedValue.id_value).toBeTruthy();
-            expect(savedValue.attribute).toBeTruthy();
-            expect(savedValue.modified_at).toBeTruthy();
-            expect(savedValue.created_at).toBeTruthy();
+            expect(savedValue[0]).toMatchObject(savedValueData);
+            expect(savedValue[0].id_value).toBeTruthy();
+            expect(savedValue[0].attribute).toBeTruthy();
+            expect(savedValue[0].modified_at).toBeTruthy();
+            expect(savedValue[0].created_at).toBeTruthy();
         });
 
         test('Should throw if unknown attribute', async function () {
@@ -449,7 +447,7 @@ describe('ValueDomain', () => {
 
             expect(mockUpdateRecordLastModif).toBeCalledWith('test_lib', '12345', ctx);
 
-            expect(savedValue).toMatchObject(savedValueData);
+            expect(savedValue[0]).toMatchObject(savedValueData);
         });
 
         test('Should save a versioned value', async () => {
@@ -501,7 +499,7 @@ describe('ValueDomain', () => {
 
             expect(mockValRepo.createValue.mock.calls.length).toBe(1);
             expect(mockValRepo.createValue.mock.calls[0][0].value.version).toBeDefined();
-            expect(savedValue.version).toBeTruthy();
+            expect(savedValue[0].version).toBeTruthy();
         });
 
         test('Should ignore version when saving version on a non versionable attribute', async () => {
@@ -541,7 +539,7 @@ describe('ValueDomain', () => {
                 ctx
             });
 
-            expect(savedValue.version).toBeUndefined();
+            expect(savedValue[0].version).toBeUndefined();
         });
 
         test('Should throw if unknown record', async () => {
@@ -829,7 +827,7 @@ describe('ValueDomain', () => {
             expect(mockEventsManagerDomain.sendDatabaseEvent).not.toBeCalled();
             expect(mockUpdateRecordLastModif).not.toBeCalled();
             expect(mockSendRecordUpdateEventHelper).not.toBeCalled();
-            expect(savedValue).toEqual(dbValueData);
+            expect(savedValue[0]).toEqual({...dbValueData, raw_value: dbValueData.value});
         });
 
         describe('Metadata', () => {
@@ -883,7 +881,7 @@ describe('ValueDomain', () => {
                     meta_attribute: 'metadata value'
                 });
 
-                expect(savedValue.metadata).toMatchObject({
+                expect(savedValue[0].metadata).toMatchObject({
                     meta_attribute: {
                         value: 'metadata value'
                     }
@@ -1729,7 +1727,7 @@ describe('ValueDomain', () => {
             });
 
             expect(mockValRepo.deleteValue.mock.calls.length).toBe(1);
-            expect(deletedValue).toMatchObject(deletedValueData);
+            expect(deletedValue[0]).toMatchObject(deletedValueData);
         });
 
         test('Should throw if unknown attribute', async function () {

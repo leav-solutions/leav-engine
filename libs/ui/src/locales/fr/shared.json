@@ -29,16 +29,18 @@
         "no": "Non",
         "create": "Créer",
         "ok": "Ok",
-        "max_length": "Longueur maximale"
+        "max_length": "Longueur maximale",
+        "confirm": "Confirmer"
     },
     "errors": {
         "default_language_required": "La langue par défaut est requise",
+        "standard_field_required": "Ce champ est requis",
         "field_required": "Le champ {{fieldName}} est requis",
         "invalid_id_format": "L'identifiant peut être composé uniquement de lettres minuscules, de chiffres et du caractère \"_\" (ex: \"mon_id\")",
         "invalid_endpoint_format": "Le point d'accès peut être composé uniquement de lettres minuscules, de chiffres et du caractère \"-\" (ex: \"mon-app\")",
         "id_already_exists": "Cet identifiant existe déjà",
         "endpoint_already_used": "Ce point d'accès est déjà utilisé",
-        "invalid_url_format": "L'URL n'est pas valide"
+        "invalid_url_format": "L’URL n’est pas valide"
     },
     "applications": {
         "id": "Identifiant",
@@ -445,7 +447,17 @@
         },
         "date_range_value": "Du {{from}} au {{to}}",
         "external_update_warning": "Cet élément a été modifié par {{modifiers}}",
-        "field_external_update": "Ce champ a été modifié"
+        "field_external_update": "Ce champ a été modifié",
+        "create": "Créer",
+        "create_and_edit": "Créer et éditer",
+        "cancel_confirm_modal_title": "Confirmer l'abandon?",
+        "cancel_confirm_modal_content": "Vous êtes sur le point d'abandonner la création.",
+        "cancel_confirm_modal_question": "Êtes-vous sûr(e) ?",
+        "record_select": "Sélectionnez un élément",
+        "inherited_input_helper": "Valeur héritée : {{- inheritedValue }}",
+        "date_range_from_to": "du {{- from}} au {{- to}}",
+        "link_search_result_count": "Résultats ({{count}}/{{total}})",
+        "suggestions_count": "Suggestions ({{count}})"
     },
     "record_summary": {
         "preview_title": "Cliquez ici pour voir l’aperçu.",

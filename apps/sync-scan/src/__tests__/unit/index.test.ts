@@ -21,9 +21,7 @@ process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) =>
 
 beforeAll(async () => {
     try {
-        jest.spyOn(console, 'info').mockImplementation(() => {
-            return;
-        });
+        jest.spyOn(console, 'info').mockImplementation(() => null);
 
         const mockAmqp = {
             publish: jest.fn(),

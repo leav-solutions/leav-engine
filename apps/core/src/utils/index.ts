@@ -3,3 +3,4 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export {default as logger} from './logger/logger';
 export {default} from './utils';
+export {TypeGuards} from './typeGuards';

@@ -15,15 +15,18 @@ fi
 
 
 branch="$(git rev-parse --abbrev-ref HEAD)"
-if [ "$branch" = "master" ]; then
-  echo "Cannot commit to master"
+if [ "$branch" = "develop" ] || [ "$branch" = "main" ]; then
+  echo "Cannot commit to develop and main branches directly. Please create a pull request."
   exit 1
 fi
 
 export SKIP_PREFLIGHT_CHECK=true
 export CI=true
 
-echo "Checking types..."
+echo "Checking translations files"
+yarn translations:check
+
+echo "\n Checking types..."
 yarn run tscheck
 
 echo "\n Checking staged files..."

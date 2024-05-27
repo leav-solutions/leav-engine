@@ -7,11 +7,9 @@ import {act, render, screen} from '_tests/testUtils';
 import {mockApplicationDetails} from '__mocks__/common/applications';
 import PermissionsTab from './PermissionsTab';
 
-jest.mock('components/permissions/DefinePermByUserGroupView', () => {
-    return function DefinePermByUserGroupView() {
+jest.mock('components/permissions/DefinePermByUserGroupView', () => function DefinePermByUserGroupView() {
         return <div>DefinePermByUserGroupView</div>;
-    };
-});
+    });
 describe('GeneralAdminPermissionsTab', () => {
     test('Render test', async () => {
         await act(async () => {

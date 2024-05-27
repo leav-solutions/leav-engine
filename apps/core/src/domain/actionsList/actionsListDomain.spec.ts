@@ -8,6 +8,8 @@ import {Errors} from '../../_types/errors';
 import {mockAttrSimple} from '../../__tests__/mocks/attribute';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import actionListDomain from './actionsListDomain';
+import {mockTranslator} from '../../__tests__/mocks/translator';
+import {i18n} from 'i18next';
 
 describe('handleJoiError', () => {
     test('handleJoiError', async () => {
@@ -47,14 +49,23 @@ describe('runActionsList', () => {
 
     test('Should run a list of actions', async () => {
         const domain = actionListDomain();
+
         const availActions = [
             {
+                id: 'validate',
                 name: 'validate',
-                action: jest.fn().mockReturnValue('test_val')
+                action: jest.fn().mockImplementation(() => ({
+                    values: {id_value: '999', value: 'test_val'},
+                    errors: []
+                }))
             },
             {
+                id: 'convert',
                 name: 'convert',
-                action: jest.fn().mockReturnValue('test_val')
+                action: jest.fn().mockImplementation(() => ({
+                    values: {id_value: '999', value: 'test_val'},
+                    errors: []
+                }))
             }
         ];
 
@@ -65,7 +76,7 @@ describe('runActionsList', () => {
                 {id: 'convert', name: 'Convert', params: [{name: 'firstArg', value: 'test'}], is_system: false},
                 {id: 'validate', name: 'Validate', is_system: true}
             ],
-            val,
+            [val],
             ctx
         );
 
@@ -76,14 +87,18 @@ describe('runActionsList', () => {
         const domain = actionListDomain();
         const availActions = [
             {
+                id: 'validate',
                 name: 'validate',
-                action: jest.fn().mockImplementation(() => {
-                    throw new ValidationError({test_attr: Errors.ERROR});
-                })
+                action: jest.fn().mockImplementation(() => ({
+                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {value: true}}]
+                }))
             },
             {
+                id: 'convert',
                 name: 'convert',
-                action: jest.fn().mockReturnValue('test_val')
+                action: jest.fn().mockImplementation(() => ({
+                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {value: true}}]
+                }))
             }
         ];
 
@@ -95,7 +110,7 @@ describe('runActionsList', () => {
                     {id: 'convert', name: 'Convert', params: [{name: 'firstArg', value: 'test'}], is_system: false},
                     {id: 'validate', name: 'validate', is_system: true}
                 ],
-                val,
+                [val],
                 ctx
             )
         ).rejects.toThrow(ValidationError);
@@ -105,14 +120,18 @@ describe('runActionsList', () => {
         const domain = actionListDomain();
         const availActions = [
             {
+                id: 'validate',
                 name: 'validate',
-                action: jest.fn().mockImplementation(() => {
-                    throw new ValidationError({test_attr: Errors.ERROR}, 'validation Error', true);
-                })
+                action: jest.fn().mockImplementation(() => ({
+                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {value: true}}]
+                }))
             },
             {
+                id: 'convert',
                 name: 'convert',
-                action: jest.fn().mockReturnValue('test_val')
+                action: jest.fn().mockImplementation(() => ({
+                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {value: true}}]
+                }))
             }
         ];
 
@@ -123,12 +142,12 @@ describe('runActionsList', () => {
                 {id: 'convert', name: 'Convert', params: [{name: 'firstArg', value: 'test'}], is_system: false},
                 {id: 'validate', name: 'validate', is_system: true, error_message: {en: 'test error message'}}
             ],
-            val,
+            [val],
             ctx
         );
 
         await expect(res).rejects.toThrow(ValidationError);
-        await expect(res).rejects.toHaveProperty('fields.test_attr', 'test error message');
+        await expect(res).rejects.toHaveProperty('fields.test_attr', 'validation Error: true');
     });
 
     test('Should throw an exception with custom message from system while a error_message "en" has been set', async () => {
@@ -138,17 +157,21 @@ describe('runActionsList', () => {
             lang: 'fr',
             defaultLang: 'fr'
         };
-        const domain = actionListDomain();
+        const domain = actionListDomain({translator: mockTranslator as i18n});
         const availActions = [
             {
+                id: 'validate',
                 name: 'validate',
-                action: jest.fn().mockImplementation(() => {
-                    throw new ValidationError({test_attr: Errors.ERROR}, 'validation Error', true);
-                })
+                action: jest.fn().mockImplementation(() => ({
+                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {value: true}}]
+                }))
             },
             {
+                id: 'convert',
                 name: 'convert',
-                action: jest.fn().mockReturnValue('test_val')
+                action: jest.fn().mockImplementation(() => ({
+                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {value: true}}]
+                }))
             }
         ];
 
@@ -159,10 +182,10 @@ describe('runActionsList', () => {
                 {id: 'convert', name: 'Convert', params: [{name: 'firstArg', value: 'test'}], is_system: false},
                 {id: 'validate', name: 'validate', is_system: true, error_message: {en: 'test error message'}}
             ],
-            val,
+            [val],
             textctx
         );
         await expect(res).rejects.toThrow(ValidationError);
-        await expect(res).rejects.toHaveProperty('fields.test_attr', Errors.ERROR);
+        await expect(res).rejects.toHaveProperty('fields.test_attr', 'validation Error: true');
     });
 });

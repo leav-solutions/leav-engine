@@ -160,12 +160,10 @@ export default function ({
                 dataToSave.previewsSettings = [...systemPreviewsSettings, ...(libData.previewsSettings ?? [])];
 
                 // Make sure the "system" flag is defined everywhere
-                dataToSave.previewsSettings = dataToSave.previewsSettings.map(preview => {
-                    return {
-                        ...preview,
-                        system: preview.system ?? false
-                    };
-                });
+                dataToSave.previewsSettings = dataToSave.previewsSettings.map(preview => ({
+                    ...preview,
+                    system: preview.system ?? false
+                }));
             }
 
             const validationErrors: Array<ErrorFieldDetail<ILibrary>> = [];

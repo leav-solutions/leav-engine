@@ -3,8 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PermissionsActions} from '../../../_gqlTypes/globalTypes';
 
-const mockUseUserData = () => {
-    return {
+const mockUseUserData = () => ({
         id: 1,
         name: 'Test',
         permissions: Object.values(PermissionsActions)
@@ -14,7 +13,6 @@ const mockUseUserData = () => {
 
                 return perms;
             }, {})
-    };
-};
+    });
 
 export default mockUseUserData;

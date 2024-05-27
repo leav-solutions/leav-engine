@@ -63,7 +63,7 @@ function VersionProfiles(): JSX.Element {
                             labelPosition="left"
                             size="medium"
                             as={Link}
-                            to={'/version_profiles/edit/'}
+                            to="/version_profiles/edit/"
                         >
                             <Icon name="plus" />
                             {t('version_profiles.new')}

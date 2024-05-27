@@ -113,8 +113,7 @@ function PreviewsSettingsList({
             title: t('libraries.previews_settings.sizes'),
             dataIndex: ['versions', 'sizes'],
             key: 'sizes',
-            render: (value: LibraryPreviewsSettingsFragment['versions']['sizes']) => {
-                return (
+            render: (value: LibraryPreviewsSettingsFragment['versions']['sizes']) => (
                     <Space wrap size="small">
                         {value.map(({name, size}) => (
                             <Tooltip key={name} title={name}>
@@ -122,8 +121,7 @@ function PreviewsSettingsList({
                             </Tooltip>
                         ))}
                     </Space>
-                );
-            }
+                )
         }
     ];
 

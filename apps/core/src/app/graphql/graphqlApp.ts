@@ -20,45 +20,14 @@ export interface IGraphqlApp extends IAppModule {
 
 interface IDeps {
     'core.depsManager'?: AwilixContainer;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.utils.logger'?: winston.Winston;
     'core.utils'?: IUtils;
-    config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.depsManager': depsManager = null,
-    'core.domain.eventsManager': eventsManagerDomain = null,
-    'core.utils': utils = null,
-    config = null
+    'core.utils': utils = null
 }: IDeps = {}): IGraphqlApp {
     const _pluginsSchema: IAppGraphQLSchema[] = [];
-
-    const _getSchema = async () => {
-        try {
-            const appSchema = {typeDefs: [], resolvers: {}};
-            const modules = Object.keys(depsManager.registrations).filter(modName => modName.match(/^core\.app*/));
-            for (const modName of modules) {
-                const appModule = depsManager.cradle[modName];
-
-                if (typeof appModule.getGraphQLSchema === 'function') {
-                    const schemaToAdd = await appModule.getGraphQLSchema();
-                    appSchema.typeDefs.push(schemaToAdd.typeDefs);
-                    appSchema.resolvers = merge(appSchema.resolvers, schemaToAdd.resolvers);
-                }
-            }
-
-            for (const schemaPart of _pluginsSchema) {
-                appSchema.typeDefs.push(schemaPart.typeDefs);
-                appSchema.resolvers = merge(appSchema.resolvers, schemaPart.resolvers);
-            }
-
-            // Put together a schema
-            return makeExecutableSchema(appSchema);
-        } catch (e) {
-            utils.rethrow(e, 'Error generating schema:');
-        }
-    };
 
     return {
         async getSchema() {
@@ -103,7 +72,7 @@ export default function({
                         extractFields(fragSelection, container);
                     }
                 } else if (selection.kind === Kind.INLINE_FRAGMENT) {
-                    // Field refers to an inline fragment, let's fetch sub fields
+                    // Field refers to an inline fragment, let's fetch subfields
                     for (const fragSelection of selection.selectionSet.selections) {
                         extractFields(fragSelection, container);
                     }

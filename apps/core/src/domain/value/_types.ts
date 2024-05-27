@@ -17,7 +17,7 @@ export interface IDeleteValueParams {
 
 export interface IRunActionListParams {
     listName: ActionsListEvents;
-    value: IValue;
+    values: IValue[];
     attribute: IAttribute;
     record?: IRecord;
     library: string;

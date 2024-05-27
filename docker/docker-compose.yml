@@ -2,7 +2,7 @@ version: "3.4"
 
 ##### Common properties #####
 x-node-image: &node_image node:18-alpine
-x-message-broker-image: &message_broker_image "rabbitmq:3.9-management-alpine"
+x-message-broker-image: &message_broker_image "rabbitmq:3.13-management-alpine"
 x-traefik-image: &traefik_image "traefik:2.6"
 x-redis-image: &redis_image "redis"
 x-arango-image: &arango_image "arangodb:3.10"
@@ -246,7 +246,6 @@ services:
 
   admin:
     image: *node_image
-    user: node
     labels:
       - traefik.enable=true
       - traefik.http.routers.admin.rule=(Host(`core.leav.localhost`) && Path(`/app/admin`, `/app/admin/{route:.*}`)) || Host(`admin.leav.localhost`)
@@ -272,7 +271,6 @@ services:
 
   data-studio:
     image: *node_image
-    user: node
     stdin_open: true
     labels:
       - traefik.enable=true
@@ -299,7 +297,6 @@ services:
 
   login:
     image: *node_image
-    user: node
     stdin_open: true
     labels:
       - traefik.enable=true
@@ -326,7 +323,6 @@ services:
 
   portal:
     image: *node_image
-    user: node
     stdin_open: true
     labels:
       - traefik.enable=true
@@ -354,6 +350,7 @@ services:
       ]
 
   automate-scan:
+    profiles: ["automate"]
     image: *node_image
     restart: always
     environment:
@@ -374,6 +371,7 @@ services:
       ]
 
   files-manager:
+    profiles: ["automate"]
     build: *env-build-core
     restart: always
     environment:
@@ -395,6 +393,7 @@ services:
       ]
 
   preview-generator:
+    profiles: ["automate"]
     build:
       context: ../apps/preview-generator
       dockerfile: ../../docker/DOCKERFILES/PREVIEW_GENERATOR/Dockerfile
@@ -421,6 +420,7 @@ services:
   # Run "docker-compose run --rm sync-scan yarn start" to make the scan
   # You need to have a GRAPHQL_API_KEY defined as environment variables (eg. in a .env file)
   sync-scan:
+    profiles: ["automate"]
     image: *node_image
     labels:
       - traefik.enable=true
@@ -441,6 +441,7 @@ services:
 
   # Feel free to comment out logs-collector and elasticsearch if don't need logs
   logs-collector:
+    profiles: ["logs"]
     image: *node_image
     labels:
       - traefik.enable=true
@@ -489,6 +490,7 @@ services:
       - traefik.http.services.arangodb.loadbalancer.server.port=8529
     volumes:
       - arango_data:/var/lib/arangodb3
+      - arango_data_apps:/var/lib/arangodb3-apps
       - ./conf/arangodb/arangod.conf:/etc/arangodb3/arangod.conf
     ports:
       - "8529:8529"
@@ -505,6 +507,8 @@ services:
       - traefik.enable=true
       - traefik.http.routers.message-broker.rule=Host(`rabbitmq.leav.localhost`)
       - traefik.http.services.message-broker.loadbalancer.server.port=5672
+    volumes:
+      - message-broker_data:/var/lib/rabbitmq
 
   redis:
     image: *redis_image
@@ -512,8 +516,11 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.services.redis.loadbalancer.server.port=6379
+    volumes:
+      - redis_data:/data
 
   redis-commander:
+    profiles: ["debug"]
     container_name: redis-commander
     hostname: redis-commander
     image: rediscommander/redis-commander:latest
@@ -531,6 +538,7 @@ services:
       - redis
 
   elasticsearch:
+    profiles: ["logs"]
     image: elasticsearch:8.10.2
     environment:
       - discovery.type=single-node
@@ -541,6 +549,7 @@ services:
 
   ## Kibana is used for debugging essentially. Uncommnent following lines if needed
   kibana:
+    profiles: ["debug"]
     image: kibana:8.10.2
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
@@ -553,6 +562,8 @@ services:
 
 volumes:
   arango_data:
+    driver: local
+  arango_data_apps:
     driver: local
   elasticsearch_data:
     driver: local
@@ -587,5 +598,9 @@ volumes:
   node_modules_ui:
     driver: local
   node_modules_message-broker:
+    driver: local
+  message-broker_data:
+    driver: local
+  redis_data:
     driver: local
 

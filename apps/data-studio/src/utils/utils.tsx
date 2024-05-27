@@ -102,9 +102,7 @@ export const isTreeInApp = (app: GET_APPLICATION_BY_ENDPOINT_applications_list, 
     return !!appTrees.find(appTree => appTree === treeId);
 };
 
-export const getFilesLibraryId = (tree: IActiveTree): string => {
-    return (tree?.libraries ?? []).find(l => l.behavior === LibraryBehavior.files)?.id ?? null;
-};
+export const getFilesLibraryId = (tree: IActiveTree): string => (tree?.libraries ?? []).find(l => l.behavior === LibraryBehavior.files)?.id ?? null;
 
 export const isInProgressTask = (task: GET_TASKS_tasks_list) =>
     task.status === TaskStatus.PENDING || task.status === TaskStatus.RUNNING;

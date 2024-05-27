@@ -37,16 +37,5 @@ export default async (
         errors.attributes = {msg: Errors.UNKNOWN_ATTRIBUTES, vars: {attributes: unknownAttrs.join(', ')}};
     }
 
-    // Check if an attribute is system and not part of default library attributes
-    const forbiddenSystemAttributes = attributes.filter(
-        a => attributesById[a]?.system && !defaultAttributes.includes(a)
-    );
-    if (forbiddenSystemAttributes.length) {
-        errors.attributes = {
-            msg: Errors.CANNOT_ADD_SYSTEM_ATTRIBUTES,
-            vars: {attributes: forbiddenSystemAttributes.join(', ')}
-        };
-    }
-
     return errors;
 };
