@@ -53,7 +53,10 @@ export const validateConfig = (conf: IConfig) => {
             oidc: Joi.object()
                 .allow(null)
                 .keys({
-                    provider: Joi.string().required()
+                    provider_url: Joi.string().required(),
+                    client_id: Joi.string().required(),
+                    redirect_uri: Joi.string().required(),
+                    code_verifier: Joi.string().required()
                 })
         }),
         mailer: Joi.object().keys({

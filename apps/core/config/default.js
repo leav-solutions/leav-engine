@@ -44,7 +44,10 @@ module.exports = {
         },
         resetPasswordExpiration: process.env.AUTH_RESET_PWD_TTL || '20m',
         oidc: {
-            provider: 'keycloak url'
+            provider_url: 'http://localhost:8080/realms/Generic/protocol/openid-connect/auth',
+            client_id: 'portail',
+            redirect_uri: 'http://core.leav.localhost/auth/oidc/verify',
+            code_verifier: 'reifirev_edoc'
         }
     },
     mailer: {
