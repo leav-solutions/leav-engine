@@ -38,9 +38,12 @@ import {TriggerNames} from '../../_types/eventsManager';
 import {ApplicationPermissionsActions, PermissionTypes} from '../../_types/permissions';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
+import {IAuth} from '../../_types/config';
+import {generateCodeChallenge} from '../../utils/oidc';
 
 export interface IApplicationApp {
     registerRoute(app: Express): void;
+
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
@@ -59,7 +62,7 @@ interface IDeps {
     config?: any;
 }
 
-export default function ({
+export default function({
     'core.app.graphql': graphqlApp = null,
     'core.app.helpers.initQueryContext': initQueryContext = null,
     'core.app.helpers.validateRequestToken': validateRequestToken = null,
@@ -316,7 +319,19 @@ export default function ({
 
                         return next();
                     } catch {
-                        res.redirect(`/${APPS_URL_PREFIX}/login/?dest=${req.originalUrl}`);
+                        if (config.auth.oidc !== null) {
+                            const {redirect_uri, provider_url, client_id, code_verifier} = config.auth
+                                .oidc as IAuth['oidc'];
+                            const code_challenge = await generateCodeChallenge(code_verifier);
+                            return res.redirect(
+                                `${provider_url}?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code&scope=openid&code_challenge=${code_challenge}&code_challenge_method=S256`
+                            );
+                            // TODO créer endpoint dans leav pour récupérer le code challenge de keycloak
+                            // TODO récupérer le token de keycloak (http://localhost:8080/realms/Generic/protocol/openid-connect/token)
+                            // TODO vérifier que l'utilisateur existe en bdd
+                            // TODO si c'est le cas l'authentifier dans leav
+                        }
+                        return res.redirect(`/${APPS_URL_PREFIX}/login/?dest=${req.originalUrl}`);
                     }
                 },
                 // Serve application
