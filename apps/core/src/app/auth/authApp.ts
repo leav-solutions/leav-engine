@@ -21,7 +21,7 @@ import {USERS_GROUP_ATTRIBUTE_NAME} from '../../infra/permission/permissionRepo'
 import {ACCESS_TOKEN_COOKIE_NAME, ITokenUserData} from '../../_types/auth';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, IRecord} from '../../_types/record';
-import {Issuer} from 'openid-client';
+import axios from 'axios';
 
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
@@ -123,6 +123,90 @@ export default function ({
             };
         },
         registerRoute(app): void {
+            app.get(
+                '/auth/oidc/verify/*',
+                async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+                    const {code} = req.query;
+                    const dest = req.params[0];
+
+                    const body = {
+                        code: code as string,
+                        code_verifier: config.auth.oidc.code_verifier,
+                        grant_type: 'authorization_code',
+                        client_id: config.auth.oidc.client_id,
+                        redirect_uri: `${config.auth.oidc.redirect_uri}/${dest}`
+                    };
+
+                    try {
+                        const {data} = await axios.post(
+                            'http://keycloak:8080/realms/Generic/protocol/openid-connect/token',
+                            body,
+                            {
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                }
+                            }
+                        );
+                        const {access_token} = data;
+                        const decodedToken = jwt.decode(access_token) as jwt.JwtPayload;
+                        const {email} = decodedToken;
+
+                        const ctx: IQueryInfos = {
+                            userId: config.defaultUserId,
+                            queryId: 'authenticate'
+                        };
+
+                        const userRecords = await recordDomain.find({
+                            params: {
+                                library: 'users',
+                                filters: [{field: 'email', condition: AttributeCondition.EQUAL, value: email}]
+                            },
+                            ctx
+                        });
+
+                        if (userRecords.list.length < 1) {
+                            return res.status(401).send('Invalid user');
+                        }
+
+                        const user = userRecords.list[0];
+
+                        const accessToken = await _generateAccessToken(user.id, ctx);
+
+                        const refreshToken = _generateRefreshToken({
+                            userId: user.id,
+                            ip: req.headers['x-forwarded-for'],
+                            agent: req.headers['user-agent']
+                        });
+
+                        // store refresh token in cache
+                        const cacheKey = `${SESSION_CACHE_HEADER}:${refreshToken}`;
+                        await cacheService.getCache(ECacheType.RAM).storeData({
+                            key: cacheKey,
+                            data: user.id,
+                            expiresIn: ms(config.auth.refreshTokenExpiration)
+                        });
+
+                        // We need the milliseconds value to set cookie expiration
+                        // ms is the package used by jsonwebtoken under the hood, hence we're sure the value is same
+                        const cookieExpires = ms(String(config.auth.tokenExpiration));
+                        res.cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, {
+                            httpOnly: true,
+                            sameSite: config.auth.cookie.sameSite,
+                            secure: config.auth.cookie.secure,
+                            domain: req.headers.host,
+                            expires: new Date(Date.now() + cookieExpires)
+                        });
+
+                        // TODO trouver un moyen de renvoyer le refresh token
+
+                        return res.redirect(`/${dest}`);
+                    } catch (err) {
+                        console.error('AXIOS ERROR', err.data);
+                        return res.status(500).send(err);
+                    }
+                }
+            );
+
             app.post(
                 '/auth/authenticate',
                 async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
@@ -439,32 +523,8 @@ export default function ({
                 queryId: 'validateToken'
             };
 
-            if (config.auth.oidc !== null) {
-                console.log('oidc detected');
-                // TODO: move realm + hostname to config
-                try {
-                    // TODO: avoid create new issuer for each request
-                    const oidcIssuer = await Issuer.discover(
-                        'http://keycloak:8080/realms/Generic/.well-known/openid-configuration'
-                    );
-                    const client = new oidcIssuer.Client({
-                        client_id: 'leav'
-                    });
-
-                    // TODO: How to get AMP token?
-                    //  - url searchQuery xstream (new route on xstream)
-                    //  - set cookies in AMP that can be read on LEAVs
-                    // TODO: Do we keep APM token or use LEAV cookie?
-                    // TODO: What we do if user has no token?
-                    const accessToken = cookies?.[ACCESS_TOKEN_COOKIE_NAME];
-                    const userinfo = await client.userinfo(accessToken);
-                    console.log(userinfo);
-                } catch (e) {
-                    console.log(e);
-                }
-            }
-
             const token = cookies?.[ACCESS_TOKEN_COOKIE_NAME];
+
             let userId: string;
             let groupsId: string[];
 

@@ -1,16 +1,10 @@
-const crypto = require('crypto');
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import crypto from 'crypto';
 
-const toBase64 = (hash: any): string => {
-    const buf = Buffer.from(hash, 'base64');
-    return buf.toString('base64');
-};
-
-export const generateCodeChallenge = async (codeVerifier: string): Promise<string> => {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(codeVerifier);
-    const hashed = await crypto.subtle.digest('SHA-256', data);
-    return toBase64(hashed)
-        .replace(/\+/g, '-')
-        .replace(/\//g, '_')
-        .replace(/=+$/, '');
+export const generateCodeChallenge = (codeVerifier: string) => {
+    const hash = crypto.createHash('sha256').update(codeVerifier).digest('base64');
+    // Convert base64 to base64url
+    return hash.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 };
