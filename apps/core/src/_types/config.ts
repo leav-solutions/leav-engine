@@ -68,10 +68,9 @@ export interface IAuth {
     };
     resetPasswordExpiration: string;
     oidc: null | {
-        provider_url: string;
-        client_id: string;
-        redirect_uri: string;
-        code_verifier: string;
+        providerUrl: string;
+        clientId: string;
+        redirectUri: string;
     };
 }
 

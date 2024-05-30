@@ -38,8 +38,7 @@ import {TriggerNames} from '../../_types/eventsManager';
 import {ApplicationPermissionsActions, PermissionTypes} from '../../_types/permissions';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
-import {IAuth} from '../../_types/config';
-import {generateCodeChallenge} from '../../utils/oidc';
+import {IAuthApp} from '../auth/authApp';
 
 export interface IApplicationApp {
     registerRoute(app: Express): void;
@@ -49,6 +48,7 @@ export interface IApplicationApp {
 
 interface IDeps {
     'core.app.graphql'?: IGraphqlApp;
+    'core.app.auth'?: IAuthApp;
     'core.app.helpers.initQueryContext'?: InitQueryContextFunc;
     'core.app.helpers.validateRequestToken'?: ValidateRequestTokenFunc;
     'core.app.core.subscriptionsHelper'?: ICoreSubscriptionsHelpersApp;
@@ -64,6 +64,7 @@ interface IDeps {
 
 export default function ({
     'core.app.graphql': graphqlApp = null,
+    'core.app.auth': authApp = null,
     'core.app.helpers.initQueryContext': initQueryContext = null,
     'core.app.helpers.validateRequestToken': validateRequestToken = null,
     'core.app.core.subscriptionsHelper': subscriptionsHelper = null,
@@ -319,23 +320,11 @@ export default function ({
 
                         return next();
                     } catch {
-                        if (config.auth.oidc === null) {
+                        if (config.auth.oidc !== null) {
+                            return authApp.authenticateWithOIDCService(req, res);
+                        } else {
                             return res.redirect(`/${APPS_URL_PREFIX}/login/?dest=${req.originalUrl}`);
                         }
-
-                        const {redirect_uri, provider_url, client_id, code_verifier} = config.auth
-                            .oidc as IAuth['oidc'];
-
-                        const urlParams = new URLSearchParams({
-                            client_id,
-                            redirect_uri: `${redirect_uri}${req.originalUrl}`,
-                            response_type: 'code',
-                            scope: 'openid',
-                            code_challenge: generateCodeChallenge(code_verifier),
-                            code_challenge_method: 'S256'
-                        });
-
-                        return res.redirect(`${provider_url}?${urlParams}`);
                     }
                 },
                 // Serve application

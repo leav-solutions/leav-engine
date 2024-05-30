@@ -14,22 +14,16 @@ export const validateConfig = (conf: IConfig) => {
             port: Joi.number().required(),
             publicUrl: Joi.string().required(),
             wsUrl: Joi.string().required(),
-            uploadLimit: Joi.alternatives()
-                .try(Joi.string(), Joi.number())
-                .required(),
+            uploadLimit: Joi.alternatives().try(Joi.string(), Joi.number()).required(),
             supportEmail: Joi.string().required(),
             allowIntrospection: Joi.boolean().required(),
             admin: {
                 login: Joi.string().required(),
                 password: Joi.string().required(),
-                email: Joi.string()
-                    .email()
-                    .required()
+                email: Joi.string().email().required()
             },
             systemUser: {
-                email: Joi.string()
-                    .email()
-                    .required()
+                email: Joi.string().email().required()
             }
         }),
         db: Joi.object().keys({
@@ -50,14 +44,11 @@ export const validateConfig = (conf: IConfig) => {
                 secure: Joi.boolean()
             },
             resetPasswordExpiration: Joi.string().required(),
-            oidc: Joi.object()
-                .allow(null)
-                .keys({
-                    provider_url: Joi.string().required(),
-                    client_id: Joi.string().required(),
-                    redirect_uri: Joi.string().required(),
-                    code_verifier: Joi.string().required()
-                })
+            oidc: Joi.object().allow(null).keys({
+                providerUrl: Joi.string().required(),
+                clientId: Joi.string().required(),
+                redirectUri: Joi.string().required()
+            })
         }),
         mailer: Joi.object().keys({
             host: Joi.string(),
@@ -69,9 +60,7 @@ export const validateConfig = (conf: IConfig) => {
             }
         }),
         lang: Joi.object().keys({
-            available: Joi.array()
-                .items(Joi.string())
-                .required(),
+            available: Joi.array().items(Joi.string()).required(),
             default: Joi.string().required()
         }),
         logs: Joi.object().keys({
@@ -115,12 +104,8 @@ export const validateConfig = (conf: IConfig) => {
             }),
             userId: Joi.string().required(),
             userGroupsIds: Joi.string().required(),
-            allowFilesList: Joi.string()
-                .required()
-                .allow(''),
-            ignoreFilesList: Joi.string()
-                .required()
-                .allow('')
+            allowFilesList: Joi.string().required().allow(''),
+            ignoreFilesList: Joi.string().required().allow('')
         }),
         indexationManager: Joi.object().keys({
             queues: Joi.object().keys({
@@ -163,9 +148,7 @@ export const validateConfig = (conf: IConfig) => {
             groupData: Joi.number().required(),
             maxStackedElements: Joi.number().required()
         }),
-        plugins: Joi.object()
-            .keys()
-            .unknown(),
+        plugins: Joi.object().keys().unknown(),
         preview: Joi.object().keys({
             directory: Joi.string().required()
         }),

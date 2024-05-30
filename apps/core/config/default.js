@@ -44,12 +44,9 @@ module.exports = {
         },
         resetPasswordExpiration: process.env.AUTH_RESET_PWD_TTL || '20m',
         oidc: {
-            provider_url: 'http://localhost:8080/realms/Generic/protocol/openid-connect/auth',
-            client_id: 'portail',
-            redirect_uri: 'http://core.leav.localhost/auth/oidc/verify',
-            // TODO générer un code avec longueur minimale inconnue pour le moment
-            code_verifier:
-                'YeXgl3xYOGF5LvuDDUL2j614QE25hfzzPWUdd8ICYXGI3MHXY8caUKMhD9VBLiGq7DIa16Dp0q3iJ3yVjv81AuvnX7SCNjRl'
+            providerUrl: 'http://localhost:8080/realms/Generic/protocol/openid-connect/auth',
+            clientId: 'portail',
+            redirectUri: 'http://core.leav.localhost/auth/oidc/verify'
         }
     },
     mailer: {

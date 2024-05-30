@@ -22,11 +22,14 @@ import {ACCESS_TOKEN_COOKIE_NAME, ITokenUserData} from '../../_types/auth';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import axios from 'axios';
+import {generateCodeChallenge} from '../../utils/oidc';
+import {IRequestWithContext} from '../../_types/express';
 
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
     validateRequestToken(params: {apiKey?: string; cookies?: {}}): Promise<ITokenUserData>;
     registerRoute(app: Express): void;
+    authenticateWithOIDCService(req: IRequestWithContext, res: Response<unknown>): void;
 }
 
 const SESSION_CACHE_HEADER = 'session';
@@ -35,6 +38,11 @@ interface ISessionPayload extends jwt.JwtPayload {
     userId: string;
     ip: string | string[];
     agent: string;
+}
+
+interface ITransfertPayloadInIODC {
+    originalUrl: string;
+    queryId: string;
 }
 
 interface IAccessTokenPayload extends jwt.JwtPayload {
@@ -59,6 +67,8 @@ export default function ({
     'core.infra.cache.cacheService': cacheService = null,
     config = null
 }: IDeps = {}): IAuthApp {
+    const mapQueryIdCodeVerifier = new Map<string, string>();
+
     const _generateAccessToken = async (userId: string, ctx: IQueryInfos) => {
         const groupsId = (
             await valueDomain.getValues({
@@ -127,14 +137,21 @@ export default function ({
                 '/auth/oidc/verify/*',
                 async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
                     const {code} = req.query;
-                    const dest = req.params[0];
+                    const payloadBase64Encoded = req.params[0];
+
+                    const {queryId, originalUrl}: ITransfertPayloadInIODC = JSON.parse(
+                        Buffer.from(payloadBase64Encoded, 'base64').toString()
+                    );
+
+                    const codeVerifier = mapQueryIdCodeVerifier.get(queryId);
+                    mapQueryIdCodeVerifier.delete(queryId);
 
                     const body = {
                         code: code as string,
-                        code_verifier: config.auth.oidc.code_verifier,
+                        code_verifier: codeVerifier,
                         grant_type: 'authorization_code',
-                        client_id: config.auth.oidc.client_id,
-                        redirect_uri: `${config.auth.oidc.redirect_uri}/${dest}`
+                        client_id: config.auth.oidc.clientId,
+                        redirect_uri: `${config.auth.oidc.redirectUri}/${payloadBase64Encoded}`
                     };
 
                     try {
@@ -199,9 +216,9 @@ export default function ({
 
                         // TODO trouver un moyen de renvoyer le refresh token
 
-                        return res.redirect(`/${dest}`);
+                        return res.redirect(originalUrl);
                     } catch (err) {
-                        console.error('AXIOS ERROR', err.data);
+                        console.error('AXIOS ERROR', err);
                         return res.status(500).send(err);
                     }
                 }
@@ -589,6 +606,27 @@ export default function ({
                 userId,
                 groupsId
             };
+        },
+        authenticateWithOIDCService: (req, res) => {
+            const {redirectUri, providerUrl, clientId} = config.auth.oidc;
+
+            const codeVerifier = [uuidv4(), uuidv4(), uuidv4()].map(uuid => uuid.replaceAll('-', '')).join('');
+            mapQueryIdCodeVerifier.set(req.ctx.queryId, codeVerifier);
+
+            const payload = Buffer.from(
+                JSON.stringify({originalUrl: req.originalUrl, queryId: req.ctx.queryId} as ITransfertPayloadInIODC)
+            ).toString('base64url');
+
+            const urlParams = new URLSearchParams({
+                client_id: clientId,
+                redirect_uri: `${redirectUri}/${payload}`,
+                response_type: 'code',
+                scope: 'openid',
+                code_challenge: generateCodeChallenge(codeVerifier),
+                code_challenge_method: 'S256'
+            });
+
+            return res.redirect(`${providerUrl}?${urlParams}`);
         }
     };
 }
