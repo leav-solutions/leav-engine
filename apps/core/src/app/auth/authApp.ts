@@ -22,9 +22,9 @@ import {ACCESS_TOKEN_COOKIE_NAME, ITokenUserData, REFRESH_TOKEN_COOKIE_NAME} fro
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import axios from 'axios';
-import {generateCodeChallenge} from '../../utils/oidc';
 import {IRequestWithContext} from '../../_types/express';
 import winston from 'winston';
+import {generators, Issuer} from 'openid-client';
 
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
@@ -64,7 +64,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function ({
+export default function({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.apiKey': apiKeyDomain = null,
@@ -214,6 +214,7 @@ export default function ({
                             data: user.id,
                             expiresIn: refreshExpires
                         });
+                        // TODO check if cookie consent is set for the user
                         res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, {
                             httpOnly: true,
                             sameSite: config.auth.oidc.cookie.sameSite,
@@ -323,7 +324,7 @@ export default function ({
 
             app.post(
                 '/auth/logout',
-                (req: Request, res: Response): Response => {
+                async (req: Request, res: Response): Promise<Response> => {
                     res.cookie(ACCESS_TOKEN_COOKIE_NAME, '', {
                         expires: new Date(0),
                         httpOnly: true,
@@ -331,8 +332,26 @@ export default function ({
                         secure: config.auth.cookie.secure,
                         domain: req.headers.host
                     });
+                    // TODO Manage leav logout when the user logout on Keycloak
+                    //  Back and Front channel logout
 
                     // TODO logout on oidc server
+                    // if (config.auth.oidc !== null) {
+                    //     const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME];
+                    //     console.log({refreshToken});
+                    //     await axios.post(
+                    //         // TODO: make 'keycloak' it variable
+                    //         'http://keycloak:8080/realms/Generic/protocol/openid-connect/logout',
+                    //         {client_id: config.auth.oidc.clientId, refresh_token: refreshToken},
+                    //         {
+                    //             headers: {
+                    //                 'Content-Type': 'application/x-www-form-urlencoded'
+                    //             }
+                    //         }
+                    //     );
+                    //
+                    //     res.clearCookie(REFRESH_TOKEN_COOKIE_NAME);
+                    // }
 
                     return res.status(200).end();
                 }
@@ -627,29 +646,38 @@ export default function ({
                 groupsId
             };
         },
-        authenticateWithOIDCService: (req, res) => {
+        authenticateWithOIDCService: async (req, res) => {
             if (config.auth.oidc === null) {
                 return res.status(401);
             }
+
             const {redirectUri, providerUrl, clientId} = config.auth.oidc;
 
-            const codeVerifier = [uuidv4(), uuidv4(), uuidv4()].map(uuid => uuid.replaceAll('-', '')).join('');
+            const issuer = await Issuer.discover(
+                'http://keycloak:8080/realms/Generic/.well-known/openid-configuration'
+            );
+
+            const client = new issuer.Client({
+                client_id: clientId
+            });
+
+            const codeVerifier = generators.codeVerifier();
             mapQueryIdCodeVerifier.set(req.ctx.queryId, codeVerifier);
 
             const payload = Buffer.from(
                 JSON.stringify({originalUrl: req.originalUrl, queryId: req.ctx.queryId} as ITransfertPayloadInIODC)
             ).toString('base64url');
 
-            const urlParams = new URLSearchParams({
-                client_id: clientId,
-                redirect_uri: `${redirectUri}/${payload}`,
-                response_type: 'code',
-                scope: 'openid',
-                code_challenge: generateCodeChallenge(codeVerifier),
-                code_challenge_method: 'S256'
-            });
-
-            return res.redirect(`${providerUrl}?${urlParams}`);
+            return res.redirect(
+                client.authorizationUrl({
+                    // TODO what nonce mean ? (https://stackoverflow.com/questions/46844285/difference-between-oauth-2-0-state-and-openid-nonce-parameter-why-state-cou)
+                    redirect_uri: `${redirectUri}/${payload}`,
+                    response_type: 'code',
+                    scope: 'openid',
+                    code_challenge: generators.codeChallenge(codeVerifier),
+                    code_challenge_method: 'S256'
+                })
+            );
         }
     };
 }
