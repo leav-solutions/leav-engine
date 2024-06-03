@@ -14,40 +14,62 @@ import {act, renderHook, waitFor} from '_ui/_tests/testUtils';
 describe('useGetOptionsQuery', () => {
     const onSelectChangeMock = jest.fn();
 
+    const firstRecord = {
+        id: '28121951',
+        _id: '28121951',
+        whoAmI: {
+            id: '28121951',
+            label: 'Danette pistache',
+            subLabel: null,
+            preview: null,
+            library: {
+                id: 'id_library',
+                label: null
+            },
+            color: null
+        },
+        __typename: 'Record'
+    };
+
+    const secondRecord = {
+        id: '15061943',
+        _id: '15061943',
+        whoAmI: {
+            id: '15061943',
+            label: 'Danette chocolat',
+            subLabel: null,
+            preview: null,
+            library: {
+                id: 'id_library',
+                label: null
+            },
+            color: null
+        },
+        __typename: 'Record'
+    };
+
     const records = {
+        __typename: 'RecordList',
+        list: [firstRecord, secondRecord],
+        totalCount: 2
+    };
+
+    const recordsWithoutLabel = {
         __typename: 'RecordList',
         list: [
             {
-                id: '28121951',
-                _id: '28121951',
+                ...firstRecord,
                 whoAmI: {
-                    id: '28121951',
-                    label: 'Danette pistache',
-                    subLabel: null,
-                    preview: null,
-                    library: {
-                        id: 'id_library',
-                        label: null
-                    },
-                    color: null
-                },
-                __typename: 'Record'
+                    ...firstRecord.whoAmI,
+                    label: null
+                }
             },
             {
-                id: '15061943',
-                _id: '15061943',
+                ...secondRecord,
                 whoAmI: {
-                    id: '15061943',
-                    label: 'Danette chocolat',
-                    subLabel: null,
-                    preview: null,
-                    library: {
-                        id: 'id_library',
-                        label: null
-                    },
-                    color: null
-                },
-                __typename: 'Record'
+                    ...secondRecord.whoAmI,
+                    label: null
+                }
             }
         ],
         totalCount: 2
@@ -217,6 +239,43 @@ describe('useGetOptionsQuery', () => {
                     },
                     label: 'Danette pistache',
                     value: '28121951'
+                }
+            ])
+        );
+    });
+
+    test('Should expose selectOptions with ids as labels ready to display', async () => {
+        const mock = mockFactory({records: recordsWithoutLabel});
+
+        const {result} = renderHook(
+            () =>
+                useGetOptionsQuery({
+                    activeValue: undefined,
+                    linkedLibraryId,
+                    onSelectChange: onSelectChangeMock
+                }),
+            {mocks: mock}
+        );
+
+        expect(result.current.selectOptions).toEqual([]);
+
+        await waitFor(() =>
+            expect(result.current.selectOptions).toEqual([
+                {
+                    idCard: {
+                        avatarProps: expect.anything(),
+                        title: '28121951'
+                    },
+                    label: '28121951',
+                    value: '28121951'
+                },
+                {
+                    idCard: {
+                        avatarProps: expect.anything(),
+                        title: '15061943'
+                    },
+                    label: '15061943',
+                    value: '15061943'
                 }
             ])
         );
