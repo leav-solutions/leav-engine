@@ -46,22 +46,26 @@ export const useGetOptionsQuery = ({
 
     const selectOptions = useMemo<ComponentProps<typeof KitSelect>['options']>(
         () =>
-            recordList.map(recordItem => ({
-                value: recordItem.whoAmI.id,
-                label: recordItem.whoAmI.label,
-                idCard: {
-                    title: recordItem.whoAmI.label,
-                    avatar: (
-                        <KitAvatar
-                            size="small"
-                            shape="square"
-                            imageFit="contain"
-                            src={recordItem.whoAmI.preview?.small}
-                            label={recordItem.whoAmI.label}
-                        />
-                    )
-                }
-            })),
+            recordList.map(recordItem => {
+                const recordLabel = recordItem.whoAmI.label ?? recordItem.whoAmI.id;
+
+                return {
+                    value: recordItem.whoAmI.id,
+                    label: recordLabel,
+                    idCard: {
+                        title: recordLabel,
+                        avatar: (
+                            <KitAvatar
+                                size="small"
+                                shape="square"
+                                imageFit="contain"
+                                src={recordItem.whoAmI.preview?.small}
+                                label={recordLabel}
+                            />
+                        )
+                    }
+                };
+            }),
         [recordList]
     );
 
