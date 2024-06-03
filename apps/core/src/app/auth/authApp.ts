@@ -24,7 +24,7 @@ import {AttributeCondition, IRecord} from '../../_types/record';
 import axios from 'axios';
 import {IRequestWithContext} from '../../_types/express';
 import winston from 'winston';
-import {generators, Issuer} from 'openid-client';
+import {IOIDCClientService} from '../../infra/oidc/oidcClientService';
 
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
@@ -61,20 +61,20 @@ interface IDeps {
     'core.domain.user'?: IUserDomain;
     'core.infra.cache.cacheService'?: ICachesService;
     'core.utils.logger'?: winston.Winston;
+    'core.infra.oidc.oidcClientService'?: IOIDCClientService;
     config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.apiKey': apiKeyDomain = null,
     'core.domain.user': userDomain = null,
     'core.utils.logger': logger = null,
     'core.infra.cache.cacheService': cacheService = null,
+    'core.infra.oidc.oidcClientService': oidcClientService = null,
     config = null
 }: IDeps = {}): IAuthApp {
-    const mapQueryIdCodeVerifier = new Map<string, string>();
-
     const _generateAccessToken = async (userId: string, ctx: IQueryInfos) => {
         const groupsId = (
             await valueDomain.getValues({
@@ -153,30 +153,13 @@ export default function({
                         Buffer.from(payloadBase64Encoded, 'base64').toString()
                     );
 
-                    const codeVerifier = mapQueryIdCodeVerifier.get(queryId);
-                    mapQueryIdCodeVerifier.delete(queryId);
-
-                    const body = {
-                        code: code as string,
-                        code_verifier: codeVerifier,
-                        grant_type: 'authorization_code',
-                        client_id: config.auth.oidc.clientId,
-                        redirect_uri: `${config.auth.oidc.redirectUri}/${payloadBase64Encoded}`
-                    };
-
                     try {
-                        const {data} = await axios.post(
-                            // TODO: make 'keycloak' it variable
-                            'http://keycloak:8080/realms/Generic/protocol/openid-connect/token',
-                            body,
-                            {
-                                headers: {
-                                    'Content-Type': 'application/x-www-form-urlencoded'
-                                }
-                            }
-                        );
-                        const {access_token} = data;
-                        const decodedToken = jwt.decode(access_token) as jwt.JwtPayload;
+                        const {access_token, refresh_token, id_token} = await oidcClientService.getTokensFromCodes({
+                            authorizationCode: code as string,
+                            queryId
+                        });
+
+                        const decodedToken = jwt.decode(id_token) as jwt.JwtPayload;
                         const {email} = decodedToken;
 
                         const ctx: IQueryInfos = {
@@ -651,31 +634,14 @@ export default function({
                 return res.status(401);
             }
 
-            const {redirectUri, providerUrl, clientId} = config.auth.oidc;
-
-            const issuer = await Issuer.discover(
-                'http://keycloak:8080/realms/Generic/.well-known/openid-configuration'
-            );
-
-            const client = new issuer.Client({
-                client_id: clientId
-            });
-
-            const codeVerifier = generators.codeVerifier();
-            mapQueryIdCodeVerifier.set(req.ctx.queryId, codeVerifier);
-
             const payload = Buffer.from(
                 JSON.stringify({originalUrl: req.originalUrl, queryId: req.ctx.queryId} as ITransfertPayloadInIODC)
             ).toString('base64url');
 
             return res.redirect(
-                client.authorizationUrl({
-                    // TODO what nonce mean ? (https://stackoverflow.com/questions/46844285/difference-between-oauth-2-0-state-and-openid-nonce-parameter-why-state-cou)
-                    redirect_uri: `${redirectUri}/${payload}`,
-                    response_type: 'code',
-                    scope: 'openid',
-                    code_challenge: generators.codeChallenge(codeVerifier),
-                    code_challenge_method: 'S256'
+                oidcClientService.getAuthorizationUrl({
+                    redirectUri: `${config.auth.oidc.redirectUri}/${payload}`,
+                    queryId: req.ctx.queryId
                 })
             );
         }
