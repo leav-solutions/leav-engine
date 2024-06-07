@@ -44,6 +44,7 @@ module.exports = {
         },
         resetPasswordExpiration: process.env.AUTH_RESET_PWD_TTL || '20m',
         oidc: {
+            wellKnownEndpoint: 'http://keycloak:8080/realms/Generic/.well-known/openid-configuration',
             providerUrl: 'http://localhost:8080/realms/Generic/protocol/openid-connect/auth',
             clientId: 'portail',
             redirectUri: 'http://core.leav.localhost/auth/oidc/verify',

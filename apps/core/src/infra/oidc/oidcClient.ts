@@ -7,8 +7,7 @@ import {IConfig} from '../../_types/config';
 export type OidcClient = BaseClient;
 
 export const initOIDCClient = async (config: IConfig): Promise<OidcClient> => {
-    // TODO passer l'url depuis la config
-    const oidcIssuer = await Issuer.discover('http://keycloak:8080/realms/Generic/.well-known/openid-configuration');
+    const oidcIssuer = await Issuer.discover(config.auth.oidc.wellKnownEndpoint);
 
     return new oidcIssuer.Client({
         client_id: config.auth.oidc.clientId,

@@ -68,6 +68,7 @@ export interface IAuth {
     };
     resetPasswordExpiration: string;
     oidc: null | {
+        wellKnownEndpoint: string;
         providerUrl: string;
         clientId: string;
         redirectUri: string;
