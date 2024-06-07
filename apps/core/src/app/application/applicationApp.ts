@@ -300,7 +300,7 @@ export default function({
 
             return fullSchema;
         },
-        registerRoute(app): void {
+        registerRoute(app) {
             // Serve applications from their endpoint
             app.get(
                 [`/${APPS_URL_PREFIX}/:endpoint`, `/${APPS_URL_PREFIX}/:endpoint/*`],
