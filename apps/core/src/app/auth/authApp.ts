@@ -319,23 +319,11 @@ export default function({
                     // TODO Manage leav logout when the user logout on Keycloak
                     //  Back and Front channel logout
 
-                    // TODO logout on oidc server
-                    // if (config.auth.oidc !== null) {
-                    //     const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME];
-                    //     console.log({refreshToken});
-                    //     await axios.post(
-                    //         // TODO: make 'keycloak' it variable
-                    //         'http://keycloak:8080/realms/Generic/protocol/openid-connect/logout',
-                    //         {client_id: config.auth.oidc.clientId, refresh_token: refreshToken},
-                    //         {
-                    //             headers: {
-                    //                 'Content-Type': 'application/x-www-form-urlencoded'
-                    //             }
-                    //         }
-                    //     );
-                    //
-                    //     res.clearCookie(REFRESH_TOKEN_COOKIE_NAME);
-                    // }
+                    if (config.auth.oidc !== null) {
+                        // TODO ajouter l'url de redirection vers le portail de connexion amp ( argument post_logout_redirect_uri)
+                        const redirectUrl = oidcClientService.oidcClient.endSessionUrl();
+                        return res.status(200).json({redirectUrl});
+                    }
 
                     return res.status(200).end();
                 }
