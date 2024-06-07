@@ -19,7 +19,7 @@ import {initMailer} from './infra/mailer';
 import {initPlugins} from './pluginsLoader';
 import {initOIDCClient} from './infra/oidc';
 
-(async function () {
+(async function() {
     const opt = minimist(process.argv.slice(2));
 
     let conf: Config.IConfig;
@@ -41,7 +41,7 @@ import {initOIDCClient} from './infra/oidc';
         }),
         initRedis({config: conf}),
         initMailer({config: conf}),
-        initOIDCClient(conf),
+        conf.auth.oidc !== null ? initOIDCClient(conf) : undefined,
         initDb(conf)
     ]);
 

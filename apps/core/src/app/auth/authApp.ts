@@ -325,7 +325,7 @@ export default function({
                         return res.status(200).json({redirectUrl});
                     }
 
-                    return res.status(200).end();
+                    return res.status(200).json({});
                 }
             );
 
@@ -557,10 +557,10 @@ export default function({
 
                         return res.status(200).json(
                             config.auth.oidc !== null
-                                ? {
+                                ? {}
+                                : {
                                       refreshToken: newRefreshToken
                                   }
-                                : {}
                         );
                     } catch (err) {
                         return next(err);
