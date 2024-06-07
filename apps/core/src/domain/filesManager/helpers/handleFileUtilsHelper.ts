@@ -95,7 +95,7 @@ export const updateRecordFile = async (
 
         await deps.updateRecordLastModif(library, recordId, ctx);
 
-        await deps.sendRecordUpdateEvent(
+        deps.sendRecordUpdateEvent(
             updatedRecord,
             Object.keys(recordData).map(attributeId => ({
                 id_value: null,

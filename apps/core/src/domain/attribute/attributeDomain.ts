@@ -72,7 +72,7 @@ interface IDeps {
     config?: any;
 }
 
-export default function ({
+export default function({
     'core.infra.attribute': attributeRepo = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.permission.admin': adminPermissionDomain = null,
@@ -82,9 +82,9 @@ export default function ({
     'core.infra.form': formRepo = null,
     'core.infra.library': libraryRepo = null,
     'core.infra.tree': treeRepo = null,
+    'core.infra.cache.cacheService': cacheService = null,
     'core.utils': utils = null,
-    config = null,
-    'core.infra.cache.cacheService': cacheService = null
+    config = null
 }: IDeps = {}): IAttributeDomain {
     const _updateFormsUsingAttribute = async (attributeId: string, ctx: IQueryInfos): Promise<void> => {
         const formsList = await formRepo.getForms({ctx});
@@ -113,13 +113,22 @@ export default function ({
 
     return {
         async getLibraryAttributes(libraryId: string, ctx): Promise<IAttribute[]> {
-            const libs = await libraryRepo.getLibraries({params: {filters: {id: libraryId}}, ctx});
+            const _execute = async () => {
+                const libs = await libraryRepo.getLibraries({params: {filters: {id: libraryId}}, ctx});
 
-            if (!libs.list.length) {
-                throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
-            }
+                if (!libs.list.length) {
+                    throw new ValidationError({id: Errors.UNKNOWN_LIBRARY});
+                }
 
-            return attributeRepo.getLibraryAttributes({libraryId, ctx});
+                return attributeRepo.getLibraryAttributes({libraryId, ctx});
+            };
+
+            const cacheKey = `${utils.getCoreEntityCacheKey('library', libraryId)}:attributes`;
+
+            // Due to race conditions, we sometimes get null when retrieving a newly created core entity. Thus, we don't
+            // want to keep this "false" null in cache
+            const res = await cacheService.memoize({key: cacheKey, func: _execute, storeNulls: false, ctx});
+            return res;
         },
         async getAttributeLibraries({attributeId, ctx}): Promise<ILibrary[]> {
             // Validate attribute

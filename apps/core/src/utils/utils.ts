@@ -111,6 +111,8 @@ export interface IUtils {
 
     getCoreEntityCacheKey(entityType: string, entityId: string): string;
 
+    getRecordsCacheKey(libraryId: string, recordId: string): string;
+
     generateExplicitValidationError<T>(
         field: keyof T,
         message: ErrorFieldDetailMessage,
@@ -137,7 +139,7 @@ export interface IUtilsDeps {
     translator?: i18n;
 }
 
-export default function ({config = null, translator = null}: IUtilsDeps = {}): IUtils {
+export default function({config = null, translator = null}: IUtilsDeps = {}): IUtils {
     return {
         getFileExtension(filename) {
             if (filename.lastIndexOf('.') === -1) {
@@ -275,8 +277,11 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
         getFullApplicationEndpoint(endpoint): string {
             return `${APPS_URL_PREFIX}/${endpoint ?? ''}`;
         },
-        getCoreEntityCacheKey(entityType: string, entityId: string): string {
+        getCoreEntityCacheKey(entityType, entityId) {
             return `coreEntity:${entityType}:${entityId}`;
+        },
+        getRecordsCacheKey(libraryId: string, recordId: string): string {
+            return `records:${libraryId}:${recordId}`;
         },
         generateExplicitValidationError<T>(
             field: keyof T,

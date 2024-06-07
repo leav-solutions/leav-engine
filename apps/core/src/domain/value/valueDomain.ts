@@ -839,7 +839,7 @@ const valueDomain = function({
 
             if (saveRes.values.length) {
                 await updateRecordLastModif(library, recordId, ctx);
-                await sendRecordUpdateEvent(
+                sendRecordUpdateEvent(
                     record,
                     saveRes.values.map(savedValue => ({
                         attribute: savedValue.attribute,
