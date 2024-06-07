@@ -16,7 +16,7 @@ function useAuth(): IAuthHook {
         logout: async () => {
             const response = await fetch('/auth/logout', {method: 'POST'});
             const data = await response.json();
-            if (data) {
+            if (data?.redirectUrl) {
                 window.location.assign(data.redirectUrl);
                 return;
             }
