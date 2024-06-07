@@ -21,7 +21,6 @@ import {USERS_GROUP_ATTRIBUTE_NAME} from '../../infra/permission/permissionRepo'
 import {ACCESS_TOKEN_COOKIE_NAME, ITokenUserData, REFRESH_TOKEN_COOKIE_NAME} from '../../_types/auth';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, IRecord} from '../../_types/record';
-import axios from 'axios';
 import {IRequestWithContext} from '../../_types/express';
 import winston from 'winston';
 import {IOIDCClientService} from '../../infra/oidc/oidcClientService';
@@ -65,7 +64,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function ({
+export default function({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.apiKey': apiKeyDomain = null,
@@ -154,12 +153,12 @@ export default function ({
                     );
 
                     try {
-                        const {access_token, refresh_token, id_token} = await oidcClientService.getTokensFromCodes({
+                        const oidcTokenSet = await oidcClientService.getTokensFromCodes({
                             authorizationCode: code as string,
                             queryId
                         });
 
-                        const decodedToken = jwt.decode(id_token) as jwt.JwtPayload;
+                        const decodedToken = jwt.decode(oidcTokenSet.id_token) as jwt.JwtPayload;
                         const {email} = decodedToken;
 
                         const ctx: IQueryInfos = {
@@ -180,6 +179,8 @@ export default function ({
                         }
 
                         const user = userRecords.list[0];
+
+                        oidcClientService.saveOIDCTokens({userId: user.id, tokens: oidcTokenSet});
 
                         const accessToken = await _generateAccessToken(user.id, ctx);
 
@@ -465,7 +466,8 @@ export default function ({
                 '/auth/refresh',
                 async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
                     try {
-                        const {refreshToken} = req.body;
+                        const refreshToken =
+                            config.auth.oidc !== null ? req.cookies[REFRESH_TOKEN_COOKIE_NAME] : req.body.refreshToken;
 
                         if (typeof refreshToken === 'undefined') {
                             return res.status(400).send('Missing refresh token');
@@ -477,6 +479,14 @@ export default function ({
                             payload = jwt.verify(refreshToken, config.auth.key) as ISessionPayload;
                         } catch (e) {
                             throw new AuthenticationError('Invalid token');
+                        }
+
+                        try {
+                            if (config.auth.oidc !== null) {
+                                await oidcClientService.checkTokensValidity({userId: payload.userId});
+                            }
+                        } catch (err) {
+                            throw new AuthenticationError('oidc session expired');
                         }
 
                         if (!payload.userId || !payload.ip || !payload.agent) {
@@ -546,9 +556,24 @@ export default function ({
                             expires: new Date(Date.now() + cookieExpires)
                         });
 
-                        return res.status(200).json({
-                            refreshToken: newRefreshToken
-                        });
+                        if (config.auth.oidc !== null) {
+                            const refreshCookieExpires = ms(String(config.auth.refreshTokenExpiration));
+                            res.cookie(REFRESH_TOKEN_COOKIE_NAME, newRefreshToken, {
+                                httpOnly: true,
+                                sameSite: config.auth.cookie.sameSite,
+                                secure: config.auth.cookie.secure,
+                                domain: req.headers.host,
+                                expires: new Date(Date.now() + refreshCookieExpires)
+                            });
+                        }
+
+                        return res.status(200).json(
+                            config.auth.oidc !== null
+                                ? {
+                                      refreshToken: newRefreshToken
+                                  }
+                                : {}
+                        );
                     } catch (err) {
                         return next(err);
                     }
@@ -577,7 +602,6 @@ export default function ({
                 try {
                     payload = jwt.verify(token, config.auth.key) as IAccessTokenPayload;
                 } catch (e) {
-                    // TODO: check if error if just expired access token, if so renew it with refresh cookie
                     throw new AuthenticationError('Invalid token');
                 }
 

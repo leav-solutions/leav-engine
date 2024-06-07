@@ -8,14 +8,22 @@ export interface IOIDCClientService {
     oidcClient?: OidcClient;
     getTokensFromCodes: (params: {authorizationCode: string; queryId: string}) => Promise<TokenSet>;
     getAuthorizationUrl: (params: {redirectUri: string; queryId: string}) => string;
+    saveOIDCTokens: (params: {
+        userId: string;
+        tokens: TokenSet;
+    }) => void;
+    checkTokensValidity: (params: {userId: string}) => Promise<void> | never;
 }
 
 interface IDeps {
     'core.infra.oidcClient'?: OidcClient;
 }
 
-export default function ({'core.infra.oidcClient': oidcClient = null}: IDeps = {}): IOIDCClientService {
+export default function({'core.infra.oidcClient': oidcClient = null}: IDeps = {}): IOIDCClientService {
+    // TODO leav doit être stateless, il faut stocker ces infos dans Redis (cacheService.ts)
     const mapCodeVerifierRedirectUriByQueryId = new Map<string, [codeVerifier: string, redirectUri: string]>();
+    const mapOIDCTokenSetByUserId = new Map<string, TokenSet>();
+
     return {
         oidcClient,
         getTokensFromCodes: ({authorizationCode, queryId}) => {
@@ -41,6 +49,17 @@ export default function ({'core.infra.oidcClient': oidcClient = null}: IDeps = {
                 code_challenge: generators.codeChallenge(codeVerifier),
                 code_challenge_method: 'S256'
             });
+        },
+        saveOIDCTokens: ({userId, tokens}) => {
+            mapOIDCTokenSetByUserId.set(userId, tokens);
+        },
+        checkTokensValidity: async ({userId}) => {
+            const tokenSet = mapOIDCTokenSetByUserId.get(userId);
+            if (tokenSet.expired()) {
+                mapOIDCTokenSetByUserId.delete(userId);
+                const newTokenSet = await oidcClient.refresh(tokenSet);
+                mapOIDCTokenSetByUserId.set(userId, newTokenSet);
+            }
         }
     };
 }
