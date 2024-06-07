@@ -13,7 +13,12 @@ function useAuth(): IAuthHook {
 
     return {
         logout: async () => {
-            await fetch('/auth/logout', {method: 'POST'});
+            const response = await fetch('/auth/logout', {method: 'POST'});
+            const data = await response.json();
+            if (data) {
+                window.location.assign(data.redirectUrl);
+                return;
+            }
             setRefreshToken('');
             window.location.reload();
         }
