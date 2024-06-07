@@ -62,7 +62,7 @@ interface IDeps {
     config?: any;
 }
 
-export default function ({
+export default function({
     'core.app.graphql': graphqlApp = null,
     'core.app.auth': authApp = null,
     'core.app.helpers.initQueryContext': initQueryContext = null,
@@ -309,6 +309,7 @@ export default function ({
                     const endpoint = req.params.endpoint;
                     req.ctx = initQueryContext(req);
 
+                    // TODO est-ce que si l'on est en OIDC on interdit l'app de login classique ?
                     if (endpoint === 'login') {
                         return next();
                     }
