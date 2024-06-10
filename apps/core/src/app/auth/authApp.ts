@@ -27,11 +27,8 @@ import {IOIDCClientService} from '../../infra/oidc/oidcClientService';
 
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
-
     validateRequestToken(params: {apiKey?: string; cookies?: {}}): Promise<ITokenUserData>;
-
     registerRoute(app: Express): void;
-
     authenticateWithOIDCService(req: IRequestWithContext, res: Response<unknown>): void;
 }
 
@@ -75,20 +72,17 @@ export default function({
     config = null
 }: IDeps = {}): IAuthApp {
     const _generateAccessToken = async (userId: string, ctx: IQueryInfos) => {
-        const groupsId = (
-            await valueDomain.getValues({
-                library: 'users',
-                recordId: userId,
-                attribute: 'user_groups',
-                ctx
-            })
-        ).map(g => g.value.id);
+        const groups = await valueDomain.getValues({
+            library: 'users',
+            recordId: userId,
+            attribute: 'user_groups',
+            ctx
+        });
 
-        // Generate token
-        const token = jwt.sign(
+        return jwt.sign(
             {
                 userId,
-                groupsId
+                groupsId: groups.map(g => g.value.id)
             },
             config.auth.key,
             {
@@ -96,19 +90,14 @@ export default function({
                 expiresIn: String(config.auth.tokenExpiration)
             }
         );
-
-        return token;
     };
 
-    const _generateRefreshToken = (payload: ISessionPayload) => {
-        const token = jwt.sign(payload, config.auth.key, {
+    const _generateRefreshToken = (payload: ISessionPayload) =>
+        jwt.sign(payload, config.auth.key, {
             algorithm: config.auth.algorithm as Algorithm,
             expiresIn: String(config.auth.refreshTokenExpiration),
             jwtid: uuidv4()
         });
-
-        return token;
-    };
 
     return {
         getGraphQLSchema(): IAppGraphQLSchema {
@@ -175,12 +164,12 @@ export default function({
                         });
 
                         if (userRecords.list.length < 1) {
-                            return res.status(401).json({reason: 'Invalid user'});
+                            throw new AuthenticationError('Invalid user');
                         }
 
                         const user = userRecords.list[0];
 
-                        oidcClientService.saveOIDCTokens({userId: user.id, tokens: oidcTokenSet});
+                        await oidcClientService.saveOIDCTokens({userId: user.id, tokens: oidcTokenSet});
 
                         const accessToken = await _generateAccessToken(user.id, ctx);
 
@@ -221,7 +210,7 @@ export default function({
                         return res.redirect(originalUrl);
                     } catch (err) {
                         logger.error(err);
-                        return res.status(401);
+                        return next(err);
                     }
                 }
             );
@@ -650,12 +639,12 @@ export default function({
                 JSON.stringify({originalUrl: req.originalUrl, queryId: req.ctx.queryId} as ITransfertPayloadInIODC)
             ).toString('base64url');
 
-            return res.redirect(
-                oidcClientService.getAuthorizationUrl({
-                    redirectUri: `${config.auth.oidc.redirectUri}/${payload}`,
-                    queryId: req.ctx.queryId
-                })
-            );
+            const oidcLoginUrl = await oidcClientService.getAuthorizationUrl({
+                redirectUri: `${config.auth.oidc.redirectUri}/${payload}`,
+                queryId: req.ctx.queryId
+            });
+
+            return res.redirect(oidcLoginUrl);
         }
     };
 }

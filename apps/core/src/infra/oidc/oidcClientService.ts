@@ -3,32 +3,89 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {OidcClient} from './oidcClient';
 import {generators, TokenSet} from 'openid-client';
+import {ECacheType, ICachesService} from '../cache/cacheService';
+import LeavError from '../../errors/LeavError';
+import {ErrorTypes} from '../../_types/errors';
+import AuthenticationError from '../../errors/AuthenticationError';
+
+const AUTH_REDIRECT_HEADER = 'oidc_redirect';
+const TOKENS_HEADER = 'oidc_tokens';
+
+type AuthRedirectStoredData = [codeVerifier: string, redirectUri: string];
 
 export interface IOIDCClientService {
     oidcClient?: OidcClient;
-    getTokensFromCodes: (params: {authorizationCode: string; queryId: string}) => Promise<TokenSet>;
-    getAuthorizationUrl: (params: {redirectUri: string; queryId: string}) => string;
+    getTokensFromCodes: (params: { authorizationCode: string; queryId: string }) => Promise<TokenSet>;
+    getAuthorizationUrl: (params: { redirectUri: string; queryId: string }) => Promise<string>;
     saveOIDCTokens: (params: {
         userId: string;
         tokens: TokenSet;
-    }) => void;
-    checkTokensValidity: (params: {userId: string}) => Promise<void> | never;
+    }) => Promise<void>;
+    checkTokensValidity: (params: { userId: string }) => Promise<void> | never;
 }
 
 interface IDeps {
     'core.infra.oidcClient'?: OidcClient;
+    'core.infra.cache.cacheService'?: ICachesService;
 }
 
-export default function({'core.infra.oidcClient': oidcClient = null}: IDeps = {}): IOIDCClientService {
+export default function({
+    'core.infra.oidcClient': oidcClient = null,
+    'core.infra.cache.cacheService': cacheService = null
+}: IDeps = {}): IOIDCClientService {
     // TODO leav doit être stateless, il faut stocker ces infos dans Redis (cacheService.ts)
-    const mapCodeVerifierRedirectUriByQueryId = new Map<string, [codeVerifier: string, redirectUri: string]>();
     const mapOIDCTokenSetByUserId = new Map<string, TokenSet>();
+
+    const cache = cacheService.getCache(ECacheType.RAM);
+    if (cache === undefined) {
+        throw new LeavError(ErrorTypes.INTERNAL_ERROR, 'Cache service not found');
+    }
+
+    const _buildCacheKey = (queryId: string) => `${AUTH_REDIRECT_HEADER}:${queryId}`;
+    const _buildTokensCacheKey = (userId: string) => `${TOKENS_HEADER}:${userId}`;
+
+    const _getCodeVerifierRedirectUriByQueryId = async (queryId: string): Promise<AuthRedirectStoredData> => {
+        const cacheContent = await cache.getData([_buildCacheKey(queryId)]);
+        if (cacheContent === undefined) {
+            throw new AuthenticationError('Unauthorized');
+        }
+        if (cacheContent[0] === null) {
+            throw new AuthenticationError('Unauthorized');
+        }
+        return JSON.parse(cacheContent[0]) as AuthRedirectStoredData;
+    };
+
+    const _deleteCodeVerifierRedirectUriByQueryId = (queryId: string) => cache.deleteData([_buildCacheKey(queryId)]);
+
+    const _writeCodeVerifierRedirectUriByQueryId = async (queryId: string, data: AuthRedirectStoredData) => cache.storeData({
+        key: _buildCacheKey(queryId),
+        data: JSON.stringify(data),
+        expiresIn: 1000 * 60 * 3 // TODO: maybe too short, can we set no expiration?
+    });
+
+    const _writeTokensSetByUserId = async (userId: string, tokens: TokenSet): Promise<void> => cache.storeData({
+        key: _buildTokensCacheKey(userId),
+        data: JSON.stringify(tokens)
+    });
+
+    const _getTokenSetByUserId = async (userId: string): Promise<TokenSet> => {
+        const cacheContent = await cache.getData([_buildTokensCacheKey(userId)]);
+        if (cacheContent === undefined) {
+            throw new AuthenticationError('Unauthorized');
+        }
+        if (cacheContent[0] === null) {
+            throw new AuthenticationError('Unauthorized');
+        }
+        return new TokenSet(JSON.parse(cacheContent[0]));
+    };
+
+    const _deleteTokenSetByUserId = async (userId: string) => cache.deleteData([_buildTokensCacheKey(userId)]);
 
     return {
         oidcClient,
-        getTokensFromCodes: ({authorizationCode, queryId}) => {
-            const [codeVerifier, redirectUri] = mapCodeVerifierRedirectUriByQueryId.get(queryId);
-            mapCodeVerifierRedirectUriByQueryId.delete(queryId);
+        getTokensFromCodes: async ({authorizationCode, queryId}) => {
+            const [codeVerifier, redirectUri] = await _getCodeVerifierRedirectUriByQueryId(queryId);
+            await _deleteCodeVerifierRedirectUriByQueryId(queryId);
 
             return oidcClient.grant({
                 code: authorizationCode,
@@ -38,9 +95,9 @@ export default function({'core.infra.oidcClient': oidcClient = null}: IDeps = {}
                 client_id: oidcClient.metadata.client_id
             });
         },
-        getAuthorizationUrl: ({redirectUri, queryId}) => {
+        getAuthorizationUrl: async ({redirectUri, queryId}) => {
             const codeVerifier = generators.codeVerifier();
-            mapCodeVerifierRedirectUriByQueryId.set(queryId, [codeVerifier, redirectUri]);
+            await _writeCodeVerifierRedirectUriByQueryId(queryId, [codeVerifier, redirectUri]);
 
             return oidcClient.authorizationUrl({
                 redirect_uri: redirectUri,
@@ -50,15 +107,14 @@ export default function({'core.infra.oidcClient': oidcClient = null}: IDeps = {}
                 code_challenge_method: 'S256'
             });
         },
-        saveOIDCTokens: ({userId, tokens}) => {
-            mapOIDCTokenSetByUserId.set(userId, tokens);
-        },
+        saveOIDCTokens: ({userId, tokens}) => _writeTokensSetByUserId(userId, tokens),
         checkTokensValidity: async ({userId}) => {
-            const tokenSet = mapOIDCTokenSetByUserId.get(userId);
+            const tokenSet = await _getTokenSetByUserId(userId);
+
             if (tokenSet.expired()) {
-                mapOIDCTokenSetByUserId.delete(userId);
+                await _deleteTokenSetByUserId(userId);
                 const newTokenSet = await oidcClient.refresh(tokenSet);
-                mapOIDCTokenSetByUserId.set(userId, newTokenSet);
+                await _writeTokensSetByUserId(userId, newTokenSet);
             }
         }
     };
