@@ -7,6 +7,8 @@ import {ECacheType, ICachesService} from '../cache/cacheService';
 import LeavError from '../../errors/LeavError';
 import {ErrorTypes} from '../../_types/errors';
 import AuthenticationError from '../../errors/AuthenticationError';
+import {IConfig} from '../../_types/config';
+import ms from 'ms';
 
 const AUTH_REDIRECT_HEADER = 'oidc_redirect';
 const TOKENS_HEADER = 'oidc_tokens';
@@ -15,27 +17,26 @@ type AuthRedirectStoredData = [codeVerifier: string, redirectUri: string];
 
 export interface IOIDCClientService {
     oidcClient?: OidcClient;
-    getTokensFromCodes: (params: { authorizationCode: string; queryId: string }) => Promise<TokenSet>;
-    getAuthorizationUrl: (params: { redirectUri: string; queryId: string }) => Promise<string>;
+    getTokensFromCodes: (params: {authorizationCode: string; queryId: string}) => Promise<TokenSet>;
+    getAuthorizationUrl: (params: {redirectUri: string; queryId: string}) => Promise<string>;
     saveOIDCTokens: (params: {
         userId: string;
         tokens: TokenSet;
     }) => Promise<void>;
-    checkTokensValidity: (params: { userId: string }) => Promise<void> | never;
+    checkTokensValidity: (params: {userId: string}) => Promise<void> | never;
 }
 
 interface IDeps {
     'core.infra.oidcClient'?: OidcClient;
     'core.infra.cache.cacheService'?: ICachesService;
+    config?: IConfig;
 }
 
 export default function({
     'core.infra.oidcClient': oidcClient = null,
-    'core.infra.cache.cacheService': cacheService = null
+    'core.infra.cache.cacheService': cacheService = null,
+    config = null
 }: IDeps = {}): IOIDCClientService {
-    // TODO leav doit être stateless, il faut stocker ces infos dans Redis (cacheService.ts)
-    const mapOIDCTokenSetByUserId = new Map<string, TokenSet>();
-
     const cache = cacheService.getCache(ECacheType.RAM);
     if (cache === undefined) {
         throw new LeavError(ErrorTypes.INTERNAL_ERROR, 'Cache service not found');
@@ -65,7 +66,8 @@ export default function({
 
     const _writeTokensSetByUserId = async (userId: string, tokens: TokenSet): Promise<void> => cache.storeData({
         key: _buildTokensCacheKey(userId),
-        data: JSON.stringify(tokens)
+        data: JSON.stringify(tokens),
+        expiresIn: ms(config.auth.refreshTokenExpiration) + (1000 * 60)
     });
 
     const _getTokenSetByUserId = async (userId: string): Promise<TokenSet> => {
