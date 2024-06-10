@@ -585,7 +585,7 @@ services:
     networks:
         - oidc-service
 
-  ## Kibana is used for debugging essentially. Uncommnent following lines if needed
+  ## Kibana is used for debugging essentially. Uncomment following lines if needed
   kibana:
     profiles: ["log"]
     image: kibana:8.10.2
