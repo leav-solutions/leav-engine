@@ -1,5 +1,3 @@
-version: "3.4"
-
 ##### Common properties #####
 x-node-image: &node_image node:18-alpine
 x-message-broker-image: &message_broker_image "rabbitmq:3.13-management-alpine"
@@ -179,13 +177,9 @@ services:
         -c,
         "/scripts/wait-for-it.sh message-broker:5672 -t 1000 -- /scripts/wait-for-it.sh arangodb:8529 -t 1000 -- /scripts/start-core.sh",
       ]
-    networks:
-        - oidc-service
 
   indexation-manager:
     build: *env-build-core
-    networks:
-        - oidc-service
     stdin_open: true
     environment:
       <<: [*env-core, *env-amqp]
@@ -206,8 +200,6 @@ services:
 
   tasks-manager-master:
     build: *env-build-core
-    networks:
-        - oidc-service
     stdin_open: true
     environment:
       <<: [*env-core, *env-amqp]
@@ -230,8 +222,6 @@ services:
 
   tasks-manager-worker:
     build: *env-build-core
-    networks:
-        - oidc-service
     restart: always
     environment:
       <<: [*env-core, *env-amqp]
@@ -271,8 +261,6 @@ services:
       - *volume-admin-modules
       - *volume-shared-modules
     working_dir: *dir-admin
-    networks:
-        - oidc-service
     command: [
         sh,
         -c,
@@ -299,8 +287,6 @@ services:
       - *volume-shared-modules
       - *volume-data_studio-modules
     working_dir: *dir-data_studio
-    networks:
-        - oidc-service
     command: [
         sh,
         -c,
@@ -327,8 +313,6 @@ services:
       - *volume-shared-modules
       - *volume-login-modules
     working_dir: *dir-login
-    networks:
-        - oidc-service
     command: [
         sh,
         -c,
@@ -343,10 +327,10 @@ services:
       - traefik.http.routers.portal.rule=(Host(`core.leav.localhost`) && PathPrefix(`/app/portal`)) || Host(`portal.leav.localhost`)
       - traefik.http.services.portal.loadbalancer.server.port=3000
       - traefik.http.routers.portal.entrypoints=web
-      # - traefik.backend=portal
-      # - traefik.port=3000
-      # - traefik.app.frontend.rule=Host:core.leav.localhost;PathPrefix:/app/portal
-      # - traefik.ws.frontend.rule=Host:portal.leav.localhost
+      - traefik.backend=portal
+      - traefik.port=3000
+      - traefik.app.frontend.rule=Host:core.leav.localhost;PathPrefix:/app/portal
+      - traefik.ws.frontend.rule=Host:portal.leav.localhost
     environment:
       <<: [*env-react, *env-portal]
       PUBLIC_URL: http://core.leav.localhost/app/portal
@@ -357,8 +341,6 @@ services:
       - *volume-shared-modules
       - *volume-portal-modules
     working_dir: *dir-portal
-    networks:
-        - oidc-service
     command: [
         sh,
         -c,
@@ -380,8 +362,6 @@ services:
       - *volume-automate_scan-modules
       - *volume-config_manager-modules
     working_dir: *dir-automate_scan
-    networks:
-        - oidc-service
     command: [
         sh,
         -c,
@@ -391,8 +371,6 @@ services:
   files-manager:
     profiles: ["automate"]
     build: *env-build-core
-    networks:
-        - oidc-service
     restart: always
     environment:
       <<: [*env-core, *env-amqp]
@@ -430,8 +408,6 @@ services:
       - *volume-preview_generator-modules
       - *volume-config_manager-modules
     working_dir: *dir-preview_generator
-    networks:
-        - oidc-service
     command: [
         sh,
         -c,
@@ -460,8 +436,6 @@ services:
       - *volume-config_manager-modules
       - *volume-message_broker-modules
     working_dir: *dir-sync_scan
-    networks:
-        - oidc-service
 
   # Feel free to comment out logs-collector and elasticsearch if don't need logs
   logs-collector:
@@ -484,8 +458,6 @@ services:
       - *volume-config_manager-modules
       - *volume-message_broker-modules
     working_dir: *dir-logs_collector
-    networks:
-        - oidc-service
     command: [
         sh,
         -c,
@@ -505,8 +477,6 @@ services:
       - "8000:8000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-        - oidc-service
 
   arangodb:
     image: *arango_image
@@ -522,8 +492,6 @@ services:
       - ./conf/arangodb/arangod.conf:/etc/arangodb3/arangod.conf
     ports:
       - "8529:8529"
-    networks:
-        - oidc-service
 
   message-broker:
     image: *message_broker_image
@@ -539,8 +507,6 @@ services:
       - traefik.http.services.message-broker.loadbalancer.server.port=5672
     volumes:
       - message-broker_data:/var/lib/rabbitmq
-    networks:
-        - oidc-service
 
   redis:
     image: *redis_image
@@ -550,8 +516,6 @@ services:
       - traefik.http.services.redis.loadbalancer.server.port=6379
     volumes:
       - redis_data:/data
-    networks:
-        - oidc-service
 
   redis-commander:
     profiles: ["debug"]
@@ -570,8 +534,6 @@ services:
       - traefik.http.routers.rabbitmq.entrypoints=web
     depends_on:
       - redis
-    networks:
-        - oidc-service
 
   elasticsearch:
     profiles: ["logs"]
@@ -582,8 +544,6 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
-    networks:
-        - oidc-service
 
   ## Kibana is used for debugging essentially. Uncomment following lines if needed
   kibana:
@@ -597,8 +557,47 @@ services:
       - "traefik.http.routers.kibana.entrypoints=web"
     depends_on:
       - elasticsearch
-    networks:
-        - oidc-service
+
+  keycloak:
+    profiles: ["oidc"]
+    build:
+      context: .
+      dockerfile: ./DOCKERFILES/KEYCLOAK/Dockerfile
+    environment:
+        KEYCLOAK_ADMIN: admin
+        KEYCLOAK_ADMIN_PASSWORD: admin
+        KC_HEALTH_ENABLED: false
+        KC_METRICS_ENABLED: false
+        KC_CACHE: ispn
+        KC_DB: postgres
+        KC_DB_URL: 'jdbc:postgresql://postgres/keycloak'
+        KC_DB_USERNAME: keycloak
+        KC_DB_PASSWORD: password
+        KC_HOSTNAME_STRICT: false
+        KC_HOSTNAME_STRICT_BACKCHANNEL: false
+        KC_LOG_LEVEL: info,org.keycloak.events:debug
+    volumes:
+        - ./realms:/opt/keycloak/data/import
+    entrypoint: ['/bin/bash', '-c']
+    command:
+        - /opt/keycloak/bin/kc.sh import --optimized --dir=/opt/keycloak/data/import --override true && /opt/keycloak/bin/kc.sh start-dev
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.redis-commander.rule=Host(`keycloak.leav.localhost`)
+      - traefik.http.services.redis-commander.loadbalancer.server.port=8080
+      - traefik.http.routers.keycloak.entrypoints=web
+    ports:
+        - '8080:8080'
+
+  postgres:
+    profiles: ["oidc"]
+    image: postgres
+    environment:
+        POSTGRES_DB: keycloak
+        POSTGRES_USER: keycloak
+        POSTGRES_PASSWORD: password
+    volumes:
+        - pgdata:/var/lib/postgresql/data
 
 volumes:
   arango_data:
@@ -643,10 +642,9 @@ volumes:
     driver: local
   redis_data:
     driver: local
+  pgdata:
+    driver: local
 
 networks:
-    # TODO: fix this for local and prod
-    oidc-service:
-        name: amp-dev-keycloak_default
-        external: true
-    default:
+  default:
+    name: leav
