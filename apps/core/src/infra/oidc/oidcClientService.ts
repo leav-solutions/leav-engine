@@ -37,7 +37,7 @@ export default function({
     'core.infra.cache.cacheService': cacheService = null,
     config = null
 }: IDeps = {}): IOIDCClientService {
-    const cache = cacheService.getCache(ECacheType.RAM);
+    const cache = cacheService?.getCache(ECacheType.RAM);
     if (cache === undefined) {
         throw new LeavError(ErrorTypes.INTERNAL_ERROR, 'Cache service not found');
     }
@@ -67,7 +67,7 @@ export default function({
     const _writeTokensSetByUserId = async (userId: string, tokens: TokenSet): Promise<void> => cache.storeData({
         key: _buildTokensCacheKey(userId),
         data: JSON.stringify(tokens),
-        expiresIn: ms(config.auth.refreshTokenExpiration) + (1000 * 60)
+        expiresIn: ms(config.auth.refreshTokenExpiration) + (1_000 * 60)
     });
 
     const _getTokenSetByUserId = async (userId: string): Promise<TokenSet> => {
