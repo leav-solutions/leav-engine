@@ -175,7 +175,7 @@ services:
     command: [
         sh,
         -c,
-        "/scripts/wait-for-it.sh message-broker:5672 -t 1000 -- /scripts/wait-for-it.sh arangodb:8529 -t 1000 -- /scripts/start-core.sh",
+        "/scripts/wait-for-it.sh message-broker:5672 -t 1000 -- /scripts/wait-for-it.sh arangodb:8529 -t 1000 -- /scripts/wait-for-it.sh keycloak:8080 -t 1000 -- /scripts/start-core.sh",
       ]
 
   indexation-manager:
