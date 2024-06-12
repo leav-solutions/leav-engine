@@ -14,7 +14,7 @@ describe('ApplicationApp', () => {
             'core.app.auth': authAppMock as IAuthApp,
             'core.app.helpers.initQueryContext': initQueryContext({}),
             'core.app.helpers.validateRequestToken': validateRequestTokenHelper as ValidateRequestTokenFunc,
-            config: {auth: {oidc: {}}}
+            config: {auth: {oidc: {enable: true}}}
         });
         validateRequestTokenHelper.mockRejectedValueOnce('unused error');
 
@@ -48,7 +48,7 @@ describe('ApplicationApp', () => {
         const applicationApp = createApplicationApp({
             'core.app.helpers.initQueryContext': initQueryContext({}),
             'core.app.helpers.validateRequestToken': validateRequestTokenHelper as ValidateRequestTokenFunc,
-            config: {auth: {oidc: null}}
+            config: {auth: {oidc: {enable: false}}}
         });
         validateRequestTokenHelper.mockRejectedValueOnce('unused error');
 

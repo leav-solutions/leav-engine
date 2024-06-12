@@ -50,17 +50,19 @@ export const validateConfig = (conf: IConfig) => {
                 secure: Joi.boolean()
             },
             resetPasswordExpiration: Joi.string().required(),
-            oidc: Joi.object()
-                .allow(null)
-                .keys({
-                    wellKnownEndpoint: Joi.string().required(),
-                    providerUrl: Joi.string().required(),
-                    clientId: Joi.string().required(),
-                    cookie: {
-                        sameSite: Joi.string().valid('none', 'lax', 'strict'),
-                        secure: Joi.boolean()
-                    }
+            oidc: Joi.object().keys({
+                enable: Joi.boolean().required(),
+                wellKnownEndpoint: Joi.alternatives().conditional('enable', {
+                    is: true,
+                    then: Joi.string().required(),
+                    otherwise: Joi.string()
+                }),
+                clientId: Joi.alternatives().conditional('enable', {
+                    is: true,
+                    then: Joi.string().required(),
+                    otherwise: Joi.string()
                 })
+            })
         }),
         mailer: Joi.object().keys({
             host: Joi.string(),

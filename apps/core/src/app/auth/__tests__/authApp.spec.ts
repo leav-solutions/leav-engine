@@ -9,7 +9,7 @@ describe('authApp', () => {
             const authApp = createAuthApp({
                 config: {
                     auth: {
-                        oidc: null
+                        oidc: {enable: false}
                     }
                 } as any
             });
@@ -33,7 +33,7 @@ describe('authApp', () => {
                 'core.infra.oidc.oidcClientService': oidcClientServiceMock as IOIDCClientService,
                 config: {
                     auth: {
-                        oidc: {}
+                        oidc: {enable: true}
                     },
                     server: {
                         publicUrl: 'test://publicUrl'
@@ -78,7 +78,7 @@ describe('authApp', () => {
                             sameSite: 'sameSite',
                             secure: 'secure'
                         },
-                        oidc: null
+                        oidc: {enable: false}
                     }
                 } as any
             });
@@ -128,7 +128,7 @@ describe('authApp', () => {
                             sameSite: 'sameSite',
                             secure: 'secure'
                         },
-                        oidc: {}
+                        oidc: {enable: true}
                     }
                 } as any
             });
@@ -179,7 +179,7 @@ describe('authApp', () => {
                 config: {
                     auth: {
                         cookie: {},
-                        oidc: {}
+                        oidc: {enable: true}
                     }
                 } as any
             });

@@ -41,7 +41,7 @@ import {initOIDCClient} from './infra/oidc';
         }),
         initRedis({config: conf}),
         initMailer({config: conf}),
-        conf.auth.oidc !== null ? initOIDCClient(conf) : undefined,
+        conf.auth.oidc.enable ? initOIDCClient(conf) : undefined,
         initDb(conf)
     ]);
 
