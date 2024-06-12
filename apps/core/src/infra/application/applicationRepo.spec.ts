@@ -156,7 +156,7 @@ describe('applicationRepo', () => {
             const fsSpyStat = jest.spyOn(fs, 'stat').mockResolvedValue({} as Stats);
 
             jest.mock(
-                '/some/path/data-studio/manifest.json',
+                '/some/path/data-studio/package.json',
                 () => ({
                     name: 'data-studio',
                     description: 'data studio description',
@@ -166,7 +166,7 @@ describe('applicationRepo', () => {
             );
 
             jest.mock(
-                '/some/path/admin/manifest.json',
+                '/some/path/admin/package.json',
                 () => ({
                     name: 'admin',
                     description: 'admin description',
@@ -200,7 +200,7 @@ describe('applicationRepo', () => {
             });
 
             jest.mock(
-                '/some/path/data-studio/manifest.json',
+                '/some/path/data-studio/package.json',
                 () => ({
                     name: 'data-studio',
                     description: 'data studio description',
