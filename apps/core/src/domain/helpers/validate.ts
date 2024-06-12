@@ -45,7 +45,7 @@ export default function({
             }
         },
         async validateRecord(library, recordId, ctx): Promise<IRecord> {
-            async function _execute() {
+            async function _fetchRecordFromDB() {
                 const recordsRes = await recordRepo.find({
                     libraryId: library,
                     filters: [
@@ -63,7 +63,7 @@ export default function({
             }
 
             const cacheKey = utils.getRecordsCacheKey(library, recordId);
-            const res = await cacheService.memoize({key: cacheKey, func: _execute, storeNulls: false, ctx});
+            const res = await cacheService.memoize({key: cacheKey, func: _fetchRecordFromDB, storeNulls: false, ctx});
 
             if (!res) {
                 throw utils.generateExplicitValidationError(
