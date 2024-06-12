@@ -67,15 +67,17 @@ export interface IAuth {
         secure: boolean;
     };
     resetPasswordExpiration: string;
-    oidc: null | {
-        wellKnownEndpoint: string;
-        providerUrl: string;
-        clientId: string;
-        cookie: {
-            sameSite: 'none' | 'lax' | 'strict';
-            secure: boolean;
-        };
-    };
+    oidc:
+        | {
+              enable: false;
+              wellKnownEndpoint?: string;
+              clientId?: string;
+          }
+        | {
+              enable: true;
+              wellKnownEndpoint: string;
+              clientId: string;
+          };
 }
 
 export interface IMailer {

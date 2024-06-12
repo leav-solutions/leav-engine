@@ -321,7 +321,7 @@ export default function({
 
                         return next();
                     } catch {
-                        if (config.auth.oidc !== null) {
+                        if (config.auth.oidc.enable) {
                             return authApp.authenticateWithOIDCService(req, res);
                         } else {
                             return res.redirect(`/${APPS_URL_PREFIX}/login/?dest=${req.originalUrl}`);

@@ -130,7 +130,7 @@ export default function({
             app.get(
                 '/auth/oidc/verify/*',
                 async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
-                    if (config.auth.oidc === null) {
+                    if (!config.auth.oidc.enable) {
                         return res.status(401);
                     }
 
@@ -190,8 +190,8 @@ export default function({
                         // TODO check if cookie consent is set for the user
                         res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, {
                             httpOnly: true,
-                            sameSite: config.auth.oidc.cookie.sameSite,
-                            secure: config.auth.oidc.cookie.secure,
+                            sameSite: config.auth.cookie.sameSite,
+                            secure: config.auth.cookie.secure,
                             domain: req.headers.host,
                             expires: new Date(Date.now() + refreshExpires)
                         });
@@ -304,7 +304,7 @@ export default function({
                     domain: req.headers.host
                 });
 
-                if (config.auth.oidc !== null) {
+                if (config.auth.oidc.enable) {
                     const redirectUrl = oidcClientService.getLogoutUrl();
                     return res.status(200).json({redirectUrl});
                 }
@@ -435,8 +435,9 @@ export default function({
 
             app.post('/auth/refresh', async (req, res, next) => {
                 try {
-                    const refreshToken =
-                        config.auth.oidc !== null ? req.cookies[REFRESH_TOKEN_COOKIE_NAME] : req.body.refreshToken;
+                    const refreshToken = config.auth.oidc.enable
+                        ? req.cookies[REFRESH_TOKEN_COOKIE_NAME]
+                        : req.body.refreshToken;
 
                     if (typeof refreshToken === 'undefined') {
                         return res.status(400).send('Missing refresh token');
@@ -451,7 +452,7 @@ export default function({
                     }
 
                     try {
-                        if (config.auth.oidc !== null) {
+                        if (config.auth.oidc.enable) {
                             await oidcClientService.checkTokensValidity({userId: payload.userId});
                         }
                     } catch (err) {
@@ -521,7 +522,7 @@ export default function({
                         expires: new Date(Date.now() + cookieExpires)
                     });
 
-                    if (config.auth.oidc !== null) {
+                    if (config.auth.oidc.enable) {
                         const refreshCookieExpires = ms(String(config.auth.refreshTokenExpiration));
                         res.cookie(REFRESH_TOKEN_COOKIE_NAME, newRefreshToken, {
                             httpOnly: true,
@@ -533,7 +534,7 @@ export default function({
                     }
 
                     return res.status(200).json(
-                        config.auth.oidc !== null
+                        config.auth.oidc.enable
                             ? {}
                             : {
                                   refreshToken: newRefreshToken
@@ -618,7 +619,7 @@ export default function({
             };
         },
         authenticateWithOIDCService: async (req, res) => {
-            if (config.auth.oidc === null) {
+            if (!config.auth.oidc.enable) {
                 return res.status(401);
             }
 
