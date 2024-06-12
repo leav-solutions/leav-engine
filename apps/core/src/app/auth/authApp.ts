@@ -29,7 +29,7 @@ export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
     validateRequestToken(params: {apiKey?: string; cookies?: {}}): Promise<ITokenUserData>;
     registerRoute(app: Express): void;
-    authenticateWithOIDCService(req: IRequestWithContext, res: Response<unknown>): void;
+    authenticateWithOIDCService(req: IRequestWithContext, res: Response<unknown>): Promise<void | Response>;
 }
 
 const SESSION_CACHE_HEADER = 'session';
@@ -295,28 +295,22 @@ export default function({
                 }
             );
 
-            app.post(
-                '/auth/logout',
-                async (req: Request, res: Response): Promise<Response> => {
-                    res.cookie(ACCESS_TOKEN_COOKIE_NAME, '', {
-                        expires: new Date(0),
-                        httpOnly: true,
-                        sameSite: config.auth.cookie.sameSite,
-                        secure: config.auth.cookie.secure,
-                        domain: req.headers.host
-                    });
-                    // TODO Manage leav logout when the user logout on Keycloak
-                    //  Back and Front channel logout
+            app.post('/auth/logout', async (req, res) => {
+                res.cookie(ACCESS_TOKEN_COOKIE_NAME, '', {
+                    expires: new Date(0),
+                    httpOnly: true,
+                    sameSite: config.auth.cookie.sameSite,
+                    secure: config.auth.cookie.secure,
+                    domain: req.headers.host
+                });
 
-                    if (config.auth.oidc !== null) {
-                        // TODO ajouter l'url de redirection vers le portail de connexion amp ( argument post_logout_redirect_uri)
-                        const redirectUrl = oidcClientService.oidcClient.endSessionUrl();
-                        return res.status(200).json({redirectUrl});
-                    }
-
-                    return res.status(200).json({});
+                if (config.auth.oidc !== null) {
+                    const redirectUrl = oidcClientService.getLogoutUrl();
+                    return res.status(200).json({redirectUrl});
                 }
-            );
+
+                return res.status(200).json({});
+            });
 
             app.post(
                 '/auth/forgot-password',
@@ -439,123 +433,116 @@ export default function({
                 }
             );
 
-            app.post(
-                '/auth/refresh',
-                async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+            app.post('/auth/refresh', async (req, res, next) => {
+                try {
+                    const refreshToken =
+                        config.auth.oidc !== null ? req.cookies[REFRESH_TOKEN_COOKIE_NAME] : req.body.refreshToken;
+
+                    if (typeof refreshToken === 'undefined') {
+                        return res.status(400).send('Missing refresh token');
+                    }
+
+                    let payload: ISessionPayload;
+
                     try {
-                        const refreshToken =
-                            config.auth.oidc !== null ? req.cookies[REFRESH_TOKEN_COOKIE_NAME] : req.body.refreshToken;
+                        payload = jwt.verify(refreshToken, config.auth.key) as ISessionPayload;
+                    } catch (e) {
+                        throw new AuthenticationError('Invalid token');
+                    }
 
-                        if (typeof refreshToken === 'undefined') {
-                            return res.status(400).send('Missing refresh token');
+                    try {
+                        if (config.auth.oidc !== null) {
+                            await oidcClientService.checkTokensValidity({userId: payload.userId});
                         }
+                    } catch (err) {
+                        throw new AuthenticationError('oidc session expired');
+                    }
 
-                        let payload: ISessionPayload;
+                    if (!payload.userId || !payload.ip || !payload.agent) {
+                        throw new AuthenticationError('Invalid token');
+                    }
 
-                        try {
-                            payload = jwt.verify(refreshToken, config.auth.key) as ISessionPayload;
-                        } catch (e) {
-                            throw new AuthenticationError('Invalid token');
-                        }
+                    // Get user data
+                    const ctx: IQueryInfos = {
+                        userId: config.defaultUserId,
+                        queryId: 'refresh'
+                    };
 
-                        try {
-                            if (config.auth.oidc !== null) {
-                                await oidcClientService.checkTokensValidity({userId: payload.userId});
-                            }
-                        } catch (err) {
-                            throw new AuthenticationError('oidc session expired');
-                        }
+                    const users = await recordDomain.find({
+                        params: {
+                            library: 'users',
+                            filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.userId}]
+                        },
+                        ctx
+                    });
 
-                        if (!payload.userId || !payload.ip || !payload.agent) {
-                            throw new AuthenticationError('Invalid token');
-                        }
+                    // User could have been deleted / disabled in database
+                    if (!users.list.length) {
+                        return res.status(401).send('Invalid token');
+                    }
 
-                        // Get user data
-                        const ctx: IQueryInfos = {
-                            userId: config.defaultUserId,
-                            queryId: 'refresh'
-                        };
+                    const userSessionId = (
+                        await cacheService.getCache(ECacheType.RAM).getData([`${SESSION_CACHE_HEADER}:${refreshToken}`])
+                    )[0];
 
-                        const users = await recordDomain.find({
-                            params: {
-                                library: 'users',
-                                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.userId}]
-                            },
-                            ctx
-                        });
+                    if (!userSessionId) {
+                        return res.status(401).send('Invalid session');
+                    }
 
-                        // User could have been deleted / disabled in database
-                        if (!users.list.length) {
-                            return res.status(401).send('Invalid token');
-                        }
+                    // We check if user agent is the same
+                    if (payload.agent !== req.headers['user-agent']) {
+                        return res.status(401).send('Invalid session');
+                    }
 
-                        const userSessionId = (
-                            await cacheService
-                                .getCache(ECacheType.RAM)
-                                .getData([`${SESSION_CACHE_HEADER}:${refreshToken}`])
-                        )[0];
+                    // Everything is ok, we can generate, update and return new tokens
 
-                        if (!userSessionId) {
-                            return res.status(401).send('Invalid session');
-                        }
+                    const newAccessToken = await _generateAccessToken(payload.userId, ctx);
+                    const newRefreshToken = _generateRefreshToken({
+                        userId: payload.userId,
+                        ip: req.headers['x-forwarded-for'],
+                        agent: req.headers['user-agent']
+                    });
 
-                        // We check if user agent is the same
-                        if (payload.agent !== req.headers['user-agent']) {
-                            return res.status(401).send('Invalid session');
-                        }
+                    await cacheService.getCache(ECacheType.RAM).storeData({
+                        key: `${SESSION_CACHE_HEADER}:${newRefreshToken}`,
+                        data: payload.userId,
+                        expiresIn: ms(config.auth.refreshTokenExpiration)
+                    });
 
-                        // Everything is ok, we can generate, update and return new tokens
+                    // Delete old session
+                    await cacheService.getCache(ECacheType.RAM).deleteData([`${SESSION_CACHE_HEADER}:${refreshToken}`]);
 
-                        const newAccessToken = await _generateAccessToken(payload.userId, ctx);
-                        const newRefreshToken = _generateRefreshToken({
-                            userId: payload.userId,
-                            ip: req.headers['x-forwarded-for'],
-                            agent: req.headers['user-agent']
-                        });
+                    const cookieExpires = ms(String(config.auth.tokenExpiration));
+                    res.cookie(ACCESS_TOKEN_COOKIE_NAME, newAccessToken, {
+                        httpOnly: true,
+                        sameSite: config.auth.cookie.sameSite,
+                        secure: config.auth.cookie.secure,
+                        domain: req.headers.host,
+                        expires: new Date(Date.now() + cookieExpires)
+                    });
 
-                        await cacheService.getCache(ECacheType.RAM).storeData({
-                            key: `${SESSION_CACHE_HEADER}:${newRefreshToken}`,
-                            data: payload.userId,
-                            expiresIn: ms(config.auth.refreshTokenExpiration)
-                        });
-
-                        // Delete old session
-                        await cacheService
-                            .getCache(ECacheType.RAM)
-                            .deleteData([`${SESSION_CACHE_HEADER}:${refreshToken}`]);
-
-                        const cookieExpires = ms(String(config.auth.tokenExpiration));
-                        res.cookie(ACCESS_TOKEN_COOKIE_NAME, newAccessToken, {
+                    if (config.auth.oidc !== null) {
+                        const refreshCookieExpires = ms(String(config.auth.refreshTokenExpiration));
+                        res.cookie(REFRESH_TOKEN_COOKIE_NAME, newRefreshToken, {
                             httpOnly: true,
                             sameSite: config.auth.cookie.sameSite,
                             secure: config.auth.cookie.secure,
                             domain: req.headers.host,
-                            expires: new Date(Date.now() + cookieExpires)
+                            expires: new Date(Date.now() + refreshCookieExpires)
                         });
-
-                        if (config.auth.oidc !== null) {
-                            const refreshCookieExpires = ms(String(config.auth.refreshTokenExpiration));
-                            res.cookie(REFRESH_TOKEN_COOKIE_NAME, newRefreshToken, {
-                                httpOnly: true,
-                                sameSite: config.auth.cookie.sameSite,
-                                secure: config.auth.cookie.secure,
-                                domain: req.headers.host,
-                                expires: new Date(Date.now() + refreshCookieExpires)
-                            });
-                        }
-
-                        return res.status(200).json(
-                            config.auth.oidc !== null
-                                ? {}
-                                : {
-                                      refreshToken: newRefreshToken
-                                  }
-                        );
-                    } catch (err) {
-                        return next(err);
                     }
+
+                    return res.status(200).json(
+                        config.auth.oidc !== null
+                            ? {}
+                            : {
+                                  refreshToken: newRefreshToken
+                              }
+                    );
+                } catch (err) {
+                    return next(err);
                 }
-            );
+            });
         },
         async validateRequestToken({apiKey, cookies}) {
             const ctx: IQueryInfos = {
@@ -640,7 +627,7 @@ export default function({
             ).toString('base64url');
 
             const oidcLoginUrl = await oidcClientService.getAuthorizationUrl({
-                redirectUri: `${config.auth.oidc.redirectUri}/${payload}`,
+                redirectUri: `${config.server.publicUrl}/auth/oidc/verify/${payload}`,
                 queryId: req.ctx.queryId
             });
 

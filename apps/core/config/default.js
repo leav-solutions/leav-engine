@@ -47,7 +47,6 @@ module.exports = {
             wellKnownEndpoint: 'http://keycloak:8080/realms/master/.well-known/openid-configuration',
             providerUrl: 'http://core.keycloak.localhost/realms/master/protocol/openid-connect/auth',
             clientId: 'leav',
-            redirectUri: 'http://core.leav.localhost/auth/oidc/verify',
             cookie: {
                 sameSite: process.env.AUTH_COOKIE_SAMESITE || 'lax',
                 secure: process.env.AUTH_COOKIE_SECURE || false
