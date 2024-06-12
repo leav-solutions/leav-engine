@@ -56,7 +56,6 @@ export const validateConfig = (conf: IConfig) => {
                     wellKnownEndpoint: Joi.string().required(),
                     providerUrl: Joi.string().required(),
                     clientId: Joi.string().required(),
-                    redirectUri: Joi.string().required(),
                     cookie: {
                         sameSite: Joi.string().valid('none', 'lax', 'strict'),
                         secure: Joi.boolean()

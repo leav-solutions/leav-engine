@@ -71,7 +71,6 @@ export interface IAuth {
         wellKnownEndpoint: string;
         providerUrl: string;
         clientId: string;
-        redirectUri: string;
         cookie: {
             sameSite: 'none' | 'lax' | 'strict';
             secure: boolean;

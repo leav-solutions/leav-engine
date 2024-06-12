@@ -20,6 +20,7 @@ export interface IOIDCClientService {
     oidcClient?: OidcClient;
     getTokensFromCodes: (params: {authorizationCode: string; queryId: string}) => Promise<TokenSet>;
     getAuthorizationUrl: (params: {redirectUri: string; queryId: string}) => Promise<string>;
+    getLogoutUrl: () => string;
     saveOIDCTokens: (params: {
         userId: string;
         tokens: TokenSet;
@@ -110,6 +111,7 @@ export default function({
                 code_challenge_method: 'S256'
             });
         },
+        getLogoutUrl: () => oidcClient.endSessionUrl(),
         saveOIDCTokens: ({userId, tokens}) => _writeTokensSetByUserId(userId, tokens),
         checkTokensValidity: async ({userId}) => {
             const tokenSet = await _getTokenSetByUserId(userId);
