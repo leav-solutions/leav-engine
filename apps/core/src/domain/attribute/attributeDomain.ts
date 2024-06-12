@@ -127,8 +127,7 @@ export default function({
 
             // Due to race conditions, we sometimes get null when retrieving a newly created core entity. Thus, we don't
             // want to keep this "false" null in cache
-            const res = await cacheService.memoize({key: cacheKey, func: _execute, storeNulls: false, ctx});
-            return res;
+            return cacheService.memoize({key: cacheKey, func: _execute, storeNulls: false, ctx});
         },
         async getAttributeLibraries({attributeId, ctx}): Promise<ILibrary[]> {
             // Validate attribute
