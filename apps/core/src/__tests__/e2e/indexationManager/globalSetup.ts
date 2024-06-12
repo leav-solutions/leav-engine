@@ -9,6 +9,7 @@ import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
 import {initRedis} from '../../../infra/cache/redis';
 import {initDb} from '../../../infra/db/db';
 import {initMailer} from '../../../infra/mailer';
+import {initOIDCClient} from '../../../infra/oidc';
 
 export async function setup() {
     try {
@@ -23,12 +24,14 @@ export async function setup() {
         const amqp = await amqpService({config: conf.amqp});
         const redisClient = await initRedis({config: conf});
         const mailer = await initMailer({config: conf});
+        const oidcClient = conf.auth.oidc.enable ? await initOIDCClient(conf) : undefined;
 
         const {coreContainer} = await initDI({
             translator,
             'core.infra.amqpService': amqp,
             'core.infra.redis': redisClient,
-            'core.infra.mailer': mailer
+            'core.infra.mailer': mailer,
+            'core.infra.oidcClient': oidcClient
         });
 
         // Clear all caches (redis cache for example might persist between runs)
