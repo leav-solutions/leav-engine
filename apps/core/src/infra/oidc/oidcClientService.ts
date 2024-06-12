@@ -12,6 +12,7 @@ import ms from 'ms';
 
 const AUTH_REDIRECT_HEADER = 'oidc_redirect';
 const TOKENS_HEADER = 'oidc_tokens';
+const ONE_DAY_IN_MS = 1_000 * 60 * 60 * 24;
 
 type AuthRedirectStoredData = [codeVerifier: string, redirectUri: string];
 
@@ -61,7 +62,7 @@ export default function({
     const _writeCodeVerifierRedirectUriByQueryId = async (queryId: string, data: AuthRedirectStoredData) => cache.storeData({
         key: _buildCacheKey(queryId),
         data: JSON.stringify(data),
-        expiresIn: 1000 * 60 * 3 // TODO: maybe too short, can we set no expiration?
+        expiresIn: ONE_DAY_IN_MS
     });
 
     const _writeTokensSetByUserId = async (userId: string, tokens: TokenSet): Promise<void> => cache.storeData({
