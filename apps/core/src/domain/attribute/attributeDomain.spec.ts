@@ -1,8 +1,6 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ILibrary} from '_types/library';
-import {IQueryInfos} from '_types/queryInfos';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain';
@@ -11,15 +9,17 @@ import {IFormRepo} from 'infra/form/formRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IUtils} from 'utils/utils';
-import {mockAttrAdv, mockAttrAdvVersionable, mockAttrSimple, mockAttrTree} from '../../__tests__/mocks/attribute';
-import {mockForm} from '../../__tests__/mocks/forms';
-import {mockLibrary} from '../../__tests__/mocks/library';
-import {ActionsListEvents, ActionsListIOTypes} from '../../_types/actionsList';
-import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
-import {AdminPermissionsActions} from '../../_types/permissions';
+import {ILibrary} from '_types/library';
+import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
+import {ActionsListEvents, ActionsListIOTypes} from '../../_types/actionsList';
+import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
+import {AdminPermissionsActions} from '../../_types/permissions';
+import {mockAttrAdv, mockAttrAdvVersionable, mockAttrSimple, mockAttrTree} from '../../__tests__/mocks/attribute';
+import {mockForm} from '../../__tests__/mocks/forms';
+import {mockLibrary} from '../../__tests__/mocks/library';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import attributeDomain from './attributeDomain';
 
@@ -30,7 +30,8 @@ const mockCacheService: Mockify<ICacheService> = {
 };
 
 const mockCachesService: Mockify<ICachesService> = {
-    getCache: jest.fn().mockReturnValue(mockCacheService)
+    getCache: jest.fn().mockReturnValue(mockCacheService),
+    memoize: jest.fn().mockImplementation(({func}) => func())
 };
 
 const mockEventsManager: Mockify<IEventsManagerDomain> = {
@@ -146,7 +147,9 @@ describe('attributeDomain', () => {
 
             const attrDomain = attributeDomain({
                 'core.infra.library': mockLibRepo as ILibraryRepo,
-                'core.infra.attribute': mockAttrRepo as IAttributeRepo
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                'core.infra.cache.cacheService': mockCachesService as ICachesService,
+                'core.utils': mockUtils as IUtils
             });
             const libAttrs = await attrDomain.getLibraryAttributes('test', ctx);
 

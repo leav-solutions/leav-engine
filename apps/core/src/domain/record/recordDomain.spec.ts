@@ -22,6 +22,7 @@ import ValidationError from '../../errors/ValidationError';
 import {getPreviewUrl} from '../../utils/preview/preview';
 import {ActionsListEvents} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes} from '../../_types/attribute';
+import {LibraryBehavior} from '../../_types/library';
 import {AttributeCondition, IRecord, Operator} from '../../_types/record';
 import {
     dateRangeAttributeMock,
@@ -66,10 +67,35 @@ describe('RecordDomain', () => {
     };
 
     const mockValidateHelper: Mockify<IValidateHelper> = {
-        validateLibrary: jest.fn()
+        validateLibrary: jest.fn().mockImplementation(libraryId => ({
+            ...mockLibrary,
+            behavior: libraryId === 'files' ? LibraryBehavior.FILES : LibraryBehavior.STANDARD,
+            recordIdentityConf: {
+                label: 'library_label',
+                color: 'library_color',
+                preview: 'library_preview',
+                subLabel: 'library_subLabel'
+            }
+        }))
     };
 
     const mockSendRecordUpdateEventHelper = jest.fn();
+
+    const mockUtils: Mockify<IUtils> = {
+        translateError: jest.fn().mockReturnValue('mock error'),
+        getRecordsCacheKey: jest.fn().mockReturnValue('cache_key'),
+        getCoreEntityCacheKey: jest.fn().mockReturnValue('cache_key'),
+        getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
+        isLinkAttribute: jest.fn().mockReturnValue(false),
+        isTreeAttribute: jest.fn().mockReturnValue(false)
+    };
+
+    const mockCacheService: Mockify<ICachesService> = {
+        memoize: jest.fn().mockImplementation(({func}) => func()),
+        getCache: jest.fn().mockReturnValue({
+            deleteData: jest.fn()
+        })
+    };
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -207,10 +233,6 @@ describe('RecordDomain', () => {
                     )
             };
 
-            const mockUtils: Mockify<IUtils> = {
-                translateError: jest.fn().mockReturnValue('mock error')
-            };
-
             const recDomain = recordDomain({
                 config: mockConfig as Config.IConfig,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
@@ -281,9 +303,11 @@ describe('RecordDomain', () => {
 
             const recDomain = recordDomain({
                 'core.infra.record': recRepo as IRecordRepo,
+                'core.infra.cache.cacheService': mockCacheService as ICachesService,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
-                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper
+                'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper,
+                'core.utils': mockUtils as IUtils
             });
 
             const updatedRecord = await recDomain.updateRecord({
@@ -974,12 +998,17 @@ describe('RecordDomain', () => {
             };
 
             const mockAttributeDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise(mockAttrSimple)
+                getAttributeProperties: jest
+                    .fn()
+                    .mockImplementation(({id}) =>
+                        id === 'preview_attr' ? {...mockAttrAdvLink, linked_library: 'files'} : mockAttrSimple
+                    )
             };
 
             const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
 
-            const mockUtils: Mockify<IUtils> = {
+            const mockUtilsRecordIdentity: Mockify<IUtils> = {
+                ...mockUtils,
                 getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
                 isLinkAttribute: jest.fn().mockReturnValue(false),
                 isTreeAttribute: jest.fn().mockReturnValue(false)
@@ -989,8 +1018,10 @@ describe('RecordDomain', () => {
                 'core.domain.value': mockValDomain as IValueDomain,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.infra.library': mockLibraryRepo as ILibraryRepo,
-                'core.utils': mockUtils as IUtils,
+                'core.infra.cache.cacheService': mockCacheService as ICachesService,
+                'core.utils': mockUtilsRecordIdentity as IUtils,
                 config: mockConfig as Config.IConfig
             });
 
@@ -1089,17 +1120,13 @@ describe('RecordDomain', () => {
 
                 const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
 
-                const mockUtils: Mockify<IUtils> = {
-                    getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
-                    isLinkAttribute: jest.fn().mockReturnValue(false),
-                    isTreeAttribute: jest.fn().mockReturnValue(false)
-                };
-
                 const recDomain = recordDomain({
                     'core.domain.value': mockValDomain as IValueDomain,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                     'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                     'core.infra.library': mockLibraryRepo as ILibraryRepo,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.infra.cache.cacheService': mockCacheService as ICachesService,
                     'core.utils': mockUtils as IUtils,
                     config: mockConfig as Config.IConfig
                 });
@@ -1178,17 +1205,13 @@ describe('RecordDomain', () => {
 
                 const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
 
-                const mockUtils: Mockify<IUtils> = {
-                    getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
-                    isLinkAttribute: jest.fn().mockReturnValue(false),
-                    isTreeAttribute: jest.fn().mockReturnValue(false)
-                };
-
                 const recDomain = recordDomain({
                     'core.domain.value': mockValDomain as IValueDomain,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                     'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                     'core.infra.library': mockLibraryRepo as ILibraryRepo,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.infra.cache.cacheService': mockCacheService as ICachesService,
                     'core.utils': mockUtils as IUtils,
                     config: mockConfig as Config.IConfig
                 });
@@ -1268,17 +1291,13 @@ describe('RecordDomain', () => {
 
                 const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
 
-                const mockUtils: Mockify<IUtils> = {
-                    getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
-                    isLinkAttribute: jest.fn().mockReturnValue(false),
-                    isTreeAttribute: jest.fn().mockReturnValue(false)
-                };
-
                 const recDomain = recordDomain({
                     'core.domain.value': mockValDomain as IValueDomain,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                     'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                     'core.infra.library': mockLibraryRepo as ILibraryRepo,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.infra.cache.cacheService': mockCacheService as ICachesService,
                     'core.utils': mockUtils as IUtils,
                     config: mockConfig as Config.IConfig
                 });
@@ -1357,17 +1376,13 @@ describe('RecordDomain', () => {
 
                 const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
 
-                const mockUtils: Mockify<IUtils> = {
-                    getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
-                    isLinkAttribute: jest.fn().mockReturnValue(false),
-                    isTreeAttribute: jest.fn().mockReturnValue(false)
-                };
-
                 const recDomain = recordDomain({
                     'core.domain.value': mockValDomain as IValueDomain,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                     'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                     'core.infra.library': mockLibraryRepo as ILibraryRepo,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.infra.cache.cacheService': mockCacheService as ICachesService,
                     'core.utils': mockUtils as IUtils,
                     config: mockConfig as Config.IConfig
                 });
@@ -1447,17 +1462,13 @@ describe('RecordDomain', () => {
 
                 const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
 
-                const mockUtils: Mockify<IUtils> = {
-                    getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
-                    isLinkAttribute: jest.fn().mockReturnValue(false),
-                    isTreeAttribute: jest.fn().mockReturnValue(false)
-                };
-
                 const recDomain = recordDomain({
                     'core.domain.value': mockValDomain as IValueDomain,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                     'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                     'core.infra.library': mockLibraryRepo as ILibraryRepo,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.infra.cache.cacheService': mockCacheService as ICachesService,
                     'core.utils': mockUtils as IUtils,
                     config: mockConfig as Config.IConfig
                 });
@@ -1536,17 +1547,13 @@ describe('RecordDomain', () => {
 
                 const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
 
-                const mockUtils: Mockify<IUtils> = {
-                    getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
-                    isLinkAttribute: jest.fn().mockReturnValue(false),
-                    isTreeAttribute: jest.fn().mockReturnValue(false)
-                };
-
                 const recDomain = recordDomain({
                     'core.domain.value': mockValDomain as IValueDomain,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                     'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                     'core.infra.library': mockLibraryRepo as ILibraryRepo,
+                    'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                    'core.infra.cache.cacheService': mockCacheService as ICachesService,
                     'core.utils': mockUtils as IUtils,
                     config: mockConfig as Config.IConfig
                 });
@@ -1588,7 +1595,6 @@ describe('RecordDomain', () => {
                 let mockGetCoreEntityById;
                 let mockLibraryRepo: Mockify<ILibraryRepo>;
                 let mockAttributeDomain: Mockify<IAttributeDomain>;
-                let mockUtils: Mockify<IUtils>;
 
                 const recordWithDateRange = {
                     id: '222536283',
@@ -1615,12 +1621,6 @@ describe('RecordDomain', () => {
 
                     mockAttributeDomain = {
                         getAttributeProperties: global.__mockPromise(dateRangeAttributeMock)
-                    };
-
-                    mockUtils = {
-                        getPreviewsAttributeName: jest.fn().mockReturnValue('previews'),
-                        isLinkAttribute: jest.fn().mockReturnValue(false),
-                        isTreeAttribute: jest.fn().mockReturnValue(false)
                     };
                 });
 
@@ -1650,6 +1650,8 @@ describe('RecordDomain', () => {
                         'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                         'core.utils': mockUtils as IUtils,
                         'core.infra.library': mockLibraryRepo as ILibraryRepo,
+                        'core.infra.cache.cacheService': mockCacheService as ICachesService,
+                        'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                         config: mockConfig as Config.IConfig,
                         translator: mockTranslatorWithOptions as i18n
                     });
@@ -1703,8 +1705,10 @@ describe('RecordDomain', () => {
                         'core.domain.value': mockValDomain as IValueDomain,
                         'core.domain.helpers.getCoreEntityById': mockGetCoreEntityById,
                         'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
+                        'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                         'core.utils': mockUtils as IUtils,
                         'core.infra.library': mockLibraryRepo as ILibraryRepo,
+                        'core.infra.cache.cacheService': mockCacheService as ICachesService,
                         config: mockConfig as Config.IConfig,
                         translator: mockTranslatorWithOptions as i18n
                     });
@@ -1761,14 +1765,6 @@ describe('RecordDomain', () => {
                 getValues: jest.fn()
             };
             const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
-
-            const mockUtils: Mockify<IUtils> = {
-                getCoreEntityCacheKey: jest.fn().mockReturnValue('core_entity_cache_key')
-            };
-
-            const mockCacheService: Mockify<ICachesService> = {
-                memoize: jest.fn().mockReturnValue(null)
-            };
 
             const recDomain = recordDomain({
                 'core.domain.value': mockValDomain as IValueDomain,
