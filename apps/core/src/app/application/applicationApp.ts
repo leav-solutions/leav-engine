@@ -309,8 +309,10 @@ export default function({
                     const endpoint = req.params.endpoint;
                     req.ctx = initQueryContext(req);
 
-                    // TODO est-ce que si l'on est en OIDC on interdit l'app de login classique ?
                     if (endpoint === 'login') {
+                        if (config.auth.oidc.enable) {
+                            return res.redirect(`/${APPS_URL_PREFIX}/portal/`);
+                        }
                         return next();
                     }
 

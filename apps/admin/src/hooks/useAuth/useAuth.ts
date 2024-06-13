@@ -12,7 +12,6 @@ function useAuth(): IAuthHook {
     const {setRefreshToken} = useRefreshToken();
 
     return {
-        // TODO Pourquoi est-ce que l'on utilise pas ici le logout de leav-ui ?
         logout: async () => {
             const response = await fetch('/auth/logout', {method: 'POST'});
             const data = await response.json();
