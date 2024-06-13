@@ -61,7 +61,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function({
+export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.apiKey': apiKeyDomain = null,
@@ -187,7 +187,6 @@ export default function({
                             data: user.id,
                             expiresIn: refreshExpires
                         });
-                        // TODO check if cookie consent is set for the user
                         res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, {
                             httpOnly: true,
                             sameSite: config.auth.cookie.sameSite,
