@@ -91,7 +91,6 @@ describe('OIDCClientService', () => {
             expect(cacheMock.deleteData).toHaveBeenCalledWith(['oidc_redirect:queryId']);
             expect(oidcClientMock.grant).toHaveBeenCalledTimes(1);
             expect(oidcClientMock.grant).toHaveBeenCalledWith({
-                client_id: 'client_id',
                 code: '123456789AZERTY',
                 code_verifier: 'codeVerifier',
                 grant_type: 'authorization_code',
@@ -219,7 +218,7 @@ describe('OIDCClientService', () => {
 
             expect(cacheMock.storeData).toHaveBeenCalledTimes(1);
             expect(cacheMock.storeData).toHaveBeenCalledWith(
-                expect.objectContaining({expiresIn: 86400000, key: 'oidc_redirect:queryId'})
+                expect.objectContaining({expiresIn: 600000, key: 'oidc_redirect:queryId'})
             );
             expect(oidcClientMock.authorizationUrl).toHaveBeenCalledWith(
                 expect.objectContaining({
