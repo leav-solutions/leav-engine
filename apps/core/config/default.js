@@ -47,7 +47,7 @@ module.exports = {
             enable: process.env.OIDC_ENABLE || false,
             wellKnownEndpoint:
                 process.env.OIDC_WELLKNOWN_ENDPOINT ||
-                'http://keycloak:8080/realms/master/.well-known/openid-configuration',
+                'http://keycloak:8080/realms/LEAV/.well-known/openid-configuration',
             clientId: process.env.OIDC_CLIENT_ID || 'leav'
         }
     },
