@@ -1,4 +1,4 @@
-FROM quay.io/keycloak/keycloak:23.0.5 as builder
+FROM keycloak/keycloak:25.0 as builder
 
 ENV KC_HEALTH_ENABLED=true
 ENV KC_METRICS_ENABLED=true
@@ -10,7 +10,8 @@ COPY ./realms /opt/keycloak/data/import/
 
 RUN /opt/keycloak/bin/kc.sh build
 
-FROM quay.io/keycloak/keycloak:23.0.5
+FROM keycloak/keycloak:25.0
+
 COPY --from=builder /opt/keycloak/lib/quarkus/ /opt/keycloak/lib/quarkus/
 
 WORKDIR /opt/keycloak

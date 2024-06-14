@@ -580,7 +580,7 @@ services:
         - ./realms:/opt/keycloak/data/import
     entrypoint: ['/bin/bash', '-c']
     command:
-        - /opt/keycloak/bin/kc.sh import --optimized --dir=/opt/keycloak/data/import --override true && /opt/keycloak/bin/kc.sh start-dev
+        - /opt/keycloak/bin/kc.sh start-dev --import-realm --optimized
     labels:
       - traefik.enable=true
       - traefik.http.routers.redis-commander.rule=Host(`keycloak.leav.localhost`)
