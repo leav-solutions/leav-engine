@@ -72,11 +72,13 @@ export interface IAuth {
               enable: false;
               wellKnownEndpoint?: string;
               clientId?: string;
+              postLogoutRedirectUri?: string;
           }
         | {
               enable: true;
               wellKnownEndpoint: string;
               clientId: string;
+              postLogoutRedirectUri: string;
           };
 }
 

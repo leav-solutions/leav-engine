@@ -48,7 +48,8 @@ module.exports = {
             wellKnownEndpoint:
                 process.env.OIDC_WELLKNOWN_ENDPOINT ||
                 'http://keycloak:8080/realms/LEAV/.well-known/openid-configuration',
-            clientId: process.env.OIDC_CLIENT_ID || 'leav'
+            clientId: process.env.OIDC_CLIENT_ID || 'leav',
+            postLogoutRedirectUri: process.env.OIDC_POST_LOGOUT_REDIRECT_URI || 'http://core.leav.localhost/'
         }
     },
     mailer: {

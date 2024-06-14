@@ -439,6 +439,7 @@ export default function ({
                         : req.body.refreshToken;
 
                     if (typeof refreshToken === 'undefined') {
+                        // TODO voir pour rediriger vers l'url de login si l'oidc est actif
                         return res.status(400).send('Missing refresh token');
                     }
 
@@ -450,12 +451,12 @@ export default function ({
                         throw new AuthenticationError('Invalid token');
                     }
 
-                    try {
-                        if (config.auth.oidc.enable) {
+                    if (config.auth.oidc.enable) {
+                        try {
                             await oidcClientService.checkTokensValidity({userId: payload.userId});
+                        } catch (err) {
+                            throw new AuthenticationError('oidc session expired');
                         }
-                    } catch (err) {
-                        throw new AuthenticationError('oidc session expired');
                     }
 
                     if (!payload.userId || !payload.ip || !payload.agent) {
