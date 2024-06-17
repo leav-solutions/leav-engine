@@ -175,7 +175,7 @@ services:
     command: [
         sh,
         -c,
-        "/scripts/wait-for-it.sh message-broker:5672 -t 1000 -- /scripts/wait-for-it.sh arangodb:8529 -t 1000 -- /scripts/wait-for-it.sh keycloak:8080 -t 1000 -- /scripts/start-core.sh",
+        "/scripts/wait-for-it.sh message-broker:5672 -t 1000 -- /scripts/wait-for-it.sh arangodb:8529 -t 1000 -- /scripts/start-core.sh",
       ]
 
   indexation-manager:
@@ -547,7 +547,7 @@ services:
 
   ## Kibana is used for debugging essentially. Uncomment following lines if needed
   kibana:
-    profiles: ["log"]
+    profiles: ["logs"]
     image: kibana:8.10.2
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
@@ -557,47 +557,6 @@ services:
       - "traefik.http.routers.kibana.entrypoints=web"
     depends_on:
       - elasticsearch
-
-  keycloak:
-    profiles: ["oidc"]
-    build:
-      context: .
-      dockerfile: ./DOCKERFILES/KEYCLOAK/Dockerfile
-    environment:
-        KEYCLOAK_ADMIN: admin
-        KEYCLOAK_ADMIN_PASSWORD: admin
-        KC_HEALTH_ENABLED: false
-        KC_METRICS_ENABLED: false
-        KC_CACHE: ispn
-        KC_DB: postgres
-        KC_DB_URL: 'jdbc:postgresql://postgres/keycloak'
-        KC_DB_USERNAME: keycloak
-        KC_DB_PASSWORD: password
-        KC_HOSTNAME_STRICT: false
-        KC_HOSTNAME_STRICT_BACKCHANNEL: false
-        KC_LOG_LEVEL: info,org.keycloak.events:debug
-    volumes:
-        - ./realms:/opt/keycloak/data/import
-    entrypoint: ['/bin/bash', '-c']
-    command:
-        - /opt/keycloak/bin/kc.sh start-dev --import-realm --optimized
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.redis-commander.rule=Host(`keycloak.leav.localhost`)
-      - traefik.http.services.redis-commander.loadbalancer.server.port=8080
-      - traefik.http.routers.keycloak.entrypoints=web
-    ports:
-        - '8080:8080'
-
-  postgres:
-    profiles: ["oidc"]
-    image: postgres
-    environment:
-        POSTGRES_DB: keycloak
-        POSTGRES_USER: keycloak
-        POSTGRES_PASSWORD: password
-    volumes:
-        - pgdata:/var/lib/postgresql/data
 
 volumes:
   arango_data:
@@ -641,8 +600,6 @@ volumes:
   message-broker_data:
     driver: local
   redis_data:
-    driver: local
-  pgdata:
     driver: local
 
 networks:

@@ -211,5 +211,35 @@ describe('authApp', () => {
             expect(nextMock).not.toHaveBeenCalled();
             expect(result).toBe('Missing refresh token');
         });
+
+        it.todo('finish all cases');
+    });
+
+    describe('auth/oidc/verify/*', () => {
+        it('Should respond 401 when oidc not enable', async () => {
+            const authApp = createAuthApp({
+                config: {
+                    auth: {
+                        oidc: {enable: false}
+                    }
+                } as any
+            });
+            const expressMock: Mockify<Express> = {
+                get: jest.fn(),
+                post: jest.fn()
+            };
+            authApp.registerRoute((expressMock as unknown) as Express);
+            const verifyHandler = expressMock.get.mock.calls.find(args => args[0] === '/auth/oidc/verify/*')[1];
+            const request = {};
+            const response = {
+                status: jest.fn(identity)
+            };
+
+            const result = await verifyHandler(request, response);
+
+            expect(result).toEqual(401);
+        });
+
+        it.todo('Should');
     });
 });
