@@ -91,10 +91,10 @@ export default function ({
             _deleteCodeVerifierRedirectUriByQueryId(queryId);
 
             return oidcClient.grant({
+                grant_type: 'authorization_code',
                 code: authorizationCode,
                 code_verifier: codeVerifier,
-                redirect_uri: redirectUri,
-                grant_type: 'authorization_code'
+                redirect_uri: redirectUri
             });
         },
         getAuthorizationUrl: async ({redirectUri, queryId}) => {
