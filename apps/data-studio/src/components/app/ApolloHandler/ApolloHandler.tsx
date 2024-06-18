@@ -22,14 +22,11 @@ import {useTranslation} from 'react-i18next';
 import {addInfo} from 'reduxStore/infos';
 import {useAppDispatch} from 'reduxStore/store';
 import {IInfo, InfoChannel, InfoType} from '_types/types';
-import {API_ENDPOINT, LOGIN_ENDPOINT, ORIGIN_URL, WS_URL} from '../../../constants';
+import {API_ENDPOINT, ORIGIN_URL, WS_URL} from '../../../constants';
 
 interface IApolloHandlerProps {
     children: ReactNode;
 }
-
-const _redirectToLogin = () =>
-    window.location.replace(`${ORIGIN_URL}/${APPS_ENDPOINT}/${LOGIN_ENDPOINT}/?dest=${window.location.pathname}`);
 
 function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     const {t, i18n} = useTranslation();
@@ -54,7 +51,6 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
                             complete: observer.complete.bind(observer)
                         });
                     } catch (err) {
-                        _redirectToLogin();
                         observer.error(err);
                     }
                 })();

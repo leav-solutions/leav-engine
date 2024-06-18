@@ -77,6 +77,18 @@ export default function({
     'core.utils': utils = null,
     config = null
 }: IDeps = {}): IApplicationApp {
+    const _doesFileExist = async (folder: string, filePath: string) => {
+        const files: string[] = await new Promise((resolve, reject) =>
+            glob(`${folder}${filePath}`, (err, matches) => {
+                if (err) {
+                    return reject(err);
+                }
+                resolve(matches);
+            })
+        );
+
+        return !!files.length;
+    };
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -316,24 +328,6 @@ export default function({
                         return next();
                     }
 
-                    try {
-                        const payload = await validateRequestToken(req);
-                        req.ctx.userId = payload.userId;
-                        req.ctx.groupsId = payload.groupsId;
-
-                        return next();
-                    } catch {
-                        if (config.auth.oidc.enable) {
-                            return authApp.authenticateWithOIDCService(req, res);
-                        } else {
-                            return res.redirect(`/${APPS_URL_PREFIX}/login/?dest=${req.originalUrl}`);
-                        }
-                    }
-                },
-                // Serve application
-                async (req: IRequestWithContext, res: Response<unknown>, next: NextFunction) => {
-                    // Get available applications
-                    const {endpoint} = req.params;
                     const application = {id: '', module: ''};
 
                     if (['portal', 'login'].includes(endpoint)) {
@@ -358,44 +352,41 @@ export default function({
                         application.module = requestApplication.module;
                     }
 
-                    // Check permissions
-                    const canAccess = await applicationPermissionDomain.getApplicationPermission({
-                        action: ApplicationPermissionsActions.ACCESS_APPLICATION,
-                        applicationId: application.id,
-                        userId: req.ctx.userId,
-                        ctx: req.ctx
-                    });
-
-                    if (!canAccess) {
-                        return next(new ApplicationError(ApplicationErrorType.FORBIDDEN_ERROR, endpoint));
-                    }
-
                     const rootPath = appRootPath();
                     const appFolder = path.resolve(rootPath, config.applications.rootFolder, application.module);
-
-                    req.ctx.applicationId = application.id;
-
-                    // Request will be handled by express as if it was a regular request to the app folder itself
-                    // Thus, we remove the app endpoint from URL.
-                    // We don't need the query params to render static files.
-                    // Hence, affect path only (=url without query params) to url
 
                     // Try to locate a file at given path. If not found, serve root path of the app,
                     // considering it will be handled it client-side (e.g. SPAs)
                     const newPath =
                         req.path.replace(new RegExp(`^\/${utils.getFullApplicationEndpoint(endpoint)}`), '') || '/';
 
-                    const files: string[] = await new Promise((resolve, reject) =>
-                        glob(`${appFolder}${newPath}`, (err, matches) => {
-                            if (err) {
-                                return reject(err);
-                            }
-                            resolve(matches);
-                        })
-                    );
-                    const doesPathExists = !!files.length;
+                    const doesPathExists = await _doesFileExist(appFolder, newPath);
                     req.url = doesPathExists ? newPath : '/';
-                    express.static(appFolder, {
+                    req.ctx.appFolder = appFolder;
+
+                    try {
+                        if (doesPathExists) {
+                            // Skip auth if we're serving an asset.
+                            // We consider user is already authenticated if he's able to fetch an asset
+                            return next();
+                        }
+
+                        const payload = await validateRequestToken(req);
+                        req.ctx.userId = payload.userId;
+                        req.ctx.groupsId = payload.groupsId;
+
+                        return next();
+                    } catch {
+                        if (config.auth.oidc.enable) {
+                            return authApp.authenticateWithOIDCService(req, res);
+                        } else {
+                            return res.redirect(`/${APPS_URL_PREFIX}/login/?dest=${req.originalUrl}`);
+                        }
+                    }
+                },
+                // Serve application
+                async (req: IRequestWithContext, res: Response<unknown>, next: NextFunction) => {
+                    express.static(req.ctx.appFolder, {
                         extensions: ['html'],
                         fallthrough: false
                     })(req, res, next);

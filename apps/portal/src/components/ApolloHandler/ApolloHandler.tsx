@@ -20,25 +20,26 @@ import fetch from 'cross-fetch';
 import {createClient} from 'graphql-ws';
 import {ReactNode, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
-import {API_ENDPOINT, APPS_ENDPOINT, LOGIN_ENDPOINT, ORIGIN_URL, WS_URL} from '../../constants';
+import {API_ENDPOINT, ORIGIN_URL, WS_URL} from '../../constants';
 
 interface IApolloHandlerProps {
     children: ReactNode;
 }
 
-const _redirectToLogin = () =>
-    window.location.replace(`${ORIGIN_URL}/${APPS_ENDPOINT}/${LOGIN_ENDPOINT}/?dest=${window.location.pathname}`);
-
 function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     const {t} = useTranslation();
     const {refreshToken} = useRefreshToken();
 
-    const wsLink = useMemo(() => new GraphQLWsLink(
-            createClient({
-                url: `${WS_URL}/${API_ENDPOINT}`,
-                shouldRetry: () => true
-            })
-        ), []);
+    const wsLink = useMemo(
+        () =>
+            new GraphQLWsLink(
+                createClient({
+                    url: `${WS_URL}/${API_ENDPOINT}`,
+                    shouldRetry: () => true
+                })
+            ),
+        []
+    );
 
     // This function will catch the errors from the exchange between Apollo Client and the server.
     const _handleApolloError = onError(({graphQLErrors, networkError, operation, forward}) => {
@@ -70,7 +71,6 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
                             complete: observer.complete.bind(observer)
                         });
                     } catch (err) {
-                        _redirectToLogin();
                         observer.error(err);
                     }
                 })();
