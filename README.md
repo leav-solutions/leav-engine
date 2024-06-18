@@ -357,7 +357,7 @@ More infos: https://docs.docker.com/compose/reference/logs/
 
 When creating a new application, the core will be looking in the `apps/core/applications/modules` folder to check
 available modules.
-Name, description and version will be retrieved from `package.json`.
+Having a `manifest.json` at the root of the app is mandatory, as it will be used to retrieve name, description and version.
 
 If you want to add your own module, just drop your folder right there.
 

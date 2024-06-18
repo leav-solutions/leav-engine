@@ -31,7 +31,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function ({
+export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.utils.logger': logger = null,
@@ -101,22 +101,22 @@ export default function ({
                 .reduce(async (accProm, appFolder) => {
                     const acc = await accProm;
                     const appPath = path.resolve(appRootFolder, appFolder);
-                    const packageJsonPath = path.resolve(appPath, 'package.json');
+                    const manifestJsonPath = path.resolve(appPath, 'manifest.json');
 
                     // Check if manifest file exists. If not, just ignore the folder
                     try {
-                        await fs.stat(packageJsonPath);
+                        await fs.stat(manifestJsonPath);
                     } catch (e) {
                         logger.warn(`Manifest file not found for module "${appPath}"`);
                         return acc;
                     }
 
-                    const appPackageJson = await import(packageJsonPath);
+                    const appManifestJson = await import(manifestJsonPath);
 
                     acc.push({
-                        id: appPackageJson.name,
-                        description: appPackageJson.description,
-                        version: appPackageJson.version
+                        id: appManifestJson.name,
+                        description: appManifestJson.description,
+                        version: appManifestJson.version
                     });
 
                     return acc;

@@ -211,7 +211,7 @@ export default function ({
                             return res.status(403).json({error: 'FORBIDDEN'});
                         }
 
-                        logger.error(`[${req.ctx.queryId}] ${err}`);
+                        logger.error(`[${req.ctx?.queryId ?? 'unknown_query'}] ${err}`);
                         logger.error(err.stack);
                         res.status(500).json({error: 'INTERNAL_SERVER_ERROR'});
                     }
