@@ -24,6 +24,8 @@ services:
             postgres:
                 condition: service_healthy
         healthcheck:
+            # The keycloak image does not embed any tool like curl or wget, thus we have to run a custom command to do the healthcheck.
+            # It opens a TCP connection, sends an HTTP request, wait for the response and check that it contains "status" and "UP"
             test: [
                 "CMD-SHELL",
                 'exec 3<>/dev/tcp/localhost/8080; echo -e "GET /health/ready HTTP/1.1\nhost: localhost:8080\n" >&3; timeout --preserve-status 1 cat <&3 | grep -m 1 status | grep -m 1 UP; ERROR=$?; exec 3<&-; exec 3>&-; exit $ERROR'

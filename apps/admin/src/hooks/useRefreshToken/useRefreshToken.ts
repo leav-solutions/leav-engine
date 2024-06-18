@@ -17,14 +17,15 @@ export default function useRefreshToken() {
                 body: JSON.stringify({refreshToken})
             });
 
-            // make the promise be rejected if we didn't get a 2xx response
+            // If we didn't get a 2xx response, reload the page and let the back handle auth
             if (!res.ok) {
-                throw new Error(res.statusText, {cause: res});
+                return window.location.reload();
             }
 
-            res.json().then(data => {
+            const data = await res.json();
+            if (data?.refreshToken) {
                 localStorage.setItem(REFRESH_TOKEN_KEY, data.refreshToken);
-            });
+            }
         }
     };
 }

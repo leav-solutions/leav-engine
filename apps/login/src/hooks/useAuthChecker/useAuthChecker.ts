@@ -12,7 +12,7 @@ export default function useAuthChecker(): UseAuthCheckerStatus {
 
     const _executeAuthCheck = async () => {
         try {
-            await refreshToken();
+            await refreshToken(false);
             setStatus('success');
         } catch (err) {
             setStatus('fail');

@@ -24,6 +24,7 @@ import {AttributeCondition, IRecord} from '../../_types/record';
 import {IRequestWithContext} from '../../_types/express';
 import winston from 'winston';
 import {IOIDCClientService} from '../../infra/oidc/oidcClientService';
+import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
 
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
@@ -51,6 +52,7 @@ interface IAccessTokenPayload extends jwt.JwtPayload {
 }
 
 interface IDeps {
+    'core.app.helpers.initQueryContext'?: InitQueryContextFunc;
     'core.domain.value'?: IValueDomain;
     'core.domain.record'?: IRecordDomain;
     'core.domain.apiKey'?: IApiKeyDomain;
@@ -61,7 +63,8 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function ({
+export default function({
+    'core.app.helpers.initQueryContext': initQueryContext = null,
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.apiKey': apiKeyDomain = null,
@@ -432,14 +435,22 @@ export default function ({
                 }
             );
 
-            app.post('/auth/refresh', async (req, res, next) => {
+            app.post('/auth/refresh', async (req: IRequestWithContext, res, next) => {
                 try {
+                    // Get user data
+                    const ctx: IQueryInfos = {
+                        userId: config.defaultUserId,
+                        queryId: 'refresh'
+                    };
+                    req.ctx = initQueryContext(req);
+                    req.ctx.userId = ctx.userId;
+                    req.ctx.queryId = ctx.queryId;
+
                     const refreshToken = config.auth.oidc.enable
                         ? req.cookies[REFRESH_TOKEN_COOKIE_NAME]
                         : req.body.refreshToken;
 
                     if (typeof refreshToken === 'undefined') {
-                        // TODO voir pour rediriger vers l'url de login si l'oidc est actif
                         return res.status(400).send('Missing refresh token');
                     }
 
@@ -462,12 +473,6 @@ export default function ({
                     if (!payload.userId || !payload.ip || !payload.agent) {
                         throw new AuthenticationError('Invalid token');
                     }
-
-                    // Get user data
-                    const ctx: IQueryInfos = {
-                        userId: config.defaultUserId,
-                        queryId: 'refresh'
-                    };
 
                     const users = await recordDomain.find({
                         params: {

@@ -2,9 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-export const APPS_ENDPOINT = 'app';
 export const API_ENDPOINT = 'graphql';
-export const LOGIN_ENDPOINT = 'login';
 
 export const ORIGIN_URL = window.location.origin;
 export const WS_URL = `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}`;

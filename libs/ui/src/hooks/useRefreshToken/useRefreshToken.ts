@@ -8,7 +8,7 @@ export default function useRefreshToken() {
         setRefreshToken: (token: string) => {
             localStorage.setItem(REFRESH_TOKEN_KEY, token);
         },
-        refreshToken: async () => {
+        refreshToken: async (autoReload: boolean = true) => {
             const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
 
             const res = await fetch('/auth/refresh', {
@@ -17,8 +17,13 @@ export default function useRefreshToken() {
                 body: JSON.stringify({refreshToken})
             });
 
-            // make the promise be rejected if we didn't get a 2xx response
+            // If we didn't get a 2xx response, reload the page and let the back handle auth, unless we explicitly
+            // ask not to reload (eg. in login app)
             if (!res.ok) {
+                if (autoReload) {
+                    return window.location.reload();
+                }
+
                 throw new Error(res.statusText, {cause: res});
             }
 
