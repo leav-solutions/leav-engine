@@ -7,7 +7,6 @@ import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from 'app/core
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
 import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {IApplicationPermissionDomain} from 'domain/permission/applicationPermissionDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import express, {Express, NextFunction, Response} from 'express';
@@ -61,7 +60,7 @@ interface IDeps {
     config?: any;
 }
 
-export default function({
+export default function ({
     'core.app.graphql': graphqlApp = null,
     'core.app.auth': authApp = null,
     'core.app.helpers.initQueryContext': initQueryContext = null,

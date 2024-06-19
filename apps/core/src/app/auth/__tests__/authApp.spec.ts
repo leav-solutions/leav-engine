@@ -6,6 +6,7 @@ import {IOIDCClientService} from '../../../infra/oidc/oidcClientService';
 import {Express} from 'express';
 import {identity} from 'lodash';
 import {convertOIDCIdentifier} from '../../helpers';
+import initQueryContext from '../../helpers/initQueryContext';
 
 describe('authApp', () => {
     describe('authenticateWithOIDCService', () => {
@@ -182,9 +183,10 @@ describe('authApp', () => {
     });
 
     describe('auth/refresh', () => {
-        it('Should call next with error if no refresh token provided in cookies on oidc service configured', async () => {
+        it('Should return if no refresh token provided in cookies on oidc service configured', async () => {
             const oidcClientServiceMock: Mockify<IOIDCClientService> = {};
             const authApp = createAuthApp({
+                'core.app.helpers.initQueryContext': initQueryContext({}),
                 'core.infra.oidc.oidcClientService': oidcClientServiceMock as IOIDCClientService,
                 config: {
                     auth: {
@@ -202,7 +204,11 @@ describe('authApp', () => {
             const request = {
                 cookies: {
                     refreshToken: undefined
-                }
+                },
+                query: {
+                    lang: 'lang'
+                },
+                body: {}
             };
             const response = {
                 status: jest.fn().mockReturnValueOnce({
