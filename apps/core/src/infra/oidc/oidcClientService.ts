@@ -10,9 +10,10 @@ import AuthenticationError from '../../errors/AuthenticationError';
 import {IConfig} from '../../_types/config';
 import ms from 'ms';
 
-const AUTH_REDIRECT_HEADER = 'oidc_redirect';
+const AUTH_VERIFICATION_KEYS_HEADER = 'oidc_verificationKeys';
+const ORIGINAL_URL_HEADER = 'oidc_originalUrl';
 const TOKENS_HEADER = 'oidc_tokens';
-const TEN_MINUTES_IN_MS = 1_000 * 60 * 10;
+const MAX_TIME_OIDC_SERVICE_ALLOW_AUTH_IN_MS = 1_000 * 60 * 10;
 
 type AuthRedirectStoredData = [codeVerifier: string, redirectUri: string];
 
@@ -23,6 +24,8 @@ export interface IOIDCClientService {
     getLogoutUrl: () => string;
     saveOIDCTokens: (params: {userId: string; tokens: TokenSet}) => Promise<void>;
     checkTokensValidity: (params: {userId: string}) => Promise<void> | never;
+    saveOriginalUrl: (params: {originalUrl: string; queryId: string}) => Promise<void>;
+    getOriginalUrl: (queryId: string) => Promise<string>;
 }
 
 interface IDeps {
@@ -41,11 +44,12 @@ export default function ({
         throw new LeavError(ErrorTypes.INTERNAL_ERROR, 'Cache service not found');
     }
 
-    const _buildCacheKey = (queryId: string) => `${AUTH_REDIRECT_HEADER}:${queryId}`;
+    const _buildAuthVerificationKeysCacheKey = (queryId: string) => `${AUTH_VERIFICATION_KEYS_HEADER}:${queryId}`;
+    const _buildOriginalUrlCacheKey = (queryId: string) => `${ORIGINAL_URL_HEADER}:${queryId}`;
     const _buildTokensCacheKey = (userId: string) => `${TOKENS_HEADER}:${userId}`;
 
     const _getCodeVerifierRedirectUriByQueryId = async (queryId: string): Promise<AuthRedirectStoredData> => {
-        const cacheContent = await cache.getData([_buildCacheKey(queryId)]);
+        const cacheContent = await cache.getData([_buildAuthVerificationKeysCacheKey(queryId)]);
         if (cacheContent === undefined) {
             throw new AuthenticationError('Unauthorized');
         }
@@ -55,21 +59,15 @@ export default function ({
         return JSON.parse(cacheContent[0]) as AuthRedirectStoredData;
     };
 
-    const _deleteCodeVerifierRedirectUriByQueryId = (queryId: string) => cache.deleteData([_buildCacheKey(queryId)]);
-
     const _writeCodeVerifierRedirectUriByQueryId = async (queryId: string, data: AuthRedirectStoredData) =>
         cache.storeData({
-            key: _buildCacheKey(queryId),
+            key: _buildAuthVerificationKeysCacheKey(queryId),
             data: JSON.stringify(data),
-            expiresIn: TEN_MINUTES_IN_MS
+            expiresIn: MAX_TIME_OIDC_SERVICE_ALLOW_AUTH_IN_MS
         });
 
-    const _writeTokensSetByUserId = async (userId: string, tokens: TokenSet): Promise<void> =>
-        cache.storeData({
-            key: _buildTokensCacheKey(userId),
-            data: JSON.stringify(tokens),
-            expiresIn: ms(config.auth.refreshTokenExpiration) + 1_000 * 60
-        });
+    const _deleteCodeVerifierRedirectUriByQueryId = (queryId: string) =>
+        cache.deleteData([_buildAuthVerificationKeysCacheKey(queryId)]);
 
     const _getTokenSetByUserId = async (userId: string): Promise<TokenSet> => {
         const cacheContent = await cache.getData([_buildTokensCacheKey(userId)]);
@@ -82,7 +80,34 @@ export default function ({
         return new TokenSet(JSON.parse(cacheContent[0]));
     };
 
+    const _writeTokensSetByUserId = async (userId: string, tokens: TokenSet): Promise<void> =>
+        cache.storeData({
+            key: _buildTokensCacheKey(userId),
+            data: JSON.stringify(tokens),
+            expiresIn: ms(config.auth.refreshTokenExpiration) + 1_000 * 60
+        });
+
     const _deleteTokenSetByUserId = async (userId: string) => cache.deleteData([_buildTokensCacheKey(userId)]);
+
+    const _writeOriginalUrlByQueryId = (queryId: string, originalUrl: string) =>
+        cache.storeData({
+            key: _buildOriginalUrlCacheKey(queryId),
+            data: originalUrl,
+            expiresIn: MAX_TIME_OIDC_SERVICE_ALLOW_AUTH_IN_MS
+        });
+
+    const _getOriginalUrlByQueryId = async (queryId: string) => {
+        const cacheContent = await cache.getData([_buildOriginalUrlCacheKey(queryId)]);
+        if (cacheContent === undefined) {
+            throw new AuthenticationError('Unauthorized');
+        }
+        if (cacheContent[0] === null) {
+            throw new AuthenticationError('Unauthorized');
+        }
+        return cacheContent[0];
+    };
+
+    const _deleteOriginalUrlByQueryId = (queryId: string) => cache.deleteData([_buildOriginalUrlCacheKey(queryId)]);
 
     return {
         oidcClient,
@@ -120,6 +145,12 @@ export default function ({
                 const newTokenSet = await oidcClient.refresh(tokenSet);
                 await _writeTokensSetByUserId(userId, newTokenSet);
             }
+        },
+        saveOriginalUrl: ({originalUrl, queryId}) => _writeOriginalUrlByQueryId(queryId, originalUrl),
+        getOriginalUrl: async queryId => {
+            const originalUrl = _getOriginalUrlByQueryId(queryId);
+            _deleteOriginalUrlByQueryId(queryId);
+            return originalUrl;
         }
     };
 }

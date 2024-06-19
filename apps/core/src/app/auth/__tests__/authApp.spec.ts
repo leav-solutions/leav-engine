@@ -5,6 +5,7 @@ import createAuthApp from '../authApp';
 import {IOIDCClientService} from '../../../infra/oidc/oidcClientService';
 import {Express} from 'express';
 import {identity} from 'lodash';
+import {convertOIDCIdentifier} from '../../helpers';
 
 describe('authApp', () => {
     describe('authenticateWithOIDCService', () => {
@@ -30,10 +31,12 @@ describe('authApp', () => {
 
         it('Should redirect to auth url with payload', async () => {
             const oidcClientServiceMock: Mockify<IOIDCClientService> = {
-                getAuthorizationUrl: jest.fn()
+                getAuthorizationUrl: jest.fn(),
+                saveOriginalUrl: jest.fn()
             };
             const authApp = createAuthApp({
                 'core.infra.oidc.oidcClientService': oidcClientServiceMock as IOIDCClientService,
+                'core.app.helpers.convertOIDCIdentifier': convertOIDCIdentifier(),
                 config: {
                     auth: {
                         oidc: {enable: true}
@@ -56,11 +59,15 @@ describe('authApp', () => {
 
             const result = await authApp.authenticateWithOIDCService(request, response);
 
+            expect(oidcClientServiceMock.saveOriginalUrl).toHaveBeenCalledTimes(1);
+            expect(oidcClientServiceMock.saveOriginalUrl).toHaveBeenCalledWith({
+                queryId: 'queryId',
+                originalUrl: 'originalUrl'
+            });
             expect(oidcClientServiceMock.getAuthorizationUrl).toHaveBeenCalledTimes(1);
             expect(oidcClientServiceMock.getAuthorizationUrl).toHaveBeenCalledWith({
                 queryId: 'queryId',
-                redirectUri:
-                    'test://publicUrl/auth/oidc/verify/eyJvcmlnaW5hbFVybCI6Im9yaWdpbmFsVXJsIiwicXVlcnlJZCI6InF1ZXJ5SWQifQ'
+                redirectUri: 'test://publicUrl/auth/oidc/verify/cXVlcnlJZA'
             });
             expect(response.redirect).toHaveBeenCalledTimes(1);
             expect(response.redirect).toHaveBeenCalledWith('oidcLoginUrl');
@@ -211,8 +218,6 @@ describe('authApp', () => {
             expect(nextMock).not.toHaveBeenCalled();
             expect(result).toBe('Missing refresh token');
         });
-
-        it.todo('finish all cases');
     });
 
     describe('auth/oidc/verify/*', () => {
@@ -229,7 +234,9 @@ describe('authApp', () => {
                 post: jest.fn()
             };
             authApp.registerRoute((expressMock as unknown) as Express);
-            const verifyHandler = expressMock.get.mock.calls.find(args => args[0] === '/auth/oidc/verify/*')[1];
+            const verifyHandler = expressMock.get.mock.calls.find(
+                args => args[0] === '/auth/oidc/verify/:identifierBase64Url'
+            )[1];
             const request = {};
             const response = {
                 status: jest.fn(identity)
@@ -239,7 +246,5 @@ describe('authApp', () => {
 
             expect(result).toEqual(401);
         });
-
-        it.todo('Should');
     });
 });

@@ -86,9 +86,9 @@ describe('OIDCClientService', () => {
             const expectedResponse = await oidcClientService.getTokensFromCodes(getTokensParams);
 
             expect(cacheMock.getData).toHaveBeenCalledTimes(1);
-            expect(cacheMock.getData).toHaveBeenCalledWith(['oidc_redirect:queryId']);
+            expect(cacheMock.getData).toHaveBeenCalledWith(['oidc_verificationKeys:queryId']);
             expect(cacheMock.deleteData).toHaveBeenCalledTimes(1);
-            expect(cacheMock.deleteData).toHaveBeenCalledWith(['oidc_redirect:queryId']);
+            expect(cacheMock.deleteData).toHaveBeenCalledWith(['oidc_verificationKeys:queryId']);
             expect(oidcClientMock.grant).toHaveBeenCalledTimes(1);
             expect(oidcClientMock.grant).toHaveBeenCalledWith({
                 code: '123456789AZERTY',
@@ -218,7 +218,7 @@ describe('OIDCClientService', () => {
 
             expect(cacheMock.storeData).toHaveBeenCalledTimes(1);
             expect(cacheMock.storeData).toHaveBeenCalledWith(
-                expect.objectContaining({expiresIn: 600000, key: 'oidc_redirect:queryId'})
+                expect.objectContaining({expiresIn: 600_000, key: 'oidc_verificationKeys:queryId'})
             );
             expect(oidcClientMock.authorizationUrl).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -230,5 +230,17 @@ describe('OIDCClientService', () => {
             );
             expect(expectedResponse).toEqual('authorizationUrl return');
         });
+    });
+
+    describe('getLogoutUrl', () => {
+        // TODO:
+    });
+
+    describe('saveOriginalUrl', () => {
+        // TODO:
+    });
+
+    describe('getOriginalUrl', () => {
+        // TODO:
     });
 });

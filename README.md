@@ -428,6 +428,13 @@ docker compose -f docker-compose.yml -f light.yml up -d
 
 - Then you can access the core at http://core.leav.localhost
 
+## OIDC
+
+LEAV is able to delegate authentification to an oidc service. This mode cannot be used in the same time as
+login/password authentification mechanism.
+
+
+
 # License
 
 LEAV-Engine is released under the [LGPL v3](https://www.gnu.org/licenses/lgpl-3.0.txt) license.
