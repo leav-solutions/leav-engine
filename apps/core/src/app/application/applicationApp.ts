@@ -54,7 +54,6 @@ interface IDeps {
     'core.app.core.subscriptionsHelper'?: ICoreSubscriptionsHelpersApp;
     'core.domain.application'?: IApplicationDomain;
     'core.domain.permission'?: IPermissionDomain;
-    'core.domain.permission.application'?: IApplicationPermissionDomain;
     'core.domain.record'?: IRecordDomain;
     'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.utils.logger'?: winston.Winston;
@@ -62,7 +61,7 @@ interface IDeps {
     config?: any;
 }
 
-export default function({
+export default function ({
     'core.app.graphql': graphqlApp = null,
     'core.app.auth': authApp = null,
     'core.app.helpers.initQueryContext': initQueryContext = null,
@@ -70,7 +69,6 @@ export default function({
     'core.app.core.subscriptionsHelper': subscriptionsHelper = null,
     'core.domain.application': applicationDomain = null,
     'core.domain.permission': permissionDomain = null,
-    'core.domain.permission.application': applicationPermissionDomain = null,
     'core.domain.record': recordDomain,
     'core.domain.eventsManager': eventsManagerDomain = null,
     'core.utils.logger': logger = null,
