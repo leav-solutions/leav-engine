@@ -357,7 +357,8 @@ More infos: https://docs.docker.com/compose/reference/logs/
 
 When creating a new application, the core will be looking in the `apps/core/applications/modules` folder to check
 available modules.
-Having a `manifest.json` at the root of the app is mandatory, as it will be used to retrieve name, description and version.
+Having a `manifest.json` at the root of the app is mandatory, as it will be used to retrieve name, description and
+version.
 
 If you want to add your own module, just drop your folder right there.
 
@@ -431,9 +432,46 @@ docker compose -f docker-compose.yml -f light.yml up -d
 ## OIDC
 
 LEAV is able to delegate authentification to an oidc service. This mode cannot be used in the same time as
-login/password authentification mechanism.
+login/password default authentification mechanism.
 
+### Configuration
 
+1. Create a `/apps/core/config/local.js` with this template:
+
+   ```javascript
+   module.exports = {
+       auth: {
+           oidc: {
+               enable: true
+           }
+       }
+   };
+   ```
+
+2. Due to docker network, you need to edit `/etc/hosts` file to add this line:
+
+   ```
+   127.0.0.1           keycloak
+   ```
+
+3. Launch docker stack with composition: this will start postgre and keycloak service and modify core to wait for
+   healthy containers.
+
+   ```shell
+   docker compose -f docker/docker-compose.yml -f docker/docker-compose.oidc.yml up -d
+   ```
+
+4. Currently, the træfik roots you to dev version of front apps (**portal**, **data-studio**…), 2 solutions:
+    - Manually stop docker front containers and build apps to [`/applications`](./apps/core/applications).
+    - Build apps to [`/applications`](./apps/core/applications) and register under new paths.
+
+### Credentials
+
+When redirect to OIDC service login page, the credentials are: `admin/admin`
+
+### Administration
+
+You can reach keycloak admin console on: [keycloak.leav.localhost](http://keycloak.leav.localhost). 
 
 # License
 
