@@ -22,18 +22,20 @@ describe('useRefreshToken', () => {
         localStorageMock.getItem.mockClear();
     });
 
-    it('Should store token in localStorage', () => {
-        const token = 'token';
-        const {result} = renderHook(() => useRefreshToken());
+    describe('setRefreshToken', () => {
+        it('Should store token in localStorage', () => {
+            const token = 'token';
+            const {result} = renderHook(() => useRefreshToken());
 
-        result.current.setRefreshToken(token);
+            result.current.setRefreshToken(token);
 
-        expect(localStorageMock.setItem).toHaveBeenCalledTimes(1);
-        expect(localStorageMock.setItem).toHaveBeenCalledWith('refreshToken', token);
+            expect(localStorageMock.setItem).toHaveBeenCalledTimes(1);
+            expect(localStorageMock.setItem).toHaveBeenCalledWith('refreshToken', token);
+        });
     });
 
     describe('refreshToken', () => {
-        it('Should propagate error from refresh call', async () => {
+        it('Should propagate error from refresh call if autoReload is set to false', async () => {
             const {result} = renderHook(() => useRefreshToken());
             const failedResponse = {
                 ok: false,
@@ -41,9 +43,37 @@ describe('useRefreshToken', () => {
             };
             fetchMock.mockResolvedValueOnce(failedResponse);
 
-            await expect(result.current.refreshToken()).rejects.toThrow(
+            await expect(result.current.refreshToken(false)).rejects.toThrow(
                 new Error(failedResponse.statusText, {cause: failedResponse})
             );
+
+            expect(localStorageMock.setItem).not.toHaveBeenCalled();
+            expect(fetchMock).toHaveBeenCalledTimes(1);
+            expect(fetchMock).toHaveBeenCalledWith('/auth/refresh', {
+                body: '{}',
+                headers: {'Content-Type': 'application/json'},
+                method: 'POST'
+            });
+        });
+
+        it('Should reload window from error refresh call if autoReload is set to true or not provided', async () => {
+            const {result} = renderHook(() => useRefreshToken());
+            const failedResponse = {
+                ok: false,
+                statusText: 'statusText'
+            };
+            fetchMock.mockResolvedValueOnce(failedResponse);
+            const reloadMock = jest.fn(() => 'reloadResult');
+            delete window.location;
+            window.location = {
+                reload: reloadMock
+            } as any;
+
+            const reloadResult = await result.current.refreshToken();
+
+            expect(reloadMock).toHaveBeenCalledTimes(1);
+            expect(reloadMock).toHaveBeenCalledWith();
+            expect(reloadResult).toBe('reloadResult');
             expect(localStorageMock.setItem).not.toHaveBeenCalled();
             expect(fetchMock).toHaveBeenCalledTimes(1);
             expect(fetchMock).toHaveBeenCalledWith('/auth/refresh', {
