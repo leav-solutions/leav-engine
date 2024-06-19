@@ -61,7 +61,7 @@ interface IDeps {
     config?: any;
 }
 
-export default function ({
+export default function({
     'core.app.graphql': graphqlApp = null,
     'core.app.auth': authApp = null,
     'core.app.helpers.initQueryContext': initQueryContext = null,
@@ -363,7 +363,7 @@ export default function ({
                     req.ctx.appFolder = appFolder;
 
                     try {
-                        if (doesPathExists) {
+                        if (doesPathExists && newPath !== '/') {
                             // Skip auth if we're serving an asset.
                             // We consider user is already authenticated if he's able to fetch an asset
                             return next();
