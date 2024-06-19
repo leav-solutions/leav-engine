@@ -68,20 +68,24 @@ export const useGetOptionsQuery = ({
                           }
                       }
                   }))
-                : recordList.map(recordItem => ({
-                      value: recordItem.whoAmI.id,
-                      label: recordItem.whoAmI.label,
-                      idCard: {
-                          title: recordItem.whoAmI.label,
-                          avatarProps: {
-                              size: 'small',
-                              shape: 'square',
-                              imageFit: 'contain',
-                              src: recordItem.whoAmI.preview?.small,
-                              label: recordItem.whoAmI.label
+                : recordList.map(recordItem => {
+                      const recordLabel = recordItem.whoAmI.label ?? recordItem.whoAmI.id;
+
+                      return {
+                          value: recordItem.whoAmI.id,
+                          label: recordLabel,
+                          idCard: {
+                              title: recordLabel,
+                              avatarProps: {
+                                  size: 'small',
+                                  shape: 'square',
+                                  imageFit: 'contain',
+                                  src: recordItem.whoAmI.preview?.small,
+                                  label: recordLabel
+                              }
                           }
-                      }
-                  })),
+                      };
+                  }),
         [recordList, isSearchLoading]
     );
 
