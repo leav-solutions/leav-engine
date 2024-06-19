@@ -24,7 +24,8 @@ import {AttributeCondition, IRecord} from '../../_types/record';
 import {IRequestWithContext} from '../../_types/express';
 import winston from 'winston';
 import {IOIDCClientService} from '../../infra/oidc/oidcClientService';
-import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
+import {InitQueryContextFunc} from '../helpers/initQueryContext';
+import {IConvertOIDCIdentifier} from '../helpers/convertOIDCIdentifier';
 
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
@@ -41,18 +42,12 @@ interface ISessionPayload extends jwt.JwtPayload {
     agent: string;
 }
 
-interface ITransfertPayloadInIODC {
-    originalUrl: string;
-    queryId: string;
-}
-
 interface IAccessTokenPayload extends jwt.JwtPayload {
     userId: string;
     groupsId: string[];
 }
 
 interface IDeps {
-    'core.app.helpers.initQueryContext'?: InitQueryContextFunc;
     'core.domain.value'?: IValueDomain;
     'core.domain.record'?: IRecordDomain;
     'core.domain.apiKey'?: IApiKeyDomain;
@@ -60,11 +55,12 @@ interface IDeps {
     'core.infra.cache.cacheService'?: ICachesService;
     'core.utils.logger'?: winston.Winston;
     'core.infra.oidc.oidcClientService'?: IOIDCClientService;
+    'core.app.helpers.initQueryContext'?: InitQueryContextFunc;
+    'core.app.helpers.convertOIDCIdentifier'?: IConvertOIDCIdentifier;
     config?: IConfig;
 }
 
 export default function({
-    'core.app.helpers.initQueryContext': initQueryContext = null,
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.apiKey': apiKeyDomain = null,
@@ -72,6 +68,8 @@ export default function({
     'core.utils.logger': logger = null,
     'core.infra.cache.cacheService': cacheService = null,
     'core.infra.oidc.oidcClientService': oidcClientService = null,
+    'core.app.helpers.initQueryContext': initQueryContext = null,
+    'core.app.helpers.convertOIDCIdentifier': convertOIDCIdentifier = null,
     config = null
 }: IDeps = {}): IAuthApp {
     const _generateAccessToken = async (userId: string, ctx: IQueryInfos) => {
@@ -103,46 +101,45 @@ export default function({
         });
 
     return {
-        getGraphQLSchema(): IAppGraphQLSchema {
-            return {
-                typeDefs: `
+        getGraphQLSchema: () => ({
+            typeDefs: `
                     extend type Query {
                         me: Record
                     }
                 `,
-                resolvers: {
-                    Query: {
-                        async me(parent, args, ctx, info): Promise<IRecord> {
-                            const users = await recordDomain.find({
-                                params: {
-                                    library: 'users',
-                                    filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: ctx.userId}],
-                                    withCount: false,
-                                    retrieveInactive: true
-                                },
-                                ctx
-                            });
+            resolvers: {
+                Query: {
+                    async me(parent, args, ctx, info): Promise<IRecord> {
+                        const users = await recordDomain.find({
+                            params: {
+                                library: 'users',
+                                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: ctx.userId}],
+                                withCount: false,
+                                retrieveInactive: true
+                            },
+                            ctx
+                        });
 
-                            return users.list[0];
-                        }
+                        return users.list[0];
                     }
                 }
-            };
-        },
-        registerRoute(app): void {
+            }
+        }),
+        registerRoute(app) {
             app.get(
-                '/auth/oidc/verify/*',
-                async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+                '/auth/oidc/verify/:identifierBase64Url',
+                async (
+                    req: Request<{identifierBase64Url: string}>,
+                    res: Response,
+                    next: NextFunction
+                ): Promise<Response | void> => {
                     if (!config.auth.oidc.enable) {
                         return res.status(401);
                     }
 
                     const {code} = req.query;
-                    const payloadBase64Encoded = req.params[0];
 
-                    const {queryId, originalUrl}: ITransfertPayloadInIODC = JSON.parse(
-                        Buffer.from(payloadBase64Encoded, 'base64').toString()
-                    );
+                    const queryId = convertOIDCIdentifier.decodeIdentifierFromBase64Url(req.params.identifierBase64Url);
 
                     try {
                         const oidcTokenSet = await oidcClientService.getTokensFromCodes({
@@ -209,6 +206,7 @@ export default function({
                             expires: new Date(Date.now() + cookieExpires)
                         });
 
+                        const originalUrl = await oidcClientService.getOriginalUrl(queryId);
                         return res.redirect(originalUrl);
                     } catch (err) {
                         logger.error(err);
@@ -628,13 +626,14 @@ export default function({
                 return res.status(401);
             }
 
-            const payload = Buffer.from(
-                JSON.stringify({originalUrl: req.originalUrl, queryId: req.ctx.queryId} as ITransfertPayloadInIODC)
-            ).toString('base64url');
+            const queryId = req.ctx.queryId;
+
+            const identifierBase64Url = convertOIDCIdentifier.encodeIdentifierToBase64Url(queryId);
+            await oidcClientService.saveOriginalUrl({originalUrl: req.originalUrl, queryId});
 
             const oidcLoginUrl = await oidcClientService.getAuthorizationUrl({
-                redirectUri: `${config.server.publicUrl}/auth/oidc/verify/${payload}`,
-                queryId: req.ctx.queryId
+                redirectUri: `${config.server.publicUrl}/auth/oidc/verify/${identifierBase64Url}`,
+                queryId
             });
 
             return res.redirect(oidcLoginUrl);
