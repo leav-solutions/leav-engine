@@ -318,11 +318,8 @@ export default function ({
                     const endpoint = req.params.endpoint;
                     req.ctx = initQueryContext(req);
 
-                    if (endpoint === 'login') {
-                        if (config.auth.oidc.enable) {
-                            return res.redirect(`/${APPS_URL_PREFIX}/portal/`);
-                        }
-                        return next();
+                    if (endpoint === 'login' && config.auth.oidc.enable) {
+                        return res.redirect(`/${APPS_URL_PREFIX}/portal/`);
                     }
 
                     const application = {id: '', module: ''};
@@ -360,6 +357,10 @@ export default function ({
                     const doesPathExists = await _doesFileExist(appFolder, newPath);
                     req.url = doesPathExists ? newPath : '/';
                     req.ctx.appFolder = appFolder;
+
+                    if (endpoint === 'login') {
+                        return next();
+                    }
 
                     try {
                         if (doesPathExists && newPath !== '/') {

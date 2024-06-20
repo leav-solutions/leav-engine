@@ -11,6 +11,10 @@ import {IApplicationDomain} from '../../../domain/application/applicationDomain'
 import {IUtils} from '../../../utils/utils';
 
 describe('ApplicationApp', () => {
+    const utilsMock: Mockify<IUtils> = {
+        getFullApplicationEndpoint: jest.fn().mockReturnValueOnce('getFullApplicationEndpoint')
+    };
+
     describe('when token is invalid', () => {
         it('Should authenticate on OIDC Service', async () => {
             const authAppMock: Mockify<IAuthApp> = {
@@ -27,9 +31,7 @@ describe('ApplicationApp', () => {
                     ]
                 })
             };
-            const utilsMock: Mockify<IUtils> = {
-                getFullApplicationEndpoint: jest.fn().mockReturnValueOnce('getFullApplicationEndpoint')
-            };
+
             const applicationApp = createApplicationApp({
                 'core.domain.application': applicationDomainMock as IApplicationDomain,
                 'core.app.auth': authAppMock as IAuthApp,
@@ -78,9 +80,7 @@ describe('ApplicationApp', () => {
                     ]
                 })
             };
-            const utilsMock: Mockify<IUtils> = {
-                getFullApplicationEndpoint: jest.fn().mockReturnValueOnce('getFullApplicationEndpoint')
-            };
+
             const applicationApp = createApplicationApp({
                 'core.domain.application': applicationDomainMock as IApplicationDomain,
                 'core.app.helpers.initQueryContext': initQueryContext({}),
@@ -121,8 +121,9 @@ describe('ApplicationApp', () => {
         it('Should redirect to portal if oidc service enable because we cannot log directly to leav', async () => {
             const applicationApp = createApplicationApp({
                 'core.app.helpers.initQueryContext': initQueryContext({}),
-                config: {auth: {oidc: {enable: true}}}
+                config: {applications: {rootFolder: 'applications/rootFolder'}, auth: {oidc: {enable: true}}}
             });
+
             const expressInstance: any = {
                 get: jest.fn()
             };
@@ -148,12 +149,13 @@ describe('ApplicationApp', () => {
             expect(res.redirect).toHaveBeenCalledWith('/app/portal/');
         });
 
-        it('Should not verify token and continue handlers, login is public when oidc no enable', async () => {
+        it('Should not verify token and continue handlers, login is public when oidc not enable', async () => {
             const validateRequestTokenHelper = jest.fn();
             const applicationApp = createApplicationApp({
                 'core.app.helpers.initQueryContext': initQueryContext({}),
                 'core.app.helpers.validateRequestToken': validateRequestTokenHelper as ValidateRequestTokenFunc,
-                config: {auth: {oidc: {enable: false}}}
+                'core.utils': utilsMock as IUtils,
+                config: {applications: {rootFolder: 'applications/rootFolder'}, auth: {oidc: {enable: false}}}
             });
             const expressInstance: any = {
                 get: jest.fn()
@@ -167,7 +169,8 @@ describe('ApplicationApp', () => {
                 originalUrl: 'originalUrl',
                 params: {endpoint: 'login'},
                 query: {lang: 'fr'},
-                body: {requestId: 'requestId'}
+                body: {requestId: 'requestId'},
+                path: '/app/login'
             };
             const res = {
                 redirect: jest.fn()
