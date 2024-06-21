@@ -15,6 +15,11 @@ const localStorageMock = {
 delete (global as any).localStorage;
 (global as any).localStorage = localStorageMock;
 
+let isDevelopmentHelperMock: boolean;
+jest.mock('_ui/_utils/isDevelopmentHelper', () => ({
+    isDevelopmentHelper: () => isDevelopmentHelperMock
+}));
+
 describe('useRefreshToken', () => {
     beforeEach(() => {
         fetchMock.mockClear();
@@ -68,12 +73,46 @@ describe('useRefreshToken', () => {
             window.location = {
                 reload: reloadMock
             } as any;
+            isDevelopmentHelperMock = false;
 
             const reloadResult = await result.current.refreshToken();
 
             expect(reloadMock).toHaveBeenCalledTimes(1);
             expect(reloadMock).toHaveBeenCalledWith();
             expect(reloadResult).toBe('reloadResult');
+            expect(localStorageMock.setItem).not.toHaveBeenCalled();
+            expect(fetchMock).toHaveBeenCalledTimes(1);
+            expect(fetchMock).toHaveBeenCalledWith('/auth/refresh', {
+                body: '{}',
+                headers: {'Content-Type': 'application/json'},
+                method: 'POST'
+            });
+        });
+
+        it('Should redirect to login app if autoReload and isDevelopmentHelper are true', async () => {
+            const {result} = renderHook(() => useRefreshToken());
+            const failedResponse = {
+                ok: false,
+                statusText: 'statusText'
+            };
+            fetchMock.mockResolvedValueOnce(failedResponse);
+            const reloadMock = jest.fn(() => 'reloadResult');
+            const replaceMock = jest.fn(() => 'replaceResult');
+            delete window.location;
+            window.location = {
+                reload: reloadMock,
+                replace: replaceMock,
+                origin: 'test://core.test',
+                pathname: 'app/test'
+            } as any;
+            isDevelopmentHelperMock = true;
+
+            const replaceResult = await result.current.refreshToken();
+
+            expect(replaceMock).toHaveBeenCalledTimes(1);
+            expect(replaceMock).toHaveBeenCalledWith('test://core.test/app/login/?dest=app/test');
+            expect(reloadMock).toHaveBeenCalledTimes(0);
+            expect(replaceResult).toBe('replaceResult');
             expect(localStorageMock.setItem).not.toHaveBeenCalled();
             expect(fetchMock).toHaveBeenCalledTimes(1);
             expect(fetchMock).toHaveBeenCalledWith('/auth/refresh', {
