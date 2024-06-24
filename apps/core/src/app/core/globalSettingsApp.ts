@@ -6,6 +6,7 @@ import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {Express, NextFunction, Response} from 'express';
 import path from 'node:path';
+import {IUtils} from 'utils/utils';
 import winston from 'winston';
 import {IConfig} from '_types/config';
 import {IRequestWithContext} from '_types/express';
@@ -27,6 +28,7 @@ interface IDeps {
     'core.domain.globalSettings'?: IGlobalSettingsDomain;
     'core.domain.record'?: IRecordDomain;
     'core.utils.logger'?: winston.Winston;
+    'core.utils': IUtils;
     config: IConfig;
 }
 
@@ -35,6 +37,7 @@ export default function ({
     'core.domain.globalSettings': globalSettingsDomain = null,
     'core.domain.record': recordDomain = null,
     'core.utils.logger': logger = null,
+    'core.utils': utils = null,
     config = null
 }: IDeps): ICoreApp {
     return {
@@ -195,7 +198,8 @@ export default function ({
                             return;
                         }
 
-                        let previewPath = fileRecord.previews[req.params.size];
+                        const previewsAttribute = utils.getPreviewsAttributeName(settings.icon.library);
+                        let previewPath = fileRecord[previewsAttribute][req.params.size];
                         // Remove leading slash of previewPath
                         if (previewPath.startsWith('/')) {
                             previewPath = previewPath.slice(1);
