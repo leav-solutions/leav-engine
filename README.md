@@ -471,7 +471,13 @@ When redirect to OIDC service login page, the credentials are: `admin/admin`
 
 ### Administration
 
-You can reach keycloak admin console on: [keycloak.leav.localhost](http://keycloak.leav.localhost). 
+You can reach keycloak admin console on: [keycloak.leav.localhost](http://keycloak.leav.localhost).
+
+### Documentation
+
+- [Init and login](./docs/oidc/OIDC-Init-Login.svg)
+- [Renewrefresh and refresh](./docs/oidc/OIDC-Renewrefresh-Refresh.svg)
+- [Logout](./docs/oidc/OIDC-Logout.svg)
 
 # License
 
