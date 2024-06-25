@@ -62,7 +62,7 @@
     "@ckeditor/ckeditor5-build-inline": "39.0.1",
     "@ckeditor/ckeditor5-react": "6.1.0",
     "@leav/utils": "0.0.2",
-    "aristid-ds": "7.1.0-0d27af6",
+    "aristid-ds": "7.2.0-53299b1",
     "dayjs": "1.11.10",
     "dompurify": "3.0.5",
     "html-react-parser": "4.2.2",
