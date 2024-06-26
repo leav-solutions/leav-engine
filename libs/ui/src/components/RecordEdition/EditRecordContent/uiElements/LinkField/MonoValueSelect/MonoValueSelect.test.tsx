@@ -315,6 +315,7 @@ describe('<MonoValueSelect />', () => {
         expect(screen.getByText('Danette chocolat')).toBeVisible();
         expect(screen.getByText(/suggestions_count|20/)).toBeVisible();
 
+        await userEvent.click(screen.getByRole('combobox'));
         await userEvent.type(screen.getByRole('combobox'), 'Yop');
 
         expect(await screen.findByText('Yop Fraise')).toBeVisible();
@@ -355,7 +356,6 @@ describe('<MonoValueSelect />', () => {
         expect(screen.queryByText('Danette chocolat')).not.toBeInTheDocument();
 
         const selectInput = screen.getByRole('combobox');
-        await userEvent.click(selectInput);
 
         await userEvent.type(selectInput, 'Something unknown');
 

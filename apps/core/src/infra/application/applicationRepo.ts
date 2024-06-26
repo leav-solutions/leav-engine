@@ -31,7 +31,7 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function ({
+export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.utils.logger': logger = null,
@@ -94,34 +94,33 @@ export default function ({
             const rootPath = appRootPath();
             const appRootFolder = path.resolve(rootPath, config.applications.rootFolder);
 
-            let appsFolders = await readdir(appRootFolder);
-            appsFolders = appsFolders.filter(item => !/(^|\/)\.[^\/\.]/g.test(item)); // ignore hidden files
+            const appsFolders = await readdir(appRootFolder);
 
-            const components: IApplicationModule[] = await appsFolders.reduce(async (accProm, appFolder) => {
-                const acc = await accProm;
-                const appPath = path.resolve(appRootFolder, appFolder);
-                const manifestPath = path.resolve(appPath, 'manifest.json');
+            return appsFolders
+                .filter(item => !/(^|\/)\.[^\/\.]/g.test(item))
+                .reduce(async (accProm, appFolder) => {
+                    const acc = await accProm;
+                    const appPath = path.resolve(appRootFolder, appFolder);
+                    const manifestJsonPath = path.resolve(appPath, 'manifest.json');
 
-                // Check if manifest file exists. If not, just ignore the folder
-                try {
-                    await fs.stat(manifestPath);
-                } catch (e) {
-                    logger.warn(`Manifest file not found for module "${appPath}"`);
+                    // Check if manifest file exists. If not, just ignore the folder
+                    try {
+                        await fs.stat(manifestJsonPath);
+                    } catch (e) {
+                        logger.warn(`Manifest file not found for module "${appPath}"`);
+                        return acc;
+                    }
+
+                    const appManifestJson = await import(manifestJsonPath);
+
+                    acc.push({
+                        id: appManifestJson.name,
+                        description: appManifestJson.description,
+                        version: appManifestJson.version
+                    });
+
                     return acc;
-                }
-
-                const appManifestJson = await import(path.resolve(appPath, 'manifest.json'));
-
-                acc.push({
-                    id: appManifestJson.name,
-                    description: appManifestJson.description,
-                    version: appManifestJson.version
-                });
-
-                return acc;
-            }, Promise.resolve([]));
-
-            return components;
+                }, Promise.resolve([]));
         }
     };
 }

@@ -7,7 +7,6 @@ import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from 'app/core
 import {IGraphqlApp} from 'app/graphql/graphqlApp';
 import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {IApplicationPermissionDomain} from 'domain/permission/applicationPermissionDomain';
 import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import express, {Express, NextFunction, Response} from 'express';
@@ -38,20 +37,22 @@ import {TriggerNames} from '../../_types/eventsManager';
 import {ApplicationPermissionsActions, PermissionTypes} from '../../_types/permissions';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
+import {IAuthApp} from '../auth/authApp';
 
 export interface IApplicationApp {
     registerRoute(app: Express): void;
+
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
 interface IDeps {
     'core.app.graphql'?: IGraphqlApp;
+    'core.app.auth'?: IAuthApp;
     'core.app.helpers.initQueryContext'?: InitQueryContextFunc;
     'core.app.helpers.validateRequestToken'?: ValidateRequestTokenFunc;
     'core.app.core.subscriptionsHelper'?: ICoreSubscriptionsHelpersApp;
     'core.domain.application'?: IApplicationDomain;
     'core.domain.permission'?: IPermissionDomain;
-    'core.domain.permission.application'?: IApplicationPermissionDomain;
     'core.domain.record'?: IRecordDomain;
     'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.utils.logger'?: winston.Winston;
@@ -61,18 +62,30 @@ interface IDeps {
 
 export default function ({
     'core.app.graphql': graphqlApp = null,
+    'core.app.auth': authApp = null,
     'core.app.helpers.initQueryContext': initQueryContext = null,
     'core.app.helpers.validateRequestToken': validateRequestToken = null,
     'core.app.core.subscriptionsHelper': subscriptionsHelper = null,
     'core.domain.application': applicationDomain = null,
     'core.domain.permission': permissionDomain = null,
-    'core.domain.permission.application': applicationPermissionDomain = null,
     'core.domain.record': recordDomain,
     'core.domain.eventsManager': eventsManagerDomain = null,
     'core.utils.logger': logger = null,
     'core.utils': utils = null,
     config = null
 }: IDeps = {}): IApplicationApp {
+    const _doesFileExist = async (folder: string, filePath: string) => {
+        const files: string[] = await new Promise((resolve, reject) =>
+            glob(`${folder}${filePath}`, (err, matches) => {
+                if (err) {
+                    return reject(err);
+                }
+                resolve(matches);
+            })
+        );
+
+        return !!files.length;
+    };
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -296,7 +309,7 @@ export default function ({
 
             return fullSchema;
         },
-        registerRoute(app): void {
+        registerRoute(app) {
             // Serve applications from their endpoint
             app.get(
                 [`/${APPS_URL_PREFIX}/:endpoint`, `/${APPS_URL_PREFIX}/:endpoint/*`],
@@ -305,24 +318,10 @@ export default function ({
                     const endpoint = req.params.endpoint;
                     req.ctx = initQueryContext(req);
 
-                    if (endpoint === 'login') {
-                        return next();
+                    if (endpoint === 'login' && config.auth.oidc.enable) {
+                        return res.redirect(`/${APPS_URL_PREFIX}/portal/`);
                     }
 
-                    try {
-                        const payload = await validateRequestToken(req);
-                        req.ctx.userId = payload.userId;
-                        req.ctx.groupsId = payload.groupsId;
-
-                        return next();
-                    } catch {
-                        res.redirect(`/${APPS_URL_PREFIX}/login/?dest=${req.originalUrl}`);
-                    }
-                },
-                // Serve application
-                async (req: IRequestWithContext, res: Response<unknown>, next: NextFunction) => {
-                    // Get available applications
-                    const {endpoint} = req.params;
                     const application = {id: '', module: ''};
 
                     if (['portal', 'login'].includes(endpoint)) {
@@ -347,44 +346,45 @@ export default function ({
                         application.module = requestApplication.module;
                     }
 
-                    // Check permissions
-                    const canAccess = await applicationPermissionDomain.getApplicationPermission({
-                        action: ApplicationPermissionsActions.ACCESS_APPLICATION,
-                        applicationId: application.id,
-                        userId: req.ctx.userId,
-                        ctx: req.ctx
-                    });
-
-                    if (!canAccess) {
-                        return next(new ApplicationError(ApplicationErrorType.FORBIDDEN_ERROR, endpoint));
-                    }
-
                     const rootPath = appRootPath();
                     const appFolder = path.resolve(rootPath, config.applications.rootFolder, application.module);
-
-                    req.ctx.applicationId = application.id;
-
-                    // Request will be handled by express as if it was a regular request to the app folder itself
-                    // Thus, we remove the app endpoint from URL.
-                    // We don't need the query params to render static files.
-                    // Hence, affect path only (=url without query params) to url
 
                     // Try to locate a file at given path. If not found, serve root path of the app,
                     // considering it will be handled it client-side (e.g. SPAs)
                     const newPath =
                         req.path.replace(new RegExp(`^\/${utils.getFullApplicationEndpoint(endpoint)}`), '') || '/';
 
-                    const files: string[] = await new Promise((resolve, reject) =>
-                        glob(`${appFolder}${newPath}`, (err, matches) => {
-                            if (err) {
-                                return reject(err);
-                            }
-                            resolve(matches);
-                        })
-                    );
-                    const doesPathExists = !!files.length;
+                    const doesPathExists = await _doesFileExist(appFolder, newPath);
                     req.url = doesPathExists ? newPath : '/';
-                    express.static(appFolder, {
+                    req.ctx.appFolder = appFolder;
+
+                    if (endpoint === 'login') {
+                        return next();
+                    }
+
+                    try {
+                        if (doesPathExists && newPath !== '/') {
+                            // Skip auth if we're serving an asset.
+                            // We consider user is already authenticated if he's able to fetch an asset
+                            return next();
+                        }
+
+                        const payload = await validateRequestToken(req);
+                        req.ctx.userId = payload.userId;
+                        req.ctx.groupsId = payload.groupsId;
+
+                        return next();
+                    } catch {
+                        if (config.auth.oidc.enable) {
+                            return authApp.authenticateWithOIDCService(req, res);
+                        } else {
+                            return res.redirect(`/${APPS_URL_PREFIX}/login/?dest=${req.originalUrl}`);
+                        }
+                    }
+                },
+                // Serve application
+                async (req: IRequestWithContext, res: Response<unknown>, next: NextFunction) => {
+                    express.static(req.ctx.appFolder, {
                         extensions: ['html'],
                         fallthrough: false
                     })(req, res, next);

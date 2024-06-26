@@ -17,8 +17,9 @@ import {initRedis} from './infra/cache';
 import {initDb} from './infra/db/db';
 import {initMailer} from './infra/mailer';
 import {initPlugins} from './pluginsLoader';
+import {initOIDCClient} from './infra/oidc';
 
-(async function () {
+(async function() {
     const opt = minimist(process.argv.slice(2));
 
     let conf: Config.IConfig;
@@ -33,13 +34,14 @@ import {initPlugins} from './pluginsLoader';
     }
 
     // Init services
-    const [translator, amqp, redisClient, mailer] = await Promise.all([
+    const [translator, amqp, redisClient, mailer, oidcClient] = await Promise.all([
         i18nextInit(conf),
         amqpService({
             config: {...conf.amqp, ...(opt.tasksManager === 'worker' && {prefetch: conf.tasksManager.workerPrefetch})}
         }),
         initRedis({config: conf}),
         initMailer({config: conf}),
+        conf.auth.oidc.enable ? initOIDCClient(conf) : undefined,
         initDb(conf)
     ]);
 
@@ -47,7 +49,8 @@ import {initPlugins} from './pluginsLoader';
         translator,
         'core.infra.amqpService': amqp,
         'core.infra.redis': redisClient,
-        'core.infra.mailer': mailer
+        'core.infra.mailer': mailer,
+        'core.infra.oidcClient': oidcClient
     });
 
     const server: IServer = coreContainer.cradle['core.interface.server'];

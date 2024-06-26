@@ -1,7 +1,7 @@
 {
     "name": "data-studio",
     "description": "Generic application to manage your data",
-    "version": "1.0.0-beta10",
+    "version": "1.0.0-beta11",
     "private": true,
     "dependencies": {
         "@ant-design/icons": "5.2.6",
@@ -13,7 +13,7 @@
         "antd": "5.15.3",
         "apollo-cache-inmemory": "1.6.6",
         "apollo-upload-client": "14.1.3",
-        "aristid-ds": "5.0.0-6123e91",
+        "aristid-ds": "7.2.0-53299b1",
         "dayjs": "1.11.10",
         "graphql": "15.0.0",
         "graphql-tag": "2.12.6",

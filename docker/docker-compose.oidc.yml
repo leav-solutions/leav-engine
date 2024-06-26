@@ -1,0 +1,67 @@
+services:
+    core:
+        depends_on:
+            keycloak:
+                condition: service_healthy
+
+    keycloak:
+        build:
+            context: .
+            dockerfile: ./DOCKERFILES/KEYCLOAK/Dockerfile
+        environment:
+            KEYCLOAK_ADMIN: admin
+            KEYCLOAK_ADMIN_PASSWORD: admin
+            KC_DB: postgres
+            KC_DB_URL: 'jdbc:postgresql://postgres/keycloak'
+            KC_DB_USERNAME: keycloak
+            KC_DB_PASSWORD: password
+            KC_HOSTNAME_STRICT: false
+            KC_HOSTNAME_STRICT_BACKCHANNEL: false
+            KC_LOG_LEVEL: info,org.keycloak.events:debug
+            KC_HTTP_ENABLED: true
+            KC_HEALTH_ENABLED: true
+        depends_on:
+            postgres:
+                condition: service_healthy
+        healthcheck:
+            # The keycloak image does not embed any tool like curl or wget, thus we have to run a custom command to do the healthcheck.
+            # It opens a TCP connection, sends an HTTP request, wait for the response and check that it contains "status" and "UP"
+            test: [
+                "CMD-SHELL",
+                'exec 3<>/dev/tcp/localhost/8080; echo -e "GET /health/ready HTTP/1.1\nhost: localhost:8080\n" >&3; timeout --preserve-status 1 cat <&3 | grep -m 1 status | grep -m 1 UP; ERROR=$?; exec 3<&-; exec 3>&-; exit $ERROR'
+            ]
+            interval: 5s
+            timeout: 2s
+            retries: 15
+        volumes:
+            - ./realms:/opt/keycloak/data/import
+        command: [
+            "start",
+            "--import-realm",
+            "--optimized"
+        ]
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.redis-commander.rule=Host(`keycloak.leav.localhost`)
+            - traefik.http.services.redis-commander.loadbalancer.server.port=8080
+            - traefik.http.routers.keycloak.entrypoints=web
+        ports:
+            - '8080:8080'
+
+    postgres:
+        image: postgres
+        environment:
+            POSTGRES_DB: keycloak
+            POSTGRES_USER: keycloak
+            POSTGRES_PASSWORD: password
+        healthcheck:
+            test: [ "CMD-SHELL", "pg_isready -U keycloak" ]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+
+volumes:
+    pgdata:
+        driver: local

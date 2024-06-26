@@ -70,7 +70,6 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
                             complete: observer.complete.bind(observer)
                         });
                     } catch (err) {
-                        _redirectToLogin();
                         observer.error(err);
                     }
                 })();

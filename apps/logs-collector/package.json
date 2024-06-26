@@ -1,6 +1,6 @@
 {
     "name": "logs-collector",
-    "version": "1.0.0-beta10",
+    "version": "1.0.0-beta11",
     "description": "",
     "main": "dist/index.js",
     "scripts": {

@@ -6,7 +6,7 @@
     "composite": true,
     "module": "esnext",
     "skipLibCheck": true,
-    "types": ["jest", "@types/jest", "@testing-library/jest-dom"],
+    "types": ["jest", "@types/jest", "@testing-library/jest-dom", "vite/client"],
     "jsx": "react-jsx",
     "resolveJsonModule": true,
     "paths": {

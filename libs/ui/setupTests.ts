@@ -19,3 +19,4 @@ window.matchMedia = query => ({
 });
 
 jest.mock('_ui/hooks/useSharedTranslation');
+jest.mock('_ui/_utils/isDevelopmentHelper');

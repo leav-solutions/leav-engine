@@ -18,14 +18,20 @@ import {IStandardValue, ITreeValue} from '_types/value';
 import AuthenticationError from '../../errors/AuthenticationError';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {USERS_GROUP_ATTRIBUTE_NAME} from '../../infra/permission/permissionRepo';
-import {ACCESS_TOKEN_COOKIE_NAME, ITokenUserData} from '../../_types/auth';
+import {ACCESS_TOKEN_COOKIE_NAME, ITokenUserData, REFRESH_TOKEN_COOKIE_NAME} from '../../_types/auth';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, IRecord} from '../../_types/record';
+import {IRequestWithContext} from '../../_types/express';
+import winston from 'winston';
+import {IOIDCClientService} from '../../infra/oidc/oidcClientService';
+import {InitQueryContextFunc} from '../helpers/initQueryContext';
+import {IConvertOIDCIdentifier} from '../helpers/convertOIDCIdentifier';
 
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
     validateRequestToken(params: {apiKey?: string; cookies?: {}}): Promise<ITokenUserData>;
     registerRoute(app: Express): void;
+    authenticateWithOIDCService(req: IRequestWithContext, res: Response<unknown>): Promise<void | Response>;
 }
 
 const SESSION_CACHE_HEADER = 'session';
@@ -47,32 +53,37 @@ interface IDeps {
     'core.domain.apiKey'?: IApiKeyDomain;
     'core.domain.user'?: IUserDomain;
     'core.infra.cache.cacheService'?: ICachesService;
+    'core.utils.logger'?: winston.Winston;
+    'core.infra.oidc.oidcClientService'?: IOIDCClientService;
+    'core.app.helpers.initQueryContext'?: InitQueryContextFunc;
+    'core.app.helpers.convertOIDCIdentifier'?: IConvertOIDCIdentifier;
     config?: IConfig;
 }
 
-export default function ({
+export default function({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.apiKey': apiKeyDomain = null,
     'core.domain.user': userDomain = null,
+    'core.utils.logger': logger = null,
     'core.infra.cache.cacheService': cacheService = null,
+    'core.infra.oidc.oidcClientService': oidcClientService = null,
+    'core.app.helpers.initQueryContext': initQueryContext = null,
+    'core.app.helpers.convertOIDCIdentifier': convertOIDCIdentifier = null,
     config = null
 }: IDeps = {}): IAuthApp {
     const _generateAccessToken = async (userId: string, ctx: IQueryInfos) => {
-        const groupsId = (
-            await valueDomain.getValues({
-                library: 'users',
-                recordId: userId,
-                attribute: 'user_groups',
-                ctx
-            })
-        ).map(g => g.value.id);
+        const groups = await valueDomain.getValues({
+            library: 'users',
+            recordId: userId,
+            attribute: 'user_groups',
+            ctx
+        });
 
-        // Generate token
-        const token = jwt.sign(
+        return jwt.sign(
             {
                 userId,
-                groupsId
+                groupsId: groups.map(g => g.value.id)
             },
             config.auth.key,
             {
@@ -80,48 +91,130 @@ export default function ({
                 expiresIn: String(config.auth.tokenExpiration)
             }
         );
-
-        return token;
     };
 
-    const _generateRefreshToken = (payload: ISessionPayload) => {
-        const token = jwt.sign(payload, config.auth.key, {
+    const _generateRefreshToken = (payload: ISessionPayload) =>
+        jwt.sign(payload, config.auth.key, {
             algorithm: config.auth.algorithm as Algorithm,
             expiresIn: String(config.auth.refreshTokenExpiration),
             jwtid: uuidv4()
         });
 
-        return token;
-    };
-
     return {
-        getGraphQLSchema(): IAppGraphQLSchema {
-            return {
-                typeDefs: `
+        getGraphQLSchema: () => ({
+            typeDefs: `
                     extend type Query {
                         me: Record
                     }
                 `,
-                resolvers: {
-                    Query: {
-                        async me(parent, args, ctx, info): Promise<IRecord> {
-                            const users = await recordDomain.find({
-                                params: {
-                                    library: 'users',
-                                    filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: ctx.userId}],
-                                    withCount: false,
-                                    retrieveInactive: true
-                                },
-                                ctx
-                            });
+            resolvers: {
+                Query: {
+                    async me(parent, args, ctx, info): Promise<IRecord> {
+                        const users = await recordDomain.find({
+                            params: {
+                                library: 'users',
+                                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: ctx.userId}],
+                                withCount: false,
+                                retrieveInactive: true
+                            },
+                            ctx
+                        });
 
-                            return users.list[0];
-                        }
+                        return users.list[0];
                     }
                 }
-            };
-        },
-        registerRoute(app): void {
+            }
+        }),
+        registerRoute(app) {
+            app.get(
+                '/auth/oidc/verify/:identifierBase64Url',
+                async (
+                    req: Request<{identifierBase64Url: string}>,
+                    res: Response,
+                    next: NextFunction
+                ): Promise<Response | void> => {
+                    if (!config.auth.oidc.enable) {
+                        return res.status(401);
+                    }
+
+                    const {code} = req.query;
+
+                    const queryId = convertOIDCIdentifier.decodeIdentifierFromBase64Url(req.params.identifierBase64Url);
+
+                    try {
+                        const oidcTokenSet = await oidcClientService.getTokensFromCodes({
+                            authorizationCode: code as string,
+                            queryId
+                        });
+
+                        const decodedToken = jwt.decode(oidcTokenSet.id_token) as jwt.JwtPayload;
+                        const {email} = decodedToken;
+
+                        const ctx: IQueryInfos = {
+                            userId: config.defaultUserId,
+                            queryId: 'authenticate'
+                        };
+
+                        const userRecords = await recordDomain.find({
+                            params: {
+                                library: 'users',
+                                filters: [{field: 'email', condition: AttributeCondition.EQUAL, value: email}]
+                            },
+                            ctx
+                        });
+
+                        if (userRecords.list.length < 1) {
+                            throw new AuthenticationError('Invalid user');
+                        }
+
+                        const user = userRecords.list[0];
+
+                        await oidcClientService.saveOIDCTokens({userId: user.id, tokens: oidcTokenSet});
+
+                        const accessToken = await _generateAccessToken(user.id, ctx);
+
+                        const refreshToken = _generateRefreshToken({
+                            userId: user.id,
+                            ip: req.headers['x-forwarded-for'],
+                            agent: req.headers['user-agent']
+                        });
+
+                        // store refresh token in cache
+                        const cacheKey = `${SESSION_CACHE_HEADER}:${refreshToken}`;
+                        const refreshExpires = ms(config.auth.refreshTokenExpiration);
+                        await cacheService.getCache(ECacheType.RAM).storeData({
+                            key: cacheKey,
+                            data: user.id,
+                            expiresIn: refreshExpires
+                        });
+                        res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, {
+                            httpOnly: true,
+                            sameSite: config.auth.cookie.sameSite,
+                            secure: config.auth.cookie.secure,
+                            domain: req.headers.host,
+                            expires: new Date(Date.now() + refreshExpires)
+                        });
+
+                        // We need the milliseconds value to set cookie expiration
+                        // ms is the package used by jsonwebtoken under the hood, hence we're sure the value is same
+                        const cookieExpires = ms(String(config.auth.tokenExpiration));
+                        res.cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, {
+                            httpOnly: true,
+                            sameSite: config.auth.cookie.sameSite,
+                            secure: config.auth.cookie.secure,
+                            domain: req.headers.host,
+                            expires: new Date(Date.now() + cookieExpires)
+                        });
+
+                        const originalUrl = await oidcClientService.getOriginalUrl(queryId);
+                        return res.redirect(originalUrl);
+                    } catch (err) {
+                        logger.error(err);
+                        return next(err);
+                    }
+                }
+            );
+
             app.post(
                 '/auth/authenticate',
                 async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
@@ -202,20 +295,22 @@ export default function ({
                 }
             );
 
-            app.post(
-                '/auth/logout',
-                (req: Request, res: Response): Response => {
-                    res.cookie(ACCESS_TOKEN_COOKIE_NAME, '', {
-                        expires: new Date(0),
-                        httpOnly: true,
-                        sameSite: config.auth.cookie.sameSite,
-                        secure: config.auth.cookie.secure,
-                        domain: req.headers.host
-                    });
+            app.post('/auth/logout', async (req, res) => {
+                res.cookie(ACCESS_TOKEN_COOKIE_NAME, '', {
+                    expires: new Date(0),
+                    httpOnly: true,
+                    sameSite: config.auth.cookie.sameSite,
+                    secure: config.auth.cookie.secure,
+                    domain: req.headers.host
+                });
 
-                    return res.status(200).end();
+                if (config.auth.oidc.enable) {
+                    const redirectUrl = oidcClientService.getLogoutUrl();
+                    return res.status(200).json({redirectUrl});
                 }
-            );
+
+                return res.status(200).json({});
+            });
 
             app.post(
                 '/auth/forgot-password',
@@ -338,99 +433,120 @@ export default function ({
                 }
             );
 
-            app.post(
-                '/auth/refresh',
-                async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+            app.post('/auth/refresh', async (req: IRequestWithContext, res, next) => {
+                try {
+                    // Get user data
+                    const ctx: IQueryInfos = {
+                        userId: config.defaultUserId,
+                        queryId: 'refresh'
+                    };
+                    req.ctx = initQueryContext(req);
+                    req.ctx.userId = ctx.userId;
+                    req.ctx.queryId = ctx.queryId;
+
+                    const refreshToken = config.auth.oidc.enable
+                        ? req.cookies[REFRESH_TOKEN_COOKIE_NAME]
+                        : req.body.refreshToken;
+
+                    if (typeof refreshToken === 'undefined') {
+                        return res.status(400).send('Missing refresh token');
+                    }
+
+                    let payload: ISessionPayload;
+
                     try {
-                        const {refreshToken} = req.body;
+                        payload = jwt.verify(refreshToken, config.auth.key) as ISessionPayload;
+                    } catch (e) {
+                        throw new AuthenticationError('Invalid token');
+                    }
 
-                        if (typeof refreshToken === 'undefined') {
-                            return res.status(400).send('Missing refresh token');
-                        }
-
-                        let payload: ISessionPayload;
-
+                    if (config.auth.oidc.enable) {
                         try {
-                            payload = jwt.verify(refreshToken, config.auth.key) as ISessionPayload;
-                        } catch (e) {
-                            throw new AuthenticationError('Invalid token');
+                            await oidcClientService.checkTokensValidity({userId: payload.userId});
+                        } catch (err) {
+                            throw new AuthenticationError('oidc session expired');
                         }
+                    }
 
-                        if (!payload.userId || !payload.ip || !payload.agent) {
-                            throw new AuthenticationError('Invalid token');
-                        }
+                    if (!payload.userId || !payload.ip || !payload.agent) {
+                        throw new AuthenticationError('Invalid token');
+                    }
 
-                        // Get user data
-                        const ctx: IQueryInfos = {
-                            userId: config.defaultUserId,
-                            queryId: 'refresh'
-                        };
+                    const users = await recordDomain.find({
+                        params: {
+                            library: 'users',
+                            filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.userId}]
+                        },
+                        ctx
+                    });
 
-                        const users = await recordDomain.find({
-                            params: {
-                                library: 'users',
-                                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.userId}]
-                            },
-                            ctx
-                        });
+                    // User could have been deleted / disabled in database
+                    if (!users.list.length) {
+                        return res.status(401).send('Invalid token');
+                    }
 
-                        // User could have been deleted / disabled in database
-                        if (!users.list.length) {
-                            return res.status(401).send('Invalid token');
-                        }
+                    const userSessionId = (
+                        await cacheService.getCache(ECacheType.RAM).getData([`${SESSION_CACHE_HEADER}:${refreshToken}`])
+                    )[0];
 
-                        const userSessionId = (
-                            await cacheService
-                                .getCache(ECacheType.RAM)
-                                .getData([`${SESSION_CACHE_HEADER}:${refreshToken}`])
-                        )[0];
+                    if (!userSessionId) {
+                        return res.status(401).send('Invalid session');
+                    }
 
-                        if (!userSessionId) {
-                            return res.status(401).send('Invalid session');
-                        }
+                    // We check if user agent is the same
+                    if (payload.agent !== req.headers['user-agent']) {
+                        return res.status(401).send('Invalid session');
+                    }
 
-                        // We check if user agent is the same
-                        if (payload.agent !== req.headers['user-agent']) {
-                            return res.status(401).send('Invalid session');
-                        }
+                    // Everything is ok, we can generate, update and return new tokens
 
-                        // Everything is ok, we can generate, update and return new tokens
+                    const newAccessToken = await _generateAccessToken(payload.userId, ctx);
+                    const newRefreshToken = _generateRefreshToken({
+                        userId: payload.userId,
+                        ip: req.headers['x-forwarded-for'],
+                        agent: req.headers['user-agent']
+                    });
 
-                        const newAccessToken = await _generateAccessToken(payload.userId, ctx);
-                        const newRefreshToken = _generateRefreshToken({
-                            userId: payload.userId,
-                            ip: req.headers['x-forwarded-for'],
-                            agent: req.headers['user-agent']
-                        });
+                    await cacheService.getCache(ECacheType.RAM).storeData({
+                        key: `${SESSION_CACHE_HEADER}:${newRefreshToken}`,
+                        data: payload.userId,
+                        expiresIn: ms(config.auth.refreshTokenExpiration)
+                    });
 
-                        await cacheService.getCache(ECacheType.RAM).storeData({
-                            key: `${SESSION_CACHE_HEADER}:${newRefreshToken}`,
-                            data: payload.userId,
-                            expiresIn: ms(config.auth.refreshTokenExpiration)
-                        });
+                    // Delete old session
+                    await cacheService.getCache(ECacheType.RAM).deleteData([`${SESSION_CACHE_HEADER}:${refreshToken}`]);
 
-                        // Delete old session
-                        await cacheService
-                            .getCache(ECacheType.RAM)
-                            .deleteData([`${SESSION_CACHE_HEADER}:${refreshToken}`]);
+                    const cookieExpires = ms(String(config.auth.tokenExpiration));
+                    res.cookie(ACCESS_TOKEN_COOKIE_NAME, newAccessToken, {
+                        httpOnly: true,
+                        sameSite: config.auth.cookie.sameSite,
+                        secure: config.auth.cookie.secure,
+                        domain: req.headers.host,
+                        expires: new Date(Date.now() + cookieExpires)
+                    });
 
-                        const cookieExpires = ms(String(config.auth.tokenExpiration));
-                        res.cookie(ACCESS_TOKEN_COOKIE_NAME, newAccessToken, {
+                    if (config.auth.oidc.enable) {
+                        const refreshCookieExpires = ms(String(config.auth.refreshTokenExpiration));
+                        res.cookie(REFRESH_TOKEN_COOKIE_NAME, newRefreshToken, {
                             httpOnly: true,
                             sameSite: config.auth.cookie.sameSite,
                             secure: config.auth.cookie.secure,
                             domain: req.headers.host,
-                            expires: new Date(Date.now() + cookieExpires)
+                            expires: new Date(Date.now() + refreshCookieExpires)
                         });
-
-                        return res.status(200).json({
-                            refreshToken: newRefreshToken
-                        });
-                    } catch (err) {
-                        return next(err);
                     }
+
+                    return res.status(200).json(
+                        config.auth.oidc.enable
+                            ? {}
+                            : {
+                                  refreshToken: newRefreshToken
+                              }
+                    );
+                } catch (err) {
+                    return next(err);
                 }
-            );
+            });
         },
         async validateRequestToken({apiKey, cookies}) {
             const ctx: IQueryInfos = {
@@ -439,6 +555,7 @@ export default function ({
             };
 
             const token = cookies?.[ACCESS_TOKEN_COOKIE_NAME];
+
             let userId: string;
             let groupsId: string[];
 
@@ -503,6 +620,23 @@ export default function ({
                 userId,
                 groupsId
             };
+        },
+        authenticateWithOIDCService: async (req, res) => {
+            if (!config.auth.oidc.enable) {
+                return res.status(401);
+            }
+
+            const queryId = req.ctx.queryId;
+
+            const identifierBase64Url = convertOIDCIdentifier.encodeIdentifierToBase64Url(queryId);
+            await oidcClientService.saveOriginalUrl({originalUrl: req.originalUrl, queryId});
+
+            const oidcLoginUrl = await oidcClientService.getAuthorizationUrl({
+                redirectUri: `${config.server.publicUrl}/auth/oidc/verify/${identifierBase64Url}`,
+                queryId
+            });
+
+            return res.redirect(oidcLoginUrl);
         }
     };
 }
