@@ -17,7 +17,7 @@ interface IDeps {
 
 const GLOBAL_SETTINGS_COLLECTION = 'core_global_settings';
 
-export default function({'core.infra.db.dbService': dbService = null}: IDeps = {}): IGlobalSettingsRepo {
+export default function ({'core.infra.db.dbService': dbService = null}: IDeps = {}): IGlobalSettingsRepo {
     const settingsKey = '1';
     return {
         async saveSettings({settings, ctx}) {
@@ -36,7 +36,8 @@ export default function({'core.infra.db.dbService': dbService = null}: IDeps = {
 
             return {
                 name: savedSettings?.[0]?.name ?? null,
-                icon: savedSettings?.[0]?.icon ?? null
+                icon: savedSettings?.[0]?.icon ?? null,
+                favicon: savedSettings?.[0]?.favicon ?? null
             };
         },
         async getSettings(ctx) {
@@ -53,7 +54,8 @@ export default function({'core.infra.db.dbService': dbService = null}: IDeps = {
 
             return {
                 name: settings?.[0]?.name ?? null,
-                icon: settings?.[0]?.icon ?? null
+                icon: settings?.[0]?.icon ?? null,
+                favicon: settings?.[0]?.favicon ?? null
             };
         }
     };

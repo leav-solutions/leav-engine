@@ -22,15 +22,33 @@ export interface GET_GLOBAL_SETTINGS_globalSettings_icon_whoAmI {
     color: string | null;
     preview: Preview | null;
 }
+export interface GET_GLOBAL_SETTINGS_globalSettings_favicon_whoAmI_library {
+    id: string;
+    label: SystemTranslation | null;
+}
+
+export interface GET_GLOBAL_SETTINGS_globalSettings_favicon_whoAmI {
+    id: string;
+    library: GET_GLOBAL_SETTINGS_globalSettings_favicon_whoAmI_library;
+    label: string | null;
+    color: string | null;
+    preview: Preview | null;
+}
 
 export interface GET_GLOBAL_SETTINGS_globalSettings_icon {
     id: string;
     whoAmI: GET_GLOBAL_SETTINGS_globalSettings_icon_whoAmI;
 }
 
+export interface GET_GLOBAL_SETTINGS_globalSettings_favicon {
+    id: string;
+    whoAmI: GET_GLOBAL_SETTINGS_globalSettings_favicon_whoAmI;
+}
+
 export interface GET_GLOBAL_SETTINGS_globalSettings {
     name: string;
     icon: GET_GLOBAL_SETTINGS_globalSettings_icon | null;
+    favicon: GET_GLOBAL_SETTINGS_globalSettings_favicon | null;
 }
 
 export interface GET_GLOBAL_SETTINGS {

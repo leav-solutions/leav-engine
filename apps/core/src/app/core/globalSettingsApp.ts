@@ -40,23 +40,51 @@ export default function ({
     'core.utils': utils = null,
     config = null
 }: IDeps): ICoreApp {
+    const _getFileRecord = async (
+        settings: IGlobalSettings,
+        field: keyof Pick<IGlobalSettings, 'icon' | 'favicon'>,
+        ctx: IQueryInfos
+    ) => {
+        if (!settings[field]) {
+            return null;
+        }
+
+        const record = await recordDomain.find({
+            params: {
+                library: settings[field].library,
+                filters: [
+                    {
+                        field: 'id',
+                        value: settings[field].recordId,
+                        condition: AttributeCondition.EQUAL
+                    }
+                ]
+            },
+            ctx
+        });
+
+        return record.list.length ? record.list[0] : null;
+    };
+
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
                 typeDefs: `
                     type GlobalSettings {
                         name: String!,
-                        icon: Record
+                        icon: Record,
+                        favicon: Record
                     }
 
-                    input GlobalSettingsIconInput {
+                    input GlobalSettingsFileInput {
                         library: String!,
                         recordId: String!
                     }
 
                     input GlobalSettingsInput {
                         name: String,
-                        icon: GlobalSettingsIconInput
+                        icon: GlobalSettingsFileInput
+                        favicon: GlobalSettingsFileInput
                     }
 
                     extend type Query {
@@ -76,27 +104,10 @@ export default function ({
 
                             return settings.name;
                         },
-                        icon: async (settings: IGlobalSettings, _, ctx: IQueryInfos) => {
-                            if (!settings.icon) {
-                                return null;
-                            }
-
-                            const record = await recordDomain.find({
-                                params: {
-                                    library: settings.icon.library,
-                                    filters: [
-                                        {
-                                            field: 'id',
-                                            value: settings.icon.recordId,
-                                            condition: AttributeCondition.EQUAL
-                                        }
-                                    ]
-                                },
-                                ctx
-                            });
-
-                            return record.list.length ? record.list[0] : null;
-                        }
+                        icon: async (settings: IGlobalSettings, _, ctx: IQueryInfos) =>
+                            _getFileRecord(settings, 'icon', ctx),
+                        favicon: async (settings: IGlobalSettings, _, ctx: IQueryInfos) =>
+                            _getFileRecord(settings, 'favicon', ctx)
                     },
                     Query: {
                         globalSettings: async (_, args, ctx: IQueryInfos) => {

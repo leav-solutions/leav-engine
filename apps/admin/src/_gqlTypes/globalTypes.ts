@@ -316,14 +316,15 @@ export interface FormInput {
     elements?: FormElementsByDepsInput[] | null;
 }
 
-export interface GlobalSettingsIconInput {
+export interface GlobalSettingsFileInput {
     library: string;
     recordId: string;
 }
 
 export interface GlobalSettingsInput {
     name?: string | null;
-    icon?: GlobalSettingsIconInput | null;
+    icon?: GlobalSettingsFileInput | null;
+    favicon?: GlobalSettingsFileInput | null;
 }
 
 export interface LibraryIconInput {
