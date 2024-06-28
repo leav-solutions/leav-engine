@@ -72,14 +72,6 @@ const App = (): JSX.Element => {
         }
 
         document.title = `${globalSettings.name} - ${localizedTranslation(currentApp.label, lang)}`;
-
-        // Change favicon
-        const link: HTMLLinkElement | null =
-            document.querySelector("link[rel*='icon']") || document.createElement('link');
-        link.type = 'image/x-icon';
-        link.rel = 'shortcut icon';
-        link.href = String(globalSettings.favicon?.whoAmI?.preview?.small ?? 'favicon-leav.svg');
-        document.getElementsByTagName('head')[0].appendChild(link);
     }, [currentApp, globalSettings, lang, t]);
 
     // Load yup messages translations

@@ -8,9 +8,13 @@ import React from 'react';
 import {render, screen, waitFor} from '_tests/testUtils';
 import GeneralCustomizationTab from './GeneralCustomizationTab';
 
-jest.mock('components/shared/FileSelector', () => function FileSelector() {
-        return <div>FileSelector</div>;
-    });
+jest.mock(
+    'components/shared/FileSelector',
+    () =>
+        function FileSelector() {
+            return <div>FileSelector</div>;
+        }
+);
 
 describe('GeneralCustomizationTab', () => {
     test('Render name and file selector', async () => {
@@ -58,7 +62,7 @@ describe('GeneralCustomizationTab', () => {
         expect(await screen.findByRole('textbox', {name: 'name'})).toBeInTheDocument();
 
         expect(screen.getByRole('textbox', {name: 'name'})).toHaveValue('My App');
-        expect(screen.getByText('FileSelector')).toBeInTheDocument();
+        expect(screen.getAllByText('FileSelector')).toHaveLength(2);
 
         //Edit name and submit
         userEvent.type(screen.getByRole('textbox', {name: 'name'}), ' Modified{Enter}');

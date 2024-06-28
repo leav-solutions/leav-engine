@@ -148,6 +148,12 @@ export default function ({
                 res.sendFile(defaultIconPath);
             };
 
+            const _serveDefaultFavicon = async (req: IRequestWithContext, res: Response, next: NextFunction) => {
+                const rootPath = appRootPath();
+                const defaultFaviconPath = path.resolve(rootPath, '../../assets/favicon-leav.svg');
+                res.sendFile(defaultFaviconPath);
+            };
+
             app.get(
                 '/global-name',
                 _initCtx,
@@ -211,6 +217,58 @@ export default function ({
 
                         const previewsAttribute = utils.getPreviewsAttributeName(settings.icon.library);
                         let previewPath = fileRecord[previewsAttribute][req.params.size];
+                        // Remove leading slash of previewPath
+                        if (previewPath.startsWith('/')) {
+                            previewPath = previewPath.slice(1);
+                        }
+
+                        const filePath = path.resolve(config.preview.directory, previewPath);
+
+                        // Cache TTL is 1 day
+                        res.set('Cache-Control', 'public, max-age=86400');
+                        res.sendFile(filePath);
+                    } catch (err) {
+                        return next(err);
+                    }
+                },
+                _handleError
+            );
+
+            app.get(
+                '/global-favicon',
+                _initCtx,
+                async (req: IRequestWithContext, res: Response, next: NextFunction) => {
+                    try {
+                        const settings = await globalSettingsDomain.getSettings(req.ctx);
+
+                        if (!settings.favicon) {
+                            _serveDefaultFavicon(req, res, next);
+                            return;
+                        }
+
+                        const fileRecord = (
+                            await recordDomain.find({
+                                params: {
+                                    library: settings.favicon.library,
+                                    filters: [
+                                        {
+                                            field: 'id',
+                                            value: settings.favicon.recordId,
+                                            condition: AttributeCondition.EQUAL
+                                        }
+                                    ]
+                                },
+                                ctx: req.ctx
+                            })
+                        ).list[0];
+
+                        if (!fileRecord) {
+                            _serveDefaultFavicon(req, res, next);
+                            return;
+                        }
+
+                        const previewsAttribute = utils.getPreviewsAttributeName(settings.favicon.library);
+                        let previewPath = fileRecord[previewsAttribute].tiny;
                         // Remove leading slash of previewPath
                         if (previewPath.startsWith('/')) {
                             previewPath = previewPath.slice(1);
