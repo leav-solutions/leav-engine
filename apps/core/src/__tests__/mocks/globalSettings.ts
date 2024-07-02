@@ -8,5 +8,9 @@ export const mockGlobalSettings: IGlobalSettings = {
     icon: {
         library: 'myLibraryId',
         recordId: '42'
+    },
+    favicon: {
+        library: 'myLibraryId',
+        recordId: '1337'
     }
 };
