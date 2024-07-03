@@ -40,23 +40,51 @@ export default function ({
     'core.utils': utils = null,
     config = null
 }: IDeps): ICoreApp {
+    const _getFileRecord = async (
+        settings: IGlobalSettings,
+        field: keyof Pick<IGlobalSettings, 'icon' | 'favicon'>,
+        ctx: IQueryInfos
+    ) => {
+        if (!settings[field]) {
+            return null;
+        }
+
+        const record = await recordDomain.find({
+            params: {
+                library: settings[field].library,
+                filters: [
+                    {
+                        field: 'id',
+                        value: settings[field].recordId,
+                        condition: AttributeCondition.EQUAL
+                    }
+                ]
+            },
+            ctx
+        });
+
+        return record.list.length ? record.list[0] : null;
+    };
+
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
                 typeDefs: `
                     type GlobalSettings {
                         name: String!,
-                        icon: Record
+                        icon: Record,
+                        favicon: Record
                     }
 
-                    input GlobalSettingsIconInput {
+                    input GlobalSettingsFileInput {
                         library: String!,
                         recordId: String!
                     }
 
                     input GlobalSettingsInput {
                         name: String,
-                        icon: GlobalSettingsIconInput
+                        icon: GlobalSettingsFileInput
+                        favicon: GlobalSettingsFileInput
                     }
 
                     extend type Query {
@@ -76,27 +104,10 @@ export default function ({
 
                             return settings.name;
                         },
-                        icon: async (settings: IGlobalSettings, _, ctx: IQueryInfos) => {
-                            if (!settings.icon) {
-                                return null;
-                            }
-
-                            const record = await recordDomain.find({
-                                params: {
-                                    library: settings.icon.library,
-                                    filters: [
-                                        {
-                                            field: 'id',
-                                            value: settings.icon.recordId,
-                                            condition: AttributeCondition.EQUAL
-                                        }
-                                    ]
-                                },
-                                ctx
-                            });
-
-                            return record.list.length ? record.list[0] : null;
-                        }
+                        icon: async (settings: IGlobalSettings, _, ctx: IQueryInfos) =>
+                            _getFileRecord(settings, 'icon', ctx),
+                        favicon: async (settings: IGlobalSettings, _, ctx: IQueryInfos) =>
+                            _getFileRecord(settings, 'favicon', ctx)
                     },
                     Query: {
                         globalSettings: async (_, args, ctx: IQueryInfos) => {
@@ -135,6 +146,12 @@ export default function ({
                 const rootPath = appRootPath();
                 const defaultIconPath = path.resolve(rootPath, '../../assets/logo-leavengine.svg');
                 res.sendFile(defaultIconPath);
+            };
+
+            const _serveDefaultFavicon = async (req: IRequestWithContext, res: Response, next: NextFunction) => {
+                const rootPath = appRootPath();
+                const defaultFaviconPath = path.resolve(rootPath, '../../assets/favicon-leav.svg');
+                res.sendFile(defaultFaviconPath);
             };
 
             app.get(
@@ -200,6 +217,58 @@ export default function ({
 
                         const previewsAttribute = utils.getPreviewsAttributeName(settings.icon.library);
                         let previewPath = fileRecord[previewsAttribute][req.params.size];
+                        // Remove leading slash of previewPath
+                        if (previewPath.startsWith('/')) {
+                            previewPath = previewPath.slice(1);
+                        }
+
+                        const filePath = path.resolve(config.preview.directory, previewPath);
+
+                        // Cache TTL is 1 day
+                        res.set('Cache-Control', 'public, max-age=86400');
+                        res.sendFile(filePath);
+                    } catch (err) {
+                        return next(err);
+                    }
+                },
+                _handleError
+            );
+
+            app.get(
+                '/global-favicon',
+                _initCtx,
+                async (req: IRequestWithContext, res: Response, next: NextFunction) => {
+                    try {
+                        const settings = await globalSettingsDomain.getSettings(req.ctx);
+
+                        if (!settings.favicon) {
+                            _serveDefaultFavicon(req, res, next);
+                            return;
+                        }
+
+                        const fileRecord = (
+                            await recordDomain.find({
+                                params: {
+                                    library: settings.favicon.library,
+                                    filters: [
+                                        {
+                                            field: 'id',
+                                            value: settings.favicon.recordId,
+                                            condition: AttributeCondition.EQUAL
+                                        }
+                                    ]
+                                },
+                                ctx: req.ctx
+                            })
+                        ).list[0];
+
+                        if (!fileRecord) {
+                            _serveDefaultFavicon(req, res, next);
+                            return;
+                        }
+
+                        const previewsAttribute = utils.getPreviewsAttributeName(settings.favicon.library);
+                        let previewPath = fileRecord[previewsAttribute].tiny;
                         // Remove leading slash of previewPath
                         if (previewPath.startsWith('/')) {
                             previewPath = previewPath.slice(1);

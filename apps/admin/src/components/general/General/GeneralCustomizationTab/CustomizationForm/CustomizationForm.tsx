@@ -25,9 +25,11 @@ function CustomizationForm({settings, onSubmit}: ICustomizationFormProps): JSX.E
         setName(val);
     };
 
-    const _handleFileSelection = (selectedFile: RecordIdentity_whoAmI) => {
+    const _handleFileSelection = (field: keyof Pick<GlobalSettingsInput, 'icon' | 'favicon'>) => (
+        selectedFile: RecordIdentity_whoAmI
+    ) => {
         onSubmit({
-            icon: selectedFile
+            [field]: selectedFile
                 ? {
                       library: selectedFile.library.id,
                       recordId: selectedFile.id
@@ -65,11 +67,18 @@ function CustomizationForm({settings, onSubmit}: ICustomizationFormProps): JSX.E
                 onKeyPress={_handleKeyPress}
                 onChange={_handleChangeName}
             />
-            <Form.Field>
+            <Form.Field name="icon">
                 <FileSelector
-                    onChange={_handleFileSelection}
+                    onChange={_handleFileSelection('icon')}
                     value={settings?.icon?.whoAmI}
                     label={t('general.customization.icon')}
+                />
+            </Form.Field>
+            <Form.Field name="favicon">
+                <FileSelector
+                    onChange={_handleFileSelection('favicon')}
+                    value={settings?.favicon?.whoAmI}
+                    label={t('general.customization.favicon')}
                 />
             </Form.Field>
         </Form>

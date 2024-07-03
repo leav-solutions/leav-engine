@@ -7,4 +7,8 @@ export interface IGlobalSettings {
         library: string;
         recordId: string;
     };
+    favicon?: {
+        library: string;
+        recordId: string;
+    };
 }

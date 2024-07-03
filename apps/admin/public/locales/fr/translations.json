@@ -43,7 +43,8 @@
         "customization": {
             "title": "Personnalisation",
             "name": "Nom",
-            "icon": "Icône"
+            "icon": "Icône",
+            "favicon": "Favicon"
         }
     },
     "errors": {

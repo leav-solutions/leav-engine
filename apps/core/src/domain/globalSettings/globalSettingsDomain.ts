@@ -60,7 +60,8 @@ export default function ({
 
             return {
                 name: settings.name,
-                icon: settings.icon
+                icon: settings.icon,
+                favicon: settings.favicon
             };
         }
     };

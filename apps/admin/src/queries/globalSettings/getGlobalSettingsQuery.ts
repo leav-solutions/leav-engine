@@ -13,6 +13,10 @@ export const getGlobalSettingsQuery = gql`
                 id
                 ...RecordIdentity
             }
+            favicon {
+                id
+                ...RecordIdentity
+            }
         }
     }
 `;
