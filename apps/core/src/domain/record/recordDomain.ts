@@ -23,7 +23,7 @@ import {IStandardValue,ITreeValue,IValue,IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ECacheType,ICachesService} from '../../infra/cache/cacheService';
-import {getValuesToDisplay} from '../../utils/helpers/getValuesToDisplay';
+import {getInheritedValues} from '../../utils/helpers/getInheritedValues';
 import {getPreviewUrl} from '../../utils/preview/preview';
 import {TypeGuards} from '../../utils/typeGuards';
 import {ActionsListEvents} from '../../_types/actionsList';
@@ -432,7 +432,7 @@ export default function ({
                 ctx
             });
 
-            previewValues = getValuesToDisplay(previewValues);
+            previewValues = getInheritedValues(previewValues);
 
             if (!(previewValues as IValue[]).length) {
                 return null;
@@ -568,7 +568,7 @@ export default function ({
                 return null;
             }
 
-            labelValues = getValuesToDisplay(labelValues);
+            labelValues = getInheritedValues(labelValues);
 
             const value: IValue['value'] | undefined = labelValues?.[0]?.value;
 
@@ -618,7 +618,7 @@ export default function ({
                 ctx
             });
 
-            colorValues = getValuesToDisplay(colorValues);
+            colorValues = getInheritedValues(colorValues);
 
             if (!colorValues.length) {
                 return null;
@@ -674,7 +674,7 @@ export default function ({
                 ctx
             });
 
-            subLabelValues = getValuesToDisplay(subLabelValues);
+            subLabelValues = getInheritedValues(subLabelValues);
 
             if (conf.subLabel === 'id') {
                 subLabelValues[0].value = record.id;

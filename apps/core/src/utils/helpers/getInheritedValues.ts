@@ -8,7 +8,7 @@ const _getInheritedValues = (values: IValue[]) => values.filter(value => value &
 const _getNotInheritedOrOverrideValues = (values: IValue[]) =>
     values.filter(value => value && !value.isInherited && value.value !== null);
 
-export const getValuesToDisplay = (values: IValue[]): IValue[] => {
+export const getInheritedValues = (values: IValue[]): IValue[] => {
     const notInheritedOrOverrideValues = _getNotInheritedOrOverrideValues(values);
 
     if (notInheritedOrOverrideValues.length > 0) {
@@ -21,5 +21,5 @@ export const getValuesToDisplay = (values: IValue[]): IValue[] => {
         return inheritedValues;
     }
 
-    return [];
+    return values;
 };
