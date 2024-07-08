@@ -1,13 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-// Copyright LEAV Solutions 2017
-// This file is released under LGPL V3
 
 import {AqlQuery} from 'arangojs/aql';
 import {IQueryInfos} from '_types/queryInfos';
 
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export interface IDbDocument {
     _id: string;
     _key: string;

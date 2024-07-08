@@ -5,6 +5,7 @@ import {IDbService} from '../db/dbService';
 import * as Config from '_types/config';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {GetSearchQuery} from './helpers/getSearchQuery';
+import {IQueryInfos} from '_types/queryInfos';
 
 interface IRecordIndexData {
     [x: string]: string;
@@ -14,7 +15,7 @@ export interface IIndexationService {
     init(): Promise<void>;
     listLibrary(libraryId: string): Promise<void>;
     isLibraryListed(libraryId: string): Promise<boolean>;
-    indexRecord(libraryId: string, recordId: string, data: IRecordIndexData): Promise<void>;
+    indexRecord(libraryId: string, recordId: string, data: IRecordIndexData, ctx: IQueryInfos): Promise<void>;
     getSearchQuery: GetSearchQuery;
 }
 
@@ -32,7 +33,7 @@ export const CORE_INDEX_FIELD = 'core_index';
 
 const _getCoreIndexView = libraryId => `${CORE_INDEX_VIEW}_${libraryId}`;
 
-export default function ({
+export default function({
     config = null,
     'core.infra.db.dbService': dbService = null,
     'core.infra.record': recordRepo = null,
@@ -95,11 +96,12 @@ export default function ({
             const views = await dbService.views();
             return !!views.find(v => v.name === _getCoreIndexView(libraryId));
         },
-        async indexRecord(libraryId: string, recordId: string, data: IRecordIndexData): Promise<void> {
+        async indexRecord(libraryId, recordId, data, ctx): Promise<void> {
             await recordRepo.updateRecord({
                 libraryId,
                 recordData: {id: recordId, [CORE_INDEX_FIELD]: data},
-                mergeObjects: true
+                mergeObjects: true,
+                ctx
             });
         },
         getSearchQuery

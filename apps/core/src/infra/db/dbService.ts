@@ -11,6 +11,7 @@ import {createHash} from 'crypto';
 import {IUtils} from 'utils/utils';
 import {IConfig} from '_types/config';
 import {IDbProfiler} from '_types/dbProfiler';
+import {ARANGODB_HTTP_CONFLICT_CODE, ARANGODB_WRITEWRITE_CONFLICT_CODE} from './_constants';
 import {IDbDocument, IExecute, IExecuteWithCount} from './_types';
 
 const MAX_ATTEMPTS = 10;
@@ -76,12 +77,12 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function ({
+export default function({
     'core.infra.db': db = null,
     'core.utils': utils = null,
     config = null
 }: IDeps = {}): IDbService {
-    const collectionExists = async function (name: string): Promise<boolean> {
+    const collectionExists = async function(name: string): Promise<boolean> {
         const collections = await db.listCollections();
 
         return collections.reduce((exists, c) => exists || c.name === name, false);
@@ -109,7 +110,9 @@ export default function ({
 
                     // Generate a hash from the query to be able
                     // to group identical queries (exact same query with exact same params)
-                    const queryKey = createHash('md5').update(JSON.stringify(query)).digest('base64');
+                    const queryKey = createHash('md5')
+                        .update(JSON.stringify(query))
+                        .digest('base64');
 
                     if (!dbProfiler.queries) {
                         dbProfiler.queries = {};
@@ -153,7 +156,10 @@ export default function ({
                 // Handle write-write conflicts: we try the query again with a growing delay between trials.
                 // If we reach maximum attempts and still no success, stop it and throw the exception
                 // error 1200 === conflict
-                if (e.isArangoError && e.errorNum === 1200 && attempts < MAX_ATTEMPTS) {
+                if (
+                    (e.code === ARANGODB_HTTP_CONFLICT_CODE || e.errorNum === ARANGODB_WRITEWRITE_CONFLICT_CODE) &&
+                    attempts < MAX_ATTEMPTS
+                ) {
                     const timeToWait = 2 ** attempts;
                     await _sleep(timeToWait);
                     return this.execute({query, ctx, withTotalCount, attempts: attempts + 1});
