@@ -155,7 +155,6 @@ export default function({
             } catch (e) {
                 // Handle write-write conflicts: we try the query again with a growing delay between trials.
                 // If we reach maximum attempts and still no success, stop it and throw the exception
-                // error 1200 === conflict
                 if (
                     (e.code === ARANGODB_HTTP_CONFLICT_CODE || e.errorNum === ARANGODB_WRITEWRITE_CONFLICT_CODE) &&
                     attempts < MAX_ATTEMPTS

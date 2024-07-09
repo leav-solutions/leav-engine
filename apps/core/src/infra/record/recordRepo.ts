@@ -337,7 +337,7 @@ export default function({
             updatedRecord.library = libraryId;
             oldRecord.library = libraryId;
 
-            return {old: dbUtils.cleanup(updatedRecord), new: dbUtils.cleanup(updatedRecord)};
+            return {old: dbUtils.cleanup(oldRecord), new: dbUtils.cleanup(updatedRecord)};
         }
     };
 }
