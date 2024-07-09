@@ -67,3 +67,23 @@ RETURN MERGE(r, {library: @value1})",
   "withTotalCount": true,
 }
 `;
+
+exports[`RecordRepo updateRecord Should update a record 1`] = `
+"
+                    UPDATE @value0 WITH @value1 IN @@value2
+                    RETURN {old: OLD, new: NEW}
+                "
+`;
+
+exports[`RecordRepo updateRecord Should update a record 2`] = `
+{
+  "@value2": "test",
+  "value0": {
+    "_id": "test/222435651",
+    "_key": "222435651",
+  },
+  "value1": {
+    "modified_at": 1519303348,
+  },
+}
+`;
