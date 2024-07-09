@@ -47,11 +47,13 @@ export interface IRecordRepo {
     updateRecord({
         libraryId,
         recordData,
-        mergeObjects = true
+        mergeObjects = true,
+        ctx
     }: {
         libraryId: string;
         recordData: IRecord;
         mergeObjects?: boolean;
+        ctx: IQueryInfos;
     }): Promise<{old: IRecord; new: IRecord}>;
     deleteRecord({libraryId, recordId, ctx}: {libraryId: string; recordId: string; ctx: IQueryInfos}): Promise<IRecord>;
     find(params: {
@@ -78,7 +80,7 @@ interface IDeps {
     'core.infra.indexation.helpers.getSearchQuery'?: GetSearchQuery;
 }
 
-export default function ({
+export default function({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attributeTypes': attributeTypesRepo = null,
@@ -311,23 +313,31 @@ export default function ({
 
             return dbUtils.cleanup(deletedRecord);
         },
-        async updateRecord({libraryId, recordData, mergeObjects = true}) {
+        async updateRecord({libraryId, recordData, mergeObjects = true, ctx}) {
             const collection = dbService.db.collection<IRecord>(libraryId);
             const dataToSave = {...recordData};
             const recordId = dataToSave.id;
             delete dataToSave.id; // Don't save ID
 
-            const {old: oldRecord, new: updatedRecord} = await collection.update({_key: String(recordId)}, dataToSave, {
-                mergeObjects,
-                returnNew: true,
-                returnOld: true,
-                keepNull: false
+            const dbDocument = {
+                _id: `${libraryId}/${recordId}`,
+                _key: recordId
+            };
+
+            const [{old: oldRecord, new: updatedRecord}] = await dbService.execute<
+                Array<{new: IDbDocument; old: IDbDocument}>
+            >({
+                query: aql`
+                    UPDATE ${dbDocument} WITH ${dataToSave} IN ${collection}
+                    RETURN {old: OLD, new: NEW}
+                `,
+                ctx
             });
 
-            updatedRecord.library = updatedRecord._id.split('/')[0];
-            oldRecord.library = oldRecord._id.split('/')[0];
+            updatedRecord.library = libraryId;
+            oldRecord.library = libraryId;
 
-            return {old: dbUtils.cleanup(updatedRecord) as IRecord, new: dbUtils.cleanup(updatedRecord) as IRecord};
+            return {old: dbUtils.cleanup(oldRecord), new: dbUtils.cleanup(updatedRecord)};
         }
     };
 }

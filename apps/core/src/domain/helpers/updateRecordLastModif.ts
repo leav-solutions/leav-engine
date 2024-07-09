@@ -29,7 +29,8 @@ export default function({
                 id: recordId,
                 modified_at: moment().unix(),
                 modified_by: String(ctx.userId)
-            }
+            },
+            ctx
         });
     };
 }

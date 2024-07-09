@@ -124,7 +124,7 @@ export default function({
                 .concat(attributesToEdit.del.map(a => ({[a.id]: null})))
                 .reduce((acc, e) => ({...acc, ...e}), {});
 
-            await indexationService.indexRecord(findRecordParams.library, record.id, data);
+            await indexationService.indexRecord(findRecordParams.library, record.id, data, ctx);
         }
     };
 
