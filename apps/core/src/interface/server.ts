@@ -14,7 +14,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express, {NextFunction, Response} from 'express';
 import fs from 'fs';
-import {GraphQLError, GraphQLFormattedError} from 'graphql';
+import {GraphQLError} from 'graphql';
 import {graphqlUploadExpress} from 'graphql-upload';
 import {ServerOptions} from 'graphql-ws';
 import * as graphqlWS from 'graphql-ws/lib/use/ws';
@@ -26,13 +26,12 @@ import {WebSocketServer} from 'ws';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import AuthenticationError from '../errors/AuthenticationError';
-import LeavError from '../errors/LeavError';
 import {ACCESS_TOKEN_COOKIE_NAME, API_KEY_PARAM_NAME} from '../_types/auth';
-import {ErrorTypes, IExtendedErrorMsg} from '../_types/errors';
 import {IRequestWithContext} from '../_types/express';
 import PermissionError from '../errors/PermissionError';
 import ValidationError from '../errors/ValidationError';
 import type {ValidateRequestTokenFunc} from '../app/helpers/validateRequestToken';
+import {HandleGraphqlErrorFunc} from './helpers/handleGraphqlError';
 
 export interface IServer {
     init(): Promise<void>;
@@ -41,6 +40,7 @@ export interface IServer {
 
 interface IDeps {
     config?: IConfig;
+    'core.interface.helpers.handleGraphqlError'?: HandleGraphqlErrorFunc;
     'core.app.graphql'?: IGraphqlApp;
     'core.app.auth'?: IAuthApp;
     'core.app.application'?: IApplicationApp;
@@ -53,6 +53,7 @@ interface IDeps {
 
 export default function ({
     config: config = null,
+    'core.interface.helpers.handleGraphqlError': handleGraphqlError = null,
     'core.app.graphql': graphqlApp = null,
     'core.app.auth': authApp = null,
     'core.app.application': applicationApp = null,
@@ -62,53 +63,6 @@ export default function ({
     'core.utils': utils = null,
     'core.depsManager': depsManager = null
 }: IDeps = {}): IServer {
-    const _handleError = (err: GraphQLError, context: IQueryInfos): GraphQLFormattedError => {
-        const newError = {...err};
-        const originalError = err.originalError;
-
-        const isGraphqlValidationError = err.extensions && err.extensions.code === 'GRAPHQL_VALIDATION_FAILED';
-        const errorType = (originalError as LeavError<unknown>)?.type ?? ErrorTypes.INTERNAL_ERROR;
-        const errorFields = (originalError as LeavError<unknown>)?.fields ?? {};
-        const errorAction = (originalError as PermissionError<unknown>)?.action ?? null;
-        const errorCustomMessage = (originalError as ValidationError<unknown>)?.isCustomMessage ?? false;
-
-        // Translate errors details
-        for (const [field, errorDetails] of Object.entries(errorFields)) {
-            const toTranslate =
-                typeof errorDetails === 'string' ? {msg: errorDetails, vars: {}} : (errorDetails as IExtendedErrorMsg);
-
-            const lang = context.lang ?? config.lang.default;
-
-            errorFields[field] = !errorCustomMessage ? utils.translateError(toTranslate, lang) : errorFields[field];
-        }
-
-        newError.extensions.code = errorType;
-        newError.extensions.fields = errorFields;
-        newError.extensions.action = errorAction;
-
-        if (
-            errorType === ErrorTypes.VALIDATION_ERROR ||
-            errorType === ErrorTypes.PERMISSION_ERROR ||
-            isGraphqlValidationError
-        ) {
-            return newError;
-        }
-
-        const errId = uuidv4();
-
-        // Error is logged with original message
-        newError.message = `[${errId}] ${err.message}`;
-        // @ts-ignore
-        logger.error(`${newError.message}\n${(err.extensions.exception?.stacktrace ?? []).join('\n')}`);
-
-        if (!config.debug) {
-            newError.message = `[${errId}] Internal Error`;
-            delete newError.extensions?.exception;
-        }
-
-        return newError;
-    };
-
     const _checkAuth = async (req, res, next) => {
         try {
             await validateRequestToken(req);
@@ -289,7 +243,7 @@ export default function ({
                                 // Format and translate errors before sending them to client
                                 if (errors) {
                                     errors = errors.map(e => {
-                                        const formattedError = _handleError(e, contextValue);
+                                        const formattedError = handleGraphqlError(e, contextValue);
                                         e = Object.assign(e, {
                                             extensions: {...e.extensions, ...formattedError.extensions},
                                             message: formattedError.message
