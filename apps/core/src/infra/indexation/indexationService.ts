@@ -96,7 +96,7 @@ export default function({
             const views = await dbService.views();
             return !!views.find(v => v.name === _getCoreIndexView(libraryId));
         },
-        async indexRecord(libraryId, recordId, data, ctx): Promise<void> {
+        async indexRecord(libraryId, recordId, data, ctx) {
             await recordRepo.updateRecord({
                 libraryId,
                 recordData: {id: recordId, [CORE_INDEX_FIELD]: data},
