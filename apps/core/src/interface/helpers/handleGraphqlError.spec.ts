@@ -1,14 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import LeavError from 'errors/LeavError';
-import PermissionError from 'errors/PermissionError';
-import ValidationError from 'errors/ValidationError';
+import LeavError from '../../errors/LeavError';
+import PermissionError from '../../errors/PermissionError';
+import ValidationError from '../../errors/ValidationError';
 import {GraphQLError, GraphQLErrorExtensions} from 'graphql';
 import {IUtils} from 'utils/utils';
 import {IConfig} from '_types/config';
 import {AdminPermissionsActions} from '../../_types/permissions';
-import {ErrorTypes} from '../../_types/errors';
+import {ErrorTypes, GRAPHQL_ERROR_CODES} from '../../_types/errors';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import handleGraphqlError from './handleGraphqlError';
 import winston from 'winston';
@@ -51,12 +51,7 @@ describe('handleGraphqlError', () => {
                 price: 'invalid price format',
                 name: 'name does not match regex'
             };
-            const originalError: LeavError<unknown> = {
-                name: 'ValidationError',
-                message: 'Validation error',
-                type: ErrorTypes.VALIDATION_ERROR,
-                fields
-            };
+            const originalError = new ValidationError(fields, 'Validation error');
 
             const errorHandler = handleGraphqlError({
                 config: mockConfig as IConfig,
@@ -77,12 +72,7 @@ describe('handleGraphqlError', () => {
             const fields = {
                 price: 'invalid price format'
             };
-            const originalError: LeavError<unknown> = {
-                name: 'ValidationError',
-                message: 'Validation error',
-                type: ErrorTypes.VALIDATION_ERROR,
-                fields
-            };
+            const originalError = new ValidationError(fields, 'Validation error');
 
             const errorHandler = handleGraphqlError({
                 config: mockConfig as IConfig,
@@ -103,14 +93,7 @@ describe('handleGraphqlError', () => {
                 price: 'invalid price format',
                 name: 'name does not match regex'
             };
-            const originalError: ValidationError<unknown> = {
-                name: 'ValidationError',
-                message: 'Validation error',
-                type: ErrorTypes.VALIDATION_ERROR,
-                isCustomMessage: true,
-                context: mockCtx,
-                fields
-            };
+            const originalError = new ValidationError(fields, 'Validation error', true);
 
             const errorHandler = handleGraphqlError({
                 config: mockConfig as IConfig,
@@ -130,12 +113,9 @@ describe('handleGraphqlError', () => {
 
     describe('PERMISSION_ERROR', () => {
         it('Should return permission action and a generic message', () => {
-            const originalError: PermissionError<unknown> = {
-                type: ErrorTypes.PERMISSION_ERROR,
-                message: 'You shall not pass!',
-                name: 'PermissionError',
-                action: AdminPermissionsActions.ACCESS_LIBRARIES
-            };
+            const originalError: PermissionError<unknown> = new PermissionError(
+                AdminPermissionsActions.ACCESS_LIBRARIES
+            );
 
             const errorHandler = handleGraphqlError({
                 config: mockConfig as IConfig,
@@ -157,7 +137,7 @@ describe('handleGraphqlError', () => {
                 'core.utils': mockUtils as IUtils
             });
             const handledError = errorHandler(
-                _makeError('Bad request', null, {code: 'GRAPHQL_VALIDATION_FAILED'}),
+                _makeError('Bad request', null, {code: GRAPHQL_ERROR_CODES.VALIDATION_FAILED}),
                 mockCtx
             );
 

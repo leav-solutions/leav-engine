@@ -6,7 +6,7 @@ import {GraphQLError, GraphQLFormattedError} from 'graphql';
 import {IUtils} from 'utils/utils';
 import winston from 'winston';
 import {IConfig} from '_types/config';
-import {IExtendedErrorMsg} from '_types/errors';
+import {GRAPHQL_ERROR_CODES, IExtendedErrorMsg} from '../../_types/errors';
 import {IQueryInfos} from '_types/queryInfos';
 import LeavError from '../../errors/LeavError';
 import PermissionError from '../../errors/PermissionError';
@@ -20,18 +20,27 @@ interface IDeps {
     'core.utils.logger'?: winston.Winston;
 }
 
-export default function({config, 'core.utils': utils, 'core.utils.logger': logger = null}: IDeps) {
-    const _handleError: HandleGraphqlErrorFunc = (err, context) => {
+const _isLeavError = (err: Error): err is LeavError<unknown> => err instanceof LeavError;
+const _isPermissionError = (err: Error): err is PermissionError<unknown> =>
+    _isLeavError(err) ? err.type === ErrorTypes.PERMISSION_ERROR && err.hasOwnProperty('action') : false;
+const _isValidationError = (err: Error): err is ValidationError<unknown> =>
+    _isLeavError(err) ? err.type === ErrorTypes.VALIDATION_ERROR && err.hasOwnProperty('isCustomMessage') : false;
+
+export default function({
+    config,
+    'core.utils': utils,
+    'core.utils.logger': logger = null
+}: IDeps): HandleGraphqlErrorFunc {
+    return (err, context) => {
         const newError = {...err};
         const originalError = err.originalError;
 
-        const isGraphqlValidationError = err.extensions && err.extensions.code === 'GRAPHQL_VALIDATION_FAILED';
-        const errorType = (originalError as LeavError<unknown>)?.type ?? ErrorTypes.INTERNAL_ERROR;
-        const errorFields = (originalError as LeavError<unknown>)?.fields
-            ? {...(originalError as LeavError<unknown>)?.fields}
-            : {};
-        const errorAction = (originalError as PermissionError<unknown>)?.action ?? null;
-        const errorCustomMessage = (originalError as ValidationError<unknown>)?.isCustomMessage ?? false;
+        const isGraphqlValidationError =
+            err.extensions && err.extensions.code === GRAPHQL_ERROR_CODES.VALIDATION_FAILED;
+        const errorType = _isLeavError(originalError) ? originalError.type : ErrorTypes.INTERNAL_ERROR;
+        const errorFields = _isLeavError(originalError) ? {...originalError.fields} : {};
+        const errorAction = _isPermissionError(originalError) ? originalError.action : null;
+        const errorCustomMessage = _isValidationError(originalError) ? originalError.isCustomMessage : false;
 
         // Translate errors details
         for (const [field, errorDetails] of Object.entries(errorFields)) {
@@ -71,6 +80,4 @@ export default function({config, 'core.utils': utils, 'core.utils.logger': logge
 
         return newError;
     };
-
-    return _handleError;
 }
