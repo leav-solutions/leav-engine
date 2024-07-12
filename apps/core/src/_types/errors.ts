@@ -117,3 +117,7 @@ export type ErrorFieldDetailMessage = Errors | IExtendedErrorMsg | string;
 export type ErrorFieldDetail<T> = {
     [P in keyof T]?: ErrorFieldDetailMessage;
 };
+
+export const GRAPHQL_ERROR_CODES = {
+    VALIDATION_FAILED: 'GRAPHQL_VALIDATION_FAILED'
+};
