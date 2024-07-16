@@ -11,6 +11,8 @@ import EditRecordBtn from '_ui/components/RecordEdition/EditRecordBtn';
 import {PreviewSize} from '_ui/constants';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IRecordIdentityWhoAmI} from '_ui/types/records';
+import {ArrowsAltOutlined} from '@ant-design/icons';
+import {Button} from 'antd';
 
 const Info = styled.div`
     min-width: 150px;
@@ -20,9 +22,10 @@ interface ICellInfosProps {
     record: IRecordIdentityWhoAmI;
     previewSize: PreviewSize;
     lang?: string[];
+    onEdit: () => void;
 }
 
-function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
+function CellInfos({record, previewSize, lang, onEdit}: ICellInfosProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {state: searchState} = useSearchReducer();
 
@@ -34,11 +37,12 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
         {
             title: t('global.details'),
             button: (
-                <EditRecordBtn
+                <Button
+                    aria-label="edit-record"
                     shape="circle"
-                    record={record}
                     size={menuBtnSize}
-                    valuesVersion={searchState.valuesVersions}
+                    icon={<ArrowsAltOutlined size={48} />}
+                    onClick={onEdit}
                 />
             )
         }

@@ -34,6 +34,7 @@ const ErrorBodyCell = styled(CustomBodyCell)`
 interface IBodyCellProps {
     cell: ReactTableTypeCell<ITableRow>;
     selected: boolean;
+    onCellInfosEdit: () => void;
 }
 
 function BodyCell({cell, selected}: IBodyCellProps): JSX.Element {
@@ -77,7 +78,7 @@ function BodyCell({cell, selected}: IBodyCellProps): JSX.Element {
             {cell.column.id === selectionColumn ? (
                 <CellSelection selected={selected} />
             ) : (
-                <Cell columnName={cell.column.id} data={data} />
+                <Cell columnName={cell.column.id} data={data} onCellInfosEdit={onCellInfosEdit} />
             )}
         </CustomBodyCell>
     );
