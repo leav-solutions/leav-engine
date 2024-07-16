@@ -1,6 +1,6 @@
 {
   "name": "login",
-  "version": "1.0.0-beta12",
+  "version": "1.0.0-beta13",
   "private": true,
   "homepage": ".",
   "dependencies": {
