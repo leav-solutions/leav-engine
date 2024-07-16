@@ -54,15 +54,13 @@ export const useGetOptionsQuery = ({
                     label: recordLabel,
                     idCard: {
                         title: recordLabel,
-                        avatar: (
-                            <KitAvatar
-                                size="small"
-                                shape="square"
-                                imageFit="contain"
-                                src={recordItem.whoAmI.preview?.small}
-                                label={recordLabel}
-                            />
-                        )
+                        avatarProps: {
+                            size: 'small',
+                            shape: 'square',
+                            imageFit: 'contain',
+                            src: recordItem.whoAmI.preview?.small,
+                            label: recordLabel
+                        }
                     }
                 };
             }),

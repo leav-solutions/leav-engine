@@ -121,7 +121,7 @@ describe('useGetOptionsQuery', () => {
                 expect(result.current.selectOptions).toEqual([
                     {
                         idCard: {
-                            avatar: expect.anything(),
+                            avatarProps: expect.anything(),
                             title: 'Danette pistache'
                         },
                         label: 'Danette pistache',
@@ -129,7 +129,7 @@ describe('useGetOptionsQuery', () => {
                     },
                     {
                         idCard: {
-                            avatar: expect.anything(),
+                            avatarProps: expect.anything(),
                             title: 'Danette chocolat'
                         },
                         label: 'Danette chocolat',
@@ -157,7 +157,7 @@ describe('useGetOptionsQuery', () => {
                 expect(result.current.selectOptions).toEqual([
                     {
                         idCard: {
-                            avatar: expect.anything(),
+                            avatarProps: expect.anything(),
                             title: '28121951'
                         },
                         label: '28121951',
@@ -165,7 +165,7 @@ describe('useGetOptionsQuery', () => {
                     },
                     {
                         idCard: {
-                            avatar: expect.anything(),
+                            avatarProps: expect.anything(),
                             title: '15061943'
                         },
                         label: '15061943',
@@ -232,7 +232,7 @@ describe('useGetOptionsQuery', () => {
             expect(result.current.selectOptions).toEqual([
                 {
                     idCard: {
-                        avatar: expect.anything(),
+                        avatarProps: expect.anything(),
                         title: 'Danette pistache'
                     },
                     label: 'Danette pistache',
@@ -240,7 +240,7 @@ describe('useGetOptionsQuery', () => {
                 },
                 {
                     idCard: {
-                        avatar: expect.anything(),
+                        avatarProps: expect.anything(),
                         title: 'Danette chocolat'
                     },
                     label: 'Danette chocolat',
@@ -260,7 +260,7 @@ describe('useGetOptionsQuery', () => {
             expect(result.current.selectOptions).toEqual([
                 {
                     idCard: {
-                        avatar: expect.anything(),
+                        avatarProps: expect.anything(),
                         title: '28121951'
                     },
                     label: '28121951',
@@ -268,7 +268,7 @@ describe('useGetOptionsQuery', () => {
                 },
                 {
                     idCard: {
-                        avatar: expect.anything(),
+                        avatarProps: expect.anything(),
                         title: '15061943'
                     },
                     label: '15061943',

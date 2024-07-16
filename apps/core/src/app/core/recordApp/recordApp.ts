@@ -77,7 +77,7 @@ export default function ({
                         id: ID!,
                         library: Library!,
                         whoAmI: RecordIdentity!,
-                        property(attribute: ID!): [GenericValue!],
+                        property(attribute: ID!): [GenericValue!]!,
                         permissions: RecordPermissions!
                     }
 
