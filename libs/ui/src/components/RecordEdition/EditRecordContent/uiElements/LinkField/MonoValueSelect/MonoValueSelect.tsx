@@ -56,7 +56,6 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
         selectOptions,
         updateLeavField,
         runFullTextSearch,
-        totalCount,
         searchResultCount,
         suggestionsCount,
         optionsType
@@ -113,8 +112,9 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
                         <ResultsCount weight="bold">
                             {optionsType === 'search'
                                 ? t('record_edition.link_search_result_count', {
-                                      count: searchResultCount,
-                                      total: totalCount
+                                      count:
+                                          searchResultCount > suggestionsCount ? suggestionsCount : searchResultCount,
+                                      total: searchResultCount
                                   })
                                 : t('record_edition.suggestions_count', {count: suggestionsCount})}
                         </ResultsCount>
