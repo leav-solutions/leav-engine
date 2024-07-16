@@ -28,9 +28,10 @@ const RecordCardCellWrapper = styled.div`
 interface ICellProps {
     columnName: string;
     data: ITableCell;
+    onCellInfosEdit: () => void;
 }
 
-const Cell: FunctionComponent<ICellProps> = ({columnName, data}) => {
+const Cell: FunctionComponent<ICellProps> = ({columnName, data, onCellInfosEdit}) => {
     const {value, type} = data;
     const {lang} = useLang();
 
@@ -81,7 +82,7 @@ const Cell: FunctionComponent<ICellProps> = ({columnName, data}) => {
         default:
             // selection and infos column has no type
             if (columnName === infosCol) {
-                return <CellInfos record={value} previewSize={previewSize} lang={lang} />;
+                return <CellInfos record={value} previewSize={previewSize} lang={lang} onEdit={onCellInfosEdit} />;
             }
 
             return <></>;

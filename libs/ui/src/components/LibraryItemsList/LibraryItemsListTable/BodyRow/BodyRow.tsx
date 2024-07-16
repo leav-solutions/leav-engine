@@ -63,6 +63,8 @@ function BodyRow({row}: IBodyRowProps): JSX.Element {
         setEditRecord(true);
     };
 
+    const _handleCellInfoEdit = _handleDoubleClick;
+
     const _handleClose = () => {
         setEditRecord(false);
     };
@@ -84,7 +86,12 @@ function BodyRow({row}: IBodyRowProps): JSX.Element {
                 />
             )}
             {row.cells.map(cell => (
-                <BodyCell selected={isRowSelected} cell={cell as any} key={cell.column.id} />
+                <BodyCell
+                    selected={isRowSelected}
+                    cell={cell as any}
+                    key={cell.column.id}
+                    onCellInfosEdit={_handleCellInfoEdit}
+                />
             ))}
         </CustomBodyRow>
     );
