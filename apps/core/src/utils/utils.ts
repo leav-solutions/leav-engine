@@ -14,7 +14,7 @@ import moment from 'moment';
 import os from 'os';
 import {IActionsListConfig} from '_types/actionsList';
 import {IConfig} from '_types/config';
-import {ErrorFieldDetail, ErrorFieldDetailMessage, Errors, IExtendedErrorMsg} from '_types/errors';
+import {ErrorFieldDetail, ErrorFieldDetailMessage, Errors, IExtendedErrorMsg} from '../_types/errors';
 import {ILibrary, ILibraryPreviewsSettings, LibraryBehavior} from '_types/library';
 import {ISystemTranslation} from '_types/systemTranslation';
 import {IValue} from '_types/value';
@@ -270,6 +270,10 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
             }
 
             const toTranslate = typeof error === 'string' ? {msg: error, vars: {}} : (error as IExtendedErrorMsg);
+
+            if (!Object.keys(Errors).includes(toTranslate.msg)) {
+                return toTranslate.msg;
+            }
 
             return translator.t(('errors.' + toTranslate.msg) as string, {
                 ...toTranslate.vars,

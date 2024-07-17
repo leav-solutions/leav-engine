@@ -37,8 +37,10 @@ export default function ({
 
         const isGraphqlValidationError =
             err.extensions && err.extensions.code === GRAPHQL_ERROR_CODES.VALIDATION_FAILED;
-        const errorType = _isLeavError(originalError) ? originalError.type : ErrorTypes.INTERNAL_ERROR;
+        const errorType =
+            _isLeavError(originalError) && originalError.type ? originalError.type : ErrorTypes.INTERNAL_ERROR;
         const errorFields = _isLeavError(originalError) ? {...originalError.fields} : {};
+        const errorRecord = _isLeavError(originalError) ? {...originalError.record} : {};
         const errorAction = _isPermissionError(originalError) ? originalError.action : null;
         const errorCustomMessage = _isValidationError(originalError) ? originalError.isCustomMessage : false;
 
@@ -55,6 +57,7 @@ export default function ({
         newError.extensions.code = errorType;
         newError.extensions.fields = errorFields;
         newError.extensions.action = errorAction;
+        newError.extensions.record = errorRecord;
 
         if (
             errorType === ErrorTypes.VALIDATION_ERROR ||

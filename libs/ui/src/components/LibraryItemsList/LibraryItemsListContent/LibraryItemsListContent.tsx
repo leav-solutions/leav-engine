@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useQuery} from '@apollo/client';
+import {ApolloQueryResult, useQuery} from '@apollo/client';
 import {FunctionComponent, useEffect, useMemo, useReducer} from 'react';
 import styled, {CSSObject} from 'styled-components';
-import {ErrorDisplay, Loading} from '_ui/components';
+import {Loading} from '_ui/components';
 import {SearchContext} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchContext';
 import searchReducer, {
     initialSearchState,
@@ -135,8 +135,8 @@ const LibraryItemsListContent: FunctionComponent<ILibraryItemsListContentProps> 
     const [updateSelectedViewMutation] = useSaveUserDataMutation();
     const selectedViewKey = getSelectedViewKey(library.id);
 
-    const _applyResults = (data: IGetRecordsFromLibraryQuery) => {
-        const itemsFromQuery = data ? data.records.list : [];
+    const _applyResults = (result: ApolloQueryResult<IGetRecordsFromLibraryQuery>) => {
+        const itemsFromQuery = result?.data?.records?.list ?? [];
 
         const newRecords: ISearchRecord[] = manageItems({
             items: itemsFromQuery,
@@ -146,7 +146,8 @@ const LibraryItemsListContent: FunctionComponent<ILibraryItemsListContentProps> 
         searchDispatch({
             type: SearchActionTypes.UPDATE_RESULT,
             records: newRecords,
-            totalCount: data?.records.totalCount ?? searchState.totalCount
+            errors: result?.errors,
+            totalCount: result?.data?.records?.totalCount ?? searchState.totalCount
         });
     };
 
@@ -171,61 +172,58 @@ const LibraryItemsListContent: FunctionComponent<ILibraryItemsListContentProps> 
         []
     );
 
-    const {loading: getRecordsLoading, data: searchData, fetchMore: getRecordsFetchMore} = useQuery<
-        IGetRecordsFromLibraryQuery,
-        IGetRecordsFromLibraryQueryVariables
-    >(getRecordsFromLibraryQuery(searchState.fields, !searchState.offset), {
-        fetchPolicy: 'network-only',
-        variables,
-        onError: err => {
-            searchDispatch({
-                type: SearchActionTypes.UPDATE_RESULT,
-                error: err
-            });
+    const getRecordsQueryResult = useQuery<IGetRecordsFromLibraryQuery, IGetRecordsFromLibraryQueryVariables>(
+        getRecordsFromLibraryQuery(searchState.fields, !searchState.offset),
+        {
+            fetchPolicy: 'network-only',
+            errorPolicy: 'all',
+            variables
         }
-    });
+    );
+    const {
+        loading: getRecordsLoading,
+        data: searchData,
+        error: searchError,
+        called: searchCalled,
+        fetchMore: getRecordsFetchMore
+    } = getRecordsQueryResult;
 
     const _fetchRecords = async () => {
-        try {
-            const queryFilters = getRequestFromFilters(searchState.filters);
+        const queryFilters = getRequestFromFilters(searchState.filters);
 
-            const currentVariables = {
-                library: library.id,
-                limit: searchState.pagination,
-                offset: searchState.offset,
-                filters: queryFilters,
-                sort: searchState.sort,
-                fullText: searchState.fullText,
-                version: _getVersionForRequest()
-            };
+        const currentVariables = {
+            library: library.id,
+            limit: searchState.pagination,
+            offset: searchState.offset,
+            filters: queryFilters,
+            sort: searchState.sort,
+            fullText: searchState.fullText,
+            version: _getVersionForRequest()
+        };
 
-            // Records have already been fetched, we use fetchMore to make sure
-            // we request the right fields by passing in a whole new query
-            const results = await getRecordsFetchMore({
-                query: getRecordsFromLibraryQuery(searchState.fields, !searchState.offset),
-                variables: currentVariables
-            });
+        // Records have already been fetched, we use fetchMore to make sure
+        // we request the right fields by passing in a whole new query
+        const results = await getRecordsFetchMore({
+            query: getRecordsFromLibraryQuery(searchState.fields, !searchState.offset),
+            variables: currentVariables,
+            //@ts-expect-error errorPolicy is applied at runtime even though it's not in the types
+            errorPolicy: 'all'
+        });
 
-            const recordsData = results.data;
-
-            // We have to call applyResults here because onCompleted is not called when fetchMore is used
-            _applyResults(recordsData);
-        } catch (err) {
-            searchDispatch({type: SearchActionTypes.SET_LOADING, loading: false});
-            // Error is already handled. This try/catch is just to avoid unhandled rejection
-        }
+        // We have to call applyResults here because onCompleted is not called when fetchMore is used
+        _applyResults(results);
     };
 
     const isLoading = getRecordsLoading || searchState.view.reload || searchState.loading;
 
     useEffect(() => {
-        if (searchData) {
-            _applyResults(searchData);
+        if (searchData || searchError) {
+            _applyResults(getRecordsQueryResult);
         }
-    }, [searchData]);
+    }, [searchData, searchError]);
 
     useEffect(() => {
-        if (searchState.loading) {
+        if (searchState.loading && searchCalled) {
             _fetchRecords();
         }
     }, [searchState.loading]);
@@ -290,9 +288,7 @@ const LibraryItemsListContent: FunctionComponent<ILibraryItemsListContentProps> 
             >
                 <Sidebar />
                 {isLoading && <Loading />}
-                {!isLoading && searchState.error && <ErrorDisplay message={searchState.error.message} />}
                 {!isLoading &&
-                    !searchState.error &&
                     (!searchState.records.length ? (
                         <LibraryItemsListEmpty notifyNewCreation={_notifyNewCreation} />
                     ) : (

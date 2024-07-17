@@ -14,7 +14,7 @@ import {
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {onError} from '@apollo/link-error';
-import {APPS_ENDPOINT, gqlPossibleTypes, useRefreshToken} from '@leav/ui';
+import {gqlPossibleTypes, useRefreshToken} from '@leav/ui';
 import {createUploadLink} from 'apollo-upload-client';
 import {createClient} from 'graphql-ws';
 import {ReactNode} from 'react';
@@ -34,7 +34,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     const {refreshToken} = useRefreshToken();
 
     // This function will catch the errors from the exchange between Apollo Client and the server.
-    const _handleApolloError = onError(({graphQLErrors, networkError, operation, forward}) => {
+    const _handleApolloError = onError(({graphQLErrors, networkError, operation, forward, response}) => {
         if (
             (networkError as ServerError)?.statusCode === 401 ||
             (graphQLErrors ?? [])?.some(err => err?.extensions?.code === 'UNAUTHENTICATED')
@@ -57,35 +57,20 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
             });
         }
 
-        if (graphQLErrors) {
-            graphQLErrors.map(({message, locations, path, extensions}) => {
+        if (graphQLErrors && response?.data === null) {
+            graphQLErrors.map(({message, locations, path}) => {
                 const errorContent = t('error.graphql_error_occurred', {
                     error: message,
                     interpolation: {escapeValue: false}
                 });
 
-                let info: IInfo;
-
-                switch (extensions?.code) {
-                    case 'INTERNAL_ERROR':
-                        info = {
-                            content: errorContent,
-                            type: InfoType.error,
-                            channel: InfoChannel.trigger
-                        };
-                        break;
-                    case 'VALIDATION_ERROR':
-                    case 'PERMISSION_ERROR':
-                    default:
-                        info = {
-                            content: errorContent,
-                            type: InfoType.error,
-                            channel: InfoChannel.trigger
-                        };
-                        break;
-                }
-
-                dispatch(addInfo(info));
+                dispatch(
+                    addInfo({
+                        content: errorContent,
+                        type: InfoType.error,
+                        channel: InfoChannel.trigger
+                    })
+                );
 
                 const errorMessage = `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`;
                 return errorMessage;
