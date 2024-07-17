@@ -18,7 +18,7 @@ describe('Cell', () => {
                 format: AttributeFormat.text
             };
 
-            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={null} />);
+            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={() => null} />);
 
             expect(screen.getByText('test_value')).toBeVisible();
         });
@@ -34,7 +34,7 @@ describe('Cell', () => {
                 format: AttributeFormat.text
             };
 
-            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={null} />);
+            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={() => null} />);
 
             expect(screen.getByText('valueInherited')).toBeVisible();
         });
@@ -50,7 +50,7 @@ describe('Cell', () => {
                 format: AttributeFormat.text
             };
 
-            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={null} />);
+            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={() => null} />);
 
             expect(screen.queryByText('valueInherited')).not.toBeInTheDocument();
             expect(screen.getByText('valueOverride')).toBeVisible();
@@ -66,7 +66,7 @@ describe('Cell', () => {
                 format: AttributeFormat.text
             };
 
-            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={null} />);
+            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={() => null} />);
 
             expect(screen.getByText(/valueA(.*)valueB/)).toBeVisible();
         });
@@ -83,7 +83,7 @@ describe('Cell', () => {
                 format: AttributeFormat.text
             };
 
-            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={null} />);
+            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={() => null} />);
 
             expect(screen.getByText(/valueInheritedA(.*)valueInheritedB/)).toBeVisible();
         });
@@ -101,7 +101,7 @@ describe('Cell', () => {
                 format: AttributeFormat.text
             };
 
-            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={null} />);
+            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={() => null} />);
 
             expect(screen.getByText(/valueOverrideA(.*)valueOverrideB/)).toBeVisible();
             expect(screen.queryByText(/valueInheritedA(.*)valueInheritedB/)).not.toBeInTheDocument();
@@ -117,7 +117,7 @@ describe('Cell', () => {
                 format: AttributeFormat.text
             };
 
-            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={null} />);
+            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={() => null} />);
 
             expect(screen.getByText(mockRecord.label)).toBeVisible();
         });
@@ -133,7 +133,7 @@ describe('Cell', () => {
                 format: AttributeFormat.text
             };
 
-            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={null} />);
+            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={() => null} />);
 
             expect(screen.getByText(mockRecord.label)).toBeVisible();
         });
@@ -150,7 +150,7 @@ describe('Cell', () => {
                 format: AttributeFormat.text
             };
 
-            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={null} />);
+            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={() => null} />);
 
             expect(screen.getByText(overrideLabel)).toBeVisible();
         });
@@ -169,7 +169,7 @@ describe('Cell', () => {
                 format: AttributeFormat.text
             };
 
-            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={null} />);
+            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={() => null} />);
 
             expect(screen.getByText(mockRecord.label)).toBeVisible();
             expect(screen.queryByText('record2')).not.toBeInTheDocument();
@@ -204,7 +204,7 @@ describe('Cell', () => {
                 format: AttributeFormat.text
             };
 
-            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={null} />);
+            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={() => null} />);
 
             expect(screen.getByText('record2')).toBeVisible();
             expect(screen.queryByText('record3')).not.toBeInTheDocument();
@@ -246,7 +246,7 @@ describe('Cell', () => {
                 format: AttributeFormat.text
             };
 
-            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={null} />);
+            render(<Cell columnName="test" data={(mockData as unknown) as ITableCell} onCellInfosEdit={() => null} />);
 
             expect(screen.getByText('record2')).toBeVisible();
             expect(screen.queryByText('record3')).not.toBeInTheDocument();

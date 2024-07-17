@@ -7,12 +7,11 @@ import {FloatingMenu, FloatingMenuAction, RecordCard} from '_ui/components';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import DeactivateRecordBtn from '_ui/components/LibraryItemsList/shared/DeactivateRecordBtn';
 import SelectCellsBtn, {SelectCellsBtnType} from '_ui/components/LibraryItemsList/shared/SelectCellsBtn';
-import EditRecordBtn from '_ui/components/RecordEdition/EditRecordBtn';
 import {PreviewSize} from '_ui/constants';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IRecordIdentityWhoAmI} from '_ui/types/records';
 import {ArrowsAltOutlined} from '@ant-design/icons';
-import {Button} from 'antd';
+import {AntButton} from 'aristid-ds';
 
 const Info = styled.div`
     min-width: 150px;
@@ -37,7 +36,7 @@ function CellInfos({record, previewSize, lang, onEdit}: ICellInfosProps): JSX.El
         {
             title: t('global.details'),
             button: (
-                <Button
+                <AntButton
                     aria-label="edit-record"
                     shape="circle"
                     size={menuBtnSize}
