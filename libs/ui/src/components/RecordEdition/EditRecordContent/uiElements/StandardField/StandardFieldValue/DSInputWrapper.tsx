@@ -3,15 +3,21 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitInput} from 'aristid-ds';
 import {ChangeEvent, FocusEvent, FunctionComponent, ReactNode, useState} from 'react';
-import {IStandardFieldReducerState} from '../../../reducers/standardFieldReducer/standardFieldReducer';
+import {
+    IStandardFieldReducerState,
+    IStandardFieldValue
+} from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {Form, InputProps} from 'antd';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
+import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 
 interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputProps> {
     state: IStandardFieldReducerState;
-    infoButton: ReactNode;
+    attribute: RecordFormAttributeFragment;
+    fieldValue: IStandardFieldValue;
     handleSubmit: (value: string, id?: string) => void;
 }
 
@@ -29,12 +35,17 @@ const KitInputStyled = styled(KitInput)<{$shouldHighlightColor: boolean}>`
 export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     state,
     value,
-    infoButton,
+    attribute,
+    fieldValue,
     onChange,
     handleSubmit
 }) => {
     const {t} = useSharedTranslation();
     const {errors} = Form.Item.useStatus();
+    const {onValueDetailsButtonClick, infoIconWithTooltip} = useValueDetailsButton({
+        value: fieldValue?.value,
+        attribute
+    });
     const [hasChanged, setHasChanged] = useState(false);
 
     const _resetToInheritedValue = () => {
@@ -70,8 +81,8 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
             label={state.formElement.settings.label}
             required={state.formElement.settings.required}
             status={errors.length > 0 ? 'error' : undefined}
-            infoIcon={infoButton}
-            onInfoClick={Boolean(infoButton) ? () => void 0 : undefined}
+            infoIcon={infoIconWithTooltip}
+            onInfoClick={onValueDetailsButtonClick}
             helper={
                 state.isInheritedOverrideValue
                     ? t('record_edition.inherited_input_helper', {
