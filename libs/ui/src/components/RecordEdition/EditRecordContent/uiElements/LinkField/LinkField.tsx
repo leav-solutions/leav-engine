@@ -97,7 +97,7 @@ function LinkField({
                         ...metadata,
                         value: {
                             ...metadata.value,
-                            version: arrayValueVersionToObject(metadata.value.version ?? [])
+                            version: arrayValueVersionToObject(metadata.value?.version ?? [])
                         }
                     }))
                 })
