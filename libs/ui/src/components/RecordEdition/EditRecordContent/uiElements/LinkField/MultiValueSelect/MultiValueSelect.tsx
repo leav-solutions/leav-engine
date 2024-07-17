@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, ReactNode} from 'react';
+import {FunctionComponent, ReactNode, useState} from 'react';
 import {AntForm, KitSelect} from 'aristid-ds';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 import useSharedTranslation from '_ui/hooks/useSharedTranslation/useSharedTranslation';
@@ -18,9 +18,9 @@ interface IMultiValueSelectProps extends IProvidedByAntFormItem<SelectProps<stri
     attribute: RecordFormAttributeLinkAttributeFragment;
     label: string;
     onValueDeselect: (value: IRecordPropertyLink) => void;
-    onSelectClear: () => void;
-    onSelectChange: (values: IRecordIdentity[]) => void;
+    onSelectChange: (values: Array<{value: IRecordIdentity; idValue: string}>) => void;
     infoButton?: ReactNode;
+    required: boolean;
 }
 
 export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
@@ -31,7 +31,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
     label,
     onValueDeselect,
     onSelectChange,
-    onSelectClear,
+    required,
     infoButton
 }) => {
     if (!onChange) {
@@ -41,25 +41,44 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
     const {t} = useSharedTranslation();
     const form = AntForm.useFormInstance();
 
+    const [initialValues] = useState<string[]>(value);
+    const [clearedValues, setClearedValues] = useState<string[]>([]);
+
     const {loading, selectOptions, updateLeavField} = useGetOptionsQuery({
         attribute,
         onSelectChange
     });
 
     const _handleSelect = (optionValue: string, ...antOnChangeParams: DefaultOptionType[]) => {
-        const oldValues = Array.isArray(value) ? value : [];
-        onChange([...oldValues, optionValue], antOnChangeParams);
+        const newValues = Array.isArray(value) ? [...value, optionValue] : [optionValue];
 
-        updateLeavField(optionValue);
+        onChange(newValues, antOnChangeParams);
+
+        if (antOnChangeParams.find(optionType => optionType.value === optionValue && !optionType.disabled)) {
+            setClearedValues(values => values.filter(value => value !== optionValue));
+        }
     };
 
     const _handleClear = () => {
+        setClearedValues(values => [...new Set(values.concat(value))]);
         form.setFieldValue(attribute.id, undefined);
+    };
 
-        onSelectClear();
+    const _handleBlur = () => {
+        if (!value.length) {
+            return;
+        }
+
+        const valuesToAdd = value.filter(val => !initialValues.includes(val));
+        const valuesToRemove = activeValues.filter(av => clearedValues.includes(av.linkValue.id));
+        updateLeavField(valuesToAdd, valuesToRemove);
     };
 
     const _handleDeselect = (valueToDeselect: string) => {
+        if (value.length === 1) {
+            return _handleClear();
+        }
+
         const newValues = value.filter(val => val !== valueToDeselect);
         form.setFieldValue(attribute.id, newValues);
 
@@ -71,6 +90,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
         <KitSelect
             loading={loading}
             value={value}
+            required={required}
             mode="multiple"
             label={label}
             options={selectOptions}
@@ -79,6 +99,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
             placeholder={t('record_edition.record_select')}
             onSelect={_handleSelect}
             onClear={_handleClear}
+            onBlur={_handleBlur}
             // @ts-expect-error
             onDeselect={_handleDeselect}
             onChange={onChange}

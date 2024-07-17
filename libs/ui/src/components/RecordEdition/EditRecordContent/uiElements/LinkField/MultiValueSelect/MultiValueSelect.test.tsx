@@ -19,6 +19,7 @@ describe('<MultiValueSelect />', () => {
     const onSelectChangeMock = jest.fn();
     const onClearSelectMock = jest.fn();
     const onValueDeselectMock = jest.fn();
+    const onChangeMock = jest.fn();
 
     const records = {
         __typename: 'RecordList',
@@ -104,8 +105,9 @@ describe('<MultiValueSelect />', () => {
                         attribute={mockFormElementLink.attribute}
                         label={state.formElement.settings.label}
                         onSelectChange={onSelectChangeMock}
-                        onSelectClear={onClearSelectMock}
                         onValueDeselect={onValueDeselectMock}
+                        required={false}
+                        onChange={onChangeMock}
                     />
                 </AntForm.Item>
             </AntForm>,
@@ -128,12 +130,11 @@ describe('<MultiValueSelect />', () => {
         expect(danetteChocolat).toBeVisible();
         await userEvent.click(danetteChocolat);
 
-        expect(onSelectChangeMock).toBeCalledTimes(1);
-        expect(onSelectChangeMock).toHaveBeenCalledWith([records.list[1]]);
+        expect(onChangeMock).toHaveBeenCalledWith([records.list[1].id], expect.anything());
     });
 
     // Does not work with current DS
-    it.skip('should display MultiValueSelect with default active value', async () => {
+    it('should display MultiValueSelect with default active value', async () => {
         onClearSelectMock.mockResolvedValueOnce({res: {status: APICallStatus.SUCCESS}});
         const id_value = '11051999';
 
@@ -159,7 +160,7 @@ describe('<MultiValueSelect />', () => {
                         attribute={mockFormElementLink.attribute}
                         label={state.formElement.settings.label}
                         onSelectChange={onSelectChangeMock}
-                        onSelectClear={onClearSelectMock}
+                        required={false}
                         onValueDeselect={onValueDeselectMock}
                     />
                 </AntForm.Item>
@@ -167,8 +168,7 @@ describe('<MultiValueSelect />', () => {
             {mocks}
         );
 
-        // const defaultValue = await screen.findByText('Danette chocolat'); // TODO uncomment and remove next line when select defaultValue is fixed in DS
-        const defaultValue = await screen.findByText('15061943');
+        const defaultValue = await screen.findByText('Danette chocolat');
         expect(defaultValue).toBeVisible();
 
         const select = screen.getByRole('combobox');
@@ -181,8 +181,7 @@ describe('<MultiValueSelect />', () => {
         expect(danettePistache).toBeVisible();
         await userEvent.click(danettePistache);
 
-        expect(onSelectChangeMock).toBeCalledTimes(1);
-        expect(onSelectChangeMock).toHaveBeenCalledWith([records.list[0]]);
+        expect(onChangeMock).toHaveBeenCalledWith([records.list[1].id], expect.anything());
     });
 
     describe('clear icons', () => {
@@ -224,19 +223,25 @@ describe('<MultiValueSelect />', () => {
                             attribute={mockFormElementLink.attribute}
                             label={state.formElement.settings.label}
                             onSelectChange={onSelectChangeMock}
-                            onSelectClear={onClearSelectMock}
+                            required={false}
                             onValueDeselect={onValueDeselectMock}
                         />
                     </AntForm.Item>
                 </AntForm>,
                 {mocks}
             );
+
+            const danetteChocolat = await screen.findByText('Danette chocolat');
+            const danettePistache = await screen.findByText('Danette pistache');
+            expect(danetteChocolat).toBeVisible();
+            expect(danettePistache).toBeVisible();
+
             const clearIcon = screen.getByLabelText('clear');
 
             await userEvent.click(clearIcon);
 
-            expect(onClearSelectMock).toHaveBeenCalledTimes(1);
-            expect(onClearSelectMock).toHaveBeenCalledWith();
+            expect(danetteChocolat).not.toBeVisible();
+            expect(danettePistache).not.toBeVisible();
         });
 
         it('should clear one element from selection on click on close icon', async () => {
@@ -248,7 +253,7 @@ describe('<MultiValueSelect />', () => {
                             attribute={mockFormElementLink.attribute}
                             label={state.formElement.settings.label}
                             onSelectChange={onSelectChangeMock}
-                            onSelectClear={onClearSelectMock}
+                            required={false}
                             onValueDeselect={onValueDeselectMock}
                         />
                     </AntForm.Item>
@@ -258,20 +263,23 @@ describe('<MultiValueSelect />', () => {
 
             const clearIcons = container.getElementsByClassName('ant-tag-close-icon');
 
+            const danetteChocolat = await screen.findByText('Danette chocolat');
+            const danettePistache = await screen.findByText('Danette pistache');
+
+            expect(danetteChocolat).toBeVisible();
+            expect(danettePistache).toBeVisible();
+
             await userEvent.click(clearIcons[1]);
+            expect(danetteChocolat).not.toBeVisible();
+
+            await userEvent.click(clearIcons[0]);
+            expect(danettePistache).not.toBeVisible();
+
             expect(onValueDeselectMock).toHaveBeenCalledTimes(1);
             expect(onValueDeselectMock).toHaveBeenCalledWith({
                 attribute: {id: 'test_attribute', system: false, type: 'simple_link'},
                 id_value: 'something_else',
                 linkValue: {id: '15061943', whoAmI: {}}
-            });
-
-            await userEvent.click(clearIcons[0]);
-            expect(onValueDeselectMock).toHaveBeenCalledTimes(2);
-            expect(onValueDeselectMock).toHaveBeenCalledWith({
-                attribute: {id: 'test_attribute', system: false, type: 'simple_link'},
-                id_value: 'something',
-                linkValue: {id: '28121951', whoAmI: {}}
             });
         });
     });

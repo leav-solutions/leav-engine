@@ -378,7 +378,7 @@ describe('useGetOptionsQuery', () => {
             await waitFor(() => result.current.selectOptions.length === 3);
             result.current.updateLeavField('notFound');
 
-            expect(onSelectChangeMock).toHaveBeenCalledWith([activeValue.linkValue]);
+            expect(onSelectChangeMock).toHaveBeenCalledWith([{value: activeValue.linkValue, idValue: null}]);
         });
 
         test('Should call onSelectChange with selectedLinkValue if record in list', async () => {
@@ -412,7 +412,7 @@ describe('useGetOptionsQuery', () => {
             const selectedRecord = records.list[0];
             result.current.updateLeavField(selectedRecord.id);
 
-            expect(onSelectChangeMock).toHaveBeenCalledWith([records.list[0]]);
+            expect(onSelectChangeMock).toHaveBeenCalledWith([{value: records.list[0], idValue: null}]);
         });
     });
 });
