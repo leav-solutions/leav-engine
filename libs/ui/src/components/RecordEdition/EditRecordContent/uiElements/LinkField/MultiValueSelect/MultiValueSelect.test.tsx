@@ -214,6 +214,42 @@ describe('<MultiValueSelect />', () => {
             }
         ];
 
+        it('should update leav field on blur with values to add and remove', async () => {
+            const {container} = render(
+                <AntForm data-testid="antform" name="name" initialValues={{danette: [records.list[0].id]}}>
+                    <AntForm.Item name="danette">
+                        <MultiValueSelect
+                            activeValues={activeValues}
+                            attribute={mockFormElementLink.attribute}
+                            label={state.formElement.settings.label}
+                            onSelectChange={onSelectChangeMock}
+                            required={false}
+                            onValueDeselect={onValueDeselectMock}
+                        />
+                    </AntForm.Item>
+                </AntForm>,
+                {mocks}
+            );
+
+            const clearIconPistache = container.getElementsByClassName('ant-tag-close-icon')[0];
+            await userEvent.click(clearIconPistache);
+
+            const select = screen.getByRole('combobox');
+            await userEvent.click(select);
+
+            const danetteChocolat = screen.getByText('Danette chocolat');
+            await userEvent.click(danetteChocolat);
+
+            const form = screen.getByTestId('antform');
+            await userEvent.click(form);
+
+            expect(onSelectChangeMock).toHaveBeenCalledTimes(1);
+            expect(onSelectChangeMock).toHaveBeenCalledWith([
+                {value: records.list[1], idValue: null},
+                {value: null, idValue: 'something'}
+            ]);
+        });
+
         it('should clear all elements on click on clear icon', async () => {
             render(
                 <AntForm name="name" initialValues={{danette: [records.list[0].id, records.list[1].id]}}>
