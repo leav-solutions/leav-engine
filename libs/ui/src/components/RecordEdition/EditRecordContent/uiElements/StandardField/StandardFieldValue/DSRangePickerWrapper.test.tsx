@@ -14,6 +14,7 @@ import {mockAttributeLink} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
 import {Form} from 'antd';
 import dayjs, {Dayjs} from 'dayjs';
+import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 
 const label = 'label';
 const idValue = '123';
@@ -84,7 +85,8 @@ describe('DSRangePickerWrapper', () => {
                     <Form.Item>
                         <DSRangePickerWrapper
                             state={state}
-                            infoButton=""
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={null}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                         />
@@ -119,7 +121,8 @@ describe('DSRangePickerWrapper', () => {
                     <Form.Item>
                         <DSRangePickerWrapper
                             state={state}
-                            infoButton=""
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={null}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                         />
@@ -136,7 +139,8 @@ describe('DSRangePickerWrapper', () => {
             expect(mockOnChange).toHaveBeenCalledTimes(1);
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
 
-            await user.click(screen.getByRole('button')); // click on clear icon
+            const buttons = screen.getAllByRole('button');
+            await user.click(buttons[1]); // click on clear icon
 
             expect(mockOnChange).toHaveBeenCalledTimes(2);
             expect(mockHandleSubmit).toHaveBeenCalledTimes(2);
@@ -151,7 +155,8 @@ describe('DSRangePickerWrapper', () => {
                     <Form.Item>
                         <DSRangePickerWrapper
                             state={state}
-                            infoButton=""
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={null}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                         />
@@ -184,7 +189,8 @@ describe('DSRangePickerWrapper', () => {
                     <Form.Item>
                         <DSRangePickerWrapper
                             state={state}
-                            infoButton=""
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={null}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                         />
@@ -201,7 +207,8 @@ describe('DSRangePickerWrapper', () => {
             expect(mockOnChange).toHaveBeenCalledTimes(1);
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
 
-            await user.click(screen.getByRole('button')); // click on clear icon
+            const buttons = screen.getAllByRole('button');
+            await user.click(buttons[1]); // click on clear icon
 
             expect(mockOnChange).toHaveBeenCalledTimes(2);
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
@@ -218,7 +225,8 @@ describe('DSRangePickerWrapper', () => {
                     <Form.Item>
                         <DSRangePickerWrapper
                             state={state}
-                            infoButton=""
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={null}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                         />
@@ -238,7 +246,8 @@ describe('DSRangePickerWrapper', () => {
                     <Form.Item>
                         <DSRangePickerWrapper
                             state={state}
-                            infoButton=""
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={null}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                         />
@@ -268,7 +277,8 @@ describe('DSRangePickerWrapper', () => {
                     <Form.Item name="dateRangeTest">
                         <DSRangePickerWrapper
                             state={state}
-                            infoButton=""
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={null}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                         />
@@ -276,7 +286,8 @@ describe('DSRangePickerWrapper', () => {
                 </Form>
             );
 
-            await user.click(screen.getByRole('button')); // click on clear icon
+            const buttons = screen.getAllByRole('button');
+            await user.click(buttons[1]); // click on clear icon
 
             expect(mockOnChange).toHaveBeenCalledTimes(1);
             expect(mockOnChange).toHaveBeenCalledWith([expect.any(Object), expect.any(Object)], raw_value);
@@ -303,7 +314,8 @@ describe('DSRangePickerWrapper', () => {
                     <Form.Item name="dateRangeTest">
                         <DSRangePickerWrapper
                             state={state}
-                            infoButton=""
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={null}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                         />
@@ -311,7 +323,10 @@ describe('DSRangePickerWrapper', () => {
                 </Form>
             );
 
-            expect(screen.queryByRole('button')).not.toBeInTheDocument(); // click on clear icon
+            const buttons = screen.getAllByRole('button');
+
+            expect(buttons).toHaveLength(1);
+            expect(buttons[0]).not.toHaveClass('ant-picker-clear');
         });
     });
 });

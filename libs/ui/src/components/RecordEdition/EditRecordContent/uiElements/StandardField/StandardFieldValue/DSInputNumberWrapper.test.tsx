@@ -15,6 +15,7 @@ import {mockAttributeLink} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
 import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
 import {AntForm} from 'aristid-ds';
+import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 
 const label = 'label';
 const idValue = '123';
@@ -111,7 +112,8 @@ describe('DSInputNumberWrapper', () => {
                 <AntForm.Item>
                     <DSInputNumberWrapper
                         state={state}
-                        infoButton=""
+                        attribute={{} as RecordFormAttributeFragment}
+                        fieldValue={null}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
                     />
@@ -135,7 +137,8 @@ describe('DSInputNumberWrapper', () => {
                     <AntForm.Item>
                         <DSInputNumberWrapper
                             state={state}
-                            infoButton=""
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={null}
                             handleSubmit={mockHandleSubmit}
                             onChange={mockOnChange}
                         />
@@ -159,7 +162,8 @@ describe('DSInputNumberWrapper', () => {
                     <AntForm.Item>
                         <DSInputNumberWrapper
                             state={state}
-                            infoButton=""
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={null}
                             handleSubmit={mockHandleSubmit}
                             onChange={mockOnChange}
                             value={mockValue.originRawValue}
@@ -189,7 +193,8 @@ describe('DSInputNumberWrapper', () => {
                     <AntForm.Item>
                         <DSInputNumberWrapper
                             state={state}
-                            infoButton=""
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={null}
                             handleSubmit={mockHandleSubmit}
                             onChange={mockOnChange}
                             value={inheritedValues[1].raw_value}
@@ -219,7 +224,8 @@ describe('DSInputNumberWrapper', () => {
                     <AntForm.Item>
                         <DSInputNumberWrapper
                             state={state}
-                            infoButton=""
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={null}
                             handleSubmit={mockHandleSubmit}
                             onChange={mockOnChange}
                             value={inheritedValues[0].raw_value}
@@ -248,7 +254,8 @@ describe('DSInputNumberWrapper', () => {
                     <AntForm.Item>
                         <DSInputNumberWrapper
                             state={state}
-                            infoButton=""
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={null}
                             handleSubmit={mockHandleSubmit}
                             onChange={mockOnChange}
                             value={inheritedValues[1].raw_value}
@@ -278,7 +285,8 @@ describe('DSInputNumberWrapper', () => {
                     <AntForm.Item>
                         <DSInputNumberWrapper
                             state={state}
-                            infoButton=""
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={null}
                             handleSubmit={mockHandleSubmit}
                             onChange={mockOnChange}
                             value={inheritedValues[0].raw_value}
