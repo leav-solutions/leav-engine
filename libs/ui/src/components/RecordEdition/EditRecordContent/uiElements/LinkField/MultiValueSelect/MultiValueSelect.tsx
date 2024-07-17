@@ -55,7 +55,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
         onChange(newValues, antOnChangeParams);
 
         if (antOnChangeParams.find(optionType => optionType.value === optionValue && !optionType.disabled)) {
-            setClearedValues(values => values.filter(value => value !== optionValue));
+            setClearedValues(values => values.filter(v => v !== optionValue));
         }
     };
 
