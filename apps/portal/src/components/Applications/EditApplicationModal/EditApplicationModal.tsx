@@ -14,7 +14,7 @@ const SubmitButton = styled(Button)`
         background-color: ${dsTheme.general.colors.primary.blue400};
 
         &:hover {
-            background-color: ${dsTheme.general.colors.primary.blue400};
+            background-color: ${dsTheme.general.colors.primary.blue100};
         }
     }
 `;
