@@ -71,6 +71,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
         const valuesToAdd = addedValues.filter(v => !activeValuesId.includes(v));
 
         const shouldRemoveNone =
+            required &&
             clearedValues.length === activeValues.length &&
             clearedValues.every(e => activeValuesId.includes(e)) &&
             !addedValues.length;
@@ -85,7 +86,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
     const _handleDeselect = (valueToDeselect: string) => {
         setAddedValues(values => values.filter(val => val !== valueToDeselect));
 
-        if (value.length === 1) {
+        if (value.length === 1 && required) {
             return _clearValues();
         }
 
