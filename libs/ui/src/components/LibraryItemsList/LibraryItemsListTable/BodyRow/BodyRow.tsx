@@ -1,15 +1,15 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useState} from 'react';
+import {useContext} from 'react';
 import {Row} from 'react-table';
 import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
-import {EditRecordModal} from '_ui/components/RecordEdition/EditRecordModal';
 import {IItem} from '_ui/types/search';
 import {SearchActionTypes} from '../../hooks/useSearchReducer/searchReducer';
 import BodyCell from '../BodyCell';
+import EditRecordModalContext from '../EditRecordModalContext';
 
 const CustomBodyRow = styled.div<{$selected: boolean}>`
     position: relative;
@@ -35,7 +35,8 @@ interface IBodyRowProps {
 function BodyRow({row}: IBodyRowProps): JSX.Element {
     const props = row.getRowProps();
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
-    const [editRecord, setEditRecord] = useState<boolean>(false);
+
+    const {editRecord} = useContext(EditRecordModalContext);
 
     const record = row.cells[0]?.row?.original?.record;
 
@@ -60,13 +61,13 @@ function BodyRow({row}: IBodyRowProps): JSX.Element {
     };
 
     const _handleDoubleClick = () => {
-        setEditRecord(true);
-    };
-
-    const _handleCellInfoEdit = _handleDoubleClick;
-
-    const _handleClose = () => {
-        setEditRecord(false);
+        editRecord({
+            open: true,
+            library: record.library.id,
+            record,
+            onClose: () => null,
+            valuesVersion: searchState.valuesVersions
+        });
     };
 
     return (
@@ -76,22 +77,8 @@ function BodyRow({row}: IBodyRowProps): JSX.Element {
             onDoubleClick={_handleDoubleClick}
             $selected={isRowSelected}
         >
-            {editRecord && (
-                <EditRecordModal
-                    open={editRecord}
-                    library={record.library.id}
-                    record={record}
-                    onClose={_handleClose}
-                    valuesVersion={searchState.valuesVersions}
-                />
-            )}
             {row.cells.map(cell => (
-                <BodyCell
-                    selected={isRowSelected}
-                    cell={cell as any}
-                    key={cell.column.id}
-                    onCellInfosEdit={_handleCellInfoEdit}
-                />
+                <BodyCell selected={isRowSelected} cell={cell as any} key={cell.column.id} />
             ))}
         </CustomBodyRow>
     );
