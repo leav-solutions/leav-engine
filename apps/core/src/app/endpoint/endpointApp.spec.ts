@@ -34,7 +34,7 @@ describe('endpointApp', () => {
             ['/mock', 'post', [jest.fn()]]
         ]);
 
-        endpointApp.registerRoute((expressApp as unknown) as Express);
+        endpointApp.registerRoute(expressApp as unknown as Express);
 
         expect(expressApp.get).toHaveBeenCalledTimes(1);
         expect(expressApp.get).toHaveBeenCalledWith('/test', [expect.any(Function), expect.any(Function)]);
@@ -50,7 +50,7 @@ describe('endpointApp', () => {
         endpointApp.extensionPoints.registerRoutes([['/protected_endpoint', 'get', [jest.fn()]]]);
 
         it('Should call extends request and call next()', async () => {
-            endpointApp.registerRoute((expressApp as unknown) as Express);
+            endpointApp.registerRoute(expressApp as unknown as Express);
             const [_initCtxHandler, ...ignoredHandlers] = expressApp.get.mock.calls[0][1];
             const request = {query: {lang: 'fr'}, body: {requestId: 'requestId'}};
             const nextMock = jest.fn();
@@ -77,7 +77,7 @@ describe('endpointApp', () => {
         });
 
         it('Should call extends request and call next() with error', async () => {
-            endpointApp.registerRoute((expressApp as unknown) as Express);
+            endpointApp.registerRoute(expressApp as unknown as Express);
             const [_initCtxHandler, ...ignoredHandlers] = expressApp.get.mock.calls[0][1];
             const request = {query: {lang: 'fr'}, body: {requestId: 'requestId'}};
             const nextMock = jest.fn();

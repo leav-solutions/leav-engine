@@ -16,9 +16,7 @@ export const getArgs = async (
     version: IVersion,
     first = false
 ): Promise<IExec[]> => {
-    const ext = extname(input)
-        .toLowerCase()
-        .replace('.', '');
+    const ext = extname(input).toLowerCase().replace('.', '');
 
     switch (type) {
         case 'video':

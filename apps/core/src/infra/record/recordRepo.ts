@@ -80,7 +80,7 @@ interface IDeps {
     'core.infra.indexation.helpers.getSearchQuery'?: GetSearchQuery;
 }
 
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attributeTypes': attributeTypesRepo = null,

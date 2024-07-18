@@ -140,7 +140,7 @@ interface IDeps {
     'core.domain.tree'?: ITreeDomain;
 }
 
-const valueDomain = function({
+const valueDomain = function ({
     config = null,
     'core.domain.actionsList': actionsListDomain = null,
     'core.domain.attribute': attributeDomain = null,
@@ -570,28 +570,26 @@ const valueDomain = function({
 
                 // Get trees ancestors
                 const trees: IFindValueTree[] = await Promise.all(
-                    versionProfile.trees.map(
-                        async (treeName: string): Promise<IFindValueTree> => {
-                            const treeElem =
-                                options?.version && options.version[treeName]
-                                    ? options.version[treeName]
-                                    : (await getDefaultElementHelper.getDefaultElement({treeId: treeName, ctx})).id;
+                    versionProfile.trees.map(async (treeName: string): Promise<IFindValueTree> => {
+                        const treeElem =
+                            options?.version && options.version[treeName]
+                                ? options.version[treeName]
+                                : (await getDefaultElementHelper.getDefaultElement({treeId: treeName, ctx})).id;
 
-                            const ancestors = (
-                                await elementAncestors.getCachedElementAncestors({
-                                    treeId: treeName,
-                                    nodeId: treeElem,
-                                    ctx
-                                })
-                            ).reverse(); // We want the leaves first
+                        const ancestors = (
+                            await elementAncestors.getCachedElementAncestors({
+                                treeId: treeName,
+                                nodeId: treeElem,
+                                ctx
+                            })
+                        ).reverse(); // We want the leaves first
 
-                            return {
-                                name: treeName,
-                                currentIndex: 0,
-                                elements: ancestors
-                            };
-                        }
-                    )
+                        return {
+                            name: treeName,
+                            currentIndex: 0,
+                            elements: ancestors
+                        };
+                    })
                 );
 
                 // Retrieve appropriate value among all values
@@ -626,7 +624,11 @@ const valueDomain = function({
             };
 
             // Check permissions
-            const {canSave, reason: forbiddenSaveReason, fields} = await canSaveValue({
+            const {
+                canSave,
+                reason: forbiddenSaveReason,
+                fields
+            } = await canSaveValue({
                 ...valueChecksParams,
                 ctx,
                 deps: {
@@ -675,23 +677,26 @@ const valueDomain = function({
                 ctx
             });
 
-            const {allSavedValues, areValuesIdentical} = await valuesToSave.reduce(async (promiseAcc, valueToSave) => {
-                const acc = await promiseAcc;
-                const {values: savedValues, areValuesIdentical: identicalValues} = await _executeSaveValue(
-                    library,
-                    record,
-                    attributeProps,
-                    valueToSave,
-                    ctx
-                );
+            const {allSavedValues, areValuesIdentical} = await valuesToSave.reduce(
+                async (promiseAcc, valueToSave) => {
+                    const acc = await promiseAcc;
+                    const {values: savedValues, areValuesIdentical: identicalValues} = await _executeSaveValue(
+                        library,
+                        record,
+                        attributeProps,
+                        valueToSave,
+                        ctx
+                    );
 
-                if (!identicalValues) {
-                    acc.areValuesIdentical = false;
-                }
+                    if (!identicalValues) {
+                        acc.areValuesIdentical = false;
+                    }
 
-                acc.allSavedValues.push(...savedValues);
-                return acc;
-            }, Promise.resolve({allSavedValues: [], areValuesIdentical: true}));
+                    acc.allSavedValues.push(...savedValues);
+                    return acc;
+                },
+                Promise.resolve({allSavedValues: [], areValuesIdentical: true})
+            );
 
             if (!areValuesIdentical) {
                 await updateRecordLastModif(library, recordId, ctx);

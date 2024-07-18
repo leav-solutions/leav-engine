@@ -56,7 +56,7 @@ interface IDeps {
     translator?: i18n;
 }
 
-export default function({'core.depsManager': depsManager = null, translator = null}: IDeps = {}): IActionsListDomain {
+export default function ({'core.depsManager': depsManager = null, translator = null}: IDeps = {}): IActionsListDomain {
     let _pluginActions = [];
     return {
         getAvailableActions(): IActionsListFunction[] {
@@ -97,8 +97,8 @@ export default function({'core.depsManager': depsManager = null, translator = nu
                     let customMessage = !isEmpty(action?.error_message?.[ctx.lang]?.trim())
                         ? action.error_message[ctx.lang]
                         : !isEmpty(action?.error_message?.[ctx.defaultLang]?.trim())
-                        ? action.error_message[ctx.defaultLang]
-                        : '';
+                          ? action.error_message[ctx.defaultLang]
+                          : '';
                     if (customMessage) {
                         customMessage += ': ' + errors.map(error => error.attributeValue.value).join(', ');
                         throw new ValidationError({[ctx.attribute.id]: customMessage}, customMessage, true);

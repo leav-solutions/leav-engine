@@ -301,8 +301,8 @@ export default function ({
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}
                 : attributes[1].id === 'id'
-                ? {...attributes[1], id: '_key'}
-                : attributes[1];
+                  ? {...attributes[1], id: '_key'}
+                  : attributes[1];
 
             const eAttribute = !!attributes[0].reverse_link
                 ? (attributes[0].reverse_link as IAttribute)?.id
@@ -336,8 +336,8 @@ export default function ({
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}
                 : attributes[1].id === 'id'
-                ? {...attributes[1], id: '_key'}
-                : attributes[1];
+                  ? {...attributes[1], id: '_key'}
+                  : attributes[1];
             const isCountFilter = filterTypes.isCountFilter(filter);
             const isReverseLink = !!attributes[0].reverse_link;
             const isReverseLinkOnSimpleLink =
@@ -360,8 +360,8 @@ export default function ({
                         COUNT(
                             FOR ${vIdentifier} IN ${c}
                                 FILTER ${vIdentifier}.${attributes[0].reverse_link.id} == ${literal(
-                        parentIdentifier
-                    )}._key
+                                    parentIdentifier
+                                )}._key
                             RETURN true
                         )
                     `;
@@ -384,8 +384,8 @@ export default function ({
                 retrieveValue = aql`
                         FOR ${vIdentifier} IN ${c}
                             FILTER ${vIdentifier}.${attributes[0].reverse_link.id} == ${literal(
-                    parentIdentifier
-                )}._key`;
+                                parentIdentifier
+                            )}._key`;
             } else {
                 retrieveValue = aql`
                         FOR ${vIdentifier}, ${eIdentifier} IN 1 ${direction} ${literal(parentIdentifier)}._id
