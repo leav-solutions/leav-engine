@@ -20,6 +20,7 @@ import {infosCol, INFOS_COLUMN_WIDTH, selectionColumn} from '../constants';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import BodyRow from './BodyRow';
 import Header from './Header';
+import {EditRecordModalProvider} from './EditRecordModalContext';
 
 interface ITableColumn extends UseTableColumnOptions<ITableRow> {
     accessor: string | ((row, rowIndex) => string);
@@ -268,7 +269,7 @@ const Table = () => {
     }
 
     return (
-        <>
+        <EditRecordModalProvider>
             <CustomTable
                 {...getTableProps()}
                 className="table sticky"
@@ -319,7 +320,7 @@ const Table = () => {
             <Pagination>
                 <LibraryItemsListPagination />
             </Pagination>
-        </>
+        </EditRecordModalProvider>
     );
 };
 
