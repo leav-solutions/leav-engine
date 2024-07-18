@@ -139,7 +139,7 @@ export interface IUtilsDeps {
     translator?: i18n;
 }
 
-export default function({config = null, translator = null}: IUtilsDeps = {}): IUtils {
+export default function ({config = null, translator = null}: IUtilsDeps = {}): IUtils {
     return {
         getFileExtension(filename) {
             if (filename.lastIndexOf('.') === -1) {
@@ -189,7 +189,10 @@ export default function({config = null, translator = null}: IUtilsDeps = {}): IU
             throw err;
         },
         pipe(...fns: any[]): any {
-            const _pipe = (f, g) => async (...args) => g(await f(...args));
+            const _pipe =
+                (f, g) =>
+                async (...args) =>
+                    g(await f(...args));
             return fns.length ? fns.reduce(_pipe) : () => null;
         },
         mergeConcat(object: {}, sources: {}): {} {

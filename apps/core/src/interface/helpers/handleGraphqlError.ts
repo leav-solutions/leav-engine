@@ -26,7 +26,7 @@ const _isPermissionError = (err: Error): err is PermissionError<unknown> =>
 const _isValidationError = (err: Error): err is ValidationError<unknown> =>
     _isLeavError(err) ? err.type === ErrorTypes.VALIDATION_ERROR && err.hasOwnProperty('isCustomMessage') : false;
 
-export default function({
+export default function ({
     config,
     'core.utils': utils,
     'core.utils.logger': logger = null

@@ -134,8 +134,8 @@ export default function ({
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}
                 : attributes[1].id === 'id'
-                ? {...attributes[1], id: '_key'}
-                : attributes[1];
+                  ? {...attributes[1], id: '_key'}
+                  : attributes[1];
 
             const linkedValue = aql`
                 FIRST(FOR l IN ${linkedLibCollec}
@@ -162,8 +162,8 @@ export default function ({
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}
                 : attributes[1].id === 'id'
-                ? {...attributes[1], id: '_key'}
-                : attributes[1];
+                  ? {...attributes[1], id: '_key'}
+                  : attributes[1];
 
             const baseIdentifier = `l${parentIdentifier}`;
             const baseIdentifierLiteral = literal(baseIdentifier);

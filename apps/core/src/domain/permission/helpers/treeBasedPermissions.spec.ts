@@ -211,7 +211,8 @@ describe('TreeBasedPermissionDomain', () => {
             };
 
             const treePermDomain = treeBasedPermissions({
-                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+                'core.domain.permission.helpers.permissionByUserGroups':
+                    mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
@@ -231,7 +232,8 @@ describe('TreeBasedPermissionDomain', () => {
             };
 
             const treePermDomain = treeBasedPermissions({
-                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+                'core.domain.permission.helpers.permissionByUserGroups':
+                    mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
@@ -257,7 +259,8 @@ describe('TreeBasedPermissionDomain', () => {
             };
 
             const treePermDomain = treeBasedPermissions({
-                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+                'core.domain.permission.helpers.permissionByUserGroups':
+                    mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperNull,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
@@ -280,7 +283,8 @@ describe('TreeBasedPermissionDomain', () => {
             };
 
             const treePermDomain = treeBasedPermissions({
-                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+                'core.domain.permission.helpers.permissionByUserGroups':
+                    mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
@@ -324,7 +328,8 @@ describe('TreeBasedPermissionDomain', () => {
             };
 
             const treePermDomain = treeBasedPermissions({
-                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+                'core.domain.permission.helpers.permissionByUserGroups':
+                    mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
@@ -358,7 +363,8 @@ describe('TreeBasedPermissionDomain', () => {
             };
 
             const treePermDomain = treeBasedPermissions({
-                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+                'core.domain.permission.helpers.permissionByUserGroups':
+                    mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperFalse,
                 'core.domain.attribute': mockAttrMultipleDomain as IAttributeDomain,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
@@ -399,7 +405,8 @@ describe('TreeBasedPermissionDomain', () => {
             };
 
             const treePermDomain = treeBasedPermissions({
-                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+                'core.domain.permission.helpers.permissionByUserGroups':
+                    mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
                 'core.domain.attribute': mockAttrMultipleDomain as IAttributeDomain,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,

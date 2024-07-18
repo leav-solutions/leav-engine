@@ -134,7 +134,7 @@ export default function (deps: IDeps = {}): ITreeNodePermissionDomain {
             const nodeRecord = await treeRepo.getRecordByNodeId({treeId, nodeId, ctx});
             if (!nodeRecord) {
                 return treePermissionDomain.getTreePermission({
-                    action: (action as unknown) as TreePermissionsActions,
+                    action: action as unknown as TreePermissionsActions,
                     userId,
                     treeId,
                     ctx
@@ -152,7 +152,7 @@ export default function (deps: IDeps = {}): ITreeNodePermissionDomain {
 
             // Retrieve permissions for this element, based on tree permissions conf
             const elemPerm = await _getPermByTreeNode({
-                action: (action as unknown) as TreeNodePermissionsActions,
+                action: action as unknown as TreeNodePermissionsActions,
                 userId,
                 treeId,
                 permConf: treeData.permissions_conf,
@@ -194,7 +194,7 @@ export default function (deps: IDeps = {}): ITreeNodePermissionDomain {
 
             // Nothing found on all ancestors
             return treePermissionDomain.getTreePermission({
-                action: (action as unknown) as TreePermissionsActions,
+                action: action as unknown as TreePermissionsActions,
                 userId,
                 treeId,
                 ctx

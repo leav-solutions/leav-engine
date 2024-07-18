@@ -102,7 +102,7 @@ describe('RecordDomain', () => {
     });
 
     describe('createRecord', () => {
-        test('Should create a new record', async function() {
+        test('Should create a new record', async function () {
             const createdRecordData = {
                 id: '222435651',
                 library: 'test',
@@ -141,7 +141,7 @@ describe('RecordDomain', () => {
             expect(createdRecord.valuesErrors).toBe(null);
         });
 
-        test('Should create a new record and save its values', async function() {
+        test('Should create a new record and save its values', async function () {
             const createdRecordData = {
                 id: '222435651',
                 library: 'test',
@@ -290,7 +290,7 @@ describe('RecordDomain', () => {
     });
 
     describe('updateRecord', () => {
-        test('Should update a record', async function() {
+        test('Should update a record', async function () {
             const updatedRecordData = {
                 id: '222435651',
                 library: 'test',
@@ -327,7 +327,7 @@ describe('RecordDomain', () => {
     describe('deleteRecord', () => {
         const recordData = {id: '222435651', library: 'test', created_at: 1519303348, modified_at: 1519303348};
 
-        test('Should delete an record and return deleted record', async function() {
+        test('Should delete an record and return deleted record', async function () {
             const recRepo: Mockify<IRecordRepo> = {
                 deleteRecord: global.__mockPromise(recordData)
             };
@@ -400,7 +400,7 @@ describe('RecordDomain', () => {
             getLibraryPermission: global.__mockPromise(true)
         };
 
-        test('Should find records', async function() {
+        test('Should find records', async function () {
             const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
 
             const recDomain = recordDomain({
@@ -902,7 +902,7 @@ describe('RecordDomain', () => {
             });
         });
 
-        test('Should search records', async function() {
+        test('Should search records', async function () {
             const mockSearchRes = {
                 totalCount: 1,
                 list: [

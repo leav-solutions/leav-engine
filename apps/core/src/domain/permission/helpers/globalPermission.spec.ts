@@ -87,7 +87,8 @@ describe('globalPermissionsHelper', () => {
             };
 
             const permHelper = globalPermissions({
-                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+                'core.domain.permission.helpers.permissionByUserGroups':
+                    mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
@@ -114,7 +115,8 @@ describe('globalPermissionsHelper', () => {
             };
 
             const permHelper = globalPermissions({
-                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+                'core.domain.permission.helpers.permissionByUserGroups':
+                    mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
@@ -167,7 +169,8 @@ describe('globalPermissionsHelper', () => {
             };
 
             const permHelper = globalPermissions({
-                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+                'core.domain.permission.helpers.permissionByUserGroups':
+                    mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
 
@@ -191,7 +194,8 @@ describe('globalPermissionsHelper', () => {
             };
 
             const permHelper = globalPermissions({
-                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+                'core.domain.permission.helpers.permissionByUserGroups':
+                    mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
 

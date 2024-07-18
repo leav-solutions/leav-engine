@@ -23,7 +23,7 @@ interface IDeps {
     'core.infra.db.dbService'?: IDbService;
 }
 
-export default function({
+export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null
 }: IDeps = {}): IApiKeyRepo {
