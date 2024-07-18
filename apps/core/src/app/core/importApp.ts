@@ -134,7 +134,7 @@ export default function ({
             // extract filename from filepath
             let filename = filepath.split('/').pop();
             // check if filepath is a valid file
-            if(!fs.existsSync(filepath)) {
+            if (!fs.existsSync(filepath)) {
                 throw new Error('File not found');
             }
 

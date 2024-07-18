@@ -97,7 +97,7 @@ describe('authApp', () => {
                 get: jest.fn(),
                 post: jest.fn()
             };
-            authApp.registerRoute((expressMock as unknown) as Express);
+            authApp.registerRoute(expressMock as unknown as Express);
             const logoutHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/logout')[1];
             const request = {
                 headers: {
@@ -147,7 +147,7 @@ describe('authApp', () => {
                 get: jest.fn(),
                 post: jest.fn()
             };
-            authApp.registerRoute((expressMock as unknown) as Express);
+            authApp.registerRoute(expressMock as unknown as Express);
             const logoutHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/logout')[1];
             const request = {
                 headers: {
@@ -199,7 +199,7 @@ describe('authApp', () => {
                 get: jest.fn(),
                 post: jest.fn()
             };
-            authApp.registerRoute((expressMock as unknown) as Express);
+            authApp.registerRoute(expressMock as unknown as Express);
             const refreshHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/refresh')[1];
             const request = {
                 cookies: {
@@ -239,7 +239,7 @@ describe('authApp', () => {
                 get: jest.fn(),
                 post: jest.fn()
             };
-            authApp.registerRoute((expressMock as unknown) as Express);
+            authApp.registerRoute(expressMock as unknown as Express);
             const verifyHandler = expressMock.get.mock.calls.find(
                 args => args[0] === '/auth/oidc/verify/:identifierBase64Url'
             )[1];

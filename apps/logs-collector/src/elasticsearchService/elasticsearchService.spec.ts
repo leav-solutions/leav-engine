@@ -7,13 +7,13 @@ import {writeData} from './elasticsearchService';
 
 describe('elasticsearchService', () => {
     test('writeData on new index', async () => {
-        const mockClient = ({
+        const mockClient = {
             indices: {
                 create: jest.fn(() => Promise.resolve()),
                 exists: jest.fn(() => Promise.resolve(false))
             },
             index: jest.fn(() => Promise.resolve())
-        } as unknown) as Client;
+        } as unknown as Client;
 
         await writeData('indexName', {...mockMessage, ...mockMessage.payload}, mockClient);
 
@@ -23,13 +23,13 @@ describe('elasticsearchService', () => {
     });
 
     test('writeData on existing index', async () => {
-        const mockClient = ({
+        const mockClient = {
             indices: {
                 create: jest.fn(() => Promise.resolve()),
                 exists: jest.fn(() => Promise.resolve(true))
             },
             index: jest.fn(() => Promise.resolve())
-        } as unknown) as Client;
+        } as unknown as Client;
 
         await writeData('indexName', {...mockMessage, ...mockMessage.payload}, mockClient);
 

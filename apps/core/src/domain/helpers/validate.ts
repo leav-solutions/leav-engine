@@ -29,7 +29,7 @@ export interface IValidateHelper {
     validateLibraryAttribute(library: string, attribute: string, ctx: IQueryInfos): Promise<void>;
 }
 
-export default function({
+export default function ({
     'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
     'core.infra.record': recordRepo = null,
     'core.utils': utils = null,

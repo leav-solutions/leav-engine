@@ -271,8 +271,8 @@ export default function ({
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}
                 : attributes[1].id === 'id'
-                ? {...attributes[1], id: '_key'}
-                : attributes[1];
+                  ? {...attributes[1], id: '_key'}
+                  : attributes[1];
 
             const linkedValue = aql`FIRST(
                 FOR v, e IN 1 OUTBOUND r._id
@@ -315,8 +315,8 @@ export default function ({
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}
                 : attributes[1].id === 'id'
-                ? {...attributes[1], id: '_key'}
-                : attributes[1];
+                  ? {...attributes[1], id: '_key'}
+                  : attributes[1];
 
             const linkValueIdentifier = literal(`${parentIdentifier}linkVal`);
             const recordIdentifierStr = parentIdentifier + 'Record';

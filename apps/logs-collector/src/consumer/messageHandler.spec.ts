@@ -13,16 +13,16 @@ jest.mock('../elasticsearchService', () => ({
 
 describe('handleMessage', () => {
     test('Should create index if it does not exist', async () => {
-        const esClient = ({
+        const esClient = {
             indices: {
                 create: jest.fn(() => Promise.resolve())
             },
             index: jest.fn(() => Promise.resolve())
-        } as unknown) as Client;
+        } as unknown as Client;
 
-        const channel = ({
+        const channel = {
             ack: jest.fn()
-        } as unknown) as amqp.ConfirmChannel;
+        } as unknown as amqp.ConfirmChannel;
 
         const config = {
             amqp: {
