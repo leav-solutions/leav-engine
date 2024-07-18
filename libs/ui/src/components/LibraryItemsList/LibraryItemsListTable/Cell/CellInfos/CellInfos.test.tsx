@@ -13,7 +13,6 @@ describe('CellInfos', () => {
                 <CellInfos
                     record={{id: 'recordId', library: {id: 'libraryId'}} as any}
                     previewSize={PreviewSize.small}
-                    onEdit={() => null}
                 />
             </MockSearchContextProvider>
         );
@@ -29,7 +28,6 @@ describe('CellInfos', () => {
                         {id: 'recordId', label: 'my record', library: {id: 'libraryId', label: {fr: 'my lib'}}} as any
                     }
                     previewSize={PreviewSize.small}
-                    onEdit={() => null}
                 />
             </MockSearchContextProvider>
         );
