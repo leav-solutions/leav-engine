@@ -28,7 +28,7 @@ const CustomBodyCell = styled.div<{id?: string | number; selected: boolean}>`
 const ErrorBodyCell = styled(CustomBodyCell)`
     color: var(--general-colors-secondary-red-red400);
     background-color: var(--general-colors-secondary-red-red100);
-    padding: 4px;
+    padding: calc(var(--general-spacing-xxs) * 1px);
 `;
 
 interface IBodyCellProps {

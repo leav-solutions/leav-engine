@@ -78,6 +78,7 @@ export type SearchAction =
 
 export const initialSearchState: ISearchState = {
     library: null,
+    errors: [],
     records: [],
     totalCount: 0,
     loading: false,

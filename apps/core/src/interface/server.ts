@@ -230,7 +230,7 @@ export default function ({
                                     return;
                                 }
 
-                                if (contextValue.errors) {
+                                if (contextValue.errors?.length) {
                                     response.body.singleResult.errors = [
                                         ...(response.body.singleResult.errors ?? []),
                                         ...(contextValue.errors ?? []).map(err => {

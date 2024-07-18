@@ -65,7 +65,7 @@ export interface ISearchState {
     library: ILibraryDetailExtended;
     records: ISearchRecord[];
     totalCount: number;
-    errors?: SearchStateError[];
+    errors?: readonly SearchStateError[];
     loading: boolean;
     pagination: number;
     offset: number;
