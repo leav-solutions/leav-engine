@@ -83,6 +83,8 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
     };
 
     const _handleDeselect = (valueToDeselect: string) => {
+        setAddedValues(values => values.filter(val => val !== valueToDeselect));
+
         if (value.length === 1) {
             return _clearValues();
         }
@@ -92,8 +94,6 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
 
         const linkValueToDeselect = activeValues.find(val => val.linkValue.id === valueToDeselect);
         onValueDeselect(linkValueToDeselect);
-
-        setAddedValues(values => values.filter(val => val !== valueToDeselect));
     };
 
     return (
