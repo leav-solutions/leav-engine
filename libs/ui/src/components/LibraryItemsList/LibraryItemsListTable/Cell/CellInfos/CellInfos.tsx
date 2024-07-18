@@ -12,6 +12,8 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IRecordIdentityWhoAmI} from '_ui/types/records';
 import {ArrowsAltOutlined} from '@ant-design/icons';
 import {AntButton} from 'aristid-ds';
+import {useContext} from 'react';
+import EditRecordModalContext from '../../EditRecordModalContext';
 
 const Info = styled.div`
     min-width: 150px;
@@ -21,16 +23,27 @@ interface ICellInfosProps {
     record: IRecordIdentityWhoAmI;
     previewSize: PreviewSize;
     lang?: string[];
-    onEdit: () => void;
 }
 
-function CellInfos({record, previewSize, lang, onEdit}: ICellInfosProps): JSX.Element {
+function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {state: searchState} = useSearchReducer();
 
     const canDeleteRecord = searchState.library.permissions.delete_record;
 
+    const {editRecord} = useContext(EditRecordModalContext);
+
     const menuBtnSize: SizeType = 'middle';
+
+    const _onEditRecord = () => {
+        editRecord({
+            open: true,
+            record,
+            library: record.library.id,
+            onClose: () => null,
+            valuesVersion: searchState.valuesVersions
+        });
+    };
 
     const menuActions: FloatingMenuAction[] = [
         {
@@ -41,7 +54,7 @@ function CellInfos({record, previewSize, lang, onEdit}: ICellInfosProps): JSX.El
                     shape="circle"
                     size={menuBtnSize}
                     icon={<ArrowsAltOutlined size={48} />}
-                    onClick={onEdit}
+                    onClick={_onEditRecord}
                 />
             )
         }
