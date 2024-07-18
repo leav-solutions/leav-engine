@@ -55,13 +55,13 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
         onChange(newValues, antOnChangeParams);
 
         if (antOnChangeParams.find(optionType => optionType.value === optionValue && !optionType.disabled)) {
-            setAddedValues(addedValues => [...new Set(addedValues.concat(optionValue))]);
-            setClearedValues(clearedValues => clearedValues.filter(v => v !== optionValue));
+            setAddedValues(values => [...new Set(values.concat(optionValue))]);
+            setClearedValues(values => values.filter(v => v !== optionValue));
         }
     };
 
     const _clearValues = () => {
-        setClearedValues(clearedValues => [...new Set(clearedValues.concat(value))]);
+        setClearedValues(values => [...new Set(values.concat(value))]);
         form.setFieldValue(attribute.id, undefined);
     };
 
