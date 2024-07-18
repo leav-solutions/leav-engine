@@ -219,7 +219,7 @@ describe('<MultiValueSelect />', () => {
                 <AntForm data-testid="antform" name="name" initialValues={{danette: [records.list[0].id]}}>
                     <AntForm.Item name="danette">
                         <MultiValueSelect
-                            activeValues={activeValues}
+                            activeValues={[activeValues[0]]}
                             attribute={mockFormElementLink.attribute}
                             label={state.formElement.settings.label}
                             onSelectChange={onSelectChangeMock}
@@ -231,8 +231,8 @@ describe('<MultiValueSelect />', () => {
                 {mocks}
             );
 
-            const clearIconPistache = container.getElementsByClassName('ant-tag-close-icon')[0];
-            await userEvent.click(clearIconPistache);
+            const deleteIconPistache = container.getElementsByClassName('ant-tag-close-icon')[0];
+            await userEvent.click(deleteIconPistache);
 
             const select = screen.getByRole('combobox');
             await userEvent.click(select);

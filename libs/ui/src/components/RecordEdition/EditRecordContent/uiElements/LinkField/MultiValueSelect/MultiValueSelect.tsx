@@ -41,7 +41,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
     const {t} = useSharedTranslation();
     const form = AntForm.useFormInstance();
 
-    const [initialValues] = useState<string[]>(value);
+    const [addedValues, setAddedValues] = useState<string[]>([]);
     const [clearedValues, setClearedValues] = useState<string[]>([]);
 
     const {loading, selectOptions, updateLeavField} = useGetOptionsQuery({
@@ -55,28 +55,36 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
         onChange(newValues, antOnChangeParams);
 
         if (antOnChangeParams.find(optionType => optionType.value === optionValue && !optionType.disabled)) {
-            setClearedValues(values => values.filter(v => v !== optionValue));
+            setAddedValues(addedValues => [...new Set(addedValues.concat(optionValue))]);
+            setClearedValues(clearedValues => clearedValues.filter(v => v !== optionValue));
         }
     };
 
-    const _handleClear = () => {
-        setClearedValues(values => [...new Set(values.concat(value))]);
+    const _clearValues = () => {
+        setClearedValues(clearedValues => [...new Set(clearedValues.concat(value))]);
         form.setFieldValue(attribute.id, undefined);
     };
 
     const _handleBlur = () => {
-        if (!value.length) {
-            return;
-        }
+        const activeValuesId = activeValues.map(av => av.linkValue.id);
 
-        const valuesToAdd = value.filter(val => !initialValues.includes(val));
-        const valuesToRemove = activeValues.filter(av => clearedValues.includes(av.linkValue.id));
+        let valuesToAdd = addedValues.filter(v => !activeValuesId.includes(v));
+
+        const shouldRemoveNone =
+            clearedValues.length === activeValues.length &&
+            clearedValues.every(e => activeValuesId.includes(e)) &&
+            !addedValues.length;
+
+        const valuesToRemove = shouldRemoveNone
+            ? []
+            : activeValues.filter(av => clearedValues.includes(av.linkValue.id));
+
         updateLeavField(valuesToAdd, valuesToRemove);
     };
 
     const _handleDeselect = (valueToDeselect: string) => {
         if (value.length === 1) {
-            return _handleClear();
+            return _clearValues();
         }
 
         const newValues = value.filter(val => val !== valueToDeselect);
@@ -84,6 +92,8 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
 
         const linkValueToDeselect = activeValues.find(val => val.linkValue.id === valueToDeselect);
         onValueDeselect(linkValueToDeselect);
+
+        setAddedValues(values => values.filter(val => val !== valueToDeselect));
     };
 
     return (
@@ -98,7 +108,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
             optionFilterProp="label"
             placeholder={t('record_edition.record_select')}
             onSelect={_handleSelect}
-            onClear={_handleClear}
+            onClear={_clearValues}
             onBlur={_handleBlur}
             // @ts-expect-error
             onDeselect={_handleDeselect}
