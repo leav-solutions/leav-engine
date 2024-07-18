@@ -18,7 +18,6 @@ import {IStandardFieldValue} from '_ui/components/RecordEdition/EditRecordConten
 interface IMultiValueSelectProps extends IProvidedByAntFormItem<SelectProps<string[]>, SelectProps> {
     activeValues: RecordFormElementsValueLinkValue[] | undefined;
     attribute: RecordFormAttributeLinkAttributeFragment;
-    fieldValue: IStandardFieldValue;
     label: string;
     onValueDeselect: (value: IRecordPropertyLink) => void;
     onSelectClear: () => void;
@@ -30,7 +29,6 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
     value,
     onChange,
     attribute,
-    fieldValue,
     label,
     onValueDeselect,
     onSelectChange,
@@ -49,7 +47,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
     });
 
     const {onValueDetailsButtonClick, infoIconWithTooltip} = useValueDetailsButton({
-        value: fieldValue?.value,
+        value: null,
         attribute
     });
 

@@ -106,7 +106,6 @@ describe('<MultiValueSelect />', () => {
                         onSelectChange={onSelectChangeMock}
                         onSelectClear={onClearSelectMock}
                         onValueDeselect={onValueDeselectMock}
-                        fieldValue={null}
                     />
                 </AntForm.Item>
             </AntForm>,
@@ -162,7 +161,6 @@ describe('<MultiValueSelect />', () => {
                         onSelectChange={onSelectChangeMock}
                         onSelectClear={onClearSelectMock}
                         onValueDeselect={onValueDeselectMock}
-                        fieldValue={null}
                     />
                 </AntForm.Item>
             </AntForm>,
@@ -228,7 +226,6 @@ describe('<MultiValueSelect />', () => {
                             onSelectChange={onSelectChangeMock}
                             onSelectClear={onClearSelectMock}
                             onValueDeselect={onValueDeselectMock}
-                            fieldValue={null}
                         />
                     </AntForm.Item>
                 </AntForm>,
@@ -253,7 +250,6 @@ describe('<MultiValueSelect />', () => {
                             onSelectChange={onSelectChangeMock}
                             onSelectClear={onClearSelectMock}
                             onValueDeselect={onValueDeselectMock}
-                            fieldValue={null}
                         />
                     </AntForm.Item>
                 </AntForm>,

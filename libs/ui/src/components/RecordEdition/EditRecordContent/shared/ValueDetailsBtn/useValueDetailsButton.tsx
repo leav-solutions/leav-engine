@@ -9,7 +9,7 @@ import {InfoOutlined} from '@ant-design/icons';
 
 interface IUseValueDetailsButtonProps {
     attribute: RecordFormAttributeFragment;
-    value: RecordProperty;
+    value: RecordProperty | null;
 }
 
 export const useValueDetailsButton = ({attribute, value}: IUseValueDetailsButtonProps) => {

@@ -159,7 +159,6 @@ describe('<MonoValueSelect />', () => {
                         required={state.formElement.settings.required}
                         onSelectChange={onSelectChangeMock}
                         onSelectClear={onClearSelectMock}
-                        fieldValue={null}
                     />
                 </AntForm.Item>
             </AntForm>,
@@ -212,7 +211,6 @@ describe('<MonoValueSelect />', () => {
                         required={state.formElement.settings.required}
                         onSelectChange={onSelectChangeMock}
                         onSelectClear={onClearSelectMock}
-                        fieldValue={null}
                     />
                 </AntForm.Item>
             </AntForm>,
@@ -262,7 +260,6 @@ describe('<MonoValueSelect />', () => {
                         required={false}
                         onSelectChange={onSelectChangeMock}
                         onSelectClear={onClearSelectMock}
-                        fieldValue={null}
                     />
                 </AntForm.Item>
             </AntForm>,
@@ -300,7 +297,6 @@ describe('<MonoValueSelect />', () => {
                         required={state.formElement.settings.required}
                         onSelectChange={onSelectChangeMock}
                         onSelectClear={onClearSelectMock}
-                        fieldValue={null}
                     />
                 </AntForm.Item>
             </AntForm>,
@@ -350,7 +346,6 @@ describe('<MonoValueSelect />', () => {
                         required={state.formElement.settings.required}
                         onSelectChange={onSelectChangeMock}
                         onSelectClear={onClearSelectMock}
-                        fieldValue={null}
                     />
                 </AntForm.Item>
             </AntForm>,

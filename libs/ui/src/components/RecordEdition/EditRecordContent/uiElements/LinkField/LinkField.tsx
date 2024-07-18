@@ -89,19 +89,19 @@ function LinkField({
                 errorMessage: res.error
             });
         } else if (res.values) {
-            const formattedValues: RecordFormElementsValueLinkValue[] = (res.values as ValueDetailsLinkValueFragment[]).map(
-                v => ({
-                    ...v,
-                    version: arrayValueVersionToObject(v.version),
-                    metadata: v.metadata?.map(metadata => ({
-                        ...metadata,
-                        value: {
-                            ...metadata.value,
-                            version: arrayValueVersionToObject(metadata.value.version ?? [])
-                        }
-                    }))
-                })
-            );
+            const formattedValues: RecordFormElementsValueLinkValue[] = (
+                res.values as ValueDetailsLinkValueFragment[]
+            ).map(v => ({
+                ...v,
+                version: arrayValueVersionToObject(v.version),
+                metadata: v.metadata?.map(metadata => ({
+                    ...metadata,
+                    value: {
+                        ...metadata.value,
+                        version: arrayValueVersionToObject(metadata.value.version ?? [])
+                    }
+                }))
+            }));
 
             dispatch({
                 type: LinkFieldReducerActionsType.ADD_VALUES,
@@ -154,7 +154,6 @@ function LinkField({
                 onValueDeselect={_handleDeleteValue}
                 onSelectClear={_handleDeleteAllValues}
                 onSelectChange={_handleAddValueSubmit}
-                fieldValue={null}
             />
         </AntForm.Item>
     ) : (
@@ -174,7 +173,6 @@ function LinkField({
                 required={state.formElement.settings.required}
                 onSelectClear={_handleDeleteValue}
                 onSelectChange={_handleAddValueSubmit}
-                fieldValue={null}
             />
         </AntForm.Item>
     );

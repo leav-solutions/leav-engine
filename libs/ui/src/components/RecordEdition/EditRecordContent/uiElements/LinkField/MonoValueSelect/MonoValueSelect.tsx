@@ -24,7 +24,6 @@ const ResultsCount = styled(KitTypography.Text)`
 interface IMonoValueSelectProps extends IProvidedByAntFormItem<SelectProps<string[]>, SelectProps<string>> {
     activeValue: RecordFormElementsValueLinkValue | undefined;
     attribute: RecordFormAttributeLinkAttributeFragment;
-    fieldValue: IStandardFieldValue;
     label: string;
     onSelectClear: (value: IRecordPropertyLink) => void;
     onSelectChange: (values: IRecordIdentity[]) => void;
@@ -36,7 +35,6 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     value,
     onChange,
     attribute,
-    fieldValue,
     label,
     onSelectChange,
     onSelectClear,
@@ -68,7 +66,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     });
 
     const {onValueDetailsButtonClick, infoIconWithTooltip} = useValueDetailsButton({
-        value: fieldValue?.value,
+        value: null,
         attribute
     });
 
