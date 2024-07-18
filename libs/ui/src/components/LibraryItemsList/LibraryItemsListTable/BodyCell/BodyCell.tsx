@@ -13,7 +13,7 @@ import CellSelection from '../Cell/CellSelection';
 const CustomBodyCell = styled.div<{id?: string | number; selected: boolean}>`
     // Inherit background from row. If background is transparent, the sticky column won't behave properly
     background-color: inherit;
-    padding: 4px 0;
+    padding: calc(var(--general-spacing-xxs) * 1px) 0;
 
     &:not(:first-child) {
         border-left: 1px solid ${props => (props.selected ? themeVars.activeColor : themeVars.borderLightColor)};
