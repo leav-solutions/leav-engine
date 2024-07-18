@@ -28,7 +28,7 @@
         "lint-staged": "9.5.0",
         "nodemon": "1.19.4",
         "onchange": "6.1.1",
-        "prettier": "1.19.1",
+        "prettier": "3.3.3",
         "ts-jest": "29.0.1",
         "ts-node-dev": "2.0.0",
         "typescript": "4.8.3"
