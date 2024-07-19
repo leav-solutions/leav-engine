@@ -14,6 +14,8 @@ import {IRecordPropertyLink} from '_ui/_queries/records/getRecordPropertiesQuery
 import {useDebouncedValue} from '_ui/hooks/useDebouncedValue/useDebouncedValue';
 import styled from 'styled-components';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
+import {IStandardFieldValue} from '_ui/components/RecordEdition/EditRecordContent/reducers/standardFieldReducer/standardFieldReducer';
 
 const ResultsCount = styled(KitTypography.Text)`
     margin-bottom: calc(var(--general-spacing-s) * 1px);
@@ -26,7 +28,6 @@ interface IMonoValueSelectProps extends IProvidedByAntFormItem<SelectProps<strin
     onSelectClear: (value: IRecordPropertyLink) => void;
     onSelectChange: (values: IRecordIdentity[]) => void;
     required: boolean;
-    infoButton?: ReactNode;
 }
 
 export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
@@ -37,8 +38,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     label,
     onSelectChange,
     onSelectClear,
-    required,
-    infoButton
+    required
 }) => {
     if (!onChange) {
         throw Error('MonoValueSelect should be used inside a antd Form.Item');
@@ -63,6 +63,11 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
         activeValue,
         linkedLibraryId: attribute.linked_library.id,
         onSelectChange
+    });
+
+    const {onValueDetailsButtonClick, infoIconWithTooltip} = useValueDetailsButton({
+        value: null,
+        attribute
     });
 
     const handleSelect = async (optionValue: string, ...antOnChangeParams: DefaultOptionType[]) => {
@@ -98,8 +103,8 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
             onChange={onChange}
             onClear={required ? undefined : handleClear}
             allowClear={!required}
-            infoIcon={infoButton}
-            onInfoClick={Boolean(infoButton) ? () => void 0 : undefined}
+            infoIcon={infoIconWithTooltip}
+            onInfoClick={onValueDetailsButtonClick}
             onSearch={handleSearch}
             filterOption={false} // To avoid dynamic filtering when debouncing
             dropdownRender={menu => {

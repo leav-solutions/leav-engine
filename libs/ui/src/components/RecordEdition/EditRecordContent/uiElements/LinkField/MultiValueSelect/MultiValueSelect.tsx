@@ -12,6 +12,8 @@ import {useGetOptionsQuery} from './useGetOptionsQuery';
 import {IRecordIdentity} from '_ui/types';
 import {IRecordPropertyLink} from '_ui/_queries/records/getRecordPropertiesQuery';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
+import {IStandardFieldValue} from '_ui/components/RecordEdition/EditRecordContent/reducers/standardFieldReducer/standardFieldReducer';
 
 interface IMultiValueSelectProps extends IProvidedByAntFormItem<SelectProps<string[]>, SelectProps> {
     activeValues: RecordFormElementsValueLinkValue[] | undefined;
@@ -20,7 +22,6 @@ interface IMultiValueSelectProps extends IProvidedByAntFormItem<SelectProps<stri
     onValueDeselect: (value: IRecordPropertyLink) => void;
     onSelectClear: () => void;
     onSelectChange: (values: IRecordIdentity[]) => void;
-    infoButton?: ReactNode;
 }
 
 export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
@@ -31,8 +32,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
     label,
     onValueDeselect,
     onSelectChange,
-    onSelectClear,
-    infoButton
+    onSelectClear
 }) => {
     if (!onChange) {
         throw Error('MultiValueSelect should be used inside a antd Form.Item');
@@ -44,6 +44,11 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
     const {loading, selectOptions, updateLeavField} = useGetOptionsQuery({
         attribute,
         onSelectChange
+    });
+
+    const {onValueDetailsButtonClick, infoIconWithTooltip} = useValueDetailsButton({
+        value: null,
+        attribute
     });
 
     const _handleSelect = (optionValue: string, ...antOnChangeParams: DefaultOptionType[]) => {
@@ -82,8 +87,8 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
             // @ts-expect-error
             onDeselect={_handleDeselect}
             onChange={onChange}
-            infoIcon={infoButton}
-            onInfoClick={Boolean(infoButton) ? () => void 0 : undefined}
+            infoIcon={infoIconWithTooltip}
+            onInfoClick={onValueDetailsButtonClick}
         />
     );
 };

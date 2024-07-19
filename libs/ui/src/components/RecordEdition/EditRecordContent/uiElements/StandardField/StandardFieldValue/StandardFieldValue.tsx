@@ -5,7 +5,7 @@ import {CloseOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import {AnyPrimitive, IDateRangeValue} from '@leav/utils';
 import {Button, Form, Input, InputRef, Popover, Space, theme} from 'antd';
 import moment from 'moment';
-import React, {MutableRefObject, ReactNode, useEffect, useRef} from 'react';
+import React, {MutableRefObject, useEffect, useRef} from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {DSInputWrapper} from './DSInputWrapper';
 import {DSRangePickerWrapper} from './DSRangePickerWrapper';
@@ -47,7 +47,6 @@ import CheckboxInput from './Inputs/CheckboxInput';
 import ColorInput from './Inputs/ColorInput';
 import DateInput from './Inputs/DateInput';
 import EncryptedInput from './Inputs/EncryptedInput';
-import NumberInput from './Inputs/NumberInput';
 import TextInput from './Inputs/TextInput';
 import ValuesList from './ValuesList';
 import {IValueOfValuesList} from './ValuesList/ValuesList';
@@ -563,9 +562,6 @@ function StandardFieldValue({
         AttributeFormat.rich_text
     ];
 
-    const infoButton: ReactNode = editRecordState.withInfoButton ? (
-        <ValueDetailsBtn value={fieldValue.value} attribute={attribute} size="small" shape="circle" />
-    ) : null;
     return (
         <>
             {attributeFormatsWithDS.includes(attribute.format) && (
@@ -579,13 +575,28 @@ function StandardFieldValue({
                     ]}
                 >
                     {attribute.format === AttributeFormat.text && (
-                        <DSInputWrapper state={state} handleSubmit={_handleSubmit} infoButton={infoButton} />
+                        <DSInputWrapper
+                            state={state}
+                            handleSubmit={_handleSubmit}
+                            attribute={attribute}
+                            fieldValue={fieldValue}
+                        />
                     )}
                     {attribute.format === AttributeFormat.date_range && (
-                        <DSRangePickerWrapper state={state} handleSubmit={_handleSubmit} infoButton={infoButton} />
+                        <DSRangePickerWrapper
+                            state={state}
+                            handleSubmit={_handleSubmit}
+                            attribute={attribute}
+                            fieldValue={fieldValue}
+                        />
                     )}
                     {attribute.format === AttributeFormat.numeric && (
-                        <DSInputNumberWrapper state={state} handleSubmit={_handleSubmit} infoButton={infoButton} />
+                        <DSInputNumberWrapper
+                            state={state}
+                            handleSubmit={_handleSubmit}
+                            attribute={attribute}
+                            fieldValue={fieldValue}
+                        />
                     )}
                 </Form.Item>
             )}

@@ -2,16 +2,22 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitInputNumber} from 'aristid-ds';
-import {ComponentPropsWithRef, FocusEvent, FunctionComponent, ReactNode, useState} from 'react';
-import {IStandardFieldReducerState} from '../../../reducers/standardFieldReducer/standardFieldReducer';
+import {ComponentPropsWithRef, FocusEvent, FunctionComponent, useState} from 'react';
+import {
+    IStandardFieldReducerState,
+    IStandardFieldValue
+} from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {Form, InputNumberProps} from 'antd';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import styled from 'styled-components';
+import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
+import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 
 interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputNumberProps> {
     state: IStandardFieldReducerState;
-    infoButton: ReactNode;
+    attribute: RecordFormAttributeFragment;
+    fieldValue: IStandardFieldValue;
     handleSubmit: (value: string, id?: string) => void;
 }
 
@@ -31,7 +37,8 @@ const KitInputNumberStyled = styled(KitInputNumber)<{$shouldHighlightColor: bool
 export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     state,
     value,
-    infoButton,
+    attribute,
+    fieldValue,
     onChange,
     handleSubmit
 }) => {
@@ -41,6 +48,11 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
 
     const {t} = useSharedTranslation();
     const {errors} = Form.Item.useStatus();
+    const {onValueDetailsButtonClick, infoIconWithTooltip} = useValueDetailsButton({
+        value: fieldValue?.value,
+        attribute
+    });
+
     const [hasChanged, setHasChanged] = useState(false);
 
     const _resetToInheritedValue = () => {
@@ -78,8 +90,8 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
                       })
                     : undefined
             }
-            infoIcon={infoButton}
-            onInfoClick={Boolean(infoButton) ? () => void 0 : undefined}
+            infoIcon={infoIconWithTooltip}
+            onInfoClick={onValueDetailsButtonClick}
             value={value}
             onChange={_handleOnChange}
             disabled={state.isReadOnly}
