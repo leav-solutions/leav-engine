@@ -55,40 +55,52 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
         onChange(newValues, antOnChangeParams);
 
         if (antOnChangeParams.find(optionType => optionType.value === optionValue && !optionType.disabled)) {
-            setAddedValues(values => [...new Set(values.concat(optionValue))]);
-            setClearedValues(values => values.filter(v => v !== optionValue));
+            _addValue(optionValue);
+        }
+    };
+
+    const _addValue = (valueToAdd: string) => {
+        setAddedValues(values => [...new Set(values.concat(valueToAdd))]);
+        setClearedValues(values => values.filter(v => v !== valueToAdd));
+    };
+
+    const _deleteValue = (valueToDelete: string, clear?: boolean) => {
+        setAddedValues(values => values.filter(v => v !== valueToDelete));
+
+        if (clear) {
+            setClearedValues(values => [...new Set(values.concat(valueToDelete))]);
         }
     };
 
     const _clearValues = () => {
-        setClearedValues(values => [...new Set(values.concat(value))]);
+        value.forEach(value => _deleteValue(value, true));
         form.setFieldValue(attribute.id, undefined);
     };
 
     const _handleBlur = () => {
         const activeValuesId = activeValues.map(av => av.linkValue.id);
-
-        const valuesToAdd = addedValues.filter(v => !activeValuesId.includes(v));
-
+        const combinedValues = required ? addedValues.concat(clearedValues) : addedValues;
+        const valuesToAdd = combinedValues.filter(v => !activeValuesId.includes(v));
         const shouldRemoveNone =
             required &&
+            !addedValues.length &&
             clearedValues.length === activeValues.length &&
-            clearedValues.every(e => activeValuesId.includes(e)) &&
-            !addedValues.length;
-
+            clearedValues.every(e => activeValuesId.includes(e));
         const valuesToRemove = shouldRemoveNone
             ? []
             : activeValues.filter(av => clearedValues.includes(av.linkValue.id));
 
-        updateLeavField(valuesToAdd, valuesToRemove);
+        if (valuesToAdd.length || valuesToRemove.length) {
+            updateLeavField(valuesToAdd, valuesToRemove);
+        }
     };
 
     const _handleDeselect = (valueToDeselect: string) => {
-        setAddedValues(values => values.filter(val => val !== valueToDeselect));
-
         if (value.length === 1 && required) {
-            return _clearValues();
+            return _deleteValue(valueToDeselect, true);
         }
+
+        _deleteValue(valueToDeselect, false);
 
         const newValues = value.filter(val => val !== valueToDeselect);
         form.setFieldValue(attribute.id, newValues);
