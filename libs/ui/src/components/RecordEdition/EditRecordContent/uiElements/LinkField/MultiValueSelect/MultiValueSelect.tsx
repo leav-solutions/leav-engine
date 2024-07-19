@@ -79,7 +79,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
 
     const _handleBlur = () => {
         const activeValuesId = activeValues.map(av => av.linkValue.id);
-        const combinedValues = required ? addedValues.concat(clearedValues) : addedValues;
+        const combinedValues = required && !addedValues.length ? clearedValues : addedValues;
         const valuesToAdd = combinedValues.filter(v => !activeValuesId.includes(v));
         const shouldRemoveNone =
             required &&
