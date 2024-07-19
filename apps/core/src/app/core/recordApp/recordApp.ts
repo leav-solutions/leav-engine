@@ -17,7 +17,7 @@ import {ICursorPaginationParams, IListWithCursor, IPaginationParams} from '_type
 import {IQueryInfos} from '_types/queryInfos';
 import {ITree} from '_types/tree';
 import ValidationError from '../../../errors/ValidationError';
-import {Errors} from '../../../_types/errors';
+import {Errors, ErrorTypes} from '../../../_types/errors';
 import {TriggerNames} from '../../../_types/eventsManager';
 import {PermissionTypes, RecordPermissionsActions} from '../../../_types/permissions';
 import {
@@ -32,6 +32,7 @@ import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from '../helpers/subscriptions';
 import {IIndexationManagerApp} from '../indexationManagerApp';
 import {ICreateRecordParams, IRecordsQueryVariables} from './_types';
+import {isLeavError} from 'errors/guards';
 
 export interface ICoreRecordApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -367,13 +368,17 @@ export default function ({
                                 });
                                 return values;
                             } catch (err) {
-                                const leavErr = new LeavError(err.type, err.message, {
-                                    fields: {[attribute]: err.message},
-                                    record: {
-                                        id: parent.id,
-                                        library: parent.library
+                                const leavErr = new LeavError(
+                                    isLeavError(err) ? err.type : ErrorTypes.INTERNAL_ERROR,
+                                    err.message,
+                                    {
+                                        fields: {[attribute]: err.message},
+                                        record: {
+                                            id: parent.id,
+                                            library: parent.library
+                                        }
                                     }
-                                });
+                                );
                                 ctx.errors = [...ctx.errors, leavErr];
                                 return [];
                             }

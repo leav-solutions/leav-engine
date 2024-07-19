@@ -12,7 +12,7 @@ interface IDeps {
 
 export type InitQueryContextFunc = (req?: Request) => IQueryInfos;
 
-export default function({config = null}: IDeps) {
+export default function ({config = null}: IDeps): InitQueryContextFunc {
     return req => ({
         userId: null,
         lang: (req?.query.lang as string) ?? config.lang.default,

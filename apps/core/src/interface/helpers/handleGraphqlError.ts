@@ -8,9 +8,7 @@ import winston from 'winston';
 import {IConfig} from '_types/config';
 import {GRAPHQL_ERROR_CODES, IExtendedErrorMsg} from '../../_types/errors';
 import {IQueryInfos} from '_types/queryInfos';
-import LeavError from '../../errors/LeavError';
-import PermissionError from '../../errors/PermissionError';
-import ValidationError from '../../errors/ValidationError';
+import {isLeavError, isPermissionError, isValidationError} from 'errors/guards';
 
 export type HandleGraphqlErrorFunc = (err: GraphQLError, ctx: IQueryInfos) => GraphQLFormattedError;
 
@@ -19,12 +17,6 @@ interface IDeps {
     'core.utils': IUtils;
     'core.utils.logger'?: winston.Winston;
 }
-
-const _isLeavError = (err: Error): err is LeavError<unknown> => err instanceof LeavError;
-const _isPermissionError = (err: Error): err is PermissionError<unknown> =>
-    _isLeavError(err) ? err.type === ErrorTypes.PERMISSION_ERROR && err.hasOwnProperty('action') : false;
-const _isValidationError = (err: Error): err is ValidationError<unknown> =>
-    _isLeavError(err) ? err.type === ErrorTypes.VALIDATION_ERROR && err.hasOwnProperty('isCustomMessage') : false;
 
 export default function ({
     config,
@@ -38,11 +30,11 @@ export default function ({
         const isGraphqlValidationError =
             err.extensions && err.extensions.code === GRAPHQL_ERROR_CODES.VALIDATION_FAILED;
         const errorType =
-            _isLeavError(originalError) && originalError.type ? originalError.type : ErrorTypes.INTERNAL_ERROR;
-        const errorFields = _isLeavError(originalError) ? {...originalError.fields} : {};
-        const errorRecord = _isLeavError(originalError) ? {...originalError.record} : {};
-        const errorAction = _isPermissionError(originalError) ? originalError.action : null;
-        const errorCustomMessage = _isValidationError(originalError) ? originalError.isCustomMessage : false;
+            isLeavError(originalError) && originalError.type ? originalError.type : ErrorTypes.INTERNAL_ERROR;
+        const errorFields = isLeavError(originalError) ? {...originalError.fields} : {};
+        const errorRecord = isLeavError(originalError) ? {...originalError.record} : {};
+        const errorAction = isPermissionError(originalError) ? originalError.action : null;
+        const errorCustomMessage = isValidationError(originalError) ? originalError.isCustomMessage : false;
 
         // Translate errors details
         for (const [field, errorDetails] of Object.entries(errorFields)) {
