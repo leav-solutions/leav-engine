@@ -60,7 +60,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
     };
 
     const _addValue = (valueToAdd: string) => {
-        setAddedValues(values => [...new Set(values.concat(valueToAdd))]);
+        setAddedValues(values => Array.from(new Set([...values, valueToAdd])));
         setClearedValues(values => values.filter(v => v !== valueToAdd));
     };
 
@@ -68,7 +68,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
         setAddedValues(values => values.filter(v => v !== valueToDelete));
 
         if (clear) {
-            setClearedValues(values => [...new Set(values.concat(valueToDelete))]);
+            setClearedValues(values => Array.from(new Set([...values, valueToDelete])));
         }
     };
 
