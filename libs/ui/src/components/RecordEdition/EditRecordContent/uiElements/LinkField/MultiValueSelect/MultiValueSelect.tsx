@@ -77,7 +77,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
     };
 
     const _clearValues = () => {
-        value.forEach(value => _deleteValue(value, true));
+        value.forEach(v => _deleteValue(v, true));
         form.setFieldValue(attribute.id, undefined);
     };
 
