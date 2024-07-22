@@ -6,13 +6,14 @@ import styled from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import {ITableRow} from '_ui/types/search';
 import {infosCol, INFOS_COLUMN_WIDTH, selectionColumn} from '../../constants';
+import useSearchReducer from '../../hooks/useSearchReducer';
 import Cell from '../Cell';
 import CellSelection from '../Cell/CellSelection';
 
 const CustomBodyCell = styled.div<{id?: string | number; selected: boolean}>`
     // Inherit background from row. If background is transparent, the sticky column won't behave properly
     background-color: inherit;
-    padding: 4px 0;
+    padding: calc(var(--general-spacing-xxs) * 1px) 0;
 
     &:not(:first-child) {
         border-left: 1px solid ${props => (props.selected ? themeVars.activeColor : themeVars.borderLightColor)};
@@ -24,12 +25,19 @@ const CustomBodyCell = styled.div<{id?: string | number; selected: boolean}>`
     align-items: center;
 `;
 
+const ErrorBodyCell = styled(CustomBodyCell)`
+    color: var(--general-colors-secondary-error-red400);
+    background-color: var(--general-colors-secondary-error-red200);
+    padding: calc(var(--general-spacing-xxs) * 1px);
+`;
+
 interface IBodyCellProps {
     cell: ReactTableTypeCell<ITableRow>;
     selected: boolean;
 }
 
 function BodyCell({cell, selected}: IBodyCellProps): JSX.Element {
+    const searchReducer = useSearchReducer();
     const props = cell.getCellProps();
     if (cell.column.id === infosCol) {
         // define info column row style
@@ -42,6 +50,10 @@ function BodyCell({cell, selected}: IBodyCellProps): JSX.Element {
         };
     }
 
+    const cellError = searchReducer.state.errors.find(
+        err => err.extensions.record?.id === cell.row.original.record.id && err.extensions.fields[cell.column.id]
+    );
+
     const data = {
         id: cell?.value?.id,
         key: cell?.value?.id,
@@ -52,8 +64,12 @@ function BodyCell({cell, selected}: IBodyCellProps): JSX.Element {
         format: cell?.value?.format
     };
 
-    if (!cell.value) {
-        return <CustomBodyCell selected={selected} {...props} />;
+    if (cellError) {
+        return (
+            <ErrorBodyCell selected={selected} {...props}>
+                {cellError.extensions.fields[cell.column.id] ?? cellError.message}
+            </ErrorBodyCell>
+        );
     }
 
     return (

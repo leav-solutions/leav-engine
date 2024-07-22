@@ -322,9 +322,16 @@ describe('Utils', () => {
         test('Translate error with vars', async () => {
             const utilsModule = utils({translator: mockTranslator as i18n});
 
-            const toTranslate = {msg: 'my_error', vars: {foo: 'bar'}};
-            expect(utilsModule.translateError(toTranslate, 'fr')).toMatch('errors.my_error');
-            expect(utilsModule.translateError(toTranslate, 'fr')).toMatch('"foo":"bar"');
+            const toTranslate = {msg: Errors.FORMAT_ERROR, vars: {details: 'foo'}};
+            expect(utilsModule.translateError(toTranslate, 'fr')).toMatch('errors.FORMAT_ERROR');
+            expect(utilsModule.translateError(toTranslate, 'fr')).toMatch('"details":"foo"');
+        });
+
+        test('Do not translate unknown key', async () => {
+            const utilsModule = utils({translator: mockTranslator as i18n});
+
+            const toTranslate = 'some message';
+            expect(utilsModule.translateError(toTranslate, 'fr')).toMatch('some message');
         });
 
         test('Translate simple string', async () => {
