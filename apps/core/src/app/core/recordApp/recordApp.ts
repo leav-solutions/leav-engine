@@ -32,7 +32,7 @@ import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from '../helpers/subscriptions';
 import {IIndexationManagerApp} from '../indexationManagerApp';
 import {ICreateRecordParams, IRecordsQueryVariables} from './_types';
-import {isLeavError} from 'errors/guards';
+import {isLeavError} from '../../../errors/typeguards';
 
 export interface ICoreRecordApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;

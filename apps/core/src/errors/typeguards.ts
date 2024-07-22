@@ -1,4 +1,4 @@
-import {ErrorTypes} from '_types/errors';
+import {ErrorTypes} from '../_types/errors';
 import LeavError from './LeavError';
 import PermissionError from './PermissionError';
 import ValidationError from './ValidationError';

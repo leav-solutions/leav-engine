@@ -8,7 +8,7 @@ import winston from 'winston';
 import {IConfig} from '_types/config';
 import {GRAPHQL_ERROR_CODES, IExtendedErrorMsg} from '../../_types/errors';
 import {IQueryInfos} from '_types/queryInfos';
-import {isLeavError, isPermissionError, isValidationError} from 'errors/guards';
+import {isLeavError, isPermissionError, isValidationError} from '../../errors/typeguards';
 
 export type HandleGraphqlErrorFunc = (err: GraphQLError, ctx: IQueryInfos) => GraphQLFormattedError;
 
