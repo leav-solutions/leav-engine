@@ -4,7 +4,7 @@
 import {EditOutlined, StarFilled, StarOutlined} from '@ant-design/icons';
 import {useLang} from '@leav/ui';
 import {getInitials, localizedTranslation} from '@leav/utils';
-import {KitAvatar, KitButton, KitImage, KitItemCard, KitTypography} from 'aristid-ds';
+import {KitAvatar, KitButton, KitImage, KitTypography} from 'aristid-ds';
 import EditApplicationModal, {
     IEditApplicationModalProps
 } from 'components/Applications/EditApplicationModal/EditApplicationModal';

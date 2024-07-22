@@ -17,24 +17,24 @@ export enum PreviewSize {
     big = 'big'
 }
 
-export const tagColorByAttributeType: {[key in AttributeType]: ComponentProps<typeof KitTag>['color']} = {
-    [AttributeType.simple]: 'purple',
-    [AttributeType.simple_link]: 'blue',
-    [AttributeType.advanced]: 'orange',
-    [AttributeType.advanced_link]: 'volcano',
-    [AttributeType.tree]: 'green'
+export const tagColorByAttributeType: {[key in AttributeType]: [string, string]} = {
+    [AttributeType.simple]: ['purple', '#ffe5ff'],
+    [AttributeType.simple_link]: ['blue', '#e5e5ff'],
+    [AttributeType.advanced]: ['orange', '#fff6e5'],
+    [AttributeType.advanced_link]: ['#d4380d', '#fde4dd'],
+    [AttributeType.tree]: ['green', '#e5ffe5']
 };
 
-export const tagColorByAttributeFormat: {[key in AttributeFormat]: TagProps['color']} = {
-    [AttributeFormat.boolean]: 'gold',
-    [AttributeFormat.date]: 'blue',
-    [AttributeFormat.date_range]: 'geekblue',
-    [AttributeFormat.encrypted]: 'red',
-    [AttributeFormat.extended]: 'magenta',
-    [AttributeFormat.numeric]: 'orange',
-    [AttributeFormat.text]: 'green',
-    [AttributeFormat.color]: 'purple',
-    [AttributeFormat.rich_text]: 'volcano'
+export const tagColorByAttributeFormat: {[key in AttributeFormat]: [string, string]} = {
+    [AttributeFormat.boolean]: ['gold', '#fff099'],
+    [AttributeFormat.date]: ['blue', '#e5e5ff'],
+    [AttributeFormat.date_range]: ['#1d39c4', '#e9ecfc'],
+    [AttributeFormat.encrypted]: ['red', '#ffe5e5'],
+    [AttributeFormat.extended]: ['magenta', '#ffe5e5'],
+    [AttributeFormat.numeric]: ['orange', '#fff6e5'],
+    [AttributeFormat.text]: ['green', '#e5ffe5'],
+    [AttributeFormat.color]: ['purple', '#ffe5ff'],
+    [AttributeFormat.rich_text]: ['#d4380d', '#fde4dd']
 };
 
 export enum ErrorDisplayTypes {
