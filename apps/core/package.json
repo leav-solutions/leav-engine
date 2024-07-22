@@ -1,6 +1,6 @@
 {
     "name": "core",
-    "version": "1.0.0-beta12",
+    "version": "1.0.0-beta13",
     "description": "",
     "scripts": {
         "start": "node .",
@@ -59,7 +59,7 @@
         "moment-timezone": "0.5.37",
         "nodemon": "1.19.4",
         "npm-run-all": "4.1.5",
-        "prettier": "1.19.1",
+        "prettier": "3.3.3",
         "ts-jest": "29.0.1",
         "ts-node": "10.9.1",
         "ts-node-dev": "2.0.0",

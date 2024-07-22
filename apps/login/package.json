@@ -1,13 +1,13 @@
 {
   "name": "login",
-  "version": "1.0.0-beta12",
+  "version": "1.0.0-beta13",
   "private": true,
   "homepage": ".",
   "dependencies": {
     "@ant-design/icons": "5.2.6",
     "@leav/ui": "workspace:libs/ui",
     "antd": "5.15.3",
-    "aristid-ds": "7.2.0-53299b1",
+    "aristid-ds": "7.2.0-f295536",
     "i18next": "22.5.0",
     "i18next-browser-languagedetector": "7.0.2",
     "i18next-http-backend": "2.1.1",

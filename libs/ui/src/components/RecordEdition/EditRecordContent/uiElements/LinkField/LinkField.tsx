@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ICommonFieldsSettings} from '@leav/utils';
-import {ReactNode, Reducer, useContext, useEffect, useReducer} from 'react';
+import {Reducer, useContext, useEffect, useReducer} from 'react';
 import CreationErrorContext from '_ui/components/RecordEdition/EditRecord/creationErrorContext';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
@@ -24,7 +24,6 @@ import {APICallStatus, IFormElementProps} from '../../_types';
 import {MonoValueSelect} from '_ui/components/RecordEdition/EditRecordContent/uiElements/LinkField/MonoValueSelect/MonoValueSelect';
 import {AntForm} from 'aristid-ds';
 import {MultiValueSelect} from './MultiValueSelect/MultiValueSelect';
-import ValueDetailsBtn from '../../shared/ValueDetailsBtn';
 
 export type LinkFieldReducerState = ILinkFieldState<RecordFormElementsValueLinkValue>;
 type LinkFieldReducerAction = LinkFieldReducerActions<RecordFormElementsValueLinkValue>;
@@ -125,29 +124,6 @@ function LinkField({
         }
     };
 
-    const _handleDeleteAllValues = async () => {
-        const deleteRes = await onDeleteMultipleValues(
-            attribute.id,
-            getActiveFieldValues(state),
-            state.values[state.activeScope].version
-        );
-        if (deleteRes.status === APICallStatus.SUCCESS) {
-            dispatch({
-                type: LinkFieldReducerActionsType.DELETE_ALL_VALUES
-            });
-        }
-        if (deleteRes?.errors?.length) {
-            dispatch({
-                type: LinkFieldReducerActionsType.SET_ERROR_MESSAGE,
-                errorMessage: deleteRes.errors.map(err => err.message)
-            });
-        }
-    };
-
-    const infoButton: ReactNode = editRecordState.withInfoButton ? (
-        <ValueDetailsBtn value={null} attribute={attribute} size="small" shape="circle" />
-    ) : null;
-
     return (
         <AntForm.Item
             name={attribute.id}
@@ -166,7 +142,6 @@ function LinkField({
                     required={state.formElement.settings.required}
                     onValueDeselect={_handleDeleteValue}
                     onSelectChange={_handleUpdateValueSubmit}
-                    infoButton={infoButton}
                 />
             ) : (
                 <MonoValueSelect
@@ -176,7 +151,6 @@ function LinkField({
                     required={state.formElement.settings.required}
                     onSelectClear={_handleDeleteValue}
                     onSelectChange={_handleUpdateValueSubmit}
-                    infoButton={infoButton}
                 />
             )}
         </AntForm.Item>

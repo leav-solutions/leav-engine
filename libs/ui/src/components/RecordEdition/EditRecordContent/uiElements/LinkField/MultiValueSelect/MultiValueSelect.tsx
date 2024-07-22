@@ -12,6 +12,7 @@ import {useGetOptionsQuery} from './useGetOptionsQuery';
 import {IRecordIdentity} from '_ui/types';
 import {IRecordPropertyLink} from '_ui/_queries/records/getRecordPropertiesQuery';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
 
 interface IMultiValueSelectProps extends IProvidedByAntFormItem<SelectProps<string[]>, SelectProps> {
     activeValues: RecordFormElementsValueLinkValue[] | undefined;
@@ -19,7 +20,6 @@ interface IMultiValueSelectProps extends IProvidedByAntFormItem<SelectProps<stri
     label: string;
     onValueDeselect: (value: IRecordPropertyLink) => void;
     onSelectChange: (values: Array<{value: IRecordIdentity; idValue: string}>) => void;
-    infoButton?: ReactNode;
     required: boolean;
 }
 
@@ -31,8 +31,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
     label,
     onValueDeselect,
     onSelectChange,
-    required,
-    infoButton
+    required
 }) => {
     if (!onChange) {
         throw Error('MultiValueSelect should be used inside a antd Form.Item');
@@ -47,6 +46,11 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
     const {loading, selectOptions, updateLeavField} = useGetOptionsQuery({
         attribute,
         onSelectChange
+    });
+
+    const {onValueDetailsButtonClick, infoIconWithTooltip} = useValueDetailsButton({
+        value: null,
+        attribute
     });
 
     const _handleSelect = (optionValue: string, ...antOnChangeParams: DefaultOptionType[]) => {
@@ -128,8 +132,8 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
             // @ts-expect-error
             onDeselect={_handleDeselect}
             onChange={onChange}
-            infoIcon={infoButton}
-            onInfoClick={Boolean(infoButton) ? () => void 0 : undefined}
+            infoIcon={infoIconWithTooltip}
+            onInfoClick={onValueDetailsButtonClick}
         />
     );
 };

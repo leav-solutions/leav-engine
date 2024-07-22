@@ -658,8 +658,10 @@ describe('LibraryDomain', () => {
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.infra.cache.cacheService': mockCachesService as ICachesService,
                     'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
-                    'core.domain.library.helpers.deleteAssociatedValues': mockDeleteAssociatedValues as IDeleteAssociatedValuesHelper,
-                    'core.domain.library.helpers.updateAssociatedForms': mockUpdateAssociatedForms as IUpdateAssociatedFormsHelper,
+                    'core.domain.library.helpers.deleteAssociatedValues':
+                        mockDeleteAssociatedValues as IDeleteAssociatedValuesHelper,
+                    'core.domain.library.helpers.updateAssociatedForms':
+                        mockUpdateAssociatedForms as IUpdateAssociatedFormsHelper,
                     'core.utils': mockUtils as IUtils
                 });
 

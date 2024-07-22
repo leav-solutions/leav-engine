@@ -22,7 +22,8 @@ describe('getSimplePermission', () => {
         };
 
         const simplePermHelper = simplePermissionHelper({
-            'core.domain.permission.helpers.permissionsByActions': mockPermsByActionsHelper as IPermissionsByActionsHelper
+            'core.domain.permission.helpers.permissionsByActions':
+                mockPermsByActionsHelper as IPermissionsByActionsHelper
         });
 
         const permAccess = await simplePermHelper.getSimplePermission({

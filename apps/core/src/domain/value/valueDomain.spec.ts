@@ -860,7 +860,8 @@ describe('ValueDomain', () => {
                     'core.infra.record': mockRecordRepo as IRecordRepo,
                     'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                     'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
-                    'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
+                    'core.domain.permission.recordAttribute':
+                        mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
@@ -915,7 +916,8 @@ describe('ValueDomain', () => {
                     'core.infra.record': mockRecordRepo as IRecordRepo,
                     'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                     'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
-                    'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
+                    'core.domain.permission.recordAttribute':
+                        mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtilsStandardAttribute as IUtils
@@ -967,7 +969,8 @@ describe('ValueDomain', () => {
                     'core.infra.record': mockRecordRepo as IRecordRepo,
                     'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                     'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
-                    'core.domain.permission.recordAttribute': mockRecordAttrPermForbidDom as IRecordAttributePermissionDomain,
+                    'core.domain.permission.recordAttribute':
+                        mockRecordAttrPermForbidDom as IRecordAttributePermissionDomain,
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtilsStandardAttribute as IUtils
@@ -1026,7 +1029,8 @@ describe('ValueDomain', () => {
                     'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
                     'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
-                    'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
+                    'core.domain.permission.recordAttribute':
+                        mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                     'core.utils': mockUtilsStandardAttribute as IUtils,
@@ -1096,7 +1100,8 @@ describe('ValueDomain', () => {
                     'core.infra.record': mockRecordRepo as IRecordRepo,
                     'core.domain.actionsList': mockALThrowsDomain as IActionsListDomain,
                     'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
-                    'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
+                    'core.domain.permission.recordAttribute':
+                        mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
                     'core.utils': mockUtils as IUtils,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
@@ -1455,7 +1460,8 @@ describe('ValueDomain', () => {
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
-                'core.domain.permission.recordAttribute': mockRecordAttrPermDomainNoEdit as IRecordAttributePermissionDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttrPermDomainNoEdit as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
@@ -2150,7 +2156,8 @@ describe('ValueDomain', () => {
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelperMultipleTrees as IElementAncestorsHelper,
+                'core.domain.tree.helpers.elementAncestors':
+                    mockElementAncestorsHelperMultipleTrees as IElementAncestorsHelper,
                 'core.domain.versionProfile': mockVersionProfileDomainMultipleTrees as IVersionProfileDomain,
                 'core.utils': mockUtilsStandardAttribute as IUtils
             });

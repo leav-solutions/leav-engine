@@ -3,17 +3,23 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitDatePicker} from 'aristid-ds';
 import {FunctionComponent, ReactNode} from 'react';
-import {IStandardFieldReducerState} from '../../../reducers/standardFieldReducer/standardFieldReducer';
+import {
+    IStandardFieldReducerState,
+    IStandardFieldValue
+} from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {Form} from 'antd';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
 import {IProvidedByAntFormItem, StandardValueTypes} from '../../../_types';
 import {RangePickerProps} from 'antd/lib/date-picker';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
+import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
 
 interface IDSRangePickerWrapperProps extends IProvidedByAntFormItem<RangePickerProps> {
     state: IStandardFieldReducerState;
-    infoButton: ReactNode;
+    attribute: RecordFormAttributeFragment;
+    fieldValue: IStandardFieldValue;
     handleSubmit: (value: StandardValueTypes, id?: string) => void;
 }
 
@@ -29,14 +35,18 @@ const KitDatePickerRangePickerStyled = styled(KitDatePicker.RangePicker)<{$shoul
 
 export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps> = ({
     state,
-    infoButton,
     value,
+    attribute,
+    fieldValue,
     onChange,
     handleSubmit
 }) => {
     const {t} = useSharedTranslation();
-
     const {errors} = Form.Item.useStatus();
+    const {onValueDetailsButtonClick, infoIconWithTooltip} = useValueDetailsButton({
+        value: fieldValue?.value,
+        attribute
+    });
 
     const _handleDateChange: (
         rangePickerDates: [from: dayjs.Dayjs, to: dayjs.Dayjs] | null,
@@ -80,8 +90,8 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
             disabled={state.isReadOnly}
             allowClear={!state.isInheritedNotOverrideValue}
             status={errors.length > 0 ? 'error' : undefined}
-            infoIcon={infoButton}
-            onInfoClick={Boolean(infoButton) ? () => void 0 : undefined}
+            infoIcon={infoIconWithTooltip}
+            onInfoClick={onValueDetailsButtonClick}
             helper={
                 state.isInheritedOverrideValue
                     ? t('record_edition.inherited_input_helper', {

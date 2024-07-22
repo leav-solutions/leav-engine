@@ -94,26 +94,28 @@ export default function ({
         return attributeProps.linked_tree;
     };
 
-    const _filterTreeContentReduce = (ctx: IQueryInfos, treeId: string) => async (
-        visibleNodesProm: Promise<ITreeNodeWithTreeId[]>,
-        treeNode: ITreeNode
-    ): Promise<ITreeNodeWithTreeId[]> => {
-        const visibleNodes = await visibleNodesProm;
-        const isVisible = await permissionDomain.isAllowed({
-            type: PermissionTypes.TREE_NODE,
-            applyTo: treeId,
-            action: TreeNodePermissionsActions.ACCESS_TREE,
-            target: {nodeId: treeNode.id},
-            userId: ctx.userId,
-            ctx
-        });
+    const _filterTreeContentReduce =
+        (ctx: IQueryInfos, treeId: string) =>
+        async (
+            visibleNodesProm: Promise<ITreeNodeWithTreeId[]>,
+            treeNode: ITreeNode
+        ): Promise<ITreeNodeWithTreeId[]> => {
+            const visibleNodes = await visibleNodesProm;
+            const isVisible = await permissionDomain.isAllowed({
+                type: PermissionTypes.TREE_NODE,
+                applyTo: treeId,
+                action: TreeNodePermissionsActions.ACCESS_TREE,
+                target: {nodeId: treeNode.id},
+                userId: ctx.userId,
+                ctx
+            });
 
-        if (isVisible) {
-            visibleNodes.push({...treeNode, treeId});
-        }
+            if (isVisible) {
+                visibleNodes.push({...treeNode, treeId});
+            }
 
-        return visibleNodes;
-    };
+            return visibleNodes;
+        };
 
     const _getChildrenDepth = (fields: IQueryField[], depth): number => {
         const children = fields.find(f => f.name === 'children');

@@ -16,7 +16,7 @@ export interface IPermissionByUserGroupsHelper {
     getPermissionByUserGroups: (params: IGetPermissionByUserGroupsParams) => Promise<boolean | null>;
 }
 
-export default function(deps: IDeps): IPermissionByUserGroupsHelper {
+export default function (deps: IDeps): IPermissionByUserGroupsHelper {
     const {
         'core.domain.permission.helpers.simplePermission': simplePermHelper = null,
         'core.domain.permission.helpers.reducePermissionsArray': reducePermissionsArrayHelper
@@ -46,37 +46,35 @@ export default function(deps: IDeps): IPermissionByUserGroupsHelper {
             // If user has no group, retrieve permission for root level ("all users")
             const userPerms = userGroupsPaths.length
                 ? await Promise.all(
-                      userGroupsPaths.map(
-                          async (userGroupPath): Promise<boolean | null> => {
-                              let userGroupPermission = null;
-                              if (userGroupPath.length) {
-                                  for (const groupNode of userGroupPath) {
-                                      // Check if this group node has a permission defined on it
-                                      const groupNodePermission = await simplePermHelper.getSimplePermission({
-                                          type,
-                                          applyTo,
-                                          action,
-                                          usersGroupNodeId: groupNode.id,
-                                          permissionTreeTarget,
-                                          ctx
-                                      });
+                      userGroupsPaths.map(async (userGroupPath): Promise<boolean | null> => {
+                          let userGroupPermission = null;
+                          if (userGroupPath.length) {
+                              for (const groupNode of userGroupPath) {
+                                  // Check if this group node has a permission defined on it
+                                  const groupNodePermission = await simplePermHelper.getSimplePermission({
+                                      type,
+                                      applyTo,
+                                      action,
+                                      usersGroupNodeId: groupNode.id,
+                                      permissionTreeTarget,
+                                      ctx
+                                  });
 
-                                      // We stop on the first group node with a permission defined (null == inherited)
-                                      if (groupNodePermission !== null) {
-                                          userGroupPermission = groupNodePermission;
-                                          break;
-                                      }
+                                  // We stop on the first group node with a permission defined (null == inherited)
+                                  if (groupNodePermission !== null) {
+                                      userGroupPermission = groupNodePermission;
+                                      break;
                                   }
                               }
-
-                              // If no permission was found on any group, retrieve permission for root level ("all users")
-                              if (userGroupPermission === null) {
-                                  userGroupPermission = await _getRootPermission();
-                              }
-
-                              return userGroupPermission;
                           }
-                      )
+
+                          // If no permission was found on any group, retrieve permission for root level ("all users")
+                          if (userGroupPermission === null) {
+                              userGroupPermission = await _getRootPermission();
+                          }
+
+                          return userGroupPermission;
+                      })
                   )
                 : [await _getRootPermission()];
 

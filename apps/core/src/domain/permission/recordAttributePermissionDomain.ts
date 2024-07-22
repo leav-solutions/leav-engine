@@ -67,12 +67,12 @@ export default function (deps: IDeps = {}): IRecordAttributePermissionDomain {
                 // Check if action is present in library permissions
                 const isAttrAction =
                     Object.values(AttributePermissionsActions).indexOf(
-                        (action as unknown) as AttributePermissionsActions
+                        action as unknown as AttributePermissionsActions
                     ) !== -1;
 
                 return isAttrAction
                     ? attrPermissionDomain.getAttributePermission({
-                          action: (action as unknown) as AttributePermissionsActions,
+                          action: action as unknown as AttributePermissionsActions,
                           attributeId,
                           ctx
                       })
@@ -107,7 +107,7 @@ export default function (deps: IDeps = {}): IRecordAttributePermissionDomain {
                     permissions_conf: attrProps.permissions_conf,
                     getDefaultPermission: () =>
                         attrPermissionDomain.getAttributePermission({
-                            action: (action as unknown) as AttributePermissionsActions,
+                            action: action as unknown as AttributePermissionsActions,
                             attributeId,
                             ctx
                         })

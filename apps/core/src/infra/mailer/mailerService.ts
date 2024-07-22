@@ -26,7 +26,7 @@ interface ISendMailParams {
     attachments?: Array<{filename: string; content?: string | Buffer; path?: string}>;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.domain.globalSettings': globalSettingsDomain = null,
     'core.infra.mailer': mailer = null

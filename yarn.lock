@@ -8128,7 +8128,7 @@ __metadata:
     app-root-path: "npm:3.0.0"
     eslint: "npm:7.32.0"
     jest: "npm:29.0.3"
-    prettier: "npm:2.7.1"
+    prettier: "npm:3.3.3"
     ts-jest: "npm:29.0.1"
     typescript: "npm:4.8.3"
   languageName: unknown
@@ -8141,7 +8141,7 @@ __metadata:
     "@types/jest": "npm:29.0.2"
     eslint: "npm:7.32.0"
     jest: "npm:29.0.3"
-    prettier: "npm:2.7.1"
+    prettier: "npm:3.3.3"
     ts-jest: "npm:29.0.1"
     typescript: "npm:4.8.3"
   languageName: unknown
@@ -8182,7 +8182,7 @@ __metadata:
     "@types/react-beautiful-dnd": "npm:13.1.2"
     "@types/react-table": "npm:7.7.12"
     "@types/uuid": "npm:^9"
-    aristid-ds: "npm:7.2.0-53299b1"
+    aristid-ds: "npm:7.2.0-f295536"
     babel-jest: "npm:29.3.1"
     commander: "npm:9.5.0"
     dayjs: "npm:1.11.10"
@@ -12156,9 +12156,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aristid-ds@npm:7.2.0-53299b1":
-  version: 7.2.0-53299b1
-  resolution: "aristid-ds@npm:7.2.0-53299b1"
+"aristid-ds@npm:7.2.0-f295536":
+  version: 7.2.0-f295536
+  resolution: "aristid-ds@npm:7.2.0-f295536"
   dependencies:
     "@dnd-kit/core": "npm:^6.1.0"
     "@dnd-kit/modifiers": "npm:^7.0.0"
@@ -12203,7 +12203,7 @@ __metadata:
     react-uuid: ^2.0.0
     remark-gfm: ^3.0.1
     styled-components: ^6.0.7
-  checksum: a2a56fd4f8dc3886dcb7d853b250ef24aeca083054a09fbad1ed581e2d0594c0ce673730b741a97c70324da52768cc3ba82a0855557c58a9e4fe6826630a110f
+  checksum: 60cb22ca2895d6ae07281aedc8829dd10274591db7ee44709bfb46c8b61e41652bd87f3b59a071af44f6465202b41447db74311c82a73d83eba8988b8aa5c6ea
   languageName: node
   linkType: hard
 
@@ -12578,7 +12578,7 @@ __metadata:
     lint-staged: "npm:9.5.0"
     lodash: "npm:4.17.21"
     nodemon: "npm:1.19.4"
-    prettier: "npm:1.19.1"
+    prettier: "npm:3.3.3"
     redis-typescript: "npm:0.1.2"
     ts-jest: "npm:29.0.1"
     ts-node-dev: "npm:2.0.0"
@@ -14952,7 +14952,7 @@ __metadata:
     npm-run-all: "npm:4.1.5"
     openid-client: "npm:5.6.5"
     poppler-simple: "npm:0.11.2"
-    prettier: "npm:1.19.1"
+    prettier: "npm:3.3.3"
     progress-stream: "npm:2.0.0"
     redis: "npm:4.0.4"
     ts-jest: "npm:29.0.1"
@@ -15410,7 +15410,7 @@ __metadata:
     apollo: "npm:2.34.0"
     apollo-cache-inmemory: "npm:1.6.6"
     apollo-upload-client: "npm:14.1.3"
-    aristid-ds: "npm:7.2.0-53299b1"
+    aristid-ds: "npm:7.2.0-f295536"
     commander: "npm:5.1.0"
     dayjs: "npm:1.11.10"
     graphql: "npm:15.0.0"
@@ -23272,7 +23272,7 @@ __metadata:
     jest-watch-typeahead: "npm:2.2.0"
     license-check-and-add: "npm:3.0.5"
     lint-staged: "npm:10.5.3"
-    prettier: "npm:2.2.1"
+    prettier: "npm:3.3.3"
     typescript: "npm:4.8.3"
   languageName: unknown
   linkType: soft
@@ -24034,7 +24034,7 @@ __metadata:
     "@types/react-dom": "npm:18.2.6"
     "@vitejs/plugin-react": "npm:3.1.0"
     antd: "npm:5.15.3"
-    aristid-ds: "npm:7.2.0-53299b1"
+    aristid-ds: "npm:7.2.0-f295536"
     i18next: "npm:22.5.0"
     i18next-browser-languagedetector: "npm:7.0.2"
     i18next-http-backend: "npm:2.1.1"
@@ -24082,7 +24082,7 @@ __metadata:
     joi: "npm:17.11.0"
     lint-staged: "npm:9.5.0"
     lodash: "npm:4.17.21"
-    prettier: "npm:1.19.1"
+    prettier: "npm:3.3.3"
     ts-jest: "npm:29.0.1"
     ts-node-dev: "npm:2.0.0"
     typescript: "npm:4.8.3"
@@ -26796,7 +26796,7 @@ __metadata:
     "@vitejs/plugin-react": "npm:3.1.0"
     antd: "npm:5.15.3"
     apollo: "npm:2.34.0"
-    aristid-ds: "npm:7.2.0-53299b1"
+    aristid-ds: "npm:7.2.0-f295536"
     commander: "npm:10.0.0"
     cross-fetch: "npm:3.1.5"
     graphql-ws: "npm:5.12.0"
@@ -26883,30 +26883,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:1.19.1":
-  version: 1.19.1
-  resolution: "prettier@npm:1.19.1"
+"prettier@npm:3.3.3":
+  version: 3.3.3
+  resolution: "prettier@npm:3.3.3"
   bin:
-    prettier: ./bin-prettier.js
-  checksum: 21d245fe788d1123fd7df63a3759f7807d8c0bb7aaa2f4f02cc055998c3e1f92d7c614b6e2749a936c527cdbbb0f3c869bd9723eb32c5232b0fab9fac04b455d
-  languageName: node
-  linkType: hard
-
-"prettier@npm:2.2.1":
-  version: 2.2.1
-  resolution: "prettier@npm:2.2.1"
-  bin:
-    prettier: bin-prettier.js
-  checksum: 7bad7ef9cf2da3059a83de0729d480879f5adbe9974419a16a953dee69b2c720ebf1df8d1a713306547a5af8c2b6168a79cd94bda15202de0121348123f7903f
-  languageName: node
-  linkType: hard
-
-"prettier@npm:2.7.1":
-  version: 2.7.1
-  resolution: "prettier@npm:2.7.1"
-  bin:
-    prettier: bin-prettier.js
-  checksum: 9d29f81c1a470efca6851cd926a3e132a8d9c9d290c3d084c917c1c5aad5c392551406cf6012c724a136bd15911ede5eadc255d121c2761813b33a541a9c34c6
+    prettier: bin/prettier.cjs
+  checksum: 5beac1f30b5b40162532b8e2f7c3a4eb650910a2695e9c8512a62ffdc09dae93190c29db9107fa7f26d1b6c71aad3628ecb9b5de1ecb0911191099be109434d7
   languageName: node
   linkType: hard
 
@@ -27015,7 +26997,7 @@ __metadata:
     lint-staged: "npm:9.5.0"
     nodemon: "npm:1.19.4"
     onchange: "npm:6.1.1"
-    prettier: "npm:1.19.1"
+    prettier: "npm:3.3.3"
     ts-jest: "npm:29.0.1"
     ts-node-dev: "npm:2.0.0"
     typescript: "npm:4.8.3"
@@ -30956,7 +30938,7 @@ __metadata:
     joi: "npm:14.3.1"
     moment: "npm:2.29.4"
     node-fetch: "npm:2.6.7"
-    prettier: "npm:1.19.1"
+    prettier: "npm:3.3.3"
     ts-jest: "npm:29.0.1"
     ts-node: "npm:10.9.1"
     ts-node-dev: "npm:2.0.0"
