@@ -105,8 +105,10 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
         const newValues = value.filter(val => val !== valueToDeselect);
         form.setFieldValue(attribute.id, newValues);
 
-        const linkValueToDeselect = activeValues.find(val => val.linkValue.id === valueToDeselect);
-        onValueDeselect(linkValueToDeselect);
+        const activeLinkValueToDeselect = activeValues.find(val => val.linkValue.id === valueToDeselect);
+        if (activeLinkValueToDeselect) {
+            onValueDeselect(activeLinkValueToDeselect);
+        }
     };
 
     return (
