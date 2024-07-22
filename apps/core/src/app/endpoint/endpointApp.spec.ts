@@ -63,6 +63,7 @@ describe('endpointApp', () => {
                     requestId: 'requestId'
                 },
                 ctx: {
+                    errors: [],
                     groupsId: 'groupsId',
                     lang: 'fr',
                     queryId: 'requestId',
@@ -90,6 +91,7 @@ describe('endpointApp', () => {
                     requestId: 'requestId'
                 },
                 ctx: {
+                    errors: [],
                     groupsId: [],
                     lang: 'fr',
                     queryId: 'requestId',

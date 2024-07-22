@@ -17,7 +17,7 @@ export default class ValidationError<T> extends LeavError<T> {
         isCustomMessage: boolean = false,
         context?: any
     ) {
-        super(ErrorTypes.VALIDATION_ERROR, message, fields);
+        super(ErrorTypes.VALIDATION_ERROR, message, {fields});
 
         this.isCustomMessage = isCustomMessage;
         this.context = context;

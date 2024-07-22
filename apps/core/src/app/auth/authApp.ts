@@ -151,6 +151,7 @@ export default function ({
                         const {email} = decodedToken;
 
                         const ctx: IQueryInfos = {
+                            ...initQueryContext(req),
                             userId: config.defaultUserId,
                             queryId: 'authenticate'
                         };
@@ -227,6 +228,7 @@ export default function ({
 
                         // Check if user is active
                         const ctx: IQueryInfos = {
+                            ...initQueryContext(req),
                             userId: config.defaultUserId,
                             queryId: 'authenticate'
                         };
@@ -325,6 +327,7 @@ export default function ({
 
                         // Get user id
                         const ctx: IQueryInfos = {
+                            ...initQueryContext(req),
                             userId: config.defaultUserId,
                             queryId: 'forgot-password'
                         };
@@ -397,6 +400,7 @@ export default function ({
                         }
 
                         const ctx: IQueryInfos = {
+                            ...initQueryContext(req),
                             userId: config.defaultUserId,
                             queryId: 'resetPassword'
                         };
@@ -437,6 +441,7 @@ export default function ({
                 try {
                     // Get user data
                     const ctx: IQueryInfos = {
+                        ...initQueryContext(req),
                         userId: config.defaultUserId,
                         queryId: 'refresh'
                     };
@@ -550,6 +555,7 @@ export default function ({
         },
         async validateRequestToken({apiKey, cookies}) {
             const ctx: IQueryInfos = {
+                ...initQueryContext(),
                 userId: config.defaultUserId,
                 queryId: 'validateToken'
             };
