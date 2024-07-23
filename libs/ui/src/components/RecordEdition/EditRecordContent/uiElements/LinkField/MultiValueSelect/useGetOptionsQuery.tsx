@@ -53,7 +53,7 @@ export const useGetOptionsQuery = ({
                     value: recordItem.whoAmI.id,
                     label: recordLabel,
                     idCard: {
-                        title: recordLabel,
+                        description: recordLabel,
                         avatarProps: {
                             size: 'small',
                             shape: 'square',
