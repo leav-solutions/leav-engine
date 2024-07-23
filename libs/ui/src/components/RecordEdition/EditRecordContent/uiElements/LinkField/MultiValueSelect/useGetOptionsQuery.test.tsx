@@ -190,9 +190,9 @@ describe('useGetOptionsQuery', () => {
                 await waitFor(() => result.current.selectOptions.length === 3);
 
                 const selectedRecord = records.list[0];
-                result.current.updateLeavField(selectedRecord.id);
+                result.current.updateLeavField([selectedRecord.id], []);
 
-                expect(onSelectChangeMock).toHaveBeenCalledWith([records.list[0]]);
+                expect(onSelectChangeMock).toHaveBeenCalledWith([{value: records.list[0], idValue: null}]);
             });
         });
     });
@@ -287,9 +287,9 @@ describe('useGetOptionsQuery', () => {
                 );
 
                 const selectedRecord = records.list[0];
-                result.current.updateLeavField(selectedRecord.id);
+                result.current.updateLeavField([selectedRecord.id], []);
 
-                expect(onSelectChangeMock).toHaveBeenCalledWith([records.list[0]]);
+                expect(onSelectChangeMock).toHaveBeenCalledWith([{value: records.list[0], idValue: null}]);
             });
         });
     });

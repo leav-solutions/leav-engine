@@ -8,6 +8,7 @@ import {
     IGetRecordsFromLibraryQueryVariables,
     getRecordsFromLibraryQuery
 } from '_ui/_queries/records/getRecordsFromLibraryQuery';
+import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 import {IRecordIdentity} from '_ui/types';
 import {KitAvatar, KitSelect} from 'aristid-ds';
 import {ComponentProps, useMemo} from 'react';
@@ -17,7 +18,7 @@ export const useGetOptionsQuery = ({
     onSelectChange
 }: {
     attribute: RecordFormAttributeLinkAttributeFragment;
-    onSelectChange: (values: IRecordIdentity[]) => void;
+    onSelectChange: (values: Array<{value: IRecordIdentity; idValue: string}>) => void;
 }) => {
     let loading: boolean;
     let data: IGetRecordsFromLibraryQuery;
@@ -67,10 +68,17 @@ export const useGetOptionsQuery = ({
         [recordList]
     );
 
-    const updateLeavField = (value: string) => {
-        const selectedLinkValue = recordList.find(record => record.id === value);
+    const updateLeavField = (valuesToAdd: string[], valuesToRemove: RecordFormElementsValueLinkValue[]) => {
+        const formattedValuesToAdd = recordList
+            .filter(record => valuesToAdd.includes(record.id))
+            .map(value => ({value, idValue: null}));
 
-        return onSelectChange([selectedLinkValue]);
+        const formattedValuesToRemove = valuesToRemove.map(cv => ({
+            idValue: cv.id_value,
+            value: null
+        }));
+
+        return onSelectChange([...formattedValuesToAdd, ...formattedValuesToRemove]);
     };
 
     return {loading, selectOptions, updateLeavField};
