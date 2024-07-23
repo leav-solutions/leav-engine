@@ -182,7 +182,7 @@ describe('<MonoValueSelect />', () => {
         await userEvent.click(danetteChocolat);
 
         expect(onSelectChangeMock).toBeCalledTimes(1);
-        expect(onSelectChangeMock).toHaveBeenCalledWith([records.list[1]]);
+        expect(onSelectChangeMock).toHaveBeenCalledWith([{value: records.list[1], idValue: null}]);
     });
 
     it('should display MonoValueSelect with active value', async () => {
@@ -232,7 +232,7 @@ describe('<MonoValueSelect />', () => {
         await userEvent.click(danettePistache);
 
         expect(onSelectChangeMock).toBeCalledTimes(1);
-        expect(onSelectChangeMock).toHaveBeenCalledWith([records.list[0]]);
+        expect(onSelectChangeMock).toHaveBeenCalledWith([{value: records.list[0], idValue: null}]);
     });
 
     it('should be able to clear selection when attribute is not required', async () => {

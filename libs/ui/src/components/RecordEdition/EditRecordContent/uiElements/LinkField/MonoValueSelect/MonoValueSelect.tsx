@@ -26,7 +26,12 @@ interface IMonoValueSelectProps extends IProvidedByAntFormItem<SelectProps<strin
     attribute: RecordFormAttributeLinkAttributeFragment;
     label: string;
     onSelectClear: (value: IRecordPropertyLink) => void;
-    onSelectChange: (values: IRecordIdentity[]) => void;
+    onSelectChange: (
+        values: Array<{
+            value: IRecordIdentity;
+            idValue: string;
+        }>
+    ) => void;
     required: boolean;
 }
 

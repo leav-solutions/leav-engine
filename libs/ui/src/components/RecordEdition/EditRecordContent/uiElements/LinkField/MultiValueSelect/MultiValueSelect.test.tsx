@@ -19,6 +19,7 @@ describe('<MultiValueSelect />', () => {
     const onSelectChangeMock = jest.fn();
     const onClearSelectMock = jest.fn();
     const onValueDeselectMock = jest.fn();
+    const onChangeMock = jest.fn();
 
     const records = {
         __typename: 'RecordList',
@@ -104,8 +105,9 @@ describe('<MultiValueSelect />', () => {
                         attribute={mockFormElementLink.attribute}
                         label={state.formElement.settings.label}
                         onSelectChange={onSelectChangeMock}
-                        onSelectClear={onClearSelectMock}
                         onValueDeselect={onValueDeselectMock}
+                        required={false}
+                        onChange={onChangeMock}
                     />
                 </AntForm.Item>
             </AntForm>,
@@ -128,12 +130,11 @@ describe('<MultiValueSelect />', () => {
         expect(danetteChocolat).toBeVisible();
         await userEvent.click(danetteChocolat);
 
-        expect(onSelectChangeMock).toBeCalledTimes(1);
-        expect(onSelectChangeMock).toHaveBeenCalledWith([records.list[1]]);
+        expect(onChangeMock).toHaveBeenCalledWith([records.list[1].id], expect.anything());
     });
 
     // Does not work with current DS
-    it.skip('should display MultiValueSelect with default active value', async () => {
+    it('should display MultiValueSelect with default active value', async () => {
         onClearSelectMock.mockResolvedValueOnce({res: {status: APICallStatus.SUCCESS}});
         const id_value = '11051999';
 
@@ -159,7 +160,7 @@ describe('<MultiValueSelect />', () => {
                         attribute={mockFormElementLink.attribute}
                         label={state.formElement.settings.label}
                         onSelectChange={onSelectChangeMock}
-                        onSelectClear={onClearSelectMock}
+                        required={false}
                         onValueDeselect={onValueDeselectMock}
                     />
                 </AntForm.Item>
@@ -167,8 +168,7 @@ describe('<MultiValueSelect />', () => {
             {mocks}
         );
 
-        // const defaultValue = await screen.findByText('Danette chocolat'); // TODO uncomment and remove next line when select defaultValue is fixed in DS
-        const defaultValue = await screen.findByText('15061943');
+        const defaultValue = await screen.findByText('Danette chocolat');
         expect(defaultValue).toBeVisible();
 
         const select = screen.getByRole('combobox');
@@ -181,8 +181,7 @@ describe('<MultiValueSelect />', () => {
         expect(danettePistache).toBeVisible();
         await userEvent.click(danettePistache);
 
-        expect(onSelectChangeMock).toBeCalledTimes(1);
-        expect(onSelectChangeMock).toHaveBeenCalledWith([records.list[0]]);
+        expect(onChangeMock).toHaveBeenCalledWith([records.list[1].id], expect.anything());
     });
 
     describe('clear icons', () => {
@@ -215,6 +214,75 @@ describe('<MultiValueSelect />', () => {
             }
         ];
 
+        it('should update leav field on blur with values to add and remove (required field)', async () => {
+            const {container} = render(
+                <AntForm data-testid="antform" name="name" initialValues={{danette: [records.list[0].id]}}>
+                    <AntForm.Item name="danette">
+                        <MultiValueSelect
+                            activeValues={[activeValues[0]]}
+                            attribute={mockFormElementLink.attribute}
+                            label={state.formElement.settings.label}
+                            onSelectChange={onSelectChangeMock}
+                            required={true}
+                            onValueDeselect={onValueDeselectMock}
+                        />
+                    </AntForm.Item>
+                </AntForm>,
+                {mocks}
+            );
+
+            const deleteIconPistache = container.getElementsByClassName('ant-tag-close-icon')[0];
+            await userEvent.click(deleteIconPistache);
+
+            const select = screen.getByRole('combobox');
+            await userEvent.click(select);
+
+            const danetteChocolat = screen.getByText('Danette chocolat');
+            await userEvent.click(danetteChocolat);
+
+            const form = screen.getByTestId('antform');
+            await userEvent.click(form);
+
+            expect(onSelectChangeMock).toHaveBeenCalledTimes(1);
+            expect(onSelectChangeMock).toHaveBeenCalledWith([
+                {value: records.list[1], idValue: null},
+                {value: null, idValue: 'something'}
+            ]);
+        });
+
+        it('should update leav field on blur with values to add and remove (no required field)', async () => {
+            const {container} = render(
+                <AntForm data-testid="antform" name="name" initialValues={{danette: [records.list[0].id]}}>
+                    <AntForm.Item name="danette">
+                        <MultiValueSelect
+                            activeValues={[activeValues[0]]}
+                            attribute={mockFormElementLink.attribute}
+                            label={state.formElement.settings.label}
+                            onSelectChange={onSelectChangeMock}
+                            required={false}
+                            onValueDeselect={onValueDeselectMock}
+                        />
+                    </AntForm.Item>
+                </AntForm>,
+                {mocks}
+            );
+
+            const deleteIconPistache = container.getElementsByClassName('ant-tag-close-icon')[0];
+            await userEvent.click(deleteIconPistache);
+
+            const select = screen.getByRole('combobox');
+            await userEvent.click(select);
+
+            const danetteChocolat = screen.getByText('Danette chocolat');
+            await userEvent.click(danetteChocolat);
+
+            const form = screen.getByTestId('antform');
+            await userEvent.click(form);
+
+            expect(onSelectChangeMock).toHaveBeenCalledTimes(1);
+            expect(onSelectChangeMock).toHaveBeenCalledWith([{value: records.list[1], idValue: null}]);
+        });
+
         it('should clear all elements on click on clear icon', async () => {
             render(
                 <AntForm name="name" initialValues={{danette: [records.list[0].id, records.list[1].id]}}>
@@ -224,22 +292,28 @@ describe('<MultiValueSelect />', () => {
                             attribute={mockFormElementLink.attribute}
                             label={state.formElement.settings.label}
                             onSelectChange={onSelectChangeMock}
-                            onSelectClear={onClearSelectMock}
+                            required={false}
                             onValueDeselect={onValueDeselectMock}
                         />
                     </AntForm.Item>
                 </AntForm>,
                 {mocks}
             );
+
+            const danetteChocolat = await screen.findByText('Danette chocolat');
+            const danettePistache = await screen.findByText('Danette pistache');
+            expect(danetteChocolat).toBeVisible();
+            expect(danettePistache).toBeVisible();
+
             const clearIcon = screen.getByLabelText('clear');
 
             await userEvent.click(clearIcon);
 
-            expect(onClearSelectMock).toHaveBeenCalledTimes(1);
-            expect(onClearSelectMock).toHaveBeenCalledWith();
+            expect(danetteChocolat).not.toBeVisible();
+            expect(danettePistache).not.toBeVisible();
         });
 
-        it('should clear one element from selection on click on close icon', async () => {
+        it('should clear one element from selection on click on close icon (field required)', async () => {
             const {container} = render(
                 <AntForm name="name" initialValues={{danette: [records.list[0].id, records.list[1].id]}}>
                     <AntForm.Item name="danette">
@@ -248,7 +322,7 @@ describe('<MultiValueSelect />', () => {
                             attribute={mockFormElementLink.attribute}
                             label={state.formElement.settings.label}
                             onSelectChange={onSelectChangeMock}
-                            onSelectClear={onClearSelectMock}
+                            required={true}
                             onValueDeselect={onValueDeselectMock}
                         />
                     </AntForm.Item>
@@ -258,16 +332,64 @@ describe('<MultiValueSelect />', () => {
 
             const clearIcons = container.getElementsByClassName('ant-tag-close-icon');
 
+            const danetteChocolat = await screen.findByText('Danette chocolat');
+            const danettePistache = await screen.findByText('Danette pistache');
+
+            expect(danetteChocolat).toBeVisible();
+            expect(danettePistache).toBeVisible();
+
             await userEvent.click(clearIcons[1]);
+            expect(danetteChocolat).not.toBeVisible();
+
+            await userEvent.click(clearIcons[0]);
+            expect(danettePistache).not.toBeVisible();
+
             expect(onValueDeselectMock).toHaveBeenCalledTimes(1);
             expect(onValueDeselectMock).toHaveBeenCalledWith({
                 attribute: {id: 'test_attribute', system: false, type: 'simple_link'},
                 id_value: 'something_else',
                 linkValue: {id: '15061943', whoAmI: {}}
             });
+        });
+
+        it('should clear one element from selection on click on close icon (field no required)', async () => {
+            const {container} = render(
+                <AntForm name="name" initialValues={{danette: [records.list[0].id, records.list[1].id]}}>
+                    <AntForm.Item name="danette">
+                        <MultiValueSelect
+                            activeValues={activeValues}
+                            attribute={mockFormElementLink.attribute}
+                            label={state.formElement.settings.label}
+                            onSelectChange={onSelectChangeMock}
+                            required={false}
+                            onValueDeselect={onValueDeselectMock}
+                        />
+                    </AntForm.Item>
+                </AntForm>,
+                {mocks}
+            );
+
+            const clearIcons = container.getElementsByClassName('ant-tag-close-icon');
+
+            const danetteChocolat = await screen.findByText('Danette chocolat');
+            const danettePistache = await screen.findByText('Danette pistache');
+
+            expect(danetteChocolat).toBeVisible();
+            expect(danettePistache).toBeVisible();
+
+            await userEvent.click(clearIcons[1]);
+            expect(danetteChocolat).not.toBeVisible();
 
             await userEvent.click(clearIcons[0]);
+            expect(danettePistache).not.toBeVisible();
+
             expect(onValueDeselectMock).toHaveBeenCalledTimes(2);
+            expect(onValueDeselectMock).toHaveBeenCalledWith({
+                attribute: {id: 'test_attribute', system: false, type: 'simple_link'},
+                id_value: 'something_else',
+                linkValue: {id: '15061943', whoAmI: {}}
+            });
+
             expect(onValueDeselectMock).toHaveBeenCalledWith({
                 attribute: {id: 'test_attribute', system: false, type: 'simple_link'},
                 id_value: 'something',

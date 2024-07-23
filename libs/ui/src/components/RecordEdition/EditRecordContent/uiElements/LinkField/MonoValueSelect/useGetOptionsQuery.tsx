@@ -26,7 +26,7 @@ export const useGetOptionsQuery = ({
 }: {
     activeValue: RecordFormElementsValueLinkValue | undefined;
     linkedLibraryId: string;
-    onSelectChange: (values: IRecordIdentity[]) => void;
+    onSelectChange: (values: Array<{value: IRecordIdentity; idValue: string}>) => void;
 }) => {
     const initialSearchVariables: IGetRecordsFromLibraryQueryVariables = {
         library: linkedLibraryId,
@@ -111,7 +111,7 @@ export const useGetOptionsQuery = ({
     const updateLeavField = (value: string) => {
         const selectedLinkValue = recordList.find(record => record.id === value);
 
-        return onSelectChange([selectedLinkValue ?? activeValue.linkValue]);
+        return onSelectChange([{value: selectedLinkValue ?? activeValue.linkValue, idValue: null}]);
     };
 
     const runFullTextSearch = async (searchText: string) => {

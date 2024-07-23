@@ -74,11 +74,11 @@ function LinkField({
         }
     };
 
-    const _handleAddValueSubmit = async (values: IRecordIdentity[]) => {
+    const _handleUpdateValueSubmit = async (values: Array<{value: IRecordIdentity; idValue: string}>) => {
         const valuesToSave = values.map(value => ({
             attribute,
-            idValue: element.attribute.multiple_values ? null : activeValues[0]?.id_value,
-            value
+            idValue: value.idValue,
+            value: value.value
         }));
 
         const res = await onValueSubmit(valuesToSave, activeVersion);
@@ -89,19 +89,19 @@ function LinkField({
                 errorMessage: res.error
             });
         } else if (res.values) {
-            const formattedValues: RecordFormElementsValueLinkValue[] = (
-                res.values as ValueDetailsLinkValueFragment[]
-            ).map(v => ({
-                ...v,
-                version: arrayValueVersionToObject(v.version),
-                metadata: v.metadata?.map(metadata => ({
-                    ...metadata,
-                    value: {
-                        ...metadata.value,
-                        version: arrayValueVersionToObject(metadata.value.version ?? [])
-                    }
-                }))
-            }));
+            const formattedValues: RecordFormElementsValueLinkValue[] = (res.values as ValueDetailsLinkValueFragment[]).map(
+                v => ({
+                    ...v,
+                    version: arrayValueVersionToObject(v.version),
+                    metadata: v.metadata?.map(metadata => ({
+                        ...metadata,
+                        value: {
+                            ...metadata.value,
+                            version: arrayValueVersionToObject(metadata.value.version ?? [])
+                        }
+                    }))
+                })
+            );
 
             dispatch({
                 type: LinkFieldReducerActionsType.ADD_VALUES,
@@ -110,7 +110,7 @@ function LinkField({
         }
 
         if (res?.errors?.length) {
-            const selectedRecordsById = values.reduce((acc, cur) => ({...acc, [cur.id]: cur}), {});
+            const selectedRecordsById = values.reduce((acc, cur) => ({...acc, [cur.value.id]: cur.value}), {});
 
             const errorsMessage = res.errors.map(err => {
                 const linkedRecordLabel = selectedRecordsById[err.input].label || selectedRecordsById[err.input].id;
@@ -124,39 +124,7 @@ function LinkField({
         }
     };
 
-    const _handleDeleteAllValues = async () => {
-        const deleteRes = await onDeleteMultipleValues(
-            attribute.id,
-            getActiveFieldValues(state),
-            state.values[state.activeScope].version
-        );
-
-        if (deleteRes.status === APICallStatus.SUCCESS) {
-            dispatch({
-                type: LinkFieldReducerActionsType.DELETE_ALL_VALUES
-            });
-        }
-
-        if (deleteRes?.errors?.length) {
-            dispatch({
-                type: LinkFieldReducerActionsType.SET_ERROR_MESSAGE,
-                errorMessage: deleteRes.errors.map(err => err.message)
-            });
-        }
-    };
-
-    return attribute.multiple_values === true ? (
-        <AntForm.Item name={attribute.id}>
-            <MultiValueSelect
-                activeValues={activeValues}
-                attribute={attribute}
-                label={state.formElement.settings.label}
-                onValueDeselect={_handleDeleteValue}
-                onSelectClear={_handleDeleteAllValues}
-                onSelectChange={_handleAddValueSubmit}
-            />
-        </AntForm.Item>
-    ) : (
+    return (
         <AntForm.Item
             name={attribute.id}
             rules={[
@@ -166,14 +134,25 @@ function LinkField({
                 }
             ]}
         >
-            <MonoValueSelect
-                activeValue={activeValues[0]}
-                attribute={attribute}
-                label={state.formElement.settings.label}
-                required={state.formElement.settings.required}
-                onSelectClear={_handleDeleteValue}
-                onSelectChange={_handleAddValueSubmit}
-            />
+            {attribute.multiple_values === true ? (
+                <MultiValueSelect
+                    activeValues={activeValues}
+                    attribute={attribute}
+                    label={state.formElement.settings.label}
+                    required={state.formElement.settings.required}
+                    onValueDeselect={_handleDeleteValue}
+                    onSelectChange={_handleUpdateValueSubmit}
+                />
+            ) : (
+                <MonoValueSelect
+                    activeValue={activeValues[0]}
+                    attribute={attribute}
+                    label={state.formElement.settings.label}
+                    required={state.formElement.settings.required}
+                    onSelectClear={_handleDeleteValue}
+                    onSelectChange={_handleUpdateValueSubmit}
+                />
+            )}
         </AntForm.Item>
     );
 }
