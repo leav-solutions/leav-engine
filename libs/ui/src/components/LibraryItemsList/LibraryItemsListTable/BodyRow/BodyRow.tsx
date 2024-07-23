@@ -9,7 +9,7 @@ import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchRed
 import {IItem} from '_ui/types/search';
 import {SearchActionTypes} from '../../hooks/useSearchReducer/searchReducer';
 import BodyCell from '../BodyCell';
-import EditRecordModalContext from '../EditRecordModalContext';
+import {useEditRecordModalContext} from '../EditRecordModalContext';
 
 const CustomBodyRow = styled.div<{$selected: boolean}>`
     position: relative;
@@ -36,7 +36,7 @@ function BodyRow({row}: IBodyRowProps): JSX.Element {
     const props = row.getRowProps();
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
 
-    const {editRecord} = useContext(EditRecordModalContext);
+    const {editRecord} = useEditRecordModalContext();
 
     const record = row.cells[0]?.row?.original?.record;
 
