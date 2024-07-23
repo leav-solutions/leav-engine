@@ -17,7 +17,7 @@ export enum PreviewSize {
     big = 'big'
 }
 
-export const tagColorByAttributeType: {[key in AttributeType]: [string, string]} = {
+export const tagColorByAttributeType: {[key in AttributeType]: [border: string, background: string]} = {
     [AttributeType.simple]: ['purple', '#ffe5ff'],
     [AttributeType.simple_link]: ['blue', '#e5e5ff'],
     [AttributeType.advanced]: ['orange', '#fff6e5'],
@@ -25,7 +25,7 @@ export const tagColorByAttributeType: {[key in AttributeType]: [string, string]}
     [AttributeType.tree]: ['green', '#e5ffe5']
 };
 
-export const tagColorByAttributeFormat: {[key in AttributeFormat]: [string, string]} = {
+export const tagColorByAttributeFormat: {[key in AttributeFormat]: [border: string, background: string]} = {
     [AttributeFormat.boolean]: ['gold', '#fff099'],
     [AttributeFormat.date]: ['blue', '#e5e5ff'],
     [AttributeFormat.date_range]: ['#1d39c4', '#e9ecfc'],
