@@ -1,29 +1,31 @@
-import React, {FunctionComponent, useContext, useState} from 'react';
+import {createContext, FunctionComponent, useCallback, useContext, useMemo, useState} from 'react';
 import {EditRecordModal, IEditRecordModalProps} from '_ui/components/RecordEdition/EditRecordModal/EditRecordModal';
 
 export interface IEditRecordContextType {
     editRecord: (props: IEditRecordModalProps) => void;
 }
 
-const EditRecordModalContext = React.createContext<IEditRecordContextType>({
+const EditRecordModalContext = createContext<IEditRecordContextType>({
     editRecord: () => null
 });
 
 export const EditRecordModalProvider: FunctionComponent = props => {
-    const [editRecordModalProps, setEditRecordModalProps] = useState<IEditRecordModalProps>(null);
+    const [editRecordModalProps, setEditRecordModalProps] = useState<IEditRecordModalProps | null>(null);
 
-    const _onClose = () => {
-        if (editRecordModalProps.onClose) {
-            editRecordModalProps.onClose();
-        }
+    const _onClose = useCallback(() => {
+        editRecordModalProps?.onClose();
+
         setEditRecordModalProps(null);
-    };
+    }, [editRecordModalProps, setEditRecordModalProps]);
 
-    const value: IEditRecordContextType = {
-        editRecord: recordProps => {
-            setEditRecordModalProps(recordProps);
-        }
-    };
+    const value = useMemo<IEditRecordContextType>(
+        () => ({
+            editRecord: recordProps => {
+                setEditRecordModalProps(recordProps);
+            }
+        }),
+        [setEditRecordModalProps]
+    );
 
     return (
         <EditRecordModalContext.Provider value={value}>
@@ -35,4 +37,4 @@ export const EditRecordModalProvider: FunctionComponent = props => {
     );
 };
 
-export default EditRecordModalContext;
+export const useEditRecordModalContext = () => useContext(EditRecordModalContext);

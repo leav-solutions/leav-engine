@@ -13,7 +13,7 @@ import {IRecordIdentityWhoAmI} from '_ui/types/records';
 import {ArrowsAltOutlined} from '@ant-design/icons';
 import {AntButton} from 'aristid-ds';
 import {useContext} from 'react';
-import EditRecordModalContext from '../../EditRecordModalContext';
+import {useEditRecordModalContext} from '../../EditRecordModalContext';
 
 const Info = styled.div`
     min-width: 150px;
@@ -31,7 +31,7 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
 
     const canDeleteRecord = searchState.library.permissions.delete_record;
 
-    const {editRecord} = useContext(EditRecordModalContext);
+    const {editRecord} = useEditRecordModalContext();
 
     const menuBtnSize: SizeType = 'middle';
 
