@@ -18,6 +18,7 @@ interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputNumberProps> 
     state: IStandardFieldReducerState;
     attribute: RecordFormAttributeFragment;
     fieldValue: IStandardFieldValue;
+    shouldShowValueDetailsButton?: boolean;
     handleSubmit: (value: string, id?: string) => void;
 }
 
@@ -35,11 +36,12 @@ const KitInputNumberStyled = styled(KitInputNumber)<{$shouldHighlightColor: bool
 `;
 
 export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
-    state,
     value,
+    onChange,
+    state,
     attribute,
     fieldValue,
-    onChange,
+    shouldShowValueDetailsButton = false,
     handleSubmit
 }) => {
     if (!onChange) {
@@ -90,8 +92,8 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
                       })
                     : undefined
             }
-            infoIcon={infoIconWithTooltip}
-            onInfoClick={onValueDetailsButtonClick}
+            infoIcon={shouldShowValueDetailsButton ? infoIconWithTooltip : null}
+            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             value={value}
             onChange={_handleOnChange}
             disabled={state.isReadOnly}

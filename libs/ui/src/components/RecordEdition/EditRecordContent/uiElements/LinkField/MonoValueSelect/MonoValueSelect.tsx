@@ -25,6 +25,8 @@ interface IMonoValueSelectProps extends IProvidedByAntFormItem<SelectProps<strin
     activeValue: RecordFormElementsValueLinkValue | undefined;
     attribute: RecordFormAttributeLinkAttributeFragment;
     label: string;
+    required: boolean;
+    shouldShowValueDetailsButton?: boolean;
     onSelectClear: (value: IRecordPropertyLink) => void;
     onSelectChange: (
         values: Array<{
@@ -32,18 +34,18 @@ interface IMonoValueSelectProps extends IProvidedByAntFormItem<SelectProps<strin
             idValue: string;
         }>
     ) => void;
-    required: boolean;
 }
 
 export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
-    activeValue,
     value,
     onChange,
+    activeValue,
     attribute,
     label,
+    required,
+    shouldShowValueDetailsButton = false,
     onSelectChange,
-    onSelectClear,
-    required
+    onSelectClear
 }) => {
     if (!onChange) {
         throw Error('MonoValueSelect should be used inside a antd Form.Item');
@@ -108,8 +110,8 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
             onChange={onChange}
             onClear={required ? undefined : handleClear}
             allowClear={!required}
-            infoIcon={infoIconWithTooltip}
-            onInfoClick={onValueDetailsButtonClick}
+            infoIcon={shouldShowValueDetailsButton ? infoIconWithTooltip : null}
+            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             onSearch={handleSearch}
             filterOption={false} // To avoid dynamic filtering when debouncing
             dropdownRender={menu => {

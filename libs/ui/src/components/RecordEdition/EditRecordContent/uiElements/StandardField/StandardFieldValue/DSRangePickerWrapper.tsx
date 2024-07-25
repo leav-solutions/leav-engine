@@ -20,6 +20,7 @@ interface IDSRangePickerWrapperProps extends IProvidedByAntFormItem<RangePickerP
     state: IStandardFieldReducerState;
     attribute: RecordFormAttributeFragment;
     fieldValue: IStandardFieldValue;
+    shouldShowValueDetailsButton?: boolean;
     handleSubmit: (value: StandardValueTypes, id?: string) => void;
 }
 
@@ -34,11 +35,12 @@ const KitDatePickerRangePickerStyled = styled(KitDatePicker.RangePicker)<{$shoul
 `;
 
 export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps> = ({
-    state,
     value,
+    onChange,
+    state,
     attribute,
     fieldValue,
-    onChange,
+    shouldShowValueDetailsButton = false,
     handleSubmit
 }) => {
     const {t} = useSharedTranslation();
@@ -90,8 +92,8 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
             disabled={state.isReadOnly}
             allowClear={!state.isInheritedNotOverrideValue}
             status={errors.length > 0 ? 'error' : undefined}
-            infoIcon={infoIconWithTooltip}
-            onInfoClick={onValueDetailsButtonClick}
+            infoIcon={shouldShowValueDetailsButton ? infoIconWithTooltip : null}
+            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             helper={
                 state.isInheritedOverrideValue
                     ? t('record_edition.inherited_input_helper', {
