@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ICommonFieldsSettings} from '@leav/utils';
-import {Reducer, useContext, useEffect, useReducer} from 'react';
+import {FunctionComponent, Reducer, useContext, useEffect, useReducer} from 'react';
 import CreationErrorContext from '_ui/components/RecordEdition/EditRecord/creationErrorContext';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
@@ -28,12 +28,11 @@ import {MultiValueSelect} from './MultiValueSelect/MultiValueSelect';
 export type LinkFieldReducerState = ILinkFieldState<RecordFormElementsValueLinkValue>;
 type LinkFieldReducerAction = LinkFieldReducerActions<RecordFormElementsValueLinkValue>;
 
-function LinkField({
+const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = ({
     element,
     onValueSubmit,
-    onValueDelete,
-    onDeleteMultipleValues
-}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
+    onValueDelete
+}) => {
     const {t} = useSharedTranslation();
 
     const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
@@ -89,19 +88,19 @@ function LinkField({
                 errorMessage: res.error
             });
         } else if (res.values) {
-            const formattedValues: RecordFormElementsValueLinkValue[] = (res.values as ValueDetailsLinkValueFragment[]).map(
-                v => ({
-                    ...v,
-                    version: arrayValueVersionToObject(v.version),
-                    metadata: v.metadata?.map(metadata => ({
-                        ...metadata,
-                        value: {
-                            ...metadata.value,
-                            version: arrayValueVersionToObject(metadata.value?.version ?? [])
-                        }
-                    }))
-                })
-            );
+            const formattedValues: RecordFormElementsValueLinkValue[] = (
+                res.values as ValueDetailsLinkValueFragment[]
+            ).map(v => ({
+                ...v,
+                version: arrayValueVersionToObject(v.version),
+                metadata: v.metadata?.map(metadata => ({
+                    ...metadata,
+                    value: {
+                        ...metadata.value,
+                        version: arrayValueVersionToObject(metadata.value?.version ?? [])
+                    }
+                }))
+            }));
 
             dispatch({
                 type: LinkFieldReducerActionsType.ADD_VALUES,
@@ -140,6 +139,7 @@ function LinkField({
                     attribute={attribute}
                     label={state.formElement.settings.label}
                     required={state.formElement.settings.required}
+                    shouldShowValueDetailsButton={editRecordState.withInfoButton}
                     onValueDeselect={_handleDeleteValue}
                     onSelectChange={_handleUpdateValueSubmit}
                 />
@@ -149,12 +149,13 @@ function LinkField({
                     attribute={attribute}
                     label={state.formElement.settings.label}
                     required={state.formElement.settings.required}
+                    shouldShowValueDetailsButton={editRecordState.withInfoButton}
                     onSelectClear={_handleDeleteValue}
                     onSelectChange={_handleUpdateValueSubmit}
                 />
             )}
         </AntForm.Item>
     );
-}
+};
 
 export default LinkField;
