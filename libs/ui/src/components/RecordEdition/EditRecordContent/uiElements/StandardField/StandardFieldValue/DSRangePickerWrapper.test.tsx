@@ -139,8 +139,8 @@ describe('DSRangePickerWrapper', () => {
             expect(mockOnChange).toHaveBeenCalledTimes(1);
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
 
-            const buttons = screen.getAllByRole('button');
-            await user.click(buttons[1]); // click on clear icon
+            const clearButton = screen.getByRole('button');
+            await user.click(clearButton);
 
             expect(mockOnChange).toHaveBeenCalledTimes(2);
             expect(mockHandleSubmit).toHaveBeenCalledTimes(2);
@@ -207,8 +207,8 @@ describe('DSRangePickerWrapper', () => {
             expect(mockOnChange).toHaveBeenCalledTimes(1);
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
 
-            const buttons = screen.getAllByRole('button');
-            await user.click(buttons[1]); // click on clear icon
+            const clearButton = screen.getByRole('button');
+            await user.click(clearButton);
 
             expect(mockOnChange).toHaveBeenCalledTimes(2);
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
@@ -286,8 +286,8 @@ describe('DSRangePickerWrapper', () => {
                 </Form>
             );
 
-            const buttons = screen.getAllByRole('button');
-            await user.click(buttons[1]); // click on clear icon
+            const clearButton = screen.getByRole('button');
+            await user.click(clearButton);
 
             expect(mockOnChange).toHaveBeenCalledTimes(1);
             expect(mockOnChange).toHaveBeenCalledWith([expect.any(Object), expect.any(Object)], raw_value);
@@ -295,7 +295,7 @@ describe('DSRangePickerWrapper', () => {
             expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
         });
 
-        test('Should hide clear icon when value is inherited , but not override', async () => {
+        test('Should hide clear icon when value is inherited, but not override', async () => {
             const raw_value = {
                 from: '1714138054',
                 to: '1714138054'
@@ -323,10 +323,7 @@ describe('DSRangePickerWrapper', () => {
                 </Form>
             );
 
-            const buttons = screen.getAllByRole('button');
-
-            expect(buttons).toHaveLength(1);
-            expect(buttons[0]).not.toHaveClass('ant-picker-clear');
+            expect(screen.queryByRole('button')).toBeNull();
         });
     });
 });

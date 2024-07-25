@@ -205,9 +205,7 @@ describe('DSInputWrapper', () => {
             const input = screen.getByRole('textbox');
             expect(input).toHaveValue(inheritedValues[1].raw_value);
 
-            const buttons = screen.getAllByRole('button');
-            expect(buttons).toHaveLength(1);
-            expect(buttons[0]).not.toHaveClass('ant-picker-clear');
+            expect(screen.queryByRole('button')).toBeNull();
 
             await user.click(input);
             await user.tab();
@@ -265,10 +263,7 @@ describe('DSInputWrapper', () => {
                     </AntForm.Item>
                 </AntForm>
             );
-
-            const buttons = screen.getAllByRole('button');
-            const clearButton = buttons[1];
-            expect(clearButton).toBeInTheDocument();
+            const clearButton = screen.getByRole('button');
 
             await user.click(clearButton);
 

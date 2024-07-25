@@ -85,15 +85,14 @@ describe('TriggerPreviewsGenerationModal', () => {
         expect(screen.getByText('files.generate_previews')).toBeInTheDocument();
 
         const settingsElem = await screen.findByText('PreviewSettings1');
-        userEvent.click(settingsElem);
+        await userEvent.click(settingsElem);
 
-        await waitFor(() => expect(screen.getByRole('button', {name: /submit/})).not.toBeDisabled());
+        const submitButton = screen.getByRole('button', {name: /submit/});
+        expect(submitButton).not.toBeDisabled();
 
-        userEvent.click(screen.getByRole('button', {name: /submit/}));
+        await userEvent.click(submitButton);
 
-        await act(async () => {
-            await waitFor(() => expect(mutationCalled).toBe(true));
-        });
+        expect(mutationCalled).toBe(true);
     });
 
     test('Can choose to generate only failed previews', async () => {
@@ -105,17 +104,17 @@ describe('TriggerPreviewsGenerationModal', () => {
                     variables: {id: 'files'}
                 },
                 result: () => ({
-                        data: {
-                            libraries: {
-                                list: [
-                                    {
-                                        ...mockLibBase,
-                                        id: 'files'
-                                    }
-                                ]
-                            }
+                    data: {
+                        libraries: {
+                            list: [
+                                {
+                                    ...mockLibBase,
+                                    id: 'files'
+                                }
+                            ]
                         }
-                    })
+                    }
+                })
             },
             {
                 request: {
