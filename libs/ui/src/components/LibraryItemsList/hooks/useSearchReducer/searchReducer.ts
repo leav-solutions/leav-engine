@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {GraphQLErrors} from '@apollo/client/errors';
 import getFieldsFromView from '_ui/components/LibraryItemsList/helpers/getFieldsFromView';
 import {IAttribute, IField, IFilter, ISelectedRecord, SearchMode, SidebarContentType} from '_ui/types/search';
