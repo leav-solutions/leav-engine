@@ -15,4 +15,23 @@ describe('formatDateAction', () => {
         expect((await action([{value: 'aaaa'}], {}, ctx)).values[0].value).toBe('');
         expect((await action([{value: null}], {}, ctx)).values[0].value).toBe(null);
     });
+
+    test('auto', async () => {
+        expect((await action([{value: 2119477320}], {auto: 'true'}, {...ctx, lang: 'ko-KR'})).values[0].value).toBe(
+            '2037. 2. 28. 오후 11:42:00'
+        );
+        expect((await action([{value: 2119477320}], {auto: 'true'}, {...ctx, lang: 'fr-FR'})).values[0].value).toBe(
+            '28/02/2037 23:42:00'
+        );
+        expect((await action([{value: 2119477320}], {auto: 'true'}, {...ctx, lang: 'ar-EG'})).values[0].value).toBe(
+            '٢٨‏/٢‏/٢٠٣٧، ١١:٤٢:٠٠ م'
+        );
+    });
+
+    test('auto override formatDate', async () => {
+        expect(
+            (await action([{value: 2119477320}], {format: 'D/M/YY', auto: 'true'}, {...ctx, lang: 'fr-FR'})).values[0]
+                .value
+        ).toBe('28/02/2037 23:42:00');
+    });
 });
