@@ -12,6 +12,7 @@
             }
         ]
     },
+    "globalSetup": "<rootDir>/src/__tests__/global-setup.ts",
     "testRegex": ".spec.(ts)$",
     "setupFiles": [
         "<rootDir>/src/__tests__/setup.ts",
