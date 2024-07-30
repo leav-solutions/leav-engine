@@ -28,10 +28,7 @@ export default function (): IActionsListFunction<{auto: true; format: false}> {
                 default_value: 'DD/MM/YYYY HH:mm:ss'
             }
         ],
-        action: (values, params, ctx) => {
-            const format = params.format;
-            const auto = params.auto === 'true';
-
+        action: (values, {auto, format}, {lang}) => {
             const computedValues = values.map(elementValue => {
                 if (elementValue.value === null) {
                     return elementValue;
@@ -41,9 +38,10 @@ export default function (): IActionsListFunction<{auto: true; format: false}> {
                 let newValue = '';
 
                 if (!isNaN(numberVal)) {
-                    newValue = auto
-                        ? new Date(numberVal * 1_000).toLocaleString(ctx.lang)
-                        : moment.unix(numberVal).format(format);
+                    newValue =
+                        auto === 'true'
+                            ? new Date(numberVal * 1_000).toLocaleString(lang)
+                            : moment.unix(numberVal).format(format ?? '');
                 }
                 elementValue.value = newValue;
                 return elementValue;
