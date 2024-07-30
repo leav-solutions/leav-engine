@@ -24,7 +24,7 @@ export default function (): IActionsListFunction {
             ActionsListIOTypes.BOOLEAN,
             ActionsListIOTypes.OBJECT
         ],
-        action: (values, params, ctx) => {
+        action: (values, _, ctx) => {
             const _getSchema = (attribute: IAttribute | IEmbeddedAttribute): Joi.Schema => {
                 let schema;
                 switch (attribute.format) {

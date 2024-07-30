@@ -21,4 +21,8 @@ global.__mockPromiseMultiple = promResults => {
 
 // Used to mock any interface, turning all function properties to an optional mock
 // Mockified object must be then passed to a function with a type assertion
-type Mockify<T> = {[P in keyof T]?: T[P] extends (...args: any) => any ? jest.Mock : T[P]};
+type Mockify<T> = {
+    [P in keyof T]?: T[P] extends (...args: any[]) => any
+        ? jest.Mock<ReturnType<T[P]> extends never ? never : any>
+        : T[P];
+};

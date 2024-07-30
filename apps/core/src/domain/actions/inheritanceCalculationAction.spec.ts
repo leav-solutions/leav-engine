@@ -40,6 +40,7 @@ describe('inheritanceCalculationAction', () => {
         const res = await action(
             null,
             {
+                Description: 'test',
                 Formula: '42'
             },
             ctx
@@ -59,6 +60,7 @@ describe('inheritanceCalculationAction', () => {
         const res = await action(
             null,
             {
+                Description: 'test',
                 Formula: ''
             },
             ctx
@@ -85,6 +87,7 @@ describe('inheritanceCalculationAction', () => {
         const res = (await action2(
             null,
             {
+                Description: 'test',
                 Formula: ''
             },
             ctx

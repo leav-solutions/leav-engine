@@ -7,7 +7,7 @@ import isEmpty from 'lodash/isEmpty';
 import ValidationError from '../../errors/ValidationError';
 import {
     IActionsListFunction,
-    IActionsListParams,
+    ActionsListParams,
     IActionsListSavedAction,
     IRunActionsListCtx
 } from '../../_types/actionsList';
@@ -26,7 +26,7 @@ export interface IActionsListDomain {
     getAvailableActions(): IActionsListFunction[];
 
     /**
-     * Allow to recorn a new action to the list of actions available
+     * Allow to record a new action to the list of actions available
      *
      * @param actions
      */
@@ -57,15 +57,15 @@ interface IDeps {
 }
 
 export default function ({'core.depsManager': depsManager = null, translator = null}: IDeps = {}): IActionsListDomain {
-    let _pluginActions = [];
+    let _pluginActions: IActionsListFunction[] = [];
     return {
-        getAvailableActions(): IActionsListFunction[] {
+        getAvailableActions() {
             const actions = Object.keys(depsManager.registrations)
                 .filter(modName => modName.match(/^core\.domain\.actions\./))
                 .map(modName => depsManager.cradle[modName]);
             return [...actions, ..._pluginActions];
         },
-        handleJoiError(attribute: IAttribute, error: Joi.ValidationError): ErrorFieldDetail<IRecord> {
+        handleJoiError(attribute, error) {
             return {
                 [attribute.id]: {
                     msg: Errors.FORMAT_ERROR,
@@ -73,14 +73,14 @@ export default function ({'core.depsManager': depsManager = null, translator = n
                 }
             };
         },
-        registerActions(actions: IActionsListFunction[]): void {
+        registerActions(actions) {
             _pluginActions = [..._pluginActions, ...actions];
         },
         async runActionsList(actions, values, ctx) {
             const availActions: IActionsListFunction[] = this.getAvailableActions();
             let resultAction = values;
             for (const action of actions) {
-                const params: IActionsListParams = !!action.params
+                const params: ActionsListParams<string> = !!action.params
                     ? action.params.reduce((all, p) => {
                           all[p.name] = p.value;
                           return all;

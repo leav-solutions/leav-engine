@@ -34,9 +34,9 @@ describe('formatDateRangeAction', () => {
         };
         expect(formattedDateNoFormat.from).toBeTruthy();
         expect(formattedDateNoFormat.to).toBeTruthy();
-        expect((await action([{value: 'aaaa'}], {}, ctx)).values[0].value).toBe(null);
-        expect((await action([{value: {from: '2119477320'}}], {}, ctx)).values[0].value).toBe(null);
-        expect((await action([{value: {to: '2119477320'}}], {}, ctx)).values[0].value).toBe(null);
-        expect((await action([{value: null}], {}, ctx)).values[0].value).toBe(null);
+        expect((await action([{value: 'aaaa'}], {format: null}, ctx)).values[0].value).toBe(null);
+        expect((await action([{value: {from: '2119477320'}}], {format: null}, ctx)).values[0].value).toBe(null);
+        expect((await action([{value: {to: '2119477320'}}], {format: null}, ctx)).values[0].value).toBe(null);
+        expect((await action([{value: null}], {format: null}, ctx)).values[0].value).toBe(null);
     });
 });
