@@ -4,7 +4,7 @@
 import axios from 'axios';
 import FormData from 'form-data';
 import jwt, {Algorithm} from 'jsonwebtoken';
-import {IActionsListConfig} from '_types/actionsList';
+import {ActionsListConfig} from '_types/actionsList';
 import {ITreeElement} from '_types/tree';
 import {getConfig} from '../../../config';
 import {adminsGroupId} from '../../../_constants/userGroups';
@@ -113,7 +113,7 @@ export async function gqlSaveAttribute(params: {
     linkedTree?: string;
     multipleValues?: boolean;
     reverseLink?: string;
-    actionsList?: IActionsListConfig;
+    actionsList?: ActionsListConfig;
 }) {
     const {
         id,
@@ -143,7 +143,7 @@ export async function gqlSaveAttribute(params: {
             }
         `;
 
-    const _convertActionsList = (actions: IActionsListConfig): string => `
+    const _convertActionsList = (actions: ActionsListConfig): string => `
             {
                 ${Object.keys(actions)
                     .map(eventKey => {

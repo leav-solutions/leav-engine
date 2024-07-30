@@ -20,13 +20,9 @@ interface IDeps {
 
 type ActionsListExcelValueType = string | number | boolean | {};
 
-export interface IActionListExcelContext extends IActionsListContext {
-    value?: ActionsListExcelValueType;
-}
-
 export default function ({
     'core.domain.helpers.calculationVariable': calculationVariable = null
-}: IDeps = {}): IActionsListFunction {
+}: IDeps = {}): IActionsListFunction<{Formula: true; Description: true}> {
     const _processReplacement = async (
         context: IActionsListContext,
         initialValues: ActionsListValueType[],
@@ -43,7 +39,7 @@ export default function ({
     const _replaceAsync = async (
         str: string,
         regex: RegExp,
-        asyncFn,
+        asyncFn: (...args: any[]) => Promise<any>,
         context: IActionsListContext,
         values: ActionsListValueType[]
     ): Promise<string> => {
@@ -58,7 +54,7 @@ export default function ({
             return '';
         });
         const data = await Promise.all(promises);
-        //change record object to string
+        // change record object to string
         const stringDatas = data.map(d => (typeof d === 'object' ? d.recordId : d));
         return str.replace(regex, () => stringDatas.shift());
     };
@@ -69,8 +65,7 @@ export default function ({
         values: ActionsListValueType[]
     ): Promise<string> => {
         const regExp = /{([^{}]*)}/g;
-        const res = _replaceAsync(formula, regExp, _processReplacement, context, values);
-        return res;
+        return _replaceAsync(formula, regExp, _processReplacement, context, values);
     };
 
     return {

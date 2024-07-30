@@ -1052,7 +1052,7 @@ describe('ValueDomain', () => {
             test('Should throw with metafield specified if actions list throws', async () => {
                 const mockUtils: Mockify<IUtils> = {
                     ...mockUtilsStandardAttribute,
-                    rethrow: jest.fn().mockImplementation(e => {
+                    rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                         throw e;
                     })
                 };
@@ -1130,7 +1130,7 @@ describe('ValueDomain', () => {
         test('Should save multiple values', async () => {
             const mockUtils: Mockify<IUtils> = {
                 ...mockUtilsStandardAttribute,
-                rethrow: jest.fn().mockImplementation(e => {
+                rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                     throw e;
                 })
             };
@@ -1244,7 +1244,7 @@ describe('ValueDomain', () => {
                 areValuesIdentical: jest.fn().mockImplementation(
                     (val1, val2) => val2?.value === 'identical' // Consider values for test_attr as identical
                 ),
-                rethrow: jest.fn().mockImplementation(e => {
+                rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                     throw e;
                 })
             };
@@ -1490,7 +1490,7 @@ describe('ValueDomain', () => {
         test('Delete empty values', async () => {
             const mockUtils: Mockify<IUtils> = {
                 ...mockUtilsStandardAttribute,
-                rethrow: jest.fn().mockImplementation(e => {
+                rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                     throw e;
                 })
             };
@@ -1536,7 +1536,7 @@ describe('ValueDomain', () => {
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper
             });
 
-            const res = await valDomain.saveValueBatch({
+            await valDomain.saveValueBatch({
                 library: 'test_lib',
                 recordId: '123456',
                 values,
@@ -1550,7 +1550,7 @@ describe('ValueDomain', () => {
         test("Don't delete empty values if keepEmpty true", async () => {
             const mockUtils: Mockify<IUtils> = {
                 ...mockUtilsStandardAttribute,
-                rethrow: jest.fn().mockImplementation(e => {
+                rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                     throw e;
                 })
             };

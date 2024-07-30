@@ -4,20 +4,26 @@
 import {flow, partialRight} from 'lodash';
 import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 
-export default function (): IActionsListFunction {
-    const _toString = (num, d) =>
+export default function (): IActionsListFunction<{
+    decimals: true;
+    thousandsSeparator: false;
+    decimalsSeparator: false;
+    prefix: false;
+    suffix: false;
+}> {
+    const _toString = (num: number, d: number): string =>
         num.toLocaleString('en', {
             minimumFractionDigits: d,
             maximumFractionDigits: d
         });
 
-    const _formatSeparators = (num, thousSep, decSep) => {
+    const _formatSeparators = (num: string, thousSep: string, decSep: string): string => {
         const newSeps = {',': thousSep, '.': decSep};
         return num.replace(/[,.]/g, m => newSeps[m]);
     };
 
-    const _addPrefix = (n, prefix) => '' + prefix + n;
-    const _addSuffix = (n, suffix) => '' + n + suffix;
+    const _addPrefix = (n: string, prefix: string): string => '' + prefix + n;
+    const _addSuffix = (n: string, suffix: string): string => '' + n + suffix;
 
     return {
         id: 'formatNumber',

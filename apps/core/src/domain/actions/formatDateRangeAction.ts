@@ -5,7 +5,7 @@ import moment from 'moment';
 import {IDateRangeValue} from '_types/value';
 import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 
-export default function (): IActionsListFunction {
+export default function (): IActionsListFunction<{format: true}> {
     return {
         id: 'formatDateRange',
         name: 'Format Date Range',
