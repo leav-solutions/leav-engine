@@ -44,6 +44,7 @@ describe('excelCalculationAction', () => {
         const res = await action(
             [],
             {
+                Description: 'test',
                 Formula: '42'
             },
             ctx
@@ -54,6 +55,7 @@ describe('excelCalculationAction', () => {
             await action(
                 [],
                 {
+                    Description: 'test',
                     Formula: '42+42'
                 },
                 ctx
@@ -67,6 +69,7 @@ describe('excelCalculationAction', () => {
         const res = await action(
             [],
             {
+                Description: 'test',
                 Formula: ''
             },
             ctx
@@ -82,6 +85,7 @@ describe('excelCalculationAction', () => {
         const res = await action(
             [],
             {
+                Description: 'test',
                 Formula: '"resultat {toto} {tata} {titi}"'
             },
             ctx
@@ -101,6 +105,7 @@ describe('excelCalculationAction', () => {
         const res = await action(
             [mockStandardValue],
             {
+                Description: 'test',
                 Formula: '"resultat {toto} {tata} {titi}"'
             },
             ctx
@@ -120,6 +125,7 @@ describe('excelCalculationAction', () => {
         const res = await action(
             [],
             {
+                Description: 'test',
                 Formula: 'UNKNOWN'
             },
             ctx
