@@ -5,24 +5,30 @@ import moment from 'moment';
 import {IDateRangeValue} from '_types/value';
 import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 
-export default function (): IActionsListFunction<{format: true}> {
+export default function (): IActionsListFunction<{auto: true; format: false}> {
     return {
         id: 'formatDateRange',
         name: 'Format Date Range',
-        description: 'Convert range timestamps to a date',
+        description: 'Convert range timestamps to a range dates',
         input_types: [ActionsListIOTypes.OBJECT],
         output_types: [ActionsListIOTypes.OBJECT],
         params: [
             {
+                name: 'auto',
+                type: 'boolean',
+                description: 'Adapt format to current language',
+                required: true,
+                default_value: 'false'
+            },
+            {
                 name: 'format',
                 type: 'string',
                 description: 'Date format. Available format: https://momentjs.com/docs/#/displaying/format/',
-                required: true,
+                required: false,
                 default_value: 'DD/MM/YYYY HH:mm:ss'
             }
         ],
-        action: (values, params) => {
-            const format = params.format || '';
+        action: (values, {auto, format}, {lang}) => {
             const computedValues = values.map(elementValue => {
                 const dateRangeValue = elementValue.value as IDateRangeValue<number>;
 
@@ -34,13 +40,21 @@ export default function (): IActionsListFunction<{format: true}> {
                 const numberValTo = dateRangeValue.to;
 
                 elementValue.value = {
-                    from: !isNaN(numberValFrom) ? moment.unix(numberValFrom).format(format) : '',
-                    to: !isNaN(numberValTo) ? moment.unix(numberValTo).format(format) : ''
+                    from: isNaN(numberValFrom)
+                        ? ''
+                        : auto === 'true'
+                          ? new Date(numberValFrom * 1_000).toLocaleString(lang)
+                          : moment.unix(numberValFrom).format(format ?? ''),
+                    to: isNaN(numberValTo)
+                        ? ''
+                        : auto === 'true'
+                          ? new Date(numberValTo * 1_000).toLocaleString(lang)
+                          : moment.unix(numberValTo).format(format ?? '')
                 };
                 return elementValue;
             });
 
-            return {values: computedValues, errors: [] as any[]};
+            return {values: computedValues, errors: []};
         }
     };
 }
