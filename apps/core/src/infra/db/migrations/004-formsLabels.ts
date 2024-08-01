@@ -22,7 +22,7 @@ export default function ({'core.infra.form': formRepo = null, config = null}: ID
                 formsList.list.map(form => {
                     form.elements = form.elements.map(dependentElements => {
                         dependentElements.elements = dependentElements.elements.map(element => {
-                            if (typeof element.settings.label !== 'object') {
+                            if ('settings' in element && typeof element.settings.label !== 'object') {
                                 element.settings.label = {
                                     [defaultLang]: element.settings.label
                                 };
