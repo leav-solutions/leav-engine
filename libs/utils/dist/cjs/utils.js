@@ -40,13 +40,9 @@ const minimatch_1 = __importDefault(require("minimatch"));
 const extensions = __importStar(require("./MIMEByExtension.json"));
 const attributes_1 = require("./types/attributes");
 const files_1 = require("./types/files");
-const getGraphqlTypeFromLibraryName = (library) => {
-    return (0, flow_1.default)([camelCase_1.default, upperFirst_1.default, trimEnd_1.default, (0, partialRight_1.default)(trimEnd_1.default, 's')])(library);
-};
+const getGraphqlTypeFromLibraryName = (library) => (0, flow_1.default)([camelCase_1.default, upperFirst_1.default, trimEnd_1.default, (0, partialRight_1.default)(trimEnd_1.default, 's')])(library);
 exports.getGraphqlTypeFromLibraryName = getGraphqlTypeFromLibraryName;
-const getGraphqlQueryNameFromLibraryName = (library) => {
-    return (0, flow_1.default)([camelCase_1.default, trimEnd_1.default])(library);
-};
+const getGraphqlQueryNameFromLibraryName = (library) => (0, flow_1.default)([camelCase_1.default, trimEnd_1.default])(library);
 exports.getGraphqlQueryNameFromLibraryName = getGraphqlQueryNameFromLibraryName;
 const isFileAllowed = (fsPath, allowList, ignoreList, filePath) => {
     // if allowPatterns is empty it's an implicit allow of all files
@@ -164,18 +160,14 @@ const extractArgsFromString = (mapping) => {
     return args.reduce((acc, value) => { var _a; return (Object.assign(Object.assign({}, acc), { [value[0]]: (_a = value[1]) !== null && _a !== void 0 ? _a : true })); }, {});
 };
 exports.extractArgsFromString = extractArgsFromString;
-const objectToNameValueArray = (obj) => {
-    return Object.keys(obj !== null && obj !== void 0 ? obj : {}).map(key => ({ name: key, value: obj[key] }));
-};
+const objectToNameValueArray = (obj) => Object.keys(obj !== null && obj !== void 0 ? obj : {}).map(key => ({ name: key, value: obj[key] }));
 exports.objectToNameValueArray = objectToNameValueArray;
-const nameValArrayToObj = (arr = [], keyFieldName = 'name', valueFieldName = 'value') => {
-    return Array.isArray(arr) && arr.length
-        ? arr.reduce((formattedElem, elem) => {
-            formattedElem[elem[keyFieldName]] = elem[valueFieldName];
-            return formattedElem;
-        }, {})
-        : null;
-};
+const nameValArrayToObj = (arr = [], keyFieldName = 'name', valueFieldName = 'value') => Array.isArray(arr) && arr.length
+    ? arr.reduce((formattedElem, elem) => {
+        formattedElem[elem[keyFieldName]] = elem[valueFieldName];
+        return formattedElem;
+    }, {})
+    : null;
 exports.nameValArrayToObj = nameValArrayToObj;
 const getFileType = (fileName) => {
     if (!fileName) {
@@ -247,18 +239,16 @@ exports._getInitialEngine = _getInitialEngine;
  * @param id
  * @returns formatted ID
  */
-const slugifyString = (id, separator = '_') => {
-    return id
-        .normalize('NFD') // Decompose the string in the base and the accents
-        .toLowerCase() // Lowercase the string
-        .replace(/[\u0300-\u036f]/g, '') // Remove accents
-        .replace(/[^a-zA-Z0-9\s]/g, separator) // Transform any special character into an underscore
-        .trim() // Remove spaces at the beginning and the end
-        .replace(/\s/g, separator) // Replace spaces by underscore
-        .replace(new RegExp(`${separator}${separator}+`, 'g'), separator) // Remove double underscores
-        .replace(new RegExp(`${separator}$`, 'g'), '') // Remove separator at the end
-        .replace(new RegExp(`^${separator}`, 'g'), ''); // Remove underscore at the beginning
-};
+const slugifyString = (id, separator = '_') => id
+    .normalize('NFD') // Decompose the string in the base and the accents
+    .toLowerCase() // Lowercase the string
+    .replace(/[\u0300-\u036f]/g, '') // Remove accents
+    .replace(/[^a-zA-Z0-9\s]/g, separator) // Transform any special character into an underscore
+    .trim() // Remove spaces at the beginning and the end
+    .replace(/\s/g, separator) // Replace spaces by underscore
+    .replace(new RegExp(`${separator}${separator}+`, 'g'), separator) // Remove double underscores
+    .replace(new RegExp(`${separator}$`, 'g'), '') // Remove separator at the end
+    .replace(new RegExp(`^${separator}`, 'g'), ''); // Remove underscore at the beginning
 exports.slugifyString = slugifyString;
 /**
  * Returns a hash code from a string
@@ -293,9 +283,7 @@ const getFlagByLang = (lang) => {
     return (_a = flagsByLang[lang]) !== null && _a !== void 0 ? _a : '';
 };
 exports.getFlagByLang = getFlagByLang;
-const getLogsIndexName = (instanceId) => {
-    return `logs-${instanceId}`;
-};
+const getLogsIndexName = (instanceId) => `logs-${instanceId}`;
 exports.getLogsIndexName = getLogsIndexName;
 const waitFor = async (predicate, options = {}) => {
     const { timeout = 5000, interval = 250 } = options;
@@ -309,13 +297,9 @@ const waitFor = async (predicate, options = {}) => {
     return true;
 };
 exports.waitFor = waitFor;
-const isTypeLink = (type) => {
-    return type === attributes_1.AttributeType.simple_link || type === attributes_1.AttributeType.advanced_link;
-};
+const isTypeLink = (type) => type === attributes_1.AttributeType.simple_link || type === attributes_1.AttributeType.advanced_link;
 exports.isTypeLink = isTypeLink;
-const isTypeStandard = (type) => {
-    return type === attributes_1.AttributeType.simple || type === attributes_1.AttributeType.advanced;
-};
+const isTypeStandard = (type) => type === attributes_1.AttributeType.simple || type === attributes_1.AttributeType.advanced;
 exports.isTypeStandard = isTypeStandard;
 /**
  * Return a new object without the keys passed in parameter

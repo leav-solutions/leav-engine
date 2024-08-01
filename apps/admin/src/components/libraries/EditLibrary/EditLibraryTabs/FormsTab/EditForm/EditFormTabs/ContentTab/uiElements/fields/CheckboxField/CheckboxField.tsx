@@ -4,14 +4,18 @@
 import React from 'react';
 import {Checkbox} from 'semantic-ui-react';
 import {ICommonFieldsSettings, IFormElementProps} from '../../../_types';
+import useLang from 'hooks/useLang';
+import {localizedLabel} from 'utils';
 
 function CheckboxField(props: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
     const {label} = props.settings;
-    const fieldProps = {
-        label
+    const {lang: availableLangs} = useLang();
+
+    const _fieldProps = {
+        label: localizedLabel(label, availableLangs)
     };
 
-    return <Checkbox toggle {...fieldProps} />;
+    return <Checkbox toggle {..._fieldProps} />;
 }
 
 export default CheckboxField;

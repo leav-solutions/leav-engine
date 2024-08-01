@@ -3,14 +3,20 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Input} from 'semantic-ui-react';
 import {ICommonFieldsSettings, IFormElementProps} from '../../../_types';
+import useLang from 'hooks/useLang';
+import {localizedLabel} from 'utils';
+
+const defaulLabel = {en: 'Date'};
 
 function EncryptedField(props: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
-    const {label = ''} = props.settings;
-    const fieldProps = {
-        label
+    const {label = defaulLabel} = props.settings;
+    const {lang: availableLangs} = useLang();
+
+    const _fieldProps = {
+        label: localizedLabel(label, availableLangs)
     };
 
-    return <Input type="password" {...fieldProps} />;
+    return <Input type="password" {..._fieldProps} />;
 }
 
 export default EncryptedField;

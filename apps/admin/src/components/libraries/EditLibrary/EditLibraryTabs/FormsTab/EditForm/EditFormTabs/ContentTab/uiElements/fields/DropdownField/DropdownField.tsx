@@ -4,11 +4,17 @@
 import React from 'react';
 import {Dropdown} from 'semantic-ui-react';
 import {ICommonFieldsSettings, IFormElementProps} from '../../../_types';
+import {localizedLabel} from 'utils';
+import useLang from 'hooks/useLang';
 
 function DropdownField({settings}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
+    const {lang: availableLangs} = useLang();
+
+    const _label = localizedLabel(settings.label, availableLangs);
+
     return (
         <>
-            <label>{settings.label}</label>
+            <label>{_label}</label>
             <Dropdown {...settings} />
         </>
     );

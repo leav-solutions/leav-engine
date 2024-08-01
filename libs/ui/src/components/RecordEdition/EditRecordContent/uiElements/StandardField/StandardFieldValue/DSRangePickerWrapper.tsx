@@ -10,11 +10,13 @@ import {
 import {Form} from 'antd';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
-import {IProvidedByAntFormItem, StandardValueTypes} from '../../../_types';
+import {FormElement, IProvidedByAntFormItem, StandardValueTypes} from '../../../_types';
 import {RangePickerProps} from 'antd/lib/date-picker';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
+import {useLang} from '_ui/hooks';
+import {IRequiredFieldsSettings, localizedTranslation} from '@leav/utils';
 
 interface IDSRangePickerWrapperProps extends IProvidedByAntFormItem<RangePickerProps> {
     state: IStandardFieldReducerState;
@@ -44,6 +46,7 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
     handleSubmit
 }) => {
     const {t} = useSharedTranslation();
+    const {lang: availableLangs} = useLang();
     const {errors} = Form.Item.useStatus();
     const {onValueDetailsButtonClick, infoIconWithTooltip} = useValueDetailsButton({
         value: fieldValue?.value,
@@ -83,11 +86,13 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
         handleSubmit(datesToSave, state.attribute.id);
     };
 
+    const _label = localizedTranslation(state.formElement.settings.label, availableLangs);
+
     return (
         <KitDatePickerRangePickerStyled
             value={value}
             onChange={_handleDateChange}
-            label={state.formElement.settings.label}
+            label={_label}
             required={state.formElement.settings.required}
             disabled={state.isReadOnly}
             allowClear={!state.isInheritedNotOverrideValue}

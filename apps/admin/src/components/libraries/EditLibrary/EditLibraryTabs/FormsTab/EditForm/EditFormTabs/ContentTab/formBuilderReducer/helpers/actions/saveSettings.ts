@@ -8,7 +8,6 @@ import getKeyFromDepValue from '../getKeyFromDepValue';
 
 export default function saveSettings(state: IFormBuilderState, action: IFormBuilderActionSaveSettings) {
     const elementToUpdate = action.element ?? state.elementInSettings;
-
     if (!elementToUpdate) {
         return state;
     }
@@ -25,7 +24,16 @@ export default function saveSettings(state: IFormBuilderState, action: IFormBuil
     if (indexInFields < 0 || indexInActiveFields < 0) {
         return state;
     }
-    const newSettings = {...elementToUpdate.settings, ...action.settings};
+
+    const newSettings = {...elementToUpdate.settings};
+    Object.keys(action.settings).forEach(key => {
+        if (key in newSettings) {
+            newSettings[key] =
+                typeof newSettings[key] === 'object'
+                    ? {...(newSettings[key] as object), ...(action.settings[key] as object)}
+                    : action.settings[key];
+        }
+    });
 
     const newElement: IFormElement = {
         ...elementToUpdate,

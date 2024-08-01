@@ -13,6 +13,8 @@ import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
+import {useLang} from '_ui/hooks';
+import {localizedTranslation} from '@leav/utils';
 
 interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputProps> {
     state: IStandardFieldReducerState;
@@ -49,6 +51,7 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
         attribute
     });
     const [hasChanged, setHasChanged] = useState(false);
+    const {lang: availableLang} = useLang();
 
     const _resetToInheritedValue = () => {
         setHasChanged(false);
@@ -78,9 +81,11 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
         onChange(event);
     };
 
+    const label = localizedTranslation(state.formElement.settings.label, availableLang);
+
     return (
         <KitInputStyled
-            label={state.formElement.settings.label}
+            label={label}
             required={state.formElement.settings.required}
             status={errors.length > 0 ? 'error' : undefined}
             infoIcon={shouldShowValueDetailsButton ? infoIconWithTooltip : null}

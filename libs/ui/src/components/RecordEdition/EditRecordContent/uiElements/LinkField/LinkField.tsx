@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ICommonFieldsSettings} from '@leav/utils';
+import {ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
 import {FunctionComponent, Reducer, useContext, useEffect, useReducer} from 'react';
 import CreationErrorContext from '_ui/components/RecordEdition/EditRecord/creationErrorContext';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
@@ -24,6 +24,7 @@ import {APICallStatus, IFormElementProps} from '../../_types';
 import {MonoValueSelect} from '_ui/components/RecordEdition/EditRecordContent/uiElements/LinkField/MonoValueSelect/MonoValueSelect';
 import {AntForm} from 'aristid-ds';
 import {MultiValueSelect} from './MultiValueSelect/MultiValueSelect';
+import {useLang} from '_ui/hooks';
 
 export type LinkFieldReducerState = ILinkFieldState<RecordFormElementsValueLinkValue>;
 type LinkFieldReducerAction = LinkFieldReducerActions<RecordFormElementsValueLinkValue>;
@@ -34,6 +35,7 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
     onValueDelete
 }) => {
     const {t} = useSharedTranslation();
+    const {lang} = useLang();
 
     const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
     const {state: editRecordState} = useEditRecordReducer();
@@ -123,6 +125,8 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
         }
     };
 
+    const label = localizedTranslation(state.formElement.settings.label, lang);
+
     return (
         <AntForm.Item
             name={attribute.id}
@@ -137,7 +141,7 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                 <MultiValueSelect
                     activeValues={activeValues}
                     attribute={attribute}
-                    label={state.formElement.settings.label}
+                    label={label}
                     required={state.formElement.settings.required}
                     shouldShowValueDetailsButton={editRecordState.withInfoButton}
                     onValueDeselect={_handleDeleteValue}
@@ -147,7 +151,7 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                 <MonoValueSelect
                     activeValue={activeValues[0]}
                     attribute={attribute}
-                    label={state.formElement.settings.label}
+                    label={label}
                     required={state.formElement.settings.required}
                     shouldShowValueDetailsButton={editRecordState.withInfoButton}
                     onSelectClear={_handleDeleteValue}

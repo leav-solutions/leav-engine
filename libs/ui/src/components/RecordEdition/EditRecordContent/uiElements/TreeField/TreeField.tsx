@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ICommonFieldsSettings} from '@leav/utils';
+import {ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
 import {List, Popover, theme} from 'antd';
 import {GlobalToken} from 'antd/lib/theme/interface';
 import Paragraph from 'antd/lib/typography/Paragraph';
@@ -39,6 +39,7 @@ import ValuesVersionIndicator from '../../shared/ValuesVersionIndicator';
 import {APICallStatus, FieldScope, IFormElementProps} from '../../_types';
 import TreeFieldValue from './TreeFieldValue';
 import ValuesAdd from './ValuesAdd';
+import {useLang} from '_ui/hooks';
 
 const Wrapper = styled.div<{$isValuesAddVisible: boolean; $themeToken: GlobalToken}>`
     position: relative;
@@ -80,6 +81,7 @@ function TreeField({
     onDeleteMultipleValues
 }: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
     const {token} = theme.useToken();
+    const {lang: availableLangs} = useLang();
     const {state: editRecordState, dispatch: editRecordDispatch} = useEditRecordReducer();
     const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
 
@@ -307,12 +309,14 @@ function TreeField({
         });
     };
 
+    const _label = localizedTranslation(attribute.label, availableLangs);
+
     return (
         <>
             {state.isValuesAddVisible && <Dimmer onClick={_handleCloseValuesAdd} />}
             <Wrapper $isValuesAddVisible={state.isValuesAddVisible} $themeToken={token}>
                 <FieldLabel ellipsis={{rows: 1, tooltip: true}}>
-                    {element.settings.label}
+                    {_label}
                     {editRecordState.externalUpdate.updatedValues[attribute?.id] && <UpdatedFieldIcon />}
                     {state.activeScope === FieldScope.INHERITED && (
                         <InheritedFieldLabel version={state.values[FieldScope.INHERITED].version} />

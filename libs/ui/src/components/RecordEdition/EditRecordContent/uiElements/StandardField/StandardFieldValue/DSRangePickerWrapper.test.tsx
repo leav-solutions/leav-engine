@@ -16,7 +16,8 @@ import {Form} from 'antd';
 import dayjs, {Dayjs} from 'dayjs';
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 
-const label = 'label';
+const en_label = 'label';
+const fr_label = 'libellé';
 const idValue = '123';
 const mockValue = {
     index: 0,
@@ -40,12 +41,12 @@ const mockValue = {
     state: StandardFieldValueState.PRISTINE
 };
 
-const getInitialState = (required: boolean): IStandardFieldReducerState => ({
+const getInitialState = (required: boolean, fallbackLang: boolean = false): IStandardFieldReducerState => ({
     record: mockRecord,
     formElement: {
         ...mockFormElementInput,
         settings: {
-            label,
+            label: fallbackLang ? {en: en_label} : {fr: fr_label, en: en_label},
             required
         }
     },
@@ -78,6 +79,44 @@ describe('DSRangePickerWrapper', () => {
     });
 
     describe('Without required field', () => {
+        test('Should display range picker with fr label ', async () => {
+            const state = getInitialState(false, false);
+            render(
+                <Form>
+                    <Form.Item>
+                        <DSRangePickerWrapper
+                            state={state}
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={null}
+                            handleSubmit={mockHandleSubmit}
+                            onChange={mockOnChange}
+                        />
+                    </Form.Item>
+                </Form>
+            );
+
+            expect(screen.getByText(fr_label)).toBeVisible();
+        });
+
+        test('Should display range picker with fallback label ', async () => {
+            const state = getInitialState(false, true);
+            render(
+                <Form>
+                    <Form.Item>
+                        <DSRangePickerWrapper
+                            state={state}
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={null}
+                            handleSubmit={mockHandleSubmit}
+                            onChange={mockOnChange}
+                        />
+                    </Form.Item>
+                </Form>
+            );
+
+            expect(screen.getByText(en_label)).toBeVisible();
+        });
+
         test('Should call onChange with value', async () => {
             const state = getInitialState(false);
             render(
