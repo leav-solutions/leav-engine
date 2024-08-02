@@ -11,7 +11,7 @@ export interface IFormFieldWrapperProps {
 
 function FormFieldWrapper({error, children}: IFormFieldWrapperProps): JSX.Element {
     const childrenList: React.ReactNode[] = children ? (!Array.isArray(children) ? [children] : children) : [];
-    console.log('childrenList', childrenList);
+
     return (
         <Form.Field>
             {childrenList.map((c, i) => React.cloneElement(c as React.ReactElement<any>, {error: !!error, key: i}))}
