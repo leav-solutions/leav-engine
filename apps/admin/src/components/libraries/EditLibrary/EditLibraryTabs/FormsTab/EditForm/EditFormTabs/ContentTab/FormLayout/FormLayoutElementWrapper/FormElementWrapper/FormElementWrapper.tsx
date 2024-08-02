@@ -28,14 +28,14 @@ const HoverBtnGroup = styled(Button.Group)`
     z-index: 10;
 `;
 
-const Wrapper = styled.div<{isOver: boolean; isHerited: boolean}>`
+const Wrapper = styled.div<{$isOver: boolean; $isHerited: boolean}>`
     position: relative;
-    background: ${props => (props.isHerited ? '#C3FFF9' : '#FFF')};
+    background: ${props => (props.$isHerited ? '#C3FFF9' : '#FFF')};
     margin: 1em 0;
     border-radius: 5px;
     border-width: 1px;
     border-style: dashed;
-    border-color: ${props => (props.isOver ? '#999' : '#DDD')};
+    border-color: ${props => (props.$isOver ? '#999' : '#DDD')};
     display: flex;
     color: #aaaaaa;
     min-height: 4em;
@@ -48,11 +48,11 @@ const ElementHandle = styled.div`
     cursor: move;
 `;
 
-const UiElementWrapper = styled.div<{isHerited: boolean; isReadOnly: boolean}>`
+const UiElementWrapper = styled.div<{$isHerited: boolean; $isReadOnly: boolean}>`
     width: 100%;
     text-align: left;
     padding: 0.5em;
-    border-left: ${props => (props.isHerited || props.isReadOnly ? 'none' : '1px solid #aaa')};
+    border-left: ${props => (props.$isHerited || props.$isReadOnly ? 'none' : '1px solid #aaa')};
     display: flex;
 
     & > div {
@@ -212,8 +212,8 @@ function FormElementWrapper({element, index, dispatch, state}: IFieldWrapperProp
             ref={dropRef}
             onMouseEnter={_handleMouseEnter}
             onMouseLeave={_handleMouseLeave}
-            isOver={false}
-            isHerited={!!element.herited}
+            $isOver={false}
+            $isHerited={!!element.herited}
         >
             {hover && (
                 <HoverBtnGroup icon>
@@ -221,8 +221,8 @@ function FormElementWrapper({element, index, dispatch, state}: IFieldWrapperProp
                         <Icon name="cog" />
                     </Button>
                     <Button onClick={_handleDeleteClick}>
-                            <Icon name="cancel" />
-                        </Button>
+                        <Icon name="cancel" />
+                    </Button>
                 </HoverBtnGroup>
             )}
             {!element.herited && !readonly && (
@@ -230,7 +230,7 @@ function FormElementWrapper({element, index, dispatch, state}: IFieldWrapperProp
                     <Icon name="bars" fitted />
                 </ElementHandle>
             )}
-            <UiElementWrapper isHerited={!!element.herited} isReadOnly={readonly}>
+            <UiElementWrapper $isHerited={!!element.herited} $isReadOnly={readonly}>
                 <element.uiElement.component.type
                     elementData={element}
                     settings={fieldSettings}

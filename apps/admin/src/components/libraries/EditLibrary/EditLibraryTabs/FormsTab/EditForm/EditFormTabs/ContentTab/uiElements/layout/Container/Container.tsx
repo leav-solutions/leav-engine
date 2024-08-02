@@ -17,15 +17,15 @@ interface IContainerProps extends Partial<IFormBuilderStateAndDispatch> {
     elementData?: IFormElement;
 }
 
-const ContainerWrapper = styled.div<{isOver: boolean; isRootContainer: boolean}>`
-    background: ${props => (props.isRootContainer ? '#FFF' : '#EEE')};
-    padding: ${props => (props.isRootContainer ? 0 : '2em')};
+const ContainerWrapper = styled.div<{$isOver: boolean; $isRootContainer: boolean}>`
+    background: ${props => (props.$isRootContainer ? '#FFF' : '#EEE')};
+    padding: ${props => (props.$isRootContainer ? 0 : '2em')};
     color: #aaaaaa;
     text-align: center;
     display: flex;
     flex-direction: column;
     width: 100%;
-    min-height: ${props => (props.isRootContainer ? 'calc(100vh - 18rem)' : 'auto')};
+    min-height: ${props => (props.$isRootContainer ? 'calc(100vh - 18rem)' : 'auto')};
 `;
 
 const EmptyContainerPlaceholder = styled.div`
@@ -113,7 +113,7 @@ function Container({elementData, state, dispatch}: IContainerProps): JSX.Element
     const content = state.activeElements[elementData.id] || [];
 
     return (
-        <ContainerWrapper isOver={isOver} isRootContainer={elementData.id === defaultContainerId} ref={dropRef}>
+        <ContainerWrapper $isOver={isOver} $isRootContainer={elementData.id === defaultContainerId} ref={dropRef}>
             {!!content.length ? (
                 content.map((c, i) => (
                     <FormElementWrapper key={c.id} element={c} index={i} state={state} dispatch={dispatch} />

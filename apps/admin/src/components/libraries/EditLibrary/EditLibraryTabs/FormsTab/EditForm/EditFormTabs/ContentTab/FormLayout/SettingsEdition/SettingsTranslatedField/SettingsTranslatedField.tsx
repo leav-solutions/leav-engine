@@ -13,7 +13,6 @@ import {FormBuilderActionTypes} from '../../../formBuilderReducer/formBuilderRed
 import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
 import {IFormElementSettings, ISettingsFieldCommonProps} from '../../../_types';
 import useLang from 'hooks/useLang';
-import FormFieldWrapper from 'components/shared/FormFieldWrapper';
 
 interface ISettingsFieldProps {
     settingsField: IFormElementSettings;
@@ -78,7 +77,7 @@ function SettingsField({settingsField}: ISettingsFieldProps) {
         <Form.Group grouped>
             <label>{t(`forms.settings.${settingsField.name}`)}</label>
             {availableLangs.map(lang => (
-                <FormFieldWrapper key={lang}>
+                <Form.Field key={lang}>
                     <label>{`${lang} ${lang === defaultLang ? '*' : ''}`}</label>
                     <Input
                         type="text"
@@ -88,7 +87,7 @@ function SettingsField({settingsField}: ISettingsFieldProps) {
                         onChange={_handleChange(lang)}
                         value={values[lang] ?? ''}
                     />
-                </FormFieldWrapper>
+                </Form.Field>
             ))}
         </Form.Group>
     );
