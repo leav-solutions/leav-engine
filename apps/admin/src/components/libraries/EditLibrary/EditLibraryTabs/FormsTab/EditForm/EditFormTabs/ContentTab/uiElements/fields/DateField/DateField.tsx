@@ -5,6 +5,8 @@ import React from 'react';
 import {Input} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {ICommonFieldsSettings, IFormElementProps} from '../../../_types';
+import useLang from 'hooks/useLang';
+import {localizedLabel} from 'utils';
 
 const DateInput = styled(Input)`
     && {
@@ -24,9 +26,11 @@ interface IDateFieldSettings extends ICommonFieldsSettings {
 }
 
 function DateField(props: IFormElementProps<IDateFieldSettings>): JSX.Element {
-    const {label = 'Date', withTime = false} = props.settings;
+    const {label, withTime = false} = props.settings;
+    const {lang: availableLangs} = useLang();
+
     const fieldProps = {
-        label
+        label: localizedLabel(label, availableLangs)
     };
 
     return (

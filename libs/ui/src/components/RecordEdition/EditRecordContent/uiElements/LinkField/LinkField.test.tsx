@@ -21,6 +21,7 @@ import {
     SubmitValueFunc
 } from '../../_types';
 import LinkField from './LinkField';
+import {MockedLangContextProvider} from '_ui/testing';
 
 jest.mock('_ui/components/RecordEdition/EditRecord', () => ({
     EditRecord: () => <div>EditRecord</div>
@@ -113,13 +114,50 @@ describe('LinkField', () => {
                     elements: null
                 }}
             >
-                <LinkField {...allProps} />
+                <MockedLangContextProvider>
+                    <LinkField {...allProps} />
+                </MockedLangContextProvider>
             </RecordEditionContext.Provider>,
             renderOptions
         );
     };
 
     beforeEach(() => jest.clearAllMocks());
+
+    it('should render LinkField with fr label', () => {
+        const mockFormElementLinkNoMultivalue: FormElement<ICommonFieldsSettings> = {
+            ...mockFormElementLink,
+            settings: {
+                ...mockFormElementLink.settings,
+                label: {fr: 'tata', en: 'toto'}
+            },
+            attribute: {
+                ...mockFormElementLink.attribute,
+                multiple_values: false
+            }
+        };
+
+        _renderLinkField({element: {...mockFormElementLinkNoMultivalue}});
+
+        expect(screen.getByText(mockFormElementLinkNoMultivalue.settings.label.fr)).toBeVisible();
+    });
+    it('should render LinkField with fallback label', () => {
+        const mockFormElementLinkNoMultivalue: FormElement<ICommonFieldsSettings> = {
+            ...mockFormElementLink,
+            settings: {
+                ...mockFormElementLink.settings,
+                label: {en: 'toto'}
+            },
+            attribute: {
+                ...mockFormElementLink.attribute,
+                multiple_values: false
+            }
+        };
+
+        _renderLinkField({element: {...mockFormElementLinkNoMultivalue}});
+
+        expect(screen.getByText(mockFormElementLinkNoMultivalue.settings.label.en)).toBeVisible();
+    });
 
     it('should render MonoValueSelect', () => {
         const mockFormElementLinkNoMultivalue: FormElement<{}> = {

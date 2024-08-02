@@ -16,8 +16,8 @@ interface IReserveLayoutElementProps {
     element: IUIElement;
 }
 
-const Wrapper = styled.div<{isDragging: boolean}>`
-    opacity: ${props => (props.isDragging ? 0.5 : 1)};
+const Wrapper = styled.div<{$isDragging: boolean}>`
+    opacity: ${props => (props.$isDragging ? 0.5 : 1)};
     font-weight: bold;
     cursor: move;
     margin: 1em 0;
@@ -79,7 +79,7 @@ function ReserveLayoutElement({element}: IReserveLayoutElementProps): JSX.Elemen
     });
 
     return (
-        <Wrapper isDragging={isDragging} ref={drag}>
+        <Wrapper $isDragging={isDragging} ref={drag}>
             {t(`forms.elements.${element.type}`)}
         </Wrapper>
     );

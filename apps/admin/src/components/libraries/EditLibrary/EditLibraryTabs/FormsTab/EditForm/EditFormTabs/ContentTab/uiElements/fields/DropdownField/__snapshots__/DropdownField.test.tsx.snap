@@ -1,472 +1,94 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DropdownField Snapshot test 1`] = `
-LoadedCheerio {
-  "0": Node {
-    "attribs": {},
-    "children": [],
-    "name": "label",
-    "namespace": "http://www.w3.org/1999/xhtml",
-    "next": Node {
-      "attribs": {
-        "aria-expanded": "false",
-        "class": "ui dropdown",
-        "role": "listbox",
-        "tabindex": "0",
-      },
-      "children": [
-        Node {
-          "attribs": {
-            "aria-hidden": "true",
-            "class": "dropdown icon",
-          },
-          "children": [],
-          "name": "i",
-          "namespace": "http://www.w3.org/1999/xhtml",
-          "next": Node {
-            "attribs": {
-              "class": "menu transition",
-            },
-            "children": [],
-            "name": "div",
-            "namespace": "http://www.w3.org/1999/xhtml",
-            "next": null,
-            "parent": [Circular],
-            "prev": [Circular],
-            "type": "tag",
-            "x-attribsNamespace": {
-              "class": undefined,
-            },
-            "x-attribsPrefix": {
-              "class": undefined,
-            },
-          },
-          "parent": [Circular],
-          "prev": null,
-          "type": "tag",
-          "x-attribsNamespace": {
-            "aria-hidden": undefined,
-            "class": undefined,
-          },
-          "x-attribsPrefix": {
-            "aria-hidden": undefined,
-            "class": undefined,
-          },
-        },
-        Node {
-          "attribs": {
-            "class": "menu transition",
-          },
-          "children": [],
-          "name": "div",
-          "namespace": "http://www.w3.org/1999/xhtml",
-          "next": null,
-          "parent": [Circular],
-          "prev": Node {
-            "attribs": {
-              "aria-hidden": "true",
-              "class": "dropdown icon",
-            },
-            "children": [],
-            "name": "i",
-            "namespace": "http://www.w3.org/1999/xhtml",
-            "next": [Circular],
-            "parent": [Circular],
-            "prev": null,
-            "type": "tag",
-            "x-attribsNamespace": {
-              "aria-hidden": undefined,
-              "class": undefined,
-            },
-            "x-attribsPrefix": {
-              "aria-hidden": undefined,
-              "class": undefined,
-            },
-          },
-          "type": "tag",
-          "x-attribsNamespace": {
-            "class": undefined,
-          },
-          "x-attribsPrefix": {
-            "class": undefined,
-          },
-        },
-      ],
-      "name": "div",
-      "namespace": "http://www.w3.org/1999/xhtml",
-      "next": null,
-      "parent": Node {
-        "children": [
-          [Circular],
-          [Circular],
-        ],
-        "name": "root",
-        "next": null,
-        "parent": null,
-        "prev": null,
-        "type": "root",
-      },
-      "prev": [Circular],
-      "type": "tag",
-      "x-attribsNamespace": {
-        "aria-expanded": undefined,
-        "class": undefined,
-        "role": undefined,
-        "tabindex": undefined,
-      },
-      "x-attribsPrefix": {
-        "aria-expanded": undefined,
-        "class": undefined,
-        "role": undefined,
-        "tabindex": undefined,
-      },
-    },
-    "parent": Node {
-      "children": [
-        [Circular],
-        Node {
-          "attribs": {
-            "aria-expanded": "false",
-            "class": "ui dropdown",
-            "role": "listbox",
-            "tabindex": "0",
-          },
-          "children": [
-            Node {
-              "attribs": {
-                "aria-hidden": "true",
-                "class": "dropdown icon",
-              },
-              "children": [],
-              "name": "i",
-              "namespace": "http://www.w3.org/1999/xhtml",
-              "next": Node {
-                "attribs": {
-                  "class": "menu transition",
-                },
-                "children": [],
-                "name": "div",
-                "namespace": "http://www.w3.org/1999/xhtml",
-                "next": null,
-                "parent": [Circular],
-                "prev": [Circular],
-                "type": "tag",
-                "x-attribsNamespace": {
-                  "class": undefined,
-                },
-                "x-attribsPrefix": {
-                  "class": undefined,
-                },
-              },
-              "parent": [Circular],
-              "prev": null,
-              "type": "tag",
-              "x-attribsNamespace": {
-                "aria-hidden": undefined,
-                "class": undefined,
-              },
-              "x-attribsPrefix": {
-                "aria-hidden": undefined,
-                "class": undefined,
-              },
-            },
-            Node {
-              "attribs": {
-                "class": "menu transition",
-              },
-              "children": [],
-              "name": "div",
-              "namespace": "http://www.w3.org/1999/xhtml",
-              "next": null,
-              "parent": [Circular],
-              "prev": Node {
-                "attribs": {
-                  "aria-hidden": "true",
-                  "class": "dropdown icon",
-                },
-                "children": [],
-                "name": "i",
-                "namespace": "http://www.w3.org/1999/xhtml",
-                "next": [Circular],
-                "parent": [Circular],
-                "prev": null,
-                "type": "tag",
-                "x-attribsNamespace": {
-                  "aria-hidden": undefined,
-                  "class": undefined,
-                },
-                "x-attribsPrefix": {
-                  "aria-hidden": undefined,
-                  "class": undefined,
-                },
-              },
-              "type": "tag",
-              "x-attribsNamespace": {
-                "class": undefined,
-              },
-              "x-attribsPrefix": {
-                "class": undefined,
-              },
-            },
-          ],
-          "name": "div",
-          "namespace": "http://www.w3.org/1999/xhtml",
-          "next": null,
-          "parent": [Circular],
-          "prev": [Circular],
-          "type": "tag",
-          "x-attribsNamespace": {
-            "aria-expanded": undefined,
-            "class": undefined,
-            "role": undefined,
-            "tabindex": undefined,
-          },
-          "x-attribsPrefix": {
-            "aria-expanded": undefined,
-            "class": undefined,
-            "role": undefined,
-            "tabindex": undefined,
-          },
-        },
-      ],
-      "name": "root",
-      "next": null,
-      "parent": null,
-      "prev": null,
-      "type": "root",
-    },
-    "prev": null,
-    "type": "tag",
-    "x-attribsNamespace": {},
-    "x-attribsPrefix": {},
-  },
-  "1": Node {
-    "attribs": {
-      "aria-expanded": "false",
-      "class": "ui dropdown",
-      "role": "listbox",
-      "tabindex": "0",
-    },
-    "children": [
-      Node {
-        "attribs": {
-          "aria-hidden": "true",
-          "class": "dropdown icon",
-        },
-        "children": [],
-        "name": "i",
-        "namespace": "http://www.w3.org/1999/xhtml",
-        "next": Node {
-          "attribs": {
-            "class": "menu transition",
-          },
-          "children": [],
-          "name": "div",
-          "namespace": "http://www.w3.org/1999/xhtml",
-          "next": null,
-          "parent": [Circular],
-          "prev": [Circular],
-          "type": "tag",
-          "x-attribsNamespace": {
-            "class": undefined,
-          },
-          "x-attribsPrefix": {
-            "class": undefined,
-          },
-        },
-        "parent": [Circular],
-        "prev": null,
-        "type": "tag",
-        "x-attribsNamespace": {
-          "aria-hidden": undefined,
-          "class": undefined,
-        },
-        "x-attribsPrefix": {
-          "aria-hidden": undefined,
-          "class": undefined,
-        },
-      },
-      Node {
-        "attribs": {
-          "class": "menu transition",
-        },
-        "children": [],
-        "name": "div",
-        "namespace": "http://www.w3.org/1999/xhtml",
-        "next": null,
-        "parent": [Circular],
-        "prev": Node {
-          "attribs": {
-            "aria-hidden": "true",
-            "class": "dropdown icon",
-          },
-          "children": [],
-          "name": "i",
-          "namespace": "http://www.w3.org/1999/xhtml",
-          "next": [Circular],
-          "parent": [Circular],
-          "prev": null,
-          "type": "tag",
-          "x-attribsNamespace": {
-            "aria-hidden": undefined,
-            "class": undefined,
-          },
-          "x-attribsPrefix": {
-            "aria-hidden": undefined,
-            "class": undefined,
-          },
-        },
-        "type": "tag",
-        "x-attribsNamespace": {
-          "class": undefined,
-        },
-        "x-attribsPrefix": {
-          "class": undefined,
-        },
-      },
-    ],
-    "name": "div",
-    "namespace": "http://www.w3.org/1999/xhtml",
-    "next": null,
-    "parent": Node {
-      "children": [
-        Node {
-          "attribs": {},
-          "children": [],
-          "name": "label",
-          "namespace": "http://www.w3.org/1999/xhtml",
-          "next": [Circular],
-          "parent": [Circular],
-          "prev": null,
-          "type": "tag",
-          "x-attribsNamespace": {},
-          "x-attribsPrefix": {},
-        },
-        [Circular],
-      ],
-      "name": "root",
-      "next": null,
-      "parent": null,
-      "prev": null,
-      "type": "root",
-    },
-    "prev": Node {
-      "attribs": {},
-      "children": [],
-      "name": "label",
-      "namespace": "http://www.w3.org/1999/xhtml",
-      "next": [Circular],
-      "parent": Node {
-        "children": [
-          [Circular],
-          [Circular],
-        ],
-        "name": "root",
-        "next": null,
-        "parent": null,
-        "prev": null,
-        "type": "root",
-      },
-      "prev": null,
-      "type": "tag",
-      "x-attribsNamespace": {},
-      "x-attribsPrefix": {},
-    },
-    "type": "tag",
-    "x-attribsNamespace": {
-      "aria-expanded": undefined,
-      "class": undefined,
-      "role": undefined,
-      "tabindex": undefined,
-    },
-    "x-attribsPrefix": {
-      "aria-expanded": undefined,
-      "class": undefined,
-      "role": undefined,
-      "tabindex": undefined,
-    },
-  },
-  "_root": LoadedCheerio {
-    "0": Node {
-      "children": [
-        Node {
-          "attribs": {},
-          "children": [
-            Node {
-              "attribs": {},
-              "children": [],
-              "name": "head",
-              "namespace": "http://www.w3.org/1999/xhtml",
-              "next": Node {
-                "attribs": {},
-                "children": [],
-                "name": "body",
-                "namespace": "http://www.w3.org/1999/xhtml",
-                "next": null,
-                "parent": [Circular],
-                "prev": [Circular],
-                "type": "tag",
-                "x-attribsNamespace": {},
-                "x-attribsPrefix": {},
-              },
-              "parent": [Circular],
-              "prev": null,
-              "type": "tag",
-              "x-attribsNamespace": {},
-              "x-attribsPrefix": {},
-            },
-            Node {
-              "attribs": {},
-              "children": [],
-              "name": "body",
-              "namespace": "http://www.w3.org/1999/xhtml",
-              "next": null,
-              "parent": [Circular],
-              "prev": Node {
-                "attribs": {},
-                "children": [],
-                "name": "head",
-                "namespace": "http://www.w3.org/1999/xhtml",
-                "next": [Circular],
-                "parent": [Circular],
-                "prev": null,
-                "type": "tag",
-                "x-attribsNamespace": {},
-                "x-attribsPrefix": {},
-              },
-              "type": "tag",
-              "x-attribsNamespace": {},
-              "x-attribsPrefix": {},
-            },
-          ],
-          "name": "html",
-          "namespace": "http://www.w3.org/1999/xhtml",
-          "next": null,
-          "parent": [Circular],
-          "prev": null,
-          "type": "tag",
-          "x-attribsNamespace": {},
-          "x-attribsPrefix": {},
-        },
-      ],
-      "name": "root",
-      "next": null,
-      "parent": null,
-      "prev": null,
-      "type": "root",
-      "x-mode": "quirks",
-    },
-    "_root": [Circular],
-    "length": 1,
-    "options": {
-      "decodeEntities": true,
-      "xml": false,
-    },
-  },
-  "length": 2,
-  "options": {
-    "decodeEntities": true,
-    "xml": false,
-  },
+{
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <label />
+      <div
+        aria-expanded="false"
+        class="ui dropdown"
+        role="listbox"
+        tabindex="0"
+      >
+        <i
+          aria-hidden="true"
+          class="dropdown icon"
+        />
+        <div
+          class="menu transition"
+        />
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <label />
+    <div
+      aria-expanded="false"
+      class="ui dropdown"
+      role="listbox"
+      tabindex="0"
+    >
+      <i
+        aria-hidden="true"
+        class="dropdown icon"
+      />
+      <div
+        class="menu transition"
+      />
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
 }
 `;

@@ -5,10 +5,12 @@ import cloneDeep from 'lodash/cloneDeep';
 import {IFormElement} from '../../../_types';
 import {defaultContainerId, IFormBuilderActionSaveSettings, IFormBuilderState} from '../../formBuilderReducer';
 import getKeyFromDepValue from '../getKeyFromDepValue';
+import {IKeyValue} from '@leav/utils';
+
+const _isLabelObject = (obj: any): obj is IKeyValue<string> => typeof obj === 'object' && obj !== null;
 
 export default function saveSettings(state: IFormBuilderState, action: IFormBuilderActionSaveSettings) {
     const elementToUpdate = action.element ?? state.elementInSettings;
-
     if (!elementToUpdate) {
         return state;
     }
@@ -25,7 +27,17 @@ export default function saveSettings(state: IFormBuilderState, action: IFormBuil
     if (indexInFields < 0 || indexInActiveFields < 0) {
         return state;
     }
-    const newSettings = {...elementToUpdate.settings, ...action.settings};
+
+    const newSettings: IKeyValue<unknown> = {...elementToUpdate.settings};
+    Object.keys(action.settings).forEach(key => {
+        if (key in newSettings) {
+            const setting = newSettings[key];
+            newSettings[key] =
+                _isLabelObject(setting) && _isLabelObject(action.settings[key])
+                    ? {...setting, ...action.settings[key]}
+                    : action.settings[key];
+        }
+    });
 
     const newElement: IFormElement = {
         ...elementToUpdate,

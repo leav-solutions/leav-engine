@@ -35,14 +35,10 @@ export declare const getInvertColor: (color: string) => string;
  * eg. "-library product -type link" => {library: product, type: link}
  * @param mapping
  */
-export declare const extractArgsFromString: (
-    mapping: string
-) => {
+export declare const extractArgsFromString: (mapping: string) => {
     [arg: string]: string;
 };
-export declare const objectToNameValueArray: <T>(
-    obj: IKeyValue<T>
-) => {
+export declare const objectToNameValueArray: <T>(obj: IKeyValue<T>) => {
     name: string;
     value: T;
 }[];

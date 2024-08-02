@@ -19,8 +19,8 @@ interface IReserveAttributeProps {
     attribute: GET_ATTRIBUTES_attributes_list;
 }
 
-const Wrapper = styled.div<{isDragging: boolean}>`
-    opacity: ${props => (props.isDragging ? 0.5 : 1)};
+const Wrapper = styled.div<{$isDragging: boolean}>`
+    opacity: ${props => (props.$isDragging ? 0.5 : 1)};
     font-weight: bold;
     cursor: move;
     margin: 0.8em 0;
@@ -31,7 +31,7 @@ function ReserveAttribute({attribute}: IReserveAttributeProps): JSX.Element {
     const {lang} = useLang();
     const {readonly} = useEditFormContext();
 
-    const attrLabel = localizedLabel(attribute.label, lang);
+    const attrLabel = attribute.label;
 
     const _getElement = () => {
         const elemByFormat: {[format in AttributeFormat]: IUIElement} = {
@@ -111,8 +111,8 @@ function ReserveAttribute({attribute}: IReserveAttributeProps): JSX.Element {
     });
 
     return (
-        <Wrapper ref={drag} isDragging={isDragging}>
-            {attrLabel}
+        <Wrapper ref={drag} $isDragging={isDragging}>
+            {localizedLabel(attribute.label, lang)}
         </Wrapper>
     );
 }

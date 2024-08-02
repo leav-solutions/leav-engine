@@ -218,7 +218,7 @@ export const mockFormElementTree: FormElement<ICommonFieldsSettings> = {
     ...formElementBase,
     id: 'tree_element',
     containerId: '__root',
-    settings: {label: 'my label', attribute: 'test'},
+    settings: {label: {en: 'my label'}, attribute: 'test'},
     uiElement: () => <div>{FormFieldTypes.TREE}</div>,
     type: FormElementTypes.field,
     uiElementType: FormFieldTypes.TREE,
@@ -235,8 +235,8 @@ export const mockFormElementTree: FormElement<ICommonFieldsSettings> = {
         treeValuesList: {enable: false, allowFreeEntry: false, values: []}
     },
     values: [
-        {...((mockTreeValueA as unknown) as RecordFormElementsValueTreeValue)},
-        {...((mockTreeValueB as unknown) as RecordFormElementsValueTreeValue)}
+        {...(mockTreeValueA as unknown as RecordFormElementsValueTreeValue)},
+        {...(mockTreeValueB as unknown as RecordFormElementsValueTreeValue)}
     ]
 };
 
