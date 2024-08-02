@@ -7,11 +7,6 @@ import {renderHook} from '_ui/_tests/testUtils';
 const fetchMock = jest.fn();
 global.fetch = fetchMock;
 
-const setRefreshTokenMock = jest.fn();
-jest.mock('../useRefreshToken', () => () => ({
-    setRefreshToken: setRefreshTokenMock
-}));
-
 const mockedLocation = {...window.location, reload: jest.fn(), assign: jest.fn()};
 delete window.location;
 window.location = mockedLocation;
@@ -19,7 +14,6 @@ window.location = mockedLocation;
 describe('useAuth', () => {
     beforeEach(() => {
         fetchMock.mockClear();
-        setRefreshTokenMock.mockClear();
         mockedLocation.reload.mockClear();
         mockedLocation.assign.mockClear();
     });

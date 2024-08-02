@@ -31,12 +31,6 @@ jest.mock('react-router-dom', () => ({
         .mockReturnValue({})
 }));
 
-jest.mock('@leav/ui', () => ({
-    useRefreshToken: jest.fn(() => ({
-        setRefreshToken: jest.fn()
-    }))
-}));
-
 const _renderComponent = (url: string = '/') =>
     render(
         <KitApp>
