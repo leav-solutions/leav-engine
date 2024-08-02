@@ -309,14 +309,14 @@ function TreeField({
         });
     };
 
-    const _label = localizedTranslation(attribute.label, availableLangs);
+    const label = localizedTranslation(attribute.label, availableLangs);
 
     return (
         <>
             {state.isValuesAddVisible && <Dimmer onClick={_handleCloseValuesAdd} />}
             <Wrapper $isValuesAddVisible={state.isValuesAddVisible} $themeToken={token}>
                 <FieldLabel ellipsis={{rows: 1, tooltip: true}}>
-                    {_label}
+                    {label}
                     {editRecordState.externalUpdate.updatedValues[attribute?.id] && <UpdatedFieldIcon />}
                     {state.activeScope === FieldScope.INHERITED && (
                         <InheritedFieldLabel version={state.values[FieldScope.INHERITED].version} />

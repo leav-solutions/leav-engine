@@ -86,13 +86,13 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
         handleSubmit(datesToSave, state.attribute.id);
     };
 
-    const _label = localizedTranslation(state.formElement.settings.label, availableLangs);
+    const label = localizedTranslation(state.formElement.settings.label, availableLangs);
 
     return (
         <KitDatePickerRangePickerStyled
             value={value}
             onChange={_handleDateChange}
-            label={_label}
+            label={label}
             required={state.formElement.settings.required}
             disabled={state.isReadOnly}
             allowClear={!state.isInheritedNotOverrideValue}
