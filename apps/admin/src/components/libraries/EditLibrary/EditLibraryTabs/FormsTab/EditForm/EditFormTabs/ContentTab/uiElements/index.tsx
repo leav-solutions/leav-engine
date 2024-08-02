@@ -36,7 +36,7 @@ const commonFieldSettings: IFormElementSettings[] = [
     },
     {
         name: 'label',
-        inputType: FormElementSettingsInputTypes.INPUT
+        inputType: FormElementSettingsInputTypes.TRANSLATED_INPUT
     }
 ];
 

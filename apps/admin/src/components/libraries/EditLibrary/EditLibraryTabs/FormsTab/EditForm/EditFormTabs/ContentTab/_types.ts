@@ -48,6 +48,7 @@ export interface IFormElement {
 
 export enum FormElementSettingsInputTypes {
     NONE = 'NONE',
+    TRANSLATED_INPUT = 'TRANSLATED_INPUT',
     ATTRIBUTE_SELECTION = 'ATTRIBUTE_SELECTION',
     ATTRIBUTE_SELECTION_MULTIPLE = 'ATTRIBUTE_SELECTION_MULTIPLE',
     INPUT = 'INPUT',
@@ -77,7 +78,7 @@ export interface IFormElementProps<SettingsType extends object> {
 }
 
 export interface ICommonFieldsSettings {
-    label?: string;
+    label?: SystemTranslation;
     attribute?: string;
 }
 

@@ -1,186 +1,88 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`EncryptedField Snapshot test 1`] = `
-LoadedCheerio {
-  "0": Node {
-    "attribs": {
-      "class": "ui input",
-    },
-    "children": [
-      Node {
-        "attribs": {
-          "class": "ui label label",
-        },
-        "children": [],
-        "name": "div",
-        "namespace": "http://www.w3.org/1999/xhtml",
-        "next": Node {
-          "attribs": {
-            "type": "password",
-          },
-          "children": [],
-          "name": "input",
-          "namespace": "http://www.w3.org/1999/xhtml",
-          "next": null,
-          "parent": [Circular],
-          "prev": [Circular],
-          "type": "tag",
-          "x-attribsNamespace": {
-            "type": undefined,
-          },
-          "x-attribsPrefix": {
-            "type": undefined,
-          },
-        },
-        "parent": [Circular],
-        "prev": null,
-        "type": "tag",
-        "x-attribsNamespace": {
-          "class": undefined,
-        },
-        "x-attribsPrefix": {
-          "class": undefined,
-        },
-      },
-      Node {
-        "attribs": {
-          "type": "password",
-        },
-        "children": [],
-        "name": "input",
-        "namespace": "http://www.w3.org/1999/xhtml",
-        "next": null,
-        "parent": [Circular],
-        "prev": Node {
-          "attribs": {
-            "class": "ui label label",
-          },
-          "children": [],
-          "name": "div",
-          "namespace": "http://www.w3.org/1999/xhtml",
-          "next": [Circular],
-          "parent": [Circular],
-          "prev": null,
-          "type": "tag",
-          "x-attribsNamespace": {
-            "class": undefined,
-          },
-          "x-attribsPrefix": {
-            "class": undefined,
-          },
-        },
-        "type": "tag",
-        "x-attribsNamespace": {
-          "type": undefined,
-        },
-        "x-attribsPrefix": {
-          "type": undefined,
-        },
-      },
-    ],
-    "name": "div",
-    "namespace": "http://www.w3.org/1999/xhtml",
-    "next": null,
-    "parent": Node {
-      "children": [
-        [Circular],
-      ],
-      "name": "root",
-      "next": null,
-      "parent": null,
-      "prev": null,
-      "type": "root",
-    },
-    "prev": null,
-    "type": "tag",
-    "x-attribsNamespace": {
-      "class": undefined,
-    },
-    "x-attribsPrefix": {
-      "class": undefined,
-    },
-  },
-  "_root": LoadedCheerio {
-    "0": Node {
-      "children": [
-        Node {
-          "attribs": {},
-          "children": [
-            Node {
-              "attribs": {},
-              "children": [],
-              "name": "head",
-              "namespace": "http://www.w3.org/1999/xhtml",
-              "next": Node {
-                "attribs": {},
-                "children": [],
-                "name": "body",
-                "namespace": "http://www.w3.org/1999/xhtml",
-                "next": null,
-                "parent": [Circular],
-                "prev": [Circular],
-                "type": "tag",
-                "x-attribsNamespace": {},
-                "x-attribsPrefix": {},
-              },
-              "parent": [Circular],
-              "prev": null,
-              "type": "tag",
-              "x-attribsNamespace": {},
-              "x-attribsPrefix": {},
-            },
-            Node {
-              "attribs": {},
-              "children": [],
-              "name": "body",
-              "namespace": "http://www.w3.org/1999/xhtml",
-              "next": null,
-              "parent": [Circular],
-              "prev": Node {
-                "attribs": {},
-                "children": [],
-                "name": "head",
-                "namespace": "http://www.w3.org/1999/xhtml",
-                "next": [Circular],
-                "parent": [Circular],
-                "prev": null,
-                "type": "tag",
-                "x-attribsNamespace": {},
-                "x-attribsPrefix": {},
-              },
-              "type": "tag",
-              "x-attribsNamespace": {},
-              "x-attribsPrefix": {},
-            },
-          ],
-          "name": "html",
-          "namespace": "http://www.w3.org/1999/xhtml",
-          "next": null,
-          "parent": [Circular],
-          "prev": null,
-          "type": "tag",
-          "x-attribsNamespace": {},
-          "x-attribsPrefix": {},
-        },
-      ],
-      "name": "root",
-      "next": null,
-      "parent": null,
-      "prev": null,
-      "type": "root",
-      "x-mode": "quirks",
-    },
-    "_root": [Circular],
-    "length": 1,
-    "options": {
-      "decodeEntities": true,
-      "xml": false,
-    },
-  },
-  "length": 1,
-  "options": {
-    "decodeEntities": true,
-    "xml": false,
-  },
+{
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <div
+        class="ui labeled input"
+      >
+        <div
+          class="ui label label"
+        >
+          Date
+        </div>
+        <input
+          type="password"
+        />
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="ui labeled input"
+    >
+      <div
+        class="ui label label"
+      >
+        Date
+      </div>
+      <input
+        type="password"
+      />
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
 }
 `;

@@ -8,6 +8,8 @@ import styled from 'styled-components';
 import {FormBuilderActionTypes} from '../../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../../formBuilderReducer/hook/useFormBuilderReducer';
 import SettingsField from './SettingsField';
+import {FormElementSettingsInputTypes} from '../../_types';
+import SettingsTranslatedField from './SettingsTranslatedField';
 
 const SettingsWrapper = styled.div`
     padding: 1.5em;
@@ -42,9 +44,13 @@ function SettingsEdition(): JSX.Element {
                 {elementInSettings && (
                     <SettingsWrapper>
                         <Form name="settings-edition">
-                            {(elementInSettings.uiElement?.settings || []).map(settingsField => (
-                                <SettingsField key={settingsField.name} settingsField={settingsField} />
-                            ))}
+                            {(elementInSettings.uiElement?.settings || []).map(settingsField =>
+                                settingsField.inputType === FormElementSettingsInputTypes.TRANSLATED_INPUT ? (
+                                    <SettingsTranslatedField key={settingsField.name} settingsField={settingsField} />
+                                ) : (
+                                    <SettingsField key={settingsField.name} settingsField={settingsField} />
+                                )
+                            )}
                         </Form>
                     </SettingsWrapper>
                 )}

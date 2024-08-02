@@ -11,12 +11,8 @@ import minimatch from 'minimatch';
 import * as extensions from './MIMEByExtension.json';
 import { AttributeType } from './types/attributes';
 import { FileType } from './types/files';
-export const getGraphqlTypeFromLibraryName = (library) => {
-    return flow([camelCase, upperFirst, trimEnd, partialRight(trimEnd, 's')])(library);
-};
-export const getGraphqlQueryNameFromLibraryName = (library) => {
-    return flow([camelCase, trimEnd])(library);
-};
+export const getGraphqlTypeFromLibraryName = (library) => flow([camelCase, upperFirst, trimEnd, partialRight(trimEnd, 's')])(library);
+export const getGraphqlQueryNameFromLibraryName = (library) => flow([camelCase, trimEnd])(library);
 export const isFileAllowed = (fsPath, allowList, ignoreList, filePath) => {
     // if allowPatterns is empty it's an implicit allow of all files
     if (!allowList.length) {
@@ -128,17 +124,13 @@ export const extractArgsFromString = (mapping) => {
         .map(e => e.replace(/\s+/g, ' ').trim().split(' '));
     return args.reduce((acc, value) => { var _a; return (Object.assign(Object.assign({}, acc), { [value[0]]: (_a = value[1]) !== null && _a !== void 0 ? _a : true })); }, {});
 };
-export const objectToNameValueArray = (obj) => {
-    return Object.keys(obj !== null && obj !== void 0 ? obj : {}).map(key => ({ name: key, value: obj[key] }));
-};
-export const nameValArrayToObj = (arr = [], keyFieldName = 'name', valueFieldName = 'value') => {
-    return Array.isArray(arr) && arr.length
-        ? arr.reduce((formattedElem, elem) => {
-            formattedElem[elem[keyFieldName]] = elem[valueFieldName];
-            return formattedElem;
-        }, {})
-        : null;
-};
+export const objectToNameValueArray = (obj) => Object.keys(obj !== null && obj !== void 0 ? obj : {}).map(key => ({ name: key, value: obj[key] }));
+export const nameValArrayToObj = (arr = [], keyFieldName = 'name', valueFieldName = 'value') => Array.isArray(arr) && arr.length
+    ? arr.reduce((formattedElem, elem) => {
+        formattedElem[elem[keyFieldName]] = elem[valueFieldName];
+        return formattedElem;
+    }, {})
+    : null;
 export const getFileType = (fileName) => {
     if (!fileName) {
         return null;
@@ -205,18 +197,16 @@ export const _getInitialEngine = (words, length) => {
  * @param id
  * @returns formatted ID
  */
-export const slugifyString = (id, separator = '_') => {
-    return id
-        .normalize('NFD') // Decompose the string in the base and the accents
-        .toLowerCase() // Lowercase the string
-        .replace(/[\u0300-\u036f]/g, '') // Remove accents
-        .replace(/[^a-zA-Z0-9\s]/g, separator) // Transform any special character into an underscore
-        .trim() // Remove spaces at the beginning and the end
-        .replace(/\s/g, separator) // Replace spaces by underscore
-        .replace(new RegExp(`${separator}${separator}+`, 'g'), separator) // Remove double underscores
-        .replace(new RegExp(`${separator}$`, 'g'), '') // Remove separator at the end
-        .replace(new RegExp(`^${separator}`, 'g'), ''); // Remove underscore at the beginning
-};
+export const slugifyString = (id, separator = '_') => id
+    .normalize('NFD') // Decompose the string in the base and the accents
+    .toLowerCase() // Lowercase the string
+    .replace(/[\u0300-\u036f]/g, '') // Remove accents
+    .replace(/[^a-zA-Z0-9\s]/g, separator) // Transform any special character into an underscore
+    .trim() // Remove spaces at the beginning and the end
+    .replace(/\s/g, separator) // Replace spaces by underscore
+    .replace(new RegExp(`${separator}${separator}+`, 'g'), separator) // Remove double underscores
+    .replace(new RegExp(`${separator}$`, 'g'), '') // Remove separator at the end
+    .replace(new RegExp(`^${separator}`, 'g'), ''); // Remove underscore at the beginning
 /**
  * Returns a hash code from a string
  * @param  {String} str The string to hash.
@@ -248,9 +238,7 @@ export const getFlagByLang = (lang) => {
     };
     return (_a = flagsByLang[lang]) !== null && _a !== void 0 ? _a : '';
 };
-export const getLogsIndexName = (instanceId) => {
-    return `logs-${instanceId}`;
-};
+export const getLogsIndexName = (instanceId) => `logs-${instanceId}`;
 export const waitFor = async (predicate, options = {}) => {
     const { timeout = 5000, interval = 250 } = options;
     const startTime = Date.now();
@@ -262,12 +250,8 @@ export const waitFor = async (predicate, options = {}) => {
     }
     return true;
 };
-export const isTypeLink = (type) => {
-    return type === AttributeType.simple_link || type === AttributeType.advanced_link;
-};
-export const isTypeStandard = (type) => {
-    return type === AttributeType.simple || type === AttributeType.advanced;
-};
+export const isTypeLink = (type) => type === AttributeType.simple_link || type === AttributeType.advanced_link;
+export const isTypeStandard = (type) => type === AttributeType.simple || type === AttributeType.advanced;
 /**
  * Return a new object without the keys passed in parameter
  */

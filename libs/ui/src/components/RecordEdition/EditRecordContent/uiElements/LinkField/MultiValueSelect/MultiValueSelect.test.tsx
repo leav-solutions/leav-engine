@@ -77,7 +77,7 @@ describe('<MultiValueSelect />', () => {
         formElement: {
             ...mockFormElementInput,
             settings: {
-                label: 'label',
+                label: {en: 'label'},
                 required: true
             }
         },
@@ -103,7 +103,7 @@ describe('<MultiValueSelect />', () => {
                     <MultiValueSelect
                         activeValues={undefined}
                         attribute={mockFormElementLink.attribute}
-                        label={state.formElement.settings.label}
+                        label={state.formElement.settings.label.en}
                         onSelectChange={onSelectChangeMock}
                         onValueDeselect={onValueDeselectMock}
                         required={false}
@@ -158,7 +158,7 @@ describe('<MultiValueSelect />', () => {
                             }
                         ]}
                         attribute={mockFormElementLink.attribute}
-                        label={state.formElement.settings.label}
+                        label={state.formElement.settings.label.en}
                         onSelectChange={onSelectChangeMock}
                         required={false}
                         onValueDeselect={onValueDeselectMock}
@@ -221,7 +221,7 @@ describe('<MultiValueSelect />', () => {
                         <MultiValueSelect
                             activeValues={[activeValues[0]]}
                             attribute={mockFormElementLink.attribute}
-                            label={state.formElement.settings.label}
+                            label={state.formElement.settings.label.en}
                             onSelectChange={onSelectChangeMock}
                             required={true}
                             onValueDeselect={onValueDeselectMock}
@@ -257,7 +257,7 @@ describe('<MultiValueSelect />', () => {
                         <MultiValueSelect
                             activeValues={[activeValues[0]]}
                             attribute={mockFormElementLink.attribute}
-                            label={state.formElement.settings.label}
+                            label={state.formElement.settings.label.en}
                             onSelectChange={onSelectChangeMock}
                             required={false}
                             onValueDeselect={onValueDeselectMock}
@@ -290,7 +290,7 @@ describe('<MultiValueSelect />', () => {
                         <MultiValueSelect
                             activeValues={activeValues}
                             attribute={mockFormElementLink.attribute}
-                            label={state.formElement.settings.label}
+                            label={state.formElement.settings.label.en}
                             onSelectChange={onSelectChangeMock}
                             required={false}
                             onValueDeselect={onValueDeselectMock}
@@ -320,7 +320,7 @@ describe('<MultiValueSelect />', () => {
                         <MultiValueSelect
                             activeValues={activeValues}
                             attribute={mockFormElementLink.attribute}
-                            label={state.formElement.settings.label}
+                            label={state.formElement.settings.label.en}
                             onSelectChange={onSelectChangeMock}
                             required={true}
                             onValueDeselect={onValueDeselectMock}
@@ -359,7 +359,7 @@ describe('<MultiValueSelect />', () => {
                         <MultiValueSelect
                             activeValues={activeValues}
                             attribute={mockFormElementLink.attribute}
-                            label={state.formElement.settings.label}
+                            label={state.formElement.settings.label.en}
                             onSelectChange={onSelectChangeMock}
                             required={false}
                             onValueDeselect={onValueDeselectMock}

@@ -16,7 +16,8 @@ import userEvent from '@testing-library/user-event';
 import {AntForm} from 'aristid-ds';
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 
-const label = 'label';
+const en_label = 'label';
+const fr_label = 'libellé';
 const idValue = '123';
 const mockValue = {
     index: 0,
@@ -40,12 +41,12 @@ const mockValue = {
     state: StandardFieldValueState.PRISTINE
 };
 
-const getInitialState = (required: boolean): IStandardFieldReducerState => ({
+const getInitialState = (required: boolean, fallbackLang: boolean = false): IStandardFieldReducerState => ({
     record: mockRecord,
     formElement: {
         ...mockFormElementInput,
         settings: {
-            label,
+            label: fallbackLang ? {en: en_label} : {fr: fr_label, en: en_label},
             required
         }
     },
@@ -102,6 +103,44 @@ describe('DSInputWrapper', () => {
         user = userEvent.setup({});
         mockOnChange.mockReset();
         mockHandleSubmit.mockReset();
+    });
+
+    test('Should display input with fr label ', async () => {
+        const state = getInitialState(false, false);
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSInputWrapper
+                        state={state}
+                        attribute={{} as RecordFormAttributeFragment}
+                        fieldValue={null}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
+
+        expect(screen.getByText(fr_label)).toBeVisible();
+    });
+
+    test('Should display input with fallback label ', async () => {
+        const state = getInitialState(false, true);
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSInputWrapper
+                        state={state}
+                        attribute={{} as RecordFormAttributeFragment}
+                        fieldValue={null}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
+
+        expect(screen.getByText(en_label)).toBeVisible();
     });
 
     test('Should submit empty value if field is not required', async () => {

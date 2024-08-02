@@ -130,7 +130,7 @@ describe('<MonoValueSelect />', () => {
         formElement: {
             ...mockFormElementInput,
             settings: {
-                label: 'label',
+                label: {en: 'label'},
                 required: true
             }
         },
@@ -155,7 +155,7 @@ describe('<MonoValueSelect />', () => {
                     <MonoValueSelect
                         activeValue={undefined}
                         attribute={mockFormElementLink.attribute}
-                        label={state.formElement.settings.label}
+                        label={state.formElement.settings.label.en}
                         required={state.formElement.settings.required}
                         onSelectChange={onSelectChangeMock}
                         onSelectClear={onClearSelectMock}
@@ -207,7 +207,7 @@ describe('<MonoValueSelect />', () => {
                             }
                         }}
                         attribute={mockFormElementLink.attribute}
-                        label={state.formElement.settings.label}
+                        label={state.formElement.settings.label.en}
                         required={state.formElement.settings.required}
                         onSelectChange={onSelectChangeMock}
                         onSelectClear={onClearSelectMock}
@@ -256,7 +256,7 @@ describe('<MonoValueSelect />', () => {
                     <MonoValueSelect
                         activeValue={activeValue}
                         attribute={mockFormElementLink.attribute}
-                        label={state.formElement.settings.label}
+                        label={state.formElement.settings.label.en}
                         required={false}
                         onSelectChange={onSelectChangeMock}
                         onSelectClear={onClearSelectMock}
@@ -293,7 +293,7 @@ describe('<MonoValueSelect />', () => {
                     <MonoValueSelect
                         activeValue={undefined}
                         attribute={mockFormElementLink.attribute}
-                        label={state.formElement.settings.label}
+                        label={state.formElement.settings.label.en}
                         required={state.formElement.settings.required}
                         onSelectChange={onSelectChangeMock}
                         onSelectClear={onClearSelectMock}
@@ -342,7 +342,7 @@ describe('<MonoValueSelect />', () => {
                     <MonoValueSelect
                         activeValue={undefined}
                         attribute={mockFormElementLink.attribute}
-                        label={state.formElement.settings.label}
+                        label={state.formElement.settings.label.en}
                         required={state.formElement.settings.required}
                         onSelectChange={onSelectChangeMock}
                         onSelectClear={onClearSelectMock}
