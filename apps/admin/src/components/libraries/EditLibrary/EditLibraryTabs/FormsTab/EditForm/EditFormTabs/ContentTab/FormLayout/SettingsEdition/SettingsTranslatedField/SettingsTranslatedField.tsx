@@ -4,24 +4,14 @@
 import {useQuery} from '@apollo/client';
 import Loading from 'components/shared/Loading';
 import {getAttributeByIdQuery} from 'queries/attributes/getAttributeById';
-import React, {useMemo} from 'react';
+import {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form, Input} from 'semantic-ui-react';
 import {GET_ATTRIBUTE_BY_ID, GET_ATTRIBUTE_BY_IDVariables} from '_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import {useEditFormContext} from '../../../../../hooks/useEditFormContext';
 import {FormBuilderActionTypes} from '../../../formBuilderReducer/formBuilderReducer';
 import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBuilderReducer';
-import {
-    FormElementSettingsInputTypes,
-    IFormElementSettings,
-    ISettingsFieldCommonProps,
-    SettingsOnChangeFunc
-} from '../../../_types';
-import SettingsAttribute, {ISettingsAttributeProps} from '../SettingsField/SettingsInput/SettingsAttribute';
-import SettingsCheckbox from '../SettingsField/SettingsInput/SettingsCheckbox';
-import SettingsRTE from '../SettingsField/SettingsInput/SettingsRTE';
-import SettingsSelect, {ISettingsFieldSelectProps} from '../SettingsField/SettingsInput/SettingsSelect';
-import SettingsTextInput from '../SettingsField/SettingsInput/SettingsTextInput';
+import {IFormElementSettings, ISettingsFieldCommonProps} from '../../../_types';
 import useLang from 'hooks/useLang';
 import FormFieldWrapper from 'components/shared/FormFieldWrapper';
 
@@ -34,7 +24,7 @@ function SettingsField({settingsField}: ISettingsFieldProps): JSX.Element {
     const {defaultLang, availableLangs} = useLang();
     const {readonly} = useEditFormContext();
     const {
-        state: {elementInSettings, library},
+        state: {elementInSettings},
         dispatch
     } = useFormBuilderReducer();
 
@@ -77,7 +67,6 @@ function SettingsField({settingsField}: ISettingsFieldProps): JSX.Element {
             });
         };
 
-    let comp: JSX.Element;
     const compProps: ISettingsFieldCommonProps = {
         onChange: _handleChange,
         disabled: readonly,
@@ -102,13 +91,6 @@ function SettingsField({settingsField}: ISettingsFieldProps): JSX.Element {
                 </FormFieldWrapper>
             ))}
         </Form.Group>
-    );
-
-    return (
-        <Form.Field key={settingsField.name}>
-            <label>{t(`forms.settings.${settingsField.name}`)}</label>
-            {comp}
-        </Form.Field>
     );
 }
 
