@@ -13,13 +13,17 @@ export const extractFormElements = (form: IRecordForm): IFormElementsByContainer
         }
 
         const uiElement = element.valueError ? ErrorField : formComponents[element.uiElementType];
+        const settings = element.settings.reduce((allSettings, curSettings) => {
+            if (curSettings.key === 'useAttributeLabel' && curSettings.value) {
+                return {...allSettings, label: element.attribute.label};
+            }
+            return {...allSettings, [curSettings.key]: curSettings.value};
+        }, {});
+
         allElements[element.containerId].push({
             ...element,
             uiElement,
-            settings: element.settings.reduce(
-                (allSettings, curSettings) => ({...allSettings, [curSettings.key]: curSettings.value}),
-                {}
-            )
+            settings
         });
 
         return allElements;

@@ -73,7 +73,8 @@ function ReserveAttribute({attribute}: IReserveAttributeProps): JSX.Element {
                 }),
                 {
                     attribute: attribute.id,
-                    label: attrLabel
+                    label: attrLabel,
+                    useAttributeLabel: true
                 }
             )
         };
