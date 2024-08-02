@@ -29,6 +29,7 @@ export enum TabsDirection {
 export interface ICommonFieldsSettings {
     label?: Record<string, string | null>;
     attribute?: string;
+    useAttributeLabel?: boolean;
 }
 
 export interface IRequiredFieldsSettings extends ICommonFieldsSettings {
