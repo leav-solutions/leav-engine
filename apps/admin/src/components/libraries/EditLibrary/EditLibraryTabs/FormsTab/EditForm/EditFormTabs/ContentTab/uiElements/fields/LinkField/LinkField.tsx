@@ -40,17 +40,17 @@ const StyledLabel = styled.span`
 `;
 
 function LinkField({settings}: IFormElementProps<ILinkFieldSettings>): JSX.Element {
-    const {label, required} = settings;
+    const {label: settingsLabel, required} = settings;
     const {lang: availableLangs} = useLang();
 
-    const _label = localizedLabel(label, availableLangs);
+    const label = localizedLabel(settingsLabel, availableLangs);
 
     return (
         <Table celled striped>
             <Table.Header>
                 <Table.Row>
                     <Table.HeaderCell colSpan="3">
-                        <StyledLabel className={required ? 'required' : undefined}>{_label}</StyledLabel>
+                        <StyledLabel className={required ? 'required' : undefined}>{label}</StyledLabel>
                     </Table.HeaderCell>
                 </Table.Row>
             </Table.Header>

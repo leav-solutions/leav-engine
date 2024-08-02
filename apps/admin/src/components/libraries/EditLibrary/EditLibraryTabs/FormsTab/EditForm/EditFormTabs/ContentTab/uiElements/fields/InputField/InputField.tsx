@@ -23,11 +23,11 @@ function InputField(props: IFormElementProps<IInputFieldSettings>): JSX.Element 
     const {label, type = 'text', required} = props.settings;
     const {lang: availableLangs} = useLang();
 
-    const _fieldProps = {
+    const fieldProps = {
         label: localizedLabel(label, availableLangs)
     };
 
-    return <StyledInput className={required ? 'required' : undefined} type={type} {..._fieldProps} fluid />;
+    return <StyledInput className={required ? 'required' : undefined} type={type} {...fieldProps} fluid />;
 }
 
 export default InputField;

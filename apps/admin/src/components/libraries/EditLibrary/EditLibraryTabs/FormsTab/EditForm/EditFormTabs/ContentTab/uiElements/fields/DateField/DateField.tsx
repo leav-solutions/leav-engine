@@ -25,19 +25,17 @@ interface IDateFieldSettings extends ICommonFieldsSettings {
     withTime?: boolean;
 }
 
-const defaulLabel = {en: 'Date'};
-
 function DateField(props: IFormElementProps<IDateFieldSettings>): JSX.Element {
-    const {label = defaulLabel, withTime = false} = props.settings;
+    const {label, withTime = false} = props.settings;
     const {lang: availableLangs} = useLang();
 
-    const _fieldProps = {
+    const fieldProps = {
         label: localizedLabel(label, availableLangs)
     };
 
     return (
         <>
-            <DateInput data-test-id="date-field" type="date" {..._fieldProps} />
+            <DateInput data-test-id="date-field" type="date" {...fieldProps} />
             {withTime && <TimeInput data-test-id="time-field" type="time" />}
         </>
     );

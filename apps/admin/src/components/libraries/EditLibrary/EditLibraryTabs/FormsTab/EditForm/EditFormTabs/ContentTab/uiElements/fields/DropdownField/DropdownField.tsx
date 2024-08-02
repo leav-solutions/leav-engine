@@ -10,11 +10,11 @@ import useLang from 'hooks/useLang';
 function DropdownField({settings}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
     const {lang: availableLangs} = useLang();
 
-    const _label = localizedLabel(settings.label, availableLangs);
+    const label = localizedLabel(settings.label, availableLangs);
 
     return (
         <>
-            <label>{_label}</label>
+            <label>{label}</label>
             <Dropdown {...settings} />
         </>
     );

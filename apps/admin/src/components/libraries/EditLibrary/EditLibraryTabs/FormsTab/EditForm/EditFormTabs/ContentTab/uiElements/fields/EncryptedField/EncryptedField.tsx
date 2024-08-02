@@ -12,11 +12,11 @@ function EncryptedField(props: IFormElementProps<ICommonFieldsSettings>): JSX.El
     const {label = defaulLabel} = props.settings;
     const {lang: availableLangs} = useLang();
 
-    const _fieldProps = {
+    const fieldProps = {
         label: localizedLabel(label, availableLangs)
     };
 
-    return <Input type="password" {..._fieldProps} />;
+    return <Input type="password" {...fieldProps} />;
 }
 
 export default EncryptedField;

@@ -67,11 +67,11 @@ function ErrorField({element}: IFormElementProps<ICommonFieldsSettings>): JSX.El
     const {token} = theme.useToken();
     const {lang: availbaleLangs} = useLang();
 
-    const _label = localizedTranslation(element.settings.label, availbaleLangs);
+    const label = localizedTranslation(element.settings.label, availbaleLangs);
 
     return (
         <Wrapper $themeToken={token}>
-            <label>{_label}</label>
+            <label>{label}</label>
             <ErrorContent>
                 <IconWrapper>
                     <FrownFilled color="yellow" size={48} />

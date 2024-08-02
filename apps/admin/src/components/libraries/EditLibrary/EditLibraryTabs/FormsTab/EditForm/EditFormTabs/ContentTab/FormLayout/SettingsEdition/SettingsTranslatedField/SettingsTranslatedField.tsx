@@ -19,7 +19,7 @@ interface ISettingsFieldProps {
     settingsField: IFormElementSettings;
 }
 
-function SettingsField({settingsField}: ISettingsFieldProps): JSX.Element {
+function SettingsField({settingsField}: ISettingsFieldProps) {
     const {t} = useTranslation();
     const {defaultLang, availableLangs} = useLang();
     const {readonly} = useEditFormContext();

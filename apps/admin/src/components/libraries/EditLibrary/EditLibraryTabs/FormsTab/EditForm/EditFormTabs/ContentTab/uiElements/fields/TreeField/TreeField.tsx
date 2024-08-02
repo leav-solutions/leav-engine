@@ -19,7 +19,7 @@ const CenteredBreadcrumb = styled(Breadcrumb)`
 function TreeField({settings}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
     const {lang: availableLangs} = useLang();
 
-    const _label = localizedLabel(settings.label, availableLangs);
+    const label = localizedLabel(settings.label, availableLangs);
 
     const nodes = [];
     const sectionsNumber = 3;
@@ -35,7 +35,7 @@ function TreeField({settings}: IFormElementProps<ICommonFieldsSettings>): JSX.El
         <Table celled striped>
             <Table.Header>
                 <Table.Row>
-                    <Table.HeaderCell>{_label}</Table.HeaderCell>
+                    <Table.HeaderCell>{label}</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
             <Table.Body>
