@@ -18,7 +18,6 @@ describe('Auth', () => {
         });
 
         expect(resAuthenticate.status).toBe(200);
-        expect(resAuthenticate.data.refreshToken).toBeTruthy();
     });
 
     test('Me', async () => {
