@@ -37,6 +37,10 @@ const commonFieldSettings: IFormElementSettings[] = [
     {
         name: 'label',
         inputType: FormElementSettingsInputTypes.TRANSLATED_INPUT
+    },
+    {
+        name: 'useAttributeLabel',
+        inputType: FormElementSettingsInputTypes.CHECKBOX
     }
 ];
 

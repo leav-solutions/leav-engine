@@ -313,7 +313,8 @@
                 "VERTICAL": "Vertical",
                 "HORIZONTAL": "Horizontal"
             },
-            "displayRecordIdentity": "Display information column"
+            "displayRecordIdentity": "Display information column",
+            "useAttributeLabel": "Use attribute label"
         },
         "rte": {
             "bold": "Bold",
