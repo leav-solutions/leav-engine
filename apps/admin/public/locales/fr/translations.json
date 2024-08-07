@@ -313,7 +313,8 @@
                 "VERTICAL": "Verticale",
                 "HORIZONTAL": "Horizontale"
             },
-            "displayRecordIdentity": "Afficher la colonne Informations"
+            "displayRecordIdentity": "Afficher la colonne Informations",
+            "useAttributeLabel": "Utiliser le libellé de l'attribut"
         },
         "rte": {
             "bold": "Gras",
