@@ -28,27 +28,35 @@ export default function computeInitialState(library: string, form: GET_FORM_form
                         ? layoutElements[uiElementType]
                         : formElements[uiElementType];
 
+                const useAttributeLabel =
+                    field.settings.find(setting => setting.key === 'useAttributeLabel')?.value ?? false;
+
                 const hydratedField: IFormElement = {
                     ...neededFieldData,
                     uiElement,
-                    settings: field.settings.reduce((allSettings, curSettings) => {
-                        let value = curSettings.value;
+                    settings: field.settings.reduce(
+                        (allSettings, curSettings) => {
+                            let value = curSettings.value;
 
-                        if (curSettings.key === 'columns') {
-                            value = value.map(col => {
-                                if (typeof col === 'object' && typeof col.id !== 'undefined') {
-                                    return col.id;
-                                }
+                            if (curSettings.key === 'columns') {
+                                value = value.map(col => {
+                                    if (typeof col === 'object' && typeof col.id !== 'undefined') {
+                                        return col.id;
+                                    }
 
-                                return col;
-                            });
+                                    return col;
+                                });
+                            }
+
+                            return {
+                                ...allSettings,
+                                [curSettings.key]: value
+                            };
+                        },
+                        {
+                            useAttributeLabel: !!useAttributeLabel
                         }
-
-                        return {
-                            ...allSettings,
-                            [curSettings.key]: value
-                        };
-                    }, {})
+                    )
                 };
 
                 if (typeof groupedFields[containerId] === 'undefined') {
