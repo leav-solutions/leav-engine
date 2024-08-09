@@ -37,7 +37,7 @@
     "@types/react-beautiful-dnd": "13.1.2",
     "@types/react-table": "7.7.12",
     "@types/uuid": "^9",
-    "aristid-ds": ">=8.0.0",
+    "aristid-ds": "8.0.0-6cb3865",
     "babel-jest": "29.3.1",
     "commander": "9.5.0",
     "jest": "29.0.3",

@@ -66,13 +66,13 @@ export const dsTheme: ComponentProps<typeof KitApp>['customTheme'] = {
     general: {
         colors: {
             primary: {
-                blue100: '#ddf1fd',
-                blue200: '#98d6f8',
-                blue300: '#54baf4',
-                blue400: themeVars.primaryColor,
-                blue500: '#0d80c2',
-                blue600: '#0b6aa0',
-                blue700: '#08537d'
+                100: '#ddf1fd',
+                200: '#98d6f8',
+                300: '#54baf4',
+                400: themeVars.primaryColor,
+                500: '#0d80c2',
+                600: '#0b6aa0',
+                700: '#08537d'
             }
         }
     },
