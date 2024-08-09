@@ -27,7 +27,7 @@ interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputNumberProps> 
 const KitInputNumberStyled = styled(KitInputNumber)<{$shouldHighlightColor: boolean}>`
     .ant-input-number-input-wrap .ant-input-number-input {
         color: ${({$shouldHighlightColor}) =>
-            $shouldHighlightColor ? 'var(--general-colors-primary-primary400)' : 'initial'};
+            $shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial'};
     }
 
     .kit-input-wrapper-helper {
