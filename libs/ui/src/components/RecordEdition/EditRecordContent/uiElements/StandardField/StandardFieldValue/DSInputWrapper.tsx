@@ -25,8 +25,7 @@ interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputProps> {
 }
 
 const KitInputStyled = styled(KitInput)<{$shouldHighlightColor: boolean}>`
-    color: ${({$shouldHighlightColor}) =>
-        $shouldHighlightColor ? 'var(--general-colors-primary-primary400)' : 'initial'};
+    color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
 
     .kit-input-wrapper-helper {
         white-space: nowrap;
