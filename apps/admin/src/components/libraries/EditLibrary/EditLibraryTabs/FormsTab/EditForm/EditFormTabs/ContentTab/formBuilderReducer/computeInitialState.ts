@@ -29,7 +29,7 @@ export default function computeInitialState(library: string, form: GET_FORM_form
                         : formElements[uiElementType];
 
                 const useAttributeLabel =
-                    field.settings.find(setting => setting.key === 'useAttributeLabel')?.value ?? false;
+                    field.settings.find(setting => setting.key === 'useAttributeLabel')?.value;
 
                 const hydratedField: IFormElement = {
                     ...neededFieldData,
