@@ -3,9 +3,17 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import moment from 'moment';
 import {IDateRangeValue} from '_types/value';
-import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
+import {ActionsListIOTypes, IActionsListFunction, IActionsListFunctionResult} from '../../_types/actionsList';
+import {Errors} from '../../_types/errors';
 
-export default function (): IActionsListFunction<{auto: true; format: false}> {
+const defaultValueLocalizedParam = `{
+  "weekday": "long",
+  "month": "long",
+  "day": "numeric",
+  "year": "numeric"
+}`;
+
+export default function (): IActionsListFunction<{localized: false; universal: false}> {
     return {
         id: 'formatDateRange',
         name: 'Format Date Range',
@@ -14,47 +22,69 @@ export default function (): IActionsListFunction<{auto: true; format: false}> {
         output_types: [ActionsListIOTypes.OBJECT],
         params: [
             {
-                name: 'auto',
-                type: 'boolean',
-                description: 'Adapt format to current language',
-                required: true,
-                default_value: 'false'
+                name: 'localized',
+                type: 'string',
+                description:
+                    'Adapt format to current language. Available options: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleString#options.',
+                required: false,
+                default_value: defaultValueLocalizedParam
             },
             {
-                name: 'format',
+                name: 'universal',
                 type: 'string',
-                description: 'Date format. Available format: https://momentjs.com/docs/#/displaying/format/',
+                description:
+                    'Date format for every languages. If "localized" parameter is defined, this parameter is ignored. Available formats: https://momentjs.com/docs/#/displaying/format/.',
                 required: false,
                 default_value: 'DD/MM/YYYY HH:mm:ss'
             }
         ],
-        action: (values, {auto, format}, {lang}) => {
-            const computedValues = values.map(elementValue => {
+        action: (values, {localized, universal}, {lang}) => {
+            const errors: IActionsListFunctionResult['errors'] = [];
+
+            const formattedValues = values.map(elementValue => {
                 const dateRangeValue = elementValue.value as IDateRangeValue<number>;
 
-                if (elementValue.value === null || !dateRangeValue.from || !dateRangeValue.to) {
-                    return {value: null};
+                if (dateRangeValue === null || !dateRangeValue.from || !dateRangeValue.to) {
+                    return {...dateRangeValue, value: null};
                 }
 
-                const numberValFrom = dateRangeValue.from;
-                const numberValTo = dateRangeValue.to;
+                const {from: numberValFrom, to: numberValTo} = dateRangeValue;
+
+                if (isNaN(Number(numberValFrom)) || isNaN(Number(numberValTo))) {
+                    return {...dateRangeValue, value: ['', '']};
+                }
+
+                if ((localized === null || localized === undefined) && universal) {
+                    return {
+                        ...dateRangeValue,
+                        value: {
+                            from: moment.unix(numberValFrom).format(universal),
+                            to: moment.unix(numberValTo).format(universal)
+                        }
+                    };
+                }
+
+                let options: Intl.DateTimeFormatOptions = {};
+                try {
+                    options = JSON.parse(localized ?? {});
+                } catch (e) {
+                    // TODO: rise error to inform user without break app
+                    errors.push({
+                        errorType: Errors.FORMAT_ERROR,
+                        attributeValue: {value: localized},
+                        message:
+                            'Params "localized" of FormatDateAction are invalid JSON. Use `{}` empty option instead.'
+                    });
+                }
 
                 elementValue.value = {
-                    from: isNaN(numberValFrom)
-                        ? ''
-                        : auto === 'true'
-                          ? new Date(numberValFrom * 1_000).toLocaleString(lang)
-                          : moment.unix(numberValFrom).format(format ?? ''),
-                    to: isNaN(numberValTo)
-                        ? ''
-                        : auto === 'true'
-                          ? new Date(numberValTo * 1_000).toLocaleString(lang)
-                          : moment.unix(numberValTo).format(format ?? '')
+                    from: new Date(numberValFrom * 1_000).toLocaleString(lang, options),
+                    to: new Date(numberValTo * 1_000).toLocaleString(lang, options)
                 };
                 return elementValue;
             });
 
-            return {values: computedValues, errors: []};
+            return {values: formattedValues, errors: []};
         }
     };
 }
