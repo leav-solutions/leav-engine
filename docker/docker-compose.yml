@@ -172,11 +172,17 @@ services:
     ports:
       - "9229:9229"
     working_dir: *dir-core
-    command: [
-        sh,
-        -c,
-        "/scripts/wait-for-it.sh message-broker:5672 -t 1000 -- /scripts/wait-for-it.sh arangodb:8529 -t 1000 -- /scripts/start-core.sh",
-      ]
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z core 4001 || exit 1"]
+      interval: 5s
+      timeout: 2s
+      retries: 15
+    depends_on:
+      message-broker:
+        condition: service_healthy
+      arangodb:
+        condition: service_healthy
+    command: [sh, -c, "/scripts/start-core.sh"]
 
   indexation-manager:
     build: *env-build-core
@@ -192,11 +198,10 @@ services:
     ports:
       - "9231:9231"
     working_dir: *dir-core
-    command: [
-        sh,
-        -c,
-        "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start:indexation",
-      ]
+    depends_on:
+      core:
+        condition: service_healthy
+    command: [sh, -c, "yarn run start:indexation"]
 
   tasks-manager-master:
     build: *env-build-core
@@ -214,11 +219,10 @@ services:
     ports:
       - "9232:9232"
     working_dir: *dir-core
-    command: [
-        sh,
-        -c,
-        "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start:tasksMaster",
-      ]
+    depends_on:
+      core:
+        condition: service_healthy
+    command: [sh, -c, "yarn run start:tasksMaster"]
 
   tasks-manager-worker:
     build: *env-build-core
@@ -236,11 +240,10 @@ services:
     working_dir: *dir-core
     ports:
         - "9234:9234"
-    command: [
-        sh,
-        -c,
-        "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start:tasksWorker",
-      ]
+    depends_on:
+      core:
+        condition: service_healthy
+    command: [sh, -c, "yarn run start:tasksWorker"]
 
   admin:
     image: *node_image
@@ -261,11 +264,10 @@ services:
       - *volume-admin-modules
       - *volume-shared-modules
     working_dir: *dir-admin
-    command: [
-        sh,
-        -c,
-        "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start"
-      ]
+    depends_on:
+      core:
+        condition: service_healthy
+    command: [sh, -c, "yarn run start"]
 
   data-studio:
     image: *node_image
@@ -287,11 +289,10 @@ services:
       - *volume-shared-modules
       - *volume-data_studio-modules
     working_dir: *dir-data_studio
-    command: [
-        sh,
-        -c,
-        "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start"
-      ]
+    depends_on:
+      core:
+        condition: service_healthy
+    command: [sh, -c, "yarn run start"]
 
   login:
     image: *node_image
@@ -313,11 +314,10 @@ services:
       - *volume-shared-modules
       - *volume-login-modules
     working_dir: *dir-login
-    command: [
-        sh,
-        -c,
-        "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start"
-      ]
+    depends_on:
+      core:
+        condition: service_healthy
+    command: [sh, -c, "yarn run start"]
 
   portal:
     image: *node_image
@@ -341,11 +341,10 @@ services:
       - *volume-shared-modules
       - *volume-portal-modules
     working_dir: *dir-portal
-    command: [
-        sh,
-        -c,
-        "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start"
-      ]
+    depends_on:
+      core:
+        condition: service_healthy
+    command: [sh, -c, "yarn run start"]
 
   automate-scan:
     profiles: ["automate"]
@@ -362,11 +361,10 @@ services:
       - *volume-automate_scan-modules
       - *volume-config_manager-modules
     working_dir: *dir-automate_scan
-    command: [
-        sh,
-        -c,
-        "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start:watch",
-      ]
+    depends_on:
+      core:
+        condition: service_healthy
+    command: [sh, -c, "yarn run start:watch"]
 
   files-manager:
     profiles: ["automate"]
@@ -384,11 +382,10 @@ services:
     ports:
       - "9230:9230"
     working_dir: *dir-core
-    command: [
-        sh,
-        -c,
-        "/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn run start:files",
-      ]
+    depends_on:
+      core:
+        condition: service_healthy
+    command: [sh, -c, "yarn run start:files"]
 
   preview-generator:
     profiles: ["automate"]
@@ -408,11 +405,10 @@ services:
       - *volume-preview_generator-modules
       - *volume-config_manager-modules
     working_dir: *dir-preview_generator
-    command: [
-        sh,
-        -c,
-        "/scripts/wait-for-it.sh core:4001 -t 1000 -- ./start.sh",
-      ]
+    depends_on:
+      core:
+        condition: service_healthy
+    command: [sh, -c, "yarn run ./start.sh"]
 
   # At creation, we just install deps and exit.
   # Run "docker-compose run --rm sync-scan yarn start" to make the scan
@@ -447,8 +443,6 @@ services:
       <<: [*env-amqp]
       APP_ROOT_PATH: *dir-logs_collector
       DEBUG: false
-    depends_on:
-      - message-broker
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
@@ -458,11 +452,10 @@ services:
       - *volume-config_manager-modules
       - *volume-message_broker-modules
     working_dir: *dir-logs_collector
-    command: [
-        sh,
-        -c,
-        "/scripts/wait-for-it.sh message-broker:5672 -t 1000 -- yarn run start:dev",
-      ]
+    depends_on:
+      message-broker:
+        condition: service_healthy
+    command: [sh, -c, "yarn run start:dev"]
 
   # Proxy
   traefik:
@@ -492,6 +485,13 @@ services:
       - ./conf/arangodb/arangod.conf:/etc/arangodb3/arangod.conf
     ports:
       - "8529:8529"
+    healthcheck:
+      # The arango image does not embed any health checking tool, thus we have to run a custom command to do the healthcheck.
+      # The test uses wget to make an internal HTTP request to the ArangoDB server's version endpoint.
+      test: ["CMD-SHELL", "wget -qO- http://0.0.0.0:8529/_api/version"]
+      interval: 5s
+      timeout: 2s
+      retries: 15
 
   message-broker:
     image: *message_broker_image
@@ -507,6 +507,11 @@ services:
       - traefik.http.services.message-broker.loadbalancer.server.port=5672
     volumes:
       - message-broker_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
+      interval: 5s
+      timeout: 2s
+      retries: 15
 
   redis:
     image: *redis_image
