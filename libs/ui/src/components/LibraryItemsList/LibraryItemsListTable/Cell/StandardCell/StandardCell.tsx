@@ -58,7 +58,7 @@ function StandardCell({cellData, values}: ISimpleCellProps): JSX.Element {
                 return (
                     <Switch
                         disabled
-                        checked={!!values[0]}
+                        checked={values[0]?.value}
                         checkedChildren={<CheckOutlined />}
                         unCheckedChildren={<CloseOutlined />}
                     />
