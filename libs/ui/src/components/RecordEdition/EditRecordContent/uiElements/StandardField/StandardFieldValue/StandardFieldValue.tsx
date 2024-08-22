@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
-import {AnyPrimitive, IDateRangeValue} from '@leav/utils';
+import {AnyPrimitive, IDateRangeValue, localizedTranslation} from '@leav/utils';
 import {Button, Form, Input, InputRef, Popover, Space, theme} from 'antd';
 import moment from 'moment';
 import React, {MutableRefObject, useEffect, useRef} from 'react';
@@ -51,6 +51,7 @@ import TextInput from './Inputs/TextInput';
 import ValuesList from './ValuesList';
 import {IValueOfValuesList} from './ValuesList/ValuesList';
 import {DSInputNumberWrapper} from './DSInputNumberWrapper';
+import {useLang} from '_ui/hooks';
 
 const ErrorMessage = styled.div`
     color: ${themeVars.errorColor};
@@ -210,6 +211,7 @@ function StandardFieldValue({
 }: IStandardFieldValueProps): JSX.Element {
     const {t, i18n} = useSharedTranslation();
     const {token} = theme.useToken();
+    const {lang: availableLangs} = useLang();
 
     const actionsWrapperRef = useRef<HTMLDivElement>();
     const inputRef = useRef<InputRefPossibleTypes>();
@@ -623,7 +625,7 @@ function StandardFieldValue({
                                 />
                                 {!fieldValue.index && (
                                     <label className="attribute-label" onClick={_handleFocus}>
-                                        {state.formElement.settings.label}
+                                        {localizedTranslation(state.formElement.settings.label, availableLangs)}
                                         {editRecordState.externalUpdate.updatedValues[attribute?.id] && (
                                             <UpdatedFieldIcon />
                                         )}

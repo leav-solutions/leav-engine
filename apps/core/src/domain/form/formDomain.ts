@@ -140,7 +140,7 @@ export default function (deps: IDeps = {}): IFormDomain {
                 uiElementType: 'input_field',
                 type: FormElementTypes.field,
                 settings: {
-                    label: att.label?.[ctx.lang] || att.id,
+                    label: att.label || att.id,
                     attribute: att.id
                 }
             };
@@ -153,7 +153,7 @@ export default function (deps: IDeps = {}): IFormDomain {
                 case AttributeTypes.ADVANCED_LINK:
                     data.settings = {
                         displayRecordIdentity: true,
-                        label: att.label?.[ctx.lang] || att.id,
+                        label: att.label || att.id,
                         attribute: att.id
                     };
                     data.uiElementType = 'link';
