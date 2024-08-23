@@ -4,7 +4,7 @@
 import {amqpService} from '@leav/message-broker';
 import fs from 'fs';
 // import {IApplicationService} from 'infra/application/applicationService';
-import {IConfig, CoreMod} from '_types/config';
+import {IConfig, CoreMode} from '_types/config';
 import {IFilesManagerInterface} from 'interface/filesManager';
 import {IIndexationManagerInterface} from 'interface/indexationManager';
 import {IServer} from 'interface/server';
@@ -36,7 +36,7 @@ import {initOIDCClient} from './infra/oidc';
         amqpService({
             config: {
                 ...conf.amqp,
-                ...(conf.coreMod === CoreMod.TASKS_MANAGER_WORKER && {prefetch: conf.tasksManager.workerPrefetch})
+                ...(conf.coreMode === CoreMode.TASKS_MANAGER_WORKER && {prefetch: conf.tasksManager.workerPrefetch})
             }
         }),
         initRedis({config: conf}),
@@ -83,27 +83,27 @@ import {initOIDCClient} from './infra/oidc';
     try {
         await _createRequiredDirectories();
 
-        switch (conf.coreMod) {
-            case CoreMod.SERVER:
+        switch (conf.coreMode) {
+            case CoreMode.SERVER:
                 await server.init();
                 await server.initConsumers();
                 break;
-            case CoreMod.MIGRATE:
+            case CoreMode.MIGRATE:
                 // Run db migrations
                 await dbUtils.migrate(coreContainer);
                 // Make sure we always exit process. Sometimes we don't and we're stuck here forever
                 process.exit(0);
                 break;
-            case CoreMod.FILES_MANAGER:
+            case CoreMode.FILES_MANAGER:
                 await filesManager.init();
                 break;
-            case CoreMod.INDEXATION_MANAGER:
+            case CoreMode.INDEXATION_MANAGER:
                 await indexationManager.init();
                 break;
-            case CoreMod.TASKS_MANAGER_MASTER:
+            case CoreMode.TASKS_MANAGER_MASTER:
                 await tasksManager.initMaster();
                 break;
-            case CoreMod.TASKS_MANAGER_WORKER:
+            case CoreMode.TASKS_MANAGER_WORKER:
                 await tasksManager.initWorker();
                 break;
             default:

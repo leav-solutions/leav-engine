@@ -146,7 +146,7 @@ services:
       - traefik.http.routers.core.entrypoints=web
     environment:
       <<: [*env-core, *env-amqp]
-      CORE_MOD: server
+      CORE_MODE: server
     volumes: # We must load every volumes for install
       - *mount_point-repo
       - *mount_point-files
@@ -190,7 +190,7 @@ services:
     stdin_open: true
     environment:
       <<: [*env-core, *env-amqp]
-      CORE_MOD: indexationManager
+      CORE_MODE: indexationManager
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
@@ -210,7 +210,7 @@ services:
     stdin_open: true
     environment:
       <<: [*env-core, *env-amqp]
-      CORE_MOD: tasksManager:master
+      CORE_MODE: tasksManager:master
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
@@ -232,7 +232,7 @@ services:
     restart: always
     environment:
       <<: [*env-core, *env-amqp]
-      CORE_MOD: tasksManager:worker
+      CORE_MODE: tasksManager:worker
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
@@ -376,7 +376,7 @@ services:
     restart: always
     environment:
       <<: [*env-core, *env-amqp]
-      CORE_MOD: filesManager
+      CORE_MODE: filesManager
     volumes:
       - *mount_point-repo
       - *mount_point-files

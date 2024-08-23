@@ -85,7 +85,7 @@ services:
       - traefik.http.routers.core.entrypoints=web
     environment:
       <<: [*env-core, *env-amqp]
-      CORE_MOD: server
+      CORE_MODE: server
     volumes:
       - *mount_point-files
       - *mount_point-previews
@@ -109,7 +109,7 @@ services:
     restart: always
     environment:
       <<: [*env-core, *env-amqp]
-      CORE_MOD: indexationManager
+      CORE_MODE: indexationManager
     depends_on:
       core:
         condition: service_healthy
@@ -121,7 +121,7 @@ services:
     restart: always
     environment:
       <<: [*env-core, *env-amqp]
-      CORE_MOD: tasksManager:master
+      CORE_MODE: tasksManager:master
     volumes:
       - *mount_point-exports
       - *mount_point-imports
@@ -135,7 +135,7 @@ services:
     restart: always
     environment:
       <<: [*env-core, *env-amqp]
-      CORE_MOD: tasksManager:worker
+      CORE_MODE: tasksManager:worker
     volumes:
       - *mount_point-exports
       - *mount_point-imports
@@ -150,7 +150,7 @@ services:
     restart: always
     environment:
       <<: [*env-core, *env-amqp]
-      CORE_MOD: filesManager
+      CORE_MODE: filesManager
     volumes:
       - *mount_point-files
       - *mount_point-previews
