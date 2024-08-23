@@ -46,7 +46,6 @@ WORKDIR /app
 COPY scripts/apps_install.sh ./scripts/apps_install.sh
 RUN ./scripts/apps_install.sh
 
-
 ### RUNNER FOR CORE ###
 FROM runner as runner-core
 WORKDIR /app
@@ -68,4 +67,4 @@ RUN rm -rf ./apps/login \
 WORKDIR /app/apps/core
 ENV APP_ROOT_PATH=/app/apps/core
 
-CMD ["sh", "-c", "/app/scripts/plugins_install.sh && yarn run db:migrate && yarn run start --server"]
+CMD ["sh", "-c", "/app/scripts/plugins_install.sh && yarn run db:migrate && yarn run start"]

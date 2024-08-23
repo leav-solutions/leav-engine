@@ -5,6 +5,7 @@ import {Options} from 'amqplib';
 import {IKeyValue} from './shared';
 
 export interface IConfig {
+    coreMode: CoreMode;
     server: IServer;
     db: IDb;
     diskCache: IDiskCache;
@@ -31,6 +32,15 @@ export interface IConfig {
     dbProfiler: IDbProfilerConfig;
     instanceId: string;
     elasticSearch: IElasticSearchConfig;
+}
+
+export enum CoreMode {
+    SERVER = 'server',
+    MIGRATE = 'migrate',
+    FILES_MANAGER = 'filesManager',
+    INDEXATION_MANAGER = 'indexationManager',
+    TASKS_MANAGER_MASTER = 'tasksManager:master',
+    TASKS_MANAGER_WORKER = 'tasksManager:worker'
 }
 
 export interface IServer {
