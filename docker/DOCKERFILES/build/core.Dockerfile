@@ -37,9 +37,6 @@ COPY ./docker/scripts ./scripts
 COPY libs ./libs
 COPY assets ./assets
 
-# Install production plugins modules
-RUN ./scripts/plugins_install.sh
-
 ### APPS INSTALLER FOR CORE ###
 # Install apps for core in a specific stage to avoid having all node_modules in runner-core
 FROM runner as apps-installer-core
@@ -67,9 +64,8 @@ RUN rm -rf ./apps/login \
     && rm -rf .yarn/cache \
     && apk del alpine-sdk pkgconfig poppler-dev poppler-utils python3
 
-
 # Get ready for runtime
 WORKDIR /app/apps/core
 ENV APP_ROOT_PATH=/app/apps/core
 
-CMD ["sh", "-c", "yarn run db:migrate && yarn run start --server"]
+CMD ["sh", "-c", "/app/scripts/plugins_install.sh && yarn run db:migrate && yarn run start --server"]
