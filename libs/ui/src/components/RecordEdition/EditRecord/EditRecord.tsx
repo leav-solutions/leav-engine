@@ -117,10 +117,11 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         withInfoButton
     });
 
-    const {loading: permissionsLoading, canEdit, isReadOnly} = useCanEditRecord(
-        {...record?.library, id: library},
-        record?.id
-    );
+    const {
+        loading: permissionsLoading,
+        canEdit,
+        isReadOnly
+    } = useCanEditRecord({...record?.library, id: library}, record?.id);
 
     const {saveValues} = useSaveValueBatchMutation();
     const {deleteValue} = useExecuteDeleteValueMutation(record);
@@ -378,6 +379,13 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                     return errors;
                 }, {});
                 setCreationErrors(errorsByField);
+
+                antdForm.setFields(
+                    creationResult.data.createRecord.valuesErrors.map(error => ({
+                        name: error.attributeId,
+                        errors: [error.message]
+                    }))
+                );
 
                 return;
             }
