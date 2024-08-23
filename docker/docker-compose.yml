@@ -146,6 +146,7 @@ services:
       - traefik.http.routers.core.entrypoints=web
     environment:
       <<: [*env-core, *env-amqp]
+      CORE_MOD: server
     volumes: # We must load every volumes for install
       - *mount_point-repo
       - *mount_point-files
@@ -189,6 +190,7 @@ services:
     stdin_open: true
     environment:
       <<: [*env-core, *env-amqp]
+      CORE_MOD: indexationManager
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
@@ -208,6 +210,7 @@ services:
     stdin_open: true
     environment:
       <<: [*env-core, *env-amqp]
+      CORE_MOD: tasksManager:master
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
@@ -229,6 +232,7 @@ services:
     restart: always
     environment:
       <<: [*env-core, *env-amqp]
+      CORE_MOD: tasksManager:worker
     volumes:
       - *mount_point-repo
       - *mount_point-scripts
@@ -372,6 +376,7 @@ services:
     restart: always
     environment:
       <<: [*env-core, *env-amqp]
+      CORE_MOD: filesManager
     volumes:
       - *mount_point-repo
       - *mount_point-files
@@ -421,7 +426,8 @@ services:
     environment:
       <<: [*env-sync-scan, *env-amqp]
     depends_on:
-      - core
+        core:
+            condition: service_healthy
     volumes:
       - *mount_point-repo
       - *mount_point-files
@@ -538,7 +544,8 @@ services:
       - traefik.http.services.redis-commander.loadbalancer.server.port=8081
       - traefik.http.routers.rabbitmq.entrypoints=web
     depends_on:
-      - redis
+        redis:
+            condition: service_healthy
 
   elasticsearch:
     profiles: ["logs"]
@@ -561,7 +568,8 @@ services:
       - "traefik.http.routers.kibana.rule=Host(`kibana.leav.localhost`)"
       - "traefik.http.routers.kibana.entrypoints=web"
     depends_on:
-      - elasticsearch
+        elasticsearch:
+            condition: service_healthy
 
 volumes:
   arango_data:
