@@ -10086,13 +10086,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/minimist@npm:1.2.2":
-  version: 1.2.2
-  resolution: "@types/minimist@npm:1.2.2"
-  checksum: b8da83c66eb4aac0440e64674b19564d9d86c80ae273144db9681e5eeff66f238ade9515f5006ffbfa955ceff8b89ad2bd8ec577d7caee74ba101431fb07045d
-  languageName: node
-  linkType: hard
-
 "@types/ms@npm:*, @types/ms@npm:0.7.31":
   version: 0.7.31
   resolution: "@types/ms@npm:0.7.31"
@@ -14898,7 +14891,6 @@ __metadata:
     "@types/jest-when": "npm:3.5.2"
     "@types/jsonwebtoken": "npm:8.5.9"
     "@types/lodash": "npm:4.14.185"
-    "@types/minimist": "npm:1.2.2"
     "@types/ms": "npm:0.7.31"
     "@types/node": "npm:18.7.18"
     "@types/nodemailer": "npm:6.4.6"
@@ -14942,7 +14934,6 @@ __metadata:
     license-check-and-add: "npm:3.0.5"
     lint-staged: "npm:7.3.0"
     lodash: "npm:4.17.21"
-    minimist: "npm:1.2.8"
     moment: "npm:2.29.4"
     moment-timezone: "npm:0.5.37"
     ms: "npm:2.1.3"
@@ -25128,7 +25119,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimist@npm:1.2.8, minimist@npm:^1.2.8":
+"minimist@npm:^1.2.8":
   version: 1.2.8
   resolution: "minimist@npm:1.2.8"
   checksum: 908491b6cc15a6c440ba5b22780a0ba89b9810e1aea684e253e43c4e3b8d56ec1dcdd7ea96dde119c29df59c936cde16062159eae4225c691e19c70b432b6e6f
