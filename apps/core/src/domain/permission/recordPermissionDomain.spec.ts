@@ -137,7 +137,8 @@ describe('recordPermissionDomain', () => {
             };
 
             const recordPermDomain = recordPermissionDomain({
-                'core.domain.permission.helpers.permissionByUserGroups': mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
+                'core.domain.permission.helpers.permissionByUserGroups':
+                    mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper
             });
 

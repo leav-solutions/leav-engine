@@ -860,7 +860,8 @@ describe('ValueDomain', () => {
                     'core.infra.record': mockRecordRepo as IRecordRepo,
                     'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                     'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
-                    'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
+                    'core.domain.permission.recordAttribute':
+                        mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
@@ -915,7 +916,8 @@ describe('ValueDomain', () => {
                     'core.infra.record': mockRecordRepo as IRecordRepo,
                     'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                     'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
-                    'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
+                    'core.domain.permission.recordAttribute':
+                        mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtilsStandardAttribute as IUtils
@@ -967,7 +969,8 @@ describe('ValueDomain', () => {
                     'core.infra.record': mockRecordRepo as IRecordRepo,
                     'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                     'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
-                    'core.domain.permission.recordAttribute': mockRecordAttrPermForbidDom as IRecordAttributePermissionDomain,
+                    'core.domain.permission.recordAttribute':
+                        mockRecordAttrPermForbidDom as IRecordAttributePermissionDomain,
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.utils': mockUtilsStandardAttribute as IUtils
@@ -1026,7 +1029,8 @@ describe('ValueDomain', () => {
                     'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
                     'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
-                    'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
+                    'core.domain.permission.recordAttribute':
+                        mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                     'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
                     'core.utils': mockUtilsStandardAttribute as IUtils,
@@ -1048,7 +1052,7 @@ describe('ValueDomain', () => {
             test('Should throw with metafield specified if actions list throws', async () => {
                 const mockUtils: Mockify<IUtils> = {
                     ...mockUtilsStandardAttribute,
-                    rethrow: jest.fn().mockImplementation(e => {
+                    rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                         throw e;
                     })
                 };
@@ -1096,7 +1100,8 @@ describe('ValueDomain', () => {
                     'core.infra.record': mockRecordRepo as IRecordRepo,
                     'core.domain.actionsList': mockALThrowsDomain as IActionsListDomain,
                     'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
-                    'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
+                    'core.domain.permission.recordAttribute':
+                        mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
                     'core.utils': mockUtils as IUtils,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
@@ -1125,7 +1130,7 @@ describe('ValueDomain', () => {
         test('Should save multiple values', async () => {
             const mockUtils: Mockify<IUtils> = {
                 ...mockUtilsStandardAttribute,
-                rethrow: jest.fn().mockImplementation(e => {
+                rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                     throw e;
                 })
             };
@@ -1239,7 +1244,7 @@ describe('ValueDomain', () => {
                 areValuesIdentical: jest.fn().mockImplementation(
                     (val1, val2) => val2?.value === 'identical' // Consider values for test_attr as identical
                 ),
-                rethrow: jest.fn().mockImplementation(e => {
+                rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                     throw e;
                 })
             };
@@ -1455,7 +1460,8 @@ describe('ValueDomain', () => {
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
-                'core.domain.permission.recordAttribute': mockRecordAttrPermDomainNoEdit as IRecordAttributePermissionDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttrPermDomainNoEdit as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
@@ -1484,7 +1490,7 @@ describe('ValueDomain', () => {
         test('Delete empty values', async () => {
             const mockUtils: Mockify<IUtils> = {
                 ...mockUtilsStandardAttribute,
-                rethrow: jest.fn().mockImplementation(e => {
+                rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                     throw e;
                 })
             };
@@ -1530,7 +1536,7 @@ describe('ValueDomain', () => {
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdateEventHelper
             });
 
-            const res = await valDomain.saveValueBatch({
+            await valDomain.saveValueBatch({
                 library: 'test_lib',
                 recordId: '123456',
                 values,
@@ -1544,7 +1550,7 @@ describe('ValueDomain', () => {
         test("Don't delete empty values if keepEmpty true", async () => {
             const mockUtils: Mockify<IUtils> = {
                 ...mockUtilsStandardAttribute,
-                rethrow: jest.fn().mockImplementation(e => {
+                rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                     throw e;
                 })
             };
@@ -2150,7 +2156,8 @@ describe('ValueDomain', () => {
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelperMultipleTrees as IElementAncestorsHelper,
+                'core.domain.tree.helpers.elementAncestors':
+                    mockElementAncestorsHelperMultipleTrees as IElementAncestorsHelper,
                 'core.domain.versionProfile': mockVersionProfileDomainMultipleTrees as IVersionProfileDomain,
                 'core.utils': mockUtilsStandardAttribute as IUtils
             });

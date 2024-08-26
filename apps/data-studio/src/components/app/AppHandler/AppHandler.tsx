@@ -195,7 +195,6 @@ function AppHandler(): JSX.Element {
                                 customTheme={dsTheme}
                                 locale={{
                                     locale: localeByLang[lang[0]],
-                                    ItemCard: null,
                                     ItemList: null,
                                     Image: null
                                 }}

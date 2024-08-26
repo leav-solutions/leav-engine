@@ -5,7 +5,7 @@ import fs from 'fs';
 import {startConsume} from './amqp/startConsume';
 import {getConfig} from './getConfig/getConfig';
 
-(async function() {
+(async function () {
     try {
         const config = await getConfig();
 

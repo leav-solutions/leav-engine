@@ -7,10 +7,13 @@ import {FloatingMenu, FloatingMenuAction, RecordCard} from '_ui/components';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import DeactivateRecordBtn from '_ui/components/LibraryItemsList/shared/DeactivateRecordBtn';
 import SelectCellsBtn, {SelectCellsBtnType} from '_ui/components/LibraryItemsList/shared/SelectCellsBtn';
-import EditRecordBtn from '_ui/components/RecordEdition/EditRecordBtn';
 import {PreviewSize} from '_ui/constants';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IRecordIdentityWhoAmI} from '_ui/types/records';
+import {ArrowsAltOutlined} from '@ant-design/icons';
+import {AntButton} from 'aristid-ds';
+import {useContext} from 'react';
+import {useEditRecordModalContext} from '../../EditRecordModalContext';
 
 const Info = styled.div`
     min-width: 150px;
@@ -28,17 +31,30 @@ function CellInfos({record, previewSize, lang}: ICellInfosProps): JSX.Element {
 
     const canDeleteRecord = searchState.library.permissions.delete_record;
 
+    const {editRecord} = useEditRecordModalContext();
+
     const menuBtnSize: SizeType = 'middle';
+
+    const _onEditRecord = () => {
+        editRecord({
+            open: true,
+            record,
+            library: record.library.id,
+            onClose: () => null,
+            valuesVersion: searchState.valuesVersions
+        });
+    };
 
     const menuActions: FloatingMenuAction[] = [
         {
             title: t('global.details'),
             button: (
-                <EditRecordBtn
+                <AntButton
+                    aria-label="edit-record"
                     shape="circle"
-                    record={record}
                     size={menuBtnSize}
-                    valuesVersion={searchState.valuesVersions}
+                    icon={<ArrowsAltOutlined size={48} />}
+                    onClick={_onEditRecord}
                 />
             )
         }

@@ -2,12 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FrownFilled} from '@ant-design/icons';
-import {ICommonFieldsSettings} from '@leav/utils';
+import {ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
 import {theme} from 'antd';
 import styled from 'styled-components';
 import {AntdThemeToken, themeVars} from '_ui/antdTheme';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IFormElementProps} from '../../_types';
+import {useLang} from '_ui/hooks';
 
 const Wrapper = styled.div<{$themeToken: AntdThemeToken}>`
     position: relative;
@@ -64,10 +65,13 @@ const Message = styled.div`
 function ErrorField({element}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
     const {t} = useSharedTranslation();
     const {token} = theme.useToken();
+    const {lang: availbaleLangs} = useLang();
+
+    const label = localizedTranslation(element.settings.label, availbaleLangs);
 
     return (
         <Wrapper $themeToken={token}>
-            <label>{element.settings.label}</label>
+            <label>{label}</label>
             <ErrorContent>
                 <IconWrapper>
                     <FrownFilled color="yellow" size={48} />

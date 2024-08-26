@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ActionsListEvents, IActionsListConfig} from '../../_types/actionsList';
+import {ActionsListEvents, ActionsListConfig} from '../../_types/actionsList';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 
-export default (attribute: IAttribute): IActionsListConfig => {
+export default (attribute: IAttribute): ActionsListConfig => {
     if (attribute.type !== AttributeTypes.SIMPLE && attribute.type !== AttributeTypes.ADVANCED) {
         return {};
     }

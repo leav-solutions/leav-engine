@@ -4,7 +4,7 @@
 import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 import {Errors} from '../../_types/errors';
 
-export default function (): IActionsListFunction {
+export default function (): IActionsListFunction<{regex: true}> {
     return {
         id: 'validateRegex',
         name: 'Validate Regex',

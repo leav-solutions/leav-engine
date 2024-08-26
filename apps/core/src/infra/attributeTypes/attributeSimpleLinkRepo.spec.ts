@@ -277,7 +277,7 @@ describe('AttributeSimpleLinkRepo', () => {
                 collection: jest.fn().mockReturnValue({} as DocumentCollection)
             };
 
-            const mockDbServ = {db: (mockDb as unknown) as Database};
+            const mockDbServ = {db: mockDb as unknown as Database};
 
             const mockRepo: Mockify<IAttributeTypeRepo> = {
                 filterValueQueryPart: jest.fn().mockReturnValue(aql``)
@@ -304,7 +304,7 @@ describe('AttributeSimpleLinkRepo', () => {
                 collection: jest.fn().mockReturnValue({} as DocumentCollection)
             };
 
-            const mockDbServ = {db: (mockDb as unknown) as Database};
+            const mockDbServ = {db: mockDb as unknown as Database};
 
             const mockRepo: Mockify<IAttributeTypeRepo> = {
                 filterValueQueryPart: jest.fn().mockReturnValue(aql`<VALUE QUERY PART>`)
@@ -370,7 +370,7 @@ describe('AttributeSimpleLinkRepo', () => {
                 collection: jest.fn().mockReturnValue({} as DocumentCollection)
             };
 
-            const mockDbServ = {db: (mockDb as unknown) as Database};
+            const mockDbServ = {db: mockDb as unknown as Database};
 
             const attrRepo = attributeSimpleLinkRepo({'core.infra.db.dbService': mockDbServ});
             const filter = attrRepo.sortQueryPart({

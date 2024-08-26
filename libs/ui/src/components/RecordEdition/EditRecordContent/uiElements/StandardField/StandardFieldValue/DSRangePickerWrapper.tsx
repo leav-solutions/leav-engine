@@ -3,23 +3,31 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitDatePicker} from 'aristid-ds';
 import {FunctionComponent, ReactNode} from 'react';
-import {IStandardFieldReducerState} from '../../../reducers/standardFieldReducer/standardFieldReducer';
+import {
+    IStandardFieldReducerState,
+    IStandardFieldValue
+} from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {Form} from 'antd';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
-import {IProvidedByAntFormItem, StandardValueTypes} from '../../../_types';
+import {FormElement, IProvidedByAntFormItem, StandardValueTypes} from '../../../_types';
 import {RangePickerProps} from 'antd/lib/date-picker';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
+import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
+import {useLang} from '_ui/hooks';
+import {IRequiredFieldsSettings, localizedTranslation} from '@leav/utils';
 
 interface IDSRangePickerWrapperProps extends IProvidedByAntFormItem<RangePickerProps> {
     state: IStandardFieldReducerState;
-    infoButton: ReactNode;
+    attribute: RecordFormAttributeFragment;
+    fieldValue: IStandardFieldValue;
+    shouldShowValueDetailsButton?: boolean;
     handleSubmit: (value: StandardValueTypes, id?: string) => void;
 }
 
 const KitDatePickerRangePickerStyled = styled(KitDatePicker.RangePicker)<{$shouldHighlightColor: boolean}>`
-    color: ${({$shouldHighlightColor}) =>
-        $shouldHighlightColor ? 'var(--general-colors-primary-primary400)' : 'initial'};
+    color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
     .kit-input-wrapper-helper {
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -28,15 +36,21 @@ const KitDatePickerRangePickerStyled = styled(KitDatePicker.RangePicker)<{$shoul
 `;
 
 export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps> = ({
-    state,
-    infoButton,
     value,
     onChange,
+    state,
+    attribute,
+    fieldValue,
+    shouldShowValueDetailsButton = false,
     handleSubmit
 }) => {
     const {t} = useSharedTranslation();
-
+    const {lang: availableLangs} = useLang();
     const {errors} = Form.Item.useStatus();
+    const {onValueDetailsButtonClick, infoIconWithTooltip} = useValueDetailsButton({
+        value: fieldValue?.value,
+        attribute
+    });
 
     const _handleDateChange: (
         rangePickerDates: [from: dayjs.Dayjs, to: dayjs.Dayjs] | null,
@@ -71,17 +85,19 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
         handleSubmit(datesToSave, state.attribute.id);
     };
 
+    const label = localizedTranslation(state.formElement.settings.label, availableLangs);
+
     return (
         <KitDatePickerRangePickerStyled
             value={value}
             onChange={_handleDateChange}
-            label={state.formElement.settings.label}
+            label={label}
             required={state.formElement.settings.required}
             disabled={state.isReadOnly}
             allowClear={!state.isInheritedNotOverrideValue}
             status={errors.length > 0 ? 'error' : undefined}
-            infoIcon={infoButton}
-            onInfoClick={Boolean(infoButton) ? () => void 0 : undefined}
+            infoIcon={shouldShowValueDetailsButton ? infoIconWithTooltip : null}
+            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             helper={
                 state.isInheritedOverrideValue
                     ? t('record_edition.inherited_input_helper', {

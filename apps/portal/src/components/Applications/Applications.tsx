@@ -17,10 +17,10 @@ import ApplicationsSearch from './ApplicationsSearch';
 import {EditApplicationModal} from './EditApplicationModal';
 
 const PrimaryFloatButton = styled(FloatButton)`
-    background-color: ${dsTheme.general.colors.primary.primary400};
+    background-color: ${dsTheme.general.colors.primary['400']};
 
     .ant-float-btn-body {
-        background-color: ${dsTheme.general.colors.primary.primary400};
+        background-color: ${dsTheme.general.colors.primary['400']};
     }
 `;
 

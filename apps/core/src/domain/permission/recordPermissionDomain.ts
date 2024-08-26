@@ -57,13 +57,12 @@ export default function (deps: IDeps = {}): IRecordPermissionDomain {
             if (typeof libProps.permissions_conf === 'undefined') {
                 // Check if action is present in library permissions
                 const isLibAction =
-                    Object.values(LibraryPermissionsActions).indexOf(
-                        (action as unknown) as LibraryPermissionsActions
-                    ) !== -1;
+                    Object.values(LibraryPermissionsActions).indexOf(action as unknown as LibraryPermissionsActions) !==
+                    -1;
 
                 return isLibAction
                     ? libraryPermissionDomain.getLibraryPermission({
-                          action: (action as unknown) as LibraryPermissionsActions,
+                          action: action as unknown as LibraryPermissionsActions,
                           libraryId: library,
                           userId,
                           ctx

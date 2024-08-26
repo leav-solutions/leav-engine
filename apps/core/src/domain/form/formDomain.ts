@@ -132,41 +132,39 @@ export default function (deps: IDeps = {}): IFormDomain {
         const attributes = await attributeDomain.getLibraryAttributes(library, ctx);
         const nonReadonlyAttributes = attributes.filter(att => !att?.readonly);
 
-        const attributesElements = nonReadonlyAttributes.map(
-            (att, index): IFormElement => {
-                const data: IFormElement = {
-                    id: uniqueId(),
-                    containerId: FORM_ROOT_CONTAINER_ID,
-                    order: index + 2,
-                    uiElementType: 'input_field',
-                    type: FormElementTypes.field,
-                    settings: {
-                        label: att.label?.[ctx.lang] || att.id,
-                        attribute: att.id
-                    }
-                };
-                switch (att.type) {
-                    case AttributeTypes.SIMPLE:
-                    case AttributeTypes.ADVANCED:
-                        data.uiElementType = 'input_field';
-                        break;
-                    case AttributeTypes.SIMPLE_LINK:
-                    case AttributeTypes.ADVANCED_LINK:
-                        data.settings = {
-                            displayRecordIdentity: true,
-                            label: att.label?.[ctx.lang] || att.id,
-                            attribute: att.id
-                        };
-                        data.uiElementType = 'link';
-                        break;
-                    case AttributeTypes.TREE:
-                        data.uiElementType = 'tree';
-                        break;
+        const attributesElements = nonReadonlyAttributes.map((att, index): IFormElement => {
+            const data: IFormElement = {
+                id: uniqueId(),
+                containerId: FORM_ROOT_CONTAINER_ID,
+                order: index + 2,
+                uiElementType: 'input_field',
+                type: FormElementTypes.field,
+                settings: {
+                    label: att.label || att.id,
+                    attribute: att.id
                 }
-
-                return data;
+            };
+            switch (att.type) {
+                case AttributeTypes.SIMPLE:
+                case AttributeTypes.ADVANCED:
+                    data.uiElementType = 'input_field';
+                    break;
+                case AttributeTypes.SIMPLE_LINK:
+                case AttributeTypes.ADVANCED_LINK:
+                    data.settings = {
+                        displayRecordIdentity: true,
+                        label: att.label || att.id,
+                        attribute: att.id
+                    };
+                    data.uiElementType = 'link';
+                    break;
+                case AttributeTypes.TREE:
+                    data.uiElementType = 'tree';
+                    break;
             }
-        );
+
+            return data;
+        });
 
         const finalElements = [...defaultElements, ...attributesElements];
 

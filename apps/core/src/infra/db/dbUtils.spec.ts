@@ -340,13 +340,13 @@ describe('dbUtils', () => {
                 Database: jest.fn(),
                 listCollections: global.__mockPromise([]),
                 collection: () =>
-                    (({
+                    ({
                         create: jest.fn(),
                         save: mockCollecSave
-                    } as unknown) as DocumentCollection)
+                    }) as unknown as DocumentCollection
             };
             const mockDbServ: Mockify<IDbService> = {
-                db: (mockDb as unknown) as Database,
+                db: mockDb as unknown as Database,
                 execute: global.__mockPromise([])
             };
 

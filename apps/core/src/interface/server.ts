@@ -20,7 +20,6 @@ import {ServerOptions} from 'graphql-ws';
 import * as graphqlWS from 'graphql-ws/lib/use/ws';
 import {createServer} from 'http';
 import {IUtils} from 'utils/utils';
-import {v4 as uuidv4} from 'uuid';
 import * as winston from 'winston';
 import {WebSocketServer} from 'ws';
 import {IConfig} from '_types/config';
@@ -32,6 +31,7 @@ import PermissionError from '../errors/PermissionError';
 import ValidationError from '../errors/ValidationError';
 import type {ValidateRequestTokenFunc} from '../app/helpers/validateRequestToken';
 import {HandleGraphqlErrorFunc} from './helpers/handleGraphqlError';
+import {InitQueryContextFunc} from 'app/helpers/initQueryContext';
 
 export interface IServer {
     init(): Promise<void>;
@@ -46,6 +46,7 @@ interface IDeps {
     'core.app.application'?: IApplicationApp;
     'core.app.core'?: ICoreApp;
     'core.app.helpers.validateRequestToken'?: ValidateRequestTokenFunc;
+    'core.app.helpers.initQueryContext'?: InitQueryContextFunc;
     'core.utils.logger'?: winston.Winston;
     'core.utils'?: IUtils;
     'core.depsManager'?: AwilixContainer;
@@ -59,6 +60,7 @@ export default function ({
     'core.app.application': applicationApp = null,
     'core.app.core': coreApp = null,
     'core.app.helpers.validateRequestToken': validateRequestToken = null,
+    'core.app.helpers.initQueryContext': initQueryContext = null,
     'core.utils.logger': logger = null,
     'core.utils': utils = null,
     'core.depsManager': depsManager = null
@@ -198,6 +200,7 @@ export default function ({
                             });
 
                             const context: IQueryInfos = {
+                                ...initQueryContext(),
                                 userId: payload.userId,
                                 groupsId: payload.groupsId
                             };
@@ -223,7 +226,21 @@ export default function ({
                             async willSendResponse(requestContext) {
                                 const {response, contextValue} = requestContext;
 
-                                if (contextValue.dbProfiler && response.body.kind === 'single') {
+                                if (response.body.kind !== 'single') {
+                                    return;
+                                }
+
+                                if (contextValue.errors?.length) {
+                                    response.body.singleResult.errors = [
+                                        ...(response.body.singleResult.errors ?? []),
+                                        ...(contextValue.errors ?? []).map(err => {
+                                            const gqlErr = new GraphQLError(err.message, {originalError: err});
+                                            return handleGraphqlError(gqlErr, contextValue);
+                                        })
+                                    ];
+                                }
+
+                                if (contextValue.dbProfiler) {
                                     response.body.singleResult.extensions = {
                                         ...response.body.singleResult.extensions,
                                         dbProfiler: {
@@ -298,9 +315,8 @@ export default function ({
                                 const payload = await validateRequestToken(req);
 
                                 const ctx: IQueryInfos = {
+                                    ...initQueryContext(req),
                                     userId: payload.userId,
-                                    lang: (req.query.lang as string) ?? config.lang.default,
-                                    queryId: req.body.requestId || uuidv4(),
                                     groupsId: payload.groupsId
                                 };
 

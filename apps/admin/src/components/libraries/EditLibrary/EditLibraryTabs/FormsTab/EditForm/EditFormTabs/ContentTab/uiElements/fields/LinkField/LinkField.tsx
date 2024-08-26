@@ -4,6 +4,8 @@
 import {Table} from 'semantic-ui-react';
 import {ICommonFieldsSettings, IFormElementProps} from '../../../_types';
 import styled from 'styled-components';
+import useLang from 'hooks/useLang';
+import {localizedLabel} from 'utils';
 
 interface ILinkFieldSettings extends ICommonFieldsSettings {
     required?: boolean;
@@ -38,7 +40,10 @@ const StyledLabel = styled.span`
 `;
 
 function LinkField({settings}: IFormElementProps<ILinkFieldSettings>): JSX.Element {
-    const {label, required} = settings;
+    const {label: settingsLabel, required} = settings;
+    const {lang: availableLangs} = useLang();
+
+    const label = localizedLabel(settingsLabel, availableLangs);
 
     return (
         <Table celled striped>

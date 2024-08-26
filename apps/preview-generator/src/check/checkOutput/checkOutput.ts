@@ -37,9 +37,7 @@ export const checkOutput = async (output: string, size: number, name: string, co
     }
 
     // checkOutput
-    const extOutput = extname(output)
-        .toLowerCase()
-        .replace('.', '');
+    const extOutput = extname(output).toLowerCase().replace('.', '');
 
     if (extOutput !== 'png') {
         throw new ErrorPreview({

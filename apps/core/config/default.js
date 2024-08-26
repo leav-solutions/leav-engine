@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 module.exports = {
     instanceId: process.env.INSTANCE_ID || 'leav_engine',
+    coreMode: process.env.CORE_MODE || 'server',
     server: {
         host: process.env.SERVER_HOST || 'localhost',
         port: process.env.SERVER_PORT || 4001,

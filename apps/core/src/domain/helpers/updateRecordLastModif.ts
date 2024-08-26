@@ -16,7 +16,7 @@ interface IDeps {
 
 export type UpdateRecordLastModifFunc = (library: string, recordId: string, ctx: IQueryInfos) => Promise<IRecord>;
 
-export default function({
+export default function ({
     'core.infra.record': recordRepo = null,
     'core.infra.cache.cacheService': cacheService = null,
     'core.utils': utils = null
