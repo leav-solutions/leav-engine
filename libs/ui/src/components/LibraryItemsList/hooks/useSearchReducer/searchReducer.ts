@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ApolloError} from '@apollo/client';
+import {GraphQLErrors} from '@apollo/client/errors';
 import getFieldsFromView from '_ui/components/LibraryItemsList/helpers/getFieldsFromView';
 import {IAttribute, IField, IFilter, ISelectedRecord, SearchMode, SidebarContentType} from '_ui/types/search';
 import {IValueVersion} from '_ui/types/values';
@@ -45,16 +45,12 @@ export enum SearchActionTypes {
 interface ISearchResult {
     type: SearchActionTypes.UPDATE_RESULT;
     records: ISearchRecord[];
+    errors?: GraphQLErrors;
     totalCount: number;
 }
 
-interface ISearchResultError {
-    type: SearchActionTypes.UPDATE_RESULT;
-    error: ApolloError;
-}
-
 export type SearchAction =
-    | ({type: SearchActionTypes.UPDATE_RESULT} & (ISearchResult | ISearchResultError))
+    | ({type: SearchActionTypes.UPDATE_RESULT} & ISearchResult)
     | {type: SearchActionTypes.SET_PAGINATION; page: number}
     | {type: SearchActionTypes.SET_OFFSET; offset: number}
     | {type: SearchActionTypes.SET_LOADING; loading: boolean}
@@ -85,6 +81,7 @@ export type SearchAction =
 
 export const initialSearchState: ISearchState = {
     library: null,
+    errors: [],
     records: [],
     totalCount: 0,
     loading: false,
@@ -160,9 +157,9 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
         case SearchActionTypes.UPDATE_RESULT: {
             return {
                 ...state,
-                records: (action as ISearchResult).records ?? [],
-                totalCount: (action as ISearchResult).totalCount ?? 0,
-                error: (action as ISearchResultError).error,
+                records: action.records ?? state.records,
+                totalCount: action.totalCount ?? state.totalCount,
+                errors: action.errors ?? [],
                 loading: false
             };
         }

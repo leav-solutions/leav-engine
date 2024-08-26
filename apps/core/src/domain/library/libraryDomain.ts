@@ -148,7 +148,7 @@ export default function ({
             };
 
             // We need behavior later on for validation. It's forbidden to change it so we get it from the existing lib
-            const libBehavior = existingLib ? library?.behavior : libData?.behavior ?? defaultParams.behavior;
+            const libBehavior = existingLib ? library?.behavior : (libData?.behavior ?? defaultParams.behavior);
 
             // If existing lib, force all uneditable fields to value saved id DB
             // If new lib, merge default params with supplied params

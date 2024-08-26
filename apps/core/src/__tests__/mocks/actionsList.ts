@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ActionsListIOTypes, IActionsListConfig, IActionsListFunction} from '../../_types/actionsList';
+import {ActionsListIOTypes, ActionsListConfig, IActionsListFunction} from '../../_types/actionsList';
 
 /*** Available Actions ***/
 const mockActionBase: IActionsListFunction = {
@@ -63,13 +63,13 @@ export const mockAvailActions: IActionsListFunction[] = [
 ];
 
 /*** Actions list conf ***/
-const mockConfBase: IActionsListConfig = {
+const mockConfBase: ActionsListConfig = {
     saveValue: [],
     deleteValue: [],
     getValue: []
 };
 
-export const mockActionsListConfGetString: IActionsListConfig = {
+export const mockActionsListConfGetString: ActionsListConfig = {
     ...mockConfBase,
     getValue: [
         {
@@ -79,7 +79,7 @@ export const mockActionsListConfGetString: IActionsListConfig = {
     ]
 };
 
-export const mockActionsListConfGetBoolean: IActionsListConfig = {
+export const mockActionsListConfGetBoolean: ActionsListConfig = {
     ...mockConfBase,
     getValue: [
         {
@@ -89,7 +89,7 @@ export const mockActionsListConfGetBoolean: IActionsListConfig = {
     ]
 };
 
-export const mockActionsListConfGetObject: IActionsListConfig = {
+export const mockActionsListConfGetObject: ActionsListConfig = {
     ...mockConfBase,
     getValue: [
         {
@@ -99,7 +99,7 @@ export const mockActionsListConfGetObject: IActionsListConfig = {
     ]
 };
 
-export const mockActionsListConfGetNumber: IActionsListConfig = {
+export const mockActionsListConfGetNumber: ActionsListConfig = {
     ...mockConfBase,
     getValue: [
         {
@@ -109,7 +109,7 @@ export const mockActionsListConfGetNumber: IActionsListConfig = {
     ]
 };
 
-export const mockActionsListConfGetAll: IActionsListConfig = {
+export const mockActionsListConfGetAll: ActionsListConfig = {
     ...mockConfBase,
     getValue: [
         {

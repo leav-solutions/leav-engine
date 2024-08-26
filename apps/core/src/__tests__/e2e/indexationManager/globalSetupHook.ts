@@ -7,7 +7,7 @@ require('ts-node').register({
     transpileOnly: true
 });
 
-export default async function() {
+export default async function () {
     await setupModule.setup();
 
     return null;

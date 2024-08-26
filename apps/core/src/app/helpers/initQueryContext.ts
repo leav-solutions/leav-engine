@@ -10,13 +10,14 @@ interface IDeps {
     config?: IConfig;
 }
 
-export type InitQueryContextFunc = (req: Request) => IQueryInfos;
+export type InitQueryContextFunc = (req?: Request) => IQueryInfos;
 
-export default function ({config = null}: IDeps) {
-    return (req: Request): IQueryInfos => ({
+export default function ({config = null}: IDeps): InitQueryContextFunc {
+    return req => ({
         userId: null,
-        lang: (req.query.lang as string) ?? config.lang.default,
-        queryId: req.body.requestId || uuidv4(),
-        groupsId: []
+        lang: (req?.query.lang as string) ?? config.lang.default,
+        queryId: req?.body.requestId || uuidv4(),
+        groupsId: [],
+        errors: []
     });
 }

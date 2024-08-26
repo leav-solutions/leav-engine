@@ -14,8 +14,10 @@ import {mockFormElementInput} from '_ui/__mocks__/common/form';
 import {mockAttributeLink} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
 import {AntForm} from 'aristid-ds';
+import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 
-const label = 'label';
+const en_label = 'label';
+const fr_label = 'libellé';
 const idValue = '123';
 const mockValue = {
     index: 0,
@@ -39,12 +41,12 @@ const mockValue = {
     state: StandardFieldValueState.PRISTINE
 };
 
-const getInitialState = (required: boolean): IStandardFieldReducerState => ({
+const getInitialState = (required: boolean, fallbackLang: boolean = false): IStandardFieldReducerState => ({
     record: mockRecord,
     formElement: {
         ...mockFormElementInput,
         settings: {
-            label,
+            label: fallbackLang ? {en: en_label} : {fr: fr_label, en: en_label},
             required
         }
     },
@@ -103,6 +105,44 @@ describe('DSInputWrapper', () => {
         mockHandleSubmit.mockReset();
     });
 
+    test('Should display input with fr label ', async () => {
+        const state = getInitialState(false, false);
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSInputWrapper
+                        state={state}
+                        attribute={{} as RecordFormAttributeFragment}
+                        fieldValue={null}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
+
+        expect(screen.getByText(fr_label)).toBeVisible();
+    });
+
+    test('Should display input with fallback label ', async () => {
+        const state = getInitialState(false, true);
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSInputWrapper
+                        state={state}
+                        attribute={{} as RecordFormAttributeFragment}
+                        fieldValue={null}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
+
+        expect(screen.getByText(en_label)).toBeVisible();
+    });
+
     test('Should submit empty value if field is not required', async () => {
         const state = getInitialState(false);
         render(
@@ -110,7 +150,8 @@ describe('DSInputWrapper', () => {
                 <AntForm.Item>
                     <DSInputWrapper
                         state={state}
-                        infoButton=""
+                        attribute={{} as RecordFormAttributeFragment}
+                        fieldValue={null}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
                     />
@@ -134,7 +175,8 @@ describe('DSInputWrapper', () => {
                     <AntForm.Item>
                         <DSInputWrapper
                             state={state}
-                            infoButton=""
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={null}
                             handleSubmit={mockHandleSubmit}
                             onChange={mockOnChange}
                         />
@@ -159,7 +201,8 @@ describe('DSInputWrapper', () => {
                     <AntForm.Item>
                         <DSInputWrapper
                             state={state}
-                            infoButton=""
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={null}
                             handleSubmit={mockHandleSubmit}
                             onChange={mockOnChange}
                             value={mockValue.originRawValue}
@@ -189,7 +232,8 @@ describe('DSInputWrapper', () => {
                     <AntForm.Item>
                         <DSInputWrapper
                             state={state}
-                            infoButton=""
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={null}
                             handleSubmit={mockHandleSubmit}
                             onChange={mockOnChange}
                             value={inheritedValues[1].raw_value}
@@ -199,8 +243,8 @@ describe('DSInputWrapper', () => {
             );
             const input = screen.getByRole('textbox');
             expect(input).toHaveValue(inheritedValues[1].raw_value);
-            const clearButton = screen.queryByRole('button');
-            expect(clearButton).not.toBeInTheDocument();
+
+            expect(screen.queryByRole('button')).toBeNull();
 
             await user.click(input);
             await user.tab();
@@ -221,7 +265,8 @@ describe('DSInputWrapper', () => {
                     <AntForm.Item>
                         <DSInputWrapper
                             state={state}
-                            infoButton=""
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={null}
                             handleSubmit={mockHandleSubmit}
                             onChange={mockOnChange}
                             value={inheritedValues[0].raw_value}
@@ -248,7 +293,8 @@ describe('DSInputWrapper', () => {
                     <AntForm.Item>
                         <DSInputWrapper
                             state={state}
-                            infoButton=""
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={null}
                             handleSubmit={mockHandleSubmit}
                             onChange={mockOnChange}
                             value={inheritedValues[0].raw_value}
@@ -257,7 +303,6 @@ describe('DSInputWrapper', () => {
                 </AntForm>
             );
             const clearButton = screen.getByRole('button');
-            expect(clearButton).toBeInTheDocument();
 
             await user.click(clearButton);
 

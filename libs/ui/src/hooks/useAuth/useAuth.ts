@@ -9,8 +9,6 @@ interface IAuthHook {
 }
 
 function useAuth(): IAuthHook {
-    const {setRefreshToken} = useRefreshToken();
-
     return {
         logout: async () => {
             const response = await fetch('/auth/logout', {method: 'POST'});
@@ -19,7 +17,6 @@ function useAuth(): IAuthHook {
                 window.location.assign(data.redirectUrl);
                 return;
             }
-            setRefreshToken('');
             window.location.reload();
         }
     };

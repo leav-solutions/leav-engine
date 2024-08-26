@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ActionsListEvents, ActionsListIOTypes, IActionsListConfig} from './actionsList';
+import {ActionsListEvents, ActionsListIOTypes, ActionsListConfig} from './actionsList';
 import {ITreePermissionsConf} from './permissions';
 import {IRecord} from './record';
 import {IGetCoreEntitiesParams} from './shared';
@@ -17,7 +17,7 @@ export interface IAttribute extends ICoreEntity {
     linked_library?: string;
     linked_tree?: string;
     embedded_fields?: IEmbeddedAttribute[];
-    actions_list?: IActionsListConfig;
+    actions_list?: ActionsListConfig;
     permissions_conf?: ITreePermissionsConf;
     multiple_values?: boolean;
     versions_conf?: IAttributeVersionsConf;

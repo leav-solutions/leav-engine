@@ -20,7 +20,7 @@ describe('AttributeSimpleRepo', () => {
     };
 
     describe('createValue', () => {
-        test('Should create a new index value', async function() {
+        test('Should create a new index value', async function () {
             const updatedRecordData = {
                 _id: 'test_lib/222435651',
                 _rev: '_WSywvyC--_',
@@ -56,7 +56,7 @@ describe('AttributeSimpleRepo', () => {
     });
 
     describe('getValues', () => {
-        test('Should return values for index attribute', async function() {
+        test('Should return values for index attribute', async function () {
             const queryRes = ['test val', 'other val that should not be returned'];
 
             const mockDbServ = {

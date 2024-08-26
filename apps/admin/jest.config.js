@@ -10,7 +10,14 @@ module.exports = {
         '\\.(ts|tsx|js|jsx)$': [
             'ts-jest',
             {
-                isolatedModules: true
+                isolatedModules: true,
+                astTransformers: {
+                    before: [
+                        {
+                            path: 'ts-jest-mock-import-meta'
+                        }
+                    ]
+                }
             }
         ],
         '^.+\\.svg$': '<rootDir>/src/_tests/svgTransform.js'

@@ -97,7 +97,8 @@ describe('getSearchVariablesQueryPart', () => {
 
         const func = getSearchVariablesQueryPart({
             'core.infra.attributeTypes': mockAttributeTypesRepo as IAttributeTypesRepo,
-            'core.infra.record.helpers.getClassifyingFiltersVariableQueryPart': mockGetClassifyingFiltersVariableQueryPart,
+            'core.infra.record.helpers.getClassifyingFiltersVariableQueryPart':
+                mockGetClassifyingFiltersVariableQueryPart,
             'core.infra.record.helpers.getSearchVariableName': mockGetSearchVariableName,
             'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper
         });

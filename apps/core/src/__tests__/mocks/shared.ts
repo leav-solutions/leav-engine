@@ -6,5 +6,6 @@ import {IQueryInfos} from '_types/queryInfos';
 export const mockCtx: IQueryInfos = {
     userId: '1',
     queryId: '123456',
-    lang: 'fr'
+    lang: 'fr',
+    errors: []
 };

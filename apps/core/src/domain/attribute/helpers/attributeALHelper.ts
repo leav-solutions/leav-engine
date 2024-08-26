@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IUtils} from 'utils/utils';
-import {ActionsListEvents, ActionsListIOTypes, IActionsListConfig} from '../../../_types/actionsList';
+import {ActionsListEvents, ActionsListIOTypes, ActionsListConfig} from '../../../_types/actionsList';
 import {AttributeFormats, IAttribute, IOAllowedTypes} from '../../../_types/attribute';
 
 export const getAllowedInputTypes = (attribute: IAttribute): IOAllowedTypes => {
@@ -82,8 +82,8 @@ export const getActionsListToSave = (
     existingAttrData: IAttribute,
     newAttr: boolean,
     utils: IUtils
-): IActionsListConfig => {
-    let alToSave = null;
+): ActionsListConfig => {
+    let alToSave: ActionsListConfig = null;
     if (!newAttr) {
         if (attrDataToSave.actions_list) {
             // We need to merge actions list to save with existing actions list to make sure we keep
@@ -94,7 +94,7 @@ export const getActionsListToSave = (
                 [ActionsListEvents.DELETE_VALUE]: []
             };
 
-            alToSave = Object.values(ActionsListEvents).reduce((allALs, evName): IActionsListConfig => {
+            alToSave = Object.values(ActionsListEvents).reduce((allALs, evName) => {
                 // Merge each action with existing system action. If there's no matching system action, we force
                 // the flag to false
                 allALs[evName] = attrDataToSave.actions_list[evName]
@@ -110,13 +110,13 @@ export const getActionsListToSave = (
                       })
                     : [];
                 return allALs;
-            }, {});
+            }, {} as ActionsListConfig);
         }
     } else {
         // set is_system to false of new actions
         attrDataToSave.actions_list = Object.entries(attrDataToSave.actions_list || {}).reduce(
             (acc, [k, v]) => ({...acc, [k]: v.map(a => ({...a, is_system: false}))}),
-            {}
+            {} as ActionsListConfig
         );
 
         alToSave = utils.mergeConcat(utils.getDefaultActionsList(attrDataToSave), attrDataToSave.actions_list);

@@ -19,18 +19,18 @@ import {IUtils} from 'utils/utils';
 import * as Config from '_types/config';
 import {IListWithCursor} from '_types/list';
 import {IPreview} from '_types/preview';
-import {IStandardValue,ITreeValue,IValue,IValuesOptions} from '_types/value';
+import {IStandardValue, ITreeValue, IValue, IValuesOptions} from '_types/value';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
-import {ECacheType,ICachesService} from '../../infra/cache/cacheService';
+import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 import {getValuesToDisplay} from '../../utils/helpers/getValuesToDisplay';
 import {getPreviewUrl} from '../../utils/preview/preview';
 import {TypeGuards} from '../../utils/typeGuards';
 import {ActionsListEvents} from '../../_types/actionsList';
-import {AttributeFormats,AttributeTypes,IAttribute,IAttributeFilterOptions} from '../../_types/attribute';
+import {AttributeFormats, AttributeTypes, IAttribute, IAttributeFilterOptions} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
-import {ILibrary,LibraryBehavior} from '../../_types/library';
-import {LibraryPermissionsActions,RecordPermissionsActions} from '../../_types/permissions';
+import {ILibrary, LibraryBehavior} from '../../_types/library';
+import {LibraryPermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {
     AttributeCondition,
@@ -46,9 +46,8 @@ import {
 import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import getAttributesFromField from './helpers/getAttributesFromField';
-import {isRecordWithId,SendRecordUpdateEventHelper} from './helpers/sendRecordUpdateEvent';
-import {ICreateRecordResult,IFindRecordParams} from './_types';
-
+import {isRecordWithId, SendRecordUpdateEventHelper} from './helpers/sendRecordUpdateEvent';
+import {ICreateRecordResult, IFindRecordParams} from './_types';
 
 /**
  * Simple list of filters (fieldName: filterValue) to apply to get records.
@@ -440,7 +439,10 @@ export default function ({
 
             let previewAttributeLibraryProps: ILibrary;
             try {
-                previewAttributeLibraryProps = await validateHelper.validateLibrary(previewAttributeProps.linked_library, ctx);
+                previewAttributeLibraryProps = await validateHelper.validateLibrary(
+                    previewAttributeProps.linked_library,
+                    ctx
+                );
             } catch (e) {
                 return null;
             }
@@ -545,7 +547,6 @@ export default function ({
         visitedLibraries.push(record.library);
 
         const lib = await validateHelper.validateLibrary(record.library, ctx);
-
 
         const conf = lib.recordIdentityConf || {};
         const valuesOptions: IValuesOptions = {
@@ -906,7 +907,11 @@ export default function ({
             return {record: newRecord, valuesErrors};
         },
         async updateRecord({library, recordData, ctx}): Promise<IRecord> {
-            const {old: oldRecord, new: savedRecord} = await recordRepo.updateRecord({libraryId: library, recordData, ctx});
+            const {old: oldRecord, new: savedRecord} = await recordRepo.updateRecord({
+                libraryId: library,
+                recordData,
+                ctx
+            });
 
             await eventsManager.sendDatabaseEvent(
                 {

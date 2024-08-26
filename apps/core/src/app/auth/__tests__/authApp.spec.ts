@@ -7,16 +7,143 @@ import {Express} from 'express';
 import {identity} from 'lodash';
 import {convertOIDCIdentifier} from '../../helpers';
 import initQueryContext from '../../helpers/initQueryContext';
+import jwt, {JwtPayload} from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import {IRecordDomain} from 'domain/record/recordDomain';
+import {ICacheService, ICachesService} from 'infra/cache/cacheService';
+import {IValueDomain} from 'domain/value/valueDomain';
+import {IConfig} from '_types/config';
+import {DeepPartial} from '_types/utils';
 
 describe('authApp', () => {
+    describe('auth/authenticate', () => {
+        it('Should set new access and refresh token', async () => {
+            // GIVEN
+            const mockRecordDomain: Mockify<IRecordDomain> = {
+                find: global.__mockPromise({
+                    cursor: {},
+                    totalCount: 1,
+                    list: [{id: 'id'}]
+                })
+            };
+
+            const mockCacheService: Mockify<ICacheService> = {
+                getData: global.__mockPromise(['id']),
+                storeData: global.__mockPromise(),
+                deleteData: global.__mockPromise()
+            };
+
+            const mockCachesService: Mockify<ICachesService> = {
+                getCache: jest.fn().mockReturnValue(mockCacheService)
+            };
+
+            const mockValueDomain: Mockify<IValueDomain> = {
+                getValues: global.__mockPromiseMultiple([[{raw_value: 'admin'}], [{value: {id: 'id'}}]])
+            };
+
+            const mockConfig: DeepPartial<IConfig> = {
+                auth: {
+                    key: 'key',
+                    cookie: {
+                        sameSite: 'lax',
+                        secure: false
+                    },
+                    oidc: {enable: false},
+                    algorithm: 'HS256',
+                    tokenExpiration: '15m',
+                    refreshTokenExpiration: '2h'
+                }
+            };
+
+            const authApp = createAuthApp({
+                'core.app.helpers.initQueryContext': initQueryContext({}),
+                'core.infra.cache.cacheService': mockCachesService as ICachesService,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.value': mockValueDomain as IValueDomain,
+                config: mockConfig as IConfig
+            });
+
+            const response = {
+                cookie: jest.fn()
+            };
+
+            const expressMock: Mockify<Express> = {
+                get: jest.fn(),
+                post: jest.fn()
+            };
+
+            const nextMock = jest.fn();
+
+            const mockedVerify = jest.spyOn(jwt, 'verify');
+
+            mockedVerify.mockImplementation(() => ({
+                userId: '1',
+                ip: '1',
+                agent: 'test'
+            }));
+
+            const mockedSign = jest.spyOn(jwt, 'sign') as jest.MockedFunction<typeof jwt.sign>;
+
+            mockedSign
+                .mockImplementationOnce(() => 'new_mocked_access_token')
+                .mockImplementationOnce(() => 'new_mocked_refresh_token');
+
+            jest.spyOn(bcrypt, 'compare').mockResolvedValue(true);
+
+            const request = {
+                cookies: {
+                    refreshToken: 'refreshToken'
+                },
+                query: {
+                    lang: 'lang'
+                },
+                body: {
+                    login: 'admin',
+                    password: 'admin'
+                },
+                headers: {
+                    host: 'host',
+                    'user-agent': 'test',
+                    'x-forwarded-for': '1'
+                }
+            };
+
+            authApp.registerRoute(expressMock as unknown as Express);
+
+            const refreshHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/authenticate')[1];
+
+            // WHEN
+            await refreshHandler(request, response, nextMock);
+
+            // THEN
+            expect(response.cookie).toHaveBeenCalledWith('accessToken', 'new_mocked_access_token', {
+                expires: expect.any(Date),
+                httpOnly: true,
+                sameSite: 'lax',
+                secure: false,
+                domain: 'host'
+            });
+
+            expect(response.cookie).toHaveBeenCalledWith('refreshToken', 'new_mocked_refresh_token', {
+                expires: expect.any(Date),
+                httpOnly: true,
+                sameSite: 'lax',
+                secure: false,
+                domain: 'host'
+            });
+        });
+    });
+
     describe('authenticateWithOIDCService', () => {
         it('Should return 401 if oidc not configured', async () => {
+            const mockConfig: DeepPartial<IConfig> = {
+                auth: {
+                    oidc: {enable: false}
+                }
+            };
+
             const authApp = createAuthApp({
-                config: {
-                    auth: {
-                        oidc: {enable: false}
-                    }
-                } as any
+                config: mockConfig as IConfig
             });
             const request: any = {};
             const response: any = {
@@ -35,17 +162,20 @@ describe('authApp', () => {
                 getAuthorizationUrl: jest.fn(),
                 saveOriginalUrl: jest.fn()
             };
+
+            const mockConfig: DeepPartial<IConfig> = {
+                auth: {
+                    oidc: {enable: true}
+                },
+                server: {
+                    publicUrl: 'test://publicUrl'
+                }
+            };
+
             const authApp = createAuthApp({
                 'core.infra.oidc.oidcClientService': oidcClientServiceMock as IOIDCClientService,
                 'core.app.helpers.convertOIDCIdentifier': convertOIDCIdentifier(),
-                config: {
-                    auth: {
-                        oidc: {enable: true}
-                    },
-                    server: {
-                        publicUrl: 'test://publicUrl'
-                    }
-                } as any
+                config: mockConfig as IConfig
             });
             oidcClientServiceMock.getAuthorizationUrl.mockResolvedValueOnce('oidcLoginUrl');
             const request: any = {
@@ -81,23 +211,26 @@ describe('authApp', () => {
             const oidcClientServiceMock: Mockify<IOIDCClientService> = {
                 getLogoutUrl: jest.fn()
             };
+
+            const mockConfig: DeepPartial<IConfig> = {
+                auth: {
+                    cookie: {
+                        sameSite: 'lax',
+                        secure: false
+                    },
+                    oidc: {enable: false}
+                }
+            };
+
             const authApp = createAuthApp({
                 'core.infra.oidc.oidcClientService': oidcClientServiceMock as IOIDCClientService,
-                config: {
-                    auth: {
-                        cookie: {
-                            sameSite: 'sameSite',
-                            secure: 'secure'
-                        },
-                        oidc: {enable: false}
-                    }
-                } as any
+                config: mockConfig as IConfig
             });
             const expressMock: Mockify<Express> = {
                 get: jest.fn(),
                 post: jest.fn()
             };
-            authApp.registerRoute((expressMock as unknown) as Express);
+            authApp.registerRoute(expressMock as unknown as Express);
             const logoutHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/logout')[1];
             const request = {
                 headers: {
@@ -117,12 +250,19 @@ describe('authApp', () => {
             expect(response.status).toHaveBeenCalledWith(200);
             expect(result).toEqual({});
             expect(oidcClientServiceMock.getLogoutUrl).not.toHaveBeenCalled();
-            expect(response.cookie).toHaveBeenCalledTimes(1);
+            expect(response.cookie).toHaveBeenCalledTimes(2);
             expect(response.cookie).toHaveBeenCalledWith('accessToken', '', {
                 expires: expect.any(Date),
                 httpOnly: true,
-                sameSite: 'sameSite',
-                secure: 'secure',
+                sameSite: 'lax',
+                secure: false,
+                domain: 'host'
+            });
+            expect(response.cookie).toHaveBeenCalledWith('refreshToken', '', {
+                expires: expect.any(Date),
+                httpOnly: true,
+                sameSite: 'lax',
+                secure: false,
                 domain: 'host'
             });
         });
@@ -131,23 +271,26 @@ describe('authApp', () => {
             const oidcClientServiceMock: Mockify<IOIDCClientService> = {
                 getLogoutUrl: jest.fn()
             };
+
+            const mockConfig: DeepPartial<IConfig> = {
+                auth: {
+                    cookie: {
+                        sameSite: 'lax',
+                        secure: false
+                    },
+                    oidc: {enable: true}
+                }
+            };
+
             const authApp = createAuthApp({
                 'core.infra.oidc.oidcClientService': oidcClientServiceMock as IOIDCClientService,
-                config: {
-                    auth: {
-                        cookie: {
-                            sameSite: 'sameSite',
-                            secure: 'secure'
-                        },
-                        oidc: {enable: true}
-                    }
-                } as any
+                config: mockConfig as IConfig
             });
             const expressMock: Mockify<Express> = {
                 get: jest.fn(),
                 post: jest.fn()
             };
-            authApp.registerRoute((expressMock as unknown) as Express);
+            authApp.registerRoute(expressMock as unknown as Express);
             const logoutHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/logout')[1];
             const request = {
                 headers: {
@@ -171,12 +314,19 @@ describe('authApp', () => {
             });
             expect(oidcClientServiceMock.getLogoutUrl).toHaveBeenCalledTimes(1);
             expect(oidcClientServiceMock.getLogoutUrl).toHaveBeenCalledWith();
-            expect(response.cookie).toHaveBeenCalledTimes(1);
+            expect(response.cookie).toHaveBeenCalledTimes(2);
             expect(response.cookie).toHaveBeenCalledWith('accessToken', '', {
                 expires: expect.any(Date),
                 httpOnly: true,
-                sameSite: 'sameSite',
-                secure: 'secure',
+                sameSite: 'lax',
+                secure: false,
+                domain: 'host'
+            });
+            expect(response.cookie).toHaveBeenCalledWith('refreshToken', '', {
+                expires: expect.any(Date),
+                httpOnly: true,
+                sameSite: 'lax',
+                secure: false,
                 domain: 'host'
             });
         });
@@ -185,21 +335,24 @@ describe('authApp', () => {
     describe('auth/refresh', () => {
         it('Should return if no refresh token provided in cookies on oidc service configured', async () => {
             const oidcClientServiceMock: Mockify<IOIDCClientService> = {};
+
+            const mockConfig: DeepPartial<IConfig> = {
+                auth: {
+                    cookie: {},
+                    oidc: {enable: true}
+                }
+            };
+
             const authApp = createAuthApp({
                 'core.app.helpers.initQueryContext': initQueryContext({}),
                 'core.infra.oidc.oidcClientService': oidcClientServiceMock as IOIDCClientService,
-                config: {
-                    auth: {
-                        cookie: {},
-                        oidc: {enable: true}
-                    }
-                } as any
+                config: mockConfig as IConfig
             });
             const expressMock: Mockify<Express> = {
                 get: jest.fn(),
                 post: jest.fn()
             };
-            authApp.registerRoute((expressMock as unknown) as Express);
+            authApp.registerRoute(expressMock as unknown as Express);
             const refreshHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/refresh')[1];
             const request = {
                 cookies: {
@@ -224,22 +377,134 @@ describe('authApp', () => {
             expect(nextMock).not.toHaveBeenCalled();
             expect(result).toBe('Missing refresh token');
         });
+
+        it('Should set new access and refresh token', async () => {
+            // GIVEN
+            const mockRecordDomain: Mockify<IRecordDomain> = {
+                find: global.__mockPromise({
+                    cursor: {},
+                    totalCount: 1,
+                    list: [{id: 'id'}]
+                })
+            };
+
+            const mockCacheService: Mockify<ICacheService> = {
+                getData: global.__mockPromise(['id']),
+                storeData: global.__mockPromise(),
+                deleteData: global.__mockPromise()
+            };
+
+            const mockCachesService: Mockify<ICachesService> = {
+                getCache: jest.fn().mockReturnValue(mockCacheService)
+            };
+
+            const mockValueDomain: Mockify<IValueDomain> = {
+                getValues: global.__mockPromise([{value: {id: 'id'}}])
+            };
+
+            const mockConfig: DeepPartial<IConfig> = {
+                auth: {
+                    key: 'key',
+                    cookie: {
+                        sameSite: 'lax',
+                        secure: false
+                    },
+                    oidc: {enable: false},
+                    algorithm: 'HS256',
+                    tokenExpiration: '15m',
+                    refreshTokenExpiration: '2h'
+                }
+            };
+
+            const authApp = createAuthApp({
+                'core.app.helpers.initQueryContext': initQueryContext({}),
+                'core.infra.cache.cacheService': mockCachesService as ICachesService,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.value': mockValueDomain as IValueDomain,
+                config: mockConfig as IConfig
+            });
+
+            const response = {
+                cookie: jest.fn()
+            };
+
+            const expressMock: Mockify<Express> = {
+                get: jest.fn(),
+                post: jest.fn()
+            };
+
+            const nextMock = jest.fn();
+
+            const mockedVerify = jest.spyOn(jwt, 'verify');
+            mockedVerify.mockImplementation(() => ({
+                userId: '1',
+                ip: '1',
+                agent: 'test'
+            }));
+
+            const mockedSign = jest.spyOn(jwt, 'sign') as jest.MockedFunction<typeof jwt.sign>;
+
+            mockedSign
+                .mockImplementationOnce(() => 'new_mocked_access_token')
+                .mockImplementationOnce(() => 'new_mocked_refresh_token');
+
+            const request = {
+                cookies: {
+                    refreshToken: 'refreshToken'
+                },
+                query: {
+                    lang: 'lang'
+                },
+                body: {},
+                headers: {
+                    host: 'host',
+                    'user-agent': 'test',
+                    'x-forwarded-for': '1'
+                }
+            };
+
+            authApp.registerRoute(expressMock as unknown as Express);
+
+            const refreshHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/refresh')[1];
+
+            // WHEN
+            await refreshHandler(request, response, nextMock);
+
+            // THEN
+            expect(response.cookie).toHaveBeenCalledWith('accessToken', 'new_mocked_access_token', {
+                expires: expect.any(Date),
+                httpOnly: true,
+                sameSite: 'lax',
+                secure: false,
+                domain: 'host'
+            });
+
+            expect(response.cookie).toHaveBeenCalledWith('refreshToken', 'new_mocked_refresh_token', {
+                expires: expect.any(Date),
+                httpOnly: true,
+                sameSite: 'lax',
+                secure: false,
+                domain: 'host'
+            });
+        });
     });
 
     describe('auth/oidc/verify/*', () => {
         it('Should respond 401 when oidc not enable', async () => {
+            const mockConfig: DeepPartial<IConfig> = {
+                auth: {
+                    oidc: {enable: false}
+                }
+            };
+
             const authApp = createAuthApp({
-                config: {
-                    auth: {
-                        oidc: {enable: false}
-                    }
-                } as any
+                config: mockConfig as IConfig
             });
             const expressMock: Mockify<Express> = {
                 get: jest.fn(),
                 post: jest.fn()
             };
-            authApp.registerRoute((expressMock as unknown) as Express);
+            authApp.registerRoute(expressMock as unknown as Express);
             const verifyHandler = expressMock.get.mock.calls.find(
                 args => args[0] === '/auth/oidc/verify/:identifierBase64Url'
             )[1];

@@ -14,6 +14,7 @@ import {i18n} from 'i18next';
 import Joi from 'joi';
 import {difference, intersectionBy, isEqual} from 'lodash';
 import {v4 as uuidv4} from 'uuid';
+import winston from 'winston';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {IValue} from '_types/value';
@@ -44,10 +45,11 @@ interface IDeps {
     'core.infra.indexation.indexationService'?: IIndexationService;
     'core.domain.tasksManager'?: ITasksManagerDomain;
     'core.domain.eventsManager'?: IEventsManagerDomain;
+    'core.utils.logger'?: winston.Winston;
     translator?: i18n;
 }
 
-export default function({
+export default function ({
     config = null,
     'core.infra.amqpService': amqpService = null,
     'core.domain.record': recordDomain = null,
@@ -56,6 +58,7 @@ export default function({
     'core.domain.tasksManager': tasksManagerDomain = null,
     'core.infra.indexation.indexationService': indexationService = null,
     'core.domain.eventsManager': eventsManager = null,
+    'core.utils.logger': logger = null,
     translator = null
 }: IDeps): IIndexationManagerDomain {
     const _indexRecords = async (
@@ -449,6 +452,8 @@ export default function({
             );
 
             await indexationService.init();
+
+            logger.info('Indexation Manager is ready. Waiting for events... 👀');
         },
         indexDatabase: _indexDatabase
     };

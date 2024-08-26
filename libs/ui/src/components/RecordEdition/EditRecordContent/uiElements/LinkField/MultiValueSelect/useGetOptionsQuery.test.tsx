@@ -122,7 +122,7 @@ describe('useGetOptionsQuery', () => {
                     {
                         idCard: {
                             avatarProps: expect.anything(),
-                            title: 'Danette pistache'
+                            description: 'Danette pistache'
                         },
                         label: 'Danette pistache',
                         value: '28121951'
@@ -130,7 +130,7 @@ describe('useGetOptionsQuery', () => {
                     {
                         idCard: {
                             avatarProps: expect.anything(),
-                            title: 'Danette chocolat'
+                            description: 'Danette chocolat'
                         },
                         label: 'Danette chocolat',
                         value: '15061943'
@@ -158,7 +158,7 @@ describe('useGetOptionsQuery', () => {
                     {
                         idCard: {
                             avatarProps: expect.anything(),
-                            title: '28121951'
+                            description: '28121951'
                         },
                         label: '28121951',
                         value: '28121951'
@@ -166,7 +166,7 @@ describe('useGetOptionsQuery', () => {
                     {
                         idCard: {
                             avatarProps: expect.anything(),
-                            title: '15061943'
+                            description: '15061943'
                         },
                         label: '15061943',
                         value: '15061943'
@@ -190,9 +190,9 @@ describe('useGetOptionsQuery', () => {
                 await waitFor(() => result.current.selectOptions.length === 3);
 
                 const selectedRecord = records.list[0];
-                result.current.updateLeavField(selectedRecord.id);
+                result.current.updateLeavField([selectedRecord.id], []);
 
-                expect(onSelectChangeMock).toHaveBeenCalledWith([records.list[0]]);
+                expect(onSelectChangeMock).toHaveBeenCalledWith([{value: records.list[0], idValue: null}]);
             });
         });
     });
@@ -233,7 +233,7 @@ describe('useGetOptionsQuery', () => {
                 {
                     idCard: {
                         avatarProps: expect.anything(),
-                        title: 'Danette pistache'
+                        description: 'Danette pistache'
                     },
                     label: 'Danette pistache',
                     value: '28121951'
@@ -241,7 +241,7 @@ describe('useGetOptionsQuery', () => {
                 {
                     idCard: {
                         avatarProps: expect.anything(),
-                        title: 'Danette chocolat'
+                        description: 'Danette chocolat'
                     },
                     label: 'Danette chocolat',
                     value: '15061943'
@@ -261,7 +261,7 @@ describe('useGetOptionsQuery', () => {
                 {
                     idCard: {
                         avatarProps: expect.anything(),
-                        title: '28121951'
+                        description: '28121951'
                     },
                     label: '28121951',
                     value: '28121951'
@@ -269,7 +269,7 @@ describe('useGetOptionsQuery', () => {
                 {
                     idCard: {
                         avatarProps: expect.anything(),
-                        title: '15061943'
+                        description: '15061943'
                     },
                     label: '15061943',
                     value: '15061943'
@@ -287,9 +287,9 @@ describe('useGetOptionsQuery', () => {
                 );
 
                 const selectedRecord = records.list[0];
-                result.current.updateLeavField(selectedRecord.id);
+                result.current.updateLeavField([selectedRecord.id], []);
 
-                expect(onSelectChangeMock).toHaveBeenCalledWith([records.list[0]]);
+                expect(onSelectChangeMock).toHaveBeenCalledWith([{value: records.list[0], idValue: null}]);
             });
         });
     });

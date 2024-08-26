@@ -31,7 +31,7 @@ describe('formatNumberAction', () => {
             (await action([{value: 123456.78}], {thousandsSeparator: '.', decimalsSeparator: ',', decimals: 4}, ctx))
                 .values[0].value
         ).toBe('123.456,7800');
-        expect((await action([{value: 'aaa'}], {}, ctx)).values[0].value).toBe('');
-        expect((await action([{value: null}], {}, ctx)).values[0].value).toBe(null);
+        expect((await action([{value: 'aaa'}], {decimals: 2}, ctx)).values[0].value).toBe('');
+        expect((await action([{value: null}], {decimals: 2}, ctx)).values[0].value).toBe(null);
     });
 });

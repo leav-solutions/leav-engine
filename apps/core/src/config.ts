@@ -4,7 +4,7 @@
 import {appRootPath} from '@leav/app-root-path';
 import {loadConfig} from '@leav/config-manager';
 import Joi from 'joi';
-import {IConfig} from '_types/config';
+import {CoreMode, IConfig} from './_types/config';
 import {env as appEnv} from './env';
 
 export const validateConfig = (conf: IConfig) => {
@@ -26,6 +26,9 @@ export const validateConfig = (conf: IConfig) => {
                 email: Joi.string().email().required()
             }
         }),
+        coreMode: Joi.string()
+            .valid(...Object.values(CoreMode))
+            .required(),
         db: Joi.object().keys({
             url: Joi.string().required(),
             name: Joi.string().required()

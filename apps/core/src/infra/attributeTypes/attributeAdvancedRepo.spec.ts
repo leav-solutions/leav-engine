@@ -335,7 +335,7 @@ describe('AttributeStandardRepo', () => {
                 collection: jest.fn().mockReturnValueOnce(mockDbCollec).mockReturnValue(mockDbEdgeCollec)
             };
 
-            const mockDbServ = {db: (mockDb as unknown) as Database};
+            const mockDbServ = {db: mockDb as unknown as Database};
 
             const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
 
@@ -397,7 +397,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const mockDbServ = {
-                db: (mockDb as unknown) as Database,
+                db: mockDb as unknown as Database,
                 execute: global.__mockPromise([{...edgeRes, value: 'test val'}])
             };
 
@@ -434,7 +434,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const mockDbServ = {
-                db: (mockDb as unknown) as Database,
+                db: mockDb as unknown as Database,
                 execute: global.__mockPromise([])
             };
 

@@ -17,7 +17,7 @@ interface IDeps {
     'core.domain.tree'?: ITreeDomain;
 }
 
-export default function({
+export default function ({
     'core.domain.versionProfile': versionProfileDomain = null,
     'core.domain.tree': treeDomain = null
 }: IDeps): ICoreVersionProfileApp {

@@ -14,7 +14,7 @@ interface IDeps {
 export default function ({
     'core.domain.helpers.calculationVariable': calculationVariable = null,
     'core.domain.attribute': attributeDomain = null
-}: IDeps = {}): IActionsListFunction {
+}: IDeps = {}): IActionsListFunction<{Formula: true; Description: true}> {
     return {
         id: 'inheritanceCalculation',
         name: 'Inheritance calculation',

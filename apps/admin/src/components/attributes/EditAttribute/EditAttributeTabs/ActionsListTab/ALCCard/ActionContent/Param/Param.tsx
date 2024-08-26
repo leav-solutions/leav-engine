@@ -60,12 +60,9 @@ function Param({param, actionId, changeParam, setBlockCard, index}: IParamProps)
         if (correspondences[param.type] === 'text') {
             return (
                 <Form>
-                    <Label attached="top" basic size="large">
-                        {param.name}
+                    <Label attached="top" basic>
+                        {param.name} - {param.description}
                     </Label>
-                    {/* <Label attached="top" italic>
-                        {param.description}
-                    </Label> */}
                     <TextArea
                         style={{marginBottom: '3px'}}
                         name={param.name}
