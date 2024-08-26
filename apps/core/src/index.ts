@@ -4,7 +4,7 @@
 import {amqpService} from '@leav/message-broker';
 import fs from 'fs';
 // import {IApplicationService} from 'infra/application/applicationService';
-import {IConfig, CoreMode} from '_types/config';
+import {IConfig, CoreMode} from './_types/config';
 import {IFilesManagerInterface} from 'interface/filesManager';
 import {IIndexationManagerInterface} from 'interface/indexationManager';
 import {IServer} from 'interface/server';
@@ -83,6 +83,8 @@ import {initOIDCClient} from './infra/oidc';
     try {
         await _createRequiredDirectories();
 
+        console.info('Starting core in mode', conf.coreMode);
+
         switch (conf.coreMode) {
             case CoreMode.SERVER:
                 await server.init();
@@ -93,7 +95,6 @@ import {initOIDCClient} from './infra/oidc';
                 await dbUtils.migrate(coreContainer);
                 // Make sure we always exit process. Sometimes we don't and we're stuck here forever
                 process.exit(0);
-                break;
             case CoreMode.FILES_MANAGER:
                 await filesManager.init();
                 break;
