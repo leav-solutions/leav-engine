@@ -6,6 +6,8 @@ import React from 'react';
 import {Breadcrumb, BreadcrumbSectionProps, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {ICommonFieldsSettings, IFormElementProps} from '../../../_types';
+import useLang from 'hooks/useLang';
+import {localizedLabel} from 'utils';
 
 const CenteredBreadcrumb = styled(Breadcrumb)`
     && {
@@ -15,6 +17,10 @@ const CenteredBreadcrumb = styled(Breadcrumb)`
 `;
 
 function TreeField({settings}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
+    const {lang: availableLangs} = useLang();
+
+    const label = localizedLabel(settings.label, availableLangs);
+
     const nodes = [];
     const sectionsNumber = 3;
 
@@ -29,7 +35,7 @@ function TreeField({settings}: IFormElementProps<ICommonFieldsSettings>): JSX.El
         <Table celled striped>
             <Table.Header>
                 <Table.Row>
-                    <Table.HeaderCell>{settings.label}</Table.HeaderCell>
+                    <Table.HeaderCell>{label}</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
             <Table.Body>

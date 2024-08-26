@@ -31,5 +31,8 @@ module.exports = {
     },
     transformIgnorePatterns: ['node_modules'],
     testRegex: '.test.(ts|tsx)$',
-    moduleNameMapper: require('../../jestModuleNameMapper')
+    moduleNameMapper: {
+        ...require('../../jestModuleNameMapper'),
+        '\\.css$': '<rootDir>/src/__mocks__/styleMock.js'
+    }
 };

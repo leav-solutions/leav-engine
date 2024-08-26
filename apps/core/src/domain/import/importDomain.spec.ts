@@ -283,7 +283,10 @@ describe('importDomain', () => {
             await fs.promises.writeFile(`${mockConfig.import.directory}/test.json`, JSON.stringify(data, null, '\t'));
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getLibraryAttributes: global.__mockPromise([{type: 'simple', id: 'fake_simple'}, {type: 'advanced_link', id: 'fake_advanced_link'}])
+                getLibraryAttributes: global.__mockPromise([
+                    {type: 'simple', id: 'fake_simple'},
+                    {type: 'advanced_link', id: 'fake_advanced_link'}
+                ])
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {

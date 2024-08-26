@@ -22,12 +22,7 @@ export enum ActionsListIOTypes {
 
 export type ActionsListValueType = string | number | boolean | {};
 
-// TODO: should be able to use [event: ActionsListEvents] as from TS v2.9
-export interface IActionsListConfig {
-    [ActionsListEvents.SAVE_VALUE]?: IActionsListSavedAction[];
-    [ActionsListEvents.DELETE_VALUE]?: IActionsListSavedAction[];
-    [ActionsListEvents.GET_VALUE]?: IActionsListSavedAction[];
-}
+export type ActionsListConfig = {[Event in ActionsListEvents]?: IActionsListSavedAction[]};
 
 export interface IActionsListContext extends IQueryInfos {
     attribute?: IAttribute;
@@ -35,34 +30,49 @@ export interface IActionsListContext extends IQueryInfos {
     recordId?: string;
 }
 
-export interface IActionsListParams {
-    [name: string]: any;
-}
+export type ActionsListParams<T extends string | number | symbol> = Record<T, any>;
 
-export interface IActionsListParamsConfig {
-    name: string;
-    type: string;
-    description: string;
-    required: boolean;
-    default_value: string;
-}
+export type ActionsListParamsConfig<ParamsRequired extends Record<string, boolean>> = {
+    [Name in keyof ParamsRequired]: {
+        name: Name;
+        type: 'boolean' | 'string' | 'number'; // TODO: find admin type
+        description: string;
+        required: ParamsRequired[Name];
+        default_value: string;
+    };
+}[keyof ParamsRequired];
 
 export interface IActionsListFunctionResult {
     values: IValue[];
     errors: Array<{errorType: Errors; attributeValue: IValue; message?: string}>;
 }
 
-export interface IActionsListFunction {
+type PartialByCondition<TargetType, RequiredValues extends Record<keyof TargetType, boolean>> = {
+    [FieldName in keyof TargetType as RequiredValues[FieldName] extends true
+        ? FieldName
+        : never]: TargetType[FieldName];
+} & {
+    [FieldName in keyof TargetType as RequiredValues[FieldName] extends false
+        ? FieldName
+        : never]?: TargetType[FieldName];
+};
+
+/**
+ * @types ParamsRequired is record of params key with matching boolean for required option: `{ paramName: isRequired }`
+ */
+export interface IActionsListFunction<
+    ParamsRequired extends Record<string | number | symbol, boolean> = Record<string | number | symbol, boolean>
+> {
     id: string;
     name: string;
     description: string;
     input_types: ActionsListIOTypes[];
     output_types: ActionsListIOTypes[];
-    params?: IActionsListParamsConfig[];
+    params?: Array<ActionsListParamsConfig<ParamsRequired>>;
     error_message?: ISystemTranslation;
     action: (
         values: IValue[],
-        params: IActionsListParams,
+        params: PartialByCondition<ActionsListParams<keyof ParamsRequired>, ParamsRequired>,
         ctx: IActionsListContext
     ) => IActionsListFunctionResult | Promise<IActionsListFunctionResult>;
 }

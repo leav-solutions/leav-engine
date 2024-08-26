@@ -172,22 +172,25 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                 values.map(val => {
                     const savableValue = {...val, attribute: val.attribute.id, metadata: val.metadata};
 
-                    switch (val.attribute.type) {
-                        case AttributeType.advanced_link:
-                        case AttributeType.simple_link:
-                            savableValue.value = (val as ISubmittedValueLink).value.id;
-                            break;
-                        case AttributeType.tree:
-                            savableValue.value = (val as ISubmittedValueTree).value.id;
-                            break;
-                        default:
-                            savableValue.value = (val as ISubmittedValueStandard).value;
-                            break;
+                    if (val.value) {
+                        switch (val.attribute.type) {
+                            case AttributeType.advanced_link:
+                            case AttributeType.simple_link:
+                                savableValue.value = (val as ISubmittedValueLink).value.id;
+                                break;
+                            case AttributeType.tree:
+                                savableValue.value = (val as ISubmittedValueTree).value.id;
+                                break;
+                            default:
+                                savableValue.value = (val as ISubmittedValueStandard).value;
+                                break;
+                        }
                     }
 
                     return savableValue as IValueToSubmit;
                 }),
-                version
+                version,
+                true // deleteEmpty
             );
         }
 

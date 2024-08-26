@@ -4,12 +4,11 @@
 import {amqpService} from '@leav/message-broker';
 import fs from 'fs';
 // import {IApplicationService} from 'infra/application/applicationService';
-import * as Config from '_types/config';
+import {IConfig, CoreMode} from './_types/config';
 import {IFilesManagerInterface} from 'interface/filesManager';
 import {IIndexationManagerInterface} from 'interface/indexationManager';
 import {IServer} from 'interface/server';
 import {ITasksManagerInterface} from 'interface/tasksManager';
-import minimist from 'minimist';
 import {getConfig, validateConfig} from './config';
 import {initDI} from './depsManager';
 import i18nextInit from './i18nextInit';
@@ -19,10 +18,8 @@ import {initMailer} from './infra/mailer';
 import {initPlugins} from './pluginsLoader';
 import {initOIDCClient} from './infra/oidc';
 
-(async function() {
-    const opt = minimist(process.argv.slice(2));
-
-    let conf: Config.IConfig;
+(async function () {
+    let conf: IConfig;
 
     try {
         conf = await getConfig();
@@ -37,7 +34,10 @@ import {initOIDCClient} from './infra/oidc';
     const [translator, amqp, redisClient, mailer, oidcClient] = await Promise.all([
         i18nextInit(conf),
         amqpService({
-            config: {...conf.amqp, ...(opt.tasksManager === 'worker' && {prefetch: conf.tasksManager.workerPrefetch})}
+            config: {
+                ...conf.amqp,
+                ...(conf.coreMode === CoreMode.TASKS_MANAGER_WORKER && {prefetch: conf.tasksManager.workerPrefetch})
+            }
         }),
         initRedis({config: conf}),
         initMailer({config: conf}),
@@ -83,24 +83,32 @@ import {initOIDCClient} from './infra/oidc';
     try {
         await _createRequiredDirectories();
 
-        if (opt.server) {
-            await server.init();
-            await server.initConsumers();
-        } else if (opt.migrate) {
-            // Run db migrations
-            await dbUtils.migrate(coreContainer);
-            // Make sure we always exit process. Sometimes we don't and we're stuck here forever
-            process.exit(0);
-        } else if (opt.filesManager) {
-            await filesManager.init();
-        } else if (opt.indexationManager) {
-            await indexationManager.init();
-        } else if (opt.tasksManager === 'master') {
-            await tasksManager.initMaster();
-        } else if (opt.tasksManager === 'worker') {
-            await tasksManager.initWorker();
-        } else {
-            await cli.run();
+        console.info('Starting core in mode', conf.coreMode);
+
+        switch (conf.coreMode) {
+            case CoreMode.SERVER:
+                await server.init();
+                await server.initConsumers();
+                break;
+            case CoreMode.MIGRATE:
+                // Run db migrations
+                await dbUtils.migrate(coreContainer);
+                // Make sure we always exit process. Sometimes we don't and we're stuck here forever
+                process.exit(0);
+            case CoreMode.FILES_MANAGER:
+                await filesManager.init();
+                break;
+            case CoreMode.INDEXATION_MANAGER:
+                await indexationManager.init();
+                break;
+            case CoreMode.TASKS_MANAGER_MASTER:
+                await tasksManager.initMaster();
+                break;
+            case CoreMode.TASKS_MANAGER_WORKER:
+                await tasksManager.initWorker();
+                break;
+            default:
+                await cli.run();
         }
     } catch (e) {
         console.error(e);

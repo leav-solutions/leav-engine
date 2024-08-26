@@ -6,7 +6,7 @@ import {IApiKeyDomain} from 'domain/apiKey/apiKeyDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IUserDomain} from 'domain/user/userDomain';
 import {IValueDomain} from 'domain/value/valueDomain';
-import {Express, NextFunction, Request, Response} from 'express';
+import {CookieOptions, Express, NextFunction, Request, Response} from 'express';
 import useragent from 'express-useragent';
 import jwt, {Algorithm} from 'jsonwebtoken';
 import ms from 'ms';
@@ -60,7 +60,9 @@ interface IDeps {
     config?: IConfig;
 }
 
-export default function({
+type authCookieName = typeof ACCESS_TOKEN_COOKIE_NAME | typeof REFRESH_TOKEN_COOKIE_NAME;
+
+export default function ({
     'core.domain.value': valueDomain = null,
     'core.domain.record': recordDomain = null,
     'core.domain.apiKey': apiKeyDomain = null,
@@ -99,6 +101,32 @@ export default function({
             expiresIn: String(config.auth.refreshTokenExpiration),
             jwtid: uuidv4()
         });
+
+    const _getAuthCookieArgs = (
+        cookieName: authCookieName,
+        value: string,
+        host: string
+    ): [authCookieName, string, CookieOptions] => {
+        const cookieExpires = ms(
+            String(
+                cookieName === ACCESS_TOKEN_COOKIE_NAME
+                    ? config.auth.tokenExpiration
+                    : config.auth.refreshTokenExpiration
+            )
+        );
+
+        return [
+            cookieName,
+            value,
+            {
+                httpOnly: true,
+                sameSite: config.auth.cookie.sameSite,
+                secure: config.auth.cookie.secure,
+                domain: host,
+                expires: new Date(Date.now() + cookieExpires)
+            }
+        ];
+    };
 
     return {
         getGraphQLSchema: () => ({
@@ -151,6 +179,7 @@ export default function({
                         const {email} = decodedToken;
 
                         const ctx: IQueryInfos = {
+                            ...initQueryContext(req),
                             userId: config.defaultUserId,
                             queryId: 'authenticate'
                         };
@@ -187,24 +216,9 @@ export default function({
                             data: user.id,
                             expiresIn: refreshExpires
                         });
-                        res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, {
-                            httpOnly: true,
-                            sameSite: config.auth.cookie.sameSite,
-                            secure: config.auth.cookie.secure,
-                            domain: req.headers.host,
-                            expires: new Date(Date.now() + refreshExpires)
-                        });
 
-                        // We need the milliseconds value to set cookie expiration
-                        // ms is the package used by jsonwebtoken under the hood, hence we're sure the value is same
-                        const cookieExpires = ms(String(config.auth.tokenExpiration));
-                        res.cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, {
-                            httpOnly: true,
-                            sameSite: config.auth.cookie.sameSite,
-                            secure: config.auth.cookie.secure,
-                            domain: req.headers.host,
-                            expires: new Date(Date.now() + cookieExpires)
-                        });
+                        res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, refreshToken, req.headers.host));
+                        res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, accessToken, req.headers.host));
 
                         const originalUrl = await oidcClientService.getOriginalUrl(queryId);
                         return res.redirect(originalUrl);
@@ -227,6 +241,7 @@ export default function({
 
                         // Check if user is active
                         const ctx: IQueryInfos = {
+                            ...initQueryContext(req),
                             userId: config.defaultUserId,
                             queryId: 'authenticate'
                         };
@@ -269,26 +284,17 @@ export default function({
 
                         // store refresh token in cache
                         const cacheKey = `${SESSION_CACHE_HEADER}:${refreshToken}`;
+
                         await cacheService.getCache(ECacheType.RAM).storeData({
                             key: cacheKey,
                             data: user.id,
                             expiresIn: ms(config.auth.refreshTokenExpiration)
                         });
 
-                        // We need the milliseconds value to set cookie expiration
-                        // ms is the package used by jsonwebtoken under the hood, hence we're sure the value is same
-                        const cookieExpires = ms(String(config.auth.tokenExpiration));
-                        res.cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, {
-                            httpOnly: true,
-                            sameSite: config.auth.cookie.sameSite,
-                            secure: config.auth.cookie.secure,
-                            domain: req.headers.host,
-                            expires: new Date(Date.now() + cookieExpires)
-                        });
+                        res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, accessToken, req.headers.host));
+                        res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, refreshToken, req.headers.host));
 
-                        return res.status(200).json({
-                            refreshToken
-                        });
+                        return res.status(200).json({});
                     } catch (err) {
                         return next(err);
                     }
@@ -296,13 +302,8 @@ export default function({
             );
 
             app.post('/auth/logout', async (req, res) => {
-                res.cookie(ACCESS_TOKEN_COOKIE_NAME, '', {
-                    expires: new Date(0),
-                    httpOnly: true,
-                    sameSite: config.auth.cookie.sameSite,
-                    secure: config.auth.cookie.secure,
-                    domain: req.headers.host
-                });
+                res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, '', req.headers.host));
+                res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, '', req.headers.host));
 
                 if (config.auth.oidc.enable) {
                     const redirectUrl = oidcClientService.getLogoutUrl();
@@ -325,6 +326,7 @@ export default function({
 
                         // Get user id
                         const ctx: IQueryInfos = {
+                            ...initQueryContext(req),
                             userId: config.defaultUserId,
                             queryId: 'forgot-password'
                         };
@@ -397,6 +399,7 @@ export default function({
                         }
 
                         const ctx: IQueryInfos = {
+                            ...initQueryContext(req),
                             userId: config.defaultUserId,
                             queryId: 'resetPassword'
                         };
@@ -437,6 +440,7 @@ export default function({
                 try {
                     // Get user data
                     const ctx: IQueryInfos = {
+                        ...initQueryContext(req),
                         userId: config.defaultUserId,
                         queryId: 'refresh'
                     };
@@ -444,9 +448,7 @@ export default function({
                     req.ctx.userId = ctx.userId;
                     req.ctx.queryId = ctx.queryId;
 
-                    const refreshToken = config.auth.oidc.enable
-                        ? req.cookies[REFRESH_TOKEN_COOKIE_NAME]
-                        : req.body.refreshToken;
+                    const refreshToken = req.cookies[REFRESH_TOKEN_COOKIE_NAME];
 
                     if (typeof refreshToken === 'undefined') {
                         return res.status(400).send('Missing refresh token');
@@ -499,8 +501,8 @@ export default function({
                     }
 
                     // Everything is ok, we can generate, update and return new tokens
-
                     const newAccessToken = await _generateAccessToken(payload.userId, ctx);
+
                     const newRefreshToken = _generateRefreshToken({
                         userId: payload.userId,
                         ip: req.headers['x-forwarded-for'],
@@ -516,33 +518,10 @@ export default function({
                     // Delete old session
                     await cacheService.getCache(ECacheType.RAM).deleteData([`${SESSION_CACHE_HEADER}:${refreshToken}`]);
 
-                    const cookieExpires = ms(String(config.auth.tokenExpiration));
-                    res.cookie(ACCESS_TOKEN_COOKIE_NAME, newAccessToken, {
-                        httpOnly: true,
-                        sameSite: config.auth.cookie.sameSite,
-                        secure: config.auth.cookie.secure,
-                        domain: req.headers.host,
-                        expires: new Date(Date.now() + cookieExpires)
-                    });
+                    res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, newAccessToken, req.headers.host));
+                    res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, newRefreshToken, req.headers.host));
 
-                    if (config.auth.oidc.enable) {
-                        const refreshCookieExpires = ms(String(config.auth.refreshTokenExpiration));
-                        res.cookie(REFRESH_TOKEN_COOKIE_NAME, newRefreshToken, {
-                            httpOnly: true,
-                            sameSite: config.auth.cookie.sameSite,
-                            secure: config.auth.cookie.secure,
-                            domain: req.headers.host,
-                            expires: new Date(Date.now() + refreshCookieExpires)
-                        });
-                    }
-
-                    return res.status(200).json(
-                        config.auth.oidc.enable
-                            ? {}
-                            : {
-                                  refreshToken: newRefreshToken
-                              }
-                    );
+                    return res.status(200).json({});
                 } catch (err) {
                     return next(err);
                 }
@@ -550,6 +529,7 @@ export default function({
         },
         async validateRequestToken({apiKey, cookies}) {
             const ctx: IQueryInfos = {
+                ...initQueryContext(),
                 userId: config.defaultUserId,
                 queryId: 'validateToken'
             };

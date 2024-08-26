@@ -4,6 +4,8 @@
 import {Input} from 'semantic-ui-react';
 import {ICommonFieldsSettings, IFormElementProps} from '../../../_types';
 import styled from 'styled-components';
+import {localizedLabel} from 'utils';
+import useLang from 'hooks/useLang';
 
 const StyledInput = styled(Input)`
     &.required .label::before {
@@ -19,9 +21,10 @@ interface IInputFieldSettings extends ICommonFieldsSettings {
 
 function InputField(props: IFormElementProps<IInputFieldSettings>): JSX.Element {
     const {label, type = 'text', required} = props.settings;
+    const {lang: availableLangs} = useLang();
 
     const fieldProps = {
-        label
+        label: localizedLabel(label, availableLangs)
     };
 
     return <StyledInput className={required ? 'required' : undefined} type={type} {...fieldProps} fluid />;

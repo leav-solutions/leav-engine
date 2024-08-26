@@ -12,16 +12,16 @@ import trimEnd from 'lodash/trimEnd';
 import upperFirst from 'lodash/upperFirst';
 import moment from 'moment';
 import os from 'os';
-import {IActionsListConfig} from '_types/actionsList';
+import {ActionsListConfig} from '_types/actionsList';
 import {IConfig} from '_types/config';
-import {ErrorFieldDetail, ErrorFieldDetailMessage, Errors, IExtendedErrorMsg} from '_types/errors';
+import {ErrorFieldDetail, ErrorFieldDetailMessage, Errors, IExtendedErrorMsg} from '../_types/errors';
 import {ILibrary, ILibraryPreviewsSettings, LibraryBehavior} from '_types/library';
 import {ISystemTranslation} from '_types/systemTranslation';
 import {IValue} from '_types/value';
 import ValidationError from '../errors/ValidationError';
 import {APPS_URL_PREFIX} from '../_types/application';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../_types/attribute';
-import {IPreviewAttributesSettings, IPreviewVersion} from '../_types/filesManager';
+import {IPreviewAttributesSettings, IPreviewVersion, IPreviewVersionSize} from '../_types/filesManager';
 import getDefaultActionsList from './helpers/getDefaultActionsList';
 import getLibraryDefaultAttributes from './helpers/getLibraryDefaultAttributes';
 import {getPreviewsAttributeName, getPreviewsStatusAttributeName} from './helpers/getPreviewsAttributes';
@@ -41,21 +41,22 @@ export interface IUtils {
      * Validate endpoint format: if external, can be any URL, if internal must be only alphanum characters and dashes
      *
      * @param id
+     * @param isExternal
      */
     isEndpointValid(id: string, isExternal: boolean): boolean;
 
     /**
      * Rethrow an error prefixed by optional message.
-     * The same given error is re-thrown so stacktrace is keeped intact
+     * The same given error is re-thrown so stacktrace is kept intact
      *
      * @param err
      * @param message
      */
-    rethrow(err: Error, message?: string): void;
+    rethrow(err: Error, message?: string): never;
 
     pipe(...fns: any[]): any;
 
-    mergeConcat(object: {}, sources: {}): {};
+    mergeConcat<T = object, U = object>(object: T, sources: U): T & U;
 
     nameValArrayToObj(arr?: Array<{}>, keyFieldName?: string, valueFieldName?: string): {[key: string]: any};
 
@@ -78,13 +79,13 @@ export interface IUtils {
     /**
      * Get the files library associated with the directories library given
      *
-     * @param library
+     * @param directoriesLibrary
      */
     getFilesLibraryId(directoriesLibrary: string): string;
 
     forceArray<T>(val: T | T[]): T[];
 
-    getDefaultActionsList(attribute: IAttribute): IActionsListConfig;
+    getDefaultActionsList(attribute: IAttribute): ActionsListConfig;
 
     getLibraryDefaultAttributes(behavior: LibraryBehavior, libraryId: string): string[];
 
@@ -139,7 +140,7 @@ export interface IUtilsDeps {
     translator?: i18n;
 }
 
-export default function({config = null, translator = null}: IUtilsDeps = {}): IUtils {
+export default function ({config = null, translator = null}: IUtilsDeps = {}): IUtils {
     return {
         getFileExtension(filename) {
             if (filename.lastIndexOf('.') === -1) {
@@ -149,14 +150,14 @@ export default function({config = null, translator = null}: IUtilsDeps = {}): IU
             return filename.slice(filename.lastIndexOf('.') + 1).toLowerCase();
         },
         getUnixTime: () => Math.floor(Date.now() / 1000),
-        deleteFile: async (path: string): Promise<void> => fs.promises.unlink(path),
-        libNameToQueryName(name: string): string {
+        deleteFile: async path => fs.promises.unlink(path),
+        libNameToQueryName(name) {
             return flow([camelCase, trimEnd])(name);
         },
-        libNameToTypeName(name: string): string {
+        libNameToTypeName(name) {
             return flow([camelCase, upperFirst, trimEnd, partialRight(trimEnd, 's')])(name);
         },
-        isIdValid(id: string): boolean {
+        isIdValid(id) {
             if (!id) {
                 return false;
             }
@@ -181,18 +182,21 @@ export default function({config = null, translator = null}: IUtilsDeps = {}): IU
             // Internal app: simple endpoint
             return /^[a-z0-9-]+$/.test(endpoint);
         },
-        rethrow(err: Error, message?: string): void {
+        rethrow(err, message?) {
             if (message) {
                 err.message = `${message}, ${err.message}`;
             }
 
             throw err;
         },
-        pipe(...fns: any[]): any {
-            const _pipe = (f, g) => async (...args) => g(await f(...args));
+        pipe(...fns) {
+            const _pipe =
+                (f, g) =>
+                async (...args) =>
+                    g(await f(...args));
             return fns.length ? fns.reduce(_pipe) : () => null;
         },
-        mergeConcat(object: {}, sources: {}): {} {
+        mergeConcat(object, sources) {
             const customizer = (oVal, srcVal) => {
                 if (Array.isArray(oVal)) {
                     return oVal.concat(srcVal);
@@ -201,7 +205,7 @@ export default function({config = null, translator = null}: IUtilsDeps = {}): IU
 
             return mergeWith(object, sources, customizer);
         },
-        nameValArrayToObj(arr: Array<{}> = [], keyFieldName = 'name', valueFieldName = 'value'): {[key: string]: any} {
+        nameValArrayToObj(arr = [], keyFieldName = 'name', valueFieldName = 'value') {
             return Array.isArray(arr) && arr.length
                 ? arr.reduce((formattedElem, elem) => {
                       formattedElem[elem[keyFieldName]] = elem[valueFieldName];
@@ -210,7 +214,11 @@ export default function({config = null, translator = null}: IUtilsDeps = {}): IU
                   }, {})
                 : null;
         },
-        objToNameValArray<T extends {}>(obj: {}, keyFieldName: string = 'name', valueFieldName: string = 'value'): T[] {
+        objToNameValArray<T extends object>(
+            obj: object,
+            keyFieldName: string = 'name',
+            valueFieldName: string = 'value'
+        ): T[] {
             if (!obj) {
                 return [];
             }
@@ -229,7 +237,7 @@ export default function({config = null, translator = null}: IUtilsDeps = {}): IU
         getLibraryTreeId(library) {
             return `${library}_tree`;
         },
-        getFilesLibraryId(directoriesLibrary: string) {
+        getFilesLibraryId(directoriesLibrary) {
             return directoriesLibrary.split('_')[0];
         },
         getDirectoriesLibraryId(library) {
@@ -240,33 +248,37 @@ export default function({config = null, translator = null}: IUtilsDeps = {}): IU
         },
         getDefaultActionsList,
         getLibraryDefaultAttributes,
-        timestampToDate(t: string | number): Date {
+        timestampToDate(t) {
             return moment.unix(Number(t)).toDate();
         },
-        dateToTimestamp(d: Date): number {
+        dateToTimestamp(d) {
             return moment(d).unix();
         },
-        isStandardAttribute(attribute: IAttribute): boolean {
+        isStandardAttribute(attribute) {
             return attribute.type === AttributeTypes.SIMPLE || attribute.type === AttributeTypes.ADVANCED;
         },
-        isLinkAttribute(attribute: IAttribute): boolean {
+        isLinkAttribute(attribute) {
             return attribute.type === AttributeTypes.SIMPLE_LINK || attribute.type === AttributeTypes.ADVANCED_LINK;
         },
-        isTreeAttribute(attribute: IAttribute): boolean {
+        isTreeAttribute(attribute) {
             return attribute.type === AttributeTypes.TREE;
         },
-        decomposeValueEdgeDestination(value: string): {library: string; id: string} {
+        decomposeValueEdgeDestination(value) {
             const [library, id]: [string, string] = value.split('/') as [string, string];
 
             return {library, id};
         },
-        translateError(error: ErrorFieldDetailMessage, lang: string): string {
+        translateError(error, lang) {
             // if error is undefined
             if (typeof error === 'undefined') {
                 error = 'Unknown error';
             }
 
             const toTranslate = typeof error === 'string' ? {msg: error, vars: {}} : (error as IExtendedErrorMsg);
+
+            if (!Object.keys(Errors).includes(toTranslate.msg)) {
+                return toTranslate.msg;
+            }
 
             return translator.t(('errors.' + toTranslate.msg) as string, {
                 ...toTranslate.vars,
@@ -280,7 +292,7 @@ export default function({config = null, translator = null}: IUtilsDeps = {}): IU
         getCoreEntityCacheKey(entityType, entityId) {
             return `coreEntity:${entityType}:${entityId}`;
         },
-        getRecordsCacheKey(libraryId: string, recordId: string): string {
+        getRecordsCacheKey(libraryId, recordId) {
             return `records:${libraryId}:${recordId}`;
         },
         generateExplicitValidationError<T>(
@@ -294,7 +306,7 @@ export default function({config = null, translator = null}: IUtilsDeps = {}): IU
             //TODO: test this
             return new ValidationError<T>(fieldDetails, this.translateError(message, lang));
         },
-        getProcessIdentifier(): string {
+        getProcessIdentifier() {
             return `${os.hostname()}-${process.pid}`;
         },
         getPreviewsAttributeName(libraryId) {
@@ -304,7 +316,7 @@ export default function({config = null, translator = null}: IUtilsDeps = {}): IU
             return getPreviewsStatusAttributeName(library);
         },
         getPreviewAttributesSettings(library) {
-            const _getSizeLabel = (size): ISystemTranslation =>
+            const _getSizeLabel = (size: IPreviewVersionSize): ISystemTranslation =>
                 config.lang.available.reduce((labels, lang) => {
                     labels[lang] = size.name;
                     return labels;
@@ -350,7 +362,7 @@ export default function({config = null, translator = null}: IUtilsDeps = {}): IU
         previewsSettingsToVersions(previewsSettings) {
             return previewsSettings.map(settings => settings.versions);
         },
-        areValuesIdentical(value1: IValue, value2: IValue) {
+        areValuesIdentical(value1, value2) {
             const isValue1MetadataEmpty = !value1?.metadata || Object.keys(value1?.metadata).length === 0;
             const isValue2MetadataEmpty = !value2?.metadata || Object.keys(value2?.metadata).length === 0;
 

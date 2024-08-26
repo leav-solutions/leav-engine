@@ -1,13 +1,14 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ApolloError} from '@apollo/client';
+import {Override} from '@leav/utils';
 import {ILang} from '_ui/types/misc';
 import {IRecordIdentityWhoAmI} from '_ui/types/records';
 import {IAttribute, IField, IFilter, ISearchSelection, SearchMode, SidebarContentType} from '_ui/types/search';
 import {IValueVersion} from '_ui/types/values';
 import {IView, IViewDisplay} from '_ui/types/views';
-import {SortOrder} from '_ui/_gqlTypes';
+import {PermissionsActions, SortOrder} from '_ui/_gqlTypes';
+import {GraphQLError, GraphQLErrorExtensions} from 'graphql';
 import {
     ILibraryDetailExtended,
     ILibraryDetailExtendedLinkedTree
@@ -47,11 +48,27 @@ export interface ISidebarState {
     type: SidebarContentType;
 }
 
+export type SearchStateError = Override<
+    GraphQLError,
+    {
+        extensions: GraphQLErrorExtensions & {
+            record?: {
+                id: string;
+                library: string;
+            };
+            fields?: {
+                [key: string]: string;
+            };
+            action?: PermissionsActions;
+        };
+    }
+>;
+
 export interface ISearchState {
     library: ILibraryDetailExtended;
     records: ISearchRecord[];
     totalCount: number;
-    error?: ApolloError;
+    errors?: readonly SearchStateError[];
     loading: boolean;
     pagination: number;
     offset: number;

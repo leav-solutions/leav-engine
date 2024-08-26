@@ -17,7 +17,7 @@ import {useGetSubmitButtons} from '../hooks/useGetSubmitButtons';
 import {useForm} from 'antd/lib/form/Form';
 import {useCreateCancelConfirm} from '../hooks/useCreateCancelConfirm';
 
-interface IEditRecordModalProps {
+export interface IEditRecordModalProps {
     open: boolean;
     record: RecordIdentityFragment['whoAmI'] | null;
     library: string;

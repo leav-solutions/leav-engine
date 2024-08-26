@@ -8,7 +8,7 @@ interface IDeps {
     'core.utils'?: IUtils;
 }
 
-export default function({'core.utils': utils = null}: IDeps): GraphQLScalarType {
+export default function ({'core.utils': utils = null}: IDeps): GraphQLScalarType {
     return new GraphQLScalarType({
         name: 'DateTime',
         description: `The DateTime scalar type represents time data,

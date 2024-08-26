@@ -85,16 +85,23 @@ services:
       - traefik.http.routers.core.entrypoints=web
     environment:
       <<: [*env-core, *env-amqp]
+      CORE_MODE: server
     volumes:
       - *mount_point-files
       - *mount_point-previews
       - *mount_point-exports
       - *mount_point-imports
-    command: [
-        sh,
-        -c,
-        "/app/scripts/wait-for-it.sh message-broker:5672 -t 1000 -- /app/scripts/wait-for-it.sh arangodb:8529 -t 1000 -- yarn run db:migrate && yarn start --server",
-      ]
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z core 4001 || exit 1"]
+      interval: 5s
+      timeout: 2s
+      retries: 15
+    depends_on:
+      message-broker:
+        condition: service_healthy
+      arangodb:
+        condition: service_healthy
+    command: [sh, -c, "yarn run db:migrate && yarn start --server"]
 
   indexation-manager:
     image: leavengine/core:latest
@@ -102,11 +109,11 @@ services:
     restart: always
     environment:
       <<: [*env-core, *env-amqp]
-    command: [
-        sh,
-        -c,
-        "/app/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn start --indexationManager",
-      ]
+      CORE_MODE: indexationManager
+    depends_on:
+      core:
+        condition: service_healthy
+    command: [sh, -c, "yarn start --indexationManager"]
 
   tasks-manager-master:
     image: leavengine/core:latest
@@ -114,28 +121,28 @@ services:
     restart: always
     environment:
       <<: [*env-core, *env-amqp]
-    command: [
-        sh,
-        -c,
-        "/app/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn start --tasksManager=master",
-      ]
+      CORE_MODE: tasksManager:master
     volumes:
       - *mount_point-exports
       - *mount_point-imports
+    depends_on:
+      core:
+        condition: service_healthy
+    command: [sh, -c, "yarn start --tasksManager=master"]
 
   tasks-manager-worker:
     image: leavengine/core:latest
     restart: always
     environment:
       <<: [*env-core, *env-amqp]
-    command: [
-        sh,
-        -c,
-        "/app/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn start --tasksManager=worker",
-      ]
+      CORE_MODE: tasksManager:worker
     volumes:
       - *mount_point-exports
       - *mount_point-imports
+    depends_on:
+      core:
+        condition: service_healthy
+    command: [sh, -c, "yarn start --tasksManager=worker"]
 
   files-manager:
     image: leavengine/core:latest
@@ -143,14 +150,14 @@ services:
     restart: always
     environment:
       <<: [*env-core, *env-amqp]
+      CORE_MODE: filesManager
     volumes:
       - *mount_point-files
       - *mount_point-previews
-    command: [
-        sh,
-        -c,
-        "/app/scripts/wait-for-it.sh core:4001 -t 1000 -- yarn start --filesManager",
-      ]
+    depends_on:
+      core:
+        condition: service_healthy
+    command: [sh, -c, "yarn start --filesManager"]
 
   automate-scan:
     image: leavengine/automate-scan:latest
@@ -159,11 +166,10 @@ services:
       <<: [*env-automate-scan, *env-amqp]
     volumes:
       - *mount_point-files
-    command: [
-        sh,
-        -c,
-        "/app/scripts/wait-for-it.sh message-broker:5672 -t 1000 -- yarn start",
-      ]
+    depends_on:
+      message-broker:
+        condition: service_healthy
+    command: [sh, -c, "yarn start"]
 
   preview-generator:
     image: leavengine/preview-generator:latest
@@ -181,7 +187,8 @@ services:
     labels:
       - traefik.enable=true
     depends_on:
-      - core
+        core:
+            condition: service_healthy
     environment:
       <<: [*env-sync-scan, *env-amqp]
     volumes:
@@ -195,13 +202,11 @@ services:
     environment:
       <<: [*env-amqp]
     depends_on:
-      - message-broker
-      - elasticsearch
-    command: [
-        sh,
-        -c,
-        "/app/scripts/wait-for-it.sh message-broker:5672 -t 1000 -- yarn run start",
-      ]
+      message-broker:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    command: [sh, -c, "yarn run start"]
 
   # Proxy
   traefik:
@@ -227,6 +232,13 @@ services:
       - traefik.http.services.arangodb.loadbalancer.server.port=8529
     volumes:
       - arango_data_prod:/var/lib/arangodb3
+    healthcheck:
+      # The arango image does not embed any health checking tool, thus we have to run a custom command to do the healthcheck.
+      # The test uses wget to make an internal HTTP request to the ArangoDB server's version endpoint.
+      test: ["CMD-SHELL", "wget -qO- http://0.0.0.0:8529/_api/version"]
+      interval: 5s
+      timeout: 2s
+      retries: 15
 
   message-broker:
     image: *message_broker_image
@@ -243,6 +255,11 @@ services:
       - traefik.enable=true
       - traefik.http.routers.message-broker.rule=Host(`rabbitmq.leav.localhost`)
       - traefik.http.services.message-broker.loadbalancer.server.port=5672
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
+      interval: 5s
+      timeout: 2s
+      retries: 15
 
   redis:
     image: *redis_image
@@ -259,6 +276,11 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     volumes:
       - elasticsearch_data_prod:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s --fail http://elasticsearch:9200"]
+      interval: 5s
+      timeout: 2s
+      retries: 15
 
 volumes:
   arango_data_prod:

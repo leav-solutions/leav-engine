@@ -398,7 +398,8 @@ describe('formDomain', () => {
         test('Return a record form with values', async () => {
             const domain = formDomain({
                 'core.domain.record': mockRecordDomain as IRecordDomain,
-                'core.domain.permission.recordAttribute': mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain
             });
 
             const mockDivider = {...formLayoutElement, id: 'divider', uiElementType: FormUIElementTypes.DIVIDER};
@@ -444,7 +445,8 @@ describe('formDomain', () => {
 
             const domain = formDomain({
                 'core.domain.record': mockRecordDomainThrowing as IRecordDomain,
-                'core.domain.permission.recordAttribute': mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
                 'core.utils.logger': mockLogger as Winston
             });
 
@@ -487,7 +489,8 @@ describe('formDomain', () => {
 
             const domain = formDomain({
                 'core.domain.record': mockRecordDomainThrowing as IRecordDomain,
-                'core.domain.permission.recordAttribute': mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
                 'core.utils': mockUtils as IUtils
             });
             const mockContainer = {...formLayoutElement};
@@ -537,7 +540,8 @@ describe('formDomain', () => {
             const domain = formDomain({
                 'core.domain.record': mockRecordDomainHandleDeps as IRecordDomain,
                 'core.domain.tree': mockTreeDomain as ITreeDomain,
-                'core.domain.permission.recordAttribute': mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain
             });
 
             const mockDepField1 = {
@@ -613,7 +617,8 @@ describe('formDomain', () => {
             const domain = formDomain({
                 'core.domain.record': mockRecordDomainHandleDeps as IRecordDomain,
                 'core.domain.tree': mockTreeDomain as ITreeDomain,
-                'core.domain.permission.recordAttribute': mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain
             });
 
             const mockDepField1 = {
@@ -693,7 +698,8 @@ describe('formDomain', () => {
 
             const domain = formDomain({
                 'core.domain.record': mockRecordDomainHandleDeps as IRecordDomain,
-                'core.domain.permission.recordAttribute': mockRecordAttributePermissionDomainForbidden as IRecordAttributePermissionDomain
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomainForbidden as IRecordAttributePermissionDomain
             });
 
             const filledContainer = {...formLayoutElement, id: 'container'};
@@ -784,7 +790,8 @@ describe('formDomain', () => {
 
             const domain = formDomain({
                 'core.domain.record': mockRecordDomainHandleDeps as IRecordDomain,
-                'core.domain.permission.recordAttribute': mockRecordAttributePermissionDomainForbidden as IRecordAttributePermissionDomain
+                'core.domain.permission.recordAttribute':
+                    mockRecordAttributePermissionDomainForbidden as IRecordAttributePermissionDomain
             });
 
             const mockTabs1 = {

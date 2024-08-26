@@ -597,8 +597,8 @@ describe('Values', () => {
 
             expect(res.data.errors).toBeUndefined();
             expect(res.data.data.saveValue[0].value).toEqual({
-                from: '1970-01-01T00:16:40+00:00',
-                to: '1970-01-01T00:33:20+00:00'
+                from: '1/1/1970, 12:16:40 AM',
+                to: '1/1/1970, 12:33:20 AM'
             });
         });
 

@@ -1,16 +1,18 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {StarFilled, StarOutlined} from '@ant-design/icons';
+import {EditOutlined, StarFilled, StarOutlined} from '@ant-design/icons';
 import {useLang} from '@leav/ui';
 import {getInitials, localizedTranslation} from '@leav/utils';
-import {KitAvatar, KitButton, KitImage, KitItemCard} from 'aristid-ds';
+import {KitAvatar, KitButton, KitImage, KitTypography} from 'aristid-ds';
 import EditApplicationModal, {
     IEditApplicationModalProps
 } from 'components/Applications/EditApplicationModal/EditApplicationModal';
 import {SyntheticEvent, useState} from 'react';
 import styled from 'styled-components';
 import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
+
+import './ApplicationCard.css';
 
 interface IApplicationCardProps {
     isFavorite?: boolean;
@@ -62,20 +64,31 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
         <KitAvatar color={application?.color ?? undefined}>{initials}</KitAvatar>
     );
 
-    const actions = [<KitButton onClick={_toggleFavorite}>{isFavorite ? <StarFilled /> : <StarOutlined />}</KitButton>];
+    const actions = [
+        <KitButton className="app-card-action-button" onClick={_handleOpenEditAppModal}>
+            <EditOutlined />
+        </KitButton>,
+        <KitButton className="app-card-action-button" onClick={_toggleFavorite}>
+            {isFavorite ? <StarFilled /> : <StarOutlined />}
+        </KitButton>
+    ];
 
     return (
         <>
-            <KitItemCard
-                vertical
-                title={<ClickableWrapper onClick={_handleClick}>{label}</ClickableWrapper>}
-                description={<ClickableWrapper onClick={_handleClick}>{description}</ClickableWrapper>}
-                picture={cover}
-                actions={actions}
-                onEdit={_handleOpenEditAppModal}
-                data-testid={`app-card-${application.id}`}
-                fullWidthAvatar
-            />
+            <div className="app-card" data-testid={`app-card-${application.id}`}>
+                <div className="app-card-icon">{cover}</div>
+                <div className="app-card-actions">{actions}</div>
+                <div className="app-card-data">
+                    <KitTypography.Text className="app-card-title" weight="bold">
+                        <ClickableWrapper onClick={_handleClick}>{label}</ClickableWrapper>
+                    </KitTypography.Text>
+                    <div className="app-card-description-container">
+                        <KitTypography.Text size="large" className="app-card-description" color="#0b6aa0">
+                            <ClickableWrapper onClick={_handleClick}>{description}</ClickableWrapper>
+                        </KitTypography.Text>
+                    </div>
+                </div>
+            </div>
             {isEditAppModalOpen && (
                 <EditApplicationModal
                     applicationId={application.id}

@@ -7,19 +7,11 @@ const _redirectToLogin = () =>
     window.location.replace(`${window.location.origin}/app/login/?dest=${window.location.pathname}`);
 
 export default function useRefreshToken() {
-    const REFRESH_TOKEN_KEY = 'refreshToken';
-
     return {
-        setRefreshToken: (token: string) => {
-            localStorage.setItem(REFRESH_TOKEN_KEY, token);
-        },
         refreshToken: async (autoReload: boolean = true) => {
-            const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
-
             const res = await fetch('/auth/refresh', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({refreshToken})
+                headers: {'Content-Type': 'application/json'}
             });
 
             // If we didn't get a 2xx response, reload the page and let the back handle auth, unless we explicitly
@@ -33,11 +25,6 @@ export default function useRefreshToken() {
                 }
 
                 throw new Error(res.statusText, {cause: res});
-            }
-
-            const data = await res.json();
-            if (data?.refreshToken) {
-                localStorage.setItem(REFRESH_TOKEN_KEY, data.refreshToken);
             }
         }
     };

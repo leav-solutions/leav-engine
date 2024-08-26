@@ -45,17 +45,19 @@ const _inputTypeByFormat: {[format in AttributeFormat]: FormFieldTypes} = {
 function ValueMetadata({value: parentValue, attribute, onMetadataSubmit}: IValueMetadataProps): JSX.Element {
     const {lang} = useLang();
 
-    const _handleValueSubmit: (field: MetadataField) => SubmitValueFunc = field => (
-        values
-    ): Promise<ISubmitMultipleResult> => onMetadataSubmit(parentValue, attribute, {
-            [field.id]: (values[0] as ISubmittedValueStandard).value
-        });
+    const _handleValueSubmit: (field: MetadataField) => SubmitValueFunc =
+        field =>
+        (values): Promise<ISubmitMultipleResult> =>
+            onMetadataSubmit(parentValue, attribute, {
+                [field.id]: (values[0] as ISubmittedValueStandard).value
+            });
 
-    const _handleValueDelete: (field: MetadataField) => DeleteValueFunc = field => (
-        values
-    ): Promise<ISubmitMultipleResult> => onMetadataSubmit(parentValue, attribute, {
-            [field.id]: null
-        });
+    const _handleValueDelete: (field: MetadataField) => DeleteValueFunc =
+        field =>
+        (values): Promise<ISubmitMultipleResult> =>
+            onMetadataSubmit(parentValue, attribute, {
+                [field.id]: null
+            });
 
     return (
         <Space direction="vertical" style={{width: '100%'}} size="small">
@@ -69,7 +71,7 @@ function ValueMetadata({value: parentValue, attribute, onMetadataSubmit}: IValue
                     valueError: null,
                     values: [parentValue?.metadata?.find(({name}) => name === field.id)?.value as unknown] ?? [],
                     settings: {
-                        label: localizedTranslation(field.label, lang)
+                        label: field.label
                     },
                     uiElement: formComponents[_inputTypeByFormat[field.format]]
                 };

@@ -327,24 +327,24 @@ docker compose exec <service_name> /bin/sh
 ### Unit tests
 
 Though you can run unit testing inside the container, it might not be very convenient and resource consuming.
-You'd better run it locally, on your machine with a standard `npm run test`.
+You'd better run it locally, on your machine with a standard `yarn run test`.
 
 ### E2E tests
 
 End-to-end testing needs to be run inside the container as it starts a server, access to the DB, etc.
 This can be done by either:
 
-- Running a shell in the container and executing `npm run test:e2e`
-- Executing the command from your machine: `docker exec -i docker-compose_leav_core_1 npm run test:e2e`
+- Running a shell in the container and executing `yarn run test:e2e`
+- Executing the command from your machine: `docker exec -i docker-compose_leav_core_1 yarn run test:e2e`
 
 ---
 
 ## Services logs
 
-All services logs out to stdout and stderr. Use `docker-compose logs` if you need to read it:
+All services logs out to stdout and stderr. Use `docker compose logs` if you need to read it:
 
 ```shell
-docker-compose logs -ft <service_name>
+docker compose logs -ft <service_name>
 ```
 
 More infos: https://docs.docker.com/compose/reference/logs/

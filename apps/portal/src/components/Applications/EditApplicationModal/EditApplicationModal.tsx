@@ -11,10 +11,10 @@ import {styled} from 'styled-components';
 
 const SubmitButton = styled(Button)`
     && {
-        background-color: ${dsTheme.general.colors.primary.primary400};
+        background-color: ${dsTheme.general.colors.primary['400']};
 
         &:hover {
-            background-color: ${dsTheme.general.colors.primary.primary100};
+            background-color: ${dsTheme.general.colors.primary['100']};
         }
     }
 `;

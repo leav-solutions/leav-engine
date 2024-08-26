@@ -14,6 +14,8 @@ import {IRecordPropertyLink} from '_ui/_queries/records/getRecordPropertiesQuery
 import {useDebouncedValue} from '_ui/hooks/useDebouncedValue/useDebouncedValue';
 import styled from 'styled-components';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
+import {IStandardFieldValue} from '_ui/components/RecordEdition/EditRecordContent/reducers/standardFieldReducer/standardFieldReducer';
 
 const ResultsCount = styled(KitTypography.Text)`
     margin-bottom: calc(var(--general-spacing-s) * 1px);
@@ -23,22 +25,27 @@ interface IMonoValueSelectProps extends IProvidedByAntFormItem<SelectProps<strin
     activeValue: RecordFormElementsValueLinkValue | undefined;
     attribute: RecordFormAttributeLinkAttributeFragment;
     label: string;
-    onSelectClear: (value: IRecordPropertyLink) => void;
-    onSelectChange: (values: IRecordIdentity[]) => void;
     required: boolean;
-    infoButton?: ReactNode;
+    shouldShowValueDetailsButton?: boolean;
+    onSelectClear: (value: IRecordPropertyLink) => void;
+    onSelectChange: (
+        values: Array<{
+            value: IRecordIdentity;
+            idValue: string;
+        }>
+    ) => void;
 }
 
 export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
-    activeValue,
     value,
     onChange,
+    activeValue,
     attribute,
     label,
-    onSelectChange,
-    onSelectClear,
     required,
-    infoButton
+    shouldShowValueDetailsButton = false,
+    onSelectChange,
+    onSelectClear
 }) => {
     if (!onChange) {
         throw Error('MonoValueSelect should be used inside a antd Form.Item');
@@ -63,6 +70,11 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
         activeValue,
         linkedLibraryId: attribute.linked_library.id,
         onSelectChange
+    });
+
+    const {onValueDetailsButtonClick, infoIconWithTooltip} = useValueDetailsButton({
+        value: null,
+        attribute
     });
 
     const handleSelect = async (optionValue: string, ...antOnChangeParams: DefaultOptionType[]) => {
@@ -98,8 +110,8 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
             onChange={onChange}
             onClear={required ? undefined : handleClear}
             allowClear={!required}
-            infoIcon={infoButton}
-            onInfoClick={Boolean(infoButton) ? () => void 0 : undefined}
+            infoIcon={shouldShowValueDetailsButton ? infoIconWithTooltip : null}
+            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             onSearch={handleSearch}
             filterOption={false} // To avoid dynamic filtering when debouncing
             dropdownRender={menu => {

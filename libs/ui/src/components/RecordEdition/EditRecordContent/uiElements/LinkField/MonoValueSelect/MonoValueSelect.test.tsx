@@ -130,7 +130,7 @@ describe('<MonoValueSelect />', () => {
         formElement: {
             ...mockFormElementInput,
             settings: {
-                label: 'label',
+                label: {en: 'label'},
                 required: true
             }
         },
@@ -155,7 +155,7 @@ describe('<MonoValueSelect />', () => {
                     <MonoValueSelect
                         activeValue={undefined}
                         attribute={mockFormElementLink.attribute}
-                        label={state.formElement.settings.label}
+                        label={state.formElement.settings.label.en}
                         required={state.formElement.settings.required}
                         onSelectChange={onSelectChangeMock}
                         onSelectClear={onClearSelectMock}
@@ -182,7 +182,7 @@ describe('<MonoValueSelect />', () => {
         await userEvent.click(danetteChocolat);
 
         expect(onSelectChangeMock).toBeCalledTimes(1);
-        expect(onSelectChangeMock).toHaveBeenCalledWith([records.list[1]]);
+        expect(onSelectChangeMock).toHaveBeenCalledWith([{value: records.list[1], idValue: null}]);
     });
 
     it('should display MonoValueSelect with active value', async () => {
@@ -207,7 +207,7 @@ describe('<MonoValueSelect />', () => {
                             }
                         }}
                         attribute={mockFormElementLink.attribute}
-                        label={state.formElement.settings.label}
+                        label={state.formElement.settings.label.en}
                         required={state.formElement.settings.required}
                         onSelectChange={onSelectChangeMock}
                         onSelectClear={onClearSelectMock}
@@ -232,7 +232,7 @@ describe('<MonoValueSelect />', () => {
         await userEvent.click(danettePistache);
 
         expect(onSelectChangeMock).toBeCalledTimes(1);
-        expect(onSelectChangeMock).toHaveBeenCalledWith([records.list[0]]);
+        expect(onSelectChangeMock).toHaveBeenCalledWith([{value: records.list[0], idValue: null}]);
     });
 
     it('should be able to clear selection when attribute is not required', async () => {
@@ -256,7 +256,7 @@ describe('<MonoValueSelect />', () => {
                     <MonoValueSelect
                         activeValue={activeValue}
                         attribute={mockFormElementLink.attribute}
-                        label={state.formElement.settings.label}
+                        label={state.formElement.settings.label.en}
                         required={false}
                         onSelectChange={onSelectChangeMock}
                         onSelectClear={onClearSelectMock}
@@ -293,7 +293,7 @@ describe('<MonoValueSelect />', () => {
                     <MonoValueSelect
                         activeValue={undefined}
                         attribute={mockFormElementLink.attribute}
-                        label={state.formElement.settings.label}
+                        label={state.formElement.settings.label.en}
                         required={state.formElement.settings.required}
                         onSelectChange={onSelectChangeMock}
                         onSelectClear={onClearSelectMock}
@@ -342,7 +342,7 @@ describe('<MonoValueSelect />', () => {
                     <MonoValueSelect
                         activeValue={undefined}
                         attribute={mockFormElementLink.attribute}
-                        label={state.formElement.settings.label}
+                        label={state.formElement.settings.label.en}
                         required={state.formElement.settings.required}
                         onSelectChange={onSelectChangeMock}
                         onSelectClear={onClearSelectMock}

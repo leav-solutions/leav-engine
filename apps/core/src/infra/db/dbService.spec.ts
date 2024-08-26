@@ -37,7 +37,7 @@ describe('dbService', () => {
             const mockDb = new Database();
 
             const mockUtils: Mockify<IUtils> = {
-                rethrow: jest.fn().mockImplementation(e => {
+                rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                     throw e;
                 })
             };
@@ -62,7 +62,7 @@ describe('dbService', () => {
             const mockDb = new Database();
 
             const mockUtils: Mockify<IUtils> = {
-                rethrow: jest.fn().mockImplementation(e => {
+                rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                     throw e;
                 })
             };
@@ -96,7 +96,7 @@ describe('dbService', () => {
             const mockDb = new Database();
 
             const mockUtils: Mockify<IUtils> = {
-                rethrow: jest.fn().mockImplementation(e => {
+                rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                     throw new Error();
                 })
             };
