@@ -56,7 +56,13 @@ function Tabs({settings, elementData}: IFormElementProps<ITabsSettings>): JSX.El
     if (!settings.tabs?.length) {
         dispatch({
             type: FormBuilderActionTypes.SAVE_SETTINGS,
-            element: elementData,
+            element: {
+                ...elementData,
+                settings: {
+                    ...elementData.settings,
+                    tabs: elementData?.settings?.tabs ?? []
+                }
+            },
             settings: {
                 ...elementData?.settings,
                 tabs: [_getNewTab()]
@@ -97,6 +103,7 @@ function Tabs({settings, elementData}: IFormElementProps<ITabsSettings>): JSX.El
     const _handleCloseEditTabModal = () => setShowEditTabModal(false);
 
     const tabsToDisplay = settings.tabs || [];
+
     const panes = tabsToDisplay.map(tab => ({
         menuItem: (
             <CompactMenuItem key={tab.id} className="form-tab-name">
