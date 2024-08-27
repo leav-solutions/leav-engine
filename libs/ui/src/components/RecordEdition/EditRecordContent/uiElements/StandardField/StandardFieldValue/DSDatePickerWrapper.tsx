@@ -25,11 +25,6 @@ interface IDSDatePickerWrapperProps extends IProvidedByAntFormItem<DatePickerPro
 
 const KitDatePickerStyled = styled(KitDatePicker)<{$shouldHighlightColor: boolean}>`
     color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
-    .kit-input-wrapper-helper {
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-    }
 `;
 
 export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> = ({
