@@ -78,24 +78,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ant-design/cssinjs@npm:^1.18.5":
-  version: 1.18.5
-  resolution: "@ant-design/cssinjs@npm:1.18.5"
-  dependencies:
-    "@babel/runtime": "npm:^7.11.1"
-    "@emotion/hash": "npm:^0.8.0"
-    "@emotion/unitless": "npm:^0.7.5"
-    classnames: "npm:^2.3.1"
-    csstype: "npm:^3.1.3"
-    rc-util: "npm:^5.35.0"
-    stylis: "npm:^4.0.13"
-  peerDependencies:
-    react: ">=16.0.0"
-    react-dom: ">=16.0.0"
-  checksum: bbb3dc153993a8f2dc9cc0e38335e606f726ddee7cd3d13989e5b5364fee08196fa77fdd2c52122df0eb1af77a5115b143cc2b6d253b446d21f9ed6fbfd48694
-  languageName: node
-  linkType: hard
-
 "@ant-design/icons-svg@npm:^4.3.0":
   version: 4.3.0
   resolution: "@ant-design/icons-svg@npm:4.3.0"
@@ -139,22 +121,6 @@ __metadata:
     react: ">=16.0.0"
     react-dom: ">=16.0.0"
   checksum: 5fe41720dd07324a31b2743dc2b558e6eea241afe2c1af623f6f9d45c7fb6051e4178e96f4bf344c76adc5549d53fcd57fe4abb38142108c24e95c4e17b0f8f3
-  languageName: node
-  linkType: hard
-
-"@ant-design/icons@npm:^5.3.5":
-  version: 5.3.5
-  resolution: "@ant-design/icons@npm:5.3.5"
-  dependencies:
-    "@ant-design/colors": "npm:^7.0.0"
-    "@ant-design/icons-svg": "npm:^4.4.0"
-    "@babel/runtime": "npm:^7.11.2"
-    classnames: "npm:^2.2.6"
-    rc-util: "npm:^5.31.1"
-  peerDependencies:
-    react: ">=16.0.0"
-    react-dom: ">=16.0.0"
-  checksum: 53428d07a75f105d802dd4f6443660e6f0260a420c03fbb530d1c85960f08ad296643c1da420cfa5fb30622bda3508269d73ecbdacbdd3ed5437aa8fa79c42b2
   languageName: node
   linkType: hard
 
@@ -4914,15 +4880,6 @@ __metadata:
   dependencies:
     regenerator-runtime: "npm:^0.14.0"
   checksum: 8ec8ce2c145bc7e31dd39ab66df124f357f65c11489aefacb30f431bae913b9aaa66aa5efe5321ea2bf8878af3fcee338c87e7599519a952e3a6f83aa1b03308
-  languageName: node
-  linkType: hard
-
-"@babel/runtime@npm:^7.24.1":
-  version: 7.24.1
-  resolution: "@babel/runtime@npm:7.24.1"
-  dependencies:
-    regenerator-runtime: "npm:^0.14.0"
-  checksum: 3a8d61400c636d1ce3a42895a106cd4dfb4e9b88832a8a754a724c68652f821d7a46dce394305d7623f9f0d3597bf0a98aeb5f9c150ef60e14bbbf66caab4654
   languageName: node
   linkType: hard
 
@@ -11526,65 +11483,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"antd@npm:^5.15.3":
-  version: 5.15.4
-  resolution: "antd@npm:5.15.4"
-  dependencies:
-    "@ant-design/colors": "npm:^7.0.2"
-    "@ant-design/cssinjs": "npm:^1.18.5"
-    "@ant-design/icons": "npm:^5.3.5"
-    "@ant-design/react-slick": "npm:~1.0.2"
-    "@babel/runtime": "npm:^7.24.1"
-    "@ctrl/tinycolor": "npm:^3.6.1"
-    "@rc-component/color-picker": "npm:~1.5.3"
-    "@rc-component/mutate-observer": "npm:^1.1.0"
-    "@rc-component/tour": "npm:~1.14.2"
-    "@rc-component/trigger": "npm:^2.0.0"
-    classnames: "npm:^2.5.1"
-    copy-to-clipboard: "npm:^3.3.3"
-    dayjs: "npm:^1.11.10"
-    qrcode.react: "npm:^3.1.0"
-    rc-cascader: "npm:~3.24.0"
-    rc-checkbox: "npm:~3.2.0"
-    rc-collapse: "npm:~3.7.3"
-    rc-dialog: "npm:~9.4.0"
-    rc-drawer: "npm:~7.1.0"
-    rc-dropdown: "npm:~4.2.0"
-    rc-field-form: "npm:~1.42.1"
-    rc-image: "npm:~7.6.0"
-    rc-input: "npm:~1.4.5"
-    rc-input-number: "npm:~9.0.0"
-    rc-mentions: "npm:~2.11.1"
-    rc-menu: "npm:~9.13.0"
-    rc-motion: "npm:^2.9.0"
-    rc-notification: "npm:~5.3.0"
-    rc-pagination: "npm:~4.0.4"
-    rc-picker: "npm:~4.3.0"
-    rc-progress: "npm:~3.5.1"
-    rc-rate: "npm:~2.12.0"
-    rc-resize-observer: "npm:^1.4.0"
-    rc-segmented: "npm:~2.3.0"
-    rc-select: "npm:~14.13.0"
-    rc-slider: "npm:~10.5.0"
-    rc-steps: "npm:~6.0.1"
-    rc-switch: "npm:~4.1.0"
-    rc-table: "npm:~7.42.0"
-    rc-tabs: "npm:~14.1.1"
-    rc-textarea: "npm:~1.6.3"
-    rc-tooltip: "npm:~6.2.0"
-    rc-tree: "npm:~5.8.5"
-    rc-tree-select: "npm:~5.19.0"
-    rc-upload: "npm:~4.5.2"
-    rc-util: "npm:^5.39.1"
-    scroll-into-view-if-needed: "npm:^3.1.0"
-    throttle-debounce: "npm:^5.0.0"
-  peerDependencies:
-    react: ">=16.9.0"
-    react-dom: ">=16.9.0"
-  checksum: fe791c5986383c8dffa19df96e0896f2744b45d4264a591f60e6de45229296a53e269967f613f096209a3e234e7c27a28ef7577a98651a78b083a07d62ae0cd2
-  languageName: node
-  linkType: hard
-
 "any-observable@npm:^0.3.0":
   version: 0.3.0
   resolution: "any-observable@npm:0.3.0"
@@ -12149,9 +12047,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aristid-ds@npm:8.0.0-6cb3865":
-  version: 8.0.0-6cb3865
-  resolution: "aristid-ds@npm:8.0.0-6cb3865"
+"aristid-ds@npm:8.0.0-8587897":
+  version: 8.0.0-8587897
+  resolution: "aristid-ds@npm:8.0.0-8587897"
   dependencies:
     "@dnd-kit/core": "npm:^6.1.0"
     "@dnd-kit/modifiers": "npm:^7.0.0"
@@ -12162,7 +12060,7 @@ __metadata:
     "@fortawesome/free-solid-svg-icons": "npm:^6.4.2"
     "@fortawesome/react-fontawesome": "npm:^0.2.0"
     "@sass-fairy/string": "npm:^1.3.0"
-    antd: "npm:^5.15.3"
+    antd: "npm:5.15.3"
     antd-img-crop: "npm:^4.21.0"
     axe-core: "npm:^4.8.1"
     classnames: "npm:^2.3.2"
@@ -12188,7 +12086,7 @@ __metadata:
     updeep: "npm:^1.2.4"
     use-debounce: "npm:^9.0.4"
   peerDependencies:
-    antd: ^5.15.3
+    antd: 5.15.3
     react: ^18.2.0
     react-dom: ^18.2.0
     react-hot-toast: ^2.4.1
@@ -12196,7 +12094,7 @@ __metadata:
     react-uuid: ^2.0.0
     remark-gfm: ^3.0.1
     styled-components: ^6.0.7
-  checksum: 3d96412e0dc9274e9b93ea9b77de2938550d9a82506b581f30adc4475d9ee35696eab0a3ffd73eee1f63b5aef3f9fea340193b70b907093d2ea072893366dd78
+  checksum: a2964bb3a71bc983f50a3f1a623bb78caeb0367e013c776044ef3c82d84a398e56dc36f7c40590edc701768ba6c251fece44eedd54c5c2bb676414e5d53c6d3d
   languageName: node
   linkType: hard
 
@@ -15401,7 +15299,7 @@ __metadata:
     apollo: "npm:2.34.0"
     apollo-cache-inmemory: "npm:1.6.6"
     apollo-upload-client: "npm:14.1.3"
-    aristid-ds: "npm:8.0.0-6cb3865"
+    aristid-ds: "npm:8.0.0-8587897"
     commander: "npm:5.1.0"
     dayjs: "npm:1.11.10"
     graphql: "npm:15.0.0"
@@ -24025,7 +23923,7 @@ __metadata:
     "@types/react-dom": "npm:18.2.6"
     "@vitejs/plugin-react": "npm:3.1.0"
     antd: "npm:5.15.3"
-    aristid-ds: "npm:8.0.0-6cb3865"
+    aristid-ds: "npm:8.0.0-8587897"
     i18next: "npm:22.5.0"
     i18next-browser-languagedetector: "npm:7.0.2"
     i18next-http-backend: "npm:2.1.1"
@@ -26787,7 +26685,7 @@ __metadata:
     "@vitejs/plugin-react": "npm:3.1.0"
     antd: "npm:5.15.3"
     apollo: "npm:2.34.0"
-    aristid-ds: "npm:8.0.0-6cb3865"
+    aristid-ds: "npm:8.0.0-8587897"
     commander: "npm:10.0.0"
     cross-fetch: "npm:3.1.5"
     graphql-ws: "npm:5.12.0"
@@ -27370,21 +27268,6 @@ __metadata:
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
   checksum: 2210194bd43be38788fa8a83b6ac2be7eeca2d1bae2fa6f0bab277658344d08fb21cef1aca20616b46539c5ca69f4598e453f1995d22598929aab4e8ff56e91e
-  languageName: node
-  linkType: hard
-
-"rc-collapse@npm:~3.7.3":
-  version: 3.7.3
-  resolution: "rc-collapse@npm:3.7.3"
-  dependencies:
-    "@babel/runtime": "npm:^7.10.1"
-    classnames: "npm:2.x"
-    rc-motion: "npm:^2.3.4"
-    rc-util: "npm:^5.27.0"
-  peerDependencies:
-    react: ">=16.9.0"
-    react-dom: ">=16.9.0"
-  checksum: 33bc54c0ebabad1e079001911c0f37409314834c274c29da7e4a58cc35fb333bcf71ab3e6c611fe927f5c34fcff0d43046e15cc352def5cafc3d4e2c82e5fe8d
   languageName: node
   linkType: hard
 
