@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AnyPrimitive, ErrorTypes, ICommonFieldsSettings} from '@leav/utils';
-import {useContext, useEffect, useMemo, useReducer} from 'react';
+import {FunctionComponent, useContext, useEffect, useMemo, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {ErrorDisplay} from '_ui/components';
@@ -25,18 +25,20 @@ import FieldFooter from '../../shared/FieldFooter';
 import ValuesVersionBtn from '../../shared/ValuesVersionBtn';
 import {APICallStatus, FieldScope, IFormElementProps} from '../../_types';
 import StandardFieldValue from './StandardFieldValue';
+import {FormInstance} from 'antd';
 
 const Wrapper = styled.div<{$metadataEdit: boolean}>`
     margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
 `;
 
-function StandardField({
+const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> & {antdForm?: FormInstance}> = ({
     element,
+    antdForm,
     onValueSubmit,
     onValueDelete,
     onDeleteMultipleValues,
     metadataEdit = false
-}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
+}) => {
     const {t} = useTranslation();
 
     const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
@@ -161,6 +163,15 @@ function StandardField({
                     attributeError.type === ErrorTypes.VALIDATION_ERROR
                         ? attributeError.message
                         : t(`errors.${attributeError.type}`);
+
+                if (antdForm) {
+                    antdForm.setFields([
+                        {
+                            name: attributeError.attribute,
+                            errors: [errorMessage]
+                        }
+                    ]);
+                }
             }
         }
 
@@ -314,6 +325,6 @@ function StandardField({
             )}
         </Wrapper>
     );
-}
+};
 
 export default StandardField;

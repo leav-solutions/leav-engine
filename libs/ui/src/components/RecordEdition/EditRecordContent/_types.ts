@@ -20,6 +20,7 @@ import {RecordFormAttributeFragment, SaveValueBatchMutation, ValueDetailsFragmen
 import {IRecordPropertyAttribute, RecordProperty} from '_ui/_queries/records/getRecordPropertiesQuery';
 import {RecordFormElementFragment} from '../../../_gqlTypes';
 import {IStandardFieldReducerState, IStandardFieldValue} from './reducers/standardFieldReducer/standardFieldReducer';
+import {FormInstance} from 'antd/lib/form/Form';
 
 export interface IValueToSubmit {
     attribute: string;
@@ -112,7 +113,7 @@ export type FormElement<SettingsType> = Override<
         values: RecordFormElementsValue[];
     }
 > & {
-    uiElement: (props: IFormElementProps<unknown>) => JSX.Element;
+    uiElement: (props: IFormElementProps<unknown> & {antdForm?: FormInstance}) => JSX.Element;
 };
 
 export interface IDependencyValues {

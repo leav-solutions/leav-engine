@@ -862,12 +862,8 @@ export default function ({
                         return {
                             type: rejection.reason.type,
                             attributeId: errorAttribute,
-                            id_value: rejection.reason.context.value
-                                ? rejection.reason.context.value.id_value
-                                : rejection.reason.context.values.id_value,
-                            input: rejection.reason.context.value
-                                ? rejection.reason.context.value.value
-                                : rejection.reason.context.values.value,
+                            id_value: rejection.reason.context.values[0].id_value,
+                            input: rejection.reason.context.values[0].value,
                             message: utils.translateError(rejection.reason.fields[errorAttribute], ctx.lang)
                         };
                     });
