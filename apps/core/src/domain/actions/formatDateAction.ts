@@ -41,6 +41,9 @@ export default function (): IActionsListFunction<{localized: false; universal: f
             const errors: IActionsListFunctionResult['errors'] = [];
 
             const formattedValues = values.map(elementValue => {
+                if ('raw_value' in elementValue) {
+                    elementValue.value = elementValue.raw_value;
+                }
                 if (elementValue.value === null) {
                     return elementValue;
                 }

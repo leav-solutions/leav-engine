@@ -90,10 +90,7 @@ export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> =
             helper={
                 state.isInheritedOverrideValue
                     ? t('record_edition.inherited_input_helper', {
-                          inheritedValue: t('record_edition.date_range_from_to', {
-                              from: state.inheritedValue.value.from,
-                              to: state.inheritedValue.value.to
-                          })
+                          inheritedValue: state.inheritedValue.value
                       })
                     : undefined
             }
