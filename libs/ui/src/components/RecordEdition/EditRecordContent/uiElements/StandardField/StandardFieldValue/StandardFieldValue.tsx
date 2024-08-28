@@ -52,6 +52,7 @@ import ValuesList from './ValuesList';
 import {IValueOfValuesList} from './ValuesList/ValuesList';
 import {DSInputNumberWrapper} from './DSInputNumberWrapper';
 import {useLang} from '_ui/hooks';
+import {DSInputPasswordWrapper} from './DSInputPasswordWrapper';
 
 const ErrorMessage = styled.div`
     color: ${themeVars.errorColor};
@@ -182,7 +183,7 @@ const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInp
     [AttributeFormat.date_range]: null,
     [AttributeFormat.boolean]: CheckboxInput,
     [AttributeFormat.numeric]: null,
-    [AttributeFormat.encrypted]: EncryptedInput,
+    [AttributeFormat.encrypted]: null,
     [AttributeFormat.extended]: TextInput,
     [AttributeFormat.color]: ColorInput,
     [AttributeFormat.rich_text]: RichTextEditorInput
@@ -553,13 +554,17 @@ function StandardFieldValue({
         borderRadius: hasMultipleValuesDisplay ? 'none' : token.borderRadius
     };
 
-    const attributeFormatsWithDS = [AttributeFormat.text, AttributeFormat.date_range, AttributeFormat.numeric];
+    const attributeFormatsWithDS = [
+        AttributeFormat.text,
+        AttributeFormat.date_range,
+        AttributeFormat.numeric,
+        AttributeFormat.encrypted
+    ];
 
     const attributeFormatsWithoutDS = [
         AttributeFormat.boolean,
         AttributeFormat.color,
         AttributeFormat.date,
-        AttributeFormat.encrypted,
         AttributeFormat.extended,
         AttributeFormat.rich_text
     ];
@@ -596,6 +601,15 @@ function StandardFieldValue({
                     )}
                     {attribute.format === AttributeFormat.numeric && (
                         <DSInputNumberWrapper
+                            state={state}
+                            handleSubmit={_handleSubmit}
+                            attribute={attribute}
+                            fieldValue={fieldValue}
+                            shouldShowValueDetailsButton={editRecordState.withInfoButton}
+                        />
+                    )}
+                    {attribute.format === AttributeFormat.encrypted && (
+                        <DSInputPasswordWrapper
                             state={state}
                             handleSubmit={_handleSubmit}
                             attribute={attribute}

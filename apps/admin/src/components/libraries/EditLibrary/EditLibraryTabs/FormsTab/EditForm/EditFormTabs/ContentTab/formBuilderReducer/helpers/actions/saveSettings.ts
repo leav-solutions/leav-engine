@@ -7,7 +7,7 @@ import {defaultContainerId, IFormBuilderActionSaveSettings, IFormBuilderState} f
 import getKeyFromDepValue from '../getKeyFromDepValue';
 import {IKeyValue} from '@leav/utils';
 
-const _isLabelObject = (obj: any): obj is IKeyValue<string> => typeof obj === 'object' && obj !== null;
+const _isLabelObject = (obj: any): obj is IKeyValue<string> => typeof obj === 'object' && obj !== null && !obj.length;
 
 export default function saveSettings(state: IFormBuilderState, action: IFormBuilderActionSaveSettings) {
     const elementToUpdate = action.element ?? state.elementInSettings;

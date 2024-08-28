@@ -216,19 +216,23 @@ describe('RecordDomain', () => {
                     .mockRejectedValueOnce(
                         new ValidationError({some_attribute: 'invalid value'}, 'mock error', false, {
                             attributeId: 'some_attribute',
-                            value: {
-                                id_value: 'fake_value1',
-                                value: 'some_value'
-                            }
+                            values: [
+                                {
+                                    id_value: 'fake_value1',
+                                    value: 'some_value'
+                                }
+                            ]
                         })
                     )
                     .mockRejectedValueOnce(
                         new ValidationError({other_attribute: 'invalid value'}, 'mock error', false, {
                             attributeId: 'other_attribute',
-                            value: {
-                                id_value: 'fake_value2',
-                                value: 'some other value'
-                            }
+                            values: [
+                                {
+                                    id_value: 'fake_value2',
+                                    value: 'some other value'
+                                }
+                            ]
                         })
                     )
             };
