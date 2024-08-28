@@ -77,12 +77,12 @@ magick-*
 /imports
 /exports
 /cache
-/exports
 
 docker/previews
 docker/files
 docker/imports
 docker/exports
+docker/docker-compose.override.yml
 
 apps/core/applications/*
 apps/core/config/local.js
