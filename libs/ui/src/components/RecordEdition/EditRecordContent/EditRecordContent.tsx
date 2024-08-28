@@ -143,6 +143,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
                 <rootElement.uiElement
                     // Use a hash of record form as a key to force a full re-render when the form changes
                     key={recordFormHash}
+                    antdForm={antdForm}
                     element={rootElement}
                     onValueSubmit={_handleValueSubmit}
                     onValueDelete={_handleValueDelete}
