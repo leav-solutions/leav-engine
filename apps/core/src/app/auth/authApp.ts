@@ -26,10 +26,14 @@ import winston from 'winston';
 import {IOIDCClientService} from '../../infra/oidc/oidcClientService';
 import {InitQueryContextFunc} from '../helpers/initQueryContext';
 import {IConvertOIDCIdentifier} from '../helpers/convertOIDCIdentifier';
+import {IncomingHttpHeaders} from 'http';
 
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
-    validateRequestToken(params: {apiKey?: string; cookies?: {}}): Promise<ITokenUserData>;
+    validateRequestToken(
+        params: {apiKey?: string; headers?: IncomingHttpHeaders; cookies?: {}},
+        res: Response<unknown>
+    ): Promise<ITokenUserData>;
     registerRoute(app: Express): void;
     authenticateWithOIDCService(req: IRequestWithContext, res: Response<unknown>): Promise<void | Response>;
 }
@@ -126,6 +130,48 @@ export default function ({
                 expires: new Date(Date.now() + cookieExpires)
             }
         ];
+    };
+
+    const _checkIfUserExistsById = async (userId: string, ctx: IQueryInfos) => {
+        const users = await recordDomain.find({
+            params: {
+                library: 'users',
+                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: userId}]
+            },
+            ctx
+        });
+
+        // User could have been deleted / disabled in database
+        if (!users.list.length) {
+            throw new AuthenticationError('User not found');
+        }
+    };
+
+    const _generateAccessAndRefreshTokens = async (
+        userId: string,
+        refreshToken: string,
+        headers: IncomingHttpHeaders,
+        res: Response,
+        ctx: IQueryInfos
+    ) => {
+        const newAccessToken = await _generateAccessToken(userId, ctx);
+
+        const newRefreshToken = _generateRefreshToken({
+            userId,
+            ip: headers['x-forwarded-for'],
+            agent: headers['user-agent']
+        });
+
+        await cacheService.getCache(ECacheType.RAM).storeData({
+            key: `${SESSION_CACHE_HEADER}:${newRefreshToken}`,
+            data: userId,
+            expiresIn: ms(config.auth.refreshTokenExpiration)
+        });
+
+        await cacheService.getCache(ECacheType.RAM).deleteData([`${SESSION_CACHE_HEADER}:${refreshToken}`]);
+
+        res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, newAccessToken, headers.host));
+        res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, newRefreshToken, headers.host));
     };
 
     return {
@@ -404,17 +450,7 @@ export default function ({
                             queryId: 'resetPassword'
                         };
 
-                        const users = await recordDomain.find({
-                            params: {
-                                library: 'users',
-                                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.userId}]
-                            },
-                            ctx
-                        });
-
-                        if (!users.list.length) {
-                            throw new AuthenticationError('User not found');
-                        }
+                        await _checkIfUserExistsById(payload.userId, ctx);
 
                         try {
                             // save new password
@@ -436,7 +472,7 @@ export default function ({
                 }
             );
 
-            app.post('/auth/refresh', async (req: IRequestWithContext, res, next) => {
+            app.post('/auth/login-checker', async (req: IRequestWithContext, res, next) => {
                 try {
                     // Get user data
                     const ctx: IQueryInfos = {
@@ -474,18 +510,7 @@ export default function ({
                         throw new AuthenticationError('Invalid token');
                     }
 
-                    const users = await recordDomain.find({
-                        params: {
-                            library: 'users',
-                            filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.userId}]
-                        },
-                        ctx
-                    });
-
-                    // User could have been deleted / disabled in database
-                    if (!users.list.length) {
-                        return res.status(401).send('Invalid token');
-                    }
+                    await _checkIfUserExistsById(payload.userId, ctx);
 
                     const userSessionId = (
                         await cacheService.getCache(ECacheType.RAM).getData([`${SESSION_CACHE_HEADER}:${refreshToken}`])
@@ -500,26 +525,7 @@ export default function ({
                         return res.status(401).send('Invalid session');
                     }
 
-                    // Everything is ok, we can generate, update and return new tokens
-                    const newAccessToken = await _generateAccessToken(payload.userId, ctx);
-
-                    const newRefreshToken = _generateRefreshToken({
-                        userId: payload.userId,
-                        ip: req.headers['x-forwarded-for'],
-                        agent: req.headers['user-agent']
-                    });
-
-                    await cacheService.getCache(ECacheType.RAM).storeData({
-                        key: `${SESSION_CACHE_HEADER}:${newRefreshToken}`,
-                        data: payload.userId,
-                        expiresIn: ms(config.auth.refreshTokenExpiration)
-                    });
-
-                    // Delete old session
-                    await cacheService.getCache(ECacheType.RAM).deleteData([`${SESSION_CACHE_HEADER}:${refreshToken}`]);
-
-                    res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, newAccessToken, req.headers.host));
-                    res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, newRefreshToken, req.headers.host));
+                    await _generateAccessAndRefreshTokens(payload.userId, refreshToken, req.headers, res, ctx);
 
                     return res.status(200).json({});
                 } catch (err) {
@@ -527,41 +533,70 @@ export default function ({
                 }
             });
         },
-        async validateRequestToken({apiKey, cookies}) {
+        async validateRequestToken({apiKey, headers, cookies}, res) {
             const ctx: IQueryInfos = {
                 ...initQueryContext(),
                 userId: config.defaultUserId,
                 queryId: 'validateToken'
             };
 
-            const token = cookies?.[ACCESS_TOKEN_COOKIE_NAME];
+            const accessToken = cookies?.[ACCESS_TOKEN_COOKIE_NAME];
+            const refreshToken = cookies?.[REFRESH_TOKEN_COOKIE_NAME];
 
             let userId: string;
             let groupsId: string[];
+            let payload: IAccessTokenPayload | ISessionPayload;
 
-            if (!token && !apiKey) {
-                throw new AuthenticationError('No token or api key provided');
-            }
-
-            if (token) {
-                // Token validation checking
-                let payload: IAccessTokenPayload;
-
+            if (accessToken) {
                 try {
-                    payload = jwt.verify(token, config.auth.key) as IAccessTokenPayload;
+                    payload = jwt.verify(accessToken, config.auth.key) as IAccessTokenPayload;
                 } catch (e) {
-                    throw new AuthenticationError('Invalid token');
-                }
-
-                if (!payload.userId) {
-                    throw new AuthenticationError('Invalid token');
+                    throw new AuthenticationError('Invalid accessToken');
                 }
 
                 userId = payload.userId;
-                groupsId = payload.groupsId;
-            }
 
-            if (!userId && apiKey) {
+                if (!userId) {
+                    throw new AuthenticationError('Invalid accessToken');
+                }
+
+                groupsId = payload.groupsId;
+            } else if (refreshToken) {
+                try {
+                    payload = jwt.verify(refreshToken, config.auth.key) as ISessionPayload;
+                } catch (e) {
+                    throw new AuthenticationError('Invalid refreshToken');
+                }
+
+                if (!payload.userId || !payload.ip || !payload.agent) {
+                    throw new AuthenticationError('Invalid refreshToken');
+                }
+
+                if (config.auth.oidc.enable) {
+                    try {
+                        await oidcClientService.checkTokensValidity({userId: payload.userId});
+                    } catch (err) {
+                        throw new AuthenticationError('OIDC session expired');
+                    }
+                }
+
+                const userSessionId = (
+                    await cacheService.getCache(ECacheType.RAM).getData([`${SESSION_CACHE_HEADER}:${refreshToken}`])
+                )[0];
+
+                if (!userSessionId || payload.agent !== headers['user-agent']) {
+                    throw new AuthenticationError('Invalid session');
+                }
+
+                await _generateAccessAndRefreshTokens(payload.userId, refreshToken, headers, res, ctx);
+
+                userId = payload.userId;
+                groupsId = payload.groupsId;
+            } else {
+                if (!apiKey) {
+                    throw new AuthenticationError('No api key provided');
+                }
+
                 // If no valid token in cookies, check api key
                 const apiKeyData = await apiKeyDomain.validateApiKey({apiKey, ctx});
 
@@ -583,18 +618,7 @@ export default function ({
                 groupsId = userGroups.map(g => g.value.id);
             }
 
-            // Validate user
-            const users = await recordDomain.find({
-                params: {
-                    library: 'users',
-                    filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: userId}]
-                },
-                ctx
-            });
-
-            if (!users.list.length) {
-                throw new AuthenticationError('User not found');
-            }
+            await _checkIfUserExistsById(userId, ctx);
 
             return {
                 userId,

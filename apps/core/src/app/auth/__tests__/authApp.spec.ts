@@ -7,13 +7,14 @@ import {Express} from 'express';
 import {identity} from 'lodash';
 import {convertOIDCIdentifier} from '../../helpers';
 import initQueryContext from '../../helpers/initQueryContext';
-import jwt, {JwtPayload} from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import {IRecordDomain} from 'domain/record/recordDomain';
-import {ICacheService, ICachesService} from 'infra/cache/cacheService';
-import {IValueDomain} from 'domain/value/valueDomain';
-import {IConfig} from '_types/config';
-import {DeepPartial} from '_types/utils';
+import {IRecordDomain} from '../../../domain/record/recordDomain';
+import {ICacheService, ICachesService} from '../../../infra/cache/cacheService';
+import {IValueDomain} from '../../../domain/value/valueDomain';
+import {IConfig} from '../../../_types/config';
+import {DeepPartial} from '../../../_types/utils';
+import {Mockify} from '@leav/utils';
 
 describe('authApp', () => {
     describe('auth/authenticate', () => {
@@ -332,7 +333,7 @@ describe('authApp', () => {
         });
     });
 
-    describe('auth/refresh', () => {
+    describe('auth/login-checker', () => {
         it('Should return if no refresh token provided in cookies on oidc service configured', async () => {
             const oidcClientServiceMock: Mockify<IOIDCClientService> = {};
 
@@ -353,7 +354,7 @@ describe('authApp', () => {
                 post: jest.fn()
             };
             authApp.registerRoute(expressMock as unknown as Express);
-            const refreshHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/refresh')[1];
+            const refreshHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/login-checker')[1];
             const request = {
                 cookies: {
                     refreshToken: undefined
@@ -417,7 +418,7 @@ describe('authApp', () => {
             };
 
             const authApp = createAuthApp({
-                'core.app.helpers.initQueryContext': initQueryContext({}),
+                'core.app.helpers.initQueryContext': initQueryContext({config: mockConfig as IConfig}),
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.value': mockValueDomain as IValueDomain,
@@ -465,7 +466,7 @@ describe('authApp', () => {
 
             authApp.registerRoute(expressMock as unknown as Express);
 
-            const refreshHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/refresh')[1];
+            const refreshHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/login-checker')[1];
 
             // WHEN
             await refreshHandler(request, response, nextMock);
