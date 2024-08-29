@@ -29,12 +29,6 @@ const KitInputNumberStyled = styled(KitInputNumber)<{$shouldHighlightColor: bool
         color: ${({$shouldHighlightColor}) =>
             $shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial'};
     }
-
-    .kit-input-wrapper-helper {
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-    }
 `;
 
 export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({

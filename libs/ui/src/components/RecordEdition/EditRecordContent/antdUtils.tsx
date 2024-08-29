@@ -58,6 +58,10 @@ export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
             acc[attribute.id] = Number(standardValue?.raw_value) ?? '';
         }
 
+        if (attribute.format === AttributeFormat.date) {
+            acc[attribute.id] = standardValue?.raw_value ? dayjs.unix(Number(standardValue?.raw_value)) : '';
+        }
+
         if (attribute.format === AttributeFormat.date_range) {
             if (!standardValue?.raw_value) {
                 return acc;

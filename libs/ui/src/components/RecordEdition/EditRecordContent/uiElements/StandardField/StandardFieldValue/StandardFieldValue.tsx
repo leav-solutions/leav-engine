@@ -45,14 +45,13 @@ import {
 } from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import CheckboxInput from './Inputs/CheckboxInput';
 import ColorInput from './Inputs/ColorInput';
-import DateInput from './Inputs/DateInput';
-import EncryptedInput from './Inputs/EncryptedInput';
 import TextInput from './Inputs/TextInput';
 import ValuesList from './ValuesList';
 import {IValueOfValuesList} from './ValuesList/ValuesList';
 import {DSInputNumberWrapper} from './DSInputNumberWrapper';
 import {useLang} from '_ui/hooks';
 import {DSInputPasswordWrapper} from './DSInputPasswordWrapper';
+import {DSDatePickerWrapper} from './DSDatePickerWrapper';
 
 const ErrorMessage = styled.div`
     color: ${themeVars.errorColor};
@@ -179,7 +178,7 @@ const RichTextEditorInput = React.lazy(() => import('./Inputs/RichTextEditorInpu
 
 const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInputProps) => JSX.Element} = {
     [AttributeFormat.text]: null,
-    [AttributeFormat.date]: DateInput,
+    [AttributeFormat.date]: null,
     [AttributeFormat.date_range]: null,
     [AttributeFormat.boolean]: CheckboxInput,
     [AttributeFormat.numeric]: null,
@@ -558,13 +557,13 @@ function StandardFieldValue({
         AttributeFormat.text,
         AttributeFormat.date_range,
         AttributeFormat.numeric,
-        AttributeFormat.encrypted
+        AttributeFormat.encrypted,
+        AttributeFormat.date
     ];
 
     const attributeFormatsWithoutDS = [
         AttributeFormat.boolean,
         AttributeFormat.color,
-        AttributeFormat.date,
         AttributeFormat.extended,
         AttributeFormat.rich_text
     ];
@@ -583,6 +582,15 @@ function StandardFieldValue({
                 >
                     {attribute.format === AttributeFormat.text && (
                         <DSInputWrapper
+                            state={state}
+                            handleSubmit={_handleSubmit}
+                            attribute={attribute}
+                            fieldValue={fieldValue}
+                            shouldShowValueDetailsButton={editRecordState.withInfoButton}
+                        />
+                    )}
+                    {attribute.format === AttributeFormat.date && (
+                        <DSDatePickerWrapper
                             state={state}
                             handleSubmit={_handleSubmit}
                             attribute={attribute}
