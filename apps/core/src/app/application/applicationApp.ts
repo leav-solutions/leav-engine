@@ -369,7 +369,7 @@ export default function ({
                             return next();
                         }
 
-                        const payload = await validateRequestToken(req);
+                        const payload = await validateRequestToken(req, res);
                         req.ctx.userId = payload.userId;
                         req.ctx.groupsId = payload.groupsId;
 

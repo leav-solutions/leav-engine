@@ -67,7 +67,7 @@ export default function ({
 }: IDeps = {}): IServer {
     const _checkAuth = async (req, res, next) => {
         try {
-            await validateRequestToken(req);
+            await validateRequestToken(req, res);
 
             return next();
         } catch (err) {
@@ -188,16 +188,20 @@ export default function ({
 
                             const apiKeyIncluded = ctx.extra.request.url.includes(`${API_KEY_PARAM_NAME}=`);
                             const cookieIncluded = headers.Cookie?.includes(ACCESS_TOKEN_COOKIE_NAME);
-                            const payload = await authApp.validateRequestToken({
-                                apiKey: apiKeyIncluded ? ctx.extra.request.url.split('key=')[1] : null,
-                                cookies: cookieIncluded
-                                    ? {
-                                          [ACCESS_TOKEN_COOKIE_NAME]: _extractAccessTokenFromCookiesString(
-                                              headers.Cookie
-                                          )
-                                      }
-                                    : null
-                            });
+
+                            const payload = await authApp.validateRequestToken(
+                                {
+                                    apiKey: apiKeyIncluded ? ctx.extra.request.url.split('key=')[1] : null,
+                                    cookies: cookieIncluded
+                                        ? {
+                                              [ACCESS_TOKEN_COOKIE_NAME]: _extractAccessTokenFromCookiesString(
+                                                  headers.Cookie
+                                              )
+                                          }
+                                        : null
+                                },
+                                null
+                            );
 
                             const context: IQueryInfos = {
                                 ...initQueryContext(),
@@ -312,7 +316,7 @@ export default function ({
                     expressMiddleware(server, {
                         context: async ({req, res}): Promise<IQueryInfos> => {
                             try {
-                                const payload = await validateRequestToken(req);
+                                const payload = await validateRequestToken(req, res);
 
                                 const ctx: IQueryInfos = {
                                     ...initQueryContext(req),

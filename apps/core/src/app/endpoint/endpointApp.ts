@@ -43,7 +43,7 @@ export default function ({
                 try {
                     req.ctx = initQueryContext(req);
 
-                    const {groupsId, userId} = await validateRequestToken(req);
+                    const {groupsId, userId} = await validateRequestToken(req, res);
                     req.ctx.userId = userId;
                     req.ctx.groupsId = groupsId;
 

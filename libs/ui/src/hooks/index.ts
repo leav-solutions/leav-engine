@@ -12,6 +12,7 @@ export {default as useLang} from './useLang';
 export {default as useLocalStorage} from './useLocalStorage';
 export {default as useRecordsConsultationHistory} from './useRecordsConsultationHistory';
 export {useRefreshFieldValues} from './useRefreshFieldValues';
-export {default as useRefreshToken} from './useRefreshToken';
+export {default as useLoginChecker} from './useLoginChecker';
+export {default as useRedirectToLogin} from './useRedirectToLogin';
 export {useUser} from './useUser';
 export {useValuesCacheUpdate} from './useValuesCacheUpdate';
