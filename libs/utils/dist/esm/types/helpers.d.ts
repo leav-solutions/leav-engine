@@ -10,5 +10,7 @@ export declare type WithTypename<T> = {
     readonly __typename?: string;
 };
 export declare type Mockify<T> = {
-    [P in keyof T]?: T[P] extends (...args: any) => any ? jest.Mock : T[P];
+    [P in keyof T]?: T[P] extends (...args: any[]) => any
+        ? jest.Mock<ReturnType<T[P]> extends never ? never : any>
+        : T[P];
 };
