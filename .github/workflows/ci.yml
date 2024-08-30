@@ -119,7 +119,7 @@ jobs:
       - install
     services:
       arangodb:
-        image: arangodb:3.9
+        image: arangodb:3.12
         env:
           ARANGO_NO_AUTH: 1
         ports:
@@ -181,7 +181,7 @@ jobs:
       - install
     services:
       arangodb:
-        image: arangodb:3.9
+        image: arangodb:3.12
         env:
           ARANGO_NO_AUTH: 1
         ports:
