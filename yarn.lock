@@ -8128,7 +8128,7 @@ __metadata:
     "@ckeditor/ckeditor5-react": "npm:6.1.0"
     "@graphql-codegen/add": "npm:5.0.0"
     "@graphql-codegen/cli": "npm:5.0.0"
-    "@leav/utils": "npm:0.0.2"
+    "@leav/utils": "npm:0.0.3"
     "@testing-library/jest-dom": "npm:5.16.5"
     "@testing-library/react": "npm:14.0.0"
     "@testing-library/react-hooks": "npm:8.0.1"
@@ -8175,7 +8175,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@leav/utils@npm:0.0.2, @leav/utils@workspace:*, @leav/utils@workspace:libs/utils":
+"@leav/utils@npm:0.0.3, @leav/utils@workspace:*, @leav/utils@workspace:libs/utils":
   version: 0.0.0-use.local
   resolution: "@leav/utils@workspace:libs/utils"
   dependencies:

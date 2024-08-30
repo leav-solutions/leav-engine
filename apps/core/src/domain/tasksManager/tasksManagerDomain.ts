@@ -457,6 +457,8 @@ export default function ({
     };
 
     const _listenExecOrders = async () => {
+        await amqpService.consumer.channel.assertQueue(config.tasksManager.queues.execOrders);
+
         await amqpService.consume(
             config.tasksManager.queues.execOrders,
             config.tasksManager.routingKeys.execOrders,
@@ -499,7 +501,6 @@ export default function ({
                 config.amqp.exchange,
                 config.tasksManager.routingKeys.execOrders
             );
-
             return _monitorTasks({
                 userId: config.defaultUserId,
                 queryId: 'TasksManagerDomain'

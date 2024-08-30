@@ -39,7 +39,7 @@ export const localizedTranslation = (translations, availableLanguages) => {
  */
 export const stringToColor = (str = '', format = 'hsl', saturation = 30, luminosity = 80) => {
     let hash = 0;
-    for (let i = 0; i < (str !== null && str !== void 0 ? str : '').length; i++) {
+    for (let i = 0; i < (str ?? '').length; i++) {
         // eslint-disable-next-line no-bitwise
         hash = str.charCodeAt(i) + ((hash << 5) - hash);
     }
@@ -122,9 +122,9 @@ export const extractArgsFromString = (mapping) => {
         .split('-')
         .slice(1)
         .map(e => e.replace(/\s+/g, ' ').trim().split(' '));
-    return args.reduce((acc, value) => { var _a; return (Object.assign(Object.assign({}, acc), { [value[0]]: (_a = value[1]) !== null && _a !== void 0 ? _a : true })); }, {});
+    return args.reduce((acc, value) => ({ ...acc, [value[0]]: value[1] ?? true }), {});
 };
-export const objectToNameValueArray = (obj) => Object.keys(obj !== null && obj !== void 0 ? obj : {}).map(key => ({ name: key, value: obj[key] }));
+export const objectToNameValueArray = (obj) => Object.keys(obj ?? {}).map(key => ({ name: key, value: obj[key] }));
 export const nameValArrayToObj = (arr = [], keyFieldName = 'name', valueFieldName = 'value') => Array.isArray(arr) && arr.length
     ? arr.reduce((formattedElem, elem) => {
         formattedElem[elem[keyFieldName]] = elem[valueFieldName];
@@ -224,7 +224,6 @@ export const simpleStringHash = (str) => {
     return Math.abs(hash);
 };
 export const getFlagByLang = (lang) => {
-    var _a;
     const flagsByLang = {
         en: '🇬🇧',
         es: '🇪🇸',
@@ -236,7 +235,7 @@ export const getFlagByLang = (lang) => {
         ja: '🇯🇵',
         ko: '🇰🇷' // Korean
     };
-    return (_a = flagsByLang[lang]) !== null && _a !== void 0 ? _a : '';
+    return flagsByLang[lang] ?? '';
 };
 export const getLogsIndexName = (instanceId) => `logs-${instanceId}`;
 export const waitFor = async (predicate, options = {}) => {
@@ -256,7 +255,7 @@ export const isTypeStandard = (type) => type === AttributeType.simple || type ==
  * Return a new object without the keys passed in parameter
  */
 export const omit = (obj, ...keys) => {
-    const result = Object.assign({}, obj);
+    const result = { ...obj };
     keys.forEach(key => delete result[key]);
     return result;
 };

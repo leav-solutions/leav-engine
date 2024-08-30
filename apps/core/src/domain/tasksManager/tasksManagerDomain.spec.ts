@@ -3,14 +3,15 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
 import * as amqp from 'amqplib';
-import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
-import {ITaskRepo} from 'infra/task/taskRepo';
-import {IUtils} from 'utils/utils';
-import {IConfig} from '_types/config';
+import {IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
+import {ITaskRepo} from '../../infra/task/taskRepo';
+import {IUtils} from '../../utils/utils';
+import {IConfig} from '../../_types/config';
 import {TaskCallbackStatus, TaskStatus} from '../../_types/tasksManager';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {mockTask} from '../../__tests__/mocks/task';
 import tasksManager from './tasksManagerDomain';
+import {Mockify} from '@leav/utils';
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     assertExchange: jest.fn(),
@@ -79,8 +80,8 @@ describe('Tasks Manager', () => {
 
         await tm.createTask(mockTask, mockCtx);
 
-        expect(mockTaskRepo.createTask).toBeCalledTimes(1);
-        expect(mockEventsManager.sendPubSubEvent).toBeCalledTimes(1);
+        expect(mockTaskRepo.createTask).toHaveBeenCalledTimes(1);
+        expect(mockEventsManager.sendPubSubEvent).toHaveBeenCalledTimes(1);
     });
 
     test('Delete task', async () => {
@@ -97,7 +98,7 @@ describe('Tasks Manager', () => {
 
         await tm.deleteTasks([mockTask], mockCtx);
 
-        expect(mockTaskRepo.deleteTask).toBeCalledTimes(1);
+        expect(mockTaskRepo.deleteTask).toHaveBeenCalledTimes(1);
     });
 
     test('Archive task', async () => {
@@ -114,8 +115,8 @@ describe('Tasks Manager', () => {
 
         await tm.deleteTasks([{...mockTask, archive: true}], mockCtx);
 
-        expect(mockTaskRepo.updateTask).toBeCalledTimes(1);
-        expect(mockEventsManager.sendPubSubEvent).toBeCalledTimes(1);
+        expect(mockTaskRepo.updateTask).toHaveBeenCalledTimes(1);
+        expect(mockEventsManager.sendPubSubEvent).toHaveBeenCalledTimes(1);
     });
 
     test('Cancel task', async () => {
@@ -137,8 +138,8 @@ describe('Tasks Manager', () => {
 
         await tm.cancelTask(mockTask, mockCtx);
 
-        expect(mockTaskRepo.updateTask).toBeCalledTimes(1);
-        expect(mockEventsManager.sendPubSubEvent).toBeCalledTimes(1);
+        expect(mockTaskRepo.updateTask).toHaveBeenCalledTimes(1);
+        expect(mockEventsManager.sendPubSubEvent).toHaveBeenCalledTimes(1);
     });
 
     test('Get tasks', async () => {
@@ -153,7 +154,7 @@ describe('Tasks Manager', () => {
 
         await tm.getTasks({params: {}, ctx: mockCtx});
 
-        expect(mockTaskRepo.getTasks).toBeCalledTimes(1);
+        expect(mockTaskRepo.getTasks).toHaveBeenCalledTimes(1);
     });
 
     test('Init Master / Task to execute', async () => {
@@ -192,8 +193,8 @@ describe('Tasks Manager', () => {
 
         await new Promise(r => setTimeout(r, conf.tasksManager.checkingInterval + 1));
 
-        expect(mockAmqpService.consumer.channel.assertQueue).toBeCalledTimes(1);
-        expect(mockAmqpService.consumer.channel.bindQueue).toBeCalledTimes(1);
+        expect(mockAmqpService.consumer.channel.assertQueue).toHaveBeenCalledTimes(1);
+        expect(mockAmqpService.consumer.channel.bindQueue).toHaveBeenCalledTimes(1);
 
         expect(mockTaskRepo.updateTask).toBeCalledWith(
             {id: mockTask.id, status: TaskStatus.PENDING},
@@ -243,8 +244,8 @@ describe('Tasks Manager', () => {
 
         await new Promise(r => setTimeout(r, conf.tasksManager.checkingInterval + 1));
 
-        expect(mockAmqpService.consumer.channel.assertQueue).toBeCalledTimes(1);
-        expect(mockAmqpService.consumer.channel.bindQueue).toBeCalledTimes(1);
+        expect(mockAmqpService.consumer.channel.assertQueue).toHaveBeenCalledTimes(1);
+        expect(mockAmqpService.consumer.channel.bindQueue).toHaveBeenCalledTimes(1);
 
         expect(mockAmqpService.publish).toBeCalled();
 
@@ -290,8 +291,8 @@ describe('Tasks Manager', () => {
 
         await new Promise(r => setTimeout(r, conf.tasksManager.checkingInterval + 1));
 
-        expect(mockAmqpService.consumer.channel.assertQueue).toBeCalledTimes(1);
-        expect(mockAmqpService.consumer.channel.bindQueue).toBeCalledTimes(1);
+        expect(mockAmqpService.consumer.channel.assertQueue).toHaveBeenCalledTimes(1);
+        expect(mockAmqpService.consumer.channel.bindQueue).toHaveBeenCalledTimes(1);
 
         expect(mockTaskRepo.updateTask).toBeCalledWith(
             {id: mockTask.id, callbacks: [{...mockTask.callbacks[0], status: TaskCallbackStatus.RUNNING}]},
@@ -321,9 +322,18 @@ describe('Tasks Manager', () => {
 
         await tm.initWorker();
 
-        expect(mockAmqpService.consume).toBeCalledTimes(2);
-        expect(mockAmqpService.consumer.channel.assertQueue).toBeCalledTimes(1);
-        expect(mockAmqpService.consumer.channel.bindQueue).toBeCalledTimes(1);
+        expect(mockAmqpService.consume).toHaveBeenCalledTimes(2);
+        expect(mockAmqpService.consumer.channel.assertQueue).toHaveBeenCalledTimes(2);
+        expect(mockAmqpService.consumer.channel.assertQueue).toHaveBeenNthCalledWith(
+            1,
+            conf.tasksManager?.queues.execOrders
+        );
+        expect(mockAmqpService.consumer.channel.assertQueue).toHaveBeenNthCalledWith(
+            2,
+            expect.stringMatching(conf.tasksManager?.queues.cancelOrders),
+            {autoDelete: true, durable: false, exclusive: true}
+        );
+        expect(mockAmqpService.consumer.channel.bindQueue).toHaveBeenCalledTimes(1);
     });
 
     test('Update progress', async () => {
@@ -344,12 +354,12 @@ describe('Tasks Manager', () => {
             mockCtx
         );
 
-        expect(mockTaskRepo.getTasks).toBeCalledTimes(1);
+        expect(mockTaskRepo.getTasks).toHaveBeenCalledTimes(1);
         expect(mockTaskRepo.updateTask).toBeCalledWith(
             {id: mockTask.id, progress: {percent: 55, description: {fr: 'description', en: 'description'}}},
             mockCtx
         );
-        expect(mockEventsManager.sendPubSubEvent).toBeCalledTimes(1);
+        expect(mockEventsManager.sendPubSubEvent).toHaveBeenCalledTimes(1);
 
         await tm.updateProgress(
             mockTask.id,
@@ -377,8 +387,8 @@ describe('Tasks Manager', () => {
 
         await tm.setLink(mockTask.id, {name: 'name', url: 'url'}, mockCtx);
 
-        expect(mockTaskRepo.getTasks).toBeCalledTimes(1);
+        expect(mockTaskRepo.getTasks).toHaveBeenCalledTimes(1);
         expect(mockTaskRepo.updateTask).toBeCalledWith({id: mockTask.id, link: {name: 'name', url: 'url'}}, mockCtx);
-        expect(mockEventsManager.sendPubSubEvent).toBeCalledTimes(1);
+        expect(mockEventsManager.sendPubSubEvent).toHaveBeenCalledTimes(1);
     });
 });
