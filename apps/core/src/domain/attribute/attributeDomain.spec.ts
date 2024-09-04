@@ -22,6 +22,7 @@ import {mockForm} from '../../__tests__/mocks/forms';
 import {mockLibrary} from '../../__tests__/mocks/library';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import attributeDomain from './attributeDomain';
+import {Mockify} from '@leav/utils';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),
@@ -292,11 +293,18 @@ describe('attributeDomain', () => {
             ])
         };
 
+        const getLibrariesUsingAttributeMockWithoutResult = jest.fn().mockResolvedValue([]);
+        const getLibrariesUsingAttributeMockWithResult = jest.fn().mockResolvedValue(['library1', 'library2']);
+
         test('Should save a new attribute', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {
                 getAttributes: global.__mockPromise({list: [], totalCount: 0}),
                 createAttribute: jest.fn().mockImplementation(attr => Promise.resolve(attr)),
                 updateAttribute: jest.fn()
+            };
+
+            const mockLibraryRepo: Mockify<ILibraryRepo> = {
+                getLibrariesUsingAttribute: getLibrariesUsingAttributeMockWithoutResult
             };
 
             const attrDomain = attributeDomain({
@@ -306,6 +314,7 @@ describe('attributeDomain', () => {
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperNoResult,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
+                'core.infra.library': mockLibraryRepo as ILibraryRepo,
                 'core.utils': mockUtils as IUtils,
                 config: mockConf
             });
@@ -324,7 +333,7 @@ describe('attributeDomain', () => {
 
             expect(mockAttrRepo.createAttribute.mock.calls.length).toBe(1);
             expect(mockAttrRepo.updateAttribute.mock.calls.length).toBe(0);
-            expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
+            expect(mockAdminPermDomain.getAdminPermission).toHaveBeenCalled();
             expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.CREATE_ATTRIBUTE
             );
@@ -389,6 +398,10 @@ describe('attributeDomain', () => {
                 updateAttribute: global.__mockPromise({id: 'test', system: false})
             };
 
+            const mockLibraryRepo: Mockify<ILibraryRepo> = {
+                getLibrariesUsingAttribute: getLibrariesUsingAttributeMockWithoutResult
+            };
+
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
@@ -397,6 +410,7 @@ describe('attributeDomain', () => {
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.utils': mockUtils as IUtils,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
+                'core.infra.library': mockLibraryRepo as ILibraryRepo,
                 config: mockConf
             });
 
@@ -413,14 +427,54 @@ describe('attributeDomain', () => {
                 ctx
             });
 
-            expect(mockCacheService.deleteData).toBeCalled();
+            expect(mockCacheService.deleteData).toHaveBeenCalled();
             expect(mockAttrRepo.createAttribute.mock.calls.length).toBe(0);
             expect(mockAttrRepo.updateAttribute.mock.calls.length).toBe(1);
-            expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
+            expect(mockAdminPermDomain.getAdminPermission).toHaveBeenCalled();
             expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.EDIT_ATTRIBUTE
             );
             expect(updatedLib).toMatchObject({id: 'test', system: false});
+        });
+
+        test('Should clear library attributes cache when updating an attribute', async function () {
+            const mockAttrRepo: Mockify<IAttributeRepo> = {
+                createAttribute: jest.fn(),
+                updateAttribute: global.__mockPromise({id: 'test', system: false})
+            };
+
+            const mockLibraryRepo: Mockify<ILibraryRepo> = {
+                getLibrariesUsingAttribute: getLibrariesUsingAttributeMockWithResult
+            };
+
+            const attrDomain = attributeDomain({
+                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                'core.domain.actionsList': mockALDomain as IActionsListDomain,
+                'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
+                'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                'core.utils': mockUtils as IUtils,
+                'core.infra.cache.cacheService': mockCachesService as ICachesService,
+                'core.infra.library': mockLibraryRepo as ILibraryRepo,
+                config: mockConf
+            });
+
+            attrDomain.getAttributes = global.__mockPromise([{id: 'test'}]);
+
+            await attrDomain.saveAttribute({
+                attrData: {
+                    id: 'test',
+                    type: AttributeTypes.ADVANCED,
+                    format: AttributeFormats.TEXT,
+                    actions_list: {
+                        saveValue: [{is_system: true, id: 'validateFormat', name: 'Validate Format'}]
+                    },
+                    label: {fr: 'Test'}
+                },
+                ctx
+            });
+
+            expect(mockCacheService.deleteData).toHaveBeenCalledTimes(3); // 1 for the attribute, 2 for libraries using attribute
         });
 
         test('Should read data from DB for fields not specified in save', async function () {
@@ -431,6 +485,10 @@ describe('attributeDomain', () => {
                 updateAttribute: global.__mockPromise(attrData)
             };
 
+            const mockLibraryRepo: Mockify<ILibraryRepo> = {
+                getLibrariesUsingAttribute: getLibrariesUsingAttributeMockWithoutResult
+            };
+
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
@@ -438,6 +496,8 @@ describe('attributeDomain', () => {
                 'core.domain.helpers.getCoreEntityById': jest.fn().mockReturnValue(attrData),
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
+                'core.infra.library': mockLibraryRepo as ILibraryRepo,
+
                 'core.utils': mockUtils as IUtils,
                 config: mockConf
             });
@@ -491,6 +551,10 @@ describe('attributeDomain', () => {
                 updateAttribute: global.__mockPromise(attrData)
             };
 
+            const mockLibraryRepo: Mockify<ILibraryRepo> = {
+                getLibrariesUsingAttribute: getLibrariesUsingAttributeMockWithoutResult
+            };
+
             const attrDomain = attributeDomain({
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
@@ -498,6 +562,7 @@ describe('attributeDomain', () => {
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
+                'core.infra.library': mockLibraryRepo as ILibraryRepo,
                 'core.utils': mockUtils as IUtils,
                 config: mockConf
             });
@@ -880,7 +945,7 @@ describe('attributeDomain', () => {
             await attrDomain.deleteAttribute({id: attrData.id, ctx});
 
             expect(mockAttrRepo.deleteAttribute.mock.calls.length).toBe(1);
-            expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
+            expect(mockAdminPermDomain.getAdminPermission).toHaveBeenCalled();
             expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.DELETE_ATTRIBUTE
             );
