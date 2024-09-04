@@ -273,6 +273,15 @@ export default function ({
             const cacheKey = utils.getCoreEntityCacheKey('attribute', attrToSave.id);
             await cacheService.getCache(ECacheType.RAM).deleteData([cacheKey]);
 
+            const librariesUsingSavedAttribute = await libraryRepo.getLibrariesUsingAttribute(savedAttribute.id, ctx);
+
+            await Promise.all(
+                librariesUsingSavedAttribute.map(async libraryId => {
+                    const libraryAttributesCacheKey = `${utils.getCoreEntityCacheKey('library', libraryId)}:attributes`;
+                    await cacheService.getCache(ECacheType.RAM).deleteData([libraryAttributesCacheKey]);
+                })
+            );
+
             return savedAttribute;
         },
         async deleteAttribute({id, ctx}): Promise<IAttribute> {
