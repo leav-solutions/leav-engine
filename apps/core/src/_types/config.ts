@@ -32,6 +32,11 @@ export interface IConfig {
     dbProfiler: IDbProfilerConfig;
     instanceId: string;
     elasticSearch: IElasticSearchConfig;
+    xstream: IXstreamConfig;
+}
+
+export interface IXstreamConfig {
+    ampUrl: string;
 }
 
 export enum CoreMode {

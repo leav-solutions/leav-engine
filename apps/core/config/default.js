@@ -2,6 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 module.exports = {
+    xstream: {
+        ampUrl: process.env.AMP_URL || 'http://localhost:5000'
+    },
     instanceId: process.env.INSTANCE_ID || 'leav_engine',
     coreMode: process.env.CORE_MODE || 'server',
     server: {

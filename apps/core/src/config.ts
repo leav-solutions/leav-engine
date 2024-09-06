@@ -181,7 +181,12 @@ export const validateConfig = (conf: IConfig) => {
         instanceId: Joi.string().required(),
         elasticSearch: Joi.object().keys({
             url: Joi.string().required()
-        })
+        }),
+        xstream: Joi.object()
+            .keys({
+                ampUrl: Joi.string().required()
+            })
+            .required()
     });
 
     const isValid = configSchema.validate(conf);

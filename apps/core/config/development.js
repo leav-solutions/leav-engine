@@ -15,5 +15,8 @@ module.exports = {
     debug: true,
     dbProfiler: {
         enable: typeof process.env.DB_PROFILER_ENABLE !== 'undefined' ? !!Number(process.env.DB_PROFILER_ENABLE) : true
+    },
+    xstream: {
+        ampUrl: process.env.AMP_URL || 'http://localhost:5000'
     }
 };
