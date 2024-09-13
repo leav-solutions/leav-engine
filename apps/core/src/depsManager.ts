@@ -63,7 +63,10 @@ export async function initDI(additionalModulesToRegister?: {
     [registerKey: string]: any;
 }): Promise<{coreContainer: AwilixContainer; pluginsContainer: AwilixContainer}> {
     const srcFolder = __dirname;
-    const pluginsFolder = realpathSync(__dirname + '/plugins');
+    // Add a few extra dependencies
+    const coreConf = await getConfig();
+
+    const pluginsFolder = realpathSync(__dirname + '/' + coreConf.pluginsPath);
     const modulesGlob = '+(app|domain|infra|interface|utils)/**/index.+(ts|js)';
     const pluginsModulesGlob = `!(core)/${modulesGlob}`;
 
@@ -74,8 +77,6 @@ export async function initDI(additionalModulesToRegister?: {
 
     await _registerModules(coreContainer, srcFolder, modulesGlob, 'core');
 
-    // Add a few extra dependencies
-    const coreConf = await getConfig();
     coreContainer.register('config', asValue(coreConf));
     coreContainer.register('pluginsFolder', asValue(pluginsFolder));
 
