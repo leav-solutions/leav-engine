@@ -47,7 +47,7 @@ export interface IRecordRepo {
     updateRecord({
         libraryId,
         recordData,
-        mergeObjects = true,
+        mergeObjects,
         ctx
     }: {
         libraryId: string;
