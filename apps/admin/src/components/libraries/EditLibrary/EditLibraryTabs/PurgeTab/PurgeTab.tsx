@@ -86,7 +86,12 @@ function PurgeTab({library, readonly}: IPurgeTabProps): JSX.Element {
 
     const confirmContent = (
         <ConfirmContent>
-            <div className="warning">{t('libraries.purge.warning', {interpolation: false})}</div>
+            <div className="warning">
+                {t('libraries.purge.warning', {
+                    interpolation: false,
+                    defaultValue: 'warning'
+                })}
+            </div>
             <div>{t('libraries.purge.confirm')}</div>
         </ConfirmContent>
     );
