@@ -35,7 +35,7 @@ import {
     ILibraryDetailExtendedLinkedTree
 } from '_ui/_queries/libraries/getLibraryDetailExtendQuery';
 import {defaultLinkAttributeFilterFormat} from '../constants';
-import {getDefaultFilterValueByFormat} from '../FiltersPanel/Filter/Filter';
+import {getDefaultFilterValueByFormat} from '../FiltersPanel/Filter/Filter.utils';
 import {defaultFilterConditionByAttributeFormat} from '../helpers/defaultFilterConditionByAttributeFormat';
 
 const CustomMenu = styled(Menu)`
@@ -168,7 +168,7 @@ function FiltersDropdown({
             value: {value: getDefaultFilterValueByFormat(defaultLinkAttributeFilterFormat)},
             parentAttribute:
                 filter?.condition === ThroughConditionFilter.THROUGH
-                    ? (filter as IFilterAttribute).attribute ?? (filter as IFilterLibrary).parentAttribute
+                    ? ((filter as IFilterAttribute).attribute ?? (filter as IFilterLibrary).parentAttribute)
                     : (filter as IFilterLibrary).parentAttribute
         };
     };
@@ -228,12 +228,14 @@ function FiltersDropdown({
 
     // to verify if a filter is used, we have to get the filter attribute/tree base id
     // and check if one of those is used in the list of filters depending on the filter type
-    const isFilterUsed = (id: string) => searchState.filters.some(f => (
+    const isFilterUsed = (id: string) =>
+        searchState.filters.some(
+            f =>
                 (f as IFilterTree)?.key === id ||
                 (f as IFilterAttribute).attribute?.parentAttribute?.id === id ||
                 (f as IFilterLibrary).parentAttribute?.id === id ||
                 (f as IFilterAttribute).parentTreeLibrary?.parentAttribute?.id === id
-            ));
+        );
 
     const menuItems: ItemType[] = [
         {

@@ -207,7 +207,7 @@ describe('Tasks Manager', () => {
         expect(mockEventsManager.sendPubSubEvent).toBeCalled();
         expect(mockAmqpService.publish).toBeCalled();
 
-        clearInterval(timerId as unknown as number);
+        clearInterval(Number(timerId));
     });
 
     test('Init Master / Task to cancel', async () => {
@@ -249,7 +249,7 @@ describe('Tasks Manager', () => {
 
         expect(mockAmqpService.publish).toBeCalled();
 
-        clearInterval(timerId as unknown as number);
+        clearInterval(Number(timerId));
     });
 
     test('Init Master / Pending callback', async () => {
@@ -302,7 +302,7 @@ describe('Tasks Manager', () => {
             }
         );
 
-        clearInterval(timerId as unknown as number);
+        clearInterval(Number(timerId));
     });
 
     test('Init Worker', async () => {

@@ -49,6 +49,7 @@ import FilterAttributeCondition from './FilterAttributeCondition';
 import DateFilter from './FilterInput/DateFilter';
 import NumericFilter from './FilterInput/NumericFilter';
 import TextFilter from './FilterInput/TextFilter';
+import {getDefaultFilterValueByFormat} from '_ui/components/LibraryItemsList/FiltersPanel/Filter/Filter.utils';
 
 interface IWrapperProps {
     active: boolean;
@@ -164,18 +165,6 @@ interface IFilterProps {
     filter: IFilter;
     handleProps: DraggableProvidedDragHandleProps;
 }
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const getDefaultFilterValueByFormat = (format: AttributeFormat): boolean | string | number => {
-    switch (format) {
-        case AttributeFormat.boolean:
-            return true;
-        case AttributeFormat.date:
-            return moment().utcOffset(0).startOf('day').unix();
-        default:
-            return '';
-    }
-};
 
 function Filter({filter, handleProps}: IFilterProps): JSX.Element {
     const {t} = useSharedTranslation();

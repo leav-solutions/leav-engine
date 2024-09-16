@@ -47,7 +47,6 @@ export interface IRecordRepo {
     updateRecord({
         libraryId,
         recordData,
-        mergeObjects,
         ctx
     }: {
         libraryId: string;
@@ -313,7 +312,7 @@ export default function ({
 
             return dbUtils.cleanup(deletedRecord);
         },
-        async updateRecord({libraryId, recordData, mergeObjects = true, ctx}) {
+        async updateRecord({libraryId, recordData, ctx}) {
             const collection = dbService.db.collection<IRecord>(libraryId);
             const dataToSave = {...recordData};
             const recordId = dataToSave.id;

@@ -10,7 +10,7 @@ import {themeVars} from '_ui/antdTheme';
 import {EntityPreview} from '_ui/components';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import DeactivateRecordBtn from '_ui/components/LibraryItemsList/shared/DeactivateRecordBtn';
-import SelectCellsBtn, {SelectCellsBtnType} from '_ui/components/LibraryItemsList/shared/SelectCellsBtn';
+import SelectCellsBtn from '_ui/components/LibraryItemsList/shared/SelectCellsBtn';
 import EditRecordBtn from '_ui/components/RecordEdition/EditRecordBtn';
 import {EditRecordModal} from '_ui/components/RecordEdition/EditRecordModal';
 import {PreviewSize} from '_ui/constants';
@@ -21,6 +21,7 @@ import {stopEvent} from '_ui/_utils';
 import {displayTypeToPreviewSize} from '../../helpers/displayTypeToPreviewSize';
 import {SearchActionTypes} from '../../hooks/useSearchReducer/searchReducer';
 import getItemPreviewSize from '../helpers/getItemPreviewSize';
+import {SelectCellsBtnType} from '_ui/components/LibraryItemsList/shared/shared.utils';
 
 const buttonsColor = '#333333';
 
