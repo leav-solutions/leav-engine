@@ -15,6 +15,7 @@ interface ISelectCellsBtnProps extends ButtonProps {
     selectionType: SelectCellsBtnType;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export enum SelectCellsBtnType {
     ONLY = 'ONLY',
     ALL = 'ALL'

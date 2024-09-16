@@ -2,10 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export const stringToColor = (
-    str: string = '',
+    str = '',
     format: 'hsl' | 'rgb' | 'hex' = 'hsl',
-    saturation: number = 30,
-    luminosity: number = 80
+    saturation = 30,
+    luminosity = 80
 ): string => {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {

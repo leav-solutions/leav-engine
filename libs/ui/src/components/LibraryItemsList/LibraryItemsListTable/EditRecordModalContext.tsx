@@ -40,4 +40,5 @@ export const EditRecordModalProvider: FunctionComponent = props => {
     );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useEditRecordModalContext = () => useContext(EditRecordModalContext);

@@ -27,7 +27,7 @@ export default function ({
     config = null
 }: IDeps): IMessagesHandlerHelper {
     const _messagesQueue: IFileEventData[] = [];
-    let _isWorking: boolean = false;
+    let _isWorking = false;
 
     const _processMessage = async (ctx: IQueryInfos): Promise<void> => {
         if (_isWorking || !_messagesQueue.length) {

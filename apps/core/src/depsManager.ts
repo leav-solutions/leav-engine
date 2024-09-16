@@ -17,7 +17,7 @@ const _registerModules = async (
     container: AwilixContainer,
     folder: string,
     glob: string,
-    prefix: string = ''
+    prefix = ''
 ): Promise<AwilixContainer> => {
     // We only consider index files so that we explicity declare what we want to make available
     // in dependency injector. This allows to have some helper files kept private inside a module.

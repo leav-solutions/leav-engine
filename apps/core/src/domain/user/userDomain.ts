@@ -115,7 +115,7 @@ export default function ({
 
             return userDataRepo.saveUserData({key, value, global, isCoreData, ctx});
         },
-        async getUserData(keys: string[], global: boolean = false, ctx: IQueryInfos): Promise<IUserData> {
+        async getUserData(keys: string[], global = false, ctx: IQueryInfos): Promise<IUserData> {
             const isAllowed = await permissionDomain.isAllowed({
                 type: PermissionTypes.ADMIN,
                 action: AdminPermissionsActions.MANAGE_GLOBAL_PREFERENCES,

@@ -8,7 +8,7 @@ import {Issuer} from 'openid-client';
 const clientMock = jest.fn();
 
 class ClientClassMock {
-    constructor(...args) {
+    public constructor(...args: any) {
         clientMock(...args);
     }
 }

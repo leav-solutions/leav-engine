@@ -26,7 +26,7 @@ jest.mock('react-router-dom', () => ({
     useParams: () => ({token: '123456'})
 }));
 
-const _renderComponent = (url: string = '/') =>
+const _renderComponent = (url = '/') =>
     render(
         <KitApp>
             <MemoryRouter initialEntries={[url]}>

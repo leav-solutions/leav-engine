@@ -165,6 +165,7 @@ interface IFilterProps {
     handleProps: DraggableProvidedDragHandleProps;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const getDefaultFilterValueByFormat = (format: AttributeFormat): boolean | string | number => {
     switch (format) {
         case AttributeFormat.boolean:
@@ -204,7 +205,8 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
         });
     };
 
-    const _getValueFromNode = (node: ITreeNode): IFilter['value'] => typeof node === 'undefined' || node.id === (filter as IFilterTree).tree.id
+    const _getValueFromNode = (node: ITreeNode): IFilter['value'] =>
+        typeof node === 'undefined' || node.id === (filter as IFilterTree).tree.id
             ? {value: null}
             : {value: node.id, label: String(node.title)};
 
@@ -284,7 +286,8 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
 
     const embeddedFieldsToAttribute = (
         embeddedFields: AttributesByLibAttributeStandardAttributeFragment['embedded_fields']
-    ): AttributesByLibAttributeStandardAttributeFragment[] => embeddedFields
+    ): AttributesByLibAttributeStandardAttributeFragment[] =>
+        embeddedFields
             ? embeddedFields.map(f => ({
                   ...f,
                   type: AttributeType.simple,
@@ -390,8 +393,8 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
             typeof (filter as IFilterAttribute).parentTreeLibrary !== 'undefined'
                 ? (filter as IFilterAttribute).parentTreeLibrary.parentAttribute
                 : filter.type === FilterType.ATTRIBUTE
-                ? (filter as IFilterAttribute).attribute.parentAttribute ?? (filter as IFilterAttribute).attribute
-                : (filter as IFilterLibrary).parentAttribute;
+                  ? ((filter as IFilterAttribute).attribute.parentAttribute ?? (filter as IFilterAttribute).attribute)
+                  : (filter as IFilterLibrary).parentAttribute;
 
         const newFilter: IFilterAttribute = {
             type: FilterType.ATTRIBUTE,
@@ -434,26 +437,25 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
         );
     };
 
-    const getParentLabel = () => (
-            localizedTranslation(
-                filter.condition === ThroughConditionFilter.THROUGH
-                    ? (filter as IFilterAttribute).attribute?.label
-                    : (filter as IFilterAttribute).attribute?.parentAttribute?.label ||
-                          (filter as IFilterLibrary).parentAttribute?.label,
-                lang
-            ) ||
-            `${localizedTranslation(
-                filter.condition === ThroughConditionFilter.THROUGH
-                    ? (filter as IFilterLibrary).parentAttribute?.label
-                    : (filter as IFilterAttribute).parentTreeLibrary?.parentAttribute?.label,
-                lang
-            )} > ${localizedTranslation(
-                filter.condition === ThroughConditionFilter.THROUGH
-                    ? (filter as IFilterLibrary)?.library.label
-                    : (filter as IFilterAttribute).parentTreeLibrary?.library.label,
-                lang
-            )} `
-        );
+    const getParentLabel = () =>
+        localizedTranslation(
+            filter.condition === ThroughConditionFilter.THROUGH
+                ? (filter as IFilterAttribute).attribute?.label
+                : (filter as IFilterAttribute).attribute?.parentAttribute?.label ||
+                      (filter as IFilterLibrary).parentAttribute?.label,
+            lang
+        ) ||
+        `${localizedTranslation(
+            filter.condition === ThroughConditionFilter.THROUGH
+                ? (filter as IFilterLibrary).parentAttribute?.label
+                : (filter as IFilterAttribute).parentTreeLibrary?.parentAttribute?.label,
+            lang
+        )} > ${localizedTranslation(
+            filter.condition === ThroughConditionFilter.THROUGH
+                ? (filter as IFilterLibrary)?.library.label
+                : (filter as IFilterAttribute).parentTreeLibrary?.library.label,
+            lang
+        )} `;
 
     const hasParent = !!(
         filter.condition === ThroughConditionFilter.THROUGH ||

@@ -14,7 +14,7 @@ import {mockTree} from '__mocks__/trees';
 import TreeStructure from './TreeStructure';
 
 describe('TreeStructure', () => {
-    const _renderTreeStructure = (tree: GET_TREES_trees_list, readOnly: boolean = false, mocks?: MockedResponse[]) => {
+    const _renderTreeStructure = (tree: GET_TREES_trees_list, readOnly = false, mocks?: MockedResponse[]) => {
         render(
             <DndProvider backend={TestBackend}>
                 <TreeStructure tree={tree} readOnly={readOnly} />

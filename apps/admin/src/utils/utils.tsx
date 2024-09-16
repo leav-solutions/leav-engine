@@ -188,7 +188,7 @@ export function versionObjToGraphql(version: {
 
 export function isLinkAttribute(
     attribute: GET_ATTRIBUTE_BY_ID_attributes_list,
-    strict: boolean = true
+    strict = true
 ): attribute is GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute {
     const linkTypes = [AttributeType.advanced_link, AttributeType.simple_link];
 
