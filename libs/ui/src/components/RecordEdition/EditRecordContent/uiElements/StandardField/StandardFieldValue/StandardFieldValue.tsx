@@ -43,7 +43,6 @@ import {
     StandardFieldReducerActionsTypes,
     StandardFieldValueState
 } from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import CheckboxInput from './Inputs/CheckboxInput';
 import ColorInput from './Inputs/ColorInput';
 import TextInput from './Inputs/TextInput';
 import ValuesList from './ValuesList';
@@ -52,6 +51,7 @@ import {DSInputNumberWrapper} from './DSInputNumberWrapper';
 import {useLang} from '_ui/hooks';
 import {DSInputPasswordWrapper} from './DSInputPasswordWrapper';
 import {DSDatePickerWrapper} from './DSDatePickerWrapper';
+import {DSBooleanWrapper} from './DSBooleanWrapper';
 
 const ErrorMessage = styled.div`
     color: ${themeVars.errorColor};
@@ -180,7 +180,7 @@ const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInp
     [AttributeFormat.text]: null,
     [AttributeFormat.date]: null,
     [AttributeFormat.date_range]: null,
-    [AttributeFormat.boolean]: CheckboxInput,
+    [AttributeFormat.boolean]: null,
     [AttributeFormat.numeric]: null,
     [AttributeFormat.encrypted]: null,
     [AttributeFormat.extended]: TextInput,
@@ -558,15 +558,11 @@ function StandardFieldValue({
         AttributeFormat.date_range,
         AttributeFormat.numeric,
         AttributeFormat.encrypted,
-        AttributeFormat.date
+        AttributeFormat.date,
+        AttributeFormat.boolean
     ];
 
-    const attributeFormatsWithoutDS = [
-        AttributeFormat.boolean,
-        AttributeFormat.color,
-        AttributeFormat.extended,
-        AttributeFormat.rich_text
-    ];
+    const attributeFormatsWithoutDS = [AttributeFormat.color, AttributeFormat.extended, AttributeFormat.rich_text];
 
     return (
         <>
@@ -624,6 +620,9 @@ function StandardFieldValue({
                             fieldValue={fieldValue}
                             shouldShowValueDetailsButton={editRecordState.withInfoButton}
                         />
+                    )}
+                    {attribute.format === AttributeFormat.boolean && (
+                        <DSBooleanWrapper state={state} handleSubmit={_handleSubmit} />
                     )}
                 </Form.Item>
             )}

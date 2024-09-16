@@ -145,10 +145,10 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
                 <KitSpace size="xxs">
                     <KitButton
                         ref={valuesVersionsButtonRef}
-                        type="text"
+                        type="tertiary"
                         icon={<FontAwesomeIcon icon={faLayerGroup} />}
                     />
-                    <KitButton ref={refreshButtonRef} type="text" icon={<FontAwesomeIcon icon={faRotateRight} />} />
+                    <KitButton ref={refreshButtonRef} type="tertiary" icon={<FontAwesomeIcon icon={faRotateRight} />} />
                 </KitSpace>
             </Header>
             <EditRecord
