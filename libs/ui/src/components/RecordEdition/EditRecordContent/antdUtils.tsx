@@ -50,35 +50,42 @@ export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
         }
 
         const standardValue = value as RecordFormElementsValueStandardValue;
-        if (attribute.format === AttributeFormat.text) {
-            acc[attribute.id] = standardValue?.raw_value ?? '';
-        }
 
-        if (attribute.format === AttributeFormat.numeric) {
-            acc[attribute.id] = Number(standardValue?.raw_value) ?? '';
-        }
-
-        if (attribute.format === AttributeFormat.date) {
-            acc[attribute.id] = standardValue?.raw_value ? dayjs.unix(Number(standardValue?.raw_value)) : '';
-        }
-
-        if (attribute.format === AttributeFormat.date_range) {
-            if (!standardValue?.raw_value) {
+        if (!standardValue?.raw_value) {
+            if (attribute.format === AttributeFormat.date_range) {
                 return acc;
             }
 
-            if (hasDateRangeValues(standardValue.raw_value)) {
-                acc[attribute.id] = [
-                    dayjs.unix(Number(standardValue.raw_value.from)),
-                    dayjs.unix(Number(standardValue.raw_value.to))
-                ];
-            } else if (typeof standardValue.raw_value === 'string') {
-                const convertedFieldValue = JSON.parse(standardValue.raw_value);
-                acc[attribute.id] = [
-                    dayjs.unix(Number(convertedFieldValue.from)),
-                    dayjs.unix(Number(convertedFieldValue.to))
-                ];
-            }
+            acc[attribute.id] = '';
+            return acc;
+        }
+
+        switch (attribute.format) {
+            case AttributeFormat.text:
+            case AttributeFormat.boolean:
+                acc[attribute.id] = standardValue.raw_value;
+                break;
+            case AttributeFormat.numeric:
+                acc[attribute.id] = Number(standardValue.raw_value);
+                break;
+            case AttributeFormat.date:
+                acc[attribute.id] = dayjs.unix(Number(standardValue.raw_value));
+                break;
+            case AttributeFormat.date_range:
+                if (hasDateRangeValues(standardValue.raw_value)) {
+                    acc[attribute.id] = [
+                        dayjs.unix(Number(standardValue.raw_value.from)),
+                        dayjs.unix(Number(standardValue.raw_value.to))
+                    ];
+                    break;
+                } else if (typeof standardValue.raw_value === 'string') {
+                    const convertedFieldValue = JSON.parse(standardValue.raw_value);
+                    acc[attribute.id] = [
+                        dayjs.unix(Number(convertedFieldValue.from)),
+                        dayjs.unix(Number(convertedFieldValue.to))
+                    ];
+                    break;
+                }
         }
 
         return acc;

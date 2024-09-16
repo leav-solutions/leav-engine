@@ -107,7 +107,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
                         <KitButton
                             ref={refreshButtonRef}
                             aria-label="refresh"
-                            type="text"
+                            type="tertiary"
                             icon={<FontAwesomeIcon icon={faRotateRight} />}
                         />
                     )}

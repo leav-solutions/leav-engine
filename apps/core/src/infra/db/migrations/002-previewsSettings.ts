@@ -29,6 +29,21 @@ export default function ({
     'core.infra.db.dbUtils': dbUtils = null,
     'core.utils': utils = null
 }: IDeps = {}): IMigration {
+    const _checkIfAttributeExist = async (attributeId, ctx) => {
+        const attributeFromDb = await attributeRepo.getAttributes({
+            params: {
+                filters: {
+                    id: attributeId
+                },
+                strictFilters: true,
+                withCount: false
+            },
+            ctx
+        });
+
+        return attributeFromDb.list.length;
+    };
+
     const _processLibrary = async (library: IDbDocument, ctx) => {
         // Save previews settings
         const coreLibsCollec = dbService.db.collection('core_libraries');
@@ -58,20 +73,8 @@ export default function ({
 
         const attributesToBind = [];
         for (const attributeToCheck of attributesToCheck) {
-            // Check if attribute already exists
-            const attributeFromDb = await attributeRepo.getAttributes({
-                params: {
-                    filters: {
-                        id: attributeToCheck
-                    },
-                    strictFilters: true,
-                    withCount: false
-                },
-                ctx
-            });
-
             const isAttributeBoundToLibrary = libAttributes.find(attr => attr.id === attributeToCheck);
-            const doesAttributeExist = attributeFromDb.list.length;
+            const doesAttributeExist = _checkIfAttributeExist(attributeToCheck, ctx);
             if (doesAttributeExist && isAttributeBoundToLibrary) {
                 continue;
             }
@@ -158,24 +161,32 @@ export default function ({
 
             await Promise.all(filesLibraries.map(async library => _processLibrary(library, ctx)));
 
-            // Delete old previews attributes
-            await attributeRepo.deleteAttribute({
-                attrData: {
-                    id: 'previews',
-                    type: AttributeTypes.SIMPLE,
-                    format: AttributeFormats.EXTENDED
-                },
-                ctx
-            });
+            const previewsAttributeExist = await _checkIfAttributeExist('previews', ctx);
 
-            await attributeRepo.deleteAttribute({
-                attrData: {
-                    id: 'previews_status',
-                    type: AttributeTypes.SIMPLE,
-                    format: AttributeFormats.EXTENDED
-                },
-                ctx
-            });
+            if (previewsAttributeExist) {
+                // Delete old previews attributes
+                await attributeRepo.deleteAttribute({
+                    attrData: {
+                        id: 'previews',
+                        type: AttributeTypes.SIMPLE,
+                        format: AttributeFormats.EXTENDED
+                    },
+                    ctx
+                });
+            }
+
+            const previewsStatusAttributeExist = await _checkIfAttributeExist('previews_status', ctx);
+
+            if (previewsStatusAttributeExist) {
+                await attributeRepo.deleteAttribute({
+                    attrData: {
+                        id: 'previews_status',
+                        type: AttributeTypes.SIMPLE,
+                        format: AttributeFormats.EXTENDED
+                    },
+                    ctx
+                });
+            }
         }
     };
 }
