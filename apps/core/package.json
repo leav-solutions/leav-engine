@@ -80,7 +80,7 @@
         "arangojs": "8.1.0",
         "awilix": "3.0.9",
         "bcryptjs": "2.4.3",
-        "body-parser": "1.20.1",
+        "body-parser": "1.20.3",
         "cacache": "15.3.0",
         "commander": "2.20.3",
         "compression": "1.7.4",
