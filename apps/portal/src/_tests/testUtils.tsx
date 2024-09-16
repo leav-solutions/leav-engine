@@ -27,6 +27,7 @@ interface IProvidersProps {
     globalSettings?: GET_GLOBAL_SETTINGS_globalSettings;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 const Providers = ({
     children,
     apolloMocks,
@@ -64,5 +65,6 @@ const renderWithProviders = (ui: ReactElement, options?: ICustomRenderOptions): 
 
 // Re-export everything from testing-library to improve DX. You can everything you need from this file when you use this
 // custom render
+// eslint-disable-next-line react-refresh/only-export-components
 export * from '@testing-library/react';
 export {renderWithProviders as render};

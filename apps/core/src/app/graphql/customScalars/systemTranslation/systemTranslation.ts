@@ -40,7 +40,7 @@ export default function ({config}: IDeps): ISystemTranslationGenerator {
         }
     };
 
-    const getScalar = (optional: boolean = true) =>
+    const getScalar = (optional = true) =>
         new GraphQLScalarType({
             name: optional ? 'SystemTranslationOptional' : 'SystemTranslation',
             description: 'System entities fields translation (label...)',

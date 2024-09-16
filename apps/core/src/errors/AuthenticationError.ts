@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 export default class AuthenticationError extends Error {
-    public constructor(message: string = 'Unauthorized') {
+    public constructor(message = 'Unauthorized') {
         super();
         this.message = message;
     }

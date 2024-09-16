@@ -43,13 +43,13 @@ export const objectValueVersionToArray = (version: IValueVersion): ValueVersionI
 export const extractPermissionFromQuery = (
     queryResult: ReturnType<typeof useIsAllowedQuery>,
     action: PermissionsActions,
-    fallbackPermission: boolean = false
+    fallbackPermission = false
 ): boolean =>
     !queryResult.loading && !queryResult.error
-        ? queryResult.data?.isAllowed?.find(permission => permission.name === action)?.allowed ?? fallbackPermission
+        ? (queryResult.data?.isAllowed?.find(permission => permission.name === action)?.allowed ?? fallbackPermission)
         : fallbackPermission;
 
-export const getPreviewSize = (size?: PreviewSize, simplistic: boolean = false) => {
+export const getPreviewSize = (size?: PreviewSize, simplistic = false) => {
     if (simplistic) {
         return '1.2rem';
     }

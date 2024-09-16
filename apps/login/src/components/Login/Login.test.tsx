@@ -31,7 +31,7 @@ jest.mock('react-router-dom', () => ({
         .mockReturnValue({})
 }));
 
-const _renderComponent = (url: string = '/') =>
+const _renderComponent = (url = '/') =>
     render(
         <KitApp>
             <MemoryRouter initialEntries={[url]}>

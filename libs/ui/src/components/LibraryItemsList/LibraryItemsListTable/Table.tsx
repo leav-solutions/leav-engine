@@ -20,7 +20,7 @@ import {infosCol, INFOS_COLUMN_WIDTH, selectionColumn} from '../constants';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import BodyRow from './BodyRow';
 import Header from './Header';
-import {EditRecordModalProvider} from './EditRecordModalContext';
+import {EditRecordModalProvider} from '_ui/components/LibraryItemsList/LibraryItemsListTable/EditRecordModalProvider';
 
 interface ITableColumn extends UseTableColumnOptions<ITableRow> {
     accessor: string | ((row, rowIndex) => string);
@@ -294,9 +294,9 @@ const Table = () => {
 
                                 return (
                                     <HeaderCell {...headerCellProps} id={column.id}>
-                                        {((column as unknown) as ITableColumn).key !== selectionColumn && (
+                                        {(column as unknown as ITableColumn).key !== selectionColumn && (
                                             <Header
-                                                id={((column as unknown) as ITableColumn).key}
+                                                id={(column as unknown as ITableColumn).key}
                                                 type={AttributeType.simple}
                                             >
                                                 {column.render('Header')}

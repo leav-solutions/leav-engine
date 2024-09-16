@@ -21,7 +21,7 @@ import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
 import FilterDropdownButton from '../../FilterDropdownButton';
 import {getConditionOptionsByType} from '../../FiltersOptions';
 import mustHideValue from '../../mustHideValue';
-import {getDefaultFilterValueByFormat} from '../Filter';
+import {getDefaultFilterValueByFormat} from '../Filter.utils';
 
 const BooleanWrapper = styled.span`
     padding: 0 1rem;

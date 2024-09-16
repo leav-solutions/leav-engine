@@ -180,14 +180,14 @@ export const getFileType = (fileName: string): FileType => {
  *
  * @param depth Number of calls to return
  */
-export const getCallStack = (depth: number = 2): string[] => {
+export const getCallStack = (depth = 2): string[] => {
     const callersStartDepth = 3;
     const callers = new Error().stack.split('\n').slice(callersStartDepth, callersStartDepth + depth);
 
     return callers.map(c => c.trim().split(' ').splice(1).join(' @ '));
 };
 
-export const getInitials = (label: string, length: number = 2) => {
+export const getInitials = (label: string, length = 2) => {
     if (typeof label !== 'string' || isEmpty(label.trim()) || length < 1) {
         return '?';
     }
@@ -213,7 +213,7 @@ export const getInitials = (label: string, length: number = 2) => {
 };
 
 export const _getInitialEngine = (words: string[], length: number) => {
-    let initials: string = '';
+    let initials = '';
     if (words.length === 1) {
         initials = words[0].slice(0, length);
     } else {

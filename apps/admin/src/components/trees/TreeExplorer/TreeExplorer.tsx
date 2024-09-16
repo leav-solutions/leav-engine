@@ -122,7 +122,7 @@ const TreeExplorer = ({
      * @param path      No path = root
      * @param expand    Should expand node?
      */
-    const _loadChildren = async (parent?: string | null, path?: Array<string | number>, expand: boolean = true) => {
+    const _loadChildren = async (parent?: string | null, path?: Array<string | number>, expand = true) => {
         const withPath = !!path;
 
         // Retrieve data

@@ -34,7 +34,7 @@ export default function ({'core.infra.elasticSearch.service': esService, config}
              *             {match: {'topic.record.id': '123456'}}
              *         ]
              */
-            const _flattenTopicFilter = (obj: Record<string, any>, parentKey: string = '') => {
+            const _flattenTopicFilter = (obj: Record<string, any>, parentKey = '') => {
                 let result: SearchQueryType[] = [];
 
                 for (const [key, value] of Object.entries(obj)) {

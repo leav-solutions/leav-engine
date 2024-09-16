@@ -12,8 +12,7 @@ import * as serviceWorker from './serviceWorker';
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
 
-// eslint-disable-next-line react-refresh/only-export-components
-function Index() {
+export function Index() {
     const {lang, loading, error} = useAppLang();
     const [i18nIsInitialized, seti18nIsInitialized] = useState(false);
 

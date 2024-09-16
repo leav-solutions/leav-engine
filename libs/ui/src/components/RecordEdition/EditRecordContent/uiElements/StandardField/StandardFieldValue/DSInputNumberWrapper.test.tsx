@@ -42,7 +42,7 @@ const mockValue = {
     state: StandardFieldValueState.PRISTINE
 };
 
-const getInitialState = (required: boolean, fallbackLang: boolean = false): IStandardFieldReducerState => ({
+const getInitialState = (required: boolean, fallbackLang = false): IStandardFieldReducerState => ({
     record: mockRecord,
     formElement: {
         ...mockFormElementInput,

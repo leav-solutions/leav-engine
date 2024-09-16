@@ -11,7 +11,7 @@ export default class PermissionError<T> extends LeavError<T> {
      */
     public action: PermissionsActions;
 
-    public constructor(action: PermissionsActions, fields?: ErrorFieldDetail<T>, message: string = 'Action forbidden') {
+    public constructor(action: PermissionsActions, fields?: ErrorFieldDetail<T>, message = 'Action forbidden') {
         super(ErrorTypes.PERMISSION_ERROR, message, {fields});
         this.action = action;
     }

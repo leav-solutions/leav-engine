@@ -21,7 +21,7 @@ export default class LeavError<T> extends Error {
     public type: ErrorTypes;
     public record?: ILeavErrorRecord;
 
-    public constructor(type: ErrorTypes, message: string = 'Action forbidden', details?: ILeavErrorDetails) {
+    public constructor(type: ErrorTypes, message = 'Action forbidden', details?: ILeavErrorDetails) {
         super(message);
 
         this.type = type;

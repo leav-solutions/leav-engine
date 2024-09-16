@@ -7,17 +7,13 @@ import React from 'react';
 import {IRecordIdentityWhoAmI} from '_ui/types/records';
 import useSearchReducer from '../hooks/useSearchReducer';
 import {SearchActionTypes} from '../hooks/useSearchReducer/searchReducer';
+import {SelectCellsBtnType} from '_ui/components/LibraryItemsList/shared/shared.utils';
 
 interface ISelectCellsBtnProps extends ButtonProps {
     record: IRecordIdentityWhoAmI;
     size: SizeType;
     text: string;
     selectionType: SelectCellsBtnType;
-}
-
-export enum SelectCellsBtnType {
-    ONLY = 'ONLY',
-    ALL = 'ALL'
 }
 
 function SelectCellsBtn({selectionType, record, size, text, ...btnProps}: ISelectCellsBtnProps): JSX.Element {

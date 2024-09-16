@@ -214,11 +214,7 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
                   }, {})
                 : null;
         },
-        objToNameValArray<T extends object>(
-            obj: object,
-            keyFieldName: string = 'name',
-            valueFieldName: string = 'value'
-        ): T[] {
+        objToNameValArray<T extends object>(obj: object, keyFieldName = 'name', valueFieldName = 'value'): T[] {
             if (!obj) {
                 return [];
             }
