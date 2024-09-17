@@ -9,8 +9,7 @@
         "declarationMap": false,
         "declaration": false,
         "sourceMap": false,
-        "composite": false,
-        "typeRoots": ["./src/types"]
+        "composite": false
     },
     "references": [
       {
