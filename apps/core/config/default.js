@@ -165,5 +165,6 @@ module.exports = {
     },
     elasticSearch: {
         url: process.env.ELASTIC_SEARCH_URL || 'http://elasticsearch:9200'
-    }
+    },
+    pluginsPath: process.env.PLUGINS_PATH || 'plugins'
 };
