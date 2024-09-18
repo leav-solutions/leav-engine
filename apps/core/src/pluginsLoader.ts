@@ -9,6 +9,10 @@ import {IAppModule} from '_types/shared';
 import {getConfig} from './config';
 
 export const initPlugins = async (folder: string, depsManager: AwilixContainer) => {
+    if (!folder) {
+        return;
+    }
+
     const pluginsApp: ICorePluginsApp = depsManager.cradle['core.app.core.plugins'];
 
     // Retrieve extensions points across all core app files
