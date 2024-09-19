@@ -66,7 +66,7 @@
         "watch": "1.0.2"
     },
     "dependencies": {
-        "@apollo/server": "4.9.5",
+        "@apollo/server": "4.11.0",
         "@elastic/elasticsearch": "8.10.0",
         "@graphql-tools/schema": "10.0.0",
         "@leav/app-root-path": "workspace:libs/app-root-path",
