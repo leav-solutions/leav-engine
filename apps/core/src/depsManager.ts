@@ -10,8 +10,9 @@ import {
     listModules,
     ModuleDescriptor
 } from 'awilix';
-import {realpathSync} from 'fs';
 import {getConfig} from './config';
+import path from 'path';
+import {existsSync} from 'fs';
 
 const _registerModules = async (
     container: AwilixContainer,
@@ -66,7 +67,12 @@ export async function initDI(additionalModulesToRegister?: {
     // Add a few extra dependencies
     const coreConf = await getConfig();
 
-    const pluginsFolder = realpathSync(__dirname + '/' + coreConf.pluginsPath);
+    let pluginsFolder = path.resolve(__dirname + '/' + coreConf.pluginsPath);
+
+    if (!existsSync(pluginsFolder)) {
+        pluginsFolder = null;
+    }
+
     const modulesGlob = '+(app|domain|infra|interface|utils)/**/index.+(ts|js)';
     const pluginsModulesGlob = `!(core)/${modulesGlob}`;
 
@@ -87,7 +93,9 @@ export async function initDI(additionalModulesToRegister?: {
     /*** PLUGINS ***/
     const pluginsContainer = coreContainer.createScope();
 
-    await _registerModules(pluginsContainer, pluginsFolder, pluginsModulesGlob);
+    if (pluginsFolder) {
+        await _registerModules(pluginsContainer, pluginsFolder, pluginsModulesGlob);
+    }
 
     // Register this at the very end because we don't want plugins to access the deps manager
     coreContainer.register('core.depsManager', asValue(coreContainer));
