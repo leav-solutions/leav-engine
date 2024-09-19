@@ -39,7 +39,7 @@ describe('authApp', () => {
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
-                getValues: global.__mockPromiseMultiple([[{raw_value: 'admin'}], [{value: {id: 'id'}}]])
+                getValues: global.__mockPromiseMultiple([[{raw_payload: 'admin'}], [{payload: {id: 'id'}}]])
             };
 
             const mockConfig: DeepPartial<IConfig> = {
@@ -400,7 +400,7 @@ describe('authApp', () => {
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
-                getValues: global.__mockPromise([{value: {id: 'id'}}])
+                getValues: global.__mockPromise([{payload: {id: 'id'}}])
             };
 
             const mockConfig: DeepPartial<IConfig> = {

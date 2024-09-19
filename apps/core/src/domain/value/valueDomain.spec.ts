@@ -141,7 +141,7 @@ describe('ValueDomain', () => {
         };
 
         test('Should save an indexed value', async function () {
-            const savedValueData = {value: 'test val', attribute: 'test_attr'};
+            const savedValueData = {payload: 'test val', attribute: 'test_attr'};
 
             const mockValRepo = {
                 createValue: global.__mockPromise(savedValueData),
@@ -173,7 +173,7 @@ describe('ValueDomain', () => {
                 library: 'test_lib',
                 recordId: '12345',
                 attribute: 'test_attr',
-                value: {value: 'test val'},
+                value: {payload: 'test val'},
                 ctx
             });
 
@@ -185,7 +185,7 @@ describe('ValueDomain', () => {
         test('Should save a new standard value', async function () {
             const savedValueData = {
                 id_value: '1337',
-                value: 'test val',
+                payload: 'test val',
                 attribute: 'test_attr',
                 modified_at: 123456,
                 created_at: 123456
@@ -220,7 +220,7 @@ describe('ValueDomain', () => {
                 library: 'test_lib',
                 recordId: '12345',
                 attribute: 'test_attr',
-                value: {value: 'test val'},
+                value: {payload: 'test val'},
                 ctx
             });
 
@@ -238,7 +238,7 @@ describe('ValueDomain', () => {
         test('Should update a standard value', async function () {
             const savedValueData = {
                 id_value: '1337',
-                value: 'test val',
+                payload: 'test val',
                 attribute: 'test_attr',
                 modified_at: 123456,
                 created_at: 123456
@@ -278,7 +278,7 @@ describe('ValueDomain', () => {
                 attribute: 'test_attr',
                 value: {
                     id_value: '12345',
-                    value: 'test val'
+                    payload: 'test val'
                 },
                 ctx
             });
@@ -315,7 +315,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: 'test_attr',
-                    value: {value: 'test val'},
+                    value: {payload: 'test val'},
                     ctx
                 })
             ).rejects.toThrow();
@@ -342,7 +342,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: 'test_attr',
-                    value: {value: 'test val'},
+                    value: {payload: 'test val'},
                     ctx
                 })
             ).rejects.toThrow();
@@ -368,7 +368,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: 'test_attr',
-                    value: {value: 'test val'},
+                    value: {payload: 'test val'},
                     ctx
                 })
             ).rejects.toThrow();
@@ -396,7 +396,7 @@ describe('ValueDomain', () => {
                     attribute: 'test_attr',
                     value: {
                         id_value: '12345',
-                        value: 'test val'
+                        payload: 'test val'
                     },
                     ctx
                 })
@@ -404,7 +404,7 @@ describe('ValueDomain', () => {
         });
 
         test('Should update record modif date and user', async function () {
-            const savedValueData = {value: 'test val', attribute: 'test_attr'};
+            const savedValueData = {payload: 'test val', attribute: 'test_attr'};
 
             const mockValRepo = {
                 createValue: global.__mockPromise(savedValueData),
@@ -441,7 +441,7 @@ describe('ValueDomain', () => {
                 library: 'test_lib',
                 recordId: '12345',
                 attribute: 'test_attr',
-                value: {value: 'test val'},
+                value: {payload: 'test val'},
                 ctx
             });
 
@@ -453,7 +453,7 @@ describe('ValueDomain', () => {
         test('Should save a versioned value', async () => {
             const savedValueData: IValue = {
                 id_value: '1337',
-                value: 'test val',
+                payload: 'test val',
                 attribute: 'advanced_attribute',
                 modified_at: 123456,
                 created_at: 123456,
@@ -491,7 +491,7 @@ describe('ValueDomain', () => {
                 recordId: '12345',
                 attribute: 'test_attr',
                 value: {
-                    value: 'test val',
+                    payload: 'test val',
                     version: {my_tree: '1'}
                 },
                 ctx
@@ -533,7 +533,7 @@ describe('ValueDomain', () => {
                 recordId: '12345',
                 attribute: 'test_attr',
                 value: {
-                    value: 'test val',
+                    payload: 'test val',
                     version: {my_tree: '1'}
                 },
                 ctx
@@ -592,7 +592,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: 'test_attr',
-                    value: {value: 'test val'},
+                    value: {payload: 'test val'},
                     ctx
                 })
             ).rejects.toThrow(ValidationError);
@@ -630,7 +630,7 @@ describe('ValueDomain', () => {
                     recordId: '12345',
                     attribute: 'test_attr',
                     value: {
-                        value: 'test val',
+                        payload: 'test val',
                         version: {my_tree: '1'}
                     },
                     ctx
@@ -671,7 +671,7 @@ describe('ValueDomain', () => {
                     recordId: '12345',
                     attribute: 'test_attr',
                     value: {
-                        value: 'test val',
+                        payload: 'test val',
                         version: {my_tree: '1'}
                     },
                     ctx
@@ -718,7 +718,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: 'test_attr',
-                    value: {value: 'test val'},
+                    value: {payload: 'test val'},
                     ctx
                 })
             ).rejects.toThrow(ValidationError);
@@ -766,7 +766,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: mockAttrTree.id,
-                    value: {value: 'lib1/123456'},
+                    value: {payload: 'lib1/123456'},
                     ctx
                 })
             ).rejects.toThrow(ValidationError);
@@ -775,7 +775,7 @@ describe('ValueDomain', () => {
         test('If value is identical to DB value, do not save it', async () => {
             const dbValueData = {
                 id_value: '1337',
-                value: 'test val',
+                payload: 'test val',
                 attribute: 'test_attr',
                 modified_at: 123456,
                 created_at: 123456
@@ -818,7 +818,7 @@ describe('ValueDomain', () => {
                 attribute: 'test_attr',
                 value: {
                     id_value: '12345',
-                    value: 'test val'
+                    payload: 'test val'
                 },
                 ctx
             });
@@ -827,14 +827,14 @@ describe('ValueDomain', () => {
             expect(mockEventsManagerDomain.sendDatabaseEvent).not.toBeCalled();
             expect(mockUpdateRecordLastModif).not.toBeCalled();
             expect(mockSendRecordUpdateEventHelper).not.toBeCalled();
-            expect(savedValue[0]).toEqual({...dbValueData, raw_value: dbValueData.value});
+            expect(savedValue[0]).toEqual({...dbValueData, raw_payload: dbValueData.payload});
         });
 
         describe('Metadata', () => {
             test('Save metadata on value', async () => {
                 const savedValueData = {
                     id_value: '1337',
-                    value: 'test val',
+                    payload: 'test val',
                     attribute: 'advanced_attribute_with_meta',
                     modified_at: 123456,
                     created_at: 123456,
@@ -873,7 +873,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: 'advanced_attribute_with_meta',
-                    value: {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
+                    value: {payload: 'test val', metadata: {meta_attribute: 'metadata value'}},
                     ctx
                 });
 
@@ -884,7 +884,7 @@ describe('ValueDomain', () => {
 
                 expect(savedValue[0].metadata).toMatchObject({
                     meta_attribute: {
-                        value: 'metadata value'
+                        payload: 'metadata value'
                     }
                 });
             });
@@ -892,7 +892,7 @@ describe('ValueDomain', () => {
             test("Should throw if metadata doesn't match attribute settings", async () => {
                 const savedValueData = {
                     id_value: '1337',
-                    value: 'test val',
+                    payload: 'test val',
                     attribute: 'advanced_attribute',
                     modified_at: 123456,
                     created_at: 123456,
@@ -927,7 +927,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: 'advanced_attribute_with_meta',
-                    value: {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
+                    value: {payload: 'test val', metadata: {meta_attribute: 'metadata value'}},
                     ctx
                 });
 
@@ -938,7 +938,7 @@ describe('ValueDomain', () => {
             test('Should throw if no permission to edit metadata field', async () => {
                 const savedValueData = {
                     id_value: '1337',
-                    value: 'test val',
+                    payload: 'test val',
                     attribute: 'advanced_attribute',
                     modified_at: 123456,
                     created_at: 123456,
@@ -980,7 +980,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: 'advanced_attribute_with_meta',
-                    value: {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
+                    value: {payload: 'test val', metadata: {meta_attribute: 'metadata value'}},
                     ctx
                 });
 
@@ -992,7 +992,7 @@ describe('ValueDomain', () => {
                 const attrWithMetadataId = 'advanced_attribute_with_meta';
                 const savedValueData = {
                     id_value: '1337',
-                    value: 'test val',
+                    payload: 'test val',
                     attribute: attrWithMetadataId,
                     modified_at: 123456,
                     created_at: 123456,
@@ -1041,7 +1041,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: attrWithMetadataId,
-                    value: {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
+                    value: {payload: 'test val', metadata: {meta_attribute: 'metadata value'}},
                     ctx
                 });
 
@@ -1060,7 +1060,7 @@ describe('ValueDomain', () => {
                 const attrWithMetadataId = 'advanced_attribute_with_meta';
                 const savedValueData = {
                     id_value: '1337',
-                    value: 'test val',
+                    payload: 'test val',
                     attribute: attrWithMetadataId,
                     modified_at: 123456,
                     created_at: 123456,
@@ -1111,7 +1111,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: 'advanced_attribute_with_meta',
-                    value: {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
+                    value: {payload: 'test val', metadata: {meta_attribute: 'metadata value'}},
                     ctx
                 });
 
@@ -1137,34 +1137,34 @@ describe('ValueDomain', () => {
             const values: IValue[] = [
                 {
                     attribute: 'test_attr',
-                    value: 'test',
-                    raw_value: 'test',
+                    payload: 'test',
+                    raw_payload: 'test',
                     id_value: '12345'
                 },
                 {
                     attribute: 'test_attr2',
-                    value: 'test',
-                    raw_value: 'test',
+                    payload: 'test',
+                    raw_payload: 'test',
                     id_value: null
                 },
                 {
                     attribute: 'test_attr3',
-                    value: 'test',
-                    raw_value: 'test',
+                    payload: 'test',
+                    raw_payload: 'test',
                     id_value: null
                 }
             ];
 
             const mockValRepo: Mockify<IValueRepo> = {
-                updateValue: global.__mockPromise({value: 'test', raw_value: 'test', id_value: 12345}),
+                updateValue: global.__mockPromise({payload: 'test', raw_payload: 'test', id_value: 12345}),
                 createValue: global.__mockPromiseMultiple([
-                    {value: 'test', raw_value: 'test', id_value: 12345},
-                    {value: 'test', raw_value: 'test', id_value: null}
+                    {payload: 'test', raw_payload: 'test', id_value: 12345},
+                    {payload: 'test', raw_payload: 'test', id_value: null}
                 ]),
                 getValueById: global.__mockPromise({
                     id_value: '12345'
                 }),
-                getValues: global.__mockPromise([{value: 'test', raw_value: 'test', id_value: 12345}])
+                getValues: global.__mockPromise([{payload: 'test', raw_payload: 'test', id_value: 12345}])
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -1217,20 +1217,20 @@ describe('ValueDomain', () => {
                 values: [
                     {
                         attribute: 'test_attr',
-                        value: 'test',
-                        raw_value: 'test',
+                        payload: 'test',
+                        raw_payload: 'test',
                         id_value: 12345
                     },
                     {
                         attribute: 'test_attr2',
-                        value: 'test',
-                        raw_value: 'test',
+                        payload: 'test',
+                        raw_payload: 'test',
                         id_value: 12345
                     },
                     {
                         attribute: 'test_attr3',
-                        value: 'test',
-                        raw_value: 'test',
+                        payload: 'test',
+                        raw_payload: 'test',
                         id_value: null
                     }
                 ],
@@ -1242,7 +1242,7 @@ describe('ValueDomain', () => {
             const mockUtils: Mockify<IUtils> = {
                 ...mockUtilsStandardAttribute,
                 areValuesIdentical: jest.fn().mockImplementation(
-                    (val1, val2) => val2?.value === 'identical' // Consider values for test_attr as identical
+                    (val1, val2) => val2?.payload === 'identical' // Consider values for test_attr as identical
                 ),
                 rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                     throw e;
@@ -1251,36 +1251,36 @@ describe('ValueDomain', () => {
             const values: IValue[] = [
                 {
                     attribute: 'test_attr',
-                    value: 'identical',
-                    raw_value: 'identical',
+                    payload: 'identical',
+                    raw_payload: 'identical',
                     id_value: '12345'
                 },
                 {
                     attribute: 'test_attr2',
-                    value: 'test',
-                    raw_value: 'test',
+                    payload: 'test',
+                    raw_payload: 'test',
                     id_value: null
                 },
                 {
                     attribute: 'test_attr3',
-                    value: 'test',
-                    raw_value: 'test',
+                    payload: 'test',
+                    raw_payload: 'test',
                     id_value: null
                 }
             ];
 
             const mockValRepo: Mockify<IValueRepo> = {
-                updateValue: global.__mockPromise({value: 'test', raw_value: 'test', id_value: 12345}),
+                updateValue: global.__mockPromise({payload: 'test', raw_payload: 'test', id_value: 12345}),
                 createValue: global.__mockPromiseMultiple([
-                    {value: 'test', raw_value: 'test', id_value: 12345},
-                    {value: 'test', raw_value: 'test', id_value: null}
+                    {payload: 'test', raw_payload: 'test', id_value: 12345},
+                    {payload: 'test', raw_payload: 'test', id_value: null}
                 ]),
                 getValueById: global.__mockPromise({
                     id_value: 12345,
-                    value: 'identical',
-                    raw_value: 'identical'
+                    payload: 'identical',
+                    raw_payload: 'identical'
                 }),
-                getValues: global.__mockPromise([{value: 'test', raw_value: 'test', id_value: 12345}])
+                getValues: global.__mockPromise([{payload: 'test', raw_payload: 'test', id_value: 12345}])
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -1333,20 +1333,20 @@ describe('ValueDomain', () => {
                 values: [
                     {
                         attribute: 'test_attr',
-                        value: 'identical',
-                        raw_value: 'identical',
+                        payload: 'identical',
+                        raw_payload: 'identical',
                         id_value: 12345
                     },
                     {
                         attribute: 'test_attr2',
-                        value: 'test',
-                        raw_value: 'test',
+                        payload: 'test',
+                        raw_payload: 'test',
                         id_value: 12345
                     },
                     {
                         attribute: 'test_attr3',
-                        value: 'test',
-                        raw_value: 'test',
+                        payload: 'test',
+                        raw_payload: 'test',
                         id_value: null
                     }
                 ],
@@ -1358,12 +1358,12 @@ describe('ValueDomain', () => {
             const values: IValue[] = [
                 {
                     attribute: 'test_attr',
-                    value: 'test',
+                    payload: 'test',
                     id_value: '12345'
                 },
                 {
                     attribute: 'test_attr2',
-                    value: 'test',
+                    payload: 'test',
                     id_value: null
                 }
             ];
@@ -1428,12 +1428,12 @@ describe('ValueDomain', () => {
             const values: IValue[] = [
                 {
                     attribute: 'test_attr',
-                    value: 'test',
+                    payload: 'test',
                     id_value: '12345'
                 },
                 {
                     attribute: 'test_attr2',
-                    value: 'test',
+                    payload: 'test',
                     id_value: null
                 }
             ];
@@ -1498,7 +1498,7 @@ describe('ValueDomain', () => {
             const values: IValue[] = [
                 {
                     attribute: 'advanced_attribute',
-                    value: '',
+                    payload: '',
                     id_value: '987654'
                 }
             ];
@@ -1508,7 +1508,7 @@ describe('ValueDomain', () => {
                 createValue: jest.fn(),
                 deleteValue: global.__mockPromise({
                     id_value: '12345',
-                    value: 'MyLabel'
+                    payload: 'MyLabel'
                 }),
                 getValueById: global.__mockPromise({
                     id_value: '12345'
@@ -1558,16 +1558,16 @@ describe('ValueDomain', () => {
             const values: IValue[] = [
                 {
                     attribute: 'advanced_attribute',
-                    value: '',
+                    payload: '',
                     id_value: '987654'
                 }
             ];
 
             const mockValRepo: Mockify<IValueRepo> = {
-                updateValue: global.__mockPromise({value: 'test', id_value: 12345}),
+                updateValue: global.__mockPromise({payload: 'test', id_value: 12345}),
                 createValue: global.__mockPromiseMultiple([
-                    {value: 'test', id_value: 12345},
-                    {value: 'test', id_value: null}
+                    {payload: 'test', id_value: 12345},
+                    {payload: 'test', id_value: null}
                 ]),
                 deleteValue: jest.fn(),
                 getValueById: global.__mockPromise({
@@ -1611,7 +1611,7 @@ describe('ValueDomain', () => {
             const values: IValue[] = [
                 {
                     attribute: 'advanced_attribute',
-                    value: '',
+                    payload: '',
                     id_value: '987654'
                 }
             ];
@@ -1666,7 +1666,7 @@ describe('ValueDomain', () => {
             const values: IValue[] = [
                 {
                     attribute: 'advanced_attribute',
-                    value: '',
+                    payload: '',
                     id_value: '987654'
                 }
             ];
@@ -1698,12 +1698,12 @@ describe('ValueDomain', () => {
 
     describe('deleteValue', () => {
         test('Should delete a value', async function () {
-            const deletedValueData = {value: 'test val', attribute: 'test_attr'};
+            const deletedValueData = {payload: 'test val', attribute: 'test_attr'};
 
             const mockValRepo = {
-                deleteValue: global.__mockPromise({value: 'test val', attribute: 'test_attr', id_value: '123'}),
+                deleteValue: global.__mockPromise({payload: 'test val', attribute: 'test_attr', id_value: '123'}),
                 getValueById: global.__mockPromise({id_value: '12345'}),
-                getValues: global.__mockPromise([{value: 'test val', attribute: 'test_attr'}])
+                getValues: global.__mockPromise([{payload: 'test val', attribute: 'test_attr'}])
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -1753,7 +1753,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: 'test_attr',
-                    value: {value: 'test val'},
+                    value: {payload: 'test val'},
                     ctx
                 })
             ).rejects.toThrow();
@@ -1867,7 +1867,7 @@ describe('ValueDomain', () => {
                     attribute: 'test_attr',
                     value: {
                         id_value: '12345',
-                        value: 'test val'
+                        payload: 'test val'
                     },
                     ctx
                 })
@@ -1877,7 +1877,7 @@ describe('ValueDomain', () => {
 
     describe('getValues', () => {
         test('Should return values', async function () {
-            const valueData = [{value: 'test val', attribute: 'test_attr'}];
+            const valueData = [{payload: 'test val', attribute: 'test_attr'}];
 
             const mockValRepo = {
                 getValues: global.__mockPromise(valueData)
@@ -1915,7 +1915,7 @@ describe('ValueDomain', () => {
             const version = {my_tree: '12345'};
             const valueData = [
                 {
-                    value: 'test val',
+                    payload: 'test val',
                     attribute: 'test_attr',
                     version
                 }
@@ -1958,12 +1958,12 @@ describe('ValueDomain', () => {
         test('Should return versioned values in smart mode', async function () {
             const valueData = [
                 {
-                    value: 'val1',
+                    payload: 'val1',
                     attribute: 'test_attr',
                     version: {my_tree: '7'}
                 },
                 {
-                    value: 'val2',
+                    payload: 'val2',
                     attribute: 'test_attr',
                     version: {my_tree: '8'}
                 }
@@ -2004,14 +2004,14 @@ describe('ValueDomain', () => {
             expect(mockElementAncestorsHelper.getCachedElementAncestors).toBeCalledTimes(1);
 
             expect(resValue.length).toBe(1);
-            expect(resValue[0].value).toBe('val2');
+            expect(resValue[0].payload).toBe('val2');
             expect(resValue[0].version).toMatchObject({my_tree: '8'});
         });
 
         test('Should return versioned values with multiple trees', async function () {
             const valueData = [
                 {
-                    value: 'val1',
+                    payload: 'val1',
                     attribute: 'test_attr',
                     version: {
                         my_tree: '9',
@@ -2020,7 +2020,7 @@ describe('ValueDomain', () => {
                     }
                 },
                 {
-                    value: 'val2',
+                    payload: 'val2',
                     attribute: 'test_attr',
                     version: {
                         my_tree: '8',
@@ -2029,7 +2029,7 @@ describe('ValueDomain', () => {
                     }
                 },
                 {
-                    value: 'val3',
+                    payload: 'val3',
                     attribute: 'test_attr',
                     version: {
                         my_tree: '8',
@@ -2038,7 +2038,7 @@ describe('ValueDomain', () => {
                     }
                 },
                 {
-                    value: 'val4',
+                    payload: 'val4',
                     attribute: 'test_attr',
                     version: {
                         my_tree: '9',
@@ -2180,8 +2180,8 @@ describe('ValueDomain', () => {
             expect(mockValRepo.getValues.mock.calls[0][0].options).toMatchObject({version});
             expect(mockElementAncestorsHelperMultipleTrees.getCachedElementAncestors).toBeCalledTimes(3);
             expect(resValue.length).toBe(2);
-            expect(resValue[0].value).toBe('val2');
-            expect(resValue[1].value).toBe('val3');
+            expect(resValue[0].payload).toBe('val2');
+            expect(resValue[1].payload).toBe('val3');
             expect(resValue[0].version).toMatchObject({
                 my_tree: '8',
                 other_tree: '2',
@@ -2192,14 +2192,14 @@ describe('ValueDomain', () => {
         test('Should return empty array if no values matching version', async function () {
             const valueData = [
                 {
-                    value: 'val1',
+                    payload: 'val1',
                     attribute: 'test_attr',
                     version: {
                         my_tree: '99'
                     }
                 },
                 {
-                    value: 'val2',
+                    payload: 'val2',
                     attribute: 'test_attr',
                     version: {
                         my_tree: '88'

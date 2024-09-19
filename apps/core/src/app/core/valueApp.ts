@@ -10,7 +10,7 @@ import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
-import {IStandardValue, IValue, IValueVersion} from '_types/value';
+import {IStandardValue, ITreeValue, IValue, IValueVersion} from '_types/value';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 import {IGraphqlApp} from '../graphql/graphqlApp';
@@ -75,6 +75,31 @@ export default function ({
                 : []
     };
 
+    const _getLinkValuePayload = (parent: IValue) => {
+        if (parent.payload === null) {
+            return null;
+        }
+
+        return {
+            ...parent.payload,
+            // Add attribute on value as it might be useful for nested resolvers like ancestors
+            attribute: parent.attribute
+        };
+    };
+
+    const _getTreeValuePayload = (parent: ITreeValue) => {
+        if (parent.payload === null) {
+            return null;
+        }
+
+        return {
+            ...parent.payload,
+            // Add attribute and treeId on value as it might be useful for nested resolvers like ancestors
+            attribute: parent.attribute,
+            treeId: parent.treeId
+        };
+    };
+
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -109,8 +134,10 @@ export default function ({
 
                     type Value implements GenericValue {
                         id_value: ID,
-                        value: Any,
-                        raw_value: Any,
+                        value: Any @deprecated(reason: "Use payload instead"),
+                        raw_value: Any @deprecated(reason: "Use raw_payload instead"),
+                        payload: Any,
+                        raw_payload: Any,
                         modified_at: Int,
                         created_at: Int,
                         modified_by: Record,
@@ -141,7 +168,8 @@ export default function ({
 
                     type LinkValue implements GenericValue {
                         id_value: ID,
-                        value: Record,
+                        value: Record @deprecated(reason: "Use payload instead"),
+                        payload: Record,
                         modified_at: Int,
                         created_at: Int,
                         modified_by: Record,
@@ -159,7 +187,8 @@ export default function ({
                         created_at: Int
                         modified_by: Record,
                         created_by: Record,
-                        value: TreeNode,
+                        value: TreeNode @deprecated(reason: "Use payload instead"),
+                        payload: TreeNode,
                         version: [ValueVersion],
                         attribute: Attribute,
                         metadata: [ValueMetadata],
@@ -174,7 +203,8 @@ export default function ({
 
                     input ValueInput {
                         id_value: ID,
-                        value: String,
+                        value: String @deprecated(reason: "Use payload instead"),
+                        payload: String,
                         metadata: [ValueMetadataInput],
                         version: [ValueVersionInput]
                     }
@@ -182,7 +212,8 @@ export default function ({
                     input ValueBatchInput {
                         attribute: ID,
                         id_value: ID,
-                        value: String,
+                        value: String @deprecated(reason: "Use payload instead"),
+                        payload: String,
                         metadata: [ValueMetadataInput]
                     }
 
@@ -208,6 +239,7 @@ export default function ({
                         async saveValue(_: never, {library, recordId, attribute, value}, ctx): Promise<IValue[]> {
                             const valToSave = {
                                 ...value,
+                                payload: value?.payload ?? value?.value,
                                 version: convertVersionFromGqlFormat(value.version),
                                 metadata: utils.nameValArrayToObj(value.metadata)
                             };
@@ -226,6 +258,7 @@ export default function ({
                             const versionToUse = convertVersionFromGqlFormat(version);
                             const convertedValues = values.map(val => ({
                                 ...val,
+                                payload: val.payload ?? val.value,
                                 version: versionToUse,
                                 metadata: utils.nameValArrayToObj(val.metadata)
                             }));
@@ -252,11 +285,18 @@ export default function ({
                             return res;
                         },
                         async deleteValue(_: never, {library, recordId, attribute, value}, ctx): Promise<IValue[]> {
+                            const valToDelete =
+                                value?.payload || value?.value
+                                    ? {
+                                          ...value,
+                                          payload: value.payload ?? value.value
+                                      }
+                                    : value;
                             return valueDomain.deleteValue({
                                 library,
                                 recordId,
                                 attribute,
-                                value,
+                                value: valToDelete,
                                 ctx
                             });
                         }
@@ -279,35 +319,20 @@ export default function ({
                             }
                         }
                     },
-                    Value: commonValueResolvers,
+                    Value: {
+                        ...commonValueResolvers,
+                        value: (parent: IStandardValue) => parent.payload,
+                        raw_value: (parent: IStandardValue) => parent.raw_payload
+                    },
                     LinkValue: {
                         ...commonValueResolvers,
-                        value: parent => {
-                            if (parent.value === null) {
-                                return null;
-                            }
-
-                            return {
-                                ...parent.value,
-                                // Add attribute on value as it might be useful for nested resolvers like ancestors
-                                attribute: parent.attribute
-                            };
-                        }
+                        value: (parent: IValue) => _getLinkValuePayload(parent),
+                        payload: (parent: IValue) => _getLinkValuePayload(parent)
                     },
                     TreeValue: {
                         ...commonValueResolvers,
-                        value: parent => {
-                            if (parent.value === null) {
-                                return null;
-                            }
-
-                            return {
-                                ...parent.value,
-                                // Add attribute and treeId on value as it might be useful for nested resolvers like ancestors
-                                attribute: parent.attribute,
-                                treeId: parent.treeId
-                            };
-                        }
+                        value: (parent: ITreeValue) => _getTreeValuePayload(parent),
+                        payload: (parent: ITreeValue) => _getTreeValuePayload(parent)
                     }
                 }
             };

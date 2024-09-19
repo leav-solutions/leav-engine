@@ -12,7 +12,8 @@ export default function (): IActionsListFunction {
         output_types: [ActionsListIOTypes.STRING],
         action: values => {
             const computedValues = values.map(elementValue => {
-                elementValue.value = elementValue.value !== null ? (elementValue.value as string).toUpperCase() : null;
+                elementValue.payload =
+                    elementValue.payload !== null ? (elementValue.payload as string).toUpperCase() : null;
                 return elementValue;
             });
             return {values: computedValues, errors: []};

@@ -526,7 +526,7 @@ describe('formDomain', () => {
                 getRecordFieldValue: jest.fn().mockImplementation(async ({attributeId}) => {
                     switch (attributeId) {
                         case 'dep_attribute':
-                            return {value: {id: '987654', record: {id: '123456', library: 'dep_lib'}}};
+                            return {payload: {id: '987654', record: {id: '123456', library: 'dep_lib'}}};
                         default:
                             return mockStandardValue;
                     }
@@ -600,7 +600,7 @@ describe('formDomain', () => {
                 getRecordFieldValue: jest.fn().mockImplementation(async ({attributeId}) => {
                     switch (attributeId) {
                         case 'dep_attribute':
-                            return {value: {id: '987654', record: {id: '123456', library: 'dep_lib'}}};
+                            return {payload: {id: '987654', record: {id: '123456', library: 'dep_lib'}}};
                         default:
                             return mockStandardValue;
                     }
@@ -678,7 +678,7 @@ describe('formDomain', () => {
                 getRecordFieldValue: jest.fn().mockImplementation(async ({attributeId}) => {
                     switch (attributeId) {
                         case 'dep_attribute':
-                            return {value: {record: {id: '123456', library: 'dep_lib'}}};
+                            return {payload: {record: {id: '123456', library: 'dep_lib'}}};
                         default:
                             return mockStandardValue;
                     }
@@ -770,7 +770,7 @@ describe('formDomain', () => {
                 getRecordFieldValue: jest.fn().mockImplementation(async ({attributeId}) => {
                     switch (attributeId) {
                         case 'dep_attribute':
-                            return {value: {record: {id: '123456', library: 'dep_lib'}}};
+                            return {payload: {record: {id: '123456', library: 'dep_lib'}}};
                         default:
                             return mockStandardValue;
                     }

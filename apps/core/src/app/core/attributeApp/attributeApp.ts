@@ -206,6 +206,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         format: AttributeFormat
                         label: SystemTranslation,
                         readonly: Boolean,
+                        required: Boolean,
                         description: SystemTranslationOptional,
                         linked_library: String,
                         linked_tree: String,

@@ -9,9 +9,9 @@ describe('toJSONAction', () => {
     const attrText: IAttribute = {id: 'test_attr', format: AttributeFormats.NUMERIC, type: AttributeTypes.SIMPLE};
     const ctx = {attribute: attrText};
     test('toJSON', async () => {
-        expect((await action([{value: {test: 'aaa', toto: {tata: true}}}], {}, ctx)).values[0].value).toBe(
+        expect((await action([{payload: {test: 'aaa', toto: {tata: true}}}], {}, ctx)).values[0].payload).toBe(
             '{"test":"aaa","toto":{"tata":true}}'
         );
-        expect((await action([{value: null}], {}, ctx)).values[0].value).toBe(null);
+        expect((await action([{payload: null}], {}, ctx)).values[0].payload).toBe(null);
     });
 });

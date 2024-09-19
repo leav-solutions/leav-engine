@@ -44,16 +44,16 @@ export interface IGenericValue {
 }
 
 export interface IStandardValue extends IGenericValue {
-    value?: any;
-    raw_value?: any;
+    payload?: any;
+    raw_payload?: any;
 }
 
 export interface ILinkValue extends IGenericValue {
-    value?: IRecord;
+    payload?: IRecord;
 }
 
 export interface ITreeValue extends IGenericValue {
-    value?: ITreeNode;
+    payload?: ITreeNode;
     treeId: string;
 }
 

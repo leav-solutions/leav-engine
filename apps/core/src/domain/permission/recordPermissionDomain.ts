@@ -84,7 +84,7 @@ export default function (deps: IDeps = {}): IRecordPermissionDomain {
 
             const valuesByAttr: IGetTreeBasedPermissionParams['treeValues'] = treesAttrValues.reduce(
                 (allVal, treeVal, i) => {
-                    allVal[libProps.permissions_conf.permissionTreeAttributes[i]] = treeVal.map(v => v.value.id);
+                    allVal[libProps.permissions_conf.permissionTreeAttributes[i]] = treeVal.map(v => v.payload.id);
 
                     return allVal;
                 },

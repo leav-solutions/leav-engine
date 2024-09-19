@@ -3,16 +3,16 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getValuesToDisplay} from './getValuesToDisplay';
 
-const nullValue = {value: null, isInherited: null};
+const nullValue = {payload: null, isInherited: null};
 
 const inheritedValues = [
-    {value: 'inherited_value_1', isInherited: true},
-    {value: 'inherited_value_2', isInherited: true}
+    {payload: 'inherited_value_1', isInherited: true},
+    {payload: 'inherited_value_2', isInherited: true}
 ];
 
 const overrideValues = [
-    {value: 'override_value_1', isInherited: false},
-    {value: 'override_value_2', isInherited: false}
+    {payload: 'override_value_1', isInherited: false},
+    {payload: 'override_value_2', isInherited: false}
 ];
 
 describe('utils', () => {

@@ -24,26 +24,26 @@ describe('formatDateRangeAction', () => {
             expect(
                 (
                     await action(
-                        [{value: testingRangeDate}],
+                        [{payload: testingRangeDate}],
                         {localized},
                         {
                             ...ctx,
                             lang: 'en-GB'
                         }
                     )
-                ).values[0].value
+                ).values[0].payload
             ).toEqual({from: '28 February 37 at 23:42', to: '28 February 37 at 23:43'});
             expect(
                 (
                     await action(
-                        [{value: testingRangeDate}],
+                        [{payload: testingRangeDate}],
                         {localized},
                         {
                             ...ctx,
                             lang: 'ko-KR'
                         }
                     )
-                ).values[0].value
+                ).values[0].payload
             ).toEqual({from: '37년 2월 28일 오후 11:42', to: '37년 2월 28일 오후 11:43'});
         });
 
@@ -51,14 +51,17 @@ describe('formatDateRangeAction', () => {
             'auto should print default on invalid json format: `%s`',
             async localized => {
                 const result = await action(
-                    [{value: testingRangeDate}],
+                    [{payload: testingRangeDate}],
                     {localized},
                     {
                         ...ctx,
                         lang: 'en-EN'
                     }
                 );
-                expect(result.values[0].value).toEqual({from: '2/28/2037, 11:42:00 PM', to: '2/28/2037, 11:43:00 PM'});
+                expect(result.values[0].payload).toEqual({
+                    from: '2/28/2037, 11:42:00 PM',
+                    to: '2/28/2037, 11:43:00 PM'
+                });
                 expect(result.errors[0]).toEqual({
                     attributeValue: {value: localized},
                     errorType: 'FORMAT_ERROR',
@@ -69,8 +72,8 @@ describe('formatDateRangeAction', () => {
     });
 
     test('Universal format', async () => {
-        const result = await action([{value: testingRangeDate}], {universal: 'D/MMMM-YY HH:mm'}, ctx);
-        const formattedRangeDate = result.values[0].value as {
+        const result = await action([{payload: testingRangeDate}], {universal: 'D/MMMM-YY HH:mm'}, ctx);
+        const formattedRangeDate = result.values[0].payload as {
             from: string;
             to: string;
         };
@@ -80,19 +83,19 @@ describe('formatDateRangeAction', () => {
 
     describe('edge cases', () => {
         test('should return null value if properties are omitted', async () => {
-            expect((await action([{value: 'aaaa'}], {}, ctx)).values[0].value).toBe(null);
-            expect((await action([{value: {}}], {}, ctx)).values[0].value).toBe(null);
-            expect((await action([{value: {unknownProperty: null}}], {}, ctx)).values[0].value).toBe(null);
-            expect((await action([{value: {from: '2119477320'}}], {}, ctx)).values[0].value).toBe(null);
-            expect((await action([{value: {to: '2119477320'}}], {}, ctx)).values[0].value).toBe(null);
-            expect((await action([{value: null}], {}, ctx)).values[0].value).toBe(null);
+            expect((await action([{payload: 'aaaa'}], {}, ctx)).values[0].payload).toBe(null);
+            expect((await action([{payload: {}}], {}, ctx)).values[0].payload).toBe(null);
+            expect((await action([{payload: {unknownProperty: null}}], {}, ctx)).values[0].payload).toBe(null);
+            expect((await action([{payload: {from: '2119477320'}}], {}, ctx)).values[0].payload).toBe(null);
+            expect((await action([{payload: {to: '2119477320'}}], {}, ctx)).values[0].payload).toBe(null);
+            expect((await action([{payload: null}], {}, ctx)).values[0].payload).toBe(null);
         });
         test('should return empty string couple on non numerical value in DB', async () => {
-            expect((await action([{value: {from: 'aaaa', to: '2119477320'}}], {}, ctx)).values[0].value).toEqual([
+            expect((await action([{payload: {from: 'aaaa', to: '2119477320'}}], {}, ctx)).values[0].payload).toEqual([
                 '',
                 ''
             ]);
-            expect((await action([{value: {from: '2119477320', to: 'aaaa'}}], {}, ctx)).values[0].value).toEqual([
+            expect((await action([{payload: {from: '2119477320', to: 'aaaa'}}], {}, ctx)).values[0].payload).toEqual([
                 '',
                 ''
             ]);
@@ -103,7 +106,7 @@ describe('formatDateRangeAction', () => {
         expect(
             (
                 await action(
-                    [{value: {from: '2119477320', to: '2119477380'}}],
+                    [{payload: {from: '2119477320', to: '2119477380'}}],
                     {
                         universal: 'D/MMMM/YY',
                         localized: `{
@@ -116,7 +119,7 @@ describe('formatDateRangeAction', () => {
                     },
                     {...ctx, lang: 'fr-FR'}
                 )
-            ).values[0].value
+            ).values[0].payload
         ).toEqual({from: 'ap. J.-C. samedi 28 F 42', to: 'ap. J.-C. samedi 28 F 43'});
     });
 });

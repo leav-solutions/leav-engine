@@ -61,7 +61,7 @@ describe('validateRequestToken', () => {
     };
 
     const mockValueDomain: Mockify<IValueDomain> = {
-        getValues: global.__mockPromise([{value: {id: '1'}}])
+        getValues: global.__mockPromise([{payload: {id: '1'}}])
     };
 
     describe('With accessToken', () => {

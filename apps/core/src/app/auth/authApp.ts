@@ -89,7 +89,7 @@ export default function ({
         return jwt.sign(
             {
                 userId,
-                groupsId: groups.map(g => g.value.id)
+                groupsId: groups.map(g => g.payload.id)
             },
             config.auth.key,
             {
@@ -314,7 +314,7 @@ export default function ({
                         });
 
                         const isValidPwd =
-                            !!userPwd[0].raw_value && (await bcrypt.compare(password, userPwd[0].raw_value));
+                            !!userPwd[0].raw_payload && (await bcrypt.compare(password, userPwd[0].raw_payload));
 
                         if (!isValidPwd) {
                             return res.status(401).send('Invalid credentials');
@@ -458,7 +458,7 @@ export default function ({
                                 library: 'users',
                                 recordId: payload.userId,
                                 attribute: 'password',
-                                value: {value: newPassword},
+                                value: {payload: newPassword},
                                 ctx
                             });
                         } catch (e) {
@@ -615,7 +615,7 @@ export default function ({
                     attribute: USERS_GROUP_ATTRIBUTE_NAME,
                     ctx
                 })) as ITreeValue[];
-                groupsId = userGroups.map(g => g.value.id);
+                groupsId = userGroups.map(g => g.payload.id);
             }
 
             await _checkIfUserExistsById(userId, ctx);

@@ -86,7 +86,7 @@ export default function (): IActionsListFunction {
 
             const computedValues = values.map(elementValue => {
                 // Joi might convert value before testing. raw() force it to send back the value we passed in
-                const validationRes = formatSchema.validate(elementValue.value);
+                const validationRes = formatSchema.validate(elementValue.payload);
                 if (!!validationRes.error) {
                     errors.push({
                         errorType: Errors.FORMAT_ERROR,
@@ -97,7 +97,7 @@ export default function (): IActionsListFunction {
 
                 // Specific Validation for date range
                 if (ctx.attribute.format === AttributeFormats.DATE_RANGE) {
-                    const rangeValue = elementValue.value as IDateRangeValue;
+                    const rangeValue = elementValue.payload as IDateRangeValue;
                     if (Number(rangeValue.from) > Number(rangeValue.to)) {
                         errors.push({
                             errorType: Errors.INVALID_DATE_RANGE,

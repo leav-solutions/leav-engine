@@ -12,15 +12,15 @@ export default function (): IActionsListFunction {
         output_types: [ActionsListIOTypes.BOOLEAN],
         action: values => {
             const computedValues = values.map(elementValue => {
-                switch (elementValue.value) {
+                switch (elementValue.payload) {
                     case 'true':
-                        elementValue.value = true;
+                        elementValue.payload = true;
                         break;
                     case 'false':
-                        elementValue.value = false;
+                        elementValue.payload = false;
                         break;
                     default:
-                        elementValue.value = !!elementValue.value;
+                        elementValue.payload = !!elementValue.payload;
                         break;
                 }
                 return elementValue;

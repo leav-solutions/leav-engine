@@ -362,7 +362,7 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
             const isValue1MetadataEmpty = !value1?.metadata || Object.keys(value1?.metadata).length === 0;
             const isValue2MetadataEmpty = !value2?.metadata || Object.keys(value2?.metadata).length === 0;
 
-            const isValueIdentical = value1?.value === value2?.value;
+            const isValueIdentical = value1?.payload === value2?.payload;
             const isMetadataIdentical =
                 (isValue1MetadataEmpty && isValue2MetadataEmpty) || isEqual(value1?.metadata, value2?.metadata);
 

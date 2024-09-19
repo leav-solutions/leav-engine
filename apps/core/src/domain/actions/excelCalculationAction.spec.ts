@@ -16,7 +16,7 @@ const mockCalculationsVariable = {
         initialValue: ActionsListValueType
     ): Promise<IVariableValue[]> => [
         {
-            value: `${variable}Value`,
+            payload: `${variable}Value`,
             recordId: '1',
             library: 'meh'
         }
@@ -35,7 +35,7 @@ describe('excelCalculationAction', () => {
         modified_by: null,
         created_at: null,
         created_by: null,
-        value: null
+        payload: null
     };
 
     test('Simple excelCalculation', async () => {
@@ -50,7 +50,7 @@ describe('excelCalculationAction', () => {
             ctx
         );
 
-        expect(res).toEqual({errors: [], values: [{...mockResultValueBase, value: '42'}]});
+        expect(res).toEqual({errors: [], values: [{...mockResultValueBase, payload: '42'}]});
         expect(
             await action(
                 [],
@@ -60,7 +60,7 @@ describe('excelCalculationAction', () => {
                 },
                 ctx
             )
-        ).toEqual({errors: [], values: [{...mockResultValueBase, value: '84'}]});
+        ).toEqual({errors: [], values: [{...mockResultValueBase, payload: '84'}]});
     });
 
     test('no formula', async () => {
@@ -74,7 +74,7 @@ describe('excelCalculationAction', () => {
             },
             ctx
         );
-        expect(res).toEqual({errors: [], values: [{...mockResultValueBase, value: ''}]});
+        expect(res).toEqual({errors: [], values: [{...mockResultValueBase, payload: ''}]});
     });
 
     test('Replace variables', async () => {
@@ -93,7 +93,7 @@ describe('excelCalculationAction', () => {
 
         expect(res).toEqual({
             errors: [],
-            values: [{...mockResultValueBase, value: 'resultat totoValue tataValue titiValue'}]
+            values: [{...mockResultValueBase, payload: 'resultat totoValue tataValue titiValue'}]
         });
     });
 
@@ -113,7 +113,7 @@ describe('excelCalculationAction', () => {
 
         expect(res).toEqual({
             errors: [],
-            values: [mockStandardValue, {...mockResultValueBase, value: 'resultat totoValue tataValue titiValue'}]
+            values: [mockStandardValue, {...mockResultValueBase, payload: 'resultat totoValue tataValue titiValue'}]
         });
     });
 

@@ -9,10 +9,10 @@ describe('validateRegexAction', () => {
     const attrText = {id: 'test_attr', format: AttributeFormats.TEXT, type: AttributeTypes.SIMPLE};
     const ctx = {attribute: attrText};
     test('validateRegex', async () => {
-        const res = await action([{value: 'test'}], {regex: '^test$'}, ctx);
-        expect(res.values[0].value).toBe('test');
+        const res = await action([{payload: 'test'}], {regex: '^test$'}, ctx);
+        expect(res.values[0].payload).toBe('test');
 
-        const resError = await action([{value: 'test'}], {regex: '^toto$'}, ctx);
+        const resError = await action([{payload: 'test'}], {regex: '^toto$'}, ctx);
         expect(resError.errors.length).toBe(1);
     });
 });

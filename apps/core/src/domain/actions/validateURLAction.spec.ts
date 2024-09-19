@@ -10,12 +10,12 @@ describe('validateURLFormatAction', () => {
     const ctx = {attribute: {id: 'test_attr', format: AttributeFormats.TEXT, type: AttributeTypes.SIMPLE}};
 
     test('validateURL should throw', async () => {
-        const res = await action([{value: 'test'}], null, ctx);
+        const res = await action([{payload: 'test'}], null, ctx);
         expect(res.errors.length).toBe(1);
     });
 
     test('validateURL should return URL', async () => {
-        const res = await action([{value: 'http://url.com'}], null, ctx);
-        expect(res.values[0].value).toBe('http://url.com');
+        const res = await action([{payload: 'http://url.com'}], null, ctx);
+        expect(res.values[0].payload).toBe('http://url.com');
     });
 });

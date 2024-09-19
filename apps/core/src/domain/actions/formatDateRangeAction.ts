@@ -42,22 +42,22 @@ export default function (): IActionsListFunction<{localized: false; universal: f
             const errors: IActionsListFunctionResult['errors'] = [];
 
             const formattedValues = values.map(elementValue => {
-                const dateRangeValue = elementValue.value as IDateRangeValue<number>;
+                const dateRangeValue = elementValue.payload as IDateRangeValue<number>;
 
                 if (dateRangeValue === null || !dateRangeValue.from || !dateRangeValue.to) {
-                    return {...dateRangeValue, value: null};
+                    return {...dateRangeValue, payload: null};
                 }
 
                 const {from: numberValFrom, to: numberValTo} = dateRangeValue;
 
                 if (isNaN(Number(numberValFrom)) || isNaN(Number(numberValTo))) {
-                    return {...dateRangeValue, value: ['', '']};
+                    return {...dateRangeValue, payload: ['', '']};
                 }
 
                 if ((localized === null || localized === undefined) && universal) {
                     return {
                         ...dateRangeValue,
-                        value: {
+                        payload: {
                             from: moment.unix(numberValFrom).format(universal),
                             to: moment.unix(numberValTo).format(universal)
                         }
@@ -71,13 +71,13 @@ export default function (): IActionsListFunction<{localized: false; universal: f
                     // TODO: rise error to inform user without break app
                     errors.push({
                         errorType: Errors.FORMAT_ERROR,
-                        attributeValue: {value: localized},
+                        attributeValue: {payload: localized},
                         message:
                             'Params "localized" of FormatDateAction are invalid JSON. Use `{}` empty option instead.'
                     });
                 }
 
-                elementValue.value = {
+                elementValue.payload = {
                     from: new Date(numberValFrom * 1_000).toLocaleString(lang, options),
                     to: new Date(numberValTo * 1_000).toLocaleString(lang, options)
                 };

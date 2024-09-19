@@ -9,9 +9,9 @@ describe('toStringAction', () => {
     const attrText: IAttribute = {id: 'test_attr', format: AttributeFormats.TEXT, type: AttributeTypes.SIMPLE};
     const ctx = {attribute: attrText};
     test('toString', async () => {
-        expect((await action([{value: 'test'}], {}, ctx)).values[0].value).toBe('test');
-        expect((await action([{value: 12345}], {}, ctx)).values[0].value).toBe('12345');
-        expect((await action([{value: true}], {}, ctx)).values[0].value).toBe('true');
-        expect((await action([{value: null}], {}, ctx)).values[0].value).toBe(null);
+        expect((await action([{payload: 'test'}], {}, ctx)).values[0].payload).toBe('test');
+        expect((await action([{payload: 12345}], {}, ctx)).values[0].payload).toBe('12345');
+        expect((await action([{payload: true}], {}, ctx)).values[0].payload).toBe('true');
+        expect((await action([{payload: null}], {}, ctx)).values[0].payload).toBe(null);
     });
 });

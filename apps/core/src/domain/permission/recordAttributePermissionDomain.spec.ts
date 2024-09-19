@@ -39,7 +39,7 @@ describe('AttributePermissionDomain', () => {
                     case 'category':
                         val = {
                             id_value: 12345,
-                            value: {
+                            payload: {
                                 record: {
                                     id: 1,
                                     library: 'category'
@@ -50,7 +50,7 @@ describe('AttributePermissionDomain', () => {
                     case 'test_attr':
                         val = {
                             id_value: 12345,
-                            value: {
+                            payload: {
                                 record: {
                                     id: 1,
                                     library: 'category'
@@ -61,7 +61,7 @@ describe('AttributePermissionDomain', () => {
                     case 'user_groups':
                         val = {
                             id_value: 54321,
-                            value: {
+                            payload: {
                                 record: {
                                     id: 1,
                                     library: 'users_groups'

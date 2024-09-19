@@ -91,7 +91,7 @@ describe('treeNodePermissionDomain', () => {
                     case 'category':
                         val = {
                             id_value: 12345,
-                            value: {
+                            payload: {
                                 id: recordId === 'parent1' ? 'parentCategory' : 'elementCategory',
                                 record: {
                                     id: recordId === 'parent1' ? 'parentCategory' : 'elementCategory',
@@ -103,7 +103,7 @@ describe('treeNodePermissionDomain', () => {
                     case 'user_groups':
                         val = {
                             id_value: 54321,
-                            value: {
+                            payload: {
                                 id: '12346',
                                 record: {
                                     id: 1,

@@ -62,7 +62,7 @@ describe('Records', () => {
                 values: [
                     {
                         attribute: "${testAttributeId}",
-                        value: "My value"
+                        payload: "My value"
                     }
                 ]
             }) {

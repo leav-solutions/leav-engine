@@ -12,7 +12,7 @@ export default function (): IActionsListFunction {
         output_types: [ActionsListIOTypes.STRING],
         action: values => {
             const computedValues = values.map(elementValue => {
-                elementValue.value = elementValue?.value === null ? null : JSON.stringify(elementValue.value);
+                elementValue.payload = elementValue?.payload === null ? null : JSON.stringify(elementValue.payload);
                 return elementValue;
             });
 

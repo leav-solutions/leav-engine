@@ -178,7 +178,7 @@ const valueDomain = function ({
         ctx
     }) => {
         const valuesToProcess = utils.isStandardAttribute(attrProps)
-            ? values.map(value => ({...value, raw_value: value.value}))
+            ? values.map(value => ({...value, raw_payload: value.payload}))
             : values;
 
         try {
@@ -220,10 +220,10 @@ const valueDomain = function ({
             attribute.type === AttributeTypes.SIMPLE_LINK || attribute.type === AttributeTypes.ADVANCED_LINK;
 
         if (isLinkAttribute && attribute.linked_library) {
-            const linkValue = processedValue.value
-                ? {...processedValue.value, library: processedValue.value.library ?? attribute.linked_library}
+            const linkValue = processedValue.payload
+                ? {...processedValue.payload, library: processedValue.payload.library ?? attribute.linked_library}
                 : null;
-            processedValue = {...value, value: linkValue};
+            processedValue = {...value, payload: linkValue};
         }
 
         processedValue.attribute = attribute.id;
@@ -243,7 +243,7 @@ const valueDomain = function ({
                             typeof value.metadata?.[metadataField] !== 'undefined'
                                 ? await _formatValue({
                                       attribute: metadataAttributeProps,
-                                      value: {value: value.metadata?.[metadataField]},
+                                      value: {payload: value.metadata?.[metadataField]},
                                       ctx
                                   })
                                 : null;
@@ -293,7 +293,7 @@ const valueDomain = function ({
                 ctx
             });
 
-            v = values.filter(val => val.value.id === value.value).pop();
+            v = values.filter(val => val.payload.id === value.payload).pop();
         } else if (!!value?.id_value) {
             v = await valueRepo.getValueById({
                 library,
@@ -425,7 +425,7 @@ const valueDomain = function ({
 
         const valueBeforeToCheck =
             utils.isLinkAttribute(attribute) || utils.isTreeAttribute(attribute)
-                ? {...valueBefore, value: valueBefore?.value?.id}
+                ? {...valueBefore, value: valueBefore?.payload?.id}
                 : valueBefore;
         const areValuesIdentical = utils.areValuesIdentical(valueBeforeToCheck, value);
 
@@ -720,7 +720,7 @@ const valueDomain = function ({
                 async (promPrevRes: Promise<ISaveBatchValueResult>, value: IValue): Promise<ISaveBatchValueResult> => {
                     const prevRes = await promPrevRes;
                     try {
-                        if (value.value === null && !keepEmpty) {
+                        if (value.payload === null && !keepEmpty) {
                             const deletedValues = await _executeDeleteValue({
                                 library,
                                 value,
@@ -797,7 +797,7 @@ const valueDomain = function ({
                         const saveResult = await valuesToSave.reduce<Promise<IValue[]>>(async (acc, valueToSave) => {
                             const prevAcc = await acc;
                             const savedValues =
-                                !keepEmpty && !valueToSave.value && !!valueToSave.id_value
+                                !keepEmpty && !valueToSave.payload && !!valueToSave.id_value
                                     ? await _executeDeleteValue({
                                           library,
                                           value: valueToSave,
@@ -832,7 +832,7 @@ const valueDomain = function ({
                                     ? utils.translateError(e.fields[value.attribute], ctx.lang)
                                     : e.fields[value.attribute]
                                 : e.message,
-                            input: value.value,
+                            input: value.payload,
                             attribute: value.attribute
                         });
                     }
@@ -859,7 +859,6 @@ const valueDomain = function ({
         async deleteValue({library, recordId, attribute, value, ctx}) {
             await validate.validateLibrary(library, ctx);
             await validate.validateRecord(library, recordId, ctx);
-
             return _executeDeleteValue({library, recordId, attribute, value, ctx});
         },
         formatValue: _formatValue,

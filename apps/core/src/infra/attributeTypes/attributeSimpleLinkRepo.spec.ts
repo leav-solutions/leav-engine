@@ -50,7 +50,7 @@ describe('AttributeSimpleLinkRepo', () => {
             };
 
             const updatedValueData = {
-                value: '123456'
+                payload: '123456'
             };
 
             const attrSimpleRepo = {
@@ -70,7 +70,7 @@ describe('AttributeSimpleLinkRepo', () => {
                 recordId: '12345',
                 attribute: mockAttribute,
                 value: {
-                    value: 123456
+                    payload: 123456
                 },
                 ctx
             });
@@ -82,7 +82,7 @@ describe('AttributeSimpleLinkRepo', () => {
 
             expect(createdVal).toMatchObject({
                 ...updatedValueData,
-                value: {
+                payload: {
                     ...mockRecord,
                     id: '123456',
                     library: 'test_linked_lib'
@@ -94,7 +94,7 @@ describe('AttributeSimpleLinkRepo', () => {
     describe('deleteValue', () => {
         test('Should delete a value', async () => {
             const deletedValueData = {
-                value: '123456'
+                payload: '123456'
             };
 
             const attrSimpleRepo = {
@@ -111,7 +111,7 @@ describe('AttributeSimpleLinkRepo', () => {
                 recordId: '12345',
                 attribute: mockAttribute,
                 value: {
-                    value: 123456
+                    payload: 123456
                 },
                 ctx
             });
@@ -122,14 +122,14 @@ describe('AttributeSimpleLinkRepo', () => {
                 recordId: '12345',
                 attribute: mockAttribute,
                 value: {
-                    value: 123456
+                    payload: 123456
                 },
                 ctx
             });
 
             expect(deletedVal).toMatchObject({
                 ...deletedValueData,
-                value: {
+                payload: {
                     id: '123456',
                     library: 'test_linked_lib'
                 }
