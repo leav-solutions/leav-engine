@@ -95,7 +95,7 @@
         "ts-jest": "29.0.5",
         "ts-jest-mock-import-meta": "1.0.0",
         "typescript": "5.5.3",
-        "vite": "4.5.3",
+        "vite": "4.5.5",
         "vite-jest": "0.1.4",
         "vite-plugin-dynamic-base": "0.4.9",
         "vite-plugin-svgr": "2.4.0"
