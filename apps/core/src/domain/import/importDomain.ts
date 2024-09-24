@@ -154,21 +154,21 @@ export default function ({
         ctx: IQueryInfos,
         valueId?: string
     ): Promise<void> => {
-        const isMatch = Array.isArray(value.value);
+        const isMatch = Array.isArray(value.payload);
 
         if (isMatch) {
             const recordsList = await recordDomain.find({
                 params: {
                     library: attribute.type === AttributeTypes.TREE ? value.library : attribute.linked_library,
-                    filters: _matchesToFilters(value.value as IMatch[])
+                    filters: _matchesToFilters(value.payload as IMatch[])
                 },
                 ctx
             });
 
-            value.value = recordsList.list[0]?.id;
+            value.payload = recordsList.list[0]?.id;
 
             // if value is undefined, it means that we have no record for this match
-            if (typeof value.value === 'undefined') {
+            if (typeof value.payload === 'undefined') {
                 throw new Error('No record found for match');
             }
 
@@ -176,13 +176,13 @@ export default function ({
                 const node = await treeDomain.getNodesByRecord({
                     treeId: attribute.linked_tree,
                     record: {
-                        id: value.value,
+                        id: value.payload,
                         library: value.library
                     },
                     ctx
                 });
 
-                value.value = node[0];
+                value.payload = node[0];
             }
         }
 
@@ -228,7 +228,7 @@ export default function ({
             library,
             recordId,
             attribute: attribute.id,
-            value: {value: value.value, id_value: valueId, metadata: value.metadata, version},
+            value: {payload: value.payload, id_value: valueId, metadata: value.metadata, version},
             ctx
         });
     };
@@ -329,7 +329,7 @@ export default function ({
                         translator.t('import.add_value_error', {
                             lng: ctx.lang || config.lang.default,
                             attributeId: libraryAttribute.id,
-                            value: v.value
+                            value: v.payload
                         })
                     );
                 }

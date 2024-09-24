@@ -15,7 +15,7 @@ export default function (): IActionsListFunction {
         output_types: [ActionsListIOTypes.STRING],
         action: values => {
             const allErrors = values.reduce((errors, elementValue) => {
-                if (!elementValue.value.match(EMAIL_REGEX)) {
+                if (!elementValue.payload.match(EMAIL_REGEX)) {
                     errors.push({errorType: Errors.INVALID_EMAIL, attributeValue: elementValue});
                 }
                 return errors;

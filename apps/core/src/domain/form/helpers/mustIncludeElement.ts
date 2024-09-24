@@ -51,7 +51,7 @@ export const mustIncludeElement = async (
     for (const depValue of depValues ?? []) {
         const ancestors = await treeDomain.getElementAncestors({
             treeId: depValue.treeId,
-            nodeId: depValue.value.id,
+            nodeId: depValue.payload.id,
             ctx
         });
         isFound = ancestors.some(ancestor => ancestor.id === element.dependencyValue.value);

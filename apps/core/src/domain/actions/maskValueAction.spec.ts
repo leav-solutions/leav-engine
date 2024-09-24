@@ -7,18 +7,20 @@ import maskValueAction from './maskValueAction';
 describe('maskValue', () => {
     const action = maskValueAction().action;
     test('maskValue', async () => {
-        expect(((await action([{value: 'coucou'}], null, null)) as IActionsListFunctionResult).values[0].value).toBe(
-            '●●●●●●●'
-        );
-        expect(((await action([{value: 13456}], null, null)) as IActionsListFunctionResult).values[0].value).toBe(
+        expect(
+            ((await action([{payload: 'coucou'}], null, null)) as IActionsListFunctionResult).values[0].payload
+        ).toBe('●●●●●●●');
+        expect(((await action([{payload: 13456}], null, null)) as IActionsListFunctionResult).values[0].payload).toBe(
             '●●●●●●●'
         );
         expect(
-            ((await action([{value: {toto: 'tata'}}], null, null)) as IActionsListFunctionResult).values[0].value
+            ((await action([{payload: {toto: 'tata'}}], null, null)) as IActionsListFunctionResult).values[0].payload
         ).toBe('●●●●●●●');
 
-        expect(((await action([{value: ''}], null, null)) as IActionsListFunctionResult).values[0].value).toBe('');
-        expect(((await action([{value: null}], null, null)) as IActionsListFunctionResult).values[0].value).toBe('');
-        expect(((await action([{value: {}}], null, null)) as IActionsListFunctionResult).values[0].value).toBe('');
+        expect(((await action([{payload: ''}], null, null)) as IActionsListFunctionResult).values[0].payload).toBe('');
+        expect(((await action([{payload: null}], null, null)) as IActionsListFunctionResult).values[0].payload).toBe(
+            ''
+        );
+        expect(((await action([{payload: {}}], null, null)) as IActionsListFunctionResult).values[0].payload).toBe('');
     });
 });

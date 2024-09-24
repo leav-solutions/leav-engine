@@ -49,9 +49,8 @@ export default function ({
 
             // Create new value entity
             const valueData = {
-                value: value.value
+                value: value.payload
             };
-
             const resVal = await dbService.execute({
                 query: aql`
                     INSERT ${valueData}
@@ -85,10 +84,9 @@ export default function ({
                 ctx
             });
             const savedEdge: Partial<IDbEdge> = resEdge.length ? resEdge[0] : {};
-
             const res: IValue = {
                 id_value: savedVal._key,
-                value: savedVal.value,
+                payload: savedVal.value,
                 attribute: savedEdge.attribute,
                 modified_at: savedEdge.modified_at,
                 created_at: savedEdge.created_at,
@@ -106,7 +104,7 @@ export default function ({
 
             // Save value entity
             const valueData = {
-                value: value.value
+                value: value.payload
             };
 
             const resVal = await dbService.execute({
@@ -151,7 +149,7 @@ export default function ({
 
             const res: IValue = {
                 id_value: savedVal._key,
-                value: savedVal.value,
+                payload: savedVal.payload,
                 attribute: savedEdge.attribute,
                 modified_at: savedEdge.modified_at,
                 created_at: savedEdge.created_at,
@@ -212,7 +210,7 @@ export default function ({
 
             return res.map(r => ({
                 id_value: r.value._key,
-                value: r.value.value,
+                payload: r.value.value,
                 attribute: r.edge.attribute,
                 modified_at: r.edge.modified_at,
                 created_at: r.edge.created_at,
@@ -233,7 +231,7 @@ export default function ({
 
                 FOR e IN ${edgeCollec}
                     FILTER e._to == value._id
-                RETURN MERGE(e, {value: value.value})
+                RETURN MERGE(e, {payload: value.value})
             `;
 
             const valueLinks = await dbService.execute({query, ctx});
@@ -244,7 +242,7 @@ export default function ({
 
             return {
                 id_value: valueId,
-                value: valueLinks[0].value,
+                payload: valueLinks[0].value,
                 attribute: valueLinks[0].attribute,
                 modified_at: valueLinks[0].modified_at,
                 created_at: valueLinks[0].created_at,

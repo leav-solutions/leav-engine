@@ -30,7 +30,7 @@ export interface IMatch {
 
 export interface IValue {
     library?: string; // only for tree attributes
-    value: string | IMatch[];
+    payload: string | IMatch[];
     metadata?: IValueMetadata;
     version?: IImportValueVersion[];
 }

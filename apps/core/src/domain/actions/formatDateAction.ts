@@ -42,20 +42,20 @@ export default function (): IActionsListFunction<{localized: false; universal: f
 
             const formattedValues = values.map(elementValue => {
                 if ('raw_value' in elementValue) {
-                    elementValue.value = elementValue.raw_value;
+                    elementValue.payload = elementValue.raw_value;
                 }
-                if (elementValue.value === null) {
+                if (elementValue.payload === null) {
                     return elementValue;
                 }
-                const numberVal = Number(elementValue.value);
+                const numberVal = Number(elementValue.payload);
 
                 if (isNaN(numberVal)) {
-                    elementValue.value = '';
+                    elementValue.payload = '';
                     return elementValue;
                 }
 
                 if ((localized === null || localized === undefined) && universal) {
-                    elementValue.value = moment.unix(numberVal).format(universal); // TODO: replace moment by dayjs
+                    elementValue.payload = moment.unix(numberVal).format(universal); // TODO: replace moment by dayjs
                     return elementValue;
                 }
 
@@ -66,13 +66,13 @@ export default function (): IActionsListFunction<{localized: false; universal: f
                     // TODO: rise error to inform user without break app
                     errors.push({
                         errorType: Errors.FORMAT_ERROR,
-                        attributeValue: {value: localized},
+                        attributeValue: {payload: localized},
                         message:
                             'Params "localized" of FormatDateAction are invalid JSON. Use `{}` empty option instead.'
                     });
                 }
 
-                elementValue.value = new Date(numberVal * 1_000).toLocaleString(lang, options);
+                elementValue.payload = new Date(numberVal * 1_000).toLocaleString(lang, options);
                 return elementValue;
             });
 

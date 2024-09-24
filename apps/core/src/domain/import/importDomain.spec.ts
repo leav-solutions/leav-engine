@@ -244,7 +244,7 @@ describe('importDomain', () => {
                                 attribute: 'fake_simple',
                                 values: [
                                     {
-                                        value: 'one'
+                                        payload: 'one'
                                     }
                                 ],
                                 action: Action.ADD
@@ -253,7 +253,7 @@ describe('importDomain', () => {
                                 attribute: 'fake_advanced_link',
                                 values: [
                                     {
-                                        value: '1'
+                                        payload: '1'
                                     }
                                 ],
                                 action: Action.REPLACE
@@ -269,7 +269,7 @@ describe('importDomain', () => {
                                 attribute: 'fake_simple',
                                 values: [
                                     {
-                                        value: 'test'
+                                        payload: 'test'
                                     }
                                 ],
                                 action: Action.ADD
@@ -328,7 +328,7 @@ describe('importDomain', () => {
                                         attribute: 'fake_advanced_link',
                                         values: [
                                             {
-                                                value: '1'
+                                                payload: '1'
                                             }
                                         ],
                                         action: Action.REPLACE
@@ -388,7 +388,7 @@ describe('importDomain', () => {
                                 attribute: 'fake_simple_link',
                                 values: [
                                     {
-                                        value: [
+                                        payload: [
                                             {
                                                 attribute: 'login',
                                                 value: 'admin'
@@ -435,7 +435,7 @@ describe('importDomain', () => {
                                     attribute: 'fake_simple_link',
                                     values: [
                                         {
-                                            value: [
+                                            payload: [
                                                 {
                                                     attribute: 'login',
                                                     value: 'admin'
@@ -572,7 +572,7 @@ describe('importDomain', () => {
                         attribute: 'fake_simple',
                         values: [
                             {
-                                value: 'one',
+                                payload: 'one',
                                 version: [
                                     {
                                         treeId: 'treeprojects',
@@ -582,7 +582,7 @@ describe('importDomain', () => {
                                 ]
                             },
                             {
-                                value: 'two',
+                                payload: 'two',
                                 version: [
                                     {
                                         treeId: 'treeprojects',
@@ -597,7 +597,7 @@ describe('importDomain', () => {
                                 ]
                             },
                             {
-                                value: 'three',
+                                payload: 'three',
                                 version: [
                                     {
                                         treeId: 'treeprojects',
@@ -705,10 +705,10 @@ describe('importDomain', () => {
             expect(mockValueDomain.saveValue.mock.calls[0][0].value.version).toEqual({treeprojects: null});
             // Second call of saveValue version must be : { treeprojects: '1' }
             expect(mockValueDomain.saveValue.mock.calls[1][0].value.version).toEqual({treeprojects: '1'});
-            expect(mockValueDomain.saveValue.mock.calls[1][0].value.value).toEqual('two');
+            expect(mockValueDomain.saveValue.mock.calls[1][0].value.payload).toEqual('two');
             // Third call of saveValue version must be : { treeprojects: '1' }
             expect(mockValueDomain.saveValue.mock.calls[2][0].value.version).toEqual({treeprojects: '1'});
-            expect(mockValueDomain.saveValue.mock.calls[2][0].value.value).toEqual('three');
+            expect(mockValueDomain.saveValue.mock.calls[2][0].value.payload).toEqual('three');
             expect(mockCacheService.deleteAll).toBeCalledTimes(1);
         });
 
@@ -719,13 +719,13 @@ describe('importDomain', () => {
                         library: 'test_import',
                         matches: [{attribute: 'id', value: 'existingId'}],
                         mode: ImportMode.UPSERT,
-                        data: [{attribute: 'fake_simple', values: [{value: 'one'}], action: Action.ADD}]
+                        data: [{attribute: 'fake_simple', values: [{payload: 'one'}], action: Action.ADD}]
                     },
                     {
                         library: 'test_import',
                         matches: [{attribute: 'id', value: 'nonExistingId'}],
                         mode: ImportMode.UPSERT,
-                        data: [{attribute: 'fake_simple', values: [{value: 'one'}], action: Action.ADD}]
+                        data: [{attribute: 'fake_simple', values: [{payload: 'one'}], action: Action.ADD}]
                     }
                 ],
                 trees: []
@@ -798,13 +798,13 @@ describe('importDomain', () => {
                         library: 'test_import',
                         matches: [{attribute: 'id', value: 'existingId'}],
                         mode: ImportMode.INSERT,
-                        data: [{attribute: 'fake_simple', values: [{value: 'one'}], action: Action.ADD}]
+                        data: [{attribute: 'fake_simple', values: [{payload: 'one'}], action: Action.ADD}]
                     },
                     {
                         library: 'test_import',
                         matches: [{attribute: 'id', value: 'nonExistingId'}],
                         mode: ImportMode.INSERT,
-                        data: [{attribute: 'fake_simple', values: [{value: 'one'}], action: Action.ADD}]
+                        data: [{attribute: 'fake_simple', values: [{payload: 'one'}], action: Action.ADD}]
                     }
                 ],
                 trees: []
@@ -877,13 +877,13 @@ describe('importDomain', () => {
                         library: 'test_import',
                         matches: [{attribute: 'id', value: 'existingId'}],
                         mode: ImportMode.UPDATE,
-                        data: [{attribute: 'fake_simple', values: [{value: 'one'}], action: Action.ADD}]
+                        data: [{attribute: 'fake_simple', values: [{payload: 'one'}], action: Action.ADD}]
                     },
                     {
                         library: 'test_import',
                         matches: [{attribute: 'id', value: 'nonExistingId'}],
                         mode: ImportMode.UPDATE,
-                        data: [{attribute: 'fake_simple', values: [{value: 'one'}], action: Action.ADD}]
+                        data: [{attribute: 'fake_simple', values: [{payload: 'one'}], action: Action.ADD}]
                     }
                 ],
                 trees: []

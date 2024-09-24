@@ -11,8 +11,8 @@ import inheritanceCalculationAction from './inheritanceCalculationAction';
 const mockCalculationsVariable = {
     processVariableString: async (ctx: IActionsListContext, variable: string): Promise<IVariableValue[]> => [
         {
-            value: `${variable}Value`,
-            raw_value: 'testRawValue',
+            payload: `${variable}Value`,
+            raw_payload: 'testRawValue',
             recordId: '1',
             library: 'meh'
         }
@@ -46,8 +46,8 @@ describe('inheritanceCalculationAction', () => {
             ctx
         );
 
-        expect(res.values[0].value).toBe('42Value');
-        expect((res.values[0] as any).raw_value).toBe('testRawValue');
+        expect(res.values[0].payload).toBe('42Value');
+        expect((res.values[0] as any).raw_payload).toBe('testRawValue');
     });
 
     test('No formula', async () => {
@@ -66,7 +66,7 @@ describe('inheritanceCalculationAction', () => {
             ctx
         );
 
-        expect(res.values[0].value).toBe('Value');
+        expect(res.values[0].payload).toBe('Value');
     });
 
     test('Inherit from link', async () => {
@@ -93,7 +93,7 @@ describe('inheritanceCalculationAction', () => {
             ctx
         )) as IRecord;
 
-        const resultValue = res.values[0].value;
+        const resultValue = res.values[0].payload;
 
         expect(resultValue).toHaveProperty('id');
         expect(resultValue).toHaveProperty('library');

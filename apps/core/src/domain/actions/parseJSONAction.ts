@@ -12,7 +12,7 @@ export default function (): IActionsListFunction {
         output_types: [ActionsListIOTypes.OBJECT],
         action: values => {
             const computedValues = values.map(elementValue => {
-                elementValue.value = JSON.parse('' + elementValue.value);
+                elementValue.payload = JSON.parse('' + elementValue.payload);
                 return elementValue;
             });
             return {values: computedValues, errors: []};

@@ -92,7 +92,7 @@ export default function (deps: IDeps = {}): IRecordAttributePermissionDomain {
             );
 
             const valuesByAttr = treesAttrValues.reduce((allVal, treeVal, i) => {
-                allVal[attrProps.permissions_conf.permissionTreeAttributes[i]] = treeVal.map(v => v.value.id);
+                allVal[attrProps.permissions_conf.permissionTreeAttributes[i]] = treeVal.map(v => v.payload.id);
 
                 return allVal;
             }, {});

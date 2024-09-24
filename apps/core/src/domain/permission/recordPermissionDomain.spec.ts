@@ -53,7 +53,7 @@ describe('recordPermissionDomain', () => {
                     case 'category':
                         val = {
                             id_value: 12345,
-                            value: {
+                            payload: {
                                 record: {
                                     id: 1,
                                     library: 'category'
@@ -64,7 +64,7 @@ describe('recordPermissionDomain', () => {
                     case 'user_groups':
                         val = {
                             id_value: 54321,
-                            value: {
+                            payload: {
                                 record: {
                                     id: 1,
                                     library: 'users_groups'

@@ -11,11 +11,11 @@ describe('validateEmailFormatAction', () => {
     const ctx = {attribute: {id: 'test_attr', format: AttributeFormats.TEXT, type: AttributeTypes.SIMPLE}};
 
     test('validateEmail should throw', async () => {
-        const res = action([{value: 'test'}], null, ctx) as IActionsListFunctionResult;
+        const res = action([{payload: 'test'}], null, ctx) as IActionsListFunctionResult;
         expect(res.errors.length).toBe(1);
     });
 
     test('validateEmail should return email', async () => {
-        expect((await action([{value: 'email@domain.com'}], null, ctx)).values[0].value).toBe('email@domain.com');
+        expect((await action([{payload: 'email@domain.com'}], null, ctx)).values[0].payload).toBe('email@domain.com');
     });
 });

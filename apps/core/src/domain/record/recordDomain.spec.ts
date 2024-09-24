@@ -179,7 +179,7 @@ describe('RecordDomain', () => {
                 values: [
                     {
                         attribute: 'some_attribute',
-                        value: 'some_value',
+                        payload: 'some_value',
                         version: null
                     }
                 ],
@@ -255,13 +255,13 @@ describe('RecordDomain', () => {
                     {
                         attribute: 'some_attribute',
                         id_value: 'fake_value1',
-                        value: 'some_value',
+                        payload: 'some_value',
                         version: null
                     },
                     {
                         attribute: 'other_attribute',
                         id_value: 'fake_value2',
-                        value: 'some other value',
+                        payload: 'some other value',
                         version: null
                     }
                 ],
@@ -986,12 +986,12 @@ describe('RecordDomain', () => {
                 getValues: global.__mockPromiseMultiple([
                     [
                         {
-                            value: 'Label Value'
+                            payload: 'Label Value'
                         }
                     ],
                     [
                         {
-                            value: '#123456'
+                            payload: '#123456'
                         }
                     ]
                 ])
@@ -1033,7 +1033,7 @@ describe('RecordDomain', () => {
                 Promise.resolve([
                     attributeId === 'previews'
                         ? {
-                              raw_value: {
+                              raw_payload: {
                                   small: 'small_fake-image',
                                   medium: 'medium_fake-image',
                                   big: 'big_fake-image'
@@ -1041,7 +1041,7 @@ describe('RecordDomain', () => {
                           }
                         : {
                               ...mockStandardValue,
-                              value: {
+                              payload: {
                                   ...mockRecord,
                                   previews: {
                                       small: 'small_fake-image',
@@ -1104,10 +1104,10 @@ describe('RecordDomain', () => {
                     getValues: global.__mockPromiseMultiple([
                         [
                             {
-                                value: null
+                                payload: null
                             },
                             {
-                                value: 'Inherited Label Value',
+                                payload: 'Inherited Label Value',
                                 isInherited: true
                             }
                         ]
@@ -1139,7 +1139,7 @@ describe('RecordDomain', () => {
                     Promise.resolve([
                         attributeId === 'previews'
                             ? {
-                                  raw_value: {
+                                  raw_payload: {
                                       small: 'small_fake-image',
                                       medium: 'medium_fake-image',
                                       big: 'big_fake-image'
@@ -1147,7 +1147,7 @@ describe('RecordDomain', () => {
                               }
                             : {
                                   ...mockStandardValue,
-                                  value: {
+                                  payload: {
                                       ...mockRecord,
                                       previews: {
                                           small: 'small_fake-image',
@@ -1188,11 +1188,11 @@ describe('RecordDomain', () => {
                     getValues: global.__mockPromiseMultiple([
                         [
                             {
-                                value: 'Override Label Value',
+                                payload: 'Override Label Value',
                                 isInherited: false
                             },
                             {
-                                value: 'Inherited Label Value',
+                                payload: 'Inherited Label Value',
                                 isInherited: true
                             }
                         ]
@@ -1224,7 +1224,7 @@ describe('RecordDomain', () => {
                     Promise.resolve([
                         attributeId === 'previews'
                             ? {
-                                  raw_value: {
+                                  raw_payload: {
                                       small: 'small_fake-image',
                                       medium: 'medium_fake-image',
                                       big: 'big_fake-image'
@@ -1232,7 +1232,7 @@ describe('RecordDomain', () => {
                               }
                             : {
                                   ...mockStandardValue,
-                                  value: {
+                                  payload: {
                                       ...mockRecord,
                                       previews: {
                                           small: 'small_fake-image',
@@ -1275,10 +1275,10 @@ describe('RecordDomain', () => {
                     getValues: global.__mockPromiseMultiple([
                         [
                             {
-                                value: null
+                                payload: null
                             },
                             {
-                                value: 'Inherited SubLabel Value',
+                                payload: 'Inherited SubLabel Value',
                                 isInherited: true
                             }
                         ]
@@ -1310,7 +1310,7 @@ describe('RecordDomain', () => {
                     Promise.resolve([
                         attributeId === 'previews'
                             ? {
-                                  raw_value: {
+                                  raw_payload: {
                                       small: 'small_fake-image',
                                       medium: 'medium_fake-image',
                                       big: 'big_fake-image'
@@ -1318,7 +1318,7 @@ describe('RecordDomain', () => {
                               }
                             : {
                                   ...mockStandardValue,
-                                  value: {
+                                  payload: {
                                       ...mockRecord,
                                       previews: {
                                           small: 'small_fake-image',
@@ -1359,11 +1359,11 @@ describe('RecordDomain', () => {
                     getValues: global.__mockPromiseMultiple([
                         [
                             {
-                                value: 'Override SubLabel Value',
+                                payload: 'Override SubLabel Value',
                                 isInherited: false
                             },
                             {
-                                value: 'Inherited SubLabel Value',
+                                payload: 'Inherited SubLabel Value',
                                 isInherited: true
                             }
                         ]
@@ -1395,7 +1395,7 @@ describe('RecordDomain', () => {
                     Promise.resolve([
                         attributeId === 'previews'
                             ? {
-                                  raw_value: {
+                                  raw_payload: {
                                       small: 'small_fake-image',
                                       medium: 'medium_fake-image',
                                       big: 'big_fake-image'
@@ -1403,7 +1403,7 @@ describe('RecordDomain', () => {
                               }
                             : {
                                   ...mockStandardValue,
-                                  value: {
+                                  payload: {
                                       ...mockRecord,
                                       previews: {
                                           small: 'small_fake-image',
@@ -1446,10 +1446,10 @@ describe('RecordDomain', () => {
                     getValues: global.__mockPromiseMultiple([
                         [
                             {
-                                value: null
+                                payload: null
                             },
                             {
-                                value: '#ff0000',
+                                payload: '#ff0000',
                                 isInherited: true
                             }
                         ]
@@ -1481,7 +1481,7 @@ describe('RecordDomain', () => {
                     Promise.resolve([
                         attributeId === 'previews'
                             ? {
-                                  raw_value: {
+                                  raw_payload: {
                                       small: 'small_fake-image',
                                       medium: 'medium_fake-image',
                                       big: 'big_fake-image'
@@ -1489,7 +1489,7 @@ describe('RecordDomain', () => {
                               }
                             : {
                                   ...mockStandardValue,
-                                  value: {
+                                  payload: {
                                       ...mockRecord,
                                       previews: {
                                           small: 'small_fake-image',
@@ -1530,11 +1530,11 @@ describe('RecordDomain', () => {
                     getValues: global.__mockPromiseMultiple([
                         [
                             {
-                                value: '#ffff00',
+                                payload: '#ffff00',
                                 isInherited: false
                             },
                             {
-                                value: '#ff0000',
+                                payload: '#ff0000',
                                 isInherited: true
                             }
                         ]
@@ -1566,7 +1566,7 @@ describe('RecordDomain', () => {
                     Promise.resolve([
                         attributeId === 'previews'
                             ? {
-                                  raw_value: {
+                                  raw_payload: {
                                       small: 'small_fake-image',
                                       medium: 'medium_fake-image',
                                       big: 'big_fake-image'
@@ -1574,7 +1574,7 @@ describe('RecordDomain', () => {
                               }
                             : {
                                   ...mockStandardValue,
-                                  value: {
+                                  payload: {
                                       ...mockRecord,
                                       previews: {
                                           small: 'small_fake-image',
@@ -1633,12 +1633,12 @@ describe('RecordDomain', () => {
                         getValues: global.__mockPromiseMultiple([
                             [
                                 {
-                                    value: {from: '2024-02-16T10:59:52+00:00', to: '2024-02-18T10:59:52+00:00'}
+                                    payload: {from: '2024-02-16T10:59:52+00:00', to: '2024-02-18T10:59:52+00:00'}
                                 }
                             ],
                             [
                                 {
-                                    value: {
+                                    payload: {
                                         small: 'small_fake-image',
                                         medium: 'medium_fake-image',
                                         big: 'big_fake-image'
@@ -1663,7 +1663,7 @@ describe('RecordDomain', () => {
                     recDomain.getRecordFieldValue = global.__mockPromise([
                         {
                             ...mockStandardValue,
-                            value: {
+                            payload: {
                                 ...mockRecord,
                                 previews: {
                                     small: 'small_fake-image',
@@ -1799,7 +1799,7 @@ describe('RecordDomain', () => {
 
         const mockValueDomainFormatValue: Mockify<IValueDomain> = {
             formatValue: jest.fn(({value, library}) => Promise.resolve(value)),
-            runActionsList: jest.fn(() => Promise.resolve([{value: 2119477320}]))
+            runActionsList: jest.fn(() => Promise.resolve([{payload: 2119477320}]))
         };
 
         const mockAttributeDomainCommon: Mockify<IAttributeDomain> = {
@@ -1842,7 +1842,7 @@ describe('RecordDomain', () => {
             })) as IValue[];
 
             expect(Array.isArray(values)).toBe(true);
-            expect(values[0].value).toBe(mockRecordWithValues.created_at);
+            expect(values[0].payload).toBe(mockRecordWithValues.created_at);
         });
 
         test('Return a value not present on record', async () => {
@@ -1860,7 +1860,7 @@ describe('RecordDomain', () => {
                 getValues: global.__mockPromise([
                     {
                         id_value: 12345,
-                        value: 'MyLabel'
+                        payload: 'MyLabel'
                     }
                 ])
             };
@@ -1877,7 +1877,7 @@ describe('RecordDomain', () => {
             });
 
             expect(Array.isArray(values)).toBe(true);
-            expect(values[0].value).toBe('MyLabel');
+            expect(values[0].payload).toBe('MyLabel');
         });
 
         test('Return a formatted value', async () => {
@@ -1895,9 +1895,9 @@ describe('RecordDomain', () => {
 
             const mockValueDomainFormatValueDate: Mockify<IValueDomain> = {
                 formatValue: jest.fn(({value}) =>
-                    Promise.resolve({...value, raw_value: 2119477320, value: '1/3/37 00:42'})
+                    Promise.resolve({...value, raw_payload: 2119477320, payload: '1/3/37 00:42'})
                 ),
-                runActionsList: jest.fn(() => Promise.resolve([{value: '1/3/37 00:42', raw_value: 2119477320}]))
+                runActionsList: jest.fn(() => Promise.resolve([{payload: '1/3/37 00:42', raw_payload: 2119477320}]))
             };
 
             const recDomain = recordDomain({
@@ -1912,8 +1912,8 @@ describe('RecordDomain', () => {
                 ctx
             })) as IStandardValue[];
 
-            expect(values[0].value).toBe('1/3/37 00:42');
-            expect(values[0].raw_value).toBe(2119477320);
+            expect(values[0].payload).toBe('1/3/37 00:42');
+            expect(values[0].raw_payload).toBe(2119477320);
         });
 
         test('Return a link value', async () => {
@@ -1929,7 +1929,7 @@ describe('RecordDomain', () => {
 
             const mockValueDomainFormatValueLink: Mockify<IValueDomain> = {
                 formatValue: jest.fn(({value, library}) =>
-                    Promise.resolve({value: {...mockRecord, id: mockRecordWithValues.created_by, library: 'users'}})
+                    Promise.resolve({payload: {...mockRecord, id: mockRecordWithValues.created_by, library: 'users'}})
                 ),
                 runActionsList: jest.fn((_, value) => Promise.resolve([value]))
             };
@@ -1946,8 +1946,8 @@ describe('RecordDomain', () => {
                 ctx
             })) as IValue[];
 
-            expect(values[0].value.id).toBe('42');
-            expect(values[0].value.library).toBe('users');
+            expect(values[0].payload.id).toBe('42');
+            expect(values[0].payload.library).toBe('users');
         });
 
         test('If force array, return an array', async () => {
@@ -1973,7 +1973,7 @@ describe('RecordDomain', () => {
             })) as IValue[];
 
             expect(Array.isArray(values)).toBe(true);
-            expect(values[0].value).toBe(2119477320);
+            expect(values[0].payload).toBe(2119477320);
         });
     });
 
@@ -1988,7 +1988,7 @@ describe('RecordDomain', () => {
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
-                saveValue: global.__mockPromise([{value: false}])
+                saveValue: global.__mockPromise([{payload: false}])
             };
 
             const recDomain = recordDomain({'core.domain.value': mockValueDomain as IValueDomain});
@@ -1998,7 +1998,7 @@ describe('RecordDomain', () => {
             expect(mockValueDomain.saveValue).toBeCalled();
             expect(typeof mockValueDomain.saveValue.mock.calls[0][0]).toBe('object');
             expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe('active');
-            expect(mockValueDomain.saveValue.mock.calls[0][0].value.value).toBe(false);
+            expect(mockValueDomain.saveValue.mock.calls[0][0].value.payload).toBe(false);
             expect(recordAfter.active).toBe(false);
         });
     });
@@ -2014,7 +2014,7 @@ describe('RecordDomain', () => {
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
-                saveValue: global.__mockPromise([{value: true}])
+                saveValue: global.__mockPromise([{payload: true}])
             };
 
             const recDomain = recordDomain({'core.domain.value': mockValueDomain as IValueDomain});
@@ -2024,7 +2024,7 @@ describe('RecordDomain', () => {
             expect(mockValueDomain.saveValue).toBeCalled();
             expect(typeof mockValueDomain.saveValue.mock.calls[0][0]).toBe('object');
             expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe('active');
-            expect(mockValueDomain.saveValue.mock.calls[0][0].value.value).toBe(true);
+            expect(mockValueDomain.saveValue.mock.calls[0][0].value.payload).toBe(true);
 
             expect(recordAfter.active).toBe(true);
         });
@@ -2041,7 +2041,7 @@ describe('RecordDomain', () => {
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
-                saveValue: global.__mockPromise([{value: false}])
+                saveValue: global.__mockPromise([{payload: false}])
             };
 
             const recDomain = recordDomain({'core.domain.value': mockValueDomain as IValueDomain});
@@ -2050,7 +2050,7 @@ describe('RecordDomain', () => {
 
             expect(mockValueDomain.saveValue).toBeCalled();
             expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe('active');
-            expect(mockValueDomain.saveValue.mock.calls[0][0].value.value).toBe(false);
+            expect(mockValueDomain.saveValue.mock.calls[0][0].value.payload).toBe(false);
             expect(recordAfter.active).toBe(false);
         });
     });
@@ -2066,7 +2066,7 @@ describe('RecordDomain', () => {
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
-                saveValue: global.__mockPromise([{value: true}])
+                saveValue: global.__mockPromise([{payload: true}])
             };
 
             const recDomain = recordDomain({'core.domain.value': mockValueDomain as IValueDomain});
@@ -2075,7 +2075,7 @@ describe('RecordDomain', () => {
 
             expect(mockValueDomain.saveValue).toBeCalled();
             expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe('active');
-            expect(mockValueDomain.saveValue.mock.calls[0][0].value.value).toBe(true);
+            expect(mockValueDomain.saveValue.mock.calls[0][0].value.payload).toBe(true);
             expect(recordAfter.active).toBe(true);
         });
     });

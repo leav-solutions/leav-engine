@@ -19,11 +19,11 @@ describe('typeGuards', () => {
     });
 
     describe('isIStandardValue', () => {
-        test('should return true value if contains "raw_value" field', () => {
-            expect(TypeGuards.isIStandardValue({raw_value: 'value'} as any)).toBe(true);
-            expect(TypeGuards.isIStandardValue({raw_value: 'value', other_value: 42} as any)).toBe(true);
+        test('should return true value if contains "raw_payload" field', () => {
+            expect(TypeGuards.isIStandardValue({raw_payload: 'value'} as any)).toBe(true);
+            expect(TypeGuards.isIStandardValue({raw_payload: 'value', other_value: 42} as any)).toBe(true);
         });
-        test('should return false value if "raw_value" field is missing', () => {
+        test('should return false value if "raw_payload" field is missing', () => {
             expect(TypeGuards.isIStandardValue({} as any)).toBe(false);
             expect(TypeGuards.isIStandardValue([] as any)).toBe(false);
             expect(TypeGuards.isIStandardValue({field: 'value'} as any)).toBe(false);

@@ -10,6 +10,6 @@ export const mockStandardValue: IStandardValue = {
     modified_at: 1234567890,
     created_by: '1',
     modified_by: '1',
-    value: 'some value',
-    raw_value: 'some raw value'
+    payload: 'some value',
+    raw_payload: 'some raw value'
 };

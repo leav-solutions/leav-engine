@@ -104,7 +104,7 @@ export default function ({
 
             val = await _getFormattedValuesAndLabels(attribute, val, ctx);
 
-            const value = val.map(v => v?.value).filter(e => e);
+            const value = val.map(v => v?.payload).filter(e => e);
 
             if (value.length === 0) {
                 return {[attribute.id]: null};
@@ -139,7 +139,7 @@ export default function ({
         if (attribute.type === AttributeTypes.TREE) {
             values = values.map(v => ({
                 ...v,
-                value: v.value?.record
+                payload: v.payload?.record
             }));
         }
 
@@ -150,13 +150,13 @@ export default function ({
         ) {
             const promises = values.map(async v => {
                 const recordIdentity = await recordDomain.getRecordIdentity(
-                    {id: v.value.id, library: attribute.linked_library || v.value.library},
+                    {id: v.payload.id, library: attribute.linked_library || v.payload.library},
                     ctx
                 );
 
                 return {
                     ...v,
-                    value: recordIdentity.label || v.value.id
+                    payload: recordIdentity.label || v.payload.id
                 };
             });
 

@@ -16,7 +16,7 @@ export default function (): IActionsListFunction {
 
             const computedValues = values.map(elementValue => ({
                 ...elementValue,
-                value: _isValueDefined(elementValue.value) ? '●●●●●●●' : ''
+                payload: _isValueDefined(elementValue.payload) ? '●●●●●●●' : ''
             }));
 
             return {values: computedValues, errors: []};

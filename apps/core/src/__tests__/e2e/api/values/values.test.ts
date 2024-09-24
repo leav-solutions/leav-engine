@@ -405,7 +405,6 @@ describe('Values', () => {
               }`);
 
         expect(res.status).toBe(200);
-
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValue[0].id_value).toBeTruthy();
         expect(res.data.data.saveValue[0].value).toBe('TEST VAL ADV');

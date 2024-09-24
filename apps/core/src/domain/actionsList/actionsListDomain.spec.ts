@@ -123,14 +123,14 @@ describe('runActionsList', () => {
                 id: 'validate',
                 name: 'validate',
                 action: jest.fn().mockImplementation(() => ({
-                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {value: true}}]
+                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {payload: true}}]
                 }))
             },
             {
                 id: 'convert',
                 name: 'convert',
                 action: jest.fn().mockImplementation(() => ({
-                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {value: true}}]
+                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {payload: true}}]
                 }))
             }
         ];
@@ -163,14 +163,14 @@ describe('runActionsList', () => {
                 id: 'validate',
                 name: 'validate',
                 action: jest.fn().mockImplementation(() => ({
-                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {value: true}}]
+                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {payload: true}}]
                 }))
             },
             {
                 id: 'convert',
                 name: 'convert',
                 action: jest.fn().mockImplementation(() => ({
-                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {value: true}}]
+                    errors: [{errorType: Errors.ERROR, message: 'validation Error', attributeValue: {payload: true}}]
                 }))
             }
         ];

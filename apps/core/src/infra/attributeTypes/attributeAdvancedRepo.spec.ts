@@ -46,7 +46,7 @@ describe('AttributeStandardRepo', () => {
 
             const newValueData = {
                 id_value: 987654,
-                value: 'test_val',
+                payload: 'test_val',
                 attribute: 'test_attr',
                 modified_at: 400999999,
                 created_at: 400999999,
@@ -67,7 +67,7 @@ describe('AttributeStandardRepo', () => {
                 recordId: '12345',
                 attribute: mockAttribute,
                 value: {
-                    value: 'test val',
+                    payload: 'test val',
                     modified_at: 400999999,
                     created_at: 400999999,
                     metadata: {my_attribute: 'metadata value'}
@@ -119,7 +119,7 @@ describe('AttributeStandardRepo', () => {
 
             const newValueData = {
                 id_value: 987654,
-                value: 'test_val',
+                payload: 'test_val',
                 attribute: 'test_attr',
                 modified_at: 400999999,
                 created_at: 400999999,
@@ -144,7 +144,7 @@ describe('AttributeStandardRepo', () => {
                 recordId: '12345',
                 attribute: mockAttribute,
                 value: {
-                    value: 'test val',
+                    payload: 'test val',
                     modified_at: 400999999,
                     created_at: 400999999,
                     version: {my_tree: '1'}
@@ -167,7 +167,7 @@ describe('AttributeStandardRepo', () => {
                 _id: 'core_values/987654',
                 _rev: '_WSywvyC--_',
                 _key: 987654,
-                value: 'test_val'
+                payload: 'test_val'
             };
 
             const savedEdgeData = {
@@ -186,7 +186,7 @@ describe('AttributeStandardRepo', () => {
 
             const valueData = {
                 id_value: 987654,
-                value: 'test_val',
+                payload: 'test_val',
                 attribute: 'test_attr',
                 modified_at: 400999999,
                 created_at: 400999999,
@@ -208,7 +208,7 @@ describe('AttributeStandardRepo', () => {
                 attribute: mockAttribute,
                 value: {
                     id_value: '987654',
-                    value: 'test val',
+                    payload: 'test val',
                     modified_at: 500999999,
                     metadata: {my_attribute: 'metadata value'}
                 },
@@ -233,7 +233,7 @@ describe('AttributeStandardRepo', () => {
                 _id: 'core_values/987654',
                 _rev: '_WSywvyC--_',
                 _key: 987654,
-                value: 'test_val',
+                payload: 'test_val',
                 version: {
                     my_tree: '1'
                 }
@@ -257,7 +257,7 @@ describe('AttributeStandardRepo', () => {
 
             const valueData = {
                 id_value: 987654,
-                value: 'test_val',
+                payload: 'test_val',
                 attribute: 'test_attr',
                 modified_at: 400999999,
                 created_at: 400999999,
@@ -283,7 +283,7 @@ describe('AttributeStandardRepo', () => {
                 attribute: mockAttribute,
                 value: {
                     id_value: '987654',
-                    value: 'test val',
+                    payload: 'test val',
                     modified_at: 500999999,
                     version: {my_tree: '1'}
                 },
@@ -300,7 +300,7 @@ describe('AttributeStandardRepo', () => {
                 _id: 'core_values/123456789',
                 _rev: '_WSywvyC--_',
                 _key: 123456789,
-                value: 'test_val'
+                payload: 'test_val'
             };
 
             const deletedEdgeData = {
@@ -345,7 +345,7 @@ describe('AttributeStandardRepo', () => {
                 attribute: mockAttribute,
                 value: {
                     id_value: '123456789',
-                    value: 'test val',
+                    payload: 'test_val',
                     modified_at: 400999999,
                     created_at: 400999999,
                     modified_by: '0',
@@ -414,7 +414,7 @@ describe('AttributeStandardRepo', () => {
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(value).toMatchObject({
                 id_value: '132465',
-                value: 'test val',
+                payload: 'test val',
                 modified_at: 99999,
                 created_at: 99999,
                 modified_by: '0',
@@ -514,7 +514,7 @@ describe('AttributeStandardRepo', () => {
             expect(values.length).toBe(2);
             expect(values[0]).toMatchObject({
                 id_value: 987654,
-                value: 'test val',
+                payload: 'test val',
                 attribute: 'test_attr',
                 modified_at: 99999,
                 created_at: 99999,
@@ -550,7 +550,7 @@ describe('AttributeStandardRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch('LIMIT 1');
             expect(values[0]).toMatchObject({
                 id_value: 987654,
-                value: 'test val',
+                payload: 'test val',
                 attribute: 'test_attr',
                 modified_at: 99999,
                 created_at: 99999,
@@ -600,7 +600,7 @@ describe('AttributeStandardRepo', () => {
             });
 
             expect(values).toHaveLength(1);
-            expect(values[0].value).toBe('test val');
+            expect(values[0].payload).toBe('test val');
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch('FILTER edge.version');
         });

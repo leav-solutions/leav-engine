@@ -47,7 +47,7 @@ export default async (params: IPrepareValueParams): Promise<IValue[]> => {
                     if (metaFieldProps?.actions_list?.[ActionsListEvents.SAVE_VALUE]) {
                         const processedMetaValue = await deps.actionsListDomain.runActionsList(
                             metaFieldProps.actions_list[ActionsListEvents.SAVE_VALUE],
-                            [{value: preparedValue.metadata[metaFieldName]}],
+                            [{payload: preparedValue.metadata[metaFieldName]}],
                             {
                                 ...ctx,
                                 attribute: metaFieldProps,
@@ -55,7 +55,7 @@ export default async (params: IPrepareValueParams): Promise<IValue[]> => {
                                 library
                             }
                         );
-                        preparedValue.metadata[metaFieldName] = processedMetaValue[0].value;
+                        preparedValue.metadata[metaFieldName] = processedMetaValue[0].payload;
                     }
                 }
             } catch (e) {

@@ -31,11 +31,10 @@ export default function ({
         ctx: IQueryInfos
     ): Promise<IValue> {
         const collec = dbService.db.collection(library);
-
         const res = await dbService.execute({
             query: aql`
                 UPDATE ${{_key: recordId}}
-                WITH ${{[attribute.id]: value.value}}
+                WITH ${{[attribute.id]: value.payload}}
                 IN ${collec}
                 OPTIONS { keepNull: false }
                 RETURN NEW`,
@@ -45,7 +44,7 @@ export default function ({
         const updatedDoc = res.length ? res[0] : {};
 
         return {
-            value: typeof updatedDoc[attribute.id] !== 'undefined' ? updatedDoc[attribute.id] : null,
+            payload: typeof updatedDoc[attribute.id] !== 'undefined' ? updatedDoc[attribute.id] : null,
             created_by: null,
             modified_by: null
         };
@@ -73,12 +72,12 @@ export default function ({
             return _saveValue(library, recordId, attribute, value, ctx);
         },
         async deleteValue({library, recordId, attribute, value, ctx}): Promise<IStandardValue> {
-            return _saveValue(library, recordId, attribute, {...value, value: null}, ctx);
+            return _saveValue(library, recordId, attribute, {...value, payload: null}, ctx);
         },
         async isValueUnique({library, recordId, attribute, value, ctx}): Promise<boolean> {
             const query = aql`
                 FOR r IN ${dbService.db.collection(library)} 
-                    FILTER r._key != ${recordId} && r.${attribute.id} == ${value.value}
+                    FILTER r._key != ${recordId} && r.${attribute.id} == ${value.payload}
                     RETURN r._key
             `;
 
@@ -96,7 +95,7 @@ export default function ({
 
             return [
                 {
-                    value: res[0],
+                    payload: res[0],
                     attribute: attribute.id,
                     modified_by: null,
                     created_by: null

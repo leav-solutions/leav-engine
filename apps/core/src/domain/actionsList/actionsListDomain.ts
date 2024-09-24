@@ -100,7 +100,7 @@ export default function ({'core.depsManager': depsManager = null, translator = n
                           ? action.error_message[ctx.defaultLang]
                           : '';
                     if (customMessage) {
-                        customMessage += ': ' + errors.map(error => error.attributeValue.value).join(', ');
+                        customMessage += ': ' + errors.map(error => error.attributeValue.payload).join(', ');
                         throw new ValidationError({[ctx.attribute.id]: customMessage}, customMessage, true);
                     } else {
                         const errorsByType = errors.reduce<
@@ -117,7 +117,7 @@ export default function ({'core.depsManager': depsManager = null, translator = n
                             (message, [errorType, {attributeValues, message: optionalMessage}]) => {
                                 const messageText = optionalMessage ?? translator.t(`error.${errorType}`);
                                 message.push(
-                                    `${messageText}: ${(attributeValues ?? []).map(value => value.value).join(', ')}`
+                                    `${messageText}: ${(attributeValues ?? []).map(value => value.payload).join(', ')}`
                                 );
                                 return message;
                             },

@@ -93,7 +93,7 @@ export default function (deps: IDeps = {}): ITreeNodePermissionDomain {
         );
 
         const valuesByAttr = treesAttrValues.reduce((allVal, treeVal, i) => {
-            allVal[permConf[library].permissionTreeAttributes[i]] = treeVal.map(v => v.value.id);
+            allVal[permConf[library].permissionTreeAttributes[i]] = treeVal.map(v => v.payload.id);
 
             return allVal;
         }, {});

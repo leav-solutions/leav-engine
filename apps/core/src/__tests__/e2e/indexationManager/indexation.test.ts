@@ -22,6 +22,8 @@ describe('Indexation', () => {
             saveAttribute(
                 attribute: {
                     id: "${attrId}",
+                    readonly: false,
+                    required: false,
                     type: simple,
                     format: text,
                     label: {fr: "Test attr", en: "Test attr en"},
@@ -53,7 +55,7 @@ describe('Indexation', () => {
                 library: "${testLibName}",
                 recordId: "${record1}",
                 attribute: "${attrId}",
-                value: {value: "one two three"}
+                value: {payload: "one two three"}
             ) {
                 attribute {
                     id

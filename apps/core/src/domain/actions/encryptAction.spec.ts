@@ -11,17 +11,17 @@ describe('encryptAction', () => {
     const ctx = {attribute: attrText};
 
     test('should encrypt a value', async () => {
-        const res = await action([{...mockStandardValue, value: 'MyPAssWd'}], {}, ctx);
+        const res = await action([{...mockStandardValue, payload: 'MyPAssWd'}], {}, ctx);
 
-        const valuePayload = res.values[0].value;
+        const valuePayload = res.values[0].payload;
         expect(typeof valuePayload).toBe('string');
         expect(('' + valuePayload).length).toBe(60);
     });
 
     test('should return null if no value', async () => {
-        expect(await action([{...mockStandardValue, value: null}], {}, ctx)).toEqual({
+        expect(await action([{...mockStandardValue, payload: null}], {}, ctx)).toEqual({
             errors: [],
-            values: [{...mockStandardValue, value: null}]
+            values: [{...mockStandardValue, payload: null}]
         });
     });
 });

@@ -67,7 +67,7 @@ export default function ({
         if (attribute.type === AttributeTypes.TREE) {
             values = values.map(v => ({
                 ...v,
-                value: v.value?.record
+                value: v.payload?.record
             }));
         }
 
@@ -78,11 +78,11 @@ export default function ({
         ) {
             for (const [i, v] of values.entries()) {
                 const recordIdentity = await recordDomain.getRecordIdentity(
-                    {id: v.value.id, library: attribute.linked_library || v.value.library},
+                    {id: v.payload.id, library: attribute.linked_library || v.payload.library},
                     ctx
                 );
 
-                values[i].value = recordIdentity.label || v.value.id;
+                values[i].payload = recordIdentity.label || v.payload.id;
             }
         }
 
@@ -104,12 +104,12 @@ export default function ({
 
         if (res !== null && asRecord) {
             if (attribute.type === AttributeTypes.TREE) {
-                res = res.map(e => e.value.record);
+                res = res.map(e => e.payload.record);
             } else if (
                 attribute.type === AttributeTypes.SIMPLE_LINK ||
                 attribute.type === AttributeTypes.ADVANCED_LINK
             ) {
-                res = res.map(e => e.value);
+                res = res.map(e => e.payload);
             }
         }
 
@@ -271,7 +271,7 @@ export default function ({
                     const value = await _getFormattedValues(attrProps, fieldValues.flat(Infinity) as IValue[], ctx);
 
                     // set value(s) and concat them if there are several
-                    subset[attr.join('.')] = value.map(v => v.value).join(' | ');
+                    subset[attr.join('.')] = value.map(v => v.payload).join(' | ');
                 }
 
                 // Add subset object record on excel row document

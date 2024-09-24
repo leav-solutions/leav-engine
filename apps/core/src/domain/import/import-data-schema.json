@@ -51,7 +51,7 @@
           "type": "string",
           "description": "Library key (only for tree attributes)"
         },
-        "value": {
+        "payload": {
           "oneOf": [
             {
               "type": "string"
@@ -79,7 +79,7 @@
         }
       },
       "required": [
-        "value"
+        "payload"
       ]
     },
     "data": {

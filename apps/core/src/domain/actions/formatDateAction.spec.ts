@@ -23,38 +23,38 @@ describe('formatDateAction', () => {
             expect(
                 (
                     await action(
-                        [{value: testingDate}],
+                        [{payload: testingDate}],
                         {localized},
                         {
                             ...ctx,
                             lang: 'en-GB'
                         }
                     )
-                ).values[0].value
+                ).values[0].payload
             ).toBe('28 February 37 at 23');
             expect(
                 (
                     await action(
-                        [{value: testingDate}],
+                        [{payload: testingDate}],
                         {localized},
                         {
                             ...ctx,
                             lang: 'fr-FR'
                         }
                     )
-                ).values[0].value
+                ).values[0].payload
             ).toBe('28 février 37 à 23 h');
             expect(
                 (
                     await action(
-                        [{value: testingDate}],
+                        [{payload: testingDate}],
                         {localized},
                         {
                             ...ctx,
                             lang: 'ko-KR'
                         }
                     )
-                ).values[0].value
+                ).values[0].payload
             ).toBe('37년 2월 28일 오후 11시');
         });
 
@@ -63,14 +63,14 @@ describe('formatDateAction', () => {
             'auto should print default on invalid json format: `%s`',
             async localized => {
                 const result = await action(
-                    [{value: testingDate}],
+                    [{payload: testingDate}],
                     {localized},
                     {
                         ...ctx,
                         lang: 'en-EN'
                     }
                 );
-                expect(result.values[0].value).toBe('2/28/2037, 11:42:00 PM');
+                expect(result.values[0].payload).toBe('2/28/2037, 11:42:00 PM');
                 expect(result.errors[0]).toEqual({
                     attributeValue: {value: localized},
                     errorType: 'FORMAT_ERROR',
@@ -84,27 +84,27 @@ describe('formatDateAction', () => {
         expect(
             (
                 await action(
-                    [{value: testingDate}],
+                    [{payload: testingDate}],
                     {
                         universal: 'D/MMMM-YY HH:mm'
                     },
                     ctx
                 )
-            ).values[0].value
+            ).values[0].payload
         ).toBe('28/February-37 23:42');
     });
 
     describe('edge cases', () => {
         test('should fallback to empty localized param when neither params provided', async () => {
-            const resultWithoutParams = await action([{value: testingDate}], {}, ctx);
-            const resultWithEmptyLocalizedParam = await action([{value: testingDate}], {localized: '{}'}, ctx);
+            const resultWithoutParams = await action([{payload: testingDate}], {}, ctx);
+            const resultWithEmptyLocalizedParam = await action([{payload: testingDate}], {localized: '{}'}, ctx);
             expect(resultWithoutParams).toEqual(resultWithEmptyLocalizedParam);
         });
         test('should return empty string on non numerical value in DB', async () => {
-            expect((await action([{value: 'aaaa'}], {}, ctx)).values[0].value).toBe('');
+            expect((await action([{payload: 'aaaa'}], {}, ctx)).values[0].payload).toBe('');
         });
         test('should return null on null value in DB', async () => {
-            expect((await action([{value: null}], {}, ctx)).values[0].value).toBe(null);
+            expect((await action([{payload: null}], {}, ctx)).values[0].payload).toBe(null);
         });
     });
 
@@ -112,7 +112,7 @@ describe('formatDateAction', () => {
         expect(
             (
                 await action(
-                    [{value: testingDate}],
+                    [{payload: testingDate}],
                     {
                         universal: 'D/MMMM/YY',
                         localized: `{
@@ -124,7 +124,7 @@ describe('formatDateAction', () => {
                     },
                     {...ctx, lang: 'fr-FR'}
                 )
-            ).values[0].value
+            ).values[0].payload
         ).toBe('ap. J.-C. samedi 28 F');
     });
 });

@@ -6,7 +6,7 @@ import {IValue} from '_types/value';
 const _getInheritedValues = (values: IValue[]) => values.filter(value => value && value.isInherited);
 
 const _getNotInheritedOrOverrideValues = (values: IValue[]) =>
-    values.filter(value => value && !value.isInherited && value.value !== null);
+    values.filter(value => value && !value.isInherited && value.payload !== null);
 
 export const getValuesToDisplay = (values: IValue[]): IValue[] => {
     const notInheritedOrOverrideValues = _getNotInheritedOrOverrideValues(values);

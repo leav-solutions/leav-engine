@@ -13,10 +13,10 @@ export default function (): IActionsListFunction {
         output_types: [ActionsListIOTypes.OBJECT],
         action: values => ({
             values: values.map(valueElement => {
-                const dateRangeValue = valueElement.value as IDateRangeValue<string>;
+                const dateRangeValue = valueElement.payload as IDateRangeValue<string>;
                 return {
                     ...valueElement,
-                    value: {from: Number(dateRangeValue.from ?? ''), to: Number(dateRangeValue.to ?? '')}
+                    payload: {from: Number(dateRangeValue.from ?? ''), to: Number(dateRangeValue.to ?? '')}
                 };
             }),
             errors: []

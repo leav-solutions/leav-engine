@@ -8,7 +8,7 @@ const mockCalculationsVariableFunctions = {
             {
                 recordId: '1',
                 library: 'meh',
-                value: 42
+                payload: 42
             }
         ],
         after: []
@@ -18,7 +18,7 @@ const mockCalculationsVariableFunctions = {
             {
                 recordId: '1',
                 library: 'meh',
-                value: initialValues[0].value + 10
+                payload: initialValues[0].payload + 10
             }
         ],
         after: []
@@ -32,19 +32,19 @@ describe('calculationVariable', () => {
 
     test('empty variable', async () => {
         const res = await calculation.processVariableString({recordId: '1', library: 'meh'}, '', ['toto']);
-        expect(res[0].value).toEqual(['toto']);
+        expect(res[0].payload).toEqual(['toto']);
     });
 
     test('run variable function', async () => {
         const res = await calculation.processVariableString({recordId: '1', library: 'meh'}, 'test()', ['toto']);
-        expect(res[0].value).toBe(42);
+        expect(res[0].payload).toBe(42);
     });
 
     test('run sequence of variable functions', async () => {
         const res = await calculation.processVariableString({recordId: '1', library: 'meh'}, 'test().test2()', [
             'toto'
         ]);
-        expect(res[0].value).toBe(52);
+        expect(res[0].payload).toBe(52);
     });
 
     test('run unknown function', async () => {

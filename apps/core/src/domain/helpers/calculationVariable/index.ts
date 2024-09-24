@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {ActionsListValueType, IActionsListContext} from '_types/actionsList';
-import {IValue} from '_types/value';
 import ValidationError from '../../../errors/ValidationError';
 import {Errors} from '../../../_types/errors';
 import {IVariableFunctions} from '../calculationsVariableFunctions';
@@ -15,8 +14,8 @@ interface IDeps {
 export interface IVariableValue {
     recordId: string;
     library: string;
-    value: string | number | boolean | Record<string, any>;
-    raw_value?: string | number | boolean | Record<string, any>;
+    payload: string | number | boolean | Record<string, any>;
+    raw_payload?: string | number | boolean | Record<string, any>;
 }
 
 export interface ICalculationVariable {
@@ -37,7 +36,7 @@ export default function ({'core.domain.helpers.calculationsVariableFunctions': v
             {
                 recordId: context.recordId,
                 library: context.library,
-                value: initialValues
+                payload: initialValues
             }
         ] as IVariableValue[];
 
