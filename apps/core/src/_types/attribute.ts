@@ -27,7 +27,6 @@ export interface IAttribute extends ICoreEntity {
     unique?: boolean; // only on simple attribute
     maxLength?: number; //only on text attribute
     description?: ISystemTranslation;
-    required?: boolean;
 }
 
 export enum ValueVersionMode {
