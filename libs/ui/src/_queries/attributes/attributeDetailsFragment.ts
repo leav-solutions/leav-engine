@@ -11,7 +11,6 @@ export const attributeDetailsFragment = gql`
         system
         readonly
         label
-        required
         description
         multiple_values
         metadata_fields {
