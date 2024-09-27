@@ -582,7 +582,6 @@ function StandardFieldValue({
                             handleSubmit={_handleSubmit}
                             attribute={attribute}
                             fieldValue={fieldValue}
-                            shouldShowValueDetailsButton={editRecordState.withInfoButton}
                         />
                     )}
                     {attribute.format === AttributeFormat.date && (

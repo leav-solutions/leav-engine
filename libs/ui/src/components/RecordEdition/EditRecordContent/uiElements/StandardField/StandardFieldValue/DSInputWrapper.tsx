@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {KitInput} from 'aristid-ds';
+import {KitInput, KitInputWrapper} from 'aristid-ds';
 import {ChangeEvent, FocusEvent, FunctionComponent, ReactNode, useState} from 'react';
 import {
     IStandardFieldReducerState,
@@ -20,7 +20,6 @@ interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputProps> {
     state: IStandardFieldReducerState;
     attribute: RecordFormAttributeFragment;
     fieldValue: IStandardFieldValue;
-    shouldShowValueDetailsButton?: boolean;
     handleSubmit: (value: string, id?: string) => void;
 }
 
@@ -34,12 +33,11 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     state,
     attribute,
     fieldValue,
-    shouldShowValueDetailsButton = false,
     handleSubmit
 }) => {
     const {t} = useSharedTranslation();
     const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick, infoIconWithTooltip} = useValueDetailsButton({
+    const {onValueDetailsButtonClick} = useValueDetailsButton({
         value: fieldValue?.value,
         attribute
     });
@@ -77,12 +75,11 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     const label = localizedTranslation(state.formElement.settings.label, availableLang);
 
     return (
-        <KitInputStyled
-            label={label}
+        <KitInputWrapper
             required={state.formElement.settings.required}
+            label={label}
+            onInfoClick={onValueDetailsButtonClick}
             status={errors.length > 0 ? 'error' : undefined}
-            infoIcon={shouldShowValueDetailsButton ? infoIconWithTooltip : null}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             helper={
                 state.isInheritedOverrideValue
                     ? t('record_edition.inherited_input_helper', {
@@ -90,12 +87,15 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
                       })
                     : undefined
             }
-            value={value}
-            disabled={state.isReadOnly}
-            allowClear={!state.isInheritedNotOverrideValue}
-            onBlur={_handleOnBlur}
-            onChange={_handleOnChange}
-            $shouldHighlightColor={!hasChanged && state.isInheritedNotOverrideValue}
-        />
+        >
+            <KitInputStyled
+                value={value}
+                disabled={state.isReadOnly}
+                allowClear={!state.isInheritedNotOverrideValue}
+                onBlur={_handleOnBlur}
+                onChange={_handleOnChange}
+                $shouldHighlightColor={!hasChanged && state.isInheritedNotOverrideValue}
+            />
+        </KitInputWrapper>
     );
 };
