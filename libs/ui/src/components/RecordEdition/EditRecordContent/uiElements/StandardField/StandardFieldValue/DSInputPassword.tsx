@@ -16,11 +16,10 @@ import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 import {useLang} from '_ui/hooks';
 import {localizedTranslation} from '@leav/utils';
 
-interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputProps> {
+interface IDSInputProps extends IProvidedByAntFormItem<InputProps> {
     state: IStandardFieldReducerState;
     attribute: RecordFormAttributeFragment;
     fieldValue: IStandardFieldValue;
-    shouldShowValueDetailsButton?: boolean;
     handleSubmit: (value: string, id?: string) => void;
 }
 
@@ -34,18 +33,17 @@ const KitInputPasswordStyled = styled(KitInput.Password)<{$shouldHighlightColor:
     }
 `;
 
-export const DSInputPasswordWrapper: FunctionComponent<IDSInputWrapperProps> = ({
+export const DSInputPassword: FunctionComponent<IDSInputProps> = ({
     value,
     onChange,
     state,
     attribute,
     fieldValue,
-    shouldShowValueDetailsButton = false,
     handleSubmit
 }) => {
     const {t} = useSharedTranslation();
     const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick, infoIconWithTooltip} = useValueDetailsButton({
+    const {onValueDetailsButtonClick} = useValueDetailsButton({
         value: fieldValue?.value,
         attribute
     });
@@ -88,8 +86,7 @@ export const DSInputPasswordWrapper: FunctionComponent<IDSInputWrapperProps> = (
             label={label}
             required={state.formElement.settings.required}
             status={errors.length > 0 ? 'error' : undefined}
-            infoIcon={shouldShowValueDetailsButton ? infoIconWithTooltip : null}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
+            onInfoClick={onValueDetailsButtonClick}
             helper={
                 state.isInheritedOverrideValue
                     ? t('record_edition.inherited_input_helper', {

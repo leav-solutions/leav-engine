@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitDatePicker} from 'aristid-ds';
-import {FunctionComponent, ReactNode} from 'react';
+import {FunctionComponent} from 'react';
 import {
     IStandardFieldReducerState,
     IStandardFieldValue
@@ -10,19 +10,18 @@ import {
 import {Form} from 'antd';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
-import {FormElement, IProvidedByAntFormItem, StandardValueTypes} from '../../../_types';
+import {IProvidedByAntFormItem, StandardValueTypes} from '../../../_types';
 import {RangePickerProps} from 'antd/lib/date-picker';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
 import {useLang} from '_ui/hooks';
-import {IRequiredFieldsSettings, localizedTranslation} from '@leav/utils';
+import {localizedTranslation} from '@leav/utils';
 
-interface IDSRangePickerWrapperProps extends IProvidedByAntFormItem<RangePickerProps> {
+interface IDSRangePickerProps extends IProvidedByAntFormItem<RangePickerProps> {
     state: IStandardFieldReducerState;
     attribute: RecordFormAttributeFragment;
     fieldValue: IStandardFieldValue;
-    shouldShowValueDetailsButton?: boolean;
     handleSubmit: (value: StandardValueTypes, id?: string) => void;
 }
 
@@ -30,19 +29,18 @@ const KitDatePickerRangePickerStyled = styled(KitDatePicker.RangePicker)<{$shoul
     color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
 `;
 
-export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps> = ({
+export const DSRangePicker: FunctionComponent<IDSRangePickerProps> = ({
     value,
     onChange,
     state,
     attribute,
     fieldValue,
-    shouldShowValueDetailsButton = false,
     handleSubmit
 }) => {
     const {t} = useSharedTranslation();
     const {lang: availableLangs} = useLang();
     const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick, infoIconWithTooltip} = useValueDetailsButton({
+    const {onValueDetailsButtonClick} = useValueDetailsButton({
         value: fieldValue?.value,
         attribute
     });
@@ -91,8 +89,7 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
             disabled={state.isReadOnly}
             allowClear={!state.isInheritedNotOverrideValue}
             status={errors.length > 0 ? 'error' : undefined}
-            infoIcon={shouldShowValueDetailsButton ? infoIconWithTooltip : null}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
+            onInfoClick={onValueDetailsButtonClick}
             helper={
                 state.isInheritedOverrideValue
                     ? t('record_edition.inherited_input_helper', {

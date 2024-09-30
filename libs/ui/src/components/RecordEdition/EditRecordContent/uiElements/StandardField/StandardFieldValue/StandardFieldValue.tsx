@@ -7,8 +7,8 @@ import {Button, Form, Input, InputRef, Popover, Space, theme} from 'antd';
 import moment from 'moment';
 import React, {MutableRefObject, useEffect, useRef} from 'react';
 import styled, {CSSObject} from 'styled-components';
-import {DSInputWrapper} from './DSInputWrapper';
-import {DSRangePickerWrapper} from './DSRangePickerWrapper';
+import {DSInput} from './DSInput';
+import {DSRangePicker} from './DSRangePicker';
 import {themeVars} from '_ui/antdTheme';
 import {FloatingMenu, FloatingMenuAction} from '_ui/components';
 import Dimmer from '_ui/components/Dimmer';
@@ -47,11 +47,11 @@ import ColorInput from './Inputs/ColorInput';
 import TextInput from './Inputs/TextInput';
 import ValuesList from './ValuesList';
 import {IValueOfValuesList} from './ValuesList/ValuesList';
-import {DSInputNumberWrapper} from './DSInputNumberWrapper';
+import {DSInputNumber} from './DSInputNumber';
 import {useLang} from '_ui/hooks';
-import {DSInputPasswordWrapper} from './DSInputPasswordWrapper';
-import {DSDatePickerWrapper} from './DSDatePickerWrapper';
-import {DSBooleanWrapper} from './DSBooleanWrapper';
+import {DSInputPassword} from './DSInputPassword';
+import {DSDatePicker} from './DSDatePicker';
+import {DSBoolean} from './DSBoolean';
 
 const ErrorMessage = styled.div`
     color: ${themeVars.errorColor};
@@ -577,7 +577,7 @@ function StandardFieldValue({
                     ]}
                 >
                     {attribute.format === AttributeFormat.text && (
-                        <DSInputWrapper
+                        <DSInput
                             state={state}
                             handleSubmit={_handleSubmit}
                             attribute={attribute}
@@ -585,43 +585,39 @@ function StandardFieldValue({
                         />
                     )}
                     {attribute.format === AttributeFormat.date && (
-                        <DSDatePickerWrapper
+                        <DSDatePicker
                             state={state}
                             handleSubmit={_handleSubmit}
                             attribute={attribute}
                             fieldValue={fieldValue}
-                            shouldShowValueDetailsButton={editRecordState.withInfoButton}
                         />
                     )}
                     {attribute.format === AttributeFormat.date_range && (
-                        <DSRangePickerWrapper
+                        <DSRangePicker
                             state={state}
                             handleSubmit={_handleSubmit}
                             attribute={attribute}
                             fieldValue={fieldValue}
-                            shouldShowValueDetailsButton={editRecordState.withInfoButton}
                         />
                     )}
                     {attribute.format === AttributeFormat.numeric && (
-                        <DSInputNumberWrapper
+                        <DSInputNumber
                             state={state}
                             handleSubmit={_handleSubmit}
                             attribute={attribute}
                             fieldValue={fieldValue}
-                            shouldShowValueDetailsButton={editRecordState.withInfoButton}
                         />
                     )}
                     {attribute.format === AttributeFormat.encrypted && (
-                        <DSInputPasswordWrapper
+                        <DSInputPassword
                             state={state}
                             handleSubmit={_handleSubmit}
                             attribute={attribute}
                             fieldValue={fieldValue}
-                            shouldShowValueDetailsButton={editRecordState.withInfoButton}
                         />
                     )}
                     {attribute.format === AttributeFormat.boolean && (
-                        <DSBooleanWrapper state={state} handleSubmit={_handleSubmit} />
+                        <DSBoolean state={state} handleSubmit={_handleSubmit} />
                     )}
                 </Form.Item>
             )}

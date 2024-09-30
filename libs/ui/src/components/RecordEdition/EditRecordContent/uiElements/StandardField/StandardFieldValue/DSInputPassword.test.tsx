@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
-import {DSInputNumberWrapper} from './DSInputNumberWrapper';
+import {DSInputPassword} from './DSInputPassword';
 import {FieldScope} from '../../../_types';
 import {
     InheritedFlags,
@@ -13,25 +13,25 @@ import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockFormElementInput} from '_ui/__mocks__/common/form';
 import {mockAttributeLink} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
-import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
 import {AntForm} from 'aristid-ds';
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
+import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
 
 const en_label = 'label';
 const fr_label = 'libellé';
 const idValue = '123';
 const mockValue = {
     index: 0,
-    displayValue: '4',
-    editingValue: '4',
-    originRawValue: '4',
+    displayValue: 'my value',
+    editingValue: 'my editing value',
+    originRawValue: 'my raw value',
     idValue: null,
     isEditing: false,
     isErrorDisplayed: false,
     value: {
         id_value: null,
-        value: '4',
-        raw_value: '4',
+        value: 'my value',
+        raw_value: 'my raw value',
         modified_at: null,
         created_at: null,
         created_by: null,
@@ -42,7 +42,13 @@ const mockValue = {
     state: StandardFieldValueState.PRISTINE
 };
 
-const getInitialState = (required: boolean, fallbackLang = false): IStandardFieldReducerState => ({
+const getInitialState = ({
+    required,
+    fallbackLang
+}: {
+    required: boolean;
+    fallbackLang: boolean;
+}): IStandardFieldReducerState => ({
     record: mockRecord,
     formElement: {
         ...mockFormElementInput,
@@ -68,16 +74,16 @@ const getInitialState = (required: boolean, fallbackLang = false): IStandardFiel
     isInheritedValue: false
 });
 
-const inheritedValues = [
+const inheritedValues: RecordFormElementsValueStandardValue[] = [
     {
         isInherited: null,
-        value: '8',
-        raw_value: '8'
+        value: 'override value',
+        raw_value: 'override value'
     },
     {
         isInherited: true,
-        value: '3.5',
-        raw_value: '3.5'
+        value: 'inherited value',
+        raw_value: 'inherited value'
     }
 ];
 
@@ -95,7 +101,7 @@ const inheritedOverrideValue: InheritedFlags = {
     inheritedValue: {raw_value: inheritedValues[1].raw_value}
 };
 
-describe('DSInputNumberWrapper', () => {
+describe('DSInputPassword', () => {
     const mockHandleSubmit = jest.fn();
     const mockOnChange = jest.fn();
     let user!: ReturnType<typeof userEvent.setup>;
@@ -106,12 +112,12 @@ describe('DSInputNumberWrapper', () => {
         mockHandleSubmit.mockReset();
     });
 
-    test('Should display inputNumber with fr label ', async () => {
-        const state = getInitialState(false, false);
+    test('Should display input with fr label ', async () => {
+        const state = getInitialState({required: false, fallbackLang: false});
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSInputNumberWrapper
+                    <DSInputPassword
                         state={state}
                         attribute={{} as RecordFormAttributeFragment}
                         fieldValue={null}
@@ -125,12 +131,12 @@ describe('DSInputNumberWrapper', () => {
         expect(screen.getByText(fr_label)).toBeVisible();
     });
 
-    test('Should display inputNumber with fallback label ', async () => {
-        const state = getInitialState(false, true);
+    test('Should display input with fallback label ', async () => {
+        const state = getInitialState({required: false, fallbackLang: true});
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSInputNumberWrapper
+                    <DSInputPassword
                         state={state}
                         attribute={{} as RecordFormAttributeFragment}
                         fieldValue={null}
@@ -145,11 +151,11 @@ describe('DSInputNumberWrapper', () => {
     });
 
     test('Should submit empty value if field is not required', async () => {
-        const state = getInitialState(false);
+        const state = getInitialState({required: false, fallbackLang: false});
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSInputNumberWrapper
+                    <DSInputPassword
                         state={state}
                         attribute={{} as RecordFormAttributeFragment}
                         fieldValue={null}
@@ -160,21 +166,22 @@ describe('DSInputNumberWrapper', () => {
             </AntForm>
         );
 
-        const input = screen.getByRole('spinbutton');
-        await user.clear(input);
+        // TODO : change testid with click on label when https://aristid.atlassian.net/browse/DS-174 is done
+        const input = screen.getByTestId('kit-input-password');
+        await user.click(input);
         await user.tab();
 
         expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
-        expect(mockOnChange).toHaveBeenCalled();
+        expect(mockOnChange).toHaveBeenCalledTimes(1);
     });
 
     describe('With required input and no inheritance', () => {
         test('Should submit the value if field is not empty', async () => {
-            const state = getInitialState(true);
+            const state = getInitialState({required: true, fallbackLang: false});
             render(
                 <AntForm>
                     <AntForm.Item>
-                        <DSInputNumberWrapper
+                        <DSInputPassword
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -185,8 +192,9 @@ describe('DSInputNumberWrapper', () => {
                 </AntForm>
             );
 
-            const text = '7.4';
-            const input = screen.getByRole('spinbutton');
+            const text = 'text';
+            const input = screen.getByTestId('kit-input-password');
+            await user.click(input);
             await user.type(input, text);
             await user.tab();
 
@@ -194,12 +202,12 @@ describe('DSInputNumberWrapper', () => {
             expect(mockOnChange).toHaveBeenCalled();
         });
 
-        test('Should submit the empty value if field is empty', async () => {
-            const state = getInitialState(true);
+        test('Should submit the default value if field is empty', async () => {
+            const state = getInitialState({required: true, fallbackLang: false});
             render(
                 <AntForm>
                     <AntForm.Item>
-                        <DSInputNumberWrapper
+                        <DSInputPassword
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -211,17 +219,17 @@ describe('DSInputNumberWrapper', () => {
                 </AntForm>
             );
 
-            const input = screen.getByRole('spinbutton');
-            await user.clear(input);
+            const input = screen.getByTestId('kit-input-password');
+            await user.click(input);
             await user.tab();
 
-            expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
+            expect(mockHandleSubmit).toHaveBeenCalledWith(mockValue.originRawValue, state.attribute.id);
         });
     });
 
     describe('With inheritance', () => {
         test("Should display the inherited value by default and not save if we don't change it", async () => {
-            let state = getInitialState(false);
+            let state = getInitialState({required: false, fallbackLang: false});
             state = {
                 ...state,
                 ...inheritedNotOverrideValue,
@@ -230,7 +238,7 @@ describe('DSInputNumberWrapper', () => {
             render(
                 <AntForm>
                     <AntForm.Item>
-                        <DSInputNumberWrapper
+                        <DSInputPassword
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -241,8 +249,10 @@ describe('DSInputNumberWrapper', () => {
                     </AntForm.Item>
                 </AntForm>
             );
-            const input = screen.getByRole('spinbutton');
+            const input = screen.getByTestId('kit-input-password');
             expect(input).toHaveValue(inheritedValues[1].raw_value);
+
+            expect(screen.queryByRole('button')).toBeNull();
 
             await user.click(input);
             await user.tab();
@@ -251,7 +261,7 @@ describe('DSInputNumberWrapper', () => {
         });
 
         test('Should display the override value in the input and inherited value under it', async () => {
-            let state = getInitialState(false);
+            let state = getInitialState({required: false, fallbackLang: false});
             state = {
                 ...state,
                 ...inheritedOverrideValue,
@@ -261,7 +271,7 @@ describe('DSInputNumberWrapper', () => {
             render(
                 <AntForm>
                     <AntForm.Item>
-                        <DSInputNumberWrapper
+                        <DSInputPassword
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -273,56 +283,23 @@ describe('DSInputNumberWrapper', () => {
                 </AntForm>
             );
 
-            const input = screen.getByRole('spinbutton');
-            const helperText = screen.getByText(/3.5/);
+            const input = screen.getByTestId('kit-input-password');
+            const helperText = screen.getByText(/inherited value/);
             expect(input).toHaveValue(inheritedValues[0].raw_value);
-            expect(helperText).toBeVisible();
-        });
-    });
-
-    describe('With required and inheritance', () => {
-        test("Should display the inherited value by default and not save if we don't change it", async () => {
-            let state = getInitialState(true);
-            state = {
-                ...state,
-                ...inheritedNotOverrideValue,
-                formElement: {...state.formElement, values: inheritedValues}
-            };
-            render(
-                <AntForm>
-                    <AntForm.Item>
-                        <DSInputNumberWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
-                            handleSubmit={mockHandleSubmit}
-                            onChange={mockOnChange}
-                            value={inheritedValues[1].raw_value}
-                        />
-                    </AntForm.Item>
-                </AntForm>
-            );
-            const input = screen.getByRole('spinbutton');
-            expect(input).toHaveValue(inheritedValues[1].raw_value);
-
-            await user.click(input);
-            await user.tab();
-
-            expect(mockHandleSubmit).not.toHaveBeenCalled();
+            expect(helperText).toBeInTheDocument();
         });
 
-        test('Should display the override value in the input and inherited value under it', async () => {
-            let state = getInitialState(false);
+        test("Should allow to clear input when it's override", async () => {
+            let state = getInitialState({required: false, fallbackLang: false});
             state = {
                 ...state,
                 ...inheritedOverrideValue,
                 formElement: {...state.formElement, values: inheritedValues}
             };
-
             render(
                 <AntForm>
                     <AntForm.Item>
-                        <DSInputNumberWrapper
+                        <DSInputPassword
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -333,11 +310,11 @@ describe('DSInputNumberWrapper', () => {
                     </AntForm.Item>
                 </AntForm>
             );
+            const clearButton = screen.getByRole('button');
 
-            const input = screen.getByRole('spinbutton');
-            const helperText = screen.getByText(/3.5/);
-            expect(input).toHaveValue(inheritedValues[0].raw_value);
-            expect(helperText).toBeVisible();
+            await user.click(clearButton);
+
+            expect(mockHandleSubmit).toHaveBeenCalledWith('', 'my_attribute');
         });
     });
 });

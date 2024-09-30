@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
 import {AntForm} from 'aristid-ds';
-import {DSBooleanWrapper} from './DSBooleanWrapper';
+import {DSBoolean} from './DSBoolean';
 import {
     InheritedFlags,
     IStandardFieldReducerState,
@@ -99,7 +99,7 @@ const getInitialState = ({
     isInheritedValue: false
 });
 
-describe('DSBooleanWrapper', () => {
+describe('DSBoolean', () => {
     let user!: ReturnType<typeof userEvent.setup>;
     const mockHandleSubmit = jest.fn();
     const mockOnChange = jest.fn();
@@ -115,7 +115,7 @@ describe('DSBooleanWrapper', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSBooleanWrapper state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
+                    <DSBoolean state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
                 </AntForm.Item>
             </AntForm>
         );
@@ -128,7 +128,7 @@ describe('DSBooleanWrapper', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSBooleanWrapper state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
+                    <DSBoolean state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
                 </AntForm.Item>
             </AntForm>
         );
@@ -142,12 +142,7 @@ describe('DSBooleanWrapper', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSBooleanWrapper
-                        value={true}
-                        state={state}
-                        handleSubmit={mockHandleSubmit}
-                        onChange={mockOnChange}
-                    />
+                    <DSBoolean value={true} state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
                 </AntForm.Item>
             </AntForm>
         );
@@ -161,12 +156,7 @@ describe('DSBooleanWrapper', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSBooleanWrapper
-                        value={false}
-                        state={state}
-                        handleSubmit={mockHandleSubmit}
-                        onChange={mockOnChange}
-                    />
+                    <DSBoolean value={false} state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
                 </AntForm.Item>
             </AntForm>
         );
@@ -180,12 +170,7 @@ describe('DSBooleanWrapper', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSBooleanWrapper
-                        value={false}
-                        state={state}
-                        handleSubmit={mockHandleSubmit}
-                        onChange={mockOnChange}
-                    />
+                    <DSBoolean value={false} state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
                 </AntForm.Item>
             </AntForm>
         );
@@ -202,12 +187,7 @@ describe('DSBooleanWrapper', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSBooleanWrapper
-                        value={true}
-                        state={state}
-                        handleSubmit={mockHandleSubmit}
-                        onChange={mockOnChange}
-                    />
+                    <DSBoolean value={true} state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
                 </AntForm.Item>
             </AntForm>
         );
@@ -230,7 +210,7 @@ describe('DSBooleanWrapper', () => {
             render(
                 <AntForm>
                     <AntForm.Item>
-                        <DSBooleanWrapper
+                        <DSBoolean
                             value={inheritedValues[1].raw_value}
                             state={state}
                             handleSubmit={mockHandleSubmit}
@@ -254,7 +234,7 @@ describe('DSBooleanWrapper', () => {
             render(
                 <AntForm>
                     <AntForm.Item>
-                        <DSBooleanWrapper
+                        <DSBoolean
                             value={inheritedValues[0].raw_value}
                             state={state}
                             handleSubmit={mockHandleSubmit}
@@ -281,7 +261,7 @@ describe('DSBooleanWrapper', () => {
             render(
                 <AntForm>
                     <AntForm.Item>
-                        <DSBooleanWrapper
+                        <DSBoolean
                             value={inheritedValues[0].raw_value}
                             state={state}
                             handleSubmit={mockHandleSubmit}

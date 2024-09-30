@@ -1,5 +1,5 @@
 import {KitDatePicker} from 'aristid-ds';
-import {FunctionComponent, ReactNode} from 'react';
+import {FunctionComponent} from 'react';
 import {
     IStandardFieldReducerState,
     IStandardFieldValue
@@ -15,11 +15,10 @@ import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordCont
 import {useLang} from '_ui/hooks';
 import {localizedTranslation} from '@leav/utils';
 
-interface IDSDatePickerWrapperProps extends IProvidedByAntFormItem<DatePickerProps> {
+interface IDSDatePickerProps extends IProvidedByAntFormItem<DatePickerProps> {
     state: IStandardFieldReducerState;
     attribute: RecordFormAttributeFragment;
     fieldValue: IStandardFieldValue;
-    shouldShowValueDetailsButton?: boolean;
     handleSubmit: (value: StandardValueTypes, id?: string) => void;
 }
 
@@ -27,19 +26,18 @@ const KitDatePickerStyled = styled(KitDatePicker)<{$shouldHighlightColor: boolea
     color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
 `;
 
-export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> = ({
+export const DSDatePicker: FunctionComponent<IDSDatePickerProps> = ({
     value,
     onChange,
     state,
     attribute,
     fieldValue,
-    shouldShowValueDetailsButton = false,
     handleSubmit
 }) => {
     const {t} = useSharedTranslation();
     const {lang: availableLangs} = useLang();
     const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick, infoIconWithTooltip} = useValueDetailsButton({
+    const {onValueDetailsButtonClick} = useValueDetailsButton({
         value: fieldValue?.value,
         attribute
     });
@@ -80,8 +78,7 @@ export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> =
             disabled={state.isReadOnly}
             allowClear={!state.isInheritedNotOverrideValue}
             status={errors.length > 0 ? 'error' : undefined}
-            infoIcon={shouldShowValueDetailsButton ? infoIconWithTooltip : null}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
+            onInfoClick={onValueDetailsButtonClick}
             helper={
                 state.isInheritedOverrideValue
                     ? t('record_edition.inherited_input_helper', {
