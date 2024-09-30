@@ -857,14 +857,14 @@ export default function ({
                     .filter(r => r.status === 'rejected')
                     .map(err => {
                         const rejection = err as PromiseRejectedResult;
-                        const errorAttribute = rejection.reason.context.attributeId;
+                        const errorAttribute = rejection.reason.context?.attributeId;
 
                         return {
                             type: rejection.reason.type,
                             attributeId: errorAttribute,
-                            id_value: rejection.reason.context.values[0].id_value,
-                            input: rejection.reason.context.values[0].value,
-                            message: utils.translateError(rejection.reason.fields[errorAttribute], ctx.lang)
+                            id_value: rejection.reason.context?.values[0].id_value,
+                            input: rejection.reason.context?.values[0].value,
+                            message: utils.translateError(rejection.reason.fields?.[errorAttribute], ctx.lang)
                         };
                     });
 
