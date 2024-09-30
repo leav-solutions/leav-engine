@@ -8,7 +8,7 @@ import {Errors} from '../../../_types/errors';
 import {IVariableFunctions} from '../calculationsVariableFunctions';
 
 interface IDeps {
-    'core.domain.helpers.calculationsVariableFunctions'?: IVariableFunctions;
+    'core.domain.helpers.calculationsVariableFunctions': IVariableFunctions;
 }
 
 export interface IVariableValue {
@@ -26,7 +26,7 @@ export interface ICalculationVariable {
     ) => Promise<IVariableValue[]>;
 }
 
-export default function ({'core.domain.helpers.calculationsVariableFunctions': variableFunctions = null}: IDeps = {}) {
+export default function ({'core.domain.helpers.calculationsVariableFunctions': variableFunctions}: IDeps) {
     const processVariableString: ICalculationVariable['processVariableString'] = async (
         context,
         variableString,

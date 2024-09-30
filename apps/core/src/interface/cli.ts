@@ -5,10 +5,10 @@ import {ICoreImportApp} from 'app/core/importApp';
 import program from 'commander';
 
 interface IDeps {
-    'core.app.core.import'?: ICoreImportApp;
+    'core.app.core.import': ICoreImportApp;
 }
 
-export default function ({'core.app.core.import': importApp = null}: IDeps = {}) {
+export default function ({'core.app.core.import': importApp}: IDeps) {
     const defineImportConfigCommand = () => {
         program
             .command('importConfig <file>')

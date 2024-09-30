@@ -6,8 +6,8 @@ import {ITreeRepo} from 'infra/tree/treeRepo';
 import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
 
 interface IDeps {
-    'core.infra.tree'?: ITreeRepo;
-    'core.infra.cache.cacheService'?: ICachesService;
+    'core.infra.tree': ITreeRepo;
+    'core.infra.cache.cacheService': ICachesService;
 }
 
 export interface IElementAncestorsHelper {
@@ -16,8 +16,8 @@ export interface IElementAncestorsHelper {
 }
 
 export default function ({
-    'core.infra.tree': treeRepo = null,
-    'core.infra.cache.cacheService': cacheService = null
+    'core.infra.tree': treeRepo,
+    'core.infra.cache.cacheService': cacheService
 }: IDeps): IElementAncestorsHelper {
     const _getCacheKey = (treeId: string, nodeId?: string): string => `elementAncestors:${treeId}:${nodeId ?? '*'}`;
 

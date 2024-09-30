@@ -11,10 +11,10 @@ export interface IMessagesHandlerHelper {
     handleMessage(message: IFileEventData, ctx: IQueryInfos);
 }
 
-interface IDeps {
-    'core.utils.logger'?: winston.Winston;
-    'core.domain.filesManager.helpers.handleFileSystemEvent'?: HandleFileSystemEventFunc;
-    config?: IConfig;
+export interface IDeps {
+    'core.utils.logger': winston.Winston;
+    'core.domain.filesManager.helpers.handleFileSystemEvent': HandleFileSystemEventFunc;
+    config: IConfig;
 }
 
 // Handle messages: new messages are stacked in a queue. Then we process them one by one.
@@ -22,9 +22,9 @@ interface IDeps {
 // Otherwise, we may have a situation where we try to add a file to a directory,
 // but the directory is not yet created.
 export default function ({
-    'core.utils.logger': logger = null,
-    'core.domain.filesManager.helpers.handleFileSystemEvent': handleFileSystemEvent = null,
-    config = null
+    'core.utils.logger': logger,
+    'core.domain.filesManager.helpers.handleFileSystemEvent': handleFileSystemEvent,
+    config
 }: IDeps): IMessagesHandlerHelper {
     const _messagesQueue: IFileEventData[] = [];
     let _isWorking = false;
@@ -39,6 +39,9 @@ export default function ({
         const message = _messagesQueue.shift();
 
         try {
+            if (!message?.rootKey) {
+                throw new Error('Root key is missing in message');
+            }
             const library = config.filesManager.rootKeys[message.rootKey];
             await handleFileSystemEvent(message, {library}, ctx);
         } catch (e) {

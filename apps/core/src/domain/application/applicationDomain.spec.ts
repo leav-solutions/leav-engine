@@ -6,14 +6,24 @@ import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IUserDomain} from 'domain/user/userDomain';
 import {IApplicationRepo} from 'infra/application/applicationRepo';
-import {IUtils} from 'utils/utils';
+import {IUtils, ToAny} from 'utils/utils';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {mockApplication, mockApplicationExternal} from '../../__tests__/mocks/application';
 import {mockCtx} from '../../__tests__/mocks/shared';
-import applicationDomain, {MAX_CONSULTATION_HISTORY_SIZE} from './applicationDomain';
+import applicationDomain, {IDeps, MAX_CONSULTATION_HISTORY_SIZE} from './applicationDomain';
+
+const depsBase: ToAny<IDeps> = {
+    config: {},
+    'core.domain.permission.admin': jest.fn(),
+    'core.domain.user': jest.fn(),
+    'core.domain.eventsManager': jest.fn(),
+    'core.infra.application': jest.fn(),
+    'core.utils': jest.fn(),
+    translator: {}
+};
 
 describe('applicationDomain', () => {
     beforeEach(() => jest.clearAllMocks());
@@ -38,11 +48,12 @@ describe('applicationDomain', () => {
             };
 
             const appDomain = applicationDomain({
+                ...depsBase,
                 'core.infra.application': mockAppRepo as IApplicationRepo
             });
             const attr = await appDomain.getApplicationProperties({id: 'test_application', ctx: mockCtx});
 
-            expect(mockAppRepo.getApplications.mock.calls.length).toBe(1);
+            expect(mockAppRepo.getApplications?.mock.calls.length).toBe(1);
             expect(mockAppRepo.getApplications).toBeCalledWith({
                 params: {filters: {id: 'test_application'}, strictFilters: true},
                 ctx: mockCtx
@@ -56,6 +67,7 @@ describe('applicationDomain', () => {
             };
 
             const appDomain = applicationDomain({
+                ...depsBase,
                 'core.infra.application': mockAppRepo as IApplicationRepo
             });
 
@@ -70,11 +82,12 @@ describe('applicationDomain', () => {
             };
 
             const appDomain = applicationDomain({
+                ...depsBase,
                 'core.infra.application': mockAppRepo as IApplicationRepo
             });
             const attr = await appDomain.getApplications({ctx: mockCtx});
 
-            expect(mockAppRepo.getApplications.mock.calls.length).toBe(1);
+            expect(mockAppRepo.getApplications?.mock.calls.length).toBe(1);
             expect(mockAppRepo.getApplications).toBeCalledWith({
                 params: {sort: {field: 'id', order: SortOrder.ASC}},
                 ctx: mockCtx
@@ -98,6 +111,7 @@ describe('applicationDomain', () => {
                 };
 
                 const appDomain = applicationDomain({
+                    ...depsBase,
                     'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.application': mockAppRepo as IApplicationRepo,
@@ -119,6 +133,7 @@ describe('applicationDomain', () => {
                 };
 
                 const appDomain = applicationDomain({
+                    ...depsBase,
                     'core.domain.permission.admin': mockAdminPermissionDomainNotAllowed as IAdminPermissionDomain,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.application': mockAppRepo as IApplicationRepo,
@@ -132,7 +147,7 @@ describe('applicationDomain', () => {
                     })
                 ).rejects.toThrow(PermissionError);
 
-                expect(mockAdminPermissionDomainNotAllowed.getAdminPermission.mock.calls[0][0].action).toBe(
+                expect(mockAdminPermissionDomainNotAllowed.getAdminPermission?.mock.calls[0][0].action).toBe(
                     AdminPermissionsActions.CREATE_APPLICATION
                 );
             });
@@ -147,6 +162,7 @@ describe('applicationDomain', () => {
                 };
 
                 const appDomain = applicationDomain({
+                    ...depsBase,
                     'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.application': mockAppRepo as IApplicationRepo,
@@ -167,6 +183,7 @@ describe('applicationDomain', () => {
                 };
 
                 const appDomain = applicationDomain({
+                    ...depsBase,
                     'core.domain.permission.admin': mockAdminPermissionDomainNotAllowed as IAdminPermissionDomain,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.application': mockAppRepo as IApplicationRepo,
@@ -180,7 +197,7 @@ describe('applicationDomain', () => {
                     })
                 ).rejects.toThrow(PermissionError);
 
-                expect(mockAdminPermissionDomainNotAllowed.getAdminPermission.mock.calls[0][0].action).toBe(
+                expect(mockAdminPermissionDomainNotAllowed.getAdminPermission?.mock.calls[0][0].action).toBe(
                     AdminPermissionsActions.EDIT_APPLICATION
                 );
             });
@@ -200,6 +217,7 @@ describe('applicationDomain', () => {
                 };
 
                 const appDomain = applicationDomain({
+                    ...depsBase,
                     'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                     'core.infra.application': mockAppRepo as IApplicationRepo,
                     'core.utils': mockUtilsInvalidID as IUtils
@@ -219,6 +237,7 @@ describe('applicationDomain', () => {
                     isEndpointValid: jest.fn().mockReturnValue(false)
                 };
                 const appDomain = applicationDomain({
+                    ...depsBase,
                     'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                     'core.infra.application': mockAppRepo as IApplicationRepo,
                     'core.utils': mockUtilsInvalidEndpoint as IUtils
@@ -241,6 +260,7 @@ describe('applicationDomain', () => {
             };
 
             const appDomain = applicationDomain({
+                ...depsBase,
                 'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.application': mockAppRepo as IApplicationRepo
@@ -258,6 +278,7 @@ describe('applicationDomain', () => {
             };
 
             const appDomain = applicationDomain({
+                ...depsBase,
                 'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.application': mockAppRepo as IApplicationRepo
@@ -274,6 +295,7 @@ describe('applicationDomain', () => {
             };
 
             const appDomain = applicationDomain({
+                ...depsBase,
                 'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.application': mockAppRepo as IApplicationRepo
@@ -291,6 +313,7 @@ describe('applicationDomain', () => {
             };
 
             const appDomain = applicationDomain({
+                ...depsBase,
                 'core.domain.permission.admin': mockAdminPermissionDomainNotAllowed as IAdminPermissionDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.application': mockAppRepo as IApplicationRepo
@@ -300,7 +323,7 @@ describe('applicationDomain', () => {
                 PermissionError
             );
 
-            expect(mockAdminPermissionDomainNotAllowed.getAdminPermission.mock.calls[0][0].action).toBe(
+            expect(mockAdminPermissionDomainNotAllowed.getAdminPermission?.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.DELETE_APPLICATION
             );
         });
@@ -314,6 +337,7 @@ describe('applicationDomain', () => {
             };
 
             const appDomain = applicationDomain({
+                ...depsBase,
                 'core.domain.user': mockUserDomain as IUserDomain
             });
 
@@ -323,7 +347,7 @@ describe('applicationDomain', () => {
             });
 
             expect(mockUserDomain.saveUserData).toBeCalled();
-            expect(mockUserDomain.saveUserData.mock.calls[0][0]).toMatchObject({
+            expect(mockUserDomain.saveUserData?.mock.calls[0][0]).toMatchObject({
                 key: CONSULTED_APPS_KEY,
                 value: [mockApplication.id],
                 global: false,
@@ -343,6 +367,7 @@ describe('applicationDomain', () => {
             };
 
             const appDomain = applicationDomain({
+                ...depsBase,
                 'core.domain.user': mockUserDomain as IUserDomain
             });
 
@@ -352,7 +377,7 @@ describe('applicationDomain', () => {
             });
 
             expect(mockUserDomain.saveUserData).toBeCalled();
-            expect(mockUserDomain.saveUserData.mock.calls[0][0]).toMatchObject({
+            expect(mockUserDomain.saveUserData?.mock.calls[0][0]).toMatchObject({
                 key: CONSULTED_APPS_KEY,
                 value: [mockApplication.id, 'some_app', 'another_app', 'last_app'],
                 global: false,
@@ -372,6 +397,7 @@ describe('applicationDomain', () => {
             };
 
             const appDomain = applicationDomain({
+                ...depsBase,
                 'core.domain.user': mockUserDomain as IUserDomain
             });
 
@@ -381,8 +407,8 @@ describe('applicationDomain', () => {
             });
 
             expect(mockUserDomain.saveUserData).toBeCalled();
-            expect(mockUserDomain.saveUserData.mock.calls[0][0].value[0]).toBe(mockApplication.id);
-            expect(mockUserDomain.saveUserData.mock.calls[0][0].value).toHaveLength(MAX_CONSULTATION_HISTORY_SIZE);
+            expect(mockUserDomain.saveUserData?.mock.calls[0][0].value[0]).toBe(mockApplication.id);
+            expect(mockUserDomain.saveUserData?.mock.calls[0][0].value).toHaveLength(MAX_CONSULTATION_HISTORY_SIZE);
         });
     });
 });

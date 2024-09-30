@@ -72,7 +72,7 @@ export interface IStoreFilesParams {
 
 interface IIsFileExistsAsChild {
     treeId: string;
-    parentNodeId: string;
+    parentNodeId?: string;
     filename: string;
 }
 
@@ -90,44 +90,44 @@ export interface IFilesManagerDomain {
     doesFileExistAsChild({treeId, filename, parentNodeId}: IIsFileExistsAsChild, ctx: IQueryInfos): Promise<boolean>;
 }
 
-interface IDeps {
-    config?: Config.IConfig;
-    'core.utils'?: IUtils;
-    'core.infra.amqpService'?: IAmqpService;
-    'core.utils.logger'?: winston.Winston;
-    'core.domain.record'?: IRecordDomain;
-    'core.domain.value'?: IValueDomain;
-    'core.domain.tree'?: ITreeDomain;
-    'core.domain.permission.library'?: ILibraryPermissionDomain;
-    'core.domain.filesManager.helpers.messagesHandler'?: IMessagesHandlerHelper;
-    'core.domain.library'?: ILibraryDomain;
-    'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
-    'core.domain.record.helpers.sendRecordUpdateEvent'?: SendRecordUpdateEventHelper;
-    'core.domain.helpers.storeUploadFile'?: StoreUploadFileFunc;
-    'core.domain.helpers.createDirectory'?: CreateDirectoryFunc;
-    'core.infra.record'?: IRecordRepo;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    translator?: i18n;
+export interface IDeps {
+    config: Config.IConfig;
+    'core.utils': IUtils;
+    'core.infra.amqpService': IAmqpService;
+    'core.utils.logger': winston.Winston;
+    'core.domain.record': IRecordDomain;
+    'core.domain.value': IValueDomain;
+    'core.domain.tree': ITreeDomain;
+    'core.domain.permission.library': ILibraryPermissionDomain;
+    'core.domain.filesManager.helpers.messagesHandler': IMessagesHandlerHelper;
+    'core.domain.library': ILibraryDomain;
+    'core.domain.helpers.updateRecordLastModif': UpdateRecordLastModifFunc;
+    'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
+    'core.domain.helpers.storeUploadFile': StoreUploadFileFunc;
+    'core.domain.helpers.createDirectory': CreateDirectoryFunc;
+    'core.infra.record': IRecordRepo;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    translator: i18n;
 }
 
 export default function ({
-    config = null,
-    'core.utils': utils = null,
-    'core.infra.amqpService': amqpService = null,
-    'core.utils.logger': logger = null,
-    'core.domain.record': recordDomain = null,
-    'core.domain.value': valueDomain = null,
-    'core.domain.tree': treeDomain = null,
-    'core.domain.permission.library': libraryPermissionDomain = null,
-    'core.domain.filesManager.helpers.messagesHandler': messagesHandler = null,
-    'core.domain.helpers.storeUploadFile': storeUploadFile = null,
-    'core.domain.helpers.createDirectory': createDirectory = null,
-    'core.domain.library': libraryDomain = null,
-    'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
-    'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent = null,
-    'core.domain.eventsManager': eventsManager = null,
-    'core.infra.record': recordRepo = null,
-    translator = null
+    config,
+    'core.utils': utils,
+    'core.infra.amqpService': amqpService,
+    'core.utils.logger': logger,
+    'core.domain.record': recordDomain,
+    'core.domain.value': valueDomain,
+    'core.domain.tree': treeDomain,
+    'core.domain.permission.library': libraryPermissionDomain,
+    'core.domain.filesManager.helpers.messagesHandler': messagesHandler,
+    'core.domain.helpers.storeUploadFile': storeUploadFile,
+    'core.domain.helpers.createDirectory': createDirectory,
+    'core.domain.library': libraryDomain,
+    'core.domain.helpers.updateRecordLastModif': updateRecordLastModif,
+    'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
+    'core.domain.eventsManager': eventsManager,
+    'core.infra.record': recordRepo,
+    translator
 }: IDeps): IFilesManagerDomain {
     let _defaultCtx: IQueryInfos;
     const _initDefaultCtx = async () => {
@@ -669,7 +669,7 @@ export default function ({
                     {
                         id: Errors.FILE_NOT_FOUND
                     },
-                    translator.t('errors.FILE_NOT_FOUND', {lng: ctx.lang})
+                    translator.t('errors.FILE_NOT_FOUND', {lng: ctx.lang}) ?? 'File not found'
                 );
             }
 

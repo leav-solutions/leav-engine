@@ -21,11 +21,11 @@ export interface IUserDataRepo {
     getUserData(keys: string[], global: boolean, ctx: IQueryInfos): Promise<IUserData>;
 }
 
-interface IDeps {
-    'core.infra.db.dbService'?: IDbService;
+export interface IDeps {
+    'core.infra.db.dbService': IDbService;
 }
 
-export default function ({'core.infra.db.dbService': dbService = null}: IDeps = {}): IUserDataRepo {
+export default function ({'core.infra.db.dbService': dbService}: IDeps): IUserDataRepo {
     return {
         async saveUserData({key, value, global, isCoreData = false, ctx}: ISaveUserDataParams): Promise<IUserData> {
             const collection = dbService.db.collection(USER_DATA_COLLECTION);

@@ -14,19 +14,19 @@ import {IDbService} from '../db/dbService';
 import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
 import {GetConditionPart} from './helpers/getConditionPart';
 
-interface IDeps {
-    'core.infra.db.dbService'?: IDbService;
-    'core.infra.db.dbUtils'?: IDbUtils;
-    'core.infra.attributeTypes.helpers.getConditionPart'?: GetConditionPart;
-    'core.infra.record.helpers.filterTypes'?: IFilterTypesHelper;
+export interface IDeps {
+    'core.infra.db.dbService': IDbService;
+    'core.infra.db.dbUtils': IDbUtils;
+    'core.infra.attributeTypes.helpers.getConditionPart': GetConditionPart;
+    'core.infra.record.helpers.filterTypes': IFilterTypesHelper;
 }
 
 export default function ({
-    'core.infra.db.dbService': dbService = null,
-    'core.infra.db.dbUtils': dbUtils = null,
-    'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
-    'core.infra.record.helpers.filterTypes': filterTypesHelper = null
-}: IDeps = {}): IAttributeTypeRepo {
+    'core.infra.db.dbService': dbService,
+    'core.infra.db.dbUtils': dbUtils,
+    'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart,
+    'core.infra.record.helpers.filterTypes': filterTypesHelper
+}: IDeps): IAttributeTypeRepo {
     function _getExtendedFilterPart(attributes: IAttribute[], advancedValue: GeneratedAqlQuery): GeneratedAqlQuery {
         return aql`${
             attributes

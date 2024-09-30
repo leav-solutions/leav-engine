@@ -6,7 +6,7 @@ import {IDbProfiler} from './dbProfiler';
 import {IValueVersion} from './value';
 
 export interface IQueryInfos {
-    userId?: string;
+    userId: string;
     lang?: string;
     defaultLang?: string;
     queryId?: string;

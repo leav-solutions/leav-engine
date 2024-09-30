@@ -9,17 +9,17 @@ import {IRecord} from '_types/record';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 
 interface IDeps {
-    'core.infra.record'?: IRecordRepo;
-    'core.infra.cache.cacheService'?: ICachesService;
-    'core.utils'?: IUtils;
+    'core.infra.record': IRecordRepo;
+    'core.infra.cache.cacheService': ICachesService;
+    'core.utils': IUtils;
 }
 
 export type UpdateRecordLastModifFunc = (library: string, recordId: string, ctx: IQueryInfos) => Promise<IRecord>;
 
 export default function ({
-    'core.infra.record': recordRepo = null,
-    'core.infra.cache.cacheService': cacheService = null,
-    'core.utils': utils = null
+    'core.infra.record': recordRepo,
+    'core.infra.cache.cacheService': cacheService,
+    'core.utils': utils
 }: IDeps): UpdateRecordLastModifFunc {
     return async (library, recordId, ctx) => {
         await cacheService.getCache(ECacheType.RAM).deleteData([utils.getRecordsCacheKey(library, recordId)]);

@@ -18,15 +18,12 @@ export interface IApiKeyRepo {
     deleteApiKey: (params: {id: string; ctx: IQueryInfos}) => Promise<IApiKey>;
 }
 
-interface IDeps {
-    'core.infra.db.dbUtils'?: IDbUtils;
-    'core.infra.db.dbService'?: IDbService;
+export interface IDeps {
+    'core.infra.db.dbUtils': IDbUtils;
+    'core.infra.db.dbService': IDbService;
 }
 
-export default function ({
-    'core.infra.db.dbService': dbService = null,
-    'core.infra.db.dbUtils': dbUtils = null
-}: IDeps = {}): IApiKeyRepo {
+export default function ({'core.infra.db.dbService': dbService, 'core.infra.db.dbUtils': dbUtils}: IDeps): IApiKeyRepo {
     return {
         async getApiKeys({params, ctx}) {
             const defaultParams: IGetCoreApiKeysParams = {

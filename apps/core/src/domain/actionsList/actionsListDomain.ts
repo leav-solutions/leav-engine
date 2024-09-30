@@ -51,12 +51,12 @@ export interface IActionsListDomain {
     runActionsList(actions: IActionsListSavedAction[], values: IValue[], ctx: IRunActionsListCtx): Promise<IValue[]>;
 }
 
-interface IDeps {
-    'core.depsManager'?: AwilixContainer;
-    translator?: i18n;
+export interface IDeps {
+    'core.depsManager': AwilixContainer;
+    translator: i18n;
 }
 
-export default function ({'core.depsManager': depsManager = null, translator = null}: IDeps = {}): IActionsListDomain {
+export default function ({'core.depsManager': depsManager, translator}: IDeps): IActionsListDomain {
     let _pluginActions: IActionsListFunction[] = [];
     return {
         getAvailableActions() {

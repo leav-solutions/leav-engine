@@ -8,7 +8,7 @@ import encryptAction from './encryptAction';
 describe('encryptAction', () => {
     const action = encryptAction().action;
     const attrText: IAttribute = {id: 'test_attr', format: AttributeFormats.NUMERIC, type: AttributeTypes.SIMPLE};
-    const ctx = {attribute: attrText};
+    const ctx = {attribute: attrText, userId: 'test_user'};
 
     test('should encrypt a value', async () => {
         const res = await action([{...mockStandardValue, payload: 'MyPAssWd'}], {}, ctx);

@@ -20,11 +20,11 @@ describe('calculationsVariableFunctions', () => {
         'core.domain.record': mockRecordDomain as IRecordDomain,
         'core.domain.attribute': mockAttributeDomain as IAttributeDomain
     });
-    const ctx: IActionsListContext = {};
+    const ctx: IActionsListContext = {userId: 'test'};
 
     beforeEach(() => {
-        mockRecordDomain.getRecordFieldValue.mockResolvedValue([{payload: 'test'}]);
-        mockAttributeDomain.getAttributeProperties.mockResolvedValue({linked_library_id: 'meh'});
+        mockRecordDomain.getRecordFieldValue?.mockResolvedValue([{payload: 'test'}]);
+        mockAttributeDomain.getAttributeProperties?.mockResolvedValue({linked_library_id: 'meh'});
     });
 
     describe('test getValue', () => {
@@ -39,8 +39,8 @@ describe('calculationsVariableFunctions', () => {
         });
 
         test('Should map "raw_payload" field', async () => {
-            mockRecordDomain.getRecordFieldValue.mockResolvedValue([{payload: 'meh', raw_payload: 42}]);
-            mockAttributeDomain.getAttributeProperties.mockResolvedValue({});
+            mockRecordDomain.getRecordFieldValue?.mockResolvedValue([{payload: 'meh', raw_payload: 42}]);
+            mockAttributeDomain.getAttributeProperties?.mockResolvedValue({});
             jest.spyOn(TypeGuards, 'isIStandardValue').mockReturnValue(true);
 
             const res = await calculationFunctions.getValue.run(ctx, [{payload: 'meh'}], ['toto']);

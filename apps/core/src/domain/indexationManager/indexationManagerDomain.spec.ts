@@ -8,11 +8,12 @@ import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
-import indexationManager from './indexationManagerDomain';
+import indexationManager, {IDeps} from './indexationManagerDomain';
 import {IIndexationService} from 'infra/indexation/indexationService';
 import {AttributeCondition} from '../../_types/record';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import winston from 'winston';
+import {ToAny} from 'utils/utils';
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
     assertExchange: jest.fn(),
@@ -41,6 +42,19 @@ const ctx: IQueryInfos = {
 
 const mockLogger: Mockify<winston.Winston> = {
     info: jest.fn((...args) => console.log(args)) // eslint-disable-line no-restricted-syntax
+};
+
+const depsBase: ToAny<IDeps> = {
+    'core.infra.amqpService': jest.fn(),
+    'core.domain.record': jest.fn(),
+    'core.domain.library': jest.fn(),
+    'core.domain.attribute': jest.fn(),
+    'core.infra.indexation.indexationService': jest.fn(),
+    'core.domain.tasksManager': jest.fn(),
+    'core.domain.eventsManager': jest.fn(),
+    'core.utils.logger': jest.fn(),
+    translator: {},
+    config: {}
 };
 
 describe('Indexation Manager', () => {
@@ -81,6 +95,7 @@ describe('Indexation Manager', () => {
         };
 
         const indexation = indexationManager({
+            ...depsBase,
             config: conf as IConfig,
             'core.infra.amqpService': mockAmqpService as IAmqpService,
             'core.utils.logger': mockLogger as winston.Winston,
@@ -126,6 +141,7 @@ describe('Indexation Manager', () => {
         };
 
         const indexation = indexationManager({
+            ...depsBase,
             config: conf as IConfig,
             'core.domain.record': mockRecordDomain as IRecordDomain,
             'core.domain.attribute': mockAttributeDomain as IAttributeDomain,

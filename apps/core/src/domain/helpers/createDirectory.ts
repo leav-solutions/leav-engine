@@ -14,11 +14,11 @@ import {IQueryInfos} from '_types/queryInfos';
 export type CreateDirectoryFunc = (name: string, path: string, ctx: IQueryInfos) => Promise<void>;
 
 interface IDeps {
-    config?: Config.IConfig;
-    'core.utils'?: IUtils;
+    config: Config.IConfig;
+    'core.utils': IUtils;
 }
 
-export default function ({config = null, 'core.utils': utils = null}: IDeps) {
+export default function ({config, 'core.utils': utils}: IDeps) {
     return async (name: string, path: string, ctx: IQueryInfos): Promise<void> => {
         if (!fs.existsSync(path)) {
             throw utils.generateExplicitValidationError('directories', Errors.DUPLICATE_DIRECTORY_NAMES, ctx.lang);

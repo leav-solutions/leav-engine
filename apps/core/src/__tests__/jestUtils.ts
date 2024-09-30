@@ -26,3 +26,5 @@ type Mockify<T> = {
         ? jest.Mock<ReturnType<T[P]> extends never ? never : any>
         : T[P];
 };
+
+type MandatoryId<T> = T & {id: string};

@@ -8,8 +8,8 @@ import {IActionsListContext} from '_types/actionsList';
 import {TypeGuards} from '../../../utils';
 
 interface IDeps {
-    'core.domain.record'?: IRecordDomain;
-    'core.domain.attribute'?: IAttributeDomain;
+    'core.domain.record': IRecordDomain;
+    'core.domain.attribute': IAttributeDomain;
 }
 
 interface IVariableFunction {
@@ -22,9 +22,9 @@ export interface IVariableFunctions {
 }
 
 export default function ({
-    'core.domain.record': recordDomain = null,
-    'core.domain.attribute': attributeDomain = null
-}: IDeps = {}): IVariableFunctions {
+    'core.domain.record': recordDomain,
+    'core.domain.attribute': attributeDomain
+}: IDeps): IVariableFunctions {
     const first = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
         {
             ...inputValue[0]

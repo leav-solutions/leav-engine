@@ -30,8 +30,11 @@ const _handleValueVersion = async (
     deps: ISaveOneValueDeps,
     ctx: IQueryInfos
 ): Promise<IValueVersion> => {
+    if (!attribute.versions_conf?.profile) {
+        throw new Error('Attribute has no profile set');
+    }
     const versionProfile = await deps.versionProfileDomain.getVersionProfileProperties({
-        id: attribute.versions_conf.profile,
+        id: attribute.versions_conf?.profile,
         ctx
     });
 

@@ -5,7 +5,7 @@ import {IGetSimplePermissionsParams} from '../_types';
 import {IPermissionsByActionsHelper} from './permissionsByActions';
 
 interface IDeps {
-    'core.domain.permission.helpers.permissionsByActions'?: IPermissionsByActionsHelper;
+    'core.domain.permission.helpers.permissionsByActions': IPermissionsByActionsHelper;
 }
 
 export interface ISimplePermissionHelper {
@@ -13,7 +13,7 @@ export interface ISimplePermissionHelper {
 }
 
 export default function ({
-    'core.domain.permission.helpers.permissionsByActions': permsByActionsHelper = null
+    'core.domain.permission.helpers.permissionsByActions': permsByActionsHelper
 }: IDeps): ISimplePermissionHelper {
     return {
         async getSimplePermission({type, applyTo, action, usersGroupNodeId, permissionTreeTarget = null, ctx}) {

@@ -23,6 +23,8 @@ const mockCalculationsVariable = {
     ]
 };
 
+const ctx = {userId: 'test_user'};
+
 describe('excelCalculationAction', () => {
     const mockUtils: Mockify<IUtils> = {
         translateError: jest.fn().mockReturnValue('Excel calculation error')
@@ -40,7 +42,6 @@ describe('excelCalculationAction', () => {
 
     test('Simple excelCalculation', async () => {
         const action = excelCalculationAction().action;
-        const ctx = {};
         const res = await action(
             [],
             {
@@ -65,7 +66,6 @@ describe('excelCalculationAction', () => {
 
     test('no formula', async () => {
         const action = excelCalculationAction().action;
-        const ctx = {};
         const res = await action(
             [],
             {
@@ -81,7 +81,6 @@ describe('excelCalculationAction', () => {
         const action = excelCalculationAction({
             'core.domain.helpers.calculationVariable': mockCalculationsVariable as ICalculationVariable
         }).action;
-        const ctx = {};
         const res = await action(
             [],
             {
@@ -101,7 +100,6 @@ describe('excelCalculationAction', () => {
         const action = excelCalculationAction({
             'core.domain.helpers.calculationVariable': mockCalculationsVariable as ICalculationVariable
         }).action;
-        const ctx = {};
         const res = await action(
             [mockStandardValue],
             {
@@ -121,7 +119,6 @@ describe('excelCalculationAction', () => {
         const action = excelCalculationAction({
             'core.utils': mockUtils as IUtils
         }).action;
-        const ctx = {};
         const res = await action(
             [],
             {

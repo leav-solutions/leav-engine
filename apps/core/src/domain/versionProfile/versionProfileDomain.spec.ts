@@ -7,7 +7,7 @@ import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ICacheService, ICachesService} from 'infra/cache/cacheService';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IVersionProfileRepo} from 'infra/versionProfile/versionProfileRepo';
-import {IUtils} from 'utils/utils';
+import {IUtils, ToAny} from 'utils/utils';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {AdminPermissionsActions} from '../../_types/permissions';
@@ -15,7 +15,18 @@ import {mockAttrAdvVersionable} from '../../__tests__/mocks/attribute';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {mockTree} from '../../__tests__/mocks/tree';
 import {mockVersionProfile} from '../../__tests__/mocks/versionProfile';
-import versionProfileDomain from './versionProfileDomain';
+import versionProfileDomain, {IDeps} from './versionProfileDomain';
+
+const depsBase: ToAny<IDeps> = {
+    'core.domain.permission.admin': jest.fn(),
+    'core.domain.helpers.getCoreEntityById': jest.fn(),
+    'core.domain.eventsManager': jest.fn(),
+    'core.infra.versionProfile': jest.fn(),
+    'core.infra.tree': jest.fn(),
+    'core.infra.attribute': jest.fn(),
+    'core.infra.cache.cacheService': jest.fn(),
+    'core.utils': jest.fn()
+};
 
 describe('versionProfileDomain', () => {
     const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
@@ -73,6 +84,7 @@ describe('versionProfileDomain', () => {
             };
 
             const domain = versionProfileDomain({
+                ...depsBase,
                 'core.infra.versionProfile': mockRepo as IVersionProfileRepo
             });
 
@@ -94,6 +106,7 @@ describe('versionProfileDomain', () => {
             };
 
             const domain = versionProfileDomain({
+                ...depsBase,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 'core.infra.versionProfile': mockRepo as IVersionProfileRepo
             });
@@ -111,6 +124,7 @@ describe('versionProfileDomain', () => {
             };
 
             const domain = versionProfileDomain({
+                ...depsBase,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperNoProfile,
                 'core.infra.versionProfile': mockRepo as IVersionProfileRepo,
                 'core.utils': mockUtils as IUtils
@@ -131,6 +145,7 @@ describe('versionProfileDomain', () => {
             };
 
             const domain = versionProfileDomain({
+                ...depsBase,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.versionProfile': mockVersionProfileRepo as IVersionProfileRepo,
@@ -147,7 +162,7 @@ describe('versionProfileDomain', () => {
             expect(mockVersionProfileRepo.updateVersionProfile).not.toBeCalled();
 
             expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+            expect(mockAdminPermDomain.getAdminPermission?.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.CREATE_VERSION_PROFILE
             );
 
@@ -162,6 +177,7 @@ describe('versionProfileDomain', () => {
             };
 
             const domain = versionProfileDomain({
+                ...depsBase,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.versionProfile': mockVersionProfileRepo as IVersionProfileRepo,
@@ -179,7 +195,7 @@ describe('versionProfileDomain', () => {
             expect(mockVersionProfileRepo.createVersionProfile).not.toBeCalled();
 
             expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+            expect(mockAdminPermDomain.getAdminPermission?.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.EDIT_VERSION_PROFILE
             );
 
@@ -194,6 +210,7 @@ describe('versionProfileDomain', () => {
             };
 
             const domain = versionProfileDomain({
+                ...depsBase,
                 'core.domain.permission.admin': mockAdminPermDomainForbidden as IAdminPermissionDomain,
                 'core.infra.versionProfile': mockVersionProfileRepo as IVersionProfileRepo,
                 'core.utils': mockUtils as IUtils
@@ -223,6 +240,7 @@ describe('versionProfileDomain', () => {
             };
 
             const domain = versionProfileDomain({
+                ...depsBase,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.infra.versionProfile': mockVersionProfileRepo as IVersionProfileRepo,
                 'core.utils': mockUtilsInvalidId as IUtils
@@ -251,6 +269,7 @@ describe('versionProfileDomain', () => {
             };
 
             const domain = versionProfileDomain({
+                ...depsBase,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.infra.versionProfile': mockVersionProfileRepo as IVersionProfileRepo,
                 'core.infra.tree': mockTreeRepoUnknownTree as ITreeRepo,
@@ -281,6 +300,7 @@ describe('versionProfileDomain', () => {
             };
 
             const domain = versionProfileDomain({
+                ...depsBase,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.versionProfile': mockVersionProfileRepo as IVersionProfileRepo,
@@ -296,7 +316,7 @@ describe('versionProfileDomain', () => {
             expect(mockVersionProfileRepo.deleteVersionProfile).toBeCalled();
 
             expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+            expect(mockAdminPermDomain.getAdminPermission?.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.DELETE_VERSION_PROFILE
             );
 
@@ -314,6 +334,7 @@ describe('versionProfileDomain', () => {
             };
 
             const domain = versionProfileDomain({
+                ...depsBase,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.infra.versionProfile': mockVersionProfileRepo as IVersionProfileRepo,
                 'core.utils': mockUtils as IUtils
@@ -336,6 +357,7 @@ describe('versionProfileDomain', () => {
             };
 
             const domain = versionProfileDomain({
+                ...depsBase,
                 'core.domain.permission.admin': mockAdminPermDomainForbidden as IAdminPermissionDomain,
                 'core.infra.versionProfile': mockVersionProfileRepo as IVersionProfileRepo,
                 'core.utils': mockUtils as IUtils
@@ -359,6 +381,7 @@ describe('versionProfileDomain', () => {
             };
 
             const domain = versionProfileDomain({
+                ...depsBase,
                 'core.infra.versionProfile': mockVersionProfileRepo as IVersionProfileRepo
             });
 

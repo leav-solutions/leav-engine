@@ -11,8 +11,20 @@ import {AttributeCondition, IRecordFilterOption, Operator} from '../../_types/re
 import {IAttributeTypeRepo, IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
 import {IDbUtils} from '../db/dbUtils';
 import {IFilterTypesHelper} from './helpers/filterTypes';
-import recordRepo from './recordRepo';
-import {IDbService} from 'infra/db/dbService';
+import recordRepo, {IDeps} from './recordRepo';
+import {ToAny} from 'utils/utils';
+
+const depsBase: ToAny<IDeps> = {
+    'core.infra.db.dbService': jest.fn(),
+    'core.infra.db.dbUtils': jest.fn(),
+    'core.infra.attributeTypes': jest.fn(),
+    'core.infra.attribute': jest.fn(),
+    'core.infra.attributeTypes.helpers.getConditionPart': jest.fn(),
+    'core.infra.record.helpers.getSearchVariablesQueryPart': jest.fn(),
+    'core.infra.record.helpers.getSearchVariableName': jest.fn(),
+    'core.infra.record.helpers.filterTypes': jest.fn(),
+    'core.infra.indexation.helpers.getSearchQuery': jest.fn()
+};
 
 describe('RecordRepo', () => {
     const ctx = {
@@ -52,6 +64,7 @@ describe('RecordRepo', () => {
             };
 
             const recRepo = recordRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
@@ -85,7 +98,7 @@ describe('RecordRepo', () => {
                 modified_at: 1519303348
             };
 
-            const mockDbServ: Mockify<IDbService> = {
+            const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([{old: updatedRecordData, new: updatedRecordData}])
             };
@@ -95,6 +108,7 @@ describe('RecordRepo', () => {
             };
 
             const recRepo = recordRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
@@ -158,6 +172,7 @@ describe('RecordRepo', () => {
             const mockDbUtils: Mockify<IDbUtils> = {cleanup: jest.fn().mockReturnValue(recordData)};
 
             const recRepo = recordRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
@@ -224,6 +239,7 @@ describe('RecordRepo', () => {
             };
 
             const recRepo = recordRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
@@ -296,6 +312,7 @@ describe('RecordRepo', () => {
             };
 
             const recRepo = recordRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
@@ -362,6 +379,7 @@ describe('RecordRepo', () => {
             };
 
             const recRepo = recordRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
@@ -408,6 +426,7 @@ describe('RecordRepo', () => {
             };
 
             const recRepo = recordRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
@@ -495,6 +514,7 @@ describe('RecordRepo', () => {
             const mockGetSearchQuery: Mockify<GetSearchQuery> = jest.fn(() => 'fulltextSearchQuery');
 
             const recRepo = recordRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
@@ -590,6 +610,7 @@ describe('RecordRepo', () => {
             };
 
             const recRepo = recordRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
                 'core.infra.attributeTypes': mockAttrRepo as IAttributeTypesRepo,

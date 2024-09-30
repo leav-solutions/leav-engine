@@ -6,14 +6,25 @@ import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {i18n} from 'i18next';
 import {IMailerService} from 'infra/mailer/mailerService';
 import {IUserDataRepo} from 'infra/userData/userDataRepo';
-import {IUtils} from 'utils/utils';
+import {IUtils, ToAny} from 'utils/utils';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {mockTranslator} from '../../__tests__/mocks/translator';
-import userDataDomain, {UserCoreDataKeys} from './userDomain';
+import userDataDomain, {IDeps, UserCoreDataKeys} from './userDomain';
+
+const depsBase: ToAny<IDeps> = {
+    config: {},
+    'core.domain.permissions': jest.fn(),
+    'core.infra.userData': jest.fn(),
+    'core.domain.permission': jest.fn(),
+    'core.infra.mailer.mailerService': jest.fn(),
+    'core.domain.globalSettings': jest.fn(),
+    'core.utils': jest.fn(),
+    translator: {}
+};
 
 describe('UserDomain', () => {
     const ctx: IQueryInfos = {
@@ -36,13 +47,14 @@ describe('UserDomain', () => {
             };
 
             const udd = userDataDomain({
+                ...depsBase,
                 'core.infra.userData': mockUserDataRepo as IUserDataRepo,
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
 
             const res = await udd.saveUserData({key: 'test1', value: 1, global: false, ctx});
 
-            expect(mockUserDataRepo.saveUserData.mock.calls.length).toBe(1);
+            expect(mockUserDataRepo.saveUserData?.mock.calls.length).toBe(1);
             expect(res).toBeTruthy();
         });
 
@@ -56,13 +68,14 @@ describe('UserDomain', () => {
             };
 
             const udd = userDataDomain({
+                ...depsBase,
                 'core.infra.userData': mockUserDataRepo as IUserDataRepo,
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
 
             const res = await udd.saveUserData({key: 'test3', value: 3, global: true, ctx});
 
-            expect(mockUserDataRepo.saveUserData.mock.calls.length).toBe(1);
+            expect(mockUserDataRepo.saveUserData?.mock.calls.length).toBe(1);
             expect(res).toBeTruthy();
         });
 
@@ -76,6 +89,7 @@ describe('UserDomain', () => {
             };
 
             const udd = userDataDomain({
+                ...depsBase,
                 'core.infra.userData': mockUserDataRepo as IUserDataRepo,
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
@@ -86,7 +100,7 @@ describe('UserDomain', () => {
         });
 
         test('should throw if key is forbidden', async function () {
-            const udd = userDataDomain(); //{
+            const udd = userDataDomain(depsBase); //{
 
             await expect(
                 udd.saveUserData({key: UserCoreDataKeys.CONSULTED_APPS, value: ['fake'], global: false, ctx})
@@ -105,13 +119,14 @@ describe('UserDomain', () => {
             };
 
             const udd = userDataDomain({
+                ...depsBase,
                 'core.infra.userData': mockUserDataRepo as IUserDataRepo,
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
 
             const res = await udd.getUserData(['key'], false, ctx);
 
-            expect(mockUserDataRepo.getUserData.mock.calls.length).toBe(1);
+            expect(mockUserDataRepo.getUserData?.mock.calls.length).toBe(1);
             expect(res).toEqual({global: false, data: {key: 'data'}});
         });
 
@@ -125,13 +140,14 @@ describe('UserDomain', () => {
             };
 
             const udd = userDataDomain({
+                ...depsBase,
                 'core.infra.userData': mockUserDataRepo as IUserDataRepo,
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
 
             const res = await udd.getUserData(['key'], true, ctx);
 
-            expect(mockUserDataRepo.getUserData.mock.calls.length).toBe(1);
+            expect(mockUserDataRepo.getUserData?.mock.calls.length).toBe(1);
             expect(res).toEqual({global: true, data: {key: 'data'}});
         });
 
@@ -145,6 +161,7 @@ describe('UserDomain', () => {
             };
 
             const udd = userDataDomain({
+                ...depsBase,
                 'core.infra.userData': mockUserDataRepo as IUserDataRepo,
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
@@ -178,6 +195,7 @@ describe('UserDomain', () => {
             };
 
             const udd = userDataDomain({
+                ...depsBase,
                 config: mockConfig as IConfig,
                 'core.domain.globalSettings': mockGlobalSettingsDomain as IGlobalSettingsDomain,
                 'core.infra.mailer.mailerService': mockMailerService as IMailerService,
@@ -187,7 +205,7 @@ describe('UserDomain', () => {
 
             await udd.sendResetPasswordEmail('email@domain.com', 'token', 'login', 'firefox', 'Os X', 'fr', mockCtx);
 
-            expect(mockMailerService.sendEmail.mock.calls.length).toBe(1);
+            expect(mockMailerService.sendEmail?.mock.calls.length).toBe(1);
         });
     });
 });

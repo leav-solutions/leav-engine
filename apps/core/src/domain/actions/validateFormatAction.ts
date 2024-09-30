@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import Joi from 'joi';
-import {IDateRangeValue} from '_types/value';
+import {IDateRangeValue, IValue} from '_types/value';
 import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 import {AttributeFormats, IAttribute, IEmbeddedAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
@@ -32,9 +32,9 @@ export default function (): IActionsListFunction {
                     case AttributeFormats.RICH_TEXT:
                     case AttributeFormats.ENCRYPTED:
                         schema = Joi.string().allow('', null);
-
-                        if ((attribute as IEmbeddedAttribute).validation_regex) {
-                            schema = schema.regex(new RegExp((attribute as IEmbeddedAttribute).validation_regex));
+                        const validationRegex = (attribute as IEmbeddedAttribute).validation_regex;
+                        if (validationRegex) {
+                            schema = schema.regex(new RegExp(validationRegex));
                         }
 
                         break;
@@ -76,8 +76,8 @@ export default function (): IActionsListFunction {
 
                 return schema;
             };
-            const attributeSchema = _getSchema(ctx.attribute);
-            const errors = [];
+            const attributeSchema = ctx.attribute ? _getSchema(ctx.attribute) : null;
+            const errors: Array<{errorType: Errors; attributeValue: IValue; message?: string}> = [];
 
             if (!attributeSchema) {
                 return {values, errors};
@@ -96,7 +96,7 @@ export default function (): IActionsListFunction {
                 }
 
                 // Specific Validation for date range
-                if (ctx.attribute.format === AttributeFormats.DATE_RANGE) {
+                if (ctx.attribute?.format === AttributeFormats.DATE_RANGE) {
                     const rangeValue = elementValue.payload as IDateRangeValue;
                     if (Number(rangeValue.from) > Number(rangeValue.to)) {
                         errors.push({

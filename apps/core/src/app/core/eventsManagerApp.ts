@@ -10,16 +10,16 @@ import {IAppModule} from '_types/shared';
 export type IEventsManagerApp = IAppModule;
 
 interface IDeps {
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.app.helpers.initQueryContext'?: InitQueryContextFunc;
-    config?: IConfig;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.app.helpers.initQueryContext': InitQueryContextFunc;
+    config: IConfig;
 }
 
-export default function({
-    'core.app.helpers.initQueryContext': initQueryContext = null,
-    'core.domain.eventsManager': eventsManagerDomain = null,
-    config = null
-}: IDeps = {}): IEventsManagerApp {
+export default function ({
+    'core.app.helpers.initQueryContext': initQueryContext,
+    'core.domain.eventsManager': eventsManagerDomain,
+    config
+}: IDeps): IEventsManagerApp {
     return {
         extensionPoints: {
             registerEventActions(actions: string[], prefix: string) {

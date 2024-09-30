@@ -249,7 +249,7 @@ export default function ({
                 sort = null,
                 customFilterConditions = {},
                 nonStrictFields = ['label', '_key'],
-                ctx = {}
+                ctx = {userId: ''}
             } = params;
 
             const collec = dbService.db.collection(collectionName);

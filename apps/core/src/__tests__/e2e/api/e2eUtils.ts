@@ -262,7 +262,7 @@ export async function gqlAddUserToGroup(groupNodeId: string) {
 export async function gqlAddElemToTree(
     treeId: string,
     element: ITreeElement,
-    parent?: string,
+    parent?: string | null,
     order?: number
 ): Promise<string> {
     const res = await makeGraphQlCall(

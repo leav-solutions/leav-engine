@@ -24,21 +24,21 @@ export interface ICoreApp extends IAppModule {
 }
 
 interface IDeps {
-    'core.app.helpers.initQueryContext'?: InitQueryContextFunc;
-    'core.domain.globalSettings'?: IGlobalSettingsDomain;
-    'core.domain.record'?: IRecordDomain;
-    'core.utils.logger'?: winston.Winston;
+    'core.app.helpers.initQueryContext': InitQueryContextFunc;
+    'core.domain.globalSettings': IGlobalSettingsDomain;
+    'core.domain.record': IRecordDomain;
+    'core.utils.logger': winston.Winston;
     'core.utils': IUtils;
     config: IConfig;
 }
 
 export default function ({
-    'core.app.helpers.initQueryContext': initQueryContext = null,
-    'core.domain.globalSettings': globalSettingsDomain = null,
-    'core.domain.record': recordDomain = null,
-    'core.utils.logger': logger = null,
-    'core.utils': utils = null,
-    config = null
+    'core.app.helpers.initQueryContext': initQueryContext,
+    'core.domain.globalSettings': globalSettingsDomain,
+    'core.domain.record': recordDomain,
+    'core.utils.logger': logger,
+    'core.utils': utils,
+    config
 }: IDeps): ICoreApp {
     const _getFileRecord = async (
         settings: IGlobalSettings,

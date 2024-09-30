@@ -7,7 +7,7 @@ import formatDateAction from './formatDateAction';
 describe('formatDateAction', () => {
     const action = formatDateAction().action;
     const attrText: IAttribute = {id: 'test_attr', format: AttributeFormats.DATE, type: AttributeTypes.SIMPLE};
-    const ctx = {attribute: attrText};
+    const ctx = {attribute: attrText, userId: 'test_user'};
 
     const testingDate = 2119477320;
 

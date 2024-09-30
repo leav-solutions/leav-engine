@@ -15,14 +15,11 @@ export interface ITreeDataValidationHelper {
 }
 
 interface IDeps {
-    'core.infra.library'?: ILibraryRepo;
-    'core.utils'?: IUtils;
+    'core.infra.library': ILibraryRepo;
+    'core.utils': IUtils;
 }
 
-export default function ({
-    'core.infra.library': libraryRepo = null,
-    'core.utils': utils = null
-}: IDeps): ITreeDataValidationHelper {
+export default function ({'core.infra.library': libraryRepo, 'core.utils': utils}: IDeps): ITreeDataValidationHelper {
     const _validateId = (treeData: ITree) => {
         if (!utils.isIdValid(treeData.id)) {
             throw new ValidationError({id: Errors.INVALID_ID_FORMAT});

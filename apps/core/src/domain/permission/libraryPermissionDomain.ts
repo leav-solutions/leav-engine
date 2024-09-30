@@ -11,12 +11,12 @@ export interface ILibraryPermissionDomain {
 }
 
 interface IDeps {
-    'core.domain.permission.helpers.globalPermission'?: IGlobalPermissionHelper;
+    'core.domain.permission.helpers.globalPermission': IGlobalPermissionHelper;
 }
 
 export default function ({
-    'core.domain.permission.helpers.globalPermission': globalPermHelper = null
-}: IDeps = {}): ILibraryPermissionDomain {
+    'core.domain.permission.helpers.globalPermission': globalPermHelper
+}: IDeps): ILibraryPermissionDomain {
     const getLibraryPermission = async ({
         action,
         libraryId,

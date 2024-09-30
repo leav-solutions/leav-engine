@@ -5,7 +5,13 @@ import {Database} from 'arangojs';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {IApiKey} from '_types/apiKey';
 import {mockCtx} from '../../__tests__/mocks/shared';
-import apiKeyRepo from './apiKeyRepo';
+import apiKeyRepo, {IDeps} from './apiKeyRepo';
+import {ToAny} from 'utils/utils';
+
+const depsBase: ToAny<IDeps> = {
+    'core.infra.db.dbUtils': jest.fn(),
+    'core.infra.db.dbService': jest.fn()
+};
 
 describe('apiKeyRepo', () => {
     const docKeyData = {
@@ -19,7 +25,7 @@ describe('apiKeyRepo', () => {
         label: 'Test',
         key: 'test_key',
         userId: '42',
-        expiresAt: null,
+        expiresAt: 0,
         createdAt: 1234567890,
         createdBy: '42',
         modifiedAt: 1234567890,
@@ -80,16 +86,17 @@ describe('apiKeyRepo', () => {
 
     describe('getApiKeys', () => {
         test('Should return a list of version keys', async () => {
-            const mockDbServ = {db: null, execute: global.__mockPromise([])};
+            const mockDbServ = {execute: global.__mockPromise([])};
 
             const repo = apiKeyRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
 
             const keys = await repo.getApiKeys({ctx: mockCtx});
 
-            expect(mockDbUtils.findCoreEntity.mock.calls.length).toBe(1);
+            expect(mockDbUtils.findCoreEntity?.mock.calls.length).toBe(1);
             expect(keys).toEqual([keyData]);
         });
     });

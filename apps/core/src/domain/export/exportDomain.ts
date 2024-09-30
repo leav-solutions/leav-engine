@@ -35,30 +35,30 @@ export interface IExportDomain {
 }
 
 interface IDeps {
-    'core.domain.record'?: IRecordDomain;
-    'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.library'?: ILibraryDomain;
-    'core.domain.tasksManager'?: ITasksManagerDomain;
-    'core.domain.helpers.validate'?: IValidateHelper;
-    'core.domain.helpers.updateTaskProgress'?: UpdateTaskProgress;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.utils'?: IUtils;
-    translator?: i18n;
-    config?: Config.IConfig;
+    'core.domain.record': IRecordDomain;
+    'core.domain.attribute': IAttributeDomain;
+    'core.domain.library': ILibraryDomain;
+    'core.domain.tasksManager': ITasksManagerDomain;
+    'core.domain.helpers.validate': IValidateHelper;
+    'core.domain.helpers.updateTaskProgress': UpdateTaskProgress;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.utils': IUtils;
+    translator: i18n;
+    config: Config.IConfig;
 }
 
 export default function ({
-    config = null,
-    'core.domain.record': recordDomain = null,
-    'core.domain.helpers.validate': validateHelper = null,
-    'core.domain.attribute': attributeDomain = null,
-    'core.domain.library': libraryDomain = null,
-    'core.domain.tasksManager': tasksManager = null,
-    'core.domain.helpers.updateTaskProgress': updateTaskProgress = null,
-    'core.domain.eventsManager': eventsManagerDomain = null,
-    'core.utils': utils = null,
-    translator = null
-}: IDeps = {}): IExportDomain {
+    config,
+    'core.domain.record': recordDomain,
+    'core.domain.helpers.validate': validateHelper,
+    'core.domain.attribute': attributeDomain,
+    'core.domain.library': libraryDomain,
+    'core.domain.tasksManager': tasksManager,
+    'core.domain.helpers.updateTaskProgress': updateTaskProgress,
+    'core.domain.eventsManager': eventsManagerDomain,
+    'core.utils': utils,
+    translator
+}: IDeps): IExportDomain {
     const _getFormattedValues = async (
         attribute: IAttribute,
         values: IValue[],

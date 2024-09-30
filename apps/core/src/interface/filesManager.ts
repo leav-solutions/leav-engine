@@ -8,7 +8,7 @@ export interface IFilesManagerInterface {
 }
 
 interface IDeps {
-    'core.app.core.filesManager'?: IFilesManagerApp;
+    'core.app.core.filesManager': IFilesManagerApp;
 }
 
 export default function ({'core.app.core.filesManager': filesManager}: IDeps): IFilesManagerInterface {

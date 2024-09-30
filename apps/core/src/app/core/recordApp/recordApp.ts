@@ -33,36 +33,37 @@ import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from '../helpe
 import {IIndexationManagerApp} from '../indexationManagerApp';
 import {ICreateRecordParams, IRecordsQueryVariables} from './_types';
 import {isLeavError} from '../../../errors/typeguards';
+import {IFindRecordParams} from 'domain/record/_types';
 
 export interface ICoreRecordApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
 interface IDeps {
-    'core.domain.record'?: IRecordDomain;
-    'core.domain.tree'?: ITreeDomain;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.domain.permission'?: IPermissionDomain;
-    'core.domain.library'?: ILibraryDomain;
-    'core.utils'?: IUtils;
-    'core.app.graphql'?: IGraphqlApp;
-    'core.app.core.indexationManager'?: IIndexationManagerApp;
-    'core.app.helpers.convertVersionFromGqlFormat'?: ConvertVersionFromGqlFormatFunc;
-    'core.app.core.subscriptionsHelper'?: ICoreSubscriptionsHelpersApp;
+    'core.domain.record': IRecordDomain;
+    'core.domain.tree': ITreeDomain;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.domain.permission': IPermissionDomain;
+    'core.domain.library': ILibraryDomain;
+    'core.utils': IUtils;
+    'core.app.graphql': IGraphqlApp;
+    'core.app.core.indexationManager': IIndexationManagerApp;
+    'core.app.helpers.convertVersionFromGqlFormat': ConvertVersionFromGqlFormatFunc;
+    'core.app.core.subscriptionsHelper': ICoreSubscriptionsHelpersApp;
 }
 
 export default function ({
-    'core.domain.record': recordDomain = null,
-    'core.domain.tree': treeDomain = null,
-    'core.domain.eventsManager': eventsManagerDomain = null,
-    'core.domain.permission': permissionDomain = null,
-    'core.domain.library': libraryDomain = null,
-    'core.utils': utils = null,
-    'core.app.graphql': graphqlApp = null,
-    'core.app.core.indexationManager': indexationManagerApp = null,
-    'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat = null,
-    'core.app.core.subscriptionsHelper': subscriptionsHelper = null
-}: IDeps = {}): ICoreRecordApp {
+    'core.domain.record': recordDomain,
+    'core.domain.tree': treeDomain,
+    'core.domain.eventsManager': eventsManagerDomain,
+    'core.domain.permission': permissionDomain,
+    'core.domain.library': libraryDomain,
+    'core.utils': utils,
+    'core.app.graphql': graphqlApp,
+    'core.app.core.indexationManager': indexationManagerApp,
+    'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat,
+    'core.app.core.subscriptionsHelper': subscriptionsHelper
+}: IDeps): ICoreRecordApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -263,31 +264,34 @@ export default function ({
                                       }, {})
                                     : null;
 
-                            ctx.version = formattedVersion;
+                            if (formattedVersion) {
+                                ctx.version = formattedVersion;
+                            }
+
+                            const params: IFindRecordParams = {
+                                library,
+                                filters,
+                                sort,
+                                pagination: pagination?.cursor
+                                    ? (pagination as ICursorPaginationParams)
+                                    : (pagination as IPaginationParams),
+                                withCount: fields.includes('totalCount'),
+                                retrieveInactive,
+                                fulltextSearch: searchQuery
+                            };
+
+                            if (formattedVersion) {
+                                params.options = {version: formattedVersion};
+                            }
 
                             return recordDomain.find({
-                                params: {
-                                    library,
-                                    filters,
-                                    sort,
-                                    pagination: pagination?.cursor
-                                        ? (pagination as ICursorPaginationParams)
-                                        : (pagination as IPaginationParams),
-                                    options: {version: formattedVersion},
-                                    withCount: fields.includes('totalCount'),
-                                    retrieveInactive,
-                                    fulltextSearch: searchQuery
-                                },
+                                params,
                                 ctx
                             });
                         }
                     },
                     Mutation: {
-                        async createRecord(
-                            _,
-                            {library, data}: ICreateRecordParams,
-                            ctx: IQueryInfos
-                        ): Promise<IRecord> {
+                        async createRecord(_, {library, data}: ICreateRecordParams, ctx: IQueryInfos) {
                             const valuesVersion = data?.version ? convertVersionFromGqlFormat(data.version) : null;
                             const valuesToSave = data
                                 ? data.values.map(value => ({
@@ -309,7 +313,7 @@ export default function ({
                         },
                         async indexRecords(
                             parent,
-                            {libraryId, records}: {libraryId: string; records?: string[]},
+                            {libraryId, records}: {libraryId: string; records: string[]},
                             ctx
                         ): Promise<boolean> {
                             await indexationManagerApp.indexDatabase(ctx, libraryId, records);
@@ -380,7 +384,7 @@ export default function ({
                                         }
                                     }
                                 );
-                                ctx.errors = [...ctx.errors, leavErr];
+                                ctx.errors = [...(ctx.errors ?? []), leavErr];
                                 return [];
                             }
                         },
@@ -411,7 +415,7 @@ export default function ({
                         }
                     },
                     RecordFilter: {
-                        tree: async (recordFilter: IRecordFilterLight, _, ctx: IQueryInfos): Promise<ITree> => {
+                        tree: async (recordFilter: IRecordFilterLight, _, ctx: IQueryInfos): Promise<ITree | null> => {
                             if (!recordFilter.treeId) {
                                 return null;
                             }

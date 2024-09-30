@@ -9,7 +9,7 @@ export interface ITasksManagerInterface {
 }
 
 interface IDeps {
-    'core.app.core.tasksManager'?: ITasksManagerApp;
+    'core.app.core.tasksManager': ITasksManagerApp;
 }
 
 export default function ({'core.app.core.tasksManager': tasksManager}: IDeps): ITasksManagerInterface {

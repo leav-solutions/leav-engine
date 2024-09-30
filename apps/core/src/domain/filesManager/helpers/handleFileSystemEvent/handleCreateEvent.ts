@@ -16,6 +16,7 @@ import {
 } from '../handleFileUtilsHelper';
 import {requestPreviewGeneration} from '../handlePreview';
 import {IHandleFileSystemEventDeps, IHandleFileSystemEventResources} from './_types';
+import {IRecord} from '_types/record';
 
 export const handleCreateEvent = async (
     scanMsg: IFileEventData,
@@ -23,7 +24,8 @@ export const handleCreateEvent = async (
     deps: IHandleFileSystemEventDeps,
     ctx: IQueryInfos
 ) => {
-    const {filePath, fileName} = getInputData(scanMsg.pathAfter);
+    const pathAfter = scanMsg.pathAfter ?? '';
+    const {filePath, fileName} = getInputData(pathAfter);
 
     // Search for existing record
     const directoriesLibraryId = deps.utils.getDirectoriesLibraryId(resources.library);
@@ -31,13 +33,19 @@ export const handleCreateEvent = async (
     const recordLibrary = scanMsg.isDirectory ? directoriesLibraryId : filesLibraryId;
     const recordLibraryProps = await deps.libraryDomain.getLibraryProperties(recordLibrary, ctx);
 
-    let record = await getRecord({fileName, filePath, fileInode: scanMsg.inode}, {recordLibrary}, true, deps, ctx);
+    let record = (await getRecord(
+        {fileName, filePath, fileInode: scanMsg.inode},
+        {recordLibrary},
+        true,
+        deps,
+        ctx
+    )) as IRecord;
 
     // Preview and Previews status
     const {previewsStatus, previews} = getPreviewsDefaultData(systemPreviewsSettings);
 
     const fileMetadata = !scanMsg.isDirectory
-        ? await extractFileMetadata(scanMsg.pathAfter, scanMsg.rootKey, deps.config)
+        ? await extractFileMetadata(pathAfter, scanMsg.rootKey, deps.config)
         : null;
 
     if (record) {
@@ -54,7 +62,9 @@ export const handleCreateEvent = async (
                 [FilesAttributes.HASH]: scanMsg.hash,
                 ...fileMetadata
             };
-
+            if (!record.id) {
+                throw new Error('Record id is missing');
+            }
             await updateRecordFile(recordData, record.id, recordLibrary, deps, ctx);
         } catch (e) {
             console.error(e);
@@ -81,18 +91,21 @@ export const handleCreateEvent = async (
     }
 
     // Find the parent folder
-    const parentRecords = await getParentRecord(filePath, directoriesLibraryId, deps, ctx);
+    const parentRecords = (await getParentRecord(filePath, directoriesLibraryId, deps, ctx)) as IRecord;
 
     // Link the child to his parent in the tree
     await createFilesTreeElement(record, parentRecords, filesLibraryId, deps, ctx);
 
     // Create the previews
     if (!scanMsg.isDirectory) {
+        if (!record?.id) {
+            throw new Error('Record id is missing');
+        }
         await requestPreviewGeneration({
             recordId: record.id,
-            pathAfter: scanMsg.pathAfter,
+            pathAfter,
             libraryId: recordLibrary,
-            versions: deps.utils.previewsSettingsToVersions(recordLibraryProps.previewsSettings),
+            versions: deps.utils.previewsSettingsToVersions(recordLibraryProps.previewsSettings ?? []),
             deps: {...deps}
         });
     }

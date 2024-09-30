@@ -26,19 +26,19 @@ export interface IApiKeyDomain {
     validateApiKey(params: {apiKey: string; ctx: IQueryInfos}): Promise<IApiKey>;
 }
 
-interface IDeps {
-    'core.domain.permission.admin'?: IAdminPermissionDomain;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.infra.apiKey'?: IApiKeyRepo;
-    'core.utils'?: IUtils;
-    translator?: i18n;
+export interface IDeps {
+    'core.domain.permission.admin': IAdminPermissionDomain;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.infra.apiKey': IApiKeyRepo;
+    'core.utils': IUtils;
+    translator: i18n;
 }
 
 export default function ({
-    'core.domain.permission.admin': adminPermissionDomain = null,
-    'core.domain.eventsManager': eventsManagerDomain = null,
-    'core.infra.apiKey': apiKeyRepo = null,
-    'core.utils': utils = null
+    'core.domain.permission.admin': adminPermissionDomain,
+    'core.domain.eventsManager': eventsManagerDomain,
+    'core.infra.apiKey': apiKeyRepo,
+    'core.utils': utils
 }: IDeps): IApiKeyDomain {
     const _hashApiKey = async (key: string): Promise<string> => {
         const salt = await bcrypt.genSalt(10);
