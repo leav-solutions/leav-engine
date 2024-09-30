@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {KitInputNumber} from 'aristid-ds';
+import {KitInputNumber, KitInputWrapper} from 'aristid-ds';
 import {ComponentPropsWithRef, FocusEvent, FunctionComponent, useState} from 'react';
 import {
     IStandardFieldReducerState,
@@ -47,7 +47,7 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     const {t} = useSharedTranslation();
     const {lang} = useLang();
     const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick, infoIconWithTooltip} = useValueDetailsButton({
+    const {onValueDetailsButtonClick} = useValueDetailsButton({
         value: fieldValue?.value,
         attribute
     });
@@ -80,10 +80,11 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     const label = localizedTranslation(state.formElement.settings.label, lang);
 
     return (
-        <KitInputNumberStyled
-            label={label}
+        <KitInputWrapper
             required={state.formElement.settings.required}
-            status={errors.length > 0 ? 'error' : ''}
+            label={label}
+            onInfoClick={onValueDetailsButtonClick}
+            status={errors.length > 0 ? 'error' : undefined}
             helper={
                 state.isInheritedOverrideValue
                     ? t('record_edition.inherited_input_helper', {
@@ -91,13 +92,14 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
                       })
                     : undefined
             }
-            infoIcon={shouldShowValueDetailsButton ? infoIconWithTooltip : null}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
+        >
+        <KitInputNumberStyled
             value={value}
             onChange={_handleOnChange}
             disabled={state.isReadOnly}
             onBlur={_handleOnBlur}
             $shouldHighlightColor={!hasChanged && state.isInheritedNotOverrideValue}
         />
+        </KitInputWrapper>
     );
 };
