@@ -9,7 +9,7 @@ import {i18n} from 'i18next';
 import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
-import {IUtils} from 'utils/utils';
+import {IUtils, ToAny} from 'utils/utils';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {systemPreviewsSettings} from '../../domain/filesManager/_constants';
@@ -23,7 +23,7 @@ import {AdminPermissionsActions, PermissionsRelations} from '../../_types/permis
 import {mockAttrSimple} from '../../__tests__/mocks/attribute';
 import {mockLibrary} from '../../__tests__/mocks/library';
 import {IAttributeDomain} from '../attribute/attributeDomain';
-import libraryDomain from './libraryDomain';
+import libraryDomain, {IDeps} from './libraryDomain';
 import {deleteAssociatedValues} from './helpers';
 import {IDeleteAssociatedValuesHelper} from './helpers/deleteAssociatedValues';
 import {IUpdateAssociatedFormsHelper} from './helpers/updateAssociatedForms';
@@ -52,6 +52,25 @@ const mockCacheService: Mockify<ICacheService> = {
 
 const mockCachesService: Mockify<ICachesService> = {
     getCache: jest.fn().mockReturnValue(mockCacheService)
+};
+
+const depsBase: ToAny<IDeps> = {
+    'core.domain.attribute': jest.fn(),
+    'core.domain.eventsManager': jest.fn(),
+    'core.domain.helpers.getCoreEntityById': jest.fn(),
+    'core.domain.helpers.validate': jest.fn(),
+    'core.domain.library.helpers.deleteAssociatedValues': jest.fn(),
+    'core.domain.library.helpers.runPreDelete': jest.fn(),
+    'core.domain.library.helpers.updateAssociatedForms': jest.fn(),
+    'core.domain.permission.admin': jest.fn(),
+    'core.domain.record': jest.fn(),
+    'core.infra.attribute': jest.fn(),
+    'core.infra.cache.cacheService': jest.fn(),
+    'core.infra.library': jest.fn(),
+    'core.infra.tree': jest.fn(),
+    'core.utils': jest.fn(),
+    translator: {},
+    config: {}
 };
 
 describe('LibraryDomain', () => {
@@ -109,6 +128,7 @@ describe('LibraryDomain', () => {
             };
 
             const libDomain = libraryDomain({
+                ...depsBase,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain
             });
@@ -118,9 +138,9 @@ describe('LibraryDomain', () => {
                 ctx
             });
 
-            expect(mockLibRepo.getLibraries.mock.calls.length).toBe(1);
-            expect(mockAttrDomain.getLibraryAttributes.mock.calls.length).toBe(2);
-            expect(mockAttrDomain.getLibraryFullTextAttributes.mock.calls.length).toBe(2);
+            expect(mockLibRepo.getLibraries?.mock.calls.length).toBe(1);
+            expect(mockAttrDomain.getLibraryAttributes?.mock.calls.length).toBe(2);
+            expect(mockAttrDomain.getLibraryFullTextAttributes?.mock.calls.length).toBe(2);
             expect(lib.totalCount).toBe(2);
 
             expect(lib.list[0].attributes).toBeDefined();
@@ -137,18 +157,20 @@ describe('LibraryDomain', () => {
             };
 
             const libDomain = libraryDomain({
+                ...depsBase,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain
             });
 
             const lib = await libDomain.getLibraries({params: {withCount: true}, ctx});
-            expect(mockLibRepo.getLibraries.mock.calls[0][0].params.sort).toMatchObject({field: 'id', order: 'asc'});
+            expect(mockLibRepo.getLibraries?.mock.calls[0][0].params.sort).toMatchObject({field: 'id', order: 'asc'});
         });
     });
 
     describe('getLibraryProperties', () => {
         test('Should return library properties', async function () {
             const libDomain = libraryDomain({
+                ...depsBase,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper
             });
             const lib = await libDomain.getLibraryProperties('test', ctx);
@@ -160,7 +182,7 @@ describe('LibraryDomain', () => {
             const mockLibRepo: Mockify<ILibraryRepo> = {
                 getLibraries: global.__mockPromise([])
             };
-            const libDomain = libraryDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
+            const libDomain = libraryDomain({...depsBase, 'core.infra.library': mockLibRepo as ILibraryRepo});
 
             await expect(libDomain.getLibraryProperties('test', ctx)).rejects.toThrow();
         });
@@ -191,6 +213,7 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
+                    ...depsBase,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
@@ -243,6 +266,7 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
+                    ...depsBase,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
@@ -260,7 +284,7 @@ describe('LibraryDomain', () => {
                     },
                     ctx
                 );
-                expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][0].attributes.includes('file_path')).toBe(true);
+                expect(mockLibRepo.saveLibraryAttributes?.mock.calls[0][0].attributes.includes('file_path')).toBe(true);
             });
 
             describe('Files library', () => {
@@ -300,6 +324,7 @@ describe('LibraryDomain', () => {
                     };
 
                     const libDomain = libraryDomain({
+                        ...depsBase,
                         'core.infra.library': mockLibRepo as ILibraryRepo,
                         'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                         'core.domain.attribute': mockAttrDomain as IAttributeDomain,
@@ -317,7 +342,7 @@ describe('LibraryDomain', () => {
                         ctx
                     );
 
-                    expect(mockLibRepo.createLibrary.mock.calls[0][0].libData.previewsSettings).toEqual(
+                    expect(mockLibRepo.createLibrary?.mock.calls[0][0].libData.previewsSettings).toEqual(
                         systemPreviewsSettings
                     );
                 });
@@ -358,6 +383,7 @@ describe('LibraryDomain', () => {
                     };
 
                     const libDomain = libraryDomain({
+                        ...depsBase,
                         'core.infra.library': mockLibRepo as ILibraryRepo,
                         'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                         'core.domain.attribute': mockAttrDomain as IAttributeDomain,
@@ -394,7 +420,7 @@ describe('LibraryDomain', () => {
                         ctx
                     );
 
-                    expect(mockLibRepo.createLibrary.mock.calls[0][0].libData.previewsSettings).toEqual([
+                    expect(mockLibRepo.createLibrary?.mock.calls[0][0].libData.previewsSettings).toEqual([
                         ...systemPreviewsSettings,
                         ...previewsSettings
                     ]);
@@ -436,6 +462,7 @@ describe('LibraryDomain', () => {
                     };
 
                     const libDomain = libraryDomain({
+                        ...depsBase,
                         'core.infra.library': mockLibRepo as ILibraryRepo,
                         'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                         'core.domain.attribute': mockAttrDomain as IAttributeDomain,
@@ -523,6 +550,7 @@ describe('LibraryDomain', () => {
                     };
 
                     const libDomain = libraryDomain({
+                        ...depsBase,
                         'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                         'core.infra.library': mockLibRepo as ILibraryRepo,
                         'core.domain.attribute': mockAttrDomain as IAttributeDomain,
@@ -585,6 +613,7 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
+                    ...depsBase,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
@@ -598,14 +627,14 @@ describe('LibraryDomain', () => {
                 const updatedLib = await libDomain.saveLibrary({id: 'test'}, ctx);
 
                 expect(mockCacheService.deleteData).toBeCalled();
-                expect(mockLibRepo.createLibrary.mock.calls.length).toBe(0);
-                expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(1);
-                expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(1);
+                expect(mockLibRepo.createLibrary?.mock.calls.length).toBe(0);
+                expect(mockLibRepo.updateLibrary?.mock.calls.length).toBe(1);
+                expect(mockLibRepo.saveLibraryAttributes?.mock.calls.length).toBe(1);
 
                 expect(updatedLib).toMatchObject({id: 'test', system: false});
 
                 expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-                expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+                expect(mockAdminPermDomain.getAdminPermission?.mock.calls[0][0].action).toBe(
                     AdminPermissionsActions.EDIT_LIBRARY
                 );
             });
@@ -651,6 +680,7 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
+                    ...depsBase,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
@@ -676,18 +706,18 @@ describe('LibraryDomain', () => {
                 const defaultAttributes = getDefaultAttributes(updatedLib.behavior, updatedLib.id);
 
                 expect(mockCacheService.deleteData).toBeCalledTimes(1); // Entity cache clear
-                expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(1);
-                expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(1);
-                expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][0].libId).toEqual('test');
-                expect(mockLibRepo.saveLibraryAttributes.mock.calls[0][0].attributes).toEqual(
+                expect(mockLibRepo.updateLibrary?.mock.calls.length).toBe(1);
+                expect(mockLibRepo.saveLibraryAttributes?.mock.calls.length).toBe(1);
+                expect(mockLibRepo.saveLibraryAttributes?.mock.calls[0][0].libId).toEqual('test');
+                expect(mockLibRepo.saveLibraryAttributes?.mock.calls[0][0].attributes).toEqual(
                     defaultAttributes.concat(['attr2'])
                 );
-                expect(mockLibRepo.saveLibraryFullTextAttributes.mock.calls[0][0].fullTextAttributes).toEqual([]);
+                expect(mockLibRepo.saveLibraryFullTextAttributes?.mock.calls[0][0].fullTextAttributes).toEqual([]);
 
                 expect(updatedLib).toMatchObject({id: 'test', system: false});
 
                 expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-                expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+                expect(mockAdminPermDomain.getAdminPermission?.mock.calls[0][0].action).toBe(
                     AdminPermissionsActions.EDIT_LIBRARY
                 );
             });
@@ -727,6 +757,7 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
+                    ...depsBase,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
@@ -749,8 +780,8 @@ describe('LibraryDomain', () => {
                     )
                 ).rejects.toThrow(ValidationError);
 
-                expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(0);
-                expect(mockLibRepo.saveLibraryAttributes.mock.calls.length).toBe(0);
+                expect(mockLibRepo.updateLibrary?.mock.calls.length).toBe(0);
+                expect(mockLibRepo.saveLibraryAttributes?.mock.calls.length).toBe(0);
             });
 
             test('Should throw if unknown trees attributes in permissions conf', async function () {
@@ -787,6 +818,7 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
+                    ...depsBase,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
@@ -810,7 +842,7 @@ describe('LibraryDomain', () => {
                     )
                 ).rejects.toThrow(ValidationError);
 
-                expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(0);
+                expect(mockLibRepo.updateLibrary?.mock.calls.length).toBe(0);
             });
 
             test('Should throw if attributes in recordIdentity are not binded to library', async function () {
@@ -848,6 +880,7 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
+                    ...depsBase,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
@@ -867,7 +900,7 @@ describe('LibraryDomain', () => {
                     )
                 ).rejects.toThrow(ValidationError);
 
-                expect(mockLibRepo.updateLibrary.mock.calls.length).toBe(0);
+                expect(mockLibRepo.updateLibrary?.mock.calls.length).toBe(0);
             });
 
             test('Should throw if forbidden action', async function () {
@@ -890,6 +923,7 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
+                    ...depsBase,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
@@ -937,6 +971,7 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
+                    ...depsBase,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
@@ -987,6 +1022,7 @@ describe('LibraryDomain', () => {
                 };
 
                 const libDomain = libraryDomain({
+                    ...depsBase,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.library': mockLibRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
@@ -999,7 +1035,7 @@ describe('LibraryDomain', () => {
 
                 await libDomain.saveLibrary({id: 'test'}, ctx);
 
-                expect(mockLibRepo.updateLibrary.mock.calls[0][0].behavior).toBeUndefined();
+                expect(mockLibRepo.updateLibrary?.mock.calls[0][0].behavior).toBeUndefined();
             });
         });
     });
@@ -1020,6 +1056,7 @@ describe('LibraryDomain', () => {
             };
 
             const libDomain = libraryDomain({
+                ...depsBase,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
@@ -1034,11 +1071,11 @@ describe('LibraryDomain', () => {
 
             await libDomain.deleteLibrary(libData.id, ctx);
 
-            expect(mockLibRepo.deleteLibrary.mock.calls.length).toBe(1);
+            expect(mockLibRepo.deleteLibrary?.mock.calls.length).toBe(1);
 
             expect(mockRunPreDelete).toBeCalled();
             expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
+            expect(mockAdminPermDomain.getAdminPermission?.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.DELETE_LIBRARY
             );
         });
@@ -1050,6 +1087,7 @@ describe('LibraryDomain', () => {
             };
 
             const libDomain = libraryDomain({
+                ...depsBase,
                 'core.domain.library.helpers.runPreDelete': mockRunPreDelete,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
@@ -1068,6 +1106,7 @@ describe('LibraryDomain', () => {
             };
 
             const libDomain = libraryDomain({
+                ...depsBase,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
             });
@@ -1082,6 +1121,7 @@ describe('LibraryDomain', () => {
             };
             const mockLibRepo: Mockify<ILibraryRepo> = {deleteLibrary: global.__mockPromise(libData)};
             const libDomain = libraryDomain({
+                ...depsBase,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.permission.admin': mockAdminPermForbiddenDomain as IAdminPermissionDomain
@@ -1108,6 +1148,7 @@ describe('LibraryDomain', () => {
             });
 
             const libDomain = libraryDomain({
+                ...depsBase,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,

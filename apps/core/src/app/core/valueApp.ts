@@ -18,21 +18,21 @@ export interface ICoreValueApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 interface IDeps {
-    'core.domain.value'?: IValueDomain;
-    'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.record'?: IRecordDomain;
-    'core.app.graphql'?: IGraphqlApp;
-    'core.app.helpers.convertVersionFromGqlFormat'?: ConvertVersionFromGqlFormatFunc;
-    'core.utils'?: IUtils;
+    'core.domain.value': IValueDomain;
+    'core.domain.attribute': IAttributeDomain;
+    'core.domain.record': IRecordDomain;
+    'core.app.graphql': IGraphqlApp;
+    'core.app.helpers.convertVersionFromGqlFormat': ConvertVersionFromGqlFormatFunc;
+    'core.utils': IUtils;
 }
 export default function ({
-    'core.domain.value': valueDomain = null,
-    'core.domain.record': recordDomain = null,
-    'core.domain.attribute': attributeDomain = null,
-    'core.app.graphql': graphqlApp = null,
-    'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat = null,
-    'core.utils': utils = null
-}: IDeps = {}): ICoreValueApp {
+    'core.domain.value': valueDomain,
+    'core.domain.record': recordDomain,
+    'core.domain.attribute': attributeDomain,
+    'core.app.graphql': graphqlApp,
+    'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat,
+    'core.utils': utils
+}: IDeps): ICoreValueApp {
     const _convertVersionToGqlFormat = (version: IValueVersion) => {
         const versionsNames = Object.keys(version);
         const formattedVersion = [];

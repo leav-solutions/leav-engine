@@ -8,7 +8,17 @@ import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IAttributePermissionDomain} from './attributePermissionDomain';
 import * as getDefaultPermission from './helpers/defaultPermission';
 import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
-import recordAttributePermissionDomain from './recordAttributePermissionDomain';
+import recordAttributePermissionDomain, {IDeps} from './recordAttributePermissionDomain';
+import {ToAny} from 'utils/utils';
+
+const depsBase: ToAny<IDeps> = {
+    'core.domain.permission.attribute': jest.fn(),
+    'core.domain.permission.helpers.treeBasedPermissions': jest.fn(),
+    'core.domain.permission.helpers.permissionByUserGroups': jest.fn(),
+    'core.domain.permission.helpers.defaultPermission': jest.fn(),
+    'core.domain.attribute': jest.fn(),
+    'core.infra.value': jest.fn()
+};
 
 describe('AttributePermissionDomain', () => {
     const ctx: IQueryInfos = {
@@ -79,6 +89,7 @@ describe('AttributePermissionDomain', () => {
             jest.spyOn(getDefaultPermission, 'default');
 
             const recordAttrPermDomain = recordAttributePermissionDomain({
+                ...depsBase,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.infra.value': mockValueRepo as IValueRepo
@@ -94,7 +105,7 @@ describe('AttributePermissionDomain', () => {
             );
 
             expect((getDefaultPermission.default as jest.Mock).mock.calls.length).toBe(0);
-            expect(mockTreeBasedPerm.getTreeBasedPermission.mock.calls.length).toBe(1);
+            expect(mockTreeBasedPerm.getTreeBasedPermission?.mock.calls.length).toBe(1);
             expect(perm).toBe(true);
         });
 
@@ -111,6 +122,7 @@ describe('AttributePermissionDomain', () => {
             };
 
             const recordAttrPermDomain = recordAttributePermissionDomain({
+                ...depsBase,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.permission.attribute': mockAttrPermDomain as IAttributePermissionDomain,
                 'core.domain.attribute': mockAttrNoPermsDomain as IAttributeDomain,

@@ -11,12 +11,12 @@ export interface ITreeLibraryPermissionDomain {
 }
 
 interface IDeps {
-    'core.domain.permission.helpers.globalPermission'?: IGlobalPermissionHelper;
+    'core.domain.permission.helpers.globalPermission': IGlobalPermissionHelper;
 }
 
 export default function ({
-    'core.domain.permission.helpers.globalPermission': globalPermHelper = null
-}: IDeps = {}): ITreeLibraryPermissionDomain {
+    'core.domain.permission.helpers.globalPermission': globalPermHelper
+}: IDeps): ITreeLibraryPermissionDomain {
     const getTreeLibraryPermission = async ({
         action,
         treeId,

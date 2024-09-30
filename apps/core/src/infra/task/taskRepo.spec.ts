@@ -107,7 +107,7 @@ describe('TaskRepo', () => {
     });
 
     test('Retrieve tasks list with clean id', async () => {
-        const mockDbServ = {db: null, execute: global.__mockPromise([])};
+        const mockDbServ = {execute: global.__mockPromise([])};
         const mockDbUtils: Mockify<IDbUtils> = {
             findCoreEntity: global.__mockPromise({list: [{...mockTask, id: 'id'}]})
         };

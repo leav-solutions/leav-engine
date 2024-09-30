@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import createAuthApp from '../authApp';
+import createAuthApp, {IDeps} from '../authApp';
 import {IOIDCClientService} from '../../../infra/oidc/oidcClientService';
 import {Express} from 'express';
 import {identity} from 'lodash';
@@ -15,6 +15,20 @@ import {IValueDomain} from '../../../domain/value/valueDomain';
 import {IConfig} from '../../../_types/config';
 import {DeepPartial} from '../../../_types/utils';
 import {Mockify} from '@leav/utils';
+import {ToAny} from '../../../utils/utils';
+
+const depsBase: ToAny<IDeps> = {
+    'core.domain.value': jest.fn(),
+    'core.domain.record': jest.fn(),
+    'core.domain.apiKey': jest.fn(),
+    'core.domain.user': jest.fn(),
+    'core.infra.cache.cacheService': jest.fn(),
+    'core.utils.logger': jest.fn(),
+    'core.infra.oidc.oidcClientService': jest.fn(),
+    'core.app.helpers.initQueryContext': jest.fn(),
+    'core.app.helpers.convertOIDCIdentifier': jest.fn(),
+    config: {}
+};
 
 describe('authApp', () => {
     describe('auth/authenticate', () => {
@@ -57,6 +71,7 @@ describe('authApp', () => {
             };
 
             const authApp = createAuthApp({
+                ...depsBase,
                 'core.app.helpers.initQueryContext': initQueryContext({}),
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
@@ -111,7 +126,7 @@ describe('authApp', () => {
 
             authApp.registerRoute(expressMock as unknown as Express);
 
-            const refreshHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/authenticate')[1];
+            const refreshHandler = expressMock.post?.mock.calls.find(args => args[0] === '/auth/authenticate')[1];
 
             // WHEN
             await refreshHandler(request, response, nextMock);
@@ -144,6 +159,7 @@ describe('authApp', () => {
             };
 
             const authApp = createAuthApp({
+                ...depsBase,
                 config: mockConfig as IConfig
             });
             const request: any = {};
@@ -174,11 +190,12 @@ describe('authApp', () => {
             };
 
             const authApp = createAuthApp({
+                ...depsBase,
                 'core.infra.oidc.oidcClientService': oidcClientServiceMock as IOIDCClientService,
                 'core.app.helpers.convertOIDCIdentifier': convertOIDCIdentifier(),
                 config: mockConfig as IConfig
             });
-            oidcClientServiceMock.getAuthorizationUrl.mockResolvedValueOnce('oidcLoginUrl');
+            oidcClientServiceMock.getAuthorizationUrl?.mockResolvedValueOnce('oidcLoginUrl');
             const request: any = {
                 originalUrl: 'originalUrl',
                 ctx: {
@@ -224,6 +241,7 @@ describe('authApp', () => {
             };
 
             const authApp = createAuthApp({
+                ...depsBase,
                 'core.infra.oidc.oidcClientService': oidcClientServiceMock as IOIDCClientService,
                 config: mockConfig as IConfig
             });
@@ -232,7 +250,7 @@ describe('authApp', () => {
                 post: jest.fn()
             };
             authApp.registerRoute(expressMock as unknown as Express);
-            const logoutHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/logout')[1];
+            const logoutHandler = expressMock.post?.mock.calls.find(args => args[0] === '/auth/logout')[1];
             const request = {
                 headers: {
                     host: 'host'
@@ -284,6 +302,7 @@ describe('authApp', () => {
             };
 
             const authApp = createAuthApp({
+                ...depsBase,
                 'core.infra.oidc.oidcClientService': oidcClientServiceMock as IOIDCClientService,
                 config: mockConfig as IConfig
             });
@@ -292,7 +311,7 @@ describe('authApp', () => {
                 post: jest.fn()
             };
             authApp.registerRoute(expressMock as unknown as Express);
-            const logoutHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/logout')[1];
+            const logoutHandler = expressMock.post?.mock.calls.find(args => args[0] === '/auth/logout')[1];
             const request = {
                 headers: {
                     host: 'host'
@@ -304,7 +323,7 @@ describe('authApp', () => {
                     json: identity
                 })
             };
-            oidcClientServiceMock.getLogoutUrl.mockReturnValueOnce('redirectUrl');
+            oidcClientServiceMock.getLogoutUrl?.mockReturnValueOnce('redirectUrl');
 
             const result = await logoutHandler(request, response);
 
@@ -345,6 +364,7 @@ describe('authApp', () => {
             };
 
             const authApp = createAuthApp({
+                ...depsBase,
                 'core.app.helpers.initQueryContext': initQueryContext({}),
                 'core.infra.oidc.oidcClientService': oidcClientServiceMock as IOIDCClientService,
                 config: mockConfig as IConfig
@@ -354,7 +374,7 @@ describe('authApp', () => {
                 post: jest.fn()
             };
             authApp.registerRoute(expressMock as unknown as Express);
-            const refreshHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/login-checker')[1];
+            const refreshHandler = expressMock.post?.mock.calls.find(args => args[0] === '/auth/login-checker')[1];
             const request = {
                 cookies: {
                     refreshToken: undefined
@@ -418,6 +438,7 @@ describe('authApp', () => {
             };
 
             const authApp = createAuthApp({
+                ...depsBase,
                 'core.app.helpers.initQueryContext': initQueryContext({config: mockConfig as IConfig}),
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
@@ -466,7 +487,7 @@ describe('authApp', () => {
 
             authApp.registerRoute(expressMock as unknown as Express);
 
-            const refreshHandler = expressMock.post.mock.calls.find(args => args[0] === '/auth/login-checker')[1];
+            const refreshHandler = expressMock.post?.mock.calls.find(args => args[0] === '/auth/login-checker')[1];
 
             // WHEN
             await refreshHandler(request, response, nextMock);
@@ -499,6 +520,7 @@ describe('authApp', () => {
             };
 
             const authApp = createAuthApp({
+                ...depsBase,
                 config: mockConfig as IConfig
             });
             const expressMock: Mockify<Express> = {
@@ -506,7 +528,7 @@ describe('authApp', () => {
                 post: jest.fn()
             };
             authApp.registerRoute(expressMock as unknown as Express);
-            const verifyHandler = expressMock.get.mock.calls.find(
+            const verifyHandler = expressMock.get?.mock.calls.find(
                 args => args[0] === '/auth/oidc/verify/:identifierBase64Url'
             )[1];
             const request = {};

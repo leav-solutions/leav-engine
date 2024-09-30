@@ -13,13 +13,13 @@ import {IValueDomain} from 'domain/value/valueDomain';
 import fs from 'fs';
 import {i18n} from 'i18next';
 import path from 'path';
-import {IUtils} from 'utils/utils';
+import {IUtils, ToAny} from 'utils/utils';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
 import {Action, ImportMode} from '../../_types/import';
 import {mockTranslator} from '../../__tests__/mocks/translator';
-import importDomain from './importDomain';
+import importDomain, {IDeps} from './importDomain';
 
 const importMockConfig: Mockify<Config.IImport> = {
     directory: path.resolve(__dirname, './imports'),
@@ -32,6 +32,25 @@ const mockConfig: Mockify<Config.IConfig> = {
     lang: {available: ['fr', 'en'], default: 'fr'}
 };
 
+const depsBase: ToAny<IDeps> = {
+    'core.domain.library': jest.fn(),
+    'core.domain.record': jest.fn(),
+    'core.domain.helpers.validate': jest.fn(),
+    'core.domain.attribute': jest.fn(),
+    'core.domain.value': jest.fn(),
+    'core.domain.tree': jest.fn(),
+    'core.domain.versionProfile': jest.fn(),
+    'core.domain.tasksManager': jest.fn(),
+    'core.domain.helpers.updateTaskProgress': jest.fn(),
+    'core.domain.eventsManager': jest.fn(),
+    'core.infra.cache.cacheService': jest.fn(),
+    'core.utils': jest.fn(),
+    translator: {},
+    config: {}
+};
+
+const mockImportDirectory = mockConfig.import?.directory ?? '';
+
 describe('importDomain', () => {
     const ctx: IQueryInfos = {
         userId: '1',
@@ -39,11 +58,15 @@ describe('importDomain', () => {
     };
 
     beforeAll(async () => {
-        await fs.promises.mkdir(importMockConfig.directory);
+        if (importMockConfig.directory) {
+            await fs.promises.mkdir(importMockConfig.directory);
+        }
     });
 
     afterAll(async () => {
-        await fs.promises.rmdir(importMockConfig.directory, {recursive: true});
+        if (importMockConfig.directory) {
+            await fs.promises.rmdir(importMockConfig.directory, {recursive: true});
+        }
     });
 
     beforeEach(() => {
@@ -51,8 +74,8 @@ describe('importDomain', () => {
     });
 
     afterEach(async () => {
-        for (const file of fs.readdirSync(mockConfig.import.directory)) {
-            await fs.promises.unlink(path.join(mockConfig.import.directory, file));
+        for (const file of fs.readdirSync(mockImportDirectory)) {
+            await fs.promises.unlink(path.join(mockImportDirectory, file));
         }
     });
 
@@ -63,6 +86,7 @@ describe('importDomain', () => {
     describe('Import config', () => {
         test('file doesnt exist', async () => {
             const imprtDomain = importDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 translator: mockTranslator as i18n
             });
@@ -79,7 +103,7 @@ describe('importDomain', () => {
                 ]
             };
 
-            const filepath = `${mockConfig.import.directory}/test.json`;
+            const filepath = `${mockImportDirectory}/test.json`;
             await fs.promises.writeFile(filepath, JSON.stringify(data, null, '\t'));
 
             const mockLibDomain: Mockify<ILibraryDomain> = {
@@ -87,6 +111,7 @@ describe('importDomain', () => {
             };
 
             const imprtDomain = importDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
@@ -95,7 +120,7 @@ describe('importDomain', () => {
             await expect(imprtDomain.importConfig({filepath, ctx, forceNoTask: true})).rejects.toThrow();
 
             // check if report file exist
-            const importDirFiles = fs.readdirSync(mockConfig.import.directory);
+            const importDirFiles = fs.readdirSync(mockImportDirectory);
             expect(importDirFiles.filter(f => f.endsWith('.config.report.txt')).length).toBeGreaterThan(0);
         });
 
@@ -113,7 +138,7 @@ describe('importDomain', () => {
                 ]
             };
 
-            const filepath = `${mockConfig.import.directory}/test.json`;
+            const filepath = `${mockImportDirectory}/test.json`;
             await fs.promises.writeFile(filepath, JSON.stringify(data, null, '\t'));
 
             const mockLibDomain: Mockify<ILibraryDomain> = {
@@ -121,6 +146,7 @@ describe('importDomain', () => {
             };
 
             const imprtDomain = importDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
@@ -128,7 +154,7 @@ describe('importDomain', () => {
 
             await imprtDomain.importConfig({filepath, ctx, forceNoTask: true});
 
-            expect(mockLibDomain.saveLibrary.mock.calls.length).toBe(4);
+            expect(mockLibDomain.saveLibrary?.mock.calls.length).toBe(4);
         });
 
         test('Import attributes', async () => {
@@ -143,7 +169,7 @@ describe('importDomain', () => {
                 ]
             };
 
-            const filepath = `${mockConfig.import.directory}/test.json`;
+            const filepath = `${mockImportDirectory}/test.json`;
             await fs.promises.writeFile(filepath, JSON.stringify(data, null, '\t'));
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -151,6 +177,7 @@ describe('importDomain', () => {
             };
 
             const imprtDomain = importDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
@@ -158,7 +185,7 @@ describe('importDomain', () => {
 
             await imprtDomain.importConfig({filepath, ctx, forceNoTask: true});
 
-            expect(mockAttrDomain.saveAttribute.mock.calls.length).toBe(2);
+            expect(mockAttrDomain.saveAttribute?.mock.calls.length).toBe(2);
         });
 
         test('Import trees', async () => {
@@ -173,7 +200,7 @@ describe('importDomain', () => {
                 ]
             };
 
-            const filepath = `${mockConfig.import.directory}/test.json`;
+            const filepath = `${mockImportDirectory}/test.json`;
             await fs.promises.writeFile(filepath, JSON.stringify(data, null, '\t'));
 
             const mockTreeDomain: Mockify<ITreeDomain> = {
@@ -181,6 +208,7 @@ describe('importDomain', () => {
             };
 
             const imprtDomain = importDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.tree': mockTreeDomain as ITreeDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
@@ -188,7 +216,7 @@ describe('importDomain', () => {
 
             await imprtDomain.importConfig({filepath, ctx, forceNoTask: true});
 
-            expect(mockTreeDomain.saveTree.mock.calls.length).toBe(2);
+            expect(mockTreeDomain.saveTree?.mock.calls.length).toBe(2);
         });
 
         test('Import trees', async () => {
@@ -203,7 +231,7 @@ describe('importDomain', () => {
                 ]
             };
 
-            const filepath = `${mockConfig.import.directory}/test.json`;
+            const filepath = `${mockImportDirectory}/test.json`;
             await fs.promises.writeFile(filepath, JSON.stringify(data, null, '\t'));
 
             const mockTreeDomain: Mockify<ITreeDomain> = {
@@ -211,6 +239,7 @@ describe('importDomain', () => {
             };
 
             const imprtDomain = importDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.tree': mockTreeDomain as ITreeDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
@@ -218,13 +247,14 @@ describe('importDomain', () => {
 
             await imprtDomain.importConfig({filepath, ctx, forceNoTask: true});
 
-            expect(mockTreeDomain.saveTree.mock.calls.length).toBe(2);
+            expect(mockTreeDomain.saveTree?.mock.calls.length).toBe(2);
         });
     });
 
     describe('Import data', () => {
         test('file doesnt exist', async () => {
             const imprtDomain = importDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 translator: mockTranslator as i18n
             });
@@ -280,7 +310,7 @@ describe('importDomain', () => {
                 trees: []
             };
 
-            await fs.promises.writeFile(`${mockConfig.import.directory}/test.json`, JSON.stringify(data, null, '\t'));
+            await fs.promises.writeFile(`${mockImportDirectory}/test.json`, JSON.stringify(data, null, '\t'));
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getLibraryAttributes: global.__mockPromise([
@@ -354,6 +384,7 @@ describe('importDomain', () => {
             const mockUpdateTaskProgress: Mockify<UpdateTaskProgress> = global.__mockPromise();
 
             const imprtDomain = importDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
@@ -404,7 +435,7 @@ describe('importDomain', () => {
                 trees: []
             };
 
-            await fs.promises.writeFile(`${mockConfig.import.directory}/test.json`, JSON.stringify(data, null, '\t'));
+            await fs.promises.writeFile(`${mockImportDirectory}/test.json`, JSON.stringify(data, null, '\t'));
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getLibraryAttributes: global.__mockPromise([{type: 'simple_link', id: 'fake_simple_link'}])
@@ -466,6 +497,7 @@ describe('importDomain', () => {
             const mockUpdateTaskProgress: Mockify<UpdateTaskProgress> = global.__mockPromise();
 
             const imprtDomain = importDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
@@ -508,7 +540,7 @@ describe('importDomain', () => {
                 ]
             };
 
-            await fs.promises.writeFile(`${mockConfig.import.directory}/test.json`, JSON.stringify(data, null, '\t'));
+            await fs.promises.writeFile(`${mockImportDirectory}/test.json`, JSON.stringify(data, null, '\t'));
 
             const mockTreeDomain: Mockify<ITreeDomain> = {
                 isRecordPresent: global.__mockPromise(false),
@@ -543,6 +575,7 @@ describe('importDomain', () => {
             const mockUpdateTaskProgress: Mockify<UpdateTaskProgress> = global.__mockPromise();
 
             const imprtDomain = importDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
@@ -556,10 +589,10 @@ describe('importDomain', () => {
 
             await imprtDomain.importData({filename: 'test.json', ctx}, {id: 'fakeTaskId'});
 
-            expect(mockRecordDomain.find.mock.calls.length).toBe(1);
-            expect(mockValidateHelper.validateLibrary.mock.calls.length).toBe(1);
-            expect(mockTreeDomain.getNodesByRecord.mock.calls.length).toBe(1);
-            expect(mockTreeDomain.addElement.mock.calls.length).toBe(1);
+            expect(mockRecordDomain.find?.mock.calls.length).toBe(1);
+            expect(mockValidateHelper.validateLibrary?.mock.calls.length).toBe(1);
+            expect(mockTreeDomain.getNodesByRecord?.mock.calls.length).toBe(1);
+            expect(mockTreeDomain.addElement?.mock.calls.length).toBe(1);
         });
 
         test('test import elements - version data', async () => {
@@ -622,7 +655,7 @@ describe('importDomain', () => {
                 trees: []
             };
 
-            await fs.promises.writeFile(`${mockConfig.import.directory}/test.json`, JSON.stringify(data, null, '\t'));
+            await fs.promises.writeFile(`${mockImportDirectory}/test.json`, JSON.stringify(data, null, '\t'));
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getLibraryAttributes: global.__mockPromise([{type: 'simple', id: 'fake_simple'}])
@@ -679,6 +712,7 @@ describe('importDomain', () => {
             const mockUpdateTaskProgress: Mockify<UpdateTaskProgress> = global.__mockPromise();
 
             const imprtDomain = importDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
@@ -694,13 +728,16 @@ describe('importDomain', () => {
 
             await imprtDomain.importData({filename: 'test.json', ctx}, {id: 'fakeTaskId'});
 
-            expect(mockRecordDomain.createRecord.mock.calls.length).toBe(1);
-            expect(mockAttrDomain.getLibraryAttributes.mock.calls.length).toBe(2);
+            expect(mockRecordDomain.createRecord?.mock.calls.length).toBe(1);
+            expect(mockAttrDomain.getLibraryAttributes?.mock.calls.length).toBe(2);
             expect(mockCacheService.storeData).toBeCalledTimes(1);
-            expect(mockValidateHelper.validateLibrary.mock.calls.length).toBe(1);
+            expect(mockValidateHelper.validateLibrary?.mock.calls.length).toBe(1);
             expect(mockCacheService.getData).toBeCalledTimes(1);
             expect(mockRecordDomain.find).toBeCalledTimes(2);
             expect(mockValueDomain.saveValue).toBeCalledTimes(3);
+            if (!mockValueDomain.saveValue) {
+                fail('saveValue not defined');
+            }
             // First call of saveValue version must be : { treeprojects: null }
             expect(mockValueDomain.saveValue.mock.calls[0][0].value.version).toEqual({treeprojects: null});
             // Second call of saveValue version must be : { treeprojects: '1' }
@@ -731,7 +768,7 @@ describe('importDomain', () => {
                 trees: []
             };
 
-            await fs.promises.writeFile(`${mockConfig.import.directory}/test.json`, JSON.stringify(data, null, '\t'));
+            await fs.promises.writeFile(`${mockImportDirectory}/test.json`, JSON.stringify(data, null, '\t'));
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getLibraryAttributes: global.__mockPromise([{type: 'simple', id: 'fake_simple'}])
@@ -772,6 +809,7 @@ describe('importDomain', () => {
             const mockUpdateTaskProgress: Mockify<UpdateTaskProgress> = global.__mockPromise();
 
             const imprtDomain = importDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
@@ -810,7 +848,7 @@ describe('importDomain', () => {
                 trees: []
             };
 
-            await fs.promises.writeFile(`${mockConfig.import.directory}/test.json`, JSON.stringify(data, null, '\t'));
+            await fs.promises.writeFile(`${mockImportDirectory}/test.json`, JSON.stringify(data, null, '\t'));
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getLibraryAttributes: global.__mockPromise([{type: 'simple', id: 'fake_simple'}])
@@ -851,6 +889,7 @@ describe('importDomain', () => {
             const mockUpdateTaskProgress: Mockify<UpdateTaskProgress> = global.__mockPromise();
 
             const imprtDomain = importDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
@@ -889,7 +928,7 @@ describe('importDomain', () => {
                 trees: []
             };
 
-            await fs.promises.writeFile(`${mockConfig.import.directory}/test.json`, JSON.stringify(data, null, '\t'));
+            await fs.promises.writeFile(`${mockImportDirectory}/test.json`, JSON.stringify(data, null, '\t'));
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getLibraryAttributes: global.__mockPromise([{type: 'simple', id: 'fake_simple'}])
@@ -934,6 +973,7 @@ describe('importDomain', () => {
             };
 
             const imprtDomain = importDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
@@ -954,7 +994,7 @@ describe('importDomain', () => {
             expect(mockValueDomain.saveValue).toBeCalledTimes(1);
 
             // check if report file exist
-            const importDirFiles = fs.readdirSync(mockConfig.import.directory);
+            const importDirFiles = fs.readdirSync(mockImportDirectory);
             expect(importDirFiles.filter(f => f.endsWith('.data.report.txt')).length).toBeGreaterThan(0);
         });
     });

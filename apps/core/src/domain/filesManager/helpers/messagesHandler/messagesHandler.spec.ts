@@ -4,7 +4,14 @@
 import {IConfig} from '_types/config';
 import {FileEvents, IFileEventData} from '../../../../_types/filesManager';
 import {mockCtx} from '../../../../__tests__/mocks/shared';
-import messagesHandler from './messagesHandler';
+import messagesHandler, {IDeps} from './messagesHandler';
+import {ToAny} from 'utils/utils';
+
+const depsBase: ToAny<IDeps> = {
+    'core.utils.logger': jest.fn(),
+    'core.domain.filesManager.helpers.handleFileSystemEvent': jest.fn(),
+    config: {}
+};
 
 describe('MessagesHandler', () => {
     test('Process messages, respect incoming order', async () => {
@@ -19,6 +26,7 @@ describe('MessagesHandler', () => {
         };
 
         const handler = messagesHandler({
+            ...depsBase,
             'core.domain.filesManager.helpers.handleFileSystemEvent': mockHandleEventFileSystem,
             config: mockConfig as IConfig
         });

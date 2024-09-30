@@ -30,25 +30,29 @@ describe('calculationVariable', () => {
         'core.domain.helpers.calculationsVariableFunctions': mockCalculationsVariableFunctions
     });
 
+    const ctx = {
+        userId: 'test',
+        recordId: '1',
+        library: 'meh'
+    };
+
     test('empty variable', async () => {
-        const res = await calculation.processVariableString({recordId: '1', library: 'meh'}, '', ['toto']);
+        const res = await calculation.processVariableString(ctx, '', ['toto']);
         expect(res[0].payload).toEqual(['toto']);
     });
 
     test('run variable function', async () => {
-        const res = await calculation.processVariableString({recordId: '1', library: 'meh'}, 'test()', ['toto']);
+        const res = await calculation.processVariableString(ctx, 'test()', ['toto']);
         expect(res[0].payload).toBe(42);
     });
 
     test('run sequence of variable functions', async () => {
-        const res = await calculation.processVariableString({recordId: '1', library: 'meh'}, 'test().test2()', [
-            'toto'
-        ]);
+        const res = await calculation.processVariableString(ctx, 'test().test2()', ['toto']);
         expect(res[0].payload).toBe(52);
     });
 
     test('run unknown function', async () => {
-        const res = calculation.processVariableString({recordId: '1', library: 'meh'}, 'meh()', ['toto']);
+        const res = calculation.processVariableString(ctx, 'meh()', ['toto']);
         res.catch(e => {
             expect(e).toEqual(Error('Invalid request'));
         });

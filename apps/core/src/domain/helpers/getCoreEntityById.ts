@@ -11,13 +11,13 @@ import {IQueryInfos} from '_types/queryInfos';
 import {ICachesService} from '../../infra/cache/cacheService';
 
 interface IDeps {
-    'core.infra.library'?: ILibraryRepo;
-    'core.infra.attribute'?: IAttributeRepo;
-    'core.infra.tree'?: ITreeRepo;
-    'core.infra.view'?: IViewRepo;
-    'core.infra.versionProfile'?: IVersionProfileRepo;
-    'core.infra.cache.cacheService'?: ICachesService;
-    'core.utils'?: IUtils;
+    'core.infra.library': ILibraryRepo;
+    'core.infra.attribute': IAttributeRepo;
+    'core.infra.tree': ITreeRepo;
+    'core.infra.view': IViewRepo;
+    'core.infra.versionProfile': IVersionProfileRepo;
+    'core.infra.cache.cacheService': ICachesService;
+    'core.utils': IUtils;
 }
 
 export type GetCoreEntityByIdFunc = <T extends ICoreEntity>(
@@ -27,13 +27,13 @@ export type GetCoreEntityByIdFunc = <T extends ICoreEntity>(
 ) => Promise<T>;
 
 export default function ({
-    'core.infra.library': libraryRepo = null,
-    'core.infra.attribute': attributeRepo = null,
-    'core.infra.tree': treeRepo = null,
-    'core.infra.view': viewRepo = null,
-    'core.infra.versionProfile': versionProfileRepo = null,
-    'core.infra.cache.cacheService': cacheService = null,
-    'core.utils': utils = null
+    'core.infra.library': libraryRepo,
+    'core.infra.attribute': attributeRepo,
+    'core.infra.tree': treeRepo,
+    'core.infra.view': viewRepo,
+    'core.infra.versionProfile': versionProfileRepo,
+    'core.infra.cache.cacheService': cacheService,
+    'core.utils': utils
 }: IDeps): GetCoreEntityByIdFunc {
     const getCoreEntityById = async function <T>(entityType, entityId, ctx): Promise<T> {
         const _execute = async () => {

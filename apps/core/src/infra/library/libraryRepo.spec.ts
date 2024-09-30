@@ -14,7 +14,7 @@ describe('LibraryRepo', () => {
     };
     describe('getLibrary', () => {
         test('Should return all libs if no filter', async function () {
-            const mockDbServ = {db: null, execute: global.__mockPromise([])};
+            const mockDbServ = {execute: global.__mockPromise([])};
             const mockDbUtils: Mockify<IDbUtils> = {
                 findCoreEntity: global.__mockPromise([
                     {

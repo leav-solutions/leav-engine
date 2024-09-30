@@ -39,7 +39,7 @@ describe('applicationRepo', () => {
 
     describe('getApplications', () => {
         test('Get all applications', async () => {
-            const mockDbServ = {db: null, execute: global.__mockPromise([])};
+            const mockDbServ = {execute: global.__mockPromise([])};
             const mockDbUtils: Mockify<IDbUtils> = {
                 findCoreEntity: global.__mockPromise([applicationData])
             };

@@ -20,34 +20,34 @@ import {handleUpdateEvent} from './handleUpdateEvent';
 import {HandleFileSystemEventFunc, IHandleFileSystemEventDeps} from './_types';
 import winston = require('winston');
 
-interface IDeps {
-    'core.domain.library'?: ILibraryDomain;
-    'core.domain.record'?: IRecordDomain;
-    'core.domain.value'?: IValueDomain;
-    'core.domain.tree'?: ITreeDomain;
-    'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
-    'core.domain.record.helpers.sendRecordUpdateEvent'?: SendRecordUpdateEventHelper;
-    'core.infra.record'?: IRecordRepo;
-    'core.infra.amqpService'?: IAmqpService;
-    'core.infra.filesManager'?: IFilesManagerRepo;
-    'core.utils.logger'?: winston.Winston;
-    'core.utils'?: IUtils;
-    config?: IConfig;
+export interface IDeps {
+    'core.domain.library': ILibraryDomain;
+    'core.domain.record': IRecordDomain;
+    'core.domain.value': IValueDomain;
+    'core.domain.tree': ITreeDomain;
+    'core.domain.helpers.updateRecordLastModif': UpdateRecordLastModifFunc;
+    'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
+    'core.infra.record': IRecordRepo;
+    'core.infra.amqpService': IAmqpService;
+    'core.infra.filesManager': IFilesManagerRepo;
+    'core.utils.logger': winston.Winston;
+    'core.utils': IUtils;
+    config: IConfig;
 }
 
 export default function (deps: IDeps): HandleFileSystemEventFunc {
     const {
-        'core.domain.library': libraryDomain = null,
-        'core.domain.record': recordDomain = null,
-        'core.domain.value': valueDomain = null,
-        'core.domain.tree': treeDomain = null,
-        'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
-        'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent = null,
-        'core.infra.record': recordRepo = null,
-        'core.infra.amqpService': amqpService = null,
-        'core.infra.filesManager': filesManagerRepo = null,
-        'core.utils.logger': logger = null,
-        'core.utils': utils = null,
+        'core.domain.library': libraryDomain,
+        'core.domain.record': recordDomain,
+        'core.domain.value': valueDomain,
+        'core.domain.tree': treeDomain,
+        'core.domain.helpers.updateRecordLastModif': updateRecordLastModif,
+        'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
+        'core.infra.record': recordRepo,
+        'core.infra.amqpService': amqpService,
+        'core.infra.filesManager': filesManagerRepo,
+        'core.utils.logger': logger,
+        'core.utils': utils,
         config
     } = deps;
 

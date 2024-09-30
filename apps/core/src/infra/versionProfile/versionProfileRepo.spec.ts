@@ -74,7 +74,7 @@ describe('versionProfileRepo', () => {
 
     describe('getVersionProfiles', () => {
         test('Should return a list of version profiles', async () => {
-            const mockDbServ = {db: null, execute: global.__mockPromise([])};
+            const mockDbServ = {execute: global.__mockPromise([])};
 
             const repo = versionProfileRepo({
                 'core.infra.db.dbService': mockDbServ,
@@ -114,7 +114,10 @@ describe('versionProfileRepo', () => {
 
     describe('getAttributesUsingProfile', () => {
         test('Should return a list of attributes using a profile', async () => {
-            const mockDbServ = {db: new Database(), execute: global.__mockPromise([mockAttrAdvVersionable])};
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise([mockAttrAdvVersionable])
+            };
 
             const mockDbUtilsAttribute: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(mockAttrAdvVersionable)

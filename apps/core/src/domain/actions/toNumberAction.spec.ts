@@ -7,7 +7,7 @@ import toNumberAction from './toNumberAction';
 describe('toNumberAction', () => {
     const action = toNumberAction().action;
     const attrText: IAttribute = {id: 'test_attr', format: AttributeFormats.NUMERIC, type: AttributeTypes.SIMPLE};
-    const ctx = {attribute: attrText};
+    const ctx = {attribute: attrText, userId: 'test_user'};
     test('toNumber', async () => {
         expect((await action([{payload: 12345}], {}, ctx)).values[0].payload).toBe(12345);
         expect((await action([{payload: '12345'}], {}, ctx)).values[0].payload).toBe(12345);

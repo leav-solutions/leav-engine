@@ -29,26 +29,26 @@ export interface IVersionProfileDomain {
     getAttributesUsingProfile(params: {id: string; ctx: IQueryInfos}): Promise<IAttribute[]>;
 }
 
-interface IDeps {
-    'core.domain.permission.admin'?: IAdminPermissionDomain;
-    'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.infra.versionProfile'?: IVersionProfileRepo;
-    'core.infra.tree'?: ITreeRepo;
-    'core.infra.attribute'?: IAttributeRepo;
-    'core.infra.cache.cacheService'?: ICachesService;
-    'core.utils'?: IUtils;
+export interface IDeps {
+    'core.domain.permission.admin': IAdminPermissionDomain;
+    'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.infra.versionProfile': IVersionProfileRepo;
+    'core.infra.tree': ITreeRepo;
+    'core.infra.attribute': IAttributeRepo;
+    'core.infra.cache.cacheService': ICachesService;
+    'core.utils': IUtils;
 }
 
 export default function ({
     'core.domain.permission.admin': adminPermissionDomain,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
-    'core.domain.eventsManager': eventsManagerDomain = null,
-    'core.infra.versionProfile': versionProfileRepo = null,
-    'core.infra.tree': treeRepo = null,
-    'core.infra.attribute': attributeRepo = null,
-    'core.infra.cache.cacheService': cacheService = null,
-    'core.utils': utils = null
+    'core.domain.eventsManager': eventsManagerDomain,
+    'core.infra.versionProfile': versionProfileRepo,
+    'core.infra.tree': treeRepo,
+    'core.infra.attribute': attributeRepo,
+    'core.infra.cache.cacheService': cacheService,
+    'core.utils': utils
 }: IDeps): IVersionProfileDomain {
     return {
         async getVersionProfiles({params, ctx}) {

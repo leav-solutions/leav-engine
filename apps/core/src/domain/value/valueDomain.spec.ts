@@ -8,7 +8,7 @@ import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain'
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
-import {IUtils} from 'utils/utils';
+import {IUtils, ToAny} from 'utils/utils';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {IValue, IValueVersion} from '_types/value';
@@ -33,7 +33,28 @@ import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IValidateHelper} from '../helpers/validate';
 import {IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
-import valueDomain from './valueDomain';
+import valueDomain, {IDeps} from './valueDomain';
+
+const depsBase: ToAny<IDeps> = {
+    config: {},
+    'core.domain.actionsList': jest.fn(),
+    'core.domain.attribute': jest.fn(),
+    'core.domain.permission.recordAttribute': jest.fn(),
+    'core.domain.permission.record': jest.fn(),
+    'core.domain.eventsManager': jest.fn(),
+    'core.domain.helpers.validate': jest.fn(),
+    'core.domain.helpers.updateRecordLastModif': jest.fn(),
+    'core.domain.tree.helpers.elementAncestors': jest.fn(),
+    'core.domain.tree.helpers.getDefaultElement': jest.fn(),
+    'core.domain.record.helpers.sendRecordUpdateEvent': jest.fn(),
+    'core.domain.versionProfile': jest.fn(),
+    'core.infra.record': jest.fn(),
+    'core.infra.tree': jest.fn(),
+    'core.infra.value': jest.fn(),
+    'core.utils': jest.fn(),
+    'core.utils.logger': jest.fn(),
+    'core.domain.tree': jest.fn()
+};
 
 describe('ValueDomain', () => {
     const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
@@ -154,6 +175,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -178,7 +200,7 @@ describe('ValueDomain', () => {
             });
 
             expect(mockValRepo.createValue.mock.calls.length).toBe(1);
-            expect(mockActionsListDomain.runActionsList.mock.calls.length).toBe(2);
+            expect(mockActionsListDomain.runActionsList?.mock.calls.length).toBe(2);
             expect(savedValue[0]).toMatchObject(savedValueData);
         });
 
@@ -201,6 +223,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -257,6 +280,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -302,6 +326,7 @@ describe('ValueDomain', () => {
                 getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
             };
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
@@ -333,6 +358,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.helpers.validate': mValidateHelper as IValidateHelper
             });
@@ -355,6 +381,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
@@ -381,6 +408,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
@@ -422,6 +450,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -470,6 +499,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
@@ -513,6 +543,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -574,6 +605,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -613,6 +645,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
@@ -654,6 +687,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
@@ -702,6 +736,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepoNotfound as IRecordRepo,
@@ -750,6 +785,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepoWithFind as IRecordRepo,
@@ -765,7 +801,7 @@ describe('ValueDomain', () => {
                 valDomain.saveValue({
                     library: 'test_lib',
                     recordId: '12345',
-                    attribute: mockAttrTree.id,
+                    attribute: mockAttrTree.id ?? '',
                     value: {payload: 'lib1/123456'},
                     ctx
                 })
@@ -797,6 +833,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -853,6 +890,7 @@ describe('ValueDomain', () => {
                 };
 
                 const valDomain = valueDomain({
+                    ...depsBase,
                     config: mockConfig as Config.IConfig,
                     'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
@@ -911,6 +949,7 @@ describe('ValueDomain', () => {
                 };
 
                 const valDomain = valueDomain({
+                    ...depsBase,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.infra.value': mockValRepo as IValueRepo,
                     'core.infra.record': mockRecordRepo as IRecordRepo,
@@ -964,6 +1003,7 @@ describe('ValueDomain', () => {
                         )
                 };
                 const valDomain = valueDomain({
+                    ...depsBase,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.infra.value': mockValRepo as IValueRepo,
                     'core.infra.record': mockRecordRepo as IRecordRepo,
@@ -1021,6 +1061,7 @@ describe('ValueDomain', () => {
                 };
 
                 const valDomain = valueDomain({
+                    ...depsBase,
                     config: mockConfig as Config.IConfig,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.infra.value': mockValRepo as IValueRepo,
@@ -1046,7 +1087,7 @@ describe('ValueDomain', () => {
                 });
 
                 expect(mockActionsListDomain.runActionsList).toHaveBeenCalled();
-                expect(mockActionsListDomain.runActionsList.mock.calls[0][2].attribute.id).toBe('meta_attribute');
+                expect(mockActionsListDomain.runActionsList?.mock.calls[0][2].attribute.id).toBe('meta_attribute');
             });
 
             test('Should throw with metafield specified if actions list throws', async () => {
@@ -1095,6 +1136,7 @@ describe('ValueDomain', () => {
                 };
 
                 const valDomain = valueDomain({
+                    ...depsBase,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.infra.value': mockValRepo as IValueRepo,
                     'core.infra.record': mockRecordRepo as IRecordRepo,
@@ -1144,14 +1186,12 @@ describe('ValueDomain', () => {
                 {
                     attribute: 'test_attr2',
                     payload: 'test',
-                    raw_payload: 'test',
-                    id_value: null
+                    raw_payload: 'test'
                 },
                 {
                     attribute: 'test_attr3',
                     payload: 'test',
-                    raw_payload: 'test',
-                    id_value: null
+                    raw_payload: 'test'
                 }
             ];
 
@@ -1187,6 +1227,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -1210,8 +1251,8 @@ describe('ValueDomain', () => {
                 ctx
             });
 
-            expect(mockValRepo.updateValue.mock.calls.length).toBe(1);
-            expect(mockValRepo.createValue.mock.calls.length).toBe(2);
+            expect(mockValRepo.updateValue?.mock.calls.length).toBe(1);
+            expect(mockValRepo.createValue?.mock.calls.length).toBe(2);
 
             expect(res).toStrictEqual({
                 values: [
@@ -1258,14 +1299,12 @@ describe('ValueDomain', () => {
                 {
                     attribute: 'test_attr2',
                     payload: 'test',
-                    raw_payload: 'test',
-                    id_value: null
+                    raw_payload: 'test'
                 },
                 {
                     attribute: 'test_attr3',
                     payload: 'test',
-                    raw_payload: 'test',
-                    id_value: null
+                    raw_payload: 'test'
                 }
             ];
 
@@ -1303,6 +1342,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -1326,8 +1366,8 @@ describe('ValueDomain', () => {
                 ctx
             });
 
-            expect(mockValRepo.updateValue.mock.calls.length).toBe(0);
-            expect(mockValRepo.createValue.mock.calls.length).toBe(2);
+            expect(mockValRepo.updateValue?.mock.calls.length).toBe(0);
+            expect(mockValRepo.createValue?.mock.calls.length).toBe(2);
 
             expect(res).toStrictEqual({
                 values: [
@@ -1363,8 +1403,7 @@ describe('ValueDomain', () => {
                 },
                 {
                     attribute: 'test_attr2',
-                    payload: 'test',
-                    id_value: null
+                    payload: 'test'
                 }
             ];
 
@@ -1392,6 +1431,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
@@ -1420,8 +1460,8 @@ describe('ValueDomain', () => {
                 ]
             });
 
-            expect(mockValRepo.updateValue.mock.calls.length).toBe(0);
-            expect(mockValRepo.createValue.mock.calls.length).toBe(0);
+            expect(mockValRepo.updateValue?.mock.calls.length).toBe(0);
+            expect(mockValRepo.createValue?.mock.calls.length).toBe(0);
         });
 
         test('Should throw if a value is not editable', async () => {
@@ -1433,8 +1473,7 @@ describe('ValueDomain', () => {
                 },
                 {
                     attribute: 'test_attr2',
-                    payload: 'test',
-                    id_value: null
+                    payload: 'test'
                 }
             ];
 
@@ -1455,6 +1494,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
@@ -1483,8 +1523,8 @@ describe('ValueDomain', () => {
                 ]
             });
 
-            expect(mockValRepo.updateValue.mock.calls.length).toBe(0);
-            expect(mockValRepo.createValue.mock.calls.length).toBe(0);
+            expect(mockValRepo.updateValue?.mock.calls.length).toBe(0);
+            expect(mockValRepo.createValue?.mock.calls.length).toBe(0);
         });
 
         test('Delete empty values', async () => {
@@ -1521,6 +1561,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -1581,6 +1622,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -1624,6 +1666,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper
             });
 
@@ -1648,6 +1691,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.helpers.validate': mValidateHelper as IValidateHelper
             });
 
@@ -1680,6 +1724,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper
             });
 
@@ -1712,6 +1757,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -1745,6 +1791,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain
             });
 
@@ -1784,6 +1831,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper,
@@ -1830,6 +1878,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper,
@@ -1857,6 +1906,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain
             });
 
@@ -1892,6 +1942,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
@@ -1933,6 +1984,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
@@ -1978,6 +2030,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
@@ -2151,6 +2204,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
@@ -2220,6 +2274,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
@@ -2251,6 +2306,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain
             });
 
@@ -2273,6 +2329,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper
             });
 
@@ -2296,6 +2353,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper
             });
 

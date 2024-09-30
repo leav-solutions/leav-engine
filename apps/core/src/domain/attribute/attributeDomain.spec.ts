@@ -8,7 +8,7 @@ import {IAttributeRepo} from 'infra/attribute/attributeRepo';
 import {IFormRepo} from 'infra/form/formRepo';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
-import {IUtils} from 'utils/utils';
+import {IUtils, ToAny} from 'utils/utils';
 import {ILibrary} from '_types/library';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
@@ -21,7 +21,7 @@ import {mockAttrAdv, mockAttrAdvVersionable, mockAttrSimple, mockAttrTree} from 
 import {mockForm} from '../../__tests__/mocks/forms';
 import {mockLibrary} from '../../__tests__/mocks/library';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
-import attributeDomain from './attributeDomain';
+import attributeDomain, {IDeps} from './attributeDomain';
 import {Mockify} from '@leav/utils';
 
 const mockCacheService: Mockify<ICacheService> = {
@@ -37,6 +37,21 @@ const mockCachesService: Mockify<ICachesService> = {
 
 const mockEventsManager: Mockify<IEventsManagerDomain> = {
     sendDatabaseEvent: global.__mockPromise()
+};
+
+const depsBase: ToAny<IDeps> = {
+    config: {},
+    'core.infra.attribute': jest.fn(),
+    'core.domain.actionsList': jest.fn(),
+    'core.domain.permission.admin': jest.fn(),
+    'core.domain.helpers.getCoreEntityById': jest.fn(),
+    'core.domain.versionProfile': jest.fn(),
+    'core.domain.eventsManager': jest.fn(),
+    'core.infra.form': jest.fn(),
+    'core.infra.library': jest.fn(),
+    'core.infra.tree': jest.fn(),
+    'core.infra.cache.cacheService': jest.fn(),
+    'core.utils': jest.fn()
 };
 
 describe('attributeDomain', () => {
@@ -88,6 +103,7 @@ describe('attributeDomain', () => {
             };
 
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 config: mockConf
             });
@@ -103,6 +119,7 @@ describe('attributeDomain', () => {
             };
 
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 config: mockConf
             });
@@ -147,6 +164,7 @@ describe('attributeDomain', () => {
             };
 
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
@@ -154,8 +172,8 @@ describe('attributeDomain', () => {
             });
             const libAttrs = await attrDomain.getLibraryAttributes('test', ctx);
 
-            expect(mockAttrRepo.getLibraryAttributes.mock.calls.length).toBe(1);
-            expect(mockAttrRepo.getLibraryAttributes.mock.calls[0][0].libraryId).toBe('test');
+            expect(mockAttrRepo.getLibraryAttributes?.mock.calls.length).toBe(1);
+            expect(mockAttrRepo.getLibraryAttributes?.mock.calls[0][0].libraryId).toBe('test');
             expect(libAttrs).toEqual(attrs);
         });
 
@@ -164,7 +182,7 @@ describe('attributeDomain', () => {
                 getLibraries: global.__mockPromise([])
             };
 
-            const attrDomain = attributeDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
+            const attrDomain = attributeDomain({...depsBase, 'core.infra.library': mockLibRepo as ILibraryRepo});
 
             await expect(attrDomain.getLibraryAttributes('test', ctx)).rejects.toThrow();
         });
@@ -188,13 +206,14 @@ describe('attributeDomain', () => {
             };
 
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 'core.infra.attribute': mockAttributeRepo as IAttributeRepo
             });
             const attributeLibraries = await attrDomain.getAttributeLibraries({attributeId: 'test', ctx});
 
-            expect(mockAttributeRepo.getAttributeLibraries.mock.calls.length).toBe(1);
-            expect(mockAttributeRepo.getAttributeLibraries.mock.calls[0][0].attributeId).toBe('test');
+            expect(mockAttributeRepo.getAttributeLibraries?.mock.calls.length).toBe(1);
+            expect(mockAttributeRepo.getAttributeLibraries?.mock.calls[0][0].attributeId).toBe('test');
             expect(attributeLibraries).toEqual(libraries);
         });
 
@@ -203,7 +222,7 @@ describe('attributeDomain', () => {
                 getLibraries: global.__mockPromise([])
             };
 
-            const attrDomain = attributeDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
+            const attrDomain = attributeDomain({...depsBase, 'core.infra.library': mockLibRepo as ILibraryRepo});
 
             await expect(attrDomain.getLibraryAttributes('test', ctx)).rejects.toThrow();
         });
@@ -226,13 +245,14 @@ describe('attributeDomain', () => {
             };
 
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.domain.helpers.getCoreEntityById': jest.fn().mockReturnValue(mockLibrary),
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo
             });
             const libAttrs = await attrDomain.getLibraryFullTextAttributes('test', ctx);
 
-            expect(mockAttrRepo.getLibraryFullTextAttributes.mock.calls.length).toBe(1);
-            expect(mockAttrRepo.getLibraryFullTextAttributes.mock.calls[0][0].libraryId).toBe('test');
+            expect(mockAttrRepo.getLibraryFullTextAttributes?.mock.calls.length).toBe(1);
+            expect(mockAttrRepo.getLibraryFullTextAttributes?.mock.calls[0][0].libraryId).toBe('test');
             expect(libAttrs).toEqual(attrs);
         });
 
@@ -241,7 +261,7 @@ describe('attributeDomain', () => {
                 getLibraries: global.__mockPromise([])
             };
 
-            const attrDomain = attributeDomain({'core.infra.library': mockLibRepo as ILibraryRepo});
+            const attrDomain = attributeDomain({...depsBase, 'core.infra.library': mockLibRepo as ILibraryRepo});
 
             await expect(attrDomain.getLibraryFullTextAttributes('test', ctx)).rejects.toThrow();
         });
@@ -250,6 +270,7 @@ describe('attributeDomain', () => {
     describe('getAttributeProperties', () => {
         test('Should return attribute properties', async function () {
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 config: mockConf
             });
@@ -264,6 +285,7 @@ describe('attributeDomain', () => {
             };
 
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 config: mockConf
             });
@@ -308,6 +330,7 @@ describe('attributeDomain', () => {
             };
 
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
@@ -331,8 +354,8 @@ describe('attributeDomain', () => {
                 ctx
             });
 
-            expect(mockAttrRepo.createAttribute.mock.calls.length).toBe(1);
-            expect(mockAttrRepo.updateAttribute.mock.calls.length).toBe(0);
+            expect(mockAttrRepo.createAttribute?.mock.calls.length).toBe(1);
+            expect(mockAttrRepo.updateAttribute?.mock.calls.length).toBe(0);
             expect(mockAdminPermDomain.getAdminPermission).toHaveBeenCalled();
             expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.CREATE_ATTRIBUTE
@@ -356,6 +379,7 @@ describe('attributeDomain', () => {
             };
 
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
@@ -403,6 +427,7 @@ describe('attributeDomain', () => {
             };
 
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
@@ -428,8 +453,8 @@ describe('attributeDomain', () => {
             });
 
             expect(mockCacheService.deleteData).toHaveBeenCalled();
-            expect(mockAttrRepo.createAttribute.mock.calls.length).toBe(0);
-            expect(mockAttrRepo.updateAttribute.mock.calls.length).toBe(1);
+            expect(mockAttrRepo.createAttribute?.mock.calls.length).toBe(0);
+            expect(mockAttrRepo.updateAttribute?.mock.calls.length).toBe(1);
             expect(mockAdminPermDomain.getAdminPermission).toHaveBeenCalled();
             expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.EDIT_ATTRIBUTE
@@ -448,6 +473,7 @@ describe('attributeDomain', () => {
             };
 
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
@@ -490,6 +516,7 @@ describe('attributeDomain', () => {
             };
 
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
@@ -509,12 +536,12 @@ describe('attributeDomain', () => {
                     id: mockAttrAdvVersionable.id,
                     type: AttributeTypes.ADVANCED,
                     format: AttributeFormats.NUMERIC,
-                    versions_conf: null
+                    versions_conf: undefined
                 },
                 ctx
             });
 
-            expect(mockAttrRepo.updateAttribute.mock.calls[0][0]).toMatchObject({
+            expect(mockAttrRepo.updateAttribute?.mock.calls[0][0]).toMatchObject({
                 attrData: {
                     _key: '',
                     id: 'advanced_attribute',
@@ -556,6 +583,7 @@ describe('attributeDomain', () => {
             };
 
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
@@ -591,7 +619,7 @@ describe('attributeDomain', () => {
                 ctx
             });
 
-            expect(mockAttrRepo.updateAttribute.mock.calls[0][0].attrData.actions_list).toEqual({
+            expect(mockAttrRepo.updateAttribute?.mock.calls[0][0].attrData.actions_list).toEqual({
                 [ActionsListEvents.SAVE_VALUE]: [
                     {id: 'toJSON', name: 'To JSON', is_system: false},
                     {
@@ -613,6 +641,7 @@ describe('attributeDomain', () => {
             };
 
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
@@ -645,6 +674,7 @@ describe('attributeDomain', () => {
             };
 
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
@@ -672,6 +702,7 @@ describe('attributeDomain', () => {
             };
 
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
@@ -700,6 +731,7 @@ describe('attributeDomain', () => {
             };
 
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
                 'core.domain.permission.admin': mockAdminPermDomainForbidden as IAdminPermissionDomain,
@@ -727,6 +759,7 @@ describe('attributeDomain', () => {
             };
 
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
@@ -774,6 +807,7 @@ describe('attributeDomain', () => {
             };
 
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
@@ -797,6 +831,7 @@ describe('attributeDomain', () => {
             };
 
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperNoResult,
@@ -855,6 +890,7 @@ describe('attributeDomain', () => {
         describe('Metadata', () => {
             test('Should throw if saving metadata on simple attribute', async () => {
                 const attrDomain = attributeDomain({
+                    ...depsBase,
                     'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                     'core.utils': mockUtils as IUtils,
@@ -893,6 +929,7 @@ describe('attributeDomain', () => {
                     );
 
                 const attrDomain = attributeDomain({
+                    ...depsBase,
                     'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                     'core.domain.actionsList': mockALDomain as IActionsListDomain,
                     'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperForMetadata,
@@ -932,6 +969,7 @@ describe('attributeDomain', () => {
             };
 
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
@@ -944,7 +982,7 @@ describe('attributeDomain', () => {
 
             await attrDomain.deleteAttribute({id: attrData.id, ctx});
 
-            expect(mockAttrRepo.deleteAttribute.mock.calls.length).toBe(1);
+            expect(mockAttrRepo.deleteAttribute?.mock.calls.length).toBe(1);
             expect(mockAdminPermDomain.getAdminPermission).toHaveBeenCalled();
             expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.DELETE_ATTRIBUTE
@@ -953,7 +991,7 @@ describe('attributeDomain', () => {
 
         test('Should throw if unknown attribute', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {deleteAttribute: global.__mockPromise()};
-            const attrDomain = attributeDomain({'core.infra.attribute': mockAttrRepo as IAttributeRepo});
+            const attrDomain = attributeDomain({...depsBase, 'core.infra.attribute': mockAttrRepo as IAttributeRepo});
             attrDomain.getAttributes = global.__mockPromise([]);
 
             await expect(attrDomain.deleteAttribute({id: attrData.id, ctx})).rejects.toThrow();
@@ -961,7 +999,7 @@ describe('attributeDomain', () => {
 
         test('Should throw if system attribute', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {deleteAttribute: global.__mockPromise()};
-            const attrDomain = attributeDomain({'core.infra.attribute': mockAttrRepo as IAttributeRepo});
+            const attrDomain = attributeDomain({...depsBase, 'core.infra.attribute': mockAttrRepo as IAttributeRepo});
             attrDomain.getAttributes = global.__mockPromise({list: [{system: true}], totalCount: 1});
 
             await expect(attrDomain.deleteAttribute({id: attrData.id, ctx})).rejects.toThrow();
@@ -970,6 +1008,7 @@ describe('attributeDomain', () => {
         test('Should throw if forbidden action', async function () {
             const mockAttrRepo: Mockify<IAttributeRepo> = {deleteAttribute: global.__mockPromise()};
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.domain.permission.admin': mockAdminPermDomainForbidden as IAdminPermissionDomain
             });
@@ -985,6 +1024,7 @@ describe('attributeDomain', () => {
             };
 
             const attrDomain = attributeDomain({
+                ...depsBase,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
                 'core.infra.cache.cacheService': mockCachesService as ICachesService,
@@ -998,7 +1038,7 @@ describe('attributeDomain', () => {
     });
 
     describe('getInputType', () => {
-        const attrDomain = attributeDomain();
+        const attrDomain = attributeDomain(depsBase);
         test('Return input type by format', async () => {
             expect(
                 attrDomain.getInputTypes({attrData: {...mockAttrSimple, format: AttributeFormats.TEXT}, ctx})
@@ -1051,7 +1091,7 @@ describe('attributeDomain', () => {
     });
 
     describe('getOutputType', () => {
-        const attrDomain = attributeDomain();
+        const attrDomain = attributeDomain(depsBase);
         test('Return output type by format', async () => {
             expect(
                 attrDomain.getOutputTypes({attrData: {...mockAttrSimple, format: AttributeFormats.TEXT}, ctx})

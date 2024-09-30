@@ -5,10 +5,10 @@ import {GraphQLScalarType, Kind, ValueNode} from 'graphql';
 import {IUtils} from 'utils/utils';
 
 interface IDeps {
-    'core.utils'?: IUtils;
+    'core.utils': IUtils;
 }
 
-export default function ({'core.utils': utils = null}: IDeps): GraphQLScalarType {
+export default function ({'core.utils': utils}: IDeps): GraphQLScalarType {
     return new GraphQLScalarType({
         name: 'DateTime',
         description: `The DateTime scalar type represents time data,

@@ -48,43 +48,43 @@ export interface ILibraryDomain {
     getLibrariesUsingAttribute(attributeId: string, ctx: IQueryInfos): Promise<string[]>;
 }
 
-interface IDeps {
-    'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
-    'core.domain.helpers.validate'?: IValidateHelper;
-    'core.domain.library.helpers.deleteAssociatedValues'?: IDeleteAssociatedValuesHelper;
-    'core.domain.library.helpers.runPreDelete'?: RunPreDeleteFunc;
-    'core.domain.library.helpers.updateAssociatedForms'?: IUpdateAssociatedFormsHelper;
-    'core.domain.permission.admin'?: IAdminPermissionDomain;
-    'core.domain.record'?: IRecordDomain;
-    'core.infra.attribute'?: IAttributeRepo;
-    'core.infra.cache.cacheService'?: ICachesService;
-    'core.infra.library'?: ILibraryRepo;
-    'core.infra.tree'?: ITreeRepo;
-    'core.utils'?: IUtils;
-    config?: IConfig;
-    translator?: i18n;
+export interface IDeps {
+    'core.domain.attribute': IAttributeDomain;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
+    'core.domain.helpers.validate': IValidateHelper;
+    'core.domain.library.helpers.deleteAssociatedValues': IDeleteAssociatedValuesHelper;
+    'core.domain.library.helpers.runPreDelete': RunPreDeleteFunc;
+    'core.domain.library.helpers.updateAssociatedForms': IUpdateAssociatedFormsHelper;
+    'core.domain.permission.admin': IAdminPermissionDomain;
+    'core.domain.record': IRecordDomain;
+    'core.infra.attribute': IAttributeRepo;
+    'core.infra.cache.cacheService': ICachesService;
+    'core.infra.library': ILibraryRepo;
+    'core.infra.tree': ITreeRepo;
+    'core.utils': IUtils;
+    config: IConfig;
+    translator: i18n;
 }
 
 export default function ({
-    'core.domain.attribute': attributeDomain = null,
-    'core.domain.eventsManager': eventsManager = null,
-    'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
-    'core.domain.helpers.validate': validateHelper = null,
-    'core.domain.library.helpers.deleteAssociatedValues': deleteAssociatedValues = null,
-    'core.domain.library.helpers.runPreDelete': runPreDelete = null,
-    'core.domain.library.helpers.updateAssociatedForms': updateAssociatedForms = null,
-    'core.domain.permission.admin': adminPermissionDomain = null,
-    'core.domain.record': recordDomain = null,
-    'core.infra.attribute': attributeRepo = null,
-    'core.infra.cache.cacheService': cacheService = null,
-    'core.infra.library': libraryRepo = null,
-    'core.infra.tree': treeRepo = null,
-    'core.utils': utils = null,
-    config = null,
-    translator: translator = null
-}: IDeps = {}): ILibraryDomain {
+    'core.domain.attribute': attributeDomain,
+    'core.domain.eventsManager': eventsManager,
+    'core.domain.helpers.getCoreEntityById': getCoreEntityById,
+    'core.domain.helpers.validate': validateHelper,
+    'core.domain.library.helpers.deleteAssociatedValues': deleteAssociatedValues,
+    'core.domain.library.helpers.runPreDelete': runPreDelete,
+    'core.domain.library.helpers.updateAssociatedForms': updateAssociatedForms,
+    'core.domain.permission.admin': adminPermissionDomain,
+    'core.domain.record': recordDomain,
+    'core.infra.attribute': attributeRepo,
+    'core.infra.cache.cacheService': cacheService,
+    'core.infra.library': libraryRepo,
+    'core.infra.tree': treeRepo,
+    'core.utils': utils,
+    config,
+    translator: translator
+}: IDeps): ILibraryDomain {
     return {
         async getLibraries({
             params,

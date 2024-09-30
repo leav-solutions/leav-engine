@@ -11,10 +11,10 @@ export interface ICoreImportApp {
 }
 
 interface IDeps {
-    'core.domain.user'?: IUserDomain;
+    'core.domain.user': IUserDomain;
 }
 
-export default function ({'core.domain.user': userDomain = null}: IDeps = {}): ICoreImportApp {
+export default function ({'core.domain.user': userDomain}: IDeps): ICoreImportApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {

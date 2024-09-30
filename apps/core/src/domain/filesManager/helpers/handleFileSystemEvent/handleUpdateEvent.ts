@@ -54,16 +54,20 @@ export const handleUpdateEvent = async (
     recordData = {...recordData, ...fileMetadata};
 
     // Update datas
-    await updateRecordFile(recordData, record.id, library, deps, ctx).catch(function (e) {
-        deps.logger.warn(`[FilesManager] error during updateRecordFile recordId ${record.id}`);
-    });
+    if (record.id) {
+        await updateRecordFile(recordData, record.id, library, deps, ctx).catch(function (e) {
+            deps.logger.warn(`[FilesManager] error during updateRecordFile recordId ${record.id}`);
+        });
 
-    // Regenerate Previews
-    requestPreviewGeneration({
-        recordId: record.id,
-        pathAfter: scanMsg.pathAfter,
-        libraryId: library,
-        versions: deps.utils.previewsSettingsToVersions(recordLibraryProps.previewsSettings),
-        deps: {...deps}
-    });
+        // Regenerate Previews
+        requestPreviewGeneration({
+            recordId: record.id,
+            pathAfter: scanMsg.pathAfter,
+            libraryId: library,
+            versions: deps.utils.previewsSettingsToVersions(recordLibraryProps.previewsSettings ?? []),
+            deps: {...deps}
+        });
+    } else {
+        deps.logger.error('[FilesManager] No record id found when trying to update the record');
+    }
 };

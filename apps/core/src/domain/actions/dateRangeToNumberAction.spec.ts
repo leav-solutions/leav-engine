@@ -8,7 +8,7 @@ import dateRangeToNumberAction from './dateRangeToNumberAction';
 describe('dateRangeToNumberAction', () => {
     const action = dateRangeToNumberAction().action;
     const attrText: IAttribute = {id: 'test_attr', format: AttributeFormats.DATE_RANGE, type: AttributeTypes.SIMPLE};
-    const ctx = {attribute: attrText};
+    const ctx = {attribute: attrText, userId: 'test_user'};
     test('dateRangeToNumberAction', async () => {
         expect(action([{...mockStandardValue, payload: {from: 12345, to: 12346}}], {}, ctx)).toEqual({
             errors: [],

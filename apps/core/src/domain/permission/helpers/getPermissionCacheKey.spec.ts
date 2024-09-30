@@ -28,7 +28,7 @@ describe('getPermissionCacheKey', () => {
         const permissionAction = AttributePermissionsActions.ACCESS_ATTRIBUTE;
         const key = 'key';
 
-        const cacheKey = getPermissionCacheKey(null, permissionType, applyTo, permissionAction, key);
+        const cacheKey = getPermissionCacheKey([], permissionType, applyTo, permissionAction, key);
 
         expect(cacheKey).toBe(`${PERMISSIONS_CACHE_HEADER}::${permissionType}:${applyTo}:${permissionAction}:${key}`);
     });
@@ -52,7 +52,7 @@ describe('getPermissionCacheKey', () => {
         const permissionAction = AttributePermissionsActions.ACCESS_ATTRIBUTE;
         const key = 'key';
 
-        const cacheKey = getPermissionCacheKey(groupsId, permissionType, null, permissionAction, key);
+        const cacheKey = getPermissionCacheKey(groupsId, permissionType, '', permissionAction, key);
 
         expect(cacheKey).toBe(
             `${PERMISSIONS_CACHE_HEADER}:${groupsId.sort().join('+')}:${permissionType}::${permissionAction}:${key}`

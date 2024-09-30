@@ -8,7 +8,18 @@ import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IPermissionByUserGroupsHelper} from './helpers/permissionByUserGroups';
 import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
-import recordPermissionDomain from './recordPermissionDomain';
+import recordPermissionDomain, {IDeps} from './recordPermissionDomain';
+import {ToAny} from 'utils/utils';
+
+const depsBase: ToAny<IDeps> = {
+    'core.domain.permission.library': jest.fn(),
+    'core.domain.permission.helpers.treeBasedPermissions': jest.fn(),
+    'core.domain.permission.helpers.permissionByUserGroups': jest.fn(),
+    'core.domain.permission.helpers.defaultPermission': jest.fn(),
+    'core.domain.attribute': jest.fn(),
+    'core.domain.helpers.getCoreEntityById': jest.fn(),
+    'core.infra.value': jest.fn()
+};
 
 describe('recordPermissionDomain', () => {
     const ctx: IQueryInfos = {
@@ -82,6 +93,7 @@ describe('recordPermissionDomain', () => {
             const mockGetCoreEntityById = global.__mockPromise(mockLibSimplePerms);
 
             const recordPermDomain = recordPermissionDomain({
+                ...depsBase,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.permission.library': mockLibPermDomain as ILibraryPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetCoreEntityById,
@@ -97,8 +109,8 @@ describe('recordPermissionDomain', () => {
                 ctx
             });
 
-            expect(mockTreeBasedPerm.getTreeBasedPermission.mock.calls.length).toBe(1);
-            expect(mockValueRepo.getValues.mock.calls.length).toBe(1);
+            expect(mockTreeBasedPerm.getTreeBasedPermission?.mock.calls.length).toBe(1);
+            expect(mockValueRepo.getValues?.mock.calls.length).toBe(1);
             expect(perm).toBe(true);
         });
 
@@ -106,6 +118,7 @@ describe('recordPermissionDomain', () => {
             const mockGetCoreEntityById = global.__mockPromise({system: false});
 
             const recordPermDomain = recordPermissionDomain({
+                ...depsBase,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.permission.library': mockLibPermDomain as ILibraryPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetCoreEntityById,
@@ -137,6 +150,7 @@ describe('recordPermissionDomain', () => {
             };
 
             const recordPermDomain = recordPermissionDomain({
+                ...depsBase,
                 'core.domain.permission.helpers.permissionByUserGroups':
                     mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper

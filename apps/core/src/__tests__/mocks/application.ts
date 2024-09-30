@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ApplicationTypes, IApplication} from '../../_types/application';
 
-export const mockApplication: IApplication = {
+export const mockApplication: MandatoryId<IApplication> = {
     id: 'test_application',
     type: ApplicationTypes.INTERNAL,
     system: true,
@@ -29,5 +29,5 @@ export const mockApplicationExternal: IApplication = {
     icon: {
         id: '123456'
     },
-    module: null
+    module: ''
 };

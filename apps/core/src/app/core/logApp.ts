@@ -20,13 +20,13 @@ export interface ICoreLogApp extends IAppModule {
 }
 
 interface IDeps {
-    'core.domain.log'?: ILogDomain;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.domain.library'?: ILibraryDomain;
-    'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.tree'?: ITreeDomain;
-    'core.domain.versionProfile'?: IVersionProfileDomain;
-    'core.domain.application'?: IApplicationDomain;
+    'core.domain.log': ILogDomain;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.domain.library': ILibraryDomain;
+    'core.domain.attribute': IAttributeDomain;
+    'core.domain.tree': ITreeDomain;
+    'core.domain.versionProfile': IVersionProfileDomain;
+    'core.domain.application': IApplicationDomain;
 }
 
 export default function ({
@@ -37,7 +37,7 @@ export default function ({
     'core.domain.tree': treeDomain,
     'core.domain.versionProfile': versionProfileDomain,
     'core.domain.application': applicationDomain
-}: IDeps = {}): ICoreLogApp {
+}: IDeps): ICoreLogApp {
     return {
         getGraphQLSchema() {
             const baseSchema = {
@@ -139,9 +139,11 @@ export default function ({
                         ) => {
                             const {filters, sort, pagination} = args;
 
-                            if (filters?.time) {
-                                filters.time.from = filters.time.from ? filters.time.from * 1000 : null;
-                                filters.time.to = filters.time.to ? filters.time.to * 1000 : null;
+                            if (filters.time?.from) {
+                                filters.time.from = filters.time.from * 1000;
+                            }
+                            if (filters.time?.to) {
+                                filters.time.to = filters.time.to * 1000;
                             }
 
                             const logs = await logDomain.getLogs({filters, sort, pagination}, ctx);

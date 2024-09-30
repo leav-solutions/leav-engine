@@ -8,7 +8,7 @@ export interface IIndexationManagerInterface {
 }
 
 interface IDeps {
-    'core.app.core.indexationManager'?: IIndexationManagerApp;
+    'core.app.core.indexationManager': IIndexationManagerApp;
 }
 
 export default function ({'core.app.core.indexationManager': indexationManager}: IDeps): IIndexationManagerInterface {

@@ -12,14 +12,11 @@ export interface ICoreActionListApp extends IAppModule {
 }
 
 interface IDeps {
-    'core.domain.actionsList'?: IActionsListDomain;
-    translator?: i18n;
+    'core.domain.actionsList': IActionsListDomain;
+    translator: i18n;
 }
 
-export default function ({
-    'core.domain.actionsList': actionsListDomain = null,
-    translator = null
-}: IDeps): ICoreActionListApp {
+export default function ({'core.domain.actionsList': actionsListDomain, translator}: IDeps): ICoreActionListApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {

@@ -12,7 +12,7 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {i18n} from 'i18next';
 import {IRecordRepo} from 'infra/record/recordRepo';
-import {IUtils} from 'utils/utils';
+import {IUtils, ToAny} from 'utils/utils';
 import * as Config from '_types/config';
 import ValidationError from '../../errors/ValidationError';
 import {LibraryBehavior} from '../../_types/library';
@@ -22,7 +22,7 @@ import {mockLibrary, mockLibraryDirectories, mockLibraryFiles} from '../../__tes
 import {mockFileRecord, mockRecord} from '../../__tests__/mocks/record';
 import {mockTranslator} from '../../__tests__/mocks/translator';
 import {mockFilesTree, mockTree} from '../../__tests__/mocks/tree';
-import filesManager, {IStoreFilesParams} from './filesManagerDomain';
+import filesManager, {IDeps, IStoreFilesParams} from './filesManagerDomain';
 import {requestPreviewGeneration} from './helpers/handlePreview';
 import {systemPreviewsSettings} from './_constants';
 import winston = require('winston');
@@ -88,6 +88,26 @@ jest.mock('./helpers/handlePreview', () => ({
     requestPreviewGeneration: jest.fn()
 }));
 
+const depsBase: ToAny<IDeps> = {
+    config: {},
+    'core.utils': jest.fn(),
+    'core.infra.amqpService': jest.fn(),
+    'core.utils.logger': jest.fn(),
+    'core.domain.record': jest.fn(),
+    'core.domain.value': jest.fn(),
+    'core.domain.tree': jest.fn(),
+    'core.domain.permission.library': jest.fn(),
+    'core.domain.filesManager.helpers.messagesHandler': jest.fn(),
+    'core.domain.library': jest.fn(),
+    'core.domain.helpers.updateRecordLastModif': jest.fn(),
+    'core.domain.record.helpers.sendRecordUpdateEvent': jest.fn(),
+    'core.domain.helpers.storeUploadFile': jest.fn(),
+    'core.domain.helpers.createDirectory': jest.fn(),
+    'core.infra.record': jest.fn(),
+    'core.domain.eventsManager': jest.fn(),
+    translator: {}
+};
+
 describe('FilesManager', () => {
     const ctx: IQueryInfos = {
         userId: '1',
@@ -116,6 +136,7 @@ describe('FilesManager', () => {
 
     test('Init', async () => {
         const files = filesManager({
+            ...depsBase,
             config: mockConfig as Config.IConfig,
             'core.utils.logger': logger as winston.Winston,
             'core.infra.amqpService': mockAmqpService as IAmqpService,
@@ -125,8 +146,8 @@ describe('FilesManager', () => {
         await files.init();
 
         expect(mockAmqpService.consume).toBeCalled();
-        expect(mockAmqpService.consumer.channel.assertQueue).toBeCalled();
-        expect(mockAmqpService.consumer.channel.bindQueue).toBeCalled();
+        expect(mockAmqpService.consumer?.channel.assertQueue).toBeCalled();
+        expect(mockAmqpService.consumer?.channel.bindQueue).toBeCalled();
     });
 
     describe('forcePreviewsGeneration', () => {
@@ -154,6 +175,7 @@ describe('FilesManager', () => {
             };
 
             const files = filesManager({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.utils': mockUtils as IUtils,
                 'core.utils.logger': logger as winston.Winston,
@@ -167,7 +189,7 @@ describe('FilesManager', () => {
 
             await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', recordIds: ['id']});
 
-            expect(mockRecordDomain.find.mock.calls[0][0].params.filters).toEqual([
+            expect(mockRecordDomain.find?.mock.calls[0][0].params.filters).toEqual([
                 {field: 'id', value: 'id', condition: AttributeCondition.EQUAL}
             ]);
             expect(requestPreviewGeneration).toBeCalledTimes(1);
@@ -196,6 +218,7 @@ describe('FilesManager', () => {
             };
 
             const files = filesManager({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.utils': mockUtils as IUtils,
                 'core.utils.logger': logger as winston.Winston,
@@ -209,7 +232,7 @@ describe('FilesManager', () => {
 
             await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', recordIds: ['id1', 'id2', 'id3']});
 
-            expect(mockRecordDomain.find.mock.calls[0][0].params.filters).toEqual([
+            expect(mockRecordDomain.find?.mock.calls[0][0].params.filters).toEqual([
                 {field: 'id', value: 'id1', condition: AttributeCondition.EQUAL},
                 {operator: Operator.OR},
                 {field: 'id', value: 'id2', condition: AttributeCondition.EQUAL},
@@ -274,6 +297,7 @@ describe('FilesManager', () => {
             };
 
             const files = filesManager({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.utils': mockUtils as IUtils,
                 'core.utils.logger': logger as winston.Winston,
@@ -322,6 +346,7 @@ describe('FilesManager', () => {
             };
 
             const files = filesManager({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.utils': mockUtils as IUtils,
                 'core.utils.logger': logger as winston.Winston,
@@ -384,6 +409,7 @@ describe('FilesManager', () => {
             };
 
             const files = filesManager({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.utils': mockUtils as IUtils,
                 'core.utils.logger': logger as winston.Winston,
@@ -427,6 +453,7 @@ describe('FilesManager', () => {
             };
 
             const files = filesManager({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.utils': mockUtils as IUtils,
                 'core.utils.logger': logger as winston.Winston,
@@ -451,7 +478,7 @@ describe('FilesManager', () => {
             });
 
             expect(mockRecordDomain.find).toBeCalledTimes(1);
-            expect(mockRecordDomain.find.mock.calls[0][0].params.filters).toEqual([
+            expect(mockRecordDomain.find?.mock.calls[0][0].params.filters).toEqual([
                 {
                     field: 'file_name',
                     condition: AttributeCondition.EQUAL,
@@ -481,6 +508,7 @@ describe('FilesManager', () => {
             };
 
             const files = filesManager({
+                ...depsBase,
                 config: mockConfigWithPaths as Config.IConfig
             });
 
@@ -507,6 +535,7 @@ describe('FilesManager', () => {
             };
 
             const files = filesManager({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.record': mockRecordDomain as IRecordDomain
             });
@@ -525,6 +554,7 @@ describe('FilesManager', () => {
             };
 
             const files = filesManager({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 translator: mockTranslator as i18n
@@ -564,6 +594,7 @@ describe('FilesManager', () => {
             };
 
             const files = filesManager({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
@@ -612,6 +643,7 @@ describe('FilesManager', () => {
             };
 
             const files = filesManager({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
@@ -689,6 +721,7 @@ describe('FilesManager', () => {
 
         test('Write file to disk', async () => {
             const filesManagerDomain = filesManager({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
@@ -713,6 +746,7 @@ describe('FilesManager', () => {
 
         test('Handle replacement if file already exists', async () => {
             const filesManagerDomain = filesManager({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.record': mockRecordDomainExists as IRecordDomain,
                 'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
@@ -744,6 +778,7 @@ describe('FilesManager', () => {
 
         test('Handle rename if file already exists', async () => {
             const filesManagerDomain = filesManager({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.record': mockRecordDomainExists as IRecordDomain,
                 'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
@@ -775,6 +810,7 @@ describe('FilesManager', () => {
 
         test('Throw if destination path is not a folder', async () => {
             const filesManagerDomain = filesManager({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
@@ -789,6 +825,7 @@ describe('FilesManager', () => {
 
         test('Throw if duplicate names in files to store', async () => {
             const filesManagerDomain = filesManager({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
@@ -817,6 +854,7 @@ describe('FilesManager', () => {
             };
 
             const filesManagerDomain = filesManager({
+                ...depsBase,
                 config: mockConfigForbiddenFiles as Config.IConfig,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,

@@ -144,43 +144,43 @@ export interface ITreeDomain {
     getDefaultElement(params: {treeId: string; ctx: IQueryInfos}): Promise<ITreeNode>;
 }
 
-interface IDeps {
-    'core.domain.record'?: IRecordDomain;
-    'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.permission.admin'?: IAdminPermissionDomain;
-    'core.domain.permission.tree'?: ITreePermissionDomain;
-    'core.domain.permission.treeNode'?: ITreeNodePermissionDomain;
-    'core.domain.tree.helpers.treeDataValidation'?: ITreeDataValidationHelper;
-    'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
-    'core.domain.tree.helpers.elementAncestors'?: IElementAncestorsHelper;
-    'core.domain.tree.helpers.handleRemovedLibraries'?: HandleRemovedLibrariesFunc;
-    'core.domain.tree.helpers.getDefaultElement'?: IGetDefaultElementHelper;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.infra.library'?: ILibraryRepo;
-    'core.infra.tree'?: ITreeRepo;
-    'core.infra.versionProfile'?: IVersionProfileRepo;
-    'core.utils'?: IUtils;
-    'core.infra.cache.cacheService'?: ICachesService;
+export interface IDeps {
+    'core.domain.record': IRecordDomain;
+    'core.domain.attribute': IAttributeDomain;
+    'core.domain.permission.admin': IAdminPermissionDomain;
+    'core.domain.permission.tree': ITreePermissionDomain;
+    'core.domain.permission.treeNode': ITreeNodePermissionDomain;
+    'core.domain.tree.helpers.treeDataValidation': ITreeDataValidationHelper;
+    'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
+    'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
+    'core.domain.tree.helpers.handleRemovedLibraries': HandleRemovedLibrariesFunc;
+    'core.domain.tree.helpers.getDefaultElement': IGetDefaultElementHelper;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.infra.library': ILibraryRepo;
+    'core.infra.tree': ITreeRepo;
+    'core.infra.versionProfile': IVersionProfileRepo;
+    'core.utils': IUtils;
+    'core.infra.cache.cacheService': ICachesService;
 }
 
 export default function ({
-    'core.domain.record': recordDomain = null,
-    'core.domain.attribute': attributeDomain = null,
-    'core.domain.permission.admin': adminPermissionDomain = null,
-    'core.domain.permission.tree': treePermissionDomain = null,
-    'core.domain.permission.treeNode': treeNodePermissionDomain = null,
-    'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper = null,
-    'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
-    'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper = null,
-    'core.domain.tree.helpers.handleRemovedLibraries': handleRemovedLibraries = null,
-    'core.domain.tree.helpers.getDefaultElement': getDefaultElementHelper = null,
-    'core.domain.eventsManager': eventsManagerDomain = null,
-    'core.infra.library': libraryRepo = null,
-    'core.infra.tree': treeRepo = null,
-    'core.infra.versionProfile': versionProfileRepo = null,
-    'core.utils': utils = null,
-    'core.infra.cache.cacheService': cacheService = null
-}: IDeps = {}): ITreeDomain {
+    'core.domain.record': recordDomain,
+    'core.domain.attribute': attributeDomain,
+    'core.domain.permission.admin': adminPermissionDomain,
+    'core.domain.permission.tree': treePermissionDomain,
+    'core.domain.permission.treeNode': treeNodePermissionDomain,
+    'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper,
+    'core.domain.helpers.getCoreEntityById': getCoreEntityById,
+    'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper,
+    'core.domain.tree.helpers.handleRemovedLibraries': handleRemovedLibraries,
+    'core.domain.tree.helpers.getDefaultElement': getDefaultElementHelper,
+    'core.domain.eventsManager': eventsManagerDomain,
+    'core.infra.library': libraryRepo,
+    'core.infra.tree': treeRepo,
+    'core.infra.versionProfile': versionProfileRepo,
+    'core.utils': utils,
+    'core.infra.cache.cacheService': cacheService
+}: IDeps): ITreeDomain {
     async function _isExistingTree(treeId: string, ctx: IQueryInfos): Promise<boolean> {
         const treeProps = await getCoreEntityById<ITree>('tree', treeId, ctx);
 
@@ -207,7 +207,7 @@ export default function ({
             !treeProps.libraries?.[parent.library]?.allowedChildren.includes(element.library));
 
     const _clearLibraries = async (libraries: string[]): Promise<void> => {
-        const keys = [];
+        const keys: string[] = [];
 
         for (const libId of libraries) {
             keys.push(
@@ -226,7 +226,7 @@ export default function ({
     };
 
     const _clearTrees = async (trees: string[]): Promise<void> => {
-        const keys = [];
+        const keys: string[] = [];
 
         for (const treeId of trees) {
             keys.push(
@@ -249,7 +249,7 @@ export default function ({
     };
 
     const _clearAttributes = async (attributes: string[]): Promise<void> => {
-        const keys = [];
+        const keys: string[] = [];
 
         for (const attributeId of attributes) {
             keys.push(

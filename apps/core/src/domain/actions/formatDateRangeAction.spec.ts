@@ -7,7 +7,7 @@ import formatDateRangeAction from './formatDateRangeAction';
 describe('formatDateRangeAction', () => {
     const action = formatDateRangeAction().action;
     const attrText: IAttribute = {id: 'test_attr', format: AttributeFormats.DATE_RANGE, type: AttributeTypes.SIMPLE};
-    const ctx = {attribute: attrText};
+    const ctx = {attribute: attrText, userId: 'test_user'};
 
     const testingRangeDate = {from: '2119477320', to: '2119477380'};
 

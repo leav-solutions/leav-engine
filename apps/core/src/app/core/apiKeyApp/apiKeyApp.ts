@@ -15,13 +15,13 @@ export interface ICoreVersionProfileApp {
 }
 
 interface IDeps {
-    'core.domain.apiKey'?: IApiKeyDomain;
-    'core.domain.record'?: IRecordDomain;
+    'core.domain.apiKey': IApiKeyDomain;
+    'core.domain.record': IRecordDomain;
 }
 
 export default function ({
-    'core.domain.apiKey': apiKeyDomain = null,
-    'core.domain.record': recordDomain = null
+    'core.domain.apiKey': apiKeyDomain,
+    'core.domain.record': recordDomain
 }: IDeps): ICoreVersionProfileApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {

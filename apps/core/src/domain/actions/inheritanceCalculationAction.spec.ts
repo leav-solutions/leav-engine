@@ -34,7 +34,8 @@ describe('inheritanceCalculationAction', () => {
             attribute: {
                 id: 'meh',
                 type: AttributeTypes.SIMPLE
-            }
+            },
+            userId: 'test'
         };
 
         const res = await action(
@@ -55,7 +56,8 @@ describe('inheritanceCalculationAction', () => {
             attribute: {
                 id: 'meh',
                 type: AttributeTypes.SIMPLE
-            }
+            },
+            userId: 'test'
         };
         const res = await action(
             null,
@@ -81,17 +83,18 @@ describe('inheritanceCalculationAction', () => {
             attribute: {
                 id: 'bla',
                 type: AttributeTypes.SIMPLE_LINK
-            }
+            },
+            userId: 'test'
         };
 
-        const res = (await action2(
+        const res = await action2(
             null,
             {
                 Description: 'test',
                 Formula: ''
             },
             ctx
-        )) as IRecord;
+        );
 
         const resultValue = res.values[0].payload;
 

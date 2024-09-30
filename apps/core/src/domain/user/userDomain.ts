@@ -39,15 +39,15 @@ export interface IUserDomain {
     ): Promise<void>;
 }
 
-interface IDeps {
-    config?: Config.IConfig;
-    'core.domain.permissions'?: IPermissionDomain;
-    'core.infra.userData'?: IUserDataRepo;
-    'core.domain.permission'?: IPermissionDomain;
-    'core.infra.mailer.mailerService'?: IMailerService;
-    'core.domain.globalSettings'?: IGlobalSettingsDomain;
-    'core.utils'?: IUtils;
-    translator?: i18n;
+export interface IDeps {
+    config: Config.IConfig;
+    'core.domain.permissions': IPermissionDomain;
+    'core.infra.userData': IUserDataRepo;
+    'core.domain.permission': IPermissionDomain;
+    'core.infra.mailer.mailerService': IMailerService;
+    'core.domain.globalSettings': IGlobalSettingsDomain;
+    'core.utils': IUtils;
+    translator: i18n;
 }
 
 export enum UserCoreDataKeys {
@@ -55,14 +55,14 @@ export enum UserCoreDataKeys {
 }
 
 export default function ({
-    config = null,
-    'core.infra.userData': userDataRepo = null,
-    'core.domain.permission': permissionDomain = null,
-    'core.infra.mailer.mailerService': mailerService = null,
-    'core.domain.globalSettings': globalSettingsDomain = null,
-    'core.utils': utils = null,
-    translator = null
-}: IDeps = {}): IUserDomain {
+    config,
+    'core.infra.userData': userDataRepo,
+    'core.domain.permission': permissionDomain,
+    'core.infra.mailer.mailerService': mailerService,
+    'core.domain.globalSettings': globalSettingsDomain,
+    'core.utils': utils,
+    translator
+}: IDeps): IUserDomain {
     return {
         async sendResetPasswordEmail(
             email: string,

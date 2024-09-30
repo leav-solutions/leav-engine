@@ -45,25 +45,25 @@ export interface IApplicationDomain {
     getApplicationUrl(params: {application: IApplication; ctx: IQueryInfos}): string;
 }
 
-interface IDeps {
-    'core.domain.permission.admin'?: IAdminPermissionDomain;
-    'core.domain.user'?: IUserDomain;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.infra.application'?: IApplicationRepo;
-    'core.utils'?: IUtils;
-    translator?: i18n;
-    config?: IConfig;
+export interface IDeps {
+    'core.domain.permission.admin': IAdminPermissionDomain;
+    'core.domain.user': IUserDomain;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.infra.application': IApplicationRepo;
+    'core.utils': IUtils;
+    translator: i18n;
+    config: IConfig;
 }
 
 export default function ({
-    'core.domain.permission.admin': adminPermissionDomain = null,
-    'core.domain.user': userDomain = null,
-    'core.domain.eventsManager': eventsManagerDomain = null,
-    'core.infra.application': applicationRepo = null,
-    'core.utils': utils = null,
-    translator = null,
-    config = null
-}: IDeps = {}): IApplicationDomain {
+    'core.domain.permission.admin': adminPermissionDomain,
+    'core.domain.user': userDomain,
+    'core.domain.eventsManager': eventsManagerDomain,
+    'core.infra.application': applicationRepo,
+    'core.utils': utils,
+    translator,
+    config
+}: IDeps): IApplicationDomain {
     const _getApplicationProperties = async ({id, ctx}) => {
         const apps = await applicationRepo.getApplications({
             params: {filters: {id}, strictFilters: true},
@@ -95,7 +95,7 @@ export default function ({
             [ApplicationEventTypes.DELETE]: EventAction.APP_DELETE
         };
 
-        let appBeforeToSend = null;
+        let appBeforeToSend: IApplication | undefined | null = null;
         switch (type) {
             case ApplicationEventTypes.SAVE:
                 appBeforeToSend = applicationBefore;

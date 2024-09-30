@@ -71,17 +71,13 @@ export interface IDbService {
     analyzers?(): Promise<Analyzer[]>;
 }
 
-interface IDeps {
-    'core.infra.db'?: Database;
-    'core.utils'?: IUtils;
-    config?: IConfig;
+export interface IDeps {
+    'core.infra.db': Database;
+    'core.utils': IUtils;
+    config: IConfig;
 }
 
-export default function ({
-    'core.infra.db': db = null,
-    'core.utils': utils = null,
-    config = null
-}: IDeps = {}): IDbService {
+export default function ({'core.infra.db': db, 'core.utils': utils, config}: IDeps): IDbService {
     const collectionExists = async function (name: string): Promise<boolean> {
         const collections = await db.listCollections();
 

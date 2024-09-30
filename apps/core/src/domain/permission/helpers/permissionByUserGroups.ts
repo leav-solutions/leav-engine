@@ -18,7 +18,7 @@ export interface IPermissionByUserGroupsHelper {
 
 export default function (deps: IDeps): IPermissionByUserGroupsHelper {
     const {
-        'core.domain.permission.helpers.simplePermission': simplePermHelper = null,
+        'core.domain.permission.helpers.simplePermission': simplePermHelper,
         'core.domain.permission.helpers.reducePermissionsArray': reducePermissionsArrayHelper
     } = deps;
 
@@ -47,7 +47,7 @@ export default function (deps: IDeps): IPermissionByUserGroupsHelper {
             const userPerms = userGroupsPaths.length
                 ? await Promise.all(
                       userGroupsPaths.map(async (userGroupPath): Promise<boolean | null> => {
-                          let userGroupPermission = null;
+                          let userGroupPermission: boolean | null = null;
                           if (userGroupPath.length) {
                               for (const groupNode of userGroupPath) {
                                   // Check if this group node has a permission defined on it

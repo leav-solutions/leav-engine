@@ -5,7 +5,8 @@
         "baseUrl": "src",
         "outDir": "dist",
         "isolatedModules": false,
-        "typeRoots": ["./src/_types", "./node_modules/@types"]
+        "typeRoots": ["./src/_types", "./node_modules/@types"]/* ,
+        "strictNullChecks": true */
     },
     "exclude": [
         "applications"

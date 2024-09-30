@@ -7,7 +7,15 @@ import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 import {mockAttrAdvVersionableSimple} from '../../__tests__/mocks/attribute';
-import attributeAdvancedRepo from './attributeAdvancedRepo';
+import attributeAdvancedRepo, {IDeps} from './attributeAdvancedRepo';
+import {ToAny} from 'utils/utils';
+
+const depsBase: ToAny<IDeps> = {
+    'core.infra.db.dbService': jest.fn(),
+    'core.infra.db.dbUtils': jest.fn(),
+    'core.infra.attributeTypes.helpers.getConditionPart': jest.fn(),
+    'core.infra.record.helpers.filterTypes': jest.fn()
+};
 
 describe('AttributeStandardRepo', () => {
     const mockAttribute = {
@@ -60,7 +68,7 @@ describe('AttributeStandardRepo', () => {
                 execute: global.__mockPromiseMultiple([[createdValueData], [createdEdgeData]])
             };
 
-            const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
+            const attrRepo = attributeAdvancedRepo({...depsBase, 'core.infra.db.dbService': mockDbServ});
 
             const createdVal = await attrRepo.createValue({
                 library: 'test_lib',
@@ -136,6 +144,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const attrRepo = attributeAdvancedRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ
             });
 
@@ -200,7 +209,7 @@ describe('AttributeStandardRepo', () => {
                 execute: global.__mockPromiseMultiple([[savedValueData], [savedEdgeData]])
             };
 
-            const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
+            const attrRepo = attributeAdvancedRepo({...depsBase, 'core.infra.db.dbService': mockDbServ});
 
             const savedVal = await attrRepo.updateValue({
                 library: 'test_lib',
@@ -274,6 +283,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const attrRepo = attributeAdvancedRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ
             });
 
@@ -337,7 +347,7 @@ describe('AttributeStandardRepo', () => {
 
             const mockDbServ = {db: mockDb as unknown as Database};
 
-            const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
+            const attrRepo = attributeAdvancedRepo({...depsBase, 'core.infra.db.dbService': mockDbServ});
 
             const deletedVal = await attrRepo.deleteValue({
                 library: 'test_lib',
@@ -401,9 +411,9 @@ describe('AttributeStandardRepo', () => {
                 execute: global.__mockPromise([{...edgeRes, value: 'test val'}])
             };
 
-            const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
+            const attrRepo = attributeAdvancedRepo({...depsBase, 'core.infra.db.dbService': mockDbServ});
 
-            const value = await attrRepo.getValueById({
+            const value = await attrRepo?.getValueById?.({
                 library: 'test_lib',
                 recordId: '987654',
                 attribute: mockAttribute,
@@ -438,9 +448,9 @@ describe('AttributeStandardRepo', () => {
                 execute: global.__mockPromise([])
             };
 
-            const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
+            const attrRepo = attributeAdvancedRepo({...depsBase, 'core.infra.db.dbService': mockDbServ});
 
-            const value = await attrRepo.getValueById({
+            const value = await attrRepo?.getValueById?.({
                 library: 'test_lib',
                 recordId: '987654',
                 attribute: mockAttribute,
@@ -496,6 +506,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const attrRepo = attributeAdvancedRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ
             });
 
@@ -531,6 +542,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const attrRepo = attributeAdvancedRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ
             });
 
@@ -587,6 +599,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const attrRepo = attributeAdvancedRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ
             });
 
@@ -612,6 +625,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const attrRepo = attributeAdvancedRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ
             });
 
@@ -638,7 +652,7 @@ describe('AttributeStandardRepo', () => {
             const mockDbServ = {
                 db: new Database()
             };
-            const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
+            const attrRepo = attributeAdvancedRepo({...depsBase, 'core.infra.db.dbService': mockDbServ});
             const filter = attrRepo.sortQueryPart({
                 attributes: [{id: 'label', type: AttributeTypes.ADVANCED}],
                 order: 'ASC'
@@ -660,6 +674,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const attrRepo = attributeAdvancedRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.attributeTypes.helpers.getConditionPart': () => aql`rVal == ${'MyLabel'}`,
                 'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper

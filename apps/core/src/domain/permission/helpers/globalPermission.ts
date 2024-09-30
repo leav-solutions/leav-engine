@@ -41,23 +41,23 @@ export interface IGlobalPermissionHelper {
     getGlobalPermission(params: IGetGlobalPermissionParams, ctx: IQueryInfos): Promise<boolean>;
     getInheritedGlobalPermission(params: IGetInheritedGlobalPermissionParams, ctx: IQueryInfos): Promise<boolean>;
 }
-interface IDeps {
-    'core.domain.permission.helpers.permissionByUserGroups'?: IPermissionByUserGroupsHelper;
-    'core.domain.permission.helpers.defaultPermission'?: IDefaultPermissionHelper;
-    'core.infra.permission'?: IPermissionRepo;
-    'core.infra.attribute'?: IAttributeRepo;
-    'core.infra.tree'?: ITreeRepo;
-    'core.infra.value'?: IValueRepo;
-    'core.infra.cache.cacheService'?: ICachesService;
+export interface IDeps {
+    'core.domain.permission.helpers.permissionByUserGroups': IPermissionByUserGroupsHelper;
+    'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
+    'core.infra.permission': IPermissionRepo;
+    'core.infra.attribute': IAttributeRepo;
+    'core.infra.tree': ITreeRepo;
+    'core.infra.value': IValueRepo;
+    'core.infra.cache.cacheService': ICachesService;
 }
 
 export default function ({
-    'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper = null,
-    'core.domain.permission.helpers.defaultPermission': defaultPermHelper = null,
-    'core.infra.attribute': attributeRepo = null,
-    'core.infra.value': valueRepo = null,
-    'core.infra.tree': treeRepo = null,
-    'core.infra.cache.cacheService': cacheService = null
+    'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper,
+    'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
+    'core.infra.attribute': attributeRepo,
+    'core.infra.value': valueRepo,
+    'core.infra.tree': treeRepo,
+    'core.infra.cache.cacheService': cacheService
 }: IDeps): IGlobalPermissionHelper {
     return {
         async getGlobalPermission(
@@ -66,7 +66,7 @@ export default function ({
         ): Promise<boolean> {
             const cacheKey = getPermissionCacheKey(ctx.groupsId, type, applyTo, action, '');
             const permFromCache = (await cacheService.getCache(ECacheType.RAM).getData([cacheKey]))[0];
-            let perm: boolean;
+            let perm: boolean | null = null;
 
             if (permFromCache !== null) {
                 if (permFromCache === PERMISSIONS_NULL_PLACEHOLDER) {

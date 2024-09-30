@@ -15,7 +15,7 @@ describe('AttributeRepo', () => {
     };
     describe('getAttributes', () => {
         test('Get all attributes', async function () {
-            const mockDbServ = {db: null, execute: global.__mockPromise([])};
+            const mockDbServ = {execute: global.__mockPromise([])};
             const mockDbUtils: Mockify<IDbUtils> = {
                 findCoreEntity: global.__mockPromise([
                     {

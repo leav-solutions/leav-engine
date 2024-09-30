@@ -64,33 +64,33 @@ export interface IFormDomain {
     deleteForm({library, id, ctx}: {library: string; id: string; ctx: IQueryInfos}): Promise<IForm>;
 }
 
-interface IDeps {
-    'core.domain.library'?: ILibraryDomain;
-    'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.record'?: IRecordDomain;
-    'core.domain.permission.library'?: ILibraryPermissionDomain;
-    'core.domain.permission.recordAttribute'?: IRecordAttributePermissionDomain;
-    'core.domain.permission.attribute'?: IAttributePermissionDomain;
-    'core.domain.helpers.validate'?: IValidateHelper;
-    'core.domain.tree'?: ITreeDomain;
-    'core.infra.form'?: IFormRepo;
-    'core.utils'?: IUtils;
-    'core.utils.logger'?: winston.Winston;
-    translator?: i18n;
+export interface IDeps {
+    'core.domain.library': ILibraryDomain;
+    'core.domain.attribute': IAttributeDomain;
+    'core.domain.record': IRecordDomain;
+    'core.domain.permission.library': ILibraryPermissionDomain;
+    'core.domain.permission.recordAttribute': IRecordAttributePermissionDomain;
+    'core.domain.permission.attribute': IAttributePermissionDomain;
+    'core.domain.helpers.validate': IValidateHelper;
+    'core.domain.tree': ITreeDomain;
+    'core.infra.form': IFormRepo;
+    'core.utils': IUtils;
+    'core.utils.logger': winston.Winston;
+    translator: i18n;
 }
 
-export default function (deps: IDeps = {}): IFormDomain {
+export default function (deps: IDeps): IFormDomain {
     const {
-        'core.domain.attribute': attributeDomain = null,
-        'core.domain.permission.library': libraryPermissionDomain = null,
-        'core.domain.permission.recordAttribute': recordAttributePermissionDomain = null,
-        'core.domain.permission.attribute': attributePermissionDomain = null,
-        'core.domain.helpers.validate': validateHelper = null,
-        'core.domain.tree': treeDomain = null,
-        'core.infra.form': formRepo = null,
-        'core.utils': utils = null,
-        'core.utils.logger': logger = null,
-        translator = null
+        'core.domain.attribute': attributeDomain,
+        'core.domain.permission.library': libraryPermissionDomain,
+        'core.domain.permission.recordAttribute': recordAttributePermissionDomain,
+        'core.domain.permission.attribute': attributePermissionDomain,
+        'core.domain.helpers.validate': validateHelper,
+        'core.domain.tree': treeDomain,
+        'core.infra.form': formRepo,
+        'core.utils': utils,
+        'core.utils.logger': logger,
+        translator
     } = deps;
 
     const _canAccessAttribute = (attribute: string, libraryId: string, recordId: string, ctx: IQueryInfos) =>

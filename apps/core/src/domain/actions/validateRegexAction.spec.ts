@@ -7,7 +7,7 @@ import validateRegexAction from './validateRegexAction';
 describe('validateRegexAction', () => {
     const action = validateRegexAction().action;
     const attrText = {id: 'test_attr', format: AttributeFormats.TEXT, type: AttributeTypes.SIMPLE};
-    const ctx = {attribute: attrText};
+    const ctx = {attribute: attrText, userId: 'test_user'};
     test('validateRegex', async () => {
         const res = await action([{payload: 'test'}], {regex: '^test$'}, ctx);
         expect(res.values[0].payload).toBe('test');
