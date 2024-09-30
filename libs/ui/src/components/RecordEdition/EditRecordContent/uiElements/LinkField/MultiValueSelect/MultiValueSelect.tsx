@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, ReactNode, useState} from 'react';
+import {FunctionComponent, useState} from 'react';
 import {AntForm, KitSelect} from 'aristid-ds';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 import useSharedTranslation from '_ui/hooks/useSharedTranslation/useSharedTranslation';
@@ -18,10 +18,9 @@ interface IMultiValueSelectProps extends IProvidedByAntFormItem<SelectProps<stri
     activeValues: RecordFormElementsValueLinkValue[] | undefined;
     attribute: RecordFormAttributeLinkAttributeFragment;
     label: string;
-    required: boolean;
-    shouldShowValueDetailsButton?: boolean;
     onValueDeselect: (value: IRecordPropertyLink) => void;
     onSelectChange: (values: Array<{value: IRecordIdentity; idValue: string}>) => void;
+    required?: boolean;
 }
 
 export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
@@ -30,10 +29,9 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
     activeValues,
     attribute,
     label,
-    required,
-    shouldShowValueDetailsButton = false,
     onValueDeselect,
-    onSelectChange
+    onSelectChange,
+    required = false
 }) => {
     if (!onChange) {
         throw Error('MultiValueSelect should be used inside a antd Form.Item');
@@ -50,7 +48,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
         onSelectChange
     });
 
-    const {onValueDetailsButtonClick, infoIconWithTooltip} = useValueDetailsButton({
+    const {onValueDetailsButtonClick} = useValueDetailsButton({
         value: null,
         attribute
     });
@@ -134,8 +132,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
             // @ts-expect-error
             onDeselect={_handleDeselect}
             onChange={onChange}
-            infoIcon={shouldShowValueDetailsButton ? infoIconWithTooltip : null}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
+            onInfoClick={onValueDetailsButtonClick}
         />
     );
 };

@@ -106,7 +106,6 @@ describe('<MultiValueSelect />', () => {
                         label={state.formElement.settings.label.en}
                         onSelectChange={onSelectChangeMock}
                         onValueDeselect={onValueDeselectMock}
-                        required={false}
                         onChange={onChangeMock}
                     />
                 </AntForm.Item>
@@ -160,7 +159,6 @@ describe('<MultiValueSelect />', () => {
                         attribute={mockFormElementLink.attribute}
                         label={state.formElement.settings.label.en}
                         onSelectChange={onSelectChangeMock}
-                        required={false}
                         onValueDeselect={onValueDeselectMock}
                     />
                 </AntForm.Item>
@@ -259,7 +257,6 @@ describe('<MultiValueSelect />', () => {
                             attribute={mockFormElementLink.attribute}
                             label={state.formElement.settings.label.en}
                             onSelectChange={onSelectChangeMock}
-                            required={false}
                             onValueDeselect={onValueDeselectMock}
                         />
                     </AntForm.Item>
@@ -292,7 +289,6 @@ describe('<MultiValueSelect />', () => {
                             attribute={mockFormElementLink.attribute}
                             label={state.formElement.settings.label.en}
                             onSelectChange={onSelectChangeMock}
-                            required={false}
                             onValueDeselect={onValueDeselectMock}
                         />
                     </AntForm.Item>
@@ -361,7 +357,6 @@ describe('<MultiValueSelect />', () => {
                             attribute={mockFormElementLink.attribute}
                             label={state.formElement.settings.label.en}
                             onSelectChange={onSelectChangeMock}
-                            required={false}
                             onValueDeselect={onValueDeselectMock}
                         />
                     </AntForm.Item>

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, ReactNode, useEffect, useState} from 'react';
+import {FunctionComponent, useEffect, useState} from 'react';
 import {AntForm, KitSelect, KitTypography} from 'aristid-ds';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 import useSharedTranslation from '_ui/hooks/useSharedTranslation/useSharedTranslation';
@@ -15,7 +15,6 @@ import {useDebouncedValue} from '_ui/hooks/useDebouncedValue/useDebouncedValue';
 import styled from 'styled-components';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
-import {IStandardFieldValue} from '_ui/components/RecordEdition/EditRecordContent/reducers/standardFieldReducer/standardFieldReducer';
 
 const ResultsCount = styled(KitTypography.Text)`
     margin-bottom: calc(var(--general-spacing-s) * 1px);
@@ -25,8 +24,6 @@ interface IMonoValueSelectProps extends IProvidedByAntFormItem<SelectProps<strin
     activeValue: RecordFormElementsValueLinkValue | undefined;
     attribute: RecordFormAttributeLinkAttributeFragment;
     label: string;
-    required: boolean;
-    shouldShowValueDetailsButton?: boolean;
     onSelectClear: (value: IRecordPropertyLink) => void;
     onSelectChange: (
         values: Array<{
@@ -34,6 +31,7 @@ interface IMonoValueSelectProps extends IProvidedByAntFormItem<SelectProps<strin
             idValue: string;
         }>
     ) => void;
+    required?: boolean;
 }
 
 export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
@@ -42,10 +40,9 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     activeValue,
     attribute,
     label,
-    required,
-    shouldShowValueDetailsButton = false,
     onSelectChange,
-    onSelectClear
+    onSelectClear,
+    required = false
 }) => {
     if (!onChange) {
         throw Error('MonoValueSelect should be used inside a antd Form.Item');
@@ -72,7 +69,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
         onSelectChange
     });
 
-    const {onValueDetailsButtonClick, infoIconWithTooltip} = useValueDetailsButton({
+    const {onValueDetailsButtonClick} = useValueDetailsButton({
         value: null,
         attribute
     });
@@ -110,8 +107,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
             onChange={onChange}
             onClear={required ? undefined : handleClear}
             allowClear={!required}
-            infoIcon={shouldShowValueDetailsButton ? infoIconWithTooltip : null}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
+            onInfoClick={onValueDetailsButtonClick}
             onSearch={handleSearch}
             filterOption={false} // To avoid dynamic filtering when debouncing
             dropdownRender={menu => {
