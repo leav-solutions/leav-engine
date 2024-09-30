@@ -100,7 +100,7 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
         if (submitRes.status === APICallStatus.SUCCESS) {
             const submitResValue = submitRes.values[0] as ValueDetailsValueFragment;
 
-            let resultValue;
+            let resultValue: ValueDetailsValueFragment;
             if (state.metadataEdit) {
                 const metadataValue =
                     (submitResValue.metadata ?? []).find(({name}) => name === element.attribute.id)?.value ?? null;
@@ -111,8 +111,8 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
                     created_by: null,
                     modified_by: null,
                     version: null,
-                    raw_value: metadataValue.raw_value ?? metadataValue.value,
-                    value: metadataValue.value,
+                    raw_payload: metadataValue.raw_payload ?? metadataValue.payload,
+                    payload: metadataValue.payload,
                     metadata: null,
                     attribute
                 };

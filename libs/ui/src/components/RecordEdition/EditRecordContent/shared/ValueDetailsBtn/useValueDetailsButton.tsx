@@ -20,7 +20,7 @@ export const useValueDetailsButton = ({
     const {dispatch} = useEditRecordReducer();
 
     const onValueDetailsButtonClick = () => {
-        const editingValue = isIRecordPropertyStandard(value, attribute.type) ? value?.value : null;
+        const editingValue = isIRecordPropertyStandard(value, attribute.type) ? value?.payload : null;
         dispatch({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
             value: {

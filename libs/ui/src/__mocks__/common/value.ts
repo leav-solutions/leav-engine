@@ -27,8 +27,8 @@ export const mockRecordProperty: RecordProperty = {
     created_by: mockModifier,
     modified_at: 1234567890,
     modified_by: mockModifier,
-    value: 'my value',
-    raw_value: 'my value',
+    payload: 'my value',
+    raw_payload: 'my value',
     treeValue: null,
     linkValue: null
 };

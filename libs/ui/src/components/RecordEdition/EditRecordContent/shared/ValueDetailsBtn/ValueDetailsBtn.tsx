@@ -22,7 +22,7 @@ function ValueDetailsBtn({value, attribute, basic = false, ...buttonProps}: IVal
     const {t} = useSharedTranslation();
 
     const _handleClick = () => {
-        const editingValue = isTypeStandard(attribute.type) ? (value as IRecordPropertyStandard)?.value : null;
+        const editingValue = isTypeStandard(attribute.type) ? (value as IRecordPropertyStandard)?.payload : null;
         dispatch({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
             value: {

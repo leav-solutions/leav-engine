@@ -16,8 +16,8 @@ function CheckboxInput({state, fieldValue, onSubmit}: IStandardInputProps): JSX.
         <Checkbox
             className="nested-input"
             disabled={state.isReadOnly}
-            checked={!!value?.value}
-            indeterminate={typeof value?.value !== 'boolean'}
+            checked={!!value?.payload}
+            indeterminate={typeof value?.payload !== 'boolean'}
             onChange={_handleCheckboxChange}
         />
     );
