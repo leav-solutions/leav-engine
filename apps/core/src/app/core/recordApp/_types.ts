@@ -8,6 +8,7 @@ import {IValue, IValueVersionFromGql} from '_types/value';
 export type ICreateRecordValue = Override<
     Omit<IValue, 'version'>,
     {
+        value: IValue['payload']; // For backward compatibility
         metadata: Array<{
             name: string;
             value: string;

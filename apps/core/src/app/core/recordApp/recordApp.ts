@@ -292,6 +292,7 @@ export default function ({
                             const valuesToSave = data
                                 ? data.values.map(value => ({
                                       ...value,
+                                      payload: value.payload ?? value.value,
                                       version: valuesVersion,
                                       metadata: utils.nameValArrayToObj(value.metadata)
                                   }))
