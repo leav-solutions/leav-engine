@@ -21,8 +21,8 @@ describe('ValueDetailsBtn', () => {
     }));
 
     const mockValue: IRecordPropertyStandard = {
-        value: 'my value',
-        raw_value: 'my raw value',
+        payload: 'my value',
+        raw_payload: 'my raw value',
         created_at: null,
         created_by: null,
         modified_at: null,

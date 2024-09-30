@@ -65,7 +65,7 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
     }, [creationErrors, attribute.id]);
 
     const _handleDeleteValue = async (value: IRecordPropertyLink) => {
-        const deleteRes = await onValueDelete({value: value.linkValue.id, id_value: value.id_value}, attribute.id);
+        const deleteRes = await onValueDelete({payload: value.linkValue.id, id_value: value.id_value}, attribute.id);
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
             dispatch({

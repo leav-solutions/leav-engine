@@ -6,7 +6,7 @@ import {recordIdentityFragment} from '../../gqlFragments';
 import {valuesVersionDetailsFragment} from './valuesVersionFragment';
 
 export const valueDetailsFragment = gql`
-    ${recordIdentityFragment} 
+    ${recordIdentityFragment}
     ${valuesVersionDetailsFragment}
     fragment ValueDetails on GenericValue {
         id_value
@@ -43,24 +43,26 @@ export const valueDetailsFragment = gql`
                 version {
                     ...ValuesVersionDetails
                 }
-                value
-                raw_value
+                payload
+                raw_payload
             }
         }
 
         ... on Value {
+            payload
+            raw_payload
             value
             raw_value
         }
 
         ... on LinkValue {
-            linkValue: value {
+            linkValue: payload {
                 ...RecordIdentity
             }
         }
 
         ... on TreeValue {
-            treeValue: value {
+            treeValue: payload {
                 id
                 record {
                     ...RecordIdentity

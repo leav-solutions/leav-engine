@@ -58,8 +58,8 @@ interface IRecordPropertyBase {
 }
 
 export interface IRecordPropertyStandard extends IRecordPropertyBase {
-    value?: string | null;
-    raw_value?: string | null;
+    payload?: string | null;
+    raw_payload?: string | null;
 }
 
 export interface IRecordPropertyLink extends IRecordPropertyBase {
@@ -115,12 +115,12 @@ const _getFieldQueryPart = (field: IRecordPropertiesField): string => `
         }
 
         ...on Value {
-            value
-            raw_value
+            payload
+            raw_payload
         }
 
         ...on LinkValue {
-            linkValue: value {
+            linkValue: payload {
                 ...RecordIdentity
 
                 ${_getFieldLinkedLibraryPart(field)}
@@ -129,7 +129,7 @@ const _getFieldQueryPart = (field: IRecordPropertiesField): string => `
         }
 
         ...on TreeValue {
-            treeValue: value {
+            treeValue: payload {
                 record {
                     ...RecordIdentity
                 }

@@ -347,7 +347,7 @@ function StandardFieldValue({
             let prefixValue;
             if (
                 attribute.format === AttributeFormat.color &&
-                (fieldValue.value === null || fieldValue.value.value === null)
+                (fieldValue.value === null || fieldValue.value.payload === null)
             ) {
                 fieldValue.value = null;
             }
@@ -499,7 +499,7 @@ function StandardFieldValue({
 
     const wrapperClasses = `
         ${attribute.format ? `format-${attribute.format}` : ''}
-        ${fieldValue?.value?.value ? 'has-value' : ''}
+        ${fieldValue?.value?.payload ? 'has-value' : ''}
         ${fieldValue.isEditing ? 'editing' : ''}
     `;
 

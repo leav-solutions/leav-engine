@@ -294,7 +294,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         switch (attribute.type) {
             case AttributeType.simple:
             case AttributeType.advanced:
-                valueContent = (value as IRecordPropertyStandard).raw_value;
+                valueContent = (value as IRecordPropertyStandard).raw_payload;
                 break;
             case AttributeType.advanced_link:
             case AttributeType.simple_link:
@@ -354,7 +354,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                             metadata: val.metadata
                                 ? val.metadata.map(metadataValue => ({
                                       name: metadataValue.name,
-                                      value: metadataValue.value.raw_value
+                                      value: metadataValue.value.raw_payload
                                   }))
                                 : null
                         };
