@@ -14,7 +14,7 @@ import {IKitSwitch} from 'aristid-ds/dist/Kit/DataEntry/Switch/types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCircleXmark} from '@fortawesome/free-solid-svg-icons';
 
-interface IDSBooleanProps extends IProvidedByAntFormItem<IKitSwitch> {
+interface IDSBooleanWrapperProps extends IProvidedByAntFormItem<IKitSwitch> {
     state: IStandardFieldReducerState;
     handleSubmit: (value: string, id?: string) => void;
 }
@@ -34,7 +34,7 @@ const FontAwesomeIconStyled = styled(FontAwesomeIcon)`
 
 const _getBooleanValueAsStringForTranslation = (value: boolean): string => (value ? 'global.yes' : 'global.no');
 
-export const DSBoolean: FunctionComponent<IDSBooleanProps> = ({value, onChange, state, handleSubmit}) => {
+export const DSBooleanWrapper: FunctionComponent<IDSBooleanWrapperProps> = ({value, onChange, state, handleSubmit}) => {
     const {t} = useSharedTranslation();
     const {errors} = Form.Item.useStatus();
     const {lang: availableLang} = useLang();

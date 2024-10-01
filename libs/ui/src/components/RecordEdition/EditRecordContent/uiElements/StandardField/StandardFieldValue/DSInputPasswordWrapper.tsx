@@ -16,7 +16,7 @@ import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 import {useLang} from '_ui/hooks';
 import {localizedTranslation} from '@leav/utils';
 
-interface IDSInputProps extends IProvidedByAntFormItem<InputProps> {
+interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputProps> {
     state: IStandardFieldReducerState;
     attribute: RecordFormAttributeFragment;
     fieldValue: IStandardFieldValue;
@@ -24,11 +24,17 @@ interface IDSInputProps extends IProvidedByAntFormItem<InputProps> {
     shouldShowValueDetailsButton?: boolean;
 }
 
-const KitInputStyled = styled(KitInput)<{$shouldHighlightColor: boolean}>`
+const KitInputPasswordStyled = styled(KitInput.Password)<{$shouldHighlightColor: boolean}>`
     color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
+
+    .kit-input-wrapper-helper {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
 `;
 
-export const DSInput: FunctionComponent<IDSInputProps> = ({
+export const DSInputPasswordWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     value,
     onChange,
     state,
@@ -77,11 +83,12 @@ export const DSInput: FunctionComponent<IDSInputProps> = ({
     const label = localizedTranslation(state.formElement.settings.label, availableLang);
 
     return (
-        <KitInputStyled
-            required={state.formElement.settings.required}
+        <KitInputPasswordStyled
+            data-testid="kit-input-password"
             label={label}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
+            required={state.formElement.settings.required}
             status={errors.length > 0 ? 'error' : undefined}
+            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             helper={
                 state.isInheritedOverrideValue
                     ? t('record_edition.inherited_input_helper', {

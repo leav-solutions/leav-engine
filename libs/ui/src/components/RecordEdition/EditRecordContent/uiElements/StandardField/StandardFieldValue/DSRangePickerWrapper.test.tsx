@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render, screen} from '_ui/_tests/testUtils';
-import {DSDatePicker} from './DSDatePicker';
+import {render, screen, fireEvent, waitFor} from '_ui/_tests/testUtils';
+import {DSRangePickerWrapper} from './DSRangePickerWrapper';
 import {FieldScope} from '../../../_types';
 import {
     IStandardFieldReducerState,
@@ -13,7 +13,7 @@ import {mockFormElementInput} from '_ui/__mocks__/common/form';
 import {mockAttributeLink} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
 import {Form} from 'antd';
-import dayjs from 'dayjs';
+import dayjs, {Dayjs} from 'dayjs';
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 
 const en_label = 'label';
@@ -41,13 +41,7 @@ const mockValue = {
     state: StandardFieldValueState.PRISTINE
 };
 
-const getInitialState = ({
-    required,
-    fallbackLang
-}: {
-    required: boolean;
-    fallbackLang: boolean;
-}): IStandardFieldReducerState => ({
+const getInitialState = (required: boolean, fallbackLang = false): IStandardFieldReducerState => ({
     record: mockRecord,
     formElement: {
         ...mockFormElementInput,
@@ -73,7 +67,7 @@ const getInitialState = ({
     isInheritedValue: false
 });
 
-describe('DSDatePicker', () => {
+describe('DSRangePickerWrapper', () => {
     const mockOnChange = jest.fn();
     const mockHandleSubmit = jest.fn();
     let user!: ReturnType<typeof userEvent.setup>;
@@ -85,12 +79,12 @@ describe('DSDatePicker', () => {
     });
 
     describe('Without required field', () => {
-        test('Should display date picker with fr label ', async () => {
-            const state = getInitialState({required: false, fallbackLang: false});
+        test('Should display range picker with fr label ', async () => {
+            const state = getInitialState(false, false);
             render(
                 <Form>
                     <Form.Item>
-                        <DSDatePicker
+                        <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -104,12 +98,12 @@ describe('DSDatePicker', () => {
             expect(screen.getByText(fr_label)).toBeVisible();
         });
 
-        test('Should display date picker with fallback label ', async () => {
-            const state = getInitialState({required: false, fallbackLang: true});
+        test('Should display range picker with fallback label ', async () => {
+            const state = getInitialState(false, true);
             render(
                 <Form>
                     <Form.Item>
-                        <DSDatePicker
+                        <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -124,11 +118,11 @@ describe('DSDatePicker', () => {
         });
 
         test('Should call onChange with value', async () => {
-            const state = getInitialState({required: false, fallbackLang: false});
+            const state = getInitialState(false);
             render(
                 <Form>
                     <Form.Item>
-                        <DSDatePicker
+                        <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -139,22 +133,32 @@ describe('DSDatePicker', () => {
                 </Form>
             );
 
-            await user.click(screen.getByRole('textbox'));
-            const todaysDate = dayjs().format('YYYY-MM-DD');
-            await user.click(screen.getByTitle(todaysDate));
+            const rangePickerInputs = screen.getAllByRole('textbox');
+            await user.click(rangePickerInputs[0]);
+            const startRangeDate = dayjs().format('YYYY-MM-DD');
+            const endRangeDate = dayjs().add(1, 'day').format('YYYY-MM-DD');
+            await user.click(screen.getAllByTitle(startRangeDate)[0]);
+            await user.click(screen.getAllByTitle(endRangeDate)[0]);
 
-            const unixTodaysDate = dayjs(todaysDate).unix().toString();
+            const unixStartRangeDate = dayjs(startRangeDate).unix().toString();
+            const unixEndRangeDate = dayjs(endRangeDate).unix().toString();
 
-            expect(mockOnChange).toHaveBeenCalledWith(dayjs(todaysDate), todaysDate);
-            expect(mockHandleSubmit).toHaveBeenCalledWith(unixTodaysDate, state.attribute.id);
+            expect(mockOnChange).toHaveBeenCalledWith(
+                [dayjs(startRangeDate), dayjs(endRangeDate)],
+                [startRangeDate, endRangeDate]
+            );
+            expect(mockHandleSubmit).toHaveBeenCalledWith(
+                {from: unixStartRangeDate, to: unixEndRangeDate},
+                state.attribute.id
+            );
         });
 
         test('Should save to LEAV if field becomes empty', async () => {
-            const state = getInitialState({required: false, fallbackLang: false});
+            const state = getInitialState(false);
             render(
                 <Form>
                     <Form.Item>
-                        <DSDatePicker
+                        <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -165,9 +169,11 @@ describe('DSDatePicker', () => {
                 </Form>
             );
 
-            await user.click(screen.getByRole('textbox'));
-            const todaysDate = dayjs().format('YYYY-MM-DD');
-            await user.click(screen.getByTitle(todaysDate));
+            const rangePickerInputs = screen.getAllByRole('textbox');
+            await user.click(rangePickerInputs[0]);
+            const currentDate = dayjs().format('YYYY-MM-DD');
+            await user.click(screen.getAllByTitle(currentDate)[0]);
+            await user.click(screen.getAllByTitle(currentDate)[0]);
 
             expect(mockOnChange).toHaveBeenCalledTimes(1);
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
@@ -182,11 +188,11 @@ describe('DSDatePicker', () => {
 
     describe('With required field', () => {
         test('Should save to LEAV if field is not empty', async () => {
-            const state = getInitialState({required: true, fallbackLang: false});
+            const state = getInitialState(true);
             render(
                 <Form>
                     <Form.Item>
-                        <DSDatePicker
+                        <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -197,22 +203,30 @@ describe('DSDatePicker', () => {
                 </Form>
             );
 
-            await user.click(screen.getByRole('textbox'));
-            const todaysDate = dayjs().format('YYYY-MM-DD');
-            await user.click(screen.getByTitle(todaysDate));
+            const rangePickerInputs = screen.getAllByRole('textbox');
+            await user.click(rangePickerInputs[0]);
+            const startRangeDate = dayjs().format('YYYY-MM-DD');
+            const endRangeDate = dayjs().add(1, 'day').format('YYYY-MM-DD');
 
-            const unixTodaysDate = dayjs(todaysDate).unix().toString();
+            await user.click(screen.getAllByTitle(startRangeDate)[0]);
+            await user.click(screen.getAllByTitle(endRangeDate)[0]);
+
+            const unixStartRangeDate = dayjs(startRangeDate).unix().toString();
+            const unixEndRangeDate = dayjs(endRangeDate).unix().toString();
 
             expect(mockOnChange).toHaveBeenCalled();
-            expect(mockHandleSubmit).toHaveBeenCalledWith(unixTodaysDate, state.attribute.id);
+            expect(mockHandleSubmit).toHaveBeenCalledWith(
+                {from: unixStartRangeDate, to: unixEndRangeDate},
+                state.attribute.id
+            );
         });
 
         test('Should not save to LEAV if field becomes empty', async () => {
-            const state = getInitialState({required: true, fallbackLang: false});
+            const state = getInitialState(true);
             render(
                 <Form>
                     <Form.Item>
-                        <DSDatePicker
+                        <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -223,9 +237,11 @@ describe('DSDatePicker', () => {
                 </Form>
             );
 
-            await user.click(screen.getByRole('textbox'));
-            const todaysDate = dayjs().format('YYYY-MM-DD');
-            await user.click(screen.getByTitle(todaysDate));
+            const rangePickerInputs = screen.getAllByRole('textbox');
+            await user.click(rangePickerInputs[0]);
+            const currentDate = dayjs().format('YYYY-MM-DD');
+            await user.click(screen.getAllByTitle(currentDate)[0]);
+            await user.click(screen.getAllByTitle(currentDate)[0]);
 
             expect(mockOnChange).toHaveBeenCalledTimes(1);
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
@@ -240,13 +256,13 @@ describe('DSDatePicker', () => {
 
     describe('Inherited values', () => {
         test('Should not display helper without inherited value', async () => {
-            const state = getInitialState({required: false, fallbackLang: false});
+            const state = getInitialState(false);
             state.inheritedValue = null;
             state.isInheritedOverrideValue = false;
             render(
                 <Form>
                     <Form.Item>
-                        <DSDatePicker
+                        <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -261,13 +277,13 @@ describe('DSDatePicker', () => {
         });
 
         test('Should display helper with inherited value', async () => {
-            const state = getInitialState({required: false, fallbackLang: false});
+            const state = getInitialState(false);
             state.inheritedValue = mockValue.value;
             state.isInheritedOverrideValue = true;
             render(
                 <Form>
                     <Form.Item>
-                        <DSDatePicker
+                        <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -282,8 +298,11 @@ describe('DSDatePicker', () => {
         });
 
         test('Should call onChange/handleSubmit with inherited value on clear', async () => {
-            const raw_value = '1714138054';
-            const state = getInitialState({required: false, fallbackLang: false});
+            const raw_value = {
+                from: '1714138054',
+                to: '1714138054'
+            };
+            const state = getInitialState(false);
             state.inheritedValue = {...mockValue.value, raw_value};
             state.isInheritedValue = true;
             state.isInheritedOverrideValue = true;
@@ -291,11 +310,11 @@ describe('DSDatePicker', () => {
             render(
                 <Form
                     initialValues={{
-                        datePickerTest: dayjs.unix(Number(raw_value))
+                        dateRangeTest: [dayjs.unix(Number(raw_value.from)), dayjs.unix(Number(raw_value.to))]
                     }}
                 >
-                    <Form.Item name="datePickerTest">
-                        <DSDatePicker
+                    <Form.Item name="dateRangeTest">
+                        <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -306,18 +325,22 @@ describe('DSDatePicker', () => {
                 </Form>
             );
 
+            // TODO : target clear button when DS add html attribute
             const clearButton = screen.getByRole('button');
             await user.click(clearButton);
 
             expect(mockOnChange).toHaveBeenCalledTimes(1);
-            expect(mockOnChange).toHaveBeenCalledWith(expect.any(Object), raw_value);
+            expect(mockOnChange).toHaveBeenCalledWith([expect.any(Object), expect.any(Object)], raw_value);
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
             expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
         });
 
         test('Should hide clear icon when value is inherited, but not override', async () => {
-            const raw_value = '1714138054';
-            const state = getInitialState({required: false, fallbackLang: false});
+            const raw_value = {
+                from: '1714138054',
+                to: '1714138054'
+            };
+            const state = getInitialState(false);
             state.inheritedValue = {...mockValue.value, raw_value};
             state.isInheritedValue = true;
             state.isInheritedOverrideValue = false;
@@ -325,11 +348,11 @@ describe('DSDatePicker', () => {
             render(
                 <Form
                     initialValues={{
-                        datePickerTest: dayjs.unix(Number(raw_value))
+                        dateRangeTest: [dayjs.unix(Number(raw_value.from)), dayjs.unix(Number(raw_value.to))]
                     }}
                 >
-                    <Form.Item name="datePickerTest">
-                        <DSDatePicker
+                    <Form.Item name="dateRangeTest">
+                        <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -340,7 +363,8 @@ describe('DSDatePicker', () => {
                 </Form>
             );
 
-            expect(screen.queryByRole('button')).toBeNull();
+            const clearButton = screen.queryByRole('button');
+            expect(clearButton).toBeNull();
         });
     });
 });

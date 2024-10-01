@@ -7,8 +7,8 @@ import {Button, Form, Input, InputRef, Popover, Space, theme} from 'antd';
 import moment from 'moment';
 import React, {MutableRefObject, useEffect, useRef} from 'react';
 import styled, {CSSObject} from 'styled-components';
-import {DSInput} from './DSInput';
-import {DSRangePicker} from './DSRangePicker';
+import {DSInputWrapper} from './DSInputWrapper';
+import {DSRangePickerWrapper} from './DSRangePickerWrapper';
 import {themeVars} from '_ui/antdTheme';
 import {FloatingMenu, FloatingMenuAction} from '_ui/components';
 import Dimmer from '_ui/components/Dimmer';
@@ -47,11 +47,11 @@ import ColorInput from './Inputs/ColorInput';
 import TextInput from './Inputs/TextInput';
 import ValuesList from './ValuesList';
 import {IValueOfValuesList} from './ValuesList/ValuesList';
-import {DSInputNumber} from './DSInputNumber';
 import {useLang} from '_ui/hooks';
-import {DSInputPassword} from './DSInputPassword';
-import {DSDatePicker} from './DSDatePicker';
-import {DSBoolean} from './DSBoolean';
+import {DSDatePickerWrapper} from './DSDatePickerWrapper';
+import {DSBooleanWrapper} from './DSBooleanWrapper';
+import { DSInputPasswordWrapper } from './DSInputPasswordWrapper';
+import { DSInputNumberWrapper } from './DSInputNumberWrapper';
 
 const ErrorMessage = styled.div`
     color: ${themeVars.errorColor};
@@ -577,7 +577,7 @@ function StandardFieldValue({
                     ]}
                 >
                     {attribute.format === AttributeFormat.text && (
-                        <DSInput
+                        <DSInputWrapper
                             state={state}
                             handleSubmit={_handleSubmit}
                             attribute={attribute}
@@ -586,7 +586,7 @@ function StandardFieldValue({
                         />
                     )}
                     {attribute.format === AttributeFormat.date && (
-                        <DSDatePicker
+                        <DSDatePickerWrapper
                             state={state}
                             handleSubmit={_handleSubmit}
                             attribute={attribute}
@@ -595,7 +595,7 @@ function StandardFieldValue({
                         />
                     )}
                     {attribute.format === AttributeFormat.date_range && (
-                        <DSRangePicker
+                        <DSRangePickerWrapper
                             state={state}
                             handleSubmit={_handleSubmit}
                             attribute={attribute}
@@ -604,7 +604,7 @@ function StandardFieldValue({
                         />
                     )}
                     {attribute.format === AttributeFormat.numeric && (
-                        <DSInputNumber
+                        <DSInputNumberWrapper
                             state={state}
                             handleSubmit={_handleSubmit}
                             attribute={attribute}
@@ -613,7 +613,7 @@ function StandardFieldValue({
                         />
                     )}
                     {attribute.format === AttributeFormat.encrypted && (
-                        <DSInputPassword
+                        <DSInputPasswordWrapper
                             state={state}
                             handleSubmit={_handleSubmit}
                             attribute={attribute}
@@ -622,7 +622,7 @@ function StandardFieldValue({
                         />
                     )}
                     {attribute.format === AttributeFormat.boolean && (
-                        <DSBoolean state={state} handleSubmit={_handleSubmit} />
+                        <DSBooleanWrapper state={state} handleSubmit={_handleSubmit} />
                     )}
                 </Form.Item>
             )}

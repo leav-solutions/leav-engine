@@ -1,22 +1,22 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {KitInput} from 'aristid-ds';
-import {ChangeEvent, FocusEvent, FunctionComponent, ReactNode, useState} from 'react';
+import {KitInputNumber} from 'aristid-ds';
+import {ComponentPropsWithRef, FocusEvent, FunctionComponent, useState} from 'react';
 import {
     IStandardFieldReducerState,
     IStandardFieldValue
 } from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import {Form, InputProps} from 'antd';
+import {Form, InputNumberProps} from 'antd';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import styled from 'styled-components';
 import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
-import {useLang} from '_ui/hooks';
 import {localizedTranslation} from '@leav/utils';
+import {useLang} from '_ui/hooks';
 
-interface IDSInputProps extends IProvidedByAntFormItem<InputProps> {
+interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputNumberProps> {
     state: IStandardFieldReducerState;
     attribute: RecordFormAttributeFragment;
     fieldValue: IStandardFieldValue;
@@ -24,17 +24,14 @@ interface IDSInputProps extends IProvidedByAntFormItem<InputProps> {
     shouldShowValueDetailsButton?: boolean;
 }
 
-const KitInputPasswordStyled = styled(KitInput.Password)<{$shouldHighlightColor: boolean}>`
-    color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
-
-    .kit-input-wrapper-helper {
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
+const KitInputNumberStyled = styled(KitInputNumber)<{$shouldHighlightColor: boolean}>`
+    .ant-input-number-input-wrap .ant-input-number-input {
+        color: ${({$shouldHighlightColor}) =>
+            $shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial'};
     }
 `;
 
-export const DSInputPassword: FunctionComponent<IDSInputProps> = ({
+export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     value,
     onChange,
     state,
@@ -43,14 +40,19 @@ export const DSInputPassword: FunctionComponent<IDSInputProps> = ({
     handleSubmit,
     shouldShowValueDetailsButton = false
 }) => {
+    if (!onChange) {
+        throw Error('DSInputWrapperNumberWrapper should be used inside a antd Form.Item');
+    }
+
     const {t} = useSharedTranslation();
+    const {lang} = useLang();
     const {errors} = Form.Item.useStatus();
     const {onValueDetailsButtonClick} = useValueDetailsButton({
         value: fieldValue?.value,
         attribute
     });
+
     const [hasChanged, setHasChanged] = useState(false);
-    const {lang: availableLang} = useLang();
 
     const _resetToInheritedValue = () => {
         setHasChanged(false);
@@ -67,28 +69,22 @@ export const DSInputPassword: FunctionComponent<IDSInputProps> = ({
         if (hasChanged || !state.isInheritedValue) {
             handleSubmit(valueToSubmit, state.attribute.id);
         }
-        onChange(event);
+        onChange(valueToSubmit);
     };
 
-    const _handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const _handleOnChange: ComponentPropsWithRef<typeof KitInputNumberStyled>['onChange'] = inputValue => {
         setHasChanged(true);
-        const inputValue = event.target.value;
-        if (state.isInheritedValue && inputValue === '' && event.type === 'click') {
-            _resetToInheritedValue();
-            return;
-        }
-        onChange(event);
+        onChange(inputValue);
     };
 
-    const label = localizedTranslation(state.formElement.settings.label, availableLang);
+    const label = localizedTranslation(state.formElement.settings.label, lang);
 
     return (
-        <KitInputPasswordStyled
-            data-testid="kit-input-password"
-            label={label}
+        <KitInputNumberStyled
             required={state.formElement.settings.required}
-            status={errors.length > 0 ? 'error' : undefined}
+            label={label}
             onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
+            status={errors.length > 0 ? 'error' : undefined}
             helper={
                 state.isInheritedOverrideValue
                     ? t('record_edition.inherited_input_helper', {
@@ -97,10 +93,9 @@ export const DSInputPassword: FunctionComponent<IDSInputProps> = ({
                     : undefined
             }
             value={value}
-            disabled={state.isReadOnly}
-            allowClear={!state.isInheritedNotOverrideValue}
-            onBlur={_handleOnBlur}
             onChange={_handleOnChange}
+            disabled={state.isReadOnly}
+            onBlur={_handleOnBlur}
             $shouldHighlightColor={!hasChanged && state.isInheritedNotOverrideValue}
         />
     );

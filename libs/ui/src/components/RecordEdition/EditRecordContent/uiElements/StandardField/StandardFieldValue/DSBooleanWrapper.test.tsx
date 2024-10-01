@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
 import {AntForm} from 'aristid-ds';
-import {DSBoolean} from './DSBoolean';
+import {DSBooleanWrapper} from './DSBooleanWrapper';
 import {
     InheritedFlags,
     IStandardFieldReducerState,
@@ -99,7 +99,7 @@ const getInitialState = ({
     isInheritedValue: false
 });
 
-describe('DSBoolean', () => {
+describe('DSBooleanWrapper', () => {
     let user!: ReturnType<typeof userEvent.setup>;
     const mockHandleSubmit = jest.fn();
     const mockOnChange = jest.fn();
@@ -115,7 +115,7 @@ describe('DSBoolean', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSBoolean state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
+                    <DSBooleanWrapper state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
                 </AntForm.Item>
             </AntForm>
         );
@@ -128,7 +128,7 @@ describe('DSBoolean', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSBoolean state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
+                    <DSBooleanWrapper state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
                 </AntForm.Item>
             </AntForm>
         );
@@ -142,7 +142,7 @@ describe('DSBoolean', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSBoolean value={true} state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
+                    <DSBooleanWrapper value={true} state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
                 </AntForm.Item>
             </AntForm>
         );
@@ -156,7 +156,7 @@ describe('DSBoolean', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSBoolean value={false} state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
+                    <DSBooleanWrapper value={false} state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
                 </AntForm.Item>
             </AntForm>
         );
@@ -170,7 +170,7 @@ describe('DSBoolean', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSBoolean value={false} state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
+                    <DSBooleanWrapper value={false} state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
                 </AntForm.Item>
             </AntForm>
         );
@@ -187,7 +187,7 @@ describe('DSBoolean', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSBoolean value={true} state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
+                    <DSBooleanWrapper value={true} state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
                 </AntForm.Item>
             </AntForm>
         );
@@ -210,7 +210,7 @@ describe('DSBoolean', () => {
             render(
                 <AntForm>
                     <AntForm.Item>
-                        <DSBoolean
+                        <DSBooleanWrapper
                             value={inheritedValues[1].raw_value}
                             state={state}
                             handleSubmit={mockHandleSubmit}
@@ -234,7 +234,7 @@ describe('DSBoolean', () => {
             render(
                 <AntForm>
                     <AntForm.Item>
-                        <DSBoolean
+                        <DSBooleanWrapper
                             value={inheritedValues[0].raw_value}
                             state={state}
                             handleSubmit={mockHandleSubmit}
@@ -261,7 +261,7 @@ describe('DSBoolean', () => {
             render(
                 <AntForm>
                     <AntForm.Item>
-                        <DSBoolean
+                        <DSBooleanWrapper
                             value={inheritedValues[0].raw_value}
                             state={state}
                             handleSubmit={mockHandleSubmit}
