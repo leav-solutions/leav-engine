@@ -21,6 +21,7 @@ interface IDSInputProps extends IProvidedByAntFormItem<InputNumberProps> {
     attribute: RecordFormAttributeFragment;
     fieldValue: IStandardFieldValue;
     handleSubmit: (value: string, id?: string) => void;
+    shouldShowValueDetailsButton?: boolean;
 }
 
 const KitInputNumberStyled = styled(KitInputNumber)<{$shouldHighlightColor: boolean}>`
@@ -36,7 +37,8 @@ export const DSInputNumber: FunctionComponent<IDSInputProps> = ({
     state,
     attribute,
     fieldValue,
-    handleSubmit
+    handleSubmit,
+    shouldShowValueDetailsButton = false
 }) => {
     if (!onChange) {
         throw Error('DSInputNumber should be used inside a antd Form.Item');
@@ -81,7 +83,7 @@ export const DSInputNumber: FunctionComponent<IDSInputProps> = ({
         <KitInputNumberStyled
             required={state.formElement.settings.required}
             label={label}
-            onInfoClick={onValueDetailsButtonClick}
+            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             status={errors.length > 0 ? 'error' : undefined}
             helper={
                 state.isInheritedOverrideValue

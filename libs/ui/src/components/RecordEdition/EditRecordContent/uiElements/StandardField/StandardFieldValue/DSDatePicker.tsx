@@ -20,6 +20,7 @@ interface IDSDatePickerProps extends IProvidedByAntFormItem<DatePickerProps> {
     attribute: RecordFormAttributeFragment;
     fieldValue: IStandardFieldValue;
     handleSubmit: (value: StandardValueTypes, id?: string) => void;
+    shouldShowValueDetailsButton?: boolean;
 }
 
 const KitDatePickerStyled = styled(KitDatePicker)<{$shouldHighlightColor: boolean}>`
@@ -32,7 +33,8 @@ export const DSDatePicker: FunctionComponent<IDSDatePickerProps> = ({
     state,
     attribute,
     fieldValue,
-    handleSubmit
+    handleSubmit,
+    shouldShowValueDetailsButton = false
 }) => {
     const {t} = useSharedTranslation();
     const {lang: availableLangs} = useLang();
@@ -78,7 +80,7 @@ export const DSDatePicker: FunctionComponent<IDSDatePickerProps> = ({
             disabled={state.isReadOnly}
             allowClear={!state.isInheritedNotOverrideValue}
             status={errors.length > 0 ? 'error' : undefined}
-            onInfoClick={onValueDetailsButtonClick}
+            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             helper={
                 state.isInheritedOverrideValue
                     ? t('record_edition.inherited_input_helper', {

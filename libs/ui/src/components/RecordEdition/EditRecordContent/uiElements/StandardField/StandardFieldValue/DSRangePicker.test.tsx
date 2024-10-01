@@ -178,7 +178,8 @@ describe('DSRangePicker', () => {
             expect(mockOnChange).toHaveBeenCalledTimes(1);
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
 
-            const clearButton = screen.getByRole('button');
+            // TODO : target clear button when DS add html attribute
+            const [infoButton, clearButton] = screen.getAllByRole('button');
             await user.click(clearButton);
 
             expect(mockOnChange).toHaveBeenCalledTimes(2);
@@ -246,7 +247,8 @@ describe('DSRangePicker', () => {
             expect(mockOnChange).toHaveBeenCalledTimes(1);
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
 
-            const clearButton = screen.getByRole('button');
+            // TODO : target clear button when DS add html attribute
+            const [infoButton, clearButton] = screen.getAllByRole('button');
             await user.click(clearButton);
 
             expect(mockOnChange).toHaveBeenCalledTimes(2);
@@ -325,7 +327,8 @@ describe('DSRangePicker', () => {
                 </Form>
             );
 
-            const clearButton = screen.getByRole('button');
+            // TODO : target clear button when DS add html attribute
+            const [infoButton, clearButton] = screen.getAllByRole('button');
             await user.click(clearButton);
 
             expect(mockOnChange).toHaveBeenCalledTimes(1);
@@ -362,7 +365,9 @@ describe('DSRangePicker', () => {
                 </Form>
             );
 
-            expect(screen.queryByRole('button')).toBeNull();
+            // TODO : target clear button when DS add html attribute
+            const [infoButton, clearButton] = screen.getAllByRole('button');
+            expect(clearButton).toBeUndefined();
         });
     });
 });

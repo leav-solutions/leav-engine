@@ -21,6 +21,7 @@ interface IMultiValueSelectProps extends IProvidedByAntFormItem<SelectProps<stri
     onValueDeselect: (value: IRecordPropertyLink) => void;
     onSelectChange: (values: Array<{value: IRecordIdentity; idValue: string}>) => void;
     required?: boolean;
+    shouldShowValueDetailsButton?: boolean;
 }
 
 export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
@@ -31,7 +32,8 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
     label,
     onValueDeselect,
     onSelectChange,
-    required = false
+    required = false,
+    shouldShowValueDetailsButton = false
 }) => {
     if (!onChange) {
         throw Error('MultiValueSelect should be used inside a antd Form.Item');
@@ -132,7 +134,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
             // @ts-expect-error
             onDeselect={_handleDeselect}
             onChange={onChange}
-            onInfoClick={onValueDetailsButtonClick}
+            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
         />
     );
 };

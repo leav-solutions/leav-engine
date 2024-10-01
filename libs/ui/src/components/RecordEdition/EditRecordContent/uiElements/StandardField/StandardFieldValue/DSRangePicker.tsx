@@ -23,6 +23,7 @@ interface IDSRangePickerProps extends IProvidedByAntFormItem<RangePickerProps> {
     attribute: RecordFormAttributeFragment;
     fieldValue: IStandardFieldValue;
     handleSubmit: (value: StandardValueTypes, id?: string) => void;
+    shouldShowValueDetailsButton?: boolean;
 }
 
 const KitDatePickerRangePickerStyled = styled(KitDatePicker.RangePicker)<{$shouldHighlightColor: boolean}>`
@@ -35,7 +36,8 @@ export const DSRangePicker: FunctionComponent<IDSRangePickerProps> = ({
     state,
     attribute,
     fieldValue,
-    handleSubmit
+    handleSubmit,
+    shouldShowValueDetailsButton = false
 }) => {
     const {t} = useSharedTranslation();
     const {lang: availableLangs} = useLang();
@@ -89,7 +91,7 @@ export const DSRangePicker: FunctionComponent<IDSRangePickerProps> = ({
             disabled={state.isReadOnly}
             allowClear={!state.isInheritedNotOverrideValue}
             status={errors.length > 0 ? 'error' : undefined}
-            onInfoClick={onValueDetailsButtonClick}
+            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             helper={
                 state.isInheritedOverrideValue
                     ? t('record_edition.inherited_input_helper', {

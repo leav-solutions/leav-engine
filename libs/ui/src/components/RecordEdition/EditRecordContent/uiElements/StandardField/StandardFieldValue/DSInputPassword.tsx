@@ -21,6 +21,7 @@ interface IDSInputProps extends IProvidedByAntFormItem<InputProps> {
     attribute: RecordFormAttributeFragment;
     fieldValue: IStandardFieldValue;
     handleSubmit: (value: string, id?: string) => void;
+    shouldShowValueDetailsButton?: boolean;
 }
 
 const KitInputPasswordStyled = styled(KitInput.Password)<{$shouldHighlightColor: boolean}>`
@@ -39,7 +40,8 @@ export const DSInputPassword: FunctionComponent<IDSInputProps> = ({
     state,
     attribute,
     fieldValue,
-    handleSubmit
+    handleSubmit,
+    shouldShowValueDetailsButton = false
 }) => {
     const {t} = useSharedTranslation();
     const {errors} = Form.Item.useStatus();
@@ -86,7 +88,7 @@ export const DSInputPassword: FunctionComponent<IDSInputProps> = ({
             label={label}
             required={state.formElement.settings.required}
             status={errors.length > 0 ? 'error' : undefined}
-            onInfoClick={onValueDetailsButtonClick}
+            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             helper={
                 state.isInheritedOverrideValue
                     ? t('record_edition.inherited_input_helper', {

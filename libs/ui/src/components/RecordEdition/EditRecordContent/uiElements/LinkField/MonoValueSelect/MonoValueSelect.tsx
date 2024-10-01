@@ -32,6 +32,7 @@ interface IMonoValueSelectProps extends IProvidedByAntFormItem<SelectProps<strin
         }>
     ) => void;
     required?: boolean;
+    shouldShowValueDetailsButton?: boolean;
 }
 
 export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
@@ -42,7 +43,8 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     label,
     onSelectChange,
     onSelectClear,
-    required = false
+    required = false,
+    shouldShowValueDetailsButton = false
 }) => {
     if (!onChange) {
         throw Error('MonoValueSelect should be used inside a antd Form.Item');
@@ -107,7 +109,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
             onChange={onChange}
             onClear={required ? undefined : handleClear}
             allowClear={!required}
-            onInfoClick={onValueDetailsButtonClick}
+            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             onSearch={handleSearch}
             filterOption={false} // To avoid dynamic filtering when debouncing
             dropdownRender={menu => {
