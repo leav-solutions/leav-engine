@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
-import {DSInputWrapperNumberWrapper} from './DSInputWrapperNumberWrapperWrapper';
+import {DSInputNumberWrapper} from './DSInputNumberWrapper';
 import {FieldScope} from '../../../_types';
 import {
     InheritedFlags,
@@ -94,7 +94,7 @@ const inheritedOverrideValue: InheritedFlags = {
     inheritedValue: {raw_value: inheritedValues[1].raw_value}
 };
 
-describe('DSInputWrapperNumberWrapper', () => {
+describe('DSInputNumberWrapper', () => {
     const mockHandleSubmit = jest.fn();
     const mockOnChange = jest.fn();
     let user!: ReturnType<typeof userEvent.setup>;
@@ -110,7 +110,7 @@ describe('DSInputWrapperNumberWrapper', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSInputWrapperNumberWrapper
+                    <DSInputNumberWrapper
                         state={state}
                         attribute={{} as RecordFormAttributeFragment}
                         fieldValue={null}
@@ -129,7 +129,7 @@ describe('DSInputWrapperNumberWrapper', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSInputWrapperNumberWrapper
+                    <DSInputNumberWrapper
                         state={state}
                         attribute={{} as RecordFormAttributeFragment}
                         fieldValue={null}
@@ -148,7 +148,7 @@ describe('DSInputWrapperNumberWrapper', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSInputWrapperNumberWrapper
+                    <DSInputNumberWrapper
                         state={state}
                         attribute={{} as RecordFormAttributeFragment}
                         fieldValue={null}
@@ -173,7 +173,7 @@ describe('DSInputWrapperNumberWrapper', () => {
             render(
                 <AntForm>
                     <AntForm.Item>
-                        <DSInputWrapperNumberWrapper
+                        <DSInputNumberWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -198,7 +198,7 @@ describe('DSInputWrapperNumberWrapper', () => {
             render(
                 <AntForm>
                     <AntForm.Item>
-                        <DSInputWrapperNumberWrapper
+                        <DSInputNumberWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -229,7 +229,7 @@ describe('DSInputWrapperNumberWrapper', () => {
             render(
                 <AntForm>
                     <AntForm.Item>
-                        <DSInputWrapperNumberWrapper
+                        <DSInputNumberWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -260,7 +260,7 @@ describe('DSInputWrapperNumberWrapper', () => {
             render(
                 <AntForm>
                     <AntForm.Item>
-                        <DSInputWrapperNumberWrapper
+                        <DSInputNumberWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -290,7 +290,7 @@ describe('DSInputWrapperNumberWrapper', () => {
             render(
                 <AntForm>
                     <AntForm.Item>
-                        <DSInputWrapperNumberWrapper
+                        <DSInputNumberWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -321,7 +321,7 @@ describe('DSInputWrapperNumberWrapper', () => {
             render(
                 <AntForm>
                     <AntForm.Item>
-                        <DSInputWrapperNumberWrapper
+                        <DSInputNumberWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}

@@ -325,7 +325,7 @@ describe('DSRangePickerWrapper', () => {
                 </Form>
             );
 
-            // TODO : target clear button when DS add html attribute
+            // TODO : target clear button when DS add html attribute - Ticket DS-219
             const clearButton = screen.getByRole('button');
             await user.click(clearButton);
 

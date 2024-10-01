@@ -41,7 +41,7 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     shouldShowValueDetailsButton = false
 }) => {
     if (!onChange) {
-        throw Error('DSInputWrapperNumberWrapper should be used inside a antd Form.Item');
+        throw Error('DSInputNumberWrapper should be used inside a antd Form.Item');
     }
 
     const {t} = useSharedTranslation();

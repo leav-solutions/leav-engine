@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
-import {DSInputWrapperPasswordWrapper} from './DSInputWrapperPasswordWrapperWrapper';
+import {DSInputPasswordWrapper} from './DSInputPasswordWrapper';
 import {FieldScope} from '../../../_types';
 import {
     InheritedFlags,
@@ -101,7 +101,7 @@ const inheritedOverrideValue: InheritedFlags = {
     inheritedValue: {raw_value: inheritedValues[1].raw_value}
 };
 
-describe('DSInputWrapperPasswordWrapper', () => {
+describe('DSInputPasswordWrapper', () => {
     const mockHandleSubmit = jest.fn();
     const mockOnChange = jest.fn();
     let user!: ReturnType<typeof userEvent.setup>;
@@ -117,7 +117,7 @@ describe('DSInputWrapperPasswordWrapper', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSInputWrapperPasswordWrapper
+                    <DSInputPasswordWrapper
                         state={state}
                         attribute={{} as RecordFormAttributeFragment}
                         fieldValue={null}
@@ -136,7 +136,7 @@ describe('DSInputWrapperPasswordWrapper', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSInputWrapperPasswordWrapper
+                    <DSInputPasswordWrapper
                         state={state}
                         attribute={{} as RecordFormAttributeFragment}
                         fieldValue={null}
@@ -155,7 +155,7 @@ describe('DSInputWrapperPasswordWrapper', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSInputWrapperPasswordWrapper
+                    <DSInputPasswordWrapper
                         state={state}
                         attribute={{} as RecordFormAttributeFragment}
                         fieldValue={null}
@@ -181,7 +181,7 @@ describe('DSInputWrapperPasswordWrapper', () => {
             render(
                 <AntForm>
                     <AntForm.Item>
-                        <DSInputWrapperPasswordWrapper
+                        <DSInputPasswordWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -207,7 +207,7 @@ describe('DSInputWrapperPasswordWrapper', () => {
             render(
                 <AntForm>
                     <AntForm.Item>
-                        <DSInputWrapperPasswordWrapper
+                        <DSInputPasswordWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -238,7 +238,7 @@ describe('DSInputWrapperPasswordWrapper', () => {
             render(
                 <AntForm>
                     <AntForm.Item>
-                        <DSInputWrapperPasswordWrapper
+                        <DSInputPasswordWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -271,7 +271,7 @@ describe('DSInputWrapperPasswordWrapper', () => {
             render(
                 <AntForm>
                     <AntForm.Item>
-                        <DSInputWrapperPasswordWrapper
+                        <DSInputPasswordWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
@@ -299,7 +299,7 @@ describe('DSInputWrapperPasswordWrapper', () => {
             render(
                 <AntForm>
                     <AntForm.Item>
-                        <DSInputWrapperPasswordWrapper
+                        <DSInputPasswordWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
                             fieldValue={null}
