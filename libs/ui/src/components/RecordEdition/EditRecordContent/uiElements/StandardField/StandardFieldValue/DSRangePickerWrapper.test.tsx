@@ -325,6 +325,7 @@ describe('DSRangePickerWrapper', () => {
                 </Form>
             );
 
+            // TODO : target clear button when DS add html attribute - Ticket DS-219
             const clearButton = screen.getByRole('button');
             await user.click(clearButton);
 
@@ -362,7 +363,8 @@ describe('DSRangePickerWrapper', () => {
                 </Form>
             );
 
-            expect(screen.queryByRole('button')).toBeNull();
+            const clearButton = screen.queryByRole('button');
+            expect(clearButton).toBeNull();
         });
     });
 });

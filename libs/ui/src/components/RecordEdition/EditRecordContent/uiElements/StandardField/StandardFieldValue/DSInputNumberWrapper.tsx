@@ -20,8 +20,8 @@ interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputNumberProps> 
     state: IStandardFieldReducerState;
     attribute: RecordFormAttributeFragment;
     fieldValue: IStandardFieldValue;
-    shouldShowValueDetailsButton?: boolean;
     handleSubmit: (value: string, id?: string) => void;
+    shouldShowValueDetailsButton?: boolean;
 }
 
 const KitInputNumberStyled = styled(KitInputNumber)<{$shouldHighlightColor: boolean}>`
@@ -37,8 +37,8 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     state,
     attribute,
     fieldValue,
-    shouldShowValueDetailsButton = false,
-    handleSubmit
+    handleSubmit,
+    shouldShowValueDetailsButton = false
 }) => {
     if (!onChange) {
         throw Error('DSInputNumberWrapper should be used inside a antd Form.Item');
@@ -47,7 +47,7 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     const {t} = useSharedTranslation();
     const {lang} = useLang();
     const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick, infoIconWithTooltip} = useValueDetailsButton({
+    const {onValueDetailsButtonClick} = useValueDetailsButton({
         value: fieldValue?.value,
         attribute
     });
@@ -81,9 +81,10 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
 
     return (
         <KitInputNumberStyled
-            label={label}
             required={state.formElement.settings.required}
-            status={errors.length > 0 ? 'error' : ''}
+            label={label}
+            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
+            status={errors.length > 0 ? 'error' : undefined}
             helper={
                 state.isInheritedOverrideValue
                     ? t('record_edition.inherited_input_helper', {
@@ -91,8 +92,6 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
                       })
                     : undefined
             }
-            infoIcon={shouldShowValueDetailsButton ? infoIconWithTooltip : null}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             value={value}
             onChange={_handleOnChange}
             disabled={state.isReadOnly}

@@ -143,9 +143,9 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                     attribute={attribute}
                     label={label}
                     required={state.formElement.settings.required}
-                    shouldShowValueDetailsButton={editRecordState.withInfoButton}
                     onValueDeselect={_handleDeleteValue}
                     onSelectChange={_handleUpdateValueSubmit}
+                    shouldShowValueDetailsButton={editRecordState.withInfoButton}
                 />
             ) : (
                 <MonoValueSelect
@@ -153,9 +153,9 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                     attribute={attribute}
                     label={label}
                     required={state.formElement.settings.required}
-                    shouldShowValueDetailsButton={editRecordState.withInfoButton}
                     onSelectClear={_handleDeleteValue}
                     onSelectChange={_handleUpdateValueSubmit}
+                    shouldShowValueDetailsButton={editRecordState.withInfoButton}
                 />
             )}
         </AntForm.Item>

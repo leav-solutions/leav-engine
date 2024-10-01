@@ -47,11 +47,11 @@ import ColorInput from './Inputs/ColorInput';
 import TextInput from './Inputs/TextInput';
 import ValuesList from './ValuesList';
 import {IValueOfValuesList} from './ValuesList/ValuesList';
-import {DSInputNumberWrapper} from './DSInputNumberWrapper';
 import {useLang} from '_ui/hooks';
-import {DSInputPasswordWrapper} from './DSInputPasswordWrapper';
 import {DSDatePickerWrapper} from './DSDatePickerWrapper';
 import {DSBooleanWrapper} from './DSBooleanWrapper';
+import { DSInputPasswordWrapper } from './DSInputPasswordWrapper';
+import { DSInputNumberWrapper } from './DSInputNumberWrapper';
 
 const ErrorMessage = styled.div`
     color: ${themeVars.errorColor};

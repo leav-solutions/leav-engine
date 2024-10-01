@@ -20,8 +20,8 @@ interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputProps> {
     state: IStandardFieldReducerState;
     attribute: RecordFormAttributeFragment;
     fieldValue: IStandardFieldValue;
-    shouldShowValueDetailsButton?: boolean;
     handleSubmit: (value: string, id?: string) => void;
+    shouldShowValueDetailsButton?: boolean;
 }
 
 const KitInputPasswordStyled = styled(KitInput.Password)<{$shouldHighlightColor: boolean}>`
@@ -40,12 +40,12 @@ export const DSInputPasswordWrapper: FunctionComponent<IDSInputWrapperProps> = (
     state,
     attribute,
     fieldValue,
-    shouldShowValueDetailsButton = false,
-    handleSubmit
+    handleSubmit,
+    shouldShowValueDetailsButton = false
 }) => {
     const {t} = useSharedTranslation();
     const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick, infoIconWithTooltip} = useValueDetailsButton({
+    const {onValueDetailsButtonClick} = useValueDetailsButton({
         value: fieldValue?.value,
         attribute
     });
@@ -88,7 +88,6 @@ export const DSInputPasswordWrapper: FunctionComponent<IDSInputWrapperProps> = (
             label={label}
             required={state.formElement.settings.required}
             status={errors.length > 0 ? 'error' : undefined}
-            infoIcon={shouldShowValueDetailsButton ? infoIconWithTooltip : null}
             onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             helper={
                 state.isInheritedOverrideValue

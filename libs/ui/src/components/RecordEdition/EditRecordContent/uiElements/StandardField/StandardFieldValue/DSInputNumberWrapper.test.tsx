@@ -13,7 +13,6 @@ import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockFormElementInput} from '_ui/__mocks__/common/form';
 import {mockAttributeLink} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
-import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
 import {AntForm} from 'aristid-ds';
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 

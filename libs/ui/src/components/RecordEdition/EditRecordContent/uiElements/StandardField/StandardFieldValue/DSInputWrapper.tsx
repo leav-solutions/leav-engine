@@ -20,8 +20,8 @@ interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputProps> {
     state: IStandardFieldReducerState;
     attribute: RecordFormAttributeFragment;
     fieldValue: IStandardFieldValue;
-    shouldShowValueDetailsButton?: boolean;
     handleSubmit: (value: string, id?: string) => void;
+    shouldShowValueDetailsButton?: boolean;
 }
 
 const KitInputStyled = styled(KitInput)<{$shouldHighlightColor: boolean}>`
@@ -34,12 +34,12 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     state,
     attribute,
     fieldValue,
-    shouldShowValueDetailsButton = false,
-    handleSubmit
+    handleSubmit,
+    shouldShowValueDetailsButton = false
 }) => {
     const {t} = useSharedTranslation();
     const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick, infoIconWithTooltip} = useValueDetailsButton({
+    const {onValueDetailsButtonClick} = useValueDetailsButton({
         value: fieldValue?.value,
         attribute
     });
@@ -78,11 +78,10 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
 
     return (
         <KitInputStyled
-            label={label}
             required={state.formElement.settings.required}
-            status={errors.length > 0 ? 'error' : undefined}
-            infoIcon={shouldShowValueDetailsButton ? infoIconWithTooltip : null}
+            label={label}
             onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
+            status={errors.length > 0 ? 'error' : undefined}
             helper={
                 state.isInheritedOverrideValue
                     ? t('record_edition.inherited_input_helper', {

@@ -142,12 +142,7 @@ describe('DSBooleanWrapper', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSBooleanWrapper
-                        value={true}
-                        state={state}
-                        handleSubmit={mockHandleSubmit}
-                        onChange={mockOnChange}
-                    />
+                    <DSBooleanWrapper value={true} state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
                 </AntForm.Item>
             </AntForm>
         );
@@ -161,12 +156,7 @@ describe('DSBooleanWrapper', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSBooleanWrapper
-                        value={false}
-                        state={state}
-                        handleSubmit={mockHandleSubmit}
-                        onChange={mockOnChange}
-                    />
+                    <DSBooleanWrapper value={false} state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
                 </AntForm.Item>
             </AntForm>
         );
@@ -180,12 +170,7 @@ describe('DSBooleanWrapper', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSBooleanWrapper
-                        value={false}
-                        state={state}
-                        handleSubmit={mockHandleSubmit}
-                        onChange={mockOnChange}
-                    />
+                    <DSBooleanWrapper value={false} state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
                 </AntForm.Item>
             </AntForm>
         );
@@ -202,12 +187,7 @@ describe('DSBooleanWrapper', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSBooleanWrapper
-                        value={true}
-                        state={state}
-                        handleSubmit={mockHandleSubmit}
-                        onChange={mockOnChange}
-                    />
+                    <DSBooleanWrapper value={true} state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
                 </AntForm.Item>
             </AntForm>
         );

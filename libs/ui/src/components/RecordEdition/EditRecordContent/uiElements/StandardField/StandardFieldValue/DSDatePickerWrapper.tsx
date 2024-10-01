@@ -1,5 +1,5 @@
 import {KitDatePicker} from 'aristid-ds';
-import {FunctionComponent, ReactNode} from 'react';
+import {FunctionComponent} from 'react';
 import {
     IStandardFieldReducerState,
     IStandardFieldValue
@@ -19,8 +19,8 @@ interface IDSDatePickerWrapperProps extends IProvidedByAntFormItem<DatePickerPro
     state: IStandardFieldReducerState;
     attribute: RecordFormAttributeFragment;
     fieldValue: IStandardFieldValue;
-    shouldShowValueDetailsButton?: boolean;
     handleSubmit: (value: StandardValueTypes, id?: string) => void;
+    shouldShowValueDetailsButton?: boolean;
 }
 
 const KitDatePickerStyled = styled(KitDatePicker)<{$shouldHighlightColor: boolean}>`
@@ -33,13 +33,13 @@ export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> =
     state,
     attribute,
     fieldValue,
-    shouldShowValueDetailsButton = false,
-    handleSubmit
+    handleSubmit,
+    shouldShowValueDetailsButton = false
 }) => {
     const {t} = useSharedTranslation();
     const {lang: availableLangs} = useLang();
     const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick, infoIconWithTooltip} = useValueDetailsButton({
+    const {onValueDetailsButtonClick} = useValueDetailsButton({
         value: fieldValue?.value,
         attribute
     });
@@ -80,7 +80,6 @@ export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> =
             disabled={state.isReadOnly}
             allowClear={!state.isInheritedNotOverrideValue}
             status={errors.length > 0 ? 'error' : undefined}
-            infoIcon={shouldShowValueDetailsButton ? infoIconWithTooltip : null}
             onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             helper={
                 state.isInheritedOverrideValue
