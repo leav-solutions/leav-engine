@@ -65,6 +65,8 @@ export default function ({
 
         // Error is logged with original message
         newError.message = `[${context.queryId}] ${err.message}`;
+        newError.extensions.queryId = context.queryId;
+
         // @ts-ignore
         logger.error(`${newError.message}\n${(err.extensions.exception?.stacktrace ?? []).join('\n')}`);
 
