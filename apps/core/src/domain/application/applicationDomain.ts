@@ -95,10 +95,10 @@ export default function ({
             [ApplicationEventTypes.DELETE]: EventAction.APP_DELETE
         };
 
-        let appBeforeToSend: IApplication | undefined | null = null;
+        let appBeforeToSend: IApplication | null = null;
         switch (type) {
             case ApplicationEventTypes.SAVE:
-                appBeforeToSend = applicationBefore;
+                appBeforeToSend = applicationBefore ?? null;
                 break;
             case ApplicationEventTypes.DELETE:
                 appBeforeToSend = application;

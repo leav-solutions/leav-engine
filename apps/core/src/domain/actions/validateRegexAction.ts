@@ -14,8 +14,8 @@ export default function (): IActionsListFunction<{regex: true}> {
         output_types: [ActionsListIOTypes.STRING],
         params: [{name: 'regex', type: 'string', description: 'Validation regex', required: true, default_value: ''}],
         action: (values, params) => {
-            const allErrors = values.reduce(
-                (errors: Array<{errorType: Errors; attributeValue: IValue}>, elementValue) => {
+            const allErrors = values.reduce<Array<{errorType: Errors; attributeValue: IValue}>>(
+                (errors, elementValue) => {
                     if (params.regex && !elementValue.payload.match(new RegExp(params.regex))) {
                         errors.push({errorType: Errors.INVALID_REGEXP, attributeValue: elementValue});
                     }
