@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitInputNumber} from 'aristid-ds';
-import {ComponentPropsWithRef, FocusEvent, FunctionComponent, useState} from 'react';
+import {ComponentPropsWithRef, FocusEvent, FunctionComponent, useEffect, useRef, useState} from 'react';
 import {
     IStandardFieldReducerState,
     IStandardFieldValue
 } from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import {Form, InputNumberProps} from 'antd';
+import {Form, GetRef, InputNumberProps} from 'antd';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import styled from 'styled-components';
@@ -21,6 +21,7 @@ interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputNumberProps> 
     attribute: RecordFormAttributeFragment;
     fieldValue: IStandardFieldValue;
     handleSubmit: (value: string, id?: string) => void;
+    handleBlur: () => void;
     shouldShowValueDetailsButton?: boolean;
 }
 
@@ -38,6 +39,7 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     attribute,
     fieldValue,
     handleSubmit,
+    handleBlur,
     shouldShowValueDetailsButton = false
 }) => {
     if (!onChange) {
@@ -54,6 +56,14 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
 
     const [hasChanged, setHasChanged] = useState(false);
 
+    const inputRef = useRef<GetRef<typeof KitInputNumberStyled>>(null);
+
+    useEffect(() => {
+        if (fieldValue.isEditing && inputRef.current) {
+            inputRef.current.focus(); // To automatically open the date picker
+        }
+    }, [fieldValue.isEditing]);
+
     const _resetToInheritedValue = () => {
         setHasChanged(false);
         onChange(state.inheritedValue.raw_value);
@@ -61,14 +71,21 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     };
 
     const _handleOnBlur = (event: FocusEvent<HTMLInputElement>) => {
+        if (!hasChanged) {
+            handleBlur();
+            return;
+        }
+
         const valueToSubmit = event.target.value;
         if (valueToSubmit === '' && state.isInheritedValue) {
             _resetToInheritedValue();
             return;
         }
+
         if (hasChanged || !state.isInheritedValue) {
             handleSubmit(valueToSubmit, state.attribute.id);
         }
+
         onChange(valueToSubmit);
     };
 
@@ -81,6 +98,7 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
 
     return (
         <KitInputNumberStyled
+            ref={inputRef}
             required={state.formElement.settings.required}
             label={label}
             onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}

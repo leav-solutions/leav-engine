@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitDatePicker} from 'aristid-ds';
-import {FunctionComponent} from 'react';
+import {FunctionComponent, useEffect, useRef} from 'react';
 import {
     IStandardFieldReducerState,
     IStandardFieldValue
@@ -23,6 +23,7 @@ interface IDSRangePickerWrapperProps extends IProvidedByAntFormItem<RangePickerP
     attribute: RecordFormAttributeFragment;
     fieldValue: IStandardFieldValue;
     handleSubmit: (value: StandardValueTypes, id?: string) => void;
+    handleBlur: () => void;
     shouldShowValueDetailsButton?: boolean;
 }
 
@@ -37,6 +38,7 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
     attribute,
     fieldValue,
     handleSubmit,
+    handleBlur,
     shouldShowValueDetailsButton = false
 }) => {
     const {t} = useSharedTranslation();
@@ -46,6 +48,14 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
         value: fieldValue?.value,
         attribute
     });
+
+    const inputRef = useRef<any>();
+
+    useEffect(() => {
+        if (fieldValue.isEditing && inputRef.current) {
+            inputRef.current.nativeElement.click(); // To automatically open the date picker
+        }
+    }, [fieldValue.isEditing]);
 
     const _handleDateChange: (
         rangePickerDates: [from: dayjs.Dayjs, to: dayjs.Dayjs] | null,
@@ -80,10 +90,18 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
         handleSubmit(datesToSave, state.attribute.id);
     };
 
+    const _handleOpenChange = (open: boolean) => {
+        if (!open) {
+            handleBlur();
+        }
+    };
+
     const label = localizedTranslation(state.formElement.settings.label, availableLangs);
 
     return (
         <KitDatePickerRangePickerStyled
+            // @ts-expect-error - ref is not a valid prop for RangePicker but works at runtime
+            ref={inputRef}
             value={value}
             onChange={_handleDateChange}
             label={label}
@@ -102,6 +120,7 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
                       })
                     : undefined
             }
+            onOpenChange={_handleOpenChange}
             $shouldHighlightColor={state.isInheritedNotOverrideValue}
         />
     );

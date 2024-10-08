@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitInput} from 'aristid-ds';
-import {ChangeEvent, FocusEvent, FunctionComponent, ReactNode, useState} from 'react';
+import {ChangeEvent, FocusEvent, FunctionComponent, useEffect, useRef, useState} from 'react';
 import {
     IStandardFieldReducerState,
     IStandardFieldValue
 } from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import {Form, InputProps} from 'antd';
+import {Form, GetRef, InputProps} from 'antd';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -21,6 +21,7 @@ interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputProps> {
     attribute: RecordFormAttributeFragment;
     fieldValue: IStandardFieldValue;
     handleSubmit: (value: string, id?: string) => void;
+    handleBlur: () => void;
     shouldShowValueDetailsButton?: boolean;
 }
 
@@ -35,6 +36,7 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     attribute,
     fieldValue,
     handleSubmit,
+    handleBlur,
     shouldShowValueDetailsButton = false
 }) => {
     const {t} = useSharedTranslation();
@@ -45,6 +47,13 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     });
     const [hasChanged, setHasChanged] = useState(false);
     const {lang: availableLang} = useLang();
+    const inputRef = useRef<GetRef<typeof KitInputStyled>>(null);
+
+    useEffect(() => {
+        if (fieldValue.isEditing && inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [fieldValue.isEditing]);
 
     const _resetToInheritedValue = () => {
         setHasChanged(false);
@@ -53,14 +62,19 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     };
 
     const _handleOnBlur = (event: FocusEvent<HTMLInputElement>) => {
+        if (!hasChanged) {
+            handleBlur();
+            return;
+        }
+
         const valueToSubmit = event.target.value;
         if (valueToSubmit === '' && state.isInheritedValue) {
             _resetToInheritedValue();
             return;
         }
-        if (hasChanged || !state.isInheritedValue) {
-            handleSubmit(valueToSubmit, state.attribute.id);
-        }
+
+        handleSubmit(valueToSubmit, state.attribute.id);
+
         onChange(event);
     };
 
@@ -71,6 +85,11 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
             _resetToInheritedValue();
             return;
         }
+
+        if (inputValue === '' && event.type === 'click') {
+            handleSubmit(inputValue, state.attribute.id);
+        }
+
         onChange(event);
     };
 
@@ -78,6 +97,7 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
 
     return (
         <KitInputStyled
+            ref={inputRef}
             required={state.formElement.settings.required}
             label={label}
             onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}

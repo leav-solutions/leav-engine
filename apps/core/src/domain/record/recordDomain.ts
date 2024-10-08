@@ -1189,9 +1189,6 @@ export default function ({
                 ];
             }
 
-            const forceArray = options?.forceArray ?? false;
-
-            //TODO: fix "[object]" on input after edit
             let formattedValues = await Promise.all(
                 values.map(async v => {
                     const formattedValue = await valueDomain.formatValue({

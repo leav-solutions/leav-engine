@@ -26,6 +26,8 @@ const formElementBase = {
         {
             value: 'My value formatted',
             raw_value: 'my_raw_value',
+            payload: 'My value formatted',
+            raw_payload: 'my_raw_payload',
             created_at: 123456789,
             modified_at: 123456789,
             created_by: mockModifier,

@@ -16,7 +16,7 @@ const hasDateRangeValues = (dateRange: unknown): dateRange is IDateRangeValue =>
     (dateRange as IDateRangeValue).from !== undefined && (dateRange as IDateRangeValue).to !== undefined;
 
 const getInheritedValue = values => values.find(value => value.isInherited);
-const getNotInheritedOrOverrideValue = values => values.find(value => !value.isInherited && value.raw_value !== null);
+const getNotInheritedOrOverrideValue = values => values.find(value => !value.isInherited && value.raw_payload !== null);
 
 const isRecordFormElementsValueLinkValue = (
     value: RecordFormElementsValue,
@@ -51,7 +51,7 @@ export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
 
         const standardValue = value as RecordFormElementsValueStandardValue;
 
-        if (!standardValue?.raw_value) {
+        if (!standardValue?.raw_payload) {
             if (attribute.format === AttributeFormat.date_range) {
                 return acc;
             }
@@ -64,23 +64,23 @@ export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
             case AttributeFormat.text:
             case AttributeFormat.rich_text:
             case AttributeFormat.boolean:
-                acc[attribute.id] = standardValue.raw_value;
+                acc[attribute.id] = standardValue.raw_payload;
                 break;
             case AttributeFormat.numeric:
-                acc[attribute.id] = Number(standardValue.raw_value);
+                acc[attribute.id] = Number(standardValue.raw_payload);
                 break;
             case AttributeFormat.date:
-                acc[attribute.id] = dayjs.unix(Number(standardValue.raw_value));
+                acc[attribute.id] = dayjs.unix(Number(standardValue.raw_payload));
                 break;
             case AttributeFormat.date_range:
-                if (hasDateRangeValues(standardValue.raw_value)) {
+                if (hasDateRangeValues(standardValue.raw_payload)) {
                     acc[attribute.id] = [
-                        dayjs.unix(Number(standardValue.raw_value.from)),
-                        dayjs.unix(Number(standardValue.raw_value.to))
+                        dayjs.unix(Number(standardValue.raw_payload.from)),
+                        dayjs.unix(Number(standardValue.raw_payload.to))
                     ];
                     break;
-                } else if (typeof standardValue.raw_value === 'string') {
-                    const convertedFieldValue = JSON.parse(standardValue.raw_value);
+                } else if (typeof standardValue.raw_payload === 'string') {
+                    const convertedFieldValue = JSON.parse(standardValue.raw_payload);
                     acc[attribute.id] = [
                         dayjs.unix(Number(convertedFieldValue.from)),
                         dayjs.unix(Number(convertedFieldValue.to))

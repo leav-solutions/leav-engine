@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitInput} from 'aristid-ds';
-import {ChangeEvent, FocusEvent, FunctionComponent, ReactNode, useState} from 'react';
+import {ChangeEvent, FocusEvent, FunctionComponent, useEffect, useRef, useState} from 'react';
 import {
     IStandardFieldReducerState,
     IStandardFieldValue
@@ -16,11 +16,12 @@ import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 import {useLang} from '_ui/hooks';
 import {localizedTranslation} from '@leav/utils';
 
-interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputProps> {
+interface IDSInputEncryptedWrapper extends IProvidedByAntFormItem<InputProps> {
     state: IStandardFieldReducerState;
     attribute: RecordFormAttributeFragment;
     fieldValue: IStandardFieldValue;
     handleSubmit: (value: string, id?: string) => void;
+    handleBlur: () => void;
     shouldShowValueDetailsButton?: boolean;
 }
 
@@ -34,13 +35,14 @@ const KitInputPasswordStyled = styled(KitInput.Password)<{$shouldHighlightColor:
     }
 `;
 
-export const DSInputPasswordWrapper: FunctionComponent<IDSInputWrapperProps> = ({
+export const DSInputEncryptedWrapper: FunctionComponent<IDSInputEncryptedWrapper> = ({
     value,
     onChange,
     state,
     attribute,
     fieldValue,
     handleSubmit,
+    handleBlur,
     shouldShowValueDetailsButton = false
 }) => {
     const {t} = useSharedTranslation();
@@ -52,6 +54,14 @@ export const DSInputPasswordWrapper: FunctionComponent<IDSInputWrapperProps> = (
     const [hasChanged, setHasChanged] = useState(false);
     const {lang: availableLang} = useLang();
 
+    const inputRef = useRef<any>(null);
+
+    useEffect(() => {
+        if (fieldValue.isEditing && inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [fieldValue.isEditing]);
+
     const _resetToInheritedValue = () => {
         setHasChanged(false);
         onChange(state.inheritedValue.raw_value);
@@ -59,14 +69,21 @@ export const DSInputPasswordWrapper: FunctionComponent<IDSInputWrapperProps> = (
     };
 
     const _handleOnBlur = (event: FocusEvent<HTMLInputElement>) => {
+        if (!hasChanged) {
+            handleBlur();
+            return;
+        }
+
         const valueToSubmit = event.target.value;
         if (valueToSubmit === '' && state.isInheritedValue) {
             _resetToInheritedValue();
             return;
         }
-        if (hasChanged || !state.isInheritedValue) {
+
+        if (!state.isInheritedValue) {
             handleSubmit(valueToSubmit, state.attribute.id);
         }
+
         onChange(event);
     };
 
@@ -84,6 +101,9 @@ export const DSInputPasswordWrapper: FunctionComponent<IDSInputWrapperProps> = (
 
     return (
         <KitInputPasswordStyled
+            // @ts-expect-error - ref is not a valid prop for Input.Password but works at runtime
+            ref={inputRef}
+            autoComplete="new-password"
             data-testid="kit-input-password"
             label={label}
             required={state.formElement.settings.required}

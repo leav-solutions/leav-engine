@@ -11,8 +11,8 @@ import {
 } from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockFormElementInput} from '_ui/__mocks__/common/form';
-import {mockAttributeLink} from '_ui/__mocks__/common/attribute';
-import {FieldScope} from '../../../_types';
+import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
+import {VersionFieldScope} from '../../../_types';
 import userEvent from '@testing-library/user-event';
 
 const en_label = 'label';
@@ -82,15 +82,15 @@ const getInitialState = ({
             required
         }
     },
-    attribute: mockAttributeLink,
+    attribute: mockFormAttribute,
     isReadOnly: false,
-    activeScope: FieldScope.CURRENT,
+    activeScope: VersionFieldScope.CURRENT,
     values: {
-        [FieldScope.CURRENT]: {
+        [VersionFieldScope.CURRENT]: {
             version: null,
             values: {[idValue]: mockValueFalse}
         },
-        [FieldScope.INHERITED]: null
+        [VersionFieldScope.INHERITED]: null
     },
     metadataEdit: false,
     inheritedValue: null,
@@ -142,7 +142,12 @@ describe('DSBooleanWrapper', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSBooleanWrapper value={true} state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
+                    <DSBooleanWrapper
+                        value={true}
+                        state={state}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                    />
                 </AntForm.Item>
             </AntForm>
         );
@@ -156,7 +161,12 @@ describe('DSBooleanWrapper', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSBooleanWrapper value={false} state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
+                    <DSBooleanWrapper
+                        value={false}
+                        state={state}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                    />
                 </AntForm.Item>
             </AntForm>
         );
@@ -170,7 +180,12 @@ describe('DSBooleanWrapper', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSBooleanWrapper value={false} state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
+                    <DSBooleanWrapper
+                        value={false}
+                        state={state}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                    />
                 </AntForm.Item>
             </AntForm>
         );
@@ -187,7 +202,12 @@ describe('DSBooleanWrapper', () => {
         render(
             <AntForm>
                 <AntForm.Item>
-                    <DSBooleanWrapper value={true} state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
+                    <DSBooleanWrapper
+                        value={true}
+                        state={state}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                    />
                 </AntForm.Item>
             </AntForm>
         );
@@ -274,7 +294,7 @@ describe('DSBooleanWrapper', () => {
             const clearButton = screen.getByRole('button');
             await user.click(clearButton);
 
-            expect(mockHandleSubmit).toHaveBeenCalledWith('', 'my_attribute');
+            expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
         });
     });
 });

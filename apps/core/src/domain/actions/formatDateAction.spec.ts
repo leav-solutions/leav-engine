@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {IStandardValue} from '_types/value';
 import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
 import formatDateAction from './formatDateAction';
 
@@ -10,6 +11,7 @@ describe('formatDateAction', () => {
     const ctx = {attribute: attrText, userId: 'test_user'};
 
     const testingDate = 2119477320;
+    const testValue: IStandardValue = {payload: testingDate, raw_payload: testingDate};
 
     describe('Localized format', () => {
         test('with options', async () => {
@@ -23,7 +25,7 @@ describe('formatDateAction', () => {
             expect(
                 (
                     await action(
-                        [{payload: testingDate}],
+                        [testValue],
                         {localized},
                         {
                             ...ctx,
@@ -35,7 +37,7 @@ describe('formatDateAction', () => {
             expect(
                 (
                     await action(
-                        [{payload: testingDate}],
+                        [testValue],
                         {localized},
                         {
                             ...ctx,
@@ -47,7 +49,7 @@ describe('formatDateAction', () => {
             expect(
                 (
                     await action(
-                        [{payload: testingDate}],
+                        [testValue],
                         {localized},
                         {
                             ...ctx,
@@ -63,7 +65,7 @@ describe('formatDateAction', () => {
             'auto should print default on invalid json format: `%s`',
             async localized => {
                 const result = await action(
-                    [{payload: testingDate}],
+                    [testValue],
                     {localized},
                     {
                         ...ctx,
@@ -84,7 +86,7 @@ describe('formatDateAction', () => {
         expect(
             (
                 await action(
-                    [{payload: testingDate}],
+                    [testValue],
                     {
                         universal: 'D/MMMM-YY HH:mm'
                     },
@@ -96,15 +98,15 @@ describe('formatDateAction', () => {
 
     describe('edge cases', () => {
         test('should fallback to empty localized param when neither params provided', async () => {
-            const resultWithoutParams = await action([{payload: testingDate}], {}, ctx);
-            const resultWithEmptyLocalizedParam = await action([{payload: testingDate}], {localized: '{}'}, ctx);
+            const resultWithoutParams = await action([testValue], {}, ctx);
+            const resultWithEmptyLocalizedParam = await action([testValue], {localized: '{}'}, ctx);
             expect(resultWithoutParams).toEqual(resultWithEmptyLocalizedParam);
         });
         test('should return empty string on non numerical value in DB', async () => {
-            expect((await action([{payload: 'aaaa'}], {}, ctx)).values[0].payload).toBe('');
+            expect((await action([{payload: 'aaaa', raw_payload: 'aaa'}], {}, ctx)).values[0].payload).toBe('');
         });
         test('should return null on null value in DB', async () => {
-            expect((await action([{payload: null}], {}, ctx)).values[0].payload).toBe(null);
+            expect((await action([{payload: null, raw_payload: null}], {}, ctx)).values[0].payload).toBe(null);
         });
     });
 
@@ -112,7 +114,7 @@ describe('formatDateAction', () => {
         expect(
             (
                 await action(
-                    [{payload: testingDate}],
+                    [testValue],
                     {
                         universal: 'D/MMMM/YY',
                         localized: `{
