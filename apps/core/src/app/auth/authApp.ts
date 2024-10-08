@@ -631,9 +631,6 @@ export default function ({
             }
 
             const queryId = req.ctx.queryId;
-            if (!queryId) {
-                throw new Error('QueryId not found');
-            }
 
             const identifierBase64Url = convertOIDCIdentifier.encodeIdentifierToBase64Url(queryId);
             await oidcClientService.saveOriginalUrl({originalUrl: req.originalUrl, queryId});
