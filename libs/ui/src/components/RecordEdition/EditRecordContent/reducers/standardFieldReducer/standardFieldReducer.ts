@@ -4,7 +4,7 @@
 import {AnyPrimitive, IDateRangeValue, IKeyValue} from '@leav/utils';
 import isCurrentVersion from '_ui/components/RecordEdition/EditRecordContent/helpers/isCurrentVersion';
 import {
-    FieldScope,
+    VersionFieldScope,
     FormElement,
     ICommonFieldsReducerState,
     StandardValueTypes
@@ -145,7 +145,7 @@ export type StandardFieldReducerValueActions =
 export type StandardFieldReducerFieldActions =
     | {
           type: StandardFieldReducerActionsTypes.CHANGE_VERSION_SCOPE;
-          scope: FieldScope;
+          scope: VersionFieldScope;
       }
     | {
           type: StandardFieldReducerActionsTypes.REFRESH_VALUES;
@@ -189,6 +189,10 @@ const _updateValueData = (
     return res;
 };
 
+const getInheritedValue = (values: RecordFormElementsValueStandardValue[]) => values.filter(value => value.isInherited);
+const getNotInheritedOrOverrideValue = (values: RecordFormElementsValueStandardValue[]) =>
+    values.filter(value => !value.isInherited && value.raw_value !== null);
+
 /**
  * For given list of values, determine if there is inherited values, inherited/current version and default active scope
  */
@@ -199,31 +203,35 @@ const _computeScopeAndValues = (params: {
 }): Pick<IStandardFieldReducerState, 'values' | 'activeScope'> => {
     const {attribute, values, formVersion} = params;
 
-    const preparedValues =
-        Array.isArray(values) && values.length
-            ? values.reduce(
-                  (allValues: IKeyValue<IStandardFieldValue>, fieldValue, index) => ({
-                      ...allValues,
-                      [fieldValue?.id_value ?? null]: {
-                          ...virginValue,
-                          idValue: fieldValue?.id_value ?? null,
-                          index,
-                          value: fieldValue ?? null,
-                          displayValue: fieldValue?.value ?? '',
-                          editingValue:
-                              attribute.format === AttributeFormat.encrypted ? '' : fieldValue?.raw_value ?? '',
-                          originRawValue:
-                              attribute.format === AttributeFormat.encrypted ? '' : fieldValue?.raw_value ?? ''
-                      }
-                  }),
-                  {}
-              )
-            : {
-                  [newValueId]: {
+    // Get override or inhertied values
+    let valuesToHandle = getNotInheritedOrOverrideValue(values);
+    if (!valuesToHandle.length) {
+        valuesToHandle = getInheritedValue(values);
+    }
+
+    const preparedValues = valuesToHandle.length
+        ? valuesToHandle.reduce(
+              (allValues: IKeyValue<IStandardFieldValue>, fieldValue, index) => ({
+                  ...allValues,
+                  [fieldValue?.id_value ?? null]: {
                       ...virginValue,
-                      idValue: newValueId
+                      idValue: fieldValue?.id_value ?? null,
+                      index,
+                      value: fieldValue ?? null,
+                      displayValue: fieldValue?.value ?? '',
+                      editingValue: attribute.format === AttributeFormat.encrypted ? '' : (fieldValue?.raw_value ?? ''),
+                      originRawValue:
+                          attribute.format === AttributeFormat.encrypted ? '' : (fieldValue?.raw_value ?? '')
                   }
-              };
+              }),
+              {}
+          )
+        : {
+              [newValueId]: {
+                  ...virginValue,
+                  idValue: newValueId
+              }
+          };
 
     const currentVersion: IValueVersion = attribute?.versions_conf?.versionable
         ? attribute.versions_conf.profile.trees.reduce((relevantVersion, tree) => {
@@ -235,19 +243,21 @@ const _computeScopeAndValues = (params: {
           }, {})
         : null;
 
-    const hasInheritedValues = attribute?.versions_conf?.versionable
+    const hasVersionInheritedValues = attribute?.versions_conf?.versionable
         ? !isCurrentVersion(currentVersion, values?.[0]?.version ?? currentVersion)
         : false; // We assume that all values have the same version
-    const inheritedVersion = hasInheritedValues ? values?.[0]?.version : null;
+    const inheritedVersion = hasVersionInheritedValues ? values?.[0]?.version : null;
 
     return {
-        activeScope: hasInheritedValues ? FieldScope.INHERITED : FieldScope.CURRENT,
+        activeScope: hasVersionInheritedValues ? VersionFieldScope.INHERITED : VersionFieldScope.CURRENT,
         values: {
-            [FieldScope.CURRENT]: {
+            [VersionFieldScope.CURRENT]: {
                 version: currentVersion ?? null,
-                values: hasInheritedValues ? {[newValueId]: {...virginValue, idValue: newValueId}} : preparedValues
+                values: hasVersionInheritedValues
+                    ? {[newValueId]: {...virginValue, idValue: newValueId}}
+                    : preparedValues
             },
-            [FieldScope.INHERITED]: hasInheritedValues
+            [VersionFieldScope.INHERITED]: hasVersionInheritedValues
                 ? {version: inheritedVersion ?? null, values: preparedValues}
                 : null
         }
@@ -296,7 +306,7 @@ export const computeInitialState = (params: {
     const {element, record, metadataEdit, isRecordReadOnly, formVersion} = params;
     const attribute = element.attribute;
 
-    const fieldValues = [...(element.values as RecordFormElementsValueStandardValue[])] ?? [];
+    const fieldValues = [...(element.values as RecordFormElementsValueStandardValue[])];
 
     return {
         attribute,
@@ -387,10 +397,10 @@ const standardFieldReducer = (
             const newValueData = {
                 ...virginValue,
                 idValue: action.newValue.id_value,
-                value: ({
+                value: {
                     ...(action.newValue as ValueDetailsValueFragment),
                     version: newValueVersion
-                } as unknown) as IRecordPropertyStandard,
+                } as unknown as IRecordPropertyStandard,
                 displayValue: (action.newValue as ValueDetailsValueFragment).value,
                 editingValue: newRawValue,
                 originRawValue: newRawValue,

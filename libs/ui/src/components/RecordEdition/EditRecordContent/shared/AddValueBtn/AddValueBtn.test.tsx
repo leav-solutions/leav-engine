@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import {act, render, screen, waitFor} from '_ui/_tests/testUtils';
-import {FieldScope} from '../../_types';
+import {VersionFieldScope} from '../../_types';
 import AddValueBtn from './AddValueBtn';
 
 describe('AddValueBtn', () => {
@@ -11,7 +11,7 @@ describe('AddValueBtn', () => {
         const mockOnClick = jest.fn();
 
         await act(async () => {
-            render(<AddValueBtn activeScope={FieldScope.CURRENT} onClick={mockOnClick} />);
+            render(<AddValueBtn activeScope={VersionFieldScope.CURRENT} onClick={mockOnClick} />);
         });
 
         const btn = screen.getByRole('button', {name: /add_value/});

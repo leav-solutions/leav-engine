@@ -1,20 +1,20 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render, screen, fireEvent, waitFor} from '_ui/_tests/testUtils';
+import {render, screen} from '_ui/_tests/testUtils';
 import {DSRangePickerWrapper} from './DSRangePickerWrapper';
-import {FieldScope} from '../../../_types';
+import {VersionFieldScope} from '../../../_types';
 import {
     IStandardFieldReducerState,
     StandardFieldValueState
 } from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockFormElementInput} from '_ui/__mocks__/common/form';
-import {mockAttributeLink} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
 import {Form} from 'antd';
-import dayjs, {Dayjs} from 'dayjs';
+import dayjs from 'dayjs';
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
+import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 
 const en_label = 'label';
 const fr_label = 'libellé';
@@ -50,15 +50,15 @@ const getInitialState = (required: boolean, fallbackLang = false): IStandardFiel
             required
         }
     },
-    attribute: mockAttributeLink,
+    attribute: mockFormAttribute,
     isReadOnly: false,
-    activeScope: FieldScope.CURRENT,
+    activeScope: VersionFieldScope.CURRENT,
     values: {
-        [FieldScope.CURRENT]: {
+        [VersionFieldScope.CURRENT]: {
             version: null,
             values: {[idValue]: mockValue}
         },
-        [FieldScope.INHERITED]: null
+        [VersionFieldScope.INHERITED]: null
     },
     metadataEdit: false,
     inheritedValue: null,
@@ -70,12 +70,14 @@ const getInitialState = (required: boolean, fallbackLang = false): IStandardFiel
 describe('DSRangePickerWrapper', () => {
     const mockOnChange = jest.fn();
     const mockHandleSubmit = jest.fn();
+    const mockHandleBlur = jest.fn();
     let user!: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {
         user = userEvent.setup({});
         mockOnChange.mockReset();
         mockHandleSubmit.mockReset();
+        mockHandleBlur.mockReset();
     });
 
     describe('Without required field', () => {
@@ -87,8 +89,9 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                             onChange={mockOnChange}
                         />
                     </Form.Item>
@@ -106,8 +109,9 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                             onChange={mockOnChange}
                         />
                     </Form.Item>
@@ -125,9 +129,10 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>
@@ -161,9 +166,10 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>
@@ -195,9 +201,10 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>
@@ -229,9 +236,10 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>
@@ -265,9 +273,10 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>
@@ -286,9 +295,10 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>
@@ -317,9 +327,10 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>
@@ -355,9 +366,10 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>

@@ -23,9 +23,10 @@ import AddValueBtn from '../../shared/AddValueBtn';
 import DeleteAllValuesBtn from '../../shared/DeleteAllValuesBtn';
 import FieldFooter from '../../shared/FieldFooter';
 import ValuesVersionBtn from '../../shared/ValuesVersionBtn';
-import {APICallStatus, FieldScope, IFormElementProps} from '../../_types';
+import {APICallStatus, VersionFieldScope, IFormElementProps} from '../../_types';
 import StandardFieldValue from './StandardFieldValue';
 import {FormInstance} from 'antd';
+import {StandardFieldReducerContext} from '../../reducers/standardFieldReducer/standardFieldReducerContext';
 
 const Wrapper = styled.div<{$metadataEdit: boolean}>`
     margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
@@ -230,7 +231,7 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
         });
     };
 
-    const _handleScopeChange = (scope: FieldScope) => {
+    const _handleScopeChange = (scope: VersionFieldScope) => {
         dispatch({
             type: StandardFieldReducerActionsTypes.CHANGE_VERSION_SCOPE,
             scope
@@ -284,46 +285,52 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
     const isAttributeVersionable = attribute?.versions_conf?.versionable;
 
     const versions = {
-        [FieldScope.CURRENT]: state.values[FieldScope.CURRENT]?.version ?? null,
-        [FieldScope.INHERITED]: state.values[FieldScope.INHERITED]?.version ?? null
+        [VersionFieldScope.CURRENT]: state.values[VersionFieldScope.CURRENT]?.version ?? null,
+        [VersionFieldScope.INHERITED]: state.values[VersionFieldScope.INHERITED]?.version ?? null
     };
 
     return (
-        <Wrapper $metadataEdit={metadataEdit}>
-            {valuesToDisplay.map(value => (
-                <StandardFieldValue
-                    key={value.idValue}
-                    value={value}
-                    state={state}
-                    dispatch={dispatch}
-                    onSubmit={_handleSubmit}
-                    onDelete={_handleDelete}
-                    onScopeChange={_handleScopeChange}
-                />
-            ))}
-            {(canDeleteAllValues || canAddAnotherValue || attribute?.versions_conf?.versionable) && (
-                <FieldFooter
-                    bordered
-                    style={{
-                        flexDirection:
-                            canAddAnotherValue && !canDeleteAllValues && !isAttributeVersionable ? 'row' : 'row-reverse'
-                    }}
-                >
-                    <div>
-                        {isAttributeVersionable && (
-                            <ValuesVersionBtn
-                                basic
-                                versions={versions}
-                                activeScope={state.activeScope}
-                                onScopeChange={_handleScopeChange}
-                            />
+        <StandardFieldReducerContext.Provider value={{state, dispatch}}>
+            <Wrapper $metadataEdit={metadataEdit}>
+                {valuesToDisplay.map(value => (
+                    <StandardFieldValue
+                        key={value.idValue}
+                        value={value}
+                        state={state}
+                        dispatch={dispatch}
+                        onSubmit={_handleSubmit}
+                        onDelete={_handleDelete}
+                        onScopeChange={_handleScopeChange}
+                    />
+                ))}
+                {(canDeleteAllValues || canAddAnotherValue || attribute?.versions_conf?.versionable) && (
+                    <FieldFooter
+                        bordered
+                        style={{
+                            flexDirection:
+                                canAddAnotherValue && !canDeleteAllValues && !isAttributeVersionable
+                                    ? 'row'
+                                    : 'row-reverse'
+                        }}
+                    >
+                        <div>
+                            {isAttributeVersionable && (
+                                <ValuesVersionBtn
+                                    basic
+                                    versions={versions}
+                                    activeScope={state.activeScope}
+                                    onScopeChange={_handleScopeChange}
+                                />
+                            )}
+                            {canDeleteAllValues && <DeleteAllValuesBtn onDelete={_handleDeleteAllValues} />}
+                        </div>
+                        {canAddAnotherValue && (
+                            <AddValueBtn activeScope={state.activeScope} onClick={_handleAddValue} />
                         )}
-                        {canDeleteAllValues && <DeleteAllValuesBtn onDelete={_handleDeleteAllValues} />}
-                    </div>
-                    {canAddAnotherValue && <AddValueBtn activeScope={state.activeScope} onClick={_handleAddValue} />}
-                </FieldFooter>
-            )}
-        </Wrapper>
+                    </FieldFooter>
+                )}
+            </Wrapper>
+        </StandardFieldReducerContext.Provider>
     );
 };
 

@@ -2,7 +2,6 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {Suspense} from 'react';
 import {
     EditRecordReducerActionsTypes,
     initialState
@@ -16,7 +15,7 @@ import {
     ValueDetailsValueFragment
 } from '_ui/_gqlTypes';
 import {IRecordPropertyAttribute} from '_ui/_queries/records/getRecordPropertiesQuery';
-import {render, screen, waitFor, waitForOptions} from '_ui/_tests/testUtils';
+import {render, screen, waitFor} from '_ui/_tests/testUtils';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import {mockFormElementInput} from '_ui/__mocks__/common/form';
 import {mockRecord} from '_ui/__mocks__/common/record';
@@ -30,11 +29,42 @@ import {
     SubmitValueFunc
 } from '../../_types';
 import StandardField from './StandardField';
+import {AntForm} from 'aristid-ds';
+import {getAntdFormInitialValues} from '../../antdUtils';
 
 jest.mock('../../hooks/useExecuteDeleteValueMutation');
 
 jest.useRealTimers();
 jest.setTimeout(15000);
+
+const _makeRecordForm = (payloads: {payload: any; raw_payload: any}, format: AttributeFormat) => ({
+    dependencyAttributes: [],
+    elements: [
+        {
+            ...mockFormElementInput,
+            settings: [
+                {key: 'label', value: 'test attribute'},
+                {key: 'attribute', value: 'test_attribute'}
+            ],
+            attribute: {...mockFormAttribute, format},
+            values: [
+                {
+                    created_at: 123456789,
+                    modified_at: 123456789,
+                    created_by: mockModifier,
+                    modified_by: mockModifier,
+                    id_value: null,
+                    metadata: null,
+                    version: null,
+                    ...payloads
+                }
+            ]
+        }
+    ],
+    id: 'edition',
+    recordId: 'recordId',
+    library: {id: 'libraryId'}
+});
 
 describe('StandardField', () => {
     const mockEditRecordDispatch = jest.fn();
@@ -107,6 +137,74 @@ describe('StandardField', () => {
     }));
 
     beforeEach(() => jest.clearAllMocks());
+
+    describe('Display value with read/write mode', () => {
+        test('Text format', async () => {
+            const payloads = {
+                payload: 'My value formatted',
+                raw_payload: 'Some raw value'
+            };
+            const recordForm = _makeRecordForm(payloads, AttributeFormat.text);
+            const formElement = {...recordForm.elements[0], settings: {}};
+
+            const antdFormInitialValues = getAntdFormInitialValues(recordForm);
+            render(
+                <AntForm initialValues={antdFormInitialValues}>
+                    <AntForm.Item>
+                        <StandardField element={formElement} {...baseProps} />
+                    </AntForm.Item>
+                </AntForm>
+            );
+
+            const formattedValueElem = screen.getByText(payloads.payload);
+            expect(formattedValueElem).toBeVisible();
+
+            expect(screen.queryByRole('textbox')).toBeNull();
+
+            await userEvent.click(formattedValueElem);
+
+            const inputElem = screen.getByRole('textbox');
+            expect(inputElem).toBeVisible();
+            expect(inputElem).toHaveValue(payloads.raw_payload);
+        });
+
+        test('Numeric format', async () => {
+            const payloads = {
+                payload: '42,00 €',
+                raw_payload: '42'
+            };
+
+            const recordForm = _makeRecordForm(payloads, AttributeFormat.numeric);
+            const formElement = {...recordForm.elements[0], settings: {}};
+            const antdFormInitialValues = getAntdFormInitialValues(recordForm);
+
+            render(
+                <AntForm initialValues={antdFormInitialValues}>
+                    <AntForm.Item>
+                        <StandardField element={formElement} {...baseProps} />
+                    </AntForm.Item>
+                </AntForm>
+            );
+
+            const formattedValueElem = screen.getByText(payloads.payload);
+            expect(formattedValueElem).toBeVisible();
+
+            expect(screen.queryByRole('spinbutton')).toBeNull();
+
+            await userEvent.click(formattedValueElem);
+
+            const inputElem = screen.getByRole('spinbutton');
+            expect(inputElem).toBeVisible();
+            expect(inputElem).toHaveValue(payloads.raw_payload);
+
+            expect(screen.getByText(payloads.payload)).not.toBeVisible();
+        });
+
+        test.todo('Date Range format');
+        test.todo('Encrypted format');
+        test.todo('Date format');
+        test.todo('Boolean format');
+    });
 
     test('Display informations about value', async () => {
         render(<StandardField element={mockFormElementInput} {...baseProps} />);
@@ -190,24 +288,6 @@ describe('StandardField', () => {
         await userEvent.click(submitBtn);
 
         expect(screen.getByText('ERROR_MESSAGE')).toBeInTheDocument();
-    });
-
-    test('Delete value', async () => {
-        render(<StandardField element={mockFormElementInput} {...baseProps} />);
-
-        const inputWrapper = screen.getByTestId('input-wrapper');
-        await userEvent.hover(inputWrapper);
-
-        const deleteBtn = screen.getByRole('button', {name: /delete/, hidden: true});
-        expect(deleteBtn).toBeInTheDocument();
-
-        await userEvent.click(deleteBtn);
-
-        const confirmDeleteBtn = screen.getByRole('button', {name: 'delete-confirm-button'});
-
-        await userEvent.click(confirmDeleteBtn);
-
-        expect(mockHandleDelete).toHaveBeenCalled();
     });
 
     test('On multiple-values attribute, can delete all values', async () => {
