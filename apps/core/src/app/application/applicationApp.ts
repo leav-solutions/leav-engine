@@ -342,9 +342,6 @@ export default function ({
                         }
 
                         const requestApplication = applications.list[0];
-                        if (!requestApplication.id) {
-                            return next(new ApplicationError(ApplicationErrorType.UNKNOWN_APP_ERROR, endpoint));
-                        }
                         application.id = requestApplication.id;
                         application.module = requestApplication.module;
                     }
@@ -387,9 +384,6 @@ export default function ({
                 },
                 // Serve application
                 async (req: IRequestWithContext, res: Response<unknown>, next: NextFunction) => {
-                    if (!req.ctx.appFolder) {
-                        return next(new ApplicationError(ApplicationErrorType.UNKNOWN_APP_ERROR, req.params.endpoint));
-                    }
                     express.static(req.ctx.appFolder, {
                         extensions: ['html'],
                         fallthrough: false
@@ -399,11 +393,6 @@ export default function ({
                 },
                 async (req: IRequestWithContext, res: Response<unknown>, next: NextFunction) => {
                     try {
-                        if (!req.ctx.applicationId) {
-                            return next(
-                                new ApplicationError(ApplicationErrorType.UNKNOWN_APP_ERROR, req.params.endpoint)
-                            );
-                        }
                         await applicationDomain.updateConsultationHistory({
                             applicationId: req.ctx.applicationId,
                             ctx: req.ctx
