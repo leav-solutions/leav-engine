@@ -140,10 +140,10 @@ export default function ({
                             const {filters, sort, pagination} = args;
 
                             if (filters.time?.from) {
-                                filters.time.from = filters.time.from * 1000;
+                                filters.time.from = filters.time.from * 1_000;
                             }
                             if (filters.time?.to) {
-                                filters.time.to = filters.time.to * 1000;
+                                filters.time.to = filters.time.to * 1_000;
                             }
 
                             const logs = await logDomain.getLogs({filters, sort, pagination}, ctx);
