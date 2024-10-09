@@ -11,7 +11,7 @@ export interface IMessagesHandlerHelper {
     handleMessage(message: IFileEventData, ctx: IQueryInfos);
 }
 
-export interface IDeps {
+export interface IMessagesHandlerDeps {
     'core.utils.logger': winston.Winston;
     'core.domain.filesManager.helpers.handleFileSystemEvent': HandleFileSystemEventFunc;
     config: IConfig;
@@ -25,7 +25,7 @@ export default function ({
     'core.utils.logger': logger,
     'core.domain.filesManager.helpers.handleFileSystemEvent': handleFileSystemEvent,
     config
-}: IDeps): IMessagesHandlerHelper {
+}: IMessagesHandlerDeps): IMessagesHandlerHelper {
     const _messagesQueue: IFileEventData[] = [];
     let _isWorking = false;
 

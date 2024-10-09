@@ -41,7 +41,7 @@ export interface IGlobalPermissionHelper {
     getGlobalPermission(params: IGetGlobalPermissionParams, ctx: IQueryInfos): Promise<boolean>;
     getInheritedGlobalPermission(params: IGetInheritedGlobalPermissionParams, ctx: IQueryInfos): Promise<boolean>;
 }
-export interface IDeps {
+export interface IGlobalPermissionDeps {
     'core.domain.permission.helpers.permissionByUserGroups': IPermissionByUserGroupsHelper;
     'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
     'core.infra.permission': IPermissionRepo;
@@ -58,7 +58,7 @@ export default function ({
     'core.infra.value': valueRepo,
     'core.infra.tree': treeRepo,
     'core.infra.cache.cacheService': cacheService
-}: IDeps): IGlobalPermissionHelper {
+}: IGlobalPermissionDeps): IGlobalPermissionHelper {
     return {
         async getGlobalPermission(
             {type, applyTo, userId, action, getDefaultPermission = defaultPermHelper.getDefaultPermission},

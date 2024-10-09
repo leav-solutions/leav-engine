@@ -17,7 +17,7 @@ import {mockCtx} from '../../../../__tests__/mocks/shared';
 import * as extractFileMetadata from '../extractFileMetadata';
 import * as fileUtilsHelpers from '../handleFileUtilsHelper';
 import * as handlePreview from '../handlePreview';
-import handleFileSystemEvent, {IDeps} from './handleFileSystemEvent';
+import handleFileSystemEvent, {IFileSystemEventDeps} from './handleFileSystemEvent';
 
 jest.mock('../getRootPathByKey', () => ({getRootPathByKey: jest.fn().mockReturnValue('/path/to/root')}));
 
@@ -90,7 +90,7 @@ describe('handleFileSystemEvent', () => {
         jest.clearAllMocks();
     });
 
-    const depsBase: ToAny<IDeps> = {
+    const depsBase: ToAny<IFileSystemEventDeps> = {
         'core.domain.library': jest.fn(),
         'core.domain.record': jest.fn(),
         'core.domain.value': jest.fn(),

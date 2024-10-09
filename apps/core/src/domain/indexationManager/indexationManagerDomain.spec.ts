@@ -8,7 +8,7 @@ import {ILibraryDomain} from 'domain/library/libraryDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
-import indexationManager, {IDeps} from './indexationManagerDomain';
+import indexationManager, {IIndexationManagerDomainDeps} from './indexationManagerDomain';
 import {IIndexationService} from 'infra/indexation/indexationService';
 import {AttributeCondition} from '../../_types/record';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
@@ -44,7 +44,7 @@ const mockLogger: Mockify<winston.Winston> = {
     info: jest.fn((...args) => console.log(args)) // eslint-disable-line no-restricted-syntax
 };
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IIndexationManagerDomainDeps> = {
     'core.infra.amqpService': jest.fn(),
     'core.domain.record': jest.fn(),
     'core.domain.library': jest.fn(),

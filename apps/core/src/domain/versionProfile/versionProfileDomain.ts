@@ -29,7 +29,7 @@ export interface IVersionProfileDomain {
     getAttributesUsingProfile(params: {id: string; ctx: IQueryInfos}): Promise<IAttribute[]>;
 }
 
-export interface IDeps {
+export interface IVersionProfileDomainDeps {
     'core.domain.permission.admin': IAdminPermissionDomain;
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
     'core.domain.eventsManager': IEventsManagerDomain;
@@ -49,7 +49,7 @@ export default function ({
     'core.infra.attribute': attributeRepo,
     'core.infra.cache.cacheService': cacheService,
     'core.utils': utils
-}: IDeps): IVersionProfileDomain {
+}: IVersionProfileDomainDeps): IVersionProfileDomain {
     return {
         async getVersionProfiles({params, ctx}) {
             const initializedParams = {...params};

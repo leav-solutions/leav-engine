@@ -155,11 +155,14 @@ interface ITreeEdge extends IDbEdge {
     order: number;
 }
 
-export interface IDeps {
+export interface ITreeRepoDeps {
     'core.infra.db.dbService': IDbService;
     'core.infra.db.dbUtils': IDbUtils;
 }
-export default function ({'core.infra.db.dbService': dbService, 'core.infra.db.dbUtils': dbUtils}: IDeps): ITreeRepo {
+export default function ({
+    'core.infra.db.dbService': dbService,
+    'core.infra.db.dbUtils': dbUtils
+}: ITreeRepoDeps): ITreeRepo {
     return {
         async createTree({treeData, ctx}): Promise<ITree> {
             const collec = dbService.db.collection(TREES_COLLECTION_NAME);

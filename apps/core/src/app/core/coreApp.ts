@@ -21,7 +21,7 @@ export interface ICoreApp extends IAppModule {
     initPubSubEventsConsumer(): Promise<void>;
 }
 
-export interface IDeps {
+export interface ICoreAppDeps {
     'core.domain.core': ICoreDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.app.graphql': IGraphqlApp;
@@ -63,7 +63,7 @@ export default function ({
     'core.app.graphql.customScalars.any': Any,
     config,
     translator
-}: IDeps): ICoreApp {
+}: ICoreAppDeps): ICoreApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {

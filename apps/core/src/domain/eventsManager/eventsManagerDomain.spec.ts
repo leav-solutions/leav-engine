@@ -8,7 +8,7 @@ import {IUtils, ToAny} from 'utils/utils';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {mockCtx} from '../../__tests__/mocks/shared';
-import eventsManager, {IDeps} from './eventsManagerDomain';
+import eventsManager, {IEventsManagerDomainDeps} from './eventsManagerDomain';
 import winston = require('winston');
 
 const logger: Mockify<winston.Winston> = {
@@ -41,7 +41,7 @@ const ctx: IQueryInfos = {
     queryId: 'eventsManagerDomainTest'
 };
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IEventsManagerDomainDeps> = {
     config: {},
     'core.infra.amqpService': jest.fn(),
     'core.utils.logger': jest.fn(),

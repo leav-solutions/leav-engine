@@ -15,7 +15,7 @@ export interface IGlobalSettingsDomain {
     getSettings(ctx: IQueryInfos): Promise<IGlobalSettings>;
 }
 
-export interface IDeps {
+export interface IGlobalSettingsDomainDeps {
     'core.domain.permission.admin': IAdminPermissionDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.infra.globalSettings': IGlobalSettingsRepo;
@@ -25,7 +25,7 @@ export default function ({
     'core.domain.permission.admin': adminPermissionDomain,
     'core.domain.eventsManager': eventsManagerDomain,
     'core.infra.globalSettings': globalSettingsRepo
-}: IDeps): IGlobalSettingsDomain {
+}: IGlobalSettingsDomainDeps): IGlobalSettingsDomain {
     return {
         async saveSettings({settings, ctx}) {
             const canSave = await adminPermissionDomain.getAdminPermission({

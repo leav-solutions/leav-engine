@@ -13,9 +13,9 @@ import {SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {mockApplication, mockApplicationExternal} from '../../__tests__/mocks/application';
 import {mockCtx} from '../../__tests__/mocks/shared';
-import applicationDomain, {IDeps, MAX_CONSULTATION_HISTORY_SIZE} from './applicationDomain';
+import applicationDomain, {IApplicationDomainDeps, MAX_CONSULTATION_HISTORY_SIZE} from './applicationDomain';
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IApplicationDomainDeps> = {
     config: {},
     'core.domain.permission.admin': jest.fn(),
     'core.domain.user': jest.fn(),

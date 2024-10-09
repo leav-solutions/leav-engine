@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ToAny} from 'utils/utils';
-import coreApp, {IDeps} from './coreApp';
+import coreApp, {ICoreAppDeps} from './coreApp';
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<ICoreAppDeps> = {
     'core.domain.core': jest.fn(),
     'core.domain.eventsManager': jest.fn(),
     'core.app.graphql': jest.fn(),

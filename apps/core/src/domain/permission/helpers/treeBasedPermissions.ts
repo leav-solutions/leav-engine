@@ -18,7 +18,7 @@ import getPermissionCacheKey from './getPermissionCacheKey';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
 
-export interface IDeps {
+export interface ITreeBasedPermissionsDeps {
     'core.domain.attribute': IAttributeDomain;
     'core.domain.permission.helpers.permissionByUserGroups': IPermissionByUserGroupsHelper;
     'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
@@ -33,7 +33,7 @@ export interface ITreeBasedPermissionHelper {
     getInheritedTreeBasedPermission(params: IGetInheritedTreeBasedPermissionParams, ctx: IQueryInfos): Promise<boolean>;
 }
 
-export default function (deps: IDeps): ITreeBasedPermissionHelper {
+export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionHelper {
     const {
         'core.domain.attribute': attributeDomain,
         'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper,

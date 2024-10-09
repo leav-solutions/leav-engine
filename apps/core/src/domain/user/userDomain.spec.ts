@@ -13,9 +13,9 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {mockTranslator} from '../../__tests__/mocks/translator';
-import userDataDomain, {IDeps, UserCoreDataKeys} from './userDomain';
+import userDataDomain, {IUserDomainDeps, UserCoreDataKeys} from './userDomain';
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IUserDomainDeps> = {
     config: {},
     'core.domain.permissions': jest.fn(),
     'core.infra.userData': jest.fn(),

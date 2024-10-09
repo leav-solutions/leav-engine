@@ -32,7 +32,7 @@ export interface ITreeNodePermissionDomain {
     getInheritedTreeNodePermission(params: IGetInheritedTreeNodePermissionParams): Promise<boolean>;
 }
 
-export interface IDeps {
+export interface ITreeNodePermissionDomainDeps {
     'core.domain.permission.tree': ITreePermissionDomain;
     'core.domain.permission.treeLibrary': ITreeLibraryPermissionDomain;
     'core.domain.permission.helpers.treeBasedPermissions': ITreeBasedPermissionHelper;
@@ -44,7 +44,7 @@ export interface IDeps {
     'core.infra.value': IValueRepo;
 }
 
-export default function (deps: IDeps): ITreeNodePermissionDomain {
+export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissionDomain {
     const {
         'core.domain.permission.tree': treePermissionDomain,
         'core.domain.permission.treeLibrary': treeLibraryPermissionDomain,

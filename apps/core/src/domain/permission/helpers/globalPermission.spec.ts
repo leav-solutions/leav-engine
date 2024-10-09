@@ -6,7 +6,7 @@ import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
 import {LibraryPermissionsActions, PermissionTypes} from '../../../_types/permissions';
-import globalPermissions, {IDeps} from './globalPermission';
+import globalPermissions, {IGlobalPermissionDeps} from './globalPermission';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 import {ICachesService, ICacheService} from '../../../infra/cache/cacheService';
 import {ToAny} from '../../../utils/utils';
@@ -20,7 +20,7 @@ const mockCachesService: Mockify<ICachesService> = {
     getCache: jest.fn().mockReturnValue(mockCacheService)
 };
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IGlobalPermissionDeps> = {
     'core.domain.permission.helpers.permissionByUserGroups': jest.fn(),
     'core.domain.permission.helpers.defaultPermission': jest.fn(),
     'core.infra.permission': jest.fn(),

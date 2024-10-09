@@ -20,7 +20,7 @@ import {handleUpdateEvent} from './handleUpdateEvent';
 import {HandleFileSystemEventFunc, IHandleFileSystemEventDeps} from './_types';
 import winston = require('winston');
 
-export interface IDeps {
+export interface IFileSystemEventDeps {
     'core.domain.library': ILibraryDomain;
     'core.domain.record': IRecordDomain;
     'core.domain.value': IValueDomain;
@@ -35,7 +35,7 @@ export interface IDeps {
     config: IConfig;
 }
 
-export default function (deps: IDeps): HandleFileSystemEventFunc {
+export default function (deps: IFileSystemEventDeps): HandleFileSystemEventFunc {
     const {
         'core.domain.library': libraryDomain,
         'core.domain.record': recordDomain,

@@ -36,7 +36,7 @@ export interface IIndexationManagerDomain {
     indexDatabase(params: IIndexDatabaseParams, task?: ITaskFuncParams): Promise<string>;
 }
 
-export interface IDeps {
+export interface IIndexationManagerDomainDeps {
     config: Config.IConfig;
     'core.infra.amqpService': IAmqpService;
     'core.domain.record': IRecordDomain;
@@ -60,7 +60,7 @@ export default function ({
     'core.domain.eventsManager': eventsManager,
     'core.utils.logger': logger,
     translator
-}: IDeps): IIndexationManagerDomain {
+}: IIndexationManagerDomainDeps): IIndexationManagerDomain {
     const _indexRecords = async (
         findRecordParams: IFindRecordParams,
         ctx: IQueryInfos,

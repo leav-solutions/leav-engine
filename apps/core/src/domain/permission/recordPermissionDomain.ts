@@ -25,7 +25,7 @@ export interface IRecordPermissionDomain {
     getInheritedRecordPermission(params: IGetInheritedRecordPermissionParams): Promise<boolean>;
 }
 
-export interface IDeps {
+export interface IRecordPermissionDomainDeps {
     'core.domain.permission.library': ILibraryPermissionDomain;
     'core.domain.permission.helpers.treeBasedPermissions': ITreeBasedPermissionHelper;
     'core.domain.permission.helpers.permissionByUserGroups': IPermissionByUserGroupsHelper;
@@ -35,7 +35,7 @@ export interface IDeps {
     'core.infra.value': IValueRepo;
 }
 
-export default function (deps: IDeps): IRecordPermissionDomain {
+export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDomain {
     const {
         'core.domain.permission.library': libraryPermissionDomain,
         'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper,

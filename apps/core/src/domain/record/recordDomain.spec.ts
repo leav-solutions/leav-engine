@@ -38,7 +38,7 @@ import {mockTranslatorWithOptions} from '../../__tests__/mocks/translator';
 import {mockTree} from '../../__tests__/mocks/tree';
 import {mockStandardValue} from '../../__tests__/mocks/value';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
-import recordDomain, {IDeps} from './recordDomain';
+import recordDomain, {IRecordDomainDeps} from './recordDomain';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
     routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'}
@@ -52,7 +52,7 @@ const mockConfig: Mockify<Config.IConfig> = {
     }
 };
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IRecordDomainDeps> = {
     config: {},
     'core.infra.record': jest.fn(),
     'core.domain.attribute': jest.fn(),

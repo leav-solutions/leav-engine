@@ -48,7 +48,7 @@ export interface ILibraryDomain {
     getLibrariesUsingAttribute(attributeId: string, ctx: IQueryInfos): Promise<string[]>;
 }
 
-export interface IDeps {
+export interface ILibraryDomainDeps {
     'core.domain.attribute': IAttributeDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
@@ -84,7 +84,7 @@ export default function ({
     'core.utils': utils,
     config,
     translator: translator
-}: IDeps): ILibraryDomain {
+}: ILibraryDomainDeps): ILibraryDomain {
     return {
         async getLibraries({
             params,

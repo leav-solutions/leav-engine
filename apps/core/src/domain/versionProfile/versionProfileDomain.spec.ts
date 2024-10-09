@@ -15,9 +15,9 @@ import {mockAttrAdvVersionable} from '../../__tests__/mocks/attribute';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {mockTree} from '../../__tests__/mocks/tree';
 import {mockVersionProfile} from '../../__tests__/mocks/versionProfile';
-import versionProfileDomain, {IDeps} from './versionProfileDomain';
+import versionProfileDomain, {IVersionProfileDomainDeps} from './versionProfileDomain';
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IVersionProfileDomainDeps> = {
     'core.domain.permission.admin': jest.fn(),
     'core.domain.helpers.getCoreEntityById': jest.fn(),
     'core.domain.eventsManager': jest.fn(),

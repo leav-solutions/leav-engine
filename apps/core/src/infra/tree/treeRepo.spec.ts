@@ -6,10 +6,10 @@ import {IDbDocument} from 'infra/db/_types';
 import {IQueryInfos} from '_types/queryInfos';
 import {mockTree} from '../../__tests__/mocks/tree';
 import dbUtils, {IDbUtils} from '../db/dbUtils';
-import treeRepo, {IDeps, TREES_COLLECTION_NAME} from './treeRepo';
+import treeRepo, {ITreeRepoDeps, TREES_COLLECTION_NAME} from './treeRepo';
 import {ToAny} from 'utils/utils';
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<ITreeRepoDeps> = {
     'core.infra.db.dbService': jest.fn(),
     'core.infra.db.dbUtils': jest.fn()
 };

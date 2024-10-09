@@ -57,7 +57,7 @@ export interface IAttributeDomain {
     getAttributeLibraries(params: {attributeId: string; ctx: IQueryInfos}): Promise<ILibrary[]>;
 }
 
-export interface IDeps {
+export interface IAttributeDomainDeps {
     'core.infra.attribute': IAttributeRepo;
     'core.domain.actionsList': IActionsListDomain;
     'core.domain.permission.admin': IAdminPermissionDomain;
@@ -85,7 +85,7 @@ export default function ({
     'core.infra.cache.cacheService': cacheService,
     'core.utils': utils,
     config
-}: IDeps): IAttributeDomain {
+}: IAttributeDomainDeps): IAttributeDomain {
     const _updateFormsUsingAttribute = async (attributeId: string, ctx: IQueryInfos): Promise<void> => {
         const formsList = await formRepo.getForms({ctx});
 

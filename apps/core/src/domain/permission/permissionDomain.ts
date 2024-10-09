@@ -73,7 +73,7 @@ export interface IPermissionDomain {
     registerActions(type: PermissionTypes, actions: string[], applyOn?: string[]): void;
 }
 
-export interface IDeps {
+export interface IPermissionDomainDeps {
     'core.domain.permission.admin': IAdminPermissionDomain;
     'core.domain.permission.library': ILibraryPermissionDomain;
     'core.domain.permission.record': IRecordPermissionDomain;
@@ -90,7 +90,7 @@ export interface IDeps {
     config: IConfig;
 }
 
-export default function (deps: IDeps): IPermissionDomain {
+export default function (deps: IPermissionDomainDeps): IPermissionDomain {
     const _pluginPermissions: {[type in PermissionTypes]?: Array<{name: string; applyOn?: string[]}>} = {};
 
     const {
@@ -107,7 +107,7 @@ export default function (deps: IDeps): IPermissionDomain {
         'core.infra.permission': permissionRepo,
         'core.infra.cache.cacheService': cacheService,
         config
-    }: IDeps = deps;
+    }: IPermissionDomainDeps = deps;
 
     const _cleanCacheOnSavingPermissions = async (permData: IPermission) => {
         // clean permissions cached

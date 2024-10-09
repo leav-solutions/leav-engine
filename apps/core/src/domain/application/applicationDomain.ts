@@ -45,7 +45,7 @@ export interface IApplicationDomain {
     getApplicationUrl(params: {application: IApplication; ctx: IQueryInfos}): string;
 }
 
-export interface IDeps {
+export interface IApplicationDomainDeps {
     'core.domain.permission.admin': IAdminPermissionDomain;
     'core.domain.user': IUserDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
@@ -63,7 +63,7 @@ export default function ({
     'core.utils': utils,
     translator,
     config
-}: IDeps): IApplicationDomain {
+}: IApplicationDomainDeps): IApplicationDomain {
     const _getApplicationProperties = async ({id, ctx}) => {
         const apps = await applicationRepo.getApplications({
             params: {filters: {id}, strictFilters: true},

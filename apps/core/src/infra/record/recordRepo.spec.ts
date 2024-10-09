@@ -11,10 +11,10 @@ import {AttributeCondition, IRecordFilterOption, Operator} from '../../_types/re
 import {IAttributeTypeRepo, IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
 import {IDbUtils} from '../db/dbUtils';
 import {IFilterTypesHelper} from './helpers/filterTypes';
-import recordRepo, {IDeps} from './recordRepo';
+import recordRepo, {IRecordRepoDeps} from './recordRepo';
 import {ToAny} from 'utils/utils';
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IRecordRepoDeps> = {
     'core.infra.db.dbService': jest.fn(),
     'core.infra.db.dbUtils': jest.fn(),
     'core.infra.attributeTypes': jest.fn(),

@@ -12,12 +12,12 @@ import {mockTree} from '../../__tests__/mocks/tree';
 import {IDefaultPermissionHelper} from './helpers/defaultPermission';
 import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
 import {ITreeLibraryPermissionDomain} from './treeLibraryPermissionDomain';
-import treeNodePermissionDomain, {IDeps} from './treeNodePermissionDomain';
+import treeNodePermissionDomain, {ITreeNodePermissionDomainDeps} from './treeNodePermissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
 import {IGetTreeBasedPermissionParams} from './_types';
 import {ToAny} from 'utils/utils';
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<ITreeNodePermissionDomainDeps> = {
     'core.domain.permission.tree': jest.fn(),
     'core.domain.permission.treeLibrary': jest.fn(),
     'core.domain.permission.helpers.treeBasedPermissions': jest.fn(),

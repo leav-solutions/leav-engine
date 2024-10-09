@@ -21,7 +21,7 @@ import {mockAttrAdv, mockAttrAdvVersionable, mockAttrSimple, mockAttrTree} from 
 import {mockForm} from '../../__tests__/mocks/forms';
 import {mockLibrary} from '../../__tests__/mocks/library';
 import {IActionsListDomain} from '../actionsList/actionsListDomain';
-import attributeDomain, {IDeps} from './attributeDomain';
+import attributeDomain, {IAttributeDomainDeps} from './attributeDomain';
 import {Mockify} from '@leav/utils';
 
 const mockCacheService: Mockify<ICacheService> = {
@@ -39,7 +39,7 @@ const mockEventsManager: Mockify<IEventsManagerDomain> = {
     sendDatabaseEvent: global.__mockPromise()
 };
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IAttributeDomainDeps> = {
     config: {},
     'core.infra.attribute': jest.fn(),
     'core.domain.actionsList': jest.fn(),

@@ -10,7 +10,7 @@ import {IConfig} from '../../_types/config';
 import {TaskCallbackStatus, TaskStatus} from '../../_types/tasksManager';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {mockTask} from '../../__tests__/mocks/task';
-import tasksManager, {IDeps} from './tasksManagerDomain';
+import tasksManager, {ITasksManagerDomainDeps} from './tasksManagerDomain';
 import {Mockify} from '@leav/utils';
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
@@ -29,7 +29,7 @@ const mockAmqpConnection: Mockify<amqp.Connection> = {
     createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel)
 };
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<ITasksManagerDomainDeps> = {
     config: {},
     'core.infra.amqpService': jest.fn(),
     'core.infra.task': jest.fn(),

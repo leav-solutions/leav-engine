@@ -4,9 +4,9 @@
 import {Database} from 'arangojs';
 import {IUtils, ToAny} from 'utils/utils';
 import {IConfig} from '_types/config';
-import dbService, {IDeps} from './dbService';
+import dbService, {IDbServiceDeps} from './dbService';
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IDbServiceDeps> = {
     'core.infra.db': jest.fn(),
     'core.utils': jest.fn(),
     config: {}
