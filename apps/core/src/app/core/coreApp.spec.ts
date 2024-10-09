@@ -26,10 +26,7 @@ describe('coreApp', () => {
 
             const app = coreApp(depsBase);
 
-            const label = app.filterSysTranslationField(fieldData, requestedLangs);
-            if (!label) {
-                fail('label is undefined');
-            }
+            const label = app.filterSysTranslationField(fieldData, requestedLangs)!;
             expect(label.fr).toEqual('labelFR');
             expect(label.en).toBeUndefined();
         });

@@ -64,9 +64,7 @@ export const handleMoveEvent = async (
         [FilesAttributes.FILE_PATH]: filePathDest,
         [FilesAttributes.FILE_NAME]: fileNameDest
     };
-    if (originRecord.id) {
-        await updateRecordFile(recordData, originRecord.id, recordLibrary, deps, ctx);
-    }
+    await updateRecordFile(recordData, originRecord.id!, recordLibrary, deps, ctx);
     // Find parent record destination
     if (filePathDest !== filePathOrigin) {
         try {

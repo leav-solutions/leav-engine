@@ -13,8 +13,8 @@ export default function (): IActionsListFunction {
         input_types: [ActionsListIOTypes.STRING],
         output_types: [ActionsListIOTypes.STRING],
         action: (values: IValue[]) => {
-            const allErrors = values.reduce(
-                (errors: Array<{errorType: Errors; attributeValue: IValue}>, elementValue) => {
+            const allErrors = values.reduce<Array<{errorType: Errors; attributeValue: IValue}>>(
+                (errors, elementValue) => {
                     try {
                         new URL(elementValue as string);
                     } catch (err) {

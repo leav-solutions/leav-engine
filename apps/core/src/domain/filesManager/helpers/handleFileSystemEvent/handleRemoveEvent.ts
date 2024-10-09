@@ -39,11 +39,7 @@ export const handleRemoveEvent = async (
     // If we start by deactivating the record and something goes wrong when removing it from the tree, the record
     // won't be found on the next attempt to remove it (eg. triggered by sync scan). The only way to fix this would be
     // to reactivate it in DB
-    if (record.id) {
-        await deleteFilesTreeElement(record.id, filesLibraryId, recordLibrary, deps, ctx);
-    } else {
-        deps.logger.error('[FilesManager] No record id found when trying to remove the record');
-    }
+    await deleteFilesTreeElement(record.id!, filesLibraryId, recordLibrary, deps, ctx);
 
     // Deactivate the record
     try {
