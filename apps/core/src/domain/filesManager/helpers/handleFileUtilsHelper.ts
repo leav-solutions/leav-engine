@@ -46,13 +46,11 @@ export const createRecordFile = async (
     }
 
     if (newRecord.id) {
-        const dataToSave: IRecord = Object.keys(recordData).reduce(
-            (acc, key) => {
-                acc[key] = typeof recordData[key] === 'object' ? JSON.stringify(recordData[key]) : recordData[key];
-                return acc;
-            },
-            {id: newRecord.id}
-        );
+        const dataToSave: IRecord = Object.keys(recordData).reduce((acc, key) => {
+            acc[key] = typeof recordData[key] === 'object' ? JSON.stringify(recordData[key]) : recordData[key];
+            return acc;
+        }, {});
+        dataToSave.id = newRecord.id;
 
         try {
             await deps.recordDomain.updateRecord({
@@ -83,13 +81,11 @@ export const updateRecordFile = async (
     ctx: IQueryInfos
 ) => {
     // Update record file attributes
-    const dataToSave: IRecord = Object.keys(recordData).reduce(
-        (acc, key) => {
-            acc[key] = recordData[key];
-            return acc;
-        },
-        {id: recordId}
-    );
+    const dataToSave: IRecord = Object.keys(recordData).reduce((acc, key) => {
+        acc[key] = recordData[key];
+        return acc;
+    }, {});
+    dataToSave.id = recordId;
 
     try {
         const updatedRecord = await deps.recordRepo.updateRecord({
