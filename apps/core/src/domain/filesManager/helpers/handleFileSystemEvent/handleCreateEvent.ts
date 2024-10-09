@@ -62,10 +62,7 @@ export const handleCreateEvent = async (
                 [FilesAttributes.HASH]: scanMsg.hash,
                 ...fileMetadata
             };
-            if (!record.id) {
-                throw new Error('Record id is missing');
-            }
-            await updateRecordFile(recordData, record.id, recordLibrary, deps, ctx);
+            await updateRecordFile(recordData, record.id!, recordLibrary, deps, ctx);
         } catch (e) {
             console.error(e);
             deps.logger.error(`[FilesManager] Event ${scanMsg.event} - Error on record activation : ${e.message}`);
@@ -98,11 +95,8 @@ export const handleCreateEvent = async (
 
     // Create the previews
     if (!scanMsg.isDirectory) {
-        if (!record?.id) {
-            throw new Error('Record id is missing');
-        }
         await requestPreviewGeneration({
-            recordId: record.id,
+            recordId: record.id!,
             pathAfter,
             libraryId: recordLibrary,
             versions: deps.utils.previewsSettingsToVersions(recordLibraryProps.previewsSettings ?? []),
