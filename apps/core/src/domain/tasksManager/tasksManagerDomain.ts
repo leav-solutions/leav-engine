@@ -62,7 +62,7 @@ export interface ITasksManagerDomain {
     initMaster(): Promise<NodeJS.Timer>;
     initWorker(): Promise<void>;
     getTasks({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>>;
-    setLink(taskId: string | null, link: {name: string | null; url: string | null}, ctx: IQueryInfos): Promise<void>;
+    setLink(taskId: string, link: {name: string; url: string}, ctx: IQueryInfos): Promise<void>;
     updateProgress(
         taskId: string | null,
         progress: {percent?: number; description?: ISystemTranslation},
@@ -484,7 +484,7 @@ export default function ({
             await eventsManager.sendDatabaseEvent(
                 {
                     action: EventAction.TASKS_DELETE,
-                    topic: {},
+                    topic: null,
                     metadata: {
                         tasks
                     }
@@ -542,7 +542,7 @@ export default function ({
 
             await _updateTask(taskId, {progress}, ctx);
         },
-        async setLink(taskId: string, link: {name: string; url: string}, ctx: IQueryInfos): Promise<void> {
+        async setLink(taskId, link, ctx) {
             await _updateTask(taskId, {link}, ctx);
         }
     };

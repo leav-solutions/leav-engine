@@ -36,12 +36,9 @@ export default function ({
 
         _isWorking = true;
 
-        const message = _messagesQueue.shift();
+        const message = _messagesQueue.shift()!;
 
         try {
-            if (!message?.rootKey) {
-                throw new Error('Root key is missing in message');
-            }
             const library = config.filesManager.rootKeys[message.rootKey];
             await handleFileSystemEvent(message, {library}, ctx);
         } catch (e) {
