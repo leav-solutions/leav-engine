@@ -6,6 +6,7 @@ import {IDateRangeValue, IValue} from '_types/value';
 import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
 import {AttributeFormats, IAttribute, IEmbeddedAttribute} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
+import ValidationError from '../../errors/ValidationError';
 
 export default function (): IActionsListFunction {
     return {
@@ -32,9 +33,9 @@ export default function (): IActionsListFunction {
                     case AttributeFormats.RICH_TEXT:
                     case AttributeFormats.ENCRYPTED:
                         schema = Joi.string().allow('', null);
-                        const validationRegex = (attribute as IEmbeddedAttribute).validation_regex;
-                        if (validationRegex) {
-                            schema = schema.regex(new RegExp(validationRegex));
+                        const embeddedAttribute = attribute as IEmbeddedAttribute;
+                        if (embeddedAttribute.validation_regex) {
+                            schema = schema.regex(new RegExp(embeddedAttribute.validation_regex));
                         }
 
                         break;
@@ -76,7 +77,10 @@ export default function (): IActionsListFunction {
 
                 return schema;
             };
-            const attributeSchema = ctx.attribute ? _getSchema(ctx.attribute) : null;
+            if (!ctx.attribute) {
+                throw new ValidationError<IAttribute>({id: Errors.UNKNOWN_ATTRIBUTE});
+            }
+            const attributeSchema = _getSchema(ctx.attribute);
             const errors: Array<{errorType: Errors; attributeValue: IValue; message?: string}> = [];
 
             if (!attributeSchema) {
