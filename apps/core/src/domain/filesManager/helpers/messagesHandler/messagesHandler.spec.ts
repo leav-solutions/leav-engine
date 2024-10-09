@@ -4,10 +4,10 @@
 import {IConfig} from '_types/config';
 import {FileEvents, IFileEventData} from '../../../../_types/filesManager';
 import {mockCtx} from '../../../../__tests__/mocks/shared';
-import messagesHandler, {IDeps} from './messagesHandler';
+import messagesHandler, {IMessagesHandlerDeps} from './messagesHandler';
 import {ToAny} from 'utils/utils';
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IMessagesHandlerDeps> = {
     'core.utils.logger': jest.fn(),
     'core.domain.filesManager.helpers.handleFileSystemEvent': jest.fn(),
     config: {}

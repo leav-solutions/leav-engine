@@ -45,7 +45,7 @@ export interface IApplicationApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
-export interface IDeps {
+export interface IApplicationAppDeps {
     'core.app.graphql': IGraphqlApp;
     'core.app.auth': IAuthApp;
     'core.app.helpers.initQueryContext': InitQueryContextFunc;
@@ -73,7 +73,7 @@ export default function ({
     'core.utils.logger': logger,
     'core.utils': utils,
     config
-}: IDeps): IApplicationApp {
+}: IApplicationAppDeps): IApplicationApp {
     const _doesFileExist = async (folder: string, filePath: string) => {
         const files: string[] = await new Promise((resolve, reject) =>
             glob(`${folder}${filePath}`, (err, matches) => {

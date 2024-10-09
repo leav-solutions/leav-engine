@@ -2,8 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import validateRequestTokenHelper from './validateRequestToken';
-import {IDeps as IDepsAuthApp} from './../auth/authApp';
-import createAuthApp, {IAuthApp} from '../auth/authApp';
+import createAuthApp, {IAuthApp, IAuthAppDeps} from '../auth/authApp';
 import initQueryContext from './initQueryContext';
 import {Mockify} from '@leav/utils';
 import {IConfig} from '../../_types/config';
@@ -66,7 +65,7 @@ describe('validateRequestToken', () => {
         getValues: global.__mockPromise([{payload: {id: '1'}}])
     };
 
-    const authAppdepsBase: ToAny<IDepsAuthApp> = {
+    const authAppdepsBase: ToAny<IAuthAppDeps> = {
         'core.domain.value': jest.fn(),
         'core.domain.record': jest.fn(),
         'core.domain.apiKey': jest.fn(),

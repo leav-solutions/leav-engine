@@ -144,7 +144,7 @@ export interface ITreeDomain {
     getDefaultElement(params: {treeId: string; ctx: IQueryInfos}): Promise<ITreeNode>;
 }
 
-export interface IDeps {
+export interface ITreeDomainDeps {
     'core.domain.record': IRecordDomain;
     'core.domain.attribute': IAttributeDomain;
     'core.domain.permission.admin': IAdminPermissionDomain;
@@ -180,7 +180,7 @@ export default function ({
     'core.infra.versionProfile': versionProfileRepo,
     'core.utils': utils,
     'core.infra.cache.cacheService': cacheService
-}: IDeps): ITreeDomain {
+}: ITreeDomainDeps): ITreeDomain {
     async function _isExistingTree(treeId: string, ctx: IQueryInfos): Promise<boolean> {
         const treeProps = await getCoreEntityById<ITree>('tree', treeId, ctx);
 

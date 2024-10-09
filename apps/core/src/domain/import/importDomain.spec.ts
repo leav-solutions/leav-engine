@@ -19,7 +19,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import {ICacheService, ICachesService} from '../../infra/cache/cacheService';
 import {Action, ImportMode} from '../../_types/import';
 import {mockTranslator} from '../../__tests__/mocks/translator';
-import importDomain, {IDeps} from './importDomain';
+import importDomain, {IImportDomainDeps} from './importDomain';
 
 const importMockConfig: Mockify<Config.IImport> = {
     directory: path.resolve(__dirname, './imports'),
@@ -32,7 +32,7 @@ const mockConfig: Mockify<Config.IConfig> = {
     lang: {available: ['fr', 'en'], default: 'fr'}
 };
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IImportDomainDeps> = {
     'core.domain.library': jest.fn(),
     'core.domain.record': jest.fn(),
     'core.domain.helpers.validate': jest.fn(),

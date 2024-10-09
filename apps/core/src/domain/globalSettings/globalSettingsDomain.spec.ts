@@ -7,10 +7,10 @@ import {IGlobalSettingsRepo} from 'infra/globalSettings/globalSettingsRepo';
 import PermissionError from '../../errors/PermissionError';
 import {mockGlobalSettings} from '../../__tests__/mocks/globalSettings';
 import {mockCtx} from '../../__tests__/mocks/shared';
-import {default as globalSettingsDomain, IDeps} from './globalSettingsDomain';
+import {default as globalSettingsDomain, IGlobalSettingsDomainDeps} from './globalSettingsDomain';
 import {ToAny} from 'utils/utils';
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IGlobalSettingsDomainDeps> = {
     'core.domain.permission.admin': jest.fn(),
     'core.domain.eventsManager': jest.fn(),
     'core.infra.globalSettings': jest.fn()

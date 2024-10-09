@@ -23,7 +23,7 @@ import {AdminPermissionsActions, PermissionsRelations} from '../../_types/permis
 import {mockAttrSimple} from '../../__tests__/mocks/attribute';
 import {mockLibrary} from '../../__tests__/mocks/library';
 import {IAttributeDomain} from '../attribute/attributeDomain';
-import libraryDomain, {IDeps} from './libraryDomain';
+import libraryDomain, {ILibraryDomainDeps} from './libraryDomain';
 import {deleteAssociatedValues} from './helpers';
 import {IDeleteAssociatedValuesHelper} from './helpers/deleteAssociatedValues';
 import {IUpdateAssociatedFormsHelper} from './helpers/updateAssociatedForms';
@@ -54,7 +54,7 @@ const mockCachesService: Mockify<ICachesService> = {
     getCache: jest.fn().mockReturnValue(mockCacheService)
 };
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<ILibraryDomainDeps> = {
     'core.domain.attribute': jest.fn(),
     'core.domain.eventsManager': jest.fn(),
     'core.domain.helpers.getCoreEntityById': jest.fn(),

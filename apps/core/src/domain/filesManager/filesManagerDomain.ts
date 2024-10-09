@@ -90,7 +90,7 @@ export interface IFilesManagerDomain {
     doesFileExistAsChild({treeId, filename, parentNodeId}: IIsFileExistsAsChild, ctx: IQueryInfos): Promise<boolean>;
 }
 
-export interface IDeps {
+export interface IFilesManagerDomainDeps {
     config: Config.IConfig;
     'core.utils': IUtils;
     'core.infra.amqpService': IAmqpService;
@@ -128,7 +128,7 @@ export default function ({
     'core.domain.eventsManager': eventsManager,
     'core.infra.record': recordRepo,
     translator
-}: IDeps): IFilesManagerDomain {
+}: IFilesManagerDomainDeps): IFilesManagerDomain {
     let _defaultCtx: IQueryInfos;
     const _initDefaultCtx = async () => {
         _defaultCtx = {

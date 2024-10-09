@@ -5,10 +5,10 @@ import {Database} from 'arangojs';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {IApiKey} from '_types/apiKey';
 import {mockCtx} from '../../__tests__/mocks/shared';
-import apiKeyRepo, {IDeps} from './apiKeyRepo';
+import apiKeyRepo, {IApiKeyRepoDeps} from './apiKeyRepo';
 import {ToAny} from 'utils/utils';
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IApiKeyRepoDeps> = {
     'core.infra.db.dbUtils': jest.fn(),
     'core.infra.db.dbService': jest.fn()
 };

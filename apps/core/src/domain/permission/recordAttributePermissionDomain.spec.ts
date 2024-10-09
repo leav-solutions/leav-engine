@@ -8,10 +8,10 @@ import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IAttributePermissionDomain} from './attributePermissionDomain';
 import * as getDefaultPermission from './helpers/defaultPermission';
 import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
-import recordAttributePermissionDomain, {IDeps} from './recordAttributePermissionDomain';
+import recordAttributePermissionDomain, {IRecordAttributePermissionDomainDeps} from './recordAttributePermissionDomain';
 import {ToAny} from 'utils/utils';
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IRecordAttributePermissionDomainDeps> = {
     'core.domain.permission.attribute': jest.fn(),
     'core.domain.permission.helpers.treeBasedPermissions': jest.fn(),
     'core.domain.permission.helpers.permissionByUserGroups': jest.fn(),

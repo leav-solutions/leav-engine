@@ -113,7 +113,7 @@ interface IProgress {
     percent: number;
 }
 
-export interface IDeps {
+export interface IImportDomainDeps {
     'core.domain.library': ILibraryDomain;
     'core.domain.record': IRecordDomain;
     'core.domain.helpers.validate': IValidateHelper;
@@ -145,7 +145,7 @@ export default function ({
     'core.utils': utils,
     config,
     translator
-}: IDeps): IImportDomain {
+}: IImportDomainDeps): IImportDomain {
     const _addValue = async (
         library: string,
         attribute: IAttribute,

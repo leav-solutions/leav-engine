@@ -20,9 +20,9 @@ import {mockAttrSimple} from '../../__tests__/mocks/attribute';
 import {formField, formLayoutElement, mockForm} from '../../__tests__/mocks/forms';
 import {mockLibrary} from '../../__tests__/mocks/library';
 import {mockStandardValue} from '../../__tests__/mocks/value';
-import formDomain, {IDeps} from './formDomain';
+import formDomain, {IFormDomainDeps} from './formDomain';
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IFormDomainDeps> = {
     'core.domain.library': jest.fn(),
     'core.domain.attribute': jest.fn(),
     'core.domain.record': jest.fn(),

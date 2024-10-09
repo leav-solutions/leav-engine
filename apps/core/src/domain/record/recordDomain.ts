@@ -167,7 +167,7 @@ export interface IRecordDomain {
     purgeInactiveRecords(params: {libraryId: string; ctx: IQueryInfos}): Promise<IRecord[]>;
 }
 
-export interface IDeps {
+export interface IRecordDomainDeps {
     config: Config.IConfig;
     'core.infra.record': IRecordRepo;
     'core.domain.attribute': IAttributeDomain;
@@ -203,7 +203,7 @@ export default function ({
     'core.infra.cache.cacheService': cacheService,
     'core.utils': utils,
     translator
-}: IDeps): IRecordDomain {
+}: IRecordDomainDeps): IRecordDomain {
     /**
      * Extract value from record if it's available (attribute simple), or fetch it from DB
      *

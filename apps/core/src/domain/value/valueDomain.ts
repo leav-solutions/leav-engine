@@ -119,7 +119,7 @@ export interface IValueDomain {
     runActionsList(params: IRunActionListParams): Promise<IValue[]>;
 }
 
-export interface IDeps {
+export interface IValueDomainDeps {
     config: Config.IConfig;
     'core.domain.actionsList': IActionsListDomain;
     'core.domain.attribute': IAttributeDomain;
@@ -158,7 +158,7 @@ const valueDomain = function ({
     'core.infra.value': valueRepo,
     'core.utils': utils,
     'core.utils.logger': logger
-}: IDeps): IValueDomain {
+}: IValueDomainDeps): IValueDomain {
     /**
      * Run actions list on a value
      *

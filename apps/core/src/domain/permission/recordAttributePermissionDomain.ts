@@ -35,7 +35,7 @@ export interface IRecordAttributePermissionDomain {
     ): Promise<boolean>;
 }
 
-export interface IDeps {
+export interface IRecordAttributePermissionDomainDeps {
     'core.domain.permission.attribute': IAttributePermissionDomain;
     'core.domain.permission.helpers.treeBasedPermissions': ITreeBasedPermissionHelper;
     'core.domain.permission.helpers.permissionByUserGroups': IPermissionByUserGroupsHelper;
@@ -44,7 +44,7 @@ export interface IDeps {
     'core.infra.value': IValueRepo;
 }
 
-export default function (deps: IDeps): IRecordAttributePermissionDomain {
+export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAttributePermissionDomain {
     const {
         'core.domain.permission.attribute': attrPermissionDomain,
         'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper,

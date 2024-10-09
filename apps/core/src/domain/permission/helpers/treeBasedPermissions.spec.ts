@@ -10,7 +10,7 @@ import {PermissionsRelations, PermissionTypes, RecordPermissionsActions} from '.
 import {IGetTreeBasedPermissionParams} from '../_types';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
-import treeBasedPermissions, {IDeps} from './treeBasedPermissions';
+import treeBasedPermissions, {ITreeBasedPermissionsDeps} from './treeBasedPermissions';
 import {ToAny} from '../../../utils/utils';
 
 const mockCacheService: Mockify<ICacheService> = {
@@ -22,7 +22,7 @@ const mockCachesService: Mockify<ICachesService> = {
     getCache: jest.fn().mockReturnValue(mockCacheService)
 };
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<ITreeBasedPermissionsDeps> = {
     'core.domain.attribute': jest.fn(),
     'core.domain.permission.helpers.permissionByUserGroups': jest.fn(),
     'core.domain.permission.helpers.defaultPermission': jest.fn(),

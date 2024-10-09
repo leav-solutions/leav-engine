@@ -67,7 +67,7 @@ export interface IRecordRepo {
     }): Promise<IListWithCursor<IRecord>>;
 }
 
-export interface IDeps {
+export interface IRecordRepoDeps {
     'core.infra.db.dbService': IDbService;
     'core.infra.db.dbUtils': IDbUtils;
     'core.infra.attributeTypes': IAttributeTypesRepo;
@@ -89,7 +89,7 @@ export default function ({
     'core.infra.record.helpers.filterTypes': filterTypesHelper,
     'core.infra.indexation.helpers.getSearchQuery': getSearchQuery,
     'core.infra.attribute': attributeRepo
-}: IDeps): IRecordRepo {
+}: IRecordRepoDeps): IRecordRepo {
     const _generateCursor = (from: number, direction: CursorDirection): string =>
         Buffer.from(`${direction}:${from}`).toString('base64');
 

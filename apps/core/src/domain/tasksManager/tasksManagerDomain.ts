@@ -73,7 +73,7 @@ export interface ITasksManagerDomain {
     deleteTasks(tasks: ITaskDeletePayload[], ctx: IQueryInfos): Promise<void>;
 }
 
-export interface IDeps {
+export interface ITasksManagerDomainDeps {
     config: Config.IConfig;
     'core.infra.amqpService': IAmqpService;
     'core.infra.task': ITaskRepo;
@@ -93,7 +93,7 @@ export default function ({
     'core.domain.eventsManager': eventsManager,
     'core.utils.logger': logger,
     'core.utils': utils
-}: IDeps): ITasksManagerDomain {
+}: ITasksManagerDomainDeps): ITasksManagerDomain {
     const tag = `${process.pid}_${nanoid(3)}`;
 
     const workerCtx = {

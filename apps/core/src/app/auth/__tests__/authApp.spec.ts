@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import createAuthApp, {IDeps} from '../authApp';
+import createAuthApp, {IAuthAppDeps} from '../authApp';
 import {IOIDCClientService} from '../../../infra/oidc/oidcClientService';
 import {Express} from 'express';
 import {identity} from 'lodash';
@@ -17,7 +17,7 @@ import {DeepPartial} from '../../../_types/utils';
 import {Mockify} from '@leav/utils';
 import {ToAny} from '../../../utils/utils';
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IAuthAppDeps> = {
     'core.domain.value': jest.fn(),
     'core.domain.record': jest.fn(),
     'core.domain.apiKey': jest.fn(),

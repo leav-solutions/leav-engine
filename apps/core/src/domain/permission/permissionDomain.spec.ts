@@ -18,7 +18,7 @@ import {mockTranslator} from '../../__tests__/mocks/translator';
 import {IAdminPermissionDomain} from './adminPermissionDomain';
 import {IAttributePermissionDomain} from './attributePermissionDomain';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
-import permissionDomain, {IDeps} from './permissionDomain';
+import permissionDomain, {IPermissionDomainDeps} from './permissionDomain';
 import {IRecordAttributePermissionDomain} from './recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from './recordPermissionDomain';
 import {ToAny} from 'utils/utils';
@@ -33,7 +33,7 @@ const mockCachesService: Mockify<ICachesService> = {
     getCache: jest.fn().mockReturnValue(mockCacheService)
 };
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IPermissionDomainDeps> = {
     'core.domain.permission.admin': jest.fn(),
     'core.domain.permission.library': jest.fn(),
     'core.domain.permission.record': jest.fn(),

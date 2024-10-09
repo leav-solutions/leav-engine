@@ -22,7 +22,7 @@ import {mockLibrary, mockLibraryDirectories, mockLibraryFiles} from '../../__tes
 import {mockFileRecord, mockRecord} from '../../__tests__/mocks/record';
 import {mockTranslator} from '../../__tests__/mocks/translator';
 import {mockFilesTree, mockTree} from '../../__tests__/mocks/tree';
-import filesManager, {IDeps, IStoreFilesParams} from './filesManagerDomain';
+import filesManager, {IFilesManagerDomainDeps, IStoreFilesParams} from './filesManagerDomain';
 import {requestPreviewGeneration} from './helpers/handlePreview';
 import {systemPreviewsSettings} from './_constants';
 import winston = require('winston');
@@ -88,7 +88,7 @@ jest.mock('./helpers/handlePreview', () => ({
     requestPreviewGeneration: jest.fn()
 }));
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IFilesManagerDomainDeps> = {
     config: {},
     'core.utils': jest.fn(),
     'core.infra.amqpService': jest.fn(),

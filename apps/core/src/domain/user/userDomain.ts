@@ -39,7 +39,7 @@ export interface IUserDomain {
     ): Promise<void>;
 }
 
-export interface IDeps {
+export interface IUserDomainDeps {
     config: Config.IConfig;
     'core.domain.permissions': IPermissionDomain;
     'core.infra.userData': IUserDataRepo;
@@ -62,7 +62,7 @@ export default function ({
     'core.domain.globalSettings': globalSettingsDomain,
     'core.utils': utils,
     translator
-}: IDeps): IUserDomain {
+}: IUserDomainDeps): IUserDomain {
     return {
         async sendResetPasswordEmail(
             email: string,

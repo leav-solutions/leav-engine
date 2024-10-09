@@ -26,7 +26,7 @@ export interface IEventsManagerDomain {
     getActions(): string[];
 }
 
-export interface IDeps {
+export interface IEventsManagerDomainDeps {
     config: Config.IConfig;
     'core.infra.amqpService': IAmqpService;
     'core.utils.logger': winston.Winston;
@@ -38,7 +38,7 @@ export default function ({
     'core.infra.amqpService': amqpService,
     'core.utils.logger': logger,
     'core.utils': utils
-}: IDeps): IEventsManagerDomain {
+}: IEventsManagerDomainDeps): IEventsManagerDomain {
     const _customEventActions = new Set<string>(); // Using a Set to avoid duplicates
     const pubsub = new PubSub();
 

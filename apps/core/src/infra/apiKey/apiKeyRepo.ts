@@ -7,7 +7,6 @@ import {IDbUtils} from 'infra/db/dbUtils';
 import {IApiKey, IGetCoreApiKeysParams} from '_types/apiKey';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
-import {IGetCoreEntitiesParams} from '_types/shared';
 
 export const API_KEY_COLLECTION_NAME = 'core_api_keys';
 
@@ -18,12 +17,15 @@ export interface IApiKeyRepo {
     deleteApiKey: (params: {id: string; ctx: IQueryInfos}) => Promise<IApiKey>;
 }
 
-export interface IDeps {
+export interface IApiKeyRepoDeps {
     'core.infra.db.dbUtils': IDbUtils;
     'core.infra.db.dbService': IDbService;
 }
 
-export default function ({'core.infra.db.dbService': dbService, 'core.infra.db.dbUtils': dbUtils}: IDeps): IApiKeyRepo {
+export default function ({
+    'core.infra.db.dbService': dbService,
+    'core.infra.db.dbUtils': dbUtils
+}: IApiKeyRepoDeps): IApiKeyRepo {
     return {
         async getApiKeys({params, ctx}) {
             const defaultParams: IGetCoreApiKeysParams = {

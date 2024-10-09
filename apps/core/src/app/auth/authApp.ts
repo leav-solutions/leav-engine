@@ -51,7 +51,7 @@ interface IAccessTokenPayload extends jwt.JwtPayload {
     groupsId: string[];
 }
 
-export interface IDeps {
+export interface IAuthAppDeps {
     'core.domain.value': IValueDomain;
     'core.domain.record': IRecordDomain;
     'core.domain.apiKey': IApiKeyDomain;
@@ -77,7 +77,7 @@ export default function ({
     'core.app.helpers.initQueryContext': initQueryContext,
     'core.app.helpers.convertOIDCIdentifier': convertOIDCIdentifier,
     config
-}: IDeps): IAuthApp {
+}: IAuthAppDeps): IAuthApp {
     const _generateAccessToken = async (userId: string, ctx: IQueryInfos) => {
         const groups = await valueDomain.getValues({
             library: 'users',

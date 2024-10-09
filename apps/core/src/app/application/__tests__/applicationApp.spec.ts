@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import createApplicationApp, {IDeps} from '../applicationApp';
+import createApplicationApp, {IApplicationAppDeps} from '../applicationApp';
 import {APPS_URL_PREFIX} from '../../../_types/application';
 import initQueryContext from '../../helpers/initQueryContext';
 import {ValidateRequestTokenFunc} from '../../helpers/validateRequestToken';
@@ -9,7 +9,7 @@ import {IAuthApp} from '../../auth/authApp';
 import {IApplicationDomain} from '../../../domain/application/applicationDomain';
 import {IUtils, ToAny} from '../../../utils/utils';
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IApplicationAppDeps> = {
     config: {},
     'core.app.graphql': jest.fn(),
     'core.app.auth': jest.fn(),

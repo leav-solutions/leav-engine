@@ -64,7 +64,7 @@ export interface IFormDomain {
     deleteForm({library, id, ctx}: {library: string; id: string; ctx: IQueryInfos}): Promise<IForm>;
 }
 
-export interface IDeps {
+export interface IFormDomainDeps {
     'core.domain.library': ILibraryDomain;
     'core.domain.attribute': IAttributeDomain;
     'core.domain.record': IRecordDomain;
@@ -79,7 +79,7 @@ export interface IDeps {
     translator: i18n;
 }
 
-export default function (deps: IDeps): IFormDomain {
+export default function (deps: IFormDomainDeps): IFormDomain {
     const {
         'core.domain.attribute': attributeDomain,
         'core.domain.permission.library': libraryPermissionDomain,

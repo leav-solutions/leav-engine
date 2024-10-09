@@ -7,10 +7,10 @@ import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 import {mockAttrAdvVersionableSimple} from '../../__tests__/mocks/attribute';
-import attributeAdvancedRepo, {IDeps} from './attributeAdvancedRepo';
+import attributeAdvancedRepo, {IAttributeAdvancedRepoDeps} from './attributeAdvancedRepo';
 import {ToAny} from 'utils/utils';
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IAttributeAdvancedRepoDeps> = {
     'core.infra.db.dbService': jest.fn(),
     'core.infra.db.dbUtils': jest.fn(),
     'core.infra.attributeTypes.helpers.getConditionPart': jest.fn(),

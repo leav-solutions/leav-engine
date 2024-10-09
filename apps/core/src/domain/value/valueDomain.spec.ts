@@ -33,9 +33,9 @@ import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IValidateHelper} from '../helpers/validate';
 import {IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
-import valueDomain, {IDeps} from './valueDomain';
+import valueDomain, {IValueDomainDeps} from './valueDomain';
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IValueDomainDeps> = {
     config: {},
     'core.domain.actionsList': jest.fn(),
     'core.domain.attribute': jest.fn(),

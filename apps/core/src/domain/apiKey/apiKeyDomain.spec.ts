@@ -12,9 +12,9 @@ import ValidationError from '../../errors/ValidationError';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {mockApiKey} from '../../__tests__/mocks/apiKey';
 import {mockCtx} from '../../__tests__/mocks/shared';
-import apiKeyDomain, {IDeps} from './apiKeyDomain';
+import apiKeyDomain, {IApiKeyDomainDeps} from './apiKeyDomain';
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IApiKeyDomainDeps> = {
     'core.domain.permission.admin': jest.fn(),
     'core.domain.eventsManager': jest.fn(),
     'core.infra.apiKey': jest.fn(),

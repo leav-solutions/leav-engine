@@ -25,7 +25,7 @@ import {IRecordDomain} from '../record/recordDomain';
 import {IElementAncestorsHelper} from './helpers/elementAncestors';
 import {IGetDefaultElementHelper} from './helpers/getDefaultElement';
 import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
-import treeDomain, {IDeps} from './treeDomain';
+import treeDomain, {ITreeDomainDeps} from './treeDomain';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),
@@ -37,7 +37,7 @@ const mockCachesService: Mockify<ICachesService> = {
     getCache: jest.fn().mockReturnValue(mockCacheService)
 };
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<ITreeDomainDeps> = {
     'core.domain.record': jest.fn(),
     'core.domain.attribute': jest.fn(),
     'core.domain.permission.admin': jest.fn(),

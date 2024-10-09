@@ -7,12 +7,12 @@ import {AttributeTypes} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {mockAttrSimple} from '../../__tests__/mocks/attribute';
 import {mockCtx} from '../../__tests__/mocks/shared';
-import actionListDomain, {IDeps} from './actionsListDomain';
+import actionListDomain, {IActionsListDomainDeps} from './actionsListDomain';
 import {mockTranslator} from '../../__tests__/mocks/translator';
 import {i18n} from 'i18next';
 import {ToAny} from 'utils/utils';
 
-const depsBase: ToAny<IDeps> = {
+const depsBase: ToAny<IActionsListDomainDeps> = {
     'core.depsManager': jest.fn(),
     translator: {}
 };
