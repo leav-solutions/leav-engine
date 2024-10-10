@@ -57,7 +57,7 @@ describe('recordPermissionDomain', () => {
             getAttributeProperties: jest.fn().mockImplementation(({id}) => Promise.resolve(mockAttrProps[id]))
         };
 
-        const mockValueRepo: Mockify<IValueRepo> = {
+        const mockValueRepo = {
             getValues: jest.fn().mockImplementation(({attribute}) => {
                 let val;
                 switch (attribute.id) {
@@ -87,7 +87,7 @@ describe('recordPermissionDomain', () => {
 
                 return Promise.resolve([val]);
             })
-        };
+        } satisfies Mockify<IValueRepo>;
 
         test('Return record permission', async () => {
             const mockGetCoreEntityById = global.__mockPromise(mockLibSimplePerms);
@@ -98,7 +98,7 @@ describe('recordPermissionDomain', () => {
                 'core.domain.permission.library': mockLibPermDomain as ILibraryPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetCoreEntityById,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.infra.value': mockValueRepo as IValueRepo
+                'core.infra.value': mockValueRepo as any
             });
 
             const perm = await recordPermDomain.getRecordPermission({
@@ -110,7 +110,7 @@ describe('recordPermissionDomain', () => {
             });
 
             expect(mockTreeBasedPerm.getTreeBasedPermission.mock.calls.length).toBe(1);
-            expect(mockValueRepo.getValues?.mock.calls.length).toBe(1);
+            expect(mockValueRepo.getValues.mock.calls.length).toBe(1);
             expect(perm).toBe(true);
         });
 
@@ -123,7 +123,7 @@ describe('recordPermissionDomain', () => {
                 'core.domain.permission.library': mockLibPermDomain as ILibraryPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetCoreEntityById,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.infra.value': mockValueRepo as IValueRepo
+                'core.infra.value': mockValueRepo as any
             });
 
             const perm = await recordPermDomain.getRecordPermission({

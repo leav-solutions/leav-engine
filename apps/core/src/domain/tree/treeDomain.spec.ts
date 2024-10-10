@@ -62,9 +62,9 @@ describe('treeDomain', () => {
         queryId: 'treeDomainTest'
     };
 
-    const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+    const mockAdminPermDomain = {
         getAdminPermission: global.__mockPromise(true)
-    };
+    } satisfies Mockify<IAdminPermissionDomain>;
 
     const mockAdminPermForbiddenDomain: Mockify<IAdminPermissionDomain> = {
         getAdminPermission: global.__mockPromise(false)
@@ -111,14 +111,14 @@ describe('treeDomain', () => {
     describe('saveTree', () => {
         const mockHandleRemovedLibraries = jest.fn();
         test('Should create new tree', async () => {
-            const treeRepo: Mockify<ITreeRepo> = {
+            const treeRepo = {
                 createTree: global.__mockPromise(mockTree),
                 updateTree: jest.fn()
-            };
+            } satisfies Mockify<ITreeRepo>;
             const domain = treeDomain({
                 ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
-                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.infra.tree': treeRepo as any,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperNoResult,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
@@ -127,19 +127,19 @@ describe('treeDomain', () => {
 
             const newTree = await domain.saveTree(mockTree, ctx);
 
-            expect(treeRepo.createTree?.mock.calls.length).toBe(1);
-            expect(treeRepo.updateTree?.mock.calls.length).toBe(0);
+            expect(treeRepo.createTree.mock.calls.length).toBe(1);
+            expect(treeRepo.updateTree.mock.calls.length).toBe(0);
 
             expect(newTree).toMatchObject(mockTree);
 
             expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-            expect(mockAdminPermDomain.getAdminPermission?.mock.calls[0][0].action).toBe(
+            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.CREATE_TREE
             );
         });
 
         test('Should update existing tree', async () => {
-            const treeRepo: Mockify<ITreeRepo> = {
+            const treeRepo = {
                 createTree: jest.fn(),
                 updateTree: global.__mockPromise(mockTree),
                 getTrees: global.__mockPromise({
@@ -153,12 +153,12 @@ describe('treeDomain', () => {
                     ],
                     totalCount: 1
                 })
-            };
+            } satisfies Mockify<ITreeRepo>;
 
             const domain = treeDomain({
                 ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
-                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.infra.tree': treeRepo as any,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 'core.domain.tree.helpers.handleRemovedLibraries': mockHandleRemovedLibraries,
@@ -169,14 +169,14 @@ describe('treeDomain', () => {
 
             const newTree = await domain.saveTree(mockTree, ctx);
 
-            expect(treeRepo.createTree?.mock.calls.length).toBe(0);
-            expect(treeRepo.updateTree?.mock.calls.length).toBe(1);
+            expect(treeRepo.createTree.mock.calls.length).toBe(0);
+            expect(treeRepo.updateTree.mock.calls.length).toBe(1);
             expect(mockCacheService.deleteData).toBeCalledTimes(1);
 
             expect(newTree).toMatchObject(mockTree);
 
             expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-            expect(mockAdminPermDomain.getAdminPermission?.mock.calls[0][0].action).toBe(
+            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.EDIT_TREE
             );
             expect(mockHandleRemovedLibraries).toBeCalled();
@@ -229,15 +229,15 @@ describe('treeDomain', () => {
         });
 
         test('Should not save behavior on existing tree', async () => {
-            const treeRepo: Mockify<ITreeRepo> = {
+            const treeRepo = {
                 createTree: jest.fn(),
                 updateTree: global.__mockPromise(mockTree)
-            };
+            } satisfies Mockify<ITreeRepo>;
 
             const domain = treeDomain({
                 ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
-                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.infra.tree': treeRepo as any,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 'core.domain.tree.helpers.handleRemovedLibraries': mockHandleRemovedLibraries,
@@ -247,7 +247,7 @@ describe('treeDomain', () => {
             });
 
             await domain.saveTree({...mockFilesTree}, ctx);
-            expect(treeRepo.updateTree?.mock.calls[0][0].behavior).toBeUndefined();
+            expect(treeRepo.updateTree.mock.calls[0][0].behavior).toBeUndefined();
         });
     });
 
@@ -270,7 +270,7 @@ describe('treeDomain', () => {
                 })
             };
 
-            const treeRepo: Mockify<ITreeRepo> = {
+            const treeRepo = {
                 getTrees: global.__mockPromise({
                     list: [
                         {
@@ -283,7 +283,7 @@ describe('treeDomain', () => {
                     totalCount: 1
                 }),
                 deleteTree: global.__mockPromise({list: [mockTree], totalCount: 1})
-            };
+            } satisfies Mockify<ITreeRepo>;
 
             const mockVersionProfileRepo: Mockify<IVersionProfileRepo> = {
                 getVersionProfiles: global.__mockPromise({list: [mockVersionProfile]}),
@@ -309,10 +309,10 @@ describe('treeDomain', () => {
 
             expect(mockCacheService.deleteData).toBeCalledTimes(4); // 3 times for permissions + 1 for entity cache
 
-            expect(treeRepo.deleteTree?.mock.calls.length).toBe(1);
+            expect(treeRepo.deleteTree.mock.calls.length).toBe(1);
 
             expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-            expect(mockAdminPermDomain.getAdminPermission?.mock.calls[0][0].action).toBe(
+            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.DELETE_TREE
             );
 
@@ -382,9 +382,9 @@ describe('treeDomain', () => {
 
     describe('getTrees', () => {
         test('Should return a list of trees', async () => {
-            const treeRepo: Mockify<ITreeRepo> = {
+            const treeRepo = {
                 getTrees: global.__mockPromise({list: [mockTree, mockTree], totalCount: 1})
-            };
+            } satisfies Mockify<ITreeRepo>;
             const domain = treeDomain({
                 ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
@@ -393,14 +393,14 @@ describe('treeDomain', () => {
 
             const trees = await domain.getTrees({params: {filters: {id: 'test'}}, ctx});
 
-            expect(treeRepo.getTrees?.mock.calls[0][0].params.filters).toMatchObject({id: 'test'});
+            expect(treeRepo.getTrees.mock.calls[0][0].params.filters).toMatchObject({id: 'test'});
             expect(trees.list.length).toBe(2);
         });
 
         test('Should add default sort', async () => {
-            const treeRepo: Mockify<ITreeRepo> = {
+            const treeRepo = {
                 getTrees: global.__mockPromise({list: [mockTree, mockTree], totalCount: 1})
-            };
+            } satisfies Mockify<ITreeRepo>;
             const domain = treeDomain({
                 ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
@@ -409,7 +409,7 @@ describe('treeDomain', () => {
 
             await domain.getTrees({params: {filters: {id: 'test'}}, ctx});
 
-            expect(treeRepo.getTrees?.mock.calls[0][0].params.sort).toMatchObject({field: 'id', order: 'asc'});
+            expect(treeRepo.getTrees.mock.calls[0][0].params.sort).toMatchObject({field: 'id', order: 'asc'});
         });
     });
 
@@ -1159,7 +1159,7 @@ describe('treeDomain', () => {
 
             const treeContent = await domain.getTreeContent({treeId: 'test_tree', ctx});
 
-            expect(treeRepo.getTreeContent?.mock.calls.length).toBe(1);
+            expect(treeRepo.getTreeContent.mock.calls.length).toBe(1);
             expect(treeContent[0].record).toMatchObject({
                 id: '223588194',
                 created_at: 1524057050,

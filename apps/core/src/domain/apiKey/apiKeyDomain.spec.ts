@@ -31,9 +31,9 @@ describe('apiKeyDomain', () => {
         getAdminPermission: global.__mockPromise(true)
     };
 
-    const mockAdminPermissionDomainForbidden: Mockify<IAdminPermissionDomain> = {
+    const mockAdminPermissionDomainForbidden = {
         getAdminPermission: global.__mockPromise(false)
-    };
+    } satisfies Mockify<IAdminPermissionDomain>;
 
     const mockEventsManager: Mockify<IEventsManagerDomain> = {
         sendDatabaseEvent: global.__mockPromise()
@@ -117,15 +117,15 @@ describe('apiKeyDomain', () => {
     describe('saveApiKey', () => {
         describe('Creation', () => {
             test('Should create a new key', async () => {
-                const mockRepo: Mockify<IApiKeyRepo> = {
+                const mockRepo = {
                     getApiKeys: global.__mockPromise({totalCount: 0, list: []}),
                     createApiKey: global.__mockPromise({...mockApiKey}),
                     updateApiKey: jest.fn()
-                };
+                } satisfies Mockify<IApiKeyRepo>;
 
                 const domain = apiKeyDomain({
                     ...depsBase,
-                    'core.infra.apiKey': mockRepo as IApiKeyRepo,
+                    'core.infra.apiKey': mockRepo as any,
                     'core.utils': mockUtils as IUtils,
                     'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
@@ -183,15 +183,15 @@ describe('apiKeyDomain', () => {
 
         describe('Update', () => {
             test('Should update an existing key', async () => {
-                const mockRepo: Mockify<IApiKeyRepo> = {
+                const mockRepo = {
                     getApiKeys: global.__mockPromise({totalCount: 1, list: [{...mockApiKey}]}),
                     createApiKey: jest.fn(),
                     updateApiKey: global.__mockPromise({...mockApiKey})
-                };
+                } satisfies Mockify<IApiKeyRepo>;
 
                 const domain = apiKeyDomain({
                     ...depsBase,
-                    'core.infra.apiKey': mockRepo as IApiKeyRepo,
+                    'core.infra.apiKey': mockRepo as any,
                     'core.utils': mockUtils as IUtils,
                     'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain

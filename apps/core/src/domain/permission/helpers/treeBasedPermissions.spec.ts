@@ -129,10 +129,10 @@ describe('TreeBasedPermissionDomain', () => {
             ]
         };
 
-        const mockElementAncestorsHelper: Mockify<IElementAncestorsHelper> = {
+        const mockElementAncestorsHelper = {
             getCachedElementAncestors: jest.fn().mockImplementation(({treeId}) => Promise.resolve(ancestors[treeId])),
             clearElementAncestorsCache: jest.fn()
-        };
+        } satisfies Mockify<IElementAncestorsHelper>;
 
         const attributesProps = {
             category: {
@@ -217,9 +217,9 @@ describe('TreeBasedPermissionDomain', () => {
         beforeEach(() => jest.clearAllMocks());
 
         test('1 tree / 1 user group with heritage', async () => {
-            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
+            const mockPermByUserGroupsHelper = {
                 getPermissionByUserGroups: global.__mockPromise(true)
-            };
+            } satisfies Mockify<IPermissionByUserGroupsHelper>;
 
             const treePermDomain = treeBasedPermissions({
                 ...depsBase,
@@ -233,9 +233,9 @@ describe('TreeBasedPermissionDomain', () => {
 
             const perm = await treePermDomain.getTreeBasedPermission(params, ctx);
 
-            expect(mockElementAncestorsHelper.getCachedElementAncestors?.mock.calls.length).toBe(2);
+            expect(mockElementAncestorsHelper.getCachedElementAncestors.mock.calls.length).toBe(2);
             expect(perm).toBe(true);
-            expect(mockPermByUserGroupsHelper.getPermissionByUserGroups?.mock.calls.length).toBe(1);
+            expect(mockPermByUserGroupsHelper.getPermissionByUserGroups.mock.calls.length).toBe(1);
         });
 
         test('1 tree with multiple values on tree attribute', async () => {
@@ -403,9 +403,9 @@ describe('TreeBasedPermissionDomain', () => {
                 ctx
             );
 
-            expect(mockElementAncestorsHelper.getCachedElementAncestors?.mock.calls.length).toBe(3);
+            expect(mockElementAncestorsHelper.getCachedElementAncestors.mock.calls.length).toBe(3);
             expect(perm).toBe(false);
-            expect(mockPermByUserGroupsHelper.getPermissionByUserGroups?.mock.calls.length).toBe(2);
+            expect(mockPermByUserGroupsHelper.getPermissionByUserGroups.mock.calls.length).toBe(2);
         });
 
         test('n permissions trees with OR', async () => {

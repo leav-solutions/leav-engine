@@ -137,20 +137,20 @@ describe('importDomain', () => {
             const filepath = `${mockImportDirectory}/test.json`;
             await fs.promises.writeFile(filepath, JSON.stringify(data, null, '\t'));
 
-            const mockLibDomain: Mockify<ILibraryDomain> = {
+            const mockLibDomain = {
                 saveLibrary: jest.fn()
             } satisfies Mockify<ILibraryDomain>;
 
             const imprtDomain = importDomain({
                 ...depsBase,
                 config: mockConfig as Config.IConfig,
-                'core.domain.library': mockLibDomain as ILibraryDomain,
+                'core.domain.library': mockLibDomain as any,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
             });
 
             await imprtDomain.importConfig({filepath, ctx, forceNoTask: true});
 
-            expect(mockLibDomain.saveLibrary?.mock.calls.length).toBe(4);
+            expect(mockLibDomain.saveLibrary.mock.calls.length).toBe(4);
         });
 
         test('Import attributes', async () => {
@@ -168,20 +168,20 @@ describe('importDomain', () => {
             const filepath = `${mockImportDirectory}/test.json`;
             await fs.promises.writeFile(filepath, JSON.stringify(data, null, '\t'));
 
-            const mockAttrDomain: Mockify<IAttributeDomain> = {
+            const mockAttrDomain = {
                 saveAttribute: jest.fn()
-            };
+            } satisfies Mockify<IAttributeDomain>;
 
             const imprtDomain = importDomain({
                 ...depsBase,
                 config: mockConfig as Config.IConfig,
-                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.attribute': mockAttrDomain as any,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
             });
 
             await imprtDomain.importConfig({filepath, ctx, forceNoTask: true});
 
-            expect(mockAttrDomain.saveAttribute?.mock.calls.length).toBe(2);
+            expect(mockAttrDomain.saveAttribute.mock.calls.length).toBe(2);
         });
 
         test('Import trees', async () => {
@@ -199,20 +199,20 @@ describe('importDomain', () => {
             const filepath = `${mockImportDirectory}/test.json`;
             await fs.promises.writeFile(filepath, JSON.stringify(data, null, '\t'));
 
-            const mockTreeDomain: Mockify<ITreeDomain> = {
+            const mockTreeDomain = {
                 saveTree: jest.fn()
-            };
+            } satisfies Mockify<ITreeDomain>;
 
             const imprtDomain = importDomain({
                 ...depsBase,
                 config: mockConfig as Config.IConfig,
-                'core.domain.tree': mockTreeDomain as ITreeDomain,
+                'core.domain.tree': mockTreeDomain as any,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
             });
 
             await imprtDomain.importConfig({filepath, ctx, forceNoTask: true});
 
-            expect(mockTreeDomain.saveTree?.mock.calls.length).toBe(2);
+            expect(mockTreeDomain.saveTree.mock.calls.length).toBe(2);
         });
 
         test('Import trees', async () => {
@@ -230,20 +230,20 @@ describe('importDomain', () => {
             const filepath = `${mockImportDirectory}/test.json`;
             await fs.promises.writeFile(filepath, JSON.stringify(data, null, '\t'));
 
-            const mockTreeDomain: Mockify<ITreeDomain> = {
+            const mockTreeDomain = {
                 saveTree: jest.fn()
-            };
+            } satisfies Mockify<ITreeDomain>;
 
             const imprtDomain = importDomain({
                 ...depsBase,
                 config: mockConfig as Config.IConfig,
-                'core.domain.tree': mockTreeDomain as ITreeDomain,
+                'core.domain.tree': mockTreeDomain as any,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain
             });
 
             await imprtDomain.importConfig({filepath, ctx, forceNoTask: true});
 
-            expect(mockTreeDomain.saveTree?.mock.calls.length).toBe(2);
+            expect(mockTreeDomain.saveTree.mock.calls.length).toBe(2);
         });
     });
 
@@ -585,10 +585,10 @@ describe('importDomain', () => {
 
             await imprtDomain.importData({filename: 'test.json', ctx}, {id: 'fakeTaskId'});
 
-            expect(mockRecordDomain.find?.mock.calls.length).toBe(1);
-            expect(mockValidateHelper.validateLibrary?.mock.calls.length).toBe(1);
-            expect(mockTreeDomain.getNodesByRecord?.mock.calls.length).toBe(1);
-            expect(mockTreeDomain.addElement?.mock.calls.length).toBe(1);
+            expect(mockRecordDomain.find.mock.calls.length).toBe(1);
+            expect(mockValidateHelper.validateLibrary.mock.calls.length).toBe(1);
+            expect(mockTreeDomain.getNodesByRecord.mock.calls.length).toBe(1);
+            expect(mockTreeDomain.addElement.mock.calls.length).toBe(1);
         });
 
         test('test import elements - version data', async () => {
@@ -724,10 +724,10 @@ describe('importDomain', () => {
 
             await imprtDomain.importData({filename: 'test.json', ctx}, {id: 'fakeTaskId'});
 
-            expect(mockRecordDomain.createRecord?.mock.calls.length).toBe(1);
-            expect(mockAttrDomain.getLibraryAttributes?.mock.calls.length).toBe(2);
+            expect(mockRecordDomain.createRecord.mock.calls.length).toBe(1);
+            expect(mockAttrDomain.getLibraryAttributes.mock.calls.length).toBe(2);
             expect(mockCacheService.storeData).toBeCalledTimes(1);
-            expect(mockValidateHelper.validateLibrary?.mock.calls.length).toBe(1);
+            expect(mockValidateHelper.validateLibrary.mock.calls.length).toBe(1);
             expect(mockCacheService.getData).toBeCalledTimes(1);
             expect(mockRecordDomain.find).toBeCalledTimes(2);
             expect(mockValueDomain.saveValue).toBeCalledTimes(3);

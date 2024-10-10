@@ -42,9 +42,9 @@ describe('UserDomain', () => {
                 isAllowed: global.__mockPromise(true)
             };
 
-            const mockUserDataRepo: Mockify<IUserDataRepo> = {
+            const mockUserDataRepo = {
                 saveUserData: global.__mockPromise(true)
-            };
+            } satisfies Mockify<IUserDataRepo>;
 
             const udd = userDataDomain({
                 ...depsBase,
@@ -54,7 +54,7 @@ describe('UserDomain', () => {
 
             const res = await udd.saveUserData({key: 'test1', value: 1, global: false, ctx});
 
-            expect(mockUserDataRepo.saveUserData?.mock.calls.length).toBe(1);
+            expect(mockUserDataRepo.saveUserData.mock.calls.length).toBe(1);
             expect(res).toBeTruthy();
         });
 
@@ -63,9 +63,9 @@ describe('UserDomain', () => {
                 isAllowed: global.__mockPromise(true)
             };
 
-            const mockUserDataRepo: Mockify<IUserDataRepo> = {
+            const mockUserDataRepo = {
                 saveUserData: global.__mockPromise(true)
-            };
+            } satisfies Mockify<IUserDataRepo>;
 
             const udd = userDataDomain({
                 ...depsBase,
@@ -75,7 +75,7 @@ describe('UserDomain', () => {
 
             const res = await udd.saveUserData({key: 'test3', value: 3, global: true, ctx});
 
-            expect(mockUserDataRepo.saveUserData?.mock.calls.length).toBe(1);
+            expect(mockUserDataRepo.saveUserData.mock.calls.length).toBe(1);
             expect(res).toBeTruthy();
         });
 
@@ -114,9 +114,9 @@ describe('UserDomain', () => {
                 isAllowed: global.__mockPromise(true)
             };
 
-            const mockUserDataRepo: Mockify<IUserDataRepo> = {
+            const mockUserDataRepo = {
                 getUserData: global.__mockPromise({global: false, data: {key: 'data'}})
-            };
+            } satisfies Mockify<IUserDataRepo>;
 
             const udd = userDataDomain({
                 ...depsBase,
@@ -126,7 +126,7 @@ describe('UserDomain', () => {
 
             const res = await udd.getUserData(['key'], false, ctx);
 
-            expect(mockUserDataRepo.getUserData?.mock.calls.length).toBe(1);
+            expect(mockUserDataRepo.getUserData.mock.calls.length).toBe(1);
             expect(res).toEqual({global: false, data: {key: 'data'}});
         });
 
@@ -135,9 +135,9 @@ describe('UserDomain', () => {
                 isAllowed: global.__mockPromise(true)
             };
 
-            const mockUserDataRepo: Mockify<IUserDataRepo> = {
+            const mockUserDataRepo = {
                 getUserData: global.__mockPromise({global: true, data: {key: 'data'}})
-            };
+            } satisfies Mockify<IUserDataRepo>;
 
             const udd = userDataDomain({
                 ...depsBase,
@@ -147,7 +147,7 @@ describe('UserDomain', () => {
 
             const res = await udd.getUserData(['key'], true, ctx);
 
-            expect(mockUserDataRepo.getUserData?.mock.calls.length).toBe(1);
+            expect(mockUserDataRepo.getUserData.mock.calls.length).toBe(1);
             expect(res).toEqual({global: true, data: {key: 'data'}});
         });
 
@@ -183,9 +183,9 @@ describe('UserDomain', () => {
                 getFullApplicationEndpoint: jest.fn().mockReturnValue('endpoint')
             };
 
-            const mockMailerService: Mockify<IMailerService> = {
+            const mockMailerService = {
                 sendEmail: global.__mockPromise(true)
-            };
+            } satisfies Mockify<IMailerService>;
 
             const mockConfig = {
                 server: {
@@ -205,7 +205,7 @@ describe('UserDomain', () => {
 
             await udd.sendResetPasswordEmail('email@domain.com', 'token', 'login', 'firefox', 'Os X', 'fr', mockCtx);
 
-            expect(mockMailerService.sendEmail?.mock.calls.length).toBe(1);
+            expect(mockMailerService.sendEmail.mock.calls.length).toBe(1);
         });
     });
 });

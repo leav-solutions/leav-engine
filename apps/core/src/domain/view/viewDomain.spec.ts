@@ -19,12 +19,12 @@ const depsBase: ToAny<IViewDomainDeps> = {
 describe('viewDomain', () => {
     beforeEach(() => jest.clearAllMocks());
 
-    const mockViewRepo: Mockify<IViewRepo> = {
+    const mockViewRepo = {
         updateView: global.__mockPromise({...mockView}),
         createView: global.__mockPromise({...mockView}),
         deleteView: global.__mockPromise({...mockView}),
         getViews: global.__mockPromise({list: [{...mockView}]})
-    };
+    } satisfies Mockify<IViewRepo>;
 
     const mockViewRepoNoView: Mockify<IViewRepo> = {
         getViews: global.__mockPromise({list: []})
@@ -54,7 +54,7 @@ describe('viewDomain', () => {
                 expect(mockViewRepo.updateView).toBeCalled();
                 expect(mockViewRepo.createView).not.toBeCalled();
 
-                const viewPassedToRepo = mockViewRepo.updateView?.mock.calls[0][0];
+                const viewPassedToRepo = mockViewRepo.updateView.mock.calls[0][0];
                 expect(viewPassedToRepo.modified_at).toBeDefined();
                 expect(viewPassedToRepo.modified_at).not.toBe(viewPassedToRepo.created_at);
 
@@ -99,7 +99,7 @@ describe('viewDomain', () => {
                 expect(mockViewRepo.createView).toBeCalled();
                 expect(mockViewRepo.updateView).not.toBeCalled();
 
-                const viewPassedToRepo = mockViewRepo.createView?.mock.calls[0][0];
+                const viewPassedToRepo = mockViewRepo.createView.mock.calls[0][0];
                 expect(viewPassedToRepo.created_by).toBe(mockCtx.userId);
                 expect(viewPassedToRepo.created_at).toBeDefined();
                 expect(viewPassedToRepo.modified_at).toBe(viewPassedToRepo.created_at);
@@ -132,7 +132,7 @@ describe('viewDomain', () => {
             const views = await domain.getViews('test_lib', mockCtx);
 
             expect(mockViewRepo.getViews).toBeCalled();
-            expect(mockViewRepo.getViews?.mock.calls[0][0].filters.created_by).toBe(mockCtx.userId);
+            expect(mockViewRepo.getViews.mock.calls[0][0].filters.created_by).toBe(mockCtx.userId);
             expect(views.list[0]).toEqual(mockView);
         });
 
@@ -158,7 +158,7 @@ describe('viewDomain', () => {
             const view = await domain.getViewById('123456', mockCtx);
 
             expect(mockViewRepo.getViews).toBeCalled();
-            expect(mockViewRepo.getViews?.mock.calls[0][0].filters.id).toBe('123456');
+            expect(mockViewRepo.getViews.mock.calls[0][0].filters.id).toBe('123456');
             expect(view).toEqual(mockView);
         });
 
