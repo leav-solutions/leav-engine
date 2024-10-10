@@ -120,7 +120,8 @@ export default function ({
                 modified_by: null,
                 created_at: null,
                 created_by: null,
-                payload: String(result)
+                payload: String(result),
+                raw_payload: String(result)
             };
 
             return {values: [...values, finalResult], errors: []};
