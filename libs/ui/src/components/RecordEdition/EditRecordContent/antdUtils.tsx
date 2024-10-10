@@ -15,8 +15,14 @@ import dayjs from 'dayjs';
 const hasDateRangeValues = (dateRange: unknown): dateRange is IDateRangeValue =>
     (dateRange as IDateRangeValue).from !== undefined && (dateRange as IDateRangeValue).to !== undefined;
 
+const getCalculatedValue = values => values.find(value => value.isCalculated);
+
 const getInheritedValue = values => values.find(value => value.isInherited);
 const getNotInheritedOrOverrideValue = values => values.find(value => !value.isInherited && value.raw_payload !== null);
+
+//TODO: Faire une deuxième fonction pour ne pas mélanger deux concepts métiers différents
+const getNotInheritedOrOverrideValue = values =>
+    values.find(value => !value.isInherited && !value.isCalculated && value.raw_value !== null);
 
 const isRecordFormElementsValueLinkValue = (
     value: RecordFormElementsValue,
@@ -37,7 +43,8 @@ export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
             return acc;
         }
 
-        const value = getNotInheritedOrOverrideValue(values) ?? getInheritedValue(values) ?? null;
+        const value =
+            getNotInheritedOrOverrideValue(values) ?? getInheritedValue(values) ?? getCalculatedValue(values) ?? null;
 
         if (isRecordFormElementsValueLinkValue(value, attribute)) {
             acc[attribute.id] = value?.linkValue?.id;
