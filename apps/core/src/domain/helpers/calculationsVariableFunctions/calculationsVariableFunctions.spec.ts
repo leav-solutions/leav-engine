@@ -7,24 +7,24 @@ import {IActionsListContext} from '_types/actionsList';
 import calculationsVariableFunctions from '.';
 import {TypeGuards} from '../../../utils';
 
-const mockRecordDomain: Mockify<IRecordDomain> = {
+const mockRecordDomain = {
     getRecordFieldValue: jest.fn()
-};
+} satisfies Mockify<IRecordDomain>;
 
-const mockAttributeDomain: Mockify<IAttributeDomain> = {
+const mockAttributeDomain = {
     getAttributeProperties: jest.fn()
-};
+} satisfies Mockify<IAttributeDomain>;
 
 describe('calculationsVariableFunctions', () => {
     const calculationFunctions = calculationsVariableFunctions({
-        'core.domain.record': mockRecordDomain as IRecordDomain,
-        'core.domain.attribute': mockAttributeDomain as IAttributeDomain
+        'core.domain.record': mockRecordDomain as any,
+        'core.domain.attribute': mockAttributeDomain as any
     });
     const ctx: IActionsListContext = {userId: 'test'};
 
     beforeEach(() => {
-        mockRecordDomain.getRecordFieldValue?.mockResolvedValue([{payload: 'test'}]);
-        mockAttributeDomain.getAttributeProperties?.mockResolvedValue({linked_library_id: 'meh'});
+        mockRecordDomain.getRecordFieldValue.mockResolvedValue([{payload: 'test'}]);
+        mockAttributeDomain.getAttributeProperties.mockResolvedValue({linked_library_id: 'meh'});
     });
 
     describe('test getValue', () => {
@@ -39,8 +39,8 @@ describe('calculationsVariableFunctions', () => {
         });
 
         test('Should map "raw_payload" field', async () => {
-            mockRecordDomain.getRecordFieldValue?.mockResolvedValue([{payload: 'meh', raw_payload: 42}]);
-            mockAttributeDomain.getAttributeProperties?.mockResolvedValue({});
+            mockRecordDomain.getRecordFieldValue.mockResolvedValue([{payload: 'meh', raw_payload: 42}]);
+            mockAttributeDomain.getAttributeProperties.mockResolvedValue({});
             jest.spyOn(TypeGuards, 'isIStandardValue').mockReturnValue(true);
 
             const res = await calculationFunctions.getValue.run(ctx, [{payload: 'meh'}], ['toto']);

@@ -54,15 +54,15 @@ describe('handleFileSystemEvent', () => {
         getParentRecord: global.__mockPromise(mockFileRecord)
     };
 
-    const mockLogger: Mockify<Winston> = {
+    const mockLogger = {
         warn: jest.fn(),
         error: jest.fn()
-    };
+    } satisfies Mockify<Winston>;
 
-    const mockRecordRepo: Mockify<IRecordRepo> = {
+    const mockRecordRepo = {
         updateRecord: jest.fn(),
         createRecord: jest.fn()
-    };
+    } satisfies Mockify<IRecordRepo>;
 
     const mockConfig: Partial<IConfig> = {
         filesManager: {
@@ -122,9 +122,9 @@ describe('handleFileSystemEvent', () => {
                 'core.domain.helpers.updateRecordLastModif': mockUpdatedLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.filesManager': mockFilesManagerRepo as IFilesManagerRepo,
-                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as Winston
+                'core.utils.logger': mockLogger as any
             });
 
             await func(
@@ -148,7 +148,7 @@ describe('handleFileSystemEvent', () => {
             expect(mockRequestPreviewGeneration).toBeCalled();
             expect(mockExtractFileMetadata).toBeCalled();
             expect(mockRecordRepo.updateRecord).toBeCalled();
-            expect(mockRecordRepo.updateRecord?.mock.calls[0][0].recordData).toMatchObject({
+            expect(mockRecordRepo.updateRecord.mock.calls[0][0].recordData).toMatchObject({
                 color_profile: 'Some Profile',
                 color_space: 'sRGB',
                 file_size: 421377,
@@ -175,9 +175,9 @@ describe('handleFileSystemEvent', () => {
                 ...depsBase,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.infra.filesManager': mockFilesManagerRepoNoRecord as IFilesManagerRepo,
-                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as Winston
+                'core.utils.logger': mockLogger as any
             });
 
             await func(
@@ -198,7 +198,7 @@ describe('handleFileSystemEvent', () => {
             );
 
             expect(mockLogger.warn).toBeCalled();
-            expect(mockLogger.warn?.mock.calls[0][0]).toMatch(/record not found/);
+            expect(mockLogger.warn.mock.calls[0][0]).toMatch(/record not found/);
             expect(mockRecordRepo.updateRecord).not.toBeCalled();
         });
     });
@@ -221,9 +221,9 @@ describe('handleFileSystemEvent', () => {
             const func = handleFileSystemEvent({
                 ...depsBase,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
-                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as Winston
+                'core.utils.logger': mockLogger as any
             });
 
             await func(
@@ -287,9 +287,9 @@ describe('handleFileSystemEvent', () => {
                 ...depsBase,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
-                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as Winston,
+                'core.utils.logger': mockLogger as any,
                 config: mockConfig as IConfig
             });
 
@@ -355,9 +355,9 @@ describe('handleFileSystemEvent', () => {
                 ...depsBase,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
-                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as Winston,
+                'core.utils.logger': mockLogger as any,
                 config: mockConfig as IConfig
             });
 
@@ -397,9 +397,9 @@ describe('handleFileSystemEvent', () => {
                 ...depsBase,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
-                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as Winston,
+                'core.utils.logger': mockLogger as any,
                 config: mockConfig as IConfig
             });
 
@@ -436,9 +436,9 @@ describe('handleFileSystemEvent', () => {
                 ...depsBase,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
-                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as Winston,
+                'core.utils.logger': mockLogger as any,
                 config: mockConfig as IConfig
             });
 
@@ -478,9 +478,9 @@ describe('handleFileSystemEvent', () => {
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.tree': mockTreeDomain as ITreeDomain,
-                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as Winston,
+                'core.utils.logger': mockLogger as any,
                 config: mockConfig as IConfig
             });
 
@@ -523,9 +523,9 @@ describe('handleFileSystemEvent', () => {
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.tree': mockTreeDomain as ITreeDomain,
-                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as Winston,
+                'core.utils.logger': mockLogger as any,
                 config: mockConfig as IConfig
             });
 
@@ -562,9 +562,9 @@ describe('handleFileSystemEvent', () => {
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.tree': mockTreeDomain as ITreeDomain,
-                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as Winston,
+                'core.utils.logger': mockLogger as any,
                 config: mockConfig as IConfig
             });
 

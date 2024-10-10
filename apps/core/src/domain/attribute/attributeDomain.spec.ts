@@ -319,11 +319,11 @@ describe('attributeDomain', () => {
         const getLibrariesUsingAttributeMockWithResult = jest.fn().mockResolvedValue(['library1', 'library2']);
 
         test('Should save a new attribute', async function () {
-            const mockAttrRepo: Mockify<IAttributeRepo> = {
+            const mockAttrRepo = {
                 getAttributes: global.__mockPromise({list: [], totalCount: 0}),
                 createAttribute: jest.fn().mockImplementation(attr => Promise.resolve(attr)),
                 updateAttribute: jest.fn()
-            };
+            } satisfies Mockify<IAttributeRepo>;
 
             const mockLibraryRepo: Mockify<ILibraryRepo> = {
                 getLibrariesUsingAttribute: getLibrariesUsingAttributeMockWithoutResult
@@ -331,7 +331,7 @@ describe('attributeDomain', () => {
 
             const attrDomain = attributeDomain({
                 ...depsBase,
-                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                'core.infra.attribute': mockAttrRepo as any,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
@@ -354,8 +354,8 @@ describe('attributeDomain', () => {
                 ctx
             });
 
-            expect(mockAttrRepo.createAttribute?.mock.calls.length).toBe(1);
-            expect(mockAttrRepo.updateAttribute?.mock.calls.length).toBe(0);
+            expect(mockAttrRepo.createAttribute.mock.calls.length).toBe(1);
+            expect(mockAttrRepo.updateAttribute.mock.calls.length).toBe(0);
             expect(mockAdminPermDomain.getAdminPermission).toHaveBeenCalled();
             expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.CREATE_ATTRIBUTE
@@ -417,10 +417,10 @@ describe('attributeDomain', () => {
         });
 
         test('Should update an attribute', async function () {
-            const mockAttrRepo: Mockify<IAttributeRepo> = {
+            const mockAttrRepo = {
                 createAttribute: jest.fn(),
                 updateAttribute: global.__mockPromise({id: 'test', system: false})
-            };
+            } satisfies Mockify<IAttributeRepo>;
 
             const mockLibraryRepo: Mockify<ILibraryRepo> = {
                 getLibrariesUsingAttribute: getLibrariesUsingAttributeMockWithoutResult
@@ -428,7 +428,7 @@ describe('attributeDomain', () => {
 
             const attrDomain = attributeDomain({
                 ...depsBase,
-                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                'core.infra.attribute': mockAttrRepo as any,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
@@ -453,8 +453,8 @@ describe('attributeDomain', () => {
             });
 
             expect(mockCacheService.deleteData).toHaveBeenCalled();
-            expect(mockAttrRepo.createAttribute?.mock.calls.length).toBe(0);
-            expect(mockAttrRepo.updateAttribute?.mock.calls.length).toBe(1);
+            expect(mockAttrRepo.createAttribute.mock.calls.length).toBe(0);
+            expect(mockAttrRepo.updateAttribute.mock.calls.length).toBe(1);
             expect(mockAdminPermDomain.getAdminPermission).toHaveBeenCalled();
             expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.EDIT_ATTRIBUTE
@@ -506,10 +506,10 @@ describe('attributeDomain', () => {
         test('Should read data from DB for fields not specified in save', async function () {
             const attrData = {...mockAttrAdvVersionable};
 
-            const mockAttrRepo: Mockify<IAttributeRepo> = {
+            const mockAttrRepo = {
                 createAttribute: jest.fn(),
                 updateAttribute: global.__mockPromise(attrData)
-            };
+            } satisfies Mockify<IAttributeRepo>;
 
             const mockLibraryRepo: Mockify<ILibraryRepo> = {
                 getLibrariesUsingAttribute: getLibrariesUsingAttributeMockWithoutResult
@@ -517,7 +517,7 @@ describe('attributeDomain', () => {
 
             const attrDomain = attributeDomain({
                 ...depsBase,
-                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                'core.infra.attribute': mockAttrRepo as any,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': jest.fn().mockReturnValue(attrData),
@@ -541,7 +541,7 @@ describe('attributeDomain', () => {
                 ctx
             });
 
-            expect(mockAttrRepo.updateAttribute?.mock.calls[0][0]).toMatchObject({
+            expect(mockAttrRepo.updateAttribute.mock.calls[0][0]).toMatchObject({
                 attrData: {
                     _key: '',
                     id: 'advanced_attribute',
@@ -569,14 +569,14 @@ describe('attributeDomain', () => {
                 }
             };
 
-            const mockAttrRepo: Mockify<IAttributeRepo> = {
+            const mockAttrRepo = {
                 getAttributes: global.__mockPromise({
                     list: [attrData],
                     totalCount: 1
                 }),
                 createAttribute: jest.fn(),
                 updateAttribute: global.__mockPromise(attrData)
-            };
+            } satisfies Mockify<IAttributeRepo>;
 
             const mockLibraryRepo: Mockify<ILibraryRepo> = {
                 getLibrariesUsingAttribute: getLibrariesUsingAttributeMockWithoutResult
@@ -584,7 +584,7 @@ describe('attributeDomain', () => {
 
             const attrDomain = attributeDomain({
                 ...depsBase,
-                'core.infra.attribute': mockAttrRepo as IAttributeRepo,
+                'core.infra.attribute': mockAttrRepo as any,
                 'core.domain.actionsList': mockALDomain as IActionsListDomain,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
@@ -619,7 +619,7 @@ describe('attributeDomain', () => {
                 ctx
             });
 
-            expect(mockAttrRepo.updateAttribute?.mock.calls[0][0].attrData.actions_list).toEqual({
+            expect(mockAttrRepo.updateAttribute.mock.calls[0][0].attrData.actions_list).toEqual({
                 [ActionsListEvents.SAVE_VALUE]: [
                     {id: 'toJSON', name: 'To JSON', is_system: false},
                     {

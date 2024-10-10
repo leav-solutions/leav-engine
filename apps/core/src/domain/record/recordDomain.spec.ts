@@ -320,9 +320,9 @@ describe('RecordDomain', () => {
                 created_at: 1519303348,
                 modified_at: 987654321
             };
-            const recRepo: Mockify<IRecordRepo> = {
+            const recRepo = {
                 updateRecord: global.__mockPromise({old: updatedRecordData, new: updatedRecordData})
-            };
+            } satisfies Mockify<IRecordRepo>;
 
             const recDomain = recordDomain({
                 ...depsBase,
@@ -340,9 +340,9 @@ describe('RecordDomain', () => {
                 ctx
             });
 
-            expect(recRepo.updateRecord?.mock.calls.length).toBe(1);
-            expect(typeof recRepo.updateRecord?.mock.calls[0][0]).toBe('object');
-            expect(Number.isInteger(recRepo.updateRecord?.mock.calls[0][0].recordData.modified_at)).toBe(true);
+            expect(recRepo.updateRecord.mock.calls.length).toBe(1);
+            expect(typeof recRepo.updateRecord.mock.calls[0][0]).toBe('object');
+            expect(Number.isInteger(recRepo.updateRecord.mock.calls[0][0].recordData.modified_at)).toBe(true);
 
             expect(updatedRecord).toMatchObject(updatedRecordData);
         });
@@ -352,9 +352,9 @@ describe('RecordDomain', () => {
         const recordData = {id: '222435651', library: 'test', created_at: 1519303348, modified_at: 1519303348};
 
         test('Should delete an record and return deleted record', async function () {
-            const recRepo: Mockify<IRecordRepo> = {
+            const recRepo = {
                 deleteRecord: global.__mockPromise(recordData)
-            };
+            } satisfies Mockify<IRecordRepo>;
 
             const recordPermDomain: Mockify<IRecordPermissionDomain> = {
                 getRecordPermission: global.__mockPromise(true)
@@ -392,7 +392,7 @@ describe('RecordDomain', () => {
 
             await recDomain.deleteRecord({library: 'test', id: recordData.id, ctx});
 
-            expect(recRepo.deleteRecord?.mock.calls.length).toBe(1);
+            expect(recRepo.deleteRecord.mock.calls.length).toBe(1);
             expect(mockValueRepo.deleteAllValuesByRecord).toBeCalled();
             expect(mockTreeRepo.getTrees).toBeCalled();
             expect(mockTreeRepo.getNodesByRecord).toBeCalled();
@@ -426,7 +426,7 @@ describe('RecordDomain', () => {
         };
 
         test('Should find records', async function () {
-            const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
+            const recRepo = {find: global.__mockPromise(mockRes)} satisfies Mockify<IRecordRepo>;
 
             const recDomain = recordDomain({
                 ...depsBase,
@@ -437,7 +437,7 @@ describe('RecordDomain', () => {
 
             const findRes = await recDomain.find({params: {library: 'test_lib'}, ctx});
 
-            expect(recRepo.find?.mock.calls.length).toBe(1);
+            expect(recRepo.find.mock.calls.length).toBe(1);
             expect(findRes.list).toEqual([
                 {
                     id: '222536515',
@@ -449,7 +449,7 @@ describe('RecordDomain', () => {
         });
 
         test('Find with a filter via extended attribute', async () => {
-            const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
+            const recRepo = {find: global.__mockPromise(mockRes)} satisfies Mockify<IRecordRepo>;
             const mockAttributeDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({
                     ...mockAttrSimple,
@@ -480,8 +480,8 @@ describe('RecordDomain', () => {
                 ctx
             });
 
-            expect(recRepo.find?.mock.calls.length).toBe(1);
-            const {filters: recRepoFilters} = recRepo.find?.mock.calls[0][0];
+            expect(recRepo.find.mock.calls.length).toBe(1);
+            const {filters: recRepoFilters} = recRepo.find.mock.calls[0][0];
             expect(recRepoFilters[0].attributes.length).toBe(3);
             expect(recRepoFilters[0].attributes[0].id).toBe('extended_attribute');
             expect(recRepoFilters[0].attributes[1].id).toBe('sub_field');
@@ -515,7 +515,7 @@ describe('RecordDomain', () => {
 
         describe('Link attribute', () => {
             test('Find with a filter via link attribute', async () => {
-                const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
+                const recRepo = {find: global.__mockPromise(mockRes)} satisfies Mockify<IRecordRepo>;
                 const mockAttributeDomain: Mockify<IAttributeDomain> = {
                     getAttributeProperties: global.__mockPromiseMultiple([
                         {
@@ -557,15 +557,15 @@ describe('RecordDomain', () => {
                     ctx
                 });
 
-                expect(recRepo.find?.mock.calls.length).toBe(1);
-                const {filters: recRepoFilters} = recRepo.find?.mock.calls[0][0];
+                expect(recRepo.find.mock.calls.length).toBe(1);
+                const {filters: recRepoFilters} = recRepo.find.mock.calls[0][0];
                 expect(recRepoFilters[0].attributes.length).toBe(2);
                 expect(recRepoFilters[0].attributes[0].id).toBe('link_attribute');
                 expect(recRepoFilters[0].attributes[1].id).toBe('sub_attribute');
             });
 
             test('If child attribute is not specified, search on linked library label', async () => {
-                const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
+                const recRepo = {find: global.__mockPromise(mockRes)} satisfies Mockify<IRecordRepo>;
                 const mockAttributeDomain: Mockify<IAttributeDomain> = {
                     getAttributeProperties: global.__mockPromiseMultiple([
                         {
@@ -624,15 +624,15 @@ describe('RecordDomain', () => {
                     ctx
                 });
 
-                expect(recRepo.find?.mock.calls.length).toBe(1);
-                const {filters: recRepoFilters} = recRepo.find?.mock.calls[0][0];
+                expect(recRepo.find.mock.calls.length).toBe(1);
+                const {filters: recRepoFilters} = recRepo.find.mock.calls[0][0];
                 expect(recRepoFilters[0].attributes.length).toBe(2);
                 expect(recRepoFilters[0].attributes[0].id).toBe('link_attribute');
                 expect(recRepoFilters[0].attributes[1].id).toBe('library_label');
             });
 
             test('If child attribute is a link, search on label', async () => {
-                const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
+                const recRepo = {find: global.__mockPromise(mockRes)} satisfies Mockify<IRecordRepo>;
                 const mockAttributeDomain: Mockify<IAttributeDomain> = {
                     getAttributeProperties: global.__mockPromiseMultiple([
                         {
@@ -706,8 +706,8 @@ describe('RecordDomain', () => {
                     ctx
                 });
 
-                expect(recRepo.find?.mock.calls.length).toBe(1);
-                const {filters: recRepoFilters} = recRepo.find?.mock.calls[0][0];
+                expect(recRepo.find.mock.calls.length).toBe(1);
+                const {filters: recRepoFilters} = recRepo.find.mock.calls[0][0];
                 expect(recRepoFilters[0].attributes.length).toBe(3);
                 expect(recRepoFilters[0].attributes[0].id).toBe('link_attribute');
                 expect(recRepoFilters[0].attributes[1].id).toBe('child_link_attribute');
@@ -717,7 +717,7 @@ describe('RecordDomain', () => {
 
         describe('Tree attribute', () => {
             test('Find with a filter via tree attribute', async () => {
-                const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
+                const recRepo = {find: global.__mockPromise(mockRes)} satisfies Mockify<IRecordRepo>;
                 const mockAttributeDomain: Mockify<IAttributeDomain> = {
                     getAttributeProperties: global.__mockPromiseMultiple([
                         {
@@ -759,15 +759,15 @@ describe('RecordDomain', () => {
                     ctx
                 });
 
-                expect(recRepo.find?.mock.calls.length).toBe(1);
-                const {filters: recRepoFilters} = recRepo.find?.mock.calls[0][0];
+                expect(recRepo.find.mock.calls.length).toBe(1);
+                const {filters: recRepoFilters} = recRepo.find.mock.calls[0][0];
                 expect(recRepoFilters[0].attributes.length).toBe(2);
                 expect(recRepoFilters[0].attributes[0].id).toBe('tree_attribute');
                 expect(recRepoFilters[0].attributes[1].id).toBe('sub_attribute');
             });
 
             test('If child attribute is not specified, search on library label', async () => {
-                const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
+                const recRepo = {find: global.__mockPromise(mockRes)} satisfies Mockify<IRecordRepo>;
 
                 const mockLibraryRepo: Mockify<ILibraryRepo> = {
                     getLibraries: global.__mockPromiseMultiple([
@@ -827,16 +827,16 @@ describe('RecordDomain', () => {
                     ctx
                 });
 
-                expect(recRepo.find?.mock.calls.length).toBe(1);
+                expect(recRepo.find.mock.calls.length).toBe(1);
 
-                const {filters: recRepoFilters} = recRepo.find?.mock.calls[0][0];
+                const {filters: recRepoFilters} = recRepo.find.mock.calls[0][0];
                 expect(recRepoFilters[0].attributes.length).toBe(2);
                 expect(recRepoFilters[0].attributes[0].id).toBe('tree_attribute');
                 expect(recRepoFilters[0].attributes[1].id).toBe('first_label_attribute');
             });
 
             test('If library is not specified, search on label of each tree libraries', async () => {
-                const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
+                const recRepo = {find: global.__mockPromise(mockRes)} satisfies Mockify<IRecordRepo>;
 
                 const mockLibraryRepo: Mockify<ILibraryRepo> = {
                     getLibraries: jest.fn().mockImplementation(({params}) =>
@@ -926,9 +926,9 @@ describe('RecordDomain', () => {
                     ctx
                 });
 
-                expect(recRepo.find?.mock.calls.length).toBe(1);
+                expect(recRepo.find.mock.calls.length).toBe(1);
 
-                const {filters: recRepoFilters} = recRepo.find?.mock.calls[0][0];
+                const {filters: recRepoFilters} = recRepo.find.mock.calls[0][0];
                 expect(recRepoFilters[0].attributes.length).toBe(3);
                 expect(recRepoFilters[0].attributes[0].id).toBe('tree_attribute');
                 expect(recRepoFilters[0].attributes[1].id).toBe('first_label_attribute');

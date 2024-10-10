@@ -175,10 +175,10 @@ describe('authApp', () => {
         });
 
         it('Should redirect to auth url with payload', async () => {
-            const oidcClientServiceMock: Mockify<IOIDCClientService> = {
+            const oidcClientServiceMock = {
                 getAuthorizationUrl: jest.fn(),
                 saveOriginalUrl: jest.fn()
-            };
+            } satisfies Mockify<IOIDCClientService>;
 
             const mockConfig: DeepPartial<IConfig> = {
                 auth: {
@@ -191,11 +191,11 @@ describe('authApp', () => {
 
             const authApp = createAuthApp({
                 ...depsBase,
-                'core.infra.oidc.oidcClientService': oidcClientServiceMock as IOIDCClientService,
+                'core.infra.oidc.oidcClientService': oidcClientServiceMock as any,
                 'core.app.helpers.convertOIDCIdentifier': convertOIDCIdentifier(),
                 config: mockConfig as IConfig
             });
-            oidcClientServiceMock.getAuthorizationUrl?.mockResolvedValueOnce('oidcLoginUrl');
+            oidcClientServiceMock.getAuthorizationUrl.mockResolvedValueOnce('oidcLoginUrl');
             const request: any = {
                 originalUrl: 'originalUrl',
                 ctx: {
@@ -287,9 +287,9 @@ describe('authApp', () => {
         });
 
         it('Should clear access cookie and return logoutUrl inside redirectUrl when oidc service configure', async () => {
-            const oidcClientServiceMock: Mockify<IOIDCClientService> = {
+            const oidcClientServiceMock = {
                 getLogoutUrl: jest.fn()
-            };
+            } satisfies Mockify<IOIDCClientService>;
 
             const mockConfig: DeepPartial<IConfig> = {
                 auth: {
@@ -303,7 +303,7 @@ describe('authApp', () => {
 
             const authApp = createAuthApp({
                 ...depsBase,
-                'core.infra.oidc.oidcClientService': oidcClientServiceMock as IOIDCClientService,
+                'core.infra.oidc.oidcClientService': oidcClientServiceMock as any,
                 config: mockConfig as IConfig
             });
             const expressMock = {
@@ -323,7 +323,7 @@ describe('authApp', () => {
                     json: identity
                 })
             };
-            oidcClientServiceMock.getLogoutUrl?.mockReturnValueOnce('redirectUrl');
+            oidcClientServiceMock.getLogoutUrl.mockReturnValueOnce('redirectUrl');
 
             const result = await logoutHandler(request, response);
 

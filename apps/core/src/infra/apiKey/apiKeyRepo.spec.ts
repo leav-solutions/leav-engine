@@ -32,11 +32,11 @@ describe('apiKeyRepo', () => {
         modifiedBy: '42'
     };
 
-    const mockDbUtils: Mockify<IDbUtils> = {
+    const mockDbUtils = {
         cleanup: jest.fn().mockReturnValue(keyData),
         convertToDoc: jest.fn().mockReturnValue(docKeyData),
         findCoreEntity: global.__mockPromise([keyData])
-    };
+    } satisfies Mockify<IDbUtils>;
 
     describe('createApiKey', () => {
         test('Should create a new version key', async () => {
@@ -96,7 +96,7 @@ describe('apiKeyRepo', () => {
 
             const keys = await repo.getApiKeys({ctx: mockCtx});
 
-            expect(mockDbUtils.findCoreEntity?.mock.calls.length).toBe(1);
+            expect(mockDbUtils.findCoreEntity.mock.calls.length).toBe(1);
             expect(keys).toEqual([keyData]);
         });
     });

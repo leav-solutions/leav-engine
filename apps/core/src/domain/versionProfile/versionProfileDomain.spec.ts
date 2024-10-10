@@ -29,9 +29,9 @@ const depsBase: ToAny<IVersionProfileDomainDeps> = {
 };
 
 describe('versionProfileDomain', () => {
-    const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+    const mockAdminPermDomain = {
         getAdminPermission: global.__mockPromise(true)
-    };
+    } satisfies Mockify<IAdminPermissionDomain>;
 
     const mockAdminPermDomainForbidden: Mockify<IAdminPermissionDomain> = {
         getAdminPermission: global.__mockPromise(false)
@@ -162,7 +162,7 @@ describe('versionProfileDomain', () => {
             expect(mockVersionProfileRepo.updateVersionProfile).not.toBeCalled();
 
             expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-            expect(mockAdminPermDomain.getAdminPermission?.mock.calls[0][0].action).toBe(
+            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.CREATE_VERSION_PROFILE
             );
 
@@ -195,7 +195,7 @@ describe('versionProfileDomain', () => {
             expect(mockVersionProfileRepo.createVersionProfile).not.toBeCalled();
 
             expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-            expect(mockAdminPermDomain.getAdminPermission?.mock.calls[0][0].action).toBe(
+            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.EDIT_VERSION_PROFILE
             );
 
@@ -316,7 +316,7 @@ describe('versionProfileDomain', () => {
             expect(mockVersionProfileRepo.deleteVersionProfile).toBeCalled();
 
             expect(mockAdminPermDomain.getAdminPermission).toBeCalled();
-            expect(mockAdminPermDomain.getAdminPermission?.mock.calls[0][0].action).toBe(
+            expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.DELETE_VERSION_PROFILE
             );
 

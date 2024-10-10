@@ -175,11 +175,11 @@ describe('formDomain', () => {
 
     describe('Save form', () => {
         test('Save new form', async () => {
-            const mockFormRepo: Mockify<IFormRepo> = {
+            const mockFormRepo = {
                 getForms: global.__mockPromise({list: []}),
                 updateForm: jest.fn(),
                 createForm: global.__mockPromise(mockForm)
-            };
+            } satisfies Mockify<IFormRepo>;
 
             const domain = formDomain({
                 ...depsBase,
@@ -187,24 +187,24 @@ describe('formDomain', () => {
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                'core.infra.form': mockFormRepo as IFormRepo,
+                'core.infra.form': mockFormRepo as any,
                 'core.utils': mockUtils as IUtils
             });
 
             const createdForm = await domain.saveForm({form: {...mockForm}, ctx});
 
             expect(mockFormRepo.createForm).toBeCalled();
-            expect(mockFormRepo.createForm?.mock.calls[0][0].formData.system).toBe(false);
+            expect(mockFormRepo.createForm.mock.calls[0][0].formData.system).toBe(false);
             expect(mockFormRepo.updateForm).not.toBeCalled();
             expect(createdForm).toEqual(mockForm);
         });
 
         test('Save existing form', async () => {
-            const mockFormRepo: Mockify<IFormRepo> = {
+            const mockFormRepo = {
                 getForms: global.__mockPromise({list: [mockForm]}),
                 updateForm: global.__mockPromise(mockForm),
                 createForm: jest.fn()
-            };
+            } satisfies Mockify<IFormRepo>;
 
             const domain = formDomain({
                 ...depsBase,
@@ -212,7 +212,7 @@ describe('formDomain', () => {
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                'core.infra.form': mockFormRepo as IFormRepo,
+                'core.infra.form': mockFormRepo as any,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -220,7 +220,7 @@ describe('formDomain', () => {
             await domain.saveForm({form: {id: mockForm.id, library: mockForm.library, label: newLabel}, ctx});
 
             expect(mockFormRepo.updateForm).toBeCalled();
-            expect(mockFormRepo.updateForm?.mock.calls[0][0].formData).toEqual({
+            expect(mockFormRepo.updateForm.mock.calls[0][0].formData).toEqual({
                 ...mockForm,
                 label: newLabel,
                 system: false
