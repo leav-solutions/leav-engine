@@ -65,6 +65,7 @@ const _handleType = (field: IField): string => {
         ${field.id}: property(attribute: "${field.id}") {
             ${typePart.trim()}
             isInherited
+            isCalculated
         }
     `;
 };
