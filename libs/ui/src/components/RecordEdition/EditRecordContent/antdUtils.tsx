@@ -62,6 +62,7 @@ export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
 
         switch (attribute.format) {
             case AttributeFormat.text:
+            case AttributeFormat.rich_text:
             case AttributeFormat.boolean:
                 acc[attribute.id] = standardValue.raw_value;
                 break;

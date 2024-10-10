@@ -50,7 +50,7 @@
     "@ant-design/icons": ">=5.2",
     "@apollo/client": ">=3.8.1",
     "antd": "5.15.3",
-    "aristid-ds": ">=8.0.0",
+    "aristid-ds": "10.0.0-855ed1b",
     "dayjs": "^1.11.10",
     "i18next": "22.5",
     "react": "18.2.0",

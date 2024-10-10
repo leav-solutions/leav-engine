@@ -50,8 +50,9 @@ import {IValueOfValuesList} from './ValuesList/ValuesList';
 import {useLang} from '_ui/hooks';
 import {DSDatePickerWrapper} from './DSDatePickerWrapper';
 import {DSBooleanWrapper} from './DSBooleanWrapper';
-import { DSInputPasswordWrapper } from './DSInputPasswordWrapper';
-import { DSInputNumberWrapper } from './DSInputNumberWrapper';
+import {DSInputPasswordWrapper} from './DSInputPasswordWrapper';
+import {DSInputNumberWrapper} from './DSInputNumberWrapper';
+import {DSRichTextWrapper} from './DSRichTextWrapper';
 
 const ErrorMessage = styled.div`
     color: ${themeVars.errorColor};
@@ -559,10 +560,11 @@ function StandardFieldValue({
         AttributeFormat.numeric,
         AttributeFormat.encrypted,
         AttributeFormat.date,
-        AttributeFormat.boolean
+        AttributeFormat.boolean,
+        AttributeFormat.rich_text
     ];
 
-    const attributeFormatsWithoutDS = [AttributeFormat.color, AttributeFormat.extended, AttributeFormat.rich_text];
+    const attributeFormatsWithoutDS = [AttributeFormat.color, AttributeFormat.extended];
 
     return (
         <>
@@ -614,6 +616,15 @@ function StandardFieldValue({
                     )}
                     {attribute.format === AttributeFormat.encrypted && (
                         <DSInputPasswordWrapper
+                            state={state}
+                            handleSubmit={_handleSubmit}
+                            attribute={attribute}
+                            fieldValue={fieldValue}
+                            shouldShowValueDetailsButton={editRecordState.withInfoButton}
+                        />
+                    )}
+                    {attribute.format === AttributeFormat.rich_text && (
+                        <DSRichTextWrapper
                             state={state}
                             handleSubmit={_handleSubmit}
                             attribute={attribute}
