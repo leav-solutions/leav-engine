@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import getActiveFieldValues from '_ui/components/RecordEdition/EditRecordContent/helpers/getActiveFieldValues';
-import {FieldScope} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {VersionFieldScope} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
 import {mockFormElementLinkVersionable, mockLinkValue} from '_ui/__mocks__/common/form';
 import linkFieldReducer, {ILinkFieldState, LinkFieldReducerActionsType, virginState} from './linkFieldReducer';
@@ -127,10 +127,10 @@ describe('linkFieldReducer', () => {
     test('CHANGE_ACTIVE_SCOPE', () => {
         const newState = linkFieldReducer(initialLinkFieldState, {
             type: LinkFieldReducerActionsType.CHANGE_ACTIVE_SCOPE,
-            scope: FieldScope.INHERITED
+            scope: VersionFieldScope.INHERITED
         });
 
-        expect(newState.activeScope).toBe(FieldScope.INHERITED);
+        expect(newState.activeScope).toBe(VersionFieldScope.INHERITED);
     });
 
     test('REFRESH_VALUES', async () => {
@@ -164,10 +164,10 @@ describe('linkFieldReducer', () => {
             }
         );
 
-        expect(newState.activeScope).toBe(FieldScope.INHERITED);
-        expect(newState.values[FieldScope.INHERITED].version).toBe(valuesVersion);
-        expect(newState.values[FieldScope.INHERITED].values).toHaveLength(1);
-        expect(newState.values[FieldScope.INHERITED].values[0].id_value).toBe('123456');
-        expect(newState.values[FieldScope.CURRENT].values).toEqual([]);
+        expect(newState.activeScope).toBe(VersionFieldScope.INHERITED);
+        expect(newState.values[VersionFieldScope.INHERITED].version).toBe(valuesVersion);
+        expect(newState.values[VersionFieldScope.INHERITED].values).toHaveLength(1);
+        expect(newState.values[VersionFieldScope.INHERITED].values[0].id_value).toBe('123456');
+        expect(newState.values[VersionFieldScope.CURRENT].values).toEqual([]);
     });
 });

@@ -36,7 +36,7 @@ import UpdatedFieldIcon from '../../shared/UpdatedFieldIcon';
 import ValueDetailsBtn from '../../shared/ValueDetailsBtn';
 import ValuesVersionBtn from '../../shared/ValuesVersionBtn';
 import ValuesVersionIndicator from '../../shared/ValuesVersionIndicator';
-import {APICallStatus, FieldScope, IFormElementProps} from '../../_types';
+import {APICallStatus, VersionFieldScope, IFormElementProps} from '../../_types';
 import TreeFieldValue from './TreeFieldValue';
 import ValuesAdd from './ValuesAdd';
 import {useLang} from '_ui/hooks';
@@ -255,7 +255,7 @@ function TreeField({
         }
     };
 
-    const _handleScopeChange = (scope: FieldScope) => {
+    const _handleScopeChange = (scope: VersionFieldScope) => {
         dispatch({
             type: LinkFieldReducerActionsType.CHANGE_ACTIVE_SCOPE,
             scope
@@ -263,8 +263,8 @@ function TreeField({
     };
 
     const versions = {
-        [FieldScope.CURRENT]: state.values[FieldScope.CURRENT]?.version ?? null,
-        [FieldScope.INHERITED]: state.values[FieldScope.INHERITED]?.version ?? null
+        [VersionFieldScope.CURRENT]: state.values[VersionFieldScope.CURRENT]?.version ?? null,
+        [VersionFieldScope.INHERITED]: state.values[VersionFieldScope.INHERITED]?.version ?? null
     };
     const ListFooter = (
         <FieldFooter>
@@ -318,8 +318,8 @@ function TreeField({
                 <FieldLabel ellipsis={{rows: 1, tooltip: true}}>
                     {label}
                     {editRecordState.externalUpdate.updatedValues[attribute?.id] && <UpdatedFieldIcon />}
-                    {state.activeScope === FieldScope.INHERITED && (
-                        <InheritedFieldLabel version={state.values[FieldScope.INHERITED].version} />
+                    {state.activeScope === VersionFieldScope.INHERITED && (
+                        <InheritedFieldLabel version={state.values[VersionFieldScope.INHERITED].version} />
                     )}
                 </FieldLabel>
                 <List

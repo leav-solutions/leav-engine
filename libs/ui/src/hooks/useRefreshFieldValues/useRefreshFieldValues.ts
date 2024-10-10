@@ -11,6 +11,7 @@ import {
     RecordProperty
 } from '_ui/_queries/records/getRecordPropertiesQuery';
 import {arrayValueVersionToObject} from '_ui/_utils';
+import {hasTypename} from '_ui/_utils/typeguards';
 
 export interface IUseRefetchFieldValuesHook {
     fetchValues: (version?: IValueVersion) => Promise<RecordProperty[]>;
@@ -49,9 +50,14 @@ const useRefreshFieldValues = (
             }
 
             const values = res.data.records.list[0][attributeId].map(value => {
-                const {__typename, ...valueData} = value; // Clear off __typename
+                // Clear off __typename
+                const data = {...value};
+                if (hasTypename(data)) {
+                    delete data.__typename;
+                }
+
                 return {
-                    ...valueData,
+                    ...data,
                     version: arrayValueVersionToObject(value.version ?? [])
                 };
             });

@@ -193,7 +193,7 @@ describe('AttributeSimpleLinkRepo', () => {
 
             expect(values[0]).toMatchObject({
                 id_value: null,
-                value: {
+                payload: {
                     id: 987654,
                     created_at: 1521475225,
                     modified_at: 1521475225
@@ -258,7 +258,7 @@ describe('AttributeSimpleLinkRepo', () => {
 
             expect(values[0]).toMatchObject({
                 id_value: null,
-                value: {
+                payload: {
                     id: 987654,
                     created_at: 1521475225,
                     modified_at: 1521475225

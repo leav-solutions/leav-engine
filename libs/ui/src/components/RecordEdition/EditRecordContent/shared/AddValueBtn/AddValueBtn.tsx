@@ -6,12 +6,12 @@ import {ButtonProps} from 'antd';
 import {themeVars} from '_ui/antdTheme';
 import {BasicButton} from '_ui/components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {FieldScope} from '../../_types';
+import {VersionFieldScope} from '../../_types';
 
 interface IAddValueBtnProps extends ButtonProps {
     bordered?: boolean;
     linkField?: boolean;
-    activeScope: FieldScope;
+    activeScope: VersionFieldScope;
 }
 
 function AddValueBtn({bordered = false, linkField = false, activeScope, ...props}: IAddValueBtnProps): JSX.Element {
@@ -22,7 +22,7 @@ function AddValueBtn({bordered = false, linkField = false, activeScope, ...props
             {...props}
             style={{
                 color:
-                    activeScope === FieldScope.INHERITED
+                    activeScope === VersionFieldScope.INHERITED
                         ? themeVars.inheritedValuesVersionColor
                         : themeVars.defaultTextColor
             }}
