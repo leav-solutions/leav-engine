@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render, screen, waitFor} from '_ui/_tests/testUtils';
+import {mockBrowserFunctionsForTiptap, render, screen, waitFor} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
 import StandardField from '../StandardField';
 import {
@@ -17,6 +17,12 @@ import {IRecordPropertyAttribute} from '_ui/_queries/records/getRecordProperties
 import {mockFormElementInput} from '_ui/__mocks__/common/form';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import {Suspense} from 'react';
+
+const tiptapCleanup = mockBrowserFunctionsForTiptap();
+
+afterAll(() => {
+    tiptapCleanup();
+});
 
 describe('StandardField, Rich Text input', () => {
     const mockRecordValuesCommon = {
@@ -86,7 +92,7 @@ describe('StandardField, Rich Text input', () => {
                 raw_value: 'new rich text editor test'
             }
         ];
-        render(
+        const {container} = render(
             <Suspense fallback={<div>Loading</div>}>
                 <StandardField
                     element={{
@@ -99,25 +105,16 @@ describe('StandardField, Rich Text input', () => {
             </Suspense>
         );
 
-        await waitFor(
-            () => {
-                screen.getByTestId('ckeditor');
-            },
-            {timeout: 5000}
-        );
+        const richTextElem = container.getElementsByClassName('ProseMirror')[0];
 
-        const richTextElem = screen.getByTestId('ckeditor');
         await userEvent.click(richTextElem);
 
-        const richTextElemOpen = screen.getByRole('textbox');
+        const richTextElemOpen = container.getElementsByClassName('menu-bar')[0];
         expect(richTextElemOpen).toBeInTheDocument();
 
-        await userEvent.click(richTextElemOpen);
+        await userEvent.type(richTextElem, 'new value');
 
-        const toolBarElem = screen.getByRole('toolbar');
-        expect(toolBarElem).toBeInTheDocument();
-
-        await userEvent.click(screen.getByRole('button', {name: 'global.submit'}));
+        await userEvent.click(document.body);
         expect(mockHandleSubmit).toHaveBeenCalled();
     });
 });
