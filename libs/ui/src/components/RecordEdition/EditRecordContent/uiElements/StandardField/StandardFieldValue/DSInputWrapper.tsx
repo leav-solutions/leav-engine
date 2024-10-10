@@ -39,6 +39,15 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     handleBlur,
     shouldShowValueDetailsButton = false
 }) => {
+    if (attribute.id === 'simple_text_with_calcul' || attribute.id === 'offers_label') {
+        console.log('------ DSInputWrapper ------');
+        console.log('attribute', attribute);
+        console.log('fieldValue', fieldValue);
+        console.log('state', state);
+        console.log('value', value);
+        console.log('test');
+    }
+
     const {t} = useSharedTranslation();
     const {errors} = Form.Item.useStatus();
     const {onValueDetailsButtonClick} = useValueDetailsButton({
@@ -94,6 +103,15 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     };
 
     const label = localizedTranslation(state.formElement.settings.label, availableLang);
+
+    console.log('!hasChanged', !hasChanged);
+    console.log('state.isInheritedNotOverrideValue', state.isInheritedNotOverrideValue);
+    console.log('state.isCalculatedNotOverrideValue', state.isCalculatedNotOverrideValue);
+
+    const test = !hasChanged && state.isInheritedNotOverrideValue;
+    console.log('shouldHighlightColor', test);
+    const test2 = !hasChanged && state.isCalculatedNotOverrideValue;
+    console.log('shouldHighlightColor', test2);
 
     return (
         <KitInputStyled
