@@ -77,6 +77,9 @@ export default function ({'core.depsManager': depsManager, translator}: IActions
             _pluginActions = [..._pluginActions, ...actions];
         },
         async runActionsList(actions, values, ctx) {
+            console.log('---- runActionsList ----');
+            console.log('values', values);
+
             const availActions: IActionsListFunction[] = this.getAvailableActions();
             let resultAction = values;
             for (const action of actions) {

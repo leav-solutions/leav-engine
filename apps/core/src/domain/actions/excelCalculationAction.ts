@@ -124,6 +124,9 @@ export default function ({
                 raw_payload: String(result)
             };
 
+            console.log('values', values);
+            console.log('finalResult', finalResult);
+
             return {values: [...values, finalResult], errors: []};
         }
     };

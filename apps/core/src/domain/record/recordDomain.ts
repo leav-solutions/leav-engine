@@ -220,6 +220,7 @@ export default function ({
         options: IValuesOptions,
         ctx: IQueryInfos
     ): Promise<IValue[]> => {
+        console.log('-> _extractRecordValue');
         let values: IValue[];
 
         if (attribute.id && typeof record[attribute.id] !== 'undefined') {
@@ -1170,6 +1171,8 @@ export default function ({
         },
         getRecordIdentity: _getRecordIdentity,
         async getRecordFieldValue({library, record, attributeId, options, ctx}) {
+            console.log('-> getRecordFieldValue');
+
             const libraryAttributes = await attributeDomain.getLibraryAttributes(library, ctx);
             if (!libraryAttributes.map(a => a.id).includes(attributeId)) {
                 throw new ValidationError({
