@@ -242,7 +242,7 @@ export async function gqlAddUserToGroup(groupNodeId: string) {
     await makeGraphQlCall(
         `mutation {
         saveValue(library: "users", recordId: "1", attribute: "${userGroupAttrId}", value: {
-            value: "${groupNodeId}"
+            payload: "${groupNodeId}"
         }) {
             id_value
         }
@@ -284,7 +284,7 @@ export async function gqlSaveValue(attributeId: string, libraryId: string, recor
     await makeGraphQlCall(
         `mutation {
         saveValue(library: "${libraryId}", recordId: "${recordId}", attribute: "${attributeId}", value: {
-            value: ${typeof value === 'string' ? `"${value}"` : value}
+            payload: ${typeof value === 'string' ? `"${value}"` : value}
         }) {
             id_value
         }

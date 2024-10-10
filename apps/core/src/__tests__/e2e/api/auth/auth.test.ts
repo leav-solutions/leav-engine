@@ -26,7 +26,7 @@ describe('Auth', () => {
                 id
                 login: property(attribute: "login") {
                     ...on Value {
-                        value
+                        payload
                     }
                 }
             }
@@ -34,6 +34,6 @@ describe('Auth', () => {
 
         expect(res.status).toBe(200);
         expect(res.data.data.me.id).toBeTruthy();
-        expect(res.data.data.me.login[0].value).toBeTruthy();
+        expect(res.data.data.me.login[0].payload).toBeTruthy();
     });
 });

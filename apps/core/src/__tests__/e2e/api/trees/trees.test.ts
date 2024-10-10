@@ -296,11 +296,11 @@ describe('Trees', () => {
                     library: "${testLibName}",
                     recordId: "${testRecordId}",
                     attribute: "${attrTreeName}",
-                    value: {value: "${nodeRecord1}"}) {
+                    value: {payload: "${nodeRecord1}"}) {
                         id_value
 
                         ... on TreeValue {
-                            value {
+                            payload {
                                 id
                                 record {
                                     id
@@ -313,7 +313,7 @@ describe('Trees', () => {
         expect(res.status).toBe(200);
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValue[0].id_value).toBeTruthy();
-        expect(res.data.data.saveValue[0].value.record.id).toBe(recordId1);
+        expect(res.data.data.saveValue[0].payload.record.id).toBe(recordId1);
 
         // Get values of this attribute
         const resGetValues = await makeGraphQlCall(`{
@@ -323,7 +323,7 @@ describe('Trees', () => {
                     property(attribute: "${attrTreeName}") {
                         id_value
                         ... on TreeValue {
-                            value {
+                            payload {
                                 id
                                 record {
                                     id
@@ -339,7 +339,7 @@ describe('Trees', () => {
                     property(attribute: "${attrTreeName}") {
                         id_value
                         ... on TreeValue {
-                            value {
+                            payload {
                                 id
                                 record {
                                     id
@@ -361,7 +361,7 @@ describe('Trees', () => {
                     property(attribute: "${attrTreeName}") {
                         id_value
                         ... on TreeValue {
-                            value {
+                            payload {
                                 id
                                 record {
                                     id
@@ -383,7 +383,7 @@ describe('Trees', () => {
                     property(attribute: "${attrTreeName}") {
                         id_value
                         ... on TreeValue {
-                            value {
+                            payload {
                                 id
                                 record {
                                     id
@@ -403,18 +403,18 @@ describe('Trees', () => {
         const resData = resGetValues.data.data;
 
         expect(resData.valElement.list[0].property[0].id_value).toBeTruthy();
-        expect(typeof resData.valElement.list[0].property[0].value).toBe('object');
-        expect(resData.valElement.list[0].property[0].value.record.id).toBeTruthy();
+        expect(typeof resData.valElement.list[0].property[0].payload).toBe('object');
+        expect(resData.valElement.list[0].property[0].payload.record.id).toBeTruthy();
 
-        expect(resData.valParents.list[0].property[0].value.ancestors).toBeInstanceOf(Array);
-        expect(resData.valParents.list[0].property[0].value.ancestors).toHaveLength(2);
-        expect(resData.valParents.list[0].property[0].value.ancestors[0].id).toBe(nodeRecord2);
-        expect(resData.valParents.list[0].property[0].value.ancestors[1].id).toBe(nodeRecord1);
+        expect(resData.valParents.list[0].property[0].payload.ancestors).toBeInstanceOf(Array);
+        expect(resData.valParents.list[0].property[0].payload.ancestors).toHaveLength(2);
+        expect(resData.valParents.list[0].property[0].payload.ancestors[0].id).toBe(nodeRecord2);
+        expect(resData.valParents.list[0].property[0].payload.ancestors[1].id).toBe(nodeRecord1);
 
-        expect(resData.valChildren.list[0].property[0].value.children).toBeInstanceOf(Array);
-        expect(resData.valChildren.list[0].property[0].value.children).toHaveLength(1);
+        expect(resData.valChildren.list[0].property[0].payload.children).toBeInstanceOf(Array);
+        expect(resData.valChildren.list[0].property[0].payload.children).toHaveLength(1);
 
-        expect(resData.valLinkedRecords.list[0].property[0].value.linkedRecords).toBeInstanceOf(Array);
-        expect(resData.valLinkedRecords.list[0].property[0].value.linkedRecords).toHaveLength(1);
+        expect(resData.valLinkedRecords.list[0].property[0].payload.linkedRecords).toBeInstanceOf(Array);
+        expect(resData.valLinkedRecords.list[0].property[0].payload.linkedRecords).toHaveLength(1);
     });
 });

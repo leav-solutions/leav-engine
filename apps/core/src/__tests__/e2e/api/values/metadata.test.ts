@@ -35,7 +35,7 @@ describe('Values Metadata', () => {
                     recordId: "${recordId}",
                     attribute: "${attrWithMetaId}",
                     value: {
-                        value: "Toto",
+                        payload: "Toto",
                         metadata: [{name: "${metaAttrId}", value: "Metadata value"}]
                     }
                 ) {
@@ -43,8 +43,8 @@ describe('Values Metadata', () => {
                     metadata {
                         name
                         value {
-                            value
-                            raw_value
+                            payload
+                            raw_payload
                         }
                     }
                 }
@@ -65,8 +65,8 @@ describe('Values Metadata', () => {
                         metadata {
                             name
                             value {
-                                value
-                                raw_value
+                                payload
+                                raw_payload
                             }
                         }
                     }
