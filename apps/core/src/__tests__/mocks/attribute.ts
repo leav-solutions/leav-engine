@@ -68,12 +68,12 @@ export const mockAttrAdvLink: IAttribute = {
 
 export const mockAttrAdvLinkMultiVal: IAttribute = {...mockAttrAdvLink, multiple_values: true};
 
-export const mockAttrTree: IAttribute = {
+export const mockAttrTree = {
     ...base,
     id: 'tree_attribute',
     type: AttributeTypes.TREE,
     linked_tree: 'my_tree'
-};
+} satisfies IAttribute;
 
 export const mockAttrTreeVersionable: IAttribute = {
     ...mockAttrTree,

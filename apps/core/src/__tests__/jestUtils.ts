@@ -4,12 +4,13 @@
 declare namespace NodeJS {
     /* eslint-disable @typescript-eslint/naming-convention */
     interface Global {
-        __mockPromise(promRes?: any): any;
+        __mockPromise<T>(promRes?: T): jest.Mock<T>;
         __mockPromiseMultiple(promRes?: any[]): any;
     }
 }
 
-global.__mockPromise = promRes => jest.fn().mockReturnValue(Promise.resolve(promRes));
+// TODO: fix that (currently it seems not applied)
+global.__mockPromise = <T>(promRes: T): jest.Mock<T> => jest.fn().mockReturnValue(Promise.resolve(promRes));
 global.__mockPromiseMultiple = promResults => {
     const jestFn = jest.fn();
     for (const promRes of promResults) {

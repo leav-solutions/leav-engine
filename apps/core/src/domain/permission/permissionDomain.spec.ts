@@ -80,9 +80,9 @@ describe('PermissionDomain', () => {
                 permissionTreeTarget: 'test_lib/12345'
             };
 
-            const mockPermRepo: Mockify<IPermissionRepo> = {
+            const mockPermRepo = {
                 savePermission: global.__mockPromise(permData)
-            };
+            } satisfies Mockify<IPermissionRepo>;
 
             const permDomain = permissionDomain({
                 ...depsBase,
@@ -109,7 +109,7 @@ describe('PermissionDomain', () => {
                 {userId: '1'}
             );
 
-            expect(mockPermRepo.savePermission?.mock.calls.length).toBe(1);
+            expect(mockPermRepo.savePermission.mock.calls.length).toBe(1);
             expect(mockCacheService.deleteData).toBeCalledTimes(3);
 
             expect(newPerm).toMatchObject(permData);

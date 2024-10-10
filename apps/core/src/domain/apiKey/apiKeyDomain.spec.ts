@@ -45,7 +45,7 @@ describe('apiKeyDomain', () => {
 
     describe('getApiKeys', () => {
         test('Return list of api keys', async () => {
-            const mockRepo: Mockify<IApiKeyRepo> = {
+            const mockRepo = {
                 getApiKeys: global.__mockPromise({
                     totalCount: 2,
                     list: [
@@ -53,7 +53,7 @@ describe('apiKeyDomain', () => {
                         {...mockApiKey, id: 'key2'}
                     ]
                 })
-            };
+            } satisfies Mockify<IApiKeyRepo>;
 
             const domain = apiKeyDomain({
                 ...depsBase,
@@ -62,8 +62,8 @@ describe('apiKeyDomain', () => {
 
             const keys = await domain.getApiKeys({ctx: mockCtx});
 
-            expect(mockRepo.getApiKeys?.mock.calls.length).toBe(1);
-            expect(mockRepo.getApiKeys?.mock.calls[0][0]).toMatchObject({ctx: mockCtx});
+            expect(mockRepo.getApiKeys.mock.calls.length).toBe(1);
+            expect(mockRepo.getApiKeys.mock.calls[0][0]).toMatchObject({ctx: mockCtx});
 
             expect(keys.list).toHaveLength(2);
             expect(keys.list[0].id).toBe('key1');
@@ -75,12 +75,12 @@ describe('apiKeyDomain', () => {
 
     describe('getApiKeyProperties', () => {
         test('Return properties for given key id', async () => {
-            const mockRepo: Mockify<IApiKeyRepo> = {
+            const mockRepo = {
                 getApiKeys: global.__mockPromise({
                     totalCount: 1,
                     list: [{...mockApiKey}]
                 })
-            };
+            } satisfies Mockify<IApiKeyRepo>;
 
             const domain = apiKeyDomain({
                 ...depsBase,
@@ -89,7 +89,7 @@ describe('apiKeyDomain', () => {
 
             const keyProps = await domain.getApiKeyProperties({id: mockApiKey.id, ctx: mockCtx});
 
-            expect(mockRepo.getApiKeys?.mock.calls.length).toBe(1);
+            expect(mockRepo.getApiKeys.mock.calls.length).toBe(1);
 
             expect(keyProps).toEqual({...mockApiKey, key: null});
         });
@@ -139,7 +139,7 @@ describe('apiKeyDomain', () => {
                 const savedKey = await domain.saveApiKey({apiKey: keyToSave, ctx: mockCtx});
 
                 expect(mockRepo.createApiKey).toBeCalled();
-                const createCallKeyData = mockRepo.createApiKey?.mock.calls[0][0].keyData;
+                const createCallKeyData = mockRepo.createApiKey.mock.calls[0][0].keyData;
                 expect(createCallKeyData.key).toBeDefined();
                 expect(createCallKeyData.createdAt).toBeDefined();
                 expect(createCallKeyData.createdBy).toBe(mockCtx.userId);
@@ -175,7 +175,7 @@ describe('apiKeyDomain', () => {
                 );
 
                 expect(mockAdminPermissionDomainForbidden.getAdminPermission).toBeCalled();
-                expect(mockAdminPermissionDomainForbidden.getAdminPermission?.mock.calls[0][0].action).toBe(
+                expect(mockAdminPermissionDomainForbidden.getAdminPermission.mock.calls[0][0].action).toBe(
                     AdminPermissionsActions.CREATE_API_KEY
                 );
             });
@@ -205,7 +205,7 @@ describe('apiKeyDomain', () => {
                 const savedKey = await domain.saveApiKey({apiKey: keyToSave, ctx: mockCtx});
 
                 expect(mockRepo.updateApiKey).toBeCalled();
-                const updateCallKeyData = mockRepo.updateApiKey?.mock.calls[0][0].keyData;
+                const updateCallKeyData = mockRepo.updateApiKey.mock.calls[0][0].keyData;
                 expect(updateCallKeyData.key).toBeUndefined(); // User can't change the key
 
                 expect(updateCallKeyData.modifiedAt).toBeDefined();
@@ -259,7 +259,7 @@ describe('apiKeyDomain', () => {
                 );
 
                 expect(mockAdminPermissionDomainForbidden.getAdminPermission).toBeCalled();
-                expect(mockAdminPermissionDomainForbidden.getAdminPermission?.mock.calls[0][0].action).toBe(
+                expect(mockAdminPermissionDomainForbidden.getAdminPermission.mock.calls[0][0].action).toBe(
                     AdminPermissionsActions.EDIT_API_KEY
                 );
             });
@@ -326,7 +326,7 @@ describe('apiKeyDomain', () => {
             await expect(() => domain.deleteApiKey({id: mockApiKey.id, ctx: mockCtx})).rejects.toThrow(PermissionError);
 
             expect(mockAdminPermissionDomainForbidden.getAdminPermission).toBeCalled();
-            expect(mockAdminPermissionDomainForbidden.getAdminPermission?.mock.calls[0][0].action).toBe(
+            expect(mockAdminPermissionDomainForbidden.getAdminPermission.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.DELETE_API_KEY
             );
         });

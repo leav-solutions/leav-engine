@@ -30,9 +30,9 @@ describe('recordPermissionDomain', () => {
     const defaultPerm = false;
 
     describe('getRecordPermission', () => {
-        const mockTreeBasedPerm: Mockify<ITreeBasedPermissionHelper> = {
+        const mockTreeBasedPerm = {
             getTreeBasedPermission: global.__mockPromise(true)
-        };
+        } satisfies Mockify<ITreeBasedPermissionHelper>;
 
         const mockLibPermDomain: Mockify<ILibraryPermissionDomain> = {
             getLibraryPermission: jest.fn().mockReturnValue(defaultPerm)
@@ -109,7 +109,7 @@ describe('recordPermissionDomain', () => {
                 ctx
             });
 
-            expect(mockTreeBasedPerm.getTreeBasedPermission?.mock.calls.length).toBe(1);
+            expect(mockTreeBasedPerm.getTreeBasedPermission.mock.calls.length).toBe(1);
             expect(mockValueRepo.getValues?.mock.calls.length).toBe(1);
             expect(perm).toBe(true);
         });

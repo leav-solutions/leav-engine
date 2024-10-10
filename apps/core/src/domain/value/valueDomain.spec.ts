@@ -801,7 +801,7 @@ describe('ValueDomain', () => {
                 valDomain.saveValue({
                     library: 'test_lib',
                     recordId: '12345',
-                    attribute: mockAttrTree.id ?? '',
+                    attribute: mockAttrTree.id,
                     value: {payload: 'lib1/123456'},
                     ctx
                 })

@@ -26,9 +26,9 @@ describe('AttributePermissionDomain', () => {
         queryId: 'attributePermissionDomainTest'
     };
     describe('getAttributePermission', () => {
-        const mockTreeBasedPerm: Mockify<ITreeBasedPermissionHelper> = {
+        const mockTreeBasedPerm = {
             getTreeBasedPermission: global.__mockPromise(true)
-        };
+        } satisfies Mockify<ITreeBasedPermissionHelper>;
 
         const defaultPerm = false;
 
@@ -105,7 +105,7 @@ describe('AttributePermissionDomain', () => {
             );
 
             expect((getDefaultPermission.default as jest.Mock).mock.calls.length).toBe(0);
-            expect(mockTreeBasedPerm.getTreeBasedPermission?.mock.calls.length).toBe(1);
+            expect(mockTreeBasedPerm.getTreeBasedPermission.mock.calls.length).toBe(1);
             expect(perm).toBe(true);
         });
 

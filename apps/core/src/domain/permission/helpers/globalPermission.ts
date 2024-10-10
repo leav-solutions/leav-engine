@@ -64,7 +64,7 @@ export default function ({
             {type, applyTo, userId, action, getDefaultPermission = defaultPermHelper.getDefaultPermission},
             ctx
         ): Promise<boolean> {
-            const cacheKey = getPermissionCacheKey(ctx.groupsId, type, applyTo, action, '');
+            const cacheKey = getPermissionCacheKey(ctx.groupsId ?? null, type, applyTo, action, '');
             const permFromCache = (await cacheService.getCache(ECacheType.RAM).getData([cacheKey]))[0];
             let perm: boolean | null = null;
 

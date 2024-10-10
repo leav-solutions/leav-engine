@@ -31,7 +31,7 @@ const _handleValueVersion = async (
     ctx: IQueryInfos
 ): Promise<IValueVersion> => {
     const versionProfile = await deps.versionProfileDomain.getVersionProfileProperties({
-        id: attribute.versions_conf?.profile,
+        id: attribute.versions_conf.profile,
         ctx
     });
 

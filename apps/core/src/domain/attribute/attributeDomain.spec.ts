@@ -98,9 +98,9 @@ describe('attributeDomain', () => {
 
     describe('getAttributes', () => {
         test('Should return a list of attributes', async function () {
-            const mockAttrRepo: Mockify<IAttributeRepo> = {
+            const mockAttrRepo = {
                 getAttributes: global.__mockPromise({list: [{id: 'test'}, {id: 'test2'}], totalCount: 0})
-            };
+            } satisfies Mockify<IAttributeRepo>;
 
             const attrDomain = attributeDomain({
                 ...depsBase,
@@ -114,9 +114,9 @@ describe('attributeDomain', () => {
         });
 
         test('Should add default sort', async function () {
-            const mockAttrRepo: Mockify<IAttributeRepo> = {
+            const mockAttrRepo = {
                 getAttributes: global.__mockPromise({list: [{id: 'test'}, {id: 'test2'}], totalCount: 0})
-            };
+            } satisfies Mockify<IAttributeRepo>;
 
             const attrDomain = attributeDomain({
                 ...depsBase,
@@ -159,9 +159,9 @@ describe('attributeDomain', () => {
                 getLibraries: global.__mockPromise({list: [{id: 'test', system: true}], totalCount: 0})
             };
 
-            const mockAttrRepo: Mockify<IAttributeRepo> = {
+            const mockAttrRepo = {
                 getLibraryAttributes: global.__mockPromise(attrs)
-            };
+            } satisfies Mockify<IAttributeRepo>;
 
             const attrDomain = attributeDomain({
                 ...depsBase,
@@ -172,8 +172,8 @@ describe('attributeDomain', () => {
             });
             const libAttrs = await attrDomain.getLibraryAttributes('test', ctx);
 
-            expect(mockAttrRepo.getLibraryAttributes?.mock.calls.length).toBe(1);
-            expect(mockAttrRepo.getLibraryAttributes?.mock.calls[0][0].libraryId).toBe('test');
+            expect(mockAttrRepo.getLibraryAttributes.mock.calls.length).toBe(1);
+            expect(mockAttrRepo.getLibraryAttributes.mock.calls[0][0].libraryId).toBe('test');
             expect(libAttrs).toEqual(attrs);
         });
 
@@ -201,9 +201,9 @@ describe('attributeDomain', () => {
                 }
             ];
 
-            const mockAttributeRepo: Mockify<IAttributeRepo> = {
+            const mockAttributeRepo = {
                 getAttributeLibraries: global.__mockPromise(libraries)
-            };
+            } satisfies Mockify<IAttributeRepo>;
 
             const attrDomain = attributeDomain({
                 ...depsBase,
@@ -212,8 +212,8 @@ describe('attributeDomain', () => {
             });
             const attributeLibraries = await attrDomain.getAttributeLibraries({attributeId: 'test', ctx});
 
-            expect(mockAttributeRepo.getAttributeLibraries?.mock.calls.length).toBe(1);
-            expect(mockAttributeRepo.getAttributeLibraries?.mock.calls[0][0].attributeId).toBe('test');
+            expect(mockAttributeRepo.getAttributeLibraries.mock.calls.length).toBe(1);
+            expect(mockAttributeRepo.getAttributeLibraries.mock.calls[0][0].attributeId).toBe('test');
             expect(attributeLibraries).toEqual(libraries);
         });
 
@@ -240,9 +240,9 @@ describe('attributeDomain', () => {
                 }
             ];
 
-            const mockAttrRepo: Mockify<IAttributeRepo> = {
+            const mockAttrRepo = {
                 getLibraryFullTextAttributes: global.__mockPromise(attrs)
-            };
+            } satisfies Mockify<IAttributeRepo>;
 
             const attrDomain = attributeDomain({
                 ...depsBase,
@@ -251,8 +251,8 @@ describe('attributeDomain', () => {
             });
             const libAttrs = await attrDomain.getLibraryFullTextAttributes('test', ctx);
 
-            expect(mockAttrRepo.getLibraryFullTextAttributes?.mock.calls.length).toBe(1);
-            expect(mockAttrRepo.getLibraryFullTextAttributes?.mock.calls[0][0].libraryId).toBe('test');
+            expect(mockAttrRepo.getLibraryFullTextAttributes.mock.calls.length).toBe(1);
+            expect(mockAttrRepo.getLibraryFullTextAttributes.mock.calls[0][0].libraryId).toBe('test');
             expect(libAttrs).toEqual(attrs);
         });
 
@@ -982,7 +982,7 @@ describe('attributeDomain', () => {
 
             await attrDomain.deleteAttribute({id: attrData.id, ctx});
 
-            expect(mockAttrRepo.deleteAttribute?.mock.calls.length).toBe(1);
+            expect(mockAttrRepo.deleteAttribute.mock.calls.length).toBe(1);
             expect(mockAdminPermDomain.getAdminPermission).toHaveBeenCalled();
             expect(mockAdminPermDomain.getAdminPermission.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.DELETE_ATTRIBUTE
