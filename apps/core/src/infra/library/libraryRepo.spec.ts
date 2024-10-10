@@ -15,7 +15,7 @@ describe('LibraryRepo', () => {
     describe('getLibrary', () => {
         test('Should return all libs if no filter', async function () {
             const mockDbServ = {execute: global.__mockPromise([])};
-            const mockDbUtils: Mockify<IDbUtils> = {
+            const mockDbUtils = {
                 findCoreEntity: global.__mockPromise([
                     {
                         id: 'users',
@@ -25,7 +25,7 @@ describe('LibraryRepo', () => {
                         }
                     }
                 ])
-            };
+            } satisfies Mockify<IDbUtils>;
 
             const repo = libraryRepo({
                 'core.infra.db.dbService': mockDbServ,
@@ -132,7 +132,7 @@ describe('LibraryRepo', () => {
         };
 
         test('Should delete a library and return deleted library', async function () {
-            const mockAttrRepo: Mockify<IAttributeRepo> = {
+            const mockAttrRepo = {
                 getAttributes: global.__mockPromise({
                     list: [
                         {id: 'attr1', type: AttributeTypes.SIMPLE},
@@ -141,7 +141,7 @@ describe('LibraryRepo', () => {
                     totalCount: 0
                 }),
                 deleteAttribute: global.__mockPromise({})
-            };
+            } satisfies Mockify<IAttributeRepo>;
 
             const mockDbServ = {
                 db: new Database(),

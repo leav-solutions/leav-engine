@@ -59,9 +59,9 @@ describe('RecordRepo', () => {
 
             const mockDbServ = {db: mockDb};
 
-            const mockDbUtils: Mockify<IDbUtils> = {
+            const mockDbUtils = {
                 cleanup: jest.fn().mockReturnValue(cleanCreatedRecordData)
-            };
+            } satisfies Mockify<IDbUtils>;
 
             const recRepo = recordRepo({
                 ...depsBase,
@@ -103,9 +103,9 @@ describe('RecordRepo', () => {
                 execute: global.__mockPromise([{old: updatedRecordData, new: updatedRecordData}])
             };
 
-            const mockDbUtils: Mockify<IDbUtils> = {
+            const mockDbUtils = {
                 cleanup: jest.fn().mockReturnValue(cleanUpdatedRecordData)
-            };
+            } satisfies Mockify<IDbUtils>;
 
             const recRepo = recordRepo({
                 ...depsBase,
@@ -169,7 +169,7 @@ describe('RecordRepo', () => {
             };
             mockDbServ.db.collection = jest.fn().mockReturnValue(mockDbCollec);
 
-            const mockDbUtils: Mockify<IDbUtils> = {cleanup: jest.fn().mockReturnValue(recordData)};
+            const mockDbUtils = {cleanup: jest.fn().mockReturnValue(recordData)} satisfies Mockify<IDbUtils>;
 
             const recRepo = recordRepo({
                 ...depsBase,

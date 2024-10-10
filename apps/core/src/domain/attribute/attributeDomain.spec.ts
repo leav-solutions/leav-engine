@@ -958,10 +958,10 @@ describe('attributeDomain', () => {
         const attrData = {id: 'test_attribute', system: false, label: {fr: 'Test'}, format: 'text', type: 'index'};
 
         test('Should delete an attribute and return deleted attribute', async function () {
-            const mockAttrRepo: Mockify<IAttributeRepo> = {
+            const mockAttrRepo = {
                 deleteAttribute: global.__mockPromise(attrData),
                 getAttributes: global.__mockPromise({list: []})
-            };
+            } satisfies Mockify<IAttributeRepo>;
 
             const mockFormRepo: Mockify<IFormRepo> = {
                 getForms: global.__mockPromise({list: [mockForm]}),

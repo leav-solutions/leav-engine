@@ -538,19 +538,19 @@ describe('importDomain', () => {
 
             await fs.promises.writeFile(`${mockImportDirectory}/test.json`, JSON.stringify(data, null, '\t'));
 
-            const mockTreeDomain: Mockify<ITreeDomain> = {
+            const mockTreeDomain = {
                 isRecordPresent: global.__mockPromise(false),
                 addElement: global.__mockPromise(),
                 getNodesByRecord: global.__mockPromise([])
-            };
+            } satisfies Mockify<ITreeDomain>;
 
-            const mockRecordDomain: Mockify<IRecordDomain> = {
+            const mockRecordDomain = {
                 find: global.__mockPromise({totalCount: 1, list: [{id: '123'}]})
-            };
+            } satisfies Mockify<IRecordDomain>;
 
-            const mockValidateHelper: Mockify<IValidateHelper> = {
+            const mockValidateHelper = {
                 validateLibrary: global.__mockPromise()
-            };
+            } satisfies Mockify<IValidateHelper>;
 
             const mockCacheService: Mockify<ICacheService> = {
                 getData: global.__mockPromise(),
@@ -653,9 +653,9 @@ describe('importDomain', () => {
 
             await fs.promises.writeFile(`${mockImportDirectory}/test.json`, JSON.stringify(data, null, '\t'));
 
-            const mockAttrDomain: Mockify<IAttributeDomain> = {
+            const mockAttrDomain = {
                 getLibraryAttributes: global.__mockPromise([{type: 'simple', id: 'fake_simple'}])
-            };
+            } satisfies Mockify<IAttributeDomain>;
 
             const mockValueDomain: Mockify<IValueDomain> = {
                 saveValue: global.__mockPromise([
@@ -666,14 +666,14 @@ describe('importDomain', () => {
                 getValues: global.__mockPromise([])
             };
 
-            const mockRecordDomain: Mockify<IRecordDomain> = {
+            const mockRecordDomain = {
                 createRecord: global.__mockPromise({record: {id: '1'}}),
                 find: global.__mockPromise({totalCount: 1, list: [{id: '1'}]})
-            };
+            } satisfies Mockify<IRecordDomain>;
 
-            const mockValidateHelper: Mockify<IValidateHelper> = {
+            const mockValidateHelper = {
                 validateLibrary: global.__mockPromise()
-            };
+            } satisfies Mockify<IValidateHelper>;
 
             const mockCacheService: Mockify<ICacheService> = {
                 getData: jest.fn().mockReturnValue(

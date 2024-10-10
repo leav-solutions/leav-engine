@@ -366,7 +366,7 @@ describe('TreeBasedPermissionDomain', () => {
         });
 
         test('n permissions trees with AND', async () => {
-            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
+            const mockPermByUserGroupsHelper = {
                 getPermissionByUserGroups: jest.fn().mockImplementation(({permissionTreeTarget}) => {
                     if (permissionTreeTarget.tree === 'categories' && permissionTreeTarget.id === 'C') {
                         return Promise.resolve(true);
@@ -376,7 +376,7 @@ describe('TreeBasedPermissionDomain', () => {
                         return Promise.resolve(null);
                     }
                 })
-            };
+            } satisfies Mockify<IPermissionByUserGroupsHelper>;
 
             const treePermDomain = treeBasedPermissions({
                 ...depsBase,

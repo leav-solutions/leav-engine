@@ -1138,10 +1138,10 @@ describe('treeDomain', () => {
                 }
             ];
 
-            const treeRepo: Mockify<ITreeRepo> = {
+            const treeRepo = {
                 getTreeContent: global.__mockPromise(treeContentData),
                 getTrees: global.__mockPromise({list: [{id: 'test_tree'}], totalCount: 0})
-            };
+            } satisfies Mockify<ITreeRepo>;
 
             const mockRecordDomain: Mockify<IRecordDomain> = {
                 find: jest.fn()

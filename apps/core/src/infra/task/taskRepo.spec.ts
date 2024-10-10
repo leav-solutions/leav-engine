@@ -108,9 +108,9 @@ describe('TaskRepo', () => {
 
     test('Retrieve tasks list with clean id', async () => {
         const mockDbServ = {execute: global.__mockPromise([])};
-        const mockDbUtils: Mockify<IDbUtils> = {
+        const mockDbUtils = {
             findCoreEntity: global.__mockPromise({list: [{...mockTask, id: 'id'}]})
-        };
+        } satisfies Mockify<IDbUtils>;
 
         const mockUtils: Mockify<IUtils> = {
             getUnixTime: jest.fn().mockReturnValue(1)
