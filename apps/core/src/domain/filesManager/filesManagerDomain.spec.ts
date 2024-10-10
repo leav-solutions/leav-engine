@@ -436,7 +436,7 @@ describe('FilesManager', () => {
         });
 
         test('Force preview generation with filters', async () => {
-            const mockRecordDomain: Mockify<IRecordDomain> = {
+            const mockRecordDomain = {
                 find: global.__mockPromise({
                     cursor: {},
                     totalCount: 1,
@@ -450,7 +450,7 @@ describe('FilesManager', () => {
                         }
                     ]
                 })
-            };
+            } satisfies Mockify<IRecordDomain>;
 
             const files = filesManager({
                 ...depsBase,

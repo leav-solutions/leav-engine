@@ -20,11 +20,11 @@ describe('versionProfileRepo', () => {
         trees: ['treeA', 'treeB']
     };
 
-    const mockDbUtils: Mockify<IDbUtils> = {
+    const mockDbUtils = {
         cleanup: jest.fn().mockReturnValue(profileData),
         convertToDoc: jest.fn().mockReturnValue(docProfileData),
         findCoreEntity: global.__mockPromise([profileData])
-    };
+    } satisfies Mockify<IDbUtils>;
 
     describe('createVersionProfile', () => {
         test('Should create a new version profile', async () => {

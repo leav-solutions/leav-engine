@@ -110,7 +110,7 @@ describe('TreeRepo', () => {
     describe('getTrees', () => {
         test('Should return all trees', async () => {
             const mockDbServ = {execute: global.__mockPromise([])};
-            const mockDbUtils: Mockify<IDbUtils> = {
+            const mockDbUtils = {
                 findCoreEntity: global.__mockPromise([
                     {
                         id: 'categories',
@@ -120,7 +120,7 @@ describe('TreeRepo', () => {
                         }
                     }
                 ])
-            };
+            } satisfies Mockify<IDbUtils>;
 
             const repo = treeRepo({
                 'core.infra.db.dbService': mockDbServ,
