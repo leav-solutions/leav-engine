@@ -21,11 +21,11 @@ import {Action, ImportMode} from '../../_types/import';
 import {mockTranslator} from '../../__tests__/mocks/translator';
 import importDomain, {IImportDomainDeps} from './importDomain';
 
-const importMockConfig: Mockify<Config.IImport> = {
+const importMockConfig = {
     directory: path.resolve(__dirname, './imports'),
     sizeLimit: 100,
     groupData: 50
-};
+} satisfies Mockify<Config.IImport>;
 
 const mockConfig: Mockify<Config.IConfig> = {
     import: importMockConfig as Config.IImport,
@@ -58,15 +58,11 @@ describe('importDomain', () => {
     };
 
     beforeAll(async () => {
-        if (importMockConfig.directory) {
-            await fs.promises.mkdir(importMockConfig.directory);
-        }
+        await fs.promises.mkdir(importMockConfig.directory);
     });
 
     afterAll(async () => {
-        if (importMockConfig.directory) {
-            await fs.promises.rmdir(importMockConfig.directory, {recursive: true});
-        }
+        await fs.promises.rmdir(importMockConfig.directory, {recursive: true});
     });
 
     beforeEach(() => {
@@ -143,7 +139,7 @@ describe('importDomain', () => {
 
             const mockLibDomain: Mockify<ILibraryDomain> = {
                 saveLibrary: jest.fn()
-            };
+            } satisfies Mockify<ILibraryDomain>;
 
             const imprtDomain = importDomain({
                 ...depsBase,

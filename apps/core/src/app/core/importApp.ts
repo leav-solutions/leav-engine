@@ -87,7 +87,7 @@ export default function ({
         forceNoTask?: boolean
     ): Promise<string> => {
         if (clearDatabase) {
-            await dbUtils.clearDatabase?.();
+            await dbUtils.clearDatabase();
         }
 
         // Run DB migration before doing anything
@@ -132,9 +132,11 @@ export default function ({
         },
         importData: async (filepath: string): Promise<void> => {
             // extract filename from filepath
-            let filename = filepath.split('/').pop();
+            let filename = filepath
+                .split('/')
+                .pop() as string; /* split give at least one element retrieve by pop method */
             // check if filepath is a valid file
-            if (!filename || !fs.existsSync(filepath)) {
+            if (!fs.existsSync(filepath)) {
                 throw new Error('File not found');
             }
 

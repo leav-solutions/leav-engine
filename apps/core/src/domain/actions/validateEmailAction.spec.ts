@@ -14,7 +14,7 @@ describe('validateEmailFormatAction', () => {
     };
 
     test('validateEmail should throw', async () => {
-        const res = action([{payload: 'test'}], {}, ctx) as IActionsListFunctionResult;
+        const res = action([{payload: 'test'}], null, ctx) as IActionsListFunctionResult;
         expect(res.errors.length).toBe(1);
     });
 

@@ -32,9 +32,9 @@ describe('applicationDomain', () => {
         getAdminPermission: global.__mockPromise(true)
     };
 
-    const mockAdminPermissionDomainNotAllowed: Mockify<IAdminPermissionDomain> = {
+    const mockAdminPermissionDomainNotAllowed = {
         getAdminPermission: global.__mockPromise(false)
-    };
+    } satisfies Mockify<IAdminPermissionDomain>;
 
     const mockEventsManager: Mockify<IEventsManagerDomain> = {
         sendPubSubEvent: global.__mockPromise(),
@@ -43,9 +43,9 @@ describe('applicationDomain', () => {
 
     describe('getApplicationProperties', () => {
         test('Retrieve an application properties from its ID', async () => {
-            const mockAppRepo: Mockify<IApplicationRepo> = {
+            const mockAppRepo = {
                 getApplications: global.__mockPromise({list: [mockApplication], totalCount: 1})
-            };
+            } satisfies Mockify<IApplicationRepo>;
 
             const appDomain = applicationDomain({
                 ...depsBase,
@@ -53,7 +53,7 @@ describe('applicationDomain', () => {
             });
             const attr = await appDomain.getApplicationProperties({id: 'test_application', ctx: mockCtx});
 
-            expect(mockAppRepo.getApplications?.mock.calls.length).toBe(1);
+            expect(mockAppRepo.getApplications.mock.calls.length).toBe(1);
             expect(mockAppRepo.getApplications).toBeCalledWith({
                 params: {filters: {id: 'test_application'}, strictFilters: true},
                 ctx: mockCtx
@@ -77,9 +77,9 @@ describe('applicationDomain', () => {
 
     describe('getApplications', () => {
         test('Retrieve all applications', async () => {
-            const mockAppRepo: Mockify<IApplicationRepo> = {
+            const mockAppRepo = {
                 getApplications: global.__mockPromise({list: [mockApplication], totalCount: 1})
-            };
+            } satisfies Mockify<IApplicationRepo>;
 
             const appDomain = applicationDomain({
                 ...depsBase,
@@ -87,7 +87,7 @@ describe('applicationDomain', () => {
             });
             const attr = await appDomain.getApplications({ctx: mockCtx});
 
-            expect(mockAppRepo.getApplications?.mock.calls.length).toBe(1);
+            expect(mockAppRepo.getApplications.mock.calls.length).toBe(1);
             expect(mockAppRepo.getApplications).toBeCalledWith({
                 params: {sort: {field: 'id', order: SortOrder.ASC}},
                 ctx: mockCtx
@@ -147,7 +147,7 @@ describe('applicationDomain', () => {
                     })
                 ).rejects.toThrow(PermissionError);
 
-                expect(mockAdminPermissionDomainNotAllowed.getAdminPermission?.mock.calls[0][0].action).toBe(
+                expect(mockAdminPermissionDomainNotAllowed.getAdminPermission.mock.calls[0][0].action).toBe(
                     AdminPermissionsActions.CREATE_APPLICATION
                 );
             });
@@ -197,7 +197,7 @@ describe('applicationDomain', () => {
                     })
                 ).rejects.toThrow(PermissionError);
 
-                expect(mockAdminPermissionDomainNotAllowed.getAdminPermission?.mock.calls[0][0].action).toBe(
+                expect(mockAdminPermissionDomainNotAllowed.getAdminPermission.mock.calls[0][0].action).toBe(
                     AdminPermissionsActions.EDIT_APPLICATION
                 );
             });
@@ -323,7 +323,7 @@ describe('applicationDomain', () => {
                 PermissionError
             );
 
-            expect(mockAdminPermissionDomainNotAllowed.getAdminPermission?.mock.calls[0][0].action).toBe(
+            expect(mockAdminPermissionDomainNotAllowed.getAdminPermission.mock.calls[0][0].action).toBe(
                 AdminPermissionsActions.DELETE_APPLICATION
             );
         });
@@ -331,10 +331,11 @@ describe('applicationDomain', () => {
 
     describe('updateConsulationHistory', () => {
         test('Save consulted app to history', async () => {
-            const mockUserDomain: Mockify<IUserDomain> = {
+            const mockUserDomain = {
                 getUserData: global.__mockPromise({data: {[CONSULTED_APPS_KEY]: []}}),
-                saveUserData: jest.fn()
-            };
+                saveUserData: jest.fn(),
+                sendResetPasswordEmail: jest.fn()
+            } satisfies Mockify<IUserDomain>;
 
             const appDomain = applicationDomain({
                 ...depsBase,
@@ -347,7 +348,7 @@ describe('applicationDomain', () => {
             });
 
             expect(mockUserDomain.saveUserData).toBeCalled();
-            expect(mockUserDomain.saveUserData?.mock.calls[0][0]).toMatchObject({
+            expect(mockUserDomain.saveUserData.mock.calls[0][0]).toMatchObject({
                 key: CONSULTED_APPS_KEY,
                 value: [mockApplication.id],
                 global: false,
@@ -357,14 +358,15 @@ describe('applicationDomain', () => {
         });
 
         test('Dedup history', async () => {
-            const mockUserDomain: Mockify<IUserDomain> = {
+            const mockUserDomain = {
                 getUserData: global.__mockPromise({
                     data: {
                         [CONSULTED_APPS_KEY]: ['some_app', 'another_app', mockApplication.id, 'last_app']
                     }
                 }),
-                saveUserData: jest.fn()
-            };
+                saveUserData: jest.fn(),
+                sendResetPasswordEmail: jest.fn()
+            } satisfies Mockify<IUserDomain>;
 
             const appDomain = applicationDomain({
                 ...depsBase,
@@ -377,7 +379,7 @@ describe('applicationDomain', () => {
             });
 
             expect(mockUserDomain.saveUserData).toBeCalled();
-            expect(mockUserDomain.saveUserData?.mock.calls[0][0]).toMatchObject({
+            expect(mockUserDomain.saveUserData.mock.calls[0][0]).toMatchObject({
                 key: CONSULTED_APPS_KEY,
                 value: [mockApplication.id, 'some_app', 'another_app', 'last_app'],
                 global: false,
@@ -387,14 +389,15 @@ describe('applicationDomain', () => {
         });
 
         test('Limit history size', async () => {
-            const mockUserDomain: Mockify<IUserDomain> = {
+            const mockUserDomain = {
                 getUserData: global.__mockPromise({
                     data: {
                         [CONSULTED_APPS_KEY]: new Array(MAX_CONSULTATION_HISTORY_SIZE).fill('').map((e, i) => i)
                     }
                 }),
-                saveUserData: jest.fn()
-            };
+                saveUserData: jest.fn(),
+                sendResetPasswordEmail: jest.fn()
+            } satisfies Mockify<IUserDomain>;
 
             const appDomain = applicationDomain({
                 ...depsBase,
@@ -407,8 +410,8 @@ describe('applicationDomain', () => {
             });
 
             expect(mockUserDomain.saveUserData).toBeCalled();
-            expect(mockUserDomain.saveUserData?.mock.calls[0][0].value[0]).toBe(mockApplication.id);
-            expect(mockUserDomain.saveUserData?.mock.calls[0][0].value).toHaveLength(MAX_CONSULTATION_HISTORY_SIZE);
+            expect(mockUserDomain.saveUserData.mock.calls[0][0].value[0]).toBe(mockApplication.id);
+            expect(mockUserDomain.saveUserData.mock.calls[0][0].value).toHaveLength(MAX_CONSULTATION_HISTORY_SIZE);
         });
     });
 });

@@ -166,13 +166,13 @@ describe('FilesManager', () => {
         const mockSendRecordUpdate = jest.fn();
 
         test('Force preview generation one file', async () => {
-            const mockRecordDomain: Mockify<IRecordDomain> = {
+            const mockRecordDomain = {
                 find: global.__mockPromise({
                     cursor: {},
                     totalCount: 1,
                     list: [{id: 'id', file_path: 'file_path', file_name: 'file_name', library: mockLibraryFiles.id}]
                 })
-            };
+            } satisfies Mockify<IRecordDomain>;
 
             const files = filesManager({
                 ...depsBase,
@@ -189,7 +189,7 @@ describe('FilesManager', () => {
 
             await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', recordIds: ['id']});
 
-            expect(mockRecordDomain.find?.mock.calls[0][0].params.filters).toEqual([
+            expect(mockRecordDomain.find.mock.calls[0][0].params.filters).toEqual([
                 {field: 'id', value: 'id', condition: AttributeCondition.EQUAL}
             ]);
             expect(requestPreviewGeneration).toBeCalledTimes(1);
@@ -205,7 +205,7 @@ describe('FilesManager', () => {
         });
 
         test('Force preview generation multiple files', async () => {
-            const mockRecordDomain: Mockify<IRecordDomain> = {
+            const mockRecordDomain = {
                 find: global.__mockPromise({
                     cursor: {},
                     totalCount: 1,
@@ -215,7 +215,7 @@ describe('FilesManager', () => {
                         {id: 'id3', file_path: 'file_path', file_name: 'file_name3', library: mockLibraryFiles.id}
                     ]
                 })
-            };
+            } satisfies Mockify<IRecordDomain>;
 
             const files = filesManager({
                 ...depsBase,
@@ -232,7 +232,7 @@ describe('FilesManager', () => {
 
             await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', recordIds: ['id1', 'id2', 'id3']});
 
-            expect(mockRecordDomain.find?.mock.calls[0][0].params.filters).toEqual([
+            expect(mockRecordDomain.find.mock.calls[0][0].params.filters).toEqual([
                 {field: 'id', value: 'id1', condition: AttributeCondition.EQUAL},
                 {operator: Operator.OR},
                 {field: 'id', value: 'id2', condition: AttributeCondition.EQUAL},
@@ -478,7 +478,7 @@ describe('FilesManager', () => {
             });
 
             expect(mockRecordDomain.find).toBeCalledTimes(1);
-            expect(mockRecordDomain.find?.mock.calls[0][0].params.filters).toEqual([
+            expect(mockRecordDomain.find.mock.calls[0][0].params.filters).toEqual([
                 {
                     field: 'file_name',
                     condition: AttributeCondition.EQUAL,

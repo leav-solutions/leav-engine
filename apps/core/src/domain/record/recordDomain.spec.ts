@@ -128,7 +128,7 @@ describe('RecordDomain', () => {
                 created_at: 1519303348,
                 modified_at: 1519303348
             };
-            const recRepo: Mockify<IRecordRepo> = {createRecord: global.__mockPromise(createdRecordData)};
+            const recRepo = {createRecord: global.__mockPromise(createdRecordData)} satisfies Mockify<IRecordRepo>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getLibraryFullTextAttributes: global.__mockPromise([])
@@ -149,10 +149,6 @@ describe('RecordDomain', () => {
             });
 
             const createdRecord = await recDomain.createRecord({library: 'test', ctx});
-
-            if (!recRepo.createRecord) {
-                fail('createRecord not defined');
-            }
 
             expect(recRepo.createRecord.mock.calls.length).toBe(1);
             expect(typeof recRepo.createRecord.mock.calls[0][0]).toBe('object');

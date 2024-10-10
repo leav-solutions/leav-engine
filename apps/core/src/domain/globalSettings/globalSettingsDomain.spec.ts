@@ -18,10 +18,10 @@ const depsBase: ToAny<IGlobalSettingsDomainDeps> = {
 
 describe('getSettingsRepo', () => {
     describe('saveSettings', () => {
-        const mockGlobalSettingsRepo: Mockify<IGlobalSettingsRepo> = {
+        const mockGlobalSettingsRepo = {
             saveSettings: global.__mockPromise(mockGlobalSettings),
             getSettings: global.__mockPromise(mockGlobalSettings)
-        };
+        } satisfies Mockify<IGlobalSettingsRepo>;
 
         const mockEventsManager: Mockify<IEventsManagerDomain> = {
             sendDatabaseEvent: global.__mockPromise()
@@ -44,7 +44,7 @@ describe('getSettingsRepo', () => {
 
             const savedSettings = await domain.saveSettings({settings: mockGlobalSettings, ctx: mockCtx});
 
-            expect(mockGlobalSettingsRepo.saveSettings?.mock.calls.length).toBe(1);
+            expect(mockGlobalSettingsRepo.saveSettings.mock.calls.length).toBe(1);
             expect(savedSettings).toMatchObject(mockGlobalSettings);
         });
 
@@ -66,9 +66,9 @@ describe('getSettingsRepo', () => {
     });
 
     describe('getSettings', () => {
-        const mockGlobalSettingsRepo: Mockify<IGlobalSettingsRepo> = {
+        const mockGlobalSettingsRepo = {
             getSettings: global.__mockPromise(mockGlobalSettings)
-        };
+        } satisfies Mockify<IGlobalSettingsRepo>;
 
         test('Should return settings', async () => {
             const domain = globalSettingsDomain({
@@ -78,7 +78,7 @@ describe('getSettingsRepo', () => {
 
             const settings = await domain.getSettings(mockCtx);
 
-            expect(mockGlobalSettingsRepo.getSettings?.mock.calls.length).toBe(1);
+            expect(mockGlobalSettingsRepo.getSettings.mock.calls.length).toBe(1);
             expect(settings).toMatchObject(mockGlobalSettings);
         });
     });
