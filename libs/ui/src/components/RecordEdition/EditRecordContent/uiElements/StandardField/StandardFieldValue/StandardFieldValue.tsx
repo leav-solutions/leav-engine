@@ -50,8 +50,8 @@ import {IValueOfValuesList} from './ValuesList/ValuesList';
 import {useLang} from '_ui/hooks';
 import {DSDatePickerWrapper} from './DSDatePickerWrapper';
 import {DSBooleanWrapper} from './DSBooleanWrapper';
-import { DSInputPasswordWrapper } from './DSInputPasswordWrapper';
-import { DSInputNumberWrapper } from './DSInputNumberWrapper';
+import {DSInputPasswordWrapper} from './DSInputPasswordWrapper';
+import {DSInputNumberWrapper} from './DSInputNumberWrapper';
 
 const ErrorMessage = styled.div`
     color: ${themeVars.errorColor};
