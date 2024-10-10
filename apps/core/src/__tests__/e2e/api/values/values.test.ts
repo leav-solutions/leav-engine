@@ -221,11 +221,11 @@ describe('Values', () => {
                 library: "${testLibName}",
                 recordId: "${recordId}",
                 attribute: "${attrTreeName}",
-                value: {value: "${nodeTreeElem}"}) {
+                value: {payload: "${nodeTreeElem}"}) {
                     id_value
 
                     ... on TreeValue {
-                        value {
+                        payload {
                             record {
                                 id
                             }
@@ -238,7 +238,7 @@ describe('Values', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValue[0].id_value).toBeTruthy();
-        expect(res.data.data.saveValue[0].value.record.id).toBe(treeElemId);
+        expect(res.data.data.saveValue[0].payload.record.id).toBe(treeElemId);
     });
 
     test('Save value simple', async () => {
@@ -247,7 +247,7 @@ describe('Values', () => {
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrSimpleName}",
-                    value: {value: "TEST VAL"}
+                    value: {payload: "TEST VAL"}
                 ) {
                     id_value
                     attribute {
@@ -257,7 +257,7 @@ describe('Values', () => {
                     }
 
                     ... on Value {
-                        value
+                        payload
                     }
                 }
               }`);
@@ -267,7 +267,7 @@ describe('Values', () => {
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValue[0].id_value).toBeNull();
         expect(res.data.data.saveValue[0].attribute?.permissions.edit_value).toBeDefined();
-        expect(res.data.data.saveValue[0].value).toBe('TEST VAL');
+        expect(res.data.data.saveValue[0].payload).toBe('TEST VAL');
     });
 
     test('Save same value on unique attribute', async () => {
@@ -276,11 +276,11 @@ describe('Values', () => {
                 library: "${testLibName}",
                 recordId: "${recordUniqueId}",
                 attribute: "${attrSimpleName}",
-                value: {value: "TEST VAL"}) {
+                value: {payload: "TEST VAL"}) {
                     id_value
 
                     ... on Value {
-                        value
+                        payload
                     }
                 }
           }`);
@@ -297,11 +297,11 @@ describe('Values', () => {
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrSimpleName}",
-                    value: {value: "AAAATEST VAL"}) {
+                    value: {payload: "AAAATEST VAL"}) {
                         id_value
 
                         ... on Value {
-                            value
+                            payload
                         }
                     }
               }`);
@@ -319,13 +319,13 @@ describe('Values', () => {
                     recordId: "${recordId}",
                     attribute: "${attrSimpleExtendedName}",
                     value: {
-                        value: "{\\"city\\": {\\"name\\": \\"Gre\\", \\"zipcode\\": \\"38000\\"}, \\"street\\": \\"Name\\"}"
+                        payload: "{\\"city\\": {\\"name\\": \\"Gre\\", \\"zipcode\\": \\"38000\\"}, \\"street\\": \\"Name\\"}"
                     }
                 ) {
                     id_value
 
                     ... on Value {
-                        value
+                        payload
                     }
                 }
             }`;
@@ -336,7 +336,7 @@ describe('Values', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValue[0].id_value).toBeNull();
-        expect(res.data.data.saveValue[0].value).toBeTruthy();
+        expect(res.data.data.saveValue[0].payload).toBeTruthy();
     });
 
     test("Don't save invalid simple extended", async () => {
@@ -346,13 +346,13 @@ describe('Values', () => {
                 recordId: "${recordId}",
                 attribute: "${attrSimpleExtendedName}",
                 value: {
-                    value: "{\\"city\\": {\\"name\\": \\"Gre\\", \\"zipcode\\": \\"3800\\"}, \\"street\\": \\"Name\\"}"
+                    payload: "{\\"city\\": {\\"name\\": \\"Gre\\", \\"zipcode\\": \\"3800\\"}, \\"street\\": \\"Name\\"}"
                 }
             ) {
                 id_value
 
                 ... on Value {
-                    value
+                    payload
                 }
             }
         }`;
@@ -371,11 +371,11 @@ describe('Values', () => {
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrSimpleLinkName}",
-                    value: {value: "${recordIdLinked}"}) {
+                    value: {payload: "${recordIdLinked}"}) {
                         id_value
 
                         ... on LinkValue {
-                            value {
+                            payload {
                                 id
                             }
                         }
@@ -386,7 +386,7 @@ describe('Values', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValue[0].id_value).toBeNull();
-        expect(res.data.data.saveValue[0].value.id).toBe(recordIdLinked);
+        expect(res.data.data.saveValue[0].payload.id).toBe(recordIdLinked);
     });
 
     test('Save value advanced', async () => {
@@ -395,11 +395,11 @@ describe('Values', () => {
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrAdvancedName}",
-                    value: {value: "TEST VAL ADV"}) {
+                    value: {payload: "TEST VAL ADV"}) {
                         id_value
 
                         ... on Value {
-                            value
+                            payload
                         }
                     }
               }`);
@@ -407,7 +407,7 @@ describe('Values', () => {
         expect(res.status).toBe(200);
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValue[0].id_value).toBeTruthy();
-        expect(res.data.data.saveValue[0].value).toBe('TEST VAL ADV');
+        expect(res.data.data.saveValue[0].payload).toBe('TEST VAL ADV');
 
         advValueId = res.data.data.saveValue[0].id_value;
     });
@@ -418,11 +418,11 @@ describe('Values', () => {
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrAdvancedLinkName}",
-                    value: {value: "${recordIdLinked}"}) {
+                    value: {payload: "${recordIdLinked}"}) {
                         id_value
 
                         ... on LinkValue {
-                            value {
+                            payload {
                                 id
                             }
                         }
@@ -433,7 +433,7 @@ describe('Values', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValue[0].id_value).toBeTruthy();
-        expect(res.data.data.saveValue[0].value.id).toBe(recordIdLinked);
+        expect(res.data.data.saveValue[0].payload.id).toBe(recordIdLinked);
     });
 
     test('Save value advanced reverse link', async () => {
@@ -442,11 +442,11 @@ describe('Values', () => {
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrAdvancedReverseLinkName}",
-                    value: {value: "${recordIdLinked}"}) {
+                    value: {payload: "${recordIdLinked}"}) {
                         id_value
 
                         ... on LinkValue {
-                            value {
+                            payload {
                                 id
                             }
                         }
@@ -457,7 +457,7 @@ describe('Values', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValue[0].id_value).toBeTruthy();
-        expect(res.data.data.saveValue[0].value.id).toBe(recordIdLinked);
+        expect(res.data.data.saveValue[0].payload.id).toBe(recordIdLinked);
     });
 
     test('Save value advanced reverse link into simple link', async () => {
@@ -466,11 +466,11 @@ describe('Values', () => {
                     library: "${testLibName}",
                     recordId: "${recordId}",
                     attribute: "${attrAdvancedReverseLinkToSimpleLinkName}",
-                    value: {value: "${recordIdLinked}"}) {
+                    value: {payload: "${recordIdLinked}"}) {
                         id_value
 
                         ... on LinkValue {
-                            value {
+                            payload {
                                 id
                             }
                         }
@@ -481,7 +481,7 @@ describe('Values', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.data.data.saveValue[0].id_value).toBeFalsy();
-        expect(res.data.data.saveValue[0].value.id).toBe(recordIdLinked);
+        expect(res.data.data.saveValue[0].payload.id).toBe(recordIdLinked);
     });
 
     test('Delete value advanced', async () => {
@@ -518,7 +518,7 @@ describe('Values', () => {
                 library: "${testLibName}",
                 recordId: "${recordId}",
                 attribute: "${attrTreeName}",
-                value: {value: "${nodeTreeElem}"}) {
+                value: {payload: "${nodeTreeElem}"}) {
                     id_value
                 }
             }`);
@@ -560,7 +560,7 @@ describe('Values', () => {
                     id_value
 
                     ... on Value {
-                        value
+                        payload
                     }
                 }
             }
@@ -581,13 +581,13 @@ describe('Values', () => {
                     recordId: "${recordId}",
                     attribute: "${attrDateRangeName}",
                     value: {
-                        value: "{\\"from\\": 1000, \\"to\\": 2000}"
+                        payload: "{\\"from\\": 1000, \\"to\\": 2000}"
                     }
                 ) {
                     id_value
 
                     ... on Value {
-                        value
+                        payload
                     }
                 }
               }`);
@@ -595,7 +595,7 @@ describe('Values', () => {
             expect(res.status).toBe(200);
 
             expect(res.data.errors).toBeUndefined();
-            expect(res.data.data.saveValue[0].value).toEqual({
+            expect(res.data.data.saveValue[0].payload).toEqual({
                 from: '1/1/1970, 12:16:40 AM',
                 to: '1/1/1970, 12:33:20 AM'
             });
@@ -608,13 +608,13 @@ describe('Values', () => {
                     recordId: "${recordId}",
                     attribute: "${attrDateRangeName}",
                     value: {
-                        value: "{\\"from\\": 2000, \\"to\\": 1000}"
+                        payload: "{\\"from\\": 2000, \\"to\\": 1000}"
                     }
                 ) {
                     id_value
 
                     ... on Value {
-                        value
+                        payload
                     }
                 }
               }`);

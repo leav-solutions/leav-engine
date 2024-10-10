@@ -95,7 +95,7 @@ describe('Records permissions', () => {
                     library: "${testLibId}",
                     recordId: "${testLibRecordId}",
                     attribute: "${testLibAttrId}",
-                    value: {value: "${nodePermTreeElem}"}
+                    value: {payload: "${nodePermTreeElem}"}
                 ) {
                     id_value
                 },
@@ -103,7 +103,7 @@ describe('Records permissions', () => {
                     library: "${testLibId}",
                     recordId: "${testLibRecordIdForMultival}",
                     attribute: "${testLibAttrId}",
-                    value: {value: "${nodePermTreeElemForMultival1}"}
+                    value: {payload: "${nodePermTreeElemForMultival1}"}
                 ) {
                     id_value
                 },
@@ -111,7 +111,7 @@ describe('Records permissions', () => {
                     library: "${testLibId}",
                     recordId: "${testLibRecordIdForMultival}",
                     attribute: "${testLibAttrId}",
-                    value: {value: "${nodePermTreeElemForMultival2}"}
+                    value: {payload: "${nodePermTreeElemForMultival2}"}
                 ) {
                     id_value
                 }

@@ -329,8 +329,8 @@ describe('Forms', () => {
                         id_value
 
                         ...on Value {
-                          value
-                          raw_value
+                          payload
+                          raw_payload
                         }
                     }
                 }

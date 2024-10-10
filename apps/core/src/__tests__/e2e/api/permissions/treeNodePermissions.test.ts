@@ -120,7 +120,7 @@ describe('TreeNodePermissions', () => {
                 recordId: "${elementsTreeRecord1}"
                 attribute: "${treeAttrID}"
                 value: {
-                    value: "${nodePermissionsRecord1}"
+                    payload: "${nodePermissionsRecord1}"
                 }
             ) {
                 id_value

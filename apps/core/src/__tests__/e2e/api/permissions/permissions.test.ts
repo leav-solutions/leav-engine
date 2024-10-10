@@ -68,7 +68,7 @@ describe('Permissions', () => {
                 library: "${testLibId}",
                 recordId: "${testLibRecordId}",
                 attribute: "${testLibAttrId}",
-                value: {value: "${nodePermTreeElem}"}
+                value: {payload: "${nodePermTreeElem}"}
             ) {
                 id_value
             }
@@ -176,7 +176,7 @@ describe('Permissions', () => {
                     library: "${testLibId}",
                     recordId: "${testLibRecordId}",
                     attribute: "${testPermAttrId}",
-                    value: {value: "TEST VAL"}
+                    value: {payload: "TEST VAL"}
                 ) {
                     id_value
                 }
