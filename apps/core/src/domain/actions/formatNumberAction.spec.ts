@@ -7,7 +7,7 @@ import formatNumberAction from './formatNumberAction';
 describe('formatNumberAction', () => {
     const action = formatNumberAction().action;
     const attrText: IAttribute = {id: 'test_attr', format: AttributeFormats.DATE, type: AttributeTypes.SIMPLE};
-    const ctx = {attribute: attrText};
+    const ctx = {attribute: attrText, userId: 'test_user'};
     test('formatNumber', async () => {
         expect(
             (

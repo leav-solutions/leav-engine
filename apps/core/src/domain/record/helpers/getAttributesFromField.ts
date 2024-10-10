@@ -11,9 +11,9 @@ import {Errors} from '../../../_types/errors';
 import {AttributeCondition, IRecordFilterLight} from '../../../_types/record';
 
 interface IDeps {
-    'core.domain.attribute'?: IAttributeDomain;
-    'core.infra.library'?: ILibraryRepo;
-    'core.infra.tree'?: ITreeRepo;
+    'core.domain.attribute': IAttributeDomain;
+    'core.infra.library': ILibraryRepo;
+    'core.infra.tree': ITreeRepo;
 }
 
 export interface IGetAttributesFromFieldsHelper {
@@ -37,9 +37,9 @@ const getAttributesFromField = async (params: {
 }): Promise<IAttribute[]> => {
     const {field, condition, visitedLibraries = [], deps, ctx} = params;
     const {
-        'core.domain.attribute': attributeDomain = null,
-        'core.infra.library': libraryRepo = null,
-        'core.infra.tree': treeRepo = null
+        'core.domain.attribute': attributeDomain,
+        'core.infra.library': libraryRepo,
+        'core.infra.tree': treeRepo
     } = deps;
 
     const _getLabelOrIdAttribute = async (library: string): Promise<string> => {

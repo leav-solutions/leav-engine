@@ -9,10 +9,10 @@ export interface ICoreExportApp {
 }
 
 interface IDeps {
-    'core.domain.export'?: IExportDomain;
+    'core.domain.export': IExportDomain;
 }
 
-export default function ({'core.domain.export': exportDomain = null}: IDeps = {}): ICoreExportApp {
+export default function ({'core.domain.export': exportDomain}: IDeps): ICoreExportApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {

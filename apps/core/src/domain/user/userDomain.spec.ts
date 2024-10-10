@@ -6,14 +6,25 @@ import {IPermissionDomain} from 'domain/permission/permissionDomain';
 import {i18n} from 'i18next';
 import {IMailerService} from 'infra/mailer/mailerService';
 import {IUserDataRepo} from 'infra/userData/userDataRepo';
-import {IUtils} from 'utils/utils';
+import {IUtils, ToAny} from 'utils/utils';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {mockTranslator} from '../../__tests__/mocks/translator';
-import userDataDomain, {UserCoreDataKeys} from './userDomain';
+import userDataDomain, {IUserDomainDeps, UserCoreDataKeys} from './userDomain';
+
+const depsBase: ToAny<IUserDomainDeps> = {
+    config: {},
+    'core.domain.permissions': jest.fn(),
+    'core.infra.userData': jest.fn(),
+    'core.domain.permission': jest.fn(),
+    'core.infra.mailer.mailerService': jest.fn(),
+    'core.domain.globalSettings': jest.fn(),
+    'core.utils': jest.fn(),
+    translator: {}
+};
 
 describe('UserDomain', () => {
     const ctx: IQueryInfos = {
@@ -31,11 +42,12 @@ describe('UserDomain', () => {
                 isAllowed: global.__mockPromise(true)
             };
 
-            const mockUserDataRepo: Mockify<IUserDataRepo> = {
+            const mockUserDataRepo = {
                 saveUserData: global.__mockPromise(true)
-            };
+            } satisfies Mockify<IUserDataRepo>;
 
             const udd = userDataDomain({
+                ...depsBase,
                 'core.infra.userData': mockUserDataRepo as IUserDataRepo,
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
@@ -51,11 +63,12 @@ describe('UserDomain', () => {
                 isAllowed: global.__mockPromise(true)
             };
 
-            const mockUserDataRepo: Mockify<IUserDataRepo> = {
+            const mockUserDataRepo = {
                 saveUserData: global.__mockPromise(true)
-            };
+            } satisfies Mockify<IUserDataRepo>;
 
             const udd = userDataDomain({
+                ...depsBase,
                 'core.infra.userData': mockUserDataRepo as IUserDataRepo,
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
@@ -76,6 +89,7 @@ describe('UserDomain', () => {
             };
 
             const udd = userDataDomain({
+                ...depsBase,
                 'core.infra.userData': mockUserDataRepo as IUserDataRepo,
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
@@ -86,7 +100,7 @@ describe('UserDomain', () => {
         });
 
         test('should throw if key is forbidden', async function () {
-            const udd = userDataDomain(); //{
+            const udd = userDataDomain(depsBase); //{
 
             await expect(
                 udd.saveUserData({key: UserCoreDataKeys.CONSULTED_APPS, value: ['fake'], global: false, ctx})
@@ -100,11 +114,12 @@ describe('UserDomain', () => {
                 isAllowed: global.__mockPromise(true)
             };
 
-            const mockUserDataRepo: Mockify<IUserDataRepo> = {
+            const mockUserDataRepo = {
                 getUserData: global.__mockPromise({global: false, data: {key: 'data'}})
-            };
+            } satisfies Mockify<IUserDataRepo>;
 
             const udd = userDataDomain({
+                ...depsBase,
                 'core.infra.userData': mockUserDataRepo as IUserDataRepo,
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
@@ -120,11 +135,12 @@ describe('UserDomain', () => {
                 isAllowed: global.__mockPromise(true)
             };
 
-            const mockUserDataRepo: Mockify<IUserDataRepo> = {
+            const mockUserDataRepo = {
                 getUserData: global.__mockPromise({global: true, data: {key: 'data'}})
-            };
+            } satisfies Mockify<IUserDataRepo>;
 
             const udd = userDataDomain({
+                ...depsBase,
                 'core.infra.userData': mockUserDataRepo as IUserDataRepo,
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
@@ -145,6 +161,7 @@ describe('UserDomain', () => {
             };
 
             const udd = userDataDomain({
+                ...depsBase,
                 'core.infra.userData': mockUserDataRepo as IUserDataRepo,
                 'core.domain.permission': mockPermDomain as IPermissionDomain
             });
@@ -166,9 +183,9 @@ describe('UserDomain', () => {
                 getFullApplicationEndpoint: jest.fn().mockReturnValue('endpoint')
             };
 
-            const mockMailerService: Mockify<IMailerService> = {
+            const mockMailerService = {
                 sendEmail: global.__mockPromise(true)
-            };
+            } satisfies Mockify<IMailerService>;
 
             const mockConfig = {
                 server: {
@@ -178,6 +195,7 @@ describe('UserDomain', () => {
             };
 
             const udd = userDataDomain({
+                ...depsBase,
                 config: mockConfig as IConfig,
                 'core.domain.globalSettings': mockGlobalSettingsDomain as IGlobalSettingsDomain,
                 'core.infra.mailer.mailerService': mockMailerService as IMailerService,

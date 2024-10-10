@@ -27,20 +27,20 @@ export interface ICoreFormApp {
 }
 
 interface IDeps {
-    'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.form'?: IFormDomain;
-    'core.domain.library'?: ILibraryDomain;
-    'core.app.helpers.convertVersionFromGqlFormat'?: ConvertVersionFromGqlFormatFunc;
-    'core.utils'?: IUtils;
+    'core.domain.attribute': IAttributeDomain;
+    'core.domain.form': IFormDomain;
+    'core.domain.library': ILibraryDomain;
+    'core.app.helpers.convertVersionFromGqlFormat': ConvertVersionFromGqlFormatFunc;
+    'core.utils': IUtils;
 }
 
 export default function ({
-    'core.domain.attribute': attributeDomain = null,
-    'core.domain.form': formDomain = null,
-    'core.domain.library': libraryDomain = null,
-    'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat = null,
-    'core.utils': utils = null
-}: IDeps = {}) {
+    'core.domain.attribute': attributeDomain,
+    'core.domain.form': formDomain,
+    'core.domain.library': libraryDomain,
+    'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat,
+    'core.utils': utils
+}: IDeps) {
     /** Functions to convert form from GraphQL format to IForm*/
     const _convertFormFromGraphql = (form: IFormForGraphql): IForm => {
         const formattedForm: IForm = {...form};
@@ -65,7 +65,7 @@ export default function ({
     });
 
     const commonFormElementResolvers = {
-        attribute: (formElement: IFormElement, _, ctx: IQueryInfos): Promise<IAttribute> => {
+        attribute: (formElement: IFormElement, _, ctx: IQueryInfos): Promise<IAttribute> | null => {
             const attributeId = formElement?.settings?.attribute;
 
             if (!attributeId) {
@@ -78,9 +78,9 @@ export default function ({
             Object.keys(formElement.settings ?? {}).map(async settingsKey => {
                 const settingsValue =
                     settingsKey !== 'columns'
-                        ? formElement.settings[settingsKey]
+                        ? formElement.settings?.[settingsKey]
                         : await Promise.all(
-                              formElement.settings[settingsKey].map(async columnId => {
+                              formElement.settings?.[settingsKey].map(async columnId => {
                                   const columnAttributeProps = await attributeDomain.getAttributeProperties({
                                       id: columnId,
                                       ctx

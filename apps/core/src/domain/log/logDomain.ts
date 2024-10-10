@@ -14,7 +14,7 @@ export interface ILogDomain {
 }
 
 interface IDeps {
-    'core.infra.log'?: ILogRepo;
+    'core.infra.log': ILogRepo;
 }
 
 export default function ({'core.infra.log': logRepo}: IDeps): ILogDomain {

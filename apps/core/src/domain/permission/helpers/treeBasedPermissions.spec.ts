@@ -10,7 +10,8 @@ import {PermissionsRelations, PermissionTypes, RecordPermissionsActions} from '.
 import {IGetTreeBasedPermissionParams} from '../_types';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
-import treeBasedPermissions from './treeBasedPermissions';
+import treeBasedPermissions, {ITreeBasedPermissionsDeps} from './treeBasedPermissions';
+import {ToAny} from '../../../utils/utils';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),
@@ -19,6 +20,16 @@ const mockCacheService: Mockify<ICacheService> = {
 
 const mockCachesService: Mockify<ICachesService> = {
     getCache: jest.fn().mockReturnValue(mockCacheService)
+};
+
+const depsBase: ToAny<ITreeBasedPermissionsDeps> = {
+    'core.domain.attribute': jest.fn(),
+    'core.domain.permission.helpers.permissionByUserGroups': jest.fn(),
+    'core.domain.permission.helpers.defaultPermission': jest.fn(),
+    'core.domain.permission.helpers.reducePermissionsArray': jest.fn(),
+    'core.domain.tree.helpers.elementAncestors': jest.fn(),
+    'core.infra.permission': jest.fn(),
+    'core.infra.cache.cacheService': jest.fn()
 };
 
 describe('TreeBasedPermissionDomain', () => {
@@ -118,10 +129,10 @@ describe('TreeBasedPermissionDomain', () => {
             ]
         };
 
-        const mockElementAncestorsHelper: Mockify<IElementAncestorsHelper> = {
+        const mockElementAncestorsHelper = {
             getCachedElementAncestors: jest.fn().mockImplementation(({treeId}) => Promise.resolve(ancestors[treeId])),
             clearElementAncestorsCache: jest.fn()
-        };
+        } satisfies Mockify<IElementAncestorsHelper>;
 
         const attributesProps = {
             category: {
@@ -206,11 +217,12 @@ describe('TreeBasedPermissionDomain', () => {
         beforeEach(() => jest.clearAllMocks());
 
         test('1 tree / 1 user group with heritage', async () => {
-            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
+            const mockPermByUserGroupsHelper = {
                 getPermissionByUserGroups: global.__mockPromise(true)
-            };
+            } satisfies Mockify<IPermissionByUserGroupsHelper>;
 
             const treePermDomain = treeBasedPermissions({
+                ...depsBase,
                 'core.domain.permission.helpers.permissionByUserGroups':
                     mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
@@ -232,6 +244,7 @@ describe('TreeBasedPermissionDomain', () => {
             };
 
             const treePermDomain = treeBasedPermissions({
+                ...depsBase,
                 'core.domain.permission.helpers.permissionByUserGroups':
                     mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
@@ -259,6 +272,7 @@ describe('TreeBasedPermissionDomain', () => {
             };
 
             const treePermDomain = treeBasedPermissions({
+                ...depsBase,
                 'core.domain.permission.helpers.permissionByUserGroups':
                     mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperNull,
@@ -283,6 +297,7 @@ describe('TreeBasedPermissionDomain', () => {
             };
 
             const treePermDomain = treeBasedPermissions({
+                ...depsBase,
                 'core.domain.permission.helpers.permissionByUserGroups':
                     mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
@@ -328,6 +343,7 @@ describe('TreeBasedPermissionDomain', () => {
             };
 
             const treePermDomain = treeBasedPermissions({
+                ...depsBase,
                 'core.domain.permission.helpers.permissionByUserGroups':
                     mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,
@@ -350,7 +366,7 @@ describe('TreeBasedPermissionDomain', () => {
         });
 
         test('n permissions trees with AND', async () => {
-            const mockPermByUserGroupsHelper: Mockify<IPermissionByUserGroupsHelper> = {
+            const mockPermByUserGroupsHelper = {
                 getPermissionByUserGroups: jest.fn().mockImplementation(({permissionTreeTarget}) => {
                     if (permissionTreeTarget.tree === 'categories' && permissionTreeTarget.id === 'C') {
                         return Promise.resolve(true);
@@ -360,9 +376,10 @@ describe('TreeBasedPermissionDomain', () => {
                         return Promise.resolve(null);
                     }
                 })
-            };
+            } satisfies Mockify<IPermissionByUserGroupsHelper>;
 
             const treePermDomain = treeBasedPermissions({
+                ...depsBase,
                 'core.domain.permission.helpers.permissionByUserGroups':
                     mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelperFalse,
@@ -405,6 +422,7 @@ describe('TreeBasedPermissionDomain', () => {
             };
 
             const treePermDomain = treeBasedPermissions({
+                ...depsBase,
                 'core.domain.permission.helpers.permissionByUserGroups':
                     mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.domain.permission.helpers.reducePermissionsArray': mockReducePermissionsArrayHelper,

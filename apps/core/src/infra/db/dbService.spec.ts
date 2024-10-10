@@ -2,9 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
-import {IUtils} from 'utils/utils';
+import {IUtils, ToAny} from 'utils/utils';
 import {IConfig} from '_types/config';
-import dbService from './dbService';
+import dbService, {IDbServiceDeps} from './dbService';
+
+const depsBase: ToAny<IDbServiceDeps> = {
+    'core.infra.db': jest.fn(),
+    'core.utils': jest.fn(),
+    config: {}
+};
+
 describe('dbService', () => {
     const ctx = {
         userId: '0',
@@ -22,7 +29,7 @@ describe('dbService', () => {
             const mockDb = new Database();
             mockDb.listCollections = jest.fn().mockReturnValue(Promise.resolve([{name: 'test'}]));
 
-            const dbServ = dbService({'core.infra.db': mockDb, config: mockConfig as IConfig});
+            const dbServ = dbService({...depsBase, 'core.infra.db': mockDb, config: mockConfig as IConfig});
 
             expect(await dbServ.collectionExists('test')).toBe(true);
             expect(await dbServ.collectionExists('dontExists')).toBe(false);

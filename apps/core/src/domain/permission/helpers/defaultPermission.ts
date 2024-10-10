@@ -4,7 +4,7 @@
 import {IConfig} from '_types/config';
 
 interface IDeps {
-    config?: IConfig;
+    config: IConfig;
 }
 
 export interface IDefaultPermissionHelper {

@@ -7,13 +7,19 @@ import {AttributeTypes} from '../../_types/attribute';
 import {Errors} from '../../_types/errors';
 import {mockAttrSimple} from '../../__tests__/mocks/attribute';
 import {mockCtx} from '../../__tests__/mocks/shared';
-import actionListDomain from './actionsListDomain';
+import actionListDomain, {IActionsListDomainDeps} from './actionsListDomain';
 import {mockTranslator} from '../../__tests__/mocks/translator';
 import {i18n} from 'i18next';
+import {ToAny} from 'utils/utils';
+
+const depsBase: ToAny<IActionsListDomainDeps> = {
+    'core.depsManager': jest.fn(),
+    translator: {}
+};
 
 describe('handleJoiError', () => {
     test('handleJoiError', async () => {
-        const domain = actionListDomain();
+        const domain = actionListDomain(depsBase);
         const mockError = {
             details: [
                 {
@@ -44,11 +50,12 @@ describe('runActionsList', () => {
         library: 'test_lib',
         attribute: {id: 'test_attr', type: AttributeTypes.SIMPLE},
         lang: 'en',
-        defaultLang: 'fr'
+        defaultLang: 'fr',
+        userId: 'test_user'
     };
 
     test('Should run a list of actions', async () => {
-        const domain = actionListDomain();
+        const domain = actionListDomain(depsBase);
 
         const availActions = [
             {
@@ -84,7 +91,7 @@ describe('runActionsList', () => {
     });
 
     test('Should throw if an action throws', async () => {
-        const domain = actionListDomain();
+        const domain = actionListDomain(depsBase);
         const availActions = [
             {
                 id: 'validate',
@@ -117,7 +124,7 @@ describe('runActionsList', () => {
     });
 
     test('Should throw an exception with custom message', async () => {
-        const domain = actionListDomain();
+        const domain = actionListDomain(depsBase);
         const availActions = [
             {
                 id: 'validate',
@@ -157,7 +164,7 @@ describe('runActionsList', () => {
             lang: 'fr',
             defaultLang: 'fr'
         };
-        const domain = actionListDomain({translator: mockTranslator as i18n});
+        const domain = actionListDomain({...depsBase, translator: mockTranslator as i18n});
         const availActions = [
             {
                 id: 'validate',

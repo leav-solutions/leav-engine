@@ -263,7 +263,7 @@ describe('dbUtils', () => {
             testDbUtils.cleanup = jest.fn();
             testDbUtils.convertToDoc = jest.fn();
 
-            mockDbServ = {db: null, execute: global.__mockPromise([])};
+            mockDbServ = {execute: global.__mockPromise([])};
             const res = await testDbUtils.findCoreEntity<ITree>({
                 collectionName: TREES_COLLECTION_NAME,
                 ctx

@@ -8,7 +8,10 @@ import {IActionsListFunctionResult} from '_types/actionsList';
 describe('validateEmailFormatAction', () => {
     const action = validateEmailAction().action;
 
-    const ctx = {attribute: {id: 'test_attr', format: AttributeFormats.TEXT, type: AttributeTypes.SIMPLE}};
+    const ctx = {
+        attribute: {id: 'test_attr', format: AttributeFormats.TEXT, type: AttributeTypes.SIMPLE},
+        userId: 'test_user'
+    };
 
     test('validateEmail should throw', async () => {
         const res = action([{payload: 'test'}], null, ctx) as IActionsListFunctionResult;
@@ -16,6 +19,6 @@ describe('validateEmailFormatAction', () => {
     });
 
     test('validateEmail should return email', async () => {
-        expect((await action([{payload: 'email@domain.com'}], null, ctx)).values[0].payload).toBe('email@domain.com');
+        expect((await action([{payload: 'email@domain.com'}], {}, ctx)).values[0].payload).toBe('email@domain.com');
     });
 });

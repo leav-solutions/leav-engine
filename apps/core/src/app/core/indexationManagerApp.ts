@@ -11,7 +11,7 @@ export interface IIndexationManagerApp {
 }
 
 interface IDeps {
-    'core.domain.indexationManager'?: IIndexationManagerDomain;
+    'core.domain.indexationManager': IIndexationManagerDomain;
 }
 
 export default function ({'core.domain.indexationManager': indexationManager}: IDeps): IIndexationManagerApp {
@@ -21,7 +21,7 @@ export default function ({'core.domain.indexationManager': indexationManager}: I
             // if records are undefined we re-index all library's records
             const filters = (records || []).reduce((acc, id) => {
                 acc.push({field: 'id', condition: AttributeCondition.EQUAL, value: id});
-                if (records.length > 1) {
+                if (records && records.length > 1) {
                     acc.push({operator: Operator.OR});
                 }
                 return acc;

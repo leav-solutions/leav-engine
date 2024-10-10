@@ -5,11 +5,11 @@ import {PermissionsActions, PermissionTypes} from '_types/permissions';
 import {PERMISSIONS_CACHE_HEADER} from '../_types';
 
 export default function (
-    groupsId: string[],
-    permissionType: PermissionTypes,
-    applyTo: string,
-    permissionAction: PermissionsActions,
-    key: string
+    groupsId?: string[] | null,
+    permissionType?: PermissionTypes | null,
+    applyTo?: string | null,
+    permissionAction?: PermissionsActions | null,
+    key?: string | null
 ): string {
     let k = `${PERMISSIONS_CACHE_HEADER}`;
 

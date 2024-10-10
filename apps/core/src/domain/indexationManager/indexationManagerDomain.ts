@@ -36,31 +36,31 @@ export interface IIndexationManagerDomain {
     indexDatabase(params: IIndexDatabaseParams, task?: ITaskFuncParams): Promise<string>;
 }
 
-interface IDeps {
-    config?: Config.IConfig;
-    'core.infra.amqpService'?: IAmqpService;
-    'core.domain.record'?: IRecordDomain;
-    'core.domain.library'?: ILibraryDomain;
-    'core.domain.attribute'?: IAttributeDomain;
-    'core.infra.indexation.indexationService'?: IIndexationService;
-    'core.domain.tasksManager'?: ITasksManagerDomain;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.utils.logger'?: winston.Winston;
-    translator?: i18n;
+export interface IIndexationManagerDomainDeps {
+    config: Config.IConfig;
+    'core.infra.amqpService': IAmqpService;
+    'core.domain.record': IRecordDomain;
+    'core.domain.library': ILibraryDomain;
+    'core.domain.attribute': IAttributeDomain;
+    'core.infra.indexation.indexationService': IIndexationService;
+    'core.domain.tasksManager': ITasksManagerDomain;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.utils.logger': winston.Winston;
+    translator: i18n;
 }
 
 export default function ({
-    config = null,
-    'core.infra.amqpService': amqpService = null,
-    'core.domain.record': recordDomain = null,
-    'core.domain.library': libraryDomain = null,
-    'core.domain.attribute': attributeDomain = null,
-    'core.domain.tasksManager': tasksManagerDomain = null,
-    'core.infra.indexation.indexationService': indexationService = null,
-    'core.domain.eventsManager': eventsManager = null,
-    'core.utils.logger': logger = null,
-    translator = null
-}: IDeps): IIndexationManagerDomain {
+    config,
+    'core.infra.amqpService': amqpService,
+    'core.domain.record': recordDomain,
+    'core.domain.library': libraryDomain,
+    'core.domain.attribute': attributeDomain,
+    'core.domain.tasksManager': tasksManagerDomain,
+    'core.infra.indexation.indexationService': indexationService,
+    'core.domain.eventsManager': eventsManager,
+    'core.utils.logger': logger,
+    translator
+}: IIndexationManagerDomainDeps): IIndexationManagerDomain {
     const _indexRecords = async (
         findRecordParams: IFindRecordParams,
         ctx: IQueryInfos,

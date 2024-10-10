@@ -25,7 +25,7 @@ export const mockViewBeforeCreation: IView = {
     }
 };
 
-export const mockView: IView = {
+export const mockView: MandatoryId<IView> = {
     ...mockViewBeforeCreation,
     id: 'test_view',
     created_by: '1',

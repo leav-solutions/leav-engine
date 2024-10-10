@@ -8,11 +8,11 @@ import {Response} from 'express';
 
 export type ValidateRequestTokenFunc = (req: IRequestWithContext, res: Response<unknown>) => Promise<ITokenUserData>;
 
-interface IDeps {
-    'core.app.auth'?: IAuthApp;
+export interface IValidateRequestTokenDeps {
+    'core.app.auth': IAuthApp;
 }
 
-export default function ({'core.app.auth': authApp = null}: IDeps = {}): ValidateRequestTokenFunc {
+export default function ({'core.app.auth': authApp}: IValidateRequestTokenDeps): ValidateRequestTokenFunc {
     return (req, res) =>
         authApp.validateRequestToken(
             {

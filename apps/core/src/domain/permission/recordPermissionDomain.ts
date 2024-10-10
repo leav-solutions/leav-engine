@@ -25,25 +25,25 @@ export interface IRecordPermissionDomain {
     getInheritedRecordPermission(params: IGetInheritedRecordPermissionParams): Promise<boolean>;
 }
 
-interface IDeps {
-    'core.domain.permission.library'?: ILibraryPermissionDomain;
-    'core.domain.permission.helpers.treeBasedPermissions'?: ITreeBasedPermissionHelper;
-    'core.domain.permission.helpers.permissionByUserGroups'?: IPermissionByUserGroupsHelper;
-    'core.domain.permission.helpers.defaultPermission'?: IDefaultPermissionHelper;
-    'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
-    'core.infra.value'?: IValueRepo;
+export interface IRecordPermissionDomainDeps {
+    'core.domain.permission.library': ILibraryPermissionDomain;
+    'core.domain.permission.helpers.treeBasedPermissions': ITreeBasedPermissionHelper;
+    'core.domain.permission.helpers.permissionByUserGroups': IPermissionByUserGroupsHelper;
+    'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
+    'core.domain.attribute': IAttributeDomain;
+    'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
+    'core.infra.value': IValueRepo;
 }
 
-export default function (deps: IDeps = {}): IRecordPermissionDomain {
+export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDomain {
     const {
-        'core.domain.permission.library': libraryPermissionDomain = null,
-        'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper = null,
-        'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupHelper = null,
-        'core.domain.permission.helpers.defaultPermission': defaultPermHelper = null,
-        'core.domain.attribute': attributeDomain = null,
-        'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
-        'core.infra.value': valueRepo = null
+        'core.domain.permission.library': libraryPermissionDomain,
+        'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper,
+        'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupHelper,
+        'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
+        'core.domain.attribute': attributeDomain,
+        'core.domain.helpers.getCoreEntityById': getCoreEntityById,
+        'core.infra.value': valueRepo
     } = deps;
 
     return {

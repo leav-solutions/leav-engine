@@ -6,7 +6,13 @@ import {IDbDocument} from 'infra/db/_types';
 import {IQueryInfos} from '_types/queryInfos';
 import {mockTree} from '../../__tests__/mocks/tree';
 import dbUtils, {IDbUtils} from '../db/dbUtils';
-import treeRepo, {TREES_COLLECTION_NAME} from './treeRepo';
+import treeRepo, {ITreeRepoDeps, TREES_COLLECTION_NAME} from './treeRepo';
+import {ToAny} from 'utils/utils';
+
+const depsBase: ToAny<ITreeRepoDeps> = {
+    'core.infra.db.dbService': jest.fn(),
+    'core.infra.db.dbUtils': jest.fn()
+};
 
 describe('TreeRepo', () => {
     const docTreeData = {
@@ -103,8 +109,8 @@ describe('TreeRepo', () => {
 
     describe('getTrees', () => {
         test('Should return all trees', async () => {
-            const mockDbServ = {db: null, execute: global.__mockPromise([])};
-            const mockDbUtils: Mockify<IDbUtils> = {
+            const mockDbServ = {execute: global.__mockPromise([])};
+            const mockDbUtils = {
                 findCoreEntity: global.__mockPromise([
                     {
                         id: 'categories',
@@ -114,7 +120,7 @@ describe('TreeRepo', () => {
                         }
                     }
                 ])
-            };
+            } satisfies Mockify<IDbUtils>;
 
             const repo = treeRepo({
                 'core.infra.db.dbService': mockDbServ,
@@ -188,7 +194,7 @@ describe('TreeRepo', () => {
                 ])
             };
 
-            const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
+            const repo = treeRepo({...depsBase, 'core.infra.db.dbService': mockDbServ});
 
             const res = await repo.addElement({
                 treeId: 'test_tree',
@@ -234,7 +240,7 @@ describe('TreeRepo', () => {
                 ])
             };
 
-            const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
+            const repo = treeRepo({...depsBase, 'core.infra.db.dbService': mockDbServ});
 
             const res = await repo.addElement({
                 treeId: 'test_tree',
@@ -273,7 +279,7 @@ describe('TreeRepo', () => {
                 ])
             };
 
-            const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
+            const repo = treeRepo({...depsBase, 'core.infra.db.dbService': mockDbServ});
             await repo.moveElement({
                 treeId: 'test_tree',
                 nodeId: '13445',
@@ -307,7 +313,7 @@ describe('TreeRepo', () => {
                 ])
             };
 
-            const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
+            const repo = treeRepo({...depsBase, 'core.infra.db.dbService': mockDbServ});
             const res = await repo.deleteElement({
                 treeId: 'test_tree',
                 nodeId: '13445',
@@ -360,7 +366,7 @@ describe('TreeRepo', () => {
                 ])
             };
 
-            const repo = treeRepo({'core.infra.db.dbService': mockDbServ}) as any;
+            const repo = treeRepo({...depsBase, 'core.infra.db.dbService': mockDbServ}) as any;
             repo.moveElement = global.__mockPromise([]);
 
             const res = await repo.deleteElement({
@@ -400,7 +406,7 @@ describe('TreeRepo', () => {
                 ])
             };
 
-            const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
+            const repo = treeRepo({...depsBase, 'core.infra.db.dbService': mockDbServ});
 
             const isPresent = await repo.isNodePresent({
                 treeId: 'test_tree',
@@ -420,7 +426,7 @@ describe('TreeRepo', () => {
                 execute: global.__mockPromise([])
             };
 
-            const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
+            const repo = treeRepo({...depsBase, 'core.infra.db.dbService': mockDbServ});
 
             const isPresent = await repo.isNodePresent({
                 treeId: 'test_tree',
@@ -446,7 +452,7 @@ describe('TreeRepo', () => {
                 ])
             };
 
-            const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
+            const repo = treeRepo({...depsBase, 'core.infra.db.dbService': mockDbServ});
 
             const isPresent = await repo.isRecordPresent({
                 treeId: 'test_tree',
@@ -466,7 +472,7 @@ describe('TreeRepo', () => {
                 execute: global.__mockPromise([])
             };
 
-            const repo = treeRepo({'core.infra.db.dbService': mockDbServ});
+            const repo = treeRepo({...depsBase, 'core.infra.db.dbService': mockDbServ});
 
             const isPresent = await repo.isRecordPresent({
                 treeId: 'test_tree',
@@ -1053,6 +1059,7 @@ describe('TreeRepo', () => {
             };
 
             const repo = treeRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ
             });
 
@@ -1080,6 +1087,7 @@ describe('TreeRepo', () => {
             };
 
             const repo = treeRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ
             });
 

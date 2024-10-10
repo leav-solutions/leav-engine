@@ -113,39 +113,39 @@ interface IProgress {
     percent: number;
 }
 
-interface IDeps {
-    'core.domain.library'?: ILibraryDomain;
-    'core.domain.record'?: IRecordDomain;
-    'core.domain.helpers.validate'?: IValidateHelper;
-    'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.value'?: IValueDomain;
-    'core.domain.tree'?: ITreeDomain;
-    'core.domain.versionProfile'?: IVersionProfileDomain;
-    'core.domain.tasksManager'?: ITasksManagerDomain;
-    'core.domain.helpers.updateTaskProgress'?: UpdateTaskProgress;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.infra.cache.cacheService'?: ICachesService;
-    config?: Config.IConfig;
-    translator?: i18n;
-    'core.utils'?: IUtils;
+export interface IImportDomainDeps {
+    'core.domain.library': ILibraryDomain;
+    'core.domain.record': IRecordDomain;
+    'core.domain.helpers.validate': IValidateHelper;
+    'core.domain.attribute': IAttributeDomain;
+    'core.domain.value': IValueDomain;
+    'core.domain.tree': ITreeDomain;
+    'core.domain.versionProfile': IVersionProfileDomain;
+    'core.domain.tasksManager': ITasksManagerDomain;
+    'core.domain.helpers.updateTaskProgress': UpdateTaskProgress;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.infra.cache.cacheService': ICachesService;
+    config: Config.IConfig;
+    translator: i18n;
+    'core.utils': IUtils;
 }
 
 export default function ({
-    'core.domain.library': libraryDomain = null,
-    'core.domain.record': recordDomain = null,
-    'core.domain.helpers.validate': validateHelper = null,
-    'core.domain.attribute': attributeDomain = null,
-    'core.domain.value': valueDomain = null,
-    'core.domain.tree': treeDomain = null,
-    'core.domain.versionProfile': versionProfileDomain = null,
-    'core.domain.tasksManager': tasksManagerDomain = null,
-    'core.domain.helpers.updateTaskProgress': updateTaskProgress = null,
-    'core.domain.eventsManager': eventsManagerDomain = null,
-    'core.infra.cache.cacheService': cacheService = null,
-    'core.utils': utils = null,
-    config = null,
-    translator = null
-}: IDeps = {}): IImportDomain {
+    'core.domain.library': libraryDomain,
+    'core.domain.record': recordDomain,
+    'core.domain.helpers.validate': validateHelper,
+    'core.domain.attribute': attributeDomain,
+    'core.domain.value': valueDomain,
+    'core.domain.tree': treeDomain,
+    'core.domain.versionProfile': versionProfileDomain,
+    'core.domain.tasksManager': tasksManagerDomain,
+    'core.domain.helpers.updateTaskProgress': updateTaskProgress,
+    'core.domain.eventsManager': eventsManagerDomain,
+    'core.infra.cache.cacheService': cacheService,
+    'core.utils': utils,
+    config,
+    translator
+}: IImportDomainDeps): IImportDomain {
     const _addValue = async (
         library: string,
         attribute: IAttribute,

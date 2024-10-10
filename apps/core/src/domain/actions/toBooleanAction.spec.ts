@@ -7,7 +7,7 @@ import toBooleanAction from './toBooleanAction';
 describe('toBooleanAction', () => {
     const action = toBooleanAction().action;
     const attrText: IAttribute = {id: 'test_attr', format: AttributeFormats.NUMERIC, type: AttributeTypes.SIMPLE};
-    const ctx = {attribute: attrText};
+    const ctx = {attribute: attrText, userId: 'test_user'};
     test('toBoolean', async () => {
         expect((await action([{payload: true}], {}, ctx)).values[0].payload).toBe(true);
         expect((await action([{payload: false}], {}, ctx)).values[0].payload).toBe(false);

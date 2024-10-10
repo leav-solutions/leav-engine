@@ -14,11 +14,11 @@ import {AttributeCondition, IRecord} from '../../_types/record';
 import {GetCoreEntityByIdFunc} from './getCoreEntityById';
 
 interface IDeps {
-    'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
-    'core.infra.record'?: IRecordRepo;
-    'core.utils'?: IUtils;
-    'core.infra.library'?: ILibraryRepo;
-    'core.infra.cache.cacheService'?: ICachesService;
+    'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
+    'core.infra.record': IRecordRepo;
+    'core.utils': IUtils;
+    'core.infra.library': ILibraryRepo;
+    'core.infra.cache.cacheService': ICachesService;
 }
 
 export interface IValidateHelper {
@@ -30,11 +30,11 @@ export interface IValidateHelper {
 }
 
 export default function ({
-    'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
-    'core.infra.record': recordRepo = null,
-    'core.utils': utils = null,
-    'core.infra.library': libraryRepo = null,
-    'core.infra.cache.cacheService': cacheService = null
+    'core.domain.helpers.getCoreEntityById': getCoreEntityById,
+    'core.infra.record': recordRepo,
+    'core.utils': utils,
+    'core.infra.library': libraryRepo,
+    'core.infra.cache.cacheService': cacheService
 }: IDeps): IValidateHelper {
     return {
         async validateLibraryAttribute(library: string, attribute: string, ctx: IQueryInfos): Promise<void> {

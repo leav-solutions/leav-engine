@@ -67,29 +67,29 @@ export interface IRecordRepo {
     }): Promise<IListWithCursor<IRecord>>;
 }
 
-interface IDeps {
-    'core.infra.db.dbService'?: IDbService;
-    'core.infra.db.dbUtils'?: IDbUtils;
-    'core.infra.attributeTypes'?: IAttributeTypesRepo;
-    'core.infra.attribute'?: IAttributeRepo;
-    'core.infra.attributeTypes.helpers.getConditionPart'?: GetConditionPart;
-    'core.infra.record.helpers.getSearchVariablesQueryPart'?: GetSearchVariablesQueryPart;
-    'core.infra.record.helpers.getSearchVariableName'?: GetSearchVariableName;
-    'core.infra.record.helpers.filterTypes'?: IFilterTypesHelper;
-    'core.infra.indexation.helpers.getSearchQuery'?: GetSearchQuery;
+export interface IRecordRepoDeps {
+    'core.infra.db.dbService': IDbService;
+    'core.infra.db.dbUtils': IDbUtils;
+    'core.infra.attributeTypes': IAttributeTypesRepo;
+    'core.infra.attribute': IAttributeRepo;
+    'core.infra.attributeTypes.helpers.getConditionPart': GetConditionPart;
+    'core.infra.record.helpers.getSearchVariablesQueryPart': GetSearchVariablesQueryPart;
+    'core.infra.record.helpers.getSearchVariableName': GetSearchVariableName;
+    'core.infra.record.helpers.filterTypes': IFilterTypesHelper;
+    'core.infra.indexation.helpers.getSearchQuery': GetSearchQuery;
 }
 
 export default function ({
-    'core.infra.db.dbService': dbService = null,
-    'core.infra.db.dbUtils': dbUtils = null,
-    'core.infra.attributeTypes': attributeTypesRepo = null,
-    'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
-    'core.infra.record.helpers.getSearchVariablesQueryPart': getSearchVariablesQueryPart = null,
-    'core.infra.record.helpers.getSearchVariableName': getSearchVariableName = null,
-    'core.infra.record.helpers.filterTypes': filterTypesHelper = null,
-    'core.infra.indexation.helpers.getSearchQuery': getSearchQuery = null,
-    'core.infra.attribute': attributeRepo = null
-}: IDeps = {}): IRecordRepo {
+    'core.infra.db.dbService': dbService,
+    'core.infra.db.dbUtils': dbUtils,
+    'core.infra.attributeTypes': attributeTypesRepo,
+    'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart,
+    'core.infra.record.helpers.getSearchVariablesQueryPart': getSearchVariablesQueryPart,
+    'core.infra.record.helpers.getSearchVariableName': getSearchVariableName,
+    'core.infra.record.helpers.filterTypes': filterTypesHelper,
+    'core.infra.indexation.helpers.getSearchQuery': getSearchQuery,
+    'core.infra.attribute': attributeRepo
+}: IRecordRepoDeps): IRecordRepo {
     const _generateCursor = (from: number, direction: CursorDirection): string =>
         Buffer.from(`${direction}:${from}`).toString('base64');
 

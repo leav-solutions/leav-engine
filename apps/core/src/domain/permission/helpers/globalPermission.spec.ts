@@ -6,9 +6,10 @@ import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
 import {IQueryInfos} from '_types/queryInfos';
 import {LibraryPermissionsActions, PermissionTypes} from '../../../_types/permissions';
-import globalPermissions from './globalPermission';
+import globalPermissions, {IGlobalPermissionDeps} from './globalPermission';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 import {ICachesService, ICacheService} from '../../../infra/cache/cacheService';
+import {ToAny} from '../../../utils/utils';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),
@@ -17,6 +18,16 @@ const mockCacheService: Mockify<ICacheService> = {
 
 const mockCachesService: Mockify<ICachesService> = {
     getCache: jest.fn().mockReturnValue(mockCacheService)
+};
+
+const depsBase: ToAny<IGlobalPermissionDeps> = {
+    'core.domain.permission.helpers.permissionByUserGroups': jest.fn(),
+    'core.domain.permission.helpers.defaultPermission': jest.fn(),
+    'core.infra.permission': jest.fn(),
+    'core.infra.attribute': jest.fn(),
+    'core.infra.tree': jest.fn(),
+    'core.infra.value': jest.fn(),
+    'core.infra.cache.cacheService': jest.fn()
 };
 
 describe('globalPermissionsHelper', () => {
@@ -87,6 +98,7 @@ describe('globalPermissionsHelper', () => {
             };
 
             const permHelper = globalPermissions({
+                ...depsBase,
                 'core.domain.permission.helpers.permissionByUserGroups':
                     mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
@@ -115,6 +127,7 @@ describe('globalPermissionsHelper', () => {
             };
 
             const permHelper = globalPermissions({
+                ...depsBase,
                 'core.domain.permission.helpers.permissionByUserGroups':
                     mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
@@ -169,6 +182,7 @@ describe('globalPermissionsHelper', () => {
             };
 
             const permHelper = globalPermissions({
+                ...depsBase,
                 'core.domain.permission.helpers.permissionByUserGroups':
                     mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.infra.tree': mockTreeRepo as ITreeRepo
@@ -194,6 +208,7 @@ describe('globalPermissionsHelper', () => {
             };
 
             const permHelper = globalPermissions({
+                ...depsBase,
                 'core.domain.permission.helpers.permissionByUserGroups':
                     mockPermByUserGroupsHelper as IPermissionByUserGroupsHelper,
                 'core.infra.tree': mockTreeRepo as ITreeRepo

@@ -67,7 +67,7 @@ export async function initDI(additionalModulesToRegister?: {
     // Add a few extra dependencies
     const coreConf = await getConfig();
 
-    let pluginsFolder = path.resolve(__dirname + '/' + coreConf.pluginsPath);
+    let pluginsFolder: string | null = path.resolve(__dirname + '/' + coreConf.pluginsPath);
 
     if (!existsSync(pluginsFolder)) {
         pluginsFolder = null;

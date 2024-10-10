@@ -24,11 +24,11 @@ export interface IFilesManagerApp {
 }
 
 interface IDeps {
-    'core.app.helpers.initQueryContext'?: InitQueryContextFunc;
-    'core.app.helpers.validateRequestToken'?: ValidateRequestTokenFunc;
-    'core.domain.filesManager'?: IFilesManagerDomain;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    config?: IConfig;
+    'core.app.helpers.initQueryContext': InitQueryContextFunc;
+    'core.app.helpers.validateRequestToken': ValidateRequestTokenFunc;
+    'core.domain.filesManager': IFilesManagerDomain;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    config: IConfig;
 }
 
 interface IUploadParams {
@@ -45,10 +45,10 @@ interface ICreateDirectoryParams {
 
 export default function ({
     'core.app.helpers.initQueryContext': initQueryContext,
-    'core.app.helpers.validateRequestToken': validateRequestToken = null,
-    'core.domain.filesManager': filesManagerDomain = null,
-    'core.domain.eventsManager': eventsManager = null,
-    config = null
+    'core.app.helpers.validateRequestToken': validateRequestToken,
+    'core.domain.filesManager': filesManagerDomain,
+    'core.domain.eventsManager': eventsManager,
+    config
 }: IDeps): IFilesManagerApp {
     return {
         init: async () => filesManagerDomain.init(),
@@ -124,7 +124,7 @@ export default function ({
                             ctx: IQueryInfos
                         ): Promise<boolean> {
                             return filesManagerDomain.doesFileExistAsChild(
-                                {treeId, filename, parentNodeId: parentNode ?? null},
+                                {treeId, filename, parentNodeId: parentNode},
                                 ctx
                             );
                         }

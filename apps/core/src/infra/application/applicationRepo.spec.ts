@@ -39,10 +39,10 @@ describe('applicationRepo', () => {
 
     describe('getApplications', () => {
         test('Get all applications', async () => {
-            const mockDbServ = {db: null, execute: global.__mockPromise([])};
-            const mockDbUtils: Mockify<IDbUtils> = {
+            const mockDbServ = {execute: global.__mockPromise([])};
+            const mockDbUtils = {
                 findCoreEntity: global.__mockPromise([applicationData])
-            };
+            } satisfies Mockify<IDbUtils>;
 
             const repo = applicationRepo({
                 'core.infra.db.dbService': mockDbServ,

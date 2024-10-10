@@ -6,7 +6,10 @@ import toUppercaseAction from './toUppercaseAction';
 
 describe('toUppercaseAction', () => {
     const action = toUppercaseAction().action;
-    const ctx = {attribute: {id: 'test_attr', format: AttributeFormats.TEXT, type: AttributeTypes.SIMPLE}};
+    const ctx = {
+        attribute: {id: 'test_attr', format: AttributeFormats.TEXT, type: AttributeTypes.SIMPLE},
+        userId: 'test_user'
+    };
 
     test('toUppercase', async () => {
         expect((await action([{payload: 'azerty'}], {}, ctx)).values[0].payload).toBe('AZERTY');

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ITree, TreeBehavior} from '../../_types/tree';
 
-export const mockTree: ITree = {
+export const mockTree: MandatoryId<ITree> = {
     id: 'my_tree',
     label: {
         fr: 'MonArbre',

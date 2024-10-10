@@ -5,14 +5,14 @@ import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {IGetPermissionsByActionsParams} from '../_types';
 
 interface IDeps {
-    'core.infra.permission'?: IPermissionRepo;
+    'core.infra.permission': IPermissionRepo;
 }
 
 export interface IPermissionsByActionsHelper {
     getPermissionsByActions: (params: IGetPermissionsByActionsParams) => Promise<{[name: string]: boolean | null}>;
 }
 
-export default function ({'core.infra.permission': permissionRepo = null}: IDeps): IPermissionsByActionsHelper {
+export default function ({'core.infra.permission': permissionRepo}: IDeps): IPermissionsByActionsHelper {
     return {
         async getPermissionsByActions({
             type,

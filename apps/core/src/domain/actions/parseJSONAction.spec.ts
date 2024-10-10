@@ -7,7 +7,7 @@ import parseJSONAction from './parseJSONAction';
 describe('parseJSONAction', () => {
     const action = parseJSONAction().action;
     const attrText: IAttribute = {id: 'test_attr', format: AttributeFormats.NUMERIC, type: AttributeTypes.SIMPLE};
-    const ctx = {attribute: attrText};
+    const ctx = {attribute: attrText, userId: 'test_user'};
     test('parseJSON', async () => {
         expect(
             (await action([{payload: '{"test":"aaa","toto":{"tata":true}}'}], {}, ctx)).values[0].payload

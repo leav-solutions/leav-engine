@@ -7,20 +7,20 @@ import {IActionsListContext} from '_types/actionsList';
 import calculationsVariableFunctions from '.';
 import {TypeGuards} from '../../../utils';
 
-const mockRecordDomain: Mockify<IRecordDomain> = {
+const mockRecordDomain = {
     getRecordFieldValue: jest.fn()
-};
+} satisfies Mockify<IRecordDomain>;
 
-const mockAttributeDomain: Mockify<IAttributeDomain> = {
+const mockAttributeDomain = {
     getAttributeProperties: jest.fn()
-};
+} satisfies Mockify<IAttributeDomain>;
 
 describe('calculationsVariableFunctions', () => {
     const calculationFunctions = calculationsVariableFunctions({
-        'core.domain.record': mockRecordDomain as IRecordDomain,
-        'core.domain.attribute': mockAttributeDomain as IAttributeDomain
+        'core.domain.record': mockRecordDomain as any,
+        'core.domain.attribute': mockAttributeDomain as any
     });
-    const ctx: IActionsListContext = {};
+    const ctx: IActionsListContext = {userId: 'test'};
 
     beforeEach(() => {
         mockRecordDomain.getRecordFieldValue.mockResolvedValue([{payload: 'test'}]);

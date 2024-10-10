@@ -15,8 +15,8 @@ describe('AttributeRepo', () => {
     };
     describe('getAttributes', () => {
         test('Get all attributes', async function () {
-            const mockDbServ = {db: null, execute: global.__mockPromise([])};
-            const mockDbUtils: Mockify<IDbUtils> = {
+            const mockDbServ = {execute: global.__mockPromise([])};
+            const mockDbUtils = {
                 findCoreEntity: global.__mockPromise([
                     {
                         id: 'label',
@@ -26,7 +26,7 @@ describe('AttributeRepo', () => {
                         }
                     }
                 ])
-            };
+            } satisfies Mockify<IDbUtils>;
 
             const repo = attributeRepo({
                 'core.infra.db.dbService': mockDbServ,

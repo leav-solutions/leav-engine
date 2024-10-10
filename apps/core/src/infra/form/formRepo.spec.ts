@@ -18,10 +18,10 @@ describe('FormRepo', () => {
     };
     describe('Get forms', () => {
         test('Retrieve forms list with clean id', async () => {
-            const mockDbServ = {db: null, execute: global.__mockPromise([])};
-            const mockDbUtils: Mockify<IDbUtils> = {
+            const mockDbServ = {execute: global.__mockPromise([])};
+            const mockDbUtils = {
                 findCoreEntity: global.__mockPromise({list: [{...mockForm, id: 'my_lib__test_form'}]})
-            };
+            } satisfies Mockify<IDbUtils>;
 
             const repo = formRepo({
                 'core.infra.db.dbService': mockDbServ,
@@ -35,10 +35,10 @@ describe('FormRepo', () => {
         });
 
         test('Convert ID filter', async () => {
-            const mockDbServ = {db: null, execute: global.__mockPromise([])};
-            const mockDbUtils: Mockify<IDbUtils> = {
+            const mockDbServ = {execute: global.__mockPromise([])};
+            const mockDbUtils = {
                 findCoreEntity: global.__mockPromise({list: [{...mockForm, id: 'my_lib__test_form'}]})
-            };
+            } satisfies Mockify<IDbUtils>;
 
             const repo = formRepo({
                 'core.infra.db.dbService': mockDbServ,

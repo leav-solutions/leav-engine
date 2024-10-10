@@ -35,23 +35,23 @@ export interface IRecordAttributePermissionDomain {
     ): Promise<boolean>;
 }
 
-interface IDeps {
-    'core.domain.permission.attribute'?: IAttributePermissionDomain;
-    'core.domain.permission.helpers.treeBasedPermissions'?: ITreeBasedPermissionHelper;
-    'core.domain.permission.helpers.permissionByUserGroups'?: IPermissionByUserGroupsHelper;
-    'core.domain.permission.helpers.defaultPermission'?: IDefaultPermissionHelper;
-    'core.domain.attribute'?: IAttributeDomain;
-    'core.infra.value'?: IValueRepo;
+export interface IRecordAttributePermissionDomainDeps {
+    'core.domain.permission.attribute': IAttributePermissionDomain;
+    'core.domain.permission.helpers.treeBasedPermissions': ITreeBasedPermissionHelper;
+    'core.domain.permission.helpers.permissionByUserGroups': IPermissionByUserGroupsHelper;
+    'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
+    'core.domain.attribute': IAttributeDomain;
+    'core.infra.value': IValueRepo;
 }
 
-export default function (deps: IDeps = {}): IRecordAttributePermissionDomain {
+export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAttributePermissionDomain {
     const {
-        'core.domain.permission.attribute': attrPermissionDomain = null,
-        'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper = null,
-        'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper = null,
-        'core.domain.permission.helpers.defaultPermission': defaultPermHelper = null,
-        'core.domain.attribute': attributeDomain = null,
-        'core.infra.value': valueRepo = null
+        'core.domain.permission.attribute': attrPermissionDomain,
+        'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper,
+        'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper,
+        'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
+        'core.domain.attribute': attributeDomain,
+        'core.infra.value': valueRepo
     } = deps;
     return {
         async getRecordAttributePermission(
