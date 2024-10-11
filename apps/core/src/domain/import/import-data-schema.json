@@ -68,7 +68,7 @@
           "type": "object",
           "description": "Metadata values on linked attributes",
           "additionalProperties": {
-            "type": "string"
+            "type": ["string", "number"]
           }
         },
         "version":{
