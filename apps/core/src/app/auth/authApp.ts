@@ -31,7 +31,7 @@ import {IncomingHttpHeaders} from 'http';
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
     validateRequestToken(
-        params: {apiKey?: string; headers?: IncomingHttpHeaders; cookies?: {}},
+        params: {apiKey?: string; headers: IncomingHttpHeaders; cookies?: {}},
         res: Response<unknown>
     ): Promise<ITokenUserData>;
     registerRoute(app: Express): void;
@@ -118,15 +118,16 @@ export default function ({
                     : config.auth.refreshTokenExpiration
             )
         );
+        if (!host) {
+            throw new AuthenticationError('Missing host, cannot scope cookie domain.');
+        }
         const cookieOptions: CookieOptions = {
             httpOnly: true,
             sameSite: config.auth.cookie.sameSite,
             secure: config.auth.cookie.secure,
-            expires: new Date(Date.now() + cookieExpires)
+            expires: new Date(Date.now() + cookieExpires),
+            domain: host
         };
-        if (host) {
-            cookieOptions.domain = host;
-        }
 
         return [cookieName, value, cookieOptions];
     };
@@ -584,7 +585,7 @@ export default function ({
                     await cacheService.getCache(ECacheType.RAM).getData([`${SESSION_CACHE_HEADER}:${refreshToken}`])
                 )[0];
 
-                if (!userSessionId || !headers || payload.agent !== headers['user-agent']) {
+                if (!userSessionId || payload.agent !== headers['user-agent']) {
                     throw new AuthenticationError('Invalid session');
                 }
 

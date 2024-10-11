@@ -176,7 +176,7 @@ export default function ({
     };
 
     const _executeCallbacks = async (task: ITask, ctx: IQueryInfos): Promise<void> => {
-        let callbacks = task.callbacks?.map(a => ({...a})) ?? [];
+        let callbacks = task.callbacks.map(a => ({...a}));
 
         for (const [i, callback] of callbacks.entries()) {
             callbacks[i].status = TaskCallbackStatus.RUNNING;

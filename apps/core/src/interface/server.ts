@@ -198,7 +198,8 @@ export default function ({
                                                   headers.Cookie
                                               )
                                           }
-                                        : null
+                                        : null,
+                                    headers
                                 },
                                 null
                             );

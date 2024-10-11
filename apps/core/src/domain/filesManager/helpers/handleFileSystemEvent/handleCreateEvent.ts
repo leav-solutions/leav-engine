@@ -82,7 +82,7 @@ export const handleCreateEvent = async (
     }
 
     // Find the parent folder
-    const parentRecords = (await getParentRecord(filePath, directoriesLibraryId, deps, ctx)) as IRecord;
+    const parentRecords = await getParentRecord(filePath, directoriesLibraryId, deps, ctx);
 
     // Link the child to his parent in the tree
     await createFilesTreeElement(record!, parentRecords, filesLibraryId, deps, ctx);

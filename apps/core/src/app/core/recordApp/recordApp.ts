@@ -264,10 +264,6 @@ export default function ({
                                       }, {})
                                     : null;
 
-                            if (formattedVersion) {
-                                ctx.version = formattedVersion;
-                            }
-
                             const params: IFindRecordParams = {
                                 library,
                                 filters,
@@ -282,6 +278,7 @@ export default function ({
 
                             if (formattedVersion) {
                                 params.options = {version: formattedVersion};
+                                ctx.version = formattedVersion;
                             }
 
                             return recordDomain.find({

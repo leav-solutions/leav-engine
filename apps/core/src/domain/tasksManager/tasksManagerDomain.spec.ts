@@ -44,7 +44,7 @@ describe('Tasks Manager', () => {
         jest.clearAllMocks();
     });
 
-    const conf: Mockify<IConfig> = {
+    const conf = {
         tasksManager: {
             checkingInterval: 3000,
             workerPrefetch: 1,
@@ -70,7 +70,7 @@ describe('Tasks Manager', () => {
             },
             type: 'direct'
         }
-    };
+    } satisfies Mockify<IConfig>;
 
     const mockEventsManager: Mockify<IEventsManagerDomain> = {
         sendDatabaseEvent: global.__mockPromise(),
@@ -173,16 +173,16 @@ describe('Tasks Manager', () => {
     });
 
     test('Init Master / Task to execute', async () => {
-        jest.setTimeout((conf?.tasksManager?.checkingInterval ?? 0) + 500);
+        jest.setTimeout(conf.tasksManager.checkingInterval + 500);
 
-        const mockAmqpService: Mockify<IAmqpService> = {
+        const mockAmqpService = {
             consume: jest.fn(),
             consumer: {
                 connection: mockAmqpConnection as amqp.Connection,
                 channel: mockAmqpChannel as amqp.ConfirmChannel
             },
             publish: jest.fn()
-        };
+        } satisfies Mockify<IAmqpService>;
 
         const mockTaskRepo: Mockify<ITaskRepo> = {
             getTasks: global.__mockPromise({totalCount: 1, list: [mockTask]}),
@@ -199,18 +199,18 @@ describe('Tasks Manager', () => {
         const tm = tasksManager({
             ...depsBase,
             config: conf as IConfig,
-            'core.infra.amqpService': mockAmqpService as IAmqpService,
-            'core.infra.task': mockTaskRepo as ITaskRepo,
-            'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
-            'core.utils': mockUtils as IUtils
-        });
+            'core.infra.amqpService': mockAmqpService,
+            'core.infra.task': mockTaskRepo,
+            'core.domain.eventsManager': mockEventsManager,
+            'core.utils': mockUtils
+        } as ToAny<ITasksManagerDomainDeps>);
 
         const timerId = await tm.initMaster();
 
-        await new Promise(r => setTimeout(r, (conf.tasksManager?.checkingInterval ?? 0) + 1));
+        await new Promise(r => setTimeout(r, conf.tasksManager.checkingInterval + 1));
 
-        expect(mockAmqpService.consumer?.channel.assertQueue).toHaveBeenCalledTimes(1);
-        expect(mockAmqpService.consumer?.channel.bindQueue).toHaveBeenCalledTimes(1);
+        expect(mockAmqpService.consumer.channel.assertQueue).toHaveBeenCalledTimes(1);
+        expect(mockAmqpService.consumer.channel.bindQueue).toHaveBeenCalledTimes(1);
 
         expect(mockTaskRepo.updateTask).toBeCalledWith(
             {id: mockTask.id, status: TaskStatus.PENDING},
@@ -227,16 +227,16 @@ describe('Tasks Manager', () => {
     });
 
     test('Init Master / Task to cancel', async () => {
-        jest.setTimeout((conf.tasksManager?.checkingInterval ?? 0) + 500);
+        jest.setTimeout(conf.tasksManager.checkingInterval + 500);
 
-        const mockAmqpService: Mockify<IAmqpService> = {
+        const mockAmqpService = {
             consume: jest.fn(),
             consumer: {
                 connection: mockAmqpConnection as amqp.Connection,
                 channel: mockAmqpChannel as amqp.ConfirmChannel
             },
             publish: jest.fn()
-        };
+        } satisfies Mockify<IAmqpService>;
 
         const mockTaskRepo: Mockify<ITaskRepo> = {
             getTasksToExecute: global.__mockPromise({totalCount: 0, list: []}),
@@ -250,19 +250,19 @@ describe('Tasks Manager', () => {
 
         const tm = tasksManager({
             ...depsBase,
-            config: conf as IConfig,
-            'core.infra.amqpService': mockAmqpService as IAmqpService,
-            'core.infra.task': mockTaskRepo as ITaskRepo,
-            'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
-            'core.utils': mockUtils as IUtils
-        });
+            config: conf,
+            'core.infra.amqpService': mockAmqpService,
+            'core.infra.task': mockTaskRepo,
+            'core.domain.eventsManager': mockEventsManager,
+            'core.utils': mockUtils
+        } as ToAny<ITasksManagerDomainDeps>);
 
         const timerId = await tm.initMaster();
 
-        await new Promise(r => setTimeout(r, (conf?.tasksManager?.checkingInterval ?? 0) + 1));
+        await new Promise(r => setTimeout(r, conf.tasksManager.checkingInterval + 1));
 
-        expect(mockAmqpService.consumer?.channel.assertQueue).toHaveBeenCalledTimes(1);
-        expect(mockAmqpService.consumer?.channel.bindQueue).toHaveBeenCalledTimes(1);
+        expect(mockAmqpService.consumer.channel.assertQueue).toHaveBeenCalledTimes(1);
+        expect(mockAmqpService.consumer.channel.bindQueue).toHaveBeenCalledTimes(1);
 
         expect(mockAmqpService.publish).toBeCalled();
 
@@ -270,16 +270,16 @@ describe('Tasks Manager', () => {
     });
 
     test('Init Master / Pending callback', async () => {
-        jest.setTimeout((conf.tasksManager?.checkingInterval ?? 0) + 500);
+        jest.setTimeout(conf.tasksManager.checkingInterval + 500);
 
-        const mockAmqpService: Mockify<IAmqpService> = {
+        const mockAmqpService = {
             consume: jest.fn(),
             consumer: {
                 connection: mockAmqpConnection as amqp.Connection,
                 channel: mockAmqpChannel as amqp.ConfirmChannel
             },
             publish: jest.fn()
-        };
+        } satisfies Mockify<IAmqpService>;
 
         const mockTaskRepo: Mockify<ITaskRepo> = {
             getTasks: global.__mockPromise({totalCount: 1, list: [mockTask]}),
@@ -298,19 +298,19 @@ describe('Tasks Manager', () => {
 
         const tm = tasksManager({
             ...depsBase,
-            config: conf as IConfig,
-            'core.infra.amqpService': mockAmqpService as IAmqpService,
-            'core.infra.task': mockTaskRepo as ITaskRepo,
-            'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
-            'core.utils': mockUtils as IUtils
-        });
+            config: conf,
+            'core.infra.amqpService': mockAmqpService,
+            'core.infra.task': mockTaskRepo,
+            'core.domain.eventsManager': mockEventsManager,
+            'core.utils': mockUtils
+        } as ToAny<ITasksManagerDomainDeps>);
 
         const timerId = await tm.initMaster();
 
-        await new Promise(r => setTimeout(r, (conf.tasksManager?.checkingInterval ?? 0) + 1));
+        await new Promise(r => setTimeout(r, conf.tasksManager.checkingInterval + 1));
 
-        expect(mockAmqpService.consumer?.channel.assertQueue).toHaveBeenCalledTimes(1);
-        expect(mockAmqpService.consumer?.channel.bindQueue).toHaveBeenCalledTimes(1);
+        expect(mockAmqpService.consumer.channel.assertQueue).toHaveBeenCalledTimes(1);
+        expect(mockAmqpService.consumer.channel.bindQueue).toHaveBeenCalledTimes(1);
 
         expect(mockTaskRepo.updateTask).toBeCalledWith(
             {id: mockTask.id, callbacks: [{...mockTask.callbacks?.[0], status: TaskCallbackStatus.RUNNING}]},
@@ -324,35 +324,35 @@ describe('Tasks Manager', () => {
     });
 
     test('Init Worker', async () => {
-        const mockAmqpService: Mockify<IAmqpService> = {
+        const mockAmqpService = {
             consume: jest.fn(),
             consumer: {
                 connection: mockAmqpConnection as amqp.Connection,
                 channel: mockAmqpChannel as amqp.ConfirmChannel
             },
             publish: jest.fn()
-        };
+        } satisfies Mockify<IAmqpService>;
 
         const tm = tasksManager({
             ...depsBase,
             config: conf as IConfig,
-            'core.infra.amqpService': mockAmqpService as IAmqpService
-        });
+            'core.infra.amqpService': mockAmqpService
+        } as ToAny<ITasksManagerDomainDeps>);
 
         await tm.initWorker();
 
         expect(mockAmqpService.consume).toHaveBeenCalledTimes(2);
-        expect(mockAmqpService.consumer?.channel.assertQueue).toHaveBeenCalledTimes(2);
-        expect(mockAmqpService.consumer?.channel.assertQueue).toHaveBeenNthCalledWith(
+        expect(mockAmqpService.consumer.channel.assertQueue).toHaveBeenCalledTimes(2);
+        expect(mockAmqpService.consumer.channel.assertQueue).toHaveBeenNthCalledWith(
             1,
-            conf.tasksManager?.queues.execOrders
+            conf.tasksManager.queues.execOrders
         );
-        expect(mockAmqpService.consumer?.channel.assertQueue).toHaveBeenNthCalledWith(
+        expect(mockAmqpService.consumer.channel.assertQueue).toHaveBeenNthCalledWith(
             2,
-            expect.stringMatching(conf.tasksManager?.queues.cancelOrders ?? ''),
+            expect.stringMatching(conf.tasksManager.queues.cancelOrders),
             {autoDelete: true, durable: false, exclusive: true}
         );
-        expect(mockAmqpService.consumer?.channel.bindQueue).toHaveBeenCalledTimes(1);
+        expect(mockAmqpService.consumer.channel.bindQueue).toHaveBeenCalledTimes(1);
     });
 
     test('Update progress', async () => {

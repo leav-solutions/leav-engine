@@ -100,7 +100,7 @@ export default function (): IActionsListFunction {
                 }
 
                 // Specific Validation for date range
-                if (ctx.attribute?.format === AttributeFormats.DATE_RANGE) {
+                if (ctx.attribute!.format === AttributeFormats.DATE_RANGE) {
                     const rangeValue = elementValue.payload as IDateRangeValue;
                     if (Number(rangeValue.from) > Number(rangeValue.to)) {
                         errors.push({

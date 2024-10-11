@@ -89,7 +89,7 @@ export const handleMoveEvent = async (
             const parentRecord = await getParentRecord(filePathDest, directoriesLibraryId, deps, ctx);
             // Move element in the tree
             const parentNode =
-                parentRecord?.id && parentRecord.library
+                parentRecord && parentRecord.id && parentRecord.library
                     ? (
                           await deps.treeDomain.getNodesByRecord({
                               treeId,

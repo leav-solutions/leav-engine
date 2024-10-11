@@ -333,14 +333,13 @@ describe('applicationDomain', () => {
         test('Save consulted app to history', async () => {
             const mockUserDomain = {
                 getUserData: global.__mockPromise({data: {[CONSULTED_APPS_KEY]: []}}),
-                saveUserData: jest.fn(),
-                sendResetPasswordEmail: jest.fn()
+                saveUserData: jest.fn()
             } satisfies Mockify<IUserDomain>;
 
             const appDomain = applicationDomain({
                 ...depsBase,
-                'core.domain.user': mockUserDomain as IUserDomain
-            });
+                'core.domain.user': mockUserDomain
+            } as ToAny<IApplicationDomainDeps>);
 
             await appDomain.updateConsultationHistory({
                 applicationId: mockApplication.id,
@@ -364,14 +363,13 @@ describe('applicationDomain', () => {
                         [CONSULTED_APPS_KEY]: ['some_app', 'another_app', mockApplication.id, 'last_app']
                     }
                 }),
-                saveUserData: jest.fn(),
-                sendResetPasswordEmail: jest.fn()
+                saveUserData: jest.fn()
             } satisfies Mockify<IUserDomain>;
 
             const appDomain = applicationDomain({
                 ...depsBase,
-                'core.domain.user': mockUserDomain as IUserDomain
-            });
+                'core.domain.user': mockUserDomain
+            } as ToAny<IApplicationDomainDeps>);
 
             await appDomain.updateConsultationHistory({
                 applicationId: mockApplication.id,
@@ -395,14 +393,13 @@ describe('applicationDomain', () => {
                         [CONSULTED_APPS_KEY]: new Array(MAX_CONSULTATION_HISTORY_SIZE).fill('').map((e, i) => i)
                     }
                 }),
-                saveUserData: jest.fn(),
-                sendResetPasswordEmail: jest.fn()
+                saveUserData: jest.fn()
             } satisfies Mockify<IUserDomain>;
 
             const appDomain = applicationDomain({
                 ...depsBase,
-                'core.domain.user': mockUserDomain as IUserDomain
-            });
+                'core.domain.user': mockUserDomain
+            } as ToAny<IApplicationDomainDeps>);
 
             await appDomain.updateConsultationHistory({
                 applicationId: mockApplication.id,

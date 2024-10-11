@@ -413,7 +413,7 @@ describe('AttributeStandardRepo', () => {
 
             const attrRepo = attributeAdvancedRepo({...depsBase, 'core.infra.db.dbService': mockDbServ});
 
-            const value = await attrRepo?.getValueById?.({
+            const value = await attrRepo.getValueById!({
                 library: 'test_lib',
                 recordId: '987654',
                 attribute: mockAttribute,

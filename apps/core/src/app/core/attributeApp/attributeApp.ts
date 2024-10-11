@@ -93,20 +93,27 @@ export default function (deps: IDeps): ICoreAttributeApp {
 
                 const hasRecordInformations = record?.id && record?.library;
 
-                const params: IIsAllowedParams = {
-                    type: hasRecordInformations ? PermissionTypes.RECORD_ATTRIBUTE : PermissionTypes.ATTRIBUTE,
-                    applyTo: hasRecordInformations ? record.library : attributeData.id,
-                    action: action as AttributePermissionsActions,
-                    userId: ctx.userId,
-                    ctx
-                };
-                if (hasRecordInformations) {
-                    params.target = {
-                        recordId: record.id,
-                        attributeId: attributeData.id
-                    };
-                }
-                const isAllowed = await permissionDomain.isAllowed(params);
+                const isAllowed = await permissionDomain.isAllowed(
+                    hasRecordInformations
+                        ? {
+                              type: PermissionTypes.RECORD_ATTRIBUTE,
+                              applyTo: record.library,
+                              action: action as AttributePermissionsActions,
+                              target: {
+                                  recordId: record.id,
+                                  attributeId: attributeData.id
+                              },
+                              userId: ctx.userId,
+                              ctx
+                          }
+                        : {
+                              type: PermissionTypes.ATTRIBUTE,
+                              applyTo: attributeData.id,
+                              action: action as AttributePermissionsActions,
+                              userId: ctx.userId,
+                              ctx
+                          }
+                );
 
                 return {...allPerms, [action]: isAllowed};
             }, Promise.resolve({}));

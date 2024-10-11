@@ -118,13 +118,13 @@ describe('FilesManager', () => {
         getLibraryProperties: global.__mockPromise(mockLibraryFiles)
     };
 
-    const mockAmqpService: Mockify<IAmqpService> = {
+    const mockAmqpService = {
         consume: jest.fn(),
         consumer: {
             connection: mockAmqpConnection as amqp.Connection,
             channel: mockAmqpChannel as amqp.ConfirmChannel
         }
-    };
+    } satisfies Mockify<IAmqpService>;
 
     const mockTreeDomain: Mockify<ITreeDomain> = {
         getNodesByRecord: jest.fn()
@@ -137,17 +137,17 @@ describe('FilesManager', () => {
     test('Init', async () => {
         const files = filesManager({
             ...depsBase,
-            config: mockConfig as Config.IConfig,
-            'core.utils.logger': logger as winston.Winston,
-            'core.infra.amqpService': mockAmqpService as IAmqpService,
-            'core.domain.tree': mockTreeDomain as ITreeDomain
-        });
+            config: mockConfig,
+            'core.utils.logger': logger,
+            'core.infra.amqpService': mockAmqpService,
+            'core.domain.tree': mockTreeDomain
+        } as ToAny<IFilesManagerDomainDeps>);
 
         await files.init();
 
         expect(mockAmqpService.consume).toBeCalled();
-        expect(mockAmqpService.consumer?.channel.assertQueue).toBeCalled();
-        expect(mockAmqpService.consumer?.channel.bindQueue).toBeCalled();
+        expect(mockAmqpService.consumer.channel.assertQueue).toBeCalled();
+        expect(mockAmqpService.consumer.channel.bindQueue).toBeCalled();
     });
 
     describe('forcePreviewsGeneration', () => {
@@ -183,9 +183,9 @@ describe('FilesManager', () => {
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
-                'core.infra.amqpService': mockAmqpService as IAmqpService,
+                'core.infra.amqpService': mockAmqpService,
                 'core.infra.record': mockRecordRepo as IRecordRepo
-            });
+            } as ToAny<IFilesManagerDomainDeps>);
 
             await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', recordIds: ['id']});
 
@@ -226,9 +226,9 @@ describe('FilesManager', () => {
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
-                'core.infra.amqpService': mockAmqpService as IAmqpService,
+                'core.infra.amqpService': mockAmqpService,
                 'core.infra.record': mockRecordRepo as IRecordRepo
-            });
+            } as ToAny<IFilesManagerDomainDeps>);
 
             await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', recordIds: ['id1', 'id2', 'id3']});
 
@@ -306,9 +306,9 @@ describe('FilesManager', () => {
                 'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
-                'core.infra.amqpService': mockAmqpService as IAmqpService,
+                'core.infra.amqpService': mockAmqpService,
                 'core.infra.record': mockRecordRepo as IRecordRepo
-            });
+            } as ToAny<IFilesManagerDomainDeps>);
 
             await files.forcePreviewsGeneration({ctx, libraryId: 'directoriesLibrary', recordIds: ['id']});
 
@@ -354,9 +354,9 @@ describe('FilesManager', () => {
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
-                'core.infra.amqpService': mockAmqpService as IAmqpService,
+                'core.infra.amqpService': mockAmqpService,
                 'core.infra.record': mockRecordRepo as IRecordRepo
-            });
+            } as ToAny<IFilesManagerDomainDeps>);
 
             await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId'});
 
@@ -417,9 +417,9 @@ describe('FilesManager', () => {
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
-                'core.infra.amqpService': mockAmqpService as IAmqpService,
+                'core.infra.amqpService': mockAmqpService,
                 'core.infra.record': mockRecordRepo as IRecordRepo
-            });
+            } as ToAny<IFilesManagerDomainDeps>);
 
             await files.forcePreviewsGeneration({ctx, libraryId: 'libraryId', failedOnly: true});
 
@@ -461,9 +461,9 @@ describe('FilesManager', () => {
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
-                'core.infra.amqpService': mockAmqpService as IAmqpService,
+                'core.infra.amqpService': mockAmqpService,
                 'core.infra.record': mockRecordRepo as IRecordRepo
-            });
+            } as ToAny<IFilesManagerDomainDeps>);
 
             await files.forcePreviewsGeneration({
                 ctx,

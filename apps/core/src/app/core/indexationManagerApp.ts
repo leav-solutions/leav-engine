@@ -19,9 +19,10 @@ export default function ({'core.domain.indexationManager': indexationManager}: I
         init: () => indexationManager.init(),
         indexDatabase: async (ctx: IQueryInfos, libraryId: string, records?: string[]) => {
             // if records are undefined we re-index all library's records
-            const filters = (records || []).reduce((acc, id) => {
+            const filters = (records ?? []).reduce((acc, id, _, array) => {
                 acc.push({field: 'id', condition: AttributeCondition.EQUAL, value: id});
-                if (records && records.length > 1) {
+                const isNotLastElement = array.length > 1;
+                if (isNotLastElement) {
                     acc.push({operator: Operator.OR});
                 }
                 return acc;
