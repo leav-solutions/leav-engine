@@ -91,7 +91,7 @@ export default function ({
         }
 
         // Run DB migration before doing anything
-        await dbUtils.migrate?.(depsManager);
+        await dbUtils.migrate(depsManager);
 
         return importDomain.importConfig(
             {filepath, forceNoTask, ctx},

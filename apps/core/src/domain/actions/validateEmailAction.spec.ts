@@ -19,6 +19,6 @@ describe('validateEmailFormatAction', () => {
     });
 
     test('validateEmail should return email', async () => {
-        expect((await action([{payload: 'email@domain.com'}], {}, ctx)).values[0].payload).toBe('email@domain.com');
+        expect((await action([{payload: 'email@domain.com'}], null, ctx)).values[0].payload).toBe('email@domain.com');
     });
 });
