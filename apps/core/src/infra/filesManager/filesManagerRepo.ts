@@ -82,7 +82,7 @@ export default function ({
 
             return dbUtils.cleanup(results[0]);
         },
-        async getParentRecord(fullParentPath: string, library: string, ctx: IQueryInfos) {
+        async getParentRecord(fullParentPath, library, ctx) {
             let parentPath = fullParentPath.split('/');
             const parentName = parentPath.pop();
 
@@ -106,7 +106,7 @@ export default function ({
                 return null;
             }
 
-            const parent: IRecord | null = results[0] ? dbUtils.cleanup(results[0]) : null;
+            const parent = results[0] ? dbUtils.cleanup(results[0]) : null;
 
             return parent;
         }

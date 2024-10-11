@@ -395,9 +395,6 @@ export default function (deps: IDeps): ICoreAttributeApp {
                             const linkedRecords = await Promise.all(
                                 ((attributeData.values_list.values ?? []) as string[]).map(
                                     async (recId): Promise<IRecord | null> => {
-                                        if (!attributeData.linked_library) {
-                                            return null;
-                                        }
                                         const record = await recordDomain.find({
                                             params: {
                                                 library: attributeData.linked_library,
@@ -444,9 +441,6 @@ export default function (deps: IDeps): ICoreAttributeApp {
                                 values: (
                                     await Promise.all(
                                         (attributeData.values_list.values as string[]).map(async nodeId => {
-                                            if (!attributeData.linked_tree) {
-                                                return null;
-                                            }
                                             const isInTree = await treeDomain.isNodePresent({
                                                 treeId: attributeData.linked_tree,
                                                 nodeId,
