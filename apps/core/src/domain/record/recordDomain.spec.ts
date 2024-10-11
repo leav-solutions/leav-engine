@@ -2033,18 +2033,15 @@ describe('RecordDomain', () => {
                 active: true
             };
 
-            const mockValueDomain: Mockify<IValueDomain> = {
+            const mockValueDomain = {
                 saveValue: global.__mockPromise([{payload: false}])
-            };
+            } satisfies Mockify<IValueDomain>;
 
             const recDomain = recordDomain({...depsBase, 'core.domain.value': mockValueDomain as IValueDomain});
 
             const recordAfter = await recDomain.deactivateRecord(record, ctx);
 
             expect(mockValueDomain.saveValue).toBeCalled();
-            if (!mockValueDomain.saveValue) {
-                fail('saveValue not defined');
-            }
             expect(typeof mockValueDomain.saveValue.mock.calls[0][0]).toBe('object');
             expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe('active');
             expect(mockValueDomain.saveValue.mock.calls[0][0].value.payload).toBe(false);
@@ -2062,18 +2059,15 @@ describe('RecordDomain', () => {
                 active: false
             };
 
-            const mockValueDomain: Mockify<IValueDomain> = {
+            const mockValueDomain = {
                 saveValue: global.__mockPromise([{payload: true}])
-            };
+            } satisfies Mockify<IValueDomain>;
 
             const recDomain = recordDomain({...depsBase, 'core.domain.value': mockValueDomain as IValueDomain});
 
             const recordAfter = await recDomain.activateRecord(record, ctx);
 
             expect(mockValueDomain.saveValue).toBeCalled();
-            if (!mockValueDomain.saveValue) {
-                fail('saveValue not defined');
-            }
             expect(typeof mockValueDomain.saveValue.mock.calls[0][0]).toBe('object');
             expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe('active');
             expect(mockValueDomain.saveValue.mock.calls[0][0].value.payload).toBe(true);
@@ -2092,18 +2086,15 @@ describe('RecordDomain', () => {
                 active: true
             };
 
-            const mockValueDomain: Mockify<IValueDomain> = {
+            const mockValueDomain = {
                 saveValue: global.__mockPromise([{payload: false}])
-            };
+            } satisfies Mockify<IValueDomain>;
 
             const recDomain = recordDomain({...depsBase, 'core.domain.value': mockValueDomain as IValueDomain});
 
             const recordAfter = await recDomain.deactivateRecord(record, {userId: '1'});
 
             expect(mockValueDomain.saveValue).toBeCalled();
-            if (!mockValueDomain.saveValue) {
-                fail('saveValue not defined');
-            }
             expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe('active');
             expect(mockValueDomain.saveValue.mock.calls[0][0].value.payload).toBe(false);
             expect(recordAfter.active).toBe(false);
@@ -2120,18 +2111,15 @@ describe('RecordDomain', () => {
                 active: false
             };
 
-            const mockValueDomain: Mockify<IValueDomain> = {
+            const mockValueDomain = {
                 saveValue: global.__mockPromise([{payload: true}])
-            };
+            } satisfies Mockify<IValueDomain>;
 
             const recDomain = recordDomain({...depsBase, 'core.domain.value': mockValueDomain as IValueDomain});
 
             const recordAfter = await recDomain.activateRecord(record, {userId: '1'});
 
             expect(mockValueDomain.saveValue).toBeCalled();
-            if (!mockValueDomain.saveValue) {
-                fail('saveValue not defined');
-            }
             expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe('active');
             expect(mockValueDomain.saveValue.mock.calls[0][0].value.payload).toBe(true);
             expect(recordAfter.active).toBe(true);

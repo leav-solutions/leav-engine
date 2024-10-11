@@ -657,14 +657,14 @@ describe('importDomain', () => {
                 getLibraryAttributes: global.__mockPromise([{type: 'simple', id: 'fake_simple'}])
             } satisfies Mockify<IAttributeDomain>;
 
-            const mockValueDomain: Mockify<IValueDomain> = {
+            const mockValueDomain = {
                 saveValue: global.__mockPromise([
                     {
                         test: 'test'
                     }
                 ]),
                 getValues: global.__mockPromise([])
-            };
+            } satisfies Mockify<IValueDomain>;
 
             const mockRecordDomain = {
                 createRecord: global.__mockPromise({record: {id: '1'}}),
@@ -731,9 +731,6 @@ describe('importDomain', () => {
             expect(mockCacheService.getData).toBeCalledTimes(1);
             expect(mockRecordDomain.find).toBeCalledTimes(2);
             expect(mockValueDomain.saveValue).toBeCalledTimes(3);
-            if (!mockValueDomain.saveValue) {
-                fail('saveValue not defined');
-            }
             // First call of saveValue version must be : { treeprojects: null }
             expect(mockValueDomain.saveValue.mock.calls[0][0].value.version).toEqual({treeprojects: null});
             // Second call of saveValue version must be : { treeprojects: '1' }
