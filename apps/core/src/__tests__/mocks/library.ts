@@ -50,7 +50,7 @@ export const mockLibraryFiles: ILibrary = {
     ]
 };
 
-export const mockLibraryDirectories: ILibrary = {
+export const mockLibraryDirectories: MandatoryId<ILibrary> = {
     id: 'files_directories',
     system: false,
     behavior: LibraryBehavior.DIRECTORIES,

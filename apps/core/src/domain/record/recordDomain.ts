@@ -167,43 +167,43 @@ export interface IRecordDomain {
     purgeInactiveRecords(params: {libraryId: string; ctx: IQueryInfos}): Promise<IRecord[]>;
 }
 
-interface IDeps {
-    config?: Config.IConfig;
-    'core.infra.record'?: IRecordRepo;
-    'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.value'?: IValueDomain;
-    'core.domain.permission.record'?: IRecordPermissionDomain;
-    'core.domain.permission.library'?: ILibraryPermissionDomain;
-    'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
-    'core.domain.helpers.validate'?: IValidateHelper;
-    'core.domain.record.helpers.sendRecordUpdateEvent'?: SendRecordUpdateEventHelper;
-    'core.infra.library'?: ILibraryRepo;
-    'core.infra.tree'?: ITreeRepo;
-    'core.infra.value'?: IValueRepo;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.infra.cache.cacheService'?: ICachesService;
-    'core.utils'?: IUtils;
-    translator?: i18n;
+export interface IRecordDomainDeps {
+    config: Config.IConfig;
+    'core.infra.record': IRecordRepo;
+    'core.domain.attribute': IAttributeDomain;
+    'core.domain.value': IValueDomain;
+    'core.domain.permission.record': IRecordPermissionDomain;
+    'core.domain.permission.library': ILibraryPermissionDomain;
+    'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
+    'core.domain.helpers.validate': IValidateHelper;
+    'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
+    'core.infra.library': ILibraryRepo;
+    'core.infra.tree': ITreeRepo;
+    'core.infra.value': IValueRepo;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.infra.cache.cacheService': ICachesService;
+    'core.utils': IUtils;
+    translator: i18n;
 }
 
 export default function ({
-    config = null,
-    'core.infra.record': recordRepo = null,
-    'core.domain.attribute': attributeDomain = null,
-    'core.domain.value': valueDomain = null,
-    'core.domain.permission.record': recordPermissionDomain = null,
-    'core.domain.permission.library': libraryPermissionDomain = null,
-    'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
-    'core.domain.helpers.validate': validateHelper = null,
-    'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent = null,
-    'core.infra.library': libraryRepo = null,
-    'core.infra.tree': treeRepo = null,
-    'core.infra.value': valueRepo = null,
-    'core.domain.eventsManager': eventsManager = null,
-    'core.infra.cache.cacheService': cacheService = null,
-    'core.utils': utils = null,
-    translator = null
-}: IDeps = {}): IRecordDomain {
+    config,
+    'core.infra.record': recordRepo,
+    'core.domain.attribute': attributeDomain,
+    'core.domain.value': valueDomain,
+    'core.domain.permission.record': recordPermissionDomain,
+    'core.domain.permission.library': libraryPermissionDomain,
+    'core.domain.helpers.getCoreEntityById': getCoreEntityById,
+    'core.domain.helpers.validate': validateHelper,
+    'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
+    'core.infra.library': libraryRepo,
+    'core.infra.tree': treeRepo,
+    'core.infra.value': valueRepo,
+    'core.domain.eventsManager': eventsManager,
+    'core.infra.cache.cacheService': cacheService,
+    'core.utils': utils,
+    translator
+}: IRecordDomainDeps): IRecordDomain {
     /**
      * Extract value from record if it's available (attribute simple), or fetch it from DB
      *
@@ -222,7 +222,7 @@ export default function ({
     ): Promise<IValue[]> => {
         let values: IValue[];
 
-        if (typeof record[attribute.id] !== 'undefined') {
+        if (attribute.id && typeof record[attribute.id] !== 'undefined') {
             // Format attribute field into simple value
             values = [
                 {
@@ -594,7 +594,11 @@ export default function ({
         return label;
     };
 
-    const _getColor = async (record: IRecord, visitedLibraries: string[] = [], ctx: IQueryInfos): Promise<string> => {
+    const _getColor = async (
+        record: IRecord,
+        visitedLibraries: string[] = [],
+        ctx: IQueryInfos
+    ): Promise<string | null> => {
         if (!record) {
             return null;
         }
@@ -607,7 +611,7 @@ export default function ({
             version: ctx.version ?? null
         };
 
-        let color: string = null;
+        let color: string | null = null;
         if (conf.color) {
             const colorAttributeProps = await attributeDomain.getAttributeProperties({id: conf.color, ctx});
 
@@ -651,7 +655,7 @@ export default function ({
         record: IRecord,
         visitedLibraries: string[] = [],
         ctx: IQueryInfos
-    ): Promise<string> => {
+    ): Promise<string | null> => {
         if (!record) {
             return null;
         }
@@ -663,7 +667,7 @@ export default function ({
         const valuesOptions: IValuesOptions = {
             version: ctx.version ?? null
         };
-        let subLabel: string = null;
+        let subLabel: string | null = null;
         if (conf.subLabel) {
             const subLabelAttributeProps = await attributeDomain.getAttributeProperties({id: conf.subLabel, ctx});
 
@@ -729,17 +733,17 @@ export default function ({
             version: ctx.version ?? null
         };
 
-        let label: string = null;
+        let label: string | null = null;
         if (conf.label) {
             label = await _getLabel(record, [], ctx);
         }
 
-        let subLabel: string = null;
+        let subLabel: string | null = null;
         if (conf.subLabel) {
             subLabel = await _getSubLabel(record, [], ctx);
         }
 
-        let color: string = null;
+        let color: string | null = null;
         if (conf.color) {
             color = await _getColor(record, [], ctx);
         }
@@ -1021,7 +1025,7 @@ export default function ({
 
             return deletedRecord;
         },
-        async find({params, ctx}: {params: IFindRecordParams; ctx: IQueryInfos}): Promise<IListWithCursor<IRecord>> {
+        async find({params, ctx}) {
             const {library, sort, pagination, withCount, retrieveInactive = false} = params;
             const {filters = [] as IRecordFilterLight[], fulltextSearch} = params;
             const fullFilters: IRecordFilterOption[] = [];

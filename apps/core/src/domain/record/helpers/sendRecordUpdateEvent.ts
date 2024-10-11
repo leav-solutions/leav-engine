@@ -17,12 +17,10 @@ export type SendRecordUpdateEventHelper = (
 ) => void;
 
 interface IDeps {
-    'core.domain.eventsManager'?: IEventsManagerDomain;
+    'core.domain.eventsManager': IEventsManagerDomain;
 }
 
-export default function ({
-    'core.domain.eventsManager': eventsManagerDomain = null
-}: IDeps): SendRecordUpdateEventHelper {
+export default function ({'core.domain.eventsManager': eventsManagerDomain}: IDeps): SendRecordUpdateEventHelper {
     return async (record, updatedValues, ctx) => {
         await eventsManagerDomain.sendPubSubEvent(
             {

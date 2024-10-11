@@ -57,35 +57,35 @@ export interface IAttributeDomain {
     getAttributeLibraries(params: {attributeId: string; ctx: IQueryInfos}): Promise<ILibrary[]>;
 }
 
-interface IDeps {
-    'core.infra.attribute'?: IAttributeRepo;
-    'core.domain.actionsList'?: IActionsListDomain;
-    'core.domain.permission.admin'?: IAdminPermissionDomain;
-    'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
-    'core.domain.versionProfile'?: IVersionProfileDomain;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.infra.form'?: IFormRepo;
-    'core.infra.library'?: ILibraryRepo;
-    'core.infra.tree'?: ITreeRepo;
-    'core.infra.cache.cacheService'?: ICachesService;
-    'core.utils'?: IUtils;
-    config?: any;
+export interface IAttributeDomainDeps {
+    'core.infra.attribute': IAttributeRepo;
+    'core.domain.actionsList': IActionsListDomain;
+    'core.domain.permission.admin': IAdminPermissionDomain;
+    'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
+    'core.domain.versionProfile': IVersionProfileDomain;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.infra.form': IFormRepo;
+    'core.infra.library': ILibraryRepo;
+    'core.infra.tree': ITreeRepo;
+    'core.infra.cache.cacheService': ICachesService;
+    'core.utils': IUtils;
+    config: any;
 }
 
 export default function ({
-    'core.infra.attribute': attributeRepo = null,
-    'core.domain.actionsList': actionsListDomain = null,
-    'core.domain.permission.admin': adminPermissionDomain = null,
-    'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
-    'core.domain.versionProfile': versionProfileDomain = null,
-    'core.domain.eventsManager': eventsManagerDomain = null,
-    'core.infra.form': formRepo = null,
-    'core.infra.library': libraryRepo = null,
-    'core.infra.tree': treeRepo = null,
-    'core.infra.cache.cacheService': cacheService = null,
-    'core.utils': utils = null,
-    config = null
-}: IDeps = {}): IAttributeDomain {
+    'core.infra.attribute': attributeRepo,
+    'core.domain.actionsList': actionsListDomain,
+    'core.domain.permission.admin': adminPermissionDomain,
+    'core.domain.helpers.getCoreEntityById': getCoreEntityById,
+    'core.domain.versionProfile': versionProfileDomain,
+    'core.domain.eventsManager': eventsManagerDomain,
+    'core.infra.form': formRepo,
+    'core.infra.library': libraryRepo,
+    'core.infra.tree': treeRepo,
+    'core.infra.cache.cacheService': cacheService,
+    'core.utils': utils,
+    config
+}: IAttributeDomainDeps): IAttributeDomain {
     const _updateFormsUsingAttribute = async (attributeId: string, ctx: IQueryInfos): Promise<void> => {
         const formsList = await formRepo.getForms({ctx});
 

@@ -13,15 +13,18 @@ export default function (): IActionsListFunction {
         input_types: [ActionsListIOTypes.STRING],
         output_types: [ActionsListIOTypes.STRING],
         action: (values: IValue[]) => {
-            const allErrors = values.reduce((errors, elementValue) => {
-                try {
-                    new URL(elementValue as string);
-                } catch (err) {
-                    errors.push({errorType: Errors.INVALID_URL, attributeValue: elementValue});
-                }
+            const allErrors = values.reduce<Array<{errorType: Errors; attributeValue: IValue}>>(
+                (errors, elementValue) => {
+                    try {
+                        new URL(elementValue as string);
+                    } catch (err) {
+                        errors.push({errorType: Errors.INVALID_URL, attributeValue: elementValue});
+                    }
 
-                return errors;
-            }, []);
+                    return errors;
+                },
+                []
+            );
 
             return {values, errors: allErrors};
         }

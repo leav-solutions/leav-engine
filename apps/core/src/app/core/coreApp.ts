@@ -17,19 +17,19 @@ import {IGraphqlApp} from '../graphql/graphqlApp';
 
 export interface ICoreApp extends IAppModule {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
-    filterSysTranslationField(fieldData: ISystemTranslation, requestedLangs: string[]): ISystemTranslation;
+    filterSysTranslationField(fieldData: ISystemTranslation, requestedLangs: string[]): ISystemTranslation | null;
     initPubSubEventsConsumer(): Promise<void>;
 }
 
-interface IDeps {
-    'core.domain.core'?: ICoreDomain;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.app.graphql'?: IGraphqlApp;
-    'core.app.graphql.customScalars.systemTranslation'?: ISystemTranslationGenerator;
-    'core.app.graphql.customScalars.dateTime'?: GraphQLScalarType;
-    'core.app.graphql.customScalars.any'?: GraphQLScalarType;
-    config?: any;
-    translator?: i18n;
+export interface ICoreAppDeps {
+    'core.domain.core': ICoreDomain;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.app.graphql': IGraphqlApp;
+    'core.app.graphql.customScalars.systemTranslation': ISystemTranslationGenerator;
+    'core.app.graphql.customScalars.dateTime': GraphQLScalarType;
+    'core.app.graphql.customScalars.any': GraphQLScalarType;
+    config: any;
+    translator: i18n;
 }
 
 const _parseLiteralAny = ast => {
@@ -54,18 +54,16 @@ const _parseLiteralAny = ast => {
     }
 };
 
-export default function (
-    {
-        'core.domain.core': coreDomain = null,
-        'core.domain.eventsManager': eventsManagerDomain = null,
-        'core.app.graphql': graphqlApp = null,
-        'core.app.graphql.customScalars.systemTranslation': systemTranslation = null,
-        'core.app.graphql.customScalars.dateTime': DateTime = null,
-        'core.app.graphql.customScalars.any': Any = null,
-        config = null,
-        translator = null
-    }: IDeps = ({} = {})
-): ICoreApp {
+export default function ({
+    'core.domain.core': coreDomain,
+    'core.domain.eventsManager': eventsManagerDomain,
+    'core.app.graphql': graphqlApp,
+    'core.app.graphql.customScalars.systemTranslation': systemTranslation,
+    'core.app.graphql.customScalars.dateTime': DateTime,
+    'core.app.graphql.customScalars.any': Any,
+    config,
+    translator
+}: ICoreAppDeps): ICoreApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -116,7 +114,7 @@ export default function (
 
             return fullSchema;
         },
-        filterSysTranslationField(fieldData: ISystemTranslation, requestedLangs: string[] = []): ISystemTranslation {
+        filterSysTranslationField(fieldData: ISystemTranslation, requestedLangs: string[] = []) {
             if (!fieldData) {
                 return null;
             }

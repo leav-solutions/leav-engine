@@ -7,7 +7,7 @@ import toStringAction from './toStringAction';
 describe('toStringAction', () => {
     const action = toStringAction().action;
     const attrText: IAttribute = {id: 'test_attr', format: AttributeFormats.TEXT, type: AttributeTypes.SIMPLE};
-    const ctx = {attribute: attrText};
+    const ctx = {attribute: attrText, userId: 'test_user'};
     test('toString', async () => {
         expect((await action([{payload: 'test'}], {}, ctx)).values[0].payload).toBe('test');
         expect((await action([{payload: 12345}], {}, ctx)).values[0].payload).toBe('12345');

@@ -8,7 +8,7 @@ import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain'
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
-import {IUtils} from 'utils/utils';
+import {IUtils, ToAny} from 'utils/utils';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {IValue, IValueVersion} from '_types/value';
@@ -33,7 +33,28 @@ import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IValidateHelper} from '../helpers/validate';
 import {IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
-import valueDomain from './valueDomain';
+import valueDomain, {IValueDomainDeps} from './valueDomain';
+
+const depsBase: ToAny<IValueDomainDeps> = {
+    config: {},
+    'core.domain.actionsList': jest.fn(),
+    'core.domain.attribute': jest.fn(),
+    'core.domain.permission.recordAttribute': jest.fn(),
+    'core.domain.permission.record': jest.fn(),
+    'core.domain.eventsManager': jest.fn(),
+    'core.domain.helpers.validate': jest.fn(),
+    'core.domain.helpers.updateRecordLastModif': jest.fn(),
+    'core.domain.tree.helpers.elementAncestors': jest.fn(),
+    'core.domain.tree.helpers.getDefaultElement': jest.fn(),
+    'core.domain.record.helpers.sendRecordUpdateEvent': jest.fn(),
+    'core.domain.versionProfile': jest.fn(),
+    'core.infra.record': jest.fn(),
+    'core.infra.tree': jest.fn(),
+    'core.infra.value': jest.fn(),
+    'core.utils': jest.fn(),
+    'core.utils.logger': jest.fn(),
+    'core.domain.tree': jest.fn()
+};
 
 describe('ValueDomain', () => {
     const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
@@ -49,9 +70,9 @@ describe('ValueDomain', () => {
         find: global.__mockPromise({totalCount: 1, list: [{id: 54321}]})
     };
 
-    const mockActionsListDomain: Mockify<IActionsListDomain> = {
+    const mockActionsListDomain = {
         runActionsList: jest.fn().mockImplementation((_, val) => Promise.resolve(val))
-    };
+    } satisfies Mockify<IActionsListDomain>;
 
     const mockRecordPermDomain: Mockify<IRecordPermissionDomain> = {
         getRecordPermission: global.__mockPromise(true)
@@ -154,11 +175,12 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
@@ -201,11 +223,12 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
@@ -257,11 +280,12 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
@@ -302,6 +326,7 @@ describe('ValueDomain', () => {
                 getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
             };
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
@@ -333,6 +358,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.helpers.validate': mValidateHelper as IValidateHelper
             });
@@ -355,6 +381,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
@@ -381,6 +408,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
@@ -422,11 +450,12 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
@@ -470,9 +499,10 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
@@ -513,11 +543,12 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
@@ -574,11 +605,12 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepoNotfound as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
@@ -613,10 +645,11 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepoNoTree as ITreeRepo,
@@ -654,10 +687,11 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepoNotPresent as ITreeRepo,
@@ -702,10 +736,11 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepoNotfound as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
@@ -750,10 +785,11 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepoWithFind as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepoNotPresent as ITreeRepo,
@@ -797,11 +833,12 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
@@ -853,12 +890,13 @@ describe('ValueDomain', () => {
                 };
 
                 const valDomain = valueDomain({
+                    ...depsBase,
                     config: mockConfig as Config.IConfig,
                     'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.infra.value': mockValRepo as IValueRepo,
                     'core.infra.record': mockRecordRepo as IRecordRepo,
-                    'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                    'core.domain.actionsList': mockActionsListDomain as any,
                     'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                     'core.domain.permission.recordAttribute':
                         mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
@@ -911,10 +949,11 @@ describe('ValueDomain', () => {
                 };
 
                 const valDomain = valueDomain({
+                    ...depsBase,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.infra.value': mockValRepo as IValueRepo,
                     'core.infra.record': mockRecordRepo as IRecordRepo,
-                    'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                    'core.domain.actionsList': mockActionsListDomain as any,
                     'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                     'core.domain.permission.recordAttribute':
                         mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
@@ -964,10 +1003,11 @@ describe('ValueDomain', () => {
                         )
                 };
                 const valDomain = valueDomain({
+                    ...depsBase,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.infra.value': mockValRepo as IValueRepo,
                     'core.infra.record': mockRecordRepo as IRecordRepo,
-                    'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                    'core.domain.actionsList': mockActionsListDomain as any,
                     'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                     'core.domain.permission.recordAttribute':
                         mockRecordAttrPermForbidDom as IRecordAttributePermissionDomain,
@@ -1021,11 +1061,12 @@ describe('ValueDomain', () => {
                 };
 
                 const valDomain = valueDomain({
+                    ...depsBase,
                     config: mockConfig as Config.IConfig,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.infra.value': mockValRepo as IValueRepo,
                     'core.infra.record': mockRecordRepo as IRecordRepo,
-                    'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                    'core.domain.actionsList': mockActionsListDomain as any,
                     'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
                     'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
@@ -1095,6 +1136,7 @@ describe('ValueDomain', () => {
                 };
 
                 const valDomain = valueDomain({
+                    ...depsBase,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.infra.value': mockValRepo as IValueRepo,
                     'core.infra.record': mockRecordRepo as IRecordRepo,
@@ -1144,18 +1186,16 @@ describe('ValueDomain', () => {
                 {
                     attribute: 'test_attr2',
                     payload: 'test',
-                    raw_payload: 'test',
-                    id_value: null
+                    raw_payload: 'test'
                 },
                 {
                     attribute: 'test_attr3',
                     payload: 'test',
-                    raw_payload: 'test',
-                    id_value: null
+                    raw_payload: 'test'
                 }
             ];
 
-            const mockValRepo: Mockify<IValueRepo> = {
+            const mockValRepo = {
                 updateValue: global.__mockPromise({payload: 'test', raw_payload: 'test', id_value: 12345}),
                 createValue: global.__mockPromiseMultiple([
                     {payload: 'test', raw_payload: 'test', id_value: 12345},
@@ -1165,7 +1205,7 @@ describe('ValueDomain', () => {
                     id_value: '12345'
                 }),
                 getValues: global.__mockPromise([{payload: 'test', raw_payload: 'test', id_value: 12345}])
-            };
+            } satisfies Mockify<IValueRepo>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: jest.fn().mockImplementation(({id, ctx: ct}) => {
@@ -1187,11 +1227,12 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.utils': mockUtils as IUtils,
@@ -1258,18 +1299,16 @@ describe('ValueDomain', () => {
                 {
                     attribute: 'test_attr2',
                     payload: 'test',
-                    raw_payload: 'test',
-                    id_value: null
+                    raw_payload: 'test'
                 },
                 {
                     attribute: 'test_attr3',
                     payload: 'test',
-                    raw_payload: 'test',
-                    id_value: null
+                    raw_payload: 'test'
                 }
             ];
 
-            const mockValRepo: Mockify<IValueRepo> = {
+            const mockValRepo = {
                 updateValue: global.__mockPromise({payload: 'test', raw_payload: 'test', id_value: 12345}),
                 createValue: global.__mockPromiseMultiple([
                     {payload: 'test', raw_payload: 'test', id_value: 12345},
@@ -1281,7 +1320,7 @@ describe('ValueDomain', () => {
                     raw_payload: 'identical'
                 }),
                 getValues: global.__mockPromise([{payload: 'test', raw_payload: 'test', id_value: 12345}])
-            };
+            } satisfies Mockify<IValueRepo>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: jest.fn().mockImplementation(({id, ctx: ct}) => {
@@ -1303,11 +1342,12 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.utils': mockUtils as IUtils,
@@ -1363,18 +1403,17 @@ describe('ValueDomain', () => {
                 },
                 {
                     attribute: 'test_attr2',
-                    payload: 'test',
-                    id_value: null
+                    payload: 'test'
                 }
             ];
 
-            const mockValRepo: Mockify<IValueRepo> = {
+            const mockValRepo = {
                 updateValue: jest.fn(),
                 createValue: jest.fn(),
                 getValueById: global.__mockPromise({
                     id_value: '12345'
                 })
-            };
+            } satisfies Mockify<IValueRepo>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttribute})
@@ -1392,8 +1431,9 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.value': mockValRepo as any,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.actionsList': mockActionsListDomainInvalid as IActionsListDomain,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
@@ -1433,18 +1473,17 @@ describe('ValueDomain', () => {
                 },
                 {
                     attribute: 'test_attr2',
-                    payload: 'test',
-                    id_value: null
+                    payload: 'test'
                 }
             ];
 
-            const mockValRepo: Mockify<IValueRepo> = {
+            const mockValRepo = {
                 updateValue: jest.fn(),
                 createValue: jest.fn(),
                 getValueById: global.__mockPromise({
                     id_value: '12345'
                 })
-            };
+            } satisfies Mockify<IValueRepo>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttribute})
@@ -1455,10 +1494,11 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.value': mockValRepo as any,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute':
                     mockRecordAttrPermDomainNoEdit as IRecordAttributePermissionDomain,
@@ -1521,11 +1561,12 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.utils': mockUtils as IUtils,
@@ -1581,11 +1622,12 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.utils': mockUtils as IUtils,
@@ -1624,6 +1666,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper
             });
 
@@ -1648,6 +1691,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.helpers.validate': mValidateHelper as IValidateHelper
             });
 
@@ -1680,6 +1724,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper
             });
 
@@ -1712,6 +1757,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -1745,6 +1791,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain
             });
 
@@ -1784,6 +1831,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper,
@@ -1830,6 +1878,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper,
@@ -1857,6 +1906,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain
             });
 
@@ -1892,10 +1942,11 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.utils': mockUtils as IUtils
             });
@@ -1933,10 +1984,11 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.utils': mockUtils as IUtils
             });
@@ -1978,10 +2030,11 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
                 'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
@@ -2151,10 +2204,11 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.tree.helpers.elementAncestors':
                     mockElementAncestorsHelperMultipleTrees as IElementAncestorsHelper,
@@ -2220,10 +2274,11 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
                 'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
@@ -2251,6 +2306,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain
             });
 
@@ -2273,6 +2329,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper
             });
 
@@ -2296,6 +2353,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper
             });
 

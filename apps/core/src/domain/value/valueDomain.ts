@@ -119,46 +119,46 @@ export interface IValueDomain {
     runActionsList(params: IRunActionListParams): Promise<IValue[]>;
 }
 
-interface IDeps {
-    config?: Config.IConfig;
-    'core.domain.actionsList'?: IActionsListDomain;
-    'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.permission.recordAttribute'?: IRecordAttributePermissionDomain;
-    'core.domain.permission.record'?: IRecordPermissionDomain;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.domain.helpers.validate'?: IValidateHelper;
-    'core.domain.helpers.updateRecordLastModif'?: UpdateRecordLastModifFunc;
-    'core.domain.tree.helpers.elementAncestors'?: IElementAncestorsHelper;
-    'core.domain.tree.helpers.getDefaultElement'?: IGetDefaultElementHelper;
-    'core.domain.record.helpers.sendRecordUpdateEvent'?: SendRecordUpdateEventHelper;
-    'core.domain.versionProfile'?: IVersionProfileDomain;
-    'core.infra.record'?: IRecordRepo;
-    'core.infra.tree'?: ITreeRepo;
-    'core.infra.value'?: IValueRepo;
-    'core.utils'?: IUtils;
-    'core.utils.logger'?: winston.Winston;
-    'core.domain.tree'?: ITreeDomain;
+export interface IValueDomainDeps {
+    config: Config.IConfig;
+    'core.domain.actionsList': IActionsListDomain;
+    'core.domain.attribute': IAttributeDomain;
+    'core.domain.permission.recordAttribute': IRecordAttributePermissionDomain;
+    'core.domain.permission.record': IRecordPermissionDomain;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.domain.helpers.validate': IValidateHelper;
+    'core.domain.helpers.updateRecordLastModif': UpdateRecordLastModifFunc;
+    'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
+    'core.domain.tree.helpers.getDefaultElement': IGetDefaultElementHelper;
+    'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
+    'core.domain.versionProfile': IVersionProfileDomain;
+    'core.infra.record': IRecordRepo;
+    'core.infra.tree': ITreeRepo;
+    'core.infra.value': IValueRepo;
+    'core.utils': IUtils;
+    'core.utils.logger': winston.Winston;
+    'core.domain.tree': ITreeDomain;
 }
 
 const valueDomain = function ({
-    config = null,
-    'core.domain.actionsList': actionsListDomain = null,
-    'core.domain.attribute': attributeDomain = null,
-    'core.domain.permission.recordAttribute': recordAttributePermissionDomain = null,
-    'core.domain.permission.record': recordPermissionDomain = null,
-    'core.domain.eventsManager': eventsManager = null,
-    'core.domain.helpers.validate': validate = null,
-    'core.domain.helpers.updateRecordLastModif': updateRecordLastModif = null,
-    'core.domain.tree.helpers.elementAncestors': elementAncestors = null,
-    'core.domain.tree.helpers.getDefaultElement': getDefaultElementHelper = null,
-    'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent = null,
-    'core.domain.versionProfile': versionProfileDomain = null,
-    'core.infra.record': recordRepo = null,
-    'core.infra.tree': treeRepo = null,
-    'core.infra.value': valueRepo = null,
-    'core.utils': utils = null,
-    'core.utils.logger': logger = null
-}: IDeps = {}): IValueDomain {
+    config,
+    'core.domain.actionsList': actionsListDomain,
+    'core.domain.attribute': attributeDomain,
+    'core.domain.permission.recordAttribute': recordAttributePermissionDomain,
+    'core.domain.permission.record': recordPermissionDomain,
+    'core.domain.eventsManager': eventsManager,
+    'core.domain.helpers.validate': validate,
+    'core.domain.helpers.updateRecordLastModif': updateRecordLastModif,
+    'core.domain.tree.helpers.elementAncestors': elementAncestors,
+    'core.domain.tree.helpers.getDefaultElement': getDefaultElementHelper,
+    'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
+    'core.domain.versionProfile': versionProfileDomain,
+    'core.infra.record': recordRepo,
+    'core.infra.tree': treeRepo,
+    'core.infra.value': valueRepo,
+    'core.utils': utils,
+    'core.utils.logger': logger
+}: IValueDomainDeps): IValueDomain {
     /**
      * Run actions list on a value
      *

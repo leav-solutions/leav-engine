@@ -82,7 +82,7 @@ export default function ({
 
             return dbUtils.cleanup(results[0]);
         },
-        async getParentRecord(fullParentPath: string, library: string, ctx: IQueryInfos): Promise<IRecord | null> {
+        async getParentRecord(fullParentPath, library, ctx) {
             let parentPath = fullParentPath.split('/');
             const parentName = parentPath.pop();
 

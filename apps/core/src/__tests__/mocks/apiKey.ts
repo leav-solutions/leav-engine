@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IApiKey} from '_types/apiKey';
 
-export const mockApiKey: IApiKey = {
+export const mockApiKey = {
     id: '123456',
     label: 'API Key Label',
     key: 'my-secret-key',
@@ -11,6 +11,6 @@ export const mockApiKey: IApiKey = {
     createdBy: '42',
     modifiedAt: 123456789,
     modifiedBy: '42',
-    expiresAt: null,
+    expiresAt: 0,
     userId: '42'
-};
+} satisfies MandatoryId<IApiKey>;

@@ -11,12 +11,12 @@ export interface IAdminPermissionDomain {
 }
 
 interface IDeps {
-    'core.domain.permission.helpers.globalPermission'?: IGlobalPermissionHelper;
+    'core.domain.permission.helpers.globalPermission': IGlobalPermissionHelper;
 }
 
 export default function ({
-    'core.domain.permission.helpers.globalPermission': globalPermHelper = null
-}: IDeps = {}): IAdminPermissionDomain {
+    'core.domain.permission.helpers.globalPermission': globalPermHelper
+}: IDeps): IAdminPermissionDomain {
     const getAdminPermission = async ({action, userId, ctx}: IGetAdminPermissionParams): Promise<boolean> =>
         globalPermHelper.getGlobalPermission(
             {

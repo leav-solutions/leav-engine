@@ -25,13 +25,13 @@ export interface ICoreImportApp {
 }
 
 interface IDeps {
-    'core.domain.import'?: IImportDomain;
-    'core.domain.helpers.storeUploadFile'?: StoreUploadFileFunc;
-    'core.infra.db.dbUtils'?: IDbUtils;
-    'core.utils'?: IUtils;
-    'core.depsManager'?: AwilixContainer;
-    'core.app.graphql'?: IGraphqlApp;
-    config?: Config.IConfig;
+    'core.domain.import': IImportDomain;
+    'core.domain.helpers.storeUploadFile': StoreUploadFileFunc;
+    'core.infra.db.dbUtils': IDbUtils;
+    'core.utils': IUtils;
+    'core.depsManager': AwilixContainer;
+    'core.app.graphql': IGraphqlApp;
+    config: Config.IConfig;
 }
 
 interface IImportConfigParams {
@@ -59,18 +59,18 @@ interface IImportExcelParams {
 }
 
 export default function ({
-    'core.domain.import': importDomain = null,
+    'core.domain.import': importDomain,
     'core.domain.helpers.storeUploadFile': storeUploadFile,
-    'core.utils': utils = null,
-    'core.depsManager': depsManager = null,
-    'core.app.graphql': graphqlApp = null,
-    'core.infra.db.dbUtils': dbUtils = null,
-    config = null
-}: IDeps = {}): ICoreImportApp {
+    'core.utils': utils,
+    'core.depsManager': depsManager,
+    'core.app.graphql': graphqlApp,
+    'core.infra.db.dbUtils': dbUtils,
+    config
+}: IDeps): ICoreImportApp {
     const _validateFileFormat = (filename: string, allowed: string[]) => {
         const fileExtension = utils.getFileExtension(filename);
 
-        if (!allowed.includes(fileExtension)) {
+        if (!fileExtension || !allowed.includes(fileExtension)) {
             throw new ValidationError<IImportDataParams | IImportConfigParams>({
                 file: {
                     msg: Errors.INVALID_FILE_FORMAT,
@@ -132,7 +132,9 @@ export default function ({
         },
         importData: async (filepath: string): Promise<void> => {
             // extract filename from filepath
-            let filename = filepath.split('/').pop();
+            let filename = filepath
+                .split('/')
+                .pop() as string; /* split give at least one element retrieve by pop method */
             // check if filepath is a valid file
             if (!fs.existsSync(filepath)) {
                 throw new Error('File not found');
@@ -184,7 +186,11 @@ export default function ({
                 resolvers: {
                     Upload: GraphQLUpload,
                     Mutation: {
-                        async importConfig(_, {file, clear}: IImportConfigParams, ctx: IQueryInfos): Promise<string> {
+                        async importConfig(
+                            _,
+                            {file, clear = false}: IImportConfigParams,
+                            ctx: IQueryInfos
+                        ): Promise<string> {
                             const fileData: FileUpload = await file;
                             const allowedExtensions = ['json'];
 

@@ -31,7 +31,7 @@ import {IncomingHttpHeaders} from 'http';
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
     validateRequestToken(
-        params: {apiKey?: string; headers?: IncomingHttpHeaders; cookies?: {}},
+        params: {apiKey?: string; headers: IncomingHttpHeaders; cookies?: {}},
         res: Response<unknown>
     ): Promise<ITokenUserData>;
     registerRoute(app: Express): void;
@@ -42,8 +42,8 @@ const SESSION_CACHE_HEADER = 'session';
 
 interface ISessionPayload extends jwt.JwtPayload {
     userId: string;
-    ip: string | string[];
-    agent: string;
+    ip: string | string[] | null;
+    agent: string | null;
 }
 
 interface IAccessTokenPayload extends jwt.JwtPayload {
@@ -51,33 +51,33 @@ interface IAccessTokenPayload extends jwt.JwtPayload {
     groupsId: string[];
 }
 
-interface IDeps {
-    'core.domain.value'?: IValueDomain;
-    'core.domain.record'?: IRecordDomain;
-    'core.domain.apiKey'?: IApiKeyDomain;
-    'core.domain.user'?: IUserDomain;
-    'core.infra.cache.cacheService'?: ICachesService;
-    'core.utils.logger'?: winston.Winston;
-    'core.infra.oidc.oidcClientService'?: IOIDCClientService;
-    'core.app.helpers.initQueryContext'?: InitQueryContextFunc;
-    'core.app.helpers.convertOIDCIdentifier'?: IConvertOIDCIdentifier;
-    config?: IConfig;
+export interface IAuthAppDeps {
+    'core.domain.value': IValueDomain;
+    'core.domain.record': IRecordDomain;
+    'core.domain.apiKey': IApiKeyDomain;
+    'core.domain.user': IUserDomain;
+    'core.infra.cache.cacheService': ICachesService;
+    'core.utils.logger': winston.Winston;
+    'core.infra.oidc.oidcClientService': IOIDCClientService;
+    'core.app.helpers.initQueryContext': InitQueryContextFunc;
+    'core.app.helpers.convertOIDCIdentifier': IConvertOIDCIdentifier;
+    config: IConfig;
 }
 
 type authCookieName = typeof ACCESS_TOKEN_COOKIE_NAME | typeof REFRESH_TOKEN_COOKIE_NAME;
 
 export default function ({
-    'core.domain.value': valueDomain = null,
-    'core.domain.record': recordDomain = null,
-    'core.domain.apiKey': apiKeyDomain = null,
-    'core.domain.user': userDomain = null,
-    'core.utils.logger': logger = null,
-    'core.infra.cache.cacheService': cacheService = null,
-    'core.infra.oidc.oidcClientService': oidcClientService = null,
-    'core.app.helpers.initQueryContext': initQueryContext = null,
-    'core.app.helpers.convertOIDCIdentifier': convertOIDCIdentifier = null,
-    config = null
-}: IDeps = {}): IAuthApp {
+    'core.domain.value': valueDomain,
+    'core.domain.record': recordDomain,
+    'core.domain.apiKey': apiKeyDomain,
+    'core.domain.user': userDomain,
+    'core.utils.logger': logger,
+    'core.infra.cache.cacheService': cacheService,
+    'core.infra.oidc.oidcClientService': oidcClientService,
+    'core.app.helpers.initQueryContext': initQueryContext,
+    'core.app.helpers.convertOIDCIdentifier': convertOIDCIdentifier,
+    config
+}: IAuthAppDeps): IAuthApp {
     const _generateAccessToken = async (userId: string, ctx: IQueryInfos) => {
         const groups = await valueDomain.getValues({
             library: 'users',
@@ -109,7 +109,7 @@ export default function ({
     const _getAuthCookieArgs = (
         cookieName: authCookieName,
         value: string,
-        host: string
+        host: string | null
     ): [authCookieName, string, CookieOptions] => {
         const cookieExpires = ms(
             String(
@@ -118,18 +118,18 @@ export default function ({
                     : config.auth.refreshTokenExpiration
             )
         );
+        if (!host) {
+            throw new AuthenticationError('Missing host, cannot scope cookie domain.');
+        }
+        const cookieOptions: CookieOptions = {
+            httpOnly: true,
+            sameSite: config.auth.cookie.sameSite,
+            secure: config.auth.cookie.secure,
+            expires: new Date(Date.now() + cookieExpires),
+            domain: host
+        };
 
-        return [
-            cookieName,
-            value,
-            {
-                httpOnly: true,
-                sameSite: config.auth.cookie.sameSite,
-                secure: config.auth.cookie.secure,
-                domain: host,
-                expires: new Date(Date.now() + cookieExpires)
-            }
-        ];
+        return [cookieName, value, cookieOptions];
     };
 
     const _checkIfUserExistsById = async (userId: string, ctx: IQueryInfos) => {
@@ -158,8 +158,8 @@ export default function ({
 
         const newRefreshToken = _generateRefreshToken({
             userId,
-            ip: headers['x-forwarded-for'],
-            agent: headers['user-agent']
+            ip: headers['x-forwarded-for'] ?? null,
+            agent: headers['user-agent'] ?? null
         });
 
         await cacheService.getCache(ECacheType.RAM).storeData({
@@ -169,9 +169,9 @@ export default function ({
         });
 
         await cacheService.getCache(ECacheType.RAM).deleteData([`${SESSION_CACHE_HEADER}:${refreshToken}`]);
-
-        res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, newAccessToken, headers.host));
-        res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, newRefreshToken, headers.host));
+        const host = headers.host ?? null;
+        res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, newAccessToken, host));
+        res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, newRefreshToken, host));
     };
 
     return {
@@ -250,8 +250,8 @@ export default function ({
 
                         const refreshToken = _generateRefreshToken({
                             userId: user.id,
-                            ip: req.headers['x-forwarded-for'],
-                            agent: req.headers['user-agent']
+                            ip: req.headers['x-forwarded-for'] ?? null,
+                            agent: req.headers['user-agent'] ?? null
                         });
 
                         // store refresh token in cache
@@ -262,9 +262,9 @@ export default function ({
                             data: user.id,
                             expiresIn: refreshExpires
                         });
-
-                        res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, refreshToken, req.headers.host));
-                        res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, accessToken, req.headers.host));
+                        const host = req.headers.host ?? null;
+                        res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, refreshToken, host));
+                        res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, accessToken, host));
 
                         const originalUrl = await oidcClientService.getOriginalUrl(queryId);
                         return res.redirect(originalUrl);
@@ -324,8 +324,8 @@ export default function ({
 
                         const refreshToken = _generateRefreshToken({
                             userId: user.id,
-                            ip: req.headers['x-forwarded-for'],
-                            agent: req.headers['user-agent']
+                            ip: req.headers['x-forwarded-for'] ?? null,
+                            agent: req.headers['user-agent'] ?? null
                         });
 
                         // store refresh token in cache
@@ -336,9 +336,9 @@ export default function ({
                             data: user.id,
                             expiresIn: ms(config.auth.refreshTokenExpiration)
                         });
-
-                        res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, accessToken, req.headers.host));
-                        res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, refreshToken, req.headers.host));
+                        const host = req.headers.host ?? null;
+                        res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, accessToken, host));
+                        res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, refreshToken, host));
 
                         return res.status(200).json({});
                     } catch (err) {
@@ -348,8 +348,9 @@ export default function ({
             );
 
             app.post('/auth/logout', async (req, res) => {
-                res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, '', req.headers.host));
-                res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, '', req.headers.host));
+                const host = req.headers.host ?? null;
+                res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, '', host));
+                res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, '', host));
 
                 if (config.auth.oidc.enable) {
                     const redirectUrl = oidcClientService.getLogoutUrl();
@@ -615,7 +616,7 @@ export default function ({
                     attribute: USERS_GROUP_ATTRIBUTE_NAME,
                     ctx
                 })) as ITreeValue[];
-                groupsId = userGroups.map(g => g.payload.id);
+                groupsId = userGroups.map(g => g.payload?.id);
             }
 
             await _checkIfUserExistsById(userId, ctx);

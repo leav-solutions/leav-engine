@@ -39,14 +39,14 @@ export interface ISaveTreeMutationArgs {
 export interface IAddElementMutationArgs {
     treeId: string;
     element: ITreeElement;
-    parent?: string;
+    parent?: string | null;
     order?: number;
 }
 
 export interface IMoveElementMutationArgs {
     treeId: string;
     nodeId: string;
-    parentTo?: string;
+    parentTo?: string | null;
     order?: number;
 }
 

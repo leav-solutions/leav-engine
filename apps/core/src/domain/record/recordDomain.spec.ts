@@ -13,7 +13,7 @@ import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
-import {IUtils} from 'utils/utils';
+import {IUtils, ToAny} from 'utils/utils';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {IStandardValue, IValue} from '_types/value';
@@ -38,7 +38,7 @@ import {mockTranslatorWithOptions} from '../../__tests__/mocks/translator';
 import {mockTree} from '../../__tests__/mocks/tree';
 import {mockStandardValue} from '../../__tests__/mocks/value';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
-import recordDomain from './recordDomain';
+import recordDomain, {IRecordDomainDeps} from './recordDomain';
 
 const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
     routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'}
@@ -50,6 +50,25 @@ const mockConfig: Mockify<Config.IConfig> = {
         rootPaths: 'files1:/files',
         originalsPathPrefix: 'originals'
     }
+};
+
+const depsBase: ToAny<IRecordDomainDeps> = {
+    config: {},
+    'core.infra.record': jest.fn(),
+    'core.domain.attribute': jest.fn(),
+    'core.domain.value': jest.fn(),
+    'core.domain.permission.record': jest.fn(),
+    'core.domain.permission.library': jest.fn(),
+    'core.domain.helpers.getCoreEntityById': jest.fn(),
+    'core.domain.helpers.validate': jest.fn(),
+    'core.domain.record.helpers.sendRecordUpdateEvent': jest.fn(),
+    'core.infra.library': jest.fn(),
+    'core.infra.tree': jest.fn(),
+    'core.infra.value': jest.fn(),
+    'core.domain.eventsManager': jest.fn(),
+    'core.infra.cache.cacheService': jest.fn(),
+    'core.utils': jest.fn(),
+    translator: {}
 };
 
 describe('RecordDomain', () => {
@@ -109,7 +128,7 @@ describe('RecordDomain', () => {
                 created_at: 1519303348,
                 modified_at: 1519303348
             };
-            const recRepo: Mockify<IRecordRepo> = {createRecord: global.__mockPromise(createdRecordData)};
+            const recRepo = {createRecord: global.__mockPromise(createdRecordData)} satisfies Mockify<IRecordRepo>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getLibraryFullTextAttributes: global.__mockPromise([])
@@ -120,6 +139,7 @@ describe('RecordDomain', () => {
             };
 
             const recDomain = recordDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
@@ -165,6 +185,7 @@ describe('RecordDomain', () => {
             };
 
             const recDomain = recordDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
@@ -179,8 +200,7 @@ describe('RecordDomain', () => {
                 values: [
                     {
                         attribute: 'some_attribute',
-                        payload: 'some_value',
-                        version: null
+                        payload: 'some_value'
                     }
                 ],
                 ctx
@@ -238,6 +258,7 @@ describe('RecordDomain', () => {
             };
 
             const recDomain = recordDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
@@ -255,14 +276,12 @@ describe('RecordDomain', () => {
                     {
                         attribute: 'some_attribute',
                         id_value: 'fake_value1',
-                        payload: 'some_value',
-                        version: null
+                        payload: 'some_value'
                     },
                     {
                         attribute: 'other_attribute',
                         id_value: 'fake_value2',
-                        payload: 'some other value',
-                        version: null
+                        payload: 'some other value'
                     }
                 ],
                 ctx
@@ -301,11 +320,12 @@ describe('RecordDomain', () => {
                 created_at: 1519303348,
                 modified_at: 987654321
             };
-            const recRepo: Mockify<IRecordRepo> = {
+            const recRepo = {
                 updateRecord: global.__mockPromise({old: updatedRecordData, new: updatedRecordData})
-            };
+            } satisfies Mockify<IRecordRepo>;
 
             const recDomain = recordDomain({
+                ...depsBase,
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.infra.cache.cacheService': mockCacheService as ICachesService,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
@@ -332,9 +352,9 @@ describe('RecordDomain', () => {
         const recordData = {id: '222435651', library: 'test', created_at: 1519303348, modified_at: 1519303348};
 
         test('Should delete an record and return deleted record', async function () {
-            const recRepo: Mockify<IRecordRepo> = {
+            const recRepo = {
                 deleteRecord: global.__mockPromise(recordData)
-            };
+            } satisfies Mockify<IRecordRepo>;
 
             const recordPermDomain: Mockify<IRecordPermissionDomain> = {
                 getRecordPermission: global.__mockPromise(true)
@@ -358,6 +378,7 @@ describe('RecordDomain', () => {
             };
 
             const recDomain = recordDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.record': recRepo as IRecordRepo,
@@ -405,9 +426,10 @@ describe('RecordDomain', () => {
         };
 
         test('Should find records', async function () {
-            const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
+            const recRepo = {find: global.__mockPromise(mockRes)} satisfies Mockify<IRecordRepo>;
 
             const recDomain = recordDomain({
+                ...depsBase,
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper
@@ -427,7 +449,7 @@ describe('RecordDomain', () => {
         });
 
         test('Find with a filter via extended attribute', async () => {
-            const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
+            const recRepo = {find: global.__mockPromise(mockRes)} satisfies Mockify<IRecordRepo>;
             const mockAttributeDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({
                     ...mockAttrSimple,
@@ -437,6 +459,7 @@ describe('RecordDomain', () => {
             };
 
             const recDomain = recordDomain({
+                ...depsBase,
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
@@ -480,6 +503,7 @@ describe('RecordDomain', () => {
             };
 
             const recDomain = recordDomain({
+                ...depsBase,
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.domain.permission.library': mockLibraryPermissionDomainForbidden as ILibraryPermissionDomain,
@@ -491,7 +515,7 @@ describe('RecordDomain', () => {
 
         describe('Link attribute', () => {
             test('Find with a filter via link attribute', async () => {
-                const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
+                const recRepo = {find: global.__mockPromise(mockRes)} satisfies Mockify<IRecordRepo>;
                 const mockAttributeDomain: Mockify<IAttributeDomain> = {
                     getAttributeProperties: global.__mockPromiseMultiple([
                         {
@@ -512,6 +536,7 @@ describe('RecordDomain', () => {
                 };
 
                 const recDomain = recordDomain({
+                    ...depsBase,
                     'core.infra.record': recRepo as IRecordRepo,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
@@ -540,7 +565,7 @@ describe('RecordDomain', () => {
             });
 
             test('If child attribute is not specified, search on linked library label', async () => {
-                const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
+                const recRepo = {find: global.__mockPromise(mockRes)} satisfies Mockify<IRecordRepo>;
                 const mockAttributeDomain: Mockify<IAttributeDomain> = {
                     getAttributeProperties: global.__mockPromiseMultiple([
                         {
@@ -577,6 +602,7 @@ describe('RecordDomain', () => {
                 };
 
                 const recDomain = recordDomain({
+                    ...depsBase,
                     'core.infra.record': recRepo as IRecordRepo,
                     'core.infra.library': mockLibraryRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
@@ -606,7 +632,7 @@ describe('RecordDomain', () => {
             });
 
             test('If child attribute is a link, search on label', async () => {
-                const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
+                const recRepo = {find: global.__mockPromise(mockRes)} satisfies Mockify<IRecordRepo>;
                 const mockAttributeDomain: Mockify<IAttributeDomain> = {
                     getAttributeProperties: global.__mockPromiseMultiple([
                         {
@@ -658,6 +684,7 @@ describe('RecordDomain', () => {
                 };
 
                 const recDomain = recordDomain({
+                    ...depsBase,
                     'core.infra.record': recRepo as IRecordRepo,
                     'core.infra.library': mockLibraryRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
@@ -690,7 +717,7 @@ describe('RecordDomain', () => {
 
         describe('Tree attribute', () => {
             test('Find with a filter via tree attribute', async () => {
-                const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
+                const recRepo = {find: global.__mockPromise(mockRes)} satisfies Mockify<IRecordRepo>;
                 const mockAttributeDomain: Mockify<IAttributeDomain> = {
                     getAttributeProperties: global.__mockPromiseMultiple([
                         {
@@ -711,6 +738,7 @@ describe('RecordDomain', () => {
                 };
 
                 const recDomain = recordDomain({
+                    ...depsBase,
                     'core.infra.record': recRepo as IRecordRepo,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                     'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
@@ -739,7 +767,7 @@ describe('RecordDomain', () => {
             });
 
             test('If child attribute is not specified, search on library label', async () => {
-                const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
+                const recRepo = {find: global.__mockPromise(mockRes)} satisfies Mockify<IRecordRepo>;
 
                 const mockLibraryRepo: Mockify<ILibraryRepo> = {
                     getLibraries: global.__mockPromiseMultiple([
@@ -777,6 +805,7 @@ describe('RecordDomain', () => {
                 };
 
                 const recDomain = recordDomain({
+                    ...depsBase,
                     'core.infra.record': recRepo as IRecordRepo,
                     'core.infra.library': mockLibraryRepo as ILibraryRepo,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
@@ -807,7 +836,7 @@ describe('RecordDomain', () => {
             });
 
             test('If library is not specified, search on label of each tree libraries', async () => {
-                const recRepo: Mockify<IRecordRepo> = {find: global.__mockPromise(mockRes)};
+                const recRepo = {find: global.__mockPromise(mockRes)} satisfies Mockify<IRecordRepo>;
 
                 const mockLibraryRepo: Mockify<ILibraryRepo> = {
                     getLibraries: jest.fn().mockImplementation(({params}) =>
@@ -874,6 +903,7 @@ describe('RecordDomain', () => {
                 };
 
                 const recDomain = recordDomain({
+                    ...depsBase,
                     'core.infra.record': recRepo as IRecordRepo,
                     'core.infra.library': mockLibraryRepo as ILibraryRepo,
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
@@ -935,6 +965,7 @@ describe('RecordDomain', () => {
             };
 
             const recDomain = recordDomain({
+                ...depsBase,
                 'core.domain.attribute': attributeDomain as IAttributeDomain,
                 'core.infra.record': recRepo as IRecordRepo,
                 'core.infra.library': libRepo as ILibraryRepo,
@@ -1019,6 +1050,7 @@ describe('RecordDomain', () => {
             };
 
             const recDomain = recordDomain({
+                ...depsBase,
                 'core.domain.value': mockValDomain as IValueDomain,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
@@ -1125,6 +1157,7 @@ describe('RecordDomain', () => {
                 const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
 
                 const recDomain = recordDomain({
+                    ...depsBase,
                     'core.domain.value': mockValDomain as IValueDomain,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                     'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
@@ -1210,6 +1243,7 @@ describe('RecordDomain', () => {
                 const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
 
                 const recDomain = recordDomain({
+                    ...depsBase,
                     'core.domain.value': mockValDomain as IValueDomain,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                     'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
@@ -1296,6 +1330,7 @@ describe('RecordDomain', () => {
                 const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
 
                 const recDomain = recordDomain({
+                    ...depsBase,
                     'core.domain.value': mockValDomain as IValueDomain,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                     'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
@@ -1381,6 +1416,7 @@ describe('RecordDomain', () => {
                 const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
 
                 const recDomain = recordDomain({
+                    ...depsBase,
                     'core.domain.value': mockValDomain as IValueDomain,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                     'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
@@ -1467,6 +1503,7 @@ describe('RecordDomain', () => {
                 const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
 
                 const recDomain = recordDomain({
+                    ...depsBase,
                     'core.domain.value': mockValDomain as IValueDomain,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                     'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
@@ -1552,6 +1589,7 @@ describe('RecordDomain', () => {
                 const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
 
                 const recDomain = recordDomain({
+                    ...depsBase,
                     'core.domain.value': mockValDomain as IValueDomain,
                     'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                     'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
@@ -1649,6 +1687,7 @@ describe('RecordDomain', () => {
                     };
 
                     const recDomain = recordDomain({
+                        ...depsBase,
                         'core.domain.value': mockValDomain as IValueDomain,
                         'core.domain.helpers.getCoreEntityById': mockGetCoreEntityById,
                         'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
@@ -1706,6 +1745,7 @@ describe('RecordDomain', () => {
                     };
 
                     const recDomain = recordDomain({
+                        ...depsBase,
                         'core.domain.value': mockValDomain as IValueDomain,
                         'core.domain.helpers.getCoreEntityById': mockGetCoreEntityById,
                         'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
@@ -1771,6 +1811,7 @@ describe('RecordDomain', () => {
             const mockGetEntityByIdHelper = jest.fn().mockReturnValue(libData);
 
             const recDomain = recordDomain({
+                ...depsBase,
                 'core.domain.value': mockValDomain as IValueDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 'core.infra.library': mockLibRepo as ILibraryRepo,
@@ -1830,6 +1871,7 @@ describe('RecordDomain', () => {
             };
 
             const recDomain = recordDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.value': mockValueDomainFormatValue as IValueDomain
             });
@@ -1865,6 +1907,7 @@ describe('RecordDomain', () => {
                 ])
             };
             const recDomain = recordDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.value': mockValDomain as IValueDomain
             });
@@ -1901,6 +1944,7 @@ describe('RecordDomain', () => {
             };
 
             const recDomain = recordDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.value': mockValueDomainFormatValueDate as IValueDomain
             });
@@ -1935,6 +1979,7 @@ describe('RecordDomain', () => {
             };
 
             const recDomain = recordDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.value': mockValueDomainFormatValueLink as IValueDomain
             });
@@ -1960,6 +2005,7 @@ describe('RecordDomain', () => {
                 })
             };
             const recDomain = recordDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.value': mockValueDomainFormatValue as IValueDomain
             });
@@ -1987,11 +2033,11 @@ describe('RecordDomain', () => {
                 active: true
             };
 
-            const mockValueDomain: Mockify<IValueDomain> = {
+            const mockValueDomain = {
                 saveValue: global.__mockPromise([{payload: false}])
-            };
+            } satisfies Mockify<IValueDomain>;
 
-            const recDomain = recordDomain({'core.domain.value': mockValueDomain as IValueDomain});
+            const recDomain = recordDomain({...depsBase, 'core.domain.value': mockValueDomain as IValueDomain});
 
             const recordAfter = await recDomain.deactivateRecord(record, ctx);
 
@@ -2013,11 +2059,11 @@ describe('RecordDomain', () => {
                 active: false
             };
 
-            const mockValueDomain: Mockify<IValueDomain> = {
+            const mockValueDomain = {
                 saveValue: global.__mockPromise([{payload: true}])
-            };
+            } satisfies Mockify<IValueDomain>;
 
-            const recDomain = recordDomain({'core.domain.value': mockValueDomain as IValueDomain});
+            const recDomain = recordDomain({...depsBase, 'core.domain.value': mockValueDomain as IValueDomain});
 
             const recordAfter = await recDomain.activateRecord(record, ctx);
 
@@ -2040,11 +2086,11 @@ describe('RecordDomain', () => {
                 active: true
             };
 
-            const mockValueDomain: Mockify<IValueDomain> = {
+            const mockValueDomain = {
                 saveValue: global.__mockPromise([{payload: false}])
-            };
+            } satisfies Mockify<IValueDomain>;
 
-            const recDomain = recordDomain({'core.domain.value': mockValueDomain as IValueDomain});
+            const recDomain = recordDomain({...depsBase, 'core.domain.value': mockValueDomain as IValueDomain});
 
             const recordAfter = await recDomain.deactivateRecord(record, {userId: '1'});
 
@@ -2065,11 +2111,11 @@ describe('RecordDomain', () => {
                 active: false
             };
 
-            const mockValueDomain: Mockify<IValueDomain> = {
+            const mockValueDomain = {
                 saveValue: global.__mockPromise([{payload: true}])
-            };
+            } satisfies Mockify<IValueDomain>;
 
-            const recDomain = recordDomain({'core.domain.value': mockValueDomain as IValueDomain});
+            const recDomain = recordDomain({...depsBase, 'core.domain.value': mockValueDomain as IValueDomain});
 
             const recordAfter = await recDomain.activateRecord(record, {userId: '1'});
 
@@ -2082,7 +2128,7 @@ describe('RecordDomain', () => {
 
     describe('deactivateRecordsBatch', () => {
         test('Deactivate records from a list of records ids', async () => {
-            const domain = recordDomain();
+            const domain = recordDomain(depsBase);
             domain.find = jest.fn();
             domain.deactivateRecord = jest.fn().mockImplementation(() => Promise.resolve(mockRecord));
 
@@ -2098,7 +2144,7 @@ describe('RecordDomain', () => {
         });
 
         test('Deactivate records from filters', async () => {
-            const domain = recordDomain();
+            const domain = recordDomain(depsBase);
             domain.find = jest
                 .fn()
                 .mockImplementation(() => Promise.resolve({list: [mockRecord, mockRecord, mockRecord]}));
@@ -2132,7 +2178,7 @@ describe('RecordDomain', () => {
 
     describe('purgeInactiveRecords', () => {
         test('Delete all inactive records', async () => {
-            const domain = recordDomain();
+            const domain = recordDomain(depsBase);
             domain.find = jest.fn().mockImplementation(() => Promise.resolve({list: [mockRecord, mockRecord]}));
             domain.deleteRecord = jest.fn().mockImplementation(() => Promise.resolve());
 

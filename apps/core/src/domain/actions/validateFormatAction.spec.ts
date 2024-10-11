@@ -34,44 +34,48 @@ describe('validateFormatAction', () => {
             }
         ]
     };
+    const ctxAttrExt = {attribute: attrExt, userId: 'test'};
+    const ctxAttrColor = {attribute: attrColor, userId: 'test'};
+    const ctxAttrText = {attribute: attrText, userId: 'test'};
+
     test('validateFormat', async () => {
         // Extended
         const extValue = [{payload: {street: 'test', city: {zipcode: 38000, name: 'Grenoble'}}}];
-        expect((await action(extValue, {}, {attribute: attrExt})).values[0]).toBe(extValue[0]);
+        expect((await action(extValue, {}, ctxAttrExt)).values[0]).toBe(extValue[0]);
     });
 
     test('Throw if invalid format', async () => {
         // Extended
         const badExtValue = [{payload: {street: 'test', city: {zipcode: 'aaa', name: 'Grenoble'}}}];
-        const res = await action(badExtValue, {}, {attribute: attrExt});
+        const res = await action(badExtValue, {}, ctxAttrExt);
         expect(res.errors.length).toBe(1);
     });
 
     test('validateFormat COLOR', async () => {
         const colorValue = [{payload: 'FFFFFF'}];
-        expect((await action(colorValue, {}, {attribute: attrColor})).values[0]).toBe(colorValue[0]);
+        expect((await action(colorValue, {}, ctxAttrColor)).values[0]).toBe(colorValue[0]);
     });
 
     test('Throw if invalid format COLOR', async () => {
         const badColorValue = [{payload: 'AZERTY'}];
-        const res = await action(badColorValue, {}, {attribute: attrColor});
+        const res = await action(badColorValue, {}, ctxAttrColor);
         expect(res.errors.length).toBe(1);
     });
 
     test('Throw if invalid format COLOR, to be less or equal to 6 characters ', async () => {
         const badColorValue = [{payload: 'FFFFFFFFFFFFFFFFFFF'}];
-        const res = await action(badColorValue, {}, {attribute: attrColor});
+        const res = await action(badColorValue, {}, ctxAttrColor);
         expect(res.errors.length).toBe(1);
     });
 
     test('validateFormat RICH TEXT', async () => {
         const RichTextValue = [{payload: '<p>salut</p>'}];
-        expect((await action(RichTextValue, {}, {attribute: attrText})).values[0]).toBe(RichTextValue[0]);
+        expect((await action(RichTextValue, {}, ctxAttrText)).values[0]).toBe(RichTextValue[0]);
     });
 
     test('validateFormat RICH TEXT', async () => {
         const RichTextValue = [{payload: false}];
-        const res = await action(RichTextValue, {}, {attribute: attrText});
+        const res = await action(RichTextValue, {}, ctxAttrText);
         expect(res.errors.length).toBe(1);
     });
 });

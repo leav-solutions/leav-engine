@@ -1,14 +1,28 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import createApplicationApp from '../applicationApp';
+import createApplicationApp, {IApplicationAppDeps} from '../applicationApp';
 import {APPS_URL_PREFIX} from '../../../_types/application';
 import initQueryContext from '../../helpers/initQueryContext';
 import {ValidateRequestTokenFunc} from '../../helpers/validateRequestToken';
 import {IAuthApp} from '../../auth/authApp';
-import {IRequestWithContext} from '../../../_types/express';
 import {IApplicationDomain} from '../../../domain/application/applicationDomain';
-import {IUtils} from '../../../utils/utils';
+import {IUtils, ToAny} from '../../../utils/utils';
+
+const depsBase: ToAny<IApplicationAppDeps> = {
+    config: {},
+    'core.app.graphql': jest.fn(),
+    'core.app.auth': jest.fn(),
+    'core.app.helpers.initQueryContext': jest.fn(),
+    'core.app.helpers.validateRequestToken': jest.fn(),
+    'core.app.core.subscriptionsHelper': jest.fn(),
+    'core.domain.application': jest.fn(),
+    'core.domain.permission': jest.fn(),
+    'core.domain.record': jest.fn(),
+    'core.domain.eventsManager': jest.fn(),
+    'core.utils.logger': jest.fn(),
+    'core.utils': jest.fn()
+};
 
 describe('ApplicationApp', () => {
     const utilsMock: Mockify<IUtils> = {
@@ -33,6 +47,7 @@ describe('ApplicationApp', () => {
             };
 
             const applicationApp = createApplicationApp({
+                ...depsBase,
                 'core.domain.application': applicationDomainMock as IApplicationDomain,
                 'core.app.auth': authAppMock as IAuthApp,
                 'core.app.helpers.initQueryContext': initQueryContext({}),
@@ -82,6 +97,7 @@ describe('ApplicationApp', () => {
             };
 
             const applicationApp = createApplicationApp({
+                ...depsBase,
                 'core.domain.application': applicationDomainMock as IApplicationDomain,
                 'core.app.helpers.initQueryContext': initQueryContext({}),
                 'core.app.helpers.validateRequestToken': validateRequestTokenHelper as ValidateRequestTokenFunc,
@@ -120,6 +136,7 @@ describe('ApplicationApp', () => {
     describe('when login is asked', () => {
         it('Should redirect to portal if oidc service enable because we cannot log directly to leav', async () => {
             const applicationApp = createApplicationApp({
+                ...depsBase,
                 'core.app.helpers.initQueryContext': initQueryContext({}),
                 config: {applications: {rootFolder: 'applications/rootFolder'}, auth: {oidc: {enable: true}}}
             });
@@ -152,6 +169,7 @@ describe('ApplicationApp', () => {
         it('Should not verify token and continue handlers, login is public when oidc not enable', async () => {
             const validateRequestTokenHelper = jest.fn();
             const applicationApp = createApplicationApp({
+                ...depsBase,
                 'core.app.helpers.initQueryContext': initQueryContext({}),
                 'core.app.helpers.validateRequestToken': validateRequestTokenHelper as ValidateRequestTokenFunc,
                 'core.utils': utilsMock as IUtils,

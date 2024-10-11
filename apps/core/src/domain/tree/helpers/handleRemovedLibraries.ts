@@ -15,7 +15,7 @@ export type HandleRemovedLibrariesFunc = (
     ctx: IQueryInfos
 ) => Promise<void>;
 
-export default function ({'core.infra.tree': treeRepo = null}: IDeps): HandleRemovedLibrariesFunc {
+export default function ({'core.infra.tree': treeRepo}: IDeps): HandleRemovedLibrariesFunc {
     return async (treeDataBefore, treeDataAfter, ctx) => {
         if (!treeDataAfter.libraries) {
             // If libraries have not changed, don't do anything

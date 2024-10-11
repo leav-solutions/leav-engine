@@ -26,6 +26,11 @@ import getDefaultActionsList from './helpers/getDefaultActionsList';
 import getLibraryDefaultAttributes from './helpers/getLibraryDefaultAttributes';
 import {getPreviewsAttributeName, getPreviewsStatusAttributeName} from './helpers/getPreviewsAttributes';
 
+export type ToAny<T> = {
+    // common type
+    [P in keyof T]: any;
+};
+
 export interface IUtils {
     libNameToQueryName(name: string): string;
     libNameToTypeName(name: string): string;
@@ -117,7 +122,7 @@ export interface IUtils {
     generateExplicitValidationError<T>(
         field: keyof T,
         message: ErrorFieldDetailMessage,
-        lang: string
+        lang?: string
     ): ValidationError<T>;
 
     deleteFile(path: string): Promise<void>;
@@ -294,7 +299,7 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
         generateExplicitValidationError<T>(
             field: keyof T,
             message: ErrorFieldDetailMessage,
-            lang: string
+            lang: string = config.lang.default
         ): ValidationError<T> {
             const fieldDetails: ErrorFieldDetail<T> = {};
             fieldDetails[field] = message;

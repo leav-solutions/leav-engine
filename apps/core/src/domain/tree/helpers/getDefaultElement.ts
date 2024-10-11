@@ -7,9 +7,9 @@ import {ITreeNode} from '_types/tree';
 import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
 
 interface IDeps {
-    'core.infra.tree'?: ITreeRepo;
-    'core.infra.cache.cacheService'?: ICachesService;
-    'core.utils'?: IUtils;
+    'core.infra.tree': ITreeRepo;
+    'core.infra.cache.cacheService': ICachesService;
+    'core.utils': IUtils;
 }
 
 export type GetDefaultElementFunc = (params: {treeId: string; ctx: any}) => Promise<ITreeNode>;
@@ -20,9 +20,9 @@ export interface IGetDefaultElementHelper {
 }
 
 export default function ({
-    'core.infra.tree': treeRepo = null,
-    'core.infra.cache.cacheService': cacheService = null,
-    'core.utils': utils = null
+    'core.infra.tree': treeRepo,
+    'core.infra.cache.cacheService': cacheService,
+    'core.utils': utils
 }: IDeps): IGetDefaultElementHelper {
     const _getCacheKey = treeId => `${utils.getCoreEntityCacheKey('tree', treeId)}:defaultElement`;
 

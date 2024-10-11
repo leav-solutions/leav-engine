@@ -6,14 +6,24 @@ import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {IAdminPermissionDomain} from 'domain/permission/adminPermissionDomain';
 import {IUserDomain} from 'domain/user/userDomain';
 import {IApplicationRepo} from 'infra/application/applicationRepo';
-import {IUtils} from 'utils/utils';
+import {IUtils, ToAny} from 'utils/utils';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {mockApplication, mockApplicationExternal} from '../../__tests__/mocks/application';
 import {mockCtx} from '../../__tests__/mocks/shared';
-import applicationDomain, {MAX_CONSULTATION_HISTORY_SIZE} from './applicationDomain';
+import applicationDomain, {IApplicationDomainDeps, MAX_CONSULTATION_HISTORY_SIZE} from './applicationDomain';
+
+const depsBase: ToAny<IApplicationDomainDeps> = {
+    config: {},
+    'core.domain.permission.admin': jest.fn(),
+    'core.domain.user': jest.fn(),
+    'core.domain.eventsManager': jest.fn(),
+    'core.infra.application': jest.fn(),
+    'core.utils': jest.fn(),
+    translator: {}
+};
 
 describe('applicationDomain', () => {
     beforeEach(() => jest.clearAllMocks());
@@ -22,9 +32,9 @@ describe('applicationDomain', () => {
         getAdminPermission: global.__mockPromise(true)
     };
 
-    const mockAdminPermissionDomainNotAllowed: Mockify<IAdminPermissionDomain> = {
+    const mockAdminPermissionDomainNotAllowed = {
         getAdminPermission: global.__mockPromise(false)
-    };
+    } satisfies Mockify<IAdminPermissionDomain>;
 
     const mockEventsManager: Mockify<IEventsManagerDomain> = {
         sendPubSubEvent: global.__mockPromise(),
@@ -33,11 +43,12 @@ describe('applicationDomain', () => {
 
     describe('getApplicationProperties', () => {
         test('Retrieve an application properties from its ID', async () => {
-            const mockAppRepo: Mockify<IApplicationRepo> = {
+            const mockAppRepo = {
                 getApplications: global.__mockPromise({list: [mockApplication], totalCount: 1})
-            };
+            } satisfies Mockify<IApplicationRepo>;
 
             const appDomain = applicationDomain({
+                ...depsBase,
                 'core.infra.application': mockAppRepo as IApplicationRepo
             });
             const attr = await appDomain.getApplicationProperties({id: 'test_application', ctx: mockCtx});
@@ -56,6 +67,7 @@ describe('applicationDomain', () => {
             };
 
             const appDomain = applicationDomain({
+                ...depsBase,
                 'core.infra.application': mockAppRepo as IApplicationRepo
             });
 
@@ -65,11 +77,12 @@ describe('applicationDomain', () => {
 
     describe('getApplications', () => {
         test('Retrieve all applications', async () => {
-            const mockAppRepo: Mockify<IApplicationRepo> = {
+            const mockAppRepo = {
                 getApplications: global.__mockPromise({list: [mockApplication], totalCount: 1})
-            };
+            } satisfies Mockify<IApplicationRepo>;
 
             const appDomain = applicationDomain({
+                ...depsBase,
                 'core.infra.application': mockAppRepo as IApplicationRepo
             });
             const attr = await appDomain.getApplications({ctx: mockCtx});
@@ -98,6 +111,7 @@ describe('applicationDomain', () => {
                 };
 
                 const appDomain = applicationDomain({
+                    ...depsBase,
                     'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.application': mockAppRepo as IApplicationRepo,
@@ -119,6 +133,7 @@ describe('applicationDomain', () => {
                 };
 
                 const appDomain = applicationDomain({
+                    ...depsBase,
                     'core.domain.permission.admin': mockAdminPermissionDomainNotAllowed as IAdminPermissionDomain,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.application': mockAppRepo as IApplicationRepo,
@@ -147,6 +162,7 @@ describe('applicationDomain', () => {
                 };
 
                 const appDomain = applicationDomain({
+                    ...depsBase,
                     'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.application': mockAppRepo as IApplicationRepo,
@@ -167,6 +183,7 @@ describe('applicationDomain', () => {
                 };
 
                 const appDomain = applicationDomain({
+                    ...depsBase,
                     'core.domain.permission.admin': mockAdminPermissionDomainNotAllowed as IAdminPermissionDomain,
                     'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                     'core.infra.application': mockAppRepo as IApplicationRepo,
@@ -200,6 +217,7 @@ describe('applicationDomain', () => {
                 };
 
                 const appDomain = applicationDomain({
+                    ...depsBase,
                     'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                     'core.infra.application': mockAppRepo as IApplicationRepo,
                     'core.utils': mockUtilsInvalidID as IUtils
@@ -219,6 +237,7 @@ describe('applicationDomain', () => {
                     isEndpointValid: jest.fn().mockReturnValue(false)
                 };
                 const appDomain = applicationDomain({
+                    ...depsBase,
                     'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                     'core.infra.application': mockAppRepo as IApplicationRepo,
                     'core.utils': mockUtilsInvalidEndpoint as IUtils
@@ -241,6 +260,7 @@ describe('applicationDomain', () => {
             };
 
             const appDomain = applicationDomain({
+                ...depsBase,
                 'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.application': mockAppRepo as IApplicationRepo
@@ -258,6 +278,7 @@ describe('applicationDomain', () => {
             };
 
             const appDomain = applicationDomain({
+                ...depsBase,
                 'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.application': mockAppRepo as IApplicationRepo
@@ -274,6 +295,7 @@ describe('applicationDomain', () => {
             };
 
             const appDomain = applicationDomain({
+                ...depsBase,
                 'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.application': mockAppRepo as IApplicationRepo
@@ -291,6 +313,7 @@ describe('applicationDomain', () => {
             };
 
             const appDomain = applicationDomain({
+                ...depsBase,
                 'core.domain.permission.admin': mockAdminPermissionDomainNotAllowed as IAdminPermissionDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.infra.application': mockAppRepo as IApplicationRepo
@@ -308,14 +331,15 @@ describe('applicationDomain', () => {
 
     describe('updateConsulationHistory', () => {
         test('Save consulted app to history', async () => {
-            const mockUserDomain: Mockify<IUserDomain> = {
+            const mockUserDomain = {
                 getUserData: global.__mockPromise({data: {[CONSULTED_APPS_KEY]: []}}),
                 saveUserData: jest.fn()
-            };
+            } satisfies Mockify<IUserDomain>;
 
             const appDomain = applicationDomain({
-                'core.domain.user': mockUserDomain as IUserDomain
-            });
+                ...depsBase,
+                'core.domain.user': mockUserDomain
+            } as ToAny<IApplicationDomainDeps>);
 
             await appDomain.updateConsultationHistory({
                 applicationId: mockApplication.id,
@@ -333,18 +357,19 @@ describe('applicationDomain', () => {
         });
 
         test('Dedup history', async () => {
-            const mockUserDomain: Mockify<IUserDomain> = {
+            const mockUserDomain = {
                 getUserData: global.__mockPromise({
                     data: {
                         [CONSULTED_APPS_KEY]: ['some_app', 'another_app', mockApplication.id, 'last_app']
                     }
                 }),
                 saveUserData: jest.fn()
-            };
+            } satisfies Mockify<IUserDomain>;
 
             const appDomain = applicationDomain({
-                'core.domain.user': mockUserDomain as IUserDomain
-            });
+                ...depsBase,
+                'core.domain.user': mockUserDomain
+            } as ToAny<IApplicationDomainDeps>);
 
             await appDomain.updateConsultationHistory({
                 applicationId: mockApplication.id,
@@ -362,18 +387,19 @@ describe('applicationDomain', () => {
         });
 
         test('Limit history size', async () => {
-            const mockUserDomain: Mockify<IUserDomain> = {
+            const mockUserDomain = {
                 getUserData: global.__mockPromise({
                     data: {
                         [CONSULTED_APPS_KEY]: new Array(MAX_CONSULTATION_HISTORY_SIZE).fill('').map((e, i) => i)
                     }
                 }),
                 saveUserData: jest.fn()
-            };
+            } satisfies Mockify<IUserDomain>;
 
             const appDomain = applicationDomain({
-                'core.domain.user': mockUserDomain as IUserDomain
-            });
+                ...depsBase,
+                'core.domain.user': mockUserDomain
+            } as ToAny<IApplicationDomainDeps>);
 
             await appDomain.updateConsultationHistory({
                 applicationId: mockApplication.id,
