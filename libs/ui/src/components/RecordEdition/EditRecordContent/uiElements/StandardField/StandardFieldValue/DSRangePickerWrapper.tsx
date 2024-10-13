@@ -57,11 +57,8 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
         }
     }, [fieldValue.isEditing]);
 
-    const _handleDateChange: (
-        rangePickerDates: [from: dayjs.Dayjs, to: dayjs.Dayjs] | null,
-        antOnChangeParams: [from: string, to: string] | null
-    ) => void = (rangePickerDates, ...antOnChangeParams) => {
-        if (state.isInheritedValue && rangePickerDates === null) {
+    const _resetToInheritedOrCalculatedValue = () => {
+        if (state.isInheritedValue) {
             onChange(
                 [
                     dayjs.unix(Number(state.inheritedValue.raw_value.from)),
@@ -69,7 +66,24 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
                 ],
                 state.inheritedValue.raw_value
             );
-            handleSubmit('', state.attribute.id);
+        } else if (state.isCalculatedValue) {
+            onChange(
+                [
+                    dayjs.unix(Number(state.calculatedValue.raw_value.from)),
+                    dayjs.unix(Number(state.calculatedValue.raw_value.to))
+                ],
+                state.calculatedValue.raw_value
+            );
+        }
+        handleSubmit('', state.attribute.id);
+    };
+
+    const _handleDateChange: (
+        rangePickerDates: [from: dayjs.Dayjs, to: dayjs.Dayjs] | null,
+        antOnChangeParams: [from: string, to: string] | null
+    ) => void = (rangePickerDates, ...antOnChangeParams) => {
+        if ((state.isInheritedValue || state.isCalculatedValue) && rangePickerDates === null) {
+            _resetToInheritedOrCalculatedValue();
             return;
         }
 
@@ -96,6 +110,25 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
         }
     };
 
+    const _getHelper = () => {
+        if (state.isInheritedValue) {
+            return t('record_edition.inherited_input_helper', {
+                inheritedValue: t('record_edition.date_range_from_to', {
+                    from: state.inheritedValue.value.from,
+                    to: state.inheritedValue.value.to
+                })
+            });
+        } else if (state.isCalculatedValue) {
+            return t('record_edition.calculated_input_helper', {
+                calculatedValue: t('record_edition.date_range_from_to', {
+                    from: state.calculatedValue.value.from,
+                    to: state.calculatedValue.value.to
+                })
+            });
+        }
+        return;
+    };
+
     const label = localizedTranslation(state.formElement.settings.label, availableLangs);
 
     return (
@@ -107,21 +140,12 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
             label={label}
             required={state.formElement.settings.required}
             disabled={state.isReadOnly}
-            allowClear={!state.isInheritedNotOverrideValue}
+            allowClear={!state.isInheritedNotOverrideValue && !state.isCalculatedNotOverrideValue}
             status={errors.length > 0 ? 'error' : undefined}
             onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
-            helper={
-                state.isInheritedOverrideValue
-                    ? t('record_edition.inherited_input_helper', {
-                          inheritedValue: t('record_edition.date_range_from_to', {
-                              from: state.inheritedValue.value.from,
-                              to: state.inheritedValue.value.to
-                          })
-                      })
-                    : undefined
-            }
             onOpenChange={_handleOpenChange}
-            $shouldHighlightColor={state.isInheritedNotOverrideValue}
+            helper={_getHelper()}
+            $shouldHighlightColor={state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue}
         />
     );
 };

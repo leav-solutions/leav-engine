@@ -39,8 +39,12 @@ export const DSBooleanWrapper: FunctionComponent<IDSBooleanWrapperProps> = ({val
     const {errors} = Form.Item.useStatus();
     const {lang: availableLang} = useLang();
 
-    const _resetOverrideValue = () => {
-        onChange(state.inheritedValue.raw_value, undefined);
+    const _resetToInheritedOrCalculatedValue = () => {
+        if (state.isInheritedValue) {
+            onChange(state.inheritedValue.raw_value, undefined);
+        } else if (state.isCalculatedValue) {
+            onChange(state.calculatedValue.raw_value, undefined);
+        }
         handleSubmit('', state.attribute.id);
     };
 
@@ -49,18 +53,25 @@ export const DSBooleanWrapper: FunctionComponent<IDSBooleanWrapperProps> = ({val
         onChange(checked, event);
     };
 
+    const _getHelper = () => {
+        if (state.isInheritedValue) {
+            return t('record_edition.inherited_input_helper', {
+                inheritedValue: t(_getBooleanValueAsStringForTranslation(state.inheritedValue.raw_value))
+            });
+        } else if (state.isCalculatedValue) {
+            return t('record_edition.inherited_input_helper', {
+                calculatedValue: t(_getBooleanValueAsStringForTranslation(state.calculatedValue.raw_value))
+            });
+        }
+        return;
+    };
+
     const label = localizedTranslation(state.formElement.settings.label, availableLang);
 
     return (
         <KitInputWrapper
             label={label}
-            helper={
-                state.isInheritedOverrideValue
-                    ? t('record_edition.inherited_input_helper', {
-                          inheritedValue: t(_getBooleanValueAsStringForTranslation(state.inheritedValue.raw_value))
-                      })
-                    : undefined
-            }
+            helper={_getHelper()}
             status={errors.length > 0 ? 'error' : undefined}
             disabled={state.isReadOnly}
         >
@@ -69,13 +80,13 @@ export const DSBooleanWrapper: FunctionComponent<IDSBooleanWrapperProps> = ({val
                 <KitTypographyTextStyled
                     size="fontSize5"
                     weight="medium"
-                    $shouldHighlightColor={state.isInheritedNotOverrideValue}
+                    $shouldHighlightColor={state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue}
                 >
                     {t(_getBooleanValueAsStringForTranslation(value))}
                 </KitTypographyTextStyled>
             </label>
-            {state.isInheritedOverrideValue && (
-                <span role="button" onClick={_resetOverrideValue}>
+            {(state.isInheritedOverrideValue || state.isCalculatedOverrideValue) && (
+                <span role="button" onClick={_resetToInheritedOrCalculatedValue}>
                     <FontAwesomeIconStyled aria-label="clear" icon={faCircleXmark} />
                 </span>
             )}

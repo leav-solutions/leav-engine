@@ -290,7 +290,7 @@ const _computeScopeAndValues = (params: {
 
 const _computeInheritedFlags = (fieldValues: RecordFormElementsValueStandardValue[]): InheritedFlags => {
     const inheritedValue = fieldValues.find(fieldValue => fieldValue.isInherited);
-    const overrideValue = fieldValues.find(fieldValue => !fieldValue.isInherited); //TODO: ! de calculated ?
+    const overrideValue = fieldValues.find(fieldValue => !fieldValue.isInherited && !fieldValue.isCalculated);
 
     if (inheritedValue === undefined) {
         return {
@@ -321,9 +321,8 @@ const _computeInheritedFlags = (fieldValues: RecordFormElementsValueStandardValu
 };
 
 const _computeCalculatedFlags = (fieldValues: RecordFormElementsValueStandardValue[]): CalculatedFlags => {
-    console.log('fieldValues', fieldValues);
     const calculatedValue = fieldValues.find(fieldValue => fieldValue.isCalculated);
-    const overrideValue = fieldValues.find(fieldValue => !fieldValue.isCalculated); //TODO: ! de inherited ?
+    const overrideValue = fieldValues.find(fieldValue => !fieldValue.isCalculated && !fieldValue.isInherited);
 
     if (calculatedValue === undefined) {
         return {
