@@ -151,7 +151,7 @@ describe('DSRichTextWrapper', () => {
 
     test('Should submit empty value if field is not required', async () => {
         const state = getInitialState(false);
-        const {container} = render(
+        render(
             <AntForm>
                 <AntForm.Item>
                     <DSRichTextWrapper
@@ -165,8 +165,8 @@ describe('DSRichTextWrapper', () => {
             </AntForm>
         );
 
-        const input = container.getElementsByClassName('ProseMirror')[0];
-        (input as HTMLInputElement).focus();
+        const input = screen.getByRole('textbox');
+        await user.click(input);
         await user.click(document.body);
 
         expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
@@ -176,7 +176,7 @@ describe('DSRichTextWrapper', () => {
     describe('With required input and no inheritance', () => {
         test('Should submit the value if field is not empty', async () => {
             const state = getInitialState(true);
-            const {container} = render(
+            render(
                 <AntForm>
                     <AntForm.Item>
                         <DSRichTextWrapper
@@ -191,7 +191,7 @@ describe('DSRichTextWrapper', () => {
             );
 
             const text = 'text';
-            const input = await container.getElementsByClassName('ProseMirror')[0];
+            const input = screen.getByRole('textbox');
             await user.click(input);
             await user.type(input, text);
             await user.click(document.body);
@@ -202,7 +202,7 @@ describe('DSRichTextWrapper', () => {
 
         test('Should submit the default value if field is empty', async () => {
             const state = getInitialState(true);
-            const {container} = render(
+            render(
                 <AntForm>
                     <AntForm.Item>
                         <DSRichTextWrapper
@@ -217,7 +217,7 @@ describe('DSRichTextWrapper', () => {
                 </AntForm>
             );
 
-            const input = await container.getElementsByClassName('ProseMirror')[0];
+            const input = screen.getByRole('textbox');
             await user.click(input);
             await user.click(document.body);
 
@@ -233,7 +233,7 @@ describe('DSRichTextWrapper', () => {
                 ...inheritedNotOverrideValue,
                 formElement: {...state.formElement, values: inheritedValues}
             };
-            const {container} = render(
+            render(
                 <AntForm>
                     <AntForm.Item>
                         <DSRichTextWrapper
@@ -248,7 +248,7 @@ describe('DSRichTextWrapper', () => {
                 </AntForm>
             );
 
-            const input = await container.getElementsByClassName('ProseMirror')[0];
+            const input = screen.getByRole('textbox');
             expect(input).toContainHTML(inheritedValues[1].raw_value);
 
             await user.click(input);
@@ -265,7 +265,7 @@ describe('DSRichTextWrapper', () => {
                 formElement: {...state.formElement, values: inheritedValues}
             };
 
-            const {container} = render(
+            render(
                 <AntForm>
                     <AntForm.Item>
                         <DSRichTextWrapper
@@ -280,8 +280,7 @@ describe('DSRichTextWrapper', () => {
                 </AntForm>
             );
 
-            const input = await container.getElementsByClassName('ProseMirror')[0];
-
+            const input = screen.getByRole('textbox');
             const helperText = screen.getByText(/inherited value/);
             expect(input).toContainHTML(inheritedValues[0].raw_value);
             expect(helperText).toBeInTheDocument();
