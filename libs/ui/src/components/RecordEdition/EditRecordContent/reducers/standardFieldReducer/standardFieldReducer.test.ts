@@ -70,7 +70,11 @@ describe('standardFieldReducer', () => {
         inheritedValue: null,
         isInheritedValue: false,
         isInheritedNotOverrideValue: false,
-        isInheritedOverrideValue: false
+        isInheritedOverrideValue: false,
+        calculatedValue: null,
+        isCalculatedNotOverrideValue: false,
+        isCalculatedOverrideValue: false,
+        isCalculatedValue: false
     };
 
     const _getInitialStateWithValues = (
