@@ -96,11 +96,11 @@ const inheritedOverrideValue: InheritedFlags = {
 
 const tiptapCleanup = mockBrowserFunctionsForTiptap();
 
-afterAll(() => {
-    tiptapCleanup();
-});
-
 describe('DSRichTextWrapper', () => {
+    afterAll(() => {
+        tiptapCleanup();
+    });
+
     const mockHandleSubmit = jest.fn();
     const mockOnChange = jest.fn();
     let user!: ReturnType<typeof userEvent.setup>;

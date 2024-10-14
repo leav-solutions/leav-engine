@@ -28,7 +28,7 @@ const KitRichTextStyled = styled(KitRichText)<{$shouldHighlightColor: boolean}>`
     color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
 `;
 
-const isEmptyValue = value => !value || value === '' || value === '<p></p>';
+const isEmptyValue = value => !value || value === '<p></p>';
 
 export const DSRichTextWrapper: FunctionComponent<IDSRichTextWrapperProps> = ({
     value,
