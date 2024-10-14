@@ -54,16 +54,16 @@ export const DSBooleanWrapper: FunctionComponent<IDSBooleanWrapperProps> = ({val
     };
 
     const _getHelper = () => {
-        if (state.isInheritedValue) {
+        if (state.isInheritedOverrideValue) {
             return t('record_edition.inherited_input_helper', {
                 inheritedValue: t(_getBooleanValueAsStringForTranslation(state.inheritedValue.raw_value))
             });
-        } else if (state.isCalculatedValue) {
-            return t('record_edition.inherited_input_helper', {
+        } else if (state.isCalculatedOverrideValue) {
+            return t('record_edition.calculated_input_helper', {
                 calculatedValue: t(_getBooleanValueAsStringForTranslation(state.calculatedValue.raw_value))
             });
         }
-        return;
+        return undefined;
     };
 
     const label = localizedTranslation(state.formElement.settings.label, availableLang);

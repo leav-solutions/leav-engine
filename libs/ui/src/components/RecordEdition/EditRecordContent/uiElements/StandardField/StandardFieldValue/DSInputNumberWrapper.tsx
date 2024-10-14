@@ -99,11 +99,11 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     };
 
     const _getHelper = () => {
-        if (state.isInheritedValue) {
+        if (state.isInheritedOverrideValue) {
             return t('record_edition.inherited_input_helper', {
                 inheritedValue: state.inheritedValue.raw_value
             });
-        } else if (state.isCalculatedValue) {
+        } else if (state.isCalculatedOverrideValue) {
             return t('record_edition.calculated_input_helper', {
                 calculatedValue: state.calculatedValue.raw_value
             });

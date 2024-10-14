@@ -111,14 +111,14 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
     };
 
     const _getHelper = () => {
-        if (state.isInheritedValue) {
+        if (state.isInheritedOverrideValue) {
             return t('record_edition.inherited_input_helper', {
                 inheritedValue: t('record_edition.date_range_from_to', {
                     from: state.inheritedValue.value.from,
                     to: state.inheritedValue.value.to
                 })
             });
-        } else if (state.isCalculatedValue) {
+        } else if (state.isCalculatedOverrideValue) {
             return t('record_edition.calculated_input_helper', {
                 calculatedValue: t('record_edition.date_range_from_to', {
                     from: state.calculatedValue.value.from,

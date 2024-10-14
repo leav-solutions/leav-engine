@@ -90,11 +90,11 @@ export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> =
     };
 
     const _getHelper = () => {
-        if (state.isInheritedValue) {
+        if (state.isInheritedOverrideValue) {
             return t('record_edition.inherited_input_helper', {
                 inheritedValue: state.inheritedValue.value
             });
-        } else if (state.isCalculatedValue) {
+        } else if (state.isCalculatedOverrideValue) {
             return t('record_edition.calculated_input_helper', {
                 calculatedValue: state.calculatedValue.value
             });
@@ -112,7 +112,7 @@ export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> =
             label={label}
             required={state.formElement.settings.required}
             disabled={state.isReadOnly}
-            allowClear={!state.isInheritedNotOverrideValue}
+            allowClear={!state.isInheritedNotOverrideValue && !state.isCalculatedNotOverrideValue}
             status={errors.length > 0 ? 'error' : undefined}
             onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             helper={_getHelper()}

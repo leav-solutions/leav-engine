@@ -5,6 +5,7 @@ import {render, screen} from '_ui/_tests/testUtils';
 import {AntForm} from 'aristid-ds';
 import {DSBooleanWrapper} from './DSBooleanWrapper';
 import {
+    CalculatedFlags,
     InheritedFlags,
     IStandardFieldReducerState,
     StandardFieldValueState
@@ -67,6 +68,33 @@ const inheritedOverrideValue: InheritedFlags = {
     inheritedValue: {raw_value: inheritedValues[1].raw_value}
 };
 
+const calculatedValues = [
+    {
+        isCalculated: null,
+        value: false,
+        raw_value: false
+    },
+    {
+        isCalculated: true,
+        value: true,
+        raw_value: true
+    }
+];
+
+const calculatedNotOverrideValue: CalculatedFlags = {
+    isCalculatedValue: true,
+    isCalculatedOverrideValue: false,
+    isCalculatedNotOverrideValue: true,
+    calculatedValue: {raw_value: calculatedValues[1].raw_value}
+};
+
+const calculatedOverrideValue: CalculatedFlags = {
+    isCalculatedValue: true,
+    isCalculatedOverrideValue: true,
+    isCalculatedNotOverrideValue: false,
+    calculatedValue: {raw_value: calculatedValues[1].raw_value}
+};
+
 const getInitialState = ({
     required,
     fallbackLang
@@ -96,7 +124,11 @@ const getInitialState = ({
     inheritedValue: null,
     isInheritedNotOverrideValue: false,
     isInheritedOverrideValue: false,
-    isInheritedValue: false
+    isInheritedValue: false,
+    calculatedValue: null,
+    isCalculatedNotOverrideValue: false,
+    isCalculatedOverrideValue: false,
+    isCalculatedValue: false
 });
 
 describe('DSBooleanWrapper', () => {
@@ -295,6 +327,86 @@ describe('DSBooleanWrapper', () => {
             await user.click(clearButton);
 
             expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
+        });
+    });
+
+    describe('With calculus', () => {
+        test('Should display calculated value', async () => {
+            let state = getInitialState({required: false, fallbackLang: false});
+            state = {
+                ...state,
+                ...calculatedNotOverrideValue,
+                formElement: {...state.formElement, values: calculatedValues}
+            };
+
+            render(
+                <AntForm>
+                    <AntForm.Item>
+                        <DSBooleanWrapper
+                            value={calculatedValues[1].raw_value}
+                            state={state}
+                            handleSubmit={mockHandleSubmit}
+                            onChange={mockOnChange}
+                        />
+                    </AntForm.Item>
+                </AntForm>
+            );
+
+            expect(screen.getByText(/yes/)).toBeVisible();
+        });
+
+        test('Should display override value, clear icon and calculated value under it', async () => {
+            let state = getInitialState({required: false, fallbackLang: false});
+            state = {
+                ...state,
+                ...calculatedOverrideValue,
+                formElement: {...state.formElement, values: calculatedValues}
+            };
+
+            render(
+                <AntForm>
+                    <AntForm.Item>
+                        <DSBooleanWrapper
+                            value={calculatedValues[0].raw_value}
+                            state={state}
+                            handleSubmit={mockHandleSubmit}
+                            onChange={mockOnChange}
+                        />
+                    </AntForm.Item>
+                </AntForm>
+            );
+
+            expect(screen.getByText(/no/)).toBeVisible();
+
+            const helperText = screen.getByText(/calculated_input_helper/);
+            expect(helperText).toBeInTheDocument();
+        });
+
+        test('Should allow to clear override value', async () => {
+            let state = getInitialState({required: false, fallbackLang: false});
+            state = {
+                ...state,
+                ...calculatedOverrideValue,
+                formElement: {...state.formElement, values: calculatedValues}
+            };
+
+            render(
+                <AntForm>
+                    <AntForm.Item>
+                        <DSBooleanWrapper
+                            value={calculatedValues[0].raw_value}
+                            state={state}
+                            handleSubmit={mockHandleSubmit}
+                            onChange={mockOnChange}
+                        />
+                    </AntForm.Item>
+                </AntForm>
+            );
+
+            const clearButton = screen.getByRole('button');
+            await user.click(clearButton);
+
+            expect(mockHandleSubmit).toHaveBeenCalledWith('', 'my_attribute');
         });
     });
 });
