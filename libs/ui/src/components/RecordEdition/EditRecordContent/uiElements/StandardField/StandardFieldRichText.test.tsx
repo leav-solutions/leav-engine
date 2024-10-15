@@ -92,7 +92,7 @@ describe('StandardField, Rich Text input', () => {
                 raw_value: 'new rich text editor test'
             }
         ];
-        const {container} = render(
+        render(
             <Suspense fallback={<div>Loading</div>}>
                 <StandardField
                     element={{
@@ -105,11 +105,12 @@ describe('StandardField, Rich Text input', () => {
             </Suspense>
         );
 
-        const richTextElem = container.getElementsByClassName('ProseMirror')[0];
-
+        const richTextElem = screen.getByRole('textbox');
         await userEvent.click(richTextElem);
 
-        const richTextElemOpen = container.getElementsByClassName('menu-bar')[0];
+        const richTextElemOpen = richTextElem.parentElement.previousSibling as HTMLElement;
+        const menuBarClassNames = richTextElemOpen?.getAttribute('class');
+        expect(menuBarClassNames).toContain('menu-bar');
         expect(richTextElemOpen).toBeInTheDocument();
 
         await userEvent.type(richTextElem, 'new value');
