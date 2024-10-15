@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render, screen, waitFor} from '_ui/_tests/testUtils';
+import {mockBrowserFunctionsForTiptap, render, screen, waitFor} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
 import StandardField from '../StandardField';
 import {
@@ -17,6 +17,12 @@ import {IRecordPropertyAttribute} from '_ui/_queries/records/getRecordProperties
 import {mockFormElementInput} from '_ui/__mocks__/common/form';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import {Suspense} from 'react';
+
+const tiptapCleanup = mockBrowserFunctionsForTiptap();
+
+afterAll(() => {
+    tiptapCleanup();
+});
 
 describe('StandardField, Rich Text input', () => {
     const mockRecordValuesCommon = {
@@ -99,25 +105,17 @@ describe('StandardField, Rich Text input', () => {
             </Suspense>
         );
 
-        await waitFor(
-            () => {
-                screen.getByTestId('ckeditor');
-            },
-            {timeout: 5000}
-        );
-
-        const richTextElem = screen.getByTestId('ckeditor');
+        const richTextElem = screen.getByRole('textbox');
         await userEvent.click(richTextElem);
 
-        const richTextElemOpen = screen.getByRole('textbox');
+        const richTextElemOpen = richTextElem.parentElement.previousSibling as HTMLElement;
+        const menuBarClassNames = richTextElemOpen?.getAttribute('class');
+        expect(menuBarClassNames).toContain('menu-bar');
         expect(richTextElemOpen).toBeInTheDocument();
 
-        await userEvent.click(richTextElemOpen);
+        await userEvent.type(richTextElem, 'new value');
 
-        const toolBarElem = screen.getByRole('toolbar');
-        expect(toolBarElem).toBeInTheDocument();
-
-        await userEvent.click(screen.getByRole('button', {name: 'global.submit'}));
+        await userEvent.click(document.body);
         expect(mockHandleSubmit).toHaveBeenCalled();
     });
 });
