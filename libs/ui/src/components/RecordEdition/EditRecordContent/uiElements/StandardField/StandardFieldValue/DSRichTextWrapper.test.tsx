@@ -153,7 +153,7 @@ describe('DSRichTextWrapper', () => {
         expect(screen.getByText(en_label)).toBeVisible();
     });
 
-    test('Should submit empty value if field is not required', async () => {
+    test('Should not submit if value has not changed', async () => {
         const state = getInitialState(false);
         render(
             <AntForm>
@@ -174,8 +174,8 @@ describe('DSRichTextWrapper', () => {
         await user.click(input);
         await user.click(document.body);
 
-        expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
-        expect(mockOnChange).toHaveBeenCalled();
+        expect(mockHandleSubmit).not.toHaveBeenCalled();
+        expect(mockOnChange).not.toHaveBeenCalled();
     });
 
     describe('With required input and no inheritance', () => {
@@ -204,31 +204,6 @@ describe('DSRichTextWrapper', () => {
 
             expect(mockHandleSubmit).toHaveBeenCalledWith(`<p>${text}</p>`, state.attribute.id);
             expect(mockOnChange).toHaveBeenCalled();
-        });
-
-        test('Should submit the default value if field is empty', async () => {
-            const state = getInitialState(true);
-            render(
-                <AntForm>
-                    <AntForm.Item>
-                        <DSRichTextWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
-                            handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
-                            onChange={mockOnChange}
-                            value={mockValue.originRawValue}
-                        />
-                    </AntForm.Item>
-                </AntForm>
-            );
-
-            const input = screen.getByRole('textbox');
-            await user.click(input);
-            await user.click(document.body);
-
-            expect(mockHandleSubmit).toHaveBeenCalledWith(mockValue.originRawValue, state.attribute.id);
         });
     });
 
