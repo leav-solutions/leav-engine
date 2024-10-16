@@ -7,14 +7,15 @@ import {
     AttributeType,
     RecordFilterCondition,
     RecordFormAttributeLinkAttributeFragment,
+    ValueDetailsFragment,
     ValueVersionInput
 } from '_ui/_gqlTypes';
 import {gqlUnchecked} from '_ui/_utils';
 import {recordIdentityFragment} from '../../gqlFragments';
 import {IRecordIdentityWhoAmI} from '../../types/records';
 import {SystemTranslation} from '../../types/scalars';
-import {IValueVersion} from '../../types/values';
 import {valuesVersionDetailsFragment} from '../values/valuesVersionFragment';
+import {IValueVersion} from '_ui/types';
 
 export interface IRecordPropertyAttribute {
     id: string;
@@ -47,36 +48,55 @@ export interface IRecordPropertyModifier {
     whoAmI: IRecordIdentityWhoAmI;
 }
 
-interface IRecordPropertyBase {
+interface IRecordPropertyBase<T extends RecordPropertyParam> {
+    __typename?: string;
     id_value?: string | null;
     created_at?: number | null;
     created_by?: IRecordPropertyModifier | null;
     modified_at?: number | null;
     modified_by?: IRecordPropertyModifier | null;
     metadata?: Array<{name: string; value: IRecordPropertyStandard}>;
-    version?: IValueVersion;
+    version?: T extends 'clean' ? IValueVersion : ValueDetailsFragment['version'];
 }
 
-export interface IRecordPropertyStandard extends IRecordPropertyBase {
+type RecordPropertyParam = 'clean' | 'raw';
+type DefaultRecordPropertyParam = 'clean';
+
+export interface IRecordPropertyStandard<T extends RecordPropertyParam = DefaultRecordPropertyParam>
+    extends IRecordPropertyBase<T> {
     payload?: string | null;
     raw_payload?: string | null;
 }
 
-export interface IRecordPropertyLink extends IRecordPropertyBase {
+export interface IRecordPropertyLink<T extends RecordPropertyParam = DefaultRecordPropertyParam>
+    extends IRecordPropertyBase<T> {
     linkValue?: ILinkValue | null;
 }
 
-export interface IRecordPropertyTree extends IRecordPropertyBase {
+export interface IRecordPropertyTree<T extends RecordPropertyParam = DefaultRecordPropertyParam>
+    extends IRecordPropertyBase<T> {
     treeValue?: ITreeValue | null;
 }
 
-export type RecordProperty = IRecordPropertyStandard | IRecordPropertyLink | IRecordPropertyTree;
+export type RecordProperty<T extends RecordPropertyParam = DefaultRecordPropertyParam> =
+    | IRecordPropertyStandard<T>
+    | IRecordPropertyLink<T>
+    | IRecordPropertyTree<T>;
+
+export type RecordPropertyWhoAmI = Pick<IRecordIdentityWhoAmI, 'id'> & {
+    library: Pick<IRecordIdentityWhoAmI['library'], 'id'>;
+};
+
+export type RecordPropertyListItem = {
+    _id: string;
+    whoAmI: RecordPropertyWhoAmI;
+} & {
+    [attributeName: string]: Array<RecordProperty<'raw'>>;
+};
 
 export interface IGetRecordProperties {
     [libName: string]: {
-        list: {
-            [attributeName: string]: RecordProperty[];
-        };
+        list: RecordPropertyListItem[];
     };
 }
 
@@ -156,6 +176,12 @@ export const getRecordPropertiesQuery = (fields: IRecordPropertiesField[]) => gq
             ) {
                 list {
                     _id: id
+                    whoAmI {
+                        id
+                        library {
+                            id
+                        }
+                    }
                     ${fields.length ? fields.map(field => _getFieldQueryPart(field)).join('\n') : ''}
                 }
             }

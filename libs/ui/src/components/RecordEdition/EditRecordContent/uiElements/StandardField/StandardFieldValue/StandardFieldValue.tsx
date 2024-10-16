@@ -3,12 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import {AnyPrimitive, IDateRangeValue, localizedTranslation} from '@leav/utils';
-import {Button, Form, Input, InputRef, Popover, Space, theme} from 'antd';
+import {Button, Input, InputRef, Popover, Space, theme} from 'antd';
 import moment from 'moment';
 import React, {MutableRefObject, useEffect, useRef} from 'react';
 import styled, {CSSObject} from 'styled-components';
-import {DSInputWrapper} from './DSInputWrapper';
-import {DSRangePickerWrapper} from './DSRangePickerWrapper';
 import {themeVars} from '_ui/antdTheme';
 import {FloatingMenu, FloatingMenuAction} from '_ui/components';
 import Dimmer from '_ui/components/Dimmer';
@@ -19,7 +17,7 @@ import ValueDetailsBtn from '_ui/components/RecordEdition/EditRecordContent/shar
 import ValuesVersionBtn from '_ui/components/RecordEdition/EditRecordContent/shared/ValuesVersionBtn';
 import ValuesVersionIndicator from '_ui/components/RecordEdition/EditRecordContent/shared/ValuesVersionIndicator';
 import {
-    FieldScope,
+    VersionFieldScope,
     InputRefPossibleTypes,
     IStandardInputProps,
     StandardValueTypes
@@ -48,11 +46,7 @@ import TextInput from './Inputs/TextInput';
 import ValuesList from './ValuesList';
 import {IValueOfValuesList} from './ValuesList/ValuesList';
 import {useLang} from '_ui/hooks';
-import {DSDatePickerWrapper} from './DSDatePickerWrapper';
-import {DSBooleanWrapper} from './DSBooleanWrapper';
-import {DSInputPasswordWrapper} from './DSInputPasswordWrapper';
-import {DSInputNumberWrapper} from './DSInputNumberWrapper';
-import {DSRichTextWrapper} from './DSRichTextWrapper';
+import {StandardFieldValueDisplayHandler} from './StandardFieldValueDisplayHandler';
 
 const ErrorMessage = styled.div`
     color: ${themeVars.errorColor};
@@ -197,9 +191,9 @@ interface IStandardFieldValueProps {
     value: IStandardFieldValue;
     state: IStandardFieldReducerState;
     dispatch: StandardFieldDispatchFunc;
-    onSubmit: (idValue: IdValue, value: AnyPrimitive) => void;
+    onSubmit: (idValue: IdValue, value: AnyPrimitive) => Promise<void>;
     onDelete: (idValue: IdValue) => void;
-    onScopeChange: (scope: FieldScope) => void;
+    onScopeChange: (scope: VersionFieldScope) => void;
 }
 
 function StandardFieldValue({
@@ -250,13 +244,20 @@ function StandardFieldValue({
         }
     }, [fieldValue.isEditing, fieldValue.editingValue]);
 
+    const _uneditField = () => {
+        dispatch({
+            type: StandardFieldReducerActionsTypes.CANCEL_EDITING,
+            idValue: fieldValue.idValue
+        });
+    };
+
     const _handleSubmit = async (valueToSave: StandardValueTypes, id?: string) => {
         if (valueToSave === '') {
             return _handleDelete();
         }
 
         const convertedValue = typeof valueToSave === 'object' ? JSON.stringify(valueToSave) : valueToSave;
-        onSubmit(fieldValue.idValue, convertedValue);
+        await onSubmit(fieldValue.idValue, convertedValue);
     };
 
     const _handlePressEnter = async () => {
@@ -277,7 +278,8 @@ function StandardFieldValue({
             return _handleCancel();
         }
 
-        onDelete(fieldValue.idValue);
+        await onDelete(fieldValue.idValue);
+        _uneditField();
     };
 
     const _handleFocus = () => {
@@ -522,8 +524,8 @@ function StandardFieldValue({
 
     if (attribute?.versions_conf?.versionable) {
         const versions = {
-            [FieldScope.CURRENT]: state.values[FieldScope.CURRENT]?.version ?? null,
-            [FieldScope.INHERITED]: state.values[FieldScope.INHERITED]?.version ?? null
+            [VersionFieldScope.CURRENT]: state.values[VersionFieldScope.CURRENT]?.version ?? null,
+            [VersionFieldScope.INHERITED]: state.values[VersionFieldScope.INHERITED]?.version ?? null
         };
 
         if (!hasMultipleValuesDisplay) {
@@ -569,73 +571,12 @@ function StandardFieldValue({
     return (
         <>
             {attributeFormatsWithDS.includes(attribute.format) && (
-                <Form.Item
-                    name={attribute.id}
-                    rules={[
-                        {
-                            required: state.formElement.settings.required,
-                            message: t('errors.standard_field_required')
-                        }
-                    ]}
-                >
-                    {attribute.format === AttributeFormat.text && (
-                        <DSInputWrapper
-                            state={state}
-                            handleSubmit={_handleSubmit}
-                            attribute={attribute}
-                            fieldValue={fieldValue}
-                            shouldShowValueDetailsButton={editRecordState.withInfoButton}
-                        />
-                    )}
-                    {attribute.format === AttributeFormat.date && (
-                        <DSDatePickerWrapper
-                            state={state}
-                            handleSubmit={_handleSubmit}
-                            attribute={attribute}
-                            fieldValue={fieldValue}
-                            shouldShowValueDetailsButton={editRecordState.withInfoButton}
-                        />
-                    )}
-                    {attribute.format === AttributeFormat.date_range && (
-                        <DSRangePickerWrapper
-                            state={state}
-                            handleSubmit={_handleSubmit}
-                            attribute={attribute}
-                            fieldValue={fieldValue}
-                            shouldShowValueDetailsButton={editRecordState.withInfoButton}
-                        />
-                    )}
-                    {attribute.format === AttributeFormat.numeric && (
-                        <DSInputNumberWrapper
-                            state={state}
-                            handleSubmit={_handleSubmit}
-                            attribute={attribute}
-                            fieldValue={fieldValue}
-                            shouldShowValueDetailsButton={editRecordState.withInfoButton}
-                        />
-                    )}
-                    {attribute.format === AttributeFormat.encrypted && (
-                        <DSInputPasswordWrapper
-                            state={state}
-                            handleSubmit={_handleSubmit}
-                            attribute={attribute}
-                            fieldValue={fieldValue}
-                            shouldShowValueDetailsButton={editRecordState.withInfoButton}
-                        />
-                    )}
-                    {attribute.format === AttributeFormat.rich_text && (
-                        <DSRichTextWrapper
-                            state={state}
-                            handleSubmit={_handleSubmit}
-                            attribute={attribute}
-                            fieldValue={fieldValue}
-                            shouldShowValueDetailsButton={editRecordState.withInfoButton}
-                        />
-                    )}
-                    {attribute.format === AttributeFormat.boolean && (
-                        <DSBooleanWrapper state={state} handleSubmit={_handleSubmit} />
-                    )}
-                </Form.Item>
+                <StandardFieldValueDisplayHandler
+                    state={state}
+                    attribute={attribute}
+                    fieldValue={fieldValue}
+                    handleSubmit={_handleSubmit}
+                />
             )}
 
             {attributeFormatsWithoutDS.includes(attribute.format) && (
@@ -661,8 +602,10 @@ function StandardFieldValue({
                                         {editRecordState.externalUpdate.updatedValues[attribute?.id] && (
                                             <UpdatedFieldIcon />
                                         )}
-                                        {state.activeScope === FieldScope.INHERITED && (
-                                            <InheritedFieldLabel version={state.values[FieldScope.INHERITED].version} />
+                                        {state.activeScope === VersionFieldScope.INHERITED && (
+                                            <InheritedFieldLabel
+                                                version={state.values[VersionFieldScope.INHERITED].version}
+                                            />
                                         )}
                                     </label>
                                 )}

@@ -2,12 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitDatePicker} from 'aristid-ds';
-import {FunctionComponent} from 'react';
+import {FunctionComponent, useEffect, useRef} from 'react';
 import {
     IStandardFieldReducerState,
     IStandardFieldValue
 } from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import {Form} from 'antd';
+import {Form, type GetRef} from 'antd';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
 import {IProvidedByAntFormItem, StandardValueTypes} from '../../../_types';
@@ -17,12 +17,12 @@ import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
 import {useLang} from '_ui/hooks';
 import {localizedTranslation} from '@leav/utils';
-
 interface IDSDatePickerWrapperProps extends IProvidedByAntFormItem<DatePickerProps> {
     state: IStandardFieldReducerState;
     attribute: RecordFormAttributeFragment;
     fieldValue: IStandardFieldValue;
     handleSubmit: (value: StandardValueTypes, id?: string) => void;
+    handleBlur: () => void;
     shouldShowValueDetailsButton?: boolean;
 }
 
@@ -33,6 +33,7 @@ const KitDatePickerStyled = styled(KitDatePicker)<{$shouldHighlightColor: boolea
 export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> = ({
     value,
     onChange,
+    handleBlur,
     state,
     attribute,
     fieldValue,
@@ -46,6 +47,14 @@ export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> =
         value: fieldValue?.value,
         attribute
     });
+
+    const inputRef = useRef<GetRef<typeof KitDatePickerStyled>>(null);
+
+    useEffect(() => {
+        if (fieldValue.isEditing && inputRef.current) {
+            inputRef.current.nativeElement.click(); // To automatically open the date picker
+        }
+    }, [fieldValue.isEditing]);
 
     const _handleDateChange: (datePickerDate: dayjs.Dayjs | null, antOnChangeParams: string | string[]) => void = (
         datePickerDate,
@@ -65,7 +74,7 @@ export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> =
         }
 
         let dateToSave = null;
-        if (datePickerDate !== null) {
+        if (!!datePickerDate) {
             dateToSave = String(datePickerDate.unix());
         }
 
@@ -76,6 +85,7 @@ export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> =
 
     return (
         <KitDatePickerStyled
+            ref={inputRef}
             value={value}
             onChange={_handleDateChange}
             label={label}
@@ -91,6 +101,7 @@ export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> =
                       })
                     : undefined
             }
+            onBlur={handleBlur}
             $shouldHighlightColor={state.isInheritedNotOverrideValue}
         />
     );

@@ -10,12 +10,12 @@ import {BasicButton} from '_ui/components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IValueVersion} from '_ui/types/values';
 import {getValueVersionLabel} from '_ui/_utils';
-import {FieldScope} from '../../_types';
+import {VersionFieldScope} from '../../_types';
 
 interface IValuesVersionBtnProps extends Omit<ButtonProps, 'value'> {
-    versions: {[scope in FieldScope]: IValueVersion};
-    activeScope: FieldScope;
-    onScopeChange: (scope: FieldScope) => void;
+    versions: {[scope in VersionFieldScope]: IValueVersion};
+    activeScope: VersionFieldScope;
+    onScopeChange: (scope: VersionFieldScope) => void;
     basic?: boolean;
 }
 
@@ -27,26 +27,27 @@ function ValuesVersionBtn({
     ...buttonProps
 }: IValuesVersionBtnProps): JSX.Element {
     const {t} = useSharedTranslation();
-    const hasInheritedVersion = !!versions[FieldScope.INHERITED];
+    const hasInheritedVersion = !!versions[VersionFieldScope.INHERITED];
 
     const _handleVersionSelect: MenuItemType['onClick'] = item => {
         item.domEvent.preventDefault();
         item.domEvent.stopPropagation();
 
-        onScopeChange(item.key as FieldScope);
+        onScopeChange(item.key as VersionFieldScope);
     };
 
-    const currentVersionLabel = getValueVersionLabel(versions[FieldScope.CURRENT]);
+    const currentVersionLabel = getValueVersionLabel(versions[VersionFieldScope.CURRENT]);
     const iconProps = {
         size: '1.8em',
         style: {
             paddingTop: '5px'
         }
     };
-    const icon = activeScope === FieldScope.CURRENT ? <VscLayersActive {...iconProps} /> : <VscLayers {...iconProps} />;
+    const icon =
+        activeScope === VersionFieldScope.CURRENT ? <VscLayersActive {...iconProps} /> : <VscLayers {...iconProps} />;
     const menuItems: ItemType[] = [
         {
-            key: FieldScope.CURRENT,
+            key: VersionFieldScope.CURRENT,
             label: (
                 <Space style={{paddingLeft: hasInheritedVersion ? '1rem' : 0}}>
                     {icon}
@@ -59,7 +60,7 @@ function ValuesVersionBtn({
 
     if (hasInheritedVersion) {
         const inheritedVersionLabel =
-            getValueVersionLabel(versions[FieldScope.INHERITED]) + ` (${t('values_version.inherited_value')})`;
+            getValueVersionLabel(versions[VersionFieldScope.INHERITED]) + ` (${t('values_version.inherited_value')})`;
 
         const inheritedIconProps = {
             size: '1.8em',
@@ -70,13 +71,13 @@ function ValuesVersionBtn({
         };
 
         const inheritedIcon =
-            activeScope === FieldScope.INHERITED ? (
+            activeScope === VersionFieldScope.INHERITED ? (
                 <VscLayersActive {...inheritedIconProps} />
             ) : (
                 <VscLayers {...inheritedIconProps} />
             );
         menuItems.unshift({
-            key: FieldScope.INHERITED,
+            key: VersionFieldScope.INHERITED,
             label: (
                 <Space>
                     {inheritedIcon}
@@ -95,7 +96,7 @@ function ValuesVersionBtn({
     );
 
     return (
-        <Dropdown trigger={['click']} menu={{items: menuItems, activeKey: activeScope}} >
+        <Dropdown trigger={['click']} menu={{items: menuItems, activeKey: activeScope}}>
             {button}
         </Dropdown>
     );

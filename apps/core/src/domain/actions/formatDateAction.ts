@@ -4,6 +4,8 @@
 import moment from 'moment';
 import {ActionsListIOTypes, IActionsListFunction, IActionsListFunctionResult} from '../../_types/actionsList';
 import {Errors} from '../../_types/errors';
+import cloneDeep from 'lodash/cloneDeep';
+import {TypeGuards} from '../../utils';
 
 const defaultValueLocalizedParam = `{
   "weekday": "long",
@@ -40,14 +42,23 @@ export default function (): IActionsListFunction<{localized: false; universal: f
         action: (values, {localized, universal}, {lang}) => {
             const errors: IActionsListFunctionResult['errors'] = [];
 
-            const formattedValues = values.map(elementValue => {
+            const formattedValues = cloneDeep(values).map(elementValue => {
+                if (!TypeGuards.isIStandardValue(elementValue)) {
+                    errors.push({
+                        errorType: Errors.INVALID_VALUES,
+                        attributeValue: elementValue,
+                        message: 'Non standard value received in formatDate.'
+                    });
+                    return elementValue;
+                }
+
                 if ('raw_value' in elementValue) {
                     elementValue.payload = elementValue.raw_value;
                 }
                 if (elementValue.payload === null) {
                     return elementValue;
                 }
-                const numberVal = Number(elementValue.payload);
+                const numberVal = Number(elementValue.raw_payload);
 
                 if (isNaN(numberVal)) {
                     elementValue.payload = '';
@@ -61,9 +72,8 @@ export default function (): IActionsListFunction<{localized: false; universal: f
 
                 let options: Intl.DateTimeFormatOptions = {};
                 try {
-                    options = JSON.parse(localized ?? {});
+                    options = JSON.parse(localized ?? '{}');
                 } catch (e) {
-                    // TODO: rise error to inform user without break app
                     errors.push({
                         errorType: Errors.FORMAT_ERROR,
                         attributeValue: {payload: localized},
@@ -76,7 +86,7 @@ export default function (): IActionsListFunction<{localized: false; universal: f
                 return elementValue;
             });
 
-            return {values: formattedValues, errors: []};
+            return {values: formattedValues, errors};
         }
     };
 }

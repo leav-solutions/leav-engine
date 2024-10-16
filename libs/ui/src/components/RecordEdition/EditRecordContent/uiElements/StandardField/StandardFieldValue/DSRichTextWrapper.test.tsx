@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mockBrowserFunctionsForTiptap, render, screen} from '_ui/_tests/testUtils';
 import {DSRichTextWrapper} from './DSRichTextWrapper';
-import {FieldScope} from '../../../_types';
+import {VersionFieldScope} from '../../../_types';
 import {
     InheritedFlags,
     IStandardFieldReducerState,
@@ -11,7 +11,7 @@ import {
 } from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockFormElementInput} from '_ui/__mocks__/common/form';
-import {mockAttributeLink} from '_ui/__mocks__/common/attribute';
+import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
 import {AntForm} from 'aristid-ds';
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
@@ -50,15 +50,15 @@ const getInitialState = (required: boolean, fallbackLang = false): IStandardFiel
             required
         }
     },
-    attribute: mockAttributeLink,
+    attribute: mockFormAttribute,
     isReadOnly: false,
-    activeScope: FieldScope.CURRENT,
+    activeScope: VersionFieldScope.CURRENT,
     values: {
-        [FieldScope.CURRENT]: {
+        [VersionFieldScope.CURRENT]: {
             version: null,
             values: {[idValue]: mockValue}
         },
-        [FieldScope.INHERITED]: null
+        [VersionFieldScope.INHERITED]: null
     },
     metadataEdit: false,
     inheritedValue: null,
@@ -102,6 +102,7 @@ describe('DSRichTextWrapper', () => {
     });
 
     const mockHandleSubmit = jest.fn();
+    const mockHandleBlur = jest.fn();
     const mockOnChange = jest.fn();
     let user!: ReturnType<typeof userEvent.setup>;
 
@@ -109,6 +110,7 @@ describe('DSRichTextWrapper', () => {
         user = userEvent.setup({});
         mockOnChange.mockReset();
         mockHandleSubmit.mockReset();
+        mockHandleBlur.mockReset();
     });
 
     test('Should display input with fr label ', async () => {
@@ -119,8 +121,9 @@ describe('DSRichTextWrapper', () => {
                     <DSRichTextWrapper
                         state={state}
                         attribute={{} as RecordFormAttributeFragment}
-                        fieldValue={null}
+                        fieldValue={mockValue}
                         handleSubmit={mockHandleSubmit}
+                        handleBlur={mockHandleBlur}
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
@@ -138,8 +141,9 @@ describe('DSRichTextWrapper', () => {
                     <DSRichTextWrapper
                         state={state}
                         attribute={{} as RecordFormAttributeFragment}
-                        fieldValue={null}
+                        fieldValue={mockValue}
                         handleSubmit={mockHandleSubmit}
+                        handleBlur={mockHandleBlur}
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
@@ -149,7 +153,7 @@ describe('DSRichTextWrapper', () => {
         expect(screen.getByText(en_label)).toBeVisible();
     });
 
-    test('Should submit empty value if field is not required', async () => {
+    test('Should not submit if value has not changed', async () => {
         const state = getInitialState(false);
         render(
             <AntForm>
@@ -157,8 +161,9 @@ describe('DSRichTextWrapper', () => {
                     <DSRichTextWrapper
                         state={state}
                         attribute={{} as RecordFormAttributeFragment}
-                        fieldValue={null}
+                        fieldValue={mockValue}
                         handleSubmit={mockHandleSubmit}
+                        handleBlur={mockHandleBlur}
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
@@ -169,8 +174,8 @@ describe('DSRichTextWrapper', () => {
         await user.click(input);
         await user.click(document.body);
 
-        expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
-        expect(mockOnChange).toHaveBeenCalled();
+        expect(mockHandleSubmit).not.toHaveBeenCalled();
+        expect(mockOnChange).not.toHaveBeenCalled();
     });
 
     describe('With required input and no inheritance', () => {
@@ -182,8 +187,9 @@ describe('DSRichTextWrapper', () => {
                         <DSRichTextWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                             onChange={mockOnChange}
                         />
                     </AntForm.Item>
@@ -198,30 +204,6 @@ describe('DSRichTextWrapper', () => {
 
             expect(mockHandleSubmit).toHaveBeenCalledWith(`<p>${text}</p>`, state.attribute.id);
             expect(mockOnChange).toHaveBeenCalled();
-        });
-
-        test('Should submit the default value if field is empty', async () => {
-            const state = getInitialState(true);
-            render(
-                <AntForm>
-                    <AntForm.Item>
-                        <DSRichTextWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
-                            handleSubmit={mockHandleSubmit}
-                            onChange={mockOnChange}
-                            value={mockValue.originRawValue}
-                        />
-                    </AntForm.Item>
-                </AntForm>
-            );
-
-            const input = screen.getByRole('textbox');
-            await user.click(input);
-            await user.click(document.body);
-
-            expect(mockHandleSubmit).toHaveBeenCalledWith(mockValue.originRawValue, state.attribute.id);
         });
     });
 
@@ -239,8 +221,9 @@ describe('DSRichTextWrapper', () => {
                         <DSRichTextWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                             onChange={mockOnChange}
                             value={inheritedValues[1].raw_value}
                         />
@@ -271,8 +254,9 @@ describe('DSRichTextWrapper', () => {
                         <DSRichTextWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                             onChange={mockOnChange}
                             value={inheritedValues[0].raw_value}
                         />
