@@ -376,7 +376,6 @@ export const computeInitialState = (params: {
     };
 };
 
-// TODO: mettre à jour les tests
 const standardFieldReducer = (
     state: IStandardFieldReducerState,
     action: StandardFieldReducerAction
@@ -471,7 +470,11 @@ const standardFieldReducer = (
                     {
                         ...state,
                         isInheritedOverrideValue: state.isInheritedValue ? true : state.isInheritedOverrideValue,
-                        isInheritedNotOverrideValue: state.isInheritedValue ? false : state.isInheritedNotOverrideValue //TODO: Faire pareil pour Calculated
+                        isInheritedNotOverrideValue: state.isInheritedValue ? false : state.isInheritedNotOverrideValue,
+                        isCalculatedOverrideValue: state.isCalculatedValue ? true : state.isCalculatedOverrideValue,
+                        isCalculatedNotOverrideValue: state.isCalculatedValue
+                            ? false
+                            : state.isCalculatedNotOverrideValue
                     } as IStandardFieldReducerState,
                     newValueData
                 );
@@ -481,7 +484,11 @@ const standardFieldReducer = (
                 ...state
             };
             newState.isInheritedOverrideValue = state.isInheritedValue ? true : state.isInheritedOverrideValue;
-            newState.isInheritedNotOverrideValue = state.isInheritedValue ? false : state.isInheritedNotOverrideValue; //TODO: Faire pareil pour Calculated
+            newState.isInheritedNotOverrideValue = state.isInheritedValue ? false : state.isInheritedNotOverrideValue;
+            newState.isCalculatedOverrideValue = state.isCalculatedValue ? true : state.isCalculatedOverrideValue;
+            newState.isCalculatedNotOverrideValue = state.isCalculatedValue
+                ? false
+                : state.isCalculatedNotOverrideValue;
 
             const newStateActiveValues = newState.values[newState.activeScope].values;
 
@@ -500,7 +507,9 @@ const standardFieldReducer = (
             const newState = {
                 ...state,
                 isInheritedOverrideValue: state.isInheritedValue ? false : state.isInheritedOverrideValue,
-                isInheritedNotOverrideValue: state.isInheritedValue ? true : state.isInheritedNotOverrideValue //TODO: Faire pareil pour Calculated
+                isInheritedNotOverrideValue: state.isInheritedValue ? true : state.isInheritedNotOverrideValue,
+                isCalculatedOverrideValue: state.isCalculatedValue ? false : state.isCalculatedOverrideValue,
+                isCalculatedNotOverrideValue: state.isCalculatedValue ? true : state.isCalculatedNotOverrideValue
             };
             const newStateActiveValues = newState.values[newState.activeScope].values;
 
@@ -537,7 +546,9 @@ const standardFieldReducer = (
             const newState = {
                 ...state,
                 isInheritedOverrideValue: state.isInheritedValue ? false : state.isInheritedOverrideValue,
-                isInheritedNotOverrideValue: state.isInheritedValue ? true : state.isInheritedNotOverrideValue //TODO: Faire pareil pour Calculated
+                isInheritedNotOverrideValue: state.isInheritedValue ? true : state.isInheritedNotOverrideValue,
+                isCalculatedOverrideValue: state.isCalculatedValue ? false : state.isCalculatedOverrideValue,
+                isCalculatedNotOverrideValue: state.isCalculatedValue ? true : state.isCalculatedNotOverrideValue
             };
 
             delete newState.values[newState.activeScope].values[newValueId];
