@@ -1,5 +1,5 @@
 import {AttributeFormat, RecordFormAttributeFragment} from '_ui/_gqlTypes';
-import {FunctionComponent} from 'react';
+import {ComponentProps, FunctionComponent} from 'react';
 import {
     IStandardFieldReducerState,
     IStandardFieldValue,
@@ -37,7 +37,9 @@ export const StandardFieldValueDisplayHandler: FunctionComponent<IStandardFieldV
     const {state, dispatch} = useStandardFieldReducer();
     const mustDisplayReadValue = !fieldValue.isEditing && attribute.format !== AttributeFormat.boolean;
 
-    const _handleClickOnReadValue = () => {
+    const _handleClickOnReadValue: ComponentProps<typeof StandardFieldValueRead>['onClick'] = e => {
+        e.stopPropagation();
+
         if (state.isReadOnly) {
             return;
         }

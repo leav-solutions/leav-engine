@@ -8,12 +8,13 @@ import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
 import useLang from '_ui/hooks/useLang';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitInputWrapper, KitTypography} from 'aristid-ds';
-import {FunctionComponent} from 'react';
+import {FunctionComponent, SyntheticEvent} from 'react';
 import styled from 'styled-components';
+import DOMPurify from 'dompurify';
 
 interface IStandardFieldValueReadProps {
     fieldValue: IStandardFieldValue;
-    onClick: () => void;
+    onClick: (e: SyntheticEvent) => void;
     className?: string;
 }
 
@@ -65,11 +66,11 @@ export const StandardFieldValueRead: FunctionComponent<IStandardFieldValueReadPr
         }
     };
 
-    const _handleClick = () => {
+    const _handleFocus = (e: SyntheticEvent) => {
         if (state.isReadOnly) {
             return;
         }
-        onClick();
+        onClick(e);
     };
 
     let displayValue = String(fieldValue.value?.payload ?? '');
@@ -110,7 +111,7 @@ export const StandardFieldValueRead: FunctionComponent<IStandardFieldValueReadPr
                       })
                     : undefined
             }
-            onFocus={_handleClick}
+            onFocus={_handleFocus}
             className={className}
             $width={width}
         >
@@ -120,7 +121,7 @@ export const StandardFieldValueRead: FunctionComponent<IStandardFieldValueReadPr
                 weight="medium"
                 $highlighted={isValueHighlighted}
             >
-                {displayValue}
+                <span dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(displayValue)}} />
             </ValueWrapper>
         </KitInputWrapperStyled>
     );

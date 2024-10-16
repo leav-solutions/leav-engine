@@ -6,7 +6,7 @@ import {
     IStandardFieldReducerState,
     IStandardFieldValue
 } from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import {Form, InputProps} from 'antd';
+import {Form, GetRef, InputProps} from 'antd';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -21,6 +21,7 @@ interface IDSRichTextWrapperProps extends IProvidedByAntFormItem<InputProps> {
     attribute: RecordFormAttributeFragment;
     fieldValue: IStandardFieldValue;
     handleSubmit: (value: string, id?: string) => void;
+    handleBlur: () => void;
     shouldShowValueDetailsButton?: boolean;
 }
 
@@ -37,6 +38,7 @@ export const DSRichTextWrapper: FunctionComponent<IDSRichTextWrapperProps> = ({
     attribute,
     fieldValue,
     handleSubmit,
+    handleBlur,
     shouldShowValueDetailsButton = false
 }) => {
     const {t} = useSharedTranslation();
@@ -47,6 +49,13 @@ export const DSRichTextWrapper: FunctionComponent<IDSRichTextWrapperProps> = ({
     });
     const [hasChanged, setHasChanged] = useState(false);
     const {lang: availableLang} = useLang();
+    const inputRef = useRef<GetRef<typeof KitRichTextStyled>>(null);
+
+    useEffect(() => {
+        if (fieldValue.isEditing && inputRef.current) {
+            (inputRef.current.children[0] as HTMLElement).focus();
+        }
+    }, [fieldValue.isEditing]);
 
     const _resetToInheritedValue = () => {
         setHasChanged(false);
@@ -55,6 +64,11 @@ export const DSRichTextWrapper: FunctionComponent<IDSRichTextWrapperProps> = ({
     };
 
     const _handleOnBlur = inputValue => {
+        if (!hasChanged) {
+            handleBlur();
+            return;
+        }
+
         const valueToSubmit = isEmptyValue(inputValue) ? '' : inputValue;
 
         if (valueToSubmit === '' && state.isInheritedValue) {
@@ -81,6 +95,7 @@ export const DSRichTextWrapper: FunctionComponent<IDSRichTextWrapperProps> = ({
 
     return (
         <KitRichTextStyled
+            ref={inputRef}
             required={state.formElement.settings.required}
             label={label}
             onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
