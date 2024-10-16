@@ -395,8 +395,9 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
+                            handleBlur={mockHandleBlur}
                             handleSubmit={mockHandleSubmit}
                         />
                     </Form.Item>
@@ -418,8 +419,9 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
+                            handleBlur={mockHandleBlur}
                             handleSubmit={mockHandleSubmit}
                         />
                     </Form.Item>
@@ -449,8 +451,9 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
+                            handleBlur={mockHandleBlur}
                             handleSubmit={mockHandleSubmit}
                         />
                     </Form.Item>
@@ -487,8 +490,9 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
+                            handleBlur={mockHandleBlur}
                             handleSubmit={mockHandleSubmit}
                         />
                     </Form.Item>

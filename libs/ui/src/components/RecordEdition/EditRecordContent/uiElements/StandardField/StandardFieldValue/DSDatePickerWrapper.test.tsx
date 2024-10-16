@@ -370,9 +370,10 @@ describe('DSDatePickerWrapper', () => {
                         <DSDatePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>
@@ -393,9 +394,10 @@ describe('DSDatePickerWrapper', () => {
                         <DSDatePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>
@@ -421,9 +423,10 @@ describe('DSDatePickerWrapper', () => {
                         <DSDatePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>
@@ -455,9 +458,10 @@ describe('DSDatePickerWrapper', () => {
                         <DSDatePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>

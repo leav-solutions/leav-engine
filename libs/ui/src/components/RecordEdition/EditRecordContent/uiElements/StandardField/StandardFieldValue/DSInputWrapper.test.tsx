@@ -342,8 +342,9 @@ describe('DSInputWrapper', () => {
                         <DSInputWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                             onChange={mockOnChange}
                             value={calculatedValues[1].raw_value}
                         />
@@ -375,8 +376,9 @@ describe('DSInputWrapper', () => {
                         <DSInputWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                             onChange={mockOnChange}
                             value={calculatedValues[0].raw_value}
                         />
@@ -403,8 +405,9 @@ describe('DSInputWrapper', () => {
                         <DSInputWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                             onChange={mockOnChange}
                             value={calculatedValues[0].raw_value}
                         />
@@ -415,7 +418,7 @@ describe('DSInputWrapper', () => {
 
             await user.click(clearButton);
 
-            expect(mockHandleSubmit).toHaveBeenCalledWith('', 'my_attribute');
+            expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
         });
     });
 });

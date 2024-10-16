@@ -402,8 +402,9 @@ describe('DSInputNumberWrapper', () => {
                         <DSInputNumberWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                             onChange={mockOnChange}
                             value={calculatedValues[1].raw_value}
                         />
@@ -433,8 +434,9 @@ describe('DSInputNumberWrapper', () => {
                         <DSInputNumberWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                             onChange={mockOnChange}
                             value={calculatedValues[0].raw_value}
                         />
@@ -463,8 +465,9 @@ describe('DSInputNumberWrapper', () => {
                         <DSInputNumberWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                             onChange={mockOnChange}
                             value={calculatedValues[1].raw_value}
                         />
@@ -494,8 +497,9 @@ describe('DSInputNumberWrapper', () => {
                         <DSInputNumberWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                             onChange={mockOnChange}
                             value={calculatedValues[0].raw_value}
                         />
