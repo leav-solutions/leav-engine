@@ -66,6 +66,20 @@ export const StandardFieldValueRead: FunctionComponent<IStandardFieldValueReadPr
         }
     };
 
+    const _getCalculatedValueForHelper = (calculatedValue: RecordFormElementsValueStandardValue) => {
+        switch (state.attribute.format) {
+            case AttributeFormat.date_range:
+                return t('record_edition.date_range_from_to', {
+                    from: calculatedValue.value.from,
+                    to: calculatedValue.value.to
+                });
+            case AttributeFormat.encrypted:
+                return calculatedValue.value ? '●●●●●●●' : '';
+            default:
+                return calculatedValue.value;
+        }
+    };
+
     const _handleFocus = (e: SyntheticEvent) => {
         if (state.isReadOnly) {
             return;
@@ -95,7 +109,20 @@ export const StandardFieldValueRead: FunctionComponent<IStandardFieldValueReadPr
             break;
     }
 
-    const isValueHighlighted = state.isInheritedNotOverrideValue;
+    const _getHelper = () => {
+        if (state.isInheritedOverrideValue) {
+            return t('record_edition.inherited_input_helper', {
+                inheritedValue: _getInheritedValueForHelper(state.inheritedValue)
+            });
+        } else if (state.isCalculatedOverrideValue) {
+            return t('record_edition.calculated_input_helper', {
+                calculatedValue: _getCalculatedValueForHelper(state.calculatedValue)
+            });
+        }
+        return;
+    };
+
+    const isValueHighlighted = state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue;
     return (
         <KitInputWrapperStyled
             label={label}
@@ -104,13 +131,7 @@ export const StandardFieldValueRead: FunctionComponent<IStandardFieldValueReadPr
             htmlFor={fieldValue.idValue}
             required={state.formElement.settings.required}
             onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
-            helper={
-                state.isInheritedOverrideValue && state.inheritedValue
-                    ? t('record_edition.inherited_input_helper', {
-                          inheritedValue: _getInheritedValueForHelper(state.inheritedValue)
-                      })
-                    : undefined
-            }
+            helper={_getHelper()}
             onFocus={_handleFocus}
             className={className}
             $width={width}
