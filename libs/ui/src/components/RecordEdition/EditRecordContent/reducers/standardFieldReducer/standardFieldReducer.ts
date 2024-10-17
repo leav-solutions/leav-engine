@@ -214,8 +214,10 @@ const _updateValueData = (
 };
 
 const getInheritedValue = (values: RecordFormElementsValueStandardValue[]) => values.filter(value => value.isInherited);
-const getNotInheritedOrOverrideValue = (values: RecordFormElementsValueStandardValue[]) =>
-    values.filter(value => !value.isInherited && value.raw_value !== null);
+const getCalculatedValue = (values: RecordFormElementsValueStandardValue[]) =>
+    values.filter(value => value.isCalculated);
+const getUserInputValue = (values: RecordFormElementsValueStandardValue[]) =>
+    values.filter(value => !value.isInherited && !value.isCalculated && value.raw_value !== null);
 
 /**
  * For given list of values, determine if there is inherited values, inherited/current version and default active scope
@@ -228,9 +230,12 @@ const _computeScopeAndValues = (params: {
     const {attribute, values, formVersion} = params;
 
     // Get override or inhertied values
-    let valuesToHandle = getNotInheritedOrOverrideValue(values);
+    let valuesToHandle = getUserInputValue(values);
     if (!valuesToHandle.length) {
-        valuesToHandle = getInheritedValue(values);
+        valuesToHandle = getCalculatedValue(values);
+        if (!valuesToHandle.length) {
+            valuesToHandle = getInheritedValue(values);
+        }
     }
 
     const preparedValues = valuesToHandle.length
