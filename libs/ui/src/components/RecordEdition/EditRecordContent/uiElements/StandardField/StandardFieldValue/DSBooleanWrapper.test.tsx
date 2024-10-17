@@ -406,7 +406,7 @@ describe('DSBooleanWrapper', () => {
             const clearButton = screen.getByRole('button');
             await user.click(clearButton);
 
-            expect(mockHandleSubmit).toHaveBeenCalledWith('', 'my_attribute');
+            expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
         });
     });
 });

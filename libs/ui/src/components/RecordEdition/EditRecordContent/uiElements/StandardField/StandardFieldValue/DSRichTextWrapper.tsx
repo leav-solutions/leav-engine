@@ -57,9 +57,13 @@ export const DSRichTextWrapper: FunctionComponent<IDSRichTextWrapperProps> = ({
         }
     }, [fieldValue.isEditing]);
 
-    const _resetToInheritedValue = () => {
+    const _resetToInheritedOrCalculatedValue = () => {
         setHasChanged(false);
-        onChange(state.inheritedValue.raw_value);
+        if (state.isInheritedValue) {
+            onChange(state.inheritedValue.raw_value);
+        } else if (state.isCalculatedValue) {
+            onChange(state.calculatedValue.raw_value);
+        }
         handleSubmit('', state.attribute.id);
     };
 
@@ -71,11 +75,11 @@ export const DSRichTextWrapper: FunctionComponent<IDSRichTextWrapperProps> = ({
 
         const valueToSubmit = isEmptyValue(inputValue) ? '' : inputValue;
 
-        if (valueToSubmit === '' && state.isInheritedValue) {
-            _resetToInheritedValue();
+        if (valueToSubmit === '' && (state.isInheritedValue || state.isCalculatedValue)) {
+            _resetToInheritedOrCalculatedValue();
             return;
         }
-        if (hasChanged || !state.isInheritedValue) {
+        if (hasChanged || (!state.isInheritedValue && !state.isCalculatedValue)) {
             handleSubmit(valueToSubmit, state.attribute.id);
         }
         onChange(valueToSubmit);
@@ -85,10 +89,23 @@ export const DSRichTextWrapper: FunctionComponent<IDSRichTextWrapperProps> = ({
     const _handleOnChange = inputValue => {
         setHasChanged(true);
         if (state.isInheritedValue && isEmptyValue(inputValue)) {
-            _resetToInheritedValue();
+            _resetToInheritedOrCalculatedValue();
             return;
         }
         onChange(inputValue);
+    };
+
+    const _getHelper = () => {
+        if (state.isInheritedOverrideValue) {
+            return t('record_edition.inherited_input_helper', {
+                inheritedValue: state.inheritedValue.raw_value
+            });
+        } else if (state.isCalculatedOverrideValue) {
+            return t('record_edition.calculated_input_helper', {
+                calculatedValue: state.calculatedValue.raw_value
+            });
+        }
+        return;
     };
 
     const label = localizedTranslation(state.formElement.settings.label, availableLang);
@@ -100,18 +117,14 @@ export const DSRichTextWrapper: FunctionComponent<IDSRichTextWrapperProps> = ({
             label={label}
             onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             status={errors.length > 0 ? 'error' : undefined}
-            helper={
-                state.isInheritedOverrideValue
-                    ? t('record_edition.inherited_input_helper', {
-                          inheritedValue: state.inheritedValue.raw_value
-                      })
-                    : undefined
-            }
+            helper={_getHelper()}
             value={value as string}
             disabled={state.isReadOnly}
             onChange={_handleOnChange}
             onBlur={_handleOnBlur}
-            $shouldHighlightColor={!hasChanged && state.isInheritedNotOverrideValue}
+            $shouldHighlightColor={
+                (!hasChanged && state.isInheritedNotOverrideValue) || state.isCalculatedNotOverrideValue
+            }
         />
     );
 };

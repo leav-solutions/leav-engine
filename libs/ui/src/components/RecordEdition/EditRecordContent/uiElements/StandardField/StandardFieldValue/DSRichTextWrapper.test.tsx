@@ -116,14 +116,14 @@ const calculatedNotOverrideValue: CalculatedFlags = {
     isCalculatedValue: true,
     isCalculatedOverrideValue: false,
     isCalculatedNotOverrideValue: true,
-    calculatedValue: {raw_value: inheritedValues[1].raw_value}
+    calculatedValue: {raw_value: calculatedValues[1].raw_value}
 };
 
 const calculatedOverrideValue: CalculatedFlags = {
     isCalculatedValue: true,
     isCalculatedOverrideValue: true,
     isCalculatedNotOverrideValue: false,
-    calculatedValue: {raw_value: inheritedValues[1].raw_value}
+    calculatedValue: {raw_value: calculatedValues[1].raw_value}
 };
 
 const tiptapCleanup = mockBrowserFunctionsForTiptap();
