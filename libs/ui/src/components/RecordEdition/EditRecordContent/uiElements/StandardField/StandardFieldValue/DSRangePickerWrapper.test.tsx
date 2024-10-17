@@ -64,7 +64,11 @@ const getInitialState = (required: boolean, fallbackLang = false): IStandardFiel
     inheritedValue: null,
     isInheritedNotOverrideValue: false,
     isInheritedOverrideValue: false,
-    isInheritedValue: false
+    isInheritedValue: false,
+    calculatedValue: null,
+    isCalculatedNotOverrideValue: false,
+    isCalculatedOverrideValue: false,
+    isCalculatedValue: false
 });
 
 describe('DSRangePickerWrapper', () => {
@@ -370,6 +374,126 @@ describe('DSRangePickerWrapper', () => {
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                             handleBlur={mockHandleBlur}
+                        />
+                    </Form.Item>
+                </Form>
+            );
+
+            const clearButton = screen.queryByRole('button');
+            expect(clearButton).toBeNull();
+        });
+    });
+
+    describe('Calculated values', () => {
+        test('Should not display helper without calculated value', async () => {
+            const state = getInitialState(false);
+            state.calculatedValue = null;
+            state.isCalculatedOverrideValue = false;
+            render(
+                <Form>
+                    <Form.Item>
+                        <DSRangePickerWrapper
+                            state={state}
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={mockValue}
+                            onChange={mockOnChange}
+                            handleBlur={mockHandleBlur}
+                            handleSubmit={mockHandleSubmit}
+                        />
+                    </Form.Item>
+                </Form>
+            );
+
+            expect(
+                screen.queryByText('record_edition.calculated_input_helper', {exact: false})
+            ).not.toBeInTheDocument();
+        });
+
+        test('Should display helper with calculated value', async () => {
+            const state = getInitialState(false);
+            state.calculatedValue = mockValue.value;
+            state.isCalculatedOverrideValue = true;
+            render(
+                <Form>
+                    <Form.Item>
+                        <DSRangePickerWrapper
+                            state={state}
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={mockValue}
+                            onChange={mockOnChange}
+                            handleBlur={mockHandleBlur}
+                            handleSubmit={mockHandleSubmit}
+                        />
+                    </Form.Item>
+                </Form>
+            );
+
+            expect(screen.getByText('record_edition.calculated_input_helper', {exact: false})).toBeVisible();
+        });
+
+        test('Should call onChange/handleSubmit with calculated value on clear', async () => {
+            const raw_value = {
+                from: '1714138054',
+                to: '1714138054'
+            };
+            const state = getInitialState(false);
+            state.calculatedValue = {...mockValue.value, raw_value};
+            state.isCalculatedValue = true;
+            state.isCalculatedOverrideValue = true;
+            state.isCalculatedNotOverrideValue = false;
+            render(
+                <Form
+                    initialValues={{
+                        dateRangeTest: [dayjs.unix(Number(raw_value.from)), dayjs.unix(Number(raw_value.to))]
+                    }}
+                >
+                    <Form.Item name="dateRangeTest">
+                        <DSRangePickerWrapper
+                            state={state}
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={mockValue}
+                            onChange={mockOnChange}
+                            handleBlur={mockHandleBlur}
+                            handleSubmit={mockHandleSubmit}
+                        />
+                    </Form.Item>
+                </Form>
+            );
+
+            // TODO : target clear button when DS add html attribute - Ticket DS-219
+            const clearButton = screen.getByRole('button');
+            await user.click(clearButton);
+
+            expect(mockOnChange).toHaveBeenCalledTimes(1);
+            expect(mockOnChange).toHaveBeenCalledWith([expect.any(Object), expect.any(Object)], raw_value);
+            expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
+            expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
+        });
+
+        test('Should hide clear icon when value is calculated, but not override', async () => {
+            const raw_value = {
+                from: '1714138054',
+                to: '1714138054'
+            };
+            const state = getInitialState(false);
+            state.calculatedValue = {...mockValue.value, raw_value};
+            state.isCalculatedValue = true;
+            state.isCalculatedOverrideValue = false;
+            state.isCalculatedNotOverrideValue = true;
+            render(
+                <Form
+                    initialValues={{
+                        dateRangeTest: [dayjs.unix(Number(raw_value.from)), dayjs.unix(Number(raw_value.to))]
+                    }}
+                >
+                    <Form.Item name="dateRangeTest">
+                        <DSRangePickerWrapper
+                            state={state}
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={mockValue}
+                            onChange={mockOnChange}
+                            handleBlur={mockHandleBlur}
+                            handleSubmit={mockHandleSubmit}
                         />
                     </Form.Item>
                 </Form>

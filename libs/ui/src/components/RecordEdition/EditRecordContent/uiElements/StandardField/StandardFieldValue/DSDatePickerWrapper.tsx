@@ -56,13 +56,21 @@ export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> =
         }
     }, [fieldValue.isEditing]);
 
+    const _resetToInheritedOrCalculatedValue = () => {
+        if (state.isInheritedValue) {
+            onChange(dayjs.unix(Number(state.inheritedValue.raw_value)), state.inheritedValue.raw_value);
+        } else if (state.isCalculatedValue) {
+            onChange(dayjs.unix(Number(state.calculatedValue.raw_value)), state.calculatedValue.raw_value);
+        }
+        handleSubmit('', state.attribute.id);
+    };
+
     const _handleDateChange: (datePickerDate: dayjs.Dayjs | null, antOnChangeParams: string | string[]) => void = (
         datePickerDate,
         ...antOnChangeParams
     ) => {
-        if (state.isInheritedValue && datePickerDate === null) {
-            onChange(dayjs.unix(Number(state.inheritedValue.raw_value)), state.inheritedValue.raw_value);
-            handleSubmit('', state.attribute.id);
+        if ((state.isInheritedValue || state.isCalculatedValue) && datePickerDate === null) {
+            _resetToInheritedOrCalculatedValue();
             return;
         }
 
@@ -81,6 +89,19 @@ export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> =
         handleSubmit(dateToSave, state.attribute.id);
     };
 
+    const _getHelper = () => {
+        if (state.isInheritedOverrideValue) {
+            return t('record_edition.inherited_input_helper', {
+                inheritedValue: state.inheritedValue.value
+            });
+        } else if (state.isCalculatedOverrideValue) {
+            return t('record_edition.calculated_input_helper', {
+                calculatedValue: state.calculatedValue.value
+            });
+        }
+        return;
+    };
+
     const label = localizedTranslation(state.formElement.settings.label, availableLangs);
 
     return (
@@ -91,18 +112,12 @@ export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> =
             label={label}
             required={state.formElement.settings.required}
             disabled={state.isReadOnly}
-            allowClear={!state.isInheritedNotOverrideValue}
+            allowClear={!state.isInheritedNotOverrideValue && !state.isCalculatedNotOverrideValue}
             status={errors.length > 0 ? 'error' : undefined}
             onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
-            helper={
-                state.isInheritedOverrideValue
-                    ? t('record_edition.inherited_input_helper', {
-                          inheritedValue: state.inheritedValue.value
-                      })
-                    : undefined
-            }
+            helper={_getHelper()}
             onBlur={handleBlur}
-            $shouldHighlightColor={state.isInheritedNotOverrideValue}
+            $shouldHighlightColor={state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue}
         />
     );
 };

@@ -5,6 +5,7 @@ import {mockBrowserFunctionsForTiptap, render, screen} from '_ui/_tests/testUtil
 import {DSRichTextWrapper} from './DSRichTextWrapper';
 import {VersionFieldScope} from '../../../_types';
 import {
+    CalculatedFlags,
     InheritedFlags,
     IStandardFieldReducerState,
     StandardFieldValueState
@@ -64,7 +65,11 @@ const getInitialState = (required: boolean, fallbackLang = false): IStandardFiel
     inheritedValue: null,
     isInheritedNotOverrideValue: false,
     isInheritedOverrideValue: false,
-    isInheritedValue: false
+    isInheritedValue: false,
+    calculatedValue: null,
+    isCalculatedNotOverrideValue: false,
+    isCalculatedOverrideValue: false,
+    isCalculatedValue: false
 });
 
 const inheritedValues = [
@@ -92,6 +97,33 @@ const inheritedOverrideValue: InheritedFlags = {
     isInheritedOverrideValue: true,
     isInheritedNotOverrideValue: false,
     inheritedValue: {raw_value: inheritedValues[1].raw_value}
+};
+
+const calculatedValues = [
+    {
+        isCalculated: null,
+        value: 'override value',
+        raw_value: 'override value'
+    },
+    {
+        isCalculated: true,
+        value: 'calculated value',
+        raw_value: 'calculated value'
+    }
+];
+
+const calculatedNotOverrideValue: CalculatedFlags = {
+    isCalculatedValue: true,
+    isCalculatedOverrideValue: false,
+    isCalculatedNotOverrideValue: true,
+    calculatedValue: {raw_value: calculatedValues[1].raw_value}
+};
+
+const calculatedOverrideValue: CalculatedFlags = {
+    isCalculatedValue: true,
+    isCalculatedOverrideValue: true,
+    isCalculatedNotOverrideValue: false,
+    calculatedValue: {raw_value: calculatedValues[1].raw_value}
 };
 
 const tiptapCleanup = mockBrowserFunctionsForTiptap();
@@ -267,6 +299,70 @@ describe('DSRichTextWrapper', () => {
             const input = screen.getByRole('textbox');
             const helperText = screen.getByText(/inherited value/);
             expect(input).toContainHTML(inheritedValues[0].raw_value);
+            expect(helperText).toBeInTheDocument();
+        });
+    });
+
+    describe('With calculation', () => {
+        test("Should display the calculated value by default and not save if we don't change it", async () => {
+            let state = getInitialState(false);
+            state = {
+                ...state,
+                ...calculatedNotOverrideValue,
+                formElement: {...state.formElement, values: calculatedValues}
+            };
+            render(
+                <AntForm>
+                    <AntForm.Item>
+                        <DSRichTextWrapper
+                            state={state}
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={mockValue}
+                            handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
+                            onChange={mockOnChange}
+                            value={calculatedValues[1].raw_value}
+                        />
+                    </AntForm.Item>
+                </AntForm>
+            );
+
+            const input = screen.getByRole('textbox');
+            expect(input).toContainHTML(calculatedValues[1].raw_value);
+
+            await user.click(input);
+            await user.click(document.body);
+
+            expect(mockHandleSubmit).not.toHaveBeenCalled();
+        });
+
+        test('Should display the override value in the input and calculated value under it', async () => {
+            let state = getInitialState(false);
+            state = {
+                ...state,
+                ...calculatedOverrideValue,
+                formElement: {...state.formElement, values: calculatedValues}
+            };
+
+            render(
+                <AntForm>
+                    <AntForm.Item>
+                        <DSRichTextWrapper
+                            state={state}
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={mockValue}
+                            handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
+                            onChange={mockOnChange}
+                            value={calculatedValues[0].raw_value}
+                        />
+                    </AntForm.Item>
+                </AntForm>
+            );
+
+            const input = screen.getByRole('textbox');
+            const helperText = screen.getByText(/calculated value/);
+            expect(input).toContainHTML(calculatedValues[0].raw_value);
             expect(helperText).toBeInTheDocument();
         });
     });

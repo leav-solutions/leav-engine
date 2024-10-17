@@ -79,6 +79,7 @@ export default function ({'core.depsManager': depsManager, translator}: IActions
         async runActionsList(actions, values, ctx) {
             const availActions: IActionsListFunction[] = this.getAvailableActions();
             let resultAction = values;
+
             for (const action of actions) {
                 const params: ActionsListParams<string> = !!action.params
                     ? action.params.reduce((all, p) => {
@@ -100,7 +101,7 @@ export default function ({'core.depsManager': depsManager, translator}: IActions
                           ? action.error_message[ctx.defaultLang]
                           : '';
                     if (customMessage) {
-                        customMessage += ': ' + errors.map(error => error.attributeValue.payload).join(', ');
+                        customMessage += ': ' + errors.map(error => error.attributeValue?.payload).join(', ');
                         throw new ValidationError({[ctx.attribute.id]: customMessage}, customMessage, true);
                     } else {
                         const errorsByType = errors.reduce<
@@ -117,7 +118,7 @@ export default function ({'core.depsManager': depsManager, translator}: IActions
                             (message, [errorType, {attributeValues, message: optionalMessage}]) => {
                                 const messageText = optionalMessage ?? translator.t(`error.${errorType}`);
                                 message.push(
-                                    `${messageText}: ${(attributeValues ?? []).map(value => value.payload).join(', ')}`
+                                    `${messageText}: ${(attributeValues ?? []).map(value => value?.payload).join(', ')}`
                                 );
                                 return message;
                             },

@@ -51,7 +51,7 @@ describe('excelCalculationAction', () => {
             ctx
         );
 
-        expect(res).toEqual({errors: [], values: [{...mockResultValueBase, payload: '42'}]});
+        expect(res).toEqual({errors: [], values: [{...mockResultValueBase, payload: '42', raw_payload: '42'}]});
         expect(
             await action(
                 [],
@@ -61,7 +61,7 @@ describe('excelCalculationAction', () => {
                 },
                 ctx
             )
-        ).toEqual({errors: [], values: [{...mockResultValueBase, payload: '84'}]});
+        ).toEqual({errors: [], values: [{...mockResultValueBase, payload: '84', raw_payload: '84'}]});
     });
 
     test('no formula', async () => {
@@ -74,7 +74,7 @@ describe('excelCalculationAction', () => {
             },
             ctx
         );
-        expect(res).toEqual({errors: [], values: [{...mockResultValueBase, payload: ''}]});
+        expect(res).toEqual({errors: [], values: [{...mockResultValueBase, payload: '', raw_payload: ''}]});
     });
 
     test('Replace variables', async () => {
@@ -92,7 +92,13 @@ describe('excelCalculationAction', () => {
 
         expect(res).toEqual({
             errors: [],
-            values: [{...mockResultValueBase, payload: 'resultat totoValue tataValue titiValue'}]
+            values: [
+                {
+                    ...mockResultValueBase,
+                    payload: 'resultat totoValue tataValue titiValue',
+                    raw_payload: 'resultat totoValue tataValue titiValue'
+                }
+            ]
         });
     });
 
@@ -111,7 +117,14 @@ describe('excelCalculationAction', () => {
 
         expect(res).toEqual({
             errors: [],
-            values: [mockStandardValue, {...mockResultValueBase, payload: 'resultat totoValue tataValue titiValue'}]
+            values: [
+                mockStandardValue,
+                {
+                    ...mockResultValueBase,
+                    payload: 'resultat totoValue tataValue titiValue',
+                    raw_payload: 'resultat totoValue tataValue titiValue'
+                }
+            ]
         });
     });
 

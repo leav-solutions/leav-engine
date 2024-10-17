@@ -62,9 +62,13 @@ export const DSInputEncryptedWrapper: FunctionComponent<IDSInputEncryptedWrapper
         }
     }, [fieldValue.isEditing]);
 
-    const _resetToInheritedValue = () => {
+    const _resetToInheritedOrCalculatedValue = () => {
         setHasChanged(false);
-        onChange(state.inheritedValue.raw_value);
+        if (state.isInheritedValue) {
+            onChange(state.inheritedValue.raw_value);
+        } else if (state.isCalculatedValue) {
+            onChange(state.calculatedValue.raw_value);
+        }
         handleSubmit('', state.attribute.id);
     };
 
@@ -75,12 +79,12 @@ export const DSInputEncryptedWrapper: FunctionComponent<IDSInputEncryptedWrapper
         }
 
         const valueToSubmit = event.target.value;
-        if (valueToSubmit === '' && state.isInheritedValue) {
-            _resetToInheritedValue();
+        if (valueToSubmit === '' && (state.isInheritedValue || state.isCalculatedValue)) {
+            _resetToInheritedOrCalculatedValue();
             return;
         }
 
-        if (!state.isInheritedValue) {
+        if (!state.isInheritedValue && !state.isCalculatedValue) {
             handleSubmit(valueToSubmit, state.attribute.id);
         }
 
@@ -90,11 +94,24 @@ export const DSInputEncryptedWrapper: FunctionComponent<IDSInputEncryptedWrapper
     const _handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
         setHasChanged(true);
         const inputValue = event.target.value;
-        if (state.isInheritedValue && inputValue === '' && event.type === 'click') {
-            _resetToInheritedValue();
+        if ((state.isInheritedValue || state.isCalculatedValue) && inputValue === '' && event.type === 'click') {
+            _resetToInheritedOrCalculatedValue();
             return;
         }
         onChange(event);
+    };
+
+    const _getHelper = () => {
+        if (state.isInheritedOverrideValue) {
+            return t('record_edition.inherited_input_helper', {
+                inheritedValue: state.inheritedValue.raw_value
+            });
+        } else if (state.isCalculatedOverrideValue) {
+            return t('record_edition.calculated_input_helper', {
+                calculatedValue: state.calculatedValue.raw_value
+            });
+        }
+        return;
     };
 
     const label = localizedTranslation(state.formElement.settings.label, availableLang);
@@ -109,19 +126,15 @@ export const DSInputEncryptedWrapper: FunctionComponent<IDSInputEncryptedWrapper
             required={state.formElement.settings.required}
             status={errors.length > 0 ? 'error' : undefined}
             onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
-            helper={
-                state.isInheritedOverrideValue
-                    ? t('record_edition.inherited_input_helper', {
-                          inheritedValue: state.inheritedValue.raw_value
-                      })
-                    : undefined
-            }
+            helper={_getHelper()}
             value={value}
             disabled={state.isReadOnly}
-            allowClear={!state.isInheritedNotOverrideValue}
+            allowClear={!state.isInheritedNotOverrideValue && !state.isCalculatedNotOverrideValue}
             onBlur={_handleOnBlur}
             onChange={_handleOnChange}
-            $shouldHighlightColor={!hasChanged && state.isInheritedNotOverrideValue}
+            $shouldHighlightColor={
+                !hasChanged && (state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue)
+            }
         />
     );
 };

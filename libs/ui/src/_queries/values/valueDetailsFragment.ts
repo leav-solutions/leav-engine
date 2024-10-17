@@ -11,6 +11,7 @@ export const valueDetailsFragment = gql`
     fragment ValueDetails on GenericValue {
         id_value
         isInherited
+        isCalculated
         modified_at
         modified_by {
             ...RecordIdentity
