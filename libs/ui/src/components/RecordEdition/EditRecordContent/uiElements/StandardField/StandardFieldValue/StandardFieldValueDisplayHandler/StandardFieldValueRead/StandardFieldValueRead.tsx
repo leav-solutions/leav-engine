@@ -128,7 +128,6 @@ export const StandardFieldValueRead: FunctionComponent<IStandardFieldValueReadPr
             label={label}
             bordered
             hoverable
-            htmlFor={fieldValue.idValue}
             required={state.formElement.settings.required}
             onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             helper={_getHelper()}
@@ -137,6 +136,7 @@ export const StandardFieldValueRead: FunctionComponent<IStandardFieldValueReadPr
             $width={width}
         >
             <ValueWrapper
+                data-testid={state.attribute.id}
                 disabled={state.isReadOnly}
                 onClick={onClick}
                 weight="medium"
