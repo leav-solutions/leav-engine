@@ -16,7 +16,7 @@ import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
 import {useApplicationLibraries} from 'hooks/useApplicationLibraries';
 import {useApplicationTrees} from 'hooks/useApplicationTrees';
 import {useTranslation} from 'react-i18next';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useSearchParams} from 'react-router-dom';
 import {useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
 import {getExplorerLibraryLink, getLibraryLink, getTreeLink, localizedTranslation} from 'utils';
@@ -72,6 +72,9 @@ const FavoriteStarSpan = styled.span<{$isFavorite: boolean}>`
 const Sidebar: FunctionComponent = () => {
     const {t} = useTranslation();
     const {lang} = useLang();
+
+    const [params] = useSearchParams();
+
     const [activeLibrary] = useActiveLibrary();
     const [activeTree] = useActiveTree();
     const navigate = useNavigate();
@@ -325,7 +328,7 @@ const Sidebar: FunctionComponent = () => {
                 <Menu
                     style={{width: '100%'}}
                     selectedKeys={[activePanel, `${activePanel}.${activeLibrary?.id || activeTree?.id}`]}
-                    activeKey={activePanel}
+                    activeKey={params.get('explorer') === null ? activePanel : 'explorer'}
                     items={menuItems}
                 />
             </NavWrapperDiv>

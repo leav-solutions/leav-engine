@@ -11,7 +11,6 @@ import {setActivePanel} from 'reduxStore/activePanel';
 import {useAppDispatch} from 'reduxStore/store';
 import styled from 'styled-components';
 import {WorkspacePanels} from '_types/types';
-import Explorer from '_ui/components/Explorer';
 
 const VisibilityHandlerDiv = styled.div<{$isActive: boolean}>`
     display: ${p => (p.$isActive ? 'block' : 'none')};
@@ -27,7 +26,7 @@ const Home = lazy(() => import('components/Home'));
 const LibraryHome = lazy(() => import('components/LibraryHome'));
 const Navigation = lazy(() => import('components/Navigation'));
 
-const Workspace: FunctionComponent<{isExplorer?: true}> = ({isExplorer}) => {
+const Workspace: FunctionComponent = () => {
     const allowedPanels = Object.values(WorkspacePanels);
 
     const dispatch = useAppDispatch();
@@ -42,21 +41,16 @@ const Workspace: FunctionComponent<{isExplorer?: true}> = ({isExplorer}) => {
     const [activeLibrary] = useActiveLibrary();
     const [activeTree] = useActiveTree();
 
-    const isExplorerActive = isExplorer ?? false;
-    const isHomeActive = activePanel === WorkspacePanels.HOME && !isExplorerActive;
-    const isLibraryActive = activePanel === WorkspacePanels.LIBRARY && !isExplorerActive;
-    const isTreeActive = activePanel === WorkspacePanels.TREE && !isExplorerActive;
+    const isHomeActive = activePanel === WorkspacePanels.HOME;
+    const isLibraryActive = activePanel === WorkspacePanels.LIBRARY;
+    const isTreeActive = activePanel === WorkspacePanels.TREE;
 
     const libraryId = isLibraryActive ? entityId : activeLibrary?.id;
     const treeId = isTreeActive ? entityId : activeTree?.id;
 
     useEffect(() => {
-        if (isExplorerActive) {
-            dispatch(setActivePanel(WorkspacePanels.EXPLORER));
-        } else {
-            dispatch(setActivePanel(activePanel));
-        }
-    }, [activePanel, dispatch, isExplorerActive]);
+        dispatch(setActivePanel(activePanel));
+    }, [activePanel, dispatch]);
 
     if (panel && !allowedPanels.includes(panel)) {
         return <RouteNotFound />;
@@ -73,9 +67,6 @@ const Workspace: FunctionComponent<{isExplorer?: true}> = ({isExplorer}) => {
                 </VisibilityHandlerDiv>
                 <VisibilityHandlerDiv $isActive={isTreeActive} className={WorkspacePanels.TREE}>
                     <Navigation tree={treeId} key={treeId} />
-                </VisibilityHandlerDiv>
-                <VisibilityHandlerDiv $isActive={isExplorerActive} className={WorkspacePanels.LIBRARY}>
-                    <Explorer library={libraryId} />
                 </VisibilityHandlerDiv>
             </Suspense>
         </WrapperDiv>

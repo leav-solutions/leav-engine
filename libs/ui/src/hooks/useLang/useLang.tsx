@@ -4,7 +4,7 @@
 import {useContext} from 'react';
 import {ILangContext, LangContext} from '../../contexts/LangContext';
 
-function useLang(): ILangContext {
+const useLang = (): ILangContext => {
     const lang = useContext(LangContext);
 
     if (!lang) {
@@ -12,6 +12,6 @@ function useLang(): ILangContext {
     }
 
     return lang;
-}
+};
 
 export default useLang;
