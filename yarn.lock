@@ -12415,9 +12415,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aristid-ds@npm:10.0.0-1473f00":
-  version: 10.0.0-1473f00
-  resolution: "aristid-ds@npm:10.0.0-1473f00"
+"aristid-ds@npm:10.1.0-15ff3d3":
+  version: 10.1.0-15ff3d3
+  resolution: "aristid-ds@npm:10.1.0-15ff3d3"
   dependencies:
     "@dnd-kit/core": "npm:^6.1.0"
     "@dnd-kit/modifiers": "npm:^7.0.0"
@@ -12473,7 +12473,7 @@ __metadata:
     react-uuid: ^2.0.0
     remark-gfm: ^3.0.1
     styled-components: ^6.0.7
-  checksum: ec1cc988d491267456ed9e08c0d231bf3277edb3a9dc291ad080e502f2449c3c7c1935c1ffbd998c4455c331fced10b11a11ff6f764032c740ea1e6f9bb25d9d
+  checksum: 3c535d9e313bfa99a5da2e1f8dc5428d89715373ce57edfb8d3cd6f8d784b71e13069a9c5b3a4aeb1afd188f6cc489154d67bfbcd83d5dc5f2a74ff4cad36448
   languageName: node
   linkType: hard
 
@@ -15651,7 +15651,7 @@ __metadata:
     apollo: "npm:2.34.0"
     apollo-cache-inmemory: "npm:1.6.6"
     apollo-upload-client: "npm:14.1.3"
-    aristid-ds: "npm:10.0.0-1473f00"
+    aristid-ds: "npm:10.1.0-15ff3d3"
     commander: "npm:5.1.0"
     dayjs: "npm:1.11.10"
     graphql: "npm:15.0.0"
@@ -24145,7 +24145,7 @@ __metadata:
     "@types/react-dom": "npm:18.2.6"
     "@vitejs/plugin-react": "npm:3.1.0"
     antd: "npm:5.15.3"
-    aristid-ds: "npm:10.0.0-1473f00"
+    aristid-ds: "npm:10.1.0-15ff3d3"
     i18next: "npm:22.5.0"
     i18next-browser-languagedetector: "npm:7.0.2"
     i18next-http-backend: "npm:2.1.1"
@@ -26923,7 +26923,7 @@ __metadata:
     "@vitejs/plugin-react": "npm:3.1.0"
     antd: "npm:5.15.3"
     apollo: "npm:2.34.0"
-    aristid-ds: "npm:10.0.0-1473f00"
+    aristid-ds: "npm:10.1.0-15ff3d3"
     commander: "npm:10.0.0"
     cross-fetch: "npm:3.1.5"
     graphql-ws: "npm:5.12.0"
