@@ -5,18 +5,19 @@ import {Loading} from '@leav/ui';
 import RouteNotFound from 'components/Router/RouteNotFound';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
-import {lazy, Suspense, useEffect} from 'react';
+import {FunctionComponent, lazy, Suspense, useEffect} from 'react';
 import {useParams} from 'react-router-dom';
 import {setActivePanel} from 'reduxStore/activePanel';
 import {useAppDispatch} from 'reduxStore/store';
 import styled from 'styled-components';
 import {WorkspacePanels} from '_types/types';
+import Explorer from '_ui/components/Explorer';
 
-const VisibilityHandler = styled.div<{$isActive: boolean}>`
+const VisibilityHandlerDiv = styled.div<{$isActive: boolean}>`
     display: ${p => (p.$isActive ? 'block' : 'none')};
 `;
 
-const Wrapper = styled.div`
+const WrapperDiv = styled.div`
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
@@ -26,7 +27,7 @@ const Home = lazy(() => import('components/Home'));
 const LibraryHome = lazy(() => import('components/LibraryHome'));
 const Navigation = lazy(() => import('components/Navigation'));
 
-function Workspace(): JSX.Element {
+const Workspace: FunctionComponent<{isExplorer?: true}> = ({isExplorer}) => {
     const allowedPanels = Object.values(WorkspacePanels);
 
     const dispatch = useAppDispatch();
@@ -41,36 +42,44 @@ function Workspace(): JSX.Element {
     const [activeLibrary] = useActiveLibrary();
     const [activeTree] = useActiveTree();
 
-    const isHomeActive = activePanel === WorkspacePanels.HOME;
-    const isLibraryActive = activePanel === WorkspacePanels.LIBRARY;
-    const isTreeActive = activePanel === WorkspacePanels.TREE;
+    const isExplorerActive = isExplorer ?? false;
+    const isHomeActive = activePanel === WorkspacePanels.HOME && !isExplorerActive;
+    const isLibraryActive = activePanel === WorkspacePanels.LIBRARY && !isExplorerActive;
+    const isTreeActive = activePanel === WorkspacePanels.TREE && !isExplorerActive;
 
     const libraryId = isLibraryActive ? entityId : activeLibrary?.id;
     const treeId = isTreeActive ? entityId : activeTree?.id;
 
     useEffect(() => {
-        dispatch(setActivePanel(activePanel));
-    }, [activePanel, dispatch]);
+        if (isExplorerActive) {
+            dispatch(setActivePanel(WorkspacePanels.EXPLORER));
+        } else {
+            dispatch(setActivePanel(activePanel));
+        }
+    }, [activePanel, dispatch, isExplorerActive]);
 
     if (panel && !allowedPanels.includes(panel)) {
         return <RouteNotFound />;
     }
 
     return (
-        <Wrapper>
+        <WrapperDiv>
             <Suspense fallback={<Loading />}>
-                <VisibilityHandler $isActive={isHomeActive} className={WorkspacePanels.HOME}>
+                <VisibilityHandlerDiv $isActive={isHomeActive} className={WorkspacePanels.HOME}>
                     <Home />
-                </VisibilityHandler>
-                <VisibilityHandler $isActive={isLibraryActive} className={WorkspacePanels.LIBRARY}>
+                </VisibilityHandlerDiv>
+                <VisibilityHandlerDiv $isActive={isLibraryActive} className={WorkspacePanels.LIBRARY}>
                     <LibraryHome library={libraryId} key={libraryId} />
-                </VisibilityHandler>
-                <VisibilityHandler $isActive={isTreeActive} className={WorkspacePanels.TREE}>
+                </VisibilityHandlerDiv>
+                <VisibilityHandlerDiv $isActive={isTreeActive} className={WorkspacePanels.TREE}>
                     <Navigation tree={treeId} key={treeId} />
-                </VisibilityHandler>
+                </VisibilityHandlerDiv>
+                <VisibilityHandlerDiv $isActive={isExplorerActive} className={WorkspacePanels.LIBRARY}>
+                    <Explorer library={libraryId} />
+                </VisibilityHandlerDiv>
             </Suspense>
-        </Wrapper>
+        </WrapperDiv>
     );
-}
+};
 
 export default Workspace;

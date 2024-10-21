@@ -601,6 +601,7 @@
         "application": "Application",
         "libraries": "Bibliothèques",
         "trees": "Arbres",
+        "explorer": "Explorateur",
         "advanced_settings": "Paramètres avancés",
         "showTransparency": "Afficher la transparence",
         "mode_confirm_title": "Êtes-vous sûr ?",
