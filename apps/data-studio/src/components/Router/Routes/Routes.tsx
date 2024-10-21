@@ -13,7 +13,6 @@ const Routes: FunctionComponent = () => (
         <Route path={routes.root} element={<Workspace />} />
         <Route path={routes.home} element={<Workspace />} />
         <Route path={routes.workspace} element={<Workspace />} />
-        <Route path={routes.explorer} element={<Workspace isExplorer />} />
         <Route path={routes.settings} element={<Settings />} />
         <Route element={<RouteNotFound />} />
     </RouterRoutes>

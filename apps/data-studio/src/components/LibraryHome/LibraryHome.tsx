@@ -5,34 +5,37 @@ import {ErrorDisplay, ErrorDisplayTypes, IFilter, ISearchSelection, LibraryItems
 import {useApplicationContext} from 'context/ApplicationContext';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery/useGetLibraryDetailExtendedQuery';
-import {useEffect, useState} from 'react';
+import {FunctionComponent, useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'reduxStore/infos';
 import {setSelection} from 'reduxStore/selection';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import {isLibraryInApp, localizedTranslation} from 'utils';
 import {IBaseInfo, InfoType, SharedStateSelectionType, WorkspacePanels} from '_types/types';
+import {useSearchParams} from 'react-router-dom';
+import Explorer from '_ui/components/Explorer';
 
 export interface ILibraryHomeProps {
     library?: string;
 }
 
-type SelectionActions = 'export' | 'deactivate' | 'generate_previews';
-
 interface IActiveAction {
     key: string;
-    modalComp: () => JSX.Element;
+    modalComp: FunctionComponent;
     modalProps: any;
 }
 
-function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
+const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
     const {lang} = useLang();
     const {t} = useTranslation();
+
+    const [params] = useSearchParams();
+
     const appData = useApplicationContext();
     const dispatch = useAppDispatch();
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
     const {activePanel, selection} = useAppSelector(state => state);
-    const [activeAction, setActiveAction] = useState<IActiveAction>();
+    const [activeAction, setActiveAction] = useState<IActiveAction | null | undefined>();
 
     const {loading, data, error} = useGetLibraryDetailExtendedQuery({library});
 
@@ -128,25 +131,32 @@ function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
         );
     };
 
+    const isExplorer = params.get('explorer') !== null;
+
     return (
         <>
-            {/* TODO: switch with explorer context */}
-            <LibraryItemsList
-                selectionMode={false}
-                library={data.libraries.list[0]}
-                key={library}
-                onSelectChange={_handleSelectChange}
-            />
-            {activeAction && (
-                <activeAction.modalComp
-                    key={activeAction.key}
-                    open
-                    onClose={_handleCloseModal}
-                    {...activeAction.modalProps}
-                />
+            {isExplorer ? (
+                <Explorer library={library} />
+            ) : (
+                <>
+                    <LibraryItemsList
+                        selectionMode={false}
+                        library={data.libraries.list[0]}
+                        key={library}
+                        onSelectChange={_handleSelectChange}
+                    />
+                    {activeAction && (
+                        <activeAction.modalComp
+                            key={activeAction.key}
+                            open
+                            onClose={_handleCloseModal}
+                            {...activeAction.modalProps}
+                        />
+                    )}
+                </>
             )}
         </>
     );
-}
+};
 
 export default LibraryHome;
