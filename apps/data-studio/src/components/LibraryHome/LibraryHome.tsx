@@ -130,6 +130,7 @@ function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
 
     return (
         <>
+            {/* TODO: switch with explorer context */}
             <LibraryItemsList
                 selectionMode={false}
                 library={data.libraries.list[0]}

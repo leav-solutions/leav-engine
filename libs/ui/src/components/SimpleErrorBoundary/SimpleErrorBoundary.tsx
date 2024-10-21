@@ -1,25 +1,25 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import React from 'react';
+import {Component, ErrorInfo, ReactNode} from 'react';
 import SimpleErrorBoundaryContent from './SimpleErrorBoundaryContent';
 
 interface ISimpleErrorBoundaryProps {
-    children?: React.ReactNode;
+    children?: ReactNode;
 }
 
 interface ISimpleErrorBoundaryState {
     error: Error;
-    errorInfo: React.ErrorInfo;
+    errorInfo: ErrorInfo;
 }
 
-export class SimpleErrorBoundary extends React.Component<ISimpleErrorBoundaryProps, ISimpleErrorBoundaryState> {
+export class SimpleErrorBoundary extends Component<ISimpleErrorBoundaryProps, ISimpleErrorBoundaryState> {
     private constructor(props) {
         super(props);
         this.state = {error: null, errorInfo: null};
     }
 
-    public componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
         // Catch errors in any components below and re-render with error message
         this.setState({
             error,
@@ -27,7 +27,7 @@ export class SimpleErrorBoundary extends React.Component<ISimpleErrorBoundaryPro
         });
     }
 
-    public render(): React.ReactNode {
+    public render() {
         if (this.state.errorInfo) {
             // Display error
             return <SimpleErrorBoundaryContent error={this.state.error} errorInfo={this.state.errorInfo} />;
