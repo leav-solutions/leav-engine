@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Loading} from '@leav/ui';
 import RouteNotFound from 'components/Router/RouteNotFound';
-import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
-import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
+import {useActiveLibrary} from 'hooks/useActiveLibrary';
+import {useActiveTree} from 'hooks/useActiveTree';
 import {FunctionComponent, lazy, Suspense, useEffect} from 'react';
 import {useParams} from 'react-router-dom';
 import {setActivePanel} from 'reduxStore/activePanel';

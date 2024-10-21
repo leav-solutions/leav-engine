@@ -12,7 +12,7 @@ import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
 import {TREE_NODE_CHILDREN_treeNodeChildren_list} from '_gqlTypes/TREE_NODE_CHILDREN';
 import {ISharedSelected, SharedStateSelectionType} from '_types/types';
-import {useActiveTree} from '../../../../../hooks/ActiveTreeHook/ActiveTreeHook';
+import {useActiveTree} from 'hooks/useActiveTree';
 import HeaderColumnNavigationActions from './HeaderColumnNavigationActions';
 
 interface IHeaderColumnProps {

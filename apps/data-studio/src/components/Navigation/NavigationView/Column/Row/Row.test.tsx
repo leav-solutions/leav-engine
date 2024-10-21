@@ -5,7 +5,7 @@ import {act, render, screen} from '_tests/testUtils';
 import {mockTreeElement} from '../../../../../__mocks__/common/treeElements';
 import Row from './Row';
 
-jest.mock('hooks/ActiveTreeHook/ActiveTreeHook');
+jest.mock('hooks/useActiveTree/useActiveTree');
 
 describe('Cell', () => {
     test('should display the label of the record', async () => {

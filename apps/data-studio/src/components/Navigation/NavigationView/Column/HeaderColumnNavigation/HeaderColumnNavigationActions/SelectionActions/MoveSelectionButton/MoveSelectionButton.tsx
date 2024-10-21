@@ -5,7 +5,7 @@ import {ArrowDownOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
 import {Button} from 'antd';
 import {moveTreeElementMutation} from 'graphQL/mutations/trees/moveTreeElementMutation';
-import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
+import {useActiveTree} from 'hooks/useActiveTree';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
 import {useTranslation} from 'react-i18next';
 import {resetSelection} from 'reduxStore/selection';

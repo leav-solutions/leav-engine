@@ -12,9 +12,9 @@ import {
     useLang
 } from '@leav/ui';
 import {useApplicationContext} from 'context/ApplicationContext';
-import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
-import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery/useGetLibraryDetailExtendedQuery';
-import {FunctionComponent, useEffect, useState} from 'react';
+import {useActiveLibrary} from 'hooks/useActiveLibrary';
+import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery';
+import {FunctionComponent, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'reduxStore/infos';
 import {setSelection} from 'reduxStore/selection';
@@ -22,17 +22,10 @@ import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import {explorerQueryParamName, isLibraryInApp, localizedTranslation} from 'utils';
 import {IBaseInfo, InfoType, SharedStateSelectionType, WorkspacePanels} from '_types/types';
 import {useSearchParams} from 'react-router-dom';
-import {KitIcon} from 'aristid-ds';
 import {FaAccessibleIcon, FaBeer, FaJs, FaXbox} from 'react-icons/all';
 
 export interface ILibraryHomeProps {
     library?: string;
-}
-
-interface IActiveAction {
-    key: string;
-    modalComp: FunctionComponent;
-    modalProps: any;
 }
 
 const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
@@ -45,7 +38,6 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
     const dispatch = useAppDispatch();
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
     const {activePanel, selection} = useAppSelector(state => state);
-    const [activeAction, setActiveAction] = useState<IActiveAction | null | undefined>();
 
     const {loading, data, error} = useGetLibraryDetailExtendedQuery({library});
 
@@ -127,8 +119,6 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
         return <ErrorDisplay message={t('items_list.not_in_app')} />;
     }
 
-    const _handleCloseModal = () => setActiveAction(null);
-
     const _handleSelectChange = (newSelection: ISearchSelection, filters: IFilter[]) => {
         dispatch(
             setSelection({
@@ -141,66 +131,52 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
         );
     };
 
-    return (
-        <>
-            {params.has(explorerQueryParamName) ? (
-                <Explorer
-                    library={library}
-                    defaultActionsForItem={['deactivate']}
-                    itemActions={[
-                        {
-                            label: 'Test 1',
-                            icon: <FaBeer />,
-                            callback: item => {
-                                // eslint-disable-next-line no-restricted-syntax
-                                console.log(1, item);
-                            }
-                        },
-                        {
-                            label: 'Test 2',
-                            icon: <FaAccessibleIcon />,
-                            callback: item => {
-                                // eslint-disable-next-line no-restricted-syntax
-                                console.log(2, item);
-                            }
-                        },
-                        {
-                            label: 'Test 3',
-                            icon: <FaXbox />,
-                            callback: item => {
-                                // eslint-disable-next-line no-restricted-syntax
-                                console.log(3, item);
-                            }
-                        },
-                        {
-                            label: 'Test 4',
-                            icon: <FaJs />,
-                            callback: item => {
-                                // eslint-disable-next-line no-restricted-syntax
-                                console.log(4, item);
-                            }
-                        }
-                    ]}
-                />
-            ) : (
-                <>
-                    <LibraryItemsList
-                        selectionMode={false}
-                        library={data.libraries.list[0]}
-                        key={library}
-                        onSelectChange={_handleSelectChange}
-                    />
-                    {activeAction && (
-                        <activeAction.modalComp
-                            key={activeAction.key}
-                            open
-                            onClose={_handleCloseModal}
-                            {...activeAction.modalProps}
-                        />
-                    )}
-                </>
-            )}
-        </>
+    return params.has(explorerQueryParamName) ? (
+        <Explorer
+            library={library}
+            defaultActionsForItem={['deactivate']}
+            itemActions={[
+                {
+                    label: 'Test 1',
+                    icon: <FaBeer />,
+                    callback: item => {
+                        // eslint-disable-next-line no-restricted-syntax
+                        console.log(1, item);
+                    }
+                },
+                {
+                    label: 'Test 2',
+                    icon: <FaAccessibleIcon />,
+                    callback: item => {
+                        // eslint-disable-next-line no-restricted-syntax
+                        console.log(2, item);
+                    }
+                },
+                {
+                    label: 'Test 3',
+                    icon: <FaXbox />,
+                    callback: item => {
+                        // eslint-disable-next-line no-restricted-syntax
+                        console.log(3, item);
+                    }
+                },
+                {
+                    label: 'Test 4',
+                    icon: <FaJs />,
+                    callback: item => {
+                        // eslint-disable-next-line no-restricted-syntax
+                        console.log(4, item);
+                    }
+                }
+            ]}
+        />
+    ) : (
+        <LibraryItemsList
+            selectionMode={false}
+            library={data.libraries.list[0]}
+            key={library}
+            onSelectChange={_handleSelectChange}
+        />
     );
 };
 

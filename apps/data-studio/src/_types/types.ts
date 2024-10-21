@@ -3,9 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields} from '_gqlTypes/GET_ATTRIBUTES_BY_LIB';
-import {AttributeFormat, AttributeType, RecordFilterCondition, RecordFilterOperator} from '_gqlTypes/globalTypes';
-import {RecordIdentity, RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
-import {TREE_NODE_CHILDREN_treeNodeChildren_list_permissions} from '_gqlTypes/TREE_NODE_CHILDREN';
+import {AttributeFormat, AttributeType, RecordFilterCondition} from '_gqlTypes/globalTypes';
+import {RecordIdentity_whoAmI} from '_gqlTypes/RecordIdentity';
 import {
     ILibraryDetailExtendedAttributeParentLinkedLibrary,
     ILibraryDetailExtendedAttributeParentLinkedTree
@@ -18,11 +17,6 @@ export interface ISystemTranslation {
 export interface ILibrary {
     id: string;
     label: ISystemTranslation;
-}
-
-export enum LinkedType {
-    library = 'library',
-    tree = 'tree'
 }
 
 export interface IItemBase {
@@ -38,15 +32,6 @@ export interface IRecordIdentityWhoAmI extends RecordIdentity_whoAmI {
     index?: number;
 }
 
-export enum PreviewAttributes {
-    tiny = 'tiny',
-    small = 'small',
-    medium = 'medium',
-    big = 'big',
-    huge = 'huge',
-    pages = 'pages'
-}
-
 export enum PreviewSize {
     tiny = 'tiny',
     small = 'small',
@@ -57,16 +42,6 @@ export enum PreviewSize {
 export enum AvailableLanguage {
     en = 'en',
     fr = 'fr'
-}
-
-export enum FilterTypes {
-    filter = 'filter',
-    separator = 'separator'
-}
-
-export interface IFilterSeparatorCommon {
-    key: number;
-    id: string;
 }
 
 export enum FilterType {
@@ -82,21 +57,6 @@ export interface IFilter {
     value: {value: boolean | string | number | null | IDateRangeValue; label?: string};
     active: boolean;
     condition: AttributeConditionType | TreeConditionFilter | ThroughConditionFilter;
-}
-
-export interface IFilterAttribute extends IFilter {
-    attribute: IAttribute; // Put the attribute in the filter to avoid having to fetch them multiple times
-    parentTreeLibrary?: IFilterLibrary; // on tree library attribute
-}
-
-export interface IFilterTree extends IFilter {
-    tree: {id: string; label?: ISystemTranslation | null};
-}
-
-// on library's tree
-export interface IFilterLibrary extends IFilter {
-    library: {id: string; label?: ISystemTranslation | null};
-    parentAttribute: IAttribute;
 }
 
 export enum OperatorFilter {
@@ -124,14 +84,6 @@ export const AttributeConditionFilter = {
 
 export type AttributeConditionType = ValueOf<typeof AttributeConditionFilter>;
 
-export interface IQueryFilter {
-    field?: string;
-    value?: string;
-    condition?: RecordFilterCondition;
-    operator?: RecordFilterOperator;
-    treeId?: string;
-}
-
 export enum OrderSearch {
     DESC = 'DESC',
     ASC = 'ASC'
@@ -150,8 +102,6 @@ export interface IAttribute {
     parentAttribute?: IAttribute;
     embedded_fields?: Array<GET_ATTRIBUTES_BY_LIB_attributes_list_StandardAttribute_embedded_fields | null> | null;
 }
-
-export type ExtendFormat = string | {[key: string]: ExtendFormat[]};
 
 export interface IEmbeddedFieldData {
     path: string;
@@ -187,30 +137,6 @@ export interface IFieldTypeTree extends IFieldBase {
 
 export type IField = IFieldTypeBasic | IFieldTypeLink | IFieldTypeTree;
 
-export interface IRecordEdition {
-    show: boolean;
-    item?: IItem;
-}
-
-export interface IAccordionActive {
-    id: string;
-    library: string;
-    depth: number;
-}
-
-export interface ISelectedAttribute {
-    id: string;
-    library: string;
-    path: string;
-    label: SystemTranslation | null;
-    type: AttributeType;
-    format?: AttributeFormat | null;
-    multiple_values: boolean;
-    parentAttributeData?: IParentAttributeData;
-    embeddedFieldData?: IEmbeddedFields;
-    treeData?: ITreeData;
-}
-
 export interface IParentAttributeData {
     id: string;
     type: AttributeType;
@@ -219,27 +145,6 @@ export interface IParentAttributeData {
 export interface ITreeData {
     treeAttributeId: string;
     libraryTypeName: string;
-}
-
-export interface IEmbeddedFields {
-    id: string;
-    format: AttributeFormat;
-    label: ISystemTranslation;
-    embedded_fields: IEmbeddedFields[];
-}
-
-export interface IGroupEmbeddedFields {
-    [attributeId: string]: {
-        embedded_fields: {[key: string]: IEmbeddedFields};
-    };
-}
-
-export interface IAttributeSelected {
-    id: string;
-    library: string;
-    originAttributeData?: IParentAttributeData;
-    extendedData?: IEmbeddedFieldData;
-    treeData?: ITreeData;
 }
 
 export interface ITree {
@@ -288,12 +193,6 @@ export interface IInfo extends IBaseInfo {
     channel?: InfoChannel;
 }
 
-export enum TypeSideItem {
-    filters = 'filters',
-    view = 'view',
-    versions = 'versions'
-}
-
 export interface ISharedStateSelectionSearch {
     type: SharedStateSelectionType.search;
     selected: ISharedSelected[];
@@ -321,12 +220,6 @@ export interface ISharedSelected {
     nodeId?: string;
 }
 
-export interface IToggleSelection {
-    selectionType: SharedStateSelectionType;
-    elementSelected: ISharedSelected;
-    parent?: string;
-}
-
 export enum WorkspacePanels {
     HOME = 'home',
     LIBRARY = 'library',
@@ -338,17 +231,6 @@ export interface IDateRangeValue {
 }
 
 export type ValueOf<T> = T[keyof T];
-
-export interface IPermissions {
-    [key: string]: boolean;
-}
-
-export interface ITreeContentRecordAndChildren {
-    id: string;
-    record: RecordIdentity;
-    children?: ITreeContentRecordAndChildren[];
-    permissions: TREE_NODE_CHILDREN_treeNodeChildren_list_permissions;
-}
 
 export interface IApplicationSettings {
     libraries?: 'all' | 'none' | string[];
