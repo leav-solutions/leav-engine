@@ -10,7 +10,7 @@ import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'reduxStore/infos';
 import {setSelection} from 'reduxStore/selection';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
-import {isLibraryInApp, localizedTranslation} from 'utils';
+import {explorerQueryParamName, isLibraryInApp, localizedTranslation} from 'utils';
 import {IBaseInfo, InfoType, SharedStateSelectionType, WorkspacePanels} from '_types/types';
 import {useSearchParams} from 'react-router-dom';
 import Explorer from '_ui/components/Explorer';
@@ -131,11 +131,9 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
         );
     };
 
-    const isExplorer = params.get('explorer') !== null;
-
     return (
         <>
-            {isExplorer ? (
+            {params.has(explorerQueryParamName) ? (
                 <Explorer library={library} />
             ) : (
                 <>
