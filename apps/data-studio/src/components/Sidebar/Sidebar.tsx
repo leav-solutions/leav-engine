@@ -19,13 +19,13 @@ import {useTranslation} from 'react-i18next';
 import {useNavigate, useSearchParams} from 'react-router-dom';
 import {useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
-import {getExplorerLibraryLink, getLibraryLink, getTreeLink, localizedTranslation} from 'utils';
+import {explorerQueryParamName, getExplorerLibraryLink, getLibraryLink, getTreeLink, localizedTranslation} from 'utils';
 import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
 import {GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 import {FAVORITE_LIBRARIES_KEY, FAVORITE_TREES_KEY} from '../../constants';
-import {FunctionComponent} from 'react';
+import {FunctionComponent, MouseEventHandler} from 'react';
 
 interface IGroupedElements<EntityType> {
     related: EntityType[];
@@ -68,6 +68,8 @@ const FavoriteStarSpan = styled.span<{$isFavorite: boolean}>`
         display: inline;
     }
 `;
+
+const explorerTabKey = 'explorer';
 
 const Sidebar: FunctionComponent = () => {
     const {t} = useTranslation();
@@ -176,7 +178,7 @@ const Sidebar: FunctionComponent = () => {
 
     const _handleClickHome = () => _goTo('/');
 
-    let libsMenuItems: ItemType[] = [];
+    let libsMenuItems: ItemType[];
 
     if (librariesLoading || favoritesList.loading) {
         libsMenuItems = [
@@ -204,7 +206,7 @@ const Sidebar: FunctionComponent = () => {
                 label: t(`sidebar.${libraryGroupKey}_libraries`),
                 children: groupedLibraries[libraryGroupKey].map(lib => {
                     const isFavorite = libraryFavorites.includes(lib.id);
-                    const _handleFavoriteClick = e => {
+                    const _handleFavoriteClick: MouseEventHandler<HTMLSpanElement> = e => {
                         e.preventDefault();
                         e.stopPropagation();
                         _handleToggleFavorite(isFavorite, lib.id, 'library');
@@ -229,7 +231,7 @@ const Sidebar: FunctionComponent = () => {
         });
     }
 
-    let treesMenuItems: ItemType[] = [];
+    let treesMenuItems: ItemType[];
     if (treesLoading || favoritesList.loading) {
         treesMenuItems = [
             {
@@ -254,21 +256,21 @@ const Sidebar: FunctionComponent = () => {
                 key: `${treeGroupKey}_trees`,
                 type: 'group',
                 label: t(`sidebar.${treeGroupKey}_trees`),
-                children: groupedTrees[treeGroupKey].map(tree => {
-                    const isFavorite = treeFavorites.includes(tree.id);
-                    const _handleFavoriteClick = e => {
+                children: groupedTrees[treeGroupKey].map(({id, label}: GET_TREES_trees_list) => {
+                    const isFavorite = treeFavorites.includes(id);
+                    const _handleFavoriteClick: MouseEventHandler<HTMLSpanElement> = e => {
                         e.preventDefault();
                         e.stopPropagation();
-                        _handleToggleFavorite(isFavorite, tree.id, 'tree');
+                        _handleToggleFavorite(isFavorite, id, 'tree');
                     };
 
                     return {
-                        key: `tree.${tree.id}`,
+                        key: `tree.${id}`,
                         label: (
                             <MenuItemContentSpan>
                                 <TreeIcon style={{fontSize: '1.2rem'}} />
-                                <LinkSpan onClick={() => _goTo(getTreeLink(tree.id))}>
-                                    {localizedTranslation(tree.label, lang)}
+                                <LinkSpan onClick={() => _goTo(getTreeLink(id))}>
+                                    {localizedTranslation(label, lang)}
                                 </LinkSpan>
                                 <FavoriteStarSpan onClick={_handleFavoriteClick} $isFavorite={isFavorite}>
                                     {isFavorite ? <StarFilled /> : <StarOutlined />}
@@ -303,7 +305,7 @@ const Sidebar: FunctionComponent = () => {
             onClick: _goToSettings
         },
         {
-            key: 'explorer',
+            key: explorerTabKey,
             icon: <TableOutlined />,
             label: t('app_settings.explorer'),
             onClick: _goToExplorerOnActiveLibrary
@@ -327,8 +329,11 @@ const Sidebar: FunctionComponent = () => {
             <NavWrapperDiv>
                 <Menu
                     style={{width: '100%'}}
-                    selectedKeys={[activePanel, `${activePanel}.${activeLibrary?.id || activeTree?.id}`]}
-                    activeKey={params.get('explorer') === null ? activePanel : 'explorer'}
+                    selectedKeys={
+                        params.has(explorerQueryParamName)
+                            ? [explorerTabKey]
+                            : [activePanel, `${activePanel}.${activeLibrary?.id || activeTree?.id}`]
+                    }
                     items={menuItems}
                 />
             </NavWrapperDiv>

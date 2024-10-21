@@ -330,7 +330,6 @@ export interface IToggleSelection {
 export enum WorkspacePanels {
     HOME = 'home',
     LIBRARY = 'library',
-    EXPLORER = 'explorer',
     TREE = 'tree'
 }
 export interface IDateRangeValue {

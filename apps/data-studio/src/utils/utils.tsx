@@ -73,8 +73,10 @@ export const gqlUnchecked = gql;
 
 export const getTreeRecordKey = (record: RecordIdentity): string => `${record.whoAmI.library.id}/${record.id}`;
 
+export const explorerQueryParamName = 'explorer';
+
 export const getLibraryLink = (libId: string) => `/library/${libId}`;
-export const getExplorerLibraryLink = (libId: string) => getLibraryLink(libId) + '?explorer';
+export const getExplorerLibraryLink = (libId: string) => getLibraryLink(libId) + '?' + explorerQueryParamName;
 export const getTreeLink = (treeId: string) => `/tree/${treeId}`;
 
 export const isLibraryInApp = (app: GET_APPLICATION_BY_ENDPOINT_applications_list, libraryId: string): boolean => {
