@@ -45,6 +45,7 @@ import {EditRecordReducerContext} from '../editRecordReducer/editRecordReducerCo
 import EditRecordSidebar from '../EditRecordSidebar';
 import CreationErrorContext, {ICreationErrorByField} from './creationErrorContext';
 import {FormInstance} from 'antd/lib/form/Form';
+import {createPortal} from 'react-dom';
 
 interface IEditRecordProps {
     antdForm: FormInstance;
@@ -61,6 +62,7 @@ interface IEditRecordProps {
         refresh?: React.RefObject<HTMLButtonElement>;
         valuesVersions?: React.RefObject<HTMLButtonElement>;
     };
+    recordSidebarContainer?: HTMLElement;
 }
 
 interface IPendingValues {
@@ -102,7 +104,8 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     showSidebar = false,
     containerStyle,
     withInfoButton,
-    buttonsRefs
+    buttonsRefs,
+    recordSidebarContainer
 }) => {
     const isCreationMode = !record;
 
@@ -448,11 +451,16 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         }
     };
 
+    console.log('EditRecord recordSidebarContainer', recordSidebarContainer);
+
     return (
         <ErrorBoundary>
             <EditRecordReducerContext.Provider value={{state, dispatch}}>
                 <CreationErrorContext.Provider value={creationErrors}>
-                    <Container $showSidebar={state.sidebarContent !== 'none'} style={containerStyle}>
+                    <Container
+                        $showSidebar={state.sidebarContent !== 'none' && recordSidebarContainer === undefined}
+                        style={containerStyle}
+                    >
                         <Content className="content">
                             {permissionsLoading ? (
                                 <EditRecordSkeleton rows={5} />
@@ -471,9 +479,19 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                                 <ErrorDisplay type={ErrorDisplayTypes.PERMISSION_ERROR} showActionButton={false} />
                             )}
                         </Content>
-                        <Sidebar className="sidebar">
-                            <EditRecordSidebar onMetadataSubmit={_handleMetadataSubmit} />
-                        </Sidebar>
+                        {/* TODO: c'est ce code là qu'il faut extraire */}
+                        {recordSidebarContainer === null && (
+                            <Sidebar className="sidebar">
+                                <EditRecordSidebar onMetadataSubmit={_handleMetadataSubmit} />
+                            </Sidebar>
+                        )}
+                        {recordSidebarContainer &&
+                            createPortal(
+                                <Sidebar className="sidebar">
+                                    <EditRecordSidebar onMetadataSubmit={_handleMetadataSubmit} />
+                                </Sidebar>,
+                                recordSidebarContainer
+                            )}
                     </Container>
                 </CreationErrorContext.Provider>
             </EditRecordReducerContext.Provider>

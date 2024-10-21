@@ -26,6 +26,8 @@ interface IEditRecordPageProps {
     showRefreshButton?: boolean;
     withInfoButton?: boolean;
     onClose: () => void;
+    recordSidebarContainer?: HTMLElement;
+    showSidebar?: boolean;
 }
 
 const Header = styled.div`
@@ -49,7 +51,9 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     showRefreshButton = true,
     submitButtons = ['create'],
     withInfoButton,
-    onClose
+    onClose,
+    recordSidebarContainer,
+    showSidebar = false
 }) => {
     const {t} = useSharedTranslation();
     const [currentRecord, setCurrentRecord] = useState<RecordIdentityFragment['whoAmI'] | null>(record);
@@ -127,6 +131,8 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
                 buttonsRefs={{refresh: refreshButtonRef}}
                 containerStyle={{height: 'calc(100% - 82px)'}}
                 withInfoButton={withInfoButton}
+                recordSidebarContainer={recordSidebarContainer}
+                showSidebar={showSidebar}
             />
         </>
     );

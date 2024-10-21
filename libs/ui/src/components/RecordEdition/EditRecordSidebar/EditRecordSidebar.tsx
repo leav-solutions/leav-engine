@@ -14,6 +14,8 @@ interface IEditRecordSidebarProps {
 function EditRecordSidebar({onMetadataSubmit}: IEditRecordSidebarProps): JSX.Element {
     const {state} = useEditRecordReducer();
 
+    console.log('EditRecordSidebar', state);
+
     switch (state.sidebarContent) {
         case 'none':
             return null;
