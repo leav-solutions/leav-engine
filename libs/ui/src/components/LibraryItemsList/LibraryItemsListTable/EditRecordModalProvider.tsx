@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent, useCallback, useMemo, useState} from 'react';
 import {EditRecordModal, IEditRecordModalProps} from '_ui/components/RecordEdition/EditRecordModal/EditRecordModal';
-import {EditRecordModalContext} from '_ui/components/LibraryItemsList/LibraryItemsListTable/EditRecordModalContext';
+import EditRecordModalContext from './EditRecordModalContext';
 
 export interface IEditRecordContextType {
     editRecord: (props: IEditRecordModalProps) => void;

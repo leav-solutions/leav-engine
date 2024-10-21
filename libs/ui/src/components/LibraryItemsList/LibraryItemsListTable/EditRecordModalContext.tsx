@@ -8,6 +8,8 @@ export interface IEditRecordContextType {
     editRecord: (props: IEditRecordModalProps) => void;
 }
 
-export const EditRecordModalContext = createContext<IEditRecordContextType>({
+const EditRecordModalContext = createContext<IEditRecordContextType>({
     editRecord: () => null
 });
+
+export default EditRecordModalContext;
