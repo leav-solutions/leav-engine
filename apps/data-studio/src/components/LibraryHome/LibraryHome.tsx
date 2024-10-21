@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ErrorDisplay, ErrorDisplayTypes, IFilter, ISearchSelection, LibraryItemsList, Loading, useLang} from '@leav/ui';
 import {useApplicationContext} from 'context/ApplicationContext';
-import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
-import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery/useGetLibraryDetailExtendedQuery';
+import {useActiveLibrary} from 'hooks/useActiveLibrary/useActiveLibrary';
+import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery';
 import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'reduxStore/infos';
@@ -16,8 +16,6 @@ import {IBaseInfo, InfoType, SharedStateSelectionType, WorkspacePanels} from '_t
 export interface ILibraryHomeProps {
     library?: string;
 }
-
-type SelectionActions = 'export' | 'deactivate' | 'generate_previews';
 
 interface IActiveAction {
     key: string;

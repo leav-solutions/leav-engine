@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {act, render} from '_tests/testUtils';
 import {mockActiveTree} from '__mocks__/common/activeTree';
-import {useActiveTree} from './ActiveTreeHook';
+import {useActiveTree} from './useActiveTree';
 
-describe('ActiveTreeHook', () => {
+describe('useActiveTree', () => {
     test('should get undefined if no activeTree set', async () => {
         let givenActiveTree;
 
