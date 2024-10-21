@@ -6,7 +6,7 @@ import {useMutation} from '@apollo/client';
 import {IRecordIdentityWhoAmI, useLang, EditRecordModal} from '@leav/ui';
 import {Button, Dropdown, Tooltip} from 'antd';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
-import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
+import {useActiveTree} from 'hooks/useActiveTree';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';

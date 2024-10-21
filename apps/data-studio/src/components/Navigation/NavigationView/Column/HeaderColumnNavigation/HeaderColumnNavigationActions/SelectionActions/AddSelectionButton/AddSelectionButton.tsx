@@ -5,7 +5,7 @@ import {PlusOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
 import {Button} from 'antd';
 import {addTreeElementMutation} from 'graphQL/mutations/trees/addTreeElementMutation';
-import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
+import {useActiveTree} from 'hooks/useActiveTree';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
 import {useTranslation} from 'react-i18next';
 import {addInfo} from 'reduxStore/infos';

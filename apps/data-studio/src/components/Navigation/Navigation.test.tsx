@@ -23,7 +23,7 @@ jest.mock('react-router-dom', () => ({
     useHistory: jest.fn()
 }));
 
-jest.mock('../../hooks/ActiveTreeHook/ActiveTreeHook', () => ({
+jest.mock('../../hooks/useActiveTree', () => ({
     useActiveTree: () => [
         {
             id: 'my_tree',

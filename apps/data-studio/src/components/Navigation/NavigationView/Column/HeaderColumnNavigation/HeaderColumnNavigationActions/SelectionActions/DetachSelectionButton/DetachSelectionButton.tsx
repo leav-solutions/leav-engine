@@ -5,7 +5,7 @@ import {DeleteOutlined} from '@ant-design/icons';
 import {useMutation} from '@apollo/client';
 import {Button} from 'antd';
 import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeElementMutation';
-import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
+import {useActiveTree} from 'hooks/useActiveTree';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
 import {useTranslation} from 'react-i18next';
 import {setNavigationPath} from 'reduxStore/navigation';

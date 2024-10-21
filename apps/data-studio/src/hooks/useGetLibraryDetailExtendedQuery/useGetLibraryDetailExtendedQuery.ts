@@ -12,7 +12,7 @@ export interface IUseGetLibraryDetailExtendedQueryHookParams {
 
 const DEPTH_EMBEDDED_FIELDS = 100;
 
-const useGetLibraryDetailExtendedQuery = ({
+export const useGetLibraryDetailExtendedQuery = ({
     library
 }: IUseGetLibraryDetailExtendedQueryHookParams): QueryResult<GET_LIBRARY_DETAIL_EXTENDED> =>
     useQuery<GET_LIBRARY_DETAIL_EXTENDED, GET_LIBRARY_DETAIL_EXTENDEDVariables>(
@@ -24,5 +24,3 @@ const useGetLibraryDetailExtendedQuery = ({
             skip: !library
         }
     );
-
-export default useGetLibraryDetailExtendedQuery;

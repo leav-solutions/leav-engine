@@ -39,7 +39,7 @@ import {GET_APPLICATION_BY_ENDPOINT, GET_APPLICATION_BY_ENDPOINTVariables} from 
 import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 import {GET_LANGS} from '_gqlTypes/GET_LANGS';
 import {getMe} from '../../../graphQL/queries/userData/me';
-import {initialActiveLibrary, useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
+import {initialActiveLibrary, useActiveLibrary} from 'hooks/useActiveLibrary';
 import {ME} from '../../../_gqlTypes/ME';
 import Router from '../../Router';
 
@@ -68,10 +68,13 @@ function AppHandler(): JSX.Element {
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
     const {data: userData, loading: meLoading, error: meError} = useQuery<ME>(getMe);
 
-    const {data: applicationData, loading: applicationLoading, error: applicationError} = useQuery<
-        GET_APPLICATION_BY_ENDPOINT,
-        GET_APPLICATION_BY_ENDPOINTVariables
-    >(getApplicationByEndpointQuery, {variables: {endpoint: APP_ENDPOINT}});
+    const {
+        data: applicationData,
+        loading: applicationLoading,
+        error: applicationError
+    } = useQuery<GET_APPLICATION_BY_ENDPOINT, GET_APPLICATION_BY_ENDPOINTVariables>(getApplicationByEndpointQuery, {
+        variables: {endpoint: APP_ENDPOINT}
+    });
 
     const {
         data: globalSettingsData,

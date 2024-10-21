@@ -11,13 +11,13 @@ import {
 } from '__mocks__/mockQuery/mockGetLibraryDetailExtendedQuery';
 
 jest.mock('@leav/ui', () => ({
-        ...jest.requireActual('@leav/ui'),
-        LibraryItemsList: () => <div>LibraryItemsList</div>
-    }));
+    ...jest.requireActual('@leav/ui'),
+    LibraryItemsList: () => <div>LibraryItemsList</div>
+}));
 
 const mockUpdateActiveLib = jest.fn();
 
-jest.mock('hooks/ActiveLibHook/ActiveLibHook', () => ({
+jest.mock('hooks/useActiveLibrary', () => ({
     useActiveLibrary: () => [mockActiveLibrary, mockUpdateActiveLib]
 }));
 

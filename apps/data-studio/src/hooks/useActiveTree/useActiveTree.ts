@@ -8,7 +8,7 @@ import {getActiveTree, IActiveTree, IGetActiveTree} from '../../graphQL/queries/
 export const useActiveTree = (): [IActiveTree | undefined, (newActiveTree: IActiveTree) => void] => {
     const {data, client} = useQuery<IGetActiveTree>(getActiveTree);
 
-    const activeTree: IActiveTree | undefined = data?.activeTree;
+    const activeTree = data?.activeTree;
 
     const updateActiveTree = useCallback(
         (newActiveTree: IActiveTree) => {
