@@ -1,0 +1,17 @@
+query Explorer($libraryId: ID!) {
+    records(library: $libraryId) {
+        list {
+            id
+            whoAmI {
+                label
+                subLabel
+                preview
+                id
+                color
+                library {
+                    id
+                }
+            }
+        }
+    }
+}
