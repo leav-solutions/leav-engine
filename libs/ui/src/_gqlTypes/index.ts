@@ -1324,6 +1324,13 @@ export type AddViewMutationVariables = Exact<{
 
 export type AddViewMutation = { saveView: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size: ViewSizes, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: { field: string, order: SortOrder } | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, settings?: Array<{ name: string, value?: any | null }> | null } };
 
+export type ExplorerQueryVariables = Exact<{
+  libraryId: Scalars['ID'];
+}>;
+
+
+export type ExplorerQuery = { records: { list: Array<{ id: string, whoAmI: { label?: string | null, subLabel?: string | null, preview?: IPreviewScalar | null, id: string, color?: string | null, library: { id: string } } }> } };
+
 export const RecordIdentityFragmentDoc = gql`
     fragment RecordIdentity on Record {
   id
@@ -3862,3 +3869,50 @@ export function useAddViewMutation(baseOptions?: Apollo.MutationHookOptions<AddV
 export type AddViewMutationHookResult = ReturnType<typeof useAddViewMutation>;
 export type AddViewMutationResult = Apollo.MutationResult<AddViewMutation>;
 export type AddViewMutationOptions = Apollo.BaseMutationOptions<AddViewMutation, AddViewMutationVariables>;
+export const ExplorerDocument = gql`
+    query Explorer($libraryId: ID!) {
+  records(library: $libraryId) {
+    list {
+      id
+      whoAmI {
+        label
+        subLabel
+        preview
+        id
+        color
+        library {
+          id
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useExplorerQuery__
+ *
+ * To run a query within a React component, call `useExplorerQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExplorerQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useExplorerQuery({
+ *   variables: {
+ *      libraryId: // value for 'libraryId'
+ *   },
+ * });
+ */
+export function useExplorerQuery(baseOptions: Apollo.QueryHookOptions<ExplorerQuery, ExplorerQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ExplorerQuery, ExplorerQueryVariables>(ExplorerDocument, options);
+      }
+export function useExplorerLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ExplorerQuery, ExplorerQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ExplorerQuery, ExplorerQueryVariables>(ExplorerDocument, options);
+        }
+export type ExplorerQueryHookResult = ReturnType<typeof useExplorerQuery>;
+export type ExplorerLazyQueryHookResult = ReturnType<typeof useExplorerLazyQuery>;
+export type ExplorerQueryResult = Apollo.QueryResult<ExplorerQuery, ExplorerQueryVariables>;
