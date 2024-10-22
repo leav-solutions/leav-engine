@@ -1,7 +1,16 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ErrorDisplay, ErrorDisplayTypes, IFilter, ISearchSelection, LibraryItemsList, Loading, useLang} from '@leav/ui';
+import {
+    ErrorDisplay,
+    ErrorDisplayTypes,
+    Explorer,
+    IFilter,
+    ISearchSelection,
+    LibraryItemsList,
+    Loading,
+    useLang
+} from '@leav/ui';
 import {useApplicationContext} from 'context/ApplicationContext';
 import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
 import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery/useGetLibraryDetailExtendedQuery';
@@ -13,7 +22,6 @@ import {useAppDispatch, useAppSelector} from 'reduxStore/store';
 import {explorerQueryParamName, isLibraryInApp, localizedTranslation} from 'utils';
 import {IBaseInfo, InfoType, SharedStateSelectionType, WorkspacePanels} from '_types/types';
 import {useSearchParams} from 'react-router-dom';
-import Explorer from '_ui/components/Explorer';
 
 export interface ILibraryHomeProps {
     library?: string;
