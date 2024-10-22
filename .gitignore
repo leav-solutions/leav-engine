@@ -72,6 +72,7 @@ magick-*
 # eslint cache
 *.eslintcache
 
+### Docker volumes ###
 /previews
 /files
 /imports
@@ -87,7 +88,11 @@ docker/docker-compose.override.yml
 apps/core/applications/*
 apps/core/config/local.js
 
+### Local builds ###
 apps/*/dist
 apps/*/build
 libs/ui/dist
 *.tsbuildinfo
+
+### GRAPHQL ###
+graphql.config.yml
