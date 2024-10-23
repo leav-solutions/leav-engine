@@ -76,7 +76,8 @@ function ValueInfo(): JSX.Element {
         return null;
     }
 
-    const valueLength = canCountValueLength ? String(state.activeValue.editingValue).length : null;
+    // const valueLength = canCountValueLength ? String(state.activeValue.editingValue).length : null;
+    const valueLength = canCountValueLength ? String(state.liveValuePoc).length : null;
     const valueDetailsSectionTitle = isTypeStandard(attribute.type)
         ? t('record_edition.value_details')
         : t('record_edition.link_details');
@@ -84,8 +85,8 @@ function ValueInfo(): JSX.Element {
     const valueWhoAmI = isTypeStandard(attribute.type)
         ? null
         : isTypeLink(attribute.type)
-        ? (value as IRecordPropertyLink)?.linkValue?.whoAmI
-        : (value as IRecordPropertyTree)?.treeValue?.record?.whoAmI;
+          ? (value as IRecordPropertyLink)?.linkValue?.whoAmI
+          : (value as IRecordPropertyTree)?.treeValue?.record?.whoAmI;
 
     return (
         <Wrapper>

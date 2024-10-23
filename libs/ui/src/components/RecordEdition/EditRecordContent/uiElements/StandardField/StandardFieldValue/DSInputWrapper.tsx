@@ -15,6 +15,8 @@ import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordCont
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 import {useLang} from '_ui/hooks';
 import {localizedTranslation} from '@leav/utils';
+import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
+import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 
 interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputProps> {
     state: IStandardFieldReducerState;
@@ -48,6 +50,8 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     const [hasChanged, setHasChanged] = useState(false);
     const {lang: availableLang} = useLang();
     const inputRef = useRef<GetRef<typeof KitInputStyled>>(null);
+
+    const {state: editRecordState, dispatch: editRecordDispatch} = useEditRecordReducer();
 
     useEffect(() => {
         if (fieldValue.isEditing && inputRef.current) {
@@ -85,6 +89,9 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     const _handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
         setHasChanged(true);
         const inputValue = event.target.value;
+
+        editRecordDispatch({type: EditRecordReducerActionsTypes.SET_LIVE_VALUE_POC, value: inputValue});
+
         if ((state.isInheritedValue || state.isCalculatedValue) && inputValue === '' && event.type === 'click') {
             _resetToInheritedOrCalculatedValue();
             return;

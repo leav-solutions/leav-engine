@@ -16,6 +16,7 @@ export interface IRecordPropertyWithAttribute {
 export interface IEditRecordReducerState {
     record: IRecordIdentityWhoAmI;
     libraryId: string;
+    liveValuePoc: string;
     activeValue: IRecordPropertyWithAttribute;
     sidebarContent: 'summary' | 'valueDetails' | 'valuesVersions' | 'none';
     sidebarDefaultHidden?: boolean;
@@ -33,6 +34,7 @@ export interface IEditRecordReducerState {
 
 export enum EditRecordReducerActionsTypes {
     SET_RECORD = 'SET_RECORD',
+    SET_LIVE_VALUE_POC = 'SET_LIVE_VALUE_POC',
     SET_ACTIVE_VALUE = 'SET_ACTIVE_VALUE',
     SET_SIDEBAR_CONTENT = 'SET_SIDEBAR_CONTENT',
     SET_VALUES_VERSION = 'SET_VALUES_VERSION',
@@ -47,6 +49,10 @@ export type IEditRecordReducerActions =
     | {
           type: EditRecordReducerActionsTypes.SET_RECORD;
           record: IEditRecordReducerState['record'];
+      }
+    | {
+          type: EditRecordReducerActionsTypes.SET_LIVE_VALUE_POC;
+          value: IEditRecordReducerState['liveValuePoc'];
       }
     | {
           type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE;
@@ -84,6 +90,7 @@ export type EditRecordDispatchFunc = (action: IEditRecordReducerActions) => void
 export const initialState: IEditRecordReducerState = {
     record: null,
     libraryId: null,
+    liveValuePoc: null,
     activeValue: null,
     sidebarContent: 'summary',
     sidebarDefaultHidden: false,
@@ -104,11 +111,19 @@ const editRecordReducer = (
     switch (action.type) {
         case EditRecordReducerActionsTypes.SET_RECORD:
             return {...state, record: action.record};
+        case EditRecordReducerActionsTypes.SET_LIVE_VALUE_POC:
+            return {...state, liveValuePoc: action.value};
         case EditRecordReducerActionsTypes.SET_ACTIVE_VALUE:
             const newSidebarContent =
                 action.value !== null ? 'valueDetails' : state.sidebarDefaultHidden ? 'none' : 'summary';
             return {
                 ...state,
+                liveValuePoc:
+                    action.value.editingValue !== null &&
+                    action.value.editingValue !== undefined &&
+                    action.value.attribute.format === 'text'
+                        ? action.value.editingValue.toString()
+                        : '', // Only on text attributes for the POC
                 activeValue: action.value,
                 sidebarContent: newSidebarContent
             };
@@ -131,7 +146,7 @@ const editRecordReducer = (
         case EditRecordReducerActionsTypes.ADD_EXTERNAL_UPDATE:
             const newState = {...state};
             const newModifiers = state.externalUpdate?.modifiers.find(m => m.id === action.modifier.id)
-                ? newState.externalUpdate?.modifiers ?? []
+                ? (newState.externalUpdate?.modifiers ?? [])
                 : [...(newState.externalUpdate?.modifiers ?? []), action.modifier];
 
             const newValues = action.updatedValues.reduce(

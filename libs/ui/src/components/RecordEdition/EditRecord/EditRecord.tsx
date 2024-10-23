@@ -480,7 +480,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                             )}
                         </Content>
                         {/* TODO: c'est ce code là qu'il faut extraire */}
-                        {recordSidebarContainer === null && (
+                        {recordSidebarContainer === undefined && (
                             <Sidebar className="sidebar">
                                 <EditRecordSidebar onMetadataSubmit={_handleMetadataSubmit} />
                             </Sidebar>
