@@ -4,8 +4,14 @@
 import {FunctionComponent} from 'react';
 import {DataView} from './DataView';
 import {useExplorerData} from './useExplorerData';
+import {ItemActions} from './types';
 
-export const Explorer: FunctionComponent<{library: string}> = ({library}) => {
+interface IExplorerProps {
+    library: string;
+    itemActions: ItemActions<any>;
+}
+
+export const Explorer: FunctionComponent<IExplorerProps> = ({library, itemActions}) => {
     const {data, loading} = useExplorerData(library);
 
     return (
@@ -13,7 +19,11 @@ export const Explorer: FunctionComponent<{library: string}> = ({library}) => {
             {loading ? (
                 'Loading...'
             ) : (
-                <DataView dataGroupedFilteredSorted={data ?? []} attributesToDisplay={['itemId', 'whoAmI']} />
+                <DataView
+                    dataGroupedFilteredSorted={data ?? []}
+                    attributesToDisplay={['itemId', 'whoAmI']}
+                    itemActions={itemActions}
+                />
             )}
         </div>
     );
