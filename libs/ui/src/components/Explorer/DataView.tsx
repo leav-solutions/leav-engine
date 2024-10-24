@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, ReactNode} from 'react';
+import {cloneElement, FunctionComponent, ReactNode} from 'react';
 import {KitButton, KitDropDown, KitIdCard, KitSpace, KitTable} from 'aristid-ds';
 import type {DataGroupedFilteredSorted, ItemActions} from './types';
 import type {KitTableColumnType} from 'aristid-ds/dist/Kit/DataDisplay/Table/types';
@@ -37,8 +37,8 @@ const _getActionButtons = (
 
     return isLessThanFourActions ? (
         <KitSpace>
-            {itemActions.map(({label, icon, callback}) => (
-                <KitButton title={label} icon={icon} onClick={callback}>
+            {itemActions.map(({label, icon, isDanger, callback}) => (
+                <KitButton title={label} icon={icon} onClick={callback} danger={isDanger}>
                     {label}
                 </KitButton>
             ))}
@@ -50,20 +50,23 @@ const _getActionButtons = (
                 icon={itemActions[0].icon}
                 onClick={itemActions[0].callback}
                 title={itemActions[0].label}
+                danger={itemActions[0].isDanger}
             />
             <KitButton
                 type="tertiary"
                 icon={itemActions[1].icon}
                 onClick={itemActions[1].callback}
                 title={itemActions[1].label}
+                danger={itemActions[1].isDanger}
             />
             <KitDropDown
                 menu={{
-                    items: itemActions.slice(2).map(({callback, icon, label}) => ({
+                    items: itemActions.slice(2).map(({callback, icon, label, isDanger}) => ({
                         key: label,
                         title: label,
+                        danger: isDanger,
                         label,
-                        icon,
+                        icon: icon ? cloneElement(icon, {size: '2em'}) : null, // TODO: find better tuning
                         onClick: callback
                     }))
                 }}

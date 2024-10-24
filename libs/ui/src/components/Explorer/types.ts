@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ExplorerQuery} from '_ui/_gqlTypes';
-import {ReactNode} from 'react';
+import {ReactElement} from 'react';
 
 export type DataGroupedFilteredSorted<Field extends keyof ExplorerQuery['records']['list'][number]> = Array<{
     libraryId: string;
@@ -12,6 +12,7 @@ export type DataGroupedFilteredSorted<Field extends keyof ExplorerQuery['records
 
 export type ItemActions<T> = Array<{
     callback: (item: T) => void;
-    icon: ReactNode;
+    icon: ReactElement;
     label: string;
+    isDanger?: boolean;
 }>;

@@ -595,6 +595,7 @@
     },
     "explorer": {
         "actions": "Actions",
-        "more-actions": "Show more"
+        "more-actions": "Show more",
+        "deactivateItem": "Deactivate item"
     }
 }

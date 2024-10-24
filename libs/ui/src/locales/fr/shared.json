@@ -595,6 +595,7 @@
     },
     "explorer": {
         "actions": "Actions",
-        "more-actions": "Voir plus"
+        "more-actions": "Voir plus",
+        "deactivateItem": "Désactiver l’élément"
     }
 }
