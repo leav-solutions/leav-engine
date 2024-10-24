@@ -8,5 +8,13 @@ import {useExplorerData} from './useExplorerData';
 export const Explorer: FunctionComponent<{library: string}> = ({library}) => {
     const {data, loading} = useExplorerData(library);
 
-    return <div>{loading ? 'Loading...' : <DataView dataGroupedFilteredSorted={data ?? []} />}</div>;
+    return (
+        <div>
+            {loading ? (
+                'Loading...'
+            ) : (
+                <DataView dataGroupedFilteredSorted={data ?? []} attributesToDisplay={['itemId', 'whoAmI']} />
+            )}
+        </div>
+    );
 };

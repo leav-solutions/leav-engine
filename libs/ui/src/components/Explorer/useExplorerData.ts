@@ -6,6 +6,7 @@ import {ExplorerQuery, useExplorerQuery} from '_ui/_gqlTypes';
 
 const _mapping = (data: ExplorerQuery, libraryId: string): IDataGroupedFilteredSorted<'whoAmI'> =>
     data.records.list.map(({id, whoAmI}) => ({
+        key: id,
         libraryId,
         itemId: id,
         value: {
