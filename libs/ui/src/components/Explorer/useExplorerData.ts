@@ -1,10 +1,10 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IDataGroupedFilteredSorted} from './types';
+import {DataGroupedFilteredSorted} from './types';
 import {ExplorerQuery, useExplorerQuery} from '_ui/_gqlTypes';
 
-const _mapping = (data: ExplorerQuery, libraryId: string): IDataGroupedFilteredSorted<'whoAmI'> =>
+const _mapping = (data: ExplorerQuery, libraryId: string): DataGroupedFilteredSorted<'whoAmI'> =>
     data.records.list.map(({id, whoAmI}) => ({
         key: id,
         libraryId,

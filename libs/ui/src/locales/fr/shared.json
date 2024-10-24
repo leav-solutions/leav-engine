@@ -592,5 +592,9 @@
         "all-selected-enabled": "Tout sélectionné actif",
         "all-selected-disabled": "Tout sélectionné inactif",
         "unselect-all": "Tout désélectionner"
+    },
+    "explorer": {
+        "actions": "Actions",
+        "more-actions": "Voir plus"
     }
 }

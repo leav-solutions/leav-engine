@@ -592,5 +592,9 @@
         "all-selected-enabled": "All selected mode enabled",
         "all-selected-disabled": "All selected mode disabled",
         "unselect-all": "Unselect All"
+    },
+    "explorer": {
+        "actions": "Actions",
+        "more-actions": "Show more"
     }
 }
