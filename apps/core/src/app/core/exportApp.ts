@@ -24,7 +24,7 @@ export default function ({'core.domain.export': exportDomain}: IDeps): ICoreExpo
                 resolvers: {
                     Query: {
                         async export(parent, {library, attributes, filters, startAt}, ctx): Promise<string> {
-                            return exportDomain.export(
+                            return exportDomain.exportExcel(
                                 {library, attributes, filters, ctx},
                                 {
                                     ...(!!startAt && {startAt})

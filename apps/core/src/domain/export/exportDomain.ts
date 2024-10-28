@@ -14,14 +14,16 @@ import {pick} from 'lodash';
 import path from 'path';
 import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
-import * as Config from '_types/config';
-import {AttributeTypes, IAttribute} from '../../_types/attribute';
-import {Errors} from '../../_types/errors';
+import * as Config from '../../_types/config';
+import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
+import {ErrorTypes, Errors} from '../../_types/errors';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {IRecord, IRecordFilterLight} from '../../_types/record';
 import {ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
 import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
+import {getValuesToDisplay} from '../../utils/helpers/getValuesToDisplay';
+import LeavError from '../../errors/LeavError';
 
 export interface IExportParams {
     library: string;
@@ -31,7 +33,12 @@ export interface IExportParams {
 }
 
 export interface IExportDomain {
-    export(params: IExportParams, task?: ITaskFuncParams): Promise<string>;
+    exportExcel(params: IExportParams, task?: ITaskFuncParams): Promise<string>;
+    exportData(
+        jsonMapping: string,
+        elements: Array<{[libraryId: string]: string}>,
+        ctx: IQueryInfos
+    ): Promise<Array<Record<string, string>>>;
 }
 
 interface IDeps {
@@ -147,8 +154,81 @@ export default function ({
         return _getRecFieldValue(values, attributes.slice(1), ctx);
     };
 
+    const _getMappingKeysByLibrary = (mapping: Record<string, string>): Record<string, string[]> =>
+        Object.entries(mapping).reduce((acc, [key, value]) => {
+            const libraryId = value.split('.')[0];
+            (acc[libraryId] ??= []).push(key);
+            return acc;
+        }, {});
+
+    const _getInDepthValue = async (
+        libraryId: string,
+        recordId: string,
+        nestedAttribute: string[],
+        ctx: IQueryInfos
+    ): Promise<string> => {
+        const attrProps = await attributeDomain.getAttributeProperties({id: nestedAttribute[0], ctx});
+
+        const recordFieldValues = await recordDomain.getRecordFieldValue({
+            library: libraryId,
+            record: {id: recordId},
+            attributeId: nestedAttribute[0],
+            ctx
+        });
+
+        let value = getValuesToDisplay(recordFieldValues)[0]?.payload;
+
+        if (typeof value === 'undefined' || value === null) {
+            return '';
+        }
+
+        if (attrProps.linked_library) {
+            return _getInDepthValue(attrProps.linked_library, value.id, nestedAttribute.slice(1), ctx);
+        } else if (nestedAttribute.length > 1) {
+            if (attrProps.format === AttributeFormats.EXTENDED) {
+                value = nestedAttribute.slice(1).reduce((acc, attr) => acc[attr], JSON.parse(value));
+            } else {
+                throw new LeavError(
+                    ErrorTypes.VALIDATION_ERROR,
+                    `Attribute "${attrProps.id}" is not an extended or a link attribute, cannot access sub-attributes`
+                );
+            }
+        } else if (attrProps.format === AttributeFormats.DATE_RANGE) {
+            value = `${value.from} - ${value.to}`;
+        }
+
+        return String(value);
+    };
+
     return {
-        async export(params: IExportParams, task?: ITaskFuncParams): Promise<string> {
+        async exportData(
+            jsonMapping: string,
+            recordsToExport: Array<{[libraryId: string]: string}>,
+            ctx: IQueryInfos
+        ): Promise<Array<Record<string, string>>> {
+            const mapping = JSON.parse(jsonMapping) as Record<string, string>;
+            const mappingKeysByLibrary = _getMappingKeysByLibrary(mapping);
+
+            const getMappingRecordValues = async (keys: string[], libraryId: string, recordId: string) =>
+                keys.reduce(async (acc, key) => {
+                    const nestedAttributes = mapping[key].split('.').slice(1); // first element is the library id, we delete it
+                    const value = await _getInDepthValue(libraryId, recordId, nestedAttributes, ctx);
+                    return {...(await acc), [key]: value};
+                }, Promise.resolve({}));
+
+            return Promise.all(
+                recordsToExport.map(e =>
+                    Object.entries(e).reduce(
+                        async (acc, [libraryId, recordId]) => ({
+                            ...(await acc),
+                            ...(await getMappingRecordValues(mappingKeysByLibrary[libraryId], libraryId, recordId))
+                        }),
+                        Promise.resolve({})
+                    )
+                )
+            );
+        },
+        async exportExcel(params: IExportParams, task?: ITaskFuncParams): Promise<string> {
             const {library, attributes, filters, ctx} = params;
 
             if (typeof task?.id === 'undefined') {
