@@ -41,7 +41,7 @@ export interface IExportDomain {
     ): Promise<Array<Record<string, string>>>;
 }
 
-interface IDeps {
+export interface IExportDomainDeps {
     'core.domain.record': IRecordDomain;
     'core.domain.attribute': IAttributeDomain;
     'core.domain.library': ILibraryDomain;
@@ -65,7 +65,7 @@ export default function ({
     'core.domain.eventsManager': eventsManagerDomain,
     'core.utils': utils,
     translator
-}: IDeps): IExportDomain {
+}: IExportDomainDeps): IExportDomain {
     const _getFormattedValues = async (
         attribute: IAttribute,
         values: IValue[],
