@@ -9,7 +9,7 @@ import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchRed
 import {IItem} from '_ui/types/search';
 import {SearchActionTypes} from '../../hooks/useSearchReducer/searchReducer';
 import BodyCell from '../BodyCell';
-import {useEditRecordModalContext} from '_ui/components/LibraryItemsList/LibraryItemsListTable/useEditRecordModalContext';
+import {useEditRecordModalContext} from '_ui/contexts/EditRecordModalContext';
 
 const CustomBodyRow = styled.div<{$selected: boolean}>`
     position: relative;

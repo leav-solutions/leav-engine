@@ -3,13 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent, useCallback, useMemo, useState} from 'react';
 import {EditRecordModal, IEditRecordModalProps} from '_ui/components/RecordEdition/EditRecordModal/EditRecordModal';
-import {EditRecordModalContext} from '_ui/components/LibraryItemsList/LibraryItemsListTable/EditRecordModalContext';
+import {IEditRecordContextType, EditRecordModalContext} from './EditRecordModalContext';
 
-export interface IEditRecordContextType {
-    editRecord: (props: IEditRecordModalProps) => void;
-}
-
-export const EditRecordModalProvider: FunctionComponent = props => {
+export const EditRecordModalProvider: FunctionComponent = ({children}) => {
     const [editRecordModalProps, setEditRecordModalProps] = useState<IEditRecordModalProps | null>(null);
 
     const _onClose = useCallback(() => {
@@ -29,10 +25,8 @@ export const EditRecordModalProvider: FunctionComponent = props => {
 
     return (
         <EditRecordModalContext.Provider value={value}>
-            {props.children}
-            {editRecordModalProps && (
-                <EditRecordModal {...editRecordModalProps} open={editRecordModalProps !== null} onClose={_onClose} />
-            )}
+            {children}
+            {editRecordModalProps && <EditRecordModal {...editRecordModalProps} onClose={_onClose} />}
         </EditRecordModalContext.Provider>
     );
 };
