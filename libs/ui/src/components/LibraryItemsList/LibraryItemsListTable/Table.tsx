@@ -20,7 +20,7 @@ import {infosCol, INFOS_COLUMN_WIDTH, selectionColumn} from '../constants';
 import LibraryItemsListPagination from '../LibraryItemsListPagination';
 import BodyRow from './BodyRow';
 import Header from './Header';
-import {EditRecordModalProvider} from '_ui/components/LibraryItemsList/LibraryItemsListTable/EditRecordModalProvider';
+import {EditRecordModalProvider} from '_ui/contexts/EditRecordModalContext';
 
 interface ITableColumn extends UseTableColumnOptions<ITableRow> {
     accessor: string | ((row, rowIndex) => string);

@@ -12,7 +12,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IRecordIdentityWhoAmI} from '_ui/types/records';
 import {ArrowsAltOutlined} from '@ant-design/icons';
 import {AntButton} from 'aristid-ds';
-import {useEditRecordModalContext} from '_ui/components/LibraryItemsList/LibraryItemsListTable/useEditRecordModalContext';
+import {useEditRecordModalContext} from '_ui/contexts/EditRecordModalContext';
 import {SelectCellsBtnType} from '_ui/components/LibraryItemsList/shared/shared.utils';
 
 const Info = styled.div`
