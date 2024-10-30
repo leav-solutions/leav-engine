@@ -14,6 +14,7 @@ import {KitInputWrapper, KitTypography} from 'aristid-ds';
 import {FunctionComponent, SyntheticEvent} from 'react';
 import styled from 'styled-components';
 import DOMPurify from 'dompurify';
+import {ColorPickerBlock} from './ColorPickerBlock';
 
 interface IStandardFieldValueReadProps {
     fieldValue: IStandardFieldValue;
@@ -24,17 +25,34 @@ interface IStandardFieldValueReadProps {
 const _isDateRangeValue = (value: any): value is {from: string; to: string} =>
     !!value && typeof value === 'object' && 'from' in value && 'to' in value;
 
-const KitInputWrapperStyled = styled(KitInputWrapper)<{$width: string}>`
-    > .kit-input-wrapper-content {
+const KitInputWrapperStyled = styled(KitInputWrapper)<{$width: string; $isColorAttribute: boolean}>`
+    &.bordered > .kit-input-wrapper-content {
         width: ${({$width}) => $width};
+
+        ${({$isColorAttribute}) => $isColorAttribute && 'padding: 3px;'}
     }
 `;
 
-const ValueWrapper = styled(KitTypography.Paragraph)<{$highlighted: boolean}>`
+const ValueWrapper = styled(KitTypography.Paragraph)<{$highlighted: boolean; $isColorAttribute: boolean}>`
     min-height: calc(var(--general-typography-fontSize6) * var(--general-typography-lineHeight6) * 1px);
-    color: ${({$highlighted}) => ($highlighted ? 'var(--general-colors-primary-400)' : 'initial')};
+    color: ${({$highlighted}) =>
+        $highlighted ? 'var(--general-colors-primary-400)' : 'var(--general-utilities-text-primary)'};
     font-size: calc(var(--general-typography-fontSize5) * 1px);
+    line-height: calc(var(--general-typography-fontSize5) * 1px);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    ${({$isColorAttribute}) =>
+        $isColorAttribute &&
+        `span {
+            margin-inline-start: 8px;
+            margin-inline-end: 5px;
+        }
+    `}
 `;
+
+const defaultColorValue = '#00000000';
 
 export const StandardFieldValueRead: FunctionComponent<IStandardFieldValueReadProps> = ({
     fieldValue,
@@ -64,6 +82,8 @@ export const StandardFieldValueRead: FunctionComponent<IStandardFieldValueReadPr
                 });
             case AttributeFormat.encrypted:
                 return inheritedValue.value ? '●●●●●●●' : '';
+            case AttributeFormat.color:
+                return '#' + inheritedValue.value;
             default:
                 return inheritedValue.value;
         }
@@ -78,6 +98,8 @@ export const StandardFieldValueRead: FunctionComponent<IStandardFieldValueReadPr
                 });
             case AttributeFormat.encrypted:
                 return calculatedValue.value ? '●●●●●●●' : '';
+            case AttributeFormat.color:
+                return '#' + calculatedValue.value;
             default:
                 return calculatedValue.value;
         }
@@ -107,6 +129,14 @@ export const StandardFieldValueRead: FunctionComponent<IStandardFieldValueReadPr
         case AttributeFormat.numeric:
             width = '90px';
             break;
+        case AttributeFormat.color:
+            if (!displayValue) {
+                displayValue = defaultColorValue;
+            } else {
+                displayValue = '#' + displayValue;
+            }
+            width = 'fit-content';
+            break;
         case AttributeFormat.date:
             width = '185px';
             break;
@@ -126,6 +156,9 @@ export const StandardFieldValueRead: FunctionComponent<IStandardFieldValueReadPr
     };
 
     const isValueHighlighted = state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue;
+    const isColorAttribute = state.attribute.format === AttributeFormat.color;
+    const isValueDefaultColor = displayValue === defaultColorValue;
+
     return (
         <KitInputWrapperStyled
             label={label}
@@ -137,6 +170,7 @@ export const StandardFieldValueRead: FunctionComponent<IStandardFieldValueReadPr
             onFocus={_handleFocus}
             className={className}
             $width={width}
+            $isColorAttribute={isColorAttribute}
         >
             <ValueWrapper
                 data-testid={state.attribute.id}
@@ -144,7 +178,11 @@ export const StandardFieldValueRead: FunctionComponent<IStandardFieldValueReadPr
                 onClick={onClick}
                 weight="medium"
                 $highlighted={isValueHighlighted}
+                $isColorAttribute={isColorAttribute}
             >
+                {isColorAttribute && (
+                    <ColorPickerBlock isValueDefaultColor={isValueDefaultColor} color={displayValue} />
+                )}
                 <span dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(displayValue)}} />
             </ValueWrapper>
         </KitInputWrapperStyled>

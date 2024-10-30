@@ -563,10 +563,11 @@ function StandardFieldValue({
         AttributeFormat.encrypted,
         AttributeFormat.date,
         AttributeFormat.boolean,
-        AttributeFormat.rich_text
+        AttributeFormat.rich_text,
+        AttributeFormat.color
     ];
 
-    const attributeFormatsWithoutDS = [AttributeFormat.color, AttributeFormat.extended];
+    const attributeFormatsWithoutDS = [AttributeFormat.extended];
 
     return (
         <>
