@@ -244,19 +244,13 @@ function StandardFieldValue({
         }
     }, [fieldValue.isEditing, fieldValue.editingValue]);
 
-    const _uneditField = () => {
-        dispatch({
-            type: StandardFieldReducerActionsTypes.CANCEL_EDITING,
-            idValue: fieldValue.idValue
-        });
-    };
-
     const _handleSubmit = async (valueToSave: StandardValueTypes, id?: string) => {
         if (valueToSave === '') {
             return _handleDelete();
         }
 
         const convertedValue = typeof valueToSave === 'object' ? JSON.stringify(valueToSave) : valueToSave;
+
         await onSubmit(fieldValue.idValue, convertedValue);
     };
 
@@ -279,7 +273,6 @@ function StandardFieldValue({
         }
 
         await onDelete(fieldValue.idValue);
-        _uneditField();
     };
 
     const _handleFocus = () => {
