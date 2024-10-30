@@ -21,7 +21,7 @@ const views: Array<WithTypename<ViewDetailsFragment>> = [
                 }
             }
         },
-        filters: [],
+        filters: [] as any,
         valuesVersions: null
     }
 ];

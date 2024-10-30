@@ -31,6 +31,7 @@
     "@testing-library/react": "14.0.0",
     "@testing-library/react-hooks": "8.0.1",
     "@testing-library/user-event": "14.4.3",
+    "@total-typescript/ts-reset": "0.6.1",
     "@types/dompurify": "3.0.3",
     "@types/jest": "29.0.2",
     "@types/object-path": "0.11.1",

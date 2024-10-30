@@ -46,7 +46,7 @@ export const getFiltersFromRequest = (
                     ? {
                           value:
                               queryFilter.condition === AttributeConditionFilter.BETWEEN
-                                  ? JSON.parse(queryFilter.value)
+                                  ? String(JSON.parse(queryFilter.value))
                                   : queryFilter.value
                       }
                     : null,

@@ -24,14 +24,15 @@ interface ISelectTreeNodeProps {
     selectableLibraries?: string[]; // all by default
 }
 
-const _constructTreeContent = (data: TreeNodeChildrenQuery['treeNodeChildren']['list']): ITreeNodeWithRecord[] => data.map(e => ({
-            record: e.record,
-            title: e.record.whoAmI.label || e.record.whoAmI.id,
-            id: e.id,
-            key: e.id,
-            isLeaf: !e.childrenCount,
-            children: []
-        }));
+const _constructTreeContent = (data: TreeNodeChildrenQuery['treeNodeChildren']['list']): ITreeNodeWithRecord[] =>
+    data.map(e => ({
+        record: e.record,
+        title: e.record.whoAmI.label || e.record.whoAmI.id,
+        id: e.id,
+        key: e.id,
+        isLeaf: !e.childrenCount,
+        children: []
+    }));
 
 const _getTreeNodeByKey = (key: string, treeContent: ITreeNodeWithRecord[]): ITreeNodeWithRecord => {
     for (const node of treeContent) {
@@ -47,13 +48,13 @@ const _getTreeNodeByKey = (key: string, treeContent: ITreeNodeWithRecord[]): ITr
     }
 };
 
-type ITreeMapElement = ITreeNodeWithRecord & {
+interface ITreeMapElement extends ITreeNodeWithRecord {
     isLeaf?: boolean;
     paginationOffset: number;
     children: ITreeMapElement[];
     isShowMore?: boolean;
     selectable?: boolean;
-};
+}
 
 interface ITreeMap {
     [nodeId: string]: ITreeMapElement;
@@ -121,7 +122,7 @@ function SelectTreeNode({
                 const nodeForTreeMap = {...node, paginationOffset: 0};
                 newTreeMap[nodeForTreeMap.key] = nodeForTreeMap as ITreeMapElement;
                 parentElement.paginationOffset = offset;
-                parentElement.children.push(nodeForTreeMap);
+                parentElement.children.push(nodeForTreeMap as ITreeMapElement);
             }
 
             if (totalCount > parentElement.paginationOffset + defaultPaginationPageSize) {

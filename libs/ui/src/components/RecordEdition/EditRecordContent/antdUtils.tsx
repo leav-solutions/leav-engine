@@ -86,7 +86,7 @@ export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
                     ];
                     break;
                 } else if (typeof standardValue.raw_payload === 'string') {
-                    const convertedFieldValue = JSON.parse(standardValue.raw_payload);
+                    const convertedFieldValue = JSON.parse(standardValue.raw_payload) as any;
                     acc[attribute.id] = [
                         dayjs.unix(Number(convertedFieldValue.from)),
                         dayjs.unix(Number(convertedFieldValue.to))
