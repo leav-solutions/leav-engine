@@ -3,12 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
-import {ToAny} from 'utils/utils';
+import {ToAny, IUtils} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import exportDomain, {IExportDomainDeps} from './exportDomain';
 import {AttributeFormats} from '../../_types/attribute';
 import {when} from 'jest-when';
-import {IUtils} from 'utils/utils';
 
 const depsBase: ToAny<IExportDomainDeps> = {
     'core.domain.record': jest.fn(),
