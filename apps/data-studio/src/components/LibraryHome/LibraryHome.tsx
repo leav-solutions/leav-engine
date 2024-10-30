@@ -134,7 +134,7 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
     return params.has(explorerQueryParamName) ? (
         <Explorer
             library={library}
-            defaultActionsForItem={['deactivate']}
+            defaultActionsForItem={['edit', 'deactivate']}
             itemActions={[
                 {
                     label: 'Test 1',

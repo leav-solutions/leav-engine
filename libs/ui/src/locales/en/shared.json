@@ -596,6 +596,7 @@
     "explorer": {
         "actions": "Actions",
         "more-actions": "Show more",
-        "deactivateItem": "Deactivate item"
+        "deactivateItem": "Deactivate item",
+        "editItem": "Edit item"
     }
 }

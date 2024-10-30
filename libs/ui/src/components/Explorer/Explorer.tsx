@@ -2,10 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent} from 'react';
-import {useDeactivateAction} from './useDeactivateAction';
+import {ItemActions} from './types';
 import {DataView} from './DataView';
 import {useExplorerData} from './useExplorerData';
-import {ItemActions} from './types';
+import {useDeactivateAction} from './useDeactivateAction';
+import {useEditAction} from './useEditAction';
 
 interface IExplorerProps {
     library: string;
@@ -28,9 +29,14 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 }) => {
     const {data, loading} = useExplorerData(library); // TODO: refresh when go back on page
 
-    const isDeactivateActionEnabled = isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('deactivate');
+    // TODO: use apollo cache to deactivate items
+    const {deactivateAction, deactivatedItemIds} = useDeactivateAction(
+        isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('deactivate')
+    );
 
-    const {deactivateAction, deactivatedItemIds} = useDeactivateAction(isDeactivateActionEnabled);
+    const {editAction, editModal} = useEditAction(
+        isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('edit')
+    );
 
     return (
         <>
@@ -40,9 +46,10 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                 <DataView
                     dataGroupedFilteredSorted={data?.filter(({itemId}) => !deactivatedItemIds.includes(itemId)) ?? []}
                     attributesToDisplay={['itemId', 'whoAmI']}
-                    itemActions={[deactivateAction, ...itemActions].filter(Boolean)}
+                    itemActions={[editAction, deactivateAction, ...itemActions].filter(Boolean)}
                 />
             )}
+            {editModal}
         </>
     );
 };

@@ -1,5 +1,5 @@
-query Explorer($libraryId: ID!) {
-    records(library: $libraryId) {
+query Explorer($libraryId: ID!, $filters: [RecordFilterInput]) {
+    records(library: $libraryId, filters: $filters) {
         list {
             id
             whoAmI {
