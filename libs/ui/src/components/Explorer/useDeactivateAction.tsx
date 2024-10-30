@@ -1,10 +1,12 @@
+// Copyright LEAV Solutions 2017
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {useState} from 'react';
+import {FaTrash} from 'react-icons/fa';
+import {KitModal} from 'aristid-ds';
 import {useDeactivateRecordsMutation} from '_ui/_gqlTypes';
 import {ItemActions} from '_ui/components/Explorer/types';
-import {FaTrash} from 'react-icons/fa';
-import {ComponentProps, useState} from 'react';
-import {DataView} from '_ui/components/Explorer/DataView';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {KitModal} from 'aristid-ds';
 
 export const useDeactivateAction = (isEnabled: boolean) => {
     const {t} = useSharedTranslation();

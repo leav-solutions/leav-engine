@@ -596,6 +596,7 @@
     "explorer": {
         "actions": "Actions",
         "more-actions": "Voir plus",
-        "deactivateItem": "Désactiver l’élément"
+        "deactivateItem": "Désactiver l’élément",
+        "editItem": "Éditer l’élément"
     }
 }
