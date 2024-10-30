@@ -66,6 +66,7 @@ export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
         }
 
         switch (attribute.format) {
+            case AttributeFormat.color:
             case AttributeFormat.text:
             case AttributeFormat.rich_text:
             case AttributeFormat.boolean:

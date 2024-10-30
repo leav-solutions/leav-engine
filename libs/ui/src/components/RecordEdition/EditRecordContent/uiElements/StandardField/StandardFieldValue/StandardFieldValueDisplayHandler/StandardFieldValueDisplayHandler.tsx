@@ -21,6 +21,7 @@ import {useStandardFieldReducer} from '_ui/components/RecordEdition/EditRecordCo
 import {Form} from 'antd';
 import {useTranslation} from 'react-i18next';
 import {DSRichTextWrapper} from '../DSRichTextWrapper';
+import {DSColorPickerWrapper} from '../DSColorPickerWrapper';
 
 interface IStandardFieldValueDisplayHandlerProps {
     state: IStandardFieldReducerState;
@@ -92,6 +93,8 @@ export const StandardFieldValueDisplayHandler: FunctionComponent<IStandardFieldV
         case AttributeFormat.rich_text:
             valueContent = <DSRichTextWrapper {...commonProps} />;
             break;
+        case AttributeFormat.color:
+            valueContent = <DSColorPickerWrapper {...commonProps} />;
     }
 
     return (
