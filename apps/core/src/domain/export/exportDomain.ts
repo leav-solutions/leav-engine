@@ -14,14 +14,16 @@ import {pick} from 'lodash';
 import path from 'path';
 import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
-import * as Config from '_types/config';
-import {AttributeTypes, IAttribute} from '../../_types/attribute';
-import {Errors} from '../../_types/errors';
+import * as Config from '../../_types/config';
+import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribute';
+import {ErrorTypes, Errors} from '../../_types/errors';
 import {IQueryInfos} from '../../_types/queryInfos';
 import {IRecord, IRecordFilterLight} from '../../_types/record';
 import {ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
 import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
+import {getValuesToDisplay} from '../../utils/helpers/getValuesToDisplay';
+import LeavError from '../../errors/LeavError';
 
 export interface IExportParams {
     library: string;
@@ -31,10 +33,15 @@ export interface IExportParams {
 }
 
 export interface IExportDomain {
-    export(params: IExportParams, task?: ITaskFuncParams): Promise<string>;
+    exportExcel(params: IExportParams, task?: ITaskFuncParams): Promise<string>;
+    exportData(
+        jsonMapping: string,
+        elements: Array<{[libraryId: string]: string}>,
+        ctx: IQueryInfos
+    ): Promise<Array<{[mappingKey: string]: string}>>;
 }
 
-interface IDeps {
+export interface IExportDomainDeps {
     'core.domain.record': IRecordDomain;
     'core.domain.attribute': IAttributeDomain;
     'core.domain.library': ILibraryDomain;
@@ -58,7 +65,7 @@ export default function ({
     'core.domain.eventsManager': eventsManagerDomain,
     'core.utils': utils,
     translator
-}: IDeps): IExportDomain {
+}: IExportDomainDeps): IExportDomain {
     const _getFormattedValues = async (
         attribute: IAttribute,
         values: IValue[],
@@ -125,19 +132,19 @@ export default function ({
             return elements;
         }
 
-        const attrProps = await attributeDomain.getAttributeProperties({id: attributes[0], ctx});
+        const attributeProps = await attributeDomain.getAttributeProperties({id: attributes[0], ctx});
 
         const values = [];
         for (const elem of elements) {
             if (Array.isArray(elem)) {
                 for (const e of elem) {
-                    const value = await _extractRecordFieldValue(e, attrProps, attributes.length > 1, ctx);
+                    const value = await _extractRecordFieldValue(e, attributeProps, attributes.length > 1, ctx);
                     if (value !== null) {
                         values.push(value);
                     }
                 }
             } else {
-                const value = await _extractRecordFieldValue(elem, attrProps, attributes.length > 1, ctx);
+                const value = await _extractRecordFieldValue(elem, attributeProps, attributes.length > 1, ctx);
                 if (value !== null) {
                     values.push(value);
                 }
@@ -147,8 +154,81 @@ export default function ({
         return _getRecFieldValue(values, attributes.slice(1), ctx);
     };
 
+    const _getMappingKeysByLibrary = (mapping: Record<string, string>): Record<string, string[]> =>
+        Object.entries(mapping).reduce((acc, [key, value]) => {
+            const libraryId = value.split('.')[0];
+            (acc[libraryId] ??= []).push(key);
+            return acc;
+        }, {});
+
+    const _getInDepthValue = async (
+        libraryId: string,
+        recordId: string,
+        nestedAttribute: string[],
+        ctx: IQueryInfos
+    ): Promise<string> => {
+        const attributeProps = await attributeDomain.getAttributeProperties({id: nestedAttribute[0], ctx});
+
+        const recordFieldValues = await recordDomain.getRecordFieldValue({
+            library: libraryId,
+            record: {id: recordId},
+            attributeId: nestedAttribute[0],
+            ctx
+        });
+
+        let value = getValuesToDisplay(recordFieldValues)[0]?.payload;
+
+        if (typeof value === 'undefined' || value === null) {
+            return '';
+        }
+
+        if (utils.isLinkAttribute(attributeProps)) {
+            return _getInDepthValue(attributeProps.linked_library, value.id, nestedAttribute.slice(1), ctx);
+        } else if (nestedAttribute.length > 1) {
+            if (attributeProps.format === AttributeFormats.EXTENDED) {
+                value = nestedAttribute.slice(1).reduce((acc, attr) => acc[attr], JSON.parse(value));
+            } else {
+                throw new LeavError(
+                    ErrorTypes.VALIDATION_ERROR,
+                    `Attribute "${attributeProps.id}" is not an extended or a link attribute, cannot access sub-attributes`
+                );
+            }
+        } else if (attributeProps.format === AttributeFormats.DATE_RANGE) {
+            value = `${value.from} - ${value.to}`;
+        }
+
+        return String(value);
+    };
+
     return {
-        async export(params: IExportParams, task?: ITaskFuncParams): Promise<string> {
+        async exportData(
+            jsonMapping: string,
+            recordsToExport: Array<{[libraryId: string]: string}>,
+            ctx: IQueryInfos
+        ): Promise<Array<{[mappingKey: string]: string}>> {
+            const mapping = JSON.parse(jsonMapping) as Record<string, string>;
+            const mappingKeysByLibrary = _getMappingKeysByLibrary(mapping);
+
+            const getMappingRecordValues = async (keys: string[], libraryId: string, recordId: string) =>
+                keys.reduce(async (acc, key) => {
+                    const nestedAttributes = mapping[key].split('.').slice(1); // first element is the library id, we delete it
+                    const value = await _getInDepthValue(libraryId, recordId, nestedAttributes, ctx);
+                    return {...(await acc), [key]: value};
+                }, Promise.resolve({}));
+
+            return Promise.all(
+                recordsToExport.map(e =>
+                    Object.entries(e).reduce(
+                        async (acc, [libraryId, recordId]) => ({
+                            ...(await acc),
+                            ...(await getMappingRecordValues(mappingKeysByLibrary[libraryId], libraryId, recordId))
+                        }),
+                        Promise.resolve({})
+                    )
+                )
+            );
+        },
+        async exportExcel(params: IExportParams, task?: ITaskFuncParams): Promise<string> {
             const {library, attributes, filters, ctx} = params;
 
             if (typeof task?.id === 'undefined') {
@@ -251,8 +331,9 @@ export default function ({
             const labels = {};
             for (const a of attributes) {
                 columns.push({header: a, key: a});
-                const attrProps = await attributeDomain.getAttributeProperties({id: a.split('.').pop(), ctx});
-                labels[a] = attrProps?.label[ctx?.lang] || attrProps?.label[config.lang.default] || attrProps.id;
+                const attributeProps = await attributeDomain.getAttributeProperties({id: a.split('.').pop(), ctx});
+                labels[a] =
+                    attributeProps?.label[ctx?.lang] || attributeProps?.label[config.lang.default] || attributeProps.id;
             }
 
             data.columns = columns as ExcelJS.Column[];
@@ -267,8 +348,15 @@ export default function ({
                     const fieldValues = await _getRecFieldValue([record], attr, ctx);
 
                     // get record label or id if last attribute of full path is a link or tree type
-                    const attrProps = await attributeDomain.getAttributeProperties({id: attr[attr.length - 1], ctx});
-                    const value = await _getFormattedValues(attrProps, fieldValues.flat(Infinity) as IValue[], ctx);
+                    const attributeProps = await attributeDomain.getAttributeProperties({
+                        id: attr[attr.length - 1],
+                        ctx
+                    });
+                    const value = await _getFormattedValues(
+                        attributeProps,
+                        fieldValues.flat(Infinity) as IValue[],
+                        ctx
+                    );
 
                     // set value(s) and concat them if there are several
                     subset[attr.join('.')] = value.map(v => v.payload).join(' | ');
