@@ -28,12 +28,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 }) => {
     const {data, loading} = useExplorerData(library); // TODO: refresh when go back on page
 
-    const isDeactivateActionEnabled =
-        isNotEmpty(defaultActionsForItem) &&
-        defaultActionsForItem.some(
-            // TODO: try with Array.includes better typing
-            a => a === 'deactivate'
-        );
+    const isDeactivateActionEnabled = isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('deactivate');
 
     const {deactivateAction, deactivatedItemIds} = useDeactivateAction(isDeactivateActionEnabled);
 
@@ -45,7 +40,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                 <DataView
                     dataGroupedFilteredSorted={data?.filter(({itemId}) => !deactivatedItemIds.includes(itemId)) ?? []}
                     attributesToDisplay={['itemId', 'whoAmI']}
-                    itemActions={[deactivateAction, ...itemActions].filter(action => !!action)}
+                    itemActions={[deactivateAction, ...itemActions].filter(Boolean)}
                 />
             )}
         </>

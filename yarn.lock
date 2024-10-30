@@ -8076,6 +8076,7 @@ __metadata:
     "@testing-library/react": "npm:14.0.0"
     "@testing-library/react-hooks": "npm:8.0.1"
     "@testing-library/user-event": "npm:14.4.3"
+    "@total-typescript/ts-reset": "npm:0.6.1"
     "@types/dompurify": "npm:3.0.3"
     "@types/jest": "npm:29.0.2"
     "@types/object-path": "npm:0.11.1"
@@ -9733,6 +9734,13 @@ __metadata:
   version: 2.0.0
   resolution: "@tootallnate/once@npm:2.0.0"
   checksum: ad87447820dd3f24825d2d947ebc03072b20a42bfc96cbafec16bff8bbda6c1a81fcb0be56d5b21968560c5359a0af4038a68ba150c3e1694fe4c109a063bed8
+  languageName: node
+  linkType: hard
+
+"@total-typescript/ts-reset@npm:0.6.1":
+  version: 0.6.1
+  resolution: "@total-typescript/ts-reset@npm:0.6.1"
+  checksum: 3e18063433c4667561b2a5ea6b698d95f8ca2cbecc7e3717b60f9266e2fd7070b2006cab0df255e60eaad5658d1cec4afc89ea4ca5645c8f36a312093bba3645
   languageName: node
   linkType: hard
 
@@ -15633,6 +15641,7 @@ __metadata:
     "@testing-library/jest-dom": "npm:4.2.4"
     "@testing-library/react": "npm:13.4.0"
     "@testing-library/user-event": "npm:13.0.4"
+    "@total-typescript/ts-reset": "npm:0.6.1"
     "@types/i18next-browser-languagedetector": "npm:3.0.0"
     "@types/i18next-xhr-backend": "npm:1.4.2"
     "@types/jest": "npm:27.5.2"
@@ -24139,6 +24148,7 @@ __metadata:
     "@testing-library/jest-dom": "npm:5.16.4"
     "@testing-library/react": "npm:14.0.0"
     "@testing-library/user-event": "npm:13.5.0"
+    "@total-typescript/ts-reset": "npm:0.6.1"
     "@types/jest": "npm:27.5.2"
     "@types/node": "npm:18.7.18"
     "@types/react": "npm:18.2.14"
@@ -26916,6 +26926,7 @@ __metadata:
     "@testing-library/react": "npm:13.1.1"
     "@testing-library/react-hooks": "npm:8.0.0"
     "@testing-library/user-event": "npm:13.5.0"
+    "@total-typescript/ts-reset": "npm:0.6.1"
     "@types/jest": "npm:27.5.2"
     "@types/node": "npm:18.7.18"
     "@types/react": "npm:18.2.14"

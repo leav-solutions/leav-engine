@@ -5,7 +5,7 @@
 import {QueryResult} from '@apollo/client';
 import {useEffect, useState} from 'react';
 import {useGetFileDataQuery} from '_ui/_gqlTypes';
-import {IFileDataWithPreviewsStatus} from '../../_queries/records/getFileDataQuery';
+import {IFileDataWithPreviewsStatus, IFilePreviewsStatus} from '../../_queries/records/getFileDataQuery';
 
 export interface IUseGetFileDataQueryHook {
     loading: boolean;
@@ -32,7 +32,7 @@ export default function useGetPreparedFileData(libraryId: string, fileId: string
             const rawFileData = data.records?.list[0];
             // Convert preview status to an object
             const previewsStatus = rawFileData?.previews_status
-                ? JSON.parse(rawFileData.previews_status?.[0]?.value)
+                ? (JSON.parse(rawFileData.previews_status?.[0]?.value) as IFilePreviewsStatus)
                 : null;
             const file: IFileDataWithPreviewsStatus = {
                 ...rawFileData,

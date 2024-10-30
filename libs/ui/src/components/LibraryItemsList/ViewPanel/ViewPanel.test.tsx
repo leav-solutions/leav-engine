@@ -45,13 +45,13 @@ describe('ViewPanel', () => {
             en: 'this is a list '
         },
         color: '#e48232',
-        filters: [],
+        filters: [] as any,
         sort: {
             __typename: 'RecordSort',
             field: 'id',
             order: gqlTypes.SortOrder.asc
         },
-        valuesVersions: [],
+        valuesVersions: [] as any,
         settings: null
     };
 

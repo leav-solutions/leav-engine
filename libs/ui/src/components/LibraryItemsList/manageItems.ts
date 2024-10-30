@@ -27,7 +27,7 @@ const manageFields = (fields: IField[], item: IGetRecordsFromLibraryQueryElement
                 }
 
                 // If we ask for a specific field, parse json and return value
-                const attributeExtendedContent = JSON.parse(item[attributeId]);
+                const attributeExtendedContent = JSON.parse(item[attributeId]) as object;
                 if (attributeExtendedContent) {
                     acc[key] = objectPath.get(attributeExtendedContent, path);
                     return acc;

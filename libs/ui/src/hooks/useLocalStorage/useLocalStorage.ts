@@ -7,7 +7,7 @@ function useLocalStorage<T>(key: string, defaultValue: T): [T, (value: T) => voi
     const _getStorageValue = (): T => {
         // getting stored value
         const saved = localStorage.getItem(key);
-        const initial = JSON.parse(saved);
+        const initial = JSON.parse(saved) as T;
         return initial || defaultValue;
     };
 
