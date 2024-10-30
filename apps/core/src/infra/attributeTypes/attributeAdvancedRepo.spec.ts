@@ -176,7 +176,7 @@ describe('AttributeStandardRepo', () => {
                 _id: 'core_values/987654',
                 _rev: '_WSywvyC--_',
                 _key: 987654,
-                payload: 'test_val'
+                value: 'test_val'
             };
 
             const savedEdgeData = {
@@ -242,7 +242,7 @@ describe('AttributeStandardRepo', () => {
                 _id: 'core_values/987654',
                 _rev: '_WSywvyC--_',
                 _key: 987654,
-                payload: 'test_val',
+                value: 'test_val',
                 version: {
                     my_tree: '1'
                 }

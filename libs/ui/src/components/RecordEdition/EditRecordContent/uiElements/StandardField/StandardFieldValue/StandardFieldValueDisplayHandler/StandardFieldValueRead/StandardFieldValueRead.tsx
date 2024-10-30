@@ -112,7 +112,8 @@ export const StandardFieldValueRead: FunctionComponent<IStandardFieldValueReadPr
         onClick(e);
     };
 
-    let displayValue = String(fieldValue.value?.payload ?? '');
+    let displayValue = String(fieldValue.value?.payload ?? fieldValue.displayValue ?? '');
+
     let width = '100%';
     switch (state.attribute.format) {
         case AttributeFormat.date_range:

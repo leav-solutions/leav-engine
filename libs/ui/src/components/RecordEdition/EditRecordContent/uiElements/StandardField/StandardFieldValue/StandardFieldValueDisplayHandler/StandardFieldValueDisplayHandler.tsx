@@ -54,12 +54,11 @@ export const StandardFieldValueDisplayHandler: FunctionComponent<IStandardFieldV
         });
     };
 
-    const _handleBlur = () => {
+    const _handleBlur = () =>
         dispatch({
             type: StandardFieldReducerActionsTypes.CANCEL_EDITING,
             idValue: fieldValue.idValue
         });
-    };
 
     const commonProps = {
         state,

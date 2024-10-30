@@ -149,7 +149,7 @@ export default function ({
 
             const res: IValue = {
                 id_value: savedVal._key,
-                payload: savedVal.payload,
+                payload: savedVal.value,
                 attribute: savedEdge.attribute,
                 modified_at: savedEdge.modified_at,
                 created_at: savedEdge.created_at,
