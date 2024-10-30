@@ -8,6 +8,7 @@ import {IQueryInfos} from '_types/queryInfos';
 import exportDomain, {IExportDomainDeps} from './exportDomain';
 import {AttributeFormats} from '../../_types/attribute';
 import {when} from 'jest-when';
+import {IUtils} from 'utils/utils';
 
 const depsBase: ToAny<IExportDomainDeps> = {
     'core.domain.record': jest.fn(),
@@ -42,6 +43,10 @@ describe('exportDomain', () => {
                 getAttributeProperties: jest.fn()
             };
 
+            const mockUtils: Mockify<IUtils> = {
+                isLinkAttribute: jest.fn()
+            };
+
             const attributeProperties = {
                 bikes_label: {format: AttributeFormats.TEXT},
                 bikes_activity: {linked_library: 'activities'},
@@ -51,6 +56,13 @@ describe('exportDomain', () => {
                 no_value: {format: AttributeFormats.TEXT, linked_library: false},
                 shops_label: {format: AttributeFormats.TEXT}
             };
+
+            when(mockUtils.isLinkAttribute)
+                .calledWith({id: 'bikes_visual', ...attributeProperties.bikes_visual})
+                .mockReturnValue(true);
+            when(mockUtils.isLinkAttribute)
+                .calledWith({id: 'bikes_activity', ...attributeProperties.bikes_activity})
+                .mockReturnValue(true);
 
             Object.entries(attributeProperties).forEach(([id, returnValue]) =>
                 when(mockAttributeDomain.getAttributeProperties)
@@ -111,7 +123,8 @@ describe('exportDomain', () => {
             const domain = exportDomain({
                 ...depsBase,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
-                'core.domain.attribute': mockAttributeDomain as IAttributeDomain
+                'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
+                'core.utils': mockUtils as IUtils
             });
 
             const data = await domain.exportData(jsonMapping, [{bikes: 'bikeId', shops: 'shopId'}], mockCtx);
