@@ -7,6 +7,14 @@ import {useDeactivateRecordsMutation} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {DataGroupedFilteredSorted, ItemActions} from './types';
 
+/**
+ * Hook used to get the action for `<DataView />` component.
+ *
+ * When the mutation for deactivation is done, the Apollo cache will be clean (`Record` and `RecordIdentity`)
+ * from deactivated record.
+ *
+ * @param isEnabled - whether the action is present
+ */
 export const useDeactivateAction = (isEnabled: boolean) => {
     const {t} = useSharedTranslation();
 
@@ -17,7 +25,7 @@ export const useDeactivateAction = (isEnabled: boolean) => {
                     id: cache.identify(record)
                 });
             });
-            cache.gc(); // used to delete RecordIdentity too
+            cache.gc();
         }
     });
 
