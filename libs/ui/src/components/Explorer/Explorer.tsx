@@ -29,8 +29,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 }) => {
     const {data, loading} = useExplorerData(library); // TODO: refresh when go back on page
 
-    // TODO: use apollo cache to deactivate items
-    const {deactivateAction, deactivatedItemIds} = useDeactivateAction(
+    const {deactivateAction} = useDeactivateAction(
         isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('deactivate')
     );
 
@@ -44,7 +43,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                 'Loading...'
             ) : (
                 <DataView
-                    dataGroupedFilteredSorted={data?.filter(({itemId}) => !deactivatedItemIds.includes(itemId)) ?? []}
+                    dataGroupedFilteredSorted={data ?? []}
                     attributesToDisplay={['itemId', 'whoAmI']}
                     itemActions={[editAction, deactivateAction, ...itemActions].filter(Boolean)}
                 />
