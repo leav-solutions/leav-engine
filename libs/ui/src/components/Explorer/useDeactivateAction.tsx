@@ -5,7 +5,7 @@ import {FaTrash} from 'react-icons/fa';
 import {KitModal} from 'aristid-ds';
 import {useDeactivateRecordsMutation} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {DataGroupedFilteredSorted, ItemActions} from './types';
+import {ActionHook, DataGroupedFilteredSorted, ItemActions} from './types';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -15,7 +15,7 @@ import {DataGroupedFilteredSorted, ItemActions} from './types';
  *
  * @param isEnabled - whether the action is present
  */
-export const useDeactivateAction = (isEnabled: boolean) => {
+export const useDeactivateAction = ({isEnabled}: ActionHook) => {
     const {t} = useSharedTranslation();
 
     const [deactivateRecordsMutation] = useDeactivateRecordsMutation({

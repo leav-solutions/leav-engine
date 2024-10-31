@@ -594,6 +594,7 @@
         "unselect-all": "Unselect All"
     },
     "explorer": {
+        "create-one": "Create",
         "actions": "Actions",
         "more-actions": "Show more",
         "deactivateItem": "Deactivate item",

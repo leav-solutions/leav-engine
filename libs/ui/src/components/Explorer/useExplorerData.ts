@@ -19,10 +19,11 @@ const _mapping = (data: ExplorerQuery, libraryId: string): DataGroupedFilteredSo
     }));
 
 export const useExplorerData = (libraryId: string) => {
-    const {data, loading} = useExplorerQuery({variables: {libraryId}});
+    const {data, loading, refetch} = useExplorerQuery({variables: {libraryId}});
 
     return {
         data: data !== undefined ? _mapping(data, libraryId) : null,
-        loading
+        loading,
+        refetch
     };
 };

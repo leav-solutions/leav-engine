@@ -16,3 +16,5 @@ export type ItemActions<T> = Array<{
     label: string;
     isDanger?: boolean;
 }>;
+
+export type ActionHook<T = {}> = {isEnabled: boolean} & T;
