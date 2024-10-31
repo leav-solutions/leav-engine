@@ -594,6 +594,7 @@
         "unselect-all": "Tout désélectionner"
     },
     "explorer": {
+        "create-one": "Créer",
         "actions": "Actions",
         "more-actions": "Voir plus",
         "deactivateItem": "Désactiver l’élément",

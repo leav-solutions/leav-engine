@@ -6,9 +6,19 @@ import {FaPen} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {EditRecordModal} from '_ui/components';
 import {RecordFilterCondition, useExplorerLazyQuery} from '_ui/_gqlTypes';
-import {DataGroupedFilteredSorted, ItemActions} from './types';
+import {ActionHook, DataGroupedFilteredSorted, ItemActions} from './types';
 
-export const useEditAction = (isEnabled: boolean) => {
+/**
+ * Hook used to get the action for `<DataView />` component.
+ *
+ * When the mutation for editing is done, the Apollo cache will be refreshed (`Record` and `RecordIdentity`)
+ * from only edited record.
+ *
+ * It returns also two parts : one for the action button call - one for displaying the modal required by the action.
+ *
+ * @param isEnabled - whether the action is present
+ */
+export const useEditAction = ({isEnabled}: ActionHook) => {
     const {t} = useSharedTranslation();
 
     const [refreshItem] = useExplorerLazyQuery({fetchPolicy: 'network-only'});

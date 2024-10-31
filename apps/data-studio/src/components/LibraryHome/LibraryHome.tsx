@@ -132,44 +132,47 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
     };
 
     return params.has(explorerQueryParamName) ? (
-        <Explorer
-            library={library}
-            defaultActionsForItem={['edit', 'deactivate']}
-            itemActions={[
-                {
-                    label: 'Test 1',
-                    icon: <FaBeer />,
-                    callback: item => {
-                        // eslint-disable-next-line no-restricted-syntax
-                        console.log(1, item);
+        <div style={{padding: '8px'}}>
+            <Explorer
+                library={library}
+                defaultActionsForItem={['edit', 'deactivate']}
+                defaultMainActions={['create']}
+                itemActions={[
+                    {
+                        label: 'Test 1',
+                        icon: <FaBeer />,
+                        callback: item => {
+                            // eslint-disable-next-line no-restricted-syntax
+                            console.log(1, item);
+                        }
+                    },
+                    {
+                        label: 'Test 2',
+                        icon: <FaAccessibleIcon />,
+                        callback: item => {
+                            // eslint-disable-next-line no-restricted-syntax
+                            console.log(2, item);
+                        }
+                    },
+                    {
+                        label: 'Test 3',
+                        icon: <FaXbox />,
+                        callback: item => {
+                            // eslint-disable-next-line no-restricted-syntax
+                            console.log(3, item);
+                        }
+                    },
+                    {
+                        label: 'Test 4',
+                        icon: <FaJs />,
+                        callback: item => {
+                            // eslint-disable-next-line no-restricted-syntax
+                            console.log(4, item);
+                        }
                     }
-                },
-                {
-                    label: 'Test 2',
-                    icon: <FaAccessibleIcon />,
-                    callback: item => {
-                        // eslint-disable-next-line no-restricted-syntax
-                        console.log(2, item);
-                    }
-                },
-                {
-                    label: 'Test 3',
-                    icon: <FaXbox />,
-                    callback: item => {
-                        // eslint-disable-next-line no-restricted-syntax
-                        console.log(3, item);
-                    }
-                },
-                {
-                    label: 'Test 4',
-                    icon: <FaJs />,
-                    callback: item => {
-                        // eslint-disable-next-line no-restricted-syntax
-                        console.log(4, item);
-                    }
-                }
-            ]}
-        />
+                ]}
+            />
+        </div>
     ) : (
         <LibraryItemsList
             selectionMode={false}
