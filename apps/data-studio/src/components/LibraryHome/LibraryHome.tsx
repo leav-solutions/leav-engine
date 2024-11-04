@@ -23,10 +23,19 @@ import {explorerQueryParamName, isLibraryInApp, localizedTranslation} from 'util
 import {IBaseInfo, InfoType, SharedStateSelectionType, WorkspacePanels} from '_types/types';
 import {useSearchParams} from 'react-router-dom';
 import {FaAccessibleIcon, FaBeer, FaJs, FaXbox} from 'react-icons/all';
+import styled from 'styled-components';
 
-export interface ILibraryHomeProps {
+interface ILibraryHomeProps {
     library?: string;
 }
+
+const ExplorerContainerDivStyled = styled.div`
+    --headerSize: 48px;
+
+    padding: 24px;
+    background-color: #f4f7ff;
+    height: calc(100vh - var(--headerSize));
+`;
 
 const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
     const {lang} = useLang();
@@ -132,7 +141,7 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
     };
 
     return params.has(explorerQueryParamName) ? (
-        <div style={{padding: '8px'}}>
+        <ExplorerContainerDivStyled>
             <Explorer
                 library={library}
                 defaultActionsForItem={['edit', 'deactivate']}
@@ -172,7 +181,7 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                     }
                 ]}
             />
-        </div>
+        </ExplorerContainerDivStyled>
     ) : (
         <LibraryItemsList
             selectionMode={false}
