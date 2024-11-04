@@ -32,8 +32,8 @@ interface ILibraryHomeProps {
 const ExplorerContainerDivStyled = styled.div`
     --headerSize: 48px;
 
-    padding: 24px;
-    background-color: #f4f7ff;
+    padding: calc(var(--general-spacing-l) * 1px);
+    background-color: var(--general-colors-primary-50);
     height: calc(100vh - var(--headerSize));
 `;
 

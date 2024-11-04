@@ -30,7 +30,7 @@ const ExplorerHeaderDivStyled = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 8px;
+    padding-bottom: calc(var(--general-spacing-xs) * 1px);
 `;
 
 export const Explorer: FunctionComponent<IExplorerProps> = ({
