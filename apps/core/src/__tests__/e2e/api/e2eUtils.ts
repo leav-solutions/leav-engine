@@ -7,7 +7,7 @@ import jwt, {Algorithm} from 'jsonwebtoken';
 import {ActionsListConfig} from '_types/actionsList';
 import {ITreeElement} from '_types/tree';
 import {getConfig} from '../../../config';
-import {adminsGroupId} from '../../../_constants/userGroups';
+import {adminsGroupId} from '../../../_constants/users';
 import {AttributeFormats, AttributeTypes, IAttributeVersionsConf, IEmbeddedAttribute} from '../../../_types/attribute';
 import {ACCESS_TOKEN_COOKIE_NAME} from '../../../_types/auth';
 
