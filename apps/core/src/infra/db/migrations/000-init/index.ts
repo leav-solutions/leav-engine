@@ -10,7 +10,7 @@ import moment from 'moment';
 import {IConfig} from '_types/config';
 import {IMigration} from '_types/migration';
 import {IQueryInfos} from '_types/queryInfos';
-import {adminsGroupId, filesAdminsGroupId} from '../../../../_constants/userGroups';
+import {adminsGroupId, filesAdminsGroupId} from '../../../../_constants/users';
 import {SortOrder} from '../../../../_types/list';
 import {PermissionTypes, TreeNodePermissionsActions} from '../../../../_types/permissions';
 import {ViewSizes, ViewTypes} from '../../../../_types/views';
