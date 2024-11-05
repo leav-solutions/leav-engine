@@ -5,7 +5,7 @@ import {FaTrash} from 'react-icons/fa';
 import {KitModal} from 'aristid-ds';
 import {useDeactivateRecordsMutation} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ActionHook, DataGroupedFilteredSorted, ItemActions} from './types';
+import {ActionHook, IItemAction} from './types';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -29,7 +29,7 @@ export const useDeactivateAction = ({isEnabled}: ActionHook) => {
         }
     });
 
-    const _deactivateAction: ItemActions<DataGroupedFilteredSorted<'whoAmI'>[number]>[number] = {
+    const _deactivateAction: IItemAction = {
         label: t('explorer.deactivateItem'),
         icon: <FaTrash />,
         isDanger: true,
