@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IRecordDomain} from 'domain/record/recordDomain';
@@ -51,7 +51,7 @@ export const mustIncludeElement = async (
     for (const depValue of depValues ?? []) {
         const ancestors = await treeDomain.getElementAncestors({
             treeId: depValue.treeId,
-            nodeId: depValue.value.id,
+            nodeId: depValue.payload.id,
             ctx
         });
         isFound = ancestors.some(ancestor => ancestor.id === element.dependencyValue.value);

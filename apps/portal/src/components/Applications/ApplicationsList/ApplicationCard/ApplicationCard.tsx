@@ -1,18 +1,18 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {EditOutlined, StarFilled, StarOutlined} from '@ant-design/icons';
+import {faPencil, faStar as faSolidStar} from '@fortawesome/free-solid-svg-icons';
+import {faStar as faEmptyStar} from '@fortawesome/free-regular-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {useLang} from '@leav/ui';
 import {getInitials, localizedTranslation} from '@leav/utils';
-import {KitAvatar, KitButton, KitImage, KitTypography} from 'aristid-ds';
+import {KitAvatar, KitImage, KitRedirectCard} from 'aristid-ds';
 import EditApplicationModal, {
     IEditApplicationModalProps
 } from 'components/Applications/EditApplicationModal/EditApplicationModal';
-import {SyntheticEvent, useState} from 'react';
-import styled from 'styled-components';
+import {ComponentProps, useState} from 'react';
 import {GET_APPLICATIONS_applications_list} from '_gqlTypes/GET_APPLICATIONS';
-
-import './ApplicationCard.css';
+import {useTranslation} from 'react-i18next';
 
 interface IApplicationCardProps {
     isFavorite?: boolean;
@@ -20,12 +20,9 @@ interface IApplicationCardProps {
     onChangeFavorite: (application: GET_APPLICATIONS_applications_list, isFavorite: boolean) => void;
 }
 
-const ClickableWrapper = styled.div`
-    cursor: pointer;
-`;
-
 function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IApplicationCardProps): JSX.Element {
     const {lang} = useLang();
+    const {t} = useTranslation();
     const [isEditAppModalOpen, setIsEditAppModalOpen] = useState(false);
     const [editAppActiveTab, setEditAppActiveTab] = useState<IEditApplicationModalProps['activeTab']>();
 
@@ -36,7 +33,8 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
         window.location.assign(application.url);
     };
 
-    const _handleOpenEditAppModal = () => {
+    const _handleOpenEditAppModal = (event: MouseEvent) => {
+        event.stopPropagation();
         setIsEditAppModalOpen(true);
     };
 
@@ -45,9 +43,8 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
         setEditAppActiveTab(null);
     };
 
-    const _toggleFavorite = (e: SyntheticEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
+    const _toggleFavorite = (event: MouseEvent) => {
+        event.stopPropagation();
         onChangeFavorite(application, !isFavorite);
     };
 
@@ -57,38 +54,37 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
         <KitImage
             src={appIcon}
             alt={label}
-            preview={{src: String(application.icon?.whoAmI?.preview?.huge), toolbarRender: () => null}}
+            preview={{src: String(application.icon?.whoAmI?.preview?.huge)}}
             style={{width: '100%', objectFit: 'scale-down', background: application?.color, padding: '3px 0'}}
         />
     ) : (
         <KitAvatar color={application?.color ?? undefined}>{initials}</KitAvatar>
     );
 
-    const actions = [
-        <KitButton className="app-card-action-button" onClick={_handleOpenEditAppModal}>
-            <EditOutlined />
-        </KitButton>,
-        <KitButton className="app-card-action-button" onClick={_toggleFavorite}>
-            {isFavorite ? <StarFilled /> : <StarOutlined />}
-        </KitButton>
+    const actions: ComponentProps<typeof KitRedirectCard>['actions'] = [
+        {
+            key: '1',
+            label: t('application.edit'),
+            icon: <FontAwesomeIcon icon={faPencil} />,
+            onClick: event => _handleOpenEditAppModal(event as MouseEvent)
+        },
+        {
+            key: '2',
+            label: t(isFavorite ? 'application.favorite.remove' : 'application.favorite.add'),
+            icon: <FontAwesomeIcon icon={isFavorite ? faSolidStar : faEmptyStar} />,
+            onClick: event => _toggleFavorite(event as MouseEvent)
+        }
     ];
 
     return (
         <>
-            <div className="app-card" data-testid={`app-card-${application.id}`}>
-                <div className="app-card-icon">{cover}</div>
-                <div className="app-card-actions">{actions}</div>
-                <div className="app-card-data">
-                    <KitTypography.Text className="app-card-title" weight="bold">
-                        <ClickableWrapper onClick={_handleClick}>{label}</ClickableWrapper>
-                    </KitTypography.Text>
-                    <div className="app-card-description-container">
-                        <KitTypography.Text size="large" className="app-card-description" color="#0b6aa0">
-                            <ClickableWrapper onClick={_handleClick}>{description}</ClickableWrapper>
-                        </KitTypography.Text>
-                    </div>
-                </div>
-            </div>
+            <KitRedirectCard
+                title={label}
+                description={description}
+                icon={cover}
+                onClick={_handleClick}
+                actions={actions}
+            />
             {isEditAppModalOpen && (
                 <EditApplicationModal
                     applicationId={application.id}

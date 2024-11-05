@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
@@ -65,7 +65,7 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
     }, [creationErrors, attribute.id]);
 
     const _handleDeleteValue = async (value: IRecordPropertyLink) => {
-        const deleteRes = await onValueDelete({value: value.linkValue.id, id_value: value.id_value}, attribute.id);
+        const deleteRes = await onValueDelete({payload: value.linkValue.id, id_value: value.id_value}, attribute.id);
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
             dispatch({
@@ -143,9 +143,9 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                     attribute={attribute}
                     label={label}
                     required={state.formElement.settings.required}
-                    shouldShowValueDetailsButton={editRecordState.withInfoButton}
                     onValueDeselect={_handleDeleteValue}
                     onSelectChange={_handleUpdateValueSubmit}
+                    shouldShowValueDetailsButton={editRecordState.withInfoButton}
                 />
             ) : (
                 <MonoValueSelect
@@ -153,9 +153,9 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                     attribute={attribute}
                     label={label}
                     required={state.formElement.settings.required}
-                    shouldShowValueDetailsButton={editRecordState.withInfoButton}
                     onSelectClear={_handleDeleteValue}
                     onSelectChange={_handleUpdateValueSubmit}
+                    shouldShowValueDetailsButton={editRecordState.withInfoButton}
                 />
             )}
         </AntForm.Item>

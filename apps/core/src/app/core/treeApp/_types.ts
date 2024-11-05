@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ILibrary} from '_types/library';
@@ -39,14 +39,14 @@ export interface ISaveTreeMutationArgs {
 export interface IAddElementMutationArgs {
     treeId: string;
     element: ITreeElement;
-    parent?: string;
+    parent?: string | null;
     order?: number;
 }
 
 export interface IMoveElementMutationArgs {
     treeId: string;
     nodeId: string;
-    parentTo?: string;
+    parentTo?: string | null;
     order?: number;
 }
 

@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ActionsListValueType, IActionsListContext} from '_types/actionsList';
@@ -16,12 +16,14 @@ const mockCalculationsVariable = {
         initialValue: ActionsListValueType
     ): Promise<IVariableValue[]> => [
         {
-            value: `${variable}Value`,
+            payload: `${variable}Value`,
             recordId: '1',
             library: 'meh'
         }
     ]
 };
+
+const ctx = {userId: 'test_user'};
 
 describe('excelCalculationAction', () => {
     const mockUtils: Mockify<IUtils> = {
@@ -35,12 +37,11 @@ describe('excelCalculationAction', () => {
         modified_by: null,
         created_at: null,
         created_by: null,
-        value: null
+        payload: null
     };
 
     test('Simple excelCalculation', async () => {
         const action = excelCalculationAction().action;
-        const ctx = {};
         const res = await action(
             [],
             {
@@ -50,7 +51,7 @@ describe('excelCalculationAction', () => {
             ctx
         );
 
-        expect(res).toEqual({errors: [], values: [{...mockResultValueBase, value: '42'}]});
+        expect(res).toEqual({errors: [], values: [{...mockResultValueBase, payload: '42', raw_payload: '42'}]});
         expect(
             await action(
                 [],
@@ -60,12 +61,11 @@ describe('excelCalculationAction', () => {
                 },
                 ctx
             )
-        ).toEqual({errors: [], values: [{...mockResultValueBase, value: '84'}]});
+        ).toEqual({errors: [], values: [{...mockResultValueBase, payload: '84', raw_payload: '84'}]});
     });
 
     test('no formula', async () => {
         const action = excelCalculationAction().action;
-        const ctx = {};
         const res = await action(
             [],
             {
@@ -74,14 +74,13 @@ describe('excelCalculationAction', () => {
             },
             ctx
         );
-        expect(res).toEqual({errors: [], values: [{...mockResultValueBase, value: ''}]});
+        expect(res).toEqual({errors: [], values: [{...mockResultValueBase, payload: '', raw_payload: ''}]});
     });
 
     test('Replace variables', async () => {
         const action = excelCalculationAction({
             'core.domain.helpers.calculationVariable': mockCalculationsVariable as ICalculationVariable
         }).action;
-        const ctx = {};
         const res = await action(
             [],
             {
@@ -93,7 +92,13 @@ describe('excelCalculationAction', () => {
 
         expect(res).toEqual({
             errors: [],
-            values: [{...mockResultValueBase, value: 'resultat totoValue tataValue titiValue'}]
+            values: [
+                {
+                    ...mockResultValueBase,
+                    payload: 'resultat totoValue tataValue titiValue',
+                    raw_payload: 'resultat totoValue tataValue titiValue'
+                }
+            ]
         });
     });
 
@@ -101,7 +106,6 @@ describe('excelCalculationAction', () => {
         const action = excelCalculationAction({
             'core.domain.helpers.calculationVariable': mockCalculationsVariable as ICalculationVariable
         }).action;
-        const ctx = {};
         const res = await action(
             [mockStandardValue],
             {
@@ -113,7 +117,14 @@ describe('excelCalculationAction', () => {
 
         expect(res).toEqual({
             errors: [],
-            values: [mockStandardValue, {...mockResultValueBase, value: 'resultat totoValue tataValue titiValue'}]
+            values: [
+                mockStandardValue,
+                {
+                    ...mockResultValueBase,
+                    payload: 'resultat totoValue tataValue titiValue',
+                    raw_payload: 'resultat totoValue tataValue titiValue'
+                }
+            ]
         });
     });
 
@@ -121,7 +132,6 @@ describe('excelCalculationAction', () => {
         const action = excelCalculationAction({
             'core.utils': mockUtils as IUtils
         }).action;
-        const ctx = {};
         const res = await action(
             [],
             {

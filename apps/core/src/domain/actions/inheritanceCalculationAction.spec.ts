@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
@@ -11,8 +11,8 @@ import inheritanceCalculationAction from './inheritanceCalculationAction';
 const mockCalculationsVariable = {
     processVariableString: async (ctx: IActionsListContext, variable: string): Promise<IVariableValue[]> => [
         {
-            value: `${variable}Value`,
-            raw_value: 'testRawValue',
+            payload: `${variable}Value`,
+            raw_payload: 'testRawValue',
             recordId: '1',
             library: 'meh'
         }
@@ -34,7 +34,8 @@ describe('inheritanceCalculationAction', () => {
             attribute: {
                 id: 'meh',
                 type: AttributeTypes.SIMPLE
-            }
+            },
+            userId: 'test'
         };
 
         const res = await action(
@@ -46,8 +47,8 @@ describe('inheritanceCalculationAction', () => {
             ctx
         );
 
-        expect(res.values[0].value).toBe('42Value');
-        expect((res.values[0] as any).raw_value).toBe('testRawValue');
+        expect(res.values[0].payload).toBe('42Value');
+        expect((res.values[0] as any).raw_payload).toBe('testRawValue');
     });
 
     test('No formula', async () => {
@@ -55,7 +56,8 @@ describe('inheritanceCalculationAction', () => {
             attribute: {
                 id: 'meh',
                 type: AttributeTypes.SIMPLE
-            }
+            },
+            userId: 'test'
         };
         const res = await action(
             null,
@@ -66,7 +68,7 @@ describe('inheritanceCalculationAction', () => {
             ctx
         );
 
-        expect(res.values[0].value).toBe('Value');
+        expect(res.values[0].payload).toBe('Value');
     });
 
     test('Inherit from link', async () => {
@@ -81,19 +83,20 @@ describe('inheritanceCalculationAction', () => {
             attribute: {
                 id: 'bla',
                 type: AttributeTypes.SIMPLE_LINK
-            }
+            },
+            userId: 'test'
         };
 
-        const res = (await action2(
+        const res = await action2(
             null,
             {
                 Description: 'test',
                 Formula: ''
             },
             ctx
-        )) as IRecord;
+        );
 
-        const resultValue = res.values[0].value;
+        const resultValue = res.values[0].payload;
 
         expect(resultValue).toHaveProperty('id');
         expect(resultValue).toHaveProperty('library');

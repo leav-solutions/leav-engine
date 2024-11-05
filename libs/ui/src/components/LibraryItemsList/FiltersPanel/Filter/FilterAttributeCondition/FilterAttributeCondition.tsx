@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {isTypeLink} from '@leav/utils';
@@ -21,7 +21,7 @@ import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
 import FilterDropdownButton from '../../FilterDropdownButton';
 import {getConditionOptionsByType} from '../../FiltersOptions';
 import mustHideValue from '../../mustHideValue';
-import {getDefaultFilterValueByFormat} from '../Filter';
+import {getDefaultFilterValueByFormat} from '../Filter.utils';
 
 const BooleanWrapper = styled.span`
     padding: 0 1rem;

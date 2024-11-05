@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ITreeDomain} from 'domain/tree/treeDomain';
@@ -6,8 +6,8 @@ import {ITreeRepo} from 'infra/tree/treeRepo';
 import {ECacheType, ICachesService} from '../../../infra/cache/cacheService';
 
 interface IDeps {
-    'core.infra.tree'?: ITreeRepo;
-    'core.infra.cache.cacheService'?: ICachesService;
+    'core.infra.tree': ITreeRepo;
+    'core.infra.cache.cacheService': ICachesService;
 }
 
 export interface IElementAncestorsHelper {
@@ -16,8 +16,8 @@ export interface IElementAncestorsHelper {
 }
 
 export default function ({
-    'core.infra.tree': treeRepo = null,
-    'core.infra.cache.cacheService': cacheService = null
+    'core.infra.tree': treeRepo,
+    'core.infra.cache.cacheService': cacheService
 }: IDeps): IElementAncestorsHelper {
     const _getCacheKey = (treeId: string, nodeId?: string): string => `elementAncestors:${treeId}:${nodeId ?? '*'}`;
 

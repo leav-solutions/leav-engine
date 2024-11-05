@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction} from '@leav/utils';
@@ -26,20 +26,20 @@ export interface IApiKeyDomain {
     validateApiKey(params: {apiKey: string; ctx: IQueryInfos}): Promise<IApiKey>;
 }
 
-interface IDeps {
-    'core.domain.permission.admin'?: IAdminPermissionDomain;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.infra.apiKey'?: IApiKeyRepo;
-    'core.utils'?: IUtils;
-    translator?: i18n;
+export interface IApiKeyDomainDeps {
+    'core.domain.permission.admin': IAdminPermissionDomain;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.infra.apiKey': IApiKeyRepo;
+    'core.utils': IUtils;
+    translator: i18n;
 }
 
 export default function ({
-    'core.domain.permission.admin': adminPermissionDomain = null,
-    'core.domain.eventsManager': eventsManagerDomain = null,
-    'core.infra.apiKey': apiKeyRepo = null,
-    'core.utils': utils = null
-}: IDeps): IApiKeyDomain {
+    'core.domain.permission.admin': adminPermissionDomain,
+    'core.domain.eventsManager': eventsManagerDomain,
+    'core.infra.apiKey': apiKeyRepo,
+    'core.utils': utils
+}: IApiKeyDomainDeps): IApiKeyDomain {
     const _hashApiKey = async (key: string): Promise<string> => {
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(key, salt);

@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, AqlQuery, GeneratedAqlQuery, join, literal} from 'arangojs/aql';
@@ -55,7 +55,7 @@ export default function ({
         const [recordLibrary, recordId] = valueEdge[recordIdField].split('/');
         return {
             id_value: valueEdge._key,
-            value: linkedRecord ? {...linkedRecord, library: recordLibrary, id: recordId} : null,
+            payload: linkedRecord ? {...linkedRecord, library: recordLibrary, id: recordId} : null,
             attribute: valueEdge.attribute,
             modified_at: valueEdge.modified_at,
             modified_by: valueEdge.modified_by,
@@ -72,15 +72,15 @@ export default function ({
             if ((attribute.reverse_link as IAttribute)?.type === AttributeTypes.SIMPLE_LINK) {
                 await attributeSimpleLinkRepo.createValue({
                     library: attribute.linked_library,
-                    recordId: value.value,
+                    recordId: value.payload,
                     attribute: {...(attribute.reverse_link as IAttribute), reverse_link: undefined},
-                    value: {value: recordId},
+                    value: {payload: recordId},
                     ctx
                 });
 
                 // To return the "from" value.
                 return {
-                    value: {id: value.value, library: attribute.linked_library},
+                    payload: {id: value.payload, library: attribute.linked_library},
                     created_by: null,
                     modified_by: null
                 };
@@ -91,11 +91,11 @@ export default function ({
             // Create the link between records and add some metadata on it.
 
             const _from = !!attribute.reverse_link
-                ? attribute.linked_library + '/' + value.value
+                ? attribute.linked_library + '/' + value.payload
                 : library + '/' + recordId;
 
             const toLibrary = !!attribute.reverse_link ? library : attribute.linked_library;
-            const toRecordId = !!attribute.reverse_link ? recordId : value.value;
+            const toRecordId = !!attribute.reverse_link ? recordId : value.payload;
 
             const _to = toLibrary + '/' + toRecordId;
 
@@ -138,9 +138,9 @@ export default function ({
             if ((attribute.reverse_link as IAttribute)?.type === AttributeTypes.SIMPLE_LINK) {
                 return attributeSimpleLinkRepo.updateValue({
                     library: attribute.linked_library,
-                    recordId: value.value.id,
+                    recordId: value.payload.id,
                     attribute: {...(attribute.reverse_link as IAttribute), reverse_link: undefined},
-                    value: {value: recordId},
+                    value: {payload: recordId},
                     ctx
                 });
             }
@@ -149,11 +149,11 @@ export default function ({
 
             // Update value's metadata on records link.r
             const _from = !!attribute.reverse_link
-                ? attribute.linked_library + '/' + value.value
+                ? attribute.linked_library + '/' + value.payload
                 : library + '/' + recordId;
 
             const toLibrary = !!attribute.reverse_link ? library : attribute.linked_library;
-            const toRecordId = !!attribute.reverse_link ? recordId : value.value;
+            const toRecordId = !!attribute.reverse_link ? recordId : value.payload;
             const _to = toLibrary + '/' + toRecordId;
 
             const edgeDataAttr = !!attribute.reverse_link ? (attribute.reverse_link as IAttribute).id : attribute.id;
@@ -195,9 +195,9 @@ export default function ({
             if ((attribute.reverse_link as IAttribute)?.type === AttributeTypes.SIMPLE_LINK) {
                 return attributeSimpleLinkRepo.deleteValue({
                     library: attribute.linked_library,
-                    recordId: value.value.id,
+                    recordId: value.payload.id,
                     attribute: {...(attribute.reverse_link as IAttribute), reverse_link: undefined},
-                    value: {value: null},
+                    value: {payload: null},
                     ctx
                 });
             }

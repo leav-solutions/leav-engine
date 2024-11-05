@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Checkbox} from 'antd';
@@ -16,8 +16,8 @@ function CheckboxInput({state, fieldValue, onSubmit}: IStandardInputProps): JSX.
         <Checkbox
             className="nested-input"
             disabled={state.isReadOnly}
-            checked={!!value?.value}
-            indeterminate={typeof value?.value !== 'boolean'}
+            checked={!!value?.payload}
+            indeterminate={typeof value?.payload !== 'boolean'}
             onChange={_handleCheckboxChange}
         />
     );

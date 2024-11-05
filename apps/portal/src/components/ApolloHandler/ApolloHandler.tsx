@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
@@ -14,7 +14,7 @@ import {
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {onError} from '@apollo/link-error';
-import {gqlPossibleTypes, useRefreshToken} from '@leav/ui';
+import {gqlPossibleTypes, useRedirectToLogin} from '@leav/ui';
 import {message} from 'antd';
 import fetch from 'cross-fetch';
 import {createClient} from 'graphql-ws';
@@ -28,7 +28,7 @@ interface IApolloHandlerProps {
 
 function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     const {t} = useTranslation();
-    const {refreshToken} = useRefreshToken();
+    const {redirectToLogin} = useRedirectToLogin();
 
     const wsLink = useMemo(
         () =>
@@ -62,7 +62,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
             return new Observable(observer => {
                 (async () => {
                     try {
-                        await refreshToken();
+                        redirectToLogin();
 
                         // Retry last failed request
                         forward(operation).subscribe({
@@ -87,7 +87,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
 
     const gqlClient = new ApolloClient({
         link: ApolloLink.from([
-            (_handleApolloError as unknown) as ApolloLink,
+            _handleApolloError as unknown as ApolloLink,
             splitLink,
             new HttpLink({
                 uri: `${ORIGIN_URL}/${API_ENDPOINT}`,

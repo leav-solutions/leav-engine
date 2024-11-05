@@ -51,7 +51,7 @@
           "type": "string",
           "description": "Library key (only for tree attributes)"
         },
-        "value": {
+        "payload": {
           "oneOf": [
             {
               "type": "string"
@@ -68,7 +68,7 @@
           "type": "object",
           "description": "Metadata values on linked attributes",
           "additionalProperties": {
-            "type": "string"
+            "type": ["string", "number"]
           }
         },
         "version":{
@@ -79,7 +79,7 @@
         }
       },
       "required": [
-        "value"
+        "payload"
       ]
     },
     "data": {

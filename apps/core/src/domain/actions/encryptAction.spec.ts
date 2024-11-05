@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {mockStandardValue} from '../../__tests__/mocks/value';
@@ -8,20 +8,20 @@ import encryptAction from './encryptAction';
 describe('encryptAction', () => {
     const action = encryptAction().action;
     const attrText: IAttribute = {id: 'test_attr', format: AttributeFormats.NUMERIC, type: AttributeTypes.SIMPLE};
-    const ctx = {attribute: attrText};
+    const ctx = {attribute: attrText, userId: 'test_user'};
 
     test('should encrypt a value', async () => {
-        const res = await action([{...mockStandardValue, value: 'MyPAssWd'}], {}, ctx);
+        const res = await action([{...mockStandardValue, payload: 'MyPAssWd'}], {}, ctx);
 
-        const valuePayload = res.values[0].value;
+        const valuePayload = res.values[0].payload;
         expect(typeof valuePayload).toBe('string');
         expect(('' + valuePayload).length).toBe(60);
     });
 
     test('should return null if no value', async () => {
-        expect(await action([{...mockStandardValue, value: null}], {}, ctx)).toEqual({
+        expect(await action([{...mockStandardValue, payload: null}], {}, ctx)).toEqual({
             errors: [],
-            values: [{...mockStandardValue, value: null}]
+            values: [{...mockStandardValue, payload: null}]
         });
     });
 });

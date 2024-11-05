@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {asFunction, AwilixContainer} from 'awilix';
@@ -23,12 +23,20 @@ interface IExecuteMigrationParams {
 }
 
 export default async (params: IExecuteMigrationParams): Promise<void> => {
+    const FILE_EXTENSION_REGEX = /\.[^/.]+$/;
     const {files, executedMigrations, migrationsDir, prefix = null, deps, ctx} = params;
 
     for (const file of files) {
-        // Check if it's been run before
         const fileKey = prefix ? [prefix, file].join('/') : file;
-        if (typeof (executedMigrations as []).find(el => el === fileKey) === 'undefined') {
+
+        const fileKeyWithoutExtension = fileKey.replace(FILE_EXTENSION_REGEX, '');
+
+        // Check if it's been run before
+        if (
+            !executedMigrations.find(
+                executedFileKey => executedFileKey.replace(FILE_EXTENSION_REGEX, '') === fileKeyWithoutExtension
+            )
+        ) {
             const importedFile = await loadMigrationFile(migrationsDir + '/' + file);
 
             if (typeof importedFile.default !== 'function') {
@@ -45,7 +53,7 @@ export default async (params: IExecuteMigrationParams): Promise<void> => {
                 // Store migration execution to DB
                 const collection = deps.dbService.db.collection(MIGRATIONS_COLLECTION_NAME);
                 await collection.save({
-                    file: fileKey,
+                    file: fileKeyWithoutExtension,
                     date: Date.now()
                 });
             } catch (err) {

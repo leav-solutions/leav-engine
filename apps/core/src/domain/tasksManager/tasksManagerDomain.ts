@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
@@ -41,9 +41,9 @@ export interface IUpdateData {
     progress?: {percent?: number; description?: ISystemTranslation};
     startedAt?: number;
     completedAt?: number;
-    link?: {name: string | null; url: string | null};
+    link?: {name: string; url: string};
     workerId?: number;
-    canceledBy?: string | null;
+    canceledBy?: string;
     archive?: boolean;
     callbacks?: ITaskCallback[];
 }
@@ -62,7 +62,7 @@ export interface ITasksManagerDomain {
     initMaster(): Promise<NodeJS.Timer>;
     initWorker(): Promise<void>;
     getTasks({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>>;
-    setLink(taskId: string | null, link: {name: string | null; url: string | null}, ctx: IQueryInfos): Promise<void>;
+    setLink(taskId: string, link: {name: string; url: string}, ctx: IQueryInfos): Promise<void>;
     updateProgress(
         taskId: string | null,
         progress: {percent?: number; description?: ISystemTranslation},
@@ -73,27 +73,27 @@ export interface ITasksManagerDomain {
     deleteTasks(tasks: ITaskDeletePayload[], ctx: IQueryInfos): Promise<void>;
 }
 
-interface IDeps {
-    config?: Config.IConfig;
-    'core.infra.amqpService'?: IAmqpService;
-    'core.infra.task'?: ITaskRepo;
-    'core.depsManager'?: AwilixContainer;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.utils.logger'?: winston.Winston;
-    'core.utils'?: IUtils;
+export interface ITasksManagerDomainDeps {
+    config: Config.IConfig;
+    'core.infra.amqpService': IAmqpService;
+    'core.infra.task': ITaskRepo;
+    'core.depsManager': AwilixContainer;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.utils.logger': winston.Winston;
+    'core.utils': IUtils;
 }
 
 type DepsManagerFunc = <T extends any[]>(...args: [...args: T, task: ITaskFuncParams] | [...args: T]) => Promise<any>;
 
 export default function ({
-    config = null,
-    'core.infra.amqpService': amqpService = null,
-    'core.infra.task': taskRepo = null,
-    'core.depsManager': depsManager = null,
-    'core.domain.eventsManager': eventsManager = null,
-    'core.utils.logger': logger = null,
-    'core.utils': utils = null
-}: IDeps): ITasksManagerDomain {
+    config,
+    'core.infra.amqpService': amqpService,
+    'core.infra.task': taskRepo,
+    'core.depsManager': depsManager,
+    'core.domain.eventsManager': eventsManager,
+    'core.utils.logger': logger,
+    'core.utils': utils
+}: ITasksManagerDomainDeps): ITasksManagerDomain {
     const tag = `${process.pid}_${nanoid(3)}`;
 
     const workerCtx = {
@@ -271,7 +271,7 @@ export default function ({
         }
     };
 
-    const _updateTask = async (taskId: string | null, data: IUpdateData, ctx: IQueryInfos): Promise<ITask> => {
+    const _updateTask = async (taskId: string, data: IUpdateData, ctx: IQueryInfos): Promise<ITask> => {
         let task = (await _getTasks({params: {filters: {id: taskId}}, ctx})).list[0];
 
         if (!task) {
@@ -294,12 +294,12 @@ export default function ({
         return task;
     };
 
-    const _attachWorker = async (taskId: string | null, workerId: number, ctx: IQueryInfos): Promise<void> => {
+    const _attachWorker = async (taskId: string, workerId: number, ctx: IQueryInfos): Promise<void> => {
         await _updateTask(taskId, {workerId}, ctx);
     };
 
-    const _detachWorker = async (taskId: string | null, ctx: IQueryInfos): Promise<void> => {
-        await _updateTask(taskId, {workerId: null}, ctx);
+    const _detachWorker = async (taskId: string, ctx: IQueryInfos): Promise<void> => {
+        await _updateTask(taskId, {}, ctx);
     };
 
     const _getTasks = async ({params, ctx}: {params: IGetTasksParams; ctx: IQueryInfos}): Promise<IList<ITask>> => {
@@ -317,7 +317,7 @@ export default function ({
     }: {
         moduleName: string | null;
         subModuleName?: string | null;
-        funcName: string | null;
+        funcName: string;
     }): DepsManagerFunc => {
         const func: DepsManagerFunc = depsManager.resolve(
             `core.${moduleName}${!!subModuleName ? `.${subModuleName}` : ''}`
@@ -448,7 +448,7 @@ export default function ({
         }
     };
 
-    const _sendOrder = async (routingKey: string | null, payload: Payload, ctx: IQueryInfos): Promise<void> => {
+    const _sendOrder = async (routingKey: string, payload: Payload, ctx: IQueryInfos): Promise<void> => {
         await amqpService.publish(
             config.amqp.exchange,
             routingKey,
@@ -457,6 +457,8 @@ export default function ({
     };
 
     const _listenExecOrders = async () => {
+        await amqpService.consumer.channel.assertQueue(config.tasksManager.queues.execOrders);
+
         await amqpService.consume(
             config.tasksManager.queues.execOrders,
             config.tasksManager.routingKeys.execOrders,
@@ -499,7 +501,6 @@ export default function ({
                 config.amqp.exchange,
                 config.tasksManager.routingKeys.execOrders
             );
-
             return _monitorTasks({
                 userId: config.defaultUserId,
                 queryId: 'TasksManagerDomain'
@@ -529,7 +530,7 @@ export default function ({
             );
         },
         async updateProgress(
-            taskId: string | null,
+            taskId: string,
             progress: {percent?: number; description?: ISystemTranslation},
             ctx: IQueryInfos
         ): Promise<void> {
@@ -541,11 +542,7 @@ export default function ({
 
             await _updateTask(taskId, {progress}, ctx);
         },
-        async setLink(
-            taskId: string | null,
-            link: {name: string | null; url: string | null},
-            ctx: IQueryInfos
-        ): Promise<void> {
+        async setLink(taskId, link, ctx) {
             await _updateTask(taskId, {link}, ctx);
         }
     };

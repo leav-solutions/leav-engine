@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction} from '@leav/utils';
@@ -29,27 +29,27 @@ export interface IVersionProfileDomain {
     getAttributesUsingProfile(params: {id: string; ctx: IQueryInfos}): Promise<IAttribute[]>;
 }
 
-interface IDeps {
-    'core.domain.permission.admin'?: IAdminPermissionDomain;
-    'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.infra.versionProfile'?: IVersionProfileRepo;
-    'core.infra.tree'?: ITreeRepo;
-    'core.infra.attribute'?: IAttributeRepo;
-    'core.infra.cache.cacheService'?: ICachesService;
-    'core.utils'?: IUtils;
+export interface IVersionProfileDomainDeps {
+    'core.domain.permission.admin': IAdminPermissionDomain;
+    'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.infra.versionProfile': IVersionProfileRepo;
+    'core.infra.tree': ITreeRepo;
+    'core.infra.attribute': IAttributeRepo;
+    'core.infra.cache.cacheService': ICachesService;
+    'core.utils': IUtils;
 }
 
 export default function ({
     'core.domain.permission.admin': adminPermissionDomain,
     'core.domain.helpers.getCoreEntityById': getCoreEntityById,
-    'core.domain.eventsManager': eventsManagerDomain = null,
-    'core.infra.versionProfile': versionProfileRepo = null,
-    'core.infra.tree': treeRepo = null,
-    'core.infra.attribute': attributeRepo = null,
-    'core.infra.cache.cacheService': cacheService = null,
-    'core.utils': utils = null
-}: IDeps): IVersionProfileDomain {
+    'core.domain.eventsManager': eventsManagerDomain,
+    'core.infra.versionProfile': versionProfileRepo,
+    'core.infra.tree': treeRepo,
+    'core.infra.attribute': attributeRepo,
+    'core.infra.cache.cacheService': cacheService,
+    'core.utils': utils
+}: IVersionProfileDomainDeps): IVersionProfileDomain {
     return {
         async getVersionProfiles({params, ctx}) {
             const initializedParams = {...params};

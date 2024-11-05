@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getCallStack} from '@leav/utils';
@@ -71,18 +71,14 @@ export interface IDbService {
     analyzers?(): Promise<Analyzer[]>;
 }
 
-interface IDeps {
-    'core.infra.db'?: Database;
-    'core.utils'?: IUtils;
-    config?: IConfig;
+export interface IDbServiceDeps {
+    'core.infra.db': Database;
+    'core.utils': IUtils;
+    config: IConfig;
 }
 
-export default function({
-    'core.infra.db': db = null,
-    'core.utils': utils = null,
-    config = null
-}: IDeps = {}): IDbService {
-    const collectionExists = async function(name: string): Promise<boolean> {
+export default function ({'core.infra.db': db, 'core.utils': utils, config}: IDbServiceDeps): IDbService {
+    const collectionExists = async function (name: string): Promise<boolean> {
         const collections = await db.listCollections();
 
         return collections.reduce((exists, c) => exists || c.name === name, false);
@@ -110,9 +106,7 @@ export default function({
 
                     // Generate a hash from the query to be able
                     // to group identical queries (exact same query with exact same params)
-                    const queryKey = createHash('md5')
-                        .update(JSON.stringify(query))
-                        .digest('base64');
+                    const queryKey = createHash('md5').update(JSON.stringify(query)).digest('base64');
 
                     if (!dbProfiler.queries) {
                         dbProfiler.queries = {};

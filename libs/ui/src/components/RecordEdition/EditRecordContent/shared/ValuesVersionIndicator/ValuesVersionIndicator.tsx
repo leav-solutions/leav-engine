@@ -1,11 +1,11 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {theme} from 'antd';
 import {GlobalToken} from 'antd/lib/theme/interface';
 import styled, {CSSObject} from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
-import {FieldScope} from '../../_types';
+import {VersionFieldScope} from '../../_types';
 
 const Indicator = styled.div<{$isCurrentVersion: boolean; $style: CSSObject; $themeToken: GlobalToken}>`
     position: absolute;
@@ -28,12 +28,12 @@ const Indicator = styled.div<{$isCurrentVersion: boolean; $style: CSSObject; $th
 `;
 
 interface IValuesVersionIndicatorProps {
-    activeScope: FieldScope;
+    activeScope: VersionFieldScope;
     style?: CSSObject;
 }
 
 function ValuesVersionIndicator({activeScope, style}: IValuesVersionIndicatorProps): JSX.Element {
-    const isCurrentVersion = activeScope === FieldScope.CURRENT;
+    const isCurrentVersion = activeScope === VersionFieldScope.CURRENT;
     const {token} = theme.useToken();
 
     return <Indicator $isCurrentVersion={isCurrentVersion} $style={style} $themeToken={token} />;

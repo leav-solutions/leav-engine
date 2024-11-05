@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
@@ -17,9 +17,10 @@ import {IRecordIdentity, IRecordIdentityWhoAmI} from '_ui/types/records';
 import {ITreeNodeWithRecord} from '_ui/types/trees';
 import {IValueVersion} from '_ui/types/values';
 import {RecordFormAttributeFragment, SaveValueBatchMutation, ValueDetailsFragment, ValueInput} from '_ui/_gqlTypes';
-import {IRecordPropertyAttribute, RecordProperty} from '_ui/_queries/records/getRecordPropertiesQuery';
+import {RecordProperty} from '_ui/_queries/records/getRecordPropertiesQuery';
 import {RecordFormElementFragment} from '../../../_gqlTypes';
 import {IStandardFieldReducerState, IStandardFieldValue} from './reducers/standardFieldReducer/standardFieldReducer';
+import {FormInstance} from 'antd/lib/form/Form';
 
 export interface IValueToSubmit {
     attribute: string;
@@ -112,7 +113,7 @@ export type FormElement<SettingsType> = Override<
         values: RecordFormElementsValue[];
     }
 > & {
-    uiElement: (props: IFormElementProps<unknown>) => JSX.Element;
+    uiElement: (props: IFormElementProps<unknown> & {antdForm?: FormInstance}) => JSX.Element;
 };
 
 export interface IDependencyValues {
@@ -134,7 +135,7 @@ export type InputRefPossibleTypes = InputRef | typeof DatePicker | typeof Checkb
 
 export type StandardValueTypes = AnyPrimitive | IDateRangeValue;
 
-export enum FieldScope {
+export enum VersionFieldScope {
     INHERITED = 'INHERITED', // inherited values
     CURRENT = 'CURRENT' // values of "current" version, eg. the version selected in the form
 }
@@ -142,11 +143,11 @@ export enum FieldScope {
 export interface ICommonFieldsReducerState<ValuesType> {
     record: IRecordIdentityWhoAmI;
     formElement: FormElement<IRequiredFieldsSettings>;
-    attribute: IRecordPropertyAttribute;
+    attribute: RecordFormAttributeFragment;
     isReadOnly: boolean;
-    activeScope: FieldScope;
+    activeScope: VersionFieldScope;
     values: {
-        [scope in FieldScope]: {
+        [scope in VersionFieldScope]: {
             version: IValueVersion;
             values: ValuesType;
         } | null;

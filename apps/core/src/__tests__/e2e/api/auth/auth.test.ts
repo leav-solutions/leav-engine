@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import axios from 'axios';
@@ -26,7 +26,7 @@ describe('Auth', () => {
                 id
                 login: property(attribute: "login") {
                     ...on Value {
-                        value
+                        payload
                     }
                 }
             }
@@ -34,6 +34,6 @@ describe('Auth', () => {
 
         expect(res.status).toBe(200);
         expect(res.data.data.me.id).toBeTruthy();
-        expect(res.data.data.me.login[0].value).toBeTruthy();
+        expect(res.data.data.me.login[0].payload).toBeTruthy();
     });
 });

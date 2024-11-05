@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
@@ -120,7 +120,7 @@ describe('TreeNodePermissions', () => {
                 recordId: "${elementsTreeRecord1}"
                 attribute: "${treeAttrID}"
                 value: {
-                    value: "${nodePermissionsRecord1}"
+                    payload: "${nodePermissionsRecord1}"
                 }
             ) {
                 id_value

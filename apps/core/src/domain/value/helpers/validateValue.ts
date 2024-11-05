@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
@@ -55,7 +55,7 @@ const _validateLinkedRecord = async (
             {
                 attributes: [{...idAttrProps, reverse_link: reverseLink}],
                 condition: AttributeCondition.EQUAL,
-                value: value.value
+                value: value.payload
             }
         ],
         ctx
@@ -67,7 +67,7 @@ const _validateLinkedRecord = async (
               isValid: false,
               reason: {
                   msg: Errors.UNKNOWN_LINKED_RECORD,
-                  vars: {record: value.value, library: attribute.linked_library}
+                  vars: {record: value.payload, library: attribute.linked_library}
               }
           };
 };
@@ -78,7 +78,7 @@ const _validateTreeLinkedRecord = async (
     deps: {attributeDomain: IAttributeDomain; recordRepo: IRecordRepo; treeRepo: ITreeRepo},
     ctx: IQueryInfos
 ): Promise<ILinkRecordValidationResult> => {
-    const nodeId = value.value;
+    const nodeId = value.payload;
 
     const isElementInTree = await deps.treeRepo.isNodePresent({
         treeId: attribute.linked_tree,
@@ -89,7 +89,7 @@ const _validateTreeLinkedRecord = async (
     if (!isElementInTree) {
         return {
             isValid: false,
-            reason: {msg: Errors.ELEMENT_NOT_IN_TREE, vars: {element: value.value, tree: attribute.linked_tree}}
+            reason: {msg: Errors.ELEMENT_NOT_IN_TREE, vars: {element: value.payload, tree: attribute.linked_tree}}
         };
     }
 
@@ -204,7 +204,7 @@ export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IV
     const metadataErrors = _validateMetadata(attributeProps, params.value);
     errors = {...errors, ...metadataErrors};
 
-    if (_mustCheckLinkedRecord(attributeProps) && value.value !== null) {
+    if (_mustCheckLinkedRecord(attributeProps) && value.payload !== null) {
         const linkedRecordValidationHandler: {
             [type: string]: (
                 value: IValue,

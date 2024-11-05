@@ -1,18 +1,18 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IPermissionRepo} from 'infra/permission/permissionRepo';
 import {IGetPermissionsByActionsParams} from '../_types';
 
 interface IDeps {
-    'core.infra.permission'?: IPermissionRepo;
+    'core.infra.permission': IPermissionRepo;
 }
 
 export interface IPermissionsByActionsHelper {
     getPermissionsByActions: (params: IGetPermissionsByActionsParams) => Promise<{[name: string]: boolean | null}>;
 }
 
-export default function ({'core.infra.permission': permissionRepo = null}: IDeps): IPermissionsByActionsHelper {
+export default function ({'core.infra.permission': permissionRepo}: IDeps): IPermissionsByActionsHelper {
     return {
         async getPermissionsByActions({
             type,

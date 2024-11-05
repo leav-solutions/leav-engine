@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IValidateHelper} from 'domain/helpers/validate';
@@ -10,7 +10,6 @@ import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
-import {IUserDomain} from 'domain/user/userDomain';
 
 export interface IViewDomain {
     saveView(view: IView, ctx: IQueryInfos): Promise<IView>;
@@ -19,20 +18,18 @@ export interface IViewDomain {
     deleteView(viewId: string, ctx: IQueryInfos): Promise<IView>;
 }
 
-interface IViewDomainDeps {
-    'core.domain.helpers.validate'?: IValidateHelper;
-    'core.domain.tree'?: ITreeDomain;
-    'core.domain.user'?: IUserDomain;
-    'core.infra.view'?: IViewRepo;
-    'core.utils'?: IUtils;
+export interface IViewDomainDeps {
+    'core.domain.helpers.validate': IValidateHelper;
+    'core.domain.tree': ITreeDomain;
+    'core.infra.view': IViewRepo;
+    'core.utils': IUtils;
 }
 
 export default function ({
-    'core.domain.helpers.validate': validationHelper = null,
-    'core.domain.user': userDomain = null,
-    'core.domain.tree': treeDomain = null,
-    'core.infra.view': viewRepo = null,
-    'core.utils': utils = null
+    'core.domain.helpers.validate': validationHelper,
+    'core.domain.tree': treeDomain,
+    'core.infra.view': viewRepo,
+    'core.utils': utils
 }: IViewDomainDeps): IViewDomain {
     return {
         async saveView(view: IView, ctx: IQueryInfos): Promise<IView> {

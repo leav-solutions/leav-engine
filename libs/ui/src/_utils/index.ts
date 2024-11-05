@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from '@apollo/client';
@@ -43,13 +43,13 @@ export const objectValueVersionToArray = (version: IValueVersion): ValueVersionI
 export const extractPermissionFromQuery = (
     queryResult: ReturnType<typeof useIsAllowedQuery>,
     action: PermissionsActions,
-    fallbackPermission: boolean = false
+    fallbackPermission = false
 ): boolean =>
     !queryResult.loading && !queryResult.error
-        ? queryResult.data?.isAllowed?.find(permission => permission.name === action)?.allowed ?? fallbackPermission
+        ? (queryResult.data?.isAllowed?.find(permission => permission.name === action)?.allowed ?? fallbackPermission)
         : fallbackPermission;
 
-export const getPreviewSize = (size?: PreviewSize, simplistic: boolean = false) => {
+export const getPreviewSize = (size?: PreviewSize, simplistic = false) => {
     if (simplistic) {
         return '1.2rem';
     }

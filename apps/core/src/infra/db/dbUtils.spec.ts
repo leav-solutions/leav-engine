@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, Database} from 'arangojs';
@@ -263,7 +263,7 @@ describe('dbUtils', () => {
             testDbUtils.cleanup = jest.fn();
             testDbUtils.convertToDoc = jest.fn();
 
-            mockDbServ = {db: null, execute: global.__mockPromise([])};
+            mockDbServ = {execute: global.__mockPromise([])};
             const res = await testDbUtils.findCoreEntity<ITree>({
                 collectionName: TREES_COLLECTION_NAME,
                 ctx

@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {UserCoreDataKeys, IUserDomain} from '../../domain/user/userDomain';
@@ -11,10 +11,10 @@ export interface ICoreImportApp {
 }
 
 interface IDeps {
-    'core.domain.user'?: IUserDomain;
+    'core.domain.user': IUserDomain;
 }
 
-export default function ({'core.domain.user': userDomain = null}: IDeps = {}): ICoreImportApp {
+export default function ({'core.domain.user': userDomain}: IDeps): ICoreImportApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {

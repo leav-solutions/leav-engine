@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ErrorFieldDetail, ErrorTypes} from '../_types/errors';
@@ -21,7 +21,7 @@ export default class LeavError<T> extends Error {
     public type: ErrorTypes;
     public record?: ILeavErrorRecord;
 
-    public constructor(type: ErrorTypes, message: string = 'Action forbidden', details?: ILeavErrorDetails) {
+    public constructor(type: ErrorTypes, message = 'Action forbidden', details?: ILeavErrorDetails) {
         super(message);
 
         this.type = type;

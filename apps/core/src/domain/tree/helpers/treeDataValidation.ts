@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ILibraryRepo} from 'infra/library/libraryRepo';
@@ -15,14 +15,11 @@ export interface ITreeDataValidationHelper {
 }
 
 interface IDeps {
-    'core.infra.library'?: ILibraryRepo;
-    'core.utils'?: IUtils;
+    'core.infra.library': ILibraryRepo;
+    'core.utils': IUtils;
 }
 
-export default function ({
-    'core.infra.library': libraryRepo = null,
-    'core.utils': utils = null
-}: IDeps): ITreeDataValidationHelper {
+export default function ({'core.infra.library': libraryRepo, 'core.utils': utils}: IDeps): ITreeDataValidationHelper {
     const _validateId = (treeData: ITree) => {
         if (!utils.isIdValid(treeData.id)) {
             throw new ValidationError({id: Errors.INVALID_ID_FORMAT});

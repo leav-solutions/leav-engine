@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, AqlQuery, GeneratedAqlQuery, join, literal} from 'arangojs/aql';
@@ -42,7 +42,7 @@ export default function ({
 
     const _buildLinkValue = (savedValue: IStandardValue, attribute: IAttribute): ILinkValue => ({
         ...savedValue,
-        value: savedValue.value !== null ? {id: savedValue.value, library: attribute.linked_library} : null
+        payload: savedValue.payload !== null ? {id: savedValue.payload, library: attribute.linked_library} : null
     });
 
     const _saveValue: IAttributeTypeRepo['createValue'] = async ({library, recordId, attribute, value, ctx}) => {
@@ -50,8 +50,8 @@ export default function ({
 
         const res = await dbService.execute<Array<{doc: IDbDocument; linkedRecord: IRecord}>>({
             query: aql`
-                    LET linkedRecord = DOCUMENT(${attribute.linked_library}, ${value.value})
-                    UPDATE ${{_key: recordId}} WITH ${{[attribute.id]: value.value}} IN ${collec}
+                    LET linkedRecord = DOCUMENT(${attribute.linked_library}, ${value.payload})
+                    UPDATE ${{_key: recordId}} WITH ${{[attribute.id]: value.payload}} IN ${collec}
                     OPTIONS { keepNull: false }
                     RETURN {doc: NEW, linkedRecord}`,
             ctx
@@ -60,7 +60,7 @@ export default function ({
         const updatedDoc = res.length ? res[0] : null;
 
         const savedVal = {
-            value: updatedDoc?.doc?.[attribute.id]
+            payload: updatedDoc?.doc?.[attribute.id]
                 ? {...dbUtils.cleanup(updatedDoc.linkedRecord), library: attribute.linked_library}
                 : null,
             created_by: null,
@@ -101,7 +101,7 @@ export default function ({
             const query = join(queryParts);
             const res = await dbService.execute({query, ctx});
 
-            return res.map(r => ({id_value: null, value: dbUtils.cleanup(r), created_by: null, modified_by: null}));
+            return res.map(r => ({id_value: null, payload: dbUtils.cleanup(r), created_by: null, modified_by: null}));
         },
         async getValues({library, recordId, attribute, ctx}): Promise<ILinkValue[]> {
             const libCollec = dbService.db.collection(library);
@@ -124,7 +124,7 @@ export default function ({
                 .map(r => ({
                     id_value: null,
                     library: attribute.linked_library,
-                    value: dbUtils.cleanup({...r, library: attribute.linked_library}),
+                    payload: dbUtils.cleanup({...r, library: attribute.linked_library}),
                     created_by: null,
                     modified_by: null
                 }));

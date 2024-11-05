@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
@@ -18,7 +18,7 @@ import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
 import fetch from 'cross-fetch';
 import {createClient} from 'graphql-ws';
-import useRefreshToken from 'hooks/useRefreshToken';
+import useRedirectToLogin from 'hooks/useRedirectToLogin';
 import {ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useDispatch} from 'react-redux';
@@ -27,14 +27,11 @@ import {endMutation, startMutation} from 'reduxStore/mutationsWatcher/mutationsW
 import {SemanticICONS} from 'semantic-ui-react';
 import * as yup from 'yup';
 import {ErrorTypes} from '_types/errors';
-import {API_ENDPOINT, APPS_ENDPOINT, LOGIN_ENDPOINT, ORIGIN_URL, UNAUTHENTICATED, WS_URL} from '../../../constants';
+import {API_ENDPOINT, ORIGIN_URL, UNAUTHENTICATED, WS_URL} from '../../../constants';
 
 interface IApolloHandlerProps {
     children: ReactNode;
 }
-
-const _redirectToLogin = () =>
-    window.location.replace(`${ORIGIN_URL}/${APPS_ENDPOINT}/${LOGIN_ENDPOINT}/?dest=${window.location.pathname}`);
 
 const gqlPossibleTypes: PossibleTypesMap = {
     Attribute: ['StandardAttribute', 'LinkAttribute', 'TreeAttribute'],
@@ -45,7 +42,7 @@ const gqlPossibleTypes: PossibleTypesMap = {
 const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
     const dispatch = useDispatch();
     const {t, i18n} = useTranslation();
-    const {refreshToken} = useRefreshToken();
+    const {redirectToLogin} = useRedirectToLogin();
 
     const _handleApolloError = onError(({graphQLErrors, networkError, operation, forward}) => {
         let title: string;
@@ -62,7 +59,8 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
             return new Observable(observer => {
                 (async () => {
                     try {
-                        await refreshToken();
+                        redirectToLogin();
+
                         // Retry last failed request
                         forward(operation).subscribe({
                             next: observer.next.bind(observer),
@@ -139,10 +137,13 @@ const ApolloHandler = ({children}: IApolloHandlerProps): JSX.Element => {
         })
     );
 
-    const splitLink = split(({query}) => {
-        const definition = getMainDefinition(query);
-        return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
-    }, (wsLink as unknown) as ApolloLink);
+    const splitLink = split(
+        ({query}) => {
+            const definition = getMainDefinition(query);
+            return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
+        },
+        wsLink as unknown as ApolloLink
+    );
 
     const gqlClient = new ApolloClient({
         link: ApolloLink.from([

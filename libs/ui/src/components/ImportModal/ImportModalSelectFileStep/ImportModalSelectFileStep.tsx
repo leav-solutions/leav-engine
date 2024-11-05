@@ -1,9 +1,9 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {extractArgsFromString} from '@leav/utils';
 import {message, Space, Spin} from 'antd';
-import {KitAlert, KitUpload} from 'aristid-ds';
+import {KitAlert, KitUpload, useKitNotification} from 'aristid-ds';
 import {IKitDragger} from 'aristid-ds/dist/Kit/DataEntry/Upload/types';
 import {useState} from 'react';
 import {read as xlsxRead, utils as xlsxUtils} from 'xlsx';
@@ -28,6 +28,7 @@ const defaultMode = ImportMode.upsert;
 
 function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStepsProps): JSX.Element {
     const {t} = useSharedTranslation();
+    const {kitNotification} = useKitNotification();
 
     const {state, dispatch} = useImportReducerContext();
     const {file} = state;
@@ -57,7 +58,8 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
                 const firstRowAddresses = Object.keys(workbook.Sheets[sheetName]).filter(
                     k => !!k.match(/\b[A-Z]+1\b/g)
                 );
-                const isMapped = !!workbook.Sheets[sheetName][firstRowAddresses[0]].c;
+
+                const isMapped = !!workbook.Sheets[sheetName][firstRowAddresses[0]]?.c;
 
                 // Mapping is present.
                 if (isMapped) {
@@ -179,11 +181,20 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
             reader.readAsBinaryString(fileToImport);
 
             reader.onload = async e => {
-                const res = await _setFileData(reader.result);
-                if (res) {
-                    dispatch({type: ImportReducerActionTypes.SET_FILE, file: fileToImport});
+                try {
+                    const res = await _setFileData(reader.result);
+
+                    if (res) {
+                        dispatch({type: ImportReducerActionTypes.SET_FILE, file: fileToImport});
+                    }
+                    dispatch({type: ImportReducerActionTypes.SET_OK_BTN, okBtn: res});
+                } catch (error) {
+                    const errorMessage = error?.message ?? t('error.error_occurred');
+                    kitNotification.error({
+                        message: t('error.error_occurred'),
+                        description: errorMessage
+                    });
                 }
-                dispatch({type: ImportReducerActionTypes.SET_OK_BTN, okBtn: res});
             };
 
             reader.onloadstart = e => {
@@ -192,6 +203,13 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
 
             reader.onloadend = e => {
                 setLoading(false);
+            };
+
+            reader.onerror = e => {
+                kitNotification.error({
+                    message: t('error.error_occurred'),
+                    description: reader.error?.message ?? ''
+                });
             };
 
             // Prevent default upload. We'll handle it ourselves later on

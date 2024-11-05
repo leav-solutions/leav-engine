@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from '@apollo/client';
@@ -6,11 +6,12 @@ import {recordIdentityFragment} from '../../gqlFragments';
 import {valuesVersionDetailsFragment} from './valuesVersionFragment';
 
 export const valueDetailsFragment = gql`
-    ${recordIdentityFragment} 
+    ${recordIdentityFragment}
     ${valuesVersionDetailsFragment}
     fragment ValueDetails on GenericValue {
         id_value
         isInherited
+        isCalculated
         modified_at
         modified_by {
             ...RecordIdentity
@@ -43,24 +44,26 @@ export const valueDetailsFragment = gql`
                 version {
                     ...ValuesVersionDetails
                 }
-                value
-                raw_value
+                payload
+                raw_payload
             }
         }
 
         ... on Value {
+            payload
+            raw_payload
             value
             raw_value
         }
 
         ... on LinkValue {
-            linkValue: value {
+            linkValue: payload {
                 ...RecordIdentity
             }
         }
 
         ... on TreeValue {
-            treeValue: value {
+            treeValue: payload {
                 id
                 record {
                     ...RecordIdentity

@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
@@ -78,7 +78,7 @@ describe('Versions', () => {
                     recordId: "${recordId}",
                     attribute: "${attrAdvName}",
                     value: {
-                        value: "TEST VAL 1",
+                        payload: "TEST VAL 1",
                         version: [
                             {
                                 treeId: "${treeName}",
@@ -96,7 +96,7 @@ describe('Versions', () => {
                     }
 
                     ... on Value {
-                        value
+                        payload
                     }
 
                 },
@@ -105,7 +105,7 @@ describe('Versions', () => {
                     recordId: "${recordId}",
                     attribute: "${attrAdvName}",
                     value: {
-                        value: "TEST VAL 2",
+                        payload: "TEST VAL 2",
                         version: [
                             {
                                 treeId: "${treeName}",
@@ -123,7 +123,7 @@ describe('Versions', () => {
                     }
 
                     ... on Value {
-                        value
+                        payload
                     }
 
                 }
@@ -153,7 +153,7 @@ describe('Versions', () => {
                         }
 
                         ... on Value {
-                            value
+                            payload
                         }
                     }
                 }
@@ -182,7 +182,7 @@ describe('Versions', () => {
                         }
 
                         ... on Value {
-                            value
+                            payload
                         }
                     }
                 }
@@ -212,7 +212,7 @@ describe('Versions', () => {
                         }
 
                         ... on Value {
-                            value
+                            payload
                         }
                     }
                 }

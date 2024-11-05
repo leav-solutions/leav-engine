@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PublishedEvent} from '@leav/utils';
@@ -45,26 +45,26 @@ export interface ITreeAttributeApp {
 }
 
 interface IDeps {
-    'core.domain.tree'?: ITreeDomain;
-    'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.permission'?: IPermissionDomain;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.app.graphql'?: IGraphqlApp;
-    'core.app.core'?: ICoreApp;
-    'core.app.core.subscriptionsHelper'?: ICoreSubscriptionsHelpersApp;
-    'core.domain.library'?: ILibraryDomain;
+    'core.domain.tree': ITreeDomain;
+    'core.domain.attribute': IAttributeDomain;
+    'core.domain.permission': IPermissionDomain;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.app.graphql': IGraphqlApp;
+    'core.app.core': ICoreApp;
+    'core.app.core.subscriptionsHelper': ICoreSubscriptionsHelpersApp;
+    'core.domain.library': ILibraryDomain;
 }
 
 export default function ({
-    'core.domain.tree': treeDomain = null,
-    'core.domain.attribute': attributeDomain = null,
-    'core.domain.permission': permissionDomain = null,
-    'core.domain.eventsManager': eventsManagerDomain = null,
-    'core.app.core': coreApp = null,
-    'core.app.graphql': graphqlApp = null,
-    'core.app.core.subscriptionsHelper': subscriptionsHelper = null,
-    'core.domain.library': libraryDomain = null
-}: IDeps = {}): ITreeAttributeApp {
+    'core.domain.tree': treeDomain,
+    'core.domain.attribute': attributeDomain,
+    'core.domain.permission': permissionDomain,
+    'core.domain.eventsManager': eventsManagerDomain,
+    'core.app.core': coreApp,
+    'core.app.graphql': graphqlApp,
+    'core.app.core.subscriptionsHelper': subscriptionsHelper,
+    'core.domain.library': libraryDomain
+}: IDeps): ITreeAttributeApp {
     /**
      * Retrieve parent tree attribute by recursively getting up on GraphQL query path.
      * We consider that the attribute is the first key that it's not one of our tree queries keys (ancestors, children,
@@ -73,7 +73,7 @@ export default function ({
      * @param path
      * @return string
      */
-    const _findParentAttribute = (path): string => {
+    const _findParentAttribute = (path): string | null => {
         const restrictedKeys = ['record', 'ancestors', 'children', 'value', 'treeValue'];
         if (!restrictedKeys.includes(path.key) && typeof path.key !== 'number') {
             return path.key;
@@ -400,7 +400,7 @@ export default function ({
 
                             const children = await treeDomain.getElementChildren({
                                 treeId,
-                                nodeId: node ?? null,
+                                nodeId: node,
                                 childrenCount: hasChildrenCount,
                                 withTotalCount,
                                 pagination,

@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ActionsListEvents} from '../../../../../_types/actionsList';
@@ -189,7 +189,7 @@ describe('inheritanceCalculationAction', () => {
                 list {
                     ${simpleAttributeId}: property(attribute: "${simpleAttributeId}") {
                         ...on Value {
-                            value
+                            payload
                             isInherited
                         }
                     }
@@ -201,7 +201,7 @@ describe('inheritanceCalculationAction', () => {
         expect(res.status).toBe(200);
 
         const inheritedValue = res.data.data.records.list[0][simpleAttributeId].find(v => v.isInherited);
-        expect(inheritedValue.value).toBe('text value');
+        expect(inheritedValue.payload).toBe('text value');
     });
 
     test('Inherit values on advanced attribute', async () => {
@@ -213,7 +213,7 @@ describe('inheritanceCalculationAction', () => {
                 list {
                     ${advancedAttributeId}: property(attribute: "${advancedAttributeId}") {
                         ...on Value {
-                            value
+                            payload
                         }
                     }
                 }
@@ -222,7 +222,7 @@ describe('inheritanceCalculationAction', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data.records.list[0][advancedAttributeId][0].value).toBe('text value');
+        expect(res.data.data.records.list[0][advancedAttributeId][0].payload).toBe('text value');
     });
 
     test('Inherit values on simple link attribute', async () => {
@@ -234,7 +234,7 @@ describe('inheritanceCalculationAction', () => {
                 list {
                     ${simpleLinkAttributeId}: property(attribute: "${simpleLinkAttributeId}") {
                         ...on LinkValue {
-                            value {
+                            payload {
                                 id
                                 library {
                                     id
@@ -248,8 +248,8 @@ describe('inheritanceCalculationAction', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data.records.list[0][simpleLinkAttributeId][0].value.id).toBe('1');
-        expect(res.data.data.records.list[0][simpleLinkAttributeId][0].value.library.id).toBe('users');
+        expect(res.data.data.records.list[0][simpleLinkAttributeId][0].payload.id).toBe('1');
+        expect(res.data.data.records.list[0][simpleLinkAttributeId][0].payload.library.id).toBe('users');
     });
 
     test('Inherit values on advanced link attribute', async () => {
@@ -261,7 +261,7 @@ describe('inheritanceCalculationAction', () => {
                 list {
                     ${advancedLinkAttributeId}: property(attribute: "${advancedLinkAttributeId}") {
                         ...on LinkValue {
-                            value {
+                            payload {
                                 id
                                 library {
                                     id
@@ -275,8 +275,8 @@ describe('inheritanceCalculationAction', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data.records.list[0][advancedLinkAttributeId][0].value.id).toBe('1');
-        expect(res.data.data.records.list[0][advancedLinkAttributeId][0].value.library.id).toBe('users');
+        expect(res.data.data.records.list[0][advancedLinkAttributeId][0].payload.id).toBe('1');
+        expect(res.data.data.records.list[0][advancedLinkAttributeId][0].payload.library.id).toBe('users');
     });
 
     test('Inherit values on tree attribute', async () => {
@@ -288,7 +288,7 @@ describe('inheritanceCalculationAction', () => {
                 list {
                     ${treeAttributeId}: property(attribute: "${treeAttributeId}") {
                         ...on TreeValue {
-                            value {
+                            payload {
                                 id
                                 record {
                                     id
@@ -305,9 +305,9 @@ describe('inheritanceCalculationAction', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data.records.list[0][treeAttributeId][0].value.id).toBe('2');
-        expect(res.data.data.records.list[0][treeAttributeId][0].value.record.id).toBe('2');
-        expect(res.data.data.records.list[0][treeAttributeId][0].value.record.library.id).toBe('users_groups');
+        expect(res.data.data.records.list[0][treeAttributeId][0].payload.id).toBe('2');
+        expect(res.data.data.records.list[0][treeAttributeId][0].payload.record.id).toBe('2');
+        expect(res.data.data.records.list[0][treeAttributeId][0].payload.record.library.id).toBe('users_groups');
     });
 
     test('If no record to inherit from, return no value', async () => {
@@ -319,7 +319,7 @@ describe('inheritanceCalculationAction', () => {
                 list {
                     ${simpleAttributeId}: property(attribute: "${simpleAttributeId}") {
                         ...on Value {
-                            value
+                            payload
                         }
                     }
 
@@ -332,6 +332,6 @@ describe('inheritanceCalculationAction', () => {
 
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
-        expect(res.data.data.records.list[0][simpleAttributeId][0].value).toBeNull();
+        expect(res.data.data.records.list[0][simpleAttributeId][0].payload).toBeNull();
     });
 });

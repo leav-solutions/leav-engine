@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IApiKeyDomain} from 'domain/apiKey/apiKeyDomain';
@@ -15,13 +15,13 @@ export interface ICoreVersionProfileApp {
 }
 
 interface IDeps {
-    'core.domain.apiKey'?: IApiKeyDomain;
-    'core.domain.record'?: IRecordDomain;
+    'core.domain.apiKey': IApiKeyDomain;
+    'core.domain.record': IRecordDomain;
 }
 
 export default function ({
-    'core.domain.apiKey': apiKeyDomain = null,
-    'core.domain.record': recordDomain = null
+    'core.domain.apiKey': apiKeyDomain,
+    'core.domain.record': recordDomain
 }: IDeps): ICoreVersionProfileApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {

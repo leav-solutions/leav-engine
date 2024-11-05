@@ -1,12 +1,12 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
 import {MonoValueSelect} from './MonoValueSelect';
 import {mockFormElementInput, mockFormElementLink} from '_ui/__mocks__/common/form';
 import {LinkFieldReducerState} from '../LinkField';
-import {mockAttributeLink} from '_ui/__mocks__/common/attribute';
-import {APICallStatus, FieldScope} from '../../../_types';
+import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
+import {APICallStatus, VersionFieldScope} from '../../../_types';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {AntForm} from 'aristid-ds';
 import userEvent from '@testing-library/user-event';
@@ -134,12 +134,12 @@ describe('<MonoValueSelect />', () => {
                 required: true
             }
         },
-        attribute: mockAttributeLink,
+        attribute: mockFormAttribute,
         isReadOnly: false,
-        activeScope: FieldScope.CURRENT,
+        activeScope: VersionFieldScope.CURRENT,
         values: {
-            [FieldScope.CURRENT]: null,
-            [FieldScope.INHERITED]: null
+            [VersionFieldScope.CURRENT]: null,
+            [VersionFieldScope.INHERITED]: null
         }
     };
 
@@ -257,7 +257,6 @@ describe('<MonoValueSelect />', () => {
                         activeValue={activeValue}
                         attribute={mockFormElementLink.attribute}
                         label={state.formElement.settings.label.en}
-                        required={false}
                         onSelectChange={onSelectChangeMock}
                         onSelectClear={onClearSelectMock}
                     />

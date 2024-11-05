@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Modal} from 'antd';
@@ -145,10 +145,10 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
                 <KitSpace size="xxs">
                     <KitButton
                         ref={valuesVersionsButtonRef}
-                        type="text"
+                        type="tertiary"
                         icon={<FontAwesomeIcon icon={faLayerGroup} />}
                     />
-                    <KitButton ref={refreshButtonRef} type="text" icon={<FontAwesomeIcon icon={faRotateRight} />} />
+                    <KitButton ref={refreshButtonRef} type="tertiary" icon={<FontAwesomeIcon icon={faRotateRight} />} />
                 </KitSpace>
             </Header>
             <EditRecord

@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedResponse} from '@apollo/client/testing';
@@ -14,7 +14,7 @@ import {mockTree} from '__mocks__/trees';
 import TreeStructure from './TreeStructure';
 
 describe('TreeStructure', () => {
-    const _renderTreeStructure = (tree: GET_TREES_trees_list, readOnly: boolean = false, mocks?: MockedResponse[]) => {
+    const _renderTreeStructure = (tree: GET_TREES_trees_list, readOnly = false, mocks?: MockedResponse[]) => {
         render(
             <DndProvider backend={TestBackend}>
                 <TreeStructure tree={tree} readOnly={readOnly} />

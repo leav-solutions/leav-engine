@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export interface IKeyValue<T> {
@@ -16,4 +16,8 @@ export type WithTypename<T> = {
     readonly __typename?: string;
 };
 
-export type Mockify<T> = {[P in keyof T]?: T[P] extends (...args: any) => any ? jest.Mock : T[P]};
+export type Mockify<T> = {
+    [P in keyof T]?: T[P] extends (...args: any[]) => any
+        ? jest.Mock<ReturnType<T[P]> extends never ? never : any>
+        : T[P];
+};

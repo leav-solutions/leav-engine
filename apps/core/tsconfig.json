@@ -1,11 +1,12 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "types": ["jest", "node", "@types/jest"],
+        "types": ["jest", "node"],
         "baseUrl": "src",
         "outDir": "dist",
         "isolatedModules": false,
-        "typeRoots": ["./src/_types"]
+        "typeRoots": ["./src/_types", "./node_modules/@types"]/* ,
+        "strictNullChecks": true */
     },
     "exclude": [
         "applications"

@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IGlobalSettingsDomain} from 'domain/globalSettings/globalSettingsDomain';
@@ -13,9 +13,9 @@ export interface IMailerService {
 }
 
 interface IDeps {
-    config?: IConfig;
-    'core.domain.globalSettings'?: IGlobalSettingsDomain;
-    'core.infra.mailer'?: nodemailer.Transporter;
+    config: IConfig;
+    'core.domain.globalSettings': IGlobalSettingsDomain;
+    'core.infra.mailer': nodemailer.Transporter;
 }
 
 interface ISendMailParams {
@@ -27,10 +27,10 @@ interface ISendMailParams {
 }
 
 export default function ({
-    config = null,
-    'core.domain.globalSettings': globalSettingsDomain = null,
-    'core.infra.mailer': mailer = null
-}: IDeps = {}): IMailerService {
+    config,
+    'core.domain.globalSettings': globalSettingsDomain,
+    'core.infra.mailer': mailer
+}: IDeps): IMailerService {
     return {
         mailer,
         async sendEmail({to, subject, text, html, attachments}, ctx): Promise<void> {

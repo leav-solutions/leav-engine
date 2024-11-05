@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IValue} from '_types/value';
@@ -6,7 +6,7 @@ import {IValue} from '_types/value';
 const _getInheritedValues = (values: IValue[]) => values.filter(value => value && value.isInherited);
 
 const _getNotInheritedOrOverrideValues = (values: IValue[]) =>
-    values.filter(value => value && !value.isInherited && value.value !== null);
+    values.filter(value => value && !value.isInherited && value.payload !== null);
 
 export const getValuesToDisplay = (values: IValue[]): IValue[] => {
     const notInheritedOrOverrideValues = _getNotInheritedOrOverrideValues(values);

@@ -1,10 +1,12 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import moment from 'moment';
 import {IDateRangeValue} from '_types/value';
 import {ActionsListIOTypes, IActionsListFunction, IActionsListFunctionResult} from '../../_types/actionsList';
 import {Errors} from '../../_types/errors';
+import cloneDeep from 'lodash/cloneDeep';
+import {TypeGuards} from '../../utils/typeGuards';
 
 const defaultValueLocalizedParam = `{
   "weekday": "long",
@@ -41,23 +43,31 @@ export default function (): IActionsListFunction<{localized: false; universal: f
         action: (values, {localized, universal}, {lang}) => {
             const errors: IActionsListFunctionResult['errors'] = [];
 
-            const formattedValues = values.map(elementValue => {
-                const dateRangeValue = elementValue.value as IDateRangeValue<number>;
+            const formattedValues = cloneDeep(values).map(elementValue => {
+                if (!TypeGuards.isIStandardValue(elementValue)) {
+                    errors.push({
+                        errorType: Errors.INVALID_VALUES,
+                        attributeValue: elementValue,
+                        message: 'Non standard value received in formatDateRange.'
+                    });
+                    return elementValue;
+                }
+                const dateRangeValue = elementValue.raw_payload as IDateRangeValue<number>;
 
                 if (dateRangeValue === null || !dateRangeValue.from || !dateRangeValue.to) {
-                    return {...dateRangeValue, value: null};
+                    return {...dateRangeValue, payload: null};
                 }
 
                 const {from: numberValFrom, to: numberValTo} = dateRangeValue;
 
                 if (isNaN(Number(numberValFrom)) || isNaN(Number(numberValTo))) {
-                    return {...dateRangeValue, value: ['', '']};
+                    return {...dateRangeValue, payload: ['', '']};
                 }
 
                 if ((localized === null || localized === undefined) && universal) {
                     return {
                         ...dateRangeValue,
-                        value: {
+                        payload: {
                             from: moment.unix(numberValFrom).format(universal),
                             to: moment.unix(numberValTo).format(universal)
                         }
@@ -66,25 +76,24 @@ export default function (): IActionsListFunction<{localized: false; universal: f
 
                 let options: Intl.DateTimeFormatOptions = {};
                 try {
-                    options = JSON.parse(localized ?? {});
+                    options = JSON.parse(localized ?? '{}');
                 } catch (e) {
-                    // TODO: rise error to inform user without break app
                     errors.push({
                         errorType: Errors.FORMAT_ERROR,
-                        attributeValue: {value: localized},
+                        attributeValue: {payload: localized},
                         message:
                             'Params "localized" of FormatDateAction are invalid JSON. Use `{}` empty option instead.'
                     });
                 }
 
-                elementValue.value = {
+                elementValue.payload = {
                     from: new Date(numberValFrom * 1_000).toLocaleString(lang, options),
                     to: new Date(numberValTo * 1_000).toLocaleString(lang, options)
                 };
                 return elementValue;
             });
 
-            return {values: formattedValues, errors: []};
+            return {values: formattedValues, errors};
         }
     };
 }

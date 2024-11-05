@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import cloneDeep from 'lodash/cloneDeep';
@@ -7,7 +7,7 @@ import {defaultContainerId, IFormBuilderActionSaveSettings, IFormBuilderState} f
 import getKeyFromDepValue from '../getKeyFromDepValue';
 import {IKeyValue} from '@leav/utils';
 
-const _isLabelObject = (obj: any): obj is IKeyValue<string> => typeof obj === 'object' && obj !== null;
+const _isLabelObject = (obj: any): obj is IKeyValue<string> => typeof obj === 'object' && obj !== null && !obj.length;
 
 export default function saveSettings(state: IFormBuilderState, action: IFormBuilderActionSaveSettings) {
     const elementToUpdate = action.element ?? state.elementInSettings;

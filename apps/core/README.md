@@ -1,6 +1,6 @@
 # LEAV Engine - Core
 
-### Create and set the local environment.
+## Create and set the local environment.
 
 leav_core depends on some variables such as the port for the server, the address of the database, the auth scheme...
 Those different configurations can be found in the `config` folder.
@@ -30,7 +30,14 @@ module.exports = {
 };
 ```
 
-### Debugging in VS Code
+## Add plugins
+
+You can add plugins to the core by adding them to the plugins folder. Each plugin live in its own folder and have at least a `index.ts` file.
+
+The plugin folder is located by default in `apps/core/src/plugins` on development environment and `apps/core/dist/plugins` on build.
+It can be configured with the `PLUGINS_PATH` environment variable or the `pluginsPath` variable in the `config/local.js` file. ⚠️ The path must be under the `apps/core/src/plugins` folder (eg. `apps/core/src/plugins/my-own-repo/my-plugins`)
+
+## Debugging in VS Code
 
 In VS Code, the easiest way to debug the app in its Docker container is to install the extension "Remote Development".
 Then, you will be able to open a container inside VS Code.

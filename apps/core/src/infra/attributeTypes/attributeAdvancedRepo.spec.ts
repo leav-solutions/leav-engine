@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, Database} from 'arangojs';
@@ -7,7 +7,15 @@ import {IQueryInfos} from '_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 import {mockAttrAdvVersionableSimple} from '../../__tests__/mocks/attribute';
-import attributeAdvancedRepo from './attributeAdvancedRepo';
+import attributeAdvancedRepo, {IAttributeAdvancedRepoDeps} from './attributeAdvancedRepo';
+import {ToAny} from 'utils/utils';
+
+const depsBase: ToAny<IAttributeAdvancedRepoDeps> = {
+    'core.infra.db.dbService': jest.fn(),
+    'core.infra.db.dbUtils': jest.fn(),
+    'core.infra.attributeTypes.helpers.getConditionPart': jest.fn(),
+    'core.infra.record.helpers.filterTypes': jest.fn()
+};
 
 describe('AttributeStandardRepo', () => {
     const mockAttribute = {
@@ -46,7 +54,7 @@ describe('AttributeStandardRepo', () => {
 
             const newValueData = {
                 id_value: 987654,
-                value: 'test_val',
+                payload: 'test_val',
                 attribute: 'test_attr',
                 modified_at: 400999999,
                 created_at: 400999999,
@@ -60,14 +68,14 @@ describe('AttributeStandardRepo', () => {
                 execute: global.__mockPromiseMultiple([[createdValueData], [createdEdgeData]])
             };
 
-            const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
+            const attrRepo = attributeAdvancedRepo({...depsBase, 'core.infra.db.dbService': mockDbServ});
 
             const createdVal = await attrRepo.createValue({
                 library: 'test_lib',
                 recordId: '12345',
                 attribute: mockAttribute,
                 value: {
-                    value: 'test val',
+                    payload: 'test val',
                     modified_at: 400999999,
                     created_at: 400999999,
                     metadata: {my_attribute: 'metadata value'}
@@ -119,7 +127,7 @@ describe('AttributeStandardRepo', () => {
 
             const newValueData = {
                 id_value: 987654,
-                value: 'test_val',
+                payload: 'test_val',
                 attribute: 'test_attr',
                 modified_at: 400999999,
                 created_at: 400999999,
@@ -136,6 +144,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const attrRepo = attributeAdvancedRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ
             });
 
@@ -144,7 +153,7 @@ describe('AttributeStandardRepo', () => {
                 recordId: '12345',
                 attribute: mockAttribute,
                 value: {
-                    value: 'test val',
+                    payload: 'test val',
                     modified_at: 400999999,
                     created_at: 400999999,
                     version: {my_tree: '1'}
@@ -186,7 +195,7 @@ describe('AttributeStandardRepo', () => {
 
             const valueData = {
                 id_value: 987654,
-                value: 'test_val',
+                payload: 'test_val',
                 attribute: 'test_attr',
                 modified_at: 400999999,
                 created_at: 400999999,
@@ -200,7 +209,7 @@ describe('AttributeStandardRepo', () => {
                 execute: global.__mockPromiseMultiple([[savedValueData], [savedEdgeData]])
             };
 
-            const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
+            const attrRepo = attributeAdvancedRepo({...depsBase, 'core.infra.db.dbService': mockDbServ});
 
             const savedVal = await attrRepo.updateValue({
                 library: 'test_lib',
@@ -208,7 +217,7 @@ describe('AttributeStandardRepo', () => {
                 attribute: mockAttribute,
                 value: {
                     id_value: '987654',
-                    value: 'test val',
+                    payload: 'test val',
                     modified_at: 500999999,
                     metadata: {my_attribute: 'metadata value'}
                 },
@@ -257,7 +266,7 @@ describe('AttributeStandardRepo', () => {
 
             const valueData = {
                 id_value: 987654,
-                value: 'test_val',
+                payload: 'test_val',
                 attribute: 'test_attr',
                 modified_at: 400999999,
                 created_at: 400999999,
@@ -274,6 +283,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const attrRepo = attributeAdvancedRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ
             });
 
@@ -283,7 +293,7 @@ describe('AttributeStandardRepo', () => {
                 attribute: mockAttribute,
                 value: {
                     id_value: '987654',
-                    value: 'test val',
+                    payload: 'test val',
                     modified_at: 500999999,
                     version: {my_tree: '1'}
                 },
@@ -300,7 +310,7 @@ describe('AttributeStandardRepo', () => {
                 _id: 'core_values/123456789',
                 _rev: '_WSywvyC--_',
                 _key: 123456789,
-                value: 'test_val'
+                payload: 'test_val'
             };
 
             const deletedEdgeData = {
@@ -337,7 +347,7 @@ describe('AttributeStandardRepo', () => {
 
             const mockDbServ = {db: mockDb as unknown as Database};
 
-            const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
+            const attrRepo = attributeAdvancedRepo({...depsBase, 'core.infra.db.dbService': mockDbServ});
 
             const deletedVal = await attrRepo.deleteValue({
                 library: 'test_lib',
@@ -345,7 +355,7 @@ describe('AttributeStandardRepo', () => {
                 attribute: mockAttribute,
                 value: {
                     id_value: '123456789',
-                    value: 'test val',
+                    payload: 'test_val',
                     modified_at: 400999999,
                     created_at: 400999999,
                     modified_by: '0',
@@ -401,9 +411,9 @@ describe('AttributeStandardRepo', () => {
                 execute: global.__mockPromise([{...edgeRes, value: 'test val'}])
             };
 
-            const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
+            const attrRepo = attributeAdvancedRepo({...depsBase, 'core.infra.db.dbService': mockDbServ});
 
-            const value = await attrRepo.getValueById({
+            const value = await attrRepo.getValueById!({
                 library: 'test_lib',
                 recordId: '987654',
                 attribute: mockAttribute,
@@ -414,7 +424,7 @@ describe('AttributeStandardRepo', () => {
             expect(mockDbServ.execute.mock.calls.length).toBe(1);
             expect(value).toMatchObject({
                 id_value: '132465',
-                value: 'test val',
+                payload: 'test val',
                 modified_at: 99999,
                 created_at: 99999,
                 modified_by: '0',
@@ -438,9 +448,9 @@ describe('AttributeStandardRepo', () => {
                 execute: global.__mockPromise([])
             };
 
-            const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
+            const attrRepo = attributeAdvancedRepo({...depsBase, 'core.infra.db.dbService': mockDbServ});
 
-            const value = await attrRepo.getValueById({
+            const value = await attrRepo?.getValueById?.({
                 library: 'test_lib',
                 recordId: '987654',
                 attribute: mockAttribute,
@@ -496,6 +506,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const attrRepo = attributeAdvancedRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ
             });
 
@@ -514,7 +525,7 @@ describe('AttributeStandardRepo', () => {
             expect(values.length).toBe(2);
             expect(values[0]).toMatchObject({
                 id_value: 987654,
-                value: 'test val',
+                payload: 'test val',
                 attribute: 'test_attr',
                 modified_at: 99999,
                 created_at: 99999,
@@ -531,6 +542,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const attrRepo = attributeAdvancedRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ
             });
 
@@ -550,7 +562,7 @@ describe('AttributeStandardRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch('LIMIT 1');
             expect(values[0]).toMatchObject({
                 id_value: 987654,
-                value: 'test val',
+                payload: 'test val',
                 attribute: 'test_attr',
                 modified_at: 99999,
                 created_at: 99999,
@@ -587,6 +599,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const attrRepo = attributeAdvancedRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ
             });
 
@@ -600,7 +613,7 @@ describe('AttributeStandardRepo', () => {
             });
 
             expect(values).toHaveLength(1);
-            expect(values[0].value).toBe('test val');
+            expect(values[0].payload).toBe('test val');
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
             expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatch('FILTER edge.version');
         });
@@ -612,6 +625,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const attrRepo = attributeAdvancedRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ
             });
 
@@ -638,7 +652,7 @@ describe('AttributeStandardRepo', () => {
             const mockDbServ = {
                 db: new Database()
             };
-            const attrRepo = attributeAdvancedRepo({'core.infra.db.dbService': mockDbServ});
+            const attrRepo = attributeAdvancedRepo({...depsBase, 'core.infra.db.dbService': mockDbServ});
             const filter = attrRepo.sortQueryPart({
                 attributes: [{id: 'label', type: AttributeTypes.ADVANCED}],
                 order: 'ASC'
@@ -660,6 +674,7 @@ describe('AttributeStandardRepo', () => {
             };
 
             const attrRepo = attributeAdvancedRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.attributeTypes.helpers.getConditionPart': () => aql`rVal == ${'MyLabel'}`,
                 'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper

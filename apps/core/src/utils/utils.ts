@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import fs from 'fs';
@@ -25,6 +25,11 @@ import {IPreviewAttributesSettings, IPreviewVersion, IPreviewVersionSize} from '
 import getDefaultActionsList from './helpers/getDefaultActionsList';
 import getLibraryDefaultAttributes from './helpers/getLibraryDefaultAttributes';
 import {getPreviewsAttributeName, getPreviewsStatusAttributeName} from './helpers/getPreviewsAttributes';
+
+export type ToAny<T> = {
+    // common type
+    [P in keyof T]: any;
+};
 
 export interface IUtils {
     libNameToQueryName(name: string): string;
@@ -117,7 +122,7 @@ export interface IUtils {
     generateExplicitValidationError<T>(
         field: keyof T,
         message: ErrorFieldDetailMessage,
-        lang: string
+        lang?: string
     ): ValidationError<T>;
 
     deleteFile(path: string): Promise<void>;
@@ -214,11 +219,7 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
                   }, {})
                 : null;
         },
-        objToNameValArray<T extends object>(
-            obj: object,
-            keyFieldName: string = 'name',
-            valueFieldName: string = 'value'
-        ): T[] {
+        objToNameValArray<T extends object>(obj: object, keyFieldName = 'name', valueFieldName = 'value'): T[] {
             if (!obj) {
                 return [];
             }
@@ -298,7 +299,7 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
         generateExplicitValidationError<T>(
             field: keyof T,
             message: ErrorFieldDetailMessage,
-            lang: string
+            lang: string = config.lang.default
         ): ValidationError<T> {
             const fieldDetails: ErrorFieldDetail<T> = {};
             fieldDetails[field] = message;
@@ -366,7 +367,7 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
             const isValue1MetadataEmpty = !value1?.metadata || Object.keys(value1?.metadata).length === 0;
             const isValue2MetadataEmpty = !value2?.metadata || Object.keys(value2?.metadata).length === 0;
 
-            const isValueIdentical = value1?.value === value2?.value;
+            const isValueIdentical = value1?.payload === value2?.payload;
             const isMetadataIdentical =
                 (isValue1MetadataEmpty && isValue2MetadataEmpty) || isEqual(value1?.metadata, value2?.metadata);
 

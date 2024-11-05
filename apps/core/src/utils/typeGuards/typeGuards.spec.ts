@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {TypeGuards} from '.';
@@ -19,11 +19,11 @@ describe('typeGuards', () => {
     });
 
     describe('isIStandardValue', () => {
-        test('should return true value if contains "raw_value" field', () => {
-            expect(TypeGuards.isIStandardValue({raw_value: 'value'} as any)).toBe(true);
-            expect(TypeGuards.isIStandardValue({raw_value: 'value', other_value: 42} as any)).toBe(true);
+        test('should return true value if contains "raw_payload" field', () => {
+            expect(TypeGuards.isIStandardValue({raw_payload: 'value'} as any)).toBe(true);
+            expect(TypeGuards.isIStandardValue({raw_payload: 'value', other_value: 42} as any)).toBe(true);
         });
-        test('should return false value if "raw_value" field is missing', () => {
+        test('should return false value if "raw_payload" field is missing', () => {
             expect(TypeGuards.isIStandardValue({} as any)).toBe(false);
             expect(TypeGuards.isIStandardValue([] as any)).toBe(false);
             expect(TypeGuards.isIStandardValue({field: 'value'} as any)).toBe(false);

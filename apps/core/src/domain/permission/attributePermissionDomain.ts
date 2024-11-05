@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {PermissionTypes} from '../../_types/permissions';
@@ -11,11 +11,11 @@ export interface IAttributePermissionDomain {
 }
 
 interface IDeps {
-    'core.domain.permission.helpers.globalPermission'?: IGlobalPermissionHelper;
+    'core.domain.permission.helpers.globalPermission': IGlobalPermissionHelper;
 }
 
-export default function (deps: IDeps = {}): IAttributePermissionDomain {
-    const {'core.domain.permission.helpers.globalPermission': globalPermHelper = null} = deps;
+export default function (deps: IDeps): IAttributePermissionDomain {
+    const {'core.domain.permission.helpers.globalPermission': globalPermHelper} = deps;
 
     const getAttributePermission = async ({
         action,

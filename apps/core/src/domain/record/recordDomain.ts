@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction} from '@leav/utils';
@@ -167,43 +167,43 @@ export interface IRecordDomain {
     purgeInactiveRecords(params: {libraryId: string; ctx: IQueryInfos}): Promise<IRecord[]>;
 }
 
-interface IDeps {
-    config?: Config.IConfig;
-    'core.infra.record'?: IRecordRepo;
-    'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.value'?: IValueDomain;
-    'core.domain.permission.record'?: IRecordPermissionDomain;
-    'core.domain.permission.library'?: ILibraryPermissionDomain;
-    'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
-    'core.domain.helpers.validate'?: IValidateHelper;
-    'core.domain.record.helpers.sendRecordUpdateEvent'?: SendRecordUpdateEventHelper;
-    'core.infra.library'?: ILibraryRepo;
-    'core.infra.tree'?: ITreeRepo;
-    'core.infra.value'?: IValueRepo;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.infra.cache.cacheService'?: ICachesService;
-    'core.utils'?: IUtils;
-    translator?: i18n;
+export interface IRecordDomainDeps {
+    config: Config.IConfig;
+    'core.infra.record': IRecordRepo;
+    'core.domain.attribute': IAttributeDomain;
+    'core.domain.value': IValueDomain;
+    'core.domain.permission.record': IRecordPermissionDomain;
+    'core.domain.permission.library': ILibraryPermissionDomain;
+    'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
+    'core.domain.helpers.validate': IValidateHelper;
+    'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
+    'core.infra.library': ILibraryRepo;
+    'core.infra.tree': ITreeRepo;
+    'core.infra.value': IValueRepo;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.infra.cache.cacheService': ICachesService;
+    'core.utils': IUtils;
+    translator: i18n;
 }
 
 export default function ({
-    config = null,
-    'core.infra.record': recordRepo = null,
-    'core.domain.attribute': attributeDomain = null,
-    'core.domain.value': valueDomain = null,
-    'core.domain.permission.record': recordPermissionDomain = null,
-    'core.domain.permission.library': libraryPermissionDomain = null,
-    'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
-    'core.domain.helpers.validate': validateHelper = null,
-    'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent = null,
-    'core.infra.library': libraryRepo = null,
-    'core.infra.tree': treeRepo = null,
-    'core.infra.value': valueRepo = null,
-    'core.domain.eventsManager': eventsManager = null,
-    'core.infra.cache.cacheService': cacheService = null,
-    'core.utils': utils = null,
-    translator = null
-}: IDeps = {}): IRecordDomain {
+    config,
+    'core.infra.record': recordRepo,
+    'core.domain.attribute': attributeDomain,
+    'core.domain.value': valueDomain,
+    'core.domain.permission.record': recordPermissionDomain,
+    'core.domain.permission.library': libraryPermissionDomain,
+    'core.domain.helpers.getCoreEntityById': getCoreEntityById,
+    'core.domain.helpers.validate': validateHelper,
+    'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
+    'core.infra.library': libraryRepo,
+    'core.infra.tree': treeRepo,
+    'core.infra.value': valueRepo,
+    'core.domain.eventsManager': eventsManager,
+    'core.infra.cache.cacheService': cacheService,
+    'core.utils': utils,
+    translator
+}: IRecordDomainDeps): IRecordDomain {
     /**
      * Extract value from record if it's available (attribute simple), or fetch it from DB
      *
@@ -222,11 +222,11 @@ export default function ({
     ): Promise<IValue[]> => {
         let values: IValue[];
 
-        if (typeof record[attribute.id] !== 'undefined') {
+        if (attribute.id && typeof record[attribute.id] !== 'undefined') {
             // Format attribute field into simple value
             values = [
                 {
-                    value:
+                    payload:
                         attribute.type === AttributeTypes.SIMPLE_LINK && typeof record[attribute.id] === 'string'
                             ? {id: record[attribute.id]}
                             : record[attribute.id]
@@ -447,7 +447,7 @@ export default function ({
                 return null;
             }
 
-            previewRecord = previewValues[0].value;
+            previewRecord = previewValues[0].payload;
 
             if (previewAttributeLibraryProps.behavior !== LibraryBehavior.FILES) {
                 // To avoid infinite loop, we check if the library has already been visited. If so, we return null
@@ -481,7 +481,7 @@ export default function ({
             return null;
         }
 
-        const previews = filePreviewsValue[0]?.raw_value ?? {};
+        const previews = filePreviewsValue[0]?.raw_payload ?? {};
 
         const previewsWithUrl: IPreview = Object.entries(previews)
             .map(value => {
@@ -571,7 +571,7 @@ export default function ({
 
             labelValues = getValuesToDisplay(labelValues);
 
-            const value: IValue['value'] | undefined = labelValues?.[0]?.value;
+            const value: IValue['payload'] | undefined = labelValues?.[0]?.payload;
 
             if (utils.isLinkAttribute(labelAttributeProps)) {
                 // To avoid infinite loop, we check if  the library has already been visited. If so, we return the id.
@@ -594,7 +594,11 @@ export default function ({
         return label;
     };
 
-    const _getColor = async (record: IRecord, visitedLibraries: string[] = [], ctx: IQueryInfos): Promise<string> => {
+    const _getColor = async (
+        record: IRecord,
+        visitedLibraries: string[] = [],
+        ctx: IQueryInfos
+    ): Promise<string | null> => {
         if (!record) {
             return null;
         }
@@ -607,7 +611,7 @@ export default function ({
             version: ctx.version ?? null
         };
 
-        let color: string = null;
+        let color: string | null = null;
         if (conf.color) {
             const colorAttributeProps = await attributeDomain.getAttributeProperties({id: conf.color, ctx});
 
@@ -626,7 +630,7 @@ export default function ({
             }
 
             if (utils.isLinkAttribute(colorAttributeProps)) {
-                const linkValue = colorValues.pop().value;
+                const linkValue = colorValues.pop().payload;
 
                 // To avoid infinite loop, we check if the library has already been visited. If so, we return null
                 // For example, if the users' library color is set to "created_by",
@@ -637,10 +641,10 @@ export default function ({
 
                 color = await _getColor(linkValue, visitedLibraries, ctx);
             } else if (utils.isTreeAttribute(colorAttributeProps)) {
-                const treeValue = colorValues.pop().value.record;
+                const treeValue = colorValues.pop().payload.record;
                 color = await _getColor(treeValue, visitedLibraries, ctx);
             } else {
-                color = colorValues.pop().value;
+                color = colorValues.pop().payload;
             }
         }
 
@@ -651,7 +655,7 @@ export default function ({
         record: IRecord,
         visitedLibraries: string[] = [],
         ctx: IQueryInfos
-    ): Promise<string> => {
+    ): Promise<string | null> => {
         if (!record) {
             return null;
         }
@@ -663,7 +667,7 @@ export default function ({
         const valuesOptions: IValuesOptions = {
             version: ctx.version ?? null
         };
-        let subLabel: string = null;
+        let subLabel: string | null = null;
         if (conf.subLabel) {
             const subLabelAttributeProps = await attributeDomain.getAttributeProperties({id: conf.subLabel, ctx});
 
@@ -678,14 +682,14 @@ export default function ({
             subLabelValues = getValuesToDisplay(subLabelValues);
 
             if (conf.subLabel === 'id') {
-                subLabelValues[0].value = record.id;
+                subLabelValues[0].payload = record.id;
             }
 
             if (!subLabelValues.length) {
                 return null;
             }
 
-            const value: IValue['value'] | undefined = subLabelValues?.[0]?.value;
+            const value: IValue['payload'] | undefined = subLabelValues?.[0]?.payload;
 
             if (utils.isLinkAttribute(subLabelAttributeProps)) {
                 const linkValue = value;
@@ -698,7 +702,7 @@ export default function ({
                 }
                 subLabel = await _getSubLabel(linkValue, visitedLibraries, ctx);
             } else if (utils.isTreeAttribute(subLabelAttributeProps)) {
-                const treeValue = (value as ITreeValue['value']).record;
+                const treeValue = (value as ITreeValue['payload']).record;
                 subLabel = await _getSubLabel(treeValue, visitedLibraries, ctx);
             } else if (subLabelAttributeProps.format === AttributeFormats.DATE_RANGE) {
                 subLabel = value ? _convertDateRangeToString(value, ctx) : null;
@@ -729,17 +733,17 @@ export default function ({
             version: ctx.version ?? null
         };
 
-        let label: string = null;
+        let label: string | null = null;
         if (conf.label) {
             label = await _getLabel(record, [], ctx);
         }
 
-        let subLabel: string = null;
+        let subLabel: string | null = null;
         if (conf.subLabel) {
             subLabel = await _getSubLabel(record, [], ctx);
         }
 
-        let color: string = null;
+        let color: string | null = null;
         if (conf.color) {
             color = await _getColor(record, [], ctx);
         }
@@ -764,7 +768,7 @@ export default function ({
                 const treeAttrProps = await attributeDomain.getAttributeProperties({id: conf.treeColorPreview, ctx});
                 const ancestors = await treeRepo.getElementAncestors({
                     treeId: treeAttrProps.linked_tree,
-                    nodeId: treeValues[0].value.id,
+                    nodeId: treeValues[0].payload.id,
                     ctx
                 });
 
@@ -857,14 +861,14 @@ export default function ({
                     .filter(r => r.status === 'rejected')
                     .map(err => {
                         const rejection = err as PromiseRejectedResult;
-                        const errorAttribute = rejection.reason.context.attributeId;
+                        const errorAttribute = rejection.reason.context?.attributeId;
 
                         return {
                             type: rejection.reason.type,
                             attributeId: errorAttribute,
-                            id_value: rejection.reason.context.value.id_value,
-                            input: rejection.reason.context.value.value,
-                            message: utils.translateError(rejection.reason.fields[errorAttribute], ctx.lang)
+                            id_value: rejection.reason.context?.values[0].id_value,
+                            input: rejection.reason.context?.values[0].value,
+                            message: utils.translateError(rejection.reason.fields?.[errorAttribute], ctx.lang)
                         };
                     });
 
@@ -1021,7 +1025,7 @@ export default function ({
 
             return deletedRecord;
         },
-        async find({params, ctx}: {params: IFindRecordParams; ctx: IQueryInfos}): Promise<IListWithCursor<IRecord>> {
+        async find({params, ctx}) {
             const {library, sort, pagination, withCount, retrieveInactive = false} = params;
             const {filters = [] as IRecordFilterLight[], fulltextSearch} = params;
             const fullFilters: IRecordFilterOption[] = [];
@@ -1180,14 +1184,11 @@ export default function ({
             if (hasNoValue) {
                 values = [
                     {
-                        value: null
+                        payload: null
                     }
                 ];
             }
 
-            const forceArray = options?.forceArray ?? false;
-
-            //TODO: fix "[object]" on input after edit
             let formattedValues = await Promise.all(
                 values.map(async v => {
                     const formattedValue = await valueDomain.formatValue({
@@ -1227,10 +1228,10 @@ export default function ({
 
             // sort of flatMap cause _formatRecordValue can return multiple values for 1 input val (think heritage)
             formattedValues = formattedValues.reduce((acc, v) => {
-                if (Array.isArray(v.value)) {
+                if (Array.isArray(v.payload)) {
                     acc = [
                         ...acc,
-                        ...v.value.map(vpart => ({
+                        ...v.payload.map(vpart => ({
                             value: vpart,
                             attribute: v.attribute
                         }))
@@ -1245,11 +1246,11 @@ export default function ({
                 // remove null values or values that do not represent a record
                 formattedValues = formattedValues.filter(
                     v =>
-                        v.value !== null &&
-                        typeof v.value !== 'undefined' &&
-                        typeof v.value === 'object' &&
-                        v.value.hasOwnProperty('id') &&
-                        v.value.hasOwnProperty('library')
+                        v.payload !== null &&
+                        typeof v.payload !== 'undefined' &&
+                        typeof v.payload === 'object' &&
+                        v.payload.hasOwnProperty('id') &&
+                        v.payload.hasOwnProperty('library')
                 );
             }
             return formattedValues;
@@ -1259,22 +1260,22 @@ export default function ({
                 library: record.library,
                 recordId: record.id,
                 attribute: 'active',
-                value: {value: false},
+                value: {payload: false},
                 ctx
             });
 
-            return {...record, active: savedValues[0].value};
+            return {...record, active: savedValues[0].payload};
         },
         async activateRecord(record: IRecord, ctx: IQueryInfos): Promise<IRecord> {
             const savedValues = await valueDomain.saveValue({
                 library: record.library,
                 recordId: record.id,
                 attribute: 'active',
-                value: {value: true},
+                value: {payload: true},
                 ctx
             });
 
-            return {...record, active: savedValues[0].value};
+            return {...record, active: savedValues[0].payload};
         },
         async deactivateRecordsBatch({libraryId, recordsIds, filters, ctx}) {
             let recordsToDeactivate: string[] = recordsIds ?? [];

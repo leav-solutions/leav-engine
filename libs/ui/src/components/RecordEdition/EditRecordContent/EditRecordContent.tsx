@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FORM_ROOT_CONTAINER_ID, FormUIElementTypes, simpleStringHash} from '@leav/utils';
@@ -143,6 +143,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
                 <rootElement.uiElement
                     // Use a hash of record form as a key to force a full re-render when the form changes
                     key={recordFormHash}
+                    antdForm={antdForm}
                     element={rootElement}
                     onValueSubmit={_handleValueSubmit}
                     onValueDelete={_handleValueDelete}

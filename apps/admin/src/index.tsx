@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import ApolloHandler from 'components/app/ApolloHandler';
@@ -17,8 +17,7 @@ import i18n from './i18n';
 import './index.css';
 import registerServiceWorker from './registerServiceWorker';
 
-// eslint-disable-next-line react-refresh/only-export-components
-function Index() {
+export function Index() {
     const {lang, loading, error} = useAppLang();
     const [i18nIsInitialized, seti18nIsInitialized] = useState(false);
 

@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
@@ -10,14 +10,15 @@ import {
     listModules,
     ModuleDescriptor
 } from 'awilix';
-import {realpathSync} from 'fs';
 import {getConfig} from './config';
+import path from 'path';
+import {existsSync} from 'fs';
 
 const _registerModules = async (
     container: AwilixContainer,
     folder: string,
     glob: string,
-    prefix: string = ''
+    prefix = ''
 ): Promise<AwilixContainer> => {
     // We only consider index files so that we explicity declare what we want to make available
     // in dependency injector. This allows to have some helper files kept private inside a module.
@@ -63,7 +64,15 @@ export async function initDI(additionalModulesToRegister?: {
     [registerKey: string]: any;
 }): Promise<{coreContainer: AwilixContainer; pluginsContainer: AwilixContainer}> {
     const srcFolder = __dirname;
-    const pluginsFolder = realpathSync(__dirname + '/plugins');
+    // Add a few extra dependencies
+    const coreConf = await getConfig();
+
+    let pluginsFolder: string | null = path.resolve(__dirname + '/' + coreConf.pluginsPath);
+
+    if (!existsSync(pluginsFolder)) {
+        pluginsFolder = null;
+    }
+
     const modulesGlob = '+(app|domain|infra|interface|utils)/**/index.+(ts|js)';
     const pluginsModulesGlob = `!(core)/${modulesGlob}`;
 
@@ -74,8 +83,6 @@ export async function initDI(additionalModulesToRegister?: {
 
     await _registerModules(coreContainer, srcFolder, modulesGlob, 'core');
 
-    // Add a few extra dependencies
-    const coreConf = await getConfig();
     coreContainer.register('config', asValue(coreConf));
     coreContainer.register('pluginsFolder', asValue(pluginsFolder));
 
@@ -86,7 +93,9 @@ export async function initDI(additionalModulesToRegister?: {
     /*** PLUGINS ***/
     const pluginsContainer = coreContainer.createScope();
 
-    await _registerModules(pluginsContainer, pluginsFolder, pluginsModulesGlob);
+    if (pluginsFolder) {
+        await _registerModules(pluginsContainer, pluginsFolder, pluginsModulesGlob);
+    }
 
     // Register this at the very end because we don't want plugins to access the deps manager
     coreContainer.register('core.depsManager', asValue(coreContainer));

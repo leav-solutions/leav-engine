@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ICachesService} from 'infra/cache/cacheService';
@@ -14,11 +14,11 @@ import {AttributeCondition, IRecord} from '../../_types/record';
 import {GetCoreEntityByIdFunc} from './getCoreEntityById';
 
 interface IDeps {
-    'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
-    'core.infra.record'?: IRecordRepo;
-    'core.utils'?: IUtils;
-    'core.infra.library'?: ILibraryRepo;
-    'core.infra.cache.cacheService'?: ICachesService;
+    'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
+    'core.infra.record': IRecordRepo;
+    'core.utils': IUtils;
+    'core.infra.library': ILibraryRepo;
+    'core.infra.cache.cacheService': ICachesService;
 }
 
 export interface IValidateHelper {
@@ -30,11 +30,11 @@ export interface IValidateHelper {
 }
 
 export default function ({
-    'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
-    'core.infra.record': recordRepo = null,
-    'core.utils': utils = null,
-    'core.infra.library': libraryRepo = null,
-    'core.infra.cache.cacheService': cacheService = null
+    'core.domain.helpers.getCoreEntityById': getCoreEntityById,
+    'core.infra.record': recordRepo,
+    'core.utils': utils,
+    'core.infra.library': libraryRepo,
+    'core.infra.cache.cacheService': cacheService
 }: IDeps): IValidateHelper {
     return {
         async validateLibraryAttribute(library: string, attribute: string, ctx: IQueryInfos): Promise<void> {

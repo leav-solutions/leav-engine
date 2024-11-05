@@ -1,19 +1,19 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
 import {DSInputNumberWrapper} from './DSInputNumberWrapper';
-import {FieldScope} from '../../../_types';
+import {VersionFieldScope} from '../../../_types';
 import {
+    CalculatedFlags,
     InheritedFlags,
     IStandardFieldReducerState,
     StandardFieldValueState
 } from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockFormElementInput} from '_ui/__mocks__/common/form';
-import {mockAttributeLink} from '_ui/__mocks__/common/attribute';
+import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
-import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
 import {AntForm} from 'aristid-ds';
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 
@@ -32,6 +32,8 @@ const mockValue = {
         id_value: null,
         value: '4',
         raw_value: '4',
+        payload: '4',
+        raw_payload: '4',
         modified_at: null,
         created_at: null,
         created_by: null,
@@ -42,7 +44,7 @@ const mockValue = {
     state: StandardFieldValueState.PRISTINE
 };
 
-const getInitialState = (required: boolean, fallbackLang: boolean = false): IStandardFieldReducerState => ({
+const getInitialState = (required: boolean, fallbackLang = false): IStandardFieldReducerState => ({
     record: mockRecord,
     formElement: {
         ...mockFormElementInput,
@@ -51,21 +53,25 @@ const getInitialState = (required: boolean, fallbackLang: boolean = false): ISta
             required
         }
     },
-    attribute: mockAttributeLink,
+    attribute: mockFormAttribute,
     isReadOnly: false,
-    activeScope: FieldScope.CURRENT,
+    activeScope: VersionFieldScope.CURRENT,
     values: {
-        [FieldScope.CURRENT]: {
+        [VersionFieldScope.CURRENT]: {
             version: null,
             values: {[idValue]: mockValue}
         },
-        [FieldScope.INHERITED]: null
+        [VersionFieldScope.INHERITED]: null
     },
     metadataEdit: false,
     inheritedValue: null,
     isInheritedNotOverrideValue: false,
     isInheritedOverrideValue: false,
-    isInheritedValue: false
+    isInheritedValue: false,
+    calculatedValue: null,
+    isCalculatedNotOverrideValue: false,
+    isCalculatedOverrideValue: false,
+    isCalculatedValue: false
 });
 
 const inheritedValues = [
@@ -95,15 +101,45 @@ const inheritedOverrideValue: InheritedFlags = {
     inheritedValue: {raw_value: inheritedValues[1].raw_value}
 };
 
+const calculatedValues = [
+    {
+        isCalculated: null,
+        value: '8',
+        raw_value: '8'
+    },
+    {
+        isCalculated: true,
+        value: '3.5',
+        raw_value: '3.5'
+    }
+];
+
+const calculatedNotOverrideValue: CalculatedFlags = {
+    isCalculatedValue: true,
+    isCalculatedOverrideValue: false,
+    isCalculatedNotOverrideValue: true,
+    calculatedValue: {raw_value: calculatedValues[1].raw_value}
+};
+
+const calculatedOverrideValue: CalculatedFlags = {
+    isCalculatedValue: true,
+    isCalculatedOverrideValue: true,
+    isCalculatedNotOverrideValue: false,
+    calculatedValue: {raw_value: calculatedValues[1].raw_value}
+};
+
 describe('DSInputNumberWrapper', () => {
     const mockHandleSubmit = jest.fn();
     const mockOnChange = jest.fn();
+    const mockHandleBlur = jest.fn();
+
     let user!: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {
         user = userEvent.setup({});
         mockOnChange.mockReset();
         mockHandleSubmit.mockReset();
+        mockHandleBlur.mockReset();
     });
 
     test('Should display inputNumber with fr label ', async () => {
@@ -114,8 +150,9 @@ describe('DSInputNumberWrapper', () => {
                     <DSInputNumberWrapper
                         state={state}
                         attribute={{} as RecordFormAttributeFragment}
-                        fieldValue={null}
+                        fieldValue={mockValue}
                         handleSubmit={mockHandleSubmit}
+                        handleBlur={mockHandleBlur}
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
@@ -133,8 +170,9 @@ describe('DSInputNumberWrapper', () => {
                     <DSInputNumberWrapper
                         state={state}
                         attribute={{} as RecordFormAttributeFragment}
-                        fieldValue={null}
+                        fieldValue={mockValue}
                         handleSubmit={mockHandleSubmit}
+                        handleBlur={mockHandleBlur}
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
@@ -144,7 +182,7 @@ describe('DSInputNumberWrapper', () => {
         expect(screen.getByText(en_label)).toBeVisible();
     });
 
-    test('Should submit empty value if field is not required', async () => {
+    test('Should submit empty value on clear if field is not required', async () => {
         const state = getInitialState(false);
         render(
             <AntForm>
@@ -152,20 +190,23 @@ describe('DSInputNumberWrapper', () => {
                     <DSInputNumberWrapper
                         state={state}
                         attribute={{} as RecordFormAttributeFragment}
-                        fieldValue={null}
+                        fieldValue={mockValue}
                         handleSubmit={mockHandleSubmit}
+                        handleBlur={mockHandleBlur}
                         onChange={mockOnChange}
+                        value={42}
                     />
                 </AntForm.Item>
             </AntForm>
         );
 
         const input = screen.getByRole('spinbutton');
+
         await user.clear(input);
         await user.tab();
 
-        expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
         expect(mockOnChange).toHaveBeenCalled();
+        expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
     });
 
     describe('With required input and no inheritance', () => {
@@ -177,8 +218,9 @@ describe('DSInputNumberWrapper', () => {
                         <DSInputNumberWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                             onChange={mockOnChange}
                         />
                     </AntForm.Item>
@@ -202,8 +244,9 @@ describe('DSInputNumberWrapper', () => {
                         <DSInputNumberWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                             onChange={mockOnChange}
                             value={mockValue.originRawValue}
                         />
@@ -233,8 +276,9 @@ describe('DSInputNumberWrapper', () => {
                         <DSInputNumberWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                             onChange={mockOnChange}
                             value={inheritedValues[1].raw_value}
                         />
@@ -264,8 +308,9 @@ describe('DSInputNumberWrapper', () => {
                         <DSInputNumberWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                             onChange={mockOnChange}
                             value={inheritedValues[0].raw_value}
                         />
@@ -294,8 +339,9 @@ describe('DSInputNumberWrapper', () => {
                         <DSInputNumberWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                             onChange={mockOnChange}
                             value={inheritedValues[1].raw_value}
                         />
@@ -325,8 +371,9 @@ describe('DSInputNumberWrapper', () => {
                         <DSInputNumberWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                             onChange={mockOnChange}
                             value={inheritedValues[0].raw_value}
                         />
@@ -337,6 +384,132 @@ describe('DSInputNumberWrapper', () => {
             const input = screen.getByRole('spinbutton');
             const helperText = screen.getByText(/3.5/);
             expect(input).toHaveValue(inheritedValues[0].raw_value);
+            expect(helperText).toBeVisible();
+        });
+    });
+
+    describe('With calculation', () => {
+        test("Should display the calculated value by default and not save if we don't change it", async () => {
+            let state = getInitialState(false);
+            state = {
+                ...state,
+                ...calculatedNotOverrideValue,
+                formElement: {...state.formElement, values: calculatedValues}
+            };
+            render(
+                <AntForm>
+                    <AntForm.Item>
+                        <DSInputNumberWrapper
+                            state={state}
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={mockValue}
+                            handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
+                            onChange={mockOnChange}
+                            value={calculatedValues[1].raw_value}
+                        />
+                    </AntForm.Item>
+                </AntForm>
+            );
+            const input = screen.getByRole('spinbutton');
+            expect(input).toHaveValue(calculatedValues[1].raw_value);
+
+            await user.click(input);
+            await user.tab();
+
+            expect(mockHandleSubmit).not.toHaveBeenCalled();
+        });
+
+        test('Should display the override value in the input and calculated value under it', async () => {
+            let state = getInitialState(false);
+            state = {
+                ...state,
+                ...calculatedOverrideValue,
+                formElement: {...state.formElement, values: calculatedValues}
+            };
+
+            render(
+                <AntForm>
+                    <AntForm.Item>
+                        <DSInputNumberWrapper
+                            state={state}
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={mockValue}
+                            handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
+                            onChange={mockOnChange}
+                            value={calculatedValues[0].raw_value}
+                        />
+                    </AntForm.Item>
+                </AntForm>
+            );
+
+            const input = screen.getByRole('spinbutton');
+            const helperText = screen.getByText(/3.5/);
+            expect(input).toHaveValue(calculatedValues[0].raw_value);
+            expect(helperText).toBeVisible();
+        });
+    });
+
+    describe('With required and calculation', () => {
+        test("Should display the calculated value by default and not save if we don't change it", async () => {
+            let state = getInitialState(true);
+            state = {
+                ...state,
+                ...calculatedNotOverrideValue,
+                formElement: {...state.formElement, values: calculatedValues}
+            };
+            render(
+                <AntForm>
+                    <AntForm.Item>
+                        <DSInputNumberWrapper
+                            state={state}
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={mockValue}
+                            handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
+                            onChange={mockOnChange}
+                            value={calculatedValues[1].raw_value}
+                        />
+                    </AntForm.Item>
+                </AntForm>
+            );
+            const input = screen.getByRole('spinbutton');
+            expect(input).toHaveValue(calculatedValues[1].raw_value);
+
+            await user.click(input);
+            await user.tab();
+
+            expect(mockHandleSubmit).not.toHaveBeenCalled();
+        });
+
+        test('Should display the override value in the input and calculated value under it', async () => {
+            let state = getInitialState(false);
+            state = {
+                ...state,
+                ...calculatedOverrideValue,
+                formElement: {...state.formElement, values: calculatedValues}
+            };
+
+            render(
+                <AntForm>
+                    <AntForm.Item>
+                        <DSInputNumberWrapper
+                            state={state}
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={mockValue}
+                            handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
+                            onChange={mockOnChange}
+                            value={calculatedValues[0].raw_value}
+                        />
+                    </AntForm.Item>
+                </AntForm>
+            );
+
+            const input = screen.getByRole('spinbutton');
+            const helperText = screen.getByText(/3.5/);
+            expect(input).toHaveValue(calculatedValues[0].raw_value);
             expect(helperText).toBeVisible();
         });
     });

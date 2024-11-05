@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
@@ -15,8 +15,8 @@ describe('AttributeRepo', () => {
     };
     describe('getAttributes', () => {
         test('Get all attributes', async function () {
-            const mockDbServ = {db: null, execute: global.__mockPromise([])};
-            const mockDbUtils: Mockify<IDbUtils> = {
+            const mockDbServ = {execute: global.__mockPromise([])};
+            const mockDbUtils = {
                 findCoreEntity: global.__mockPromise([
                     {
                         id: 'label',
@@ -26,7 +26,7 @@ describe('AttributeRepo', () => {
                         }
                     }
                 ])
-            };
+            } satisfies Mockify<IDbUtils>;
 
             const repo = attributeRepo({
                 'core.infra.db.dbService': mockDbServ,

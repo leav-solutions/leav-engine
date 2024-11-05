@@ -455,6 +455,7 @@
         "cancel_confirm_modal_question": "Êtes-vous sûr(e) ?",
         "record_select": "Sélectionnez un élément",
         "inherited_input_helper": "Valeur héritée : {{- inheritedValue }}",
+        "calculated_input_helper": "Valeur calculée : {{- calculatedValue}}",
         "date_range_from_to": "du {{- from}} au {{- to}}",
         "link_search_result_count": "Résultats ({{count}}/{{total}})",
         "suggestions_count": "Suggestions ({{count}})"
@@ -591,5 +592,12 @@
         "all-selected-enabled": "Tout sélectionné actif",
         "all-selected-disabled": "Tout sélectionné inactif",
         "unselect-all": "Tout désélectionner"
+    },
+    "explorer": {
+        "create-one": "Créer",
+        "actions": "Actions",
+        "more-actions": "Voir plus",
+        "deactivateItem": "Désactiver l’élément",
+        "editItem": "Éditer l’élément"
     }
 }

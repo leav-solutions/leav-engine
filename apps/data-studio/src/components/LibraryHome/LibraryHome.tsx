@@ -1,38 +1,52 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ErrorDisplay, ErrorDisplayTypes, IFilter, ISearchSelection, LibraryItemsList, Loading, useLang} from '@leav/ui';
+import {
+    ErrorDisplay,
+    ErrorDisplayTypes,
+    Explorer,
+    IFilter,
+    ISearchSelection,
+    LibraryItemsList,
+    Loading,
+    useLang
+} from '@leav/ui';
 import {useApplicationContext} from 'context/ApplicationContext';
-import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
-import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery/useGetLibraryDetailExtendedQuery';
-import {useEffect, useState} from 'react';
+import {useActiveLibrary} from 'hooks/useActiveLibrary';
+import useGetLibraryDetailExtendedQuery from 'hooks/useGetLibraryDetailExtendedQuery';
+import {FunctionComponent, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {setInfoBase} from 'reduxStore/infos';
 import {setSelection} from 'reduxStore/selection';
 import {useAppDispatch, useAppSelector} from 'reduxStore/store';
-import {isLibraryInApp, localizedTranslation} from 'utils';
+import {explorerQueryParamName, isLibraryInApp, localizedTranslation} from 'utils';
 import {IBaseInfo, InfoType, SharedStateSelectionType, WorkspacePanels} from '_types/types';
+import {useSearchParams} from 'react-router-dom';
+import {FaAccessibleIcon, FaBeer, FaJs, FaXbox} from 'react-icons/all';
+import styled from 'styled-components';
 
-export interface ILibraryHomeProps {
+interface ILibraryHomeProps {
     library?: string;
 }
 
-type SelectionActions = 'export' | 'deactivate' | 'generate_previews';
+const ExplorerContainerDivStyled = styled.div`
+    --headerSize: 48px;
 
-interface IActiveAction {
-    key: string;
-    modalComp: () => JSX.Element;
-    modalProps: any;
-}
+    padding: calc(var(--general-spacing-l) * 1px);
+    background-color: var(--general-colors-primary-50);
+    height: calc(100vh - var(--headerSize));
+`;
 
-function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
+const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
     const {lang} = useLang();
     const {t} = useTranslation();
+
+    const [params] = useSearchParams();
+
     const appData = useApplicationContext();
     const dispatch = useAppDispatch();
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
     const {activePanel, selection} = useAppSelector(state => state);
-    const [activeAction, setActiveAction] = useState<IActiveAction>();
 
     const {loading, data, error} = useGetLibraryDetailExtendedQuery({library});
 
@@ -114,8 +128,6 @@ function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
         return <ErrorDisplay message={t('items_list.not_in_app')} />;
     }
 
-    const _handleCloseModal = () => setActiveAction(null);
-
     const _handleSelectChange = (newSelection: ISearchSelection, filters: IFilter[]) => {
         dispatch(
             setSelection({
@@ -128,24 +140,56 @@ function LibraryHome({library}: ILibraryHomeProps): JSX.Element {
         );
     };
 
-    return (
-        <>
-            <LibraryItemsList
-                selectionMode={false}
-                library={data.libraries.list[0]}
-                key={library}
-                onSelectChange={_handleSelectChange}
+    return params.has(explorerQueryParamName) ? (
+        <ExplorerContainerDivStyled>
+            <Explorer
+                library={library}
+                defaultActionsForItem={['edit', 'deactivate']}
+                defaultMainActions={['create']}
+                itemActions={[
+                    {
+                        label: 'Test 1',
+                        icon: <FaBeer />,
+                        callback: item => {
+                            // eslint-disable-next-line no-restricted-syntax
+                            console.log(1, item);
+                        }
+                    },
+                    {
+                        label: 'Test 2',
+                        icon: <FaAccessibleIcon />,
+                        callback: item => {
+                            // eslint-disable-next-line no-restricted-syntax
+                            console.log(2, item);
+                        }
+                    },
+                    {
+                        label: 'Test 3',
+                        icon: <FaXbox />,
+                        callback: item => {
+                            // eslint-disable-next-line no-restricted-syntax
+                            console.log(3, item);
+                        }
+                    },
+                    {
+                        label: 'Test 4',
+                        icon: <FaJs />,
+                        callback: item => {
+                            // eslint-disable-next-line no-restricted-syntax
+                            console.log(4, item);
+                        }
+                    }
+                ]}
             />
-            {activeAction && (
-                <activeAction.modalComp
-                    key={activeAction.key}
-                    open
-                    onClose={_handleCloseModal}
-                    {...activeAction.modalProps}
-                />
-            )}
-        </>
+        </ExplorerContainerDivStyled>
+    ) : (
+        <LibraryItemsList
+            selectionMode={false}
+            library={data.libraries.list[0]}
+            key={library}
+            onSelectChange={_handleSelectChange}
+        />
     );
-}
+};
 
 export default LibraryHome;

@@ -1,14 +1,12 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import {AnyPrimitive, IDateRangeValue, localizedTranslation} from '@leav/utils';
-import {Button, Form, Input, InputRef, Popover, Space, theme} from 'antd';
+import {Button, Input, InputRef, Popover, Space, theme} from 'antd';
 import moment from 'moment';
 import React, {MutableRefObject, useEffect, useRef} from 'react';
 import styled, {CSSObject} from 'styled-components';
-import {DSInputWrapper} from './DSInputWrapper';
-import {DSRangePickerWrapper} from './DSRangePickerWrapper';
 import {themeVars} from '_ui/antdTheme';
 import {FloatingMenu, FloatingMenuAction} from '_ui/components';
 import Dimmer from '_ui/components/Dimmer';
@@ -19,7 +17,7 @@ import ValueDetailsBtn from '_ui/components/RecordEdition/EditRecordContent/shar
 import ValuesVersionBtn from '_ui/components/RecordEdition/EditRecordContent/shared/ValuesVersionBtn';
 import ValuesVersionIndicator from '_ui/components/RecordEdition/EditRecordContent/shared/ValuesVersionIndicator';
 import {
-    FieldScope,
+    VersionFieldScope,
     InputRefPossibleTypes,
     IStandardInputProps,
     StandardValueTypes
@@ -43,15 +41,12 @@ import {
     StandardFieldReducerActionsTypes,
     StandardFieldValueState
 } from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import CheckboxInput from './Inputs/CheckboxInput';
 import ColorInput from './Inputs/ColorInput';
-import DateInput from './Inputs/DateInput';
-import EncryptedInput from './Inputs/EncryptedInput';
 import TextInput from './Inputs/TextInput';
 import ValuesList from './ValuesList';
 import {IValueOfValuesList} from './ValuesList/ValuesList';
-import {DSInputNumberWrapper} from './DSInputNumberWrapper';
 import {useLang} from '_ui/hooks';
+import {StandardFieldValueDisplayHandler} from './StandardFieldValueDisplayHandler';
 
 const ErrorMessage = styled.div`
     color: ${themeVars.errorColor};
@@ -178,11 +173,11 @@ const RichTextEditorInput = React.lazy(() => import('./Inputs/RichTextEditorInpu
 
 const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInputProps) => JSX.Element} = {
     [AttributeFormat.text]: null,
-    [AttributeFormat.date]: DateInput,
+    [AttributeFormat.date]: null,
     [AttributeFormat.date_range]: null,
-    [AttributeFormat.boolean]: CheckboxInput,
+    [AttributeFormat.boolean]: null,
     [AttributeFormat.numeric]: null,
-    [AttributeFormat.encrypted]: EncryptedInput,
+    [AttributeFormat.encrypted]: null,
     [AttributeFormat.extended]: TextInput,
     [AttributeFormat.color]: ColorInput,
     [AttributeFormat.rich_text]: RichTextEditorInput
@@ -196,9 +191,9 @@ interface IStandardFieldValueProps {
     value: IStandardFieldValue;
     state: IStandardFieldReducerState;
     dispatch: StandardFieldDispatchFunc;
-    onSubmit: (idValue: IdValue, value: AnyPrimitive) => void;
+    onSubmit: (idValue: IdValue, value: AnyPrimitive) => Promise<void>;
     onDelete: (idValue: IdValue) => void;
-    onScopeChange: (scope: FieldScope) => void;
+    onScopeChange: (scope: VersionFieldScope) => void;
 }
 
 function StandardFieldValue({
@@ -255,7 +250,8 @@ function StandardFieldValue({
         }
 
         const convertedValue = typeof valueToSave === 'object' ? JSON.stringify(valueToSave) : valueToSave;
-        onSubmit(fieldValue.idValue, convertedValue);
+
+        await onSubmit(fieldValue.idValue, convertedValue);
     };
 
     const _handlePressEnter = async () => {
@@ -276,7 +272,7 @@ function StandardFieldValue({
             return _handleCancel();
         }
 
-        onDelete(fieldValue.idValue);
+        await onDelete(fieldValue.idValue);
     };
 
     const _handleFocus = () => {
@@ -347,7 +343,7 @@ function StandardFieldValue({
             let prefixValue;
             if (
                 attribute.format === AttributeFormat.color &&
-                (fieldValue.value === null || fieldValue.value.value === null)
+                (fieldValue.value === null || fieldValue.value.payload === null)
             ) {
                 fieldValue.value = null;
             }
@@ -499,7 +495,7 @@ function StandardFieldValue({
 
     const wrapperClasses = `
         ${attribute.format ? `format-${attribute.format}` : ''}
-        ${fieldValue?.value?.value ? 'has-value' : ''}
+        ${fieldValue?.value?.payload ? 'has-value' : ''}
         ${fieldValue.isEditing ? 'editing' : ''}
     `;
 
@@ -521,8 +517,8 @@ function StandardFieldValue({
 
     if (attribute?.versions_conf?.versionable) {
         const versions = {
-            [FieldScope.CURRENT]: state.values[FieldScope.CURRENT]?.version ?? null,
-            [FieldScope.INHERITED]: state.values[FieldScope.INHERITED]?.version ?? null
+            [VersionFieldScope.CURRENT]: state.values[VersionFieldScope.CURRENT]?.version ?? null,
+            [VersionFieldScope.INHERITED]: state.values[VersionFieldScope.INHERITED]?.version ?? null
         };
 
         if (!hasMultipleValuesDisplay) {
@@ -553,57 +549,28 @@ function StandardFieldValue({
         borderRadius: hasMultipleValuesDisplay ? 'none' : token.borderRadius
     };
 
-    const attributeFormatsWithDS = [AttributeFormat.text, AttributeFormat.date_range, AttributeFormat.numeric];
-
-    const attributeFormatsWithoutDS = [
-        AttributeFormat.boolean,
-        AttributeFormat.color,
-        AttributeFormat.date,
+    const attributeFormatsWithDS = [
+        AttributeFormat.text,
+        AttributeFormat.date_range,
+        AttributeFormat.numeric,
         AttributeFormat.encrypted,
-        AttributeFormat.extended,
-        AttributeFormat.rich_text
+        AttributeFormat.date,
+        AttributeFormat.boolean,
+        AttributeFormat.rich_text,
+        AttributeFormat.color
     ];
+
+    const attributeFormatsWithoutDS = [AttributeFormat.extended];
 
     return (
         <>
             {attributeFormatsWithDS.includes(attribute.format) && (
-                <Form.Item
-                    name={attribute.id}
-                    rules={[
-                        {
-                            required: state.formElement.settings.required,
-                            message: t('errors.standard_field_required')
-                        }
-                    ]}
-                >
-                    {attribute.format === AttributeFormat.text && (
-                        <DSInputWrapper
-                            state={state}
-                            handleSubmit={_handleSubmit}
-                            attribute={attribute}
-                            fieldValue={fieldValue}
-                            shouldShowValueDetailsButton={editRecordState.withInfoButton}
-                        />
-                    )}
-                    {attribute.format === AttributeFormat.date_range && (
-                        <DSRangePickerWrapper
-                            state={state}
-                            handleSubmit={_handleSubmit}
-                            attribute={attribute}
-                            fieldValue={fieldValue}
-                            shouldShowValueDetailsButton={editRecordState.withInfoButton}
-                        />
-                    )}
-                    {attribute.format === AttributeFormat.numeric && (
-                        <DSInputNumberWrapper
-                            state={state}
-                            handleSubmit={_handleSubmit}
-                            attribute={attribute}
-                            fieldValue={fieldValue}
-                            shouldShowValueDetailsButton={editRecordState.withInfoButton}
-                        />
-                    )}
-                </Form.Item>
+                <StandardFieldValueDisplayHandler
+                    state={state}
+                    attribute={attribute}
+                    fieldValue={fieldValue}
+                    handleSubmit={_handleSubmit}
+                />
             )}
 
             {attributeFormatsWithoutDS.includes(attribute.format) && (
@@ -629,8 +596,10 @@ function StandardFieldValue({
                                         {editRecordState.externalUpdate.updatedValues[attribute?.id] && (
                                             <UpdatedFieldIcon />
                                         )}
-                                        {state.activeScope === FieldScope.INHERITED && (
-                                            <InheritedFieldLabel version={state.values[FieldScope.INHERITED].version} />
+                                        {state.activeScope === VersionFieldScope.INHERITED && (
+                                            <InheritedFieldLabel
+                                                version={state.values[VersionFieldScope.INHERITED].version}
+                                            />
                                         )}
                                     </label>
                                 )}

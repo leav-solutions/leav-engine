@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IActionsListDomain} from 'domain/actionsList/actionsListDomain';
@@ -30,35 +30,36 @@ import {AttributePermissionsActions, PermissionTypes} from '../../../_types/perm
 import {AttributeCondition, IRecord} from '../../../_types/record';
 import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
+import {IIsAllowedParams} from 'domain/permission/_types';
 
 export interface ICoreAttributeApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
 interface IDeps {
-    'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.library'?: ILibraryDomain;
-    'core.domain.record'?: IRecordDomain;
-    'core.domain.tree'?: ITreeDomain;
-    'core.domain.actionsList'?: IActionsListDomain;
-    'core.domain.permission'?: IPermissionDomain;
-    'core.domain.versionProfile'?: IVersionProfileDomain;
-    'core.app.graphql'?: IGraphqlApp;
-    'core.app.core'?: ICoreApp;
-    'core.utils'?: IUtils;
+    'core.domain.attribute': IAttributeDomain;
+    'core.domain.library': ILibraryDomain;
+    'core.domain.record': IRecordDomain;
+    'core.domain.tree': ITreeDomain;
+    'core.domain.actionsList': IActionsListDomain;
+    'core.domain.permission': IPermissionDomain;
+    'core.domain.versionProfile': IVersionProfileDomain;
+    'core.app.graphql': IGraphqlApp;
+    'core.app.core': ICoreApp;
+    'core.utils': IUtils;
 }
 
-export default function (deps: IDeps = {}): ICoreAttributeApp {
+export default function (deps: IDeps): ICoreAttributeApp {
     const {
-        'core.domain.attribute': attributeDomain = null,
-        'core.domain.record': recordDomain = null,
-        'core.domain.library': libraryDomain = null,
-        'core.domain.tree': treeDomain = null,
-        'core.domain.permission': permissionDomain = null,
-        'core.domain.versionProfile': versionProfileDomain = null,
-        'core.app.graphql': graphqlApp = null,
-        'core.app.core': coreApp = null,
-        'core.utils': utils = null
+        'core.domain.attribute': attributeDomain,
+        'core.domain.record': recordDomain,
+        'core.domain.library': libraryDomain,
+        'core.domain.tree': treeDomain,
+        'core.domain.permission': permissionDomain,
+        'core.domain.versionProfile': versionProfileDomain,
+        'core.app.graphql': graphqlApp,
+        'core.app.core': coreApp,
+        'core.utils': utils
     } = deps;
     const commonResolvers = {
         /**
@@ -92,19 +93,27 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
 
                 const hasRecordInformations = record?.id && record?.library;
 
-                const isAllowed = await permissionDomain.isAllowed({
-                    type: hasRecordInformations ? PermissionTypes.RECORD_ATTRIBUTE : PermissionTypes.ATTRIBUTE,
-                    applyTo: hasRecordInformations ? record.library : attributeData.id,
-                    action: action as AttributePermissionsActions,
-                    userId: ctx.userId,
-                    target: hasRecordInformations
+                const isAllowed = await permissionDomain.isAllowed(
+                    hasRecordInformations
                         ? {
-                              recordId: record.id,
-                              attributeId: attributeData.id
+                              type: PermissionTypes.RECORD_ATTRIBUTE,
+                              applyTo: record.library,
+                              action: action as AttributePermissionsActions,
+                              target: {
+                                  recordId: record.id,
+                                  attributeId: attributeData.id
+                              },
+                              userId: ctx.userId,
+                              ctx
                           }
-                        : null,
-                    ctx
-                });
+                        : {
+                              type: PermissionTypes.ATTRIBUTE,
+                              applyTo: attributeData.id,
+                              action: action as AttributePermissionsActions,
+                              userId: ctx.userId,
+                              ctx
+                          }
+                );
 
                 return {...allPerms, [action]: isAllowed};
             }, Promise.resolve({}));
@@ -118,7 +127,6 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                 type: AttributeType!,
                 format: AttributeFormat,
                 system: Boolean!,
-                required: Boolean!,
                 readonly: Boolean!,
                 label(lang: [AvailableLanguage!]): SystemTranslation,
                 description(lang: [AvailableLanguage!]): SystemTranslationOptional,
@@ -206,6 +214,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                         format: AttributeFormat
                         label: SystemTranslation,
                         readonly: Boolean,
+                        required: Boolean,
                         description: SystemTranslationOptional,
                         linked_library: String,
                         linked_tree: String,
@@ -376,7 +385,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                     },
                     LinkAttribute: {
                         ...commonResolvers,
-                        linked_library: (attributeData: IAttribute, _, ctx: IQueryInfos): Promise<ILibrary> => {
+                        linked_library: (attributeData: IAttribute, _, ctx: IQueryInfos) => {
                             if (!attributeData.linked_library) {
                                 return null;
                             }
@@ -419,7 +428,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                     },
                     TreeAttribute: {
                         ...commonResolvers,
-                        linked_tree: (attributeData: IAttribute, _, ctx: IQueryInfos): Promise<ITree> => {
+                        linked_tree: (attributeData: IAttribute, _, ctx: IQueryInfos) => {
                             if (!attributeData.linked_tree) {
                                 return null;
                             }
@@ -460,11 +469,7 @@ export default function (deps: IDeps = {}): ICoreAttributeApp {
                                 : 'StandardStringValuesListConf'
                     },
                     ValuesVersionsConf: {
-                        profile: async (
-                            conf: IAttributeVersionsConf,
-                            args,
-                            ctx: IQueryInfos
-                        ): Promise<IVersionProfile> => {
+                        profile: async (conf: IAttributeVersionsConf, args, ctx: IQueryInfos) => {
                             if (!conf.profile) {
                                 return null;
                             }

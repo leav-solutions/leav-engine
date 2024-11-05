@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getLogsIndexName, Log} from '@leav/utils';
@@ -34,7 +34,7 @@ export default function ({'core.infra.elasticSearch.service': esService, config}
              *             {match: {'topic.record.id': '123456'}}
              *         ]
              */
-            const _flattenTopicFilter = (obj: Record<string, any>, parentKey: string = '') => {
+            const _flattenTopicFilter = (obj: Record<string, any>, parentKey = '') => {
                 let result: SearchQueryType[] = [];
 
                 for (const [key, value] of Object.entries(obj)) {

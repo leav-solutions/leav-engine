@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IQueryInfos} from '_types/queryInfos';
@@ -57,7 +57,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
     const valueData: IValue = {
         id_value: '978654321',
-        value: 987654,
+        payload: 987654,
         attribute: 'test_adv_link_attr',
         modified_at: 400999999,
         created_at: 400999999,
@@ -91,7 +91,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 recordId: '12345',
                 attribute: mockAttribute,
                 value: {
-                    value: 987654,
+                    payload: 987654,
                     modified_at: 400999999,
                     created_at: 400999999,
                     metadata: {my_attribute: 'metadata value'},
@@ -107,7 +107,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             expect(createdVal).toMatchObject({
                 id_value: '978654321',
-                value: {
+                payload: {
                     library: 'test_linked_lib',
                     id: '987654'
                 },
@@ -150,7 +150,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 recordId: '12345',
                 attribute: {...mockAttribute, reverse_link: mockReverseAdvAttribute},
                 value: {
-                    value: 987654,
+                    payload: 987654,
                     modified_at: 400999999,
                     created_at: 400999999,
                     metadata: {my_attribute: 'metadata value'},
@@ -179,7 +179,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 recordId: '12345',
                 attribute: {...mockAttribute, reverse_link: mockReverseSimpAttribute},
                 value: {
-                    value: '1'
+                    payload: '1'
                 },
                 ctx
             });
@@ -190,7 +190,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 library: mockAttribute.linked_library,
                 recordId: '1',
                 attribute: {...mockReverseSimpAttribute, reverse_link: undefined},
-                value: {value: '12345'},
+                value: {payload: '12345'},
                 ctx
             });
         });
@@ -214,7 +214,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 attribute: mockAttribute,
                 value: {
                     id_value: '987654',
-                    value: 987654,
+                    payload: 987654,
                     modified_at: 400999999,
                     metadata: {my_attribute: 'metadata value'},
                     version: {my_tree: '1'}
@@ -229,7 +229,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             expect(savedVal).toMatchObject({
                 ...valueData,
-                value: {
+                payload: {
                     library: 'test_linked_lib',
                     id: '987654'
                 },
@@ -260,7 +260,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 attribute: {...mockAttribute, reverse_link: mockReverseAdvAttribute},
                 value: {
                     id_value: '987654',
-                    value: 987654,
+                    payload: 987654,
                     modified_at: 400999999,
                     metadata: {my_attribute: 'metadata value'},
                     version: {my_tree: '1'}
@@ -288,7 +288,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 recordId: '12345',
                 attribute: {...mockAttribute, reverse_link: mockReverseSimpAttribute},
                 value: {
-                    value: {id: '1'}
+                    payload: {id: '1'}
                 },
                 ctx
             });
@@ -299,7 +299,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 library: mockAttribute.linked_library,
                 recordId: '1',
                 attribute: {...mockReverseSimpAttribute, reverse_link: undefined},
-                value: {value: '12345'},
+                value: {payload: '12345'},
                 ctx
             });
         });
@@ -331,7 +331,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 attribute: mockAttribute,
                 value: {
                     id_value: '445566',
-                    value: 987654,
+                    payload: 987654,
                     modified_at: 400999999,
                     created_at: 400999999
                 },
@@ -346,7 +346,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             expect(deletedVal).toMatchObject({
                 id_value: '445566',
-                value: {
+                payload: {
                     id: '987654',
                     library: 'test_linked_lib'
                 }
@@ -368,7 +368,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 recordId: '12345',
                 attribute: {...mockAttribute, reverse_link: mockReverseSimpAttribute},
                 value: {
-                    value: {id: '445566'}
+                    payload: {id: '445566'}
                 },
                 ctx
             });
@@ -379,7 +379,7 @@ describe('AttributeAdvancedLinkRepo', () => {
                 library: mockAttribute.linked_library,
                 recordId: '445566',
                 attribute: {...mockReverseSimpAttribute, reverse_link: undefined},
-                value: {value: null},
+                value: {payload: null},
                 ctx
             });
         });
@@ -448,7 +448,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
             expect(value).toMatchObject({
                 id_value: '112233',
-                value: {
+                payload: {
                     id: '123456',
                     created_at: 88888,
                     modified_at: 88888
@@ -610,7 +610,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             expect(values.length).toBe(2);
             expect(values[0]).toMatchObject({
                 id_value: '112233',
-                value: {
+                payload: {
                     id: '123456',
                     created_at: 88888,
                     modified_at: 88888
@@ -625,7 +625,7 @@ describe('AttributeAdvancedLinkRepo', () => {
 
             expect(values[1]).toMatchObject({
                 id_value: '112234',
-                value: {
+                payload: {
                     id: '123457',
                     created_at: 77777,
                     modified_at: 77777
@@ -802,7 +802,7 @@ describe('AttributeAdvancedLinkRepo', () => {
             expect(values.length).toBe(1);
             expect(values[0]).toMatchObject({
                 id_value: '112233',
-                value: {
+                payload: {
                     id: '123456',
                     created_at: 88888,
                     modified_at: 88888

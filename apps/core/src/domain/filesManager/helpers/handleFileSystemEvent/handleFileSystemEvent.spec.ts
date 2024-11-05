@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ILibraryDomain} from 'domain/library/libraryDomain';
@@ -6,7 +6,7 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IFilesManagerRepo} from 'infra/filesManager/filesManagerRepo';
 import {IRecordRepo} from 'infra/record/recordRepo';
-import {IUtils} from 'utils/utils';
+import {IUtils, ToAny} from 'utils/utils';
 import {Winston} from 'winston';
 import {IConfig} from '_types/config';
 import {FileEvents} from '../../../../_types/filesManager';
@@ -17,7 +17,7 @@ import {mockCtx} from '../../../../__tests__/mocks/shared';
 import * as extractFileMetadata from '../extractFileMetadata';
 import * as fileUtilsHelpers from '../handleFileUtilsHelper';
 import * as handlePreview from '../handlePreview';
-import handleFileSystemEvent from './handleFileSystemEvent';
+import handleFileSystemEvent, {IFileSystemEventDeps} from './handleFileSystemEvent';
 
 jest.mock('../getRootPathByKey', () => ({getRootPathByKey: jest.fn().mockReturnValue('/path/to/root')}));
 
@@ -54,31 +54,56 @@ describe('handleFileSystemEvent', () => {
         getParentRecord: global.__mockPromise(mockFileRecord)
     };
 
-    const mockLogger: Mockify<Winston> = {
+    const mockLogger = {
         warn: jest.fn(),
         error: jest.fn()
-    };
+    } satisfies Mockify<Winston>;
 
-    const mockRecordRepo: Mockify<IRecordRepo> = {
+    const mockRecordRepo = {
         updateRecord: jest.fn(),
         createRecord: jest.fn()
-    };
+    } satisfies Mockify<IRecordRepo>;
 
     const mockConfig: Partial<IConfig> = {
         filesManager: {
             userId: 'userId',
-            queues: null,
-            allowFilesList: null,
-            ignoreFilesList: null,
-            rootKeys: null,
-            routingKeys: null,
-            userGroupsIds: null
+            queues: {
+                events: '',
+                previewRequest: '',
+                previewResponse: ''
+            },
+            allowFilesList: '',
+            ignoreFilesList: '',
+            rootKeys: {
+                files1: ''
+            },
+            routingKeys: {
+                events: '',
+                previewRequest: '',
+                previewResponse: ''
+            },
+            userGroupsIds: ''
         }
     };
 
     beforeEach(() => {
         jest.clearAllMocks();
     });
+
+    const depsBase: ToAny<IFileSystemEventDeps> = {
+        'core.domain.library': jest.fn(),
+        'core.domain.record': jest.fn(),
+        'core.domain.value': jest.fn(),
+        'core.domain.tree': jest.fn(),
+        'core.domain.helpers.updateRecordLastModif': jest.fn(),
+        'core.domain.record.helpers.sendRecordUpdateEvent': jest.fn(),
+        'core.infra.record': jest.fn(),
+        'core.infra.amqpService': jest.fn(),
+        'core.infra.filesManager': jest.fn(),
+        'core.utils.logger': jest.fn(),
+        'core.utils': jest.fn(),
+        config: {}
+    };
 
     describe('Update', () => {
         const mockExtractFileMetadata = jest.fn().mockResolvedValue(mockFileMetadata);
@@ -92,13 +117,14 @@ describe('handleFileSystemEvent', () => {
             const mockSendRecordUpdate = jest.fn();
 
             const func = handleFileSystemEvent({
+                ...depsBase,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.helpers.updateRecordLastModif': mockUpdatedLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
                 'core.infra.filesManager': mockFilesManagerRepo as IFilesManagerRepo,
-                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as Winston
+                'core.utils.logger': mockLogger as any
             });
 
             await func(
@@ -146,11 +172,12 @@ describe('handleFileSystemEvent', () => {
             jest.spyOn(handlePreview, 'requestPreviewGeneration').mockImplementation(mockRequestPreviewGeneration);
 
             const func = handleFileSystemEvent({
+                ...depsBase,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.infra.filesManager': mockFilesManagerRepoNoRecord as IFilesManagerRepo,
-                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as Winston
+                'core.utils.logger': mockLogger as any
             });
 
             await func(
@@ -188,14 +215,15 @@ describe('handleFileSystemEvent', () => {
             const mockCreateRecordFile = jest.fn().mockResolvedValue(mockFileRecord);
             jest.spyOn(fileUtilsHelpers, 'createFilesTreeElement').mockImplementation(mockCreateFileTreeElement);
             jest.spyOn(fileUtilsHelpers, 'createRecordFile').mockImplementation(mockCreateRecordFile);
-            jest.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => null);
-            jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => null);
+            jest.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => Promise.resolve(null));
+            jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(null));
 
             const func = handleFileSystemEvent({
+                ...depsBase,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
-                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as Winston
+                'core.utils.logger': mockLogger as any
             });
 
             await func(
@@ -253,14 +281,15 @@ describe('handleFileSystemEvent', () => {
             jest.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() =>
                 Promise.resolve({...mockFileRecord, active: false})
             );
-            jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => null);
+            jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(null));
 
             const func = handleFileSystemEvent({
+                ...depsBase,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
-                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as Winston,
+                'core.utils.logger': mockLogger as any,
                 config: mockConfig as IConfig
             });
 
@@ -319,15 +348,16 @@ describe('handleFileSystemEvent', () => {
             jest.spyOn(fileUtilsHelpers, 'createFilesTreeElement').mockImplementation(mockCreateFileTreeElement);
             jest.spyOn(fileUtilsHelpers, 'createRecordFile').mockImplementation(mockCreateRecordFile);
             jest.spyOn(fileUtilsHelpers, 'updateRecordFile').mockImplementation(mockUpdateRecordFile);
-            jest.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => null);
-            jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => null);
+            jest.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => Promise.resolve(null));
+            jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(null));
 
             const func = handleFileSystemEvent({
+                ...depsBase,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
-                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as Winston,
+                'core.utils.logger': mockLogger as any,
                 config: mockConfig as IConfig
             });
 
@@ -361,14 +391,15 @@ describe('handleFileSystemEvent', () => {
             const mockDeleteFileTreeElement = jest.fn();
             jest.spyOn(fileUtilsHelpers, 'deleteFilesTreeElement').mockImplementation(mockDeleteFileTreeElement);
             jest.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => Promise.resolve(mockFileRecord));
-            jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => null);
+            jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(null));
 
             const func = handleFileSystemEvent({
+                ...depsBase,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
-                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as Winston,
+                'core.utils.logger': mockLogger as any,
                 config: mockConfig as IConfig
             });
 
@@ -398,15 +429,16 @@ describe('handleFileSystemEvent', () => {
         test('Should throw if record not found', async () => {
             const mockDeleteFileTreeElement = jest.fn();
             jest.spyOn(fileUtilsHelpers, 'deleteFilesTreeElement').mockImplementation(mockDeleteFileTreeElement);
-            jest.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => null);
-            jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => null);
+            jest.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => Promise.resolve(null));
+            jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(null));
 
             const func = handleFileSystemEvent({
+                ...depsBase,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
-                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as Winston,
+                'core.utils.logger': mockLogger as any,
                 config: mockConfig as IConfig
             });
 
@@ -442,12 +474,13 @@ describe('handleFileSystemEvent', () => {
             jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(mockFileRecord));
 
             const func = handleFileSystemEvent({
+                ...depsBase,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.tree': mockTreeDomain as ITreeDomain,
-                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as Winston,
+                'core.utils.logger': mockLogger as any,
                 config: mockConfig as IConfig
             });
 
@@ -482,16 +515,17 @@ describe('handleFileSystemEvent', () => {
         test('Should throw if record not found', async () => {
             const mockUpdateRecordFile = jest.fn().mockResolvedValue(mockFileRecord);
             jest.spyOn(fileUtilsHelpers, 'updateRecordFile').mockImplementation(mockUpdateRecordFile);
-            jest.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => null);
+            jest.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => Promise.resolve(null));
             jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(mockFileRecord));
 
             const func = handleFileSystemEvent({
+                ...depsBase,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.tree': mockTreeDomain as ITreeDomain,
-                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as Winston,
+                'core.utils.logger': mockLogger as any,
                 config: mockConfig as IConfig
             });
 
@@ -521,15 +555,16 @@ describe('handleFileSystemEvent', () => {
             const mockUpdateRecordFile = jest.fn().mockResolvedValue(mockFileRecord);
             jest.spyOn(fileUtilsHelpers, 'updateRecordFile').mockImplementation(mockUpdateRecordFile);
             jest.spyOn(fileUtilsHelpers, 'getRecord').mockImplementation(() => Promise.resolve(mockFileRecord));
-            jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => null);
+            jest.spyOn(fileUtilsHelpers, 'getParentRecord').mockImplementation(() => Promise.resolve(null));
 
             const func = handleFileSystemEvent({
+                ...depsBase,
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.tree': mockTreeDomain as ITreeDomain,
-                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.infra.record': mockRecordRepo as any,
                 'core.utils': mockUtils as IUtils,
-                'core.utils.logger': mockLogger as Winston,
+                'core.utils.logger': mockLogger as any,
                 config: mockConfig as IConfig
             });
 

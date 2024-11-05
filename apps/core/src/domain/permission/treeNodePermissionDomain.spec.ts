@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
@@ -12,9 +12,22 @@ import {mockTree} from '../../__tests__/mocks/tree';
 import {IDefaultPermissionHelper} from './helpers/defaultPermission';
 import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
 import {ITreeLibraryPermissionDomain} from './treeLibraryPermissionDomain';
-import treeNodePermissionDomain from './treeNodePermissionDomain';
+import treeNodePermissionDomain, {ITreeNodePermissionDomainDeps} from './treeNodePermissionDomain';
 import {ITreePermissionDomain} from './treePermissionDomain';
 import {IGetTreeBasedPermissionParams} from './_types';
+import {ToAny} from 'utils/utils';
+
+const depsBase: ToAny<ITreeNodePermissionDomainDeps> = {
+    'core.domain.permission.tree': jest.fn(),
+    'core.domain.permission.treeLibrary': jest.fn(),
+    'core.domain.permission.helpers.treeBasedPermissions': jest.fn(),
+    'core.domain.permission.helpers.permissionByUserGroups': jest.fn(),
+    'core.domain.permission.helpers.defaultPermission': jest.fn(),
+    'core.domain.helpers.getCoreEntityById': jest.fn(),
+    'core.infra.tree': jest.fn(),
+    'core.domain.attribute': jest.fn(),
+    'core.infra.value': jest.fn()
+};
 
 describe('treeNodePermissionDomain', () => {
     const ctx: IQueryInfos = {
@@ -91,7 +104,7 @@ describe('treeNodePermissionDomain', () => {
                     case 'category':
                         val = {
                             id_value: 12345,
-                            value: {
+                            payload: {
                                 id: recordId === 'parent1' ? 'parentCategory' : 'elementCategory',
                                 record: {
                                     id: recordId === 'parent1' ? 'parentCategory' : 'elementCategory',
@@ -103,7 +116,7 @@ describe('treeNodePermissionDomain', () => {
                     case 'user_groups':
                         val = {
                             id_value: 54321,
-                            value: {
+                            payload: {
                                 id: '12346',
                                 record: {
                                     id: 1,
@@ -128,6 +141,7 @@ describe('treeNodePermissionDomain', () => {
             };
 
             const domain = treeNodePermissionDomain({
+                ...depsBase,
                 'core.infra.tree': mockTreeRepoNoPerm as ITreeRepo,
                 'core.domain.permission.tree': mockTreePermDomain as ITreePermissionDomain,
                 'core.domain.permission.treeLibrary': mockTreeLibPermissionDomain as ITreeLibraryPermissionDomain,
@@ -153,6 +167,7 @@ describe('treeNodePermissionDomain', () => {
             };
 
             const domain = treeNodePermissionDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.tree': mockTreeRepoWithPerm as ITreeRepo,
                 'core.domain.permission.treeLibrary': mockTreeLibPermissionDomain as ITreeLibraryPermissionDomain,
@@ -187,6 +202,7 @@ describe('treeNodePermissionDomain', () => {
             };
 
             const domain = treeNodePermissionDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.tree': mockTreeRepoWithPerm as ITreeRepo,
                 'core.domain.permission.treeLibrary': mockTreeLibPermissionDomain as ITreeLibraryPermissionDomain,
@@ -221,6 +237,7 @@ describe('treeNodePermissionDomain', () => {
             };
 
             const domain = treeNodePermissionDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.tree': mockTreeRepoWithPerm as ITreeRepo,
                 'core.domain.permission.treeLibrary': mockTreeLibPermissionDomainNoPerm as ITreeLibraryPermissionDomain,
@@ -251,6 +268,7 @@ describe('treeNodePermissionDomain', () => {
             };
 
             const domain = treeNodePermissionDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.tree': mockTreeRepoWithPerm as ITreeRepo,
                 'core.domain.permission.tree': mockTreePermissionDomain as ITreePermissionDomain,
@@ -281,6 +299,7 @@ describe('treeNodePermissionDomain', () => {
             };
 
             const treeNodePermDomain = treeNodePermissionDomain({
+                ...depsBase,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper
             });
 

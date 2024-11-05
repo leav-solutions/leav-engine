@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useLazyQuery} from '@apollo/client';
@@ -11,6 +11,7 @@ import {
     RecordProperty
 } from '_ui/_queries/records/getRecordPropertiesQuery';
 import {arrayValueVersionToObject} from '_ui/_utils';
+import {hasTypename} from '_ui/_utils/typeguards';
 
 export interface IUseRefetchFieldValuesHook {
     fetchValues: (version?: IValueVersion) => Promise<RecordProperty[]>;
@@ -49,9 +50,14 @@ const useRefreshFieldValues = (
             }
 
             const values = res.data.records.list[0][attributeId].map(value => {
-                const {__typename, ...valueData} = value; // Clear off __typename
+                // Clear off __typename
+                const data = {...value};
+                if (hasTypename(data)) {
+                    delete data.__typename;
+                }
+
                 return {
-                    ...valueData,
+                    ...data,
                     version: arrayValueVersionToObject(value.version ?? [])
                 };
             });

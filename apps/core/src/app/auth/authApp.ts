@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as bcrypt from 'bcryptjs';
@@ -26,10 +26,14 @@ import winston from 'winston';
 import {IOIDCClientService} from '../../infra/oidc/oidcClientService';
 import {InitQueryContextFunc} from '../helpers/initQueryContext';
 import {IConvertOIDCIdentifier} from '../helpers/convertOIDCIdentifier';
+import {IncomingHttpHeaders} from 'http';
 
 export interface IAuthApp {
     getGraphQLSchema(): IAppGraphQLSchema;
-    validateRequestToken(params: {apiKey?: string; cookies?: {}}): Promise<ITokenUserData>;
+    validateRequestToken(
+        params: {apiKey?: string; headers: IncomingHttpHeaders; cookies?: {}},
+        res: Response<unknown>
+    ): Promise<ITokenUserData>;
     registerRoute(app: Express): void;
     authenticateWithOIDCService(req: IRequestWithContext, res: Response<unknown>): Promise<void | Response>;
 }
@@ -38,8 +42,8 @@ const SESSION_CACHE_HEADER = 'session';
 
 interface ISessionPayload extends jwt.JwtPayload {
     userId: string;
-    ip: string | string[];
-    agent: string;
+    ip: string | string[] | null;
+    agent: string | null;
 }
 
 interface IAccessTokenPayload extends jwt.JwtPayload {
@@ -47,33 +51,33 @@ interface IAccessTokenPayload extends jwt.JwtPayload {
     groupsId: string[];
 }
 
-interface IDeps {
-    'core.domain.value'?: IValueDomain;
-    'core.domain.record'?: IRecordDomain;
-    'core.domain.apiKey'?: IApiKeyDomain;
-    'core.domain.user'?: IUserDomain;
-    'core.infra.cache.cacheService'?: ICachesService;
-    'core.utils.logger'?: winston.Winston;
-    'core.infra.oidc.oidcClientService'?: IOIDCClientService;
-    'core.app.helpers.initQueryContext'?: InitQueryContextFunc;
-    'core.app.helpers.convertOIDCIdentifier'?: IConvertOIDCIdentifier;
-    config?: IConfig;
+export interface IAuthAppDeps {
+    'core.domain.value': IValueDomain;
+    'core.domain.record': IRecordDomain;
+    'core.domain.apiKey': IApiKeyDomain;
+    'core.domain.user': IUserDomain;
+    'core.infra.cache.cacheService': ICachesService;
+    'core.utils.logger': winston.Winston;
+    'core.infra.oidc.oidcClientService': IOIDCClientService;
+    'core.app.helpers.initQueryContext': InitQueryContextFunc;
+    'core.app.helpers.convertOIDCIdentifier': IConvertOIDCIdentifier;
+    config: IConfig;
 }
 
 type authCookieName = typeof ACCESS_TOKEN_COOKIE_NAME | typeof REFRESH_TOKEN_COOKIE_NAME;
 
 export default function ({
-    'core.domain.value': valueDomain = null,
-    'core.domain.record': recordDomain = null,
-    'core.domain.apiKey': apiKeyDomain = null,
-    'core.domain.user': userDomain = null,
-    'core.utils.logger': logger = null,
-    'core.infra.cache.cacheService': cacheService = null,
-    'core.infra.oidc.oidcClientService': oidcClientService = null,
-    'core.app.helpers.initQueryContext': initQueryContext = null,
-    'core.app.helpers.convertOIDCIdentifier': convertOIDCIdentifier = null,
-    config = null
-}: IDeps = {}): IAuthApp {
+    'core.domain.value': valueDomain,
+    'core.domain.record': recordDomain,
+    'core.domain.apiKey': apiKeyDomain,
+    'core.domain.user': userDomain,
+    'core.utils.logger': logger,
+    'core.infra.cache.cacheService': cacheService,
+    'core.infra.oidc.oidcClientService': oidcClientService,
+    'core.app.helpers.initQueryContext': initQueryContext,
+    'core.app.helpers.convertOIDCIdentifier': convertOIDCIdentifier,
+    config
+}: IAuthAppDeps): IAuthApp {
     const _generateAccessToken = async (userId: string, ctx: IQueryInfos) => {
         const groups = await valueDomain.getValues({
             library: 'users',
@@ -85,7 +89,7 @@ export default function ({
         return jwt.sign(
             {
                 userId,
-                groupsId: groups.map(g => g.value.id)
+                groupsId: groups.map(g => g.payload.id)
             },
             config.auth.key,
             {
@@ -105,7 +109,7 @@ export default function ({
     const _getAuthCookieArgs = (
         cookieName: authCookieName,
         value: string,
-        host: string
+        host: string | null
     ): [authCookieName, string, CookieOptions] => {
         const cookieExpires = ms(
             String(
@@ -114,18 +118,60 @@ export default function ({
                     : config.auth.refreshTokenExpiration
             )
         );
+        if (!host) {
+            throw new AuthenticationError('Missing host, cannot scope cookie domain.');
+        }
+        const cookieOptions: CookieOptions = {
+            httpOnly: true,
+            sameSite: config.auth.cookie.sameSite,
+            secure: config.auth.cookie.secure,
+            expires: new Date(Date.now() + cookieExpires),
+            domain: host
+        };
 
-        return [
-            cookieName,
-            value,
-            {
-                httpOnly: true,
-                sameSite: config.auth.cookie.sameSite,
-                secure: config.auth.cookie.secure,
-                domain: host,
-                expires: new Date(Date.now() + cookieExpires)
-            }
-        ];
+        return [cookieName, value, cookieOptions];
+    };
+
+    const _checkIfUserExistsById = async (userId: string, ctx: IQueryInfos) => {
+        const users = await recordDomain.find({
+            params: {
+                library: 'users',
+                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: userId}]
+            },
+            ctx
+        });
+
+        // User could have been deleted / disabled in database
+        if (!users.list.length) {
+            throw new AuthenticationError('User not found');
+        }
+    };
+
+    const _generateAccessAndRefreshTokens = async (
+        userId: string,
+        refreshToken: string,
+        headers: IncomingHttpHeaders,
+        res: Response,
+        ctx: IQueryInfos
+    ) => {
+        const newAccessToken = await _generateAccessToken(userId, ctx);
+
+        const newRefreshToken = _generateRefreshToken({
+            userId,
+            ip: headers['x-forwarded-for'] ?? null,
+            agent: headers['user-agent'] ?? null
+        });
+
+        await cacheService.getCache(ECacheType.RAM).storeData({
+            key: `${SESSION_CACHE_HEADER}:${newRefreshToken}`,
+            data: userId,
+            expiresIn: ms(config.auth.refreshTokenExpiration)
+        });
+
+        await cacheService.getCache(ECacheType.RAM).deleteData([`${SESSION_CACHE_HEADER}:${refreshToken}`]);
+        const host = headers.host ?? null;
+        res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, newAccessToken, host));
+        res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, newRefreshToken, host));
     };
 
     return {
@@ -204,8 +250,8 @@ export default function ({
 
                         const refreshToken = _generateRefreshToken({
                             userId: user.id,
-                            ip: req.headers['x-forwarded-for'],
-                            agent: req.headers['user-agent']
+                            ip: req.headers['x-forwarded-for'] ?? null,
+                            agent: req.headers['user-agent'] ?? null
                         });
 
                         // store refresh token in cache
@@ -216,9 +262,9 @@ export default function ({
                             data: user.id,
                             expiresIn: refreshExpires
                         });
-
-                        res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, refreshToken, req.headers.host));
-                        res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, accessToken, req.headers.host));
+                        const host = req.headers.host ?? null;
+                        res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, refreshToken, host));
+                        res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, accessToken, host));
 
                         const originalUrl = await oidcClientService.getOriginalUrl(queryId);
                         return res.redirect(originalUrl);
@@ -268,7 +314,7 @@ export default function ({
                         });
 
                         const isValidPwd =
-                            !!userPwd[0].raw_value && (await bcrypt.compare(password, userPwd[0].raw_value));
+                            !!userPwd[0].raw_payload && (await bcrypt.compare(password, userPwd[0].raw_payload));
 
                         if (!isValidPwd) {
                             return res.status(401).send('Invalid credentials');
@@ -278,8 +324,8 @@ export default function ({
 
                         const refreshToken = _generateRefreshToken({
                             userId: user.id,
-                            ip: req.headers['x-forwarded-for'],
-                            agent: req.headers['user-agent']
+                            ip: req.headers['x-forwarded-for'] ?? null,
+                            agent: req.headers['user-agent'] ?? null
                         });
 
                         // store refresh token in cache
@@ -290,9 +336,9 @@ export default function ({
                             data: user.id,
                             expiresIn: ms(config.auth.refreshTokenExpiration)
                         });
-
-                        res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, accessToken, req.headers.host));
-                        res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, refreshToken, req.headers.host));
+                        const host = req.headers.host ?? null;
+                        res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, accessToken, host));
+                        res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, refreshToken, host));
 
                         return res.status(200).json({});
                     } catch (err) {
@@ -302,8 +348,9 @@ export default function ({
             );
 
             app.post('/auth/logout', async (req, res) => {
-                res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, '', req.headers.host));
-                res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, '', req.headers.host));
+                const host = req.headers.host ?? null;
+                res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, '', host));
+                res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, '', host));
 
                 if (config.auth.oidc.enable) {
                     const redirectUrl = oidcClientService.getLogoutUrl();
@@ -404,17 +451,7 @@ export default function ({
                             queryId: 'resetPassword'
                         };
 
-                        const users = await recordDomain.find({
-                            params: {
-                                library: 'users',
-                                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.userId}]
-                            },
-                            ctx
-                        });
-
-                        if (!users.list.length) {
-                            throw new AuthenticationError('User not found');
-                        }
+                        await _checkIfUserExistsById(payload.userId, ctx);
 
                         try {
                             // save new password
@@ -422,7 +459,7 @@ export default function ({
                                 library: 'users',
                                 recordId: payload.userId,
                                 attribute: 'password',
-                                value: {value: newPassword},
+                                value: {payload: newPassword},
                                 ctx
                             });
                         } catch (e) {
@@ -436,7 +473,7 @@ export default function ({
                 }
             );
 
-            app.post('/auth/refresh', async (req: IRequestWithContext, res, next) => {
+            app.post('/auth/login-checker', async (req: IRequestWithContext, res, next) => {
                 try {
                     // Get user data
                     const ctx: IQueryInfos = {
@@ -474,18 +511,7 @@ export default function ({
                         throw new AuthenticationError('Invalid token');
                     }
 
-                    const users = await recordDomain.find({
-                        params: {
-                            library: 'users',
-                            filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.userId}]
-                        },
-                        ctx
-                    });
-
-                    // User could have been deleted / disabled in database
-                    if (!users.list.length) {
-                        return res.status(401).send('Invalid token');
-                    }
+                    await _checkIfUserExistsById(payload.userId, ctx);
 
                     const userSessionId = (
                         await cacheService.getCache(ECacheType.RAM).getData([`${SESSION_CACHE_HEADER}:${refreshToken}`])
@@ -500,26 +526,7 @@ export default function ({
                         return res.status(401).send('Invalid session');
                     }
 
-                    // Everything is ok, we can generate, update and return new tokens
-                    const newAccessToken = await _generateAccessToken(payload.userId, ctx);
-
-                    const newRefreshToken = _generateRefreshToken({
-                        userId: payload.userId,
-                        ip: req.headers['x-forwarded-for'],
-                        agent: req.headers['user-agent']
-                    });
-
-                    await cacheService.getCache(ECacheType.RAM).storeData({
-                        key: `${SESSION_CACHE_HEADER}:${newRefreshToken}`,
-                        data: payload.userId,
-                        expiresIn: ms(config.auth.refreshTokenExpiration)
-                    });
-
-                    // Delete old session
-                    await cacheService.getCache(ECacheType.RAM).deleteData([`${SESSION_CACHE_HEADER}:${refreshToken}`]);
-
-                    res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, newAccessToken, req.headers.host));
-                    res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, newRefreshToken, req.headers.host));
+                    await _generateAccessAndRefreshTokens(payload.userId, refreshToken, req.headers, res, ctx);
 
                     return res.status(200).json({});
                 } catch (err) {
@@ -527,41 +534,70 @@ export default function ({
                 }
             });
         },
-        async validateRequestToken({apiKey, cookies}) {
+        async validateRequestToken({apiKey, headers, cookies}, res) {
             const ctx: IQueryInfos = {
                 ...initQueryContext(),
                 userId: config.defaultUserId,
                 queryId: 'validateToken'
             };
 
-            const token = cookies?.[ACCESS_TOKEN_COOKIE_NAME];
+            const accessToken = cookies?.[ACCESS_TOKEN_COOKIE_NAME];
+            const refreshToken = cookies?.[REFRESH_TOKEN_COOKIE_NAME];
 
             let userId: string;
             let groupsId: string[];
+            let payload: IAccessTokenPayload | ISessionPayload;
 
-            if (!token && !apiKey) {
-                throw new AuthenticationError('No token or api key provided');
-            }
-
-            if (token) {
-                // Token validation checking
-                let payload: IAccessTokenPayload;
-
+            if (accessToken) {
                 try {
-                    payload = jwt.verify(token, config.auth.key) as IAccessTokenPayload;
+                    payload = jwt.verify(accessToken, config.auth.key) as IAccessTokenPayload;
                 } catch (e) {
-                    throw new AuthenticationError('Invalid token');
-                }
-
-                if (!payload.userId) {
-                    throw new AuthenticationError('Invalid token');
+                    throw new AuthenticationError('Invalid accessToken');
                 }
 
                 userId = payload.userId;
-                groupsId = payload.groupsId;
-            }
 
-            if (!userId && apiKey) {
+                if (!userId) {
+                    throw new AuthenticationError('Invalid accessToken');
+                }
+
+                groupsId = payload.groupsId;
+            } else if (refreshToken) {
+                try {
+                    payload = jwt.verify(refreshToken, config.auth.key) as ISessionPayload;
+                } catch (e) {
+                    throw new AuthenticationError('Invalid refreshToken');
+                }
+
+                if (!payload.userId || !payload.ip || !payload.agent) {
+                    throw new AuthenticationError('Invalid refreshToken');
+                }
+
+                if (config.auth.oidc.enable) {
+                    try {
+                        await oidcClientService.checkTokensValidity({userId: payload.userId});
+                    } catch (err) {
+                        throw new AuthenticationError('OIDC session expired');
+                    }
+                }
+
+                const userSessionId = (
+                    await cacheService.getCache(ECacheType.RAM).getData([`${SESSION_CACHE_HEADER}:${refreshToken}`])
+                )[0];
+
+                if (!userSessionId || payload.agent !== headers['user-agent']) {
+                    throw new AuthenticationError('Invalid session');
+                }
+
+                await _generateAccessAndRefreshTokens(payload.userId, refreshToken, headers, res, ctx);
+
+                userId = payload.userId;
+                groupsId = payload.groupsId;
+            } else {
+                if (!apiKey) {
+                    throw new AuthenticationError('No api key provided');
+                }
+
                 // If no valid token in cookies, check api key
                 const apiKeyData = await apiKeyDomain.validateApiKey({apiKey, ctx});
 
@@ -580,21 +616,10 @@ export default function ({
                     attribute: USERS_GROUP_ATTRIBUTE_NAME,
                     ctx
                 })) as ITreeValue[];
-                groupsId = userGroups.map(g => g.value.id);
+                groupsId = userGroups.map(g => g.payload?.id);
             }
 
-            // Validate user
-            const users = await recordDomain.find({
-                params: {
-                    library: 'users',
-                    filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: userId}]
-                },
-                ctx
-            });
-
-            if (!users.list.length) {
-                throw new AuthenticationError('User not found');
-            }
+            await _checkIfUserExistsById(userId, ctx);
 
             return {
                 userId,

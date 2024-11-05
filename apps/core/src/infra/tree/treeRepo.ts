@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, literal, join} from 'arangojs/aql';
@@ -155,14 +155,14 @@ interface ITreeEdge extends IDbEdge {
     order: number;
 }
 
-interface IDeps {
-    'core.infra.db.dbService'?: IDbService;
-    'core.infra.db.dbUtils'?: IDbUtils;
+export interface ITreeRepoDeps {
+    'core.infra.db.dbService': IDbService;
+    'core.infra.db.dbUtils': IDbUtils;
 }
 export default function ({
-    'core.infra.db.dbService': dbService = null,
-    'core.infra.db.dbUtils': dbUtils = null
-}: IDeps = {}): ITreeRepo {
+    'core.infra.db.dbService': dbService,
+    'core.infra.db.dbUtils': dbUtils
+}: ITreeRepoDeps): ITreeRepo {
     return {
         async createTree({treeData, ctx}): Promise<ITree> {
             const collec = dbService.db.collection(TREES_COLLECTION_NAME);

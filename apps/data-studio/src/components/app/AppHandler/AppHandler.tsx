@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {HomeOutlined, ReloadOutlined} from '@ant-design/icons';
@@ -39,7 +39,7 @@ import {GET_APPLICATION_BY_ENDPOINT, GET_APPLICATION_BY_ENDPOINTVariables} from 
 import {GET_GLOBAL_SETTINGS} from '_gqlTypes/GET_GLOBAL_SETTINGS';
 import {GET_LANGS} from '_gqlTypes/GET_LANGS';
 import {getMe} from '../../../graphQL/queries/userData/me';
-import {initialActiveLibrary, useActiveLibrary} from '../../../hooks/ActiveLibHook/ActiveLibHook';
+import {initialActiveLibrary, useActiveLibrary} from 'hooks/useActiveLibrary';
 import {ME} from '../../../_gqlTypes/ME';
 import Router from '../../Router';
 
@@ -68,10 +68,13 @@ function AppHandler(): JSX.Element {
     const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
     const {data: userData, loading: meLoading, error: meError} = useQuery<ME>(getMe);
 
-    const {data: applicationData, loading: applicationLoading, error: applicationError} = useQuery<
-        GET_APPLICATION_BY_ENDPOINT,
-        GET_APPLICATION_BY_ENDPOINTVariables
-    >(getApplicationByEndpointQuery, {variables: {endpoint: APP_ENDPOINT}});
+    const {
+        data: applicationData,
+        loading: applicationLoading,
+        error: applicationError
+    } = useQuery<GET_APPLICATION_BY_ENDPOINT, GET_APPLICATION_BY_ENDPOINTVariables>(getApplicationByEndpointQuery, {
+        variables: {endpoint: APP_ENDPOINT}
+    });
 
     const {
         data: globalSettingsData,

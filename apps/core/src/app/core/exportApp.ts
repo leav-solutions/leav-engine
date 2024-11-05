@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IExportDomain} from 'domain/export/exportDomain';
@@ -9,10 +9,10 @@ export interface ICoreExportApp {
 }
 
 interface IDeps {
-    'core.domain.export'?: IExportDomain;
+    'core.domain.export': IExportDomain;
 }
 
-export default function ({'core.domain.export': exportDomain = null}: IDeps = {}): ICoreExportApp {
+export default function ({'core.domain.export': exportDomain}: IDeps): ICoreExportApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -24,7 +24,7 @@ export default function ({'core.domain.export': exportDomain = null}: IDeps = {}
                 resolvers: {
                     Query: {
                         async export(parent, {library, attributes, filters, startAt}, ctx): Promise<string> {
-                            return exportDomain.export(
+                            return exportDomain.exportExcel(
                                 {library, attributes, filters, ctx},
                                 {
                                     ...(!!startAt && {startAt})

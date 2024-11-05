@@ -10,8 +10,7 @@
       "declaration": false,
       "sourceMap": false,
       "composite": false,
-      "resolveJsonModule": true,
-      "typeRoots": ["./src/_types"]
+      "resolveJsonModule": true
   },
   "references": [
       {

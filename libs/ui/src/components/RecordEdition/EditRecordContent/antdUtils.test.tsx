@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {getAntdFormInitialValues} from '_ui/components/RecordEdition/EditRecordContent/antdUtils';
@@ -102,7 +102,7 @@ describe('getAntdFormInitialValues', () => {
             const textAttributeId = 'textAttributeId';
             const textElement = {
                 attribute: {format: AttributeFormat.text, id: textAttributeId},
-                values: [{raw_value: rawValue}]
+                values: [{raw_payload: rawValue}]
             };
             const recordForm = {elements: [textElement]};
 
@@ -148,7 +148,7 @@ describe('getAntdFormInitialValues', () => {
             const dateRangeAttributeId = 'dateRangeAttributeId';
             const strcturedDateRangeElement = {
                 attribute: {format: AttributeFormat.date_range, id: dateRangeAttributeId},
-                values: [{raw_value: {from, to}}]
+                values: [{raw_payload: {from, to}}]
             };
             const recordForm = {elements: [strcturedDateRangeElement]};
 
@@ -165,7 +165,7 @@ describe('getAntdFormInitialValues', () => {
             const dateRangeAttributeId = 'dateRangeAttributeId';
             const strcturedDateRangeElement = {
                 attribute: {format: AttributeFormat.date_range, id: dateRangeAttributeId},
-                values: [{raw_value: JSON.stringify({from, to})}]
+                values: [{raw_payload: JSON.stringify({from, to})}]
             };
             const recordForm = {elements: [strcturedDateRangeElement]};
 

@@ -1,10 +1,10 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import getActiveFieldValues from '_ui/components/RecordEdition/EditRecordContent/helpers/getActiveFieldValues';
 import isCurrentVersion from '_ui/components/RecordEdition/EditRecordContent/helpers/isCurrentVersion';
 import {
-    FieldScope,
+    VersionFieldScope,
     FormElement,
     ICommonFieldsReducerState
 } from '_ui/components/RecordEdition/EditRecordContent/_types';
@@ -49,7 +49,7 @@ export type LinkFieldReducerActions<ValuesType extends AllowedValuesType> =
     | {type: LinkFieldReducerActionsType.SET_ERROR_MESSAGE; errorMessage: string | string[]}
     | {type: LinkFieldReducerActionsType.CLEAR_ERROR_MESSAGE}
     | {type: LinkFieldReducerActionsType.SET_IS_VALUES_ADD_VISIBLE; isValuesAddVisible: boolean}
-    | {type: LinkFieldReducerActionsType.CHANGE_ACTIVE_SCOPE; scope: FieldScope}
+    | {type: LinkFieldReducerActionsType.CHANGE_ACTIVE_SCOPE; scope: VersionFieldScope}
     | {
           type: LinkFieldReducerActionsType.REFRESH_VALUES;
           values: ValuesType[];
@@ -61,13 +61,13 @@ export const virginState: ILinkFieldState<AllowedValuesType> = {
     formElement: null,
     attribute: null,
     isReadOnly: false,
-    activeScope: FieldScope.CURRENT,
+    activeScope: VersionFieldScope.CURRENT,
     values: {
-        [FieldScope.CURRENT]: {
+        [VersionFieldScope.CURRENT]: {
             version: null,
             values: []
         },
-        [FieldScope.INHERITED]: null
+        [VersionFieldScope.INHERITED]: null
     },
     errorMessage: '',
     isValuesAddVisible: false
@@ -100,13 +100,13 @@ const _computeScopeAndValues = <ValuesType extends AllowedValuesType>(params: {
     const inheritedVersion = hasInheritedValues ? values?.[0]?.version : null;
 
     return {
-        activeScope: hasInheritedValues ? FieldScope.INHERITED : FieldScope.CURRENT,
+        activeScope: hasInheritedValues ? VersionFieldScope.INHERITED : VersionFieldScope.CURRENT,
         values: {
-            [FieldScope.CURRENT]: {
+            [VersionFieldScope.CURRENT]: {
                 version: currentVersion ?? null,
                 values: hasInheritedValues ? [] : values
             },
-            [FieldScope.INHERITED]: hasInheritedValues ? {version: inheritedVersion ?? null, values} : null
+            [VersionFieldScope.INHERITED]: hasInheritedValues ? {version: inheritedVersion ?? null, values} : null
         }
     };
 };
@@ -198,7 +198,7 @@ const linkFieldReducer = <ValuesType extends AllowedValuesType>(
                 ..._computeScopeAndValues({
                     attribute: state.formElement.attribute,
                     values: action.values,
-                    formVersion: state.values[FieldScope.CURRENT].version
+                    formVersion: state.values[VersionFieldScope.CURRENT].version
                 })
             };
         }

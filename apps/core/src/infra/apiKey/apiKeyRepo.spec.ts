@@ -1,11 +1,17 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
 import {IDbUtils} from 'infra/db/dbUtils';
 import {IApiKey} from '_types/apiKey';
 import {mockCtx} from '../../__tests__/mocks/shared';
-import apiKeyRepo from './apiKeyRepo';
+import apiKeyRepo, {IApiKeyRepoDeps} from './apiKeyRepo';
+import {ToAny} from 'utils/utils';
+
+const depsBase: ToAny<IApiKeyRepoDeps> = {
+    'core.infra.db.dbUtils': jest.fn(),
+    'core.infra.db.dbService': jest.fn()
+};
 
 describe('apiKeyRepo', () => {
     const docKeyData = {
@@ -19,18 +25,18 @@ describe('apiKeyRepo', () => {
         label: 'Test',
         key: 'test_key',
         userId: '42',
-        expiresAt: null,
+        expiresAt: 0,
         createdAt: 1234567890,
         createdBy: '42',
         modifiedAt: 1234567890,
         modifiedBy: '42'
     };
 
-    const mockDbUtils: Mockify<IDbUtils> = {
+    const mockDbUtils = {
         cleanup: jest.fn().mockReturnValue(keyData),
         convertToDoc: jest.fn().mockReturnValue(docKeyData),
         findCoreEntity: global.__mockPromise([keyData])
-    };
+    } satisfies Mockify<IDbUtils>;
 
     describe('createApiKey', () => {
         test('Should create a new version key', async () => {
@@ -80,9 +86,10 @@ describe('apiKeyRepo', () => {
 
     describe('getApiKeys', () => {
         test('Should return a list of version keys', async () => {
-            const mockDbServ = {db: null, execute: global.__mockPromise([])};
+            const mockDbServ = {execute: global.__mockPromise([])};
 
             const repo = apiKeyRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });

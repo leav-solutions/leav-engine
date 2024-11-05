@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
@@ -36,31 +36,31 @@ export interface IIndexationManagerDomain {
     indexDatabase(params: IIndexDatabaseParams, task?: ITaskFuncParams): Promise<string>;
 }
 
-interface IDeps {
-    config?: Config.IConfig;
-    'core.infra.amqpService'?: IAmqpService;
-    'core.domain.record'?: IRecordDomain;
-    'core.domain.library'?: ILibraryDomain;
-    'core.domain.attribute'?: IAttributeDomain;
-    'core.infra.indexation.indexationService'?: IIndexationService;
-    'core.domain.tasksManager'?: ITasksManagerDomain;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.utils.logger'?: winston.Winston;
-    translator?: i18n;
+export interface IIndexationManagerDomainDeps {
+    config: Config.IConfig;
+    'core.infra.amqpService': IAmqpService;
+    'core.domain.record': IRecordDomain;
+    'core.domain.library': ILibraryDomain;
+    'core.domain.attribute': IAttributeDomain;
+    'core.infra.indexation.indexationService': IIndexationService;
+    'core.domain.tasksManager': ITasksManagerDomain;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.utils.logger': winston.Winston;
+    translator: i18n;
 }
 
 export default function ({
-    config = null,
-    'core.infra.amqpService': amqpService = null,
-    'core.domain.record': recordDomain = null,
-    'core.domain.library': libraryDomain = null,
-    'core.domain.attribute': attributeDomain = null,
-    'core.domain.tasksManager': tasksManagerDomain = null,
-    'core.infra.indexation.indexationService': indexationService = null,
-    'core.domain.eventsManager': eventsManager = null,
-    'core.utils.logger': logger = null,
-    translator = null
-}: IDeps): IIndexationManagerDomain {
+    config,
+    'core.infra.amqpService': amqpService,
+    'core.domain.record': recordDomain,
+    'core.domain.library': libraryDomain,
+    'core.domain.attribute': attributeDomain,
+    'core.domain.tasksManager': tasksManagerDomain,
+    'core.infra.indexation.indexationService': indexationService,
+    'core.domain.eventsManager': eventsManager,
+    'core.utils.logger': logger,
+    translator
+}: IIndexationManagerDomainDeps): IIndexationManagerDomain {
     const _indexRecords = async (
         findRecordParams: IFindRecordParams,
         ctx: IQueryInfos,
@@ -104,7 +104,7 @@ export default function ({
 
             val = await _getFormattedValuesAndLabels(attribute, val, ctx);
 
-            const value = val.map(v => v?.value).filter(e => e);
+            const value = val.map(v => v?.payload).filter(e => e);
 
             if (value.length === 0) {
                 return {[attribute.id]: null};
@@ -139,7 +139,7 @@ export default function ({
         if (attribute.type === AttributeTypes.TREE) {
             values = values.map(v => ({
                 ...v,
-                value: v.value?.record
+                payload: v.payload?.record
             }));
         }
 
@@ -150,13 +150,13 @@ export default function ({
         ) {
             const promises = values.map(async v => {
                 const recordIdentity = await recordDomain.getRecordIdentity(
-                    {id: v.value.id, library: attribute.linked_library || v.value.library},
+                    {id: v.payload.id, library: attribute.linked_library || v.payload.library},
                     ctx
                 );
 
                 return {
                     ...v,
-                    value: recordIdentity.label || v.value.id
+                    payload: recordIdentity.label || v.payload.id
                 };
             });
 

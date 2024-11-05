@@ -1,20 +1,20 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render, screen, fireEvent, waitFor} from '_ui/_tests/testUtils';
+import {render, screen} from '_ui/_tests/testUtils';
 import {DSRangePickerWrapper} from './DSRangePickerWrapper';
-import {FieldScope} from '../../../_types';
+import {VersionFieldScope} from '../../../_types';
 import {
     IStandardFieldReducerState,
     StandardFieldValueState
 } from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockFormElementInput} from '_ui/__mocks__/common/form';
-import {mockAttributeLink} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
 import {Form} from 'antd';
-import dayjs, {Dayjs} from 'dayjs';
+import dayjs from 'dayjs';
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
+import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 
 const en_label = 'label';
 const fr_label = 'libellé';
@@ -41,7 +41,7 @@ const mockValue = {
     state: StandardFieldValueState.PRISTINE
 };
 
-const getInitialState = (required: boolean, fallbackLang: boolean = false): IStandardFieldReducerState => ({
+const getInitialState = (required: boolean, fallbackLang = false): IStandardFieldReducerState => ({
     record: mockRecord,
     formElement: {
         ...mockFormElementInput,
@@ -50,32 +50,38 @@ const getInitialState = (required: boolean, fallbackLang: boolean = false): ISta
             required
         }
     },
-    attribute: mockAttributeLink,
+    attribute: mockFormAttribute,
     isReadOnly: false,
-    activeScope: FieldScope.CURRENT,
+    activeScope: VersionFieldScope.CURRENT,
     values: {
-        [FieldScope.CURRENT]: {
+        [VersionFieldScope.CURRENT]: {
             version: null,
             values: {[idValue]: mockValue}
         },
-        [FieldScope.INHERITED]: null
+        [VersionFieldScope.INHERITED]: null
     },
     metadataEdit: false,
     inheritedValue: null,
     isInheritedNotOverrideValue: false,
     isInheritedOverrideValue: false,
-    isInheritedValue: false
+    isInheritedValue: false,
+    calculatedValue: null,
+    isCalculatedNotOverrideValue: false,
+    isCalculatedOverrideValue: false,
+    isCalculatedValue: false
 });
 
 describe('DSRangePickerWrapper', () => {
     const mockOnChange = jest.fn();
     const mockHandleSubmit = jest.fn();
+    const mockHandleBlur = jest.fn();
     let user!: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {
         user = userEvent.setup({});
         mockOnChange.mockReset();
         mockHandleSubmit.mockReset();
+        mockHandleBlur.mockReset();
     });
 
     describe('Without required field', () => {
@@ -87,8 +93,9 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                             onChange={mockOnChange}
                         />
                     </Form.Item>
@@ -106,8 +113,9 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                             onChange={mockOnChange}
                         />
                     </Form.Item>
@@ -125,9 +133,10 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>
@@ -161,9 +170,10 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>
@@ -195,9 +205,10 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>
@@ -229,9 +240,10 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>
@@ -265,9 +277,10 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>
@@ -286,9 +299,10 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>
@@ -317,14 +331,16 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>
             );
 
+            // TODO : target clear button when DS add html attribute - Ticket DS-219
             const clearButton = screen.getByRole('button');
             await user.click(clearButton);
 
@@ -354,15 +370,137 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={null}
+                            fieldValue={mockValue}
                             onChange={mockOnChange}
+                            handleSubmit={mockHandleSubmit}
+                            handleBlur={mockHandleBlur}
+                        />
+                    </Form.Item>
+                </Form>
+            );
+
+            const clearButton = screen.queryByRole('button');
+            expect(clearButton).toBeNull();
+        });
+    });
+
+    describe('Calculated values', () => {
+        test('Should not display helper without calculated value', async () => {
+            const state = getInitialState(false);
+            state.calculatedValue = null;
+            state.isCalculatedOverrideValue = false;
+            render(
+                <Form>
+                    <Form.Item>
+                        <DSRangePickerWrapper
+                            state={state}
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={mockValue}
+                            onChange={mockOnChange}
+                            handleBlur={mockHandleBlur}
                             handleSubmit={mockHandleSubmit}
                         />
                     </Form.Item>
                 </Form>
             );
 
-            expect(screen.queryByRole('button')).toBeNull();
+            expect(
+                screen.queryByText('record_edition.calculated_input_helper', {exact: false})
+            ).not.toBeInTheDocument();
+        });
+
+        test('Should display helper with calculated value', async () => {
+            const state = getInitialState(false);
+            state.calculatedValue = mockValue.value;
+            state.isCalculatedOverrideValue = true;
+            render(
+                <Form>
+                    <Form.Item>
+                        <DSRangePickerWrapper
+                            state={state}
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={mockValue}
+                            onChange={mockOnChange}
+                            handleBlur={mockHandleBlur}
+                            handleSubmit={mockHandleSubmit}
+                        />
+                    </Form.Item>
+                </Form>
+            );
+
+            expect(screen.getByText('record_edition.calculated_input_helper', {exact: false})).toBeVisible();
+        });
+
+        test('Should call onChange/handleSubmit with calculated value on clear', async () => {
+            const raw_value = {
+                from: '1714138054',
+                to: '1714138054'
+            };
+            const state = getInitialState(false);
+            state.calculatedValue = {...mockValue.value, raw_value};
+            state.isCalculatedValue = true;
+            state.isCalculatedOverrideValue = true;
+            state.isCalculatedNotOverrideValue = false;
+            render(
+                <Form
+                    initialValues={{
+                        dateRangeTest: [dayjs.unix(Number(raw_value.from)), dayjs.unix(Number(raw_value.to))]
+                    }}
+                >
+                    <Form.Item name="dateRangeTest">
+                        <DSRangePickerWrapper
+                            state={state}
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={mockValue}
+                            onChange={mockOnChange}
+                            handleBlur={mockHandleBlur}
+                            handleSubmit={mockHandleSubmit}
+                        />
+                    </Form.Item>
+                </Form>
+            );
+
+            // TODO : target clear button when DS add html attribute - Ticket DS-219
+            const clearButton = screen.getByRole('button');
+            await user.click(clearButton);
+
+            expect(mockOnChange).toHaveBeenCalledTimes(1);
+            expect(mockOnChange).toHaveBeenCalledWith([expect.any(Object), expect.any(Object)], raw_value);
+            expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
+            expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
+        });
+
+        test('Should hide clear icon when value is calculated, but not override', async () => {
+            const raw_value = {
+                from: '1714138054',
+                to: '1714138054'
+            };
+            const state = getInitialState(false);
+            state.calculatedValue = {...mockValue.value, raw_value};
+            state.isCalculatedValue = true;
+            state.isCalculatedOverrideValue = false;
+            state.isCalculatedNotOverrideValue = true;
+            render(
+                <Form
+                    initialValues={{
+                        dateRangeTest: [dayjs.unix(Number(raw_value.from)), dayjs.unix(Number(raw_value.to))]
+                    }}
+                >
+                    <Form.Item name="dateRangeTest">
+                        <DSRangePickerWrapper
+                            state={state}
+                            attribute={{} as RecordFormAttributeFragment}
+                            fieldValue={mockValue}
+                            onChange={mockOnChange}
+                            handleBlur={mockHandleBlur}
+                            handleSubmit={mockHandleSubmit}
+                        />
+                    </Form.Item>
+                </Form>
+            );
+
+            const clearButton = screen.queryByRole('button');
+            expect(clearButton).toBeNull();
         });
     });
 });

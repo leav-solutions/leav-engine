@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AwilixContainer} from 'awilix';
@@ -51,12 +51,12 @@ export interface IActionsListDomain {
     runActionsList(actions: IActionsListSavedAction[], values: IValue[], ctx: IRunActionsListCtx): Promise<IValue[]>;
 }
 
-interface IDeps {
-    'core.depsManager'?: AwilixContainer;
-    translator?: i18n;
+export interface IActionsListDomainDeps {
+    'core.depsManager': AwilixContainer;
+    translator: i18n;
 }
 
-export default function ({'core.depsManager': depsManager = null, translator = null}: IDeps = {}): IActionsListDomain {
+export default function ({'core.depsManager': depsManager, translator}: IActionsListDomainDeps): IActionsListDomain {
     let _pluginActions: IActionsListFunction[] = [];
     return {
         getAvailableActions() {
@@ -79,6 +79,7 @@ export default function ({'core.depsManager': depsManager = null, translator = n
         async runActionsList(actions, values, ctx) {
             const availActions: IActionsListFunction[] = this.getAvailableActions();
             let resultAction = values;
+
             for (const action of actions) {
                 const params: ActionsListParams<string> = !!action.params
                     ? action.params.reduce((all, p) => {
@@ -100,7 +101,7 @@ export default function ({'core.depsManager': depsManager = null, translator = n
                           ? action.error_message[ctx.defaultLang]
                           : '';
                     if (customMessage) {
-                        customMessage += ': ' + errors.map(error => error.attributeValue.value).join(', ');
+                        customMessage += ': ' + errors.map(error => error.attributeValue?.payload).join(', ');
                         throw new ValidationError({[ctx.attribute.id]: customMessage}, customMessage, true);
                     } else {
                         const errorsByType = errors.reduce<
@@ -117,7 +118,7 @@ export default function ({'core.depsManager': depsManager = null, translator = n
                             (message, [errorType, {attributeValues, message: optionalMessage}]) => {
                                 const messageText = optionalMessage ?? translator.t(`error.${errorType}`);
                                 message.push(
-                                    `${messageText}: ${(attributeValues ?? []).map(value => value.value).join(', ')}`
+                                    `${messageText}: ${(attributeValues ?? []).map(value => value?.payload).join(', ')}`
                                 );
                                 return message;
                             },

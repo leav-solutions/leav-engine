@@ -1,11 +1,11 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {act, render, screen} from '_tests/testUtils';
 import {mockTreeElement} from '../../../../../__mocks__/common/treeElements';
 import Row from './Row';
 
-jest.mock('hooks/ActiveTreeHook/ActiveTreeHook');
+jest.mock('hooks/useActiveTree/useActiveTree');
 
 describe('Cell', () => {
     test('should display the label of the record', async () => {

@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IRecordDomain} from 'domain/record/recordDomain';
@@ -12,9 +12,9 @@ import {AttributeCondition, IRecord} from '../../_types/record';
 import {ViewSizes, ViewTypes} from '../../_types/views';
 
 interface IDeps {
-    'core.domain.record'?: IRecordDomain;
-    'core.domain.view'?: IViewDomain;
-    'core.utils'?: IUtils;
+    'core.domain.record': IRecordDomain;
+    'core.domain.view': IViewDomain;
+    'core.utils': IUtils;
 }
 
 export interface IViewApp {
@@ -22,9 +22,9 @@ export interface IViewApp {
 }
 
 export default function ({
-    'core.domain.view': viewDomain = null,
-    'core.domain.record': recordDomain = null,
-    'core.utils': utils = null
+    'core.domain.view': viewDomain,
+    'core.domain.record': recordDomain,
+    'core.utils': utils
 }: IDeps): IViewApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
@@ -135,7 +135,7 @@ export default function ({
                             viewDomain.deleteView(viewId, ctx)
                     },
                     View: {
-                        created_by: async (view: ViewFromGraphQL, _, ctx): Promise<IRecord> => {
+                        created_by: async (view: ViewFromGraphQL, _, ctx): Promise<IRecord | null> => {
                             const record = await recordDomain.find({
                                 params: {
                                     library: USERS_LIBRARY,
@@ -148,7 +148,7 @@ export default function ({
 
                             return record.list.length ? record.list[0] : null;
                         },
-                        valuesVersions: (view: IView, _, ctx): IViewValuesVersionForGraphql[] => {
+                        valuesVersions: (view: IView, _, ctx): IViewValuesVersionForGraphql[] | null => {
                             if (!view.valuesVersions) {
                                 return null;
                             }

@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeWithRevLink} from 'infra/attributeTypes/attributeTypesRepo';
@@ -35,23 +35,23 @@ export interface IRecordAttributePermissionDomain {
     ): Promise<boolean>;
 }
 
-interface IDeps {
-    'core.domain.permission.attribute'?: IAttributePermissionDomain;
-    'core.domain.permission.helpers.treeBasedPermissions'?: ITreeBasedPermissionHelper;
-    'core.domain.permission.helpers.permissionByUserGroups'?: IPermissionByUserGroupsHelper;
-    'core.domain.permission.helpers.defaultPermission'?: IDefaultPermissionHelper;
-    'core.domain.attribute'?: IAttributeDomain;
-    'core.infra.value'?: IValueRepo;
+export interface IRecordAttributePermissionDomainDeps {
+    'core.domain.permission.attribute': IAttributePermissionDomain;
+    'core.domain.permission.helpers.treeBasedPermissions': ITreeBasedPermissionHelper;
+    'core.domain.permission.helpers.permissionByUserGroups': IPermissionByUserGroupsHelper;
+    'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
+    'core.domain.attribute': IAttributeDomain;
+    'core.infra.value': IValueRepo;
 }
 
-export default function (deps: IDeps = {}): IRecordAttributePermissionDomain {
+export default function (deps: IRecordAttributePermissionDomainDeps): IRecordAttributePermissionDomain {
     const {
-        'core.domain.permission.attribute': attrPermissionDomain = null,
-        'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper = null,
-        'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper = null,
-        'core.domain.permission.helpers.defaultPermission': defaultPermHelper = null,
-        'core.domain.attribute': attributeDomain = null,
-        'core.infra.value': valueRepo = null
+        'core.domain.permission.attribute': attrPermissionDomain,
+        'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper,
+        'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper,
+        'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
+        'core.domain.attribute': attributeDomain,
+        'core.infra.value': valueRepo
     } = deps;
     return {
         async getRecordAttributePermission(
@@ -92,7 +92,7 @@ export default function (deps: IDeps = {}): IRecordAttributePermissionDomain {
             );
 
             const valuesByAttr = treesAttrValues.reduce((allVal, treeVal, i) => {
-                allVal[attrProps.permissions_conf.permissionTreeAttributes[i]] = treeVal.map(v => v.value.id);
+                allVal[attrProps.permissions_conf.permissionTreeAttributes[i]] = treeVal.map(v => v.payload.id);
 
                 return allVal;
             }, {});

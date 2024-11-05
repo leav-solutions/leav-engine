@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
@@ -35,7 +35,7 @@ describe('Values Metadata', () => {
                     recordId: "${recordId}",
                     attribute: "${attrWithMetaId}",
                     value: {
-                        value: "Toto",
+                        payload: "Toto",
                         metadata: [{name: "${metaAttrId}", value: "Metadata value"}]
                     }
                 ) {
@@ -43,8 +43,8 @@ describe('Values Metadata', () => {
                     metadata {
                         name
                         value {
-                            value
-                            raw_value
+                            payload
+                            raw_payload
                         }
                     }
                 }
@@ -65,8 +65,8 @@ describe('Values Metadata', () => {
                         metadata {
                             name
                             value {
-                                value
-                                raw_value
+                                payload
+                                raw_payload
                             }
                         }
                     }

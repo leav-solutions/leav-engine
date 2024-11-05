@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ICorePluginsApp} from 'app/core/pluginsApp';
@@ -8,7 +8,11 @@ import {IExtensionPoints} from '_types/extensionPoints';
 import {IAppModule} from '_types/shared';
 import {getConfig} from './config';
 
-export const initPlugins = async (folder: string, depsManager: AwilixContainer) => {
+export const initPlugins = async (folder: string | null, depsManager: AwilixContainer) => {
+    if (!folder) {
+        return;
+    }
+
     const pluginsApp: ICorePluginsApp = depsManager.cradle['core.app.core.plugins'];
 
     // Retrieve extensions points across all core app files

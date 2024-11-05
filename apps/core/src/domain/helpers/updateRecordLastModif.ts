@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IRecordRepo} from 'infra/record/recordRepo';
@@ -9,17 +9,17 @@ import {IRecord} from '_types/record';
 import {ECacheType, ICachesService} from '../../infra/cache/cacheService';
 
 interface IDeps {
-    'core.infra.record'?: IRecordRepo;
-    'core.infra.cache.cacheService'?: ICachesService;
-    'core.utils'?: IUtils;
+    'core.infra.record': IRecordRepo;
+    'core.infra.cache.cacheService': ICachesService;
+    'core.utils': IUtils;
 }
 
 export type UpdateRecordLastModifFunc = (library: string, recordId: string, ctx: IQueryInfos) => Promise<IRecord>;
 
 export default function ({
-    'core.infra.record': recordRepo = null,
-    'core.infra.cache.cacheService': cacheService = null,
-    'core.utils': utils = null
+    'core.infra.record': recordRepo,
+    'core.infra.cache.cacheService': cacheService,
+    'core.utils': utils
 }: IDeps): UpdateRecordLastModifFunc {
     return async (library, recordId, ctx) => {
         await cacheService.getCache(ECacheType.RAM).deleteData([utils.getRecordsCacheKey(library, recordId)]);

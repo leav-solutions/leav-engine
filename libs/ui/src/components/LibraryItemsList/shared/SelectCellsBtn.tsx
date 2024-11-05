@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Button, ButtonProps} from 'antd';
@@ -7,17 +7,13 @@ import React from 'react';
 import {IRecordIdentityWhoAmI} from '_ui/types/records';
 import useSearchReducer from '../hooks/useSearchReducer';
 import {SearchActionTypes} from '../hooks/useSearchReducer/searchReducer';
+import {SelectCellsBtnType} from '_ui/components/LibraryItemsList/shared/shared.utils';
 
 interface ISelectCellsBtnProps extends ButtonProps {
     record: IRecordIdentityWhoAmI;
     size: SizeType;
     text: string;
     selectionType: SelectCellsBtnType;
-}
-
-export enum SelectCellsBtnType {
-    ONLY = 'ONLY',
-    ALL = 'ALL'
 }
 
 function SelectCellsBtn({selectionType, record, size, text, ...btnProps}: ISelectCellsBtnProps): JSX.Element {

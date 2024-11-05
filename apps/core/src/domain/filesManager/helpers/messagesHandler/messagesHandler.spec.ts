@@ -1,10 +1,17 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IConfig} from '_types/config';
 import {FileEvents, IFileEventData} from '../../../../_types/filesManager';
 import {mockCtx} from '../../../../__tests__/mocks/shared';
-import messagesHandler from './messagesHandler';
+import messagesHandler, {IMessagesHandlerDeps} from './messagesHandler';
+import {ToAny} from 'utils/utils';
+
+const depsBase: ToAny<IMessagesHandlerDeps> = {
+    'core.utils.logger': jest.fn(),
+    'core.domain.filesManager.helpers.handleFileSystemEvent': jest.fn(),
+    config: {}
+};
 
 describe('MessagesHandler', () => {
     test('Process messages, respect incoming order', async () => {
@@ -19,6 +26,7 @@ describe('MessagesHandler', () => {
         };
 
         const handler = messagesHandler({
+            ...depsBase,
             'core.domain.filesManager.helpers.handleFileSystemEvent': mockHandleEventFileSystem,
             config: mockConfig as IConfig
         });

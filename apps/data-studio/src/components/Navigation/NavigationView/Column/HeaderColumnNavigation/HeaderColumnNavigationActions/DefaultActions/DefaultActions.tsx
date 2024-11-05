@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
@@ -17,7 +17,7 @@ import {Button, Dropdown, message} from 'antd';
 import {ItemType} from 'antd/lib/menu/hooks/useItems';
 import {IconEllipsisVertical} from 'assets/icons/IconEllipsisVertical';
 import {removeTreeElementMutation} from 'graphQL/mutations/trees/removeTreeElementMutation';
-import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
+import {useActiveTree} from 'hooks/useActiveTree';
 import useRefreshTreeContent from 'hooks/useRefreshTreeContent';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
