@@ -30,13 +30,11 @@ export default function saveSettings(state: IFormBuilderState, action: IFormBuil
 
     const newSettings: IKeyValue<unknown> = {...elementToUpdate.settings};
     Object.keys(action.settings).forEach(key => {
-        if (key in newSettings) {
-            const setting = newSettings[key];
-            newSettings[key] =
-                _isLabelObject(setting) && _isLabelObject(action.settings[key])
-                    ? {...setting, ...action.settings[key]}
-                    : action.settings[key];
-        }
+        const setting = newSettings[key];
+        newSettings[key] =
+            _isLabelObject(setting) && _isLabelObject(action.settings[key])
+                ? {...setting, ...action.settings[key]}
+                : action.settings[key];
     });
 
     const newElement: IFormElement = {
