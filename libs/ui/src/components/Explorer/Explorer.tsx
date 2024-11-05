@@ -4,7 +4,7 @@
 import {FunctionComponent} from 'react';
 import {KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
-import {ItemActions} from './types';
+import {IItemAction} from './types';
 import {DataView} from './DataView';
 import {useExplorerData} from './useExplorerData';
 import {useDeactivateAction} from './useDeactivateAction';
@@ -13,7 +13,7 @@ import {useCreateMainAction} from './useCreateMainAction';
 
 interface IExplorerProps {
     library: string;
-    itemActions: ItemActions<any>;
+    itemActions: IItemAction[];
     defaultActionsForItem?:
         | []
         | ['deactivate']
@@ -39,7 +39,9 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     defaultActionsForItem = ['edit', 'deactivate'],
     defaultMainActions = ['create']
 }) => {
-    const {data, loading, refetch} = useExplorerData(library); // TODO: refresh when go back on page
+    const currentAttribute = 'user_groups';
+
+    const {data, loading, refetch} = useExplorerData(library, [currentAttribute]); // TODO: refresh when go back on page
 
     const {deactivateAction} = useDeactivateAction({
         isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('deactivate')
@@ -69,7 +71,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                     </ExplorerHeaderDivStyled>
                     <DataView
                         dataGroupedFilteredSorted={data ?? []}
-                        attributesToDisplay={['itemId', 'whoAmI']}
+                        attributesToDisplay={[currentAttribute, 'whoAmI']}
                         itemActions={[editAction, deactivateAction, ...itemActions].filter(Boolean)}
                     />
                 </>
