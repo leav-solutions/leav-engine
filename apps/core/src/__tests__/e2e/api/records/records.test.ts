@@ -11,6 +11,8 @@ import {
     gqlSaveTree,
     makeGraphQlCall
 } from '../e2eUtils';
+import {adminUserId} from '../../../../_constants/users';
+import {usersLibraryId} from '../../../../_constants/libraries';
 
 describe('Records', () => {
     const testLibName = 'record_library_test';
@@ -123,12 +125,9 @@ describe('Records', () => {
     });
 
     test('Get record with properties', async () => {
-        const userLibraryId = 'users';
-        const adminUserId = '1';
-
         const result = await makeGraphQlCall(`{
             records(
-                library: "${userLibraryId}",
+                library: "${usersLibraryId}",
                 filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${adminUserId}"}]
             ) {
                 list {
