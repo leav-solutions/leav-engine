@@ -6,7 +6,7 @@ import {FaPen} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {EditRecordModal} from '_ui/components';
 import {RecordFilterCondition, useExplorerLazyQuery} from '_ui/_gqlTypes';
-import {ActionHook, DataGroupedFilteredSorted, ItemActions} from './types';
+import {ActionHook, IItemAction, IItemData} from './types';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -23,9 +23,9 @@ export const useEditAction = ({isEnabled}: ActionHook) => {
 
     const [refreshItem] = useExplorerLazyQuery({fetchPolicy: 'network-only'});
 
-    const [editingItem, setEditingItem] = useState<null | DataGroupedFilteredSorted<'whoAmI'>[number]>(null);
+    const [editingItem, setEditingItem] = useState<null | IItemData>(null);
 
-    const _editAction: ItemActions<any>[number] = {
+    const _editAction: IItemAction = {
         label: t('explorer.editItem'),
         icon: <FaPen />,
         callback: item => {
@@ -33,10 +33,11 @@ export const useEditAction = ({isEnabled}: ActionHook) => {
         }
     };
 
-    const _handleEditModalClose = (item: DataGroupedFilteredSorted<'whoAmI'>[number]) => {
+    const _handleEditModalClose = (item: IItemData) => {
         refreshItem({
             variables: {
                 libraryId: item.libraryId,
+                attributeIds: ['id'],
                 filters: [
                     {
                         condition: RecordFilterCondition.EQUAL,
@@ -55,7 +56,7 @@ export const useEditAction = ({isEnabled}: ActionHook) => {
             isEnabled && editingItem !== null ? (
                 <EditRecordModal
                     open
-                    record={editingItem.value}
+                    record={editingItem.whoAmI}
                     library={editingItem.libraryId}
                     onClose={() => _handleEditModalClose(editingItem)}
                 />

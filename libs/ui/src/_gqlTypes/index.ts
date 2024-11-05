@@ -1,6 +1,3 @@
-// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IPreviewScalar} from '@leav/utils'
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
@@ -936,6 +933,14 @@ export type TreeNodeChildFragment = { id: string, order?: number | null, childre
 
 export type ViewDetailsFragment = { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size: ViewSizes, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: { field: string, order: SortOrder } | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, settings?: Array<{ name: string, value?: any | null }> | null };
 
+export type PropertyValueLinkValueFragment = { linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, attribute?: { type: AttributeType } | null };
+
+export type PropertyValueTreeValueFragment = { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null, attribute?: { type: AttributeType } | null };
+
+export type PropertyValueValueFragment = { valuePayload?: any | null, attribute?: { type: AttributeType } | null };
+
+export type PropertyValueFragment = PropertyValueLinkValueFragment | PropertyValueTreeValueFragment | PropertyValueValueFragment;
+
 export type CheckApplicationExistenceQueryVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
   endpoint?: InputMaybe<Scalars['String']>;
@@ -1326,11 +1331,12 @@ export type AddViewMutation = { saveView: { id: string, shared: boolean, label: 
 
 export type ExplorerQueryVariables = Exact<{
   libraryId: Scalars['ID'];
+  attributeIds: Array<Scalars['ID']> | Scalars['ID'];
   filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
 }>;
 
 
-export type ExplorerQuery = { records: { list: Array<{ id: string, whoAmI: { label?: string | null, subLabel?: string | null, preview?: IPreviewScalar | null, id: string, color?: string | null, library: { id: string } } }> } };
+export type ExplorerQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, properties: Array<{ attributeId: string, values: Array<{ linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, attribute?: { type: AttributeType } | null } | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null, attribute?: { type: AttributeType } | null } | { valuePayload?: any | null, attribute?: { type: AttributeType } | null }> }> }> } };
 
 export const RecordIdentityFragmentDoc = gql`
     fragment RecordIdentity on Record {
@@ -1870,6 +1876,28 @@ export const ViewDetailsFragmentDoc = gql`
   settings {
     name
     value
+  }
+}
+    ${RecordIdentityFragmentDoc}`;
+export const PropertyValueFragmentDoc = gql`
+    fragment PropertyValue on GenericValue {
+  attribute {
+    type
+  }
+  ... on Value {
+    valuePayload: payload
+  }
+  ... on LinkValue {
+    linkPayload: payload {
+      ...RecordIdentity
+    }
+  }
+  ... on TreeValue {
+    treePayload: payload {
+      record {
+        ...RecordIdentity
+      }
+    }
   }
 }
     ${RecordIdentityFragmentDoc}`;
@@ -3871,24 +3899,21 @@ export type AddViewMutationHookResult = ReturnType<typeof useAddViewMutation>;
 export type AddViewMutationResult = Apollo.MutationResult<AddViewMutation>;
 export type AddViewMutationOptions = Apollo.BaseMutationOptions<AddViewMutation, AddViewMutationVariables>;
 export const ExplorerDocument = gql`
-    query Explorer($libraryId: ID!, $filters: [RecordFilterInput]) {
+    query Explorer($libraryId: ID!, $attributeIds: [ID!]!, $filters: [RecordFilterInput]) {
   records(library: $libraryId, filters: $filters) {
     list {
-      id
-      whoAmI {
-        label
-        subLabel
-        preview
-        id
-        color
-        library {
-          id
+      ...RecordIdentity
+      properties(attributeIds: $attributeIds) {
+        attributeId
+        values {
+          ...PropertyValue
         }
       }
     }
   }
 }
-    `;
+    ${RecordIdentityFragmentDoc}
+${PropertyValueFragmentDoc}`;
 
 /**
  * __useExplorerQuery__
@@ -3903,6 +3928,7 @@ export const ExplorerDocument = gql`
  * const { data, loading, error } = useExplorerQuery({
  *   variables: {
  *      libraryId: // value for 'libraryId'
+ *      attributeIds: // value for 'attributeIds'
  *      filters: // value for 'filters'
  *   },
  * });

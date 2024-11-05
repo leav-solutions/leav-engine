@@ -1,15 +1,32 @@
-query Explorer($libraryId: ID!, $filters: [RecordFilterInput]) {
+fragment PropertyValue on GenericValue {
+    attribute {
+        type
+    }
+    ... on Value {
+        valuePayload: payload
+    }
+    ... on LinkValue {
+        linkPayload: payload {
+            ...RecordIdentity
+        }
+    }
+    ... on TreeValue {
+        treePayload: payload {
+            record {
+                ...RecordIdentity
+            }
+        }
+    }
+}
+
+query Explorer($libraryId: ID!, $attributeIds: [ID!]!, $filters: [RecordFilterInput]) {
     records(library: $libraryId, filters: $filters) {
         list {
-            id
-            whoAmI {
-                label
-                subLabel
-                preview
-                id
-                color
-                library {
-                    id
+            ...RecordIdentity
+            properties(attributeIds: $attributeIds) {
+                attributeId
+                values {
+                    ...PropertyValue
                 }
             }
         }

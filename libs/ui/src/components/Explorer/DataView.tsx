@@ -3,23 +3,23 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {cloneElement, FunctionComponent, ReactNode} from 'react';
 import {KitButton, KitDropDown, KitIdCard, KitSpace, KitTable} from 'aristid-ds';
-import type {DataGroupedFilteredSorted, ItemActions} from './types';
 import type {KitTableColumnType} from 'aristid-ds/dist/Kit/DataDisplay/Table/types';
 import type {IKitAvatar} from 'aristid-ds/dist/Kit/DataDisplay/Avatar/types';
 import {FaEllipsisH} from 'react-icons/fa';
 import {Override} from '@leav/utils';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {TFunction} from 'i18next';
+import {
+    AttributeType,
+    PropertyValueFragment,
+    PropertyValueLinkValueFragment,
+    PropertyValueTreeValueFragment,
+    PropertyValueValueFragment
+} from '_ui/_gqlTypes';
+import {IItemAction, IItemData, ItemWhoAmI} from './types';
 
 const USELESS = '';
 
-const _getIdCard = ({
-    id,
-    label,
-    library,
-    preview,
-    subLabel
-}: IDataViewProps['dataGroupedFilteredSorted'][number]['value']): ReturnType<typeof KitIdCard> => {
+const _getIdCard = ({id, label, library, preview, subLabel}: ItemWhoAmI): ReturnType<typeof KitIdCard> => {
     const avatarProps: IKitAvatar = {label: label ?? undefined};
 
     if (preview) {
@@ -29,63 +29,94 @@ const _getIdCard = ({
     return <KitIdCard avatarProps={avatarProps} title={label ?? id} description={subLabel ?? library.id} />;
 };
 
-const _getActionButtons = (
-    itemActions: Array<Override<ItemActions<any>[number], {callback: () => void}>>,
-    t: TFunction<'shared'>
-): ReactNode => {
-    const isLessThanFourActions = itemActions.length < 4;
+interface IDataViewProps {
+    dataGroupedFilteredSorted: IItemData[];
+    itemActions: IItemAction[];
+    attributesToDisplay: string[];
+}
 
-    return isLessThanFourActions ? (
-        <KitSpace>
-            {itemActions.map(({label, icon, isDanger, callback}) => (
-                <KitButton title={label} icon={icon} onClick={callback} danger={isDanger}>
-                    {label}
-                </KitButton>
-            ))}
-        </KitSpace>
-    ) : (
-        <>
-            <KitButton
-                type="tertiary"
-                icon={itemActions[0].icon}
-                onClick={itemActions[0].callback}
-                title={itemActions[0].label}
-                danger={itemActions[0].isDanger}
-            />
-            <KitButton
-                type="tertiary"
-                icon={itemActions[1].icon}
-                onClick={itemActions[1].callback}
-                title={itemActions[1].label}
-                danger={itemActions[1].isDanger}
-            />
-            <KitDropDown
-                menu={{
-                    items: itemActions.slice(2).map(({callback, icon, label, isDanger}) => ({
-                        key: label,
-                        title: label,
-                        danger: isDanger,
-                        label,
-                        icon: icon ? cloneElement(icon, {size: '2em'}) : null, // TODO: find better tuning
-                        onClick: callback
-                    }))
-                }}
-            >
-                <KitButton title={t('explorer.more-actions') ?? undefined} type="tertiary" icon={<FaEllipsisH />} />
-            </KitDropDown>
-        </>
-    );
-};
-const _getColumns = (
-    attributesToDisplay: IDataViewProps['attributesToDisplay'],
-    itemActions: IDataViewProps['itemActions'],
-    t: TFunction<'shared'>
-): Array<KitTableColumnType<DataGroupedFilteredSorted<'whoAmI'>[number]>> =>
-    attributesToDisplay
-        .map<KitTableColumnType<DataGroupedFilteredSorted<'whoAmI'>[number]>>(attributeName => ({
+export const DataView: FunctionComponent<IDataViewProps> = ({
+    dataGroupedFilteredSorted,
+    attributesToDisplay,
+    itemActions
+}) => {
+    const {t} = useSharedTranslation();
+
+    const _getActionButtons = (actions: Array<Override<IItemAction, {callback: () => void}>>): ReactNode => {
+        const isLessThanFourActions = actions.length < 4;
+
+        return isLessThanFourActions ? (
+            <KitSpace>
+                {actions.map(({label, icon, isDanger, callback}) => (
+                    <KitButton title={label} icon={icon} onClick={callback} danger={isDanger}>
+                        {label}
+                    </KitButton>
+                ))}
+            </KitSpace>
+        ) : (
+            <>
+                <KitButton
+                    type="tertiary"
+                    icon={actions[0].icon}
+                    onClick={actions[0].callback}
+                    title={actions[0].label}
+                    danger={actions[0].isDanger}
+                />
+                <KitButton
+                    type="tertiary"
+                    icon={actions[1].icon}
+                    onClick={actions[1].callback}
+                    title={actions[1].label}
+                    danger={actions[1].isDanger}
+                />
+                <KitDropDown
+                    menu={{
+                        items: actions.slice(2).map(({callback, icon, label, isDanger}) => ({
+                            key: label,
+                            title: label,
+                            danger: isDanger,
+                            label,
+                            icon: icon ? cloneElement(icon, {size: '2em'}) : null, // TODO: find better tuning
+                            onClick: callback
+                        }))
+                    }}
+                >
+                    <KitButton title={t('explorer.more-actions') ?? undefined} type="tertiary" icon={<FaEllipsisH />} />
+                </KitDropDown>
+            </>
+        );
+    };
+
+    const renderCell = (propertiesById: {[p: string]: PropertyValueFragment[]}, attributeName: string) => {
+        const isLinkValue = (v: PropertyValueFragment): v is PropertyValueLinkValueFragment =>
+            [AttributeType.simple_link, AttributeType.advanced_link].includes(v.attribute!.type); // TODO: remove !
+        const isTreeValue = (v: PropertyValueFragment): v is PropertyValueTreeValueFragment =>
+            [AttributeType.tree].includes(v.attribute!.type); // TODO: remove !
+        const isStandardValue = (v: PropertyValueFragment): v is PropertyValueValueFragment =>
+            [AttributeType.simple, AttributeType.advanced].includes(v.attribute!.type); // TODO: remove !
+
+        return propertiesById[attributeName]
+            .map(value => {
+                if (isStandardValue(value)) {
+                    return value.valuePayload;
+                }
+                if (isTreeValue(value)) {
+                    return value.treePayload!.record.id; // TODO: remove !
+                }
+                if (isLinkValue(value)) {
+                    return value.linkPayload!.id; // TODO: remove !
+                }
+                return '-';
+            })
+            .join(', ');
+    };
+
+    const columns = attributesToDisplay
+        .map<KitTableColumnType<IItemData>>(attributeName => ({
             title: attributeName,
-            dataIndex: attributeName,
-            render: (text, {value}) => (attributeName === 'whoAmI' ? _getIdCard(value) : text)
+            dataIndex: USELESS,
+            render: (_, {whoAmI, propertiesById}) =>
+                attributeName === 'whoAmI' ? _getIdCard(whoAmI) : renderCell(propertiesById, attributeName)
         }))
         .concat(
             itemActions.length === 0
@@ -100,31 +131,11 @@ const _getColumns = (
                                   itemActions.map(action => ({
                                       ...action,
                                       callback: () => action.callback(item)
-                                  })),
-                                  t
+                                  }))
                               )
                       }
                   ]
         );
 
-interface IDataViewProps {
-    dataGroupedFilteredSorted: DataGroupedFilteredSorted<'whoAmI'>;
-    itemActions: ItemActions<any>;
-    attributesToDisplay: string[];
-}
-
-export const DataView: FunctionComponent<IDataViewProps> = ({
-    dataGroupedFilteredSorted,
-    attributesToDisplay,
-    itemActions
-}) => {
-    const {t} = useSharedTranslation();
-
-    return (
-        <KitTable
-            columns={_getColumns(attributesToDisplay, itemActions, t)}
-            pagination={false}
-            dataSource={dataGroupedFilteredSorted}
-        />
-    );
+    return <KitTable columns={columns} pagination={false} dataSource={dataGroupedFilteredSorted} />;
 };
