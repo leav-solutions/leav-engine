@@ -32,7 +32,6 @@ import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from '../helpers/subscriptions';
 import {IIndexationManagerApp} from '../indexationManagerApp';
 import {ICreateRecordParams, IRecordsQueryVariables} from './_types';
-import {isLeavError} from '../../../errors/typeguards';
 import {IFindRecordParams} from 'domain/record/_types';
 
 export interface ICoreRecordApp {
@@ -64,6 +63,36 @@ export default function ({
     'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat,
     'core.app.core.subscriptionsHelper': subscriptionsHelper
 }: IDeps): ICoreRecordApp {
+    const _getPropertyValues = async (parent: IRecord, attributeId: string, ctx: IQueryInfos) => {
+        try {
+            return recordDomain.getRecordFieldValue({
+                library: parent.library,
+                record: parent,
+                attributeId,
+                options: {
+                    version: ctx.version,
+                    forceArray: true
+                },
+                ctx
+            });
+        } catch (error) {
+            if (error instanceof LeavError) {
+                ctx.errors = [...(ctx.errors ?? []), error];
+                return [];
+            }
+
+            const leavErr = new LeavError(ErrorTypes.INTERNAL_ERROR, error.message, {
+                fields: {[attributeId]: error.message},
+                record: {
+                    id: parent.id,
+                    library: parent.library
+                }
+            });
+            ctx.errors = [...(ctx.errors ?? []), leavErr];
+            return [];
+        }
+    };
+
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -81,7 +110,13 @@ export default function ({
                         library: Library!,
                         whoAmI: RecordIdentity!,
                         property(attribute: ID!): [GenericValue!]!,
+                        properties(attributeIds: [ID!]!): [RecordProperty!]!,
                         permissions: RecordPermissions!
+                    }
+
+                    type RecordProperty {
+                        attributeId: ID!,
+                        values: [GenericValue!]!
                     }
 
                     type RecordIdentity {
@@ -356,35 +391,19 @@ export default function ({
                         library: async (record: IRecord, _, ctx: IQueryInfos) =>
                             record.library ? libraryDomain.getLibraryProperties(record.library, ctx) : null,
                         whoAmI: async (rec: IRecord, _, ctx: IQueryInfos) => recordDomain.getRecordIdentity(rec, ctx),
-                        property: async (parent: IRecord, {attribute}: {attribute: string}, ctx: IQueryInfos) => {
-                            try {
-                                const values = await recordDomain.getRecordFieldValue({
-                                    library: parent.library,
-                                    record: parent,
-                                    attributeId: attribute,
-                                    options: {
-                                        version: ctx.version,
-                                        forceArray: true
-                                    },
-                                    ctx
-                                });
-                                return values;
-                            } catch (err) {
-                                const leavErr = new LeavError(
-                                    isLeavError(err) ? err.type : ErrorTypes.INTERNAL_ERROR,
-                                    err.message,
-                                    {
-                                        fields: {[attribute]: err.message},
-                                        record: {
-                                            id: parent.id,
-                                            library: parent.library
-                                        }
-                                    }
-                                );
-                                ctx.errors = [...(ctx.errors ?? []), leavErr];
-                                return [];
-                            }
-                        },
+                        property: async (parent: IRecord, {attribute}: {attribute: string}, ctx: IQueryInfos) =>
+                            _getPropertyValues(parent, attribute, ctx),
+                        properties: async (
+                            parent: IRecord,
+                            {attributeIds}: {attributeIds: string[]},
+                            ctx: IQueryInfos
+                        ) =>
+                            Promise.all(
+                                attributeIds.map(async attributeId => ({
+                                    attributeId,
+                                    values: await _getPropertyValues(parent, attributeId, ctx)
+                                }))
+                            ),
                         permissions: (
                             record: IRecord,
                             _,
