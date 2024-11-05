@@ -15,7 +15,7 @@ import {
 describe('Records', () => {
     const testLibName = 'record_library_test';
     const testAttributeId = 'create_record_test_attribute';
-    let recordId;
+    let recordId: string;
 
     beforeAll(async () => {
         await gqlSaveAttribute({
@@ -27,11 +27,11 @@ describe('Records', () => {
 
         await gqlSaveLibrary(testLibName, 'Test', [testAttributeId]);
 
-        const resCrea = await makeGraphQlCall(`mutation {
+        const resultCreation = await makeGraphQlCall(`mutation {
             c1: createRecord(library: "${testLibName}") { record {id} }
         }`);
 
-        recordId = resCrea.data.data.c1.record.id;
+        recordId = resultCreation.data.data.c1.record.id;
     });
 
     test('Create records', async () => {
@@ -120,6 +120,80 @@ describe('Records', () => {
         expect(res.data.errors).toBeUndefined();
         expect(res.status).toBe(200);
         expect(res.data.data.records.list[0].library.id).toBe(testLibName);
+    });
+
+    test('Get record with properties', async () => {
+        const userLibraryId = 'users';
+        const adminUserId = '1';
+
+        const result = await makeGraphQlCall(`{
+            records(
+                library: "${userLibraryId}",
+                filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${adminUserId}"}]
+            ) {
+                list {
+                    properties(attributeIds: ["created_at", "created_by", "user_groups"]) {
+                        attributeId
+                        values {
+                            id_value
+                            ... on Value {
+                                valuePayload: payload
+                            }
+                            ... on LinkValue {
+                                linkPayload: payload {
+                                    whoAmI {
+                                        label
+                                    }
+                                }
+                            }
+                            ... on TreeValue {
+                                treePayload: payload {
+                                    id
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }`);
+
+        expect(result.data.errors).toBeUndefined();
+        expect(result.status).toBe(200);
+        expect(result.data.data.records.list[0].properties).toEqual([
+            {
+                attributeId: 'created_at',
+                values: [
+                    {
+                        id_value: null,
+                        valuePayload: expect.any(String)
+                    }
+                ]
+            },
+            {
+                attributeId: 'created_by',
+                values: [
+                    {
+                        id_value: null,
+                        linkPayload: {
+                            whoAmI: {
+                                label: 'system'
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                attributeId: 'user_groups',
+                values: [
+                    {
+                        id_value: expect.any(String),
+                        treePayload: {
+                            id: '1'
+                        }
+                    }
+                ]
+            }
+        ]);
     });
 
     test('Get record identity', async () => {
