@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AnyPrimitive, Override} from '@leav/utils';
@@ -44,16 +44,16 @@ export interface IGenericValue {
 }
 
 export interface IStandardValue extends IGenericValue {
-    value?: any;
-    raw_value?: any;
+    payload?: any;
+    raw_payload?: any;
 }
 
 export interface ILinkValue extends IGenericValue {
-    value?: IRecord;
+    payload?: IRecord;
 }
 
 export interface ITreeValue extends IGenericValue {
-    value?: ITreeNode;
+    payload?: ITreeNode;
     treeId: string;
 }
 

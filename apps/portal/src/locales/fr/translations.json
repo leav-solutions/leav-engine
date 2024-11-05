@@ -22,7 +22,12 @@
     },
     "application": {
         "new_app": "Nouvelle application",
-        "create": "Créer une nouvelle appli"
+        "create": "Créer une nouvelle appli",
+        "edit": "Editer l'application",
+        "favorite": {
+            "add": "Ajouter aux favoris",
+            "remove": "Retirer des favoris"
+        }
     },
     "lang": {
         "fr": "Français",

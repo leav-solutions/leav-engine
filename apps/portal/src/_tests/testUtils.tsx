@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {InMemoryCache, InMemoryCacheConfig} from '@apollo/client';
@@ -27,6 +27,7 @@ interface IProvidersProps {
     globalSettings?: GET_GLOBAL_SETTINGS_globalSettings;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 const Providers = ({
     children,
     apolloMocks,
@@ -64,5 +65,6 @@ const renderWithProviders = (ui: ReactElement, options?: ICustomRenderOptions): 
 
 // Re-export everything from testing-library to improve DX. You can everything you need from this file when you use this
 // custom render
+// eslint-disable-next-line react-refresh/only-export-components
 export * from '@testing-library/react';
 export {renderWithProviders as render};

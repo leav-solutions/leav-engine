@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useContext} from 'react';
@@ -9,7 +9,7 @@ import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchRed
 import {IItem} from '_ui/types/search';
 import {SearchActionTypes} from '../../hooks/useSearchReducer/searchReducer';
 import BodyCell from '../BodyCell';
-import {useEditRecordModalContext} from '../EditRecordModalContext';
+import {useEditRecordModalContext} from '_ui/contexts/EditRecordModalContext';
 
 const CustomBodyRow = styled.div<{$selected: boolean}>`
     position: relative;

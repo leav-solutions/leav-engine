@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
@@ -15,7 +15,7 @@ export default function (): IActionsListFunction {
         output_types: [ActionsListIOTypes.STRING],
         action: values => {
             const allErrors = values.reduce((errors, elementValue) => {
-                if (!elementValue.value.match(EMAIL_REGEX)) {
+                if (!elementValue.payload.match(EMAIL_REGEX)) {
                     errors.push({errorType: Errors.INVALID_EMAIL, attributeValue: elementValue});
                 }
                 return errors;

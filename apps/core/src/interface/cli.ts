@@ -1,14 +1,14 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ICoreImportApp} from 'app/core/importApp';
 import program from 'commander';
 
 interface IDeps {
-    'core.app.core.import'?: ICoreImportApp;
+    'core.app.core.import': ICoreImportApp;
 }
 
-export default function ({'core.app.core.import': importApp = null}: IDeps = {}) {
+export default function ({'core.app.core.import': importApp}: IDeps) {
     const defineImportConfigCommand = () => {
         program
             .command('importConfig <file>')

@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
@@ -7,7 +7,6 @@ import {IDbUtils} from 'infra/db/dbUtils';
 import {IApiKey, IGetCoreApiKeysParams} from '_types/apiKey';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
-import {IGetCoreEntitiesParams} from '_types/shared';
 
 export const API_KEY_COLLECTION_NAME = 'core_api_keys';
 
@@ -18,15 +17,15 @@ export interface IApiKeyRepo {
     deleteApiKey: (params: {id: string; ctx: IQueryInfos}) => Promise<IApiKey>;
 }
 
-interface IDeps {
-    'core.infra.db.dbUtils'?: IDbUtils;
-    'core.infra.db.dbService'?: IDbService;
+export interface IApiKeyRepoDeps {
+    'core.infra.db.dbUtils': IDbUtils;
+    'core.infra.db.dbService': IDbService;
 }
 
 export default function ({
-    'core.infra.db.dbService': dbService = null,
-    'core.infra.db.dbUtils': dbUtils = null
-}: IDeps = {}): IApiKeyRepo {
+    'core.infra.db.dbService': dbService,
+    'core.infra.db.dbUtils': dbUtils
+}: IApiKeyRepoDeps): IApiKeyRepo {
     return {
         async getApiKeys({params, ctx}) {
             const defaultParams: IGetCoreApiKeysParams = {

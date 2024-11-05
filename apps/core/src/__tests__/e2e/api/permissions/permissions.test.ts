@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeTypes} from '../../../../_types/attribute';
@@ -68,7 +68,7 @@ describe('Permissions', () => {
                 library: "${testLibId}",
                 recordId: "${testLibRecordId}",
                 attribute: "${testLibAttrId}",
-                value: {value: "${nodePermTreeElem}"}
+                value: {payload: "${nodePermTreeElem}"}
             ) {
                 id_value
             }
@@ -176,7 +176,7 @@ describe('Permissions', () => {
                     library: "${testLibId}",
                     recordId: "${testLibRecordId}",
                     attribute: "${testPermAttrId}",
-                    value: {value: "TEST VAL"}
+                    value: {payload: "TEST VAL"}
                 ) {
                     id_value
                 }

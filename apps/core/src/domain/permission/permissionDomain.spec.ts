@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
@@ -18,9 +18,10 @@ import {mockTranslator} from '../../__tests__/mocks/translator';
 import {IAdminPermissionDomain} from './adminPermissionDomain';
 import {IAttributePermissionDomain} from './attributePermissionDomain';
 import {ILibraryPermissionDomain} from './libraryPermissionDomain';
-import permissionDomain from './permissionDomain';
+import permissionDomain, {IPermissionDomainDeps} from './permissionDomain';
 import {IRecordAttributePermissionDomain} from './recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from './recordPermissionDomain';
+import {ToAny} from 'utils/utils';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),
@@ -30,6 +31,23 @@ const mockCacheService: Mockify<ICacheService> = {
 
 const mockCachesService: Mockify<ICachesService> = {
     getCache: jest.fn().mockReturnValue(mockCacheService)
+};
+
+const depsBase: ToAny<IPermissionDomainDeps> = {
+    'core.domain.permission.admin': jest.fn(),
+    'core.domain.permission.library': jest.fn(),
+    'core.domain.permission.record': jest.fn(),
+    'core.domain.permission.attribute': jest.fn(),
+    'core.domain.permission.recordAttribute': jest.fn(),
+    'core.domain.permission.tree': jest.fn(),
+    'core.domain.permission.treeNode': jest.fn(),
+    'core.domain.permission.treeLibrary': jest.fn(),
+    'core.domain.permission.application': jest.fn(),
+    'core.domain.eventsManager': jest.fn(),
+    'core.infra.permission': jest.fn(),
+    'core.infra.cache.cacheService': jest.fn(),
+    translator: {},
+    config: {}
 };
 
 describe('PermissionDomain', () => {
@@ -62,11 +80,12 @@ describe('PermissionDomain', () => {
                 permissionTreeTarget: 'test_lib/12345'
             };
 
-            const mockPermRepo: Mockify<IPermissionRepo> = {
+            const mockPermRepo = {
                 savePermission: global.__mockPromise(permData)
-            };
+            } satisfies Mockify<IPermissionRepo>;
 
             const permDomain = permissionDomain({
+                ...depsBase,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.infra.permission': mockPermRepo as IPermissionRepo,
@@ -100,6 +119,7 @@ describe('PermissionDomain', () => {
     describe('isAllowed', () => {
         test('Return admin permission', async () => {
             const permsHelperDomain = permissionDomain({
+                ...depsBase,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain
             });
 
@@ -120,6 +140,7 @@ describe('PermissionDomain', () => {
             };
 
             const permsHelperDomain = permissionDomain({
+                ...depsBase,
                 'core.domain.permission.library': mockLibPermDomain as ILibraryPermissionDomain
             });
 
@@ -141,6 +162,7 @@ describe('PermissionDomain', () => {
             };
 
             const permsHelperDomain = permissionDomain({
+                ...depsBase,
                 'core.domain.permission.attribute': mockAttrPermDomain as IAttributePermissionDomain
             });
 
@@ -162,6 +184,7 @@ describe('PermissionDomain', () => {
             };
 
             const permsHelperDomain = permissionDomain({
+                ...depsBase,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain
             });
 
@@ -186,6 +209,7 @@ describe('PermissionDomain', () => {
             };
 
             const permsHelperDomain = permissionDomain({
+                ...depsBase,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain
             });
 
@@ -219,6 +243,7 @@ describe('PermissionDomain', () => {
             };
 
             const permsHelperDomain = permissionDomain({
+                ...depsBase,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain
             });
 
@@ -244,6 +269,7 @@ describe('PermissionDomain', () => {
             };
 
             const permsHelperDomain = permissionDomain({
+                ...depsBase,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain
             });
 
@@ -294,7 +320,11 @@ describe('PermissionDomain', () => {
         };
 
         test('Return actions by type with registered actions', async () => {
-            const permsDomain = permissionDomain({config: mockConfig as IConfig, translator: mockTranslator as i18n});
+            const permsDomain = permissionDomain({
+                ...depsBase,
+                config: mockConfig as IConfig,
+                translator: mockTranslator as i18n
+            });
 
             // Register actions
             permsDomain.registerActions(PermissionTypes.ADMIN, ['test_perm']);
@@ -306,7 +336,11 @@ describe('PermissionDomain', () => {
         });
 
         test('Return actions by type with registered actions, filtered', async () => {
-            const permsDomain = permissionDomain({config: mockConfig as IConfig, translator: mockTranslator as i18n});
+            const permsDomain = permissionDomain({
+                ...depsBase,
+                config: mockConfig as IConfig,
+                translator: mockTranslator as i18n
+            });
 
             // Register actions
             permsDomain.registerActions(PermissionTypes.ADMIN, ['test_perm'], ['my_lib_name']);
@@ -328,7 +362,11 @@ describe('PermissionDomain', () => {
         });
 
         test('Return all actions if forced too', async () => {
-            const permsDomain = permissionDomain({config: mockConfig as IConfig, translator: mockTranslator as i18n});
+            const permsDomain = permissionDomain({
+                ...depsBase,
+                config: mockConfig as IConfig,
+                translator: mockTranslator as i18n
+            });
 
             // Register actions
             permsDomain.registerActions(PermissionTypes.ADMIN, ['test_perm'], ['my_lib_name']);

@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ISelectedAttribute} from '_ui/types/attributes';
@@ -40,7 +40,6 @@ export const mockAttributeWithDetails: AttributeDetailsFragment = {
         fr: 'Mon attribut',
         en: 'My attribute'
     },
-    required: false,
     format: AttributeFormat.text,
     type: AttributeType.simple,
     system: false,

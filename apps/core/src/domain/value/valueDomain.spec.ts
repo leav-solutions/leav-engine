@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
@@ -8,7 +8,7 @@ import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain'
 import {IRecordRepo} from 'infra/record/recordRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IValueRepo} from 'infra/value/valueRepo';
-import {IUtils} from 'utils/utils';
+import {IUtils, ToAny} from 'utils/utils';
 import * as Config from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {IValue, IValueVersion} from '_types/value';
@@ -33,7 +33,28 @@ import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IValidateHelper} from '../helpers/validate';
 import {IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import {IRecordPermissionDomain} from '../permission/recordPermissionDomain';
-import valueDomain from './valueDomain';
+import valueDomain, {IValueDomainDeps} from './valueDomain';
+
+const depsBase: ToAny<IValueDomainDeps> = {
+    config: {},
+    'core.domain.actionsList': jest.fn(),
+    'core.domain.attribute': jest.fn(),
+    'core.domain.permission.recordAttribute': jest.fn(),
+    'core.domain.permission.record': jest.fn(),
+    'core.domain.eventsManager': jest.fn(),
+    'core.domain.helpers.validate': jest.fn(),
+    'core.domain.helpers.updateRecordLastModif': jest.fn(),
+    'core.domain.tree.helpers.elementAncestors': jest.fn(),
+    'core.domain.tree.helpers.getDefaultElement': jest.fn(),
+    'core.domain.record.helpers.sendRecordUpdateEvent': jest.fn(),
+    'core.domain.versionProfile': jest.fn(),
+    'core.infra.record': jest.fn(),
+    'core.infra.tree': jest.fn(),
+    'core.infra.value': jest.fn(),
+    'core.utils': jest.fn(),
+    'core.utils.logger': jest.fn(),
+    'core.domain.tree': jest.fn()
+};
 
 describe('ValueDomain', () => {
     const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
@@ -49,9 +70,9 @@ describe('ValueDomain', () => {
         find: global.__mockPromise({totalCount: 1, list: [{id: 54321}]})
     };
 
-    const mockActionsListDomain: Mockify<IActionsListDomain> = {
+    const mockActionsListDomain = {
         runActionsList: jest.fn().mockImplementation((_, val) => Promise.resolve(val))
-    };
+    } satisfies Mockify<IActionsListDomain>;
 
     const mockRecordPermDomain: Mockify<IRecordPermissionDomain> = {
         getRecordPermission: global.__mockPromise(true)
@@ -141,7 +162,7 @@ describe('ValueDomain', () => {
         };
 
         test('Should save an indexed value', async function () {
-            const savedValueData = {value: 'test val', attribute: 'test_attr'};
+            const savedValueData = {payload: 'test val', attribute: 'test_attr'};
 
             const mockValRepo = {
                 createValue: global.__mockPromise(savedValueData),
@@ -154,11 +175,12 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
@@ -173,7 +195,7 @@ describe('ValueDomain', () => {
                 library: 'test_lib',
                 recordId: '12345',
                 attribute: 'test_attr',
-                value: {value: 'test val'},
+                value: {payload: 'test val'},
                 ctx
             });
 
@@ -185,7 +207,7 @@ describe('ValueDomain', () => {
         test('Should save a new standard value', async function () {
             const savedValueData = {
                 id_value: '1337',
-                value: 'test val',
+                payload: 'test val',
                 attribute: 'test_attr',
                 modified_at: 123456,
                 created_at: 123456
@@ -201,11 +223,12 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
@@ -220,7 +243,7 @@ describe('ValueDomain', () => {
                 library: 'test_lib',
                 recordId: '12345',
                 attribute: 'test_attr',
-                value: {value: 'test val'},
+                value: {payload: 'test val'},
                 ctx
             });
 
@@ -238,7 +261,7 @@ describe('ValueDomain', () => {
         test('Should update a standard value', async function () {
             const savedValueData = {
                 id_value: '1337',
-                value: 'test val',
+                payload: 'test val',
                 attribute: 'test_attr',
                 modified_at: 123456,
                 created_at: 123456
@@ -257,11 +280,12 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
@@ -278,7 +302,7 @@ describe('ValueDomain', () => {
                 attribute: 'test_attr',
                 value: {
                     id_value: '12345',
-                    value: 'test val'
+                    payload: 'test val'
                 },
                 ctx
             });
@@ -302,6 +326,7 @@ describe('ValueDomain', () => {
                 getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}])
             };
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
@@ -315,7 +340,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: 'test_attr',
-                    value: {value: 'test val'},
+                    value: {payload: 'test val'},
                     ctx
                 })
             ).rejects.toThrow();
@@ -333,6 +358,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.helpers.validate': mValidateHelper as IValidateHelper
             });
@@ -342,7 +368,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: 'test_attr',
-                    value: {value: 'test val'},
+                    value: {payload: 'test val'},
                     ctx
                 })
             ).rejects.toThrow();
@@ -355,6 +381,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
@@ -368,7 +395,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: 'test_attr',
-                    value: {value: 'test val'},
+                    value: {payload: 'test val'},
                     ctx
                 })
             ).rejects.toThrow();
@@ -381,6 +408,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
@@ -396,7 +424,7 @@ describe('ValueDomain', () => {
                     attribute: 'test_attr',
                     value: {
                         id_value: '12345',
-                        value: 'test val'
+                        payload: 'test val'
                     },
                     ctx
                 })
@@ -404,7 +432,7 @@ describe('ValueDomain', () => {
         });
 
         test('Should update record modif date and user', async function () {
-            const savedValueData = {value: 'test val', attribute: 'test_attr'};
+            const savedValueData = {payload: 'test val', attribute: 'test_attr'};
 
             const mockValRepo = {
                 createValue: global.__mockPromise(savedValueData),
@@ -422,11 +450,12 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
@@ -441,7 +470,7 @@ describe('ValueDomain', () => {
                 library: 'test_lib',
                 recordId: '12345',
                 attribute: 'test_attr',
-                value: {value: 'test val'},
+                value: {payload: 'test val'},
                 ctx
             });
 
@@ -453,7 +482,7 @@ describe('ValueDomain', () => {
         test('Should save a versioned value', async () => {
             const savedValueData: IValue = {
                 id_value: '1337',
-                value: 'test val',
+                payload: 'test val',
                 attribute: 'advanced_attribute',
                 modified_at: 123456,
                 created_at: 123456,
@@ -470,9 +499,10 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
@@ -491,7 +521,7 @@ describe('ValueDomain', () => {
                 recordId: '12345',
                 attribute: 'test_attr',
                 value: {
-                    value: 'test val',
+                    payload: 'test val',
                     version: {my_tree: '1'}
                 },
                 ctx
@@ -513,11 +543,12 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
@@ -533,7 +564,7 @@ describe('ValueDomain', () => {
                 recordId: '12345',
                 attribute: 'test_attr',
                 value: {
-                    value: 'test val',
+                    payload: 'test val',
                     version: {my_tree: '1'}
                 },
                 ctx
@@ -574,11 +605,12 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepoNotfound as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
@@ -592,7 +624,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: 'test_attr',
-                    value: {value: 'test val'},
+                    value: {payload: 'test val'},
                     ctx
                 })
             ).rejects.toThrow(ValidationError);
@@ -613,10 +645,11 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepoNoTree as ITreeRepo,
@@ -630,7 +663,7 @@ describe('ValueDomain', () => {
                     recordId: '12345',
                     attribute: 'test_attr',
                     value: {
-                        value: 'test val',
+                        payload: 'test val',
                         version: {my_tree: '1'}
                     },
                     ctx
@@ -654,10 +687,11 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepoNotPresent as ITreeRepo,
@@ -671,7 +705,7 @@ describe('ValueDomain', () => {
                     recordId: '12345',
                     attribute: 'test_attr',
                     value: {
-                        value: 'test val',
+                        payload: 'test val',
                         version: {my_tree: '1'}
                     },
                     ctx
@@ -702,10 +736,11 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepoNotfound as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
@@ -718,7 +753,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: 'test_attr',
-                    value: {value: 'test val'},
+                    value: {payload: 'test val'},
                     ctx
                 })
             ).rejects.toThrow(ValidationError);
@@ -750,10 +785,11 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepoWithFind as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.infra.tree': mockTreeRepoNotPresent as ITreeRepo,
@@ -766,7 +802,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: mockAttrTree.id,
-                    value: {value: 'lib1/123456'},
+                    value: {payload: 'lib1/123456'},
                     ctx
                 })
             ).rejects.toThrow(ValidationError);
@@ -775,7 +811,7 @@ describe('ValueDomain', () => {
         test('If value is identical to DB value, do not save it', async () => {
             const dbValueData = {
                 id_value: '1337',
-                value: 'test val',
+                payload: 'test val',
                 attribute: 'test_attr',
                 modified_at: 123456,
                 created_at: 123456
@@ -797,11 +833,12 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
@@ -818,7 +855,7 @@ describe('ValueDomain', () => {
                 attribute: 'test_attr',
                 value: {
                     id_value: '12345',
-                    value: 'test val'
+                    payload: 'test val'
                 },
                 ctx
             });
@@ -827,14 +864,14 @@ describe('ValueDomain', () => {
             expect(mockEventsManagerDomain.sendDatabaseEvent).not.toBeCalled();
             expect(mockUpdateRecordLastModif).not.toBeCalled();
             expect(mockSendRecordUpdateEventHelper).not.toBeCalled();
-            expect(savedValue[0]).toEqual({...dbValueData, raw_value: dbValueData.value});
+            expect(savedValue[0]).toEqual({...dbValueData, raw_payload: dbValueData.payload});
         });
 
         describe('Metadata', () => {
             test('Save metadata on value', async () => {
                 const savedValueData = {
                     id_value: '1337',
-                    value: 'test val',
+                    payload: 'test val',
                     attribute: 'advanced_attribute_with_meta',
                     modified_at: 123456,
                     created_at: 123456,
@@ -853,12 +890,13 @@ describe('ValueDomain', () => {
                 };
 
                 const valDomain = valueDomain({
+                    ...depsBase,
                     config: mockConfig as Config.IConfig,
                     'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.infra.value': mockValRepo as IValueRepo,
                     'core.infra.record': mockRecordRepo as IRecordRepo,
-                    'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                    'core.domain.actionsList': mockActionsListDomain as any,
                     'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                     'core.domain.permission.recordAttribute':
                         mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
@@ -873,7 +911,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: 'advanced_attribute_with_meta',
-                    value: {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
+                    value: {payload: 'test val', metadata: {meta_attribute: 'metadata value'}},
                     ctx
                 });
 
@@ -884,7 +922,7 @@ describe('ValueDomain', () => {
 
                 expect(savedValue[0].metadata).toMatchObject({
                     meta_attribute: {
-                        value: 'metadata value'
+                        payload: 'metadata value'
                     }
                 });
             });
@@ -892,7 +930,7 @@ describe('ValueDomain', () => {
             test("Should throw if metadata doesn't match attribute settings", async () => {
                 const savedValueData = {
                     id_value: '1337',
-                    value: 'test val',
+                    payload: 'test val',
                     attribute: 'advanced_attribute',
                     modified_at: 123456,
                     created_at: 123456,
@@ -911,10 +949,11 @@ describe('ValueDomain', () => {
                 };
 
                 const valDomain = valueDomain({
+                    ...depsBase,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.infra.value': mockValRepo as IValueRepo,
                     'core.infra.record': mockRecordRepo as IRecordRepo,
-                    'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                    'core.domain.actionsList': mockActionsListDomain as any,
                     'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                     'core.domain.permission.recordAttribute':
                         mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
@@ -927,7 +966,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: 'advanced_attribute_with_meta',
-                    value: {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
+                    value: {payload: 'test val', metadata: {meta_attribute: 'metadata value'}},
                     ctx
                 });
 
@@ -938,7 +977,7 @@ describe('ValueDomain', () => {
             test('Should throw if no permission to edit metadata field', async () => {
                 const savedValueData = {
                     id_value: '1337',
-                    value: 'test val',
+                    payload: 'test val',
                     attribute: 'advanced_attribute',
                     modified_at: 123456,
                     created_at: 123456,
@@ -964,10 +1003,11 @@ describe('ValueDomain', () => {
                         )
                 };
                 const valDomain = valueDomain({
+                    ...depsBase,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.infra.value': mockValRepo as IValueRepo,
                     'core.infra.record': mockRecordRepo as IRecordRepo,
-                    'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                    'core.domain.actionsList': mockActionsListDomain as any,
                     'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                     'core.domain.permission.recordAttribute':
                         mockRecordAttrPermForbidDom as IRecordAttributePermissionDomain,
@@ -980,7 +1020,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: 'advanced_attribute_with_meta',
-                    value: {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
+                    value: {payload: 'test val', metadata: {meta_attribute: 'metadata value'}},
                     ctx
                 });
 
@@ -992,7 +1032,7 @@ describe('ValueDomain', () => {
                 const attrWithMetadataId = 'advanced_attribute_with_meta';
                 const savedValueData = {
                     id_value: '1337',
-                    value: 'test val',
+                    payload: 'test val',
                     attribute: attrWithMetadataId,
                     modified_at: 123456,
                     created_at: 123456,
@@ -1021,11 +1061,12 @@ describe('ValueDomain', () => {
                 };
 
                 const valDomain = valueDomain({
+                    ...depsBase,
                     config: mockConfig as Config.IConfig,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.infra.value': mockValRepo as IValueRepo,
                     'core.infra.record': mockRecordRepo as IRecordRepo,
-                    'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                    'core.domain.actionsList': mockActionsListDomain as any,
                     'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
                     'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
@@ -1041,7 +1082,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: attrWithMetadataId,
-                    value: {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
+                    value: {payload: 'test val', metadata: {meta_attribute: 'metadata value'}},
                     ctx
                 });
 
@@ -1060,7 +1101,7 @@ describe('ValueDomain', () => {
                 const attrWithMetadataId = 'advanced_attribute_with_meta';
                 const savedValueData = {
                     id_value: '1337',
-                    value: 'test val',
+                    payload: 'test val',
                     attribute: attrWithMetadataId,
                     modified_at: 123456,
                     created_at: 123456,
@@ -1095,6 +1136,7 @@ describe('ValueDomain', () => {
                 };
 
                 const valDomain = valueDomain({
+                    ...depsBase,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.infra.value': mockValRepo as IValueRepo,
                     'core.infra.record': mockRecordRepo as IRecordRepo,
@@ -1111,7 +1153,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: 'advanced_attribute_with_meta',
-                    value: {value: 'test val', metadata: {meta_attribute: 'metadata value'}},
+                    value: {payload: 'test val', metadata: {meta_attribute: 'metadata value'}},
                     ctx
                 });
 
@@ -1137,35 +1179,33 @@ describe('ValueDomain', () => {
             const values: IValue[] = [
                 {
                     attribute: 'test_attr',
-                    value: 'test',
-                    raw_value: 'test',
+                    payload: 'test',
+                    raw_payload: 'test',
                     id_value: '12345'
                 },
                 {
                     attribute: 'test_attr2',
-                    value: 'test',
-                    raw_value: 'test',
-                    id_value: null
+                    payload: 'test',
+                    raw_payload: 'test'
                 },
                 {
                     attribute: 'test_attr3',
-                    value: 'test',
-                    raw_value: 'test',
-                    id_value: null
+                    payload: 'test',
+                    raw_payload: 'test'
                 }
             ];
 
-            const mockValRepo: Mockify<IValueRepo> = {
-                updateValue: global.__mockPromise({value: 'test', raw_value: 'test', id_value: 12345}),
+            const mockValRepo = {
+                updateValue: global.__mockPromise({payload: 'test', raw_payload: 'test', id_value: 12345}),
                 createValue: global.__mockPromiseMultiple([
-                    {value: 'test', raw_value: 'test', id_value: 12345},
-                    {value: 'test', raw_value: 'test', id_value: null}
+                    {payload: 'test', raw_payload: 'test', id_value: 12345},
+                    {payload: 'test', raw_payload: 'test', id_value: null}
                 ]),
                 getValueById: global.__mockPromise({
                     id_value: '12345'
                 }),
-                getValues: global.__mockPromise([{value: 'test', raw_value: 'test', id_value: 12345}])
-            };
+                getValues: global.__mockPromise([{payload: 'test', raw_payload: 'test', id_value: 12345}])
+            } satisfies Mockify<IValueRepo>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: jest.fn().mockImplementation(({id, ctx: ct}) => {
@@ -1187,11 +1227,12 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.utils': mockUtils as IUtils,
@@ -1217,20 +1258,20 @@ describe('ValueDomain', () => {
                 values: [
                     {
                         attribute: 'test_attr',
-                        value: 'test',
-                        raw_value: 'test',
+                        payload: 'test',
+                        raw_payload: 'test',
                         id_value: 12345
                     },
                     {
                         attribute: 'test_attr2',
-                        value: 'test',
-                        raw_value: 'test',
+                        payload: 'test',
+                        raw_payload: 'test',
                         id_value: 12345
                     },
                     {
                         attribute: 'test_attr3',
-                        value: 'test',
-                        raw_value: 'test',
+                        payload: 'test',
+                        raw_payload: 'test',
                         id_value: null
                     }
                 ],
@@ -1242,7 +1283,7 @@ describe('ValueDomain', () => {
             const mockUtils: Mockify<IUtils> = {
                 ...mockUtilsStandardAttribute,
                 areValuesIdentical: jest.fn().mockImplementation(
-                    (val1, val2) => val2?.value === 'identical' // Consider values for test_attr as identical
+                    (val1, val2) => val2?.payload === 'identical' // Consider values for test_attr as identical
                 ),
                 rethrow: jest.fn<never, any[]>().mockImplementation(e => {
                     throw e;
@@ -1251,37 +1292,35 @@ describe('ValueDomain', () => {
             const values: IValue[] = [
                 {
                     attribute: 'test_attr',
-                    value: 'identical',
-                    raw_value: 'identical',
+                    payload: 'identical',
+                    raw_payload: 'identical',
                     id_value: '12345'
                 },
                 {
                     attribute: 'test_attr2',
-                    value: 'test',
-                    raw_value: 'test',
-                    id_value: null
+                    payload: 'test',
+                    raw_payload: 'test'
                 },
                 {
                     attribute: 'test_attr3',
-                    value: 'test',
-                    raw_value: 'test',
-                    id_value: null
+                    payload: 'test',
+                    raw_payload: 'test'
                 }
             ];
 
-            const mockValRepo: Mockify<IValueRepo> = {
-                updateValue: global.__mockPromise({value: 'test', raw_value: 'test', id_value: 12345}),
+            const mockValRepo = {
+                updateValue: global.__mockPromise({payload: 'test', raw_payload: 'test', id_value: 12345}),
                 createValue: global.__mockPromiseMultiple([
-                    {value: 'test', raw_value: 'test', id_value: 12345},
-                    {value: 'test', raw_value: 'test', id_value: null}
+                    {payload: 'test', raw_payload: 'test', id_value: 12345},
+                    {payload: 'test', raw_payload: 'test', id_value: null}
                 ]),
                 getValueById: global.__mockPromise({
                     id_value: 12345,
-                    value: 'identical',
-                    raw_value: 'identical'
+                    payload: 'identical',
+                    raw_payload: 'identical'
                 }),
-                getValues: global.__mockPromise([{value: 'test', raw_value: 'test', id_value: 12345}])
-            };
+                getValues: global.__mockPromise([{payload: 'test', raw_payload: 'test', id_value: 12345}])
+            } satisfies Mockify<IValueRepo>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: jest.fn().mockImplementation(({id, ctx: ct}) => {
@@ -1303,11 +1342,12 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.utils': mockUtils as IUtils,
@@ -1333,20 +1373,20 @@ describe('ValueDomain', () => {
                 values: [
                     {
                         attribute: 'test_attr',
-                        value: 'identical',
-                        raw_value: 'identical',
+                        payload: 'identical',
+                        raw_payload: 'identical',
                         id_value: 12345
                     },
                     {
                         attribute: 'test_attr2',
-                        value: 'test',
-                        raw_value: 'test',
+                        payload: 'test',
+                        raw_payload: 'test',
                         id_value: 12345
                     },
                     {
                         attribute: 'test_attr3',
-                        value: 'test',
-                        raw_value: 'test',
+                        payload: 'test',
+                        raw_payload: 'test',
                         id_value: null
                     }
                 ],
@@ -1358,23 +1398,22 @@ describe('ValueDomain', () => {
             const values: IValue[] = [
                 {
                     attribute: 'test_attr',
-                    value: 'test',
+                    payload: 'test',
                     id_value: '12345'
                 },
                 {
                     attribute: 'test_attr2',
-                    value: 'test',
-                    id_value: null
+                    payload: 'test'
                 }
             ];
 
-            const mockValRepo: Mockify<IValueRepo> = {
+            const mockValRepo = {
                 updateValue: jest.fn(),
                 createValue: jest.fn(),
                 getValueById: global.__mockPromise({
                     id_value: '12345'
                 })
-            };
+            } satisfies Mockify<IValueRepo>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttribute})
@@ -1392,8 +1431,9 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.value': mockValRepo as any,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.actionsList': mockActionsListDomainInvalid as IActionsListDomain,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
@@ -1428,23 +1468,22 @@ describe('ValueDomain', () => {
             const values: IValue[] = [
                 {
                     attribute: 'test_attr',
-                    value: 'test',
+                    payload: 'test',
                     id_value: '12345'
                 },
                 {
                     attribute: 'test_attr2',
-                    value: 'test',
-                    id_value: null
+                    payload: 'test'
                 }
             ];
 
-            const mockValRepo: Mockify<IValueRepo> = {
+            const mockValRepo = {
                 updateValue: jest.fn(),
                 createValue: jest.fn(),
                 getValueById: global.__mockPromise({
                     id_value: '12345'
                 })
-            };
+            } satisfies Mockify<IValueRepo>;
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
                 getAttributeProperties: global.__mockPromise({...mockAttribute})
@@ -1455,10 +1494,11 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
-                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.value': mockValRepo as any,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute':
                     mockRecordAttrPermDomainNoEdit as IRecordAttributePermissionDomain,
@@ -1498,7 +1538,7 @@ describe('ValueDomain', () => {
             const values: IValue[] = [
                 {
                     attribute: 'advanced_attribute',
-                    value: '',
+                    payload: '',
                     id_value: '987654'
                 }
             ];
@@ -1508,7 +1548,7 @@ describe('ValueDomain', () => {
                 createValue: jest.fn(),
                 deleteValue: global.__mockPromise({
                     id_value: '12345',
-                    value: 'MyLabel'
+                    payload: 'MyLabel'
                 }),
                 getValueById: global.__mockPromise({
                     id_value: '12345'
@@ -1521,11 +1561,12 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.utils': mockUtils as IUtils,
@@ -1558,16 +1599,16 @@ describe('ValueDomain', () => {
             const values: IValue[] = [
                 {
                     attribute: 'advanced_attribute',
-                    value: '',
+                    payload: '',
                     id_value: '987654'
                 }
             ];
 
             const mockValRepo: Mockify<IValueRepo> = {
-                updateValue: global.__mockPromise({value: 'test', id_value: 12345}),
+                updateValue: global.__mockPromise({payload: 'test', id_value: 12345}),
                 createValue: global.__mockPromiseMultiple([
-                    {value: 'test', id_value: 12345},
-                    {value: 'test', id_value: null}
+                    {payload: 'test', id_value: 12345},
+                    {payload: 'test', id_value: null}
                 ]),
                 deleteValue: jest.fn(),
                 getValueById: global.__mockPromise({
@@ -1581,11 +1622,12 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.utils': mockUtils as IUtils,
@@ -1611,7 +1653,7 @@ describe('ValueDomain', () => {
             const values: IValue[] = [
                 {
                     attribute: 'advanced_attribute',
-                    value: '',
+                    payload: '',
                     id_value: '987654'
                 }
             ];
@@ -1624,6 +1666,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper
             });
 
@@ -1648,6 +1691,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.helpers.validate': mValidateHelper as IValidateHelper
             });
 
@@ -1666,7 +1710,7 @@ describe('ValueDomain', () => {
             const values: IValue[] = [
                 {
                     attribute: 'advanced_attribute',
-                    value: '',
+                    payload: '',
                     id_value: '987654'
                 }
             ];
@@ -1680,6 +1724,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper
             });
 
@@ -1698,12 +1743,12 @@ describe('ValueDomain', () => {
 
     describe('deleteValue', () => {
         test('Should delete a value', async function () {
-            const deletedValueData = {value: 'test val', attribute: 'test_attr'};
+            const deletedValueData = {payload: 'test val', attribute: 'test_attr'};
 
             const mockValRepo = {
-                deleteValue: global.__mockPromise({value: 'test val', attribute: 'test_attr', id_value: '123'}),
+                deleteValue: global.__mockPromise({payload: 'test val', attribute: 'test_attr', id_value: '123'}),
                 getValueById: global.__mockPromise({id_value: '12345'}),
-                getValues: global.__mockPromise([{value: 'test val', attribute: 'test_attr'}])
+                getValues: global.__mockPromise([{payload: 'test val', attribute: 'test_attr'}])
             };
 
             const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -1712,6 +1757,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 config: mockConfig as Config.IConfig,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
@@ -1745,6 +1791,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain
             });
 
@@ -1753,7 +1800,7 @@ describe('ValueDomain', () => {
                     library: 'test_lib',
                     recordId: '12345',
                     attribute: 'test_attr',
-                    value: {value: 'test val'},
+                    value: {payload: 'test val'},
                     ctx
                 })
             ).rejects.toThrow();
@@ -1784,6 +1831,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper,
@@ -1830,6 +1878,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper,
@@ -1857,6 +1906,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain
             });
 
@@ -1867,7 +1917,7 @@ describe('ValueDomain', () => {
                     attribute: 'test_attr',
                     value: {
                         id_value: '12345',
-                        value: 'test val'
+                        payload: 'test val'
                     },
                     ctx
                 })
@@ -1877,7 +1927,7 @@ describe('ValueDomain', () => {
 
     describe('getValues', () => {
         test('Should return values', async function () {
-            const valueData = [{value: 'test val', attribute: 'test_attr'}];
+            const valueData = [{payload: 'test val', attribute: 'test_attr'}];
 
             const mockValRepo = {
                 getValues: global.__mockPromise(valueData)
@@ -1892,10 +1942,11 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.utils': mockUtils as IUtils
             });
@@ -1915,7 +1966,7 @@ describe('ValueDomain', () => {
             const version = {my_tree: '12345'};
             const valueData = [
                 {
-                    value: 'test val',
+                    payload: 'test val',
                     attribute: 'test_attr',
                     version
                 }
@@ -1933,10 +1984,11 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.utils': mockUtils as IUtils
             });
@@ -1958,12 +2010,12 @@ describe('ValueDomain', () => {
         test('Should return versioned values in smart mode', async function () {
             const valueData = [
                 {
-                    value: 'val1',
+                    payload: 'val1',
                     attribute: 'test_attr',
                     version: {my_tree: '7'}
                 },
                 {
-                    value: 'val2',
+                    payload: 'val2',
                     attribute: 'test_attr',
                     version: {my_tree: '8'}
                 }
@@ -1978,10 +2030,11 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
                 'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
@@ -2004,14 +2057,14 @@ describe('ValueDomain', () => {
             expect(mockElementAncestorsHelper.getCachedElementAncestors).toBeCalledTimes(1);
 
             expect(resValue.length).toBe(1);
-            expect(resValue[0].value).toBe('val2');
+            expect(resValue[0].payload).toBe('val2');
             expect(resValue[0].version).toMatchObject({my_tree: '8'});
         });
 
         test('Should return versioned values with multiple trees', async function () {
             const valueData = [
                 {
-                    value: 'val1',
+                    payload: 'val1',
                     attribute: 'test_attr',
                     version: {
                         my_tree: '9',
@@ -2020,7 +2073,7 @@ describe('ValueDomain', () => {
                     }
                 },
                 {
-                    value: 'val2',
+                    payload: 'val2',
                     attribute: 'test_attr',
                     version: {
                         my_tree: '8',
@@ -2029,7 +2082,7 @@ describe('ValueDomain', () => {
                     }
                 },
                 {
-                    value: 'val3',
+                    payload: 'val3',
                     attribute: 'test_attr',
                     version: {
                         my_tree: '8',
@@ -2038,7 +2091,7 @@ describe('ValueDomain', () => {
                     }
                 },
                 {
-                    value: 'val4',
+                    payload: 'val4',
                     attribute: 'test_attr',
                     version: {
                         my_tree: '9',
@@ -2151,10 +2204,11 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.tree.helpers.elementAncestors':
                     mockElementAncestorsHelperMultipleTrees as IElementAncestorsHelper,
@@ -2180,8 +2234,8 @@ describe('ValueDomain', () => {
             expect(mockValRepo.getValues.mock.calls[0][0].options).toMatchObject({version});
             expect(mockElementAncestorsHelperMultipleTrees.getCachedElementAncestors).toBeCalledTimes(3);
             expect(resValue.length).toBe(2);
-            expect(resValue[0].value).toBe('val2');
-            expect(resValue[1].value).toBe('val3');
+            expect(resValue[0].payload).toBe('val2');
+            expect(resValue[1].payload).toBe('val3');
             expect(resValue[0].version).toMatchObject({
                 my_tree: '8',
                 other_tree: '2',
@@ -2192,14 +2246,14 @@ describe('ValueDomain', () => {
         test('Should return empty array if no values matching version', async function () {
             const valueData = [
                 {
-                    value: 'val1',
+                    payload: 'val1',
                     attribute: 'test_attr',
                     version: {
                         my_tree: '99'
                     }
                 },
                 {
-                    value: 'val2',
+                    payload: 'val2',
                     attribute: 'test_attr',
                     version: {
                         my_tree: '88'
@@ -2220,10 +2274,11 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
-                'core.domain.actionsList': mockActionsListDomain as IActionsListDomain,
+                'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
                 'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
@@ -2251,6 +2306,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain
             });
 
@@ -2273,6 +2329,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper
             });
 
@@ -2296,6 +2353,7 @@ describe('ValueDomain', () => {
             };
 
             const valDomain = valueDomain({
+                ...depsBase,
                 'core.domain.helpers.validate': mockValidHelper as IValidateHelper
             });
 

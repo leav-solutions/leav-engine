@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useApolloClient} from '@apollo/client';
@@ -122,7 +122,7 @@ const TreeExplorer = ({
      * @param path      No path = root
      * @param expand    Should expand node?
      */
-    const _loadChildren = async (parent?: string | null, path?: Array<string | number>, expand: boolean = true) => {
+    const _loadChildren = async (parent?: string | null, path?: Array<string | number>, expand = true) => {
         const withPath = !!path;
 
         // Retrieve data

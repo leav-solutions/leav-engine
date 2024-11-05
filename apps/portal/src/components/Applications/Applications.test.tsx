@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {MockedProvider} from '@apollo/client/testing';
@@ -7,10 +7,10 @@ import {getApplicationsQuery} from 'queries/applications/getApplicationsQuery';
 import {getUserDataQuery} from 'queries/userData/getUserData';
 import {saveUserData} from 'queries/userData/saveUserData';
 import {mockApplication} from '_tests/mocks/applications';
-import {render,screen,within} from '_tests/testUtils';
+import {render, screen, within} from '_tests/testUtils';
 import * as useApplicationsPermissions from '../../hooks/useApplicationsPermissions/useApplicationsPermissions';
 import Applications from './Applications';
-import {CONSULTED_APPS_KEY,FAVORITES_APPS_KEY} from './_constants';
+import {CONSULTED_APPS_KEY, FAVORITES_APPS_KEY} from './_constants';
 
 jest.mock('hooks/useApplicationsPermissions', () => ({
     useApplicationsPermissions: () => ({
@@ -214,18 +214,21 @@ describe('Applications', () => {
         render(<Applications />, {apolloMocks: [...mocks]});
 
         const favoritesList = await screen.findByTestId('favorites-list');
-        expect(within(favoritesList).getAllByTestId(/app-card/)).toHaveLength(2);
-
-        const firstAppCard = screen.getByTestId('app-card-my-app');
-        const fourthAppCard = screen.getByTestId('app-card-my-fourth-app');
-        userEvent.hover(firstAppCard);
+        expect(favoritesList.childNodes).toHaveLength(2);
 
         // Add an app to favorites
-        userEvent.click(within(firstAppCard).getByRole('img', {name: /star/, hidden: true}));
-        expect(within(favoritesList).getAllByTestId(/app-card/)).toHaveLength(3);
+
+        const otherList = await screen.findByTestId('others-list');
+        expect(otherList.childNodes).toHaveLength(1);
+
+        userEvent.click(within(otherList).getAllByRole('button')[1]);
+
+        expect(screen.queryByTestId('others-list')).not.toBeInTheDocument();
+        expect(favoritesList.childNodes).toHaveLength(3);
 
         // Remove an app from favorites
-        userEvent.click(within(fourthAppCard).getByRole('img', {name: /star/, hidden: true}));
-        expect(within(favoritesList).getAllByTestId(/app-card/)).toHaveLength(2);
+        userEvent.click(within(favoritesList).getAllByRole('button')[1]);
+        expect(favoritesList.childNodes).toHaveLength(2);
+        expect(otherList.childNodes).toHaveLength(1);
     });
 });

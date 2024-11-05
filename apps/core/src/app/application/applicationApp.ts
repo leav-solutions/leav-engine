@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {appRootPath} from '@leav/app-root-path';
@@ -45,35 +45,35 @@ export interface IApplicationApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
 
-interface IDeps {
-    'core.app.graphql'?: IGraphqlApp;
-    'core.app.auth'?: IAuthApp;
-    'core.app.helpers.initQueryContext'?: InitQueryContextFunc;
-    'core.app.helpers.validateRequestToken'?: ValidateRequestTokenFunc;
-    'core.app.core.subscriptionsHelper'?: ICoreSubscriptionsHelpersApp;
-    'core.domain.application'?: IApplicationDomain;
-    'core.domain.permission'?: IPermissionDomain;
-    'core.domain.record'?: IRecordDomain;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.utils.logger'?: winston.Winston;
-    'core.utils'?: IUtils;
-    config?: any;
+export interface IApplicationAppDeps {
+    'core.app.graphql': IGraphqlApp;
+    'core.app.auth': IAuthApp;
+    'core.app.helpers.initQueryContext': InitQueryContextFunc;
+    'core.app.helpers.validateRequestToken': ValidateRequestTokenFunc;
+    'core.app.core.subscriptionsHelper': ICoreSubscriptionsHelpersApp;
+    'core.domain.application': IApplicationDomain;
+    'core.domain.permission': IPermissionDomain;
+    'core.domain.record': IRecordDomain;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.utils.logger': winston.Winston;
+    'core.utils': IUtils;
+    config: any;
 }
 
 export default function ({
-    'core.app.graphql': graphqlApp = null,
-    'core.app.auth': authApp = null,
-    'core.app.helpers.initQueryContext': initQueryContext = null,
-    'core.app.helpers.validateRequestToken': validateRequestToken = null,
-    'core.app.core.subscriptionsHelper': subscriptionsHelper = null,
-    'core.domain.application': applicationDomain = null,
-    'core.domain.permission': permissionDomain = null,
+    'core.app.graphql': graphqlApp,
+    'core.app.auth': authApp,
+    'core.app.helpers.initQueryContext': initQueryContext,
+    'core.app.helpers.validateRequestToken': validateRequestToken,
+    'core.app.core.subscriptionsHelper': subscriptionsHelper,
+    'core.domain.application': applicationDomain,
+    'core.domain.permission': permissionDomain,
     'core.domain.record': recordDomain,
-    'core.domain.eventsManager': eventsManagerDomain = null,
-    'core.utils.logger': logger = null,
-    'core.utils': utils = null,
-    config = null
-}: IDeps = {}): IApplicationApp {
+    'core.domain.eventsManager': eventsManagerDomain,
+    'core.utils.logger': logger,
+    'core.utils': utils,
+    config
+}: IApplicationAppDeps): IApplicationApp {
     const _doesFileExist = async (folder: string, filePath: string) => {
         const files: string[] = await new Promise((resolve, reject) =>
             glob(`${folder}${filePath}`, (err, matches) => {
@@ -285,7 +285,7 @@ export default function ({
                             appData: Override<IApplication, {icon: {libraryId: string; recordId: string}}>,
                             _,
                             ctx: IQueryInfos
-                        ): Promise<IRecord> => {
+                        ): Promise<IRecord | null> => {
                             if (!appData.icon) {
                                 return null;
                             }
@@ -369,7 +369,7 @@ export default function ({
                             return next();
                         }
 
-                        const payload = await validateRequestToken(req);
+                        const payload = await validateRequestToken(req, res);
                         req.ctx.userId = payload.userId;
                         req.ctx.groupsId = payload.groupsId;
 

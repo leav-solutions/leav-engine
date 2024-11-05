@@ -3,10 +3,10 @@ echo "Install apps dependencies"
 yarn install
 
 # Install plugins dependencies
-for plugin in ./src/plugins/*/; do
-  echo "Install dependencies for $plugin"
-  yarn --cwd "$plugin" install
-done
+find ./src/plugins -name package.json -not -path "*/node_modules/*" -exec sh -c '
+  echo "🚧 Install dependencies for plugin $(basename $(dirname {}))"
+  (cd $(dirname {}) && yarn install)
+' \;
 
 yarn run db:migrate:dev
 

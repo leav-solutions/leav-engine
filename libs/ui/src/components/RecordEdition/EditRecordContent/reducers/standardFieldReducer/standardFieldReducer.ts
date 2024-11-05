@@ -1,10 +1,10 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AnyPrimitive, IDateRangeValue, IKeyValue} from '@leav/utils';
 import isCurrentVersion from '_ui/components/RecordEdition/EditRecordContent/helpers/isCurrentVersion';
 import {
-    FieldScope,
+    VersionFieldScope,
     FormElement,
     ICommonFieldsReducerState,
     StandardValueTypes
@@ -62,9 +62,33 @@ interface INotInherited {
 
 export type InheritedFlags = INotInherited | IInheritedOverride | IInheritedNotOverride;
 
+interface ICalculatedNotOverride {
+    isCalculatedValue: true;
+    isCalculatedOverrideValue: false;
+    isCalculatedNotOverrideValue: true;
+    calculatedValue: RecordFormElementsValueStandardValue;
+}
+
+interface ICalculatedOverride {
+    isCalculatedValue: true;
+    isCalculatedOverrideValue: true;
+    isCalculatedNotOverrideValue: false;
+    calculatedValue: RecordFormElementsValueStandardValue;
+}
+
+interface INotCalculated {
+    isCalculatedValue: false;
+    isCalculatedOverrideValue: false;
+    isCalculatedNotOverrideValue: false;
+    calculatedValue: null;
+}
+
+export type CalculatedFlags = INotCalculated | ICalculatedOverride | ICalculatedNotOverride;
+
 export type IStandardFieldReducerState = ICommonFieldsReducerState<StandardFieldReducerValues> & {
     metadataEdit: boolean;
-} & InheritedFlags;
+} & InheritedFlags &
+    CalculatedFlags;
 
 export enum StandardFieldReducerActionsTypes {
     ADD_VALUE = 'ADD_VALUE',
@@ -145,7 +169,7 @@ export type StandardFieldReducerValueActions =
 export type StandardFieldReducerFieldActions =
     | {
           type: StandardFieldReducerActionsTypes.CHANGE_VERSION_SCOPE;
-          scope: FieldScope;
+          scope: VersionFieldScope;
       }
     | {
           type: StandardFieldReducerActionsTypes.REFRESH_VALUES;
@@ -189,6 +213,12 @@ const _updateValueData = (
     return res;
 };
 
+const getInheritedValue = (values: RecordFormElementsValueStandardValue[]) => values.filter(value => value.isInherited);
+const getCalculatedValue = (values: RecordFormElementsValueStandardValue[]) =>
+    values.filter(value => value.isCalculated);
+const getUserInputValue = (values: RecordFormElementsValueStandardValue[]) =>
+    values.filter(value => !value.isInherited && !value.isCalculated && value.raw_value !== null);
+
 /**
  * For given list of values, determine if there is inherited values, inherited/current version and default active scope
  */
@@ -199,31 +229,38 @@ const _computeScopeAndValues = (params: {
 }): Pick<IStandardFieldReducerState, 'values' | 'activeScope'> => {
     const {attribute, values, formVersion} = params;
 
-    const preparedValues =
-        Array.isArray(values) && values.length
-            ? values.reduce(
-                  (allValues: IKeyValue<IStandardFieldValue>, fieldValue, index) => ({
-                      ...allValues,
-                      [fieldValue?.id_value ?? null]: {
-                          ...virginValue,
-                          idValue: fieldValue?.id_value ?? null,
-                          index,
-                          value: fieldValue ?? null,
-                          displayValue: fieldValue?.value ?? '',
-                          editingValue:
-                              attribute.format === AttributeFormat.encrypted ? '' : fieldValue?.raw_value ?? '',
-                          originRawValue:
-                              attribute.format === AttributeFormat.encrypted ? '' : fieldValue?.raw_value ?? ''
-                      }
-                  }),
-                  {}
-              )
-            : {
-                  [newValueId]: {
+    // Get override or inhertied values
+    let valuesToHandle = getUserInputValue(values);
+    if (!valuesToHandle.length) {
+        valuesToHandle = getCalculatedValue(values);
+        if (!valuesToHandle.length) {
+            valuesToHandle = getInheritedValue(values);
+        }
+    }
+
+    const preparedValues = valuesToHandle.length
+        ? valuesToHandle.reduce(
+              (allValues: IKeyValue<IStandardFieldValue>, fieldValue, index) => ({
+                  ...allValues,
+                  [fieldValue?.id_value ?? null]: {
                       ...virginValue,
-                      idValue: newValueId
+                      idValue: fieldValue?.id_value ?? null,
+                      index,
+                      value: fieldValue ?? null,
+                      displayValue: fieldValue?.value ?? '',
+                      editingValue: attribute.format === AttributeFormat.encrypted ? '' : (fieldValue?.raw_value ?? ''),
+                      originRawValue:
+                          attribute.format === AttributeFormat.encrypted ? '' : (fieldValue?.raw_value ?? '')
                   }
-              };
+              }),
+              {}
+          )
+        : {
+              [newValueId]: {
+                  ...virginValue,
+                  idValue: newValueId
+              }
+          };
 
     const currentVersion: IValueVersion = attribute?.versions_conf?.versionable
         ? attribute.versions_conf.profile.trees.reduce((relevantVersion, tree) => {
@@ -235,19 +272,21 @@ const _computeScopeAndValues = (params: {
           }, {})
         : null;
 
-    const hasInheritedValues = attribute?.versions_conf?.versionable
+    const hasVersionInheritedValues = attribute?.versions_conf?.versionable
         ? !isCurrentVersion(currentVersion, values?.[0]?.version ?? currentVersion)
         : false; // We assume that all values have the same version
-    const inheritedVersion = hasInheritedValues ? values?.[0]?.version : null;
+    const inheritedVersion = hasVersionInheritedValues ? values?.[0]?.version : null;
 
     return {
-        activeScope: hasInheritedValues ? FieldScope.INHERITED : FieldScope.CURRENT,
+        activeScope: hasVersionInheritedValues ? VersionFieldScope.INHERITED : VersionFieldScope.CURRENT,
         values: {
-            [FieldScope.CURRENT]: {
+            [VersionFieldScope.CURRENT]: {
                 version: currentVersion ?? null,
-                values: hasInheritedValues ? {[newValueId]: {...virginValue, idValue: newValueId}} : preparedValues
+                values: hasVersionInheritedValues
+                    ? {[newValueId]: {...virginValue, idValue: newValueId}}
+                    : preparedValues
             },
-            [FieldScope.INHERITED]: hasInheritedValues
+            [VersionFieldScope.INHERITED]: hasVersionInheritedValues
                 ? {version: inheritedVersion ?? null, values: preparedValues}
                 : null
         }
@@ -256,7 +295,7 @@ const _computeScopeAndValues = (params: {
 
 const _computeInheritedFlags = (fieldValues: RecordFormElementsValueStandardValue[]): InheritedFlags => {
     const inheritedValue = fieldValues.find(fieldValue => fieldValue.isInherited);
-    const overrideValue = fieldValues.find(fieldValue => !fieldValue.isInherited);
+    const overrideValue = fieldValues.find(fieldValue => !fieldValue.isInherited && !fieldValue.isCalculated);
 
     if (inheritedValue === undefined) {
         return {
@@ -286,6 +325,38 @@ const _computeInheritedFlags = (fieldValues: RecordFormElementsValueStandardValu
     };
 };
 
+const _computeCalculatedFlags = (fieldValues: RecordFormElementsValueStandardValue[]): CalculatedFlags => {
+    const calculatedValue = fieldValues.find(fieldValue => fieldValue.isCalculated);
+    const overrideValue = fieldValues.find(fieldValue => !fieldValue.isCalculated && !fieldValue.isInherited);
+
+    if (calculatedValue === undefined) {
+        return {
+            calculatedValue: null,
+            isCalculatedValue: false,
+            isCalculatedOverrideValue: false,
+            isCalculatedNotOverrideValue: false
+        };
+    }
+
+    const isCalculatedValue = true;
+
+    if (overrideValue.value === null) {
+        return {
+            calculatedValue,
+            isCalculatedValue,
+            isCalculatedNotOverrideValue: true,
+            isCalculatedOverrideValue: false
+        };
+    }
+
+    return {
+        calculatedValue,
+        isCalculatedValue,
+        isCalculatedNotOverrideValue: false,
+        isCalculatedOverrideValue: true
+    };
+};
+
 export const computeInitialState = (params: {
     element: FormElement<unknown>;
     record: IRecordIdentityWhoAmI;
@@ -296,7 +367,7 @@ export const computeInitialState = (params: {
     const {element, record, metadataEdit, isRecordReadOnly, formVersion} = params;
     const attribute = element.attribute;
 
-    const fieldValues = [...(element.values as RecordFormElementsValueStandardValue[])] ?? [];
+    const fieldValues = [...(element.values as RecordFormElementsValueStandardValue[])];
 
     return {
         attribute,
@@ -305,7 +376,8 @@ export const computeInitialState = (params: {
         isReadOnly: attribute?.readonly || isRecordReadOnly || !attribute?.permissions?.edit_value,
         metadataEdit,
         ..._computeScopeAndValues({attribute, values: fieldValues, formVersion}),
-        ..._computeInheritedFlags(fieldValues)
+        ..._computeInheritedFlags(fieldValues),
+        ..._computeCalculatedFlags(fieldValues)
     };
 };
 
@@ -387,10 +459,10 @@ const standardFieldReducer = (
             const newValueData = {
                 ...virginValue,
                 idValue: action.newValue.id_value,
-                value: ({
+                value: {
                     ...(action.newValue as ValueDetailsValueFragment),
                     version: newValueVersion
-                } as unknown) as IRecordPropertyStandard,
+                } as unknown as IRecordPropertyStandard,
                 displayValue: (action.newValue as ValueDetailsValueFragment).value,
                 editingValue: newRawValue,
                 originRawValue: newRawValue,
@@ -403,7 +475,11 @@ const standardFieldReducer = (
                     {
                         ...state,
                         isInheritedOverrideValue: state.isInheritedValue ? true : state.isInheritedOverrideValue,
-                        isInheritedNotOverrideValue: state.isInheritedValue ? false : state.isInheritedNotOverrideValue
+                        isInheritedNotOverrideValue: state.isInheritedValue ? false : state.isInheritedNotOverrideValue,
+                        isCalculatedOverrideValue: state.isCalculatedValue ? true : state.isCalculatedOverrideValue,
+                        isCalculatedNotOverrideValue: state.isCalculatedValue
+                            ? false
+                            : state.isCalculatedNotOverrideValue
                     } as IStandardFieldReducerState,
                     newValueData
                 );
@@ -414,6 +490,10 @@ const standardFieldReducer = (
             };
             newState.isInheritedOverrideValue = state.isInheritedValue ? true : state.isInheritedOverrideValue;
             newState.isInheritedNotOverrideValue = state.isInheritedValue ? false : state.isInheritedNotOverrideValue;
+            newState.isCalculatedOverrideValue = state.isCalculatedValue ? true : state.isCalculatedOverrideValue;
+            newState.isCalculatedNotOverrideValue = state.isCalculatedValue
+                ? false
+                : state.isCalculatedNotOverrideValue;
 
             const newStateActiveValues = newState.values[newState.activeScope].values;
 
@@ -432,7 +512,9 @@ const standardFieldReducer = (
             const newState = {
                 ...state,
                 isInheritedOverrideValue: state.isInheritedValue ? false : state.isInheritedOverrideValue,
-                isInheritedNotOverrideValue: state.isInheritedValue ? true : state.isInheritedNotOverrideValue
+                isInheritedNotOverrideValue: state.isInheritedValue ? true : state.isInheritedNotOverrideValue,
+                isCalculatedOverrideValue: state.isCalculatedValue ? false : state.isCalculatedOverrideValue,
+                isCalculatedNotOverrideValue: state.isCalculatedValue ? true : state.isCalculatedNotOverrideValue
             };
             const newStateActiveValues = newState.values[newState.activeScope].values;
 
@@ -469,7 +551,9 @@ const standardFieldReducer = (
             const newState = {
                 ...state,
                 isInheritedOverrideValue: state.isInheritedValue ? false : state.isInheritedOverrideValue,
-                isInheritedNotOverrideValue: state.isInheritedValue ? true : state.isInheritedNotOverrideValue
+                isInheritedNotOverrideValue: state.isInheritedValue ? true : state.isInheritedNotOverrideValue,
+                isCalculatedOverrideValue: state.isCalculatedValue ? false : state.isCalculatedOverrideValue,
+                isCalculatedNotOverrideValue: state.isCalculatedValue ? true : state.isCalculatedNotOverrideValue
             };
 
             delete newState.values[newState.activeScope].values[newValueId];

@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {i18n} from 'i18next';
@@ -6,7 +6,7 @@ import {IPluginInitModule} from '_types/plugin';
 import {PermissionTypes} from '../../../../../_types/permissions';
 
 interface IDeps {
-    translator?: i18n;
+    translator: i18n;
 }
 
 enum FakePluginActions {
@@ -14,7 +14,7 @@ enum FakePluginActions {
     FAKE_PLUGIN_ACTION2 = 'fakeplugin_FAKE_PLUGIN_ACTION2'
 }
 
-export default function ({translator = null}: IDeps): IPluginInitModule {
+export default function ({translator}: IDeps): IPluginInitModule {
     return {
         async init(extensionPoints) {
             await extensionPoints.registerTranslations(__dirname + '/locales');

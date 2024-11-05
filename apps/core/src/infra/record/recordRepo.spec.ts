@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, Database} from 'arangojs';
@@ -11,8 +11,20 @@ import {AttributeCondition, IRecordFilterOption, Operator} from '../../_types/re
 import {IAttributeTypeRepo, IAttributeTypesRepo} from '../attributeTypes/attributeTypesRepo';
 import {IDbUtils} from '../db/dbUtils';
 import {IFilterTypesHelper} from './helpers/filterTypes';
-import recordRepo from './recordRepo';
-import {IDbService} from 'infra/db/dbService';
+import recordRepo, {IRecordRepoDeps} from './recordRepo';
+import {ToAny} from 'utils/utils';
+
+const depsBase: ToAny<IRecordRepoDeps> = {
+    'core.infra.db.dbService': jest.fn(),
+    'core.infra.db.dbUtils': jest.fn(),
+    'core.infra.attributeTypes': jest.fn(),
+    'core.infra.attribute': jest.fn(),
+    'core.infra.attributeTypes.helpers.getConditionPart': jest.fn(),
+    'core.infra.record.helpers.getSearchVariablesQueryPart': jest.fn(),
+    'core.infra.record.helpers.getSearchVariableName': jest.fn(),
+    'core.infra.record.helpers.filterTypes': jest.fn(),
+    'core.infra.indexation.helpers.getSearchQuery': jest.fn()
+};
 
 describe('RecordRepo', () => {
     const ctx = {
@@ -47,11 +59,12 @@ describe('RecordRepo', () => {
 
             const mockDbServ = {db: mockDb};
 
-            const mockDbUtils: Mockify<IDbUtils> = {
+            const mockDbUtils = {
                 cleanup: jest.fn().mockReturnValue(cleanCreatedRecordData)
-            };
+            } satisfies Mockify<IDbUtils>;
 
             const recRepo = recordRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
@@ -85,16 +98,17 @@ describe('RecordRepo', () => {
                 modified_at: 1519303348
             };
 
-            const mockDbServ: Mockify<IDbService> = {
+            const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([{old: updatedRecordData, new: updatedRecordData}])
             };
 
-            const mockDbUtils: Mockify<IDbUtils> = {
+            const mockDbUtils = {
                 cleanup: jest.fn().mockReturnValue(cleanUpdatedRecordData)
-            };
+            } satisfies Mockify<IDbUtils>;
 
             const recRepo = recordRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
@@ -155,9 +169,10 @@ describe('RecordRepo', () => {
             };
             mockDbServ.db.collection = jest.fn().mockReturnValue(mockDbCollec);
 
-            const mockDbUtils: Mockify<IDbUtils> = {cleanup: jest.fn().mockReturnValue(recordData)};
+            const mockDbUtils = {cleanup: jest.fn().mockReturnValue(recordData)} satisfies Mockify<IDbUtils>;
 
             const recRepo = recordRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
@@ -227,6 +242,7 @@ describe('RecordRepo', () => {
             };
 
             const recRepo = recordRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
@@ -302,6 +318,7 @@ describe('RecordRepo', () => {
             };
 
             const recRepo = recordRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
@@ -371,6 +388,7 @@ describe('RecordRepo', () => {
             };
 
             const recRepo = recordRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
@@ -417,6 +435,7 @@ describe('RecordRepo', () => {
             };
 
             const recRepo = recordRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils
             });
@@ -507,6 +526,7 @@ describe('RecordRepo', () => {
             const mockGetSearchQuery: Mockify<GetSearchQuery> = jest.fn(() => 'fulltextSearchQuery');
 
             const recRepo = recordRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
                 'core.infra.attribute': mockAttrRepo as IAttributeRepo,
@@ -602,6 +622,7 @@ describe('RecordRepo', () => {
             };
 
             const recRepo = recordRepo({
+                ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
                 'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
                 'core.infra.attributeTypes': mockAttrRepo as IAttributeTypesRepo,

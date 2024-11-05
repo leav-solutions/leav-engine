@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {SizeType} from 'antd/lib/config-provider/SizeContext';
@@ -6,14 +6,14 @@ import styled from 'styled-components';
 import {FloatingMenu, FloatingMenuAction, RecordCard} from '_ui/components';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import DeactivateRecordBtn from '_ui/components/LibraryItemsList/shared/DeactivateRecordBtn';
-import SelectCellsBtn, {SelectCellsBtnType} from '_ui/components/LibraryItemsList/shared/SelectCellsBtn';
+import SelectCellsBtn from '_ui/components/LibraryItemsList/shared/SelectCellsBtn';
 import {PreviewSize} from '_ui/constants';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IRecordIdentityWhoAmI} from '_ui/types/records';
 import {ArrowsAltOutlined} from '@ant-design/icons';
 import {AntButton} from 'aristid-ds';
-import {useContext} from 'react';
-import {useEditRecordModalContext} from '../../EditRecordModalContext';
+import {useEditRecordModalContext} from '_ui/contexts/EditRecordModalContext';
+import {SelectCellsBtnType} from '_ui/components/LibraryItemsList/shared/shared.utils';
 
 const Info = styled.div`
     min-width: 150px;

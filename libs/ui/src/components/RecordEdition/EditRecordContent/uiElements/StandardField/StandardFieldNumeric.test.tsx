@@ -1,7 +1,7 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render, screen, waitFor} from '_ui/_tests/testUtils';
+import {render, screen} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
 import StandardField from '../StandardField';
 import {mockModifier} from '_ui/__mocks__/common/value';
@@ -79,8 +79,8 @@ describe('StandardField, Numeric input', () => {
         const recordValuesNumeric = [
             {
                 ...mockRecordValuesCommon,
-                value: '123456',
-                raw_value: '123456'
+                payload: '42,00 €',
+                raw_payload: '42'
             }
         ];
 
@@ -94,7 +94,7 @@ describe('StandardField, Numeric input', () => {
                 {
                     ...mockFormElementInput,
                     settings: [
-                        {key: 'label', value: 'test atribute'},
+                        {key: 'label', value: 'test attribute'},
                         {key: 'attribute', value: 'test_attribute'}
                     ],
                     attribute: {...mockFormAttribute, format: AttributeFormat.numeric},
@@ -123,11 +123,17 @@ describe('StandardField, Numeric input', () => {
             </AntForm>
         );
 
+        const formattedValueElem = screen.getByText(recordValuesNumeric[0].payload);
+        expect(formattedValueElem).toBeVisible();
+
+        expect(screen.queryByRole('spinbutton')).toBeNull();
+
+        await userEvent.click(formattedValueElem);
+
         const inputElem = screen.getByRole('spinbutton');
-        expect(inputElem).toHaveValue('123456');
+        expect(inputElem).toBeVisible();
+        expect(inputElem).toHaveValue(recordValuesNumeric[0].raw_payload);
 
-        await userEvent.click(inputElem);
-
-        expect(screen.getByRole('spinbutton')).toBeInTheDocument();
+        expect(screen.getByText(recordValuesNumeric[0].payload)).not.toBeVisible();
     });
 });

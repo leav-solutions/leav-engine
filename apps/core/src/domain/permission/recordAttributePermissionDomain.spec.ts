@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IValueRepo} from 'infra/value/valueRepo';
@@ -8,7 +8,17 @@ import {IAttributeDomain} from '../attribute/attributeDomain';
 import {IAttributePermissionDomain} from './attributePermissionDomain';
 import * as getDefaultPermission from './helpers/defaultPermission';
 import {ITreeBasedPermissionHelper} from './helpers/treeBasedPermissions';
-import recordAttributePermissionDomain from './recordAttributePermissionDomain';
+import recordAttributePermissionDomain, {IRecordAttributePermissionDomainDeps} from './recordAttributePermissionDomain';
+import {ToAny} from 'utils/utils';
+
+const depsBase: ToAny<IRecordAttributePermissionDomainDeps> = {
+    'core.domain.permission.attribute': jest.fn(),
+    'core.domain.permission.helpers.treeBasedPermissions': jest.fn(),
+    'core.domain.permission.helpers.permissionByUserGroups': jest.fn(),
+    'core.domain.permission.helpers.defaultPermission': jest.fn(),
+    'core.domain.attribute': jest.fn(),
+    'core.infra.value': jest.fn()
+};
 
 describe('AttributePermissionDomain', () => {
     const ctx: IQueryInfos = {
@@ -16,9 +26,9 @@ describe('AttributePermissionDomain', () => {
         queryId: 'attributePermissionDomainTest'
     };
     describe('getAttributePermission', () => {
-        const mockTreeBasedPerm: Mockify<ITreeBasedPermissionHelper> = {
+        const mockTreeBasedPerm = {
             getTreeBasedPermission: global.__mockPromise(true)
-        };
+        } satisfies Mockify<ITreeBasedPermissionHelper>;
 
         const defaultPerm = false;
 
@@ -39,7 +49,7 @@ describe('AttributePermissionDomain', () => {
                     case 'category':
                         val = {
                             id_value: 12345,
-                            value: {
+                            payload: {
                                 record: {
                                     id: 1,
                                     library: 'category'
@@ -50,7 +60,7 @@ describe('AttributePermissionDomain', () => {
                     case 'test_attr':
                         val = {
                             id_value: 12345,
-                            value: {
+                            payload: {
                                 record: {
                                     id: 1,
                                     library: 'category'
@@ -61,7 +71,7 @@ describe('AttributePermissionDomain', () => {
                     case 'user_groups':
                         val = {
                             id_value: 54321,
-                            value: {
+                            payload: {
                                 record: {
                                     id: 1,
                                     library: 'users_groups'
@@ -79,6 +89,7 @@ describe('AttributePermissionDomain', () => {
             jest.spyOn(getDefaultPermission, 'default');
 
             const recordAttrPermDomain = recordAttributePermissionDomain({
+                ...depsBase,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
                 'core.infra.value': mockValueRepo as IValueRepo
@@ -111,6 +122,7 @@ describe('AttributePermissionDomain', () => {
             };
 
             const recordAttrPermDomain = recordAttributePermissionDomain({
+                ...depsBase,
                 'core.domain.permission.helpers.treeBasedPermissions': mockTreeBasedPerm as ITreeBasedPermissionHelper,
                 'core.domain.permission.attribute': mockAttrPermDomain as IAttributePermissionDomain,
                 'core.domain.attribute': mockAttrNoPermsDomain as IAttributeDomain,

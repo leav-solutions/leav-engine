@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
@@ -21,8 +21,8 @@ describe('ValueDetailsBtn', () => {
     }));
 
     const mockValue: IRecordPropertyStandard = {
-        value: 'my value',
-        raw_value: 'my raw value',
+        payload: 'my value',
+        raw_payload: 'my raw value',
         created_at: null,
         created_by: null,
         modified_at: null,

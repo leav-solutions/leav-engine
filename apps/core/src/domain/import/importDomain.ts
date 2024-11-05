@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction, extractArgsFromString} from '@leav/utils';
@@ -113,39 +113,39 @@ interface IProgress {
     percent: number;
 }
 
-interface IDeps {
-    'core.domain.library'?: ILibraryDomain;
-    'core.domain.record'?: IRecordDomain;
-    'core.domain.helpers.validate'?: IValidateHelper;
-    'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.value'?: IValueDomain;
-    'core.domain.tree'?: ITreeDomain;
-    'core.domain.versionProfile'?: IVersionProfileDomain;
-    'core.domain.tasksManager'?: ITasksManagerDomain;
-    'core.domain.helpers.updateTaskProgress'?: UpdateTaskProgress;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.infra.cache.cacheService'?: ICachesService;
-    config?: Config.IConfig;
-    translator?: i18n;
-    'core.utils'?: IUtils;
+export interface IImportDomainDeps {
+    'core.domain.library': ILibraryDomain;
+    'core.domain.record': IRecordDomain;
+    'core.domain.helpers.validate': IValidateHelper;
+    'core.domain.attribute': IAttributeDomain;
+    'core.domain.value': IValueDomain;
+    'core.domain.tree': ITreeDomain;
+    'core.domain.versionProfile': IVersionProfileDomain;
+    'core.domain.tasksManager': ITasksManagerDomain;
+    'core.domain.helpers.updateTaskProgress': UpdateTaskProgress;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.infra.cache.cacheService': ICachesService;
+    config: Config.IConfig;
+    translator: i18n;
+    'core.utils': IUtils;
 }
 
 export default function ({
-    'core.domain.library': libraryDomain = null,
-    'core.domain.record': recordDomain = null,
-    'core.domain.helpers.validate': validateHelper = null,
-    'core.domain.attribute': attributeDomain = null,
-    'core.domain.value': valueDomain = null,
-    'core.domain.tree': treeDomain = null,
-    'core.domain.versionProfile': versionProfileDomain = null,
-    'core.domain.tasksManager': tasksManagerDomain = null,
-    'core.domain.helpers.updateTaskProgress': updateTaskProgress = null,
-    'core.domain.eventsManager': eventsManagerDomain = null,
-    'core.infra.cache.cacheService': cacheService = null,
-    'core.utils': utils = null,
-    config = null,
-    translator = null
-}: IDeps = {}): IImportDomain {
+    'core.domain.library': libraryDomain,
+    'core.domain.record': recordDomain,
+    'core.domain.helpers.validate': validateHelper,
+    'core.domain.attribute': attributeDomain,
+    'core.domain.value': valueDomain,
+    'core.domain.tree': treeDomain,
+    'core.domain.versionProfile': versionProfileDomain,
+    'core.domain.tasksManager': tasksManagerDomain,
+    'core.domain.helpers.updateTaskProgress': updateTaskProgress,
+    'core.domain.eventsManager': eventsManagerDomain,
+    'core.infra.cache.cacheService': cacheService,
+    'core.utils': utils,
+    config,
+    translator
+}: IImportDomainDeps): IImportDomain {
     const _addValue = async (
         library: string,
         attribute: IAttribute,
@@ -154,21 +154,21 @@ export default function ({
         ctx: IQueryInfos,
         valueId?: string
     ): Promise<void> => {
-        const isMatch = Array.isArray(value.value);
+        const isMatch = Array.isArray(value.payload);
 
         if (isMatch) {
             const recordsList = await recordDomain.find({
                 params: {
                     library: attribute.type === AttributeTypes.TREE ? value.library : attribute.linked_library,
-                    filters: _matchesToFilters(value.value as IMatch[])
+                    filters: _matchesToFilters(value.payload as IMatch[])
                 },
                 ctx
             });
 
-            value.value = recordsList.list[0]?.id;
+            value.payload = recordsList.list[0]?.id;
 
             // if value is undefined, it means that we have no record for this match
-            if (typeof value.value === 'undefined') {
+            if (typeof value.payload === 'undefined') {
                 throw new Error('No record found for match');
             }
 
@@ -176,13 +176,13 @@ export default function ({
                 const node = await treeDomain.getNodesByRecord({
                     treeId: attribute.linked_tree,
                     record: {
-                        id: value.value,
+                        id: value.payload,
                         library: value.library
                     },
                     ctx
                 });
 
-                value.value = node[0];
+                value.payload = node[0];
             }
         }
 
@@ -228,7 +228,7 @@ export default function ({
             library,
             recordId,
             attribute: attribute.id,
-            value: {value: value.value, id_value: valueId, metadata: value.metadata, version},
+            value: {payload: value.payload, id_value: valueId, metadata: value.metadata, version},
             ctx
         });
     };
@@ -329,7 +329,7 @@ export default function ({
                         translator.t('import.add_value_error', {
                             lng: ctx.lang || config.lang.default,
                             attributeId: libraryAttribute.id,
-                            value: v.value
+                            value: v.payload
                         })
                     );
                 }

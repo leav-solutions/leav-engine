@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IQueryInfos} from '_types/queryInfos';
@@ -39,7 +39,7 @@ export const handleRemoveEvent = async (
     // If we start by deactivating the record and something goes wrong when removing it from the tree, the record
     // won't be found on the next attempt to remove it (eg. triggered by sync scan). The only way to fix this would be
     // to reactivate it in DB
-    await deleteFilesTreeElement(record.id, filesLibraryId, recordLibrary, deps, ctx);
+    await deleteFilesTreeElement(record.id!, filesLibraryId, recordLibrary, deps, ctx);
 
     // Deactivate the record
     try {

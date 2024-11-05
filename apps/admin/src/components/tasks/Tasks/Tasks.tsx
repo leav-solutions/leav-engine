@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation, useQuery, useSubscription} from '@apollo/client';
@@ -95,7 +95,7 @@ const Tasks = (): JSX.Element => {
     const [delTasks] = useMutation<DELETE_TASKS, DELETE_TASKSVariables>(deleteTasksMutation);
     const [cancelTask] = useMutation<CANCEL_TASK, CANCEL_TASKVariables>(cancelTaskMutation);
 
-    const _onDeleteAll = async (archivesOnly: boolean = false) => {
+    const _onDeleteAll = async (archivesOnly = false) => {
         const tasksToDel = !archivesOnly ? completedTasks : completedTasks.filter(ct => ct.archive);
 
         await delTasks({variables: {tasks: tasksToDel.map(ttd => ({id: ttd.id, archive: false}))}});

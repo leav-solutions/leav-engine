@@ -8,8 +8,7 @@
         "isolatedModules": false,
         "declarationMap": false,
         "declaration": false,
-        "sourceMap": false,
-        "typeRoots": ["./src/_types"]
+        "sourceMap": false
     },
     "references": [
         {

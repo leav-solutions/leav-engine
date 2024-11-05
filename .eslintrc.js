@@ -5,7 +5,7 @@ module.exports = {
     ignorePatterns: ['**/_gqlTypes/*.ts', '**/dist/*', '**/plugins/*'],
     parser: '@typescript-eslint/parser',
     parserOptions: {tsconfigRootDir: __dirname},
-    plugins: ['@typescript-eslint', 'react-app', 'react-refresh'],
+    plugins: ['@typescript-eslint', 'react-refresh'],
     settings: {react: {version: 'latest'}},
     extends: ['plugin:@aristid/recommended'],
     rules: {

@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
@@ -15,8 +15,13 @@ import dayjs from 'dayjs';
 const hasDateRangeValues = (dateRange: unknown): dateRange is IDateRangeValue =>
     (dateRange as IDateRangeValue).from !== undefined && (dateRange as IDateRangeValue).to !== undefined;
 
+const getCalculatedValue = values => values.find(value => value.isCalculated);
+
 const getInheritedValue = values => values.find(value => value.isInherited);
-const getNotInheritedOrOverrideValue = values => values.find(value => !value.isInherited && value.raw_value !== null);
+const getNotInheritedOrOverrideValue = values => values.find(value => !value.isInherited && value.raw_payload !== null);
+
+const getUserInputValue = values =>
+    values.find(value => !value.isInherited && !value.isCalculated && value.raw_value !== null);
 
 const isRecordFormElementsValueLinkValue = (
     value: RecordFormElementsValue,
@@ -37,7 +42,7 @@ export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
             return acc;
         }
 
-        const value = getNotInheritedOrOverrideValue(values) ?? getInheritedValue(values) ?? null;
+        const value = getUserInputValue(values) ?? getInheritedValue(values) ?? getCalculatedValue(values) ?? null;
 
         if (isRecordFormElementsValueLinkValue(value, attribute)) {
             acc[attribute.id] = value?.linkValue?.id;
@@ -50,31 +55,44 @@ export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
         }
 
         const standardValue = value as RecordFormElementsValueStandardValue;
-        if (attribute.format === AttributeFormat.text) {
-            acc[attribute.id] = standardValue?.raw_value ?? '';
-        }
 
-        if (attribute.format === AttributeFormat.numeric) {
-            acc[attribute.id] = Number(standardValue?.raw_value) ?? '';
-        }
-
-        if (attribute.format === AttributeFormat.date_range) {
-            if (!standardValue?.raw_value) {
+        if (!standardValue?.raw_payload) {
+            if (attribute.format === AttributeFormat.date_range) {
                 return acc;
             }
 
-            if (hasDateRangeValues(standardValue.raw_value)) {
-                acc[attribute.id] = [
-                    dayjs.unix(Number(standardValue.raw_value.from)),
-                    dayjs.unix(Number(standardValue.raw_value.to))
-                ];
-            } else if (typeof standardValue.raw_value === 'string') {
-                const convertedFieldValue = JSON.parse(standardValue.raw_value);
-                acc[attribute.id] = [
-                    dayjs.unix(Number(convertedFieldValue.from)),
-                    dayjs.unix(Number(convertedFieldValue.to))
-                ];
-            }
+            acc[attribute.id] = '';
+            return acc;
+        }
+
+        switch (attribute.format) {
+            case AttributeFormat.color:
+            case AttributeFormat.text:
+            case AttributeFormat.rich_text:
+            case AttributeFormat.boolean:
+                acc[attribute.id] = standardValue.raw_payload;
+                break;
+            case AttributeFormat.numeric:
+                acc[attribute.id] = Number(standardValue.raw_payload);
+                break;
+            case AttributeFormat.date:
+                acc[attribute.id] = dayjs.unix(Number(standardValue.raw_payload));
+                break;
+            case AttributeFormat.date_range:
+                if (hasDateRangeValues(standardValue.raw_payload)) {
+                    acc[attribute.id] = [
+                        dayjs.unix(Number(standardValue.raw_payload.from)),
+                        dayjs.unix(Number(standardValue.raw_payload.to))
+                    ];
+                    break;
+                } else if (typeof standardValue.raw_payload === 'string') {
+                    const convertedFieldValue = JSON.parse(standardValue.raw_payload) as any;
+                    acc[attribute.id] = [
+                        dayjs.unix(Number(convertedFieldValue.from)),
+                        dayjs.unix(Number(convertedFieldValue.to))
+                    ];
+                    break;
+                }
         }
 
         return acc;

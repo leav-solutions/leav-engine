@@ -1,11 +1,11 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {APPS_ENDPOINT, APP_ENDPOINT, themeVars} from '@leav/ui';
 import {Layout} from 'antd';
 import Sidebar from 'components/Sidebar';
 import TopBar from 'components/TopBar';
-import {useState} from 'react';
+import {FunctionComponent, useState} from 'react';
 import {BrowserRouter} from 'react-router-dom';
 import NotifsPanel from '../NotifsPanel';
 import UserPanel from '../UserPanel';
@@ -13,7 +13,7 @@ import Routes from './Routes';
 
 const {Header, Content, Sider} = Layout;
 
-function Router(): JSX.Element {
+const Router: FunctionComponent = () => {
     const [userPanelVisible, setUserPanelVisible] = useState<boolean>(false);
     const [nbNotifs, setNbNotifs] = useState<number>(0);
 
@@ -55,6 +55,6 @@ function Router(): JSX.Element {
             </Layout>
         </BrowserRouter>
     );
-}
+};
 
 export default Router;

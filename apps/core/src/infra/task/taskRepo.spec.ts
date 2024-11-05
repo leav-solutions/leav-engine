@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
@@ -107,10 +107,10 @@ describe('TaskRepo', () => {
     });
 
     test('Retrieve tasks list with clean id', async () => {
-        const mockDbServ = {db: null, execute: global.__mockPromise([])};
-        const mockDbUtils: Mockify<IDbUtils> = {
+        const mockDbServ = {execute: global.__mockPromise([])};
+        const mockDbUtils = {
             findCoreEntity: global.__mockPromise({list: [{...mockTask, id: 'id'}]})
-        };
+        } satisfies Mockify<IDbUtils>;
 
         const mockUtils: Mockify<IUtils> = {
             getUnixTime: jest.fn().mockReturnValue(1)

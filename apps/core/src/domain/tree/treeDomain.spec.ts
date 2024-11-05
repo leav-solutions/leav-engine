@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
@@ -10,7 +10,7 @@ import {IValueDomain} from 'domain/value/valueDomain';
 import {ILibraryRepo} from 'infra/library/libraryRepo';
 import {ITreeRepo} from 'infra/tree/treeRepo';
 import {IVersionProfileRepo} from 'infra/versionProfile/versionProfileRepo';
-import {IUtils} from 'utils/utils';
+import {IUtils, ToAny} from 'utils/utils';
 import {IQueryInfos} from '_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
@@ -25,7 +25,7 @@ import {IRecordDomain} from '../record/recordDomain';
 import {IElementAncestorsHelper} from './helpers/elementAncestors';
 import {IGetDefaultElementHelper} from './helpers/getDefaultElement';
 import {ITreeDataValidationHelper} from './helpers/treeDataValidation';
-import treeDomain from './treeDomain';
+import treeDomain, {ITreeDomainDeps} from './treeDomain';
 
 const mockCacheService: Mockify<ICacheService> = {
     getData: global.__mockPromise([null]),
@@ -37,15 +37,34 @@ const mockCachesService: Mockify<ICachesService> = {
     getCache: jest.fn().mockReturnValue(mockCacheService)
 };
 
+const depsBase: ToAny<ITreeDomainDeps> = {
+    'core.domain.record': jest.fn(),
+    'core.domain.attribute': jest.fn(),
+    'core.domain.permission.admin': jest.fn(),
+    'core.domain.permission.tree': jest.fn(),
+    'core.domain.permission.treeNode': jest.fn(),
+    'core.domain.tree.helpers.treeDataValidation': jest.fn(),
+    'core.domain.helpers.getCoreEntityById': jest.fn(),
+    'core.domain.tree.helpers.elementAncestors': jest.fn(),
+    'core.domain.tree.helpers.handleRemovedLibraries': jest.fn(),
+    'core.domain.tree.helpers.getDefaultElement': jest.fn(),
+    'core.domain.eventsManager': jest.fn(),
+    'core.infra.library': jest.fn(),
+    'core.infra.tree': jest.fn(),
+    'core.infra.versionProfile': jest.fn(),
+    'core.utils': jest.fn(),
+    'core.infra.cache.cacheService': jest.fn()
+};
+
 describe('treeDomain', () => {
     const ctx: IQueryInfos = {
         userId: '1',
         queryId: 'treeDomainTest'
     };
 
-    const mockAdminPermDomain: Mockify<IAdminPermissionDomain> = {
+    const mockAdminPermDomain = {
         getAdminPermission: global.__mockPromise(true)
-    };
+    } satisfies Mockify<IAdminPermissionDomain>;
 
     const mockAdminPermForbiddenDomain: Mockify<IAdminPermissionDomain> = {
         getAdminPermission: global.__mockPromise(false)
@@ -92,13 +111,14 @@ describe('treeDomain', () => {
     describe('saveTree', () => {
         const mockHandleRemovedLibraries = jest.fn();
         test('Should create new tree', async () => {
-            const treeRepo: Mockify<ITreeRepo> = {
+            const treeRepo = {
                 createTree: global.__mockPromise(mockTree),
                 updateTree: jest.fn()
-            };
+            } satisfies Mockify<ITreeRepo>;
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
-                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.infra.tree': treeRepo as any,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperNoResult,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
@@ -119,7 +139,7 @@ describe('treeDomain', () => {
         });
 
         test('Should update existing tree', async () => {
-            const treeRepo: Mockify<ITreeRepo> = {
+            const treeRepo = {
                 createTree: jest.fn(),
                 updateTree: global.__mockPromise(mockTree),
                 getTrees: global.__mockPromise({
@@ -133,11 +153,12 @@ describe('treeDomain', () => {
                     ],
                     totalCount: 1
                 })
-            };
+            } satisfies Mockify<ITreeRepo>;
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
-                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.infra.tree': treeRepo as any,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 'core.domain.tree.helpers.handleRemovedLibraries': mockHandleRemovedLibraries,
@@ -168,6 +189,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.permission.admin': mockAdminPermForbiddenDomain as IAdminPermissionDomain,
@@ -194,6 +216,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': failingDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
@@ -206,14 +229,15 @@ describe('treeDomain', () => {
         });
 
         test('Should not save behavior on existing tree', async () => {
-            const treeRepo: Mockify<ITreeRepo> = {
+            const treeRepo = {
                 createTree: jest.fn(),
                 updateTree: global.__mockPromise(mockTree)
-            };
+            } satisfies Mockify<ITreeRepo>;
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
-                'core.infra.tree': treeRepo as ITreeRepo,
+                'core.infra.tree': treeRepo as any,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper,
                 'core.domain.tree.helpers.handleRemovedLibraries': mockHandleRemovedLibraries,
@@ -246,7 +270,7 @@ describe('treeDomain', () => {
                 })
             };
 
-            const treeRepo: Mockify<ITreeRepo> = {
+            const treeRepo = {
                 getTrees: global.__mockPromise({
                     list: [
                         {
@@ -259,7 +283,7 @@ describe('treeDomain', () => {
                     totalCount: 1
                 }),
                 deleteTree: global.__mockPromise({list: [mockTree], totalCount: 1})
-            };
+            } satisfies Mockify<ITreeRepo>;
 
             const mockVersionProfileRepo: Mockify<IVersionProfileRepo> = {
                 getVersionProfiles: global.__mockPromise({list: [mockVersionProfile]}),
@@ -267,6 +291,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
@@ -303,6 +328,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
@@ -323,6 +349,7 @@ describe('treeDomain', () => {
             const mockGetEntityByIdHelperSystemTree = jest.fn().mockReturnValue(treeData);
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.permission.admin': mockAdminPermDomain as IAdminPermissionDomain,
@@ -342,6 +369,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
@@ -354,10 +382,11 @@ describe('treeDomain', () => {
 
     describe('getTrees', () => {
         test('Should return a list of trees', async () => {
-            const treeRepo: Mockify<ITreeRepo> = {
+            const treeRepo = {
                 getTrees: global.__mockPromise({list: [mockTree, mockTree], totalCount: 1})
-            };
+            } satisfies Mockify<ITreeRepo>;
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo
             });
@@ -369,10 +398,11 @@ describe('treeDomain', () => {
         });
 
         test('Should add default sort', async () => {
-            const treeRepo: Mockify<ITreeRepo> = {
+            const treeRepo = {
                 getTrees: global.__mockPromise({list: [mockTree, mockTree], totalCount: 1})
-            };
+            } satisfies Mockify<ITreeRepo>;
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo
             });
@@ -390,6 +420,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelper
             });
@@ -405,6 +436,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperNoResult,
                 'core.utils': mockUtils as IUtils
@@ -430,6 +462,7 @@ describe('treeDomain', () => {
                 getTreeContent: global.__mockPromise([])
             };
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
@@ -461,6 +494,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
@@ -491,6 +525,7 @@ describe('treeDomain', () => {
                 })
             };
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': recordDomain as IRecordDomain
@@ -523,6 +558,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': recordDomain as IRecordDomain,
@@ -594,6 +630,7 @@ describe('treeDomain', () => {
             });
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': recordDomain as IRecordDomain,
@@ -663,6 +700,7 @@ describe('treeDomain', () => {
                 getRecordByNodeId: global.__mockPromise({id: '1345', library: 'lib1'})
             };
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
@@ -703,6 +741,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': recordDomain as IRecordDomain,
@@ -743,6 +782,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': recordDomain as IRecordDomain,
@@ -815,6 +855,7 @@ describe('treeDomain', () => {
                 })
             };
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': recordDomain as IRecordDomain,
@@ -896,6 +937,7 @@ describe('treeDomain', () => {
                 })
             };
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': recordDomain as IRecordDomain,
@@ -982,6 +1024,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
@@ -1020,6 +1063,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': recordDomain as IRecordDomain,
@@ -1094,16 +1138,17 @@ describe('treeDomain', () => {
                 }
             ];
 
-            const treeRepo: Mockify<ITreeRepo> = {
+            const treeRepo = {
                 getTreeContent: global.__mockPromise(treeContentData),
                 getTrees: global.__mockPromise({list: [{id: 'test_tree'}], totalCount: 0})
-            };
+            } satisfies Mockify<ITreeRepo>;
 
             const mockRecordDomain: Mockify<IRecordDomain> = {
                 find: jest.fn()
             };
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
@@ -1131,6 +1176,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.attribute': mockAttributesDomain as IAttributeDomain,
@@ -1154,6 +1200,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': treeRepo as ITreeRepo,
                 'core.domain.attribute': mockAttributesDomain as IAttributeDomain,
@@ -1172,6 +1219,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
@@ -1193,6 +1241,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
 
@@ -1213,6 +1262,7 @@ describe('treeDomain', () => {
             };
 
             const domain = treeDomain({
+                ...depsBase,
                 'core.infra.tree': mockTreeRepo as ITreeRepo
             });
 

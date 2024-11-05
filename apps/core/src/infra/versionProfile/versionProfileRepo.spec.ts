@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
@@ -20,11 +20,11 @@ describe('versionProfileRepo', () => {
         trees: ['treeA', 'treeB']
     };
 
-    const mockDbUtils: Mockify<IDbUtils> = {
+    const mockDbUtils = {
         cleanup: jest.fn().mockReturnValue(profileData),
         convertToDoc: jest.fn().mockReturnValue(docProfileData),
         findCoreEntity: global.__mockPromise([profileData])
-    };
+    } satisfies Mockify<IDbUtils>;
 
     describe('createVersionProfile', () => {
         test('Should create a new version profile', async () => {
@@ -74,7 +74,7 @@ describe('versionProfileRepo', () => {
 
     describe('getVersionProfiles', () => {
         test('Should return a list of version profiles', async () => {
-            const mockDbServ = {db: null, execute: global.__mockPromise([])};
+            const mockDbServ = {execute: global.__mockPromise([])};
 
             const repo = versionProfileRepo({
                 'core.infra.db.dbService': mockDbServ,
@@ -114,7 +114,10 @@ describe('versionProfileRepo', () => {
 
     describe('getAttributesUsingProfile', () => {
         test('Should return a list of attributes using a profile', async () => {
-            const mockDbServ = {db: new Database(), execute: global.__mockPromise([mockAttrAdvVersionable])};
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise([mockAttrAdvVersionable])
+            };
 
             const mockDbUtilsAttribute: Mockify<IDbUtils> = {
                 cleanup: jest.fn().mockReturnValue(mockAttrAdvVersionable)

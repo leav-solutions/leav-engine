@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {gql} from 'graphql-tag';
@@ -8,6 +8,8 @@ import {GET_TASKS_tasks_list} from '_gqlTypes/GET_TASKS';
 import {LibraryBehavior, TaskStatus} from '_gqlTypes/globalTypes';
 import {RecordIdentity} from '_gqlTypes/RecordIdentity';
 import {AvailableLanguage, IApplicationSettings, IInfo, InfoPriority} from '../_types/types';
+import {generatePath} from 'react-router-dom';
+import {routes} from '../components/Router/Routes/ListRoutes';
 
 export function getFileUrl(filepath: string) {
     // Assets are served from the same origin as the application. Just return the filepath but keep this function
@@ -71,7 +73,10 @@ export const gqlUnchecked = gql;
 
 export const getTreeRecordKey = (record: RecordIdentity): string => `${record.whoAmI.library.id}/${record.id}`;
 
+export const explorerQueryParamName = 'explorer';
+
 export const getLibraryLink = (libId: string) => `/library/${libId}`;
+export const getExplorerLibraryLink = (libId: string) => getLibraryLink(libId) + '?' + explorerQueryParamName;
 export const getTreeLink = (treeId: string) => `/tree/${treeId}`;
 
 export const isLibraryInApp = (app: GET_APPLICATION_BY_ENDPOINT_applications_list, libraryId: string): boolean => {
@@ -102,7 +107,8 @@ export const isTreeInApp = (app: GET_APPLICATION_BY_ENDPOINT_applications_list, 
     return !!appTrees.find(appTree => appTree === treeId);
 };
 
-export const getFilesLibraryId = (tree: IActiveTree): string => (tree?.libraries ?? []).find(l => l.behavior === LibraryBehavior.files)?.id ?? null;
+export const getFilesLibraryId = (tree: IActiveTree): string =>
+    (tree?.libraries ?? []).find(l => l.behavior === LibraryBehavior.files)?.id ?? null;
 
 export const isInProgressTask = (task: GET_TASKS_tasks_list) =>
     task.status === TaskStatus.PENDING || task.status === TaskStatus.RUNNING;

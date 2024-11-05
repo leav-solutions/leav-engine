@@ -1,8 +1,8 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AnyPrimitive, ErrorTypes, ICommonFieldsSettings} from '@leav/utils';
-import {useContext, useEffect, useMemo, useReducer} from 'react';
+import {FunctionComponent, useContext, useEffect, useMemo, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {ErrorDisplay} from '_ui/components';
@@ -23,20 +23,23 @@ import AddValueBtn from '../../shared/AddValueBtn';
 import DeleteAllValuesBtn from '../../shared/DeleteAllValuesBtn';
 import FieldFooter from '../../shared/FieldFooter';
 import ValuesVersionBtn from '../../shared/ValuesVersionBtn';
-import {APICallStatus, FieldScope, IFormElementProps} from '../../_types';
+import {APICallStatus, VersionFieldScope, IFormElementProps} from '../../_types';
 import StandardFieldValue from './StandardFieldValue';
+import {FormInstance} from 'antd';
+import {StandardFieldReducerContext} from '../../reducers/standardFieldReducer/standardFieldReducerContext';
 
 const Wrapper = styled.div<{$metadataEdit: boolean}>`
     margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
 `;
 
-function StandardField({
+const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> & {antdForm?: FormInstance}> = ({
     element,
+    antdForm,
     onValueSubmit,
     onValueDelete,
     onDeleteMultipleValues,
     metadataEdit = false
-}: IFormElementProps<ICommonFieldsSettings>): JSX.Element {
+}) => {
     const {t} = useTranslation();
 
     const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
@@ -98,7 +101,7 @@ function StandardField({
         if (submitRes.status === APICallStatus.SUCCESS) {
             const submitResValue = submitRes.values[0] as ValueDetailsValueFragment;
 
-            let resultValue;
+            let resultValue: ValueDetailsValueFragment;
             if (state.metadataEdit) {
                 const metadataValue =
                     (submitResValue.metadata ?? []).find(({name}) => name === element.attribute.id)?.value ?? null;
@@ -109,8 +112,8 @@ function StandardField({
                     created_by: null,
                     modified_by: null,
                     version: null,
-                    raw_value: metadataValue.raw_value ?? metadataValue.value,
-                    value: metadataValue.value,
+                    raw_payload: metadataValue.raw_payload ?? metadataValue.payload,
+                    payload: metadataValue.payload,
                     metadata: null,
                     attribute
                 };
@@ -161,6 +164,15 @@ function StandardField({
                     attributeError.type === ErrorTypes.VALIDATION_ERROR
                         ? attributeError.message
                         : t(`errors.${attributeError.type}`);
+
+                if (antdForm) {
+                    antdForm.setFields([
+                        {
+                            name: attributeError.attribute,
+                            errors: [errorMessage]
+                        }
+                    ]);
+                }
             }
         }
 
@@ -219,7 +231,7 @@ function StandardField({
         });
     };
 
-    const _handleScopeChange = (scope: FieldScope) => {
+    const _handleScopeChange = (scope: VersionFieldScope) => {
         dispatch({
             type: StandardFieldReducerActionsTypes.CHANGE_VERSION_SCOPE,
             scope
@@ -273,47 +285,53 @@ function StandardField({
     const isAttributeVersionable = attribute?.versions_conf?.versionable;
 
     const versions = {
-        [FieldScope.CURRENT]: state.values[FieldScope.CURRENT]?.version ?? null,
-        [FieldScope.INHERITED]: state.values[FieldScope.INHERITED]?.version ?? null
+        [VersionFieldScope.CURRENT]: state.values[VersionFieldScope.CURRENT]?.version ?? null,
+        [VersionFieldScope.INHERITED]: state.values[VersionFieldScope.INHERITED]?.version ?? null
     };
 
     return (
-        <Wrapper $metadataEdit={metadataEdit}>
-            {valuesToDisplay.map(value => (
-                <StandardFieldValue
-                    key={value.idValue}
-                    value={value}
-                    state={state}
-                    dispatch={dispatch}
-                    onSubmit={_handleSubmit}
-                    onDelete={_handleDelete}
-                    onScopeChange={_handleScopeChange}
-                />
-            ))}
-            {(canDeleteAllValues || canAddAnotherValue || attribute?.versions_conf?.versionable) && (
-                <FieldFooter
-                    bordered
-                    style={{
-                        flexDirection:
-                            canAddAnotherValue && !canDeleteAllValues && !isAttributeVersionable ? 'row' : 'row-reverse'
-                    }}
-                >
-                    <div>
-                        {isAttributeVersionable && (
-                            <ValuesVersionBtn
-                                basic
-                                versions={versions}
-                                activeScope={state.activeScope}
-                                onScopeChange={_handleScopeChange}
-                            />
+        <StandardFieldReducerContext.Provider value={{state, dispatch}}>
+            <Wrapper $metadataEdit={metadataEdit}>
+                {valuesToDisplay.map(value => (
+                    <StandardFieldValue
+                        key={value.idValue}
+                        value={value}
+                        state={state}
+                        dispatch={dispatch}
+                        onSubmit={_handleSubmit}
+                        onDelete={_handleDelete}
+                        onScopeChange={_handleScopeChange}
+                    />
+                ))}
+                {(canDeleteAllValues || canAddAnotherValue || attribute?.versions_conf?.versionable) && (
+                    <FieldFooter
+                        bordered
+                        style={{
+                            flexDirection:
+                                canAddAnotherValue && !canDeleteAllValues && !isAttributeVersionable
+                                    ? 'row'
+                                    : 'row-reverse'
+                        }}
+                    >
+                        <div>
+                            {isAttributeVersionable && (
+                                <ValuesVersionBtn
+                                    basic
+                                    versions={versions}
+                                    activeScope={state.activeScope}
+                                    onScopeChange={_handleScopeChange}
+                                />
+                            )}
+                            {canDeleteAllValues && <DeleteAllValuesBtn onDelete={_handleDeleteAllValues} />}
+                        </div>
+                        {canAddAnotherValue && (
+                            <AddValueBtn activeScope={state.activeScope} onClick={_handleAddValue} />
                         )}
-                        {canDeleteAllValues && <DeleteAllValuesBtn onDelete={_handleDeleteAllValues} />}
-                    </div>
-                    {canAddAnotherValue && <AddValueBtn activeScope={state.activeScope} onClick={_handleAddValue} />}
-                </FieldFooter>
-            )}
-        </Wrapper>
+                    </FieldFooter>
+                )}
+            </Wrapper>
+        </StandardFieldReducerContext.Provider>
     );
-}
+};
 
 export default StandardField;

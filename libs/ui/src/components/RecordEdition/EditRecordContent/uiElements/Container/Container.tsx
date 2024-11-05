@@ -1,16 +1,17 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Col, Row} from 'antd';
+import {Col, FormInstance, Row} from 'antd';
 import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
 import {IFormElementProps} from '../../_types';
 
 function Container({
     element,
+    antdForm,
     onValueSubmit,
     onValueDelete,
     onDeleteMultipleValues
-}: IFormElementProps<{}>): JSX.Element {
+}: IFormElementProps<{}> & {antdForm?: FormInstance}): JSX.Element {
     const {elements: formElements} = useRecordEditionContext();
     const children = formElements[element.id] ?? [];
 
@@ -22,6 +23,7 @@ function Container({
                         {el.uiElement && (
                             <el.uiElement
                                 element={el}
+                                antdForm={antdForm}
                                 onValueSubmit={onValueSubmit}
                                 onValueDelete={onValueDelete}
                                 onDeleteMultipleValues={onDeleteMultipleValues}

@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {setTimeout} from 'timers/promises';
@@ -22,6 +22,8 @@ describe('Indexation', () => {
             saveAttribute(
                 attribute: {
                     id: "${attrId}",
+                    readonly: false,
+                    required: false,
                     type: simple,
                     format: text,
                     label: {fr: "Test attr", en: "Test attr en"},
@@ -53,7 +55,7 @@ describe('Indexation', () => {
                 library: "${testLibName}",
                 recordId: "${record1}",
                 attribute: "${attrId}",
-                value: {value: "one two three"}
+                value: {payload: "one two three"}
             ) {
                 attribute {
                     id

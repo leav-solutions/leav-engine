@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
@@ -14,7 +14,7 @@ import {
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {onError} from '@apollo/link-error';
-import {gqlPossibleTypes, useRefreshToken} from '@leav/ui';
+import {gqlPossibleTypes, useRedirectToLogin} from '@leav/ui';
 import {createUploadLink} from 'apollo-upload-client';
 import {createClient} from 'graphql-ws';
 import {ReactNode} from 'react';
@@ -31,7 +31,7 @@ interface IApolloHandlerProps {
 function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
     const {t, i18n} = useTranslation();
     const dispatch = useAppDispatch();
-    const {refreshToken} = useRefreshToken();
+    const {redirectToLogin} = useRedirectToLogin();
 
     // This function will catch the errors from the exchange between Apollo Client and the server.
     const _handleApolloError = onError(({graphQLErrors, networkError, operation, forward, response}) => {
@@ -42,7 +42,7 @@ function ApolloHandler({children}: IApolloHandlerProps): JSX.Element {
             return new Observable(observer => {
                 (async () => {
                     try {
-                        await refreshToken();
+                        redirectToLogin();
 
                         // Retry last failed request
                         forward(operation).subscribe({

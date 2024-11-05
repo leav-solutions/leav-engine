@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
@@ -8,8 +8,8 @@ import {IActionsListContext} from '_types/actionsList';
 import {TypeGuards} from '../../../utils';
 
 interface IDeps {
-    'core.domain.record'?: IRecordDomain;
-    'core.domain.attribute'?: IAttributeDomain;
+    'core.domain.record': IRecordDomain;
+    'core.domain.attribute': IAttributeDomain;
 }
 
 interface IVariableFunction {
@@ -22,9 +22,9 @@ export interface IVariableFunctions {
 }
 
 export default function ({
-    'core.domain.record': recordDomain = null,
-    'core.domain.attribute': attributeDomain = null
-}: IDeps = {}): IVariableFunctions {
+    'core.domain.record': recordDomain,
+    'core.domain.attribute': attributeDomain
+}: IDeps): IVariableFunctions {
     const first = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
         {
             ...inputValue[0]
@@ -39,8 +39,8 @@ export default function ({
     const sum = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
         {
             ...inputValue[0],
-            value: inputValue.reduce((acc, v) => {
-                const value = typeof v.value === 'object' ? v.value.value : v.value;
+            payload: inputValue.reduce((acc, v) => {
+                const value = typeof v.payload === 'object' ? v.payload.value : v.payload;
                 return acc + parseFloat(value);
             }, 0)
         }
@@ -48,9 +48,9 @@ export default function ({
     const avg = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => [
         {
             ...inputValue[0],
-            value:
+            payload:
                 inputValue.reduce((acc, v) => {
-                    const value = typeof v.value === 'object' ? v.value.value : v.value;
+                    const value = typeof v.payload === 'object' ? v.payload.value : v.payload;
                     return acc + parseFloat(value);
                 }, 0) / inputValue.length
         }
@@ -62,14 +62,14 @@ export default function ({
     ): Promise<IVariableValue[]> => [
         {
             ...inputValue[0],
-            value: inputValue.map(v => v.value).join(separator)
+            payload: inputValue.map(v => v.payload).join(separator)
         }
     ];
 
     const dedup = async (context: IActionsListContext, inputValue: IVariableValue[]): Promise<IVariableValue[]> => {
         const seen = {};
         return inputValue.filter(function (v) {
-            const stringRepresentation = JSON.stringify(v.value);
+            const stringRepresentation = JSON.stringify(v.payload);
             return seen.hasOwnProperty(stringRepresentation) ? false : (seen[stringRepresentation] = true);
         });
     };
@@ -103,11 +103,11 @@ export default function ({
                     if (properties?.linked_library) {
                         currReturnValue = values
                             .map(v =>
-                                !!v?.value
+                                !!v?.payload
                                     ? {
                                           library: properties?.linked_library,
-                                          recordId: v.value.id,
-                                          value: v.value.id
+                                          recordId: v.payload.id,
+                                          payload: v.payload.id
                                       }
                                     : null
                             )
@@ -116,8 +116,8 @@ export default function ({
                         currReturnValue = values.map(v => ({
                             library,
                             recordId,
-                            value: v?.value ?? null,
-                            raw_value: TypeGuards.isIStandardValue(v) ? v?.raw_value : null
+                            payload: v?.payload ?? null,
+                            raw_payload: TypeGuards.isIStandardValue(v) ? v?.raw_payload : null
                         }));
                     }
                 }

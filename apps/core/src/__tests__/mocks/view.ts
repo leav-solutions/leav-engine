@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ViewTypes, ViewSizes} from '../../_types/views';
@@ -25,7 +25,7 @@ export const mockViewBeforeCreation: IView = {
     }
 };
 
-export const mockView: IView = {
+export const mockView: MandatoryId<IView> = {
     ...mockViewBeforeCreation,
     id: 'test_view',
     created_by: '1',

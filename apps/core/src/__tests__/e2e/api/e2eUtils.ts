@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import axios from 'axios';
@@ -242,7 +242,7 @@ export async function gqlAddUserToGroup(groupNodeId: string) {
     await makeGraphQlCall(
         `mutation {
         saveValue(library: "users", recordId: "1", attribute: "${userGroupAttrId}", value: {
-            value: "${groupNodeId}"
+            payload: "${groupNodeId}"
         }) {
             id_value
         }
@@ -262,7 +262,7 @@ export async function gqlAddUserToGroup(groupNodeId: string) {
 export async function gqlAddElemToTree(
     treeId: string,
     element: ITreeElement,
-    parent?: string,
+    parent?: string | null,
     order?: number
 ): Promise<string> {
     const res = await makeGraphQlCall(
@@ -284,7 +284,7 @@ export async function gqlSaveValue(attributeId: string, libraryId: string, recor
     await makeGraphQlCall(
         `mutation {
         saveValue(library: "${libraryId}", recordId: "${recordId}", attribute: "${attributeId}", value: {
-            value: ${typeof value === 'string' ? `"${value}"` : value}
+            payload: ${typeof value === 'string' ? `"${value}"` : value}
         }) {
             id_value
         }

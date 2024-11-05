@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
@@ -7,14 +7,21 @@ import {IGlobalSettingsRepo} from 'infra/globalSettings/globalSettingsRepo';
 import PermissionError from '../../errors/PermissionError';
 import {mockGlobalSettings} from '../../__tests__/mocks/globalSettings';
 import {mockCtx} from '../../__tests__/mocks/shared';
-import {default as globalSettingsDomain} from './globalSettingsDomain';
+import {default as globalSettingsDomain, IGlobalSettingsDomainDeps} from './globalSettingsDomain';
+import {ToAny} from 'utils/utils';
+
+const depsBase: ToAny<IGlobalSettingsDomainDeps> = {
+    'core.domain.permission.admin': jest.fn(),
+    'core.domain.eventsManager': jest.fn(),
+    'core.infra.globalSettings': jest.fn()
+};
 
 describe('getSettingsRepo', () => {
     describe('saveSettings', () => {
-        const mockGlobalSettingsRepo: Mockify<IGlobalSettingsRepo> = {
+        const mockGlobalSettingsRepo = {
             saveSettings: global.__mockPromise(mockGlobalSettings),
             getSettings: global.__mockPromise(mockGlobalSettings)
-        };
+        } satisfies Mockify<IGlobalSettingsRepo>;
 
         const mockEventsManager: Mockify<IEventsManagerDomain> = {
             sendDatabaseEvent: global.__mockPromise()
@@ -59,12 +66,13 @@ describe('getSettingsRepo', () => {
     });
 
     describe('getSettings', () => {
-        const mockGlobalSettingsRepo: Mockify<IGlobalSettingsRepo> = {
+        const mockGlobalSettingsRepo = {
             getSettings: global.__mockPromise(mockGlobalSettings)
-        };
+        } satisfies Mockify<IGlobalSettingsRepo>;
 
         test('Should return settings', async () => {
             const domain = globalSettingsDomain({
+                ...depsBase,
                 'core.infra.globalSettings': mockGlobalSettingsRepo as IGlobalSettingsRepo
             });
 

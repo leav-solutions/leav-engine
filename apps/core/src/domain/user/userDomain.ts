@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import ValidationError from '../../errors/ValidationError';
@@ -39,15 +39,15 @@ export interface IUserDomain {
     ): Promise<void>;
 }
 
-interface IDeps {
-    config?: Config.IConfig;
-    'core.domain.permissions'?: IPermissionDomain;
-    'core.infra.userData'?: IUserDataRepo;
-    'core.domain.permission'?: IPermissionDomain;
-    'core.infra.mailer.mailerService'?: IMailerService;
-    'core.domain.globalSettings'?: IGlobalSettingsDomain;
-    'core.utils'?: IUtils;
-    translator?: i18n;
+export interface IUserDomainDeps {
+    config: Config.IConfig;
+    'core.domain.permissions': IPermissionDomain;
+    'core.infra.userData': IUserDataRepo;
+    'core.domain.permission': IPermissionDomain;
+    'core.infra.mailer.mailerService': IMailerService;
+    'core.domain.globalSettings': IGlobalSettingsDomain;
+    'core.utils': IUtils;
+    translator: i18n;
 }
 
 export enum UserCoreDataKeys {
@@ -55,14 +55,14 @@ export enum UserCoreDataKeys {
 }
 
 export default function ({
-    config = null,
-    'core.infra.userData': userDataRepo = null,
-    'core.domain.permission': permissionDomain = null,
-    'core.infra.mailer.mailerService': mailerService = null,
-    'core.domain.globalSettings': globalSettingsDomain = null,
-    'core.utils': utils = null,
-    translator = null
-}: IDeps = {}): IUserDomain {
+    config,
+    'core.infra.userData': userDataRepo,
+    'core.domain.permission': permissionDomain,
+    'core.infra.mailer.mailerService': mailerService,
+    'core.domain.globalSettings': globalSettingsDomain,
+    'core.utils': utils,
+    translator
+}: IUserDomainDeps): IUserDomain {
     return {
         async sendResetPasswordEmail(
             email: string,
@@ -115,7 +115,7 @@ export default function ({
 
             return userDataRepo.saveUserData({key, value, global, isCoreData, ctx});
         },
-        async getUserData(keys: string[], global: boolean = false, ctx: IQueryInfos): Promise<IUserData> {
+        async getUserData(keys: string[], global = false, ctx: IQueryInfos): Promise<IUserData> {
             const isAllowed = await permissionDomain.isAllowed({
                 type: PermissionTypes.ADMIN,
                 action: AdminPermissionsActions.MANAGE_GLOBAL_PREFERENCES,

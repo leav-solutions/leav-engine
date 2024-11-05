@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {GetCoreEntityByIdFunc} from 'domain/helpers/getCoreEntityById';
@@ -32,28 +32,28 @@ export interface ITreeNodePermissionDomain {
     getInheritedTreeNodePermission(params: IGetInheritedTreeNodePermissionParams): Promise<boolean>;
 }
 
-interface IDeps {
-    'core.domain.permission.tree'?: ITreePermissionDomain;
-    'core.domain.permission.treeLibrary'?: ITreeLibraryPermissionDomain;
-    'core.domain.permission.helpers.treeBasedPermissions'?: ITreeBasedPermissionHelper;
-    'core.domain.permission.helpers.permissionByUserGroups'?: IPermissionByUserGroupsHelper;
-    'core.domain.permission.helpers.defaultPermission'?: IDefaultPermissionHelper;
-    'core.domain.helpers.getCoreEntityById'?: GetCoreEntityByIdFunc;
-    'core.infra.tree'?: ITreeRepo;
-    'core.domain.attribute'?: IAttributeDomain;
-    'core.infra.value'?: IValueRepo;
+export interface ITreeNodePermissionDomainDeps {
+    'core.domain.permission.tree': ITreePermissionDomain;
+    'core.domain.permission.treeLibrary': ITreeLibraryPermissionDomain;
+    'core.domain.permission.helpers.treeBasedPermissions': ITreeBasedPermissionHelper;
+    'core.domain.permission.helpers.permissionByUserGroups': IPermissionByUserGroupsHelper;
+    'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
+    'core.domain.helpers.getCoreEntityById': GetCoreEntityByIdFunc;
+    'core.infra.tree': ITreeRepo;
+    'core.domain.attribute': IAttributeDomain;
+    'core.infra.value': IValueRepo;
 }
 
-export default function (deps: IDeps = {}): ITreeNodePermissionDomain {
+export default function (deps: ITreeNodePermissionDomainDeps): ITreeNodePermissionDomain {
     const {
-        'core.domain.permission.tree': treePermissionDomain = null,
-        'core.domain.permission.treeLibrary': treeLibraryPermissionDomain = null,
-        'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper = null,
-        'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupHelper = null,
-        'core.domain.permission.helpers.defaultPermission': defaultPermHelper = null,
-        'core.domain.helpers.getCoreEntityById': getCoreEntityById = null,
-        'core.infra.tree': treeRepo = null,
-        'core.domain.attribute': attributeDomain = null,
+        'core.domain.permission.tree': treePermissionDomain,
+        'core.domain.permission.treeLibrary': treeLibraryPermissionDomain,
+        'core.domain.permission.helpers.treeBasedPermissions': treeBasedPermissionsHelper,
+        'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupHelper,
+        'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
+        'core.domain.helpers.getCoreEntityById': getCoreEntityById,
+        'core.infra.tree': treeRepo,
+        'core.domain.attribute': attributeDomain,
         'core.infra.value': valueRepo = null
     } = deps;
 
@@ -93,7 +93,7 @@ export default function (deps: IDeps = {}): ITreeNodePermissionDomain {
         );
 
         const valuesByAttr = treesAttrValues.reduce((allVal, treeVal, i) => {
-            allVal[permConf[library].permissionTreeAttributes[i]] = treeVal.map(v => v.value.id);
+            allVal[permConf[library].permissionTreeAttributes[i]] = treeVal.map(v => v.payload.id);
 
             return allVal;
         }, {});

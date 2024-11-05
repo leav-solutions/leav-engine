@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID} from '@leav/utils';
@@ -10,7 +10,7 @@ import {IRecordAttributePermissionDomain} from 'domain/permission/recordAttribut
 import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITreeDomain} from 'domain/tree/treeDomain';
 import {IFormRepo} from 'infra/form/formRepo';
-import {IUtils} from 'utils/utils';
+import {IUtils, ToAny} from 'utils/utils';
 import {Winston} from 'winston';
 import {IForm} from '_types/forms';
 import {IQueryInfos} from '_types/queryInfos';
@@ -20,7 +20,22 @@ import {mockAttrSimple} from '../../__tests__/mocks/attribute';
 import {formField, formLayoutElement, mockForm} from '../../__tests__/mocks/forms';
 import {mockLibrary} from '../../__tests__/mocks/library';
 import {mockStandardValue} from '../../__tests__/mocks/value';
-import formDomain from './formDomain';
+import formDomain, {IFormDomainDeps} from './formDomain';
+
+const depsBase: ToAny<IFormDomainDeps> = {
+    'core.domain.library': jest.fn(),
+    'core.domain.attribute': jest.fn(),
+    'core.domain.record': jest.fn(),
+    'core.domain.permission.library': jest.fn(),
+    'core.domain.permission.recordAttribute': jest.fn(),
+    'core.domain.permission.attribute': jest.fn(),
+    'core.domain.helpers.validate': jest.fn(),
+    'core.domain.tree': jest.fn(),
+    'core.infra.form': jest.fn(),
+    'core.utils': jest.fn(),
+    'core.utils.logger': jest.fn(),
+    translator: {}
+};
 
 describe('formDomain', () => {
     const ctx: IQueryInfos = {
@@ -71,6 +86,7 @@ describe('formDomain', () => {
             };
 
             const domain = formDomain({
+                ...depsBase,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
@@ -89,6 +105,7 @@ describe('formDomain', () => {
             };
 
             const domain = formDomain({
+                ...depsBase,
                 'core.domain.library': mockLibDomainNoLib as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
@@ -106,6 +123,7 @@ describe('formDomain', () => {
             };
 
             const domain = formDomain({
+                ...depsBase,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
@@ -124,6 +142,7 @@ describe('formDomain', () => {
             };
 
             const domain = formDomain({
+                ...depsBase,
                 'core.domain.library': mockLibDomainNoLib as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
@@ -141,6 +160,7 @@ describe('formDomain', () => {
             };
 
             const domain = formDomain({
+                ...depsBase,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.infra.form': mockFormRepo as IFormRepo,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
@@ -155,18 +175,19 @@ describe('formDomain', () => {
 
     describe('Save form', () => {
         test('Save new form', async () => {
-            const mockFormRepo: Mockify<IFormRepo> = {
+            const mockFormRepo = {
                 getForms: global.__mockPromise({list: []}),
                 updateForm: jest.fn(),
                 createForm: global.__mockPromise(mockForm)
-            };
+            } satisfies Mockify<IFormRepo>;
 
             const domain = formDomain({
+                ...depsBase,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                'core.infra.form': mockFormRepo as IFormRepo,
+                'core.infra.form': mockFormRepo as any,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -179,18 +200,19 @@ describe('formDomain', () => {
         });
 
         test('Save existing form', async () => {
-            const mockFormRepo: Mockify<IFormRepo> = {
+            const mockFormRepo = {
                 getForms: global.__mockPromise({list: [mockForm]}),
                 updateForm: global.__mockPromise(mockForm),
                 createForm: jest.fn()
-            };
+            } satisfies Mockify<IFormRepo>;
 
             const domain = formDomain({
+                ...depsBase,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
-                'core.infra.form': mockFormRepo as IFormRepo,
+                'core.infra.form': mockFormRepo as any,
                 'core.utils': mockUtils as IUtils
             });
 
@@ -214,6 +236,7 @@ describe('formDomain', () => {
             };
 
             const domain = formDomain({
+                ...depsBase,
                 'core.domain.library': mockLibDomainNoLib as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
@@ -239,6 +262,7 @@ describe('formDomain', () => {
             };
 
             const domain = formDomain({
+                ...depsBase,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
@@ -266,6 +290,7 @@ describe('formDomain', () => {
             };
 
             const domain = formDomain({
+                ...depsBase,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomainNoMatch as IAttributeDomain,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
@@ -293,6 +318,7 @@ describe('formDomain', () => {
             };
 
             const domain = formDomain({
+                ...depsBase,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.library': mockLibraryPermForbiddenDomain as ILibraryPermissionDomain,
@@ -319,6 +345,7 @@ describe('formDomain', () => {
             };
 
             const domain = formDomain({
+                ...depsBase,
                 'core.domain.library': mockLibDomain as ILibraryDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.domain.permission.library': mockLibraryPermForbiddenDomain as ILibraryPermissionDomain,
@@ -342,6 +369,7 @@ describe('formDomain', () => {
             };
 
             const domain = formDomain({
+                ...depsBase,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
                 'core.infra.form': mockFormRepo as IFormRepo
             });
@@ -359,6 +387,7 @@ describe('formDomain', () => {
             };
 
             const domain = formDomain({
+                ...depsBase,
                 'core.domain.permission.library': mockLibraryPermDomain as ILibraryPermissionDomain,
                 'core.infra.form': mockFormRepo as IFormRepo
             });
@@ -380,6 +409,7 @@ describe('formDomain', () => {
             };
 
             const domain = formDomain({
+                ...depsBase,
                 'core.domain.permission.library': mockLibraryPermForbiddenDomain as ILibraryPermissionDomain,
                 'core.infra.form': mockFormRepo as IFormRepo
             });
@@ -397,6 +427,7 @@ describe('formDomain', () => {
 
         test('Return a record form with values', async () => {
             const domain = formDomain({
+                ...depsBase,
                 'core.domain.record': mockRecordDomain as IRecordDomain,
                 'core.domain.permission.recordAttribute':
                     mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain
@@ -444,6 +475,7 @@ describe('formDomain', () => {
             };
 
             const domain = formDomain({
+                ...depsBase,
                 'core.domain.record': mockRecordDomainThrowing as IRecordDomain,
                 'core.domain.permission.recordAttribute':
                     mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
@@ -488,6 +520,7 @@ describe('formDomain', () => {
             };
 
             const domain = formDomain({
+                ...depsBase,
                 'core.domain.record': mockRecordDomainThrowing as IRecordDomain,
                 'core.domain.permission.recordAttribute':
                     mockRecordAttributePermissionDomain as IRecordAttributePermissionDomain,
@@ -526,7 +559,7 @@ describe('formDomain', () => {
                 getRecordFieldValue: jest.fn().mockImplementation(async ({attributeId}) => {
                     switch (attributeId) {
                         case 'dep_attribute':
-                            return {value: {id: '987654', record: {id: '123456', library: 'dep_lib'}}};
+                            return {payload: {id: '987654', record: {id: '123456', library: 'dep_lib'}}};
                         default:
                             return mockStandardValue;
                     }
@@ -538,6 +571,7 @@ describe('formDomain', () => {
             };
 
             const domain = formDomain({
+                ...depsBase,
                 'core.domain.record': mockRecordDomainHandleDeps as IRecordDomain,
                 'core.domain.tree': mockTreeDomain as ITreeDomain,
                 'core.domain.permission.recordAttribute':
@@ -600,7 +634,7 @@ describe('formDomain', () => {
                 getRecordFieldValue: jest.fn().mockImplementation(async ({attributeId}) => {
                     switch (attributeId) {
                         case 'dep_attribute':
-                            return {value: {id: '987654', record: {id: '123456', library: 'dep_lib'}}};
+                            return {payload: {id: '987654', record: {id: '123456', library: 'dep_lib'}}};
                         default:
                             return mockStandardValue;
                     }
@@ -615,6 +649,7 @@ describe('formDomain', () => {
             };
 
             const domain = formDomain({
+                ...depsBase,
                 'core.domain.record': mockRecordDomainHandleDeps as IRecordDomain,
                 'core.domain.tree': mockTreeDomain as ITreeDomain,
                 'core.domain.permission.recordAttribute':
@@ -678,7 +713,7 @@ describe('formDomain', () => {
                 getRecordFieldValue: jest.fn().mockImplementation(async ({attributeId}) => {
                     switch (attributeId) {
                         case 'dep_attribute':
-                            return {value: {record: {id: '123456', library: 'dep_lib'}}};
+                            return {payload: {record: {id: '123456', library: 'dep_lib'}}};
                         default:
                             return mockStandardValue;
                     }
@@ -697,6 +732,7 @@ describe('formDomain', () => {
             };
 
             const domain = formDomain({
+                ...depsBase,
                 'core.domain.record': mockRecordDomainHandleDeps as IRecordDomain,
                 'core.domain.permission.recordAttribute':
                     mockRecordAttributePermissionDomainForbidden as IRecordAttributePermissionDomain
@@ -770,7 +806,7 @@ describe('formDomain', () => {
                 getRecordFieldValue: jest.fn().mockImplementation(async ({attributeId}) => {
                     switch (attributeId) {
                         case 'dep_attribute':
-                            return {value: {record: {id: '123456', library: 'dep_lib'}}};
+                            return {payload: {record: {id: '123456', library: 'dep_lib'}}};
                         default:
                             return mockStandardValue;
                     }
@@ -789,6 +825,7 @@ describe('formDomain', () => {
             };
 
             const domain = formDomain({
+                ...depsBase,
                 'core.domain.record': mockRecordDomainHandleDeps as IRecordDomain,
                 'core.domain.permission.recordAttribute':
                     mockRecordAttributePermissionDomainForbidden as IRecordAttributePermissionDomain

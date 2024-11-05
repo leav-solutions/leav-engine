@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as bcrypt from 'bcryptjs';
@@ -17,15 +17,15 @@ export default function (): IActionsListFunction {
                 async (promAcc, valueElement) => {
                     const acc = await promAcc;
                     try {
-                        if (valueElement.value === null) {
-                            acc.values.push({...valueElement, value: null});
+                        if (valueElement.payload === null) {
+                            acc.values.push({...valueElement, payload: null});
                             return acc;
                         }
 
                         const salt = await bcrypt.genSalt(10);
-                        const hash = await bcrypt.hash(valueElement.value, salt);
+                        const hash = await bcrypt.hash(valueElement.payload, salt);
 
-                        acc.values.push({...valueElement, value: hash});
+                        acc.values.push({...valueElement, payload: hash});
                     } catch (e) {
                         acc.errors.push({errorType: Errors, attributeValue: valueElement});
                     }

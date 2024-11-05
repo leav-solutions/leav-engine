@@ -1,11 +1,11 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {QueryResult} from '@apollo/client';
 import {useEffect, useState} from 'react';
 import {useGetFileDataQuery} from '_ui/_gqlTypes';
-import {IFileDataWithPreviewsStatus} from '../../_queries/records/getFileDataQuery';
+import {IFileDataWithPreviewsStatus, IFilePreviewsStatus} from '../../_queries/records/getFileDataQuery';
 
 export interface IUseGetFileDataQueryHook {
     loading: boolean;
@@ -32,7 +32,7 @@ export default function useGetPreparedFileData(libraryId: string, fileId: string
             const rawFileData = data.records?.list[0];
             // Convert preview status to an object
             const previewsStatus = rawFileData?.previews_status
-                ? JSON.parse(rawFileData.previews_status?.[0]?.value)
+                ? (JSON.parse(rawFileData.previews_status?.[0]?.value) as IFilePreviewsStatus)
                 : null;
             const file: IFileDataWithPreviewsStatus = {
                 ...rawFileData,

@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {InfoCircleOutlined, InfoOutlined} from '@ant-design/icons';
@@ -22,7 +22,7 @@ function ValueDetailsBtn({value, attribute, basic = false, ...buttonProps}: IVal
     const {t} = useSharedTranslation();
 
     const _handleClick = () => {
-        const editingValue = isTypeStandard(attribute.type) ? (value as IRecordPropertyStandard)?.value : null;
+        const editingValue = isTypeStandard(attribute.type) ? (value as IRecordPropertyStandard)?.payload : null;
         dispatch({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
             value: {

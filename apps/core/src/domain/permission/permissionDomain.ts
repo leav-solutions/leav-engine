@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction} from '@leav/utils';
@@ -73,46 +73,46 @@ export interface IPermissionDomain {
     registerActions(type: PermissionTypes, actions: string[], applyOn?: string[]): void;
 }
 
-interface IDeps {
-    'core.domain.permission.admin'?: IAdminPermissionDomain;
-    'core.domain.permission.library'?: ILibraryPermissionDomain;
-    'core.domain.permission.record'?: IRecordPermissionDomain;
-    'core.domain.permission.attribute'?: IAttributePermissionDomain;
-    'core.domain.permission.recordAttribute'?: IRecordAttributePermissionDomain;
-    'core.domain.permission.tree'?: ITreePermissionDomain;
-    'core.domain.permission.treeNode'?: ITreeNodePermissionDomain;
-    'core.domain.permission.treeLibrary'?: ITreeLibraryPermissionDomain;
-    'core.domain.permission.application'?: IApplicationPermissionDomain;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.infra.permission'?: IPermissionRepo;
-    'core.infra.cache.cacheService'?: ICachesService;
-    translator?: i18n;
-    config?: IConfig;
+export interface IPermissionDomainDeps {
+    'core.domain.permission.admin': IAdminPermissionDomain;
+    'core.domain.permission.library': ILibraryPermissionDomain;
+    'core.domain.permission.record': IRecordPermissionDomain;
+    'core.domain.permission.attribute': IAttributePermissionDomain;
+    'core.domain.permission.recordAttribute': IRecordAttributePermissionDomain;
+    'core.domain.permission.tree': ITreePermissionDomain;
+    'core.domain.permission.treeNode': ITreeNodePermissionDomain;
+    'core.domain.permission.treeLibrary': ITreeLibraryPermissionDomain;
+    'core.domain.permission.application': IApplicationPermissionDomain;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.infra.permission': IPermissionRepo;
+    'core.infra.cache.cacheService': ICachesService;
+    translator: i18n;
+    config: IConfig;
 }
 
-export default function (deps: IDeps = {}): IPermissionDomain {
+export default function (deps: IPermissionDomainDeps): IPermissionDomain {
     const _pluginPermissions: {[type in PermissionTypes]?: Array<{name: string; applyOn?: string[]}>} = {};
 
     const {
-        'core.domain.permission.admin': adminPermissionDomain = null,
-        'core.domain.permission.record': recordPermissionDomain = null,
-        'core.domain.permission.library': libraryPermissionDomain = null,
-        'core.domain.permission.attribute': attributePermissionDomain = null,
-        'core.domain.permission.recordAttribute': recordAttributePermissionDomain = null,
-        'core.domain.permission.tree': treePermissionDomain = null,
-        'core.domain.permission.treeNode': treeNodePermissionDomain = null,
-        'core.domain.permission.treeLibrary': treeLibraryPermissionDomain = null,
-        'core.domain.permission.application': applicationPermissionDomain = null,
-        'core.domain.eventsManager': eventsManagerDomain = null,
-        'core.infra.permission': permissionRepo = null,
-        'core.infra.cache.cacheService': cacheService = null,
-        config = null
-    }: IDeps = deps;
+        'core.domain.permission.admin': adminPermissionDomain,
+        'core.domain.permission.record': recordPermissionDomain,
+        'core.domain.permission.library': libraryPermissionDomain,
+        'core.domain.permission.attribute': attributePermissionDomain,
+        'core.domain.permission.recordAttribute': recordAttributePermissionDomain,
+        'core.domain.permission.tree': treePermissionDomain,
+        'core.domain.permission.treeNode': treeNodePermissionDomain,
+        'core.domain.permission.treeLibrary': treeLibraryPermissionDomain,
+        'core.domain.permission.application': applicationPermissionDomain,
+        'core.domain.eventsManager': eventsManagerDomain,
+        'core.infra.permission': permissionRepo,
+        'core.infra.cache.cacheService': cacheService,
+        config
+    }: IPermissionDomainDeps = deps;
 
     const _cleanCacheOnSavingPermissions = async (permData: IPermission) => {
         // clean permissions cached
         for (const [name, v] of Object.entries(permData.actions)) {
-            const keys = [];
+            const keys: string[] = [];
 
             keys.push(
                 getPermissionCachePatternKey({
@@ -348,7 +348,7 @@ export default function (deps: IDeps = {}): IPermissionDomain {
                 });
                 break;
             case PermissionTypes.RECORD_ATTRIBUTE:
-                const errors = [];
+                const errors: string[] = [];
                 if (!target) {
                     throw new ValidationError({target: Errors.MISSING_TARGET});
                 }

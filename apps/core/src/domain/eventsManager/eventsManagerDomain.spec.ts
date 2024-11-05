@@ -1,14 +1,14 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
 import {EventAction} from '@leav/utils';
 import * as amqp from 'amqplib';
-import {IUtils} from 'utils/utils';
+import {IUtils, ToAny} from 'utils/utils';
 import {IConfig} from '_types/config';
 import {IQueryInfos} from '_types/queryInfos';
 import {mockCtx} from '../../__tests__/mocks/shared';
-import eventsManager from './eventsManagerDomain';
+import eventsManager, {IEventsManagerDomainDeps} from './eventsManagerDomain';
 import winston = require('winston');
 
 const logger: Mockify<winston.Winston> = {
@@ -39,6 +39,13 @@ jest.mock('amqplib', () => ({
 const ctx: IQueryInfos = {
     userId: '1',
     queryId: 'eventsManagerDomainTest'
+};
+
+const depsBase: ToAny<IEventsManagerDomainDeps> = {
+    config: {},
+    'core.infra.amqpService': jest.fn(),
+    'core.utils.logger': jest.fn(),
+    'core.utils': jest.fn()
 };
 
 describe('Events Manager', () => {
@@ -89,6 +96,7 @@ describe('Events Manager', () => {
 
     test('Init', async () => {
         const events = eventsManager({
+            ...depsBase,
             config: conf as IConfig,
             'core.utils.logger': logger as winston.Winston,
             'core.infra.amqpService': mockAmqpService as IAmqpService
@@ -101,6 +109,7 @@ describe('Events Manager', () => {
 
     test('send database event', async () => {
         const events = eventsManager({
+            ...depsBase,
             config: conf as IConfig,
             'core.infra.amqpService': mockAmqpService as IAmqpService,
             'core.utils': mockUtils as IUtils
@@ -116,6 +125,7 @@ describe('Events Manager', () => {
 
     test('send pubsub event', async () => {
         const events = eventsManager({
+            ...depsBase,
             config: conf as IConfig,
             'core.infra.amqpService': mockAmqpService as IAmqpService,
             'core.utils': mockUtils as IUtils
@@ -129,6 +139,7 @@ describe('Events Manager', () => {
     describe('registerEventActions', () => {
         test('registerEventActions', () => {
             const events = eventsManager({
+                ...depsBase,
                 config: conf as IConfig,
                 'core.utils.logger': logger as winston.Winston,
                 'core.infra.amqpService': mockAmqpService as IAmqpService
@@ -146,6 +157,7 @@ describe('Events Manager', () => {
 
         test('Should throw if actions are not prefixed', async () => {
             const events = eventsManager({
+                ...depsBase,
                 config: conf as IConfig,
                 'core.utils.logger': logger as winston.Winston,
                 'core.infra.amqpService': mockAmqpService as IAmqpService

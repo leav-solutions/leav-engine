@@ -1,22 +1,22 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Loading} from '@leav/ui';
 import RouteNotFound from 'components/Router/RouteNotFound';
-import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
-import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
-import {lazy, Suspense, useEffect} from 'react';
+import {useActiveLibrary} from 'hooks/useActiveLibrary';
+import {useActiveTree} from 'hooks/useActiveTree';
+import {FunctionComponent, lazy, Suspense, useEffect} from 'react';
 import {useParams} from 'react-router-dom';
 import {setActivePanel} from 'reduxStore/activePanel';
 import {useAppDispatch} from 'reduxStore/store';
 import styled from 'styled-components';
 import {WorkspacePanels} from '_types/types';
 
-const VisibilityHandler = styled.div<{$isActive: boolean}>`
+const VisibilityHandlerDiv = styled.div<{$isActive: boolean}>`
     display: ${p => (p.$isActive ? 'block' : 'none')};
 `;
 
-const Wrapper = styled.div`
+const WrapperDiv = styled.div`
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
@@ -26,7 +26,7 @@ const Home = lazy(() => import('components/Home'));
 const LibraryHome = lazy(() => import('components/LibraryHome'));
 const Navigation = lazy(() => import('components/Navigation'));
 
-function Workspace(): JSX.Element {
+const Workspace: FunctionComponent = () => {
     const allowedPanels = Object.values(WorkspacePanels);
 
     const dispatch = useAppDispatch();
@@ -57,20 +57,20 @@ function Workspace(): JSX.Element {
     }
 
     return (
-        <Wrapper>
+        <WrapperDiv>
             <Suspense fallback={<Loading />}>
-                <VisibilityHandler $isActive={isHomeActive} className={WorkspacePanels.HOME}>
+                <VisibilityHandlerDiv $isActive={isHomeActive} className={WorkspacePanels.HOME}>
                     <Home />
-                </VisibilityHandler>
-                <VisibilityHandler $isActive={isLibraryActive} className={WorkspacePanels.LIBRARY}>
+                </VisibilityHandlerDiv>
+                <VisibilityHandlerDiv $isActive={isLibraryActive} className={WorkspacePanels.LIBRARY}>
                     <LibraryHome library={libraryId} key={libraryId} />
-                </VisibilityHandler>
-                <VisibilityHandler $isActive={isTreeActive} className={WorkspacePanels.TREE}>
+                </VisibilityHandlerDiv>
+                <VisibilityHandlerDiv $isActive={isTreeActive} className={WorkspacePanels.TREE}>
                     <Navigation tree={treeId} key={treeId} />
-                </VisibilityHandler>
+                </VisibilityHandlerDiv>
             </Suspense>
-        </Wrapper>
+        </WrapperDiv>
     );
-}
+};
 
 export default Workspace;

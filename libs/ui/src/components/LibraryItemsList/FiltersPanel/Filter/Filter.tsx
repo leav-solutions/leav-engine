@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseCircleFilled, MoreOutlined} from '@ant-design/icons';
@@ -49,6 +49,7 @@ import FilterAttributeCondition from './FilterAttributeCondition';
 import DateFilter from './FilterInput/DateFilter';
 import NumericFilter from './FilterInput/NumericFilter';
 import TextFilter from './FilterInput/TextFilter';
+import {getDefaultFilterValueByFormat} from '_ui/components/LibraryItemsList/FiltersPanel/Filter/Filter.utils';
 
 interface IWrapperProps {
     active: boolean;
@@ -165,17 +166,6 @@ interface IFilterProps {
     handleProps: DraggableProvidedDragHandleProps;
 }
 
-export const getDefaultFilterValueByFormat = (format: AttributeFormat): boolean | string | number => {
-    switch (format) {
-        case AttributeFormat.boolean:
-            return true;
-        case AttributeFormat.date:
-            return moment().utcOffset(0).startOf('day').unix();
-        default:
-            return '';
-    }
-};
-
 function Filter({filter, handleProps}: IFilterProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
@@ -204,7 +194,8 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
         });
     };
 
-    const _getValueFromNode = (node: ITreeNode): IFilter['value'] => typeof node === 'undefined' || node.id === (filter as IFilterTree).tree.id
+    const _getValueFromNode = (node: ITreeNode): IFilter['value'] =>
+        typeof node === 'undefined' || node.id === (filter as IFilterTree).tree.id
             ? {value: null}
             : {value: node.id, label: String(node.title)};
 
@@ -284,7 +275,8 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
 
     const embeddedFieldsToAttribute = (
         embeddedFields: AttributesByLibAttributeStandardAttributeFragment['embedded_fields']
-    ): AttributesByLibAttributeStandardAttributeFragment[] => embeddedFields
+    ): AttributesByLibAttributeStandardAttributeFragment[] =>
+        embeddedFields
             ? embeddedFields.map(f => ({
                   ...f,
                   type: AttributeType.simple,
@@ -390,8 +382,8 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
             typeof (filter as IFilterAttribute).parentTreeLibrary !== 'undefined'
                 ? (filter as IFilterAttribute).parentTreeLibrary.parentAttribute
                 : filter.type === FilterType.ATTRIBUTE
-                ? (filter as IFilterAttribute).attribute.parentAttribute ?? (filter as IFilterAttribute).attribute
-                : (filter as IFilterLibrary).parentAttribute;
+                  ? ((filter as IFilterAttribute).attribute.parentAttribute ?? (filter as IFilterAttribute).attribute)
+                  : (filter as IFilterLibrary).parentAttribute;
 
         const newFilter: IFilterAttribute = {
             type: FilterType.ATTRIBUTE,
@@ -434,26 +426,25 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
         );
     };
 
-    const getParentLabel = () => (
-            localizedTranslation(
-                filter.condition === ThroughConditionFilter.THROUGH
-                    ? (filter as IFilterAttribute).attribute?.label
-                    : (filter as IFilterAttribute).attribute?.parentAttribute?.label ||
-                          (filter as IFilterLibrary).parentAttribute?.label,
-                lang
-            ) ||
-            `${localizedTranslation(
-                filter.condition === ThroughConditionFilter.THROUGH
-                    ? (filter as IFilterLibrary).parentAttribute?.label
-                    : (filter as IFilterAttribute).parentTreeLibrary?.parentAttribute?.label,
-                lang
-            )} > ${localizedTranslation(
-                filter.condition === ThroughConditionFilter.THROUGH
-                    ? (filter as IFilterLibrary)?.library.label
-                    : (filter as IFilterAttribute).parentTreeLibrary?.library.label,
-                lang
-            )} `
-        );
+    const getParentLabel = () =>
+        localizedTranslation(
+            filter.condition === ThroughConditionFilter.THROUGH
+                ? (filter as IFilterAttribute).attribute?.label
+                : (filter as IFilterAttribute).attribute?.parentAttribute?.label ||
+                      (filter as IFilterLibrary).parentAttribute?.label,
+            lang
+        ) ||
+        `${localizedTranslation(
+            filter.condition === ThroughConditionFilter.THROUGH
+                ? (filter as IFilterLibrary).parentAttribute?.label
+                : (filter as IFilterAttribute).parentTreeLibrary?.parentAttribute?.label,
+            lang
+        )} > ${localizedTranslation(
+            filter.condition === ThroughConditionFilter.THROUGH
+                ? (filter as IFilterLibrary)?.library.label
+                : (filter as IFilterAttribute).parentTreeLibrary?.library.label,
+            lang
+        )} `;
 
     const hasParent = !!(
         filter.condition === ThroughConditionFilter.THROUGH ||

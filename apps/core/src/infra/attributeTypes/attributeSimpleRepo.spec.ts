@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Database} from 'arangojs';
@@ -29,7 +29,7 @@ describe('AttributeSimpleRepo', () => {
             };
 
             const updatedValueData = {
-                value: 'test_val'
+                payload: 'test_val'
             };
 
             const mockDbServ = {db: new Database(), execute: global.__mockPromise([updatedRecordData])};
@@ -41,7 +41,7 @@ describe('AttributeSimpleRepo', () => {
                 recordId: '12345',
                 attribute: mockAttribute,
                 value: {
-                    value: 'test val'
+                    payload: 'test val'
                 },
                 ctx
             });
@@ -80,7 +80,7 @@ describe('AttributeSimpleRepo', () => {
 
             expect(values.length).toBe(1);
             expect(values[0]).toMatchObject({
-                value: 'test val',
+                payload: 'test val',
                 attribute: 'test_attr'
             });
         });
@@ -95,7 +95,7 @@ describe('AttributeSimpleRepo', () => {
             };
 
             const deletedValueData = {
-                value: null
+                payload: null
             };
 
             const mockDbServ = {db: new Database(), execute: global.__mockPromise([updatedRecordData])};
@@ -107,7 +107,7 @@ describe('AttributeSimpleRepo', () => {
                 recordId: '12345',
                 attribute: mockAttribute,
                 value: {
-                    value: 'test val'
+                    payload: 'test val'
                 },
                 ctx
             });

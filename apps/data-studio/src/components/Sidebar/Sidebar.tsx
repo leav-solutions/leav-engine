@@ -1,7 +1,7 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {DatabaseOutlined, SettingOutlined, StarFilled, StarOutlined} from '@ant-design/icons';
+import {DatabaseOutlined, SettingOutlined, StarFilled, StarOutlined, TableOutlined} from '@ant-design/icons';
 import {useMutation, useQuery} from '@apollo/client';
 import {ErrorDisplay, themeVars, useLang} from '@leav/ui';
 import {Menu, Spin} from 'antd';
@@ -11,20 +11,21 @@ import AppIcon from 'components/shared/AppIcon';
 import TreeIcon from 'components/shared/TreeIcon';
 import {saveUserData} from 'graphQL/mutations/userData/saveUserData';
 import {getUserDataQuery} from 'graphQL/queries/userData/getUserData';
-import {useActiveLibrary} from 'hooks/ActiveLibHook/ActiveLibHook';
-import {useActiveTree} from 'hooks/ActiveTreeHook/ActiveTreeHook';
+import {useActiveLibrary} from 'hooks/useActiveLibrary';
+import {useActiveTree} from 'hooks/useActiveTree';
 import {useApplicationLibraries} from 'hooks/useApplicationLibraries';
 import {useApplicationTrees} from 'hooks/useApplicationTrees';
 import {useTranslation} from 'react-i18next';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useSearchParams} from 'react-router-dom';
 import {useAppSelector} from 'reduxStore/store';
 import styled from 'styled-components';
-import {getLibraryLink, getTreeLink, localizedTranslation} from 'utils';
+import {explorerQueryParamName, getExplorerLibraryLink, getLibraryLink, getTreeLink, localizedTranslation} from 'utils';
 import {GET_LIBRARIES_LIST_libraries_list} from '_gqlTypes/GET_LIBRARIES_LIST';
 import {GET_TREES_trees_list} from '_gqlTypes/GET_TREES';
 import {GET_USER_DATA, GET_USER_DATAVariables} from '_gqlTypes/GET_USER_DATA';
 import {SAVE_USER_DATA, SAVE_USER_DATAVariables} from '_gqlTypes/SAVE_USER_DATA';
 import {FAVORITE_LIBRARIES_KEY, FAVORITE_TREES_KEY} from '../../constants';
+import {FunctionComponent, MouseEventHandler} from 'react';
 
 interface IGroupedElements<EntityType> {
     related: EntityType[];
@@ -32,7 +33,7 @@ interface IGroupedElements<EntityType> {
     others: EntityType[];
 }
 
-const HomeButton = styled.div`
+const HomeButtonDiv = styled.div`
     height: ${themeVars.headerHeight};
     background: ${themeVars.secondaryBg};
     box-shadow: 0 1px 2px #ccc;
@@ -43,11 +44,11 @@ const HomeButton = styled.div`
     cursor: pointer;
 `;
 
-const NavWrapper = styled.div`
+const NavWrapperDiv = styled.div`
     height: 100%;
 `;
 
-const MenuItemContent = styled.span`
+const MenuItemContentSpan = styled.span`
     display: inline-flex;
     flex-direction: row;
     justify-content: space-between;
@@ -56,21 +57,26 @@ const MenuItemContent = styled.span`
     gap: 0.5rem;
 `;
 
-const Link = styled.span`
+const LinkSpan = styled.span`
     flex-grow: 1;
 `;
 
-const FavoriteStar = styled.span<{$isFavorite: boolean}>`
+const FavoriteStarSpan = styled.span<{$isFavorite: boolean}>`
     display: ${p => (p.$isFavorite ? 'inline' : 'none')};
 
-    ${MenuItemContent}:hover > & {
+    ${MenuItemContentSpan}:hover > & {
         display: inline;
     }
 `;
 
-function Sidebar(): JSX.Element {
+const explorerTabKey = 'explorer';
+
+const Sidebar: FunctionComponent = () => {
     const {t} = useTranslation();
     const {lang} = useLang();
+
+    const [params] = useSearchParams();
+
     const [activeLibrary] = useActiveLibrary();
     const [activeTree] = useActiveTree();
     const navigate = useNavigate();
@@ -150,6 +156,14 @@ function Sidebar(): JSX.Element {
         _goTo(getLibraryLink(activeLibrary.id));
     };
 
+    const _goToExplorerOnActiveLibrary = () => {
+        if (!activeLibrary?.id) {
+            return;
+        }
+
+        _goTo(getExplorerLibraryLink(activeLibrary.id));
+    };
+
     const _goToActiveTree = () => {
         if (!activeTree?.id) {
             return;
@@ -164,7 +178,7 @@ function Sidebar(): JSX.Element {
 
     const _handleClickHome = () => _goTo('/');
 
-    let libsMenuItems: ItemType[] = [];
+    let libsMenuItems: ItemType[];
 
     if (librariesLoading || favoritesList.loading) {
         libsMenuItems = [
@@ -192,7 +206,7 @@ function Sidebar(): JSX.Element {
                 label: t(`sidebar.${libraryGroupKey}_libraries`),
                 children: groupedLibraries[libraryGroupKey].map(lib => {
                     const isFavorite = libraryFavorites.includes(lib.id);
-                    const _handleFavoriteClick = e => {
+                    const _handleFavoriteClick: MouseEventHandler<HTMLSpanElement> = e => {
                         e.preventDefault();
                         e.stopPropagation();
                         _handleToggleFavorite(isFavorite, lib.id, 'library');
@@ -201,15 +215,15 @@ function Sidebar(): JSX.Element {
                     return {
                         key: `library.${lib.id}`,
                         label: (
-                            <MenuItemContent>
+                            <MenuItemContentSpan>
                                 <LibraryIcon library={lib} />
-                                <Link onClick={() => _goTo(getLibraryLink(lib.id))}>
+                                <LinkSpan onClick={() => _goTo(getLibraryLink(lib.id))}>
                                     {localizedTranslation(lib.label, lang)}
-                                </Link>
-                                <FavoriteStar onClick={_handleFavoriteClick} $isFavorite={isFavorite}>
+                                </LinkSpan>
+                                <FavoriteStarSpan onClick={_handleFavoriteClick} $isFavorite={isFavorite}>
                                     {isFavorite ? <StarFilled /> : <StarOutlined />}
-                                </FavoriteStar>
-                            </MenuItemContent>
+                                </FavoriteStarSpan>
+                            </MenuItemContentSpan>
                         )
                     };
                 })
@@ -217,7 +231,7 @@ function Sidebar(): JSX.Element {
         });
     }
 
-    let treesMenuItems: ItemType[] = [];
+    let treesMenuItems: ItemType[];
     if (treesLoading || favoritesList.loading) {
         treesMenuItems = [
             {
@@ -242,26 +256,26 @@ function Sidebar(): JSX.Element {
                 key: `${treeGroupKey}_trees`,
                 type: 'group',
                 label: t(`sidebar.${treeGroupKey}_trees`),
-                children: groupedTrees[treeGroupKey].map(tree => {
-                    const isFavorite = treeFavorites.includes(tree.id);
-                    const _handleFavoriteClick = e => {
+                children: groupedTrees[treeGroupKey].map(({id, label}: GET_TREES_trees_list) => {
+                    const isFavorite = treeFavorites.includes(id);
+                    const _handleFavoriteClick: MouseEventHandler<HTMLSpanElement> = e => {
                         e.preventDefault();
                         e.stopPropagation();
-                        _handleToggleFavorite(isFavorite, tree.id, 'tree');
+                        _handleToggleFavorite(isFavorite, id, 'tree');
                     };
 
                     return {
-                        key: `tree.${tree.id}`,
+                        key: `tree.${id}`,
                         label: (
-                            <MenuItemContent>
+                            <MenuItemContentSpan>
                                 <TreeIcon style={{fontSize: '1.2rem'}} />
-                                <Link onClick={() => _goTo(getTreeLink(tree.id))}>
-                                    {localizedTranslation(tree.label, lang)}
-                                </Link>
-                                <FavoriteStar onClick={_handleFavoriteClick} $isFavorite={isFavorite}>
+                                <LinkSpan onClick={() => _goTo(getTreeLink(id))}>
+                                    {localizedTranslation(label, lang)}
+                                </LinkSpan>
+                                <FavoriteStarSpan onClick={_handleFavoriteClick} $isFavorite={isFavorite}>
                                     {isFavorite ? <StarFilled /> : <StarOutlined />}
-                                </FavoriteStar>
-                            </MenuItemContent>
+                                </FavoriteStarSpan>
+                            </MenuItemContentSpan>
                         )
                     };
                 })
@@ -289,12 +303,18 @@ function Sidebar(): JSX.Element {
             icon: <SettingOutlined />,
             label: t('app_settings.title'),
             onClick: _goToSettings
+        },
+        {
+            key: explorerTabKey,
+            icon: <TableOutlined />,
+            label: t('app_settings.explorer'),
+            onClick: _goToExplorerOnActiveLibrary
         }
     ];
 
     return (
         <>
-            <HomeButton onClick={_handleClickHome}>
+            <HomeButtonDiv onClick={_handleClickHome}>
                 <AppIcon
                     size="tiny"
                     style={{
@@ -305,17 +325,20 @@ function Sidebar(): JSX.Element {
                         verticalAlign: 'top'
                     }}
                 />
-            </HomeButton>
-            <NavWrapper>
+            </HomeButtonDiv>
+            <NavWrapperDiv>
                 <Menu
                     style={{width: '100%'}}
-                    selectedKeys={[activePanel, `${activePanel}.${activeLibrary?.id || activeTree?.id}`]}
-                    activeKey={activePanel}
+                    selectedKeys={
+                        params.has(explorerQueryParamName)
+                            ? [explorerTabKey]
+                            : [activePanel, `${activePanel}.${activeLibrary?.id || activeTree?.id}`]
+                    }
                     items={menuItems}
                 />
-            </NavWrapper>
+            </NavWrapperDiv>
         </>
     );
-}
+};
 
 export default Sidebar;

@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ICalculationVariable} from 'domain/helpers/calculationVariable';
@@ -30,7 +30,7 @@ export default function ({
     ): Promise<ActionsListExcelValueType> => {
         const variableValues = await calculationVariable.processVariableString(context, variable, initialValues);
         const stringValues = variableValues.map(v =>
-            v.value === null ? '' : typeof v.value === 'object' ? v.value.value : v.value
+            v.payload === null ? '' : typeof v.payload === 'object' ? v.payload.value : v.payload
         );
 
         return stringValues.join(' ');
@@ -96,7 +96,7 @@ export default function ({
             const finalFormula = await _replaceVariables(
                 formula,
                 ctx,
-                values.map(v => v.value)
+                values.map(v => v.payload)
             );
             const parser = new Parser();
             const {error, result} = parser.parse(finalFormula);
@@ -120,7 +120,8 @@ export default function ({
                 modified_by: null,
                 created_at: null,
                 created_by: null,
-                value: String(result)
+                payload: String(result),
+                raw_payload: String(result)
             };
 
             return {values: [...values, finalResult], errors: []};

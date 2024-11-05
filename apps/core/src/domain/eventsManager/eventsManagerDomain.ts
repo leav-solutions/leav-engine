@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAmqpService} from '@leav/message-broker';
@@ -26,19 +26,19 @@ export interface IEventsManagerDomain {
     getActions(): string[];
 }
 
-interface IDeps {
-    config?: Config.IConfig;
-    'core.infra.amqpService'?: IAmqpService;
-    'core.utils.logger'?: winston.Winston;
-    'core.utils'?: IUtils;
+export interface IEventsManagerDomainDeps {
+    config: Config.IConfig;
+    'core.infra.amqpService': IAmqpService;
+    'core.utils.logger': winston.Winston;
+    'core.utils': IUtils;
 }
 
 export default function ({
-    config = null,
-    'core.infra.amqpService': amqpService = null,
-    'core.utils.logger': logger = null,
-    'core.utils': utils = null
-}: IDeps): IEventsManagerDomain {
+    config,
+    'core.infra.amqpService': amqpService,
+    'core.utils.logger': logger,
+    'core.utils': utils
+}: IEventsManagerDomainDeps): IEventsManagerDomain {
     const _customEventActions = new Set<string>(); // Using a Set to avoid duplicates
     const pubsub = new PubSub();
 

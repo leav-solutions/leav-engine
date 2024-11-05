@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import React, {useState} from 'react';
@@ -56,7 +56,13 @@ function Tabs({settings, elementData}: IFormElementProps<ITabsSettings>): JSX.El
     if (!settings.tabs?.length) {
         dispatch({
             type: FormBuilderActionTypes.SAVE_SETTINGS,
-            element: elementData,
+            element: {
+                ...elementData,
+                settings: {
+                    ...elementData.settings,
+                    tabs: elementData?.settings?.tabs ?? []
+                }
+            },
             settings: {
                 ...elementData?.settings,
                 tabs: [_getNewTab()]
@@ -97,6 +103,7 @@ function Tabs({settings, elementData}: IFormElementProps<ITabsSettings>): JSX.El
     const _handleCloseEditTabModal = () => setShowEditTabModal(false);
 
     const tabsToDisplay = settings.tabs || [];
+
     const panes = tabsToDisplay.map(tab => ({
         menuItem: (
             <CompactMenuItem key={tab.id} className="form-tab-name">

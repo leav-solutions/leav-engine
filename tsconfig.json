@@ -24,7 +24,6 @@
     "jsx": "react",
     "noImplicitReturns": false,
     "noImplicitThis": true,
-    "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": false,
     "downlevelIteration": true,
     "noFallthroughCasesInSwitch": false,

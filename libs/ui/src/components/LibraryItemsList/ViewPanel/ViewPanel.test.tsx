@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {QueryResult} from '@apollo/client';
@@ -45,13 +45,13 @@ describe('ViewPanel', () => {
             en: 'this is a list '
         },
         color: '#e48232',
-        filters: [],
+        filters: [] as any,
         sort: {
             __typename: 'RecordSort',
             field: 'id',
             order: gqlTypes.SortOrder.asc
         },
-        valuesVersions: [],
+        valuesVersions: [] as any,
         settings: null
     };
 

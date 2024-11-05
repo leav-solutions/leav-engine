@@ -1,0 +1,17 @@
+query Explorer($libraryId: ID!, $filters: [RecordFilterInput]) {
+    records(library: $libraryId, filters: $filters) {
+        list {
+            id
+            whoAmI {
+                label
+                subLabel
+                preview
+                id
+                color
+                library {
+                    id
+                }
+            }
+        }
+    }
+}

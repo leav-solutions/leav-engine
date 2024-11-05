@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
@@ -12,7 +12,7 @@ export interface IMemoizeParams<T> {
 }
 
 export interface ICachesService {
-    getCache?(type: ECacheType): ICacheService;
+    getCache(type: ECacheType): ICacheService;
     memoize<T>(params: IMemoizeParams<T>): Promise<T>;
 }
 
@@ -24,15 +24,15 @@ export interface IStoreDataParams {
 }
 
 export interface ICacheService {
-    storeData?(params: IStoreDataParams): Promise<void>;
-    getData?(keys: string[], path?: string): Promise<string[]>;
-    deleteData?(keys: string[], path?: string): Promise<void>;
-    deleteAll?(path?: string): Promise<void>;
+    storeData(params: IStoreDataParams): Promise<void>;
+    getData(keys: string[], path?: string): Promise<string[]>;
+    deleteData(keys: string[], path?: string): Promise<void>;
+    deleteAll(path?: string): Promise<void>;
 }
 
 interface IDeps {
-    'core.infra.cache.ramService'?: ICacheService;
-    'core.infra.cache.diskService'?: ICacheService;
+    'core.infra.cache.ramService': ICacheService;
+    'core.infra.cache.diskService': ICacheService;
 }
 
 export enum ECacheType {
@@ -41,8 +41,8 @@ export enum ECacheType {
 }
 
 export default function ({
-    'core.infra.cache.ramService': ramService = null,
-    'core.infra.cache.diskService': diskService = null
+    'core.infra.cache.ramService': ramService,
+    'core.infra.cache.diskService': diskService
 }: IDeps): ICachesService {
     return {
         getCache(type: ECacheType): ICacheService {

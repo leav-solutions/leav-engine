@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {flow, partialRight} from 'lodash';
@@ -83,17 +83,17 @@ export default function (): IActionsListFunction<{
             };
 
             const computedValues = values.map(elementValue => {
-                if (elementValue.value === null) {
+                if (elementValue.payload === null) {
                     return elementValue;
                 }
-                elementValue.value = isNaN(Number(elementValue.value))
+                elementValue.payload = isNaN(Number(elementValue.payload))
                     ? ''
                     : flow(
                           partialRight(_toString, userParams.decimals),
                           partialRight(_formatSeparators, userParams.thousandsSeparator, userParams.decimalsSeparator),
                           partialRight(_addPrefix, userParams.prefix),
                           partialRight(_addSuffix, userParams.suffix)
-                      )(Number(elementValue.value));
+                      )(Number(elementValue.payload));
                 return elementValue;
             });
 

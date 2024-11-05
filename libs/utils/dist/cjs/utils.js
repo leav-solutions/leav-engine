@@ -72,7 +72,7 @@ exports.localizedTranslation = localizedTranslation;
  */
 const stringToColor = (str = '', format = 'hsl', saturation = 30, luminosity = 80) => {
     let hash = 0;
-    for (let i = 0; i < (str !== null && str !== void 0 ? str : '').length; i++) {
+    for (let i = 0; i < (str ?? '').length; i++) {
         // eslint-disable-next-line no-bitwise
         hash = str.charCodeAt(i) + ((hash << 5) - hash);
     }
@@ -157,10 +157,10 @@ const extractArgsFromString = (mapping) => {
         .split('-')
         .slice(1)
         .map(e => e.replace(/\s+/g, ' ').trim().split(' '));
-    return args.reduce((acc, value) => { var _a; return (Object.assign(Object.assign({}, acc), { [value[0]]: (_a = value[1]) !== null && _a !== void 0 ? _a : true })); }, {});
+    return args.reduce((acc, value) => ({ ...acc, [value[0]]: value[1] ?? true }), {});
 };
 exports.extractArgsFromString = extractArgsFromString;
-const objectToNameValueArray = (obj) => Object.keys(obj !== null && obj !== void 0 ? obj : {}).map(key => ({ name: key, value: obj[key] }));
+const objectToNameValueArray = (obj) => Object.keys(obj ?? {}).map(key => ({ name: key, value: obj[key] }));
 exports.objectToNameValueArray = objectToNameValueArray;
 const nameValArrayToObj = (arr = [], keyFieldName = 'name', valueFieldName = 'value') => Array.isArray(arr) && arr.length
     ? arr.reduce((formattedElem, elem) => {
@@ -268,7 +268,6 @@ const simpleStringHash = (str) => {
 };
 exports.simpleStringHash = simpleStringHash;
 const getFlagByLang = (lang) => {
-    var _a;
     const flagsByLang = {
         en: '🇬🇧',
         es: '🇪🇸',
@@ -280,7 +279,7 @@ const getFlagByLang = (lang) => {
         ja: '🇯🇵',
         ko: '🇰🇷' // Korean
     };
-    return (_a = flagsByLang[lang]) !== null && _a !== void 0 ? _a : '';
+    return flagsByLang[lang] ?? '';
 };
 exports.getFlagByLang = getFlagByLang;
 const getLogsIndexName = (instanceId) => `logs-${instanceId}`;
@@ -305,7 +304,7 @@ exports.isTypeStandard = isTypeStandard;
  * Return a new object without the keys passed in parameter
  */
 const omit = (obj, ...keys) => {
-    const result = Object.assign({}, obj);
+    const result = { ...obj };
     keys.forEach(key => delete result[key]);
     return result;
 };

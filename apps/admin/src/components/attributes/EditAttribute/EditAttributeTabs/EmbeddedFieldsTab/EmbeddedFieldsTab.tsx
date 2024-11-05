@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMutation, useQuery} from '@apollo/client';
@@ -62,10 +62,12 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
     // Manually set the depth of embedded_fields to max
     const [level] = useState<number>(100);
 
-    const {loading: lQuery, error: eQuery, data: dQuery, refetch: rQuery} = useQuery<IQuery, IQueryVariables>(
-        getAttributesEmbeddedFieldsQuery(level),
-        {variables: {attId: attribute.id}}
-    );
+    const {
+        loading: lQuery,
+        error: eQuery,
+        data: dQuery,
+        refetch: rQuery
+    } = useQuery<IQuery, IQueryVariables>(getAttributesEmbeddedFieldsQuery(level), {variables: {attId: attribute.id}});
 
     const [saveAttribute] = useMutation(saveAttributesEmbeddedFieldsQuery);
 
@@ -211,7 +213,7 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
                 format: 'text',
                 label: {
                     fr: '',
-                    en: ''
+                    en: newId
                 }
             };
 

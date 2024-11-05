@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
@@ -18,14 +18,14 @@ import getPermissionCacheKey from './getPermissionCacheKey';
 import {IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 import {IReducePermissionsArrayHelper} from './reducePermissionsArray';
 
-interface IDeps {
-    'core.domain.attribute'?: IAttributeDomain;
-    'core.domain.permission.helpers.permissionByUserGroups'?: IPermissionByUserGroupsHelper;
-    'core.domain.permission.helpers.defaultPermission'?: IDefaultPermissionHelper;
-    'core.domain.permission.helpers.reducePermissionsArray'?: IReducePermissionsArrayHelper;
-    'core.domain.tree.helpers.elementAncestors'?: IElementAncestorsHelper;
-    'core.infra.permission'?: IPermissionRepo;
-    'core.infra.cache.cacheService'?: ICachesService;
+export interface ITreeBasedPermissionsDeps {
+    'core.domain.attribute': IAttributeDomain;
+    'core.domain.permission.helpers.permissionByUserGroups': IPermissionByUserGroupsHelper;
+    'core.domain.permission.helpers.defaultPermission': IDefaultPermissionHelper;
+    'core.domain.permission.helpers.reducePermissionsArray': IReducePermissionsArrayHelper;
+    'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
+    'core.infra.permission': IPermissionRepo;
+    'core.infra.cache.cacheService': ICachesService;
 }
 
 export interface ITreeBasedPermissionHelper {
@@ -33,14 +33,14 @@ export interface ITreeBasedPermissionHelper {
     getInheritedTreeBasedPermission(params: IGetInheritedTreeBasedPermissionParams, ctx: IQueryInfos): Promise<boolean>;
 }
 
-export default function (deps: IDeps): ITreeBasedPermissionHelper {
+export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionHelper {
     const {
-        'core.domain.attribute': attributeDomain = null,
-        'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper = null,
-        'core.domain.permission.helpers.defaultPermission': defaultPermHelper = null,
-        'core.domain.permission.helpers.reducePermissionsArray': reducePermissionsArrayHelper = null,
-        'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper = null,
-        'core.infra.cache.cacheService': cacheService = null
+        'core.domain.attribute': attributeDomain,
+        'core.domain.permission.helpers.permissionByUserGroups': permByUserGroupsHelper,
+        'core.domain.permission.helpers.defaultPermission': defaultPermHelper,
+        'core.domain.permission.helpers.reducePermissionsArray': reducePermissionsArrayHelper,
+        'core.domain.tree.helpers.elementAncestors': elementAncestorsHelper,
+        'core.infra.cache.cacheService': cacheService
     } = deps;
 
     /**
@@ -73,7 +73,7 @@ export default function (deps: IDeps): ITreeBasedPermissionHelper {
                             ctx
                         });
 
-                        let perm = null;
+                        let perm: boolean | null = null;
                         for (const pathElem of permTreePath.reverse()) {
                             const valuePerm = await permByUserGroupsHelper.getPermissionByUserGroups({
                                 type,
@@ -139,7 +139,7 @@ export default function (deps: IDeps): ITreeBasedPermissionHelper {
 
         const cacheKey = getPermissionCacheKey(ctx.groupsId, type, applyTo, action, key);
         const permFromCache = (await cacheService.getCache(ECacheType.RAM).getData([cacheKey]))[0];
-        let perm: boolean;
+        let perm: boolean | null;
 
         if (permFromCache !== null) {
             if (permFromCache === PERMISSIONS_NULL_PLACEHOLDER) {

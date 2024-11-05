@@ -1,9 +1,9 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import getActiveFieldValues from '_ui/components/RecordEdition/EditRecordContent/helpers/getActiveFieldValues';
-import {FieldScope} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {AttributeFormat, AttributeType, FormElementTypes} from '_ui/_gqlTypes';
+import {VersionFieldScope} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
 import {mockFormElementInput, mockFormElementInputVersionable} from '_ui/__mocks__/common/form';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockModifier} from '_ui/__mocks__/common/value';
@@ -18,6 +18,7 @@ import {
     StandardFieldValueState,
     virginValue
 } from './standardFieldReducer';
+import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 
 describe('standardFieldReducer', () => {
     const mockAttribute = {
@@ -55,21 +56,25 @@ describe('standardFieldReducer', () => {
     const initialState: IStandardFieldReducerState = {
         record: mockRecord,
         formElement: mockFormElementInput,
-        attribute: mockAttribute,
+        attribute: mockFormAttribute,
         isReadOnly: false,
-        activeScope: FieldScope.CURRENT,
+        activeScope: VersionFieldScope.CURRENT,
         values: {
-            [FieldScope.CURRENT]: {
+            [VersionFieldScope.CURRENT]: {
                 version: null,
                 values: {[idValue]: mockValue}
             },
-            [FieldScope.INHERITED]: null
+            [VersionFieldScope.INHERITED]: null
         },
         metadataEdit: false,
         inheritedValue: null,
         isInheritedValue: false,
         isInheritedNotOverrideValue: false,
-        isInheritedOverrideValue: false
+        isInheritedOverrideValue: false,
+        calculatedValue: null,
+        isCalculatedNotOverrideValue: false,
+        isCalculatedOverrideValue: false,
+        isCalculatedValue: false
     };
 
     const _getInitialStateWithValues = (
@@ -84,8 +89,8 @@ describe('standardFieldReducer', () => {
         ...initialState,
         values: {
             ...initialState.values,
-            [FieldScope.CURRENT]: {
-                ...initialState.values[FieldScope.CURRENT],
+            [VersionFieldScope.CURRENT]: {
+                ...initialState.values[VersionFieldScope.CURRENT],
                 values: {...values}
             }
         },
@@ -515,9 +520,9 @@ describe('standardFieldReducer', () => {
         const newState = standardFieldValueReducer(
             {
                 ...initialState,
-                activeScope: FieldScope.INHERITED,
+                activeScope: VersionFieldScope.INHERITED,
                 values: {
-                    [FieldScope.INHERITED]: {
+                    [VersionFieldScope.INHERITED]: {
                         version: inheritedVersion,
                         values: {
                             '123465789': {
@@ -538,7 +543,7 @@ describe('standardFieldReducer', () => {
                             }
                         }
                     },
-                    [FieldScope.CURRENT]: {
+                    [VersionFieldScope.CURRENT]: {
                         version: currentVersion,
                         values: {
                             [newValueId]: {
@@ -550,12 +555,12 @@ describe('standardFieldReducer', () => {
             },
             {
                 type: StandardFieldReducerActionsTypes.CHANGE_VERSION_SCOPE,
-                scope: FieldScope.CURRENT
+                scope: VersionFieldScope.CURRENT
             }
         );
         const newStateValues = getActiveFieldValues(newState);
 
-        expect(newState.activeScope).toBe(FieldScope.CURRENT);
+        expect(newState.activeScope).toBe(VersionFieldScope.CURRENT);
         expect(Object.keys(newStateValues)).toHaveLength(1);
         expect(newStateValues[newValueId]).toBeDefined();
     });
@@ -591,10 +596,10 @@ describe('standardFieldReducer', () => {
             }
         );
 
-        expect(newState.activeScope).toBe(FieldScope.INHERITED);
-        expect(newState.values[FieldScope.INHERITED].version).toBe(valuesVersion);
-        expect(newState.values[FieldScope.INHERITED].values['123456']).toBeDefined();
-        expect(newState.values[FieldScope.CURRENT].values[newValueId]).toBeDefined();
+        expect(newState.activeScope).toBe(VersionFieldScope.INHERITED);
+        expect(newState.values[VersionFieldScope.INHERITED].version).toBe(valuesVersion);
+        expect(newState.values[VersionFieldScope.INHERITED].values['123456']).toBeDefined();
+        expect(newState.values[VersionFieldScope.CURRENT].values[newValueId]).toBeDefined();
     });
 
     describe('computeInitialState', () => {

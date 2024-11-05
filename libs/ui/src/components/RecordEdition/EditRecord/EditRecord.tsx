@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import isEqual from 'lodash/isEqual';
@@ -117,10 +117,11 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         withInfoButton
     });
 
-    const {loading: permissionsLoading, canEdit, isReadOnly} = useCanEditRecord(
-        {...record?.library, id: library},
-        record?.id
-    );
+    const {
+        loading: permissionsLoading,
+        canEdit,
+        isReadOnly
+    } = useCanEditRecord({...record?.library, id: library}, record?.id);
 
     const {saveValues} = useSaveValueBatchMutation();
     const {deleteValue} = useExecuteDeleteValueMutation(record);
@@ -293,7 +294,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         switch (attribute.type) {
             case AttributeType.simple:
             case AttributeType.advanced:
-                valueContent = (value as IRecordPropertyStandard).raw_value;
+                valueContent = (value as IRecordPropertyStandard).raw_payload;
                 break;
             case AttributeType.advanced_link:
             case AttributeType.simple_link:
@@ -353,7 +354,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                             metadata: val.metadata
                                 ? val.metadata.map(metadataValue => ({
                                       name: metadataValue.name,
-                                      value: metadataValue.value.raw_value
+                                      value: metadataValue.value.raw_payload
                                   }))
                                 : null
                         };
@@ -378,6 +379,13 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                     return errors;
                 }, {});
                 setCreationErrors(errorsByField);
+
+                antdForm.setFields(
+                    creationResult.data.createRecord.valuesErrors.map(error => ({
+                        name: error.attributeId,
+                        errors: [error.message]
+                    }))
+                );
 
                 return;
             }

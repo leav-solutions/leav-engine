@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {DownOutlined} from '@ant-design/icons';
@@ -24,14 +24,15 @@ interface ISelectTreeNodeProps {
     selectableLibraries?: string[]; // all by default
 }
 
-const _constructTreeContent = (data: TreeNodeChildrenQuery['treeNodeChildren']['list']): ITreeNodeWithRecord[] => data.map(e => ({
-            record: e.record,
-            title: e.record.whoAmI.label || e.record.whoAmI.id,
-            id: e.id,
-            key: e.id,
-            isLeaf: !e.childrenCount,
-            children: []
-        }));
+const _constructTreeContent = (data: TreeNodeChildrenQuery['treeNodeChildren']['list']): ITreeNodeWithRecord[] =>
+    data.map(e => ({
+        record: e.record,
+        title: e.record.whoAmI.label || e.record.whoAmI.id,
+        id: e.id,
+        key: e.id,
+        isLeaf: !e.childrenCount,
+        children: []
+    }));
 
 const _getTreeNodeByKey = (key: string, treeContent: ITreeNodeWithRecord[]): ITreeNodeWithRecord => {
     for (const node of treeContent) {
@@ -47,13 +48,13 @@ const _getTreeNodeByKey = (key: string, treeContent: ITreeNodeWithRecord[]): ITr
     }
 };
 
-type ITreeMapElement = ITreeNodeWithRecord & {
+interface ITreeMapElement extends ITreeNodeWithRecord {
     isLeaf?: boolean;
     paginationOffset: number;
     children: ITreeMapElement[];
     isShowMore?: boolean;
     selectable?: boolean;
-};
+}
 
 interface ITreeMap {
     [nodeId: string]: ITreeMapElement;
@@ -92,7 +93,7 @@ function SelectTreeNode({
     // Retrieve tree content
     const [loadTreeContent, {error, called}] = useTreeNodeChildrenLazyQuery();
 
-    const _fetchTreeContent = async (key?: string, offset: number = 0) => {
+    const _fetchTreeContent = async (key?: string, offset = 0) => {
         try {
             const data = await loadTreeContent({
                 variables: {
@@ -121,7 +122,7 @@ function SelectTreeNode({
                 const nodeForTreeMap = {...node, paginationOffset: 0};
                 newTreeMap[nodeForTreeMap.key] = nodeForTreeMap as ITreeMapElement;
                 parentElement.paginationOffset = offset;
-                parentElement.children.push(nodeForTreeMap);
+                parentElement.children.push(nodeForTreeMap as ITreeMapElement);
             }
 
             if (totalCount > parentElement.paginationOffset + defaultPaginationPageSize) {

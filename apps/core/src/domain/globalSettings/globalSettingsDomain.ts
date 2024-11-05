@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction} from '@leav/utils';
@@ -15,17 +15,17 @@ export interface IGlobalSettingsDomain {
     getSettings(ctx: IQueryInfos): Promise<IGlobalSettings>;
 }
 
-interface IDeps {
-    'core.domain.permission.admin'?: IAdminPermissionDomain;
-    'core.domain.eventsManager'?: IEventsManagerDomain;
-    'core.infra.globalSettings'?: IGlobalSettingsRepo;
+export interface IGlobalSettingsDomainDeps {
+    'core.domain.permission.admin': IAdminPermissionDomain;
+    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.infra.globalSettings': IGlobalSettingsRepo;
 }
 
 export default function ({
-    'core.domain.permission.admin': adminPermissionDomain = null,
-    'core.domain.eventsManager': eventsManagerDomain = null,
-    'core.infra.globalSettings': globalSettingsRepo = null
-}: IDeps = {}): IGlobalSettingsDomain {
+    'core.domain.permission.admin': adminPermissionDomain,
+    'core.domain.eventsManager': eventsManagerDomain,
+    'core.infra.globalSettings': globalSettingsRepo
+}: IGlobalSettingsDomainDeps): IGlobalSettingsDomain {
     return {
         async saveSettings({settings, ctx}) {
             const canSave = await adminPermissionDomain.getAdminPermission({

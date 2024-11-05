@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
@@ -12,10 +12,10 @@ export interface IUseGetLibraryDetailExtendedQueryHookParams {
 
 const DEPTH_EMBEDDED_FIELDS = 100;
 
-export default function useGetLibraryDetailExtendedQuery({
+export const useGetLibraryDetailExtendedQuery = ({
     library
-}: IUseGetLibraryDetailExtendedQueryHookParams): QueryResult<GET_LIBRARY_DETAIL_EXTENDED> {
-    const query = useQuery<GET_LIBRARY_DETAIL_EXTENDED, GET_LIBRARY_DETAIL_EXTENDEDVariables>(
+}: IUseGetLibraryDetailExtendedQueryHookParams): QueryResult<GET_LIBRARY_DETAIL_EXTENDED> =>
+    useQuery<GET_LIBRARY_DETAIL_EXTENDED, GET_LIBRARY_DETAIL_EXTENDEDVariables>(
         getLibraryDetailExtendedQuery(DEPTH_EMBEDDED_FIELDS),
         {
             variables: {
@@ -24,6 +24,3 @@ export default function useGetLibraryDetailExtendedQuery({
             skip: !library
         }
     );
-
-    return query;
-}

@@ -1,22 +1,21 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
 import {ActionsListValueType, IActionsListContext} from '_types/actionsList';
-import {IValue} from '_types/value';
 import ValidationError from '../../../errors/ValidationError';
 import {Errors} from '../../../_types/errors';
 import {IVariableFunctions} from '../calculationsVariableFunctions';
 
 interface IDeps {
-    'core.domain.helpers.calculationsVariableFunctions'?: IVariableFunctions;
+    'core.domain.helpers.calculationsVariableFunctions': IVariableFunctions;
 }
 
 export interface IVariableValue {
     recordId: string;
     library: string;
-    value: string | number | boolean | Record<string, any>;
-    raw_value?: string | number | boolean | Record<string, any>;
+    payload: string | number | boolean | Record<string, any>;
+    raw_payload?: string | number | boolean | Record<string, any>;
 }
 
 export interface ICalculationVariable {
@@ -27,7 +26,7 @@ export interface ICalculationVariable {
     ) => Promise<IVariableValue[]>;
 }
 
-export default function ({'core.domain.helpers.calculationsVariableFunctions': variableFunctions = null}: IDeps = {}) {
+export default function ({'core.domain.helpers.calculationsVariableFunctions': variableFunctions}: IDeps) {
     const processVariableString: ICalculationVariable['processVariableString'] = async (
         context,
         variableString,
@@ -37,7 +36,7 @@ export default function ({'core.domain.helpers.calculationsVariableFunctions': v
             {
                 recordId: context.recordId,
                 library: context.library,
-                value: initialValues
+                payload: initialValues
             }
         ] as IVariableValue[];
 

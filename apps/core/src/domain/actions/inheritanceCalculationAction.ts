@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
@@ -60,14 +60,14 @@ export default function ({
 
             if (attrProps.type === AttributeTypes.SIMPLE_LINK || attrProps.type === AttributeTypes.ADVANCED_LINK) {
                 inheritedValues = result.map(resultValue => ({
-                    value: {id: String(resultValue.value), library: resultValue.library},
+                    payload: {id: String(resultValue.payload), library: resultValue.library},
                     isInherited: true
                 }));
             } else {
                 inheritedValues = result.map(v => ({
-                    value: v.value,
+                    payload: v.payload,
                     isInherited: true,
-                    raw_value: v.raw_value
+                    raw_payload: v.raw_payload
                 }));
             }
 

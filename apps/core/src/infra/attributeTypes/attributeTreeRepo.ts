@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql, AqlQuery, GeneratedAqlQuery, literal, join} from 'arangojs/aql';
@@ -38,7 +38,7 @@ export default function ({
         valueEdge: IValueEdge
     ): ITreeValue => ({
         id_value: valueEdge._key,
-        value:
+        payload:
             linkedRecord && nodeId
                 ? {
                       id: nodeId,
@@ -77,7 +77,7 @@ export default function ({
             // Create the link between records and add some metadata on it
             const edgeData: any = {
                 _from: library + '/' + recordId,
-                _to: getFullNodeId(value.value, attribute.linked_tree),
+                _to: getFullNodeId(value.payload, attribute.linked_tree),
                 attribute: attribute.id,
                 modified_at: value.modified_at,
                 created_at: value.created_at,
@@ -118,7 +118,7 @@ export default function ({
             // Update value's metadata on records link
             const edgeData: any = {
                 _from: library + '/' + recordId,
-                _to: getFullNodeId(value.value, attribute.linked_tree),
+                _to: getFullNodeId(value.payload, attribute.linked_tree),
                 attribute: attribute.id,
                 modified_at: value.modified_at,
                 created_by: value.created_by,

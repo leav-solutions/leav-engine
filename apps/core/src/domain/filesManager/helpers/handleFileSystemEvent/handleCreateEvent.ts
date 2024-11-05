@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IQueryInfos} from '_types/queryInfos';
@@ -16,6 +16,7 @@ import {
 } from '../handleFileUtilsHelper';
 import {requestPreviewGeneration} from '../handlePreview';
 import {IHandleFileSystemEventDeps, IHandleFileSystemEventResources} from './_types';
+import {IRecord} from '_types/record';
 
 export const handleCreateEvent = async (
     scanMsg: IFileEventData,
@@ -23,7 +24,8 @@ export const handleCreateEvent = async (
     deps: IHandleFileSystemEventDeps,
     ctx: IQueryInfos
 ) => {
-    const {filePath, fileName} = getInputData(scanMsg.pathAfter);
+    const pathAfter = scanMsg.pathAfter ?? '';
+    const {filePath, fileName} = getInputData(pathAfter);
 
     // Search for existing record
     const directoriesLibraryId = deps.utils.getDirectoriesLibraryId(resources.library);
@@ -37,7 +39,7 @@ export const handleCreateEvent = async (
     const {previewsStatus, previews} = getPreviewsDefaultData(systemPreviewsSettings);
 
     const fileMetadata = !scanMsg.isDirectory
-        ? await extractFileMetadata(scanMsg.pathAfter, scanMsg.rootKey, deps.config)
+        ? await extractFileMetadata(pathAfter, scanMsg.rootKey, deps.config)
         : null;
 
     if (record) {
@@ -54,8 +56,7 @@ export const handleCreateEvent = async (
                 [FilesAttributes.HASH]: scanMsg.hash,
                 ...fileMetadata
             };
-
-            await updateRecordFile(recordData, record.id, recordLibrary, deps, ctx);
+            await updateRecordFile(recordData, record.id!, recordLibrary, deps, ctx);
         } catch (e) {
             console.error(e);
             deps.logger.error(`[FilesManager] Event ${scanMsg.event} - Error on record activation : ${e.message}`);
@@ -84,15 +85,15 @@ export const handleCreateEvent = async (
     const parentRecords = await getParentRecord(filePath, directoriesLibraryId, deps, ctx);
 
     // Link the child to his parent in the tree
-    await createFilesTreeElement(record, parentRecords, filesLibraryId, deps, ctx);
+    await createFilesTreeElement(record!, parentRecords, filesLibraryId, deps, ctx);
 
     // Create the previews
     if (!scanMsg.isDirectory) {
         await requestPreviewGeneration({
-            recordId: record.id,
-            pathAfter: scanMsg.pathAfter,
+            recordId: record!.id!,
+            pathAfter,
             libraryId: recordLibrary,
-            versions: deps.utils.previewsSettingsToVersions(recordLibraryProps.previewsSettings),
+            versions: deps.utils.previewsSettingsToVersions(recordLibraryProps.previewsSettings ?? []),
             deps: {...deps}
         });
     }

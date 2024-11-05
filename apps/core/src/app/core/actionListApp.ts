@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IActionsListDomain} from 'domain/actionsList/actionsListDomain';
@@ -12,14 +12,11 @@ export interface ICoreActionListApp extends IAppModule {
 }
 
 interface IDeps {
-    'core.domain.actionsList'?: IActionsListDomain;
-    translator?: i18n;
+    'core.domain.actionsList': IActionsListDomain;
+    translator: i18n;
 }
 
-export default function ({
-    'core.domain.actionsList': actionsListDomain = null,
-    translator = null
-}: IDeps): ICoreActionListApp {
+export default function ({'core.domain.actionsList': actionsListDomain, translator}: IDeps): ICoreActionListApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {

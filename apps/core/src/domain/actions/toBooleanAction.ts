@@ -1,4 +1,4 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ActionsListIOTypes, IActionsListFunction} from '../../_types/actionsList';
@@ -12,15 +12,15 @@ export default function (): IActionsListFunction {
         output_types: [ActionsListIOTypes.BOOLEAN],
         action: values => {
             const computedValues = values.map(elementValue => {
-                switch (elementValue.value) {
+                switch (elementValue.payload) {
                     case 'true':
-                        elementValue.value = true;
+                        elementValue.payload = true;
                         break;
                     case 'false':
-                        elementValue.value = false;
+                        elementValue.payload = false;
                         break;
                     default:
-                        elementValue.value = !!elementValue.value;
+                        elementValue.payload = !!elementValue.payload;
                         break;
                 }
                 return elementValue;

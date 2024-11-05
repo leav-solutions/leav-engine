@@ -455,6 +455,7 @@
         "cancel_confirm_modal_question": "Are you sure?",
         "record_select": "Select a record",
         "inherited_input_helper": "Inherited value: {{- inheritedValue}}",
+        "calculated_input_helper": "Calculated value: {{- calculatedValue}}",
         "date_range_from_to": "from {{- from}} to {{- to}}",
         "link_search_result_count": "Results ({{count}}/{{total}})",
         "suggestions_count": "Suggestions ({{count}})"
@@ -591,5 +592,12 @@
         "all-selected-enabled": "All selected mode enabled",
         "all-selected-disabled": "All selected mode disabled",
         "unselect-all": "Unselect All"
+    },
+    "explorer": {
+        "create-one": "Create",
+        "actions": "Actions",
+        "more-actions": "Show more",
+        "deactivateItem": "Deactivate item",
+        "editItem": "Edit item"
     }
 }
