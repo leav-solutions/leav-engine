@@ -13,15 +13,15 @@ import {IRecord} from '_types/record';
 import {IStandardValue, ITreeValue, IValue, IValueVersion} from '_types/value';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
-import {IGraphqlApp} from '../graphql/graphqlApp';
+
 export interface ICoreValueApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
 }
+
 interface IDeps {
     'core.domain.value': IValueDomain;
     'core.domain.attribute': IAttributeDomain;
     'core.domain.record': IRecordDomain;
-    'core.app.graphql': IGraphqlApp;
     'core.app.helpers.convertVersionFromGqlFormat': ConvertVersionFromGqlFormatFunc;
     'core.utils': IUtils;
 }
@@ -29,7 +29,6 @@ export default function ({
     'core.domain.value': valueDomain,
     'core.domain.record': recordDomain,
     'core.domain.attribute': attributeDomain,
-    'core.app.graphql': graphqlApp,
     'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat,
     'core.utils': utils
 }: IDeps): ICoreValueApp {
@@ -126,7 +125,7 @@ export default function ({
                         modified_by: Record,
                         created_by: Record,
                         version: [ValueVersion],
-                        attribute: Attribute,
+                        attribute: Attribute!,
                         metadata: [ValueMetadata],
                         isInherited: Boolean,
                         isCalculated: Boolean
@@ -143,7 +142,7 @@ export default function ({
                         modified_by: Record,
                         created_by: Record,
                         version: [ValueVersion],
-                        attribute: Attribute,
+                        attribute: Attribute!,
                         metadata: [ValueMetadata],
                         isInherited: Boolean,
                         isCalculated: Boolean
@@ -175,7 +174,7 @@ export default function ({
                         modified_by: Record,
                         created_by: Record,
                         version: [ValueVersion],
-                        attribute: Attribute,
+                        attribute: Attribute!,
                         metadata: [ValueMetadata],
                         isInherited: Boolean,
                         isCalculated: Boolean
@@ -190,7 +189,7 @@ export default function ({
                         value: TreeNode @deprecated(reason: "Use payload instead"),
                         payload: TreeNode,
                         version: [ValueVersion],
-                        attribute: Attribute,
+                        attribute: Attribute!,
                         metadata: [ValueMetadata],
                         isInherited: Boolean,
                         isCalculated: Boolean
