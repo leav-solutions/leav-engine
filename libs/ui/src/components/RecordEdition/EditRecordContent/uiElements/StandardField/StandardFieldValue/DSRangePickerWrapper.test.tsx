@@ -144,20 +144,38 @@ describe('DSRangePickerWrapper', () => {
 
             const rangePickerInputs = screen.getAllByRole('textbox');
             await user.click(rangePickerInputs[0]);
-            const startRangeDate = dayjs().format('YYYY-MM-DD');
-            const endRangeDate = dayjs().add(1, 'day').format('YYYY-MM-DD');
-            await user.click(screen.getAllByTitle(startRangeDate)[0]);
-            await user.click(screen.getAllByTitle(endRangeDate)[0]);
 
-            const unixStartRangeDate = dayjs(startRangeDate).unix().toString();
-            const unixEndRangeDate = dayjs(endRangeDate).unix().toString();
+            const startRangeDate = dayjs();
+            const startRangeDateFormatted = dayjs().format('YYYY-MM-DD');
+            const endRangeDate = dayjs().add(1, 'day');
+            const endRangeDateFormatted = dayjs().add(1, 'day').format('YYYY-MM-DD');
+
+            await user.click(screen.getAllByTitle(startRangeDateFormatted)[0]);
+            await user.click(screen.getAllByTitle(endRangeDateFormatted)[0]);
+
+            const startRangeDateAtNoon = startRangeDate
+                .utc()
+                .set('date', startRangeDate.date())
+                .set('hour', 12)
+                .set('minute', 0)
+                .set('second', 0)
+                .set('millisecond', 0);
+
+            const endRangeDateAtNoon = endRangeDate
+                .utc()
+                .set('date', endRangeDate.date())
+                .set('hour', 12)
+                .set('minute', 0)
+                .set('second', 0)
+                .set('millisecond', 0);
 
             expect(mockOnChange).toHaveBeenCalledWith(
-                [dayjs(startRangeDate), dayjs(endRangeDate)],
-                [startRangeDate, endRangeDate]
+                [startRangeDateAtNoon, endRangeDateAtNoon],
+                [startRangeDateFormatted, endRangeDateFormatted]
             );
+
             expect(mockHandleSubmit).toHaveBeenCalledWith(
-                {from: unixStartRangeDate, to: unixEndRangeDate},
+                {from: startRangeDateAtNoon.unix().toString(), to: endRangeDateAtNoon.unix().toString()},
                 state.attribute.id
             );
         });
@@ -216,18 +234,33 @@ describe('DSRangePickerWrapper', () => {
 
             const rangePickerInputs = screen.getAllByRole('textbox');
             await user.click(rangePickerInputs[0]);
-            const startRangeDate = dayjs().format('YYYY-MM-DD');
-            const endRangeDate = dayjs().add(1, 'day').format('YYYY-MM-DD');
+            const startRangeDate = dayjs();
+            const startRangeDateFormatted = dayjs().format('YYYY-MM-DD');
+            const endRangeDate = dayjs().add(1, 'day');
+            const endRangeDateFormatted = dayjs().add(1, 'day').format('YYYY-MM-DD');
 
-            await user.click(screen.getAllByTitle(startRangeDate)[0]);
-            await user.click(screen.getAllByTitle(endRangeDate)[0]);
+            await user.click(screen.getAllByTitle(startRangeDateFormatted)[0]);
+            await user.click(screen.getAllByTitle(endRangeDateFormatted)[0]);
 
-            const unixStartRangeDate = dayjs(startRangeDate).unix().toString();
-            const unixEndRangeDate = dayjs(endRangeDate).unix().toString();
+            const startRangeDateAtNoon = startRangeDate
+                .utc()
+                .set('date', startRangeDate.date())
+                .set('hour', 12)
+                .set('minute', 0)
+                .set('second', 0)
+                .set('millisecond', 0);
+
+            const endRangeDateAtNoon = endRangeDate
+                .utc()
+                .set('date', endRangeDate.date())
+                .set('hour', 12)
+                .set('minute', 0)
+                .set('second', 0)
+                .set('millisecond', 0);
 
             expect(mockOnChange).toHaveBeenCalled();
             expect(mockHandleSubmit).toHaveBeenCalledWith(
-                {from: unixStartRangeDate, to: unixEndRangeDate},
+                {from: startRangeDateAtNoon.unix().toString(), to: endRangeDateAtNoon.unix().toString()},
                 state.attribute.id
             );
         });

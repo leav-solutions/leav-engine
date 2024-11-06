@@ -9,6 +9,7 @@ import {
 } from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {Form, type GetRef} from 'antd';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import styled from 'styled-components';
 import {IProvidedByAntFormItem, StandardValueTypes} from '../../../_types';
 import {DatePickerProps} from 'antd/lib/date-picker';
@@ -26,9 +27,14 @@ interface IDSDatePickerWrapperProps extends IProvidedByAntFormItem<DatePickerPro
     shouldShowValueDetailsButton?: boolean;
 }
 
+dayjs.extend(utc);
+
 const KitDatePickerStyled = styled(KitDatePicker)<{$shouldHighlightColor: boolean}>`
     color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
 `;
+
+const _setDateToUTCNoon = (date: dayjs.Dayjs): dayjs.Dayjs =>
+    date.utc().set('date', date.date()).set('hour', 12).set('minute', 0).set('second', 0).set('millisecond', 0);
 
 export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> = ({
     value,
@@ -62,6 +68,7 @@ export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> =
         } else if (state.isCalculatedValue) {
             onChange(dayjs.unix(Number(state.calculatedValue.raw_value)), state.calculatedValue.raw_value);
         }
+
         handleSubmit('', state.attribute.id);
     };
 
@@ -72,6 +79,10 @@ export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> =
         if ((state.isInheritedValue || state.isCalculatedValue) && datePickerDate === null) {
             _resetToInheritedOrCalculatedValue();
             return;
+        }
+
+        if (!!datePickerDate) {
+            datePickerDate = _setDateToUTCNoon(datePickerDate);
         }
 
         onChange(datePickerDate, ...antOnChangeParams);
