@@ -39,7 +39,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     defaultActionsForItem = ['edit', 'deactivate'],
     defaultMainActions = ['create']
 }) => {
-    const currentAttribute = 'user_groups';
+    const currentAttribute = 'id';
 
     const {data, loading, refetch} = useExplorerData(library, [currentAttribute]); // TODO: refresh when go back on page
 

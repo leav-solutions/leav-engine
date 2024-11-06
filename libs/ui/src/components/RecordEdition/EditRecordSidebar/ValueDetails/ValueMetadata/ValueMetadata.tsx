@@ -1,9 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FormFieldTypes, ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
+import {FunctionComponent} from 'react';
+import {FormFieldTypes, ICommonFieldsSettings} from '@leav/utils';
 import {Space} from 'antd';
-import useLang from '../../../../../hooks/useLang';
 import {
     AttributeFormat,
     FormElementTypes,
@@ -42,9 +42,7 @@ const _inputTypeByFormat: {[format in AttributeFormat]: FormFieldTypes} = {
     [AttributeFormat.rich_text]: FormFieldTypes.TEXT_INPUT
 };
 
-function ValueMetadata({value: parentValue, attribute, onMetadataSubmit}: IValueMetadataProps): JSX.Element {
-    const {lang} = useLang();
-
+const ValueMetadata: FunctionComponent<IValueMetadataProps> = ({value: parentValue, attribute, onMetadataSubmit}) => {
     const _handleValueSubmit: (field: MetadataField) => SubmitValueFunc =
         field =>
         (values): Promise<ISubmitMultipleResult> =>
@@ -69,7 +67,7 @@ function ValueMetadata({value: parentValue, attribute, onMetadataSubmit}: IValue
                     type: FormElementTypes.field,
                     uiElementType: _inputTypeByFormat[field.format],
                     valueError: null,
-                    values: [parentValue?.metadata?.find(({name}) => name === field.id)?.value as unknown] ?? [],
+                    values: [parentValue?.metadata?.find(({name}) => name === field.id)?.value],
                     settings: {
                         label: field.label
                     },
@@ -89,6 +87,6 @@ function ValueMetadata({value: parentValue, attribute, onMetadataSubmit}: IValue
             })}
         </Space>
     );
-}
+};
 
 export default ValueMetadata;
