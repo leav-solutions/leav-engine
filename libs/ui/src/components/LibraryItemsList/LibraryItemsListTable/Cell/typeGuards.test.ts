@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {TypeGuards} from './typeGuards';
 import {mockRecord} from '_ui/__mocks__/common/record';
+import {mockAttributeLink, mockAttributeSimple, mockAttributeTree} from '_ui/__mocks__/common/attribute';
 
 const mockRecordIdentity = {
     id: '123456',
@@ -24,7 +25,8 @@ const mockValue = {
     modified_at: 123456789,
     id_value: null,
     metadata: null,
-    version: null
+    version: null,
+    attribute: mockAttributeSimple
 };
 
 const mockLinkValue = {
@@ -34,6 +36,7 @@ const mockLinkValue = {
             ...mockRecord
         }
     },
+    attribute: mockAttributeLink,
     created_at: 123456789,
     modified_at: 123456789,
     id_value: null,
@@ -54,6 +57,7 @@ const mockTreeValue = {
             }
         ]
     },
+    attribute: mockAttributeTree,
     created_at: 123456789,
     modified_at: 123456789,
     metadata: null,
@@ -64,7 +68,7 @@ describe('typeGuards', () => {
     describe('isSimpleCellValues', () => {
         it('should be false', () => {
             expect(TypeGuards.isSimpleCellValues([])).toBe(false);
-            expect(TypeGuards.isSimpleCellValues([{}])).toBe(false);
+            expect(TypeGuards.isSimpleCellValues([{} as any])).toBe(false);
             expect(TypeGuards.isSimpleCellValues([{...mockLinkValue, isInherited: true}])).toBe(false);
             expect(TypeGuards.isSimpleCellValues([{...mockTreeValue, isInherited: true}])).toBe(false);
         });
@@ -78,7 +82,7 @@ describe('typeGuards', () => {
 
     describe('isLinkCellValue', () => {
         it('should be false', () => {
-            expect(TypeGuards.isLinkCellValue({})).toBe(false);
+            expect(TypeGuards.isLinkCellValue({} as any)).toBe(false);
             expect(TypeGuards.isLinkCellValue({...mockValue, isInherited: true})).toBe(false);
             expect(TypeGuards.isLinkCellValue({...mockTreeValue, isInherited: true})).toBe(false);
         });
@@ -93,7 +97,7 @@ describe('typeGuards', () => {
     describe('isLinkCellValues', () => {
         it('should be false', () => {
             expect(TypeGuards.isLinkCellValues([])).toBe(false);
-            expect(TypeGuards.isLinkCellValues([{}])).toBe(false);
+            expect(TypeGuards.isLinkCellValues([{} as any])).toBe(false);
             expect(TypeGuards.isLinkCellValues([{...mockValue, isInherited: true}])).toBe(false);
             expect(TypeGuards.isLinkCellValues([{...mockTreeValue, isInherited: true}])).toBe(false);
         });
@@ -107,7 +111,7 @@ describe('typeGuards', () => {
 
     describe('isTreeCellValue', () => {
         it('should be false', () => {
-            expect(TypeGuards.isTreeCellValue({})).toBe(false);
+            expect(TypeGuards.isTreeCellValue({} as any)).toBe(false);
             expect(TypeGuards.isTreeCellValue({...mockValue, isInherited: true})).toBe(false);
             expect(TypeGuards.isTreeCellValue({...mockLinkValue, isInherited: true})).toBe(false);
         });
@@ -122,7 +126,7 @@ describe('typeGuards', () => {
     describe('isTreeCellValues', () => {
         it('should be false', () => {
             expect(TypeGuards.isTreeCellValues([])).toBe(false);
-            expect(TypeGuards.isTreeCellValues([{}])).toBe(false);
+            expect(TypeGuards.isTreeCellValues([{} as any])).toBe(false);
             expect(TypeGuards.isTreeCellValues([{...mockValue, isInherited: true}])).toBe(false);
             expect(TypeGuards.isTreeCellValues([{...mockLinkValue, isInherited: true}])).toBe(false);
         });
