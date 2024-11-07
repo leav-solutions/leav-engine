@@ -458,7 +458,10 @@
         "calculated_input_helper": "Valeur calculée : {{- calculatedValue}}",
         "date_range_from_to": "du {{- from}} au {{- to}}",
         "link_search_result_count": "Résultats ({{count}}/{{total}})",
-        "suggestions_count": "Suggestions ({{count}})"
+        "suggestions_count": "Suggestions ({{count}})",
+        "search_not_found": "Aucune correspondance",
+        "press_enter_to": "Appuyer sur Entrer pour ",
+        "select_this_value": "Sélectionner cette valeur"
     },
     "record_summary": {
         "preview_title": "Cliquez ici pour voir l’aperçu.",
