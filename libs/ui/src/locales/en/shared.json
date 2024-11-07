@@ -458,7 +458,10 @@
         "calculated_input_helper": "Calculated value: {{- calculatedValue}}",
         "date_range_from_to": "from {{- from}} to {{- to}}",
         "link_search_result_count": "Results ({{count}}/{{total}})",
-        "suggestions_count": "Suggestions ({{count}})"
+        "suggestions_count": "Suggestions ({{count}})",
+        "search_not_found": "No match",
+        "press_enter_to": "Press enter to ",
+        "select_this_value": "Select this value"
     },
     "record_summary": {
         "preview_title": "Click here to visualize preview.",
