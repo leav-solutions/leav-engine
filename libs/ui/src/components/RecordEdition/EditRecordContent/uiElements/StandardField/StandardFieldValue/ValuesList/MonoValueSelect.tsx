@@ -1,13 +1,11 @@
 // Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ChangeEvent, FocusEvent, FunctionComponent, useEffect, useMemo, useRef, useState} from 'react';
-import {KitSelect} from 'aristid-ds';
+import {FunctionComponent, useEffect, useMemo, useRef, useState} from 'react';
+import {KitSelect, KitTypography} from 'aristid-ds';
 import useSharedTranslation from '_ui/hooks/useSharedTranslation/useSharedTranslation';
 import {
     AttributeFormat,
-    RecordFormAttributeFragment,
-    RecordFormAttributeLinkAttributeFragment,
     RecordFormAttributeStandardAttributeFragment,
     StandardValuesListFragmentStandardDateRangeValuesListConfFragment,
     StandardValuesListFragmentStandardStringValuesListConfFragment
@@ -17,18 +15,12 @@ import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordCon
 import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
 import {
     IStandardFieldReducerState,
-    IStandardFieldValue,
-    StandardFieldValueState
+    IStandardFieldValue
 } from '_ui/components/RecordEdition/EditRecordContent/reducers/standardFieldReducer/standardFieldReducer';
 import {useLang} from '_ui/hooks';
 import {localizedTranslation} from '@leav/utils';
-import {IValueOfValuesList} from './ValuesList';
 import moment from 'moment';
 import {stringifyDateRangeValue} from '_ui/_utils';
-
-// const ResultsCount = styled(KitTypography.Text)`
-//     margin-bottom: calc(var(--general-spacing-s) * 1px);
-// `;
 
 interface IMonoValueSelectProps extends IProvidedByAntFormItem<SelectProps> {
     state: IStandardFieldReducerState;
@@ -64,6 +56,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
         attribute
     });
     const [isSelectOpen, setIsSelectOpen] = useState(false);
+    const [searchedString, setSearchedString] = useState('');
     const {lang: availableLang} = useLang();
     const selectRef = useRef<GetRef<typeof KitSelect>>(null);
 
@@ -104,6 +97,11 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
 
     const options = _getFilteredValuesList();
 
+    const searchResultsCount = useMemo(
+        () => options.filter(option => option.label.toLowerCase().includes(searchedString.toLowerCase())).length,
+        [searchedString]
+    );
+
     const _resetToInheritedOrCalculatedValue = () => {
         if (state.isInheritedValue) {
             onChange(state.inheritedValue.raw_value, options);
@@ -120,6 +118,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
 
     const _handleOnChange = (selectedValue: string) => {
         setIsSelectOpen(false);
+        setSearchedString('');
         if ((state.isInheritedValue || state.isCalculatedValue) && selectedValue === '') {
             _resetToInheritedOrCalculatedValue();
             return;
@@ -148,13 +147,15 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     }, [state.isInheritedOverrideValue, state.isCalculatedOverrideValue]);
 
     const label = localizedTranslation(state.formElement.settings.label, availableLang);
+    const required = state.formElement.settings.required;
 
     return (
         <KitSelect
             ref={selectRef}
             open={isSelectOpen}
             value={value}
-            required={state.formElement.settings.required}
+            required={required}
+            allowClear={!required}
             label={label}
             options={options}
             status={errors.length > 0 && 'error'}
@@ -164,27 +165,30 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
             onChange={onChange}
             onClear={_handleOnClear}
             onBlur={_handleOnBlur}
+            onSearch={setSearchedString}
             onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
-            // dropdownRender={menu => {
-            //     if (loading) {
-            //         return menu;
-            //     }
-
-            //     return (
-            //         <>
-            //             <ResultsCount weight="bold">
-            //                 {optionsType === 'search'
-            //                     ? t('record_edition.link_search_result_count', {
-            //                           count:
-            //                               searchResultCount > suggestionsCount ? suggestionsCount : searchResultCount,
-            //                           total: searchResultCount
-            //                       })
-            //                     : t('record_edition.suggestions_count', {count: suggestionsCount})}
-            //             </ResultsCount>
-            //             {menu}
-            //         </>
-            //     );
-            // }}
+            dropdownRender={menu => (
+                <>
+                    {searchedString !== '' && searchResultsCount > 0 && (
+                        <>
+                            <KitTypography.Text size="fontSize7">
+                                {t('record_edition.press_enter_to')}
+                            </KitTypography.Text>
+                            <KitTypography.Text size="fontSize7" weight="medium">
+                                {t('record_edition.select_this_value')}
+                            </KitTypography.Text>
+                        </>
+                    )}
+                    {menu}
+                </>
+            )}
+            notFoundContent={
+                <div style={{textAlign: 'center'}}>
+                    <KitTypography.Text size="fontSize5" weight="medium">
+                        {t('record_edition.search_not_found')}
+                    </KitTypography.Text>
+                </div>
+            }
         />
     );
 };
