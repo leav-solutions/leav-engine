@@ -112,7 +112,12 @@ export const StandardFieldValueRead: FunctionComponent<IStandardFieldValueReadPr
         onClick(e);
     };
 
-    let displayValue = String(fieldValue.value?.payload ?? fieldValue.displayValue ?? '');
+    let displayValue =
+        fieldValue.value?.payload ||
+        String(fieldValue.displayValue) ||
+        state.calculatedValue?.payload ||
+        state.inheritedValue?.payload ||
+        '';
 
     let width = '100%';
     switch (state.attribute.format) {
