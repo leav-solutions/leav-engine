@@ -1,8 +1,8 @@
-// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
+// Copyright LEAV Solutions 2017
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AttributeFormat, RecordFormAttributeFragment} from '_ui/_gqlTypes';
-import {ComponentProps, FunctionComponent} from 'react';
+import {AttributeFormat, RecordFormAttributeStandardAttributeFragment} from '_ui/_gqlTypes';
+import {ComponentProps, FunctionComponent, ReactNode} from 'react';
 import {
     IStandardFieldReducerState,
     IStandardFieldValue,
@@ -22,10 +22,11 @@ import {Form} from 'antd';
 import {useTranslation} from 'react-i18next';
 import {DSRichTextWrapper} from '../DSRichTextWrapper';
 import {DSColorPickerWrapper} from '../DSColorPickerWrapper';
+import {MonoValueSelect} from '../ValuesList/MonoValueSelect';
 
 interface IStandardFieldValueDisplayHandlerProps {
     state: IStandardFieldReducerState;
-    attribute: RecordFormAttributeFragment;
+    attribute: RecordFormAttributeStandardAttributeFragment;
     fieldValue: IStandardFieldValue;
     shouldShowValueDetailsButton?: boolean;
     handleSubmit: (value: StandardValueTypes, id?: string) => void;
@@ -54,11 +55,12 @@ export const StandardFieldValueDisplayHandler: FunctionComponent<IStandardFieldV
         });
     };
 
-    const _handleBlur = () =>
+    const _handleBlur = () => {
         dispatch({
             type: StandardFieldReducerActionsTypes.CANCEL_EDITING,
             idValue: fieldValue.idValue
         });
+    };
 
     const commonProps = {
         state,
@@ -69,31 +71,37 @@ export const StandardFieldValueDisplayHandler: FunctionComponent<IStandardFieldV
         shouldShowValueDetailsButton: editRecordState.withInfoButton
     };
 
-    let valueContent;
-    switch (attribute.format) {
-        case AttributeFormat.text:
-            valueContent = <DSInputWrapper {...commonProps} />;
-            break;
-        case AttributeFormat.date:
-            valueContent = <DSDatePickerWrapper {...commonProps} />;
-            break;
-        case AttributeFormat.date_range:
-            valueContent = <DSRangePickerWrapper {...commonProps} />;
-            break;
-        case AttributeFormat.numeric:
-            valueContent = <DSInputNumberWrapper {...commonProps} />;
-            break;
-        case AttributeFormat.encrypted:
-            valueContent = <DSInputEncryptedWrapper {...commonProps} />;
-            break;
-        case AttributeFormat.boolean:
-            valueContent = <DSBooleanWrapper {...commonProps} />;
-            break;
-        case AttributeFormat.rich_text:
-            valueContent = <DSRichTextWrapper {...commonProps} />;
-            break;
-        case AttributeFormat.color:
-            valueContent = <DSColorPickerWrapper {...commonProps} />;
+    const isValuesListEnabled = Boolean(attribute.values_list?.enable);
+
+    let valueContent: ReactNode;
+    if (isValuesListEnabled) {
+        valueContent = <MonoValueSelect {...commonProps} />;
+    } else {
+        switch (attribute.format) {
+            case AttributeFormat.text:
+                valueContent = <DSInputWrapper {...commonProps} />;
+                break;
+            case AttributeFormat.date:
+                valueContent = <DSDatePickerWrapper {...commonProps} />;
+                break;
+            case AttributeFormat.date_range:
+                valueContent = <DSRangePickerWrapper {...commonProps} />;
+                break;
+            case AttributeFormat.numeric:
+                valueContent = <DSInputNumberWrapper {...commonProps} />;
+                break;
+            case AttributeFormat.encrypted:
+                valueContent = <DSInputEncryptedWrapper {...commonProps} />;
+                break;
+            case AttributeFormat.boolean:
+                valueContent = <DSBooleanWrapper {...commonProps} />;
+                break;
+            case AttributeFormat.rich_text:
+                valueContent = <DSRichTextWrapper {...commonProps} />;
+                break;
+            case AttributeFormat.color:
+                valueContent = <DSColorPickerWrapper {...commonProps} />;
+        }
     }
 
     return (
