@@ -122,6 +122,8 @@ const _getFieldLinkedLibraryPart = (field: IRecordPropertiesField): string =>
 const _getFieldQueryPart = (field: IRecordPropertiesField): string => `
     ${field.attributeId}: property(attribute: "${field.attributeId}") {
         id_value
+        isInherited
+        isCalculated
         created_at
         modified_at
         version {

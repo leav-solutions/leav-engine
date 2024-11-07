@@ -230,13 +230,7 @@ const _computeScopeAndValues = (params: {
     const {attribute, values, formVersion} = params;
 
     // Get override or inhertied values
-    let valuesToHandle = getUserInputValue(values);
-    if (!valuesToHandle.length) {
-        valuesToHandle = getCalculatedValue(values);
-        if (!valuesToHandle.length) {
-            valuesToHandle = getInheritedValue(values);
-        }
-    }
+    const valuesToHandle = getUserInputValue(values);
 
     const preparedValues = valuesToHandle.length
         ? valuesToHandle.reduce(
@@ -340,7 +334,7 @@ const _computeCalculatedFlags = (fieldValues: RecordFormElementsValueStandardVal
 
     const isCalculatedValue = true;
 
-    if (overrideValue.value === null) {
+    if (!overrideValue || overrideValue.value === null) {
         return {
             calculatedValue,
             isCalculatedValue,
