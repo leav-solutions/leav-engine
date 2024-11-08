@@ -10,6 +10,7 @@ import {BrowserRouter} from 'react-router-dom';
 import NotifsPanel from '../NotifsPanel';
 import UserPanel from '../UserPanel';
 import Routes from './Routes';
+import {ExplorerSettingsSidePanel} from 'components/ExplorerSettingsSidePanel';
 
 const {Header, Content, Sider} = Layout;
 
