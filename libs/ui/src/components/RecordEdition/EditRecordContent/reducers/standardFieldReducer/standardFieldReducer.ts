@@ -12,7 +12,12 @@ import {
 import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
 import {IRecordIdentityWhoAmI} from '_ui/types/records';
 import {IValueVersion} from '_ui/types/values';
-import {AttributeFormat, RecordFormAttributeFragment, ValueDetailsValueFragment} from '_ui/_gqlTypes';
+import {
+    AttributeFormat,
+    RecordFormAttributeFragment,
+    RecordFormAttributeStandardAttributeFragment,
+    ValueDetailsValueFragment
+} from '_ui/_gqlTypes';
 import {IRecordPropertyStandard} from '_ui/_queries/records/getRecordPropertiesQuery';
 import {arrayValueVersionToObject} from '_ui/_utils';
 
@@ -85,7 +90,10 @@ interface INotCalculated {
 
 export type CalculatedFlags = INotCalculated | ICalculatedOverride | ICalculatedNotOverride;
 
-export type IStandardFieldReducerState = ICommonFieldsReducerState<StandardFieldReducerValues> & {
+export type IStandardFieldReducerState = ICommonFieldsReducerState<
+    StandardFieldReducerValues,
+    RecordFormAttributeStandardAttributeFragment
+> & {
     metadataEdit: boolean;
 } & InheritedFlags &
     CalculatedFlags;
