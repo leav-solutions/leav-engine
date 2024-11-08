@@ -2,34 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent, useEffect, useMemo, useRef, useState} from 'react';
-import {KitSelect, KitTypography} from 'aristid-ds';
+import {AntForm, KitSelect, KitTypography} from 'aristid-ds';
 import useSharedTranslation from '_ui/hooks/useSharedTranslation/useSharedTranslation';
-import {
-    AttributeFormat,
-    RecordFormAttributeStandardAttributeFragment,
-    StandardValuesListFragmentStandardDateRangeValuesListConfFragment,
-    StandardValuesListFragmentStandardStringValuesListConfFragment
-} from '_ui/_gqlTypes';
-import {Form, GetRef, SelectProps} from 'antd';
-import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {AttributeFormat} from '_ui/_gqlTypes';
+import {Form, GetRef} from 'antd';
 import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
-import {
-    IStandardFieldReducerState,
-    IStandardFieldValue
-} from '_ui/components/RecordEdition/EditRecordContent/reducers/standardFieldReducer/standardFieldReducer';
 import {useLang} from '_ui/hooks';
 import {localizedTranslation} from '@leav/utils';
 import moment from 'moment';
 import {stringifyDateRangeValue} from '_ui/_utils';
-
-interface IMonoValueSelectProps extends IProvidedByAntFormItem<SelectProps> {
-    state: IStandardFieldReducerState;
-    attribute: RecordFormAttributeStandardAttributeFragment;
-    fieldValue: IStandardFieldValue;
-    handleSubmit: (value: string, id?: string) => void;
-    handleBlur: () => void;
-    shouldShowValueDetailsButton?: boolean;
-}
+import {IDateRangeValuesListConf, IMonoValueSelectProps, IStringValuesListConf} from './_types';
 
 export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     value,
@@ -67,9 +49,6 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
         }
     }, [fieldValue.isEditing]);
 
-    type IStringValuesListConf = StandardValuesListFragmentStandardStringValuesListConfFragment;
-    type IDateRangeValuesListConf = StandardValuesListFragmentStandardDateRangeValuesListConfFragment;
-
     const _getFilteredValuesList = () => {
         let values = [];
 
@@ -104,9 +83,9 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
 
     const _resetToInheritedOrCalculatedValue = () => {
         if (state.isInheritedValue) {
-            onChange(state.inheritedValue.raw_value, options);
+            setTimeout(() => onChange(state.inheritedValue.raw_value, options), 0);
         } else if (state.isCalculatedValue) {
-            onChange(state.calculatedValue.raw_value, options);
+            setTimeout(() => onChange(state.calculatedValue.raw_value, options), 0);
         }
         handleSubmit('', attribute.id);
     };
@@ -129,8 +108,8 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     };
 
     const _handleOnClear = () => {
-        handleSubmit('', attribute.id);
-        _handleOnBlur();
+        _handleOnChange('');
+        handleBlur();
     };
 
     const helper = useMemo(() => {
@@ -170,14 +149,14 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
             dropdownRender={menu => (
                 <>
                     {searchedString !== '' && searchResultsCount > 0 && (
-                        <>
+                        <div style={{paddingBottom: 'calc(var(--general-spacing-xs) * 1px)'}}>
                             <KitTypography.Text size="fontSize7">
                                 {t('record_edition.press_enter_to')}
                             </KitTypography.Text>
                             <KitTypography.Text size="fontSize7" weight="medium">
                                 {t('record_edition.select_this_value')}
                             </KitTypography.Text>
-                        </>
+                        </div>
                     )}
                     {menu}
                 </>

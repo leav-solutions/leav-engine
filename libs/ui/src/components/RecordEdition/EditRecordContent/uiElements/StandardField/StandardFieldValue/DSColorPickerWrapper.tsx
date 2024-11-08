@@ -46,6 +46,10 @@ export const DSColorPickerWrapper: FunctionComponent<IDSColorPickerWrapperProps>
     handleBlur,
     shouldShowValueDetailsButton = false
 }) => {
+    if (!onChange) {
+        throw Error('DSColorPickerWrapper should be used inside a antd Form.Item');
+    }
+
     const {t} = useSharedTranslation();
     const {lang: availableLang} = useLang();
     const [hasChanged, setHasChanged] = useState(false);

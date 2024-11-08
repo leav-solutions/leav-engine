@@ -11,6 +11,8 @@ import userEvent from '@testing-library/user-event';
 import {RecordFormAttributeStandardAttributeFragment, SortOrder} from '_ui/_gqlTypes';
 import {VersionFieldScope} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {
+    CalculatedFlags,
+    InheritedFlags,
     IStandardFieldReducerState,
     IStandardFieldValue
 } from '_ui/components/RecordEdition/EditRecordContent/reducers/standardFieldReducer/standardFieldReducer';
@@ -144,6 +146,128 @@ describe('<MonoValueSelect />', () => {
         expect(handleSubmitMock).toHaveBeenCalledTimes(2);
         expect(handleSubmitMock).toHaveBeenCalledWith('', attribute.id);
     });
+
+    it.each`
+        calculatedValue | inheritedValue | displayedValue
+        ${'calculated'} | ${null}        | ${'calculated'}
+        ${null}         | ${'inherited'} | ${'inherited'}
+        ${'calculated'} | ${'inherited'} | ${'inherited'}
+    `(
+        'should display calculated / inherited value in helper',
+        ({
+            calculatedValue,
+            inheritedValue,
+            displayedValue
+        }: {
+            calculatedValue: string | null;
+            inheritedValue: string | null;
+            displayedValue: string;
+        }) => {
+            const stateWithInheritedValue: InheritedFlags = {
+                inheritedValue: {raw_value: inheritedValue},
+                isInheritedValue: true,
+                isInheritedNotOverrideValue: false,
+                isInheritedOverrideValue: true
+            };
+            const stateWithCalculatedValue: CalculatedFlags = {
+                calculatedValue: {raw_value: calculatedValue},
+                isCalculatedValue: true,
+                isCalculatedNotOverrideValue: false,
+                isCalculatedOverrideValue: true
+            };
+
+            let newState = state;
+            if (inheritedValue) {
+                newState = {...newState, ...stateWithInheritedValue} as any;
+            }
+
+            if (calculatedValue) {
+                newState = {...newState, ...stateWithCalculatedValue} as any;
+            }
+
+            render(
+                <AntForm name="name">
+                    <AntForm.Item name="chartreuse">
+                        <MonoValueSelect
+                            attribute={attribute}
+                            state={newState}
+                            fieldValue={{...fieldValue, isEditing: true}}
+                            handleSubmit={handleSubmitMock}
+                            handleBlur={handleBlurMock}
+                        />
+                    </AntForm.Item>
+                </AntForm>
+            );
+
+            expect(screen.getByText(new RegExp(`${displayedValue}`))).toBeVisible();
+        }
+    );
+
+    it.each`
+        calculatedValue | inheritedValue | displayedValue
+        ${'calculated'} | ${null}        | ${'calculated'}
+        ${null}         | ${'inherited'} | ${'inherited'}
+        ${'calculated'} | ${'inherited'} | ${'inherited'}
+    `(
+        'should revert to calculated / inherited value on click on clear icon',
+        async ({
+            calculatedValue,
+            inheritedValue,
+            displayedValue
+        }: {
+            calculatedValue: string | null;
+            inheritedValue: string | null;
+            displayedValue: string;
+        }) => {
+            const stateWithInheritedValue: InheritedFlags = {
+                inheritedValue: {raw_value: inheritedValue},
+                isInheritedValue: true,
+                isInheritedNotOverrideValue: true,
+                isInheritedOverrideValue: false
+            };
+            const stateWithCalculatedValue: CalculatedFlags = {
+                calculatedValue: {raw_value: calculatedValue},
+                isCalculatedValue: true,
+                isCalculatedNotOverrideValue: true,
+                isCalculatedOverrideValue: false
+            };
+
+            let newState = state;
+            if (inheritedValue) {
+                newState = {...newState, ...stateWithInheritedValue} as any;
+            }
+
+            if (calculatedValue) {
+                newState = {...newState, ...stateWithCalculatedValue} as any;
+            }
+
+            render(
+                <AntForm name="name">
+                    <AntForm.Item name="chartreuse">
+                        <MonoValueSelect
+                            attribute={attribute}
+                            state={newState}
+                            fieldValue={{...fieldValue, isEditing: true}}
+                            handleSubmit={handleSubmitMock}
+                            handleBlur={handleBlurMock}
+                        />
+                    </AntForm.Item>
+                </AntForm>
+            );
+
+            expect(screen.queryByText(displayedValue)).not.toBeInTheDocument();
+            const select = screen.getByRole('combobox');
+            await userEvent.click(select);
+
+            const green = screen.getAllByText('green').pop();
+            await userEvent.click(green);
+
+            const clearIcon = screen.getByLabelText('clear');
+            await userEvent.click(clearIcon);
+
+            expect(screen.getByTitle(displayedValue)).toBeVisible();
+        }
+    );
 
     it('should display a specific text on search with results', async () => {
         render(

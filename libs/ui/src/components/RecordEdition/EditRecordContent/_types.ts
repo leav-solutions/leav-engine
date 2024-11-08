@@ -140,10 +140,10 @@ export enum VersionFieldScope {
     CURRENT = 'CURRENT' // values of "current" version, eg. the version selected in the form
 }
 
-export interface ICommonFieldsReducerState<ValuesType> {
+export interface ICommonFieldsReducerState<ValuesType, RecordFormAttributeFragmentType = RecordFormAttributeFragment> {
     record: IRecordIdentityWhoAmI;
     formElement: FormElement<IRequiredFieldsSettings>;
-    attribute: RecordFormAttributeFragment;
+    attribute: RecordFormAttributeFragmentType;
     isReadOnly: boolean;
     activeScope: VersionFieldScope;
     values: {
