@@ -41,6 +41,10 @@ export const DSRichTextWrapper: FunctionComponent<IDSRichTextWrapperProps> = ({
     handleBlur,
     shouldShowValueDetailsButton = false
 }) => {
+    if (!onChange) {
+        throw Error('DSRichTextWrapper should be used inside a antd Form.Item');
+    }
+
     const {t} = useSharedTranslation();
     const {errors} = Form.Item.useStatus();
     const {onValueDetailsButtonClick} = useValueDetailsButton({

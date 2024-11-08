@@ -41,6 +41,10 @@ export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> =
     handleSubmit,
     shouldShowValueDetailsButton = false
 }) => {
+    if (!onChange) {
+        throw Error('DSDatePickerWrapper should be used inside a antd Form.Item');
+    }
+
     const {t} = useSharedTranslation();
     const {lang: availableLangs} = useLang();
     const {errors} = Form.Item.useStatus();
