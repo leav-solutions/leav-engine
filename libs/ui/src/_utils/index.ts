@@ -21,6 +21,10 @@ import {
     ViewDetailsFragment
 } from '_ui/_gqlTypes';
 import {getFiltersFromRequest} from './getFiltersFromRequest';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 export const arrayValueVersionToObject = (version: ValueDetailsFragment['version']): IValueVersion =>
     version?.reduce((acc: IValueVersion, value) => {
@@ -67,6 +71,9 @@ export const getPreviewSize = (size?: PreviewSize, simplistic = false) => {
             return '2rem';
     }
 };
+
+export const setDateToUTCNoon = (date: dayjs.Dayjs): dayjs.Dayjs =>
+    date.utc().set('date', date.date()).set('hour', 12).set('minute', 0).set('second', 0).set('millisecond', 0);
 
 export const getTreeRecordKey = (record: RecordIdentityFragment): string => `${record.whoAmI.library.id}/${record.id}`;
 
