@@ -131,7 +131,7 @@ describe('DSDatePickerWrapper', () => {
             expect(screen.getByText(en_label)).toBeVisible();
         });
 
-        test('Should call onChange with value', async () => {
+        test('Should call onChange / handle submit with value at noon', async () => {
             const state = getInitialState({required: false, fallbackLang: false});
             render(
                 <Form>
@@ -149,13 +149,20 @@ describe('DSDatePickerWrapper', () => {
             );
 
             await user.click(screen.getByRole('textbox'));
-            const todaysDate = dayjs().format('YYYY-MM-DD');
-            await user.click(screen.getByTitle(todaysDate));
+            const todayDate = dayjs();
+            const formattedTodayDate = todayDate.format('YYYY-MM-DD');
+            await user.click(screen.getByTitle(formattedTodayDate));
 
-            const unixTodaysDate = dayjs(todaysDate).unix().toString();
+            const todayDateAtNoon = todayDate
+                .utc()
+                .set('date', todayDate.date())
+                .set('hour', 12)
+                .set('minute', 0)
+                .set('second', 0)
+                .set('millisecond', 0);
 
-            expect(mockOnChange).toHaveBeenCalledWith(dayjs(todaysDate), todaysDate);
-            expect(mockHandleSubmit).toHaveBeenCalledWith(unixTodaysDate, state.attribute.id);
+            expect(mockOnChange).toHaveBeenCalledWith(todayDateAtNoon, formattedTodayDate);
+            expect(mockHandleSubmit).toHaveBeenCalledWith(todayDateAtNoon.unix().toString(), state.attribute.id);
         });
 
         test('Should save to LEAV if field becomes empty', async () => {
@@ -209,13 +216,20 @@ describe('DSDatePickerWrapper', () => {
             );
 
             await user.click(screen.getByRole('textbox'));
-            const todaysDate = dayjs().format('YYYY-MM-DD');
-            await user.click(screen.getByTitle(todaysDate));
+            const todayDate = dayjs();
+            const todayDateFormatted = dayjs().format('YYYY-MM-DD');
+            await user.click(screen.getByTitle(todayDateFormatted));
 
-            const unixTodaysDate = dayjs(todaysDate).unix().toString();
+            const todayDateAtNoon = todayDate
+                .utc()
+                .set('date', todayDate.date())
+                .set('hour', 12)
+                .set('minute', 0)
+                .set('second', 0)
+                .set('millisecond', 0);
 
             expect(mockOnChange).toHaveBeenCalled();
-            expect(mockHandleSubmit).toHaveBeenCalledWith(unixTodaysDate, state.attribute.id);
+            expect(mockHandleSubmit).toHaveBeenCalledWith(todayDateAtNoon.unix().toString(), state.attribute.id);
         });
 
         test('Should not save to LEAV if field becomes empty', async () => {

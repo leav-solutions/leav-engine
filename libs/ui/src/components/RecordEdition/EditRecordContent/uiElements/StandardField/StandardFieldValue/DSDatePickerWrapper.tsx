@@ -17,6 +17,7 @@ import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
 import {useLang} from '_ui/hooks';
 import {localizedTranslation} from '@leav/utils';
+import {setDateToUTCNoon} from '_ui/_utils';
 interface IDSDatePickerWrapperProps extends IProvidedByAntFormItem<DatePickerProps> {
     state: IStandardFieldReducerState;
     attribute: RecordFormAttributeFragment;
@@ -62,6 +63,7 @@ export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> =
         } else if (state.isCalculatedValue) {
             onChange(dayjs.unix(Number(state.calculatedValue.raw_value)), state.calculatedValue.raw_value);
         }
+
         handleSubmit('', state.attribute.id);
     };
 
@@ -72,6 +74,10 @@ export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> =
         if ((state.isInheritedValue || state.isCalculatedValue) && datePickerDate === null) {
             _resetToInheritedOrCalculatedValue();
             return;
+        }
+
+        if (!!datePickerDate) {
+            datePickerDate = setDateToUTCNoon(datePickerDate);
         }
 
         onChange(datePickerDate, ...antOnChangeParams);
