@@ -45,6 +45,10 @@ export const DSInputEncryptedWrapper: FunctionComponent<IDSInputEncryptedWrapper
     handleBlur,
     shouldShowValueDetailsButton = false
 }) => {
+    if (!onChange) {
+        throw Error('DSInputEncryptedWrapper should be used inside a antd Form.Item');
+    }
+
     const {t} = useSharedTranslation();
     const {errors} = Form.Item.useStatus();
     const {onValueDetailsButtonClick} = useValueDetailsButton({

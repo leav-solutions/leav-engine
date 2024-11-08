@@ -42,6 +42,10 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
     handleBlur,
     shouldShowValueDetailsButton = false
 }) => {
+    if (!onChange) {
+        throw Error('DSRangePickerWrapper should be used inside a antd Form.Item');
+    }
+
     const {t} = useSharedTranslation();
     const {lang: availableLangs} = useLang();
     const {errors} = Form.Item.useStatus();

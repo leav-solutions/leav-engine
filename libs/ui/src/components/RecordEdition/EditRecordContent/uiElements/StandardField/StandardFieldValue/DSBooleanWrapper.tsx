@@ -35,6 +35,10 @@ const FontAwesomeIconStyled = styled(FontAwesomeIcon)`
 const _getBooleanValueAsStringForTranslation = (value: boolean): string => (value ? 'global.yes' : 'global.no');
 
 export const DSBooleanWrapper: FunctionComponent<IDSBooleanWrapperProps> = ({value, onChange, state, handleSubmit}) => {
+    if (!onChange) {
+        throw Error('DSBooleanWrapper should be used inside a antd Form.Item');
+    }
+
     const {t} = useSharedTranslation();
     const {errors} = Form.Item.useStatus();
     const {lang: availableLang} = useLang();
