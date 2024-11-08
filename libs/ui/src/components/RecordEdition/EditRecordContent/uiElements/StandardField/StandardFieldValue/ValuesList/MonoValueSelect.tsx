@@ -108,7 +108,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
         } else if (state.isCalculatedValue) {
             onChange(state.calculatedValue.raw_value, options);
         }
-        handleSubmit('', state.attribute.id);
+        handleSubmit('', attribute.id);
     };
 
     const _handleOnBlur = () => {
@@ -124,12 +124,12 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
             return;
         }
 
-        handleSubmit(selectedValue, state.attribute.id);
+        handleSubmit(selectedValue, attribute.id);
         onChange(selectedValue, options);
     };
 
     const _handleOnClear = () => {
-        handleSubmit('', state.attribute.id);
+        handleSubmit('', attribute.id);
         _handleOnBlur();
     };
 
