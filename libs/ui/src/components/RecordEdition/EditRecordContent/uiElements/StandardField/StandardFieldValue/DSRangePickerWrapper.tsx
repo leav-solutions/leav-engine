@@ -17,6 +17,7 @@ import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
 import {useLang} from '_ui/hooks';
 import {localizedTranslation} from '@leav/utils';
+import {setDateToUTCNoon} from '_ui/_utils';
 
 interface IDSRangePickerWrapperProps extends IProvidedByAntFormItem<RangePickerProps> {
     state: IStandardFieldReducerState;
@@ -87,6 +88,10 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
             return;
         }
 
+        if (rangePickerDates) {
+            rangePickerDates = [setDateToUTCNoon(rangePickerDates[0]), setDateToUTCNoon(rangePickerDates[1])];
+        }
+
         onChange(rangePickerDates, ...antOnChangeParams);
 
         // TODO : validate form with await form.validateFields(state.attribute.id)
@@ -97,6 +102,7 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
         const datesToSave = {from: null, to: null};
         if (rangePickerDates !== null) {
             const [dateFrom, dateTo] = rangePickerDates;
+
             datesToSave.from = String(dateFrom.unix());
             datesToSave.to = String(dateTo.unix());
         }
