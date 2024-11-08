@@ -9,7 +9,6 @@ import {
 } from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {Form, type GetRef} from 'antd';
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
 import styled from 'styled-components';
 import {IProvidedByAntFormItem, StandardValueTypes} from '../../../_types';
 import {DatePickerProps} from 'antd/lib/date-picker';
@@ -18,6 +17,7 @@ import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
 import {useLang} from '_ui/hooks';
 import {localizedTranslation} from '@leav/utils';
+import {setDateToUTCNoon} from '_ui/_utils';
 interface IDSDatePickerWrapperProps extends IProvidedByAntFormItem<DatePickerProps> {
     state: IStandardFieldReducerState;
     attribute: RecordFormAttributeFragment;
@@ -27,14 +27,9 @@ interface IDSDatePickerWrapperProps extends IProvidedByAntFormItem<DatePickerPro
     shouldShowValueDetailsButton?: boolean;
 }
 
-dayjs.extend(utc);
-
 const KitDatePickerStyled = styled(KitDatePicker)<{$shouldHighlightColor: boolean}>`
     color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
 `;
-
-const _setDateToUTCNoon = (date: dayjs.Dayjs): dayjs.Dayjs =>
-    date.utc().set('date', date.date()).set('hour', 12).set('minute', 0).set('second', 0).set('millisecond', 0);
 
 export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> = ({
     value,
@@ -82,7 +77,7 @@ export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> =
         }
 
         if (!!datePickerDate) {
-            datePickerDate = _setDateToUTCNoon(datePickerDate);
+            datePickerDate = setDateToUTCNoon(datePickerDate);
         }
 
         onChange(datePickerDate, ...antOnChangeParams);

@@ -9,7 +9,6 @@ import {
 } from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {Form} from 'antd';
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
 import styled from 'styled-components';
 import {IProvidedByAntFormItem, StandardValueTypes} from '../../../_types';
 import {RangePickerProps} from 'antd/lib/date-picker';
@@ -18,8 +17,7 @@ import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
 import {useLang} from '_ui/hooks';
 import {localizedTranslation} from '@leav/utils';
-
-dayjs.extend(utc);
+import {setDateToUTCNoon} from '_ui/_utils';
 
 interface IDSRangePickerWrapperProps extends IProvidedByAntFormItem<RangePickerProps> {
     state: IStandardFieldReducerState;
@@ -33,9 +31,6 @@ interface IDSRangePickerWrapperProps extends IProvidedByAntFormItem<RangePickerP
 const KitDatePickerRangePickerStyled = styled(KitDatePicker.RangePicker)<{$shouldHighlightColor: boolean}>`
     color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
 `;
-
-const _setDateToUTCNoon = (date: dayjs.Dayjs): dayjs.Dayjs =>
-    date.utc().set('date', date.date()).set('hour', 12).set('minute', 0).set('second', 0).set('millisecond', 0);
 
 export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps> = ({
     value,
@@ -94,7 +89,7 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
         }
 
         if (rangePickerDates) {
-            rangePickerDates = [_setDateToUTCNoon(rangePickerDates[0]), _setDateToUTCNoon(rangePickerDates[1])];
+            rangePickerDates = [setDateToUTCNoon(rangePickerDates[0]), setDateToUTCNoon(rangePickerDates[1])];
         }
 
         onChange(rangePickerDates, ...antOnChangeParams);
