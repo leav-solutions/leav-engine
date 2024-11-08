@@ -113,7 +113,7 @@ exports[`AttributeSimpleLinkRepo sortQueryPart Should return simple link sort 1`
     "value2": "linked",
     "value3": "ASC",
   },
-  "query": "SORT 
+  "query": "
                 FIRST(FOR l IN @value0
                     FILTER TO_STRING(r.@value1) == l._key
                 RETURN l.@value2)

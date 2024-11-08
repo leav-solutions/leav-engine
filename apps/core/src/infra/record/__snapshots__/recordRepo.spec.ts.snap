@@ -20,6 +20,35 @@ RETURN MERGE(r, {library: @value1})",
 }
 `;
 
+exports[`RecordRepo find Should aggregate sorts 1`] = `
+{
+  "ctx": {
+    "requestId": "123465",
+    "userId": "0",
+  },
+  "query": {
+    "_source": [Function],
+    "bindVars": {
+      "@value0": "test_lib",
+      "value1": {
+        "query": "sortQueryPart",
+      },
+      "value2": {
+        "query": "sortQueryPart",
+      },
+      "value3": "test_lib",
+    },
+    "query": "FOR r IN (@@value0)
+SORT 
+@value1
+@value2
+FILTER r.active == true
+RETURN MERGE(r, {library: @value3})",
+  },
+  "withTotalCount": undefined,
+}
+`;
+
 exports[`RecordRepo find Should find records 1`] = `
 {
   "ctx": {

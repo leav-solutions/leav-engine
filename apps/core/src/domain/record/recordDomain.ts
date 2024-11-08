@@ -1155,18 +1155,16 @@ export default function ({
                 };
             }
 
-            const records = await recordRepo.find({
+            return recordRepo.find({
                 libraryId: library,
                 filters: fullFilters,
-                sort: fullSort,
+                sort: [fullSort],
                 pagination,
                 withCount,
                 retrieveInactive,
                 fulltextSearch,
                 ctx
             });
-
-            return records;
         },
         getRecordIdentity: _getRecordIdentity,
         async getRecordFieldValue({library, record, attributeId, options, ctx}) {

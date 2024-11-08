@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, AqlQuery, GeneratedAqlQuery, literal, join} from 'arangojs/aql';
+import {aql, GeneratedAqlQuery, join, literal} from 'arangojs/aql';
 import {IDbDocument} from 'infra/db/_types';
 import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IUtils} from 'utils/utils';
@@ -264,7 +264,7 @@ export default function ({
                 res[0].edge
             );
         },
-        sortQueryPart({attributes, order}: {attributes: IAttribute[]; order: string}): AqlQuery {
+        sortQueryPart({attributes, order}) {
             const valuesLinksCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
             const treeCollec = dbService.db.collection(getEdgesCollectionName(attributes[0].linked_tree));
 
@@ -285,12 +285,9 @@ export default function ({
                 RETURN record.${linked.id}
             )`;
 
-            const query =
-                linked.format !== AttributeFormats.EXTENDED
-                    ? aql`SORT ${linkedValue} ${order}`
-                    : aql`SORT ${_getExtendedFilterPart(attributes, linkedValue)} ${order}`;
-
-            return query;
+            return linked.format !== AttributeFormats.EXTENDED
+                ? aql`${linkedValue} ${order}`
+                : aql`${_getExtendedFilterPart(attributes, linkedValue)} ${order}`;
         },
         filterValueQueryPart(attributes, filter, parentIdentifier = BASE_QUERY_IDENTIFIER) {
             const valuesLinksCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);

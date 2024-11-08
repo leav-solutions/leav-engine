@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, AqlQuery, GeneratedAqlQuery, join, literal} from 'arangojs/aql';
+import {aql, GeneratedAqlQuery, join, literal} from 'arangojs/aql';
 import {IDbDocument} from 'infra/db/_types';
 import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IRecord} from '_types/record';
@@ -129,7 +129,7 @@ export default function ({
                     modified_by: null
                 }));
         },
-        sortQueryPart({attributes, order}: {attributes: IAttribute[]; order: string}): AqlQuery {
+        sortQueryPart({attributes, order}) {
             const linkedLibCollec = dbService.db.collection(attributes[0].linked_library);
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}
@@ -143,12 +143,9 @@ export default function ({
                 RETURN l.${linked.id})
             `;
 
-            const query: AqlQuery =
-                linked.format !== AttributeFormats.EXTENDED
-                    ? aql`SORT ${linkedValue} ${order}`
-                    : aql`SORT ${_getExtendedFilterPart(attributes, linkedValue)} ${order}`;
-
-            return query;
+            return linked.format !== AttributeFormats.EXTENDED
+                ? aql`${linkedValue} ${order}`
+                : aql`${_getExtendedFilterPart(attributes, linkedValue)} ${order}`;
         },
         filterValueQueryPart(attributes, filter, parentIdentifier = BASE_QUERY_IDENTIFIER) {
             const isCountFilter = filterTypesHelper.isCountFilter(filter);

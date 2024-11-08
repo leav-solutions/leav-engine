@@ -58,7 +58,7 @@ export interface IRecordRepo {
     find(params: {
         libraryId: string;
         filters?: IRecordFilterOption[];
-        sort?: IRecordSort;
+        sort?: IRecordSort[];
         pagination?: IPaginationParams | ICursorPaginationParams;
         withCount?: boolean;
         retrieveInactive?: boolean;
@@ -230,12 +230,13 @@ export default function ({
             }
 
             // If we have a full text search query and no specific sort, sorting by relevance is already handled.
-            if (sort || !fulltextSearchQuery) {
-                const sortQueryPart = sort
-                    ? attributeTypesRepo.getTypeRepo(sort.attributes[0]).sortQueryPart(sort)
-                    : aql`SORT ${literal('TO_NUMBER(r._key) DESC')}`;
-
-                queryParts.push(sortQueryPart as GeneratedAqlQuery);
+            if (!fulltextSearchQuery && !sort) {
+                queryParts.push(aql`SORT ${literal('TO_NUMBER(r._key) DESC')}`);
+            } else if (sort?.length) {
+                queryParts.push(
+                    aql`SORT `,
+                    ...sort.map(s => attributeTypesRepo.getTypeRepo(s.attributes[0]).sortQueryPart(s))
+                );
             }
 
             if (!retrieveInactive && !isFilteringOnActive) {
@@ -284,13 +285,11 @@ export default function ({
                   }
                 : null;
 
-            const returnVal = {
+            return {
                 totalCount,
                 list: list.map(dbUtils.cleanup),
                 cursor
             };
-
-            return returnVal;
         },
         async createRecord({libraryId, recordData, ctx}): Promise<IRecord> {
             const collection = dbService.db.collection(libraryId);
