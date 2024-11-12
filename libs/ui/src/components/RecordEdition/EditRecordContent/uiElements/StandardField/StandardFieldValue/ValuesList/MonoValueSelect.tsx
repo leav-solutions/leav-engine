@@ -13,6 +13,21 @@ import moment from 'moment';
 import {stringifyDateRangeValue} from '_ui/_utils';
 import {IDateRangeValuesListConf, IMonoValueSelectProps, IStringValuesListConf} from './_types';
 
+interface IOption {
+    label: string;
+    value: string;
+}
+const addOption = (options: IOption[], optionToAdd: IOption) => {
+    const newOptions = options;
+    if (optionToAdd.value && !options.find(option => option.value === optionToAdd.value)) {
+        newOptions.unshift({
+            value: optionToAdd.value,
+            label: optionToAdd.label
+        });
+    }
+    return newOptions;
+};
+
 export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     value,
     onChange,
@@ -43,6 +58,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     const [searchedString, setSearchedString] = useState('');
     const {lang: availableLang} = useLang();
     const selectRef = useRef<GetRef<typeof KitSelect>>(null);
+    const allowFreeEntry = attribute.values_list.allowFreeEntry;
 
     useEffect(() => {
         if (fieldValue.isEditing && selectRef.current) {
@@ -76,7 +92,14 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
         return values;
     };
 
-    const options = _getFilteredValuesList();
+    let options = _getFilteredValuesList();
+    if (allowFreeEntry) {
+        options = addOption(options, {value, label: value});
+        options = addOption(options, {
+            value: searchedString,
+            label: t('record_edition.select_option') + searchedString
+        });
+    }
 
     const searchResultsCount = useMemo(
         () => options.filter(option => option.label.toLowerCase().includes(searchedString.toLowerCase())).length,
@@ -133,6 +156,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     return (
         <KitSelect
             ref={selectRef}
+            data-testid={attribute.id}
             open={isSelectOpen}
             value={value}
             required={required}
