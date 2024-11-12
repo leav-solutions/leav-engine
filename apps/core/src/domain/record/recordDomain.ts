@@ -1158,7 +1158,7 @@ export default function ({
             return recordRepo.find({
                 libraryId: library,
                 filters: fullFilters,
-                sort: [fullSort],
+                sort: fullSort ? [fullSort] : [],
                 pagination,
                 withCount,
                 retrieveInactive,
