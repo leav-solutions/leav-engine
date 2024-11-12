@@ -167,6 +167,7 @@ export type AttributeInput = {
     multiple_values?: InputMaybe<Scalars['Boolean']>;
     permissions_conf?: InputMaybe<TreepermissionsConfInput>;
     readonly?: InputMaybe<Scalars['Boolean']>;
+    required?: InputMaybe<Scalars['Boolean']>;
     reverse_link?: InputMaybe<Scalars['String']>;
     type?: InputMaybe<AttributeType>;
     unique?: InputMaybe<Scalars['Boolean']>;
@@ -297,13 +298,14 @@ export enum FormsSortableFields {
     system = 'system'
 }
 
-export type GlobalSettingsIconInput = {
+export type GlobalSettingsFileInput = {
     library: Scalars['String'];
     recordId: Scalars['String'];
 };
 
 export type GlobalSettingsInput = {
-    icon?: InputMaybe<GlobalSettingsIconInput>;
+    favicon?: InputMaybe<GlobalSettingsFileInput>;
+    icon?: InputMaybe<GlobalSettingsFileInput>;
     name?: InputMaybe<Scalars['String']>;
 };
 
@@ -804,13 +806,13 @@ export type ValueBatchInput = {
     attribute?: InputMaybe<Scalars['ID']>;
     id_value?: InputMaybe<Scalars['ID']>;
     metadata?: InputMaybe<Array<InputMaybe<ValueMetadataInput>>>;
-    value?: InputMaybe<Scalars['String']>;
+    payload?: InputMaybe<Scalars['String']>;
 };
 
 export type ValueInput = {
     id_value?: InputMaybe<Scalars['ID']>;
     metadata?: InputMaybe<Array<InputMaybe<ValueMetadataInput>>>;
-    value?: InputMaybe<Scalars['String']>;
+    payload?: InputMaybe<Scalars['String']>;
     version?: InputMaybe<Array<InputMaybe<ValueVersionInput>>>;
 };
 
@@ -831,6 +833,7 @@ export enum ValueVersionMode {
 
 export type ValuesListConfInput = {
     allowFreeEntry?: InputMaybe<Scalars['Boolean']>;
+    allowListUpdate?: InputMaybe<Scalars['Boolean']>;
     enable: Scalars['Boolean'];
     values?: InputMaybe<Array<Scalars['String']>>;
 };
@@ -1311,7 +1314,7 @@ export type TreeNodeChildrenQuery = {
                     preview?: IPreviewScalar | null;
                     library: {id: string; behavior: LibraryBehavior; label?: any | null};
                 };
-                active?: Array<{value?: any | null}> | null;
+                active: Array<{value?: any | null}>;
             };
             permissions: {access_tree: boolean; detach: boolean; edit_children: boolean};
         }>;

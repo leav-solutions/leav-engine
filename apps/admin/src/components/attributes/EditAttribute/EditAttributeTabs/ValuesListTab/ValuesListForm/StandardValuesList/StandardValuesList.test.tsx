@@ -22,6 +22,7 @@ describe('StandardValuesList', () => {
         values_list: {
             enable: true,
             allowFreeEntry: false,
+            allowListUpdate: false,
             values: ['valueA', 'valueB']
         },
         unique: null

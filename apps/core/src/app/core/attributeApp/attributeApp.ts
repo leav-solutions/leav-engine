@@ -265,29 +265,35 @@ export default function (deps: IDeps): ICoreAttributeApp {
                     type StandardStringValuesListConf {
                         enable: Boolean!,
                         allowFreeEntry: Boolean,
+                        allowListUpdate: Boolean,
                         values: [String!]
                     }
+                    
                     type StandardDateRangeValuesListConf {
                         enable: Boolean!,
                         allowFreeEntry: Boolean,
+                        allowListUpdate: Boolean,
                         values: [DateRangeValue!]
                     }
 
                     type LinkValuesListConf {
                         enable: Boolean!,
                         allowFreeEntry: Boolean,
+                        allowListUpdate: Boolean,
                         values: [Record!]
                     }
 
                     type TreeValuesListConf {
                         enable: Boolean!,
                         allowFreeEntry: Boolean,
+                        allowListUpdate: Boolean,
                         values: [TreeNode!]
                     }
 
                     input ValuesListConfInput {
                         enable: Boolean!,
                         allowFreeEntry: Boolean,
+                        allowListUpdate: Boolean,
                         values: [String!]
                     }
 

@@ -68,6 +68,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_libraries {
 export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardStringValuesListConf {
     enable: boolean;
     allowFreeEntry: boolean | null;
+    allowListUpdate: boolean | null;
     values: string[] | null;
 }
 
@@ -79,6 +80,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_Stan
 export interface SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardDateRangeValuesListConf {
     enable: boolean;
     allowFreeEntry: boolean | null;
+    allowListUpdate: boolean | null;
     dateRangeValues:
         | SAVE_ATTRIBUTE_saveAttribute_StandardAttribute_values_list_StandardDateRangeValuesListConf_dateRangeValues[]
         | null;
@@ -182,6 +184,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_values_list_linkValu
 export interface SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_values_list {
     enable: boolean;
     allowFreeEntry: boolean | null;
+    allowListUpdate: boolean | null;
     linkValues: SAVE_ATTRIBUTE_saveAttribute_LinkAttribute_values_list_linkValues[] | null;
 }
 
@@ -307,6 +310,7 @@ export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValu
 export interface SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list {
     enable: boolean;
     allowFreeEntry: boolean | null;
+    allowListUpdate: boolean | null;
     treeValues: SAVE_ATTRIBUTE_saveAttribute_TreeAttribute_values_list_treeValues[] | null;
 }
 

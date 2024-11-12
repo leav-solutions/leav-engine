@@ -76,12 +76,14 @@ export const attributeValuesListDetailsFragment = gql`
                 ... on StandardStringValuesListConf {
                     enable
                     allowFreeEntry
+                    allowListUpdate
                     values
                 }
 
                 ... on StandardDateRangeValuesListConf {
                     enable
                     allowFreeEntry
+                    allowListUpdate
                     dateRangeValues: values {
                         from
                         to
@@ -93,6 +95,7 @@ export const attributeValuesListDetailsFragment = gql`
             values_list {
                 enable
                 allowFreeEntry
+                allowListUpdate
                 linkValues: values {
                     ...RecordIdentity
                 }
@@ -102,6 +105,7 @@ export const attributeValuesListDetailsFragment = gql`
             values_list {
                 enable
                 allowFreeEntry
+                allowListUpdate
                 treeValues: values {
                     id
                     record {

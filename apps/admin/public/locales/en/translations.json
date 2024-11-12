@@ -162,6 +162,7 @@
         },
         "values_list_enable": "Enable",
         "allow_free_entry": "Allow free entry",
+        "allow_list_update": "Allow list update",
         "values": "Values",
         "values_list": "Values list",
         "add_value": "Add value",
