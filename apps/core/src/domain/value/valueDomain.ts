@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {EventAction} from '@leav/utils';
+import {EventAction, IDateRangeValue} from '@leav/utils';
 import {IEventsManagerDomain} from 'domain/eventsManager/eventsManagerDomain';
 import {UpdateRecordLastModifFunc} from 'domain/helpers/updateRecordLastModif';
 import {SendRecordUpdateEventHelper} from 'domain/record/helpers/sendRecordUpdateEvent';
@@ -19,7 +19,7 @@ import {IRecord} from '_types/record';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents} from '../../_types/actionsList';
-import {AttributeTypes, IAttribute, ValueVersionMode} from '../../_types/attribute';
+import {AttributeFormats, AttributeTypes, IAttribute, ValueVersionMode} from '../../_types/attribute';
 import {Errors, ErrorTypes} from '../../_types/errors';
 import {RecordAttributePermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {IQueryInfos} from '../../_types/queryInfos';
@@ -117,6 +117,16 @@ export interface IValueDomain {
     }): Promise<IValue>;
 
     runActionsList(params: IRunActionListParams): Promise<IValue[]>;
+
+    runActionsListAndFormatOnValue({
+        library,
+        value,
+        ctx
+    }: {
+        library: string;
+        value: IValue;
+        ctx: IQueryInfos;
+    }): Promise<IValue[]>;
 }
 
 export interface IValueDomainDeps {
@@ -216,10 +226,7 @@ const valueDomain = function ({
     }): Promise<IValue> => {
         let processedValue = {...value}; // Don't mutate given value
 
-        const isLinkAttribute =
-            attribute.type === AttributeTypes.SIMPLE_LINK || attribute.type === AttributeTypes.ADVANCED_LINK;
-
-        if (isLinkAttribute && attribute.linked_library) {
+        if (utils.isLinkAttribute(attribute)) {
             const linkValue = processedValue.payload
                 ? {...processedValue.payload, library: processedValue.payload.library ?? attribute.linked_library}
                 : null;
@@ -452,10 +459,40 @@ const valueDomain = function ({
             );
         }
 
-        // Apply actions list and format value before returning it
+        const processedValues = await _runActionsListAndFormatValue(library, attribute, savedValue, ctx, record);
+
+        if (!areValuesIdentical) {
+            await eventsManager.sendDatabaseEvent(
+                {
+                    action: EventAction.VALUE_SAVE,
+                    topic: {
+                        library,
+                        record: {
+                            id: record.id,
+                            libraryId: library
+                        },
+                        attribute: attribute.id
+                    },
+                    before: valueBefore,
+                    after: savedValue
+                },
+                ctx
+            );
+        }
+
+        return {values: processedValues, areValuesIdentical};
+    };
+
+    const _runActionsListAndFormatValue = async (
+        library: string,
+        attribute: IAttribute,
+        value: IValue,
+        ctx: IQueryInfos,
+        record: IRecord = null
+    ) => {
         let processedValues = await _runActionsList({
             listName: ActionsListEvents.GET_VALUE,
-            values: [savedValue],
+            values: [value],
             attribute,
             record,
             library,
@@ -500,26 +537,7 @@ const valueDomain = function ({
             })
         );
 
-        if (!areValuesIdentical) {
-            await eventsManager.sendDatabaseEvent(
-                {
-                    action: EventAction.VALUE_SAVE,
-                    topic: {
-                        library,
-                        record: {
-                            id: record.id,
-                            libraryId: library
-                        },
-                        attribute: attribute.id
-                    },
-                    before: valueBefore,
-                    after: savedValue
-                },
-                ctx
-            );
-        }
-
-        return {values: processedValues, areValuesIdentical};
+        return processedValues;
     };
 
     return {
@@ -860,6 +878,22 @@ const valueDomain = function ({
             await validate.validateLibrary(library, ctx);
             await validate.validateRecord(library, recordId, ctx);
             return _executeDeleteValue({library, recordId, attribute, value, ctx});
+        },
+        async runActionsListAndFormatOnValue({library, value, ctx}) {
+            const attributeProps = await attributeDomain.getAttributeProperties({id: value.attribute, ctx});
+
+            if (attributeProps.format === AttributeFormats.DATE_RANGE) {
+                value.payload = JSON.parse(value.payload) as IDateRangeValue;
+            }
+
+            //TODO: When we will adapt Tree attribute to design-system, we will have to adapt this part (like we did for link)
+            if (utils.isLinkAttribute(attributeProps)) {
+                value.payload = {
+                    id: value.payload
+                };
+            }
+
+            return _runActionsListAndFormatValue(library, attributeProps, value, ctx);
         },
         formatValue: _formatValue,
         runActionsList: _runActionsList

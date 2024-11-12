@@ -1,0 +1,7 @@
+
+query RUN_ACTIONS_LIST_AND_FORMAT_ON_VALUE($library: ID!, $value: ValueBatchInput, $version: [ValueVersionInput]) {
+    runActionsListAndFormatOnValue(library: $library, value: $value, version: $version) {
+        ...ValueDetails
+    }
+}
+

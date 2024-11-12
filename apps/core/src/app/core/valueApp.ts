@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IKeyValue, objectToNameValueArray} from '@leav/utils';
+import {IKeyValue, objectToNameValueArray, Override} from '@leav/utils';
 import {ConvertVersionFromGqlFormatFunc} from 'app/helpers/convertVersionFromGqlFormat';
 import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 import {IRecordDomain} from 'domain/record/recordDomain';
@@ -10,7 +10,7 @@ import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
 import {IQueryInfos} from '_types/queryInfos';
 import {IRecord} from '_types/record';
-import {IStandardValue, ITreeValue, IValue, IValueVersion} from '_types/value';
+import {IStandardValue, ITreeValue, IValue, IValueFromGql, IValueVersion, IValueVersionFromGql} from '_types/value';
 import {AttributeTypes, IAttribute} from '../../_types/attribute';
 import {AttributeCondition} from '../../_types/record';
 
@@ -232,6 +232,10 @@ export default function ({
 
                         deleteValue(library: ID!, recordId: ID!, attribute: ID!, value: ValueInput): [GenericValue!]!
                     }
+
+                    extend type Query {
+                        runActionsListAndFormatOnValue(library: ID, value: ValueBatchInput, version: [ValueVersionInput]): [Value!]!
+                    }
                 `,
                 resolvers: {
                     Mutation: {
@@ -296,6 +300,29 @@ export default function ({
                                 recordId,
                                 attribute,
                                 value: valToDelete,
+                                ctx
+                            });
+                        }
+                    },
+                    Query: {
+                        async runActionsListAndFormatOnValue(
+                            _: never,
+                            {
+                                library,
+                                value,
+                                version
+                            }: {library: string; value: IValueFromGql; version: IValueVersionFromGql},
+                            ctx: IQueryInfos
+                        ): Promise<IValue[]> {
+                            const convertedValue = {
+                                ...value,
+                                version: convertVersionFromGqlFormat(version),
+                                metadata: utils.nameValArrayToObj(value.metadata)
+                            };
+
+                            return valueDomain.runActionsListAndFormatOnValue({
+                                library,
+                                value: convertedValue,
                                 ctx
                             });
                         }
