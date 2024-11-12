@@ -310,7 +310,7 @@ const _computeInheritedFlags = (fieldValues: RecordFormElementsValueStandardValu
 
     const isInheritedValue = true;
 
-    if (overrideValue.value === null) {
+    if (!overrideValue || overrideValue.value === null) {
         return {
             inheritedValue,
             isInheritedValue,
