@@ -601,7 +601,13 @@
         "create-one": "Créer",
         "actions": "Actions",
         "more-actions": "Voir plus",
-        "deactivateItem": "Désactiver l’élément",
-        "editItem": "Éditer l’élément"
+        "deactivate-item": "Désactiver l’élément",
+        "edit-item": "Éditer l’élément",
+        "settings": "Paramètres",
+        "back": "Retour",
+        "view-configuration": "Configuration de la vue",
+        "display-mode": "Mode d’affichage",
+        "filters": "Filtrer",
+        "sort":  "Trier"
     }
 }
