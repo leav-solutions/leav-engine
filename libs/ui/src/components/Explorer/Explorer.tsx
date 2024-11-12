@@ -2,11 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent} from 'react';
-import {KitTypography} from 'aristid-ds';
+import {KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
-import {IItemAction} from './types';
+import {IItemAction} from './_types';
 import {DataView} from './DataView';
-import {useExplorerData} from './useExplorerData';
+import {useOpenSettings} from './edit-settings/useOpenSettings';
+import {useExplorerData} from './_queries/useExplorerData';
 import {useDeactivateAction} from './useDeactivateAction';
 import {useEditAction} from './useEditAction';
 import {useCreateMainAction} from './useCreateMainAction';
@@ -57,6 +58,8 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         refetch
     });
 
+    const settingsButton = useOpenSettings();
+
     return (
         <>
             {loading ? (
@@ -67,7 +70,10 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                         <KitTypography.Title level="h1">
                             {library /* TODO: get correct name from backend */}
                         </KitTypography.Title>
-                        {createButton}
+                        <KitSpace size="xs">
+                            {settingsButton}
+                            {createButton}
+                        </KitSpace>
                     </ExplorerHeaderDivStyled>
                     <DataView
                         dataGroupedFilteredSorted={data ?? []}
