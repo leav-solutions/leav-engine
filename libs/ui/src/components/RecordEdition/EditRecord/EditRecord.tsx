@@ -45,6 +45,7 @@ import {EditRecordReducerContext} from '../editRecordReducer/editRecordReducerCo
 import EditRecordSidebar from '../EditRecordSidebar';
 import CreationErrorContext, {ICreationErrorByField} from './creationErrorContext';
 import {FormInstance} from 'antd/lib/form/Form';
+import {useRunActionsListAndFormatOnValue} from '../EditRecordContent/hooks/useRunActionsListAndFormatOnValue';
 
 interface IEditRecordProps {
     antdForm: FormInstance;
@@ -135,8 +136,6 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     // We use a ref to store the latest state and access it in the callback
     const pendingValuesRef = useRef(pendingValues);
 
-    const hasPendingValues = !!Object.keys(pendingValues).length;
-
     // Update record in reducer when it changes. Might happen on record identity change (after value save)
     useEffect(() => {
         if (record && !isEqual(record, state.record)) {
@@ -164,6 +163,8 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     useEffect(() => {
         pendingValuesRef.current = pendingValues;
     }, [pendingValues]);
+
+    const {runActionsListAndFormatOnValue} = useRunActionsListAndFormatOnValue();
 
     const _handleValueSubmit: SubmitValueFunc = async (values, version) => {
         if (!isCreationMode) {
@@ -199,6 +200,29 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         const newPendingValues = {...pendingValues};
         const storedValues: ValueDetailsFragment[] = [];
         for (const value of values) {
+            const valueToProcess = {...value, attribute: value.attribute.id, metadata: value.metadata};
+
+            if (valueToProcess.value) {
+                switch (value.attribute.type) {
+                    case AttributeType.advanced_link:
+                    case AttributeType.simple_link:
+                        valueToProcess.value = (value as ISubmittedValueLink).value.id;
+                        break;
+                    case AttributeType.tree:
+                        valueToProcess.value = (value as ISubmittedValueTree).value.id;
+                        break;
+                    default:
+                        valueToProcess.value = (value as ISubmittedValueStandard).value;
+                        break;
+                }
+            }
+
+            const valueAfterActionsListAndFormat = await runActionsListAndFormatOnValue(
+                library,
+                valueToProcess as IValueToSubmit,
+                version
+            );
+
             const attributeId = value.attribute.id;
             if (!newPendingValues[attributeId]) {
                 newPendingValues[attributeId] = {};
@@ -270,8 +294,9 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                     };
                     break;
                 default:
-                    (valueToStore as ValueDetailsValueFragment).value = value.value;
-                    (valueToStore as ValueDetailsValueFragment).raw_value = value.value;
+                    (valueToStore as ValueDetailsValueFragment).payload =
+                        valueAfterActionsListAndFormat.payload ?? value.value;
+                    (valueToStore as ValueDetailsValueFragment).raw_payload = value.value;
                     break;
             }
 

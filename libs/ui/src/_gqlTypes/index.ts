@@ -1293,6 +1293,15 @@ export type DeleteValueMutationVariables = Exact<{
 
 export type DeleteValueMutation = { deleteValue: Array<{ id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, linkValue?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null } | { id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, treeValue?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null } | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null } | { payload?: any | null, raw_payload?: any | null, value?: any | null, raw_value?: any | null, id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null }> };
 
+export type RunActionsListAndFormatOnValueQueryVariables = Exact<{
+  library: Scalars['ID'];
+  value?: InputMaybe<ValueBatchInput>;
+  version?: InputMaybe<Array<InputMaybe<ValueVersionInput>> | InputMaybe<ValueVersionInput>>;
+}>;
+
+
+export type RunActionsListAndFormatOnValueQuery = { runActionsListAndFormatOnValue: Array<{ id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, value?: any | null, raw_value?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null }> };
+
 export type SaveValueBatchMutationVariables = Exact<{
   library: Scalars['ID'];
   recordId: Scalars['ID'];
@@ -3710,6 +3719,47 @@ export function useDeleteValueMutation(baseOptions?: Apollo.MutationHookOptions<
 export type DeleteValueMutationHookResult = ReturnType<typeof useDeleteValueMutation>;
 export type DeleteValueMutationResult = Apollo.MutationResult<DeleteValueMutation>;
 export type DeleteValueMutationOptions = Apollo.BaseMutationOptions<DeleteValueMutation, DeleteValueMutationVariables>;
+export const RunActionsListAndFormatOnValueDocument = gql`
+    query RUN_ACTIONS_LIST_AND_FORMAT_ON_VALUE($library: ID!, $value: ValueBatchInput, $version: [ValueVersionInput]) {
+  runActionsListAndFormatOnValue(
+    library: $library
+    value: $value
+    version: $version
+  ) {
+    ...ValueDetails
+  }
+}
+    ${ValueDetailsFragmentDoc}`;
+
+/**
+ * __useRunActionsListAndFormatOnValueQuery__
+ *
+ * To run a query within a React component, call `useRunActionsListAndFormatOnValueQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRunActionsListAndFormatOnValueQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRunActionsListAndFormatOnValueQuery({
+ *   variables: {
+ *      library: // value for 'library'
+ *      value: // value for 'value'
+ *      version: // value for 'version'
+ *   },
+ * });
+ */
+export function useRunActionsListAndFormatOnValueQuery(baseOptions: Apollo.QueryHookOptions<RunActionsListAndFormatOnValueQuery, RunActionsListAndFormatOnValueQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<RunActionsListAndFormatOnValueQuery, RunActionsListAndFormatOnValueQueryVariables>(RunActionsListAndFormatOnValueDocument, options);
+      }
+export function useRunActionsListAndFormatOnValueLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RunActionsListAndFormatOnValueQuery, RunActionsListAndFormatOnValueQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<RunActionsListAndFormatOnValueQuery, RunActionsListAndFormatOnValueQueryVariables>(RunActionsListAndFormatOnValueDocument, options);
+        }
+export type RunActionsListAndFormatOnValueQueryHookResult = ReturnType<typeof useRunActionsListAndFormatOnValueQuery>;
+export type RunActionsListAndFormatOnValueLazyQueryHookResult = ReturnType<typeof useRunActionsListAndFormatOnValueLazyQuery>;
+export type RunActionsListAndFormatOnValueQueryResult = Apollo.QueryResult<RunActionsListAndFormatOnValueQuery, RunActionsListAndFormatOnValueQueryVariables>;
 export const SaveValueBatchDocument = gql`
     mutation SAVE_VALUE_BATCH($library: ID!, $recordId: ID!, $version: [ValueVersionInput!], $values: [ValueBatchInput!]!, $deleteEmpty: Boolean) {
   saveValueBatch(
