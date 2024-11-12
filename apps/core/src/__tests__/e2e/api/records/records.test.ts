@@ -272,6 +272,7 @@ describe('Records', () => {
         const sfTestLibTreeId = 'records_sort_filter_test_lib_tree';
         const testTreeId = 'records_sf_test_tree';
         const testSimpleAttrId = 'records_sort_filter_test_attr_simple';
+        const testSimpleAttrId2 = 'records_sort_filter_test_attr_simple2';
         const testSimpleExtAttrId = 'records_sort_filter_test_attr_simple_extended';
         const testSimpleLinkAttrId = 'records_sort_filter_test_attr_simple_link';
         const testAdvAttrId = 'records_sort_filter_test_attr_adv';
@@ -313,6 +314,12 @@ describe('Records', () => {
                 id: testSimpleAttrId,
                 type: AttributeTypes.SIMPLE,
                 label: 'test',
+                format: AttributeFormats.TEXT
+            });
+            await gqlSaveAttribute({
+                id: testSimpleAttrId2,
+                type: AttributeTypes.SIMPLE,
+                label: 'test 2',
                 format: AttributeFormats.TEXT
             });
             await gqlSaveAttribute({
@@ -375,6 +382,7 @@ describe('Records', () => {
             // Save attributes on libs
             await gqlSaveLibrary(sfTestLibId, 'Test', [
                 testSimpleAttrId,
+                testSimpleAttrId2,
                 testSimpleExtAttrId,
                 testAdvAttrId,
                 testSimpleLinkAttrId,
@@ -484,6 +492,21 @@ describe('Records', () => {
                         recordId: "${sfRecord3}",
                         attribute: "${testSimpleAttrId}",
                         value: {payload: "B"}) { id_value }
+                    v4: saveValue(
+                        library: "${sfTestLibId}",
+                        recordId: "${sfRecord1}",
+                        attribute: "${testSimpleAttrId2}",
+                        value: {payload: "1"}) { id_value }
+                    v5: saveValue(
+                        library: "${sfTestLibId}",
+                        recordId: "${sfRecord2}",
+                        attribute: "${testSimpleAttrId2}",
+                        value: {payload: "1"}) { id_value }
+                    v6: saveValue(
+                        library: "${sfTestLibId}",
+                        recordId: "${sfRecord3}",
+                        attribute: "${testSimpleAttrId2}",
+                        value: {payload: "2"}) { id_value }
                   }`);
             });
 
@@ -516,6 +539,78 @@ describe('Records', () => {
                 expect(res.data.data.records.list[0].id).toBe(sfRecord2);
                 expect(res.data.data.records.list[1].id).toBe(sfRecord3);
                 expect(res.data.data.records.list[2].id).toBe(sfRecord1);
+            });
+
+            describe('Multiple sorts', () => {
+                // +--------------+---------------------+--------------------+
+                // |              | testSimpleAttribute | testSimpleAttrId2  |
+                // +--------------+---------------------+--------------------+
+                // | sfRecord1    | C                   | 1                  |
+                // | sfRecord2    | A                   | 1                  |
+                // | sfRecord3    | B                   | 2                  |
+                // +--------------+---------------------+--------------------+
+
+                const _makeCall = async (
+                    testSimpleAttrId2Order: 'asc' | 'desc',
+                    testSimpleAttrIdOrder: 'asc' | 'desc'
+                ) =>
+                    makeGraphQlCall(`{
+                    records(
+                        library: "${sfTestLibId}",
+                        multipleSort: [
+                            {field: "${testSimpleAttrId2}", order: ${testSimpleAttrId2Order}},
+                            {field: "${testSimpleAttrId}", order: ${testSimpleAttrIdOrder}}
+                        ]
+                    ) {
+                        list {
+                            id
+                        }
+                    }
+                }`);
+
+                test('Sort on multiple attributes asc / asc', async () => {
+                    const res = await _makeCall('asc', 'asc');
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.data.data.records.list.map((record: {id: string}) => record.id)).toEqual([
+                        sfRecord2,
+                        sfRecord1,
+                        sfRecord3
+                    ]);
+                });
+
+                test('Sort on multiple attributes desc / asc', async () => {
+                    const res = await _makeCall('desc', 'asc');
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.data.data.records.list.map((record: {id: string}) => record.id)).toEqual([
+                        sfRecord3,
+                        sfRecord2,
+                        sfRecord1
+                    ]);
+                });
+
+                test('Sort on multiple attributes asc / desc', async () => {
+                    const res = await _makeCall('asc', 'desc');
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.data.data.records.list.map((record: {id: string}) => record.id)).toEqual([
+                        sfRecord1,
+                        sfRecord2,
+                        sfRecord3
+                    ]);
+                });
+
+                test('Sort on multiple attributes desc / desc', async () => {
+                    const res = await _makeCall('desc', 'desc');
+
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.data.data.records.list.map((record: {id: string}) => record.id)).toEqual([
+                        sfRecord3,
+                        sfRecord1,
+                        sfRecord2
+                    ]);
+                });
             });
         });
 

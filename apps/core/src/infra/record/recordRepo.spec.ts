@@ -543,7 +543,7 @@ describe('RecordRepo', () => {
             });
         });
 
-        test.only('Should aggregate sorts', async () => {
+        test('Should aggregate sorts', async () => {
             const mockDbServ = {
                 db: new Database(),
                 execute: global.__mockPromise([])

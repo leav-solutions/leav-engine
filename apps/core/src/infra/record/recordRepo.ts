@@ -241,10 +241,9 @@ export default function ({
             if (!fulltextSearchQuery && !sort?.length) {
                 queryParts.push(aql`SORT ${literal('TO_NUMBER(r._key) DESC')}`);
             } else if (sort?.length) {
-                queryParts.push(
-                    aql`SORT `,
-                    ...sort.map(s => attributeTypesRepo.getTypeRepo(s.attributes[0]).sortQueryPart(s))
-                );
+                const sortParts = sort.map(s => attributeTypesRepo.getTypeRepo(s.attributes[0]).sortQueryPart(s));
+
+                queryParts.push(aql`SORT `, join(sortParts, ', '));
             }
 
             if (!retrieveInactive && !isFilteringOnActive) {
@@ -252,10 +251,6 @@ export default function ({
             }
 
             if (pagination) {
-                if (!_isOffsetPagination(pagination) && !_isCursorPagination(pagination)) {
-                    (pagination as IPaginationParams).offset = 0;
-                }
-
                 if (_isOffsetPagination(pagination)) {
                     queryParts.push(aql`LIMIT ${pagination.offset}, ${pagination.limit}`);
                 } else if (_isCursorPagination(pagination)) {
@@ -269,6 +264,8 @@ export default function ({
                     const operator = direction === CursorDirection.NEXT ? '<' : '>';
                     queryParts.push(aql`FILTER r._key ${literal(operator)} ${from}`);
                     queryParts.push(aql`LIMIT ${pagination.limit}`);
+                } else {
+                    (pagination as IPaginationParams).offset = 0;
                 }
             }
 
