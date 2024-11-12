@@ -6,6 +6,17 @@ import {IDbEdge} from 'infra/db/_types';
 import {IRecord} from './record';
 import {ITreeNode, TreePaths} from './tree';
 
+export type IValueFromGql = Override<
+    Omit<IValue, 'version'>,
+    {
+        value: IValue['payload'];
+        metadata: Array<{
+            name: string;
+            value: string;
+        }>;
+    }
+>;
+
 export interface IValueVersion {
     [treeName: string]: string;
 }
