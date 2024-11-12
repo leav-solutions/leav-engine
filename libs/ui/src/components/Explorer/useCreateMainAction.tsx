@@ -6,7 +6,7 @@ import {KitButton} from 'aristid-ds';
 import {FaPlus} from 'react-icons/fa';
 import {EditRecordModal} from '_ui/components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ActionHook} from './types';
+import {ActionHook} from './_types';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -35,7 +35,7 @@ export const useCreateMainAction = ({
         createButton: isEnabled ? (
             <KitButton
                 type="primary"
-                icon={<FaPlus /> /* TODO: move to font-awesome icons*/}
+                icon={<FaPlus /> /* TODO: move to font-awesome 6 icons */}
                 onClick={() => {
                     setRecordCreationVisible(true);
                 }}

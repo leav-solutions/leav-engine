@@ -6,7 +6,7 @@ import {FaPen} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {EditRecordModal} from '_ui/components';
 import {RecordFilterCondition, useExplorerLazyQuery} from '_ui/_gqlTypes';
-import {ActionHook, IItemAction, IItemData} from './types';
+import {ActionHook, IItemAction, IItemData} from './_types';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -26,7 +26,7 @@ export const useEditAction = ({isEnabled}: ActionHook) => {
     const [editingItem, setEditingItem] = useState<null | IItemData>(null);
 
     const _editAction: IItemAction = {
-        label: t('explorer.editItem'),
+        label: t('explorer.edit-item'),
         icon: <FaPen />,
         callback: item => {
             setEditingItem(item);

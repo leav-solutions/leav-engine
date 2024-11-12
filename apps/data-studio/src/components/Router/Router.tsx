@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {APPS_ENDPOINT, APP_ENDPOINT, themeVars} from '@leav/ui';
+import {APPS_ENDPOINT, APP_ENDPOINT, Explorer, themeVars} from '@leav/ui';
 import {Layout} from 'antd';
 import Sidebar from 'components/Sidebar';
 import TopBar from 'components/TopBar';
@@ -45,11 +45,15 @@ const Router: FunctionComponent = () => {
                         />
                     </Header>
                     <Layout style={{overflow: 'hidden', position: 'relative'}}>
-                        <Content style={{background: themeVars.defaultBg, overflow: 'hidden'}}>
-                            <UserPanel userPanelVisible={userPanelVisible} hideUserPanel={hideUserPanel} />
-                            <NotifsPanel setNbNotifs={_setNbNotifs} />
-                            <Routes />
-                        </Content>
+                        <Explorer.EditSettingsContextProvider>
+                            <Content style={{background: themeVars.defaultBg, overflow: 'hidden'}}>
+                                <UserPanel userPanelVisible={userPanelVisible} hideUserPanel={hideUserPanel} />
+                                <NotifsPanel setNbNotifs={_setNbNotifs} />
+                                <Routes />
+                            </Content>
+                            {/* TODO: handle conflict with app side panel */}
+                            <Explorer.SettingsSidePanel />
+                        </Explorer.EditSettingsContextProvider>
                     </Layout>
                 </Layout>
             </Layout>
