@@ -1,8 +1,8 @@
-// Copyright LEAV Solutions 2017
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent, useEffect, useMemo, useRef, useState} from 'react';
-import {AntForm, KitSelect, KitTypography} from 'aristid-ds';
+import {KitSelect, KitTypography} from 'aristid-ds';
 import useSharedTranslation from '_ui/hooks/useSharedTranslation/useSharedTranslation';
 import {AttributeFormat} from '_ui/_gqlTypes';
 import {Form, GetRef} from 'antd';
@@ -12,6 +12,21 @@ import {localizedTranslation} from '@leav/utils';
 import moment from 'moment';
 import {stringifyDateRangeValue} from '_ui/_utils';
 import {IDateRangeValuesListConf, IMonoValueSelectProps, IStringValuesListConf} from './_types';
+
+interface IOption {
+    label: string;
+    value: string;
+}
+const addOption = (options: IOption[], optionToAdd: IOption) => {
+    const newOptions = options;
+    if (optionToAdd.value && !options.find(option => option.value === optionToAdd.value)) {
+        newOptions.unshift({
+            value: optionToAdd.value,
+            label: optionToAdd.label
+        });
+    }
+    return newOptions;
+};
 
 export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     value,
@@ -41,6 +56,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     const [searchedString, setSearchedString] = useState('');
     const {lang: availableLang} = useLang();
     const selectRef = useRef<GetRef<typeof KitSelect>>(null);
+    const allowFreeEntry = attribute.values_list.allowFreeEntry;
 
     useEffect(() => {
         if (fieldValue.isEditing && selectRef.current) {
@@ -74,7 +90,14 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
         return values;
     };
 
-    const options = _getFilteredValuesList();
+    let options = _getFilteredValuesList();
+    if (allowFreeEntry) {
+        options = addOption(options, {value, label: value});
+        options = addOption(options, {
+            value: searchedString,
+            label: t('record_edition.select_option') + searchedString
+        });
+    }
 
     const searchResultsCount = useMemo(
         () => options.filter(option => option.label.toLowerCase().includes(searchedString.toLowerCase())).length,
@@ -131,6 +154,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     return (
         <KitSelect
             ref={selectRef}
+            data-testid={attribute.id}
             open={isSelectOpen}
             value={value}
             required={required}
