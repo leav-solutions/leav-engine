@@ -5,7 +5,7 @@ import {FaTrash} from 'react-icons/fa';
 import {KitModal} from 'aristid-ds';
 import {useDeactivateRecordsMutation} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ActionHook, IItemAction} from './types';
+import {ActionHook, IItemAction} from './_types';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -30,7 +30,7 @@ export const useDeactivateAction = ({isEnabled}: ActionHook) => {
     });
 
     const _deactivateAction: IItemAction = {
-        label: t('explorer.deactivateItem'),
+        label: t('explorer.deactivate-item'),
         icon: <FaTrash />,
         isDanger: true,
         callback: ({itemId, libraryId}) =>

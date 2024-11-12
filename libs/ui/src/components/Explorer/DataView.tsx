@@ -15,7 +15,7 @@ import {
     PropertyValueTreeValueFragment,
     PropertyValueValueFragment
 } from '_ui/_gqlTypes';
-import {IItemAction, IItemData, ItemWhoAmI} from './types';
+import {IItemAction, IItemData, ItemWhoAmI} from './_types';
 
 const USELESS = '';
 
