@@ -2368,4 +2368,115 @@ describe('ValueDomain', () => {
             await expect(getVal).rejects.toHaveProperty('fields.recordId');
         });
     });
+
+    describe('runActionsListAndFormatOnValue', () => {
+        test('Should return the same value if no actions list', async function () {
+            const payload = 'test val';
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.SIMPLE})
+            };
+
+            const valDomain = valueDomain({
+                ...depsBase,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as any,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
+            });
+
+            const resValue = await valDomain.runActionsListAndFormatOnValue({
+                library: 'test_lib',
+                value: {
+                    attribute: 'test_attr',
+                    payload
+                },
+                ctx
+            });
+            expect(resValue).toMatchObject([{payload, raw_payload: payload, attribute: 'test_attr'}]);
+        });
+
+        test('Should return formatted value after actions list', async function () {
+            const payload = 'test val';
+            const formattedPayload = 'TEST VAL';
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.SIMPLE})
+            };
+
+            const mockActionsListDomainUpperCase: Mockify<IActionsListDomain> = {
+                runActionsList: jest
+                    .fn()
+                    .mockImplementation((_, val) => Promise.resolve([{...val[0], payload: formattedPayload}]))
+            };
+
+            const valDomain = valueDomain({
+                ...depsBase,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomainUpperCase as any,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
+            });
+
+            const resValue = await valDomain.runActionsListAndFormatOnValue({
+                library: 'test_lib',
+                value: {
+                    attribute: 'test_attr',
+                    payload
+                },
+                ctx
+            });
+            expect(resValue).toMatchObject([{payload: formattedPayload, raw_payload: payload, attribute: 'test_attr'}]);
+        });
+
+        test('Should return fomatted value after actions list if attribute format is date range', async function () {
+            const dateRangePayload = JSON.stringify({from: '1727733600', to: '1729548000'});
+            const dateRangeFormattedPayload = {
+                from: 'Monday, Septembre 30, 2024',
+                to: 'Tuesday, October 1, 2024'
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.SIMPLE})
+            };
+
+            const mockActionsListDomainDateRange: Mockify<IActionsListDomain> = {
+                runActionsList: jest.fn().mockImplementation((_, val) =>
+                    Promise.resolve([
+                        {
+                            ...val[0],
+                            payload: dateRangeFormattedPayload
+                        }
+                    ])
+                )
+            };
+
+            const valDomain = valueDomain({
+                ...depsBase,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomainDateRange as any,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
+            });
+
+            const resValue = await valDomain.runActionsListAndFormatOnValue({
+                library: 'test_lib',
+                value: {
+                    attribute: 'test_attr',
+                    payload: dateRangePayload
+                },
+                ctx
+            });
+            expect(resValue).toMatchObject([
+                {
+                    payload: dateRangeFormattedPayload,
+                    raw_payload: dateRangePayload,
+                    attribute: 'test_attr'
+                }
+            ]);
+        });
+    });
 });
