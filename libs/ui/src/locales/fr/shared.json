@@ -461,7 +461,8 @@
         "suggestions_count": "Suggestions ({{count}})",
         "search_not_found": "Aucune correspondance",
         "press_enter_to": "Appuyer sur Entrer pour ",
-        "select_this_value": "Sélectionner cette valeur"
+        "select_this_value": "Sélectionner cette valeur",
+        "select_option": "Sélectionner l’option "
     },
     "record_summary": {
         "preview_title": "Cliquez ici pour voir l’aperçu.",
