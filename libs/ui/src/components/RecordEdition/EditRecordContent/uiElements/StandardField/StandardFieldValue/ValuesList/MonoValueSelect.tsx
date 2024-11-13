@@ -1,11 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-// Copyright LEAV Solutions 2017
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent, useEffect, useMemo, useRef, useState} from 'react';
-import {AntForm, KitSelect, KitTypography} from 'aristid-ds';
+import {KitSelect, KitTypography} from 'aristid-ds';
 import useSharedTranslation from '_ui/hooks/useSharedTranslation/useSharedTranslation';
 import {AttributeFormat} from '_ui/_gqlTypes';
 import {Form, GetRef} from 'antd';
@@ -29,6 +26,8 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     if (!onChange) {
         throw Error('MonoValueSelect should be used inside a antd Form.Item');
     }
+
+    // TODO: avec renaud
 
     if (!attribute.values_list || attribute.values_list.enable === false) {
         throw Error('MonoValueSelect should have a values list');
