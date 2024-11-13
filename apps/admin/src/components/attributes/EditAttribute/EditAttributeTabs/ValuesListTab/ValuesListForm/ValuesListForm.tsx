@@ -90,7 +90,12 @@ function ValuesListForm({attribute, onSubmit}: IValuesListFormProps): JSX.Elemen
     const [state, dispatch] = useReducer(reducer, initialState);
 
     const _toggleEnable = () => dispatch({type: 'toggle_enable'});
-    const _toggleAllowFreeEntry = () => dispatch({type: 'toggle_allow_free_entry'});
+    const _toggleAllowFreeEntry = () => {
+        dispatch({type: 'toggle_allow_free_entry'});
+        if (state.conf.allowListUpdate) {
+            dispatch({type: 'toggle_allow_list_update'});
+        }
+    };
     const _toggleAllowListUpdate = () => dispatch({type: 'toggle_allow_list_update'});
 
     const _extractValuesToSave = useCallback(
