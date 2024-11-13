@@ -27,7 +27,7 @@ describe('SettingsPanel', () => {
     });
 
     test('should be able to move to advanced setting and come back', async () => {
-        render(<SettingsPanel />);
+        render(<SettingsPanel library="users" />);
         expect(screen.getByRole('heading', {name: 'explorer.view-configuration'})).toBeVisible();
 
         await userEvent.click(screen.getByRole('button', {name: 'explorer.display-mode'}));

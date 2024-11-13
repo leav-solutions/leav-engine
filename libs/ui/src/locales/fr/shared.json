@@ -607,6 +607,10 @@
         "back": "Retour",
         "view-configuration": "Configuration de la vue",
         "display-mode": "Mode d’affichage",
+        "display-mode-list": "List",
+        "display-mode-table": "Tableau",
+        "display-mode-mosaic": "Mosaïque",
+        "display-mode-planning": "Planning",
         "filters": "Filtrer",
         "sort":  "Trier"
     }
