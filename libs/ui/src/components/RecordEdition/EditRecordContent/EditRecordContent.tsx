@@ -80,7 +80,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         }
     }, [state.refreshRequested]);
 
-    if (loading) {
+    if (loading && !recordForm) {
         return <EditRecordSkeleton rows={5} />;
     }
 
