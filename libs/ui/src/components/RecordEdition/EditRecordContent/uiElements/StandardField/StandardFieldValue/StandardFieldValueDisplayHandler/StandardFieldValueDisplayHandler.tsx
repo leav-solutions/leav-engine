@@ -38,7 +38,7 @@ export const StandardFieldValueDisplayHandler: FunctionComponent<IStandardFieldV
     handleSubmit
 }) => {
     const {t} = useTranslation();
-    const {state: editRecordState} = useEditRecordReducer();
+    const {state: editRecordState, dispatch: editRecordDispatch} = useEditRecordReducer();
     const {state, dispatch} = useStandardFieldReducer();
     const mustDisplayReadValue = !fieldValue.isEditing && attribute.format !== AttributeFormat.boolean;
 
@@ -64,6 +64,7 @@ export const StandardFieldValueDisplayHandler: FunctionComponent<IStandardFieldV
 
     const commonProps = {
         state,
+        editRecordDispatch,
         handleSubmit,
         handleBlur: _handleBlur,
         attribute,
