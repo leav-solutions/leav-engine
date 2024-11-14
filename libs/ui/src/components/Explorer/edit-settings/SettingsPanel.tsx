@@ -22,7 +22,11 @@ const ConfigurationStyledMenu = styled.menu`
     padding: 0;
 `;
 
-export const SettingsPanel: FunctionComponent = () => {
+interface ISettingsPanelProps {
+    library: string;
+}
+
+export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library}) => {
     const {t} = useSharedTranslation();
 
     const {setActiveSettings, activeSettings} = useEditSettings();
@@ -91,7 +95,7 @@ export const SettingsPanel: FunctionComponent = () => {
                     </ConfigurationStyledMenu>
                 </nav>
             )}
-            {currentPage === 'display-mode' && <DisplayMode />}
+            {currentPage === 'display-mode' && <DisplayMode library={library} />}
         </ContentWrapperStyledDiv>
     );
 };

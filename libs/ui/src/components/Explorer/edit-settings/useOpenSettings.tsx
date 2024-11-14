@@ -7,13 +7,13 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {SettingsPanel} from './SettingsPanel';
 import {useEditSettings} from './useEditSettings';
 
-export const useOpenSettings = () => {
+export const useOpenSettings = (library: string) => {
     const {setActiveSettings} = useEditSettings();
     const {t} = useSharedTranslation();
 
     const _openSettingsPanel = () =>
         setActiveSettings({
-            content: <SettingsPanel />,
+            content: <SettingsPanel library={library} />,
             title: t('explorer.settings')
         });
 
