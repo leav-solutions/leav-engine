@@ -39,6 +39,7 @@ describe('ValuesListTab', () => {
                                         __typename: 'ValuesListConf',
                                         enable: true,
                                         allowFreeEntry: false,
+                                        allowListUpdate: false,
                                         values: ['value 1', 'value 2']
                                     },
                                     __typename: 'Attribute'

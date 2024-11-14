@@ -201,12 +201,14 @@ describe('useGetOptionsQuery', () => {
         const linkValuesList = {
             enable: true,
             allowFreeEntry: false,
+            allowListUpdate: false,
             values: records.list
         };
 
         const linkValuesWithoutLabelList = {
             enable: true,
             allowFreeEntry: false,
+            allowListUpdate: false,
             values: recordsWithoutLabel.list
         };
 

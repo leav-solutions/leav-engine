@@ -24,6 +24,7 @@ export interface ITreeValuesList {
 export interface IValuesListConf {
     enable: boolean;
     allowFreeEntry?: boolean | null;
+    allowListUpdate?: boolean | null;
     values?: ValuesList | null;
 }
 

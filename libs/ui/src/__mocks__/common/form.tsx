@@ -110,7 +110,7 @@ const mockFormAttributeLink = {
         }
     },
     system: false,
-    linkValuesList: {enable: false, allowFreeEntry: false, values: []}
+    linkValuesList: {enable: false, allowFreeEntry: false, allowListUpdate: false, values: []}
 };
 
 export const mockFormElementLink: FormElement<{}> = {
@@ -234,7 +234,7 @@ export const mockFormElementTree: FormElement<ICommonFieldsSettings> = {
                 en: 'My tree'
             }
         },
-        treeValuesList: {enable: false, allowFreeEntry: false, values: []}
+        treeValuesList: {enable: false, allowFreeEntry: false, allowListUpdate: false, values: []}
     },
     values: [
         {...(mockTreeValueA as unknown as RecordFormElementsValueTreeValue)},

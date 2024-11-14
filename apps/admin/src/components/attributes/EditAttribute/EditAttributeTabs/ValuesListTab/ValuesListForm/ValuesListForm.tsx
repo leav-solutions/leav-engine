@@ -42,6 +42,9 @@ const reducer = (state: IValuesFormState, action) => {
         case 'toggle_allow_free_entry':
             newConf.allowFreeEntry = !newConf.allowFreeEntry;
             break;
+        case 'toggle_allow_list_update':
+            newConf.allowListUpdate = !newConf.allowListUpdate;
+            break;
         case 'change_values':
             if (JSON.stringify(newConf.values) === JSON.stringify(action.values)) {
                 // Don't update values as nothing has changed
@@ -87,7 +90,13 @@ function ValuesListForm({attribute, onSubmit}: IValuesListFormProps): JSX.Elemen
     const [state, dispatch] = useReducer(reducer, initialState);
 
     const _toggleEnable = () => dispatch({type: 'toggle_enable'});
-    const _toggleAllowFreeEntry = () => dispatch({type: 'toggle_allow_free_entry'});
+    const _toggleAllowFreeEntry = () => {
+        dispatch({type: 'toggle_allow_free_entry'});
+        if (state.conf.allowListUpdate) {
+            dispatch({type: 'toggle_allow_list_update'});
+        }
+    };
+    const _toggleAllowListUpdate = () => dispatch({type: 'toggle_allow_list_update'});
 
     const _extractValuesToSave = useCallback(
         (conf: IValuesListConf): string[] => {
@@ -131,6 +140,7 @@ function ValuesListForm({attribute, onSubmit}: IValuesListFormProps): JSX.Elemen
             onSubmit({
                 enable: state.conf.enable,
                 allowFreeEntry: state.conf.allowFreeEntry,
+                allowListUpdate: state.conf.allowListUpdate,
                 values: _extractValuesToSave(state.conf)
             });
             dispatch({type: 'submit_done'});
@@ -185,13 +195,22 @@ function ValuesListForm({attribute, onSubmit}: IValuesListFormProps): JSX.Elemen
                     onChange={_toggleEnable}
                 />
                 {state.conf.enable && (
-                    <Form.Checkbox
-                        name="allowFreeEntry"
-                        toggle
-                        label={t('attributes.allow_free_entry')}
-                        checked={!!state.conf.allowFreeEntry}
-                        onChange={_toggleAllowFreeEntry}
-                    />
+                    <>
+                        <Form.Checkbox
+                            name="allowFreeEntry"
+                            toggle
+                            label={t('attributes.allow_free_entry')}
+                            checked={!!state.conf.allowFreeEntry}
+                            onChange={_toggleAllowFreeEntry}
+                        />
+                        <Form.Checkbox
+                            name="allowListUpdate"
+                            toggle
+                            label={t('attributes.allow_list_update')}
+                            checked={!!state.conf.allowListUpdate}
+                            onChange={_toggleAllowListUpdate}
+                        />
+                    </>
                 )}
             </Form.Group>
             {state.conf.enable && (
