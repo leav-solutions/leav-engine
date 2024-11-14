@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AnyPrimitive, ErrorTypes, ICommonFieldsSettings} from '@leav/utils';
+import {AnyPrimitive, ErrorTypes, ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
 import {FunctionComponent, useContext, useEffect, useMemo, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -25,8 +25,11 @@ import FieldFooter from '../../shared/FieldFooter';
 import ValuesVersionBtn from '../../shared/ValuesVersionBtn';
 import {APICallStatus, VersionFieldScope, IFormElementProps} from '../../_types';
 import StandardFieldValue from './StandardFieldValue';
-import {FormInstance} from 'antd';
+import {Form, FormInstance} from 'antd';
 import {StandardFieldReducerContext} from '../../reducers/standardFieldReducer/standardFieldReducerContext';
+import {KitInputWrapper} from 'aristid-ds';
+import {useLang} from '_ui/hooks';
+import {useValueDetailsButton} from '../../shared/ValueDetailsBtn/useValueDetailsButton';
 
 const Wrapper = styled.div<{$metadataEdit: boolean}>`
     margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
@@ -40,6 +43,7 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
     onDeleteMultipleValues,
     metadataEdit = false
 }) => {
+    console.log('-------- StandardField ----------');
     const {t} = useTranslation();
 
     const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
@@ -289,20 +293,75 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
         [VersionFieldScope.INHERITED]: state.values[VersionFieldScope.INHERITED]?.version ?? null
     };
 
+    // -------- Added
+    const {lang: availableLang} = useLang();
+
+    const label = localizedTranslation(state.formElement.settings.label, availableLang);
+
+    console.log('valuesToDisplay', valuesToDisplay);
+    console.log('attribute', attribute);
+
+    const {onValueDetailsButtonClick} = useValueDetailsButton({
+        value: valuesToDisplay[0]?.value,
+        attribute: state.attribute
+    });
+
+    const shouldShowValueDetailsButton = editRecordState.withInfoButton;
+
+    const _getFormattedValueForHelper = (valueToFormat: RecordFormElementsValueStandardValue) => {
+        switch (state.attribute.format) {
+            case AttributeFormat.date_range:
+                return t('record_edition.date_range_from_to', {
+                    from: valueToFormat.value.from,
+                    to: valueToFormat.value.to
+                });
+            case AttributeFormat.encrypted:
+                return valueToFormat.value ? '●●●●●●●' : '';
+            case AttributeFormat.color:
+                return '#' + valueToFormat.value;
+            default:
+                return valueToFormat.value;
+        }
+    };
+
+    const _getHelper = () => {
+        if (state.isInheritedOverrideValue) {
+            return t('record_edition.inherited_input_helper', {
+                inheritedValue: _getFormattedValueForHelper(state.inheritedValue)
+            });
+        } else if (state.isCalculatedOverrideValue) {
+            return t('record_edition.calculated_input_helper', {
+                calculatedValue: _getFormattedValueForHelper(state.calculatedValue)
+            });
+        }
+        return;
+    };
+
+    console.log('helper', _getHelper());
+
     return (
         <StandardFieldReducerContext.Provider value={{state, dispatch}}>
             <Wrapper $metadataEdit={metadataEdit}>
-                {valuesToDisplay.map(value => (
-                    <StandardFieldValue
-                        key={value.idValue}
-                        value={value}
-                        state={state}
-                        dispatch={dispatch}
-                        onSubmit={_handleSubmit}
-                        onDelete={_handleDelete}
-                        onScopeChange={_handleScopeChange}
-                    />
-                ))}
+                <KitInputWrapper
+                    label={label}
+                    onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
+                    helper={_getHelper()}
+                    required={state.formElement.settings.required}
+                    disabled={state.isReadOnly}
+                >
+                    {valuesToDisplay.map(value => (
+                        <StandardFieldValue
+                            key={value.idValue}
+                            value={value}
+                            state={state}
+                            dispatch={dispatch}
+                            onSubmit={_handleSubmit}
+                            onDelete={_handleDelete}
+                            onScopeChange={_handleScopeChange}
+                        />
+                    ))}
+                </KitInputWrapper>
+
                 {(canDeleteAllValues || canAddAnotherValue || attribute?.versions_conf?.versionable) && (
                     <FieldFooter
                         bordered

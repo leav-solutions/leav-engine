@@ -23,6 +23,7 @@ import {useTranslation} from 'react-i18next';
 import {DSRichTextWrapper} from '../DSRichTextWrapper';
 import {DSColorPickerWrapper} from '../DSColorPickerWrapper';
 import {MonoValueSelect} from '../ValuesList/MonoValueSelect';
+import {MultiValueSelect} from '../ValuesList/MultiValueSelect';
 
 interface IStandardFieldValueDisplayHandlerProps {
     state: IStandardFieldReducerState;
@@ -73,6 +74,10 @@ export const StandardFieldValueDisplayHandler: FunctionComponent<IStandardFieldV
     };
 
     const isValuesListEnabled = Boolean(attribute.values_list?.enable);
+
+    // console.log('attribute', attribute);
+
+    console.log('fieldValue', fieldValue);
 
     let valueContent: ReactNode;
     if (isValuesListEnabled) {

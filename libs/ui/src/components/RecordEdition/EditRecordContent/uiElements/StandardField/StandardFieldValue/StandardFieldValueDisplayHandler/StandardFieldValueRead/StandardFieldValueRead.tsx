@@ -1,14 +1,10 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {localizedTranslation} from '@leav/utils';
 import {AttributeFormat} from '_ui/_gqlTypes';
 import {IStandardFieldValue} from '_ui/components/RecordEdition/EditRecordContent/reducers/standardFieldReducer/standardFieldReducer';
 import {useStandardFieldReducer} from '_ui/components/RecordEdition/EditRecordContent/reducers/standardFieldReducer/useStandardFieldReducer';
-import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
-import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
-import useLang from '_ui/hooks/useLang';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitInputWrapper, KitTypography} from 'aristid-ds';
 import {FunctionComponent, SyntheticEvent} from 'react';
@@ -60,50 +56,7 @@ export const StandardFieldValueRead: FunctionComponent<IStandardFieldValueReadPr
     className
 }) => {
     const {state} = useStandardFieldReducer();
-    const {state: editRecordState} = useEditRecordReducer();
-    const {lang: availableLang} = useLang();
     const {t} = useSharedTranslation();
-
-    const shouldShowValueDetailsButton = editRecordState.withInfoButton;
-
-    const {onValueDetailsButtonClick} = useValueDetailsButton({
-        value: fieldValue?.value,
-        attribute: state.attribute
-    });
-
-    const label = localizedTranslation(state.formElement.settings.label, availableLang);
-
-    const _getInheritedValueForHelper = (inheritedValue: RecordFormElementsValueStandardValue) => {
-        switch (state.attribute.format) {
-            case AttributeFormat.date_range:
-                return t('record_edition.date_range_from_to', {
-                    from: inheritedValue.value.from,
-                    to: inheritedValue.value.to
-                });
-            case AttributeFormat.encrypted:
-                return inheritedValue.value ? '●●●●●●●' : '';
-            case AttributeFormat.color:
-                return '#' + inheritedValue.value;
-            default:
-                return inheritedValue.value;
-        }
-    };
-
-    const _getCalculatedValueForHelper = (calculatedValue: RecordFormElementsValueStandardValue) => {
-        switch (state.attribute.format) {
-            case AttributeFormat.date_range:
-                return t('record_edition.date_range_from_to', {
-                    from: calculatedValue.value.from,
-                    to: calculatedValue.value.to
-                });
-            case AttributeFormat.encrypted:
-                return calculatedValue.value ? '●●●●●●●' : '';
-            case AttributeFormat.color:
-                return '#' + calculatedValue.value;
-            default:
-                return calculatedValue.value;
-        }
-    };
 
     const _handleFocus = (e: SyntheticEvent) => {
         if (state.isReadOnly) {
@@ -148,31 +101,14 @@ export const StandardFieldValueRead: FunctionComponent<IStandardFieldValueReadPr
             break;
     }
 
-    const _getHelper = () => {
-        if (state.isInheritedOverrideValue) {
-            return t('record_edition.inherited_input_helper', {
-                inheritedValue: _getInheritedValueForHelper(state.inheritedValue)
-            });
-        } else if (state.isCalculatedOverrideValue) {
-            return t('record_edition.calculated_input_helper', {
-                calculatedValue: _getCalculatedValueForHelper(state.calculatedValue)
-            });
-        }
-        return;
-    };
-
     const isValueHighlighted = state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue;
     const isColorAttribute = state.attribute.format === AttributeFormat.color;
     const isValueDefaultColor = displayValue === defaultColorValue;
 
     return (
         <KitInputWrapperStyled
-            label={label}
             bordered
             hoverable
-            required={state.formElement.settings.required}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
-            helper={_getHelper()}
             onFocus={_handleFocus}
             className={className}
             $width={width}
