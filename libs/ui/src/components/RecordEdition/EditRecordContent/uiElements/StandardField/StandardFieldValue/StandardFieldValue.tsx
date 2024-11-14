@@ -204,6 +204,8 @@ function StandardFieldValue({
     state,
     dispatch
 }: IStandardFieldValueProps): JSX.Element {
+    console.log('-> StandardFieldValue ---');
+    console.log('fieldValue', fieldValue);
     const {t, i18n} = useSharedTranslation();
     const {token} = theme.useToken();
     const {lang: availableLangs} = useLang();

@@ -10,11 +10,7 @@ import {
 import {Form, GetRef, InputProps} from 'antd';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import styled from 'styled-components';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
-import {useLang} from '_ui/hooks';
-import {localizedTranslation} from '@leav/utils';
 
 interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputProps> {
     state: IStandardFieldReducerState;
@@ -33,24 +29,17 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     value,
     onChange,
     state,
-    attribute,
+    attribute, //TODO
     fieldValue,
     handleSubmit,
     handleBlur,
-    shouldShowValueDetailsButton = false
+    shouldShowValueDetailsButton = false //TODO
 }) => {
     if (!onChange) {
         throw Error('DSInputWrapper should be used inside a antd Form.Item');
     }
 
-    const {t} = useSharedTranslation();
-    const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick} = useValueDetailsButton({
-        value: fieldValue?.value,
-        attribute
-    });
     const [hasChanged, setHasChanged] = useState(false);
-    const {lang: availableLang} = useLang();
     const inputRef = useRef<GetRef<typeof KitInputStyled>>(null);
 
     useEffect(() => {
@@ -101,31 +90,13 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
         onChange(event);
     };
 
-    const _getHelper = () => {
-        if (state.isInheritedOverrideValue) {
-            return t('record_edition.inherited_input_helper', {
-                inheritedValue: state.inheritedValue.raw_value
-            });
-        } else if (state.isCalculatedOverrideValue) {
-            return t('record_edition.calculated_input_helper', {
-                calculatedValue: state.calculatedValue.raw_value
-            });
-        }
-        return;
-    };
-
-    const label = localizedTranslation(state.formElement.settings.label, availableLang);
+    const {errors} = Form.Item.useStatus();
 
     return (
         <KitInputStyled
             ref={inputRef}
-            required={state.formElement.settings.required}
-            label={label}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             status={errors.length > 0 ? 'error' : undefined}
-            helper={_getHelper()}
             value={value}
-            disabled={state.isReadOnly}
             allowClear={!state.isInheritedNotOverrideValue && !state.isCalculatedNotOverrideValue}
             onBlur={_handleOnBlur}
             onChange={_handleOnChange}
