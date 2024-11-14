@@ -463,7 +463,7 @@
         "press_enter_to": "Press enter to ",
         "select_this_value": "Select this value",
         "select_option": "Select option ",
-        "create_option": "Create and select option "
+        "create_and_select_option": "Create and select option "
     },
     "record_summary": {
         "preview_title": "Click here to visualize preview.",

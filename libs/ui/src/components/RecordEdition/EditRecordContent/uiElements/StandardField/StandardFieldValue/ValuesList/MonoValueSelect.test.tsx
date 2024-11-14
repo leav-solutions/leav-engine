@@ -375,7 +375,7 @@ describe('<MonoValueSelect />', () => {
             expect(screen.getByTestId(attribute.id).innerHTML).toMatch(new RegExp(newColor));
         });
 
-        it.only('should display the option and create it with list update', async () => {
+        it('should display the option and create it with list update', async () => {
             const editRecordDispatch = jest.fn();
             render(
                 <AntForm name="name">
@@ -400,7 +400,7 @@ describe('<MonoValueSelect />', () => {
             await userEvent.type(select, newColor);
 
             expect(screen.queryByText('record_edition.search_not_found')).not.toBeInTheDocument();
-            const newColorOption = screen.getByText(`record_edition.create_option${newColor}`);
+            const newColorOption = screen.getByText(`record_edition.create_and_select_option${newColor}`);
             await userEvent.click(newColorOption);
 
             expect(handleSubmitMock).toHaveBeenCalledWith(newColor, attribute.id);

@@ -105,7 +105,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
         options = addOption(options, {
             value: searchedString,
             label:
-                (allowListUpdate ? t('record_edition.create_option') : t('record_edition.select_option')) +
+                (allowListUpdate ? t('record_edition.create_and_select_option') : t('record_edition.select_option')) +
                 searchedString
         });
     }

@@ -463,7 +463,7 @@
         "press_enter_to": "Appuyer sur Entrer pour ",
         "select_this_value": "Sélectionner cette valeur",
         "select_option": "Sélectionner l’option ",
-        "create_option": "Créer et sélectionner l’option "
+        "create_and_select_option": "Créer et sélectionner l’option "
     },
     "record_summary": {
         "preview_title": "Cliquez ici pour voir l’aperçu.",
