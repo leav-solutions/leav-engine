@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import {AnyPrimitive, IDateRangeValue, localizedTranslation} from '@leav/utils';
-import {Button, Input, InputRef, Popover, Space, theme} from 'antd';
+import {Button, FormListFieldData, Input, InputRef, Popover, Space, theme} from 'antd';
 import moment from 'moment';
 import React, {MutableRefObject, useEffect, useRef} from 'react';
 import styled, {CSSObject} from 'styled-components';
@@ -194,6 +194,7 @@ interface IStandardFieldValueProps {
     onSubmit: (idValue: IdValue, value: AnyPrimitive) => Promise<void>;
     onDelete: (idValue: IdValue) => void;
     onScopeChange: (scope: VersionFieldScope) => void;
+    listField?: FormListFieldData;
 }
 
 function StandardFieldValue({
@@ -202,7 +203,8 @@ function StandardFieldValue({
     onDelete,
     onScopeChange,
     state,
-    dispatch
+    dispatch,
+    listField
 }: IStandardFieldValueProps): JSX.Element {
     console.log('-> StandardFieldValue ---');
     console.log('fieldValue', fieldValue);
@@ -568,6 +570,7 @@ function StandardFieldValue({
         <>
             {attributeFormatsWithDS.includes(attribute.format) && (
                 <StandardFieldValueDisplayHandler
+                    listField={listField}
                     state={state}
                     attribute={attribute}
                     fieldValue={fieldValue}

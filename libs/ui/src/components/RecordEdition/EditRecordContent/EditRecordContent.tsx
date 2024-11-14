@@ -132,6 +132,8 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
 
     const antdFormInitialValues = getAntdFormInitialValues(recordForm);
 
+    console.log('antdFormInitialValues', antdFormInitialValues);
+
     return (
         <Form
             id={EDIT_OR_CREATE_RECORD_FORM_ID}

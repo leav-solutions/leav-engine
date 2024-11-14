@@ -18,7 +18,7 @@ import {StandardValueTypes} from '../../../../_types';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {StandardFieldValueRead} from './StandardFieldValueRead/StandardFieldValueRead';
 import {useStandardFieldReducer} from '_ui/components/RecordEdition/EditRecordContent/reducers/standardFieldReducer/useStandardFieldReducer';
-import {Form} from 'antd';
+import {Form, FormListFieldData} from 'antd';
 import {useTranslation} from 'react-i18next';
 import {DSRichTextWrapper} from '../DSRichTextWrapper';
 import {DSColorPickerWrapper} from '../DSColorPickerWrapper';
@@ -31,12 +31,14 @@ interface IStandardFieldValueDisplayHandlerProps {
     fieldValue: IStandardFieldValue;
     shouldShowValueDetailsButton?: boolean;
     handleSubmit: (value: StandardValueTypes, id?: string) => void;
+    listField: FormListFieldData;
 }
 
 export const StandardFieldValueDisplayHandler: FunctionComponent<IStandardFieldValueDisplayHandlerProps> = ({
     attribute,
     fieldValue,
-    handleSubmit
+    handleSubmit,
+    listField = null
 }) => {
     const {t} = useTranslation();
     const {state: editRecordState, dispatch: editRecordDispatch} = useEditRecordReducer();
@@ -112,18 +114,19 @@ export const StandardFieldValueDisplayHandler: FunctionComponent<IStandardFieldV
 
     return (
         <>
-            <div style={{display: mustDisplayReadValue ? 'block' : 'none'}}>
+            {/* <div style={{display: mustDisplayReadValue ? 'block' : 'none'}}>
                 <StandardFieldValueRead fieldValue={fieldValue} onClick={_handleClickOnReadValue} />
-            </div>
+            </div> */}
             <Form.Item
                 name={attribute.id}
+                {...listField}
                 rules={[
                     {
                         required: state.formElement.settings.required,
                         message: t('errors.standard_field_required')
                     }
                 ]}
-                style={{display: mustDisplayReadValue ? 'none' : 'block'}}
+                // style={{display: mustDisplayReadValue ? 'none' : 'block'}}
             >
                 {valueContent}
             </Form.Item>
