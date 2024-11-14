@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, AqlQuery, GeneratedAqlQuery, literal} from 'arangojs/aql';
+import {aql, GeneratedAqlQuery, literal} from 'arangojs/aql';
 import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IQueryInfos} from '_types/queryInfos';
 import {AttributeFormats, IAttribute} from '../../_types/attribute';
@@ -102,15 +102,12 @@ export default function ({
                 }
             ];
         },
-        sortQueryPart({attributes, order}: {attributes: IAttribute[]; order: string}): AqlQuery {
+        sortQueryPart({attributes, order}) {
             attributes[0].id = attributes[0].id === 'id' ? '_key' : attributes[0].id;
 
-            const query: AqlQuery =
-                attributes[0].format === AttributeFormats.EXTENDED && attributes.length > 1
-                    ? aql`SORT ${_getExtendedFilterPart(attributes)} ${order}`
-                    : aql`SORT r.${attributes[0].id} ${order}`;
-
-            return query;
+            return attributes[0].format === AttributeFormats.EXTENDED && attributes.length > 1
+                ? aql`${_getExtendedFilterPart(attributes)} ${order}`
+                : aql`r.${attributes[0].id} ${order}`;
         },
         filterValueQueryPart(attributes, filter, parentIdentifier = BASE_QUERY_IDENTIFIER) {
             let recordValue: GeneratedAqlQuery;

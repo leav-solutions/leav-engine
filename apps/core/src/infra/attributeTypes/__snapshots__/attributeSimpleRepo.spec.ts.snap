@@ -90,6 +90,6 @@ exports[`AttributeSimpleRepo sortQueryPart Should return simple sort 1`] = `
     "value0": "_key",
     "value1": "ASC",
   },
-  "query": "SORT r.@value0 @value1",
+  "query": "r.@value0 @value1",
 }
 `;

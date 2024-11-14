@@ -135,7 +135,7 @@ exports[`AttributeStandardRepo sortQueryPart Should return advanced filter 1`] =
     "value1": "label",
     "value2": "ASC",
   },
-  "query": "SORT FIRST(
+  "query": "FIRST(
                 FOR v, e IN 1 OUTBOUND r._id
                 @@value0
                 FILTER e.attribute == @value1 RETURN v.value

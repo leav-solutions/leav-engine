@@ -300,7 +300,7 @@ exports[`AttributeAdvancedLinkRepo sortQueryPart Should return advanced link sor
     "value2": "linked",
     "value3": "ASC",
   },
-  "query": "SORT FIRST(
+  "query": "FIRST(
                 FOR v, e IN 1 OUTBOUND r._id
                 @@value0
                 FILTER e.attribute == @value1 RETURN v.@value2
