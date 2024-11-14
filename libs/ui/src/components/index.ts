@@ -39,3 +39,4 @@ export * from './TreePicker';
 export * from './TriggerPreviewsGenerationModal';
 export * from './UploadFiles';
 export * from './ValuesVersionConfigurator';
+export * from './Explorer';

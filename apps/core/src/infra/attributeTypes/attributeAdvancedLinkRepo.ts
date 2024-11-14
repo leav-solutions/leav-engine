@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {aql, AqlQuery, GeneratedAqlQuery, join, literal} from 'arangojs/aql';
+import {aql, GeneratedAqlQuery, join, literal} from 'arangojs/aql';
 import {IFilterTypesHelper} from 'infra/record/helpers/filterTypes';
 import {IUtils} from 'utils/utils';
 import {ILinkValue, IValueEdge} from '_types/value';
@@ -10,7 +10,7 @@ import {AttributeFormats, AttributeTypes, IAttribute} from '../../_types/attribu
 import {IRecord} from '../../_types/record';
 import {IDbService} from '../db/dbService';
 import {IDbUtils} from '../db/dbUtils';
-import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo, IAttributeWithRevLink} from './attributeTypesRepo';
+import {BASE_QUERY_IDENTIFIER, IAttributeTypeRepo} from './attributeTypesRepo';
 import {GetConditionPart} from './helpers/getConditionPart';
 
 interface ISavedValueResult {
@@ -296,7 +296,7 @@ export default function ({
 
             return _buildLinkValue(dbUtils.cleanup(res[0].linkedRecord), res[0].edge, !!attribute.reverse_link);
         },
-        sortQueryPart({attributes, order}: {attributes: IAttributeWithRevLink[]; order: string}): AqlQuery {
+        sortQueryPart({attributes, order}) {
             const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
             const linked = !attributes[1]
                 ? {id: '_key', format: AttributeFormats.TEXT}
@@ -324,12 +324,9 @@ export default function ({
                     `;
             }
 
-            const query =
-                linked.format !== AttributeFormats.EXTENDED
-                    ? aql`SORT ${linkedValue} ${order}`
-                    : aql`SORT ${_getExtendedFilterPart(attributes, linkedValue)} ${order}`;
-
-            return query;
+            return linked.format !== AttributeFormats.EXTENDED
+                ? aql`${linkedValue} ${order}`
+                : aql`${_getExtendedFilterPart(attributes, linkedValue)} ${order}`;
         },
         filterValueQueryPart(attributes, filter, parentIdentifier = BASE_QUERY_IDENTIFIER) {
             const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);

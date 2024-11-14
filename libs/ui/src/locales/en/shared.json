@@ -602,7 +602,13 @@
         "create-one": "Create",
         "actions": "Actions",
         "more-actions": "Show more",
-        "deactivateItem": "Deactivate item",
-        "editItem": "Edit item"
+        "deactivate-item": "Deactivate item",
+        "edit-item": "Edit item",
+        "settings": "Settings",
+        "back": "Back",
+        "view-configuration": "View Configuration",
+        "display-mode": "Display Mode",
+        "filters": "Filters",
+        "sort":  "Sort"
     }
 }

@@ -246,7 +246,8 @@ export default function ({
                         records(
                             library: ID!,
                             filters: [RecordFilterInput],
-                            sort: RecordSortInput
+                            sort: RecordSortInput @deprecated(reason: "Should use multipleSort. They are both here for backward compatibility. Eventually, multipleSort will replace sort."),
+                            multipleSort: [RecordSortInput!]
                             version: [ValueVersionInput],
                             pagination: RecordsPagination,
                             retrieveInactive: Boolean,
@@ -274,6 +275,7 @@ export default function ({
                                 library,
                                 filters,
                                 sort,
+                                multipleSort,
                                 version,
                                 pagination,
                                 retrieveInactive = false,
@@ -302,7 +304,7 @@ export default function ({
                             const params: IFindRecordParams = {
                                 library,
                                 filters,
-                                sort,
+                                sort: multipleSort ?? [sort],
                                 pagination: pagination?.cursor
                                     ? (pagination as ICursorPaginationParams)
                                     : (pagination as IPaginationParams),

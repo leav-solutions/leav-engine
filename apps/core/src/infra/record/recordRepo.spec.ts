@@ -13,6 +13,8 @@ import {IDbUtils} from '../db/dbUtils';
 import {IFilterTypesHelper} from './helpers/filterTypes';
 import recordRepo, {IRecordRepoDeps} from './recordRepo';
 import {ToAny} from 'utils/utils';
+import {SortOrder} from '../../_types/list';
+import {mockAttrSimple} from '../../__tests__/mocks/attribute';
 
 const depsBase: ToAny<IRecordRepoDeps> = {
     'core.infra.db.dbService': jest.fn(),
@@ -539,6 +541,50 @@ describe('RecordRepo', () => {
                 totalCount: 2,
                 list: mockCleanupRes
             });
+        });
+
+        test('Should aggregate sorts', async () => {
+            const mockDbServ = {
+                db: new Database(),
+                execute: global.__mockPromise([])
+            };
+
+            const mockAttributeTypes: Mockify<IAttributeTypesRepo> = {
+                getTypeRepo: jest.fn(() => ({
+                    sortQueryPart: jest.fn(() => ({
+                        query: 'sortQueryPart'
+                    }))
+                }))
+            };
+
+            const mockDbUtils: Mockify<IDbUtils> = {
+                cleanup: jest.fn()
+            };
+
+            const recRepo = recordRepo({
+                ...depsBase,
+                'core.infra.db.dbService': mockDbServ,
+                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
+                'core.infra.attributeTypes': mockAttributeTypes as IAttributeTypesRepo
+            });
+
+            await recRepo.find({
+                libraryId: 'test_lib',
+                sort: [
+                    {
+                        order: SortOrder.DESC,
+                        attributes: [{...mockAttrSimple, reverse_link: undefined, id: 'attribute1'}]
+                    },
+                    {
+                        order: SortOrder.ASC,
+                        attributes: [{...mockAttrSimple, reverse_link: undefined, id: 'attribute2'}]
+                    }
+                ],
+                ctx
+            });
+
+            expect(mockDbServ.execute.mock.calls.length).toBe(1);
+            expect(mockDbServ.execute.mock.calls[0][0]).toMatchSnapshot();
         });
     });
 
