@@ -381,7 +381,6 @@ describe('AttributeSimpleLinkRepo', () => {
                 order: 'ASC'
             });
 
-            expect(filter.query).toMatch(/^SORT/);
             expect(filter).toMatchSnapshot();
         });
     });

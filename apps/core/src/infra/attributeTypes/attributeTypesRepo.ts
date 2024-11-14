@@ -164,7 +164,7 @@ export interface IAttributeTypeRepo {
     /**
      * Return AQL query part to sort on this attribute
      */
-    sortQueryPart({attributes, order}: {attributes: IAttributeWithRevLink[]; order: string}): AqlQuery;
+    sortQueryPart({attributes, order}: {attributes: IAttributeWithRevLink[]; order: string}): GeneratedAqlQuery;
 
     /**
      * Clear all values of given attribute. Can be used to cleanup values when an attribute is deleted for example.
