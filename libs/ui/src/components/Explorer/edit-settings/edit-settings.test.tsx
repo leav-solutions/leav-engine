@@ -15,7 +15,7 @@ jest.mock('./DisplayMode', () => ({
 }));
 
 const MockOpenEditSettings: FunctionComponent = () => {
-    const OpenEditSettingsButton = useOpenSettings();
+    const OpenEditSettingsButton = useOpenSettings('');
 
     return <>{OpenEditSettingsButton}</>;
 };

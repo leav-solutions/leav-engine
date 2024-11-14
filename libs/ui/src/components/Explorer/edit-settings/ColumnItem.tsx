@@ -42,14 +42,15 @@ const StyledConfigurationItem = styled.li`
     > button {
         border: none;
         background: transparent;
-        cursor: pointer;
         padding: 0;
+        &:not([disabled]) {
+            cursor: pointer;
+        }
     }
 `;
 
-const StyledFaEye = styled(FaEye).attrs<{$disabled: boolean}>({$disabled: false})`
-    color: ${({$disabled}) => ($disabled ? 'var(--general-utilities-disabled)' : 'currentColor')};
-    cursor: ${({$disabled}) => ($disabled ? 'default' : 'pointer')};
+const StyledFaEye = styled(FaEye)`
+    color: currentColor;
 `;
 
 const StyledEyeSlash = styled(FaEyeSlash)`
@@ -76,12 +77,12 @@ export const ColumnItem: FunctionComponent<IColumnItemProps> = ({
     visible,
     onVisibilityClick
 }) => (
-    <StyledConfigurationItem className={`${disabled ? 'disabled' : ''}`}>
+    <StyledConfigurationItem className={disabled ? 'disabled' : ''}>
         {dragHandler || <StyledEmptyIcon />}
         <KitTypography.Text size="fontSize5" ellipsis className="title">
             {title}
         </KitTypography.Text>
-        <button className={`${disabled ? 'disabled' : ''}`} onClick={onVisibilityClick}>
+        <button disabled={disabled} onClick={onVisibilityClick}>
             {visible ? <StyledFaEye /> : <StyledEyeSlash />}
         </button>
     </StyledConfigurationItem>

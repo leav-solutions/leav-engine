@@ -21,17 +21,17 @@ interface IDisplayModeProps {
 
 export const DisplayMode: FunctionComponent<IDisplayModeProps> = ({library}) => {
     const {t} = useSharedTranslation();
-    const [currrentDisplayMode, setCurrentDisplayMode] = useState<string>('table');
+    const [currentDisplayMode, setCurrentDisplayMode] = useState('table');
 
     const _handleDisplayModeChange = (event: RadioChangeEvent) => {
         setCurrentDisplayMode(event.target.value);
     };
 
-    const comingSoonTag = <KitTag type="primary" idCardProps={{description: String(t('explorer.coming-soon'))}} />;
+    const comingSoonTag = <KitTag type="secondary" idCardProps={{description: String(t('explorer.coming-soon'))}} />;
 
     return (
         <StyledWrapperDiv>
-            <KitRadio.Group value={currrentDisplayMode} onChange={_handleDisplayModeChange}>
+            <KitRadio.Group value={currentDisplayMode} onChange={_handleDisplayModeChange}>
                 <KitSpace direction="vertical" size={0}>
                     <KitRadio value="list" disabled>
                         <KitSpace>
@@ -51,7 +51,7 @@ export const DisplayMode: FunctionComponent<IDisplayModeProps> = ({library}) => 
                     </KitRadio>
                 </KitSpace>
             </KitRadio.Group>
-            {currrentDisplayMode === 'table' && <DisplayModeTable library={library} />}
+            {currentDisplayMode === 'table' && <DisplayModeTable library={library} />}
         </StyledWrapperDiv>
     );
 };

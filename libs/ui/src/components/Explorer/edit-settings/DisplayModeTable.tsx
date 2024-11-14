@@ -31,46 +31,50 @@ export const DisplayModeTable: FunctionComponent<IDisplayModeTableProps> = ({lib
     const {t} = useSharedTranslation();
     // TODO Where to stock visible columns list
     // TODO when are changes saved (and thus, when is the table updated) ?
-    const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
-        id: true
-    });
+    const [orderedVisibleColumns, setOrderedVisibleColumns] = useState<string[]>([]);
     const [searchInput, setSearchInput] = useState('');
     const debouncedSearchInput = useDebouncedValue(searchInput, 300);
 
-    const columnsById = useGetLibraryColumns(library);
-    const visibleColumnsKeys = Object.keys(visibleColumns);
+    const {attributeDetailsById} = useGetLibraryColumns(library);
 
-    const filteredColumns = useMemo(() => {
-        const columnIds = Object.keys(columnsById);
+    const searchFilteredColumns = useMemo(() => {
+        const columnIds = Object.keys(attributeDetailsById);
         if (columnIds.length === 0) {
             return {};
         }
         if (searchInput === '') {
-            return columnsById;
+            return attributeDetailsById;
         }
 
         return columnIds.reduce((acc, columnId) => {
-            if (columnsById[columnId].label.includes(searchInput) || columnId.includes(searchInput)) {
-                acc[columnId] = columnsById[columnId];
+            if (attributeDetailsById[columnId].label.includes(searchInput) || columnId.includes(searchInput)) {
+                acc[columnId] = attributeDetailsById[columnId];
             }
             return acc;
         }, {});
-    }, [debouncedSearchInput, columnsById]);
-    const filteredColumnIds = Object.keys(filteredColumns);
+    }, [debouncedSearchInput, attributeDetailsById]);
+    const searchFilteredColumnsIds = Object.keys(searchFilteredColumns);
 
     const _onSearchChanged = (event: ChangeEvent<HTMLInputElement>) => {
-        if ((searchInput.length > 2 && event.target.value.length < 3) || event.target.value.length === 0) {
-            setSearchInput('');
-        } else if (event.target.value.length > 2) {
-            setSearchInput(event.target.value);
+        const shouldIgnoreInputChange = event.target.value.length < 3 && searchInput.length < 3;
+        if (shouldIgnoreInputChange) {
+            return;
         }
+        setSearchInput(() => {
+            if (event.target.value.length > 2) {
+                return event.target.value;
+            }
+            return '';
+        });
     };
 
     const _toggleColumnVisibility = (columnId: string) => () => {
-        setVisibleColumns(prev => ({
-            ...prev,
-            [columnId]: !prev[columnId]
-        }));
+        setOrderedVisibleColumns(() => {
+            if (orderedVisibleColumns.includes(columnId)) {
+                return orderedVisibleColumns.filter(id => id !== columnId);
+            }
+            return [...orderedVisibleColumns, columnId];
+        });
     };
 
     return (
@@ -80,36 +84,30 @@ export const DisplayModeTable: FunctionComponent<IDisplayModeTableProps> = ({lib
             <div>
                 <StyledList>
                     <ColumnItem title={t('record_edition.whoAmI')} visible={false} disabled />
-                    {visibleColumnsKeys.map(columnId => {
-                        if (filteredColumns[columnId] && visibleColumns[columnId]) {
-                            return (
-                                <ColumnItem
-                                    key={columnId}
-                                    title={columnsById[columnId].label}
-                                    visible
-                                    onVisibilityClick={_toggleColumnVisibility(columnId)}
-                                    dragHandler={<FaGripLines />}
-                                />
-                            );
-                        }
-                        return null;
-                    })}
+                    {orderedVisibleColumns
+                        .filter(columnId => searchFilteredColumnsIds[columnId])
+                        .map(columnId => (
+                            <ColumnItem
+                                key={columnId}
+                                title={attributeDetailsById[columnId].label}
+                                visible
+                                onVisibilityClick={_toggleColumnVisibility(columnId)}
+                                dragHandler={<FaGripLines />}
+                            />
+                        ))}
                 </StyledList>
                 <StyledDivider />
                 <StyledList>
-                    {filteredColumnIds.map(columnId => {
-                        if (visibleColumns[columnId]) {
-                            return null;
-                        }
-                        return (
+                    {searchFilteredColumnsIds
+                        .filter(columnId => !orderedVisibleColumns.includes(columnId))
+                        .map(columnId => (
                             <ColumnItem
-                                key={columnsById[columnId].id}
+                                key={attributeDetailsById[columnId].id}
                                 visible={false}
-                                title={columnsById[columnId].label}
+                                title={attributeDetailsById[columnId].label}
                                 onVisibilityClick={_toggleColumnVisibility(columnId)}
                             />
-                        );
-                    })}
+                        ))}
                 </StyledList>
             </div>
         </div>
