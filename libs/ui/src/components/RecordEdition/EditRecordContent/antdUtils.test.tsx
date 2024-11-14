@@ -96,6 +96,50 @@ describe('getAntdFormInitialValues', () => {
         });
     });
 
+    describe('Advanced standard field with multiple values', () => {
+        test('Should initialize antd form with given value', async () => {
+            const elementFormId = 'elementFormId';
+            const yetAnotherElementFormId = 'yetAnotherElementFormId';
+            const standardAttributeId = 'standardAttributeId';
+            const standardElement = {
+                attribute: {
+                    type: AttributeType.advanced,
+                    format: AttributeFormat.text,
+                    multiple_values: true,
+                    id: standardAttributeId
+                },
+                values: [{raw_payload: elementFormId}, {raw_payload: yetAnotherElementFormId}]
+            };
+            const recordForm = {elements: [standardElement]};
+
+            const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
+
+            expect(antdFormInitialValues).toEqual({
+                [standardAttributeId]: [elementFormId, yetAnotherElementFormId]
+            });
+        });
+
+        test('Should initialize antd form with empty array for standard field when value is not set', async () => {
+            const standardAttributeId = 'standardAttributeId';
+            const standardElement = {
+                attribute: {
+                    type: AttributeType.advanced,
+                    format: AttributeFormat.text,
+                    multiple_values: true,
+                    id: standardAttributeId
+                },
+                values: []
+            };
+            const recordForm = {elements: [standardElement]};
+
+            const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
+
+            expect(antdFormInitialValues).toEqual({
+                [standardAttributeId]: []
+            });
+        });
+    });
+
     describe('AttributeFormat.text', () => {
         test('Should initialize antd form with given value for text attribute', async () => {
             const rawValue = 'rawValue';

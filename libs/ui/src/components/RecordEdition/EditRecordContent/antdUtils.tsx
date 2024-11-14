@@ -96,7 +96,6 @@ export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
             return acc;
         }
 
-        //TODO: Ecrire les tests de ce cas
         if (isRecordFormElementsStandardValues(values, attribute)) {
             acc[attribute.id] = values.map(val => formatStandardInitialValue(val, attribute));
             return acc;
