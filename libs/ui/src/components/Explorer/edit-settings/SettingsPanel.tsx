@@ -96,6 +96,6 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library})
                 </nav>
             )}
             {currentPage === 'display-mode' && <DisplayMode library={library} />}
-        </StyledSettingsPanelContent>
+        </ContentWrapperStyledDiv>
     );
 };

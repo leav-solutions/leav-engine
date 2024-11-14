@@ -1,13 +1,11 @@
-import {useGetAttributesByLibQuery} from '_ui/_gqlTypes';
 import {useDebouncedValue} from '_ui/hooks/useDebouncedValue/useDebouncedValue';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitInput, KitTypography} from 'aristid-ds';
-import {FunctionComponent, useMemo, useState} from 'react';
+import {ChangeEvent, FunctionComponent, useMemo, useState} from 'react';
 import styled from 'styled-components';
-import {localizedTranslation} from '@leav/utils';
-import {useLang} from '../../../hooks';
 import {FaGripLines} from 'react-icons/fa';
 import {ColumnItem} from './ColumnItem';
+import {useGetLibraryColumns} from './useGetLibraryColumns';
 
 const StyledList = styled.ul`
     padding: 0;
@@ -16,10 +14,13 @@ const StyledList = styled.ul`
     color: var(--general-utilities-text-primary);
 `;
 
-const StyledDivider = styled.li`
-    list-style: none;
-    border-bottom: 1px solid var(--general-utilities-main-light);
+const StyledDivider = styled.hr`
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid var(--general-utilities-main-light);
     margin: 0 calc(var(--general-spacing-s) * 1px);
+    padding: 0;
 `;
 
 interface IDisplayModeTableProps {
@@ -28,33 +29,39 @@ interface IDisplayModeTableProps {
 
 export const DisplayModeTable: FunctionComponent<IDisplayModeTableProps> = ({library}) => {
     const {t} = useSharedTranslation();
-    const {lang: availableLangs} = useLang();
-    // TOTO Where to stock visible columns list
+    // TODO Where to stock visible columns list
     // TODO when are changes saved (and thus, when is the table updated) ?
     const [visibleColumns, setVisibleColumns] = useState<Record<string, boolean>>({
         id: true
     });
     const [searchInput, setSearchInput] = useState('');
     const debouncedSearchInput = useDebouncedValue(searchInput, 300);
-    const {data} = useGetAttributesByLibQuery({
-        variables: {
-            library
-        }
-    });
+
+    const columnsById = useGetLibraryColumns(library);
+    const visibleColumnsKeys = Object.keys(visibleColumns);
 
     const filteredColumns = useMemo(() => {
-        if (!data) {
-            return [];
+        const columnIds = Object.keys(columnsById);
+        if (columnIds.length === 0) {
+            return {};
         }
         if (searchInput === '') {
-            return data?.attributes?.list ?? [];
+            return columnsById;
         }
 
-        return data?.attributes?.list?.filter(attribute => attribute.id.includes(debouncedSearchInput)) ?? [];
-    }, [debouncedSearchInput, data]);
+        return columnIds.reduce((acc, columnId) => {
+            if (columnsById[columnId].label.includes(searchInput) || columnId.includes(searchInput)) {
+                acc[columnId] = columnsById[columnId];
+            }
+            return acc;
+        }, {});
+    }, [debouncedSearchInput, columnsById]);
+    const filteredColumnIds = Object.keys(filteredColumns);
 
-    const _onSearchChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        if (event.target.value.length > 2 || event.target.value.length === 0) {
+    const _onSearchChanged = (event: ChangeEvent<HTMLInputElement>) => {
+        if ((searchInput.length > 2 && event.target.value.length < 3) || event.target.value.length === 0) {
+            setSearchInput('');
+        } else if (event.target.value.length > 2) {
             setSearchInput(event.target.value);
         }
     };
@@ -69,19 +76,18 @@ export const DisplayModeTable: FunctionComponent<IDisplayModeTableProps> = ({lib
     return (
         <div>
             <KitTypography.Title level="h4">{t('items_list.columns')}</KitTypography.Title>
-            <KitInput placeholder={String(t('global.search'))} onChange={_onSearchChanged}></KitInput>
+            <KitInput placeholder={String(t('global.search'))} onChange={_onSearchChanged} allowClear></KitInput>
             <div>
                 <StyledList>
                     <ColumnItem title={t('record_edition.whoAmI')} visible={false} disabled />
-                    {Object.keys(visibleColumns).map(column => {
-                        const attribute = filteredColumns.find(({id}) => id === column);
-                        if (attribute && visibleColumns[attribute.id]) {
+                    {visibleColumnsKeys.map(columnId => {
+                        if (filteredColumns[columnId] && visibleColumns[columnId]) {
                             return (
                                 <ColumnItem
-                                    key={column}
-                                    title={localizedTranslation(attribute.label, availableLangs)}
+                                    key={columnId}
+                                    title={columnsById[columnId].label}
                                     visible
-                                    onVisibilityClick={_toggleColumnVisibility(column)}
+                                    onVisibilityClick={_toggleColumnVisibility(columnId)}
                                     dragHandler={<FaGripLines />}
                                 />
                             );
@@ -91,16 +97,16 @@ export const DisplayModeTable: FunctionComponent<IDisplayModeTableProps> = ({lib
                 </StyledList>
                 <StyledDivider />
                 <StyledList>
-                    {filteredColumns.map(attribute => {
-                        if (visibleColumns[attribute.id]) {
+                    {filteredColumnIds.map(columnId => {
+                        if (visibleColumns[columnId]) {
                             return null;
                         }
                         return (
                             <ColumnItem
-                                key={attribute.id}
+                                key={columnsById[columnId].id}
                                 visible={false}
-                                title={localizedTranslation(attribute.label, availableLangs)}
-                                onVisibilityClick={_toggleColumnVisibility(attribute.id)}
+                                title={columnsById[columnId].label}
+                                onVisibilityClick={_toggleColumnVisibility(columnId)}
                             />
                         );
                     })}

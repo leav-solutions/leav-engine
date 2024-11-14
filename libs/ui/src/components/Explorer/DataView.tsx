@@ -16,7 +16,6 @@ import {
     PropertyValueValueFragment
 } from '_ui/_gqlTypes';
 import {IItemAction, IItemData, ItemWhoAmI} from './_types';
-import styled from 'styled-components';
 
 const USELESS = '';
 

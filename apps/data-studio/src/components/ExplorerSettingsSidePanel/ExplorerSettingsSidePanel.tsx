@@ -14,7 +14,6 @@ export const ExplorerSettingsSidePanel: FunctionComponent = () => {
 
     return (
         <KitSidePanel
-            style={{zIndex: '10000'}}
             initialOpen
             floating
             closable

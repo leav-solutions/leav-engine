@@ -54,7 +54,6 @@ const StyledFaEye = styled(FaEye).attrs<{$disabled: boolean}>({$disabled: false}
 
 const StyledEyeSlash = styled(FaEyeSlash)`
     color: var(--general-utilities-disabled);
-    cursor: pointer;
 `;
 
 const StyledEmptyIcon = styled.div`

@@ -1,12 +1,11 @@
-import {useGetAttributesByLibQuery} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {KitRadio, KitSpace, KitTypography} from 'aristid-ds';
+import {KitRadio, KitSpace, KitTag} from 'aristid-ds';
 import {RadioChangeEvent} from 'aristid-ds/dist/Kit/DataEntry/Radio';
 import {FunctionComponent, useState} from 'react';
 import styled from 'styled-components';
 import {DisplayModeTable} from './DisplayModeTable';
 
-const StyledWrapper = styled.div`
+const StyledWrapperDiv = styled.div`
     display: flex;
     flex-direction: column;
     gap: calc(var(--general-spacing-l) * 1px);
@@ -20,7 +19,7 @@ interface IDisplayModeProps {
     library: string;
 }
 
-export const DisplayMode: FunctionComponent<IDisplayModeProps> = ({library = 'users'}) => {
+export const DisplayMode: FunctionComponent<IDisplayModeProps> = ({library}) => {
     const {t} = useSharedTranslation();
     const [currrentDisplayMode, setCurrentDisplayMode] = useState<string>('table');
 
@@ -28,20 +27,31 @@ export const DisplayMode: FunctionComponent<IDisplayModeProps> = ({library = 'us
         setCurrentDisplayMode(event.target.value);
     };
 
+    const comingSoonTag = <KitTag type="primary" idCardProps={{description: String(t('explorer.coming-soon'))}} />;
+
     return (
-        <StyledWrapper>
+        <StyledWrapperDiv>
             <KitRadio.Group value={currrentDisplayMode} onChange={_handleDisplayModeChange}>
                 <KitSpace direction="vertical" size={0}>
-                    <KitRadio value="list">{t('explorer.display-mode-list')}</KitRadio>
+                    <KitRadio value="list" disabled>
+                        <KitSpace>
+                            {t('explorer.display-mode-list')} {comingSoonTag}
+                        </KitSpace>
+                    </KitRadio>
                     <KitRadio value="table">{t('explorer.display-mode-table')}</KitRadio>
-                    <KitRadio value="mosaic">{t('explorer.display-mode-mosaic')}</KitRadio>
-                    <KitRadio value="planning">{t('explorer.display-mode-planning')}</KitRadio>
+                    <KitRadio value="mosaic" disabled>
+                        <KitSpace>
+                            {t('explorer.display-mode-mosaic')} {comingSoonTag}
+                        </KitSpace>
+                    </KitRadio>
+                    <KitRadio value="planning" disabled>
+                        <KitSpace>
+                            {t('explorer.display-mode-planning')} {comingSoonTag}
+                        </KitSpace>
+                    </KitRadio>
                 </KitSpace>
             </KitRadio.Group>
             {currrentDisplayMode === 'table' && <DisplayModeTable library={library} />}
-            {currrentDisplayMode !== 'table' && (
-                <KitTypography.Text>{t(`explorer.display-mode-${currrentDisplayMode}`)}</KitTypography.Text>
-            )}
-        </StyledWrapper>
+        </StyledWrapperDiv>
     );
 };

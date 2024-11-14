@@ -612,6 +612,7 @@
         "display-mode-mosaic": "Mosaïc",
         "display-mode-planning": "Planning",
         "filters": "Filters",
-        "sort":  "Sort"
+        "sort":  "Sort",
+        "coming-soon": "Coming soon"
     }
 }
