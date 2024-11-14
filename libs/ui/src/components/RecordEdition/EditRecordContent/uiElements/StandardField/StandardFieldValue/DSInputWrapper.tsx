@@ -92,6 +92,8 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
 
     const {errors} = Form.Item.useStatus();
 
+    console.log('InputWrapper value', value);
+
     return (
         <KitInputStyled
             ref={inputRef}

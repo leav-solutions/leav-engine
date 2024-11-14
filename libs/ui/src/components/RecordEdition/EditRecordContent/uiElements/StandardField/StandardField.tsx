@@ -349,17 +349,38 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
                     required={state.formElement.settings.required}
                     disabled={state.isReadOnly}
                 >
-                    {valuesToDisplay.map(value => (
+                    {!attribute.multiple_values && (
                         <StandardFieldValue
-                            key={value.idValue}
-                            value={value}
+                            key={valuesToDisplay[0].idValue}
+                            value={valuesToDisplay[0]}
                             state={state}
                             dispatch={dispatch}
                             onSubmit={_handleSubmit}
                             onDelete={_handleDelete}
                             onScopeChange={_handleScopeChange}
                         />
-                    ))}
+                    )}
+                    {attribute.multiple_values && (
+                        <Form.List name={attribute.id}>
+                            {/* TODO: Garder add et remove ?? */}
+                            {(fields, {add, remove}) => (
+                                <>
+                                    {fields.map((field, index) => (
+                                        <StandardFieldValue
+                                            key={field.key}
+                                            listField={field}
+                                            value={valuesToDisplay[index]}
+                                            state={state}
+                                            dispatch={dispatch}
+                                            onSubmit={_handleSubmit}
+                                            onDelete={_handleDelete}
+                                            onScopeChange={_handleScopeChange}
+                                        />
+                                    ))}
+                                </>
+                            )}
+                        </Form.List>
+                    )}
                 </KitInputWrapper>
 
                 {(canDeleteAllValues || canAddAnotherValue || attribute?.versions_conf?.versionable) && (
