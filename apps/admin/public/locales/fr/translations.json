@@ -162,6 +162,7 @@
         },
         "values_list_enable": "Activer",
         "allow_free_entry": "Autoriser la saisie libre",
+        "allow_list_update": "Autoriser la mise à jour de la liste",
         "values": "Valeurs",
         "values_list": "Liste de valeurs",
         "add_value": "Ajouter une valeur",

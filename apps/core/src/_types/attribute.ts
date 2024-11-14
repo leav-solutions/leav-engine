@@ -73,6 +73,7 @@ export interface IValuesListConf {
     enable: boolean;
     values?: string[] | IDateRangeValue[] | IRecord[] | ITreeElement[];
     allowFreeEntry?: boolean;
+    allowListUpdate?: boolean;
 }
 
 export type IOAllowedTypes = {

@@ -4,7 +4,8 @@
 import {expectToThrow, render, screen} from '_ui/_tests/testUtils';
 import {MonoValueSelect} from './MonoValueSelect';
 import {mockFormElementInput} from '_ui/__mocks__/common/form';
-import {mockAttributeSimple, mockFormAttribute} from '_ui/__mocks__/common/attribute';
+import {mockAttributeSimple, mockAttributeWithDetails, mockFormAttribute} from '_ui/__mocks__/common/attribute';
+import * as gqlTypes from '_ui/_gqlTypes';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {AntForm} from 'aristid-ds';
 import userEvent from '@testing-library/user-event';
@@ -16,10 +17,24 @@ import {
     IStandardFieldReducerState,
     IStandardFieldValue
 } from '_ui/components/RecordEdition/EditRecordContent/reducers/standardFieldReducer/standardFieldReducer';
+import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 
 describe('<MonoValueSelect />', () => {
     const handleSubmitMock = jest.fn();
     const handleBlurMock = jest.fn();
+    const dispatch = jest.fn();
+
+    const mockSaveAttributeMutation = jest.fn().mockReturnValue({
+        data: {
+            saveAttribute: {
+                ...mockAttributeWithDetails
+            }
+        }
+    });
+    jest.spyOn(gqlTypes, 'useSaveAttributeMutation').mockImplementation(() => [
+        mockSaveAttributeMutation,
+        {loading: false, called: false, client: null, reset: null, error: null}
+    ]);
 
     const commonAttribute: RecordFormAttributeStandardAttributeFragment = {
         ...mockAttributeSimple,
@@ -90,6 +105,7 @@ describe('<MonoValueSelect />', () => {
                         <MonoValueSelect
                             attribute={commonAttribute}
                             state={state}
+                            editRecordDispatch={dispatch}
                             fieldValue={fieldValue}
                             handleSubmit={handleSubmitMock}
                             handleBlur={handleBlurMock}
@@ -108,6 +124,7 @@ describe('<MonoValueSelect />', () => {
                                 <MonoValueSelect
                                     attribute={commonAttribute}
                                     state={state}
+                                    editRecordDispatch={dispatch}
                                     fieldValue={fieldValue}
                                     handleSubmit={handleSubmitMock}
                                     handleBlur={handleBlurMock}
@@ -127,6 +144,7 @@ describe('<MonoValueSelect />', () => {
                     <MonoValueSelect
                         attribute={attribute}
                         state={state}
+                        editRecordDispatch={dispatch}
                         fieldValue={{...fieldValue, isEditing: true}}
                         handleSubmit={handleSubmitMock}
                         handleBlur={handleBlurMock}
@@ -196,6 +214,7 @@ describe('<MonoValueSelect />', () => {
                             <MonoValueSelect
                                 attribute={attribute}
                                 state={newState}
+                                editRecordDispatch={dispatch}
                                 fieldValue={{...fieldValue, isEditing: true}}
                                 handleSubmit={handleSubmitMock}
                                 handleBlur={handleBlurMock}
@@ -252,6 +271,7 @@ describe('<MonoValueSelect />', () => {
                             <MonoValueSelect
                                 attribute={attribute}
                                 state={newState}
+                                editRecordDispatch={dispatch}
                                 fieldValue={{...fieldValue, isEditing: true}}
                                 handleSubmit={handleSubmitMock}
                                 handleBlur={handleBlurMock}
@@ -283,6 +303,7 @@ describe('<MonoValueSelect />', () => {
                         <MonoValueSelect
                             attribute={attribute}
                             state={state}
+                            editRecordDispatch={dispatch}
                             fieldValue={{...fieldValue, isEditing: true}}
                             handleSubmit={handleSubmitMock}
                             handleBlur={handleBlurMock}
@@ -309,6 +330,7 @@ describe('<MonoValueSelect />', () => {
                         <MonoValueSelect
                             attribute={attribute}
                             state={state}
+                            editRecordDispatch={dispatch}
                             fieldValue={{...fieldValue, isEditing: true}}
                             handleSubmit={handleSubmitMock}
                             handleBlur={handleBlurMock}
@@ -332,6 +354,7 @@ describe('<MonoValueSelect />', () => {
                         <MonoValueSelect
                             attribute={{...attribute, values_list: {...valuesList, allowFreeEntry: true}}}
                             state={state}
+                            editRecordDispatch={dispatch}
                             fieldValue={{...fieldValue, isEditing: true}}
                             handleSubmit={handleSubmitMock}
                             handleBlur={handleBlurMock}
@@ -348,6 +371,40 @@ describe('<MonoValueSelect />', () => {
             const newColorOption = screen.getByText(`record_edition.select_option${newColor}`);
             await userEvent.click(newColorOption);
 
+            expect(handleSubmitMock).toHaveBeenCalledWith(newColor, attribute.id);
+            expect(screen.getByTestId(attribute.id).innerHTML).toMatch(new RegExp(newColor));
+        });
+
+        it('should display the option and create it with list update', async () => {
+            const editRecordDispatch = jest.fn();
+            render(
+                <AntForm name="name">
+                    <AntForm.Item name="chartreuse">
+                        <MonoValueSelect
+                            attribute={{
+                                ...attribute,
+                                values_list: {...valuesList, allowFreeEntry: true, allowListUpdate: true}
+                            }}
+                            state={state}
+                            editRecordDispatch={editRecordDispatch}
+                            fieldValue={{...fieldValue, isEditing: true}}
+                            handleSubmit={handleSubmitMock}
+                            handleBlur={handleBlurMock}
+                        />
+                    </AntForm.Item>
+                </AntForm>
+            );
+
+            const select = screen.getByRole('combobox');
+            await userEvent.click(select);
+            await userEvent.type(select, newColor);
+
+            expect(screen.queryByText('record_edition.search_not_found')).not.toBeInTheDocument();
+            const newColorOption = screen.getByText(`record_edition.create_and_select_option${newColor}`);
+            await userEvent.click(newColorOption);
+
+            expect(handleSubmitMock).toHaveBeenCalledWith(newColor, attribute.id);
+            expect(editRecordDispatch).toHaveBeenCalledWith({type: EditRecordReducerActionsTypes.REQUEST_REFRESH});
             expect(screen.getByTestId(attribute.id).innerHTML).toMatch(new RegExp(newColor));
         });
     });

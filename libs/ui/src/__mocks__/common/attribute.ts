@@ -118,6 +118,7 @@ export const mockFormAttribute: RecordFormAttributeFragment = {
     values_list: {
         enable: false,
         allowFreeEntry: false,
+        allowListUpdate: false,
         values: []
     },
     permissions: {
@@ -140,7 +141,7 @@ export const mockFormAttributeTree: RecordFormAttributeTreeAttributeFragment = {
     ...mockFormAttribute,
     ...mockAttributeTree,
     metadata_fields: null,
-    treeValuesList: {enable: false, allowFreeEntry: false, values: []}
+    treeValuesList: {enable: false, allowFreeEntry: false, allowListUpdate: false, values: []}
 };
 
 export const mockSelectedAttributeA: ISelectedAttribute = {

@@ -31,12 +31,14 @@ export const getRecordFormQuery = gql`
         ... on StandardStringValuesListConf {
             enable
             allowFreeEntry
+            allowListUpdate
             values
         }
 
         ... on StandardDateRangeValuesListConf {
             enable
             allowFreeEntry
+            allowListUpdate
             dateRangeValues: values {
                 from
                 to

@@ -34,6 +34,7 @@ describe('ValuesListForm', () => {
 
         expect(comp.find('FormCheckbox[name="enable"]').prop('checked')).toBe(true);
         expect(comp.find('FormCheckbox[name="allowFreeEntry"]').prop('checked')).toBe(false);
+        expect(comp.find('FormCheckbox[name="allowListUpdate"]').prop('checked')).toBe(false);
     });
 
     test('When disabled, hide values list', async () => {
@@ -42,7 +43,7 @@ describe('ValuesListForm', () => {
             <ValuesListForm
                 attribute={{
                     ...mockAttrSimpleWithValuesList,
-                    values_list: {enable: false, allowFreeEntry: null, values: null}
+                    values_list: {enable: false, allowFreeEntry: null, allowListUpdate: null, values: null}
                 }}
                 onSubmit={onSubmit}
             />
@@ -50,6 +51,7 @@ describe('ValuesListForm', () => {
 
         expect(comp.find('FormCheckbox[name="enable"]').prop('checked')).toBe(false);
         expect(comp.find('FormCheckbox[name="allowFreeEntry"]')).toHaveLength(0);
+        expect(comp.find('FormCheckbox[name="allowListUpdate"]')).toHaveLength(0);
         expect(comp.find('[data-test-id="values-list-wrapper"]')).toHaveLength(0);
     });
 
@@ -62,10 +64,14 @@ describe('ValuesListForm', () => {
         });
 
         act(() => {
+            comp.find('FormCheckbox[name="allowListUpdate"] input').simulate('change');
+        });
+
+        act(() => {
             comp.find('FormCheckbox[name="enable"] input').simulate('change');
         });
 
-        expect(onSubmit).toHaveBeenCalledTimes(2);
+        expect(onSubmit).toHaveBeenCalledTimes(3);
     });
 
     test('Render form based on attribute type', () => {
