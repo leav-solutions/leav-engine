@@ -96,7 +96,12 @@ function ValuesListForm({attribute, onSubmit}: IValuesListFormProps): JSX.Elemen
             dispatch({type: 'toggle_allow_list_update'});
         }
     };
-    const _toggleAllowListUpdate = () => dispatch({type: 'toggle_allow_list_update'});
+    const _toggleAllowListUpdate = () => {
+        dispatch({type: 'toggle_allow_list_update'});
+        if (!state.conf.allowListUpdate && !state.conf.allowFreeEntry) {
+            dispatch({type: 'toggle_allow_free_entry'});
+        }
+    };
 
     const _extractValuesToSave = useCallback(
         (conf: IValuesListConf): string[] => {
