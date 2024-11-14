@@ -9,7 +9,7 @@ import {IValue, IValuesOptions, IValueVersion} from '_types/value';
 export interface IFindRecordParams {
     library: string;
     filters?: IRecordFilterLight[];
-    sort?: IRecordSortLight;
+    sort?: IRecordSortLight[];
     options?: IValuesOptions;
     pagination?: IPaginationParams | ICursorPaginationParams;
     withCount?: boolean;
