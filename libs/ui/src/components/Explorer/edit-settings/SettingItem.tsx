@@ -54,12 +54,14 @@ const StyledConfigurationItem = styled.li`
     }
 `;
 
-export const SettingItem: FunctionComponent<{
+interface ISettingItemProps {
     icon: ReactNode;
     title: string;
     onClick: () => void;
     value?: string;
-}> = ({icon, title, value = '', onClick}) => (
+}
+
+export const SettingItem: FunctionComponent<ISettingItemProps> = ({icon, title, value = '', onClick}) => (
     <StyledConfigurationItem>
         <button onClick={onClick}>
             {icon}
