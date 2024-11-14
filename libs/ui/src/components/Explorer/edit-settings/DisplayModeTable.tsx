@@ -85,7 +85,7 @@ export const DisplayModeTable: FunctionComponent<IDisplayModeTableProps> = ({lib
                 <StyledList>
                     <ColumnItem title={t('record_edition.whoAmI')} visible={false} disabled />
                     {orderedVisibleColumns
-                        .filter(columnId => searchFilteredColumnsIds[columnId])
+                        .filter(columnId => searchFilteredColumnsIds.includes(columnId))
                         .map(columnId => (
                             <ColumnItem
                                 key={columnId}
