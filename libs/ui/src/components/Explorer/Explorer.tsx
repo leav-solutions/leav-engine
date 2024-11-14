@@ -58,7 +58,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         refetch
     });
 
-    const settingsButton = useOpenSettings();
+    const settingsButton = useOpenSettings(library);
 
     return (
         <>

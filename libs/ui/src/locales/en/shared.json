@@ -608,7 +608,12 @@
         "back": "Back",
         "view-configuration": "View Configuration",
         "display-mode": "Display Mode",
+        "display-mode-list": "List",
+        "display-mode-table": "Table",
+        "display-mode-mosaic": "Mosaic",
+        "display-mode-planning": "Planning",
         "filters": "Filters",
-        "sort":  "Sort"
+        "sort": "Sort",
+        "coming-soon": "Coming soon"
     }
 }
