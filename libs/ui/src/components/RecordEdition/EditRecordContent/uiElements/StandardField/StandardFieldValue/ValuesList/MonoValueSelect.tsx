@@ -4,7 +4,7 @@
 import {FunctionComponent, useEffect, useMemo, useRef, useState} from 'react';
 import {KitSelect, KitTypography} from 'aristid-ds';
 import useSharedTranslation from '_ui/hooks/useSharedTranslation/useSharedTranslation';
-import {AttributeFormat} from '_ui/_gqlTypes';
+import {AttributeFormat, useSaveAttributeMutation} from '_ui/_gqlTypes';
 import {Form, GetRef} from 'antd';
 import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
 import {useLang} from '_ui/hooks';
@@ -12,14 +12,19 @@ import {localizedTranslation} from '@leav/utils';
 import moment from 'moment';
 import {stringifyDateRangeValue} from '_ui/_utils';
 import {IDateRangeValuesListConf, IMonoValueSelectProps, IStringValuesListConf} from './_types';
+import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 
 interface IOption {
     label: string;
     value: string;
 }
+
+const isNewOption = (value: string, options: IOption[]): boolean =>
+    value !== '' && !options.find(option => option.value === value);
+
 const addOption = (options: IOption[], optionToAdd: IOption) => {
     const newOptions = options;
-    if (optionToAdd.value && !options.find(option => option.value === optionToAdd.value)) {
+    if (optionToAdd.value && isNewOption(optionToAdd.value, options)) {
         newOptions.unshift({
             value: optionToAdd.value,
             label: optionToAdd.label
@@ -32,6 +37,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     value,
     onChange,
     state,
+    editRecordDispatch,
     attribute,
     fieldValue,
     handleSubmit,
@@ -56,7 +62,9 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
     const [searchedString, setSearchedString] = useState('');
     const {lang: availableLang} = useLang();
     const selectRef = useRef<GetRef<typeof KitSelect>>(null);
+    const [saveAttribute] = useSaveAttributeMutation();
     const allowFreeEntry = attribute.values_list.allowFreeEntry;
+    const allowListUpdate = attribute.values_list.allowListUpdate;
 
     useEffect(() => {
         if (fieldValue.isEditing && selectRef.current) {
@@ -90,12 +98,15 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
         return values;
     };
 
-    let options = _getFilteredValuesList();
+    const initialOptions = _getFilteredValuesList();
+    let options = [...initialOptions];
     if (allowFreeEntry) {
         options = addOption(options, {value, label: value});
         options = addOption(options, {
             value: searchedString,
-            label: t('record_edition.select_option') + searchedString
+            label:
+                (allowListUpdate ? t('record_edition.create_and_select_option') : t('record_edition.select_option')) +
+                searchedString
         });
     }
 
@@ -118,12 +129,29 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
         setIsSelectOpen(false);
     };
 
-    const _handleOnChange = (selectedValue: string) => {
+    const _handleOnChange = async (selectedValue: string) => {
         setIsSelectOpen(false);
         setSearchedString('');
         if ((state.isInheritedValue || state.isCalculatedValue) && selectedValue === '') {
             _resetToInheritedOrCalculatedValue();
             return;
+        }
+
+        if (allowListUpdate && isNewOption(selectedValue, initialOptions) && 'values' in attribute.values_list) {
+            await saveAttribute({
+                variables: {
+                    attribute: {
+                        id: attribute.id,
+                        values_list: {
+                            enable: true,
+                            allowFreeEntry: true,
+                            allowListUpdate: true,
+                            values: [...attribute.values_list.values, selectedValue]
+                        }
+                    }
+                }
+            });
+            editRecordDispatch({type: EditRecordReducerActionsTypes.REQUEST_REFRESH});
         }
 
         handleSubmit(selectedValue, attribute.id);

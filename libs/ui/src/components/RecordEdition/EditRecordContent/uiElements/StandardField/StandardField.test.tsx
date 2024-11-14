@@ -344,6 +344,7 @@ describe('StandardField', () => {
                 values_list: {
                     enable: true,
                     allowFreeEntry: false,
+                    allowListUpdate: false,
                     values: ['My value', 'Other value']
                 }
             }

@@ -36,7 +36,7 @@ describe('ValueDetailsBtn', () => {
             fr: 'my attribute label'
         },
         system: false,
-        values_list: {enable: false, allowFreeEntry: false, values: []}
+        values_list: {enable: false, allowFreeEntry: false, allowListUpdate: false, values: []}
     };
 
     test('Open value details on click', async () => {

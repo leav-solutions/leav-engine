@@ -66,6 +66,7 @@ export const recordFormAttributeFragment = gql`
             linkValuesList: values_list {
                 enable
                 allowFreeEntry
+                allowListUpdate
                 values {
                     ...RecordIdentity
                 }
@@ -80,6 +81,7 @@ export const recordFormAttributeFragment = gql`
             treeValuesList: values_list {
                 enable
                 allowFreeEntry
+                allowListUpdate
                 values {
                     id
                     record {

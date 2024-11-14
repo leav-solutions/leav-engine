@@ -505,6 +505,7 @@ export interface ValueVersionInput {
 export interface ValuesListConfInput {
     enable: boolean;
     allowFreeEntry?: boolean | null;
+    allowListUpdate?: boolean | null;
     values?: string[] | null;
 }
 

@@ -11,10 +11,13 @@ import {
     IStandardFieldReducerState,
     IStandardFieldValue
 } from '_ui/components/RecordEdition/EditRecordContent/reducers/standardFieldReducer/standardFieldReducer';
+import {IEditRecordReducerActions} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 import {SelectProps} from 'antd';
+import {Dispatch} from 'react';
 
 export interface IMonoValueSelectProps extends IProvidedByAntFormItem<SelectProps> {
     state: IStandardFieldReducerState;
+    editRecordDispatch: Dispatch<IEditRecordReducerActions>;
     attribute: RecordFormAttributeStandardAttributeFragment;
     fieldValue: IStandardFieldValue;
     handleSubmit: (value: string, id?: string) => void;
