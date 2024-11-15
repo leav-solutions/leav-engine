@@ -11,10 +11,12 @@ import {useExplorerData} from './_queries/useExplorerData';
 import {useDeactivateAction} from './useDeactivateAction';
 import {useEditAction} from './useEditAction';
 import {useCreateMainAction} from './useCreateMainAction';
+import {ExplorerTitle} from './ExplorerTitle';
 
 interface IExplorerProps {
     library: string;
     itemActions: IItemAction[];
+    title?: string;
     defaultActionsForItem?:
         | []
         | ['deactivate']
@@ -37,6 +39,7 @@ const ExplorerHeaderDivStyled = styled.div`
 export const Explorer: FunctionComponent<IExplorerProps> = ({
     library,
     itemActions,
+    title,
     defaultActionsForItem = ['edit', 'deactivate'],
     defaultMainActions = ['create']
 }) => {
@@ -63,12 +66,12 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     return (
         <>
             {loading ? (
-                'Loading...'
+                'Loading...' // TODO: handle loading properly
             ) : (
                 <>
                     <ExplorerHeaderDivStyled>
                         <KitTypography.Title level="h1">
-                            {library /* TODO: get correct name from backend */}
+                            <ExplorerTitle library={library} title={title} />
                         </KitTypography.Title>
                         <KitSpace size="xs">
                             {settingsButton}
