@@ -170,8 +170,8 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
                         : t(`errors.${attributeError.type}`);
 
                 if (antdForm) {
-                    const shouldSepicifyField = attribute.multiple_values && fieldName !== undefined;
-                    const name = shouldSepicifyField ? [attribute.id, fieldName] : attribute.id;
+                    const shouldSpecifyFieldName = attribute.multiple_values && fieldName !== undefined;
+                    const name = shouldSpecifyFieldName ? [attribute.id, fieldName] : attribute.id;
 
                     antdForm.setFields([
                         {
