@@ -10,11 +10,7 @@ import {
 import {Form, InputProps} from 'antd';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import styled from 'styled-components';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
-import {useLang} from '_ui/hooks';
-import {localizedTranslation} from '@leav/utils';
 
 interface IDSInputEncryptedWrapper extends IProvidedByAntFormItem<InputProps> {
     state: IStandardFieldReducerState;
@@ -49,15 +45,8 @@ export const DSInputEncryptedWrapper: FunctionComponent<IDSInputEncryptedWrapper
         throw Error('DSInputEncryptedWrapper should be used inside a antd Form.Item');
     }
 
-    const {t} = useSharedTranslation();
     const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick} = useValueDetailsButton({
-        value: fieldValue?.value,
-        attribute
-    });
     const [hasChanged, setHasChanged] = useState(false);
-    const {lang: availableLang} = useLang();
-
     const inputRef = useRef<any>(null);
 
     useEffect(() => {
@@ -105,32 +94,13 @@ export const DSInputEncryptedWrapper: FunctionComponent<IDSInputEncryptedWrapper
         onChange(event);
     };
 
-    const _getHelper = () => {
-        if (state.isInheritedOverrideValue) {
-            return t('record_edition.inherited_input_helper', {
-                inheritedValue: state.inheritedValue.raw_value
-            });
-        } else if (state.isCalculatedOverrideValue) {
-            return t('record_edition.calculated_input_helper', {
-                calculatedValue: state.calculatedValue.raw_value
-            });
-        }
-        return;
-    };
-
-    const label = localizedTranslation(state.formElement.settings.label, availableLang);
-
     return (
         <KitInputPasswordStyled
             // @ts-expect-error - ref is not a valid prop for Input.Password but works at runtime
             ref={inputRef}
             autoComplete="new-password"
             data-testid="kit-input-password"
-            label={label}
-            required={state.formElement.settings.required}
             status={errors.length > 0 ? 'error' : undefined}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
-            helper={_getHelper()}
             value={value}
             disabled={state.isReadOnly}
             allowClear={!state.isInheritedNotOverrideValue && !state.isCalculatedNotOverrideValue}

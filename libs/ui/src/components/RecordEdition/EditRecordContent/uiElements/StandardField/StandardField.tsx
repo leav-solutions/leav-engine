@@ -338,6 +338,9 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
         return;
     };
 
+    //TODO: Question. Dans le cas d'un multi est-ce qu'on veut que le label soit en erreur ?
+    const isFieldInError = attribute.multiple_values ? valuesToDisplay.some(v => v.error) : valuesToDisplay[0].error;
+
     // TODO: Tester attribut mono et multi (nombre potentiel de composant à afficher)
     return (
         <StandardFieldReducerContext.Provider value={{state, dispatch}}>
@@ -349,6 +352,7 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
                     required={state.formElement.settings.required}
                     disabled={state.isReadOnly}
                     bordered={attribute.multiple_values}
+                    status={isFieldInError ? 'error' : undefined}
                 >
                     {!attribute.multiple_values && (
                         <StandardFieldValue

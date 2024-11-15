@@ -9,11 +9,7 @@ import {
 import {Form, GetRef, InputProps} from 'antd';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import styled from 'styled-components';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
-import {useLang} from '_ui/hooks';
-import {localizedTranslation} from '@leav/utils';
 import {KitRichText} from 'aristid-ds';
 
 interface IDSRichTextWrapperProps extends IProvidedByAntFormItem<InputProps> {
@@ -45,14 +41,8 @@ export const DSRichTextWrapper: FunctionComponent<IDSRichTextWrapperProps> = ({
         throw Error('DSRichTextWrapper should be used inside a antd Form.Item');
     }
 
-    const {t} = useSharedTranslation();
     const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick} = useValueDetailsButton({
-        value: fieldValue?.value,
-        attribute
-    });
     const [hasChanged, setHasChanged] = useState(false);
-    const {lang: availableLang} = useLang();
     const inputRef = useRef<GetRef<typeof KitRichTextStyled>>(null);
 
     useEffect(() => {
@@ -99,29 +89,10 @@ export const DSRichTextWrapper: FunctionComponent<IDSRichTextWrapperProps> = ({
         onChange(inputValue);
     };
 
-    const _getHelper = () => {
-        if (state.isInheritedOverrideValue) {
-            return t('record_edition.inherited_input_helper', {
-                inheritedValue: state.inheritedValue.raw_value
-            });
-        } else if (state.isCalculatedOverrideValue) {
-            return t('record_edition.calculated_input_helper', {
-                calculatedValue: state.calculatedValue.raw_value
-            });
-        }
-        return;
-    };
-
-    const label = localizedTranslation(state.formElement.settings.label, availableLang);
-
     return (
         <KitRichTextStyled
             ref={inputRef}
-            required={state.formElement.settings.required}
-            label={label}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             status={errors.length > 0 ? 'error' : undefined}
-            helper={_getHelper()}
             value={value as string}
             disabled={state.isReadOnly}
             onChange={_handleOnChange}
@@ -129,6 +100,7 @@ export const DSRichTextWrapper: FunctionComponent<IDSRichTextWrapperProps> = ({
             $shouldHighlightColor={
                 (!hasChanged && state.isInheritedNotOverrideValue) || state.isCalculatedNotOverrideValue
             }
+            placeholder="TODO"
         />
     );
 };

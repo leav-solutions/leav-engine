@@ -41,7 +41,6 @@ export const DSBooleanWrapper: FunctionComponent<IDSBooleanWrapperProps> = ({val
 
     const {t} = useSharedTranslation();
     const {errors} = Form.Item.useStatus();
-    const {lang: availableLang} = useLang();
 
     const _resetToInheritedOrCalculatedValue = () => {
         if (state.isInheritedValue) {
@@ -57,28 +56,8 @@ export const DSBooleanWrapper: FunctionComponent<IDSBooleanWrapperProps> = ({val
         onChange(checked, event);
     };
 
-    const _getHelper = () => {
-        if (state.isInheritedOverrideValue) {
-            return t('record_edition.inherited_input_helper', {
-                inheritedValue: t(_getBooleanValueAsStringForTranslation(state.inheritedValue.raw_value))
-            });
-        } else if (state.isCalculatedOverrideValue) {
-            return t('record_edition.calculated_input_helper', {
-                calculatedValue: t(_getBooleanValueAsStringForTranslation(state.calculatedValue.raw_value))
-            });
-        }
-        return undefined;
-    };
-
-    const label = localizedTranslation(state.formElement.settings.label, availableLang);
-
     return (
-        <KitInputWrapper
-            label={label}
-            helper={_getHelper()}
-            status={errors.length > 0 ? 'error' : undefined}
-            disabled={state.isReadOnly}
-        >
+        <>
             <label>
                 <KitSwitch checked={value} disabled={state.isReadOnly} onChange={_handleOnChange} />
                 <KitTypographyTextStyled
@@ -94,6 +73,6 @@ export const DSBooleanWrapper: FunctionComponent<IDSBooleanWrapperProps> = ({val
                     <FontAwesomeIconStyled aria-label="clear" icon={faCircleXmark} />
                 </span>
             )}
-        </KitInputWrapper>
+        </>
     );
 };
