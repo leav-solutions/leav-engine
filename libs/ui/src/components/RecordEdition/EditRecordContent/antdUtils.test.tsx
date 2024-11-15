@@ -119,7 +119,7 @@ describe('getAntdFormInitialValues', () => {
             });
         });
 
-        test('Should initialize antd form with empty array for standard field when value is not set', async () => {
+        test('Should initialize antd form with array containing null for standard field when value is not set', async () => {
             const standardAttributeId = 'standardAttributeId';
             const standardElement = {
                 attribute: {
@@ -135,7 +135,7 @@ describe('getAntdFormInitialValues', () => {
             const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
 
             expect(antdFormInitialValues).toEqual({
-                [standardAttributeId]: []
+                [standardAttributeId]: [null]
             });
         });
     });
