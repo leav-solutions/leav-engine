@@ -4,7 +4,7 @@
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitRadio, KitSpace, KitTag} from 'aristid-ds';
 import {RadioChangeEvent} from 'aristid-ds/dist/Kit/DataEntry/Radio';
-import {FunctionComponent, useState} from 'react';
+import {FunctionComponent} from 'react';
 import styled from 'styled-components';
 import {DisplayModeTable} from './DisplayModeTable';
 import {useViewSettings} from './useViewSettings';
