@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent} from 'react';
+import {FunctionComponent, useEffect} from 'react';
 import {KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {IItemAction, IPrimaryAction} from './_types';
@@ -13,6 +13,7 @@ import {useEditAction} from './useEditAction';
 import {usePrimaryActionsButton as usePrimaryActionsButton} from './usePrimaryActions';
 import {ExplorerTitle} from './ExplorerTitle';
 import {useCreateAction} from './useCreateAction';
+import {useViewSettings} from './edit-settings/useViewSettings';
 
 interface IExplorerProps {
     library: string;
@@ -40,9 +41,9 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     defaultActionsForItem = ['edit', 'deactivate'],
     defaultPrimaryActions = ['create']
 }) => {
-    const currentAttribute = 'id';
+    const {view} = useViewSettings();
 
-    const {data, loading, refetch} = useExplorerData(library, [currentAttribute]); // TODO: refresh when go back on page
+    const {data, loading, refetch} = useExplorerData(library, view.fields); // TODO: refresh when go back on page
 
     const {deactivateAction} = useDeactivateAction({
         isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('deactivate')
@@ -83,8 +84,8 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                     </ExplorerHeaderDivStyled>
                     <DataView
                         dataGroupedFilteredSorted={data ?? []}
-                        attributesToDisplay={[currentAttribute, 'whoAmI']}
                         itemActions={dedupItemActions}
+                        attributesToDisplay={['whoAmI', ...view.fields]}
                     />
                 </>
             )}
