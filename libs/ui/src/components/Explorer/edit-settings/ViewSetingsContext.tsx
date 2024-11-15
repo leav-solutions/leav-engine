@@ -4,7 +4,7 @@
 import {createContext, Dispatch} from 'react';
 import {IViewSettingsState, ViewSettingsAction} from './viewSettingsReducer';
 
-export const ViewSettingsInitialState: IViewSettingsState = {
+export const viewSettingsInitialState: IViewSettingsState = {
     displayMode: 'table',
     fields: []
 };
@@ -12,4 +12,4 @@ export const ViewSettingsInitialState: IViewSettingsState = {
 export const ViewSettingsContext = createContext<{
     view: IViewSettingsState;
     dispatch: Dispatch<ViewSettingsAction>;
-}>({view: ViewSettingsInitialState, dispatch: () => ViewSettingsInitialState});
+}>({view: viewSettingsInitialState, dispatch: () => viewSettingsInitialState});
