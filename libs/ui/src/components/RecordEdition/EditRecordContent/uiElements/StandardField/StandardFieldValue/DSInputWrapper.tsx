@@ -105,6 +105,7 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
             $shouldHighlightColor={
                 !hasChanged && (state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue)
             }
+            placeholder="Saisir une valeur" //TODO: Traduire et faire pour tous les autres inputs  + liste de valeurs (en attente wording Cyril)
         />
     );
 };
