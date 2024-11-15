@@ -9,12 +9,8 @@ import {
 } from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {Form, GetRef, InputNumberProps} from 'antd';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import styled from 'styled-components';
-import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
-import {localizedTranslation} from '@leav/utils';
-import {useLang} from '_ui/hooks';
 
 interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputNumberProps> {
     state: IStandardFieldReducerState;
@@ -46,13 +42,7 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
         throw Error('DSInputNumberWrapper should be used inside a antd Form.Item');
     }
 
-    const {t} = useSharedTranslation();
-    const {lang} = useLang();
     const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick} = useValueDetailsButton({
-        value: fieldValue?.value,
-        attribute
-    });
 
     const [hasChanged, setHasChanged] = useState(false);
 
@@ -98,29 +88,10 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
         onChange(inputValue);
     };
 
-    const _getHelper = () => {
-        if (state.isInheritedOverrideValue) {
-            return t('record_edition.inherited_input_helper', {
-                inheritedValue: state.inheritedValue.raw_value
-            });
-        } else if (state.isCalculatedOverrideValue) {
-            return t('record_edition.calculated_input_helper', {
-                calculatedValue: state.calculatedValue.raw_value
-            });
-        }
-        return;
-    };
-
-    const label = localizedTranslation(state.formElement.settings.label, lang);
-
     return (
         <KitInputNumberStyled
             ref={inputRef}
-            required={state.formElement.settings.required}
-            label={label}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             status={errors.length > 0 ? 'error' : undefined}
-            helper={_getHelper()}
             value={value}
             onChange={_handleOnChange}
             disabled={state.isReadOnly}

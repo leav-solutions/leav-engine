@@ -6,9 +6,6 @@ import {KitSelect, KitTypography} from 'aristid-ds';
 import useSharedTranslation from '_ui/hooks/useSharedTranslation/useSharedTranslation';
 import {AttributeFormat, useSaveAttributeMutation} from '_ui/_gqlTypes';
 import {Form, GetRef} from 'antd';
-import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
-import {useLang} from '_ui/hooks';
-import {localizedTranslation} from '@leav/utils';
 import moment from 'moment';
 import {stringifyDateRangeValue} from '_ui/_utils';
 import {IDateRangeValuesListConf, IMonoValueSelectProps, IStringValuesListConf} from './_types';
@@ -54,13 +51,8 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
 
     const {t} = useSharedTranslation();
     const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick} = useValueDetailsButton({
-        value: fieldValue?.value,
-        attribute
-    });
     const [isSelectOpen, setIsSelectOpen] = useState(false);
     const [searchedString, setSearchedString] = useState('');
-    const {lang: availableLang} = useLang();
     const selectRef = useRef<GetRef<typeof KitSelect>>(null);
     const [saveAttribute] = useSaveAttributeMutation();
     const allowFreeEntry = attribute.values_list.allowFreeEntry;
@@ -163,20 +155,6 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
         handleBlur();
     };
 
-    const helper = useMemo(() => {
-        if (state.isInheritedOverrideValue) {
-            return t('record_edition.inherited_input_helper', {
-                inheritedValue: state.inheritedValue.raw_value
-            });
-        } else if (state.isCalculatedOverrideValue) {
-            return t('record_edition.calculated_input_helper', {
-                calculatedValue: state.calculatedValue.raw_value
-            });
-        }
-        return '';
-    }, [state.isInheritedOverrideValue, state.isCalculatedOverrideValue]);
-
-    const label = localizedTranslation(state.formElement.settings.label, availableLang);
     const required = state.formElement.settings.required;
 
     return (
@@ -185,19 +163,15 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
             data-testid={attribute.id}
             open={isSelectOpen}
             value={value}
-            required={required}
             allowClear={!required}
-            label={label}
             options={options}
             status={errors.length > 0 && 'error'}
             showSearch
-            helper={helper}
             onSelect={_handleOnChange}
             onChange={onChange}
             onClear={_handleOnClear}
             onBlur={_handleOnBlur}
             onSearch={setSearchedString}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             dropdownRender={menu => (
                 <>
                     {searchedString !== '' && searchResultsCount > 0 && (

@@ -9,11 +9,9 @@ import {
 } from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import styled from 'styled-components';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useLang} from '_ui/hooks';
 import {localizedTranslation} from '@leav/utils';
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
-import {useValueDetailsButton} from '../../../shared/ValueDetailsBtn/useValueDetailsButton';
 import {KitColor, KitColorPickerProps, KitColorPickerRef} from 'aristid-ds/dist/Kit/DataEntry/ColorPicker/types';
 
 interface IDSColorPickerWrapperProps extends IProvidedByAntFormItem<KitColorPickerProps> {
@@ -50,16 +48,11 @@ export const DSColorPickerWrapper: FunctionComponent<IDSColorPickerWrapperProps>
         throw Error('DSColorPickerWrapper should be used inside a antd Form.Item');
     }
 
-    const {t} = useSharedTranslation();
     const {lang: availableLang} = useLang();
     const [hasChanged, setHasChanged] = useState(false);
     const [currentColor, setCurrentColor] = useState<KitColor>();
     const [currentHex, setCurrentHex] = useState((value as string) ?? '');
     const colorPickerRef = useRef<KitColorPickerRef>(null);
-    const {onValueDetailsButtonClick} = useValueDetailsButton({
-        value: fieldValue?.value,
-        attribute
-    });
 
     useEffect(() => {
         if (fieldValue.isEditing) {
@@ -102,15 +95,6 @@ export const DSColorPickerWrapper: FunctionComponent<IDSColorPickerWrapperProps>
         handleSubmit('', state.attribute.id);
     };
 
-    const _getHelper = () => {
-        if (state.isInheritedOverrideValue) {
-            return t('record_edition.inherited_input_helper', {inheritedValue: state.inheritedValue.raw_value});
-        } else if (state.isCalculatedOverrideValue) {
-            return t('record_edition.calculated_input_helper', {calculatedValue: state.calculatedValue.raw_value});
-        }
-        return;
-    };
-
     const label = localizedTranslation(state.formElement.settings.label, availableLang);
 
     return (
@@ -118,10 +102,6 @@ export const DSColorPickerWrapper: FunctionComponent<IDSColorPickerWrapperProps>
             ref={colorPickerRef}
             value={currentHex}
             aria-label={label}
-            label={label}
-            helper={_getHelper()}
-            required={state.formElement.settings.required}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             disabled={state.isReadOnly}
             disabledAlpha
             showText

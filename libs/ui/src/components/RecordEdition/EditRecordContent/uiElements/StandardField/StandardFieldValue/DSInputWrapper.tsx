@@ -97,6 +97,7 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
     return (
         <KitInputStyled
             ref={inputRef}
+            disabled={state.isReadOnly}
             status={errors.length > 0 ? 'error' : undefined}
             value={value}
             allowClear={!state.isInheritedNotOverrideValue && !state.isCalculatedNotOverrideValue}
@@ -105,7 +106,7 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
             $shouldHighlightColor={
                 !hasChanged && (state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue)
             }
-            placeholder="Saisir une valeur" //TODO: Traduire et faire pour tous les autres inputs  + liste de valeurs (en attente wording Cyril)
+            placeholder="TODO" //TODO: Traduire et faire pour tous les autres inputs  + liste de valeurs (en attente wording Cyril)
         />
     );
 };

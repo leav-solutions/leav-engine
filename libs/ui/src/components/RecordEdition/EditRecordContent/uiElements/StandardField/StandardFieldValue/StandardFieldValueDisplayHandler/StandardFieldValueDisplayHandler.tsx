@@ -23,7 +23,6 @@ import {useTranslation} from 'react-i18next';
 import {DSRichTextWrapper} from '../DSRichTextWrapper';
 import {DSColorPickerWrapper} from '../DSColorPickerWrapper';
 import {MonoValueSelect} from '../ValuesList/MonoValueSelect';
-import {MultiValueSelect} from '../ValuesList/MultiValueSelect';
 
 interface IStandardFieldValueDisplayHandlerProps {
     state: IStandardFieldReducerState;

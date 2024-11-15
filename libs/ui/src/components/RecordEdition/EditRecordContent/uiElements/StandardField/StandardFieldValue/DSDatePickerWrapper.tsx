@@ -12,11 +12,7 @@ import dayjs from 'dayjs';
 import styled from 'styled-components';
 import {IProvidedByAntFormItem, StandardValueTypes} from '../../../_types';
 import {DatePickerProps} from 'antd/lib/date-picker';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
-import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
-import {useLang} from '_ui/hooks';
-import {localizedTranslation} from '@leav/utils';
 import {setDateToUTCNoon} from '_ui/_utils';
 interface IDSDatePickerWrapperProps extends IProvidedByAntFormItem<DatePickerProps> {
     state: IStandardFieldReducerState;
@@ -45,13 +41,7 @@ export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> =
         throw Error('DSDatePickerWrapper should be used inside a antd Form.Item');
     }
 
-    const {t} = useSharedTranslation();
-    const {lang: availableLangs} = useLang();
     const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick} = useValueDetailsButton({
-        value: fieldValue?.value,
-        attribute
-    });
 
     const inputRef = useRef<GetRef<typeof KitDatePickerStyled>>(null);
 
@@ -99,33 +89,14 @@ export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> =
         handleSubmit(dateToSave, state.attribute.id);
     };
 
-    const _getHelper = () => {
-        if (state.isInheritedOverrideValue) {
-            return t('record_edition.inherited_input_helper', {
-                inheritedValue: state.inheritedValue.value
-            });
-        } else if (state.isCalculatedOverrideValue) {
-            return t('record_edition.calculated_input_helper', {
-                calculatedValue: state.calculatedValue.value
-            });
-        }
-        return;
-    };
-
-    const label = localizedTranslation(state.formElement.settings.label, availableLangs);
-
     return (
         <KitDatePickerStyled
             ref={inputRef}
             value={value}
             onChange={_handleDateChange}
-            label={label}
-            required={state.formElement.settings.required}
             disabled={state.isReadOnly}
             allowClear={!state.isInheritedNotOverrideValue && !state.isCalculatedNotOverrideValue}
             status={errors.length > 0 ? 'error' : undefined}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
-            helper={_getHelper()}
             onBlur={handleBlur}
             $shouldHighlightColor={state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue}
         />

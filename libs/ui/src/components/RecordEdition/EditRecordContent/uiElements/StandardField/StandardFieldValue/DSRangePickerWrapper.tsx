@@ -12,11 +12,7 @@ import dayjs from 'dayjs';
 import styled from 'styled-components';
 import {IProvidedByAntFormItem, StandardValueTypes} from '../../../_types';
 import {RangePickerProps} from 'antd/lib/date-picker';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
-import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
-import {useLang} from '_ui/hooks';
-import {localizedTranslation} from '@leav/utils';
 import {setDateToUTCNoon} from '_ui/_utils';
 
 interface IDSRangePickerWrapperProps extends IProvidedByAntFormItem<RangePickerProps> {
@@ -46,13 +42,7 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
         throw Error('DSRangePickerWrapper should be used inside a antd Form.Item');
     }
 
-    const {t} = useSharedTranslation();
-    const {lang: availableLangs} = useLang();
     const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick} = useValueDetailsButton({
-        value: fieldValue?.value,
-        attribute
-    });
 
     const inputRef = useRef<any>();
 
@@ -120,42 +110,18 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
         }
     };
 
-    const _getHelper = () => {
-        if (state.isInheritedOverrideValue) {
-            return t('record_edition.inherited_input_helper', {
-                inheritedValue: t('record_edition.date_range_from_to', {
-                    from: state.inheritedValue.value.from,
-                    to: state.inheritedValue.value.to
-                })
-            });
-        } else if (state.isCalculatedOverrideValue) {
-            return t('record_edition.calculated_input_helper', {
-                calculatedValue: t('record_edition.date_range_from_to', {
-                    from: state.calculatedValue.value.from,
-                    to: state.calculatedValue.value.to
-                })
-            });
-        }
-        return;
-    };
-
-    const label = localizedTranslation(state.formElement.settings.label, availableLangs);
-
     return (
         <KitDatePickerRangePickerStyled
             // @ts-expect-error - ref is not a valid prop for RangePicker but works at runtime
             ref={inputRef}
             value={value}
             onChange={_handleDateChange}
-            label={label}
-            required={state.formElement.settings.required}
             disabled={state.isReadOnly}
             allowClear={!state.isInheritedNotOverrideValue && !state.isCalculatedNotOverrideValue}
             status={errors.length > 0 ? 'error' : undefined}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
             onOpenChange={_handleOpenChange}
-            helper={_getHelper()}
             $shouldHighlightColor={state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue}
+            placeholder={['TODO', 'TODO']}
         />
     );
 };
