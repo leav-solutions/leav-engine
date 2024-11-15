@@ -47,8 +47,8 @@ export const DataView: FunctionComponent<IDataViewProps> = ({
 
         return isLessThanFourActions ? (
             <KitSpace>
-                {actions.map(({label, icon, isDanger, callback}) => (
-                    <KitButton title={label} icon={icon} onClick={callback} danger={isDanger}>
+                {actions.map(({label, icon, isDanger, callback}, index) => (
+                    <KitButton title={label} icon={icon} onClick={callback} danger={isDanger} key={index}>
                         {label}
                     </KitButton>
                 ))}
