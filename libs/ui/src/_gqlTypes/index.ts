@@ -1356,7 +1356,7 @@ export type ExplorerLibraryDataQueryVariables = Exact<{
 }>;
 
 
-export type ExplorerLibraryDataQuery = { libraries?: { list: Array<{ label?: any | null }> } | null };
+export type ExplorerLibraryDataQuery = { libraries?: { list: Array<{ id: string, label?: any | null }> } | null };
 
 export const RecordIdentityFragmentDoc = gql`
     fragment RecordIdentity on Record {
@@ -4013,6 +4013,7 @@ export const ExplorerLibraryDataDocument = gql`
     query ExplorerLibraryData($libraryId: ID!) {
   libraries(filters: {id: [$libraryId]}) {
     list {
+      id
       label
     }
   }

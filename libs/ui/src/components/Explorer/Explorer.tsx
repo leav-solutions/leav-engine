@@ -16,7 +16,7 @@ import {useViewSettings} from './edit-settings/useViewSettings';
 
 interface IExplorerProps {
     library: string;
-    itemActions: IItemAction[];
+    itemActions?: IItemAction[];
     title?: string;
     defaultActionsForItem?:
         | []
@@ -82,7 +82,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                     <DataView
                         dataGroupedFilteredSorted={data ?? []}
                         attributesToDisplay={['whoAmI', ...view.fields]}
-                        itemActions={[editAction, deactivateAction, ...itemActions].filter(Boolean)}
+                        itemActions={[editAction, deactivateAction, ...(itemActions ?? [])].filter(Boolean)}
                     />
                 </>
             )}
