@@ -1,3 +1,6 @@
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useDebouncedValue} from '_ui/hooks/useDebouncedValue/useDebouncedValue';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitInput, KitTypography} from 'aristid-ds';
@@ -72,11 +75,10 @@ export const DisplayModeTable: FunctionComponent<IDisplayModeTableProps> = ({lib
     };
 
     const _toggleColumnVisibility = (columnId: string) => () => {
-        if (orderedVisibleColumns.includes(columnId)) {
-            dispatch({type: ViewSettingsActionTypes.REMOVE_FIELD, field: columnId});
-        } else {
-            dispatch({type: ViewSettingsActionTypes.ADD_FIELD, field: columnId});
-        }
+        const actionType = orderedVisibleColumns.includes(columnId)
+            ? ViewSettingsActionTypes.REMOVE_FIELD
+            : ViewSettingsActionTypes.ADD_FIELD;
+        dispatch({type: actionType, field: columnId});
     };
 
     return (

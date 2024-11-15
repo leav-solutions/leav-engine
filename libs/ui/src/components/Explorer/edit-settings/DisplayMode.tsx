@@ -1,7 +1,10 @@
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitRadio, KitSpace, KitTag} from 'aristid-ds';
 import {RadioChangeEvent} from 'aristid-ds/dist/Kit/DataEntry/Radio';
-import {FunctionComponent, useState} from 'react';
+import {FunctionComponent} from 'react';
 import styled from 'styled-components';
 import {DisplayModeTable} from './DisplayModeTable';
 import {useViewSettings} from './useViewSettings';
