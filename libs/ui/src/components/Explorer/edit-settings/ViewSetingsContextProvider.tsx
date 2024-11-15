@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent, useReducer} from 'react';
 import ViewSettingsReducer from './viewSettingsReducer';
-import {ViewSettingsContext, ViewSettingsInitialState} from './ViewSetingsContext';
+import {ViewSettingsContext, viewSettingsInitialState} from './ViewSetingsContext';
 
 export const ViewSettingsContextProvider: FunctionComponent = ({children}) => {
-    const [state, dispatch] = useReducer(ViewSettingsReducer, ViewSettingsInitialState);
+    const [state, dispatch] = useReducer(ViewSettingsReducer, viewSettingsInitialState);
     return <ViewSettingsContext.Provider value={{view: state, dispatch}}>{children}</ViewSettingsContext.Provider>;
 };

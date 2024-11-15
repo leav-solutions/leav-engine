@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export interface IViewSettingsState {
-    displayMode: string;
+    displayMode: 'table' | 'list' | 'timeline' | 'mosaic';
     fields: string[];
 }
 
@@ -35,7 +35,7 @@ export interface IViewSettingsActionOrderFields {
 
 export interface IViewSettingsActionChangeDisplayMode {
     type: ViewSettingsActionTypes.CHANGE_DISPLAY_MODE;
-    displayMode: string;
+    displayMode: IViewSettingsState['displayMode'];
 }
 
 export type ViewSettingsAction =
