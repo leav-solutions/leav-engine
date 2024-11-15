@@ -1,0 +1,7 @@
+query ExplorerLibraryData($libraryId: ID!) {
+    libraries(filters: {id: [$libraryId]} ) {
+        list {
+            label
+        }
+    }
+}
