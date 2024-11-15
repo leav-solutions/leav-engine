@@ -67,7 +67,7 @@ jobs:
             with:
                 path: '**/node_modules'
                 key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          - run: yarn license-check
+          - run: yarn license:check
 
   tscheck:
     runs-on: ubuntu-latest
