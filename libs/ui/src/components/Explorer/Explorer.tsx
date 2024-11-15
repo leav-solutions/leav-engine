@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useEffect} from 'react';
+import {FunctionComponent} from 'react';
 import {KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {IItemAction} from './_types';
@@ -11,11 +11,13 @@ import {useExplorerData} from './_queries/useExplorerData';
 import {useDeactivateAction} from './useDeactivateAction';
 import {useEditAction} from './useEditAction';
 import {useCreateMainAction} from './useCreateMainAction';
+import {ExplorerTitle} from './ExplorerTitle';
 import {useViewSettings} from './edit-settings/useViewSettings';
 
 interface IExplorerProps {
     library: string;
     itemActions: IItemAction[];
+    title?: string;
     defaultActionsForItem?:
         | []
         | ['deactivate']
@@ -38,6 +40,7 @@ const ExplorerHeaderDivStyled = styled.div`
 export const Explorer: FunctionComponent<IExplorerProps> = ({
     library,
     itemActions,
+    title,
     defaultActionsForItem = ['edit', 'deactivate'],
     defaultMainActions = ['create']
 }) => {
@@ -64,12 +67,12 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     return (
         <>
             {loading ? (
-                'Loading...'
+                'Loading...' // TODO: handle loading properly
             ) : (
                 <>
                     <ExplorerHeaderDivStyled>
                         <KitTypography.Title level="h1">
-                            {library /* TODO: get correct name from backend */}
+                            <ExplorerTitle library={library} title={title} />
                         </KitTypography.Title>
                         <KitSpace size="xs">
                             {settingsButton}
