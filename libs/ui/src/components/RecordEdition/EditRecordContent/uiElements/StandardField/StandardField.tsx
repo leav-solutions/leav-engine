@@ -348,6 +348,7 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
                     helper={_getHelper()}
                     required={state.formElement.settings.required}
                     disabled={state.isReadOnly}
+                    bordered={attribute.multiple_values}
                 >
                     {!attribute.multiple_values && (
                         <StandardFieldValue
