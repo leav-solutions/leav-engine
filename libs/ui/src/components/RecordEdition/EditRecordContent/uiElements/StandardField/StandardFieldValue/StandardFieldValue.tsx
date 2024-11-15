@@ -191,7 +191,7 @@ interface IStandardFieldValueProps {
     value: IStandardFieldValue;
     state: IStandardFieldReducerState;
     dispatch: StandardFieldDispatchFunc;
-    onSubmit: (idValue: IdValue, value: AnyPrimitive) => Promise<void>;
+    onSubmit: (idValue: IdValue, value: AnyPrimitive, fieldName?: number) => Promise<void>;
     onDelete: (idValue: IdValue) => void;
     onScopeChange: (scope: VersionFieldScope) => void;
     listField?: FormListFieldData;
@@ -206,8 +206,6 @@ function StandardFieldValue({
     dispatch,
     listField
 }: IStandardFieldValueProps): JSX.Element {
-    console.log('-> StandardFieldValue ---');
-    console.log('fieldValue', fieldValue);
     const {t, i18n} = useSharedTranslation();
     const {token} = theme.useToken();
     const {lang: availableLangs} = useLang();
@@ -255,7 +253,7 @@ function StandardFieldValue({
 
         const convertedValue = typeof valueToSave === 'object' ? JSON.stringify(valueToSave) : valueToSave;
 
-        await onSubmit(fieldValue.idValue, convertedValue);
+        await onSubmit(fieldValue.idValue, convertedValue, listField?.name);
     };
 
     const _handlePressEnter = async () => {

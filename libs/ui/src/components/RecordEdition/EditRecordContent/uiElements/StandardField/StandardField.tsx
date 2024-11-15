@@ -89,7 +89,7 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
         }
     }, [creationErrors, attribute.id]);
 
-    const _handleSubmit = async (idValue: IdValue, valueToSave: AnyPrimitive) => {
+    const _handleSubmit = async (idValue: IdValue, valueToSave: AnyPrimitive, fieldName?: number) => {
         const isSavingNewValue = idValue === newValueId;
         dispatch({
             type: StandardFieldReducerActionsTypes.CLEAR_ERROR,
@@ -170,9 +170,12 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
                         : t(`errors.${attributeError.type}`);
 
                 if (antdForm) {
+                    const shouldSepicifyField = attribute.multiple_values && fieldName !== undefined;
+                    const name = shouldSepicifyField ? [attribute.id, fieldName] : attribute.id;
+
                     antdForm.setFields([
                         {
-                            name: attributeError.attribute,
+                            name,
                             errors: [errorMessage]
                         }
                     ]);
@@ -298,9 +301,6 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
 
     const label = localizedTranslation(state.formElement.settings.label, availableLang);
 
-    console.log('valuesToDisplay', valuesToDisplay);
-    console.log('attribute', attribute);
-
     const {onValueDetailsButtonClick} = useValueDetailsButton({
         value: valuesToDisplay[0]?.value,
         attribute: state.attribute
@@ -324,6 +324,7 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
         }
     };
 
+    // TODO: Remonter les tests liés aux helpers des différents DS_XXX_Wrapper dans ce composant ?
     const _getHelper = () => {
         if (state.isInheritedOverrideValue) {
             return t('record_edition.inherited_input_helper', {
@@ -337,8 +338,7 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
         return;
     };
 
-    console.log('helper', _getHelper());
-
+    // TODO: Tester attribut mono et multi (nombre potentiel de composant à afficher)
     return (
         <StandardFieldReducerContext.Provider value={{state, dispatch}}>
             <Wrapper $metadataEdit={metadataEdit}>
@@ -364,22 +364,20 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
                     {attribute.multiple_values && (
                         <Form.List name={attribute.id}>
                             {/* TODO: Garder add et remove ?? */}
-                            {(fields, {add, remove}) => (
-                                <>
-                                    {fields.map((field, index) => (
-                                        <StandardFieldValue
-                                            key={field.key}
-                                            listField={field}
-                                            value={valuesToDisplay[index]}
-                                            state={state}
-                                            dispatch={dispatch}
-                                            onSubmit={_handleSubmit}
-                                            onDelete={_handleDelete}
-                                            onScopeChange={_handleScopeChange}
-                                        />
-                                    ))}
-                                </>
-                            )}
+                            {(fields, {add, remove}) =>
+                                fields.map((field, index) => (
+                                    <StandardFieldValue
+                                        key={field.key}
+                                        listField={field}
+                                        value={valuesToDisplay[index]}
+                                        state={state}
+                                        dispatch={dispatch}
+                                        onSubmit={_handleSubmit}
+                                        onDelete={_handleDelete}
+                                        onScopeChange={_handleScopeChange}
+                                    />
+                                ))
+                            }
                         </Form.List>
                     )}
                 </KitInputWrapper>
