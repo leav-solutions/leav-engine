@@ -15,7 +15,7 @@ import {ExplorerTitle} from './ExplorerTitle';
 
 interface IExplorerProps {
     library: string;
-    itemActions: IItemAction[];
+    itemActions?: IItemAction[];
     title?: string;
     defaultActionsForItem?:
         | []
@@ -81,7 +81,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                     <DataView
                         dataGroupedFilteredSorted={data ?? []}
                         attributesToDisplay={[currentAttribute, 'whoAmI']}
-                        itemActions={[editAction, deactivateAction, ...itemActions].filter(Boolean)}
+                        itemActions={[editAction, deactivateAction, ...(itemActions ?? [])].filter(Boolean)}
                     />
                 </>
             )}

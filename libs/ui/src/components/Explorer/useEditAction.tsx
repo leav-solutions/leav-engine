@@ -4,7 +4,7 @@
 import {useState} from 'react';
 import {FaPen} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {EditRecordModal} from '_ui/components';
+import {EditRecordModal} from '_ui/components/RecordEdition/EditRecordModal';
 import {RecordFilterCondition, useExplorerLazyQuery} from '_ui/_gqlTypes';
 import {ActionHook, IItemAction, IItemData} from './_types';
 
