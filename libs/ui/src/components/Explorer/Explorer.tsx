@@ -4,21 +4,23 @@
 import {FunctionComponent} from 'react';
 import {KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
-import {IItemAction} from './_types';
+import {IItemAction, IPrimaryAction} from './_types';
 import {DataView} from './DataView';
 import {useOpenSettings} from './edit-settings/useOpenSettings';
 import {useExplorerData} from './_queries/useExplorerData';
 import {useDeactivateAction} from './useDeactivateAction';
 import {useEditAction} from './useEditAction';
-import {useCreateMainAction} from './useCreateMainAction';
+import {usePrimaryActionsButton as usePrimaryActionsButton} from './usePrimaryActions';
 import {ExplorerTitle} from './ExplorerTitle';
+import {useCreateAction} from './useCreateAction';
 
 interface IExplorerProps {
     library: string;
     itemActions?: IItemAction[];
+    primaryActions?: IPrimaryAction[];
     title?: string;
     defaultActionsForItem?: Array<'edit' | 'deactivate'>;
-    defaultMainActions?: Array<'create'>;
+    defaultPrimaryActions?: Array<'create'>;
 }
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
@@ -33,9 +35,10 @@ const ExplorerHeaderDivStyled = styled.div`
 export const Explorer: FunctionComponent<IExplorerProps> = ({
     library,
     itemActions,
+    primaryActions,
     title,
     defaultActionsForItem = ['edit', 'deactivate'],
-    defaultMainActions = ['create']
+    defaultPrimaryActions = ['create']
 }) => {
     const currentAttribute = 'id';
 
@@ -49,11 +52,15 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('edit')
     });
 
-    const {createButton, createModal} = useCreateMainAction({
-        isEnabled: isNotEmpty(defaultMainActions) && defaultMainActions.includes('create'),
+    const {createAction, createModal} = useCreateAction({
+        isEnabled: isNotEmpty(defaultPrimaryActions) && defaultPrimaryActions.includes('create'),
         library,
         refetch
     });
+
+    const enabledDefaultActions = createAction ? [createAction] : [];
+
+    const {primaryButton} = usePrimaryActionsButton([...enabledDefaultActions, ...(primaryActions ?? [])]);
 
     const settingsButton = useOpenSettings(library);
 
@@ -71,7 +78,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                         </KitTypography.Title>
                         <KitSpace size="xs">
                             {settingsButton}
-                            {createButton}
+                            {primaryButton}
                         </KitSpace>
                     </ExplorerHeaderDivStyled>
                     <DataView
