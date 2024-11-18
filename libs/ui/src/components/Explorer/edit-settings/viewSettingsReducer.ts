@@ -1,8 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+
+export type DisplayMode = 'table' | 'list' | 'timeline' | 'mosaic';
+
 export interface IViewSettingsState {
-    displayMode: 'table' | 'list' | 'timeline' | 'mosaic';
+    displayMode: DisplayMode;
     fields: string[];
 }
 
@@ -35,7 +38,7 @@ export interface IViewSettingsActionOrderFields {
 
 export interface IViewSettingsActionChangeDisplayMode {
     type: ViewSettingsActionTypes.CHANGE_DISPLAY_MODE;
-    displayMode: IViewSettingsState['displayMode'];
+    displayMode: DisplayMode;
 }
 
 export type ViewSettingsAction =
