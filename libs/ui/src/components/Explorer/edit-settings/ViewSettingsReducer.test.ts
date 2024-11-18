@@ -2,13 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {viewSettingsInitialState} from './ViewSetingsContext';
-import reducer, {ViewSettingsActionTypes} from './viewSettingsReducer';
+import reducer, {DisplayMode, ViewSettingsActionTypes} from './viewSettingsReducer';
 
 describe('ViewSettings Reducer', () => {
     test.each(['table', 'list', 'mosaic', 'timeline'])('Action CHANGE_DISPLAY_MODE to %s', displayMode => {
         const state = reducer(viewSettingsInitialState, {
             type: ViewSettingsActionTypes.CHANGE_DISPLAY_MODE,
-            displayMode
+            displayMode: displayMode as DisplayMode
         });
         expect(state.displayMode).toEqual(displayMode);
     });
