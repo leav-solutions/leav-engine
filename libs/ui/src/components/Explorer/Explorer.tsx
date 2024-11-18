@@ -17,14 +17,8 @@ interface IExplorerProps {
     library: string;
     itemActions?: IItemAction[];
     title?: string;
-    defaultActionsForItem?:
-        | []
-        | ['deactivate']
-        | ['edit']
-        | ['edit', 'deactivate']
-        | ['deactivate', 'edit']
-        | undefined;
-    defaultMainActions?: [] | ['create'];
+    defaultActionsForItem?: Array<'edit' | 'deactivate'>;
+    defaultMainActions?: Array<'create'>;
 }
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
@@ -63,6 +57,8 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 
     const settingsButton = useOpenSettings(library);
 
+    const dedupItemActions = [...new Set([editAction, deactivateAction, ...(itemActions ?? [])].filter(Boolean))];
+
     return (
         <>
             {loading ? (
@@ -81,7 +77,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                     <DataView
                         dataGroupedFilteredSorted={data ?? []}
                         attributesToDisplay={[currentAttribute, 'whoAmI']}
-                        itemActions={[editAction, deactivateAction, ...(itemActions ?? [])].filter(Boolean)}
+                        itemActions={dedupItemActions}
                     />
                 </>
             )}
