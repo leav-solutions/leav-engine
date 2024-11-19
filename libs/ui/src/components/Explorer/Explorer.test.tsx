@@ -8,7 +8,7 @@ import {Mockify} from '@leav/utils';
 import userEvent from '@testing-library/user-event';
 import {Fa500Px, FaAccessibleIcon, FaBeer, FaJs, FaXbox} from 'react-icons/fa';
 import {mockRecord} from '_ui/__mocks__/common/record';
-import {IItemAction} from './_types';
+import {IItemAction, IPrimaryAction} from './_types';
 
 jest.mock('_ui/components/RecordEdition/EditRecordModal', () => ({
     EditRecordModal: () => <div>EditRecordModal</div>
@@ -103,6 +103,19 @@ describe('Explorer', () => {
             }
         }
     };
+
+    const customPrimaryActions: IPrimaryAction[] = [
+        {
+            label: 'Additional action 1',
+            icon: <FaBeer />,
+            callback: jest.fn()
+        },
+        {
+            label: 'Additional action 2',
+            icon: <FaAccessibleIcon />,
+            callback: jest.fn()
+        }
+    ];
 
     beforeAll(() => {
         jest.spyOn(gqlTypes, 'useExplorerQuery').mockImplementation(
@@ -245,5 +258,44 @@ describe('Explorer', () => {
         user.click(screen.getByRole('button', {name: /create/}));
 
         expect(await screen.findByText('EditRecordModal')).toBeVisible();
+    });
+
+    test('Should be able to display custom primary actions', async () => {
+        render(<Explorer library="campaigns" primaryActions={customPrimaryActions} />);
+
+        const createButton = screen.getByRole('button', {name: /create/});
+        const dropdownButton = createButton.nextElementSibling; // Not nice, but no way to get the dropdown button directly
+
+        expect(screen.queryByText(/Additional action 1/)).not.toBeInTheDocument();
+        expect(screen.queryByText(/Additional action 2/)).not.toBeInTheDocument();
+
+        await user.click(dropdownButton);
+
+        expect(await screen.findByRole('menuitem', {name: /Additional action 1/})).toBeVisible();
+        expect(await screen.findByRole('menuitem', {name: /Additional action 2/})).toBeVisible();
+
+        await user.click(screen.getByRole('menuitem', {name: /Additional action 1/}));
+        expect(customPrimaryActions[0].callback).toHaveBeenCalled();
+    });
+
+    test('Should be able to display custom primary actions without create button', async () => {
+        render(<Explorer library="campaigns" primaryActions={customPrimaryActions} defaultPrimaryActions={[]} />);
+
+        expect(screen.queryByRole('button', {name: /create/})).not.toBeInTheDocument();
+        const firstActionButton = screen.getByRole('button', {name: /Additional action 1/});
+        expect(firstActionButton).toBeVisible();
+
+        await user.click(firstActionButton);
+        expect(customPrimaryActions[0].callback).toHaveBeenCalled();
+
+        const dropdownButton = firstActionButton.nextElementSibling; // Not nice, but no way to get the dropdown button directly
+        expect(screen.queryByText(/Additional action 2/)).not.toBeInTheDocument();
+
+        await user.click(dropdownButton);
+
+        expect(await screen.findByRole('menuitem', {name: /Additional action 2/})).toBeVisible();
+
+        await user.click(screen.getByRole('menuitem', {name: /Additional action 2/}));
+        expect(customPrimaryActions[1].callback).toHaveBeenCalled();
     });
 });

@@ -2,11 +2,10 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useState} from 'react';
-import {KitButton} from 'aristid-ds';
 import {FaPlus} from 'react-icons/fa';
 import {EditRecordModal} from '_ui/components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ActionHook} from './_types';
+import {ActionHook, IPrimaryAction} from './_types';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -19,7 +18,7 @@ import {ActionHook} from './_types';
  * @param library - the library's id to add new item
  * @param refetch - method to call to refresh the list. New item will be visible if it matches filters and sorts
  */
-export const useCreateMainAction = ({
+export const useCreateAction = ({
     isEnabled,
     library,
     refetch
@@ -31,18 +30,16 @@ export const useCreateMainAction = ({
 
     const [isRecordCreationVisible, setRecordCreationVisible] = useState(false);
 
+    const createAction: IPrimaryAction = {
+        callback: () => {
+            setRecordCreationVisible(true);
+        },
+        icon: <FaPlus />,
+        label: t('explorer.create-one')
+    };
+
     return {
-        createButton: isEnabled ? (
-            <KitButton
-                type="primary"
-                icon={<FaPlus /> /* TODO: move to font-awesome 6 icons */}
-                onClick={() => {
-                    setRecordCreationVisible(true);
-                }}
-            >
-                {t('explorer.create-one')}
-            </KitButton>
-        ) : null,
+        createAction: isEnabled ? createAction : null,
         createModal: isRecordCreationVisible ? (
             <EditRecordModal
                 open
@@ -51,7 +48,7 @@ export const useCreateMainAction = ({
                 onClose={() => {
                     setRecordCreationVisible(false);
                 }}
-                onCreate={ignoreNewItem => {
+                onCreate={() => {
                     refetch();
                     setRecordCreationVisible(false);
                 }}
