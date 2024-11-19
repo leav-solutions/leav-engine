@@ -23,4 +23,10 @@ export interface IItemAction {
     isDanger?: boolean;
 }
 
+export interface IPrimaryAction {
+    callback: () => void;
+    icon: ReactElement;
+    label: string;
+}
+
 export type ActionHook<T = {}> = {isEnabled: boolean} & T;
