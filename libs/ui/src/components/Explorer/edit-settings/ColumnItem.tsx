@@ -3,8 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitTypography} from 'aristid-ds';
 import {FunctionComponent, ReactNode} from 'react';
-import {FaChevronRight, FaEye, FaEyeSlash, FaGripLines} from 'react-icons/fa';
+import {FaEye, FaEyeSlash} from 'react-icons/fa';
 import styled from 'styled-components';
+import {useSortable} from '@dnd-kit/sortable';
+import {CSS} from '@dnd-kit/utilities';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 const StyledValue = styled(KitTypography.Text)`
     color: var(--general-utilities-disabled);
@@ -60,11 +63,16 @@ const StyledEyeSlash = styled(FaEyeSlash)`
     color: var(--general-utilities-disabled);
 `;
 
+const StyledDragHandle = styled.span<{$isDragging: boolean}>`
+    cursor: ${props => (props.$isDragging ? 'grabbing' : 'grab')};
+`;
+
 const StyledEmptyIcon = styled.div`
     width: calc(var(--general-spacing-s) * 1px);
 `;
 
 interface IColumnItemProps {
+    itemId: string;
     dragHandler?: ReactNode;
     visible: boolean;
     title: string;
@@ -74,19 +82,43 @@ interface IColumnItemProps {
 }
 
 export const ColumnItem: FunctionComponent<IColumnItemProps> = ({
+    itemId,
     dragHandler,
     title,
     disabled,
     visible,
     onVisibilityClick
-}) => (
-    <StyledConfigurationItem className={disabled ? 'disabled' : ''}>
-        {dragHandler || <StyledEmptyIcon />}
-        <KitTypography.Text size="fontSize5" ellipsis className="title">
-            {title}
-        </KitTypography.Text>
-        <button disabled={disabled} onClick={onVisibilityClick}>
-            {visible ? <StyledFaEye /> : <StyledEyeSlash />}
-        </button>
-    </StyledConfigurationItem>
-);
+}) => {
+    const {t} = useSharedTranslation();
+    const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id: itemId});
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition
+    };
+
+    const _handleClick = () => onVisibilityClick?.();
+
+    const visibilityButtonLabel = visible ? t('explorer.hide') : t('explorer.show');
+    return (
+        <StyledConfigurationItem className={disabled ? 'disabled' : ''} ref={setNodeRef} style={style}>
+            {dragHandler ? (
+                <StyledDragHandle {...attributes} {...listeners} $isDragging={isDragging}>
+                    {dragHandler}
+                </StyledDragHandle>
+            ) : (
+                <StyledEmptyIcon />
+            )}
+            <KitTypography.Text size="fontSize5" ellipsis className="title">
+                {title}
+            </KitTypography.Text>
+            <button
+                disabled={disabled}
+                onClick={_handleClick}
+                title={visibilityButtonLabel}
+                aria-label={visibilityButtonLabel}
+            >
+                {visible ? <StyledFaEye /> : <StyledEyeSlash />}
+            </button>
+        </StyledConfigurationItem>
+    );
+};

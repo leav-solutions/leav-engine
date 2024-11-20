@@ -614,6 +614,8 @@
         "display-mode-planning": "Planning",
         "filters": "Filters",
         "sort": "Sort",
-        "coming-soon": "Coming soon"
+        "coming-soon": "Coming soon",
+        "show": "Show",
+        "hide": "Hide"
     }
 }
