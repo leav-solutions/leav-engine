@@ -14,6 +14,7 @@ import {usePrimaryActionsButton as usePrimaryActionsButton} from './usePrimaryAc
 import {ExplorerTitle} from './ExplorerTitle';
 import {useCreateAction} from './useCreateAction';
 import {useViewSettings} from './edit-settings/useViewSettings';
+import {useGetLibraryColumns} from './edit-settings/useGetLibraryColumns';
 
 interface IExplorerProps {
     library: string;
@@ -83,6 +84,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                         </KitSpace>
                     </ExplorerHeaderDivStyled>
                     <DataView
+                        library={library}
                         dataGroupedFilteredSorted={data ?? []}
                         itemActions={dedupItemActions}
                         attributesToDisplay={['whoAmI', ...view.fields]}
