@@ -13,8 +13,8 @@ export enum ViewSettingsActionTypes {
     CHANGE_DISPLAY_MODE = 'SET_DISPLAY_MODE',
     ADD_FIELD = 'ADD_FIELD',
     REMOVE_FIELD = 'REMOVE_FIELD',
-    ORDER_FIELDS = 'ORDER_FIELDS',
-    RESET_FIELDS = 'RESET_FIELDS'
+    RESET_FIELDS = 'RESET_FIELDS',
+    MOVE_FIELD = 'MOVE_FIELD'
 }
 
 export interface IViewSettingsActionAddField {
@@ -31,9 +31,10 @@ export interface IViewSettingsActionRemoveField {
     field: string;
 }
 
-export interface IViewSettingsActionOrderFields {
-    type: ViewSettingsActionTypes.ORDER_FIELDS;
-    fields: string[];
+export interface IViewSettingsActionMoveField {
+    type: ViewSettingsActionTypes.MOVE_FIELD;
+    indexFrom: number;
+    indexTo: number;
 }
 
 export interface IViewSettingsActionChangeDisplayMode {
@@ -45,7 +46,7 @@ export type ViewSettingsAction =
     | IViewSettingsActionResetFields
     | IViewSettingsActionAddField
     | IViewSettingsActionRemoveField
-    | IViewSettingsActionOrderFields
+    | IViewSettingsActionMoveField
     | IViewSettingsActionChangeDisplayMode;
 
 export type ViewSettingsDispatchFunc = (action: ViewSettingsAction) => void;
@@ -65,10 +66,15 @@ const removeField = (state: IViewSettingsState, action: IViewSettingsActionRemov
     fields: state.fields.filter(field => field !== action.field)
 });
 
-const orderFields = (state: IViewSettingsState, action: IViewSettingsActionOrderFields) => ({
-    ...state,
-    fields: action.fields
-});
+const moveField = (state: IViewSettingsState, {indexFrom, indexTo}: IViewSettingsActionMoveField) => {
+    const newFields = [...state.fields];
+    const [fieldToMove] = newFields.splice(indexFrom, 1);
+    newFields.splice(indexTo, 0, fieldToMove);
+    return {
+        ...state,
+        fields: newFields
+    };
+};
 
 const resetFields = (state: IViewSettingsState) => ({
     ...state,
@@ -88,8 +94,8 @@ const ViewSettingsReducer = (state: IViewSettingsState, action: ViewSettingsActi
         case ViewSettingsActionTypes.REMOVE_FIELD: {
             return removeField(state, action);
         }
-        case ViewSettingsActionTypes.ORDER_FIELDS: {
-            return orderFields(state, action);
+        case ViewSettingsActionTypes.MOVE_FIELD: {
+            return moveField(state, action);
         }
         case ViewSettingsActionTypes.RESET_FIELDS: {
             return resetFields(state);
