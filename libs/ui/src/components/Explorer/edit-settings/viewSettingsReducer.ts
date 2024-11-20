@@ -7,7 +7,7 @@ export type DisplayMode = 'table' | 'list' | 'timeline' | 'mosaic';
 export const ViewSettingsActionTypes = {
     ADD_FIELD: 'ADD_FIELD',
     REMOVE_FIELD: 'REMOVE_FIELD',
-    ORDER_FIELDS: 'ORDER_FIELDS',
+    MOVE_FIELD: 'MOVE_FIELD',
     RESET_FIELDS: 'RESET_FIELDS',
     CHANGE_DISPLAY_MODE: 'CHANGE_DISPLAY_MODE'
 } as const;
@@ -27,9 +27,12 @@ interface IViewSettingsActionRemoveField {
     payload: {field: string};
 }
 
-interface IViewSettingsActionOrderFields {
-    type: typeof ViewSettingsActionTypes.ORDER_FIELDS;
-    payload: {fields: string[]};
+interface IViewSettingsActionMoveField {
+    type: typeof ViewSettingsActionTypes.MOVE_FIELD;
+    payload: {
+        indexFrom: number;
+        indexTo: number;
+    };
 }
 
 interface IViewSettingsActionChangeDisplayMode {
@@ -37,7 +40,7 @@ interface IViewSettingsActionChangeDisplayMode {
     payload: {displayMode: DisplayMode};
 }
 
-interface IViewSettingsActionResetField {
+interface IViewSettingsActionResetFields {
     type: typeof ViewSettingsActionTypes.RESET_FIELDS;
 }
 
@@ -55,10 +58,15 @@ const removeField: Reducer<IViewSettingsActionRemoveField['payload']> = (state, 
     fields: state.fields.filter(field => field !== payload.field)
 });
 
-const orderFields: Reducer<IViewSettingsActionOrderFields['payload']> = (state, payload) => ({
-    ...state,
-    fields: payload.fields
-});
+const moveField: Reducer<IViewSettingsActionMoveField['payload']> = (state, payload) => {
+    const newFields = [...state.fields];
+    const [fieldToMove] = newFields.splice(payload.indexFrom, 1);
+    newFields.splice(payload.indexTo, 0, fieldToMove);
+    return {
+        ...state,
+        fields: newFields
+    };
+};
 
 const resetFields: Reducer = state => ({
     ...state,
@@ -71,10 +79,10 @@ const changeDisplayMode: Reducer<IViewSettingsActionChangeDisplayMode['payload']
 });
 
 export type IViewSettingsAction =
-    | IViewSettingsActionResetField
+    | IViewSettingsActionResetFields
     | IViewSettingsActionAddField
     | IViewSettingsActionRemoveField
-    | IViewSettingsActionOrderFields
+    | IViewSettingsActionMoveField
     | IViewSettingsActionChangeDisplayMode;
 
 const ViewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
@@ -85,8 +93,8 @@ const ViewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAct
         case ViewSettingsActionTypes.REMOVE_FIELD: {
             return removeField(state, action.payload);
         }
-        case ViewSettingsActionTypes.ORDER_FIELDS: {
-            return orderFields(state, action.payload);
+        case ViewSettingsActionTypes.MOVE_FIELD: {
+            return moveField(state, action.payload);
         }
         case ViewSettingsActionTypes.RESET_FIELDS: {
             return resetFields(state);
