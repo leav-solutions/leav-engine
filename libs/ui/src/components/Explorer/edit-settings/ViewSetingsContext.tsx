@@ -12,4 +12,9 @@ export const viewSettingsInitialState: IViewSettingsState = {
 export const ViewSettingsContext = createContext<{
     view: IViewSettingsState;
     dispatch: Dispatch<ViewSettingsAction>;
-}>({view: viewSettingsInitialState, dispatch: () => viewSettingsInitialState});
+}>({
+    view: viewSettingsInitialState,
+    dispatch: () => {
+        throw new Error('Must be used within a ViewSettingsContextProvider');
+    }
+});
