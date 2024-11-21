@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AnyPrimitive, ErrorTypes, ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
-import {FunctionComponent, useContext, useEffect, useMemo, useReducer} from 'react';
+import {FunctionComponent, useContext, useEffect, useMemo, useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {ErrorDisplay} from '_ui/components';
@@ -23,27 +23,64 @@ import AddValueBtn from '../../shared/AddValueBtn';
 import DeleteAllValuesBtn from '../../shared/DeleteAllValuesBtn';
 import FieldFooter from '../../shared/FieldFooter';
 import ValuesVersionBtn from '../../shared/ValuesVersionBtn';
-import {APICallStatus, VersionFieldScope, IFormElementProps} from '../../_types';
+import {APICallStatus, VersionFieldScope, IFormElementProps, FormErrors} from '../../_types';
 import StandardFieldValue from './StandardFieldValue';
 import {Form, FormInstance} from 'antd';
 import {StandardFieldReducerContext} from '../../reducers/standardFieldReducer/standardFieldReducerContext';
 import {KitInputWrapper} from 'aristid-ds';
 import {useLang} from '_ui/hooks';
 import {useValueDetailsButton} from '../../shared/ValueDetailsBtn/useValueDetailsButton';
+import {TFunction} from 'i18next';
 
 const Wrapper = styled.div<{$metadataEdit: boolean}>`
     margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
 `;
 
-const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> & {antdForm?: FormInstance}> = ({
-    element,
-    antdForm,
-    onValueSubmit,
-    onValueDelete,
-    onDeleteMultipleValues,
-    metadataEdit = false
-}) => {
-    console.log('-------- StandardField ----------');
+const _isDateRangeValue = (value: any): value is {from: string; to: string} =>
+    !!value && typeof value === 'object' && 'from' in value && 'to' in value;
+
+const _getPresentationValue = ({
+    t,
+    format,
+    value,
+    calculatedValue,
+    inheritedValue
+}: {
+    t: TFunction;
+    format: AttributeFormat;
+    value: ValueDetailsValueFragment['payload'];
+    calculatedValue: RecordFormElementsValueStandardValue;
+    inheritedValue: RecordFormElementsValueStandardValue;
+}): string => {
+    let presentationValue = value || calculatedValue?.payload || inheritedValue?.payload || '';
+
+    switch (format) {
+        case AttributeFormat.date_range:
+            if (!_isDateRangeValue(presentationValue)) {
+                presentationValue = '';
+            } else {
+                const {from, to} = presentationValue;
+                presentationValue = t('record_edition.date_range_value', {from, to});
+            }
+            break;
+        case AttributeFormat.color:
+            if (!presentationValue) {
+                presentationValue = '#00000000';
+            } else {
+                presentationValue = '#' + presentationValue;
+            }
+            break;
+    }
+
+    return presentationValue;
+};
+
+const StandardField: FunctionComponent<
+    IFormElementProps<ICommonFieldsSettings, RecordFormElementsValueStandardValue> & {
+        antdForm?: FormInstance;
+        formErrors?: FormErrors;
+    }
+> = ({element, antdForm, formErrors, onValueSubmit, onValueDelete, onDeleteMultipleValues, metadataEdit = false}) => {
     const {t} = useTranslation();
 
     const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
@@ -73,6 +110,16 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
     );
 
     const [state, dispatch] = useReducer(standardFieldReducer, initialState);
+
+    const [presentationValue, setPresentationValue] = useState(
+        _getPresentationValue({
+            t,
+            format: attribute.format,
+            value: element.values[0]?.payload,
+            calculatedValue: state.calculatedValue,
+            inheritedValue: state.inheritedValue
+        })
+    );
 
     useEffect(() => {
         if (creationErrors[attribute.id]) {
@@ -127,9 +174,19 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
 
             dispatch({
                 type: StandardFieldReducerActionsTypes.UPDATE_AFTER_SUBMIT,
-                newValue: resultValue,
+                newValue: resultValue.payload,
                 idValue
             });
+
+            setPresentationValue(
+                _getPresentationValue({
+                    t,
+                    format: attribute.format,
+                    value: resultValue.payload,
+                    calculatedValue: state.calculatedValue,
+                    inheritedValue: state.inheritedValue
+                })
+            );
 
             const newActiveValue = state.metadataEdit
                 ? {
@@ -199,6 +256,16 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
         const deleteRes = await onValueDelete({id_value: idValue}, attribute.id);
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
+            setPresentationValue(
+                _getPresentationValue({
+                    t,
+                    format: attribute.format,
+                    value: '',
+                    calculatedValue: state.calculatedValue,
+                    inheritedValue: state.inheritedValue
+                })
+            );
+
             dispatch({
                 type: StandardFieldReducerActionsTypes.UPDATE_AFTER_DELETE,
                 idValue
@@ -312,15 +379,15 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
         switch (state.attribute.format) {
             case AttributeFormat.date_range:
                 return t('record_edition.date_range_from_to', {
-                    from: valueToFormat.value.from,
-                    to: valueToFormat.value.to
+                    from: valueToFormat.payload.from,
+                    to: valueToFormat.payload.to
                 });
             case AttributeFormat.encrypted:
-                return valueToFormat.value ? '●●●●●●●' : '';
+                return valueToFormat.payload ? '●●●●●●●' : '';
             case AttributeFormat.color:
-                return '#' + valueToFormat.value;
+                return '#' + valueToFormat.payload;
             default:
-                return valueToFormat.value;
+                return valueToFormat.payload;
         }
     };
 
@@ -338,8 +405,14 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
         return;
     };
 
-    //TODO: Question. Dans le cas d'un multi est-ce qu'on veut que le label soit en erreur ?
-    const isFieldInError = attribute.multiple_values ? valuesToDisplay.some(v => v.error) : valuesToDisplay[0].error;
+    const isFieldInError =
+        antdForm.getFieldError(attribute.id).length > 0 ||
+        formErrors?.length > 0 ||
+        antdForm.getFieldError([attribute.id, 0]).length > 0; // Todo: Un test par nombre de valeur du multivalué
+
+    //TODO: A vérifier dans le cas du multivalué
+    // Use watch to update the component when the value changes (useful for errors)
+    Form.useWatch(attribute.id, antdForm);
 
     // TODO: Tester attribut mono et multi (nombre potentiel de composant à afficher)
     return (
@@ -358,6 +431,7 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
                         <StandardFieldValue
                             key={valuesToDisplay[0].idValue}
                             value={valuesToDisplay[0]}
+                            presentationValue={presentationValue}
                             state={state}
                             dispatch={dispatch}
                             onSubmit={_handleSubmit}
@@ -367,13 +441,13 @@ const StandardField: FunctionComponent<IFormElementProps<ICommonFieldsSettings> 
                     )}
                     {attribute.multiple_values && (
                         <Form.List name={attribute.id}>
-                            {/* TODO: Garder add et remove ?? */}
                             {(fields, {add, remove}) =>
                                 fields.map((field, index) => (
                                     <StandardFieldValue
                                         key={field.key}
                                         listField={field}
                                         value={valuesToDisplay[index]}
+                                        presentationValue={presentationValue}
                                         state={state}
                                         dispatch={dispatch}
                                         onSubmit={_handleSubmit}

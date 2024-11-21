@@ -2,65 +2,51 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitInput} from 'aristid-ds';
-import {ChangeEvent, FocusEvent, FunctionComponent, useEffect, useRef, useState} from 'react';
-import {
-    IStandardFieldReducerState,
-    IStandardFieldValue
-} from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import {Form, GetRef, InputProps} from 'antd';
-import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {ChangeEvent, FocusEvent, FunctionComponent, useState} from 'react';
+import {Form} from 'antd';
 import styled from 'styled-components';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
-
-interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputProps> {
-    state: IStandardFieldReducerState;
-    attribute: RecordFormAttributeFragment;
-    fieldValue: IStandardFieldValue;
-    handleSubmit: (value: string, id?: string) => void;
-    handleBlur: () => void;
-    shouldShowValueDetailsButton?: boolean;
-}
+import {IStandFieldValueContentProps} from './_types';
+import {IKitInput} from 'aristid-ds/dist/Kit/DataEntry/Input/types';
 
 const KitInputStyled = styled(KitInput)<{$shouldHighlightColor: boolean}>`
     color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
 `;
 
-export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
+export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKitInput>> = ({
     value,
+    presentationValue,
     onChange,
     state,
-    attribute, //TODO
-    fieldValue,
-    handleSubmit,
-    handleBlur,
-    shouldShowValueDetailsButton = false //TODO
+    attribute,
+    handleSubmit
 }) => {
     if (!onChange) {
         throw Error('DSInputWrapper should be used inside a antd Form.Item');
     }
 
     const [hasChanged, setHasChanged] = useState(false);
-    const inputRef = useRef<GetRef<typeof KitInputStyled>>(null);
+    const [isFocused, setIsFocused] = useState(false);
+    const {errors} = Form.Item.useStatus();
 
-    useEffect(() => {
-        if (fieldValue.isEditing && inputRef.current) {
-            inputRef.current.focus();
-        }
-    }, [fieldValue.isEditing]);
+    const isErrors = errors.length > 0;
+    const valueToDisplay = isFocused || isErrors ? value : presentationValue;
 
-    const _resetToInheritedOrCalculatedValue = () => {
+    const _resetToInheritedOrCalculatedValue = async () => {
         setHasChanged(false);
         if (state.isInheritedValue) {
-            onChange(state.inheritedValue.raw_value);
+            onChange(state.inheritedValue.raw_payload);
         } else if (state.isCalculatedValue) {
-            onChange(state.calculatedValue.raw_value);
+            onChange(state.calculatedValue.raw_payload);
         }
-        handleSubmit('', state.attribute.id);
+        await handleSubmit('', state.attribute.id);
     };
 
-    const _handleOnBlur = (event: FocusEvent<HTMLInputElement>) => {
+    const _handleFocus = () => setIsFocused(true);
+
+    const _handleOnBlur = async (event: FocusEvent<HTMLInputElement>) => {
         if (!hasChanged) {
-            handleBlur();
+            onChange(event);
+            setIsFocused(false);
             return;
         }
 
@@ -69,44 +55,40 @@ export const DSInputWrapper: FunctionComponent<IDSInputWrapperProps> = ({
             _resetToInheritedOrCalculatedValue();
             return;
         }
-        if (hasChanged || (!state.isInheritedValue && !state.isCalculatedValue)) {
-            handleSubmit(valueToSubmit, state.attribute.id);
-        }
+
         onChange(event);
+        setIsFocused(false);
+        await handleSubmit(valueToSubmit, state.attribute.id);
     };
 
-    const _handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
+    // TODO remove this function to use onClear Prop when ant is updated to 5.20+ (and other inputs too)
+    const _handleOnChange = async (event: ChangeEvent<HTMLInputElement>) => {
         setHasChanged(true);
         const inputValue = event.target.value;
         if ((state.isInheritedValue || state.isCalculatedValue) && inputValue === '' && event.type === 'click') {
             _resetToInheritedOrCalculatedValue();
             return;
         }
-
-        if (inputValue === '' && event.type === 'click') {
-            handleSubmit(inputValue, state.attribute.id);
-        }
-
         onChange(event);
+        if (inputValue === '' && event.type === 'click') {
+            await handleSubmit(inputValue, state.attribute.id);
+        }
     };
-
-    const {errors} = Form.Item.useStatus();
-
-    console.log('InputWrapper value', value);
 
     return (
         <KitInputStyled
-            ref={inputRef}
             disabled={state.isReadOnly}
-            status={errors.length > 0 ? 'error' : undefined}
-            value={value}
+            helper={isErrors ? String(errors[0]) : undefined}
+            status={isErrors ? 'error' : undefined}
+            value={valueToDisplay}
             allowClear={!state.isInheritedNotOverrideValue && !state.isCalculatedNotOverrideValue}
-            onBlur={_handleOnBlur}
             onChange={_handleOnChange}
+            onFocus={_handleFocus}
+            onBlur={_handleOnBlur}
             $shouldHighlightColor={
                 !hasChanged && (state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue)
             }
-            placeholder="TODO" //TODO: Traduire et faire pour tous les autres inputs  + liste de valeurs (en attente wording Cyril)
+            placeholder="TODO" //TODO: Traduire et faire pour tous les autres inputs  + liste de valeurs (en attente wording Cyril - XSTREAM-954)
         />
     );
 };

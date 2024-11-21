@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FORM_ROOT_CONTAINER_ID, FormUIElementTypes, simpleStringHash} from '@leav/utils';
-import {FunctionComponent, useEffect, useMemo} from 'react';
+import {FunctionComponent, useEffect, useMemo, useState} from 'react';
 import {ErrorDisplay} from '_ui/components';
 import useGetRecordForm from '_ui/hooks/useGetRecordForm';
 import {useGetRecordUpdatesSubscription} from '_ui/hooks/useGetRecordUpdatesSubscription';
@@ -16,8 +16,8 @@ import EditRecordSkeleton from './EditRecordSkeleton';
 import extractFormElements from './helpers/extractFormElements';
 import {RecordEditionContext} from './hooks/useRecordEditionContext';
 import {formComponents} from './uiElements';
-import {DeleteMultipleValuesFunc, DeleteValueFunc, FormElement, SubmitValueFunc} from './_types';
-import {Form, FormInstance} from 'antd';
+import {DeleteMultipleValuesFunc, DeleteValueFunc, FormElement, FormErrors, SubmitValueFunc} from './_types';
+import {Form, FormInstance, FormProps} from 'antd';
 import {EDIT_OR_CREATE_RECORD_FORM_ID} from './formConstants';
 import {getAntdFormInitialValues} from '_ui/components/RecordEdition/EditRecordContent/antdUtils';
 
@@ -45,6 +45,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     const formId = record ? 'edition' : 'creation';
     const {t} = useSharedTranslation();
     const {state, dispatch} = useEditRecordReducer();
+    const [formErrors, setFormErrors] = useState<FormErrors>();
 
     useRecordsConsultationHistory(record?.library?.id ?? null, record?.id ?? null);
 
@@ -132,7 +133,13 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
 
     const antdFormInitialValues = getAntdFormInitialValues(recordForm);
 
-    console.log('antdFormInitialValues', antdFormInitialValues);
+    const _onFieldsChange = (_, allFields: Parameters<FormProps['onFieldsChange']>[1]) => {
+        const newFormErrors = allFields
+            .filter(field => field.errors.length > 0)
+            .map(field => ({name: field.name, errors: field.errors}));
+
+        setFormErrors(newFormErrors);
+    };
 
     return (
         <Form
@@ -140,12 +147,14 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
             form={antdForm}
             initialValues={antdFormInitialValues}
             onFinish={onRecordSubmit}
+            onFieldsChange={_onFieldsChange}
         >
             <RecordEditionContext.Provider value={{elements: elementsByContainer, readOnly: readonly, record}}>
                 <rootElement.uiElement
                     // Use a hash of record form as a key to force a full re-render when the form changes
                     key={recordFormHash}
                     antdForm={antdForm}
+                    formErrors={formErrors}
                     element={rootElement}
                     onValueSubmit={_handleValueSubmit}
                     onValueDelete={_handleValueDelete}

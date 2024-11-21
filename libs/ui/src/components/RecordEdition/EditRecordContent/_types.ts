@@ -21,6 +21,7 @@ import {RecordProperty} from '_ui/_queries/records/getRecordPropertiesQuery';
 import {RecordFormElementFragment} from '../../../_gqlTypes';
 import {IStandardFieldReducerState, IStandardFieldValue} from './reducers/standardFieldReducer/standardFieldReducer';
 import {FormInstance} from 'antd/lib/form/Form';
+import {NamePath} from 'antd/es/form/interface';
 
 export interface IValueToSubmit {
     attribute: string;
@@ -97,23 +98,23 @@ export interface ISubmittedValueBase {
     metadata?: IKeyValue<AnyPrimitive>;
 }
 
-export interface IFormElementProps<SettingsType> {
-    element: FormElement<SettingsType>;
+export interface IFormElementProps<SettingsType, RecordFormElements = RecordFormElementsValue> {
+    element: FormElement<SettingsType, RecordFormElements>;
     onValueSubmit?: SubmitValueFunc;
     onValueDelete?: DeleteValueFunc;
     onDeleteMultipleValues?: DeleteMultipleValuesFunc;
     metadataEdit?: boolean;
 }
 
-export type FormElement<SettingsType> = Override<
+export type FormElement<SettingsType, RecordFormElements = RecordFormElementsValue> = Override<
     RecordFormElementFragment,
     {
         settings: SettingsType;
         uiElementType: FormUIElementTypes | FormFieldTypes;
-        values: RecordFormElementsValue[];
+        values: RecordFormElements[];
     }
 > & {
-    uiElement: (props: IFormElementProps<unknown> & {antdForm?: FormInstance}) => JSX.Element;
+    uiElement: (props: IFormElementProps<unknown> & {formErrors?: FormErrors; antdForm?: FormInstance}) => JSX.Element;
 };
 
 export interface IDependencyValues {
@@ -161,3 +162,5 @@ export interface IProvidedByAntFormItem<
     value?: InputFieldProps['value'];
     onChange?: AntNotifier['onChange'];
 }
+
+export type FormErrors = {name: NamePath; errors: string[]}[];

@@ -1,23 +1,14 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {KitInputWrapper, KitSwitch, KitTypography} from 'aristid-ds';
+import {KitSwitch, KitTypography} from 'aristid-ds';
 import {FunctionComponent, MouseEvent} from 'react';
-import {IStandardFieldReducerState} from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import {Form} from 'antd';
-import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {useLang} from '_ui/hooks';
-import {localizedTranslation} from '@leav/utils';
 import {IKitSwitch} from 'aristid-ds/dist/Kit/DataEntry/Switch/types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCircleXmark} from '@fortawesome/free-solid-svg-icons';
-
-interface IDSBooleanWrapperProps extends IProvidedByAntFormItem<IKitSwitch> {
-    state: IStandardFieldReducerState;
-    handleSubmit: (value: string, id?: string) => void;
-}
+import {IStandFieldValueContentProps} from './_types';
 
 const KitTypographyTextStyled = styled(KitTypography.Text)<{$shouldHighlightColor: boolean}>`
     vertical-align: middle;
@@ -34,13 +25,17 @@ const FontAwesomeIconStyled = styled(FontAwesomeIcon)`
 
 const _getBooleanValueAsStringForTranslation = (value: boolean): string => (value ? 'global.yes' : 'global.no');
 
-export const DSBooleanWrapper: FunctionComponent<IDSBooleanWrapperProps> = ({value, onChange, state, handleSubmit}) => {
+export const DSBooleanWrapper: FunctionComponent<IStandFieldValueContentProps<IKitSwitch>> = ({
+    value,
+    onChange,
+    state,
+    handleSubmit
+}) => {
     if (!onChange) {
         throw Error('DSBooleanWrapper should be used inside a antd Form.Item');
     }
 
     const {t} = useSharedTranslation();
-    const {errors} = Form.Item.useStatus();
 
     const _resetToInheritedOrCalculatedValue = () => {
         if (state.isInheritedValue) {
@@ -52,8 +47,8 @@ export const DSBooleanWrapper: FunctionComponent<IDSBooleanWrapperProps> = ({val
     };
 
     const _handleOnChange: (checked: boolean, event: MouseEvent<HTMLButtonElement>) => void = (checked, event) => {
-        handleSubmit(String(checked), state.attribute.id);
         onChange(checked, event);
+        handleSubmit(String(checked), state.attribute.id);
     };
 
     return (

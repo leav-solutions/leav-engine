@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import {AnyPrimitive, IDateRangeValue, localizedTranslation} from '@leav/utils';
-import {Button, FormListFieldData, Input, InputRef, Popover, Space, theme} from 'antd';
+import {Button, Form, FormListFieldData, Input, InputRef, Popover, Space, theme} from 'antd';
 import moment from 'moment';
-import React, {MutableRefObject, useEffect, useRef} from 'react';
+import React, {MutableRefObject, ReactNode, useEffect, useRef} from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import {FloatingMenu, FloatingMenuAction} from '_ui/components';
@@ -46,7 +46,15 @@ import TextInput from './Inputs/TextInput';
 import ValuesList from './ValuesList';
 import {IValueOfValuesList} from './ValuesList/ValuesList';
 import {useLang} from '_ui/hooks';
-import {StandardFieldValueDisplayHandler} from './StandardFieldValueDisplayHandler';
+import {MonoValueSelect} from './ValuesList/MonoValueSelect';
+import {DSInputWrapper} from './DSInputWrapper';
+import {DSDatePickerWrapper} from './DSDatePickerWrapper';
+import {DSRangePickerWrapper} from './DSRangePickerWrapper';
+import {DSInputNumberWrapper} from './DSInputNumberWrapper';
+import {DSInputEncryptedWrapper} from './DSInputEncryptedWrapper';
+import {DSBooleanWrapper} from './DSBooleanWrapper';
+import {DSRichTextWrapper} from './DSRichTextWrapper';
+import {DSColorPickerWrapper} from './DSColorPickerWrapper';
 
 const ErrorMessage = styled.div`
     color: ${themeVars.errorColor};
@@ -189,6 +197,7 @@ type IDateRangeValuesListConf = StandardValuesListFragmentStandardDateRangeValue
 
 interface IStandardFieldValueProps {
     value: IStandardFieldValue;
+    presentationValue: string;
     state: IStandardFieldReducerState;
     dispatch: StandardFieldDispatchFunc;
     onSubmit: (idValue: IdValue, value: AnyPrimitive, fieldName?: number) => Promise<void>;
@@ -199,6 +208,7 @@ interface IStandardFieldValueProps {
 
 function StandardFieldValue({
     value: fieldValue,
+    presentationValue,
     onSubmit,
     onDelete,
     onScopeChange,
@@ -564,16 +574,60 @@ function StandardFieldValue({
 
     const attributeFormatsWithoutDS = [AttributeFormat.extended];
 
+    const commonProps = {
+        state,
+        handleSubmit: _handleSubmit,
+        attribute,
+        presentationValue
+    };
+
+    let valueContent: ReactNode;
+    if (isValuesListEnabled) {
+        valueContent = <MonoValueSelect {...commonProps} />;
+    } else {
+        switch (attribute.format) {
+            case AttributeFormat.text:
+                valueContent = <DSInputWrapper {...commonProps} />;
+                break;
+            case AttributeFormat.date:
+                valueContent = <DSDatePickerWrapper {...commonProps} />;
+                break;
+            case AttributeFormat.date_range:
+                valueContent = <DSRangePickerWrapper {...commonProps} />;
+                break;
+            case AttributeFormat.numeric:
+                valueContent = <DSInputNumberWrapper {...commonProps} />;
+                break;
+            case AttributeFormat.encrypted:
+                valueContent = <DSInputEncryptedWrapper {...commonProps} />;
+                break;
+            case AttributeFormat.boolean:
+                valueContent = <DSBooleanWrapper {...commonProps} />;
+                break;
+            case AttributeFormat.rich_text:
+                valueContent = <DSRichTextWrapper {...commonProps} />;
+                break;
+            case AttributeFormat.color:
+                valueContent = <DSColorPickerWrapper {...commonProps} />;
+        }
+    }
+
     return (
         <>
             {attributeFormatsWithDS.includes(attribute.format) && (
-                <StandardFieldValueDisplayHandler
-                    listField={listField}
-                    state={state}
-                    attribute={attribute}
-                    fieldValue={fieldValue}
-                    handleSubmit={_handleSubmit}
-                />
+                <Form.Item
+                    name={attribute.id}
+                    {...listField}
+                    rules={[
+                        {
+                            required: state.formElement.settings.required,
+                            message: t('errors.standard_field_required')
+                        }
+                    ]}
+                    noStyle
+                >
+                    {valueContent}
+                </Form.Item>
             )}
 
             {attributeFormatsWithoutDS.includes(attribute.format) && (
