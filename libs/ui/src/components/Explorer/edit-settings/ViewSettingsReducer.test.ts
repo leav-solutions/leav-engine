@@ -8,14 +8,14 @@ describe('ViewSettings Reducer', () => {
     test.each(['table', 'list', 'mosaic', 'timeline'])('Action CHANGE_DISPLAY_MODE to %s', displayMode => {
         const state = reducer(viewSettingsInitialState, {
             type: ViewSettingsActionTypes.CHANGE_DISPLAY_MODE,
-            displayMode: displayMode as DisplayMode
+            payload: {displayMode: displayMode as DisplayMode}
         });
         expect(state.displayMode).toEqual(displayMode);
     });
     test('Action ADD_FIELD test', () => {
         const state = reducer(viewSettingsInitialState, {
             type: ViewSettingsActionTypes.ADD_FIELD,
-            field: 'test'
+            payload: {field: 'test'}
         });
         expect(state.fields).toEqual(['test']);
     });
@@ -27,7 +27,7 @@ describe('ViewSettings Reducer', () => {
             },
             {
                 type: ViewSettingsActionTypes.REMOVE_FIELD,
-                field: 'test'
+                payload: {field: 'test'}
             }
         );
         expect(state.fields).toEqual(['active', 'created_at']);
@@ -40,7 +40,7 @@ describe('ViewSettings Reducer', () => {
             },
             {
                 type: ViewSettingsActionTypes.ORDER_FIELDS,
-                fields: ['created_at', 'test', 'active']
+                payload: {fields: ['created_at', 'test', 'active']}
             }
         );
         expect(state.fields).toEqual(['created_at', 'test', 'active']);

@@ -78,7 +78,7 @@ export const DisplayModeTable: FunctionComponent<IDisplayModeTableProps> = ({lib
         const actionType = orderedVisibleColumns.includes(columnId)
             ? ViewSettingsActionTypes.REMOVE_FIELD
             : ViewSettingsActionTypes.ADD_FIELD;
-        dispatch({type: actionType, field: columnId});
+        dispatch({type: actionType, payload: {field: columnId}});
     };
 
     return (

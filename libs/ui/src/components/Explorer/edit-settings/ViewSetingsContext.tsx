@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {createContext, Dispatch} from 'react';
-import {IViewSettingsState, ViewSettingsAction} from './viewSettingsReducer';
+import {IViewSettingsState, IViewSettingsAction} from './viewSettingsReducer';
 
 export const viewSettingsInitialState: IViewSettingsState = {
     displayMode: 'table',
@@ -11,10 +11,10 @@ export const viewSettingsInitialState: IViewSettingsState = {
 
 export const ViewSettingsContext = createContext<{
     view: IViewSettingsState;
-    dispatch: Dispatch<ViewSettingsAction>;
+    dispatch: Dispatch<IViewSettingsAction>;
 }>({
-    view: viewSettingsInitialState,
+    view: null as any,
     dispatch: () => {
-        throw Error();
+        throw new Error('useViewSettingsContext must be used inside a <Explorer.ViewSettingsContextProvider />');
     }
 });

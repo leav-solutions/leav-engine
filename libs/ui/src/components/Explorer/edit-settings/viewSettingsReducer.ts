@@ -4,98 +4,95 @@
 
 export type DisplayMode = 'table' | 'list' | 'timeline' | 'mosaic';
 
+export const ViewSettingsActionTypes = {
+    ADD_FIELD: 'ADD_FIELD',
+    REMOVE_FIELD: 'REMOVE_FIELD',
+    ORDER_FIELDS: 'ORDER_FIELDS',
+    RESET_FIELDS: 'RESET_FIELDS',
+    CHANGE_DISPLAY_MODE: 'CHANGE_DISPLAY_MODE'
+} as const;
+
 export interface IViewSettingsState {
     displayMode: DisplayMode;
     fields: string[];
 }
 
-export enum ViewSettingsActionTypes {
-    CHANGE_DISPLAY_MODE = 'SET_DISPLAY_MODE',
-    ADD_FIELD = 'ADD_FIELD',
-    REMOVE_FIELD = 'REMOVE_FIELD',
-    ORDER_FIELDS = 'ORDER_FIELDS',
-    RESET_FIELDS = 'RESET_FIELDS'
+interface IViewSettingsActionAddField {
+    type: typeof ViewSettingsActionTypes.ADD_FIELD;
+    payload: {field: string};
 }
 
-export interface IViewSettingsActionAddField {
-    type: ViewSettingsActionTypes.ADD_FIELD;
-    field: string;
+interface IViewSettingsActionRemoveField {
+    type: typeof ViewSettingsActionTypes.REMOVE_FIELD;
+    payload: {field: string};
 }
 
-export interface IViewSettingsActionResetFields {
-    type: ViewSettingsActionTypes.RESET_FIELDS;
+interface IViewSettingsActionOrderFields {
+    type: typeof ViewSettingsActionTypes.ORDER_FIELDS;
+    payload: {fields: string[]};
 }
 
-export interface IViewSettingsActionRemoveField {
-    type: ViewSettingsActionTypes.REMOVE_FIELD;
-    field: string;
+interface IViewSettingsActionChangeDisplayMode {
+    type: typeof ViewSettingsActionTypes.CHANGE_DISPLAY_MODE;
+    payload: {displayMode: DisplayMode};
 }
 
-export interface IViewSettingsActionOrderFields {
-    type: ViewSettingsActionTypes.ORDER_FIELDS;
-    fields: string[];
+interface IViewSettingsActionResetField {
+    type: typeof ViewSettingsActionTypes.RESET_FIELDS;
 }
 
-export interface IViewSettingsActionChangeDisplayMode {
-    type: ViewSettingsActionTypes.CHANGE_DISPLAY_MODE;
-    displayMode: DisplayMode;
-}
+type Reducer<PAYLOAD = 'no_payload'> = PAYLOAD extends 'no_payload'
+    ? (state: IViewSettingsState) => IViewSettingsState
+    : (state: IViewSettingsState, payload: PAYLOAD) => IViewSettingsState;
 
-export type ViewSettingsAction =
-    | IViewSettingsActionResetFields
+const addField: Reducer<IViewSettingsActionAddField['payload']> = (state, payload) => ({
+    ...state,
+    fields: [...state.fields, payload.field]
+});
+
+const removeField: Reducer<IViewSettingsActionRemoveField['payload']> = (state, payload) => ({
+    ...state,
+    fields: state.fields.filter(field => field !== payload.field)
+});
+
+const orderFields: Reducer<IViewSettingsActionOrderFields['payload']> = (state, payload) => ({
+    ...state,
+    fields: payload.fields
+});
+
+const resetFields: Reducer = state => ({
+    ...state,
+    fields: []
+});
+
+const changeDisplayMode: Reducer<IViewSettingsActionChangeDisplayMode['payload']> = (state, payload) => ({
+    ...state,
+    displayMode: payload.displayMode
+});
+
+export type IViewSettingsAction =
+    | IViewSettingsActionResetField
     | IViewSettingsActionAddField
     | IViewSettingsActionRemoveField
     | IViewSettingsActionOrderFields
     | IViewSettingsActionChangeDisplayMode;
 
-export type ViewSettingsDispatchFunc = (action: ViewSettingsAction) => void;
-
-export interface IViewSettingsStateAndDispatch {
-    state: IViewSettingsState;
-    dispatch: ViewSettingsDispatchFunc;
-}
-
-const addField = (state: IViewSettingsState, action: IViewSettingsActionAddField) => ({
-    ...state,
-    fields: [...state.fields, action.field]
-});
-
-const removeField = (state: IViewSettingsState, action: IViewSettingsActionRemoveField) => ({
-    ...state,
-    fields: state.fields.filter(field => field !== action.field)
-});
-
-const orderFields = (state: IViewSettingsState, action: IViewSettingsActionOrderFields) => ({
-    ...state,
-    fields: action.fields
-});
-
-const resetFields = (state: IViewSettingsState) => ({
-    ...state,
-    fields: []
-});
-
-const changeDisplayMode = (state: IViewSettingsState, action: IViewSettingsActionChangeDisplayMode) => ({
-    ...state,
-    displayMode: action.displayMode
-});
-
-const ViewSettingsReducer = (state: IViewSettingsState, action: ViewSettingsAction): IViewSettingsState => {
+const ViewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
     switch (action.type) {
         case ViewSettingsActionTypes.ADD_FIELD: {
-            return addField(state, action);
+            return addField(state, action.payload);
         }
         case ViewSettingsActionTypes.REMOVE_FIELD: {
-            return removeField(state, action);
+            return removeField(state, action.payload);
         }
         case ViewSettingsActionTypes.ORDER_FIELDS: {
-            return orderFields(state, action);
+            return orderFields(state, action.payload);
         }
         case ViewSettingsActionTypes.RESET_FIELDS: {
             return resetFields(state);
         }
         case ViewSettingsActionTypes.CHANGE_DISPLAY_MODE: {
-            return changeDisplayMode(state, action);
+            return changeDisplayMode(state, action.payload);
         }
         default:
             return state;

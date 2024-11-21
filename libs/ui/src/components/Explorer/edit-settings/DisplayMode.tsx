@@ -29,7 +29,12 @@ export const DisplayMode: FunctionComponent<IDisplayModeProps> = ({library}) => 
     const {view, dispatch} = useViewSettingsContext();
 
     const _handleDisplayModeChange = (event: RadioChangeEvent) => {
-        dispatch({type: ViewSettingsActionTypes.CHANGE_DISPLAY_MODE, displayMode: event.target.value});
+        dispatch({
+            type: ViewSettingsActionTypes.CHANGE_DISPLAY_MODE,
+            payload: {
+                displayMode: event.target.value
+            }
+        });
     };
 
     const comingSoonTag = <KitTag type="secondary" idCardProps={{description: String(t('explorer.coming-soon'))}} />;
