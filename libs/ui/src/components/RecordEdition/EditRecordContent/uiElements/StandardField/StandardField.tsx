@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AnyPrimitive, ErrorTypes, ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
-import {FunctionComponent, useContext, useEffect, useMemo, useReducer, useState} from 'react';
+import {FunctionComponent, useContext, useEffect, useMemo, useReducer, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {ErrorDisplay} from '_ui/components';
@@ -25,13 +25,13 @@ import FieldFooter from '../../shared/FieldFooter';
 import ValuesVersionBtn from '../../shared/ValuesVersionBtn';
 import {APICallStatus, VersionFieldScope, IFormElementProps, FormErrors} from '../../_types';
 import StandardFieldValue from './StandardFieldValue';
-import {Form, FormInstance} from 'antd';
+import {Form, FormInstance, FormListOperation} from 'antd';
 import {StandardFieldReducerContext} from '../../reducers/standardFieldReducer/standardFieldReducerContext';
 import {KitButton, KitInputWrapper, KitSpace} from 'aristid-ds';
 import {useLang} from '_ui/hooks';
 import {useValueDetailsButton} from '../../shared/ValueDetailsBtn/useValueDetailsButton';
 import {TFunction} from 'i18next';
-import {FaPlus} from 'react-icons/fa';
+import {FaPlus, FaTrash} from 'react-icons/fa';
 import {StoreValue} from 'antd/es/form/interface';
 
 const Wrapper = styled.div<{$metadataEdit: boolean}>`
@@ -303,7 +303,7 @@ const StandardField: FunctionComponent<
         });
     };
 
-    const _handleAddValue = (add: (defaultValue?: StoreValue, insertIndex?: number) => void) => {
+    const _handleAddValue = (add: FormListOperation['add']) => {
         editRecordDispatch({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
             value: {
@@ -405,17 +405,23 @@ const StandardField: FunctionComponent<
         }
     };
 
-    // TODO: Remonter les tests liés aux helpers des différents DS_XXX_Wrapper dans ce composant ?
     const _getHelper = () => {
+        if (attribute.multiple_values) {
+            return;
+        }
+
         if (state.isInheritedOverrideValue) {
             return t('record_edition.inherited_input_helper', {
                 inheritedValue: _getFormattedValueForHelper(state.inheritedValue)
             });
-        } else if (state.isCalculatedOverrideValue) {
+        }
+
+        if (state.isCalculatedOverrideValue) {
             return t('record_edition.calculated_input_helper', {
                 calculatedValue: _getFormattedValueForHelper(state.calculatedValue)
             });
         }
+
         return;
     };
 
@@ -428,7 +434,18 @@ const StandardField: FunctionComponent<
     // Use watch to update the component when the value changes (useful for errors)
     Form.useWatch(attribute.id, antdForm);
 
-    // TODO: Tester attribut mono et multi (nombre potentiel de composant à afficher)
+    const listFieldsRef = useRef<{add: FormListOperation['add']; remove: FormListOperation['remove']} | null>(null);
+
+    // TODO:
+    // - Gérer le allowclear qui vide la valeur mais ne supprime pas
+    // - Gérer la corbeille qui supprime la valeur
+    // - Gérer le supprimer tout (globalement on fait un delete sur toutes les valeurs)
+    // - Multivalués, l'odre change en fonction de l'ordre d'édition des valeurs ? Peut être revoir cette logique pour que l'ordre soit toujours le même
+    // - Faire un composant StandardFieldInputWrapper pour alleger ce composant (A discuter , est-ce une bonne idée ?)
+    // - Gérer placeholder sur tous les formats
+    // - Vérifier required
+    // - Vérifier errors
+    // - Vérifier calculs
     return (
         <StandardFieldReducerContext.Provider value={{state, dispatch}}>
             <Wrapper $metadataEdit={metadataEdit}>
@@ -464,43 +481,50 @@ const StandardField: FunctionComponent<
                         />
                     )}
                     {attribute.multiple_values && (
-                        // <KitSpace direction="vertical" style={{width: '100%'}}>
-                        <Form.List name={attribute.id}>
-                            {(fields, {add, remove}) => (
-                                <KitSpace direction="vertical" style={{width: '100%'}}>
-                                    {fields.map((field, index) => {
-                                        console.log('------- field --------');
-                                        console.log('field', field);
-                                        console.log('value', valuesToDisplay[index]);
-                                        console.log('presentationValues', presentationValues[index]);
-                                        return (
-                                            <StandardFieldValue
-                                                key={field.key}
-                                                listField={field}
-                                                value={valuesToDisplay[index]}
-                                                presentationValue={presentationValues[index]}
-                                                state={state}
-                                                dispatch={dispatch}
-                                                onSubmit={_handleSubmit}
-                                                onDelete={_handleDelete}
-                                                onScopeChange={_handleScopeChange}
-                                            />
-                                        );
-                                    })}
-                                    {canAddAnotherValue && (
-                                        <KitButton
-                                            type="secondary"
-                                            size="m"
-                                            icon={<FaPlus />}
-                                            onClick={() => _handleAddValue(add)}
-                                        >
-                                            {t('record_edition.add_value')}
-                                        </KitButton>
-                                    )}
-                                </KitSpace>
+                        <KitSpace direction="vertical" style={{width: '100%'}}>
+                            <Form.List name={attribute.id}>
+                                {(fields, {add, remove}) => {
+                                    listFieldsRef.current = {add, remove};
+
+                                    return (
+                                        <KitSpace direction="vertical" style={{width: '100%'}}>
+                                            {fields.map((field, index) => {
+                                                // console.log('------- field --------');
+                                                // console.log('field', field);
+                                                // console.log('value', valuesToDisplay[index]);
+                                                // console.log('presentationValues', presentationValues[index]);
+                                                return (
+                                                    <KitSpace direction="horizontal" style={{width: '100%'}}>
+                                                        <StandardFieldValue
+                                                            key={field.key}
+                                                            listField={field}
+                                                            value={valuesToDisplay[index]}
+                                                            presentationValue={presentationValues[index]}
+                                                            state={state}
+                                                            dispatch={dispatch}
+                                                            onSubmit={_handleSubmit}
+                                                            onDelete={_handleDelete}
+                                                            onScopeChange={_handleScopeChange}
+                                                        />
+                                                        <KitButton type="tertiary" icon={<FaTrash />} />
+                                                    </KitSpace>
+                                                );
+                                            })}
+                                        </KitSpace>
+                                    );
+                                }}
+                            </Form.List>
+                            {canAddAnotherValue && (
+                                <KitButton
+                                    type="secondary"
+                                    size="m"
+                                    icon={<FaPlus />}
+                                    onClick={() => _handleAddValue(listFieldsRef.current.add)}
+                                >
+                                    {t('record_edition.add_value')}
+                                </KitButton>
                             )}
-                        </Form.List>
-                        // </KitSpace>
+                        </KitSpace>
                     )}
                 </KitInputWrapper>
                 {attribute?.versions_conf?.versionable && (
