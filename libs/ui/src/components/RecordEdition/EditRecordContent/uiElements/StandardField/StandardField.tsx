@@ -27,10 +27,12 @@ import {APICallStatus, VersionFieldScope, IFormElementProps, FormErrors} from '.
 import StandardFieldValue from './StandardFieldValue';
 import {Form, FormInstance} from 'antd';
 import {StandardFieldReducerContext} from '../../reducers/standardFieldReducer/standardFieldReducerContext';
-import {KitInputWrapper} from 'aristid-ds';
+import {KitButton, KitInputWrapper, KitSpace} from 'aristid-ds';
 import {useLang} from '_ui/hooks';
 import {useValueDetailsButton} from '../../shared/ValueDetailsBtn/useValueDetailsButton';
 import {TFunction} from 'i18next';
+import {FaPlus} from 'react-icons/fa';
+import {StoreValue} from 'antd/es/form/interface';
 
 const Wrapper = styled.div<{$metadataEdit: boolean}>`
     margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
@@ -111,15 +113,23 @@ const StandardField: FunctionComponent<
 
     const [state, dispatch] = useReducer(standardFieldReducer, initialState);
 
-    const [presentationValue, setPresentationValue] = useState(
-        _getPresentationValue({
-            t,
-            format: attribute.format,
-            value: element.values[0]?.payload,
-            calculatedValue: state.calculatedValue,
-            inheritedValue: state.inheritedValue
+    const [presentationValues, setPresentationValues] = useState(
+        element.values.map(value => {
+            const test = _getPresentationValue({
+                t,
+                format: attribute.format,
+                value: value.payload,
+                calculatedValue: state.calculatedValue,
+                inheritedValue: state.inheritedValue
+            });
+
+            console.log('test', test);
+
+            return test;
         })
     );
+
+    console.log('presentationValues', presentationValues);
 
     useEffect(() => {
         if (creationErrors[attribute.id]) {
@@ -178,15 +188,16 @@ const StandardField: FunctionComponent<
                 idValue
             });
 
-            setPresentationValue(
-                _getPresentationValue({
-                    t,
-                    format: attribute.format,
-                    value: resultValue.payload,
-                    calculatedValue: state.calculatedValue,
-                    inheritedValue: state.inheritedValue
-                })
-            );
+            const index = fieldName ?? 0;
+            const newPresentationValues = [...presentationValues];
+            newPresentationValues[index] = _getPresentationValue({
+                t,
+                format: attribute.format,
+                value: resultValue.payload,
+                calculatedValue: state.calculatedValue,
+                inheritedValue: state.inheritedValue
+            });
+            setPresentationValues(newPresentationValues);
 
             const newActiveValue = state.metadataEdit
                 ? {
@@ -256,15 +267,16 @@ const StandardField: FunctionComponent<
         const deleteRes = await onValueDelete({id_value: idValue}, attribute.id);
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
-            setPresentationValue(
-                _getPresentationValue({
-                    t,
-                    format: attribute.format,
-                    value: '',
-                    calculatedValue: state.calculatedValue,
-                    inheritedValue: state.inheritedValue
-                })
-            );
+            // TODO: Géré l'actualisation ici (comme pour le handleSubmit)
+            // setPresentationValue(
+            //     _getPresentationValue({
+            //         t,
+            //         format: attribute.format,
+            //         value: '',
+            //         calculatedValue: state.calculatedValue,
+            //         inheritedValue: state.inheritedValue
+            //     })
+            // );
 
             dispatch({
                 type: StandardFieldReducerActionsTypes.UPDATE_AFTER_DELETE,
@@ -291,7 +303,7 @@ const StandardField: FunctionComponent<
         });
     };
 
-    const _handleAddValue = () => {
+    const _handleAddValue = (add: (defaultValue?: StoreValue, insertIndex?: number) => void) => {
         editRecordDispatch({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
             value: {
@@ -303,6 +315,9 @@ const StandardField: FunctionComponent<
         dispatch({
             type: StandardFieldReducerActionsTypes.ADD_VALUE
         });
+
+        //TODO: is ok ?
+        add(null);
     };
 
     const _handleScopeChange = (scope: VersionFieldScope) => {
@@ -353,8 +368,7 @@ const StandardField: FunctionComponent<
         (valueA, valueB) => valueA.index - valueB.index
     );
     const hasValue = valuesToDisplay[0].idValue !== newValueId && valuesToDisplay[0].idValue !== null;
-    const canAddAnotherValue =
-        !state.isReadOnly && isMultipleValues && hasValue && attribute.format !== AttributeFormat.boolean;
+    const canAddAnotherValue = !state.isReadOnly && isMultipleValues && attribute.format !== AttributeFormat.boolean;
     const canDeleteAllValues = !state.isReadOnly && hasValue && valuesToDisplay.length > 1;
     const isAttributeVersionable = attribute?.versions_conf?.versionable;
 
@@ -426,12 +440,22 @@ const StandardField: FunctionComponent<
                     disabled={state.isReadOnly}
                     bordered={attribute.multiple_values}
                     status={isFieldInError ? 'error' : undefined}
+                    actions={
+                        canDeleteAllValues
+                            ? [
+                                  // TODO: Refaire un composant comme DeleteAllValuesBtn mais avec une modale pour la confirmation
+                                  <KitButton type="tertiary" size="s">
+                                      Tout supprimer
+                                  </KitButton>
+                              ]
+                            : undefined
+                    }
                 >
                     {!attribute.multiple_values && (
                         <StandardFieldValue
                             key={valuesToDisplay[0].idValue}
                             value={valuesToDisplay[0]}
-                            presentationValue={presentationValue}
+                            presentationValue={presentationValues[0]}
                             state={state}
                             dispatch={dispatch}
                             onSubmit={_handleSubmit}
@@ -440,34 +464,50 @@ const StandardField: FunctionComponent<
                         />
                     )}
                     {attribute.multiple_values && (
+                        // <KitSpace direction="vertical" style={{width: '100%'}}>
                         <Form.List name={attribute.id}>
-                            {(fields, {add, remove}) =>
-                                fields.map((field, index) => (
-                                    <StandardFieldValue
-                                        key={field.key}
-                                        listField={field}
-                                        value={valuesToDisplay[index]}
-                                        presentationValue={presentationValue}
-                                        state={state}
-                                        dispatch={dispatch}
-                                        onSubmit={_handleSubmit}
-                                        onDelete={_handleDelete}
-                                        onScopeChange={_handleScopeChange}
-                                    />
-                                ))
-                            }
+                            {(fields, {add, remove}) => (
+                                <KitSpace direction="vertical" style={{width: '100%'}}>
+                                    {fields.map((field, index) => {
+                                        console.log('------- field --------');
+                                        console.log('field', field);
+                                        console.log('value', valuesToDisplay[index]);
+                                        console.log('presentationValues', presentationValues[index]);
+                                        return (
+                                            <StandardFieldValue
+                                                key={field.key}
+                                                listField={field}
+                                                value={valuesToDisplay[index]}
+                                                presentationValue={presentationValues[index]}
+                                                state={state}
+                                                dispatch={dispatch}
+                                                onSubmit={_handleSubmit}
+                                                onDelete={_handleDelete}
+                                                onScopeChange={_handleScopeChange}
+                                            />
+                                        );
+                                    })}
+                                    {canAddAnotherValue && (
+                                        <KitButton
+                                            type="secondary"
+                                            size="m"
+                                            icon={<FaPlus />}
+                                            onClick={() => _handleAddValue(add)}
+                                        >
+                                            {t('record_edition.add_value')}
+                                        </KitButton>
+                                    )}
+                                </KitSpace>
+                            )}
                         </Form.List>
+                        // </KitSpace>
                     )}
                 </KitInputWrapper>
-
-                {(canDeleteAllValues || canAddAnotherValue || attribute?.versions_conf?.versionable) && (
+                {attribute?.versions_conf?.versionable && (
                     <FieldFooter
                         bordered
                         style={{
-                            flexDirection:
-                                canAddAnotherValue && !canDeleteAllValues && !isAttributeVersionable
-                                    ? 'row'
-                                    : 'row-reverse'
+                            flexDirection: !isAttributeVersionable ? 'row' : 'row-reverse'
                         }}
                     >
                         <div>
@@ -479,11 +519,7 @@ const StandardField: FunctionComponent<
                                     onScopeChange={_handleScopeChange}
                                 />
                             )}
-                            {canDeleteAllValues && <DeleteAllValuesBtn onDelete={_handleDeleteAllValues} />}
                         </div>
-                        {canAddAnotherValue && (
-                            <AddValueBtn activeScope={state.activeScope} onClick={_handleAddValue} />
-                        )}
                     </FieldFooter>
                 )}
             </Wrapper>
