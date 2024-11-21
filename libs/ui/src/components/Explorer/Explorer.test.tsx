@@ -2,17 +2,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen, within} from '_ui/_tests/testUtils';
+import userEvent from '@testing-library/user-event';
+import {waitFor} from '@testing-library/react';
+import {Mockify} from '@leav/utils';
 import {Explorer} from '_ui/index';
 import * as gqlTypes from '_ui/_gqlTypes';
-import {Mockify} from '@leav/utils';
-import userEvent from '@testing-library/user-event';
 import {Fa500Px, FaAccessibleIcon, FaBeer, FaJs, FaXbox} from 'react-icons/fa';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {IItemAction, IPrimaryAction} from './_types';
 import {viewSettingsInitialState} from '_ui/components/Explorer/edit-settings/ViewSetingsContext';
 
+const EditRecordModalMock = 'EditRecordModal';
+
 jest.mock('_ui/components/RecordEdition/EditRecordModal', () => ({
-    EditRecordModal: () => <div>EditRecordModal</div>
+    EditRecordModal: () => <div>{EditRecordModalMock}</div>
 }));
 
 jest.mock('./edit-settings/useViewSettingsContext', () => ({
@@ -23,77 +26,79 @@ jest.mock('./edit-settings/useViewSettingsContext', () => ({
 }));
 
 describe('Explorer', () => {
+    const mockRecords = [
+        {
+            id: '613982168',
+            whoAmI: {
+                id: '613982168',
+                label: 'Halloween 2025',
+                subLabel: 'Du mercredi 6 novembre 2024 au lundi 9 décembre 2024',
+                color: null,
+                library: {
+                    id: 'campaigns',
+                    label: {
+                        en: 'Campaigns',
+                        fr: 'Campagnes'
+                    }
+                },
+                preview: null
+            },
+            properties: [
+                {
+                    attributeId: 'id',
+                    values: [
+                        {
+                            attribute: {
+                                type: 'simple'
+                            },
+                            valuePayload: '613982168'
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            id: '612694174',
+            whoAmI: {
+                id: '612694174',
+                label: 'Foire aux vins 2024 - semaine 1',
+                subLabel: 'Du mercredi 30 octobre 2024 au lundi 25 novembre 2024',
+                color: null,
+                library: {
+                    id: 'campaigns',
+                    label: {
+                        en: 'Campaigns',
+                        fr: 'Campagnes'
+                    }
+                },
+                preview: null
+            },
+            properties: [
+                {
+                    attributeId: 'id',
+                    values: [
+                        {
+                            attribute: {
+                                type: 'simple'
+                            },
+                            valuePayload: '612694174'
+                        }
+                    ]
+                }
+            ]
+        }
+    ];
     const mockExplorerQueryResult: Mockify<typeof gqlTypes.useExplorerQuery> = {
         loading: false,
         called: true,
         data: {
             records: {
-                list: [
-                    {
-                        id: '613982168',
-                        whoAmI: {
-                            id: '613982168',
-                            label: 'Halloween 2025',
-                            subLabel: 'Du mercredi 6 novembre 2024 au lundi 9 décembre 2024',
-                            color: null,
-                            library: {
-                                id: 'campaigns',
-                                label: {
-                                    en: 'Campaigns',
-                                    fr: 'Campagnes'
-                                }
-                            },
-                            preview: null
-                        },
-                        properties: [
-                            {
-                                attributeId: 'id',
-                                values: [
-                                    {
-                                        attribute: {
-                                            type: 'simple'
-                                        },
-                                        valuePayload: '613982168'
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        id: '612694174',
-                        whoAmI: {
-                            id: '612694174',
-                            label: 'Foire aux vins 2024 - semaine 1',
-                            subLabel: 'Du mercredi 30 octobre 2024 au lundi 25 novembre 2024',
-                            color: null,
-                            library: {
-                                id: 'campaigns',
-                                label: {
-                                    en: 'Campaigns',
-                                    fr: 'Campagnes'
-                                }
-                            },
-                            preview: null
-                        },
-                        properties: [
-                            {
-                                attributeId: 'id',
-                                values: [
-                                    {
-                                        attribute: {
-                                            type: 'simple'
-                                        },
-                                        valuePayload: '612694174'
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
+                list: mockRecords
             }
         }
     };
 
+    const campaignName = 'Campagnes';
     const mockLibraryDataQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
         loading: false,
         called: true,
@@ -104,7 +109,7 @@ describe('Explorer', () => {
                         id: 'campaigns',
                         label: {
                             en: 'Campaigns',
-                            fr: 'Campagnes'
+                            fr: campaignName
                         }
                     }
                 ]
@@ -124,6 +129,7 @@ describe('Explorer', () => {
             callback: jest.fn()
         }
     ];
+    const [customPrimaryAction1, customPrimaryAction2] = customPrimaryActions;
 
     beforeAll(() => {
         jest.spyOn(gqlTypes, 'useExplorerQuery').mockImplementation(
@@ -135,30 +141,33 @@ describe('Explorer', () => {
         );
     });
 
-    let user;
+    let user: ReturnType<typeof userEvent.setup>;
     beforeEach(() => {
         user = userEvent.setup();
     });
 
-    test('Should display library label as title', () => {
-        render(<Explorer library="campaigns" />);
+    describe('props title', () => {
+        test('Should display library label as title', () => {
+            render(<Explorer library="campaigns" />);
 
-        expect(screen.getByText('Campagnes')).toBeInTheDocument();
-    });
+            expect(screen.getByText(campaignName)).toBeInTheDocument();
+        });
 
-    test('Should display custom title', () => {
-        render(<Explorer library="campaigns" title="Here's my explorer!" />);
+        test('Should display custom title', () => {
+            render(<Explorer library="campaigns" title="Here's my explorer!" />);
 
-        expect(screen.getByText("Here's my explorer!")).toBeInTheDocument();
+            expect(screen.getByText("Here's my explorer!")).toBeInTheDocument();
+        });
     });
 
     test('Should display the list of records in a table', async () => {
         render(<Explorer library="campaigns" />);
 
         expect(screen.getByRole('table')).toBeVisible();
-        expect(screen.getAllByRole('row')).toHaveLength(3); // 1 header row + 2 records
-        expect(screen.getByText('Halloween 2025')).toBeInTheDocument();
-        expect(screen.getByText('Foire aux vins 2024 - semaine 1')).toBeInTheDocument();
+        expect(screen.getAllByRole('row')).toHaveLength(1 + mockRecords.length); // 1 header row + 2 records
+        const [record1, record2] = mockRecords;
+        expect(screen.getByText(record1.whoAmI.label)).toBeInTheDocument();
+        expect(screen.getByText(record2.whoAmI.label)).toBeInTheDocument();
     });
 
     test('Should be able to deactivate a record with default actions', async () => {
@@ -180,11 +189,11 @@ describe('Explorer', () => {
 
         render(<Explorer library="campaigns" />);
 
-        const firstRecordRow = screen.getAllByRole('row')[1];
-        await user.click(within(firstRecordRow).getByRole('button', {name: /deactivate/}));
+        const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
+        await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.deactivate-item'}));
 
-        expect(await screen.findByText('records_deactivation.confirm_one')).toBeVisible();
-        await user.click(screen.getByText(/submit/));
+        expect(screen.getByText('records_deactivation.confirm_one')).toBeVisible();
+        await user.click(screen.getByText('global.submit'));
 
         expect(mockDeactivateMutation).toHaveBeenCalled();
     });
@@ -192,27 +201,23 @@ describe('Explorer', () => {
     test('Should be able to edit a record with default actions', async () => {
         render(<Explorer library="campaigns" />);
 
-        const firstRecordRow = screen.getAllByRole('row')[1];
-        user.click(within(firstRecordRow).getByRole('button', {name: /edit-item/}));
-        expect(await screen.findByText('EditRecordModal')).toBeVisible();
+        const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
+        await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.edit-item'}));
+        expect(screen.getByText(EditRecordModalMock)).toBeVisible();
     });
 
     test('Should display the list of records with custom actions', async () => {
-        const customActionCb = jest.fn();
-        const customActions: IItemAction[] = [
-            {
-                icon: <Fa500Px />,
-                label: 'Custom action',
-                callback: customActionCb
-            }
-        ];
-        render(<Explorer library="campaigns" itemActions={customActions} />);
+        const customAction: IItemAction = {
+            icon: <Fa500Px />,
+            label: 'Custom action',
+            callback: jest.fn()
+        };
+        render(<Explorer library="campaigns" itemActions={[customAction]} />);
 
-        const firstRecordRow = screen.getAllByRole('row')[1];
+        const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
+        await user.click(within(firstRecordRow).getByRole('button', {name: customAction.label}));
 
-        await user.click(within(firstRecordRow).queryByRole('button', {name: /Custom action/}));
-
-        expect(customActionCb).toHaveBeenCalled();
+        expect(customAction.callback).toHaveBeenCalled();
     });
 
     test('Should display the list of records with a lot of custom actions', async () => {
@@ -240,15 +245,17 @@ describe('Explorer', () => {
         ];
         render(<Explorer library="campaigns" itemActions={customActions} />);
 
-        const firstRecordRow = screen.getAllByRole('row')[1];
-        await user.hover(within(firstRecordRow).getByRole('button', {name: /more-actions/}));
+        const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
+        await user.hover(within(firstRecordRow).getByRole('button', {name: 'explorer.more-actions'}));
 
-        expect(await screen.findByRole('menuitem', {name: /Test 1/})).toBeVisible();
-        expect(await screen.findByRole('menuitem', {name: /Test 2/})).toBeVisible();
-        expect(await screen.findByRole('menuitem', {name: /Test 3/})).toBeVisible();
-        expect(await screen.findByRole('menuitem', {name: /Test 4/})).toBeVisible();
+        await waitFor(() => {
+            expect(screen.getByRole('menuitem', {name: /Test 1/})).toBeVisible();
+            expect(screen.getByRole('menuitem', {name: /Test 2/})).toBeVisible();
+            expect(screen.getByRole('menuitem', {name: /Test 3/})).toBeVisible();
+            expect(screen.getByRole('menuitem', {name: /Test 4/})).toBeVisible();
+        });
 
-        await user.click(screen.getByRole('menuitem', {name: /Test 1/}));
+        await user.click(screen.getByRole('menuitem', {name: customActions[0].label}));
 
         expect(customActions[0].callback).toHaveBeenCalled();
     });
@@ -256,54 +263,54 @@ describe('Explorer', () => {
     test('Should display the list of records with no actions', () => {
         render(<Explorer library="campaigns" defaultActionsForItem={[]} />);
 
-        const firstRecordRow = screen.getAllByRole('row')[1];
+        const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
         expect(within(firstRecordRow).queryByRole('button')).not.toBeInTheDocument();
     });
 
     test('Should be able to create a new record', async () => {
         render(<Explorer library="campaigns" />);
 
-        user.click(screen.getByRole('button', {name: /create/}));
+        await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
 
-        expect(await screen.findByText('EditRecordModal')).toBeVisible();
+        expect(screen.getByText(EditRecordModalMock)).toBeVisible();
     });
 
     test('Should be able to display custom primary actions', async () => {
         render(<Explorer library="campaigns" primaryActions={customPrimaryActions} />);
 
-        const createButton = screen.getByRole('button', {name: /create/});
+        const createButton = screen.getByRole('button', {name: 'explorer.create-one'});
         const dropdownButton = createButton.nextElementSibling; // Not nice, but no way to get the dropdown button directly
 
-        expect(screen.queryByText(/Additional action 1/)).not.toBeInTheDocument();
-        expect(screen.queryByText(/Additional action 2/)).not.toBeInTheDocument();
+        expect(screen.queryByText(customPrimaryAction1.label)).not.toBeInTheDocument();
+        expect(screen.queryByText(customPrimaryAction2.label)).not.toBeInTheDocument();
 
-        await user.click(dropdownButton);
+        await user.click(dropdownButton!);
 
-        expect(await screen.findByRole('menuitem', {name: /Additional action 1/})).toBeVisible();
-        expect(await screen.findByRole('menuitem', {name: /Additional action 2/})).toBeVisible();
+        expect(screen.getByRole('menuitem', {name: customPrimaryAction1.label})).toBeVisible();
+        expect(screen.getByRole('menuitem', {name: customPrimaryAction2.label})).toBeVisible();
 
-        await user.click(screen.getByRole('menuitem', {name: /Additional action 1/}));
+        await user.click(screen.getByRole('menuitem', {name: customPrimaryAction1.label}));
         expect(customPrimaryActions[0].callback).toHaveBeenCalled();
     });
 
     test('Should be able to display custom primary actions without create button', async () => {
         render(<Explorer library="campaigns" primaryActions={customPrimaryActions} defaultPrimaryActions={[]} />);
 
-        expect(screen.queryByRole('button', {name: /create/})).not.toBeInTheDocument();
-        const firstActionButton = screen.getByRole('button', {name: /Additional action 1/});
+        expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
+        const firstActionButton = screen.getByRole('button', {name: customPrimaryAction1.label});
         expect(firstActionButton).toBeVisible();
 
         await user.click(firstActionButton);
         expect(customPrimaryActions[0].callback).toHaveBeenCalled();
 
         const dropdownButton = firstActionButton.nextElementSibling; // Not nice, but no way to get the dropdown button directly
-        expect(screen.queryByText(/Additional action 2/)).not.toBeInTheDocument();
+        expect(screen.queryByText(customPrimaryAction2.label)).not.toBeInTheDocument();
 
-        await user.click(dropdownButton);
+        await user.click(dropdownButton!);
 
-        expect(await screen.findByRole('menuitem', {name: /Additional action 2/})).toBeVisible();
+        expect(screen.getByRole('menuitem', {name: customPrimaryAction2.label})).toBeVisible();
 
-        await user.click(screen.getByRole('menuitem', {name: /Additional action 2/}));
+        await user.click(screen.getByRole('menuitem', {name: customPrimaryAction2.label}));
         expect(customPrimaryActions[1].callback).toHaveBeenCalled();
     });
 });
