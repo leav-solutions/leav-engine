@@ -23,7 +23,7 @@ import AddValueBtn from '../../shared/AddValueBtn';
 import DeleteAllValuesBtn from '../../shared/DeleteAllValuesBtn';
 import FieldFooter from '../../shared/FieldFooter';
 import ValuesVersionBtn from '../../shared/ValuesVersionBtn';
-import {APICallStatus, VersionFieldScope, IFormElementProps, FormErrors} from '../../_types';
+import {APICallStatus, VersionFieldScope, IFormElementProps, FormErrors, ISubmitMultipleResult} from '../../_types';
 import StandardFieldValue from './StandardFieldValue';
 import {Form, FormInstance, FormListOperation} from 'antd';
 import {StandardFieldReducerContext} from '../../reducers/standardFieldReducer/standardFieldReducerContext';
@@ -147,7 +147,11 @@ const StandardField: FunctionComponent<
         }
     }, [creationErrors, attribute.id]);
 
-    const _handleSubmit = async (idValue: IdValue, valueToSave: AnyPrimitive, fieldName?: number) => {
+    const _handleSubmit = async (
+        idValue: IdValue,
+        valueToSave: AnyPrimitive,
+        fieldName?: number
+    ): Promise<void | ISubmitMultipleResult> => {
         const isSavingNewValue = idValue === newValueId;
         dispatch({
             type: StandardFieldReducerActionsTypes.CLEAR_ERROR,
@@ -185,7 +189,7 @@ const StandardField: FunctionComponent<
 
             dispatch({
                 type: StandardFieldReducerActionsTypes.UPDATE_AFTER_SUBMIT,
-                newValue: resultValue.payload,
+                newValue: resultValue.payload ?? '',
                 idValue
             });
 
@@ -225,7 +229,7 @@ const StandardField: FunctionComponent<
                 value: newActiveValue
             });
 
-            return;
+            return submitRes;
         }
 
         let errorMessage = submitRes.error;
@@ -304,7 +308,7 @@ const StandardField: FunctionComponent<
         });
     };
 
-    const _handleAddValue = (add: FormListOperation['add']) => {
+    const _handleAddValue = async (add: FormListOperation['add']) => {
         editRecordDispatch({
             type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
             value: {
@@ -313,12 +317,13 @@ const StandardField: FunctionComponent<
             }
         });
 
-        dispatch({
-            type: StandardFieldReducerActionsTypes.ADD_VALUE
-        });
-
         //TODO: is ok ?
-        add(null);
+        const res = await _handleSubmit(newValueId, '', valuesToDisplay.length);
+        dispatch({
+            type: StandardFieldReducerActionsTypes.ADD_VALUE,
+            idValue: res.values[0].id_value
+        });
+        add();
     };
 
     const _handleScopeChange = (scope: VersionFieldScope) => {
@@ -438,7 +443,7 @@ const StandardField: FunctionComponent<
     const listFieldsRef = useRef<{add: FormListOperation['add']; remove: FormListOperation['remove']} | null>(null);
 
     // TODO:
-    // - Gérer le allowclear qui vide la valeur mais ne supprime pas
+    // - Gérer le allowclear qui vide la valeur mais ne supprime pas => DONE
     // - Gérer la corbeille qui supprime la valeur
     // - Gérer le supprimer tout (globalement on fait un delete sur toutes les valeurs)
     // - Multivalués, l'odre change en fonction de l'ordre d'édition des valeurs ? Peut être revoir cette logique pour que l'ordre soit toujours le même

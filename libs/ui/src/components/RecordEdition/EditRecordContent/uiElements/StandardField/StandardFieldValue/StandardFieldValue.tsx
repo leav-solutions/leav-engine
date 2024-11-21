@@ -20,7 +20,8 @@ import {
     VersionFieldScope,
     InputRefPossibleTypes,
     IStandardInputProps,
-    StandardValueTypes
+    StandardValueTypes,
+    ISubmitMultipleResult
 } from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
@@ -200,7 +201,7 @@ interface IStandardFieldValueProps {
     presentationValue: string;
     state: IStandardFieldReducerState;
     dispatch: StandardFieldDispatchFunc;
-    onSubmit: (idValue: IdValue, value: AnyPrimitive, fieldName?: number) => Promise<void>;
+    onSubmit: (idValue: IdValue, value: AnyPrimitive, fieldName?: number) => Promise<void | ISubmitMultipleResult>;
     onDelete: (idValue: IdValue) => void;
     onScopeChange: (scope: VersionFieldScope) => void;
     listField?: FormListFieldData;
@@ -256,11 +257,7 @@ function StandardFieldValue({
         }
     }, [fieldValue.isEditing, fieldValue.editingValue]);
 
-    const _handleSubmit = async (valueToSave: StandardValueTypes, id?: string) => {
-        if (valueToSave === '') {
-            return _handleDelete();
-        }
-
+    const _handleSubmit = async (valueToSave: StandardValueTypes) => {
         const convertedValue = typeof valueToSave === 'object' ? JSON.stringify(valueToSave) : valueToSave;
 
         await onSubmit(fieldValue.idValue, convertedValue, listField?.name);
