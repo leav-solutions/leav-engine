@@ -369,7 +369,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                                 actualValue = treeValue.id;
                                 break;
                             default:
-                                actualValue = (val as ValueDetailsValueFragment).raw_value;
+                                actualValue = (val as ValueDetailsValueFragment).raw_payload;
                                 break;
                         }
                         return {
