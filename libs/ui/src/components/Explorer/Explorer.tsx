@@ -13,8 +13,7 @@ import {useEditAction} from './useEditAction';
 import {usePrimaryActionsButton as usePrimaryActionsButton} from './usePrimaryActions';
 import {ExplorerTitle} from './ExplorerTitle';
 import {useCreateAction} from './useCreateAction';
-import {useViewSettings} from './edit-settings/useViewSettings';
-import {useGetLibraryColumns} from './edit-settings/useGetLibraryColumns';
+import {useViewSettingsContext} from './edit-settings/useViewSettingsContext';
 
 interface IExplorerProps {
     library: string;
@@ -42,7 +41,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     defaultActionsForItem = ['edit', 'deactivate'],
     defaultPrimaryActions = ['create']
 }) => {
-    const {view} = useViewSettings();
+    const {view} = useViewSettingsContext();
 
     const {data, loading, refetch} = useExplorerData(library, view.fields); // TODO: refresh when go back on page
 
@@ -84,9 +83,9 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                         </KitSpace>
                     </ExplorerHeaderDivStyled>
                     <DataView
-                        library={library}
-                        dataGroupedFilteredSorted={data ?? []}
+                        dataGroupedFilteredSorted={data?.records ?? []}
                         itemActions={dedupItemActions}
+                        columnsLabels={data?.attributes}
                         attributesToDisplay={['whoAmI', ...view.fields]}
                     />
                 </>

@@ -10,7 +10,7 @@ import {FaGripLines} from 'react-icons/fa';
 import {ColumnItem} from './ColumnItem';
 import {useGetLibraryColumns} from './useGetLibraryColumns';
 import {ViewSettingsActionTypes} from '../edit-settings/viewSettingsReducer';
-import {useViewSettings} from '../edit-settings/useViewSettings';
+import {useViewSettingsContext} from './useViewSettingsContext';
 
 const StyledList = styled.ul`
     padding: 0;
@@ -35,8 +35,8 @@ interface IDisplayModeTableProps {
 export const DisplayModeTable: FunctionComponent<IDisplayModeTableProps> = ({library}) => {
     const {t} = useSharedTranslation();
 
-    const {view, dispatch} = useViewSettings();
-    const {fields: orderedVisibleColumns} = view;
+    const {view, dispatch} = useViewSettingsContext();
+    const {fields: orderedVisibleColumns} = view!;
 
     const [searchInput, setSearchInput] = useState('');
     const debouncedSearchInput = useDebouncedValue(searchInput, 300);

@@ -7,8 +7,8 @@ import {RadioChangeEvent} from 'aristid-ds/dist/Kit/DataEntry/Radio';
 import {FunctionComponent} from 'react';
 import styled from 'styled-components';
 import {DisplayModeTable} from './DisplayModeTable';
-import {useViewSettings} from './useViewSettings';
 import {ViewSettingsActionTypes} from './viewSettingsReducer';
+import {useViewSettingsContext} from './useViewSettingsContext';
 
 const StyledWrapperDiv = styled.div`
     display: flex;
@@ -26,7 +26,7 @@ interface IDisplayModeProps {
 
 export const DisplayMode: FunctionComponent<IDisplayModeProps> = ({library}) => {
     const {t} = useSharedTranslation();
-    const {view, dispatch} = useViewSettings();
+    const {view, dispatch} = useViewSettingsContext();
 
     const _handleDisplayModeChange = (event: RadioChangeEvent) => {
         dispatch({type: ViewSettingsActionTypes.CHANGE_DISPLAY_MODE, displayMode: event.target.value});

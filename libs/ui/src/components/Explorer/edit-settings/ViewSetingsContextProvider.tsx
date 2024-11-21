@@ -7,5 +7,6 @@ import {ViewSettingsContext, viewSettingsInitialState} from './ViewSetingsContex
 
 export const ViewSettingsContextProvider: FunctionComponent = ({children}) => {
     const [state, dispatch] = useReducer(ViewSettingsReducer, viewSettingsInitialState);
+
     return <ViewSettingsContext.Provider value={{view: state, dispatch}}>{children}</ViewSettingsContext.Provider>;
 };

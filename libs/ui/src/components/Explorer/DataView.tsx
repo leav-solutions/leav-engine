@@ -15,8 +15,7 @@ import {
     PropertyValueTreeValueFragment,
     PropertyValueValueFragment
 } from '_ui/_gqlTypes';
-import {IItemAction, IItemData, ItemWhoAmI} from './_types';
-import {useGetLibraryColumns} from './edit-settings/useGetLibraryColumns';
+import {IExplorerData, IItemAction, IItemData, ItemWhoAmI} from './_types';
 
 const USELESS = '';
 
@@ -33,18 +32,17 @@ const _getIdCard = ({id, label, library, preview, subLabel}: ItemWhoAmI): Return
 interface IDataViewProps {
     dataGroupedFilteredSorted: IItemData[];
     itemActions: IItemAction[];
-    library: string;
+    columnsLabels: IExplorerData['attributes'] | null;
     attributesToDisplay: string[];
 }
 
 export const DataView: FunctionComponent<IDataViewProps> = ({
     dataGroupedFilteredSorted,
     attributesToDisplay,
-    library,
+    columnsLabels,
     itemActions
 }) => {
     const {t} = useSharedTranslation();
-    const {attributeDetailsById} = useGetLibraryColumns(library);
 
     const _getActionButtons = (actions: Array<Override<IItemAction, {callback: () => void}>>): ReactNode => {
         const isLessThanFourActions = actions.length < 4;
@@ -91,8 +89,7 @@ export const DataView: FunctionComponent<IDataViewProps> = ({
         );
     };
 
-    const _getColumnName = (attributeName: string): string =>
-        attributeDetailsById[attributeName].label ?? attributeName;
+    const _getColumnName = (attributeName: string): string => columnsLabels?.[attributeName] ?? attributeName;
 
     const renderCell = (propertiesById: IItemData['propertiesById'], attributeName: string) => {
         // TODO: handle inherited and calculated values

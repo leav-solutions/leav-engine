@@ -4,4 +4,4 @@
 import {useContext} from 'react';
 import {ViewSettingsContext} from './ViewSetingsContext';
 
-export const useViewSettings = () => useContext(ViewSettingsContext);
+export const useViewSettingsContext = () => useContext(ViewSettingsContext);
