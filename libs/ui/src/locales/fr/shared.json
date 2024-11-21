@@ -423,6 +423,7 @@
         "metadata_section": "Propriétés de la valeur",
         "metadata_section_link": "Propriétés de la liaison",
         "value_length": "{{length}} caractère(s)",
+        "delete_all": "Tout supprimer",
         "delete_all_values": "Supprimer toutes les valeurs",
         "delete_all_values_confirm": "Êtes-vous sûr de vouloir supprimer toutes les valeurs?",
         "value_details_tooltip": "Plus d'informations",

@@ -33,6 +33,7 @@ import {useValueDetailsButton} from '../../shared/ValueDetailsBtn/useValueDetail
 import {TFunction} from 'i18next';
 import {FaPlus, FaTrash} from 'react-icons/fa';
 import {StoreValue} from 'antd/es/form/interface';
+import {DeleteAllValuesButton} from './DeleteAllValuesButton';
 
 const Wrapper = styled.div<{$metadataEdit: boolean}>`
     margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
@@ -457,16 +458,7 @@ const StandardField: FunctionComponent<
                     disabled={state.isReadOnly}
                     bordered={attribute.multiple_values}
                     status={isFieldInError ? 'error' : undefined}
-                    actions={
-                        canDeleteAllValues
-                            ? [
-                                  // TODO: Refaire un composant comme DeleteAllValuesBtn mais avec une modale pour la confirmation
-                                  <KitButton type="tertiary" size="s">
-                                      Tout supprimer
-                                  </KitButton>
-                              ]
-                            : undefined
-                    }
+                    actions={canDeleteAllValues ? [<DeleteAllValuesButton />] : undefined}
                 >
                     {!attribute.multiple_values && (
                         <StandardFieldValue
@@ -494,9 +486,12 @@ const StandardField: FunctionComponent<
                                                 // console.log('value', valuesToDisplay[index]);
                                                 // console.log('presentationValues', presentationValues[index]);
                                                 return (
-                                                    <KitSpace direction="horizontal" style={{width: '100%'}}>
+                                                    <KitSpace
+                                                        direction="horizontal"
+                                                        style={{width: '100%'}}
+                                                        key={field.key}
+                                                    >
                                                         <StandardFieldValue
-                                                            key={field.key}
                                                             listField={field}
                                                             value={valuesToDisplay[index]}
                                                             presentationValue={presentationValues[index]}
