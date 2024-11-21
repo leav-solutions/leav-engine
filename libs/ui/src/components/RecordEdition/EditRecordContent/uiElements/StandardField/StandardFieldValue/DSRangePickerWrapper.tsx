@@ -1,58 +1,43 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {KitDatePicker} from 'aristid-ds';
-import {FunctionComponent, useEffect, useRef} from 'react';
-import {
-    IStandardFieldReducerState,
-    IStandardFieldValue
-} from '../../../reducers/standardFieldReducer/standardFieldReducer';
+import {KitDatePicker, KitInput} from 'aristid-ds';
+import {ChangeEvent, FunctionComponent, useState} from 'react';
 import {Form} from 'antd';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
-import {IProvidedByAntFormItem, StandardValueTypes} from '../../../_types';
-import {RangePickerProps} from 'antd/lib/date-picker';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
+import {StandardValueTypes} from '../../../_types';
 import {setDateToUTCNoon} from '_ui/_utils';
-
-interface IDSRangePickerWrapperProps extends IProvidedByAntFormItem<RangePickerProps> {
-    state: IStandardFieldReducerState;
-    attribute: RecordFormAttributeFragment;
-    fieldValue: IStandardFieldValue;
-    handleSubmit: (value: StandardValueTypes, id?: string) => void;
-    handleBlur: () => void;
-    shouldShowValueDetailsButton?: boolean;
-}
+import {FaCalendar} from 'react-icons/fa';
+import {IStandFieldValueContentProps} from './_types';
+import {IKitRangePicker} from 'aristid-ds/dist/Kit/DataEntry/DatePicker/types';
 
 const KitDatePickerRangePickerStyled = styled(KitDatePicker.RangePicker)<{$shouldHighlightColor: boolean}>`
     color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
 `;
 
-export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps> = ({
+const KitInputStyled = styled(KitInput)<{$shouldHighlightColor: boolean}>`
+    color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
+`;
+
+export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProps<IKitRangePicker>> = ({
+    presentationValue,
     value,
     onChange,
     state,
     attribute,
-    fieldValue,
-    handleSubmit,
-    handleBlur,
-    shouldShowValueDetailsButton = false
+    handleSubmit
 }) => {
     if (!onChange) {
         throw Error('DSRangePickerWrapper should be used inside a antd Form.Item');
     }
 
+    const [isFocused, setIsFocused] = useState(false);
     const {errors} = Form.Item.useStatus();
 
-    const inputRef = useRef<any>();
+    const isErrors = errors.length > 0;
 
-    useEffect(() => {
-        if (fieldValue.isEditing && inputRef.current) {
-            inputRef.current.nativeElement.click(); // To automatically open the date picker
-        }
-    }, [fieldValue.isEditing]);
-
-    const _resetToInheritedOrCalculatedValue = () => {
+    const _resetToInheritedOrCalculatedValue = async () => {
         if (state.isInheritedValue) {
             onChange(
                 [
@@ -70,13 +55,15 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
                 state.calculatedValue.raw_value
             );
         }
-        handleSubmit('', state.attribute.id);
+        await handleSubmit('', state.attribute.id);
     };
+
+    const _handleFocus = () => setIsFocused(true);
 
     const _handleDateChange: (
         rangePickerDates: [from: dayjs.Dayjs, to: dayjs.Dayjs] | null,
         antOnChangeParams: [from: string, to: string] | null
-    ) => void = (rangePickerDates, ...antOnChangeParams) => {
+    ) => void = async (rangePickerDates, ...antOnChangeParams) => {
         if ((state.isInheritedValue || state.isCalculatedValue) && rangePickerDates === null) {
             _resetToInheritedOrCalculatedValue();
             return;
@@ -93,35 +80,68 @@ export const DSRangePickerWrapper: FunctionComponent<IDSRangePickerWrapperProps>
             return;
         }
 
-        const datesToSave = {from: null, to: null};
+        let datesToSave: StandardValueTypes = '';
+
         if (rangePickerDates !== null) {
             const [dateFrom, dateTo] = rangePickerDates;
-
-            datesToSave.from = String(dateFrom.unix());
-            datesToSave.to = String(dateTo.unix());
+            datesToSave = {from: String(dateFrom.unix()), to: String(dateTo.unix())};
         }
 
-        handleSubmit(datesToSave, state.attribute.id);
+        await handleSubmit(datesToSave, state.attribute.id);
     };
 
     const _handleOpenChange = (open: boolean) => {
         if (!open) {
-            handleBlur();
+            setIsFocused(false);
+        }
+    };
+
+    // TOTO remove this function to use onClear Prop when ant is updated to 5.20+
+    const _handleClear = async (event: ChangeEvent<HTMLInputElement>) => {
+        const inputValue = event.target.value;
+
+        if ((state.isInheritedValue || state.isCalculatedValue) && inputValue === '' && event.type === 'click') {
+            _resetToInheritedOrCalculatedValue();
+            return;
+        }
+        onChange(null, null);
+        if (inputValue === '' && event.type === 'click') {
+            await handleSubmit('', state.attribute.id);
         }
     };
 
     return (
-        <KitDatePickerRangePickerStyled
-            // @ts-expect-error - ref is not a valid prop for RangePicker but works at runtime
-            ref={inputRef}
-            value={value}
-            onChange={_handleDateChange}
-            disabled={state.isReadOnly}
-            allowClear={!state.isInheritedNotOverrideValue && !state.isCalculatedNotOverrideValue}
-            status={errors.length > 0 ? 'error' : undefined}
-            onOpenChange={_handleOpenChange}
-            $shouldHighlightColor={state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue}
-            placeholder={['TODO', 'TODO']}
-        />
+        <>
+            {
+                !isFocused && !isErrors && (
+                    <KitInputStyled
+                        prefix={<FaCalendar />}
+                        helper={isErrors ? String(errors[0]) : undefined}
+                        status={isErrors ? 'error' : undefined}
+                        value={presentationValue}
+                        onFocus={_handleFocus}
+                        onChange={_handleClear}
+                        $shouldHighlightColor={state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue}
+                        placeholder="TODO" //TODO: Traduire et faire pour tous les autres inputs  + liste de valeurs (en attente wording Cyril - XSTREAM-954)
+                    />
+                )
+                //TODO: Léger décalage car l'icon n'est pas exactement le même que celui du DS (MAJ React-icons ?)
+            }
+            {(isFocused || isErrors) && (
+                <KitDatePickerRangePickerStyled
+                    open
+                    autoFocus
+                    value={value}
+                    disabled={state.isReadOnly}
+                    allowClear={!state.isInheritedNotOverrideValue && !state.isCalculatedNotOverrideValue}
+                    helper={isErrors ? String(errors[0]) : undefined}
+                    status={isErrors ? 'error' : undefined}
+                    onChange={_handleDateChange}
+                    onOpenChange={_handleOpenChange}
+                    $shouldHighlightColor={state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue}
+                    placeholder={['TODO', 'TODO']} //TODO: Traduire et faire pour tous les autres inputs  + liste de valeurs (en attente wording Cyril - XSTREAM-954)
+                />
+            )}
+        </>
     );
 };

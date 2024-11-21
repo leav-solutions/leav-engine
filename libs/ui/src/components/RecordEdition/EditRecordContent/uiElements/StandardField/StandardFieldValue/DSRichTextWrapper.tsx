@@ -1,83 +1,70 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useEffect, useRef, useState} from 'react';
-import {
-    IStandardFieldReducerState,
-    IStandardFieldValue
-} from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import {Form, GetRef, InputProps} from 'antd';
-import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {FunctionComponent, useState} from 'react';
+import {Form} from 'antd';
 import styled from 'styled-components';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 import {KitRichText} from 'aristid-ds';
-
-interface IDSRichTextWrapperProps extends IProvidedByAntFormItem<InputProps> {
-    state: IStandardFieldReducerState;
-    attribute: RecordFormAttributeFragment;
-    fieldValue: IStandardFieldValue;
-    handleSubmit: (value: string, id?: string) => void;
-    handleBlur: () => void;
-    shouldShowValueDetailsButton?: boolean;
-}
+import {IStandFieldValueContentProps} from './_types';
+import {KitRichTextProps} from 'aristid-ds/dist/Kit/DataEntry/RichText/types';
 
 const KitRichTextStyled = styled(KitRichText)<{$shouldHighlightColor: boolean}>`
-    color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
+    .tiptap.ProseMirror {
+        color: ${({$shouldHighlightColor}) =>
+            $shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial'};
+    }
 `;
 
 const isEmptyValue = value => !value || value === '<p></p>';
 
-export const DSRichTextWrapper: FunctionComponent<IDSRichTextWrapperProps> = ({
+export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<KitRichTextProps>> = ({
     value,
+    presentationValue,
     onChange,
     state,
     attribute,
-    fieldValue,
-    handleSubmit,
-    handleBlur,
-    shouldShowValueDetailsButton = false
+    handleSubmit
 }) => {
     if (!onChange) {
         throw Error('DSRichTextWrapper should be used inside a antd Form.Item');
     }
 
-    const {errors} = Form.Item.useStatus();
     const [hasChanged, setHasChanged] = useState(false);
-    const inputRef = useRef<GetRef<typeof KitRichTextStyled>>(null);
+    const [isFocused, setIsFocused] = useState(false);
+    const {errors} = Form.Item.useStatus();
 
-    useEffect(() => {
-        if (fieldValue.isEditing && inputRef.current) {
-            (inputRef.current.children[0] as HTMLElement).focus();
-        }
-    }, [fieldValue.isEditing]);
+    const isErrors = errors.length > 0;
+    const valueToDisplay = isFocused || isErrors ? value : presentationValue;
 
-    const _resetToInheritedOrCalculatedValue = () => {
+    const _resetToInheritedOrCalculatedValue = async () => {
         setHasChanged(false);
         if (state.isInheritedValue) {
-            onChange(state.inheritedValue.raw_value);
+            onChange(state.inheritedValue.raw_payload);
         } else if (state.isCalculatedValue) {
-            onChange(state.calculatedValue.raw_value);
+            onChange(state.calculatedValue.raw_payload);
         }
-        handleSubmit('', state.attribute.id);
+        await handleSubmit('', state.attribute.id);
     };
 
-    const _handleOnBlur = inputValue => {
+    const _handleFocus = () => setIsFocused(true);
+
+    const _handleOnBlur = async inputValue => {
+        const valueToSubmit = isEmptyValue(inputValue) ? '' : inputValue;
+
         if (!hasChanged) {
-            handleBlur();
+            onChange(valueToSubmit);
+            setIsFocused(false);
             return;
         }
-
-        const valueToSubmit = isEmptyValue(inputValue) ? '' : inputValue;
 
         if (valueToSubmit === '' && (state.isInheritedValue || state.isCalculatedValue)) {
             _resetToInheritedOrCalculatedValue();
             return;
         }
-        if (hasChanged || (!state.isInheritedValue && !state.isCalculatedValue)) {
-            handleSubmit(valueToSubmit, state.attribute.id);
-        }
+
         onChange(valueToSubmit);
-        return;
+        setIsFocused(false);
+        await handleSubmit(valueToSubmit, state.attribute.id);
     };
 
     const _handleOnChange = inputValue => {
@@ -91,14 +78,15 @@ export const DSRichTextWrapper: FunctionComponent<IDSRichTextWrapperProps> = ({
 
     return (
         <KitRichTextStyled
-            ref={inputRef}
-            status={errors.length > 0 ? 'error' : undefined}
-            value={value as string}
+            helper={isErrors ? String(errors[0]) : undefined}
+            status={isErrors ? 'error' : undefined}
+            value={valueToDisplay}
             disabled={state.isReadOnly}
             onChange={_handleOnChange}
+            onFocus={_handleFocus}
             onBlur={_handleOnBlur}
             $shouldHighlightColor={
-                (!hasChanged && state.isInheritedNotOverrideValue) || state.isCalculatedNotOverrideValue
+                !hasChanged && (state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue)
             }
             placeholder="TODO"
         />

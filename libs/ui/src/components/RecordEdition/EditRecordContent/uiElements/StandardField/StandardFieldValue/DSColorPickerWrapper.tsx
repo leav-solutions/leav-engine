@@ -2,26 +2,12 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitColorPicker} from 'aristid-ds';
-import {FunctionComponent, useEffect, useRef, useState} from 'react';
-import {
-    IStandardFieldReducerState,
-    IStandardFieldValue
-} from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {FunctionComponent, useState} from 'react';
 import styled from 'styled-components';
 import {useLang} from '_ui/hooks';
 import {localizedTranslation} from '@leav/utils';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
-import {KitColor, KitColorPickerProps, KitColorPickerRef} from 'aristid-ds/dist/Kit/DataEntry/ColorPicker/types';
-
-interface IDSColorPickerWrapperProps extends IProvidedByAntFormItem<KitColorPickerProps> {
-    state: IStandardFieldReducerState;
-    attribute: RecordFormAttributeFragment;
-    fieldValue: IStandardFieldValue;
-    handleSubmit: (value: string, id?: string) => void;
-    handleBlur: () => void;
-    shouldShowValueDetailsButton?: boolean;
-}
+import {KitColor, KitColorPickerProps} from 'aristid-ds/dist/Kit/DataEntry/ColorPicker/types';
+import {IStandFieldValueContentProps} from './_types';
 
 const KitColorPickerStyled = styled(KitColorPicker)<{$shouldHighlightColor: boolean}>`
     .ant-color-picker-trigger-text {
@@ -34,15 +20,13 @@ const KitColorPickerStyled = styled(KitColorPicker)<{$shouldHighlightColor: bool
     }
 `;
 
-export const DSColorPickerWrapper: FunctionComponent<IDSColorPickerWrapperProps> = ({
+export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProps<KitColorPickerProps>> = ({
     value,
+    presentationValue,
+    onChange,
     state,
     attribute,
-    fieldValue,
-    onChange,
-    handleSubmit,
-    handleBlur,
-    shouldShowValueDetailsButton = false
+    handleSubmit
 }) => {
     if (!onChange) {
         throw Error('DSColorPickerWrapper should be used inside a antd Form.Item');
@@ -50,25 +34,22 @@ export const DSColorPickerWrapper: FunctionComponent<IDSColorPickerWrapperProps>
 
     const {lang: availableLang} = useLang();
     const [hasChanged, setHasChanged] = useState(false);
+    const [isFocused, setIsFocused] = useState(false);
     const [currentColor, setCurrentColor] = useState<KitColor>();
     const [currentHex, setCurrentHex] = useState((value as string) ?? '');
-    const colorPickerRef = useRef<KitColorPickerRef>(null);
 
-    useEffect(() => {
-        if (fieldValue.isEditing) {
-            colorPickerRef.current.focus();
-        }
-    }, [fieldValue.isEditing]);
-
-    const _handleOnOpenChange = (open: boolean) => {
+    const _handleOnOpenChange = async (open: boolean) => {
         if (!open) {
             if (!hasChanged) {
-                handleBlur();
+                setIsFocused(false);
                 return;
             }
 
-            handleSubmit(currentColor.toHex(), state.attribute.id);
             onChange(currentColor, currentHex);
+            setIsFocused(false);
+            await handleSubmit(currentColor.toHex(), state.attribute.id);
+        } else {
+            setIsFocused(true);
         }
     };
 
@@ -82,7 +63,7 @@ export const DSColorPickerWrapper: FunctionComponent<IDSColorPickerWrapperProps>
         onChange(color, hex);
     };
 
-    const _handleOnClear = () => {
+    const _handleOnClear = async () => {
         setHasChanged(false);
 
         if (state.isInheritedValue) {
@@ -92,19 +73,19 @@ export const DSColorPickerWrapper: FunctionComponent<IDSColorPickerWrapperProps>
         }
 
         onChange(null, '');
-        handleSubmit('', state.attribute.id);
+        setIsFocused(false);
+        await handleSubmit('', state.attribute.id);
     };
 
     const label = localizedTranslation(state.formElement.settings.label, availableLang);
 
     return (
         <KitColorPickerStyled
-            ref={colorPickerRef}
             value={currentHex}
+            showText={isFocused ? true : () => `${presentationValue}`}
             aria-label={label}
             disabled={state.isReadOnly}
             disabledAlpha
-            showText
             allowClear={!state.isInheritedNotOverrideValue && !state.isCalculatedNotOverrideValue}
             onOpenChange={_handleOnOpenChange}
             onChange={_handleOnChange}
