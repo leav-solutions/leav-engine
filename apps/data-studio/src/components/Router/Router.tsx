@@ -5,7 +5,7 @@ import {APPS_ENDPOINT, APP_ENDPOINT, Explorer, themeVars} from '@leav/ui';
 import {Layout} from 'antd';
 import Sidebar from 'components/Sidebar';
 import TopBar from 'components/TopBar';
-import {FunctionComponent, useState} from 'react';
+import {FunctionComponent, useRef, useState} from 'react';
 import {BrowserRouter} from 'react-router-dom';
 import NotifsPanel from '../NotifsPanel';
 import UserPanel from '../UserPanel';
@@ -16,6 +16,7 @@ const {Header, Content, Sider} = Layout;
 const Router: FunctionComponent = () => {
     const [userPanelVisible, setUserPanelVisible] = useState<boolean>(false);
     const [nbNotifs, setNbNotifs] = useState<number>(0);
+    const explorerContainerRef = useRef<HTMLDivElement>(null);
 
     const toggleUserPanelVisible = () => setUserPanelVisible(visible => !visible);
 
@@ -44,17 +45,13 @@ const Router: FunctionComponent = () => {
                             nbNotifs={nbNotifs}
                         />
                     </Header>
-                    <Layout style={{overflow: 'hidden', position: 'relative'}}>
-                        <Explorer.EditSettingsContextProvider>
-                            <Explorer.ViewSettingsContextProvider>
-                                <Content style={{background: themeVars.defaultBg, overflow: 'hidden'}}>
-                                    <UserPanel userPanelVisible={userPanelVisible} hideUserPanel={hideUserPanel} />
-                                    <NotifsPanel setNbNotifs={_setNbNotifs} />
-                                    <Routes />
-                                </Content>
-                                {/* TODO: handle conflict with app side panel */}
-                                <Explorer.SettingsSidePanel />
-                            </Explorer.ViewSettingsContextProvider>
+                    <Layout style={{overflow: 'hidden', position: 'relative'}} ref={explorerContainerRef}>
+                        <Explorer.EditSettingsContextProvider panelElement={explorerContainerRef.current}>
+                            <Content style={{background: themeVars.defaultBg, overflow: 'hidden'}}>
+                                <UserPanel userPanelVisible={userPanelVisible} hideUserPanel={hideUserPanel} />
+                                <NotifsPanel setNbNotifs={_setNbNotifs} />
+                                <Routes />
+                            </Content>
                         </Explorer.EditSettingsContextProvider>
                     </Layout>
                 </Layout>
