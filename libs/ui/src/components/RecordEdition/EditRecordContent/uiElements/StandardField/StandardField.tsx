@@ -16,6 +16,7 @@ import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
 import standardFieldReducer, {
     computeInitialState,
     IdValue,
+    IStandardFieldValue,
     newValueId,
     StandardFieldReducerActionsTypes
 } from '../../reducers/standardFieldReducer/standardFieldReducer';
@@ -189,7 +190,7 @@ const StandardField: FunctionComponent<
 
             dispatch({
                 type: StandardFieldReducerActionsTypes.UPDATE_AFTER_SUBMIT,
-                newValue: resultValue.payload ?? '',
+                newValue: resultValue,
                 idValue
             });
 
@@ -308,22 +309,23 @@ const StandardField: FunctionComponent<
         });
     };
 
-    const _handleAddValue = async (add: FormListOperation['add']) => {
-        editRecordDispatch({
-            type: EditRecordReducerActionsTypes.SET_ACTIVE_VALUE,
-            value: {
-                attribute,
-                value: null
-            }
-        });
+    const _handleAddValue = async (antdAdd: FormListOperation['add']) => {
+        await _handleSubmit(newValueId, '', valuesToDisplay.length);
+        antdAdd();
+    };
 
-        //TODO: is ok ?
-        const res = await _handleSubmit(newValueId, '', valuesToDisplay.length);
+    const _handleDeleteValue = async (
+        field: IStandardFieldValue,
+        antdRemove: FormListOperation['remove'],
+        deletedFieldIndex: number
+    ) => {
+        await onValueDelete({id_value: field.idValue}, attribute.id);
+        antdRemove(deletedFieldIndex);
+        setPresentationValues(presentationValues.filter((_, index) => index !== deletedFieldIndex));
         dispatch({
-            type: StandardFieldReducerActionsTypes.ADD_VALUE,
-            idValue: res.values[0].id_value
+            type: StandardFieldReducerActionsTypes.UPDATE_AFTER_DELETE,
+            idValue: field.idValue
         });
-        add();
     };
 
     const _handleScopeChange = (scope: VersionFieldScope) => {
@@ -440,11 +442,9 @@ const StandardField: FunctionComponent<
     // Use watch to update the component when the value changes (useful for errors)
     Form.useWatch(attribute.id, antdForm);
 
-    const listFieldsRef = useRef<{add: FormListOperation['add']; remove: FormListOperation['remove']} | null>(null);
-
     // TODO:
     // - Gérer le allowclear qui vide la valeur mais ne supprime pas => DONE
-    // - Gérer la corbeille qui supprime la valeur
+    // - Gérer la corbeille qui supprime la valeur => DONE
     // - Gérer le supprimer tout (globalement on fait un delete sur toutes les valeurs)
     // - Multivalués, l'odre change en fonction de l'ordre d'édition des valeurs ? Peut être revoir cette logique pour que l'ordre soit toujours le même
     // - Faire un composant StandardFieldInputWrapper pour alleger ce composant (A discuter , est-ce une bonne idée ?)
@@ -480,50 +480,58 @@ const StandardField: FunctionComponent<
                     {attribute.multiple_values && (
                         <KitSpace direction="vertical" style={{width: '100%'}}>
                             <Form.List name={attribute.id}>
-                                {(fields, {add, remove}) => {
-                                    listFieldsRef.current = {add, remove};
-
-                                    return (
-                                        <KitSpace direction="vertical" style={{width: '100%'}}>
-                                            {fields.map((field, index) => {
-                                                // console.log('------- field --------');
-                                                // console.log('field', field);
-                                                // console.log('value', valuesToDisplay[index]);
-                                                // console.log('presentationValues', presentationValues[index]);
-                                                return (
-                                                    <KitSpace
-                                                        direction="horizontal"
-                                                        style={{width: '100%'}}
-                                                        key={field.key}
-                                                    >
-                                                        <StandardFieldValue
-                                                            listField={field}
-                                                            value={valuesToDisplay[index]}
-                                                            presentationValue={presentationValues[index]}
-                                                            state={state}
-                                                            dispatch={dispatch}
-                                                            onSubmit={_handleSubmit}
-                                                            onDelete={_handleDelete}
-                                                            onScopeChange={_handleScopeChange}
+                                {(fields, {add, remove}) => (
+                                    <KitSpace direction="vertical" style={{width: '100%'}}>
+                                        {fields.map((field, index) => {
+                                            console.log('------- field --------');
+                                            // console.log('field', field);
+                                            // console.log('value', valuesToDisplay[index]);
+                                            // console.log('presentationValues', presentationValues[index]);
+                                            return (
+                                                <KitSpace
+                                                    direction="horizontal"
+                                                    style={{width: '100%'}}
+                                                    key={field.key}
+                                                >
+                                                    <StandardFieldValue
+                                                        listField={field}
+                                                        value={valuesToDisplay[index]}
+                                                        presentationValue={presentationValues[index]}
+                                                        state={state}
+                                                        dispatch={dispatch}
+                                                        onSubmit={_handleSubmit}
+                                                        onDelete={_handleDelete}
+                                                        onScopeChange={_handleScopeChange}
+                                                    />
+                                                    {fields.length > 1 && (
+                                                        <KitButton
+                                                            type="tertiary"
+                                                            icon={<FaTrash />}
+                                                            onClick={() =>
+                                                                _handleDeleteValue(
+                                                                    valuesToDisplay[index],
+                                                                    remove,
+                                                                    index
+                                                                )
+                                                            }
                                                         />
-                                                        <KitButton type="tertiary" icon={<FaTrash />} />
-                                                    </KitSpace>
-                                                );
-                                            })}
-                                        </KitSpace>
-                                    );
-                                }}
+                                                    )}
+                                                </KitSpace>
+                                            );
+                                        })}
+                                        {canAddAnotherValue && (
+                                            <KitButton
+                                                type="secondary"
+                                                size="m"
+                                                icon={<FaPlus />}
+                                                onClick={() => _handleAddValue(add)}
+                                            >
+                                                {t('record_edition.add_value')}
+                                            </KitButton>
+                                        )}
+                                    </KitSpace>
+                                )}
                             </Form.List>
-                            {canAddAnotherValue && (
-                                <KitButton
-                                    type="secondary"
-                                    size="m"
-                                    icon={<FaPlus />}
-                                    onClick={() => _handleAddValue(listFieldsRef.current.add)}
-                                >
-                                    {t('record_edition.add_value')}
-                                </KitButton>
-                            )}
                         </KitSpace>
                     )}
                 </KitInputWrapper>
