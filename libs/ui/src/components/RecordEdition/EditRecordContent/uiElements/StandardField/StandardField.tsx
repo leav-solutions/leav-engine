@@ -90,6 +90,12 @@ const StandardField: FunctionComponent<
     const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
     const {state: editRecordState, dispatch: editRecordDispatch} = useEditRecordReducer();
 
+    const antdListFieldsRef = useRef<{
+        add: FormListOperation['add'];
+        remove: FormListOperation['remove'];
+        indexes: number[];
+    } | null>(null);
+
     const {fetchValues} = useRefreshFieldValues(
         editRecordState.record?.library?.id,
         element.attribute?.id,
@@ -116,19 +122,15 @@ const StandardField: FunctionComponent<
     const [state, dispatch] = useReducer(standardFieldReducer, initialState);
 
     const [presentationValues, setPresentationValues] = useState(
-        element.values.map(value => {
-            const test = _getPresentationValue({
+        element.values.map(value =>
+            _getPresentationValue({
                 t,
                 format: attribute.format,
                 value: value.payload,
                 calculatedValue: state.calculatedValue,
                 inheritedValue: state.inheritedValue
-            });
-
-            console.log('test', test);
-
-            return test;
-        })
+            })
+        )
     );
 
     console.log('presentationValues', presentationValues);
@@ -195,15 +197,17 @@ const StandardField: FunctionComponent<
             });
 
             const index = fieldName ?? 0;
-            const newPresentationValues = [...presentationValues];
-            newPresentationValues[index] = _getPresentationValue({
-                t,
-                format: attribute.format,
-                value: resultValue.payload,
-                calculatedValue: state.calculatedValue,
-                inheritedValue: state.inheritedValue
+            setPresentationValues(previousPresentationValues => {
+                const nextPresentationValues = [...previousPresentationValues];
+                nextPresentationValues[index] = _getPresentationValue({
+                    t,
+                    format: attribute.format,
+                    value: resultValue.payload,
+                    calculatedValue: state.calculatedValue,
+                    inheritedValue: state.inheritedValue
+                });
+                return nextPresentationValues;
             });
-            setPresentationValues(newPresentationValues);
 
             const newActiveValue = state.metadataEdit
                 ? {
@@ -321,7 +325,9 @@ const StandardField: FunctionComponent<
     ) => {
         await onValueDelete({id_value: field.idValue}, attribute.id);
         antdRemove(deletedFieldIndex);
-        setPresentationValues(presentationValues.filter((_, index) => index !== deletedFieldIndex));
+        setPresentationValues(previousPresentationValues =>
+            previousPresentationValues.filter((_, index) => index !== deletedFieldIndex)
+        );
         dispatch({
             type: StandardFieldReducerActionsTypes.UPDATE_AFTER_DELETE,
             idValue: field.idValue
@@ -343,6 +349,9 @@ const StandardField: FunctionComponent<
         );
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
+            antdListFieldsRef.current.remove(antdListFieldsRef.current.indexes);
+            antdListFieldsRef.current.add();
+            setPresentationValues(['']);
             dispatch({
                 type: StandardFieldReducerActionsTypes.UPDATE_AFTER_DELETE,
                 allDeleted: true
@@ -446,7 +455,7 @@ const StandardField: FunctionComponent<
     // - Gérer le allowclear qui vide la valeur mais ne supprime pas => DONE
     // - Gérer la corbeille qui supprime la valeur => DONE
     // - Gérer le supprimer tout (globalement on fait un delete sur toutes les valeurs)
-    // - Multivalués, l'odre change en fonction de l'ordre d'édition des valeurs ? Peut être revoir cette logique pour que l'ordre soit toujours le même
+    // - Multivalués, l'ordre change en fonction de l'ordre d'édition des valeurs ? Peut être revoir cette logique pour que l'ordre soit toujours le même
     // - Faire un composant StandardFieldInputWrapper pour alleger ce composant (A discuter , est-ce une bonne idée ?)
     // - Gérer placeholder sur tous les formats
     // - Vérifier required
@@ -463,7 +472,11 @@ const StandardField: FunctionComponent<
                     disabled={state.isReadOnly}
                     bordered={attribute.multiple_values}
                     status={isFieldInError ? 'error' : undefined}
-                    actions={canDeleteAllValues ? [<DeleteAllValuesButton />] : undefined}
+                    actions={
+                        canDeleteAllValues
+                            ? [<DeleteAllValuesButton handleDelete={_handleDeleteAllValues} />]
+                            : undefined
+                    }
                 >
                     {!attribute.multiple_values && (
                         <StandardFieldValue
@@ -480,57 +493,61 @@ const StandardField: FunctionComponent<
                     {attribute.multiple_values && (
                         <KitSpace direction="vertical" style={{width: '100%'}}>
                             <Form.List name={attribute.id}>
-                                {(fields, {add, remove}) => (
-                                    <KitSpace direction="vertical" style={{width: '100%'}}>
-                                        {fields.map((field, index) => {
-                                            console.log('------- field --------');
-                                            // console.log('field', field);
-                                            // console.log('value', valuesToDisplay[index]);
-                                            // console.log('presentationValues', presentationValues[index]);
-                                            return (
-                                                <KitSpace
-                                                    direction="horizontal"
-                                                    style={{width: '100%'}}
-                                                    key={field.key}
-                                                >
-                                                    <StandardFieldValue
-                                                        listField={field}
-                                                        value={valuesToDisplay[index]}
-                                                        presentationValue={presentationValues[index]}
-                                                        state={state}
-                                                        dispatch={dispatch}
-                                                        onSubmit={_handleSubmit}
-                                                        onDelete={_handleDelete}
-                                                        onScopeChange={_handleScopeChange}
-                                                    />
-                                                    {fields.length > 1 && (
-                                                        <KitButton
-                                                            type="tertiary"
-                                                            icon={<FaTrash />}
-                                                            onClick={() =>
-                                                                _handleDeleteValue(
-                                                                    valuesToDisplay[index],
-                                                                    remove,
-                                                                    index
-                                                                )
-                                                            }
+                                {(fields, {add, remove}) => {
+                                    antdListFieldsRef.current = {add, remove, indexes: fields.map((_, index) => index)};
+
+                                    return (
+                                        <KitSpace direction="vertical" style={{width: '100%'}}>
+                                            {fields.map((field, index) => {
+                                                console.log('------- field --------');
+                                                // console.log('field', field);
+                                                // console.log('value', valuesToDisplay[index]);
+                                                // console.log('presentationValues', presentationValues[index]);
+                                                return (
+                                                    <KitSpace
+                                                        direction="horizontal"
+                                                        style={{width: '100%'}}
+                                                        key={field.key}
+                                                    >
+                                                        <StandardFieldValue
+                                                            listField={field}
+                                                            value={valuesToDisplay[index]}
+                                                            presentationValue={presentationValues[index]}
+                                                            state={state}
+                                                            dispatch={dispatch}
+                                                            onSubmit={_handleSubmit}
+                                                            onDelete={_handleDelete}
+                                                            onScopeChange={_handleScopeChange}
                                                         />
-                                                    )}
-                                                </KitSpace>
-                                            );
-                                        })}
-                                        {canAddAnotherValue && (
-                                            <KitButton
-                                                type="secondary"
-                                                size="m"
-                                                icon={<FaPlus />}
-                                                onClick={() => _handleAddValue(add)}
-                                            >
-                                                {t('record_edition.add_value')}
-                                            </KitButton>
-                                        )}
-                                    </KitSpace>
-                                )}
+                                                        {fields.length > 1 && (
+                                                            <KitButton
+                                                                type="tertiary"
+                                                                icon={<FaTrash />}
+                                                                onClick={() =>
+                                                                    _handleDeleteValue(
+                                                                        valuesToDisplay[index],
+                                                                        remove,
+                                                                        index
+                                                                    )
+                                                                }
+                                                            />
+                                                        )}
+                                                    </KitSpace>
+                                                );
+                                            })}
+                                            {canAddAnotherValue && (
+                                                <KitButton
+                                                    type="secondary"
+                                                    size="m"
+                                                    icon={<FaPlus />}
+                                                    onClick={() => _handleAddValue(add)}
+                                                >
+                                                    {t('record_edition.add_value')}
+                                                </KitButton>
+                                            )}
+                                        </KitSpace>
+                                    );
+                                }}
                             </Form.List>
                         </KitSpace>
                     )}
