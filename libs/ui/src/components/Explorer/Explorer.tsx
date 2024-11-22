@@ -13,6 +13,7 @@ import {useEditAction} from './useEditAction';
 import {usePrimaryActionsButton as usePrimaryActionsButton} from './usePrimaryActions';
 import {ExplorerTitle} from './ExplorerTitle';
 import {useCreateAction} from './useCreateAction';
+import {useViewSettingsContext} from './edit-settings/useViewSettingsContext';
 
 interface IExplorerProps {
     library: string;
@@ -40,9 +41,9 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     defaultActionsForItem = ['edit', 'deactivate'],
     defaultPrimaryActions = ['create']
 }) => {
-    const currentAttribute = 'id';
+    const {view} = useViewSettingsContext();
 
-    const {data, loading, refetch} = useExplorerData(library, [currentAttribute]); // TODO: refresh when go back on page
+    const {data, loading, refetch} = useExplorerData(library, view.fields); // TODO: refresh when go back on page
 
     const {deactivateAction} = useDeactivateAction({
         isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('deactivate')
@@ -58,12 +59,15 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         refetch
     });
 
+    // TODO: move to `useCreateAction` directly?
     const enabledDefaultActions = createAction ? [createAction] : [];
 
     const {primaryButton} = usePrimaryActionsButton([...enabledDefaultActions, ...(primaryActions ?? [])]);
 
+    // TODO: harmonize to other hook signature that return only object
     const settingsButton = useOpenSettings(library);
 
+    // TODO: remove SET
     const dedupItemActions = [...new Set([editAction, deactivateAction, ...(itemActions ?? [])].filter(Boolean))];
 
     return (
@@ -82,9 +86,10 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                         </KitSpace>
                     </ExplorerHeaderDivStyled>
                     <DataView
-                        dataGroupedFilteredSorted={data ?? []}
-                        attributesToDisplay={[currentAttribute, 'whoAmI']}
+                        dataGroupedFilteredSorted={data?.records ?? []}
                         itemActions={dedupItemActions}
+                        columnsLabels={data?.attributes ?? {}}
+                        attributesToDisplay={['whoAmI', ...view.fields]}
                     />
                 </>
             )}

@@ -15,7 +15,7 @@ import {
     PropertyValueTreeValueFragment,
     PropertyValueValueFragment
 } from '_ui/_gqlTypes';
-import {IItemAction, IItemData, ItemWhoAmI} from './_types';
+import {IExplorerData, IItemAction, IItemData, ItemWhoAmI} from './_types';
 
 const USELESS = '';
 
@@ -32,12 +32,14 @@ const _getIdCard = ({id, label, library, preview, subLabel}: ItemWhoAmI): Return
 interface IDataViewProps {
     dataGroupedFilteredSorted: IItemData[];
     itemActions: IItemAction[];
+    columnsLabels: IExplorerData['attributes'];
     attributesToDisplay: string[];
 }
 
 export const DataView: FunctionComponent<IDataViewProps> = ({
     dataGroupedFilteredSorted,
     attributesToDisplay,
+    columnsLabels,
     itemActions
 }) => {
     const {t} = useSharedTranslation();
@@ -87,6 +89,8 @@ export const DataView: FunctionComponent<IDataViewProps> = ({
         );
     };
 
+    const _getColumnName = (attributeName: string): string => columnsLabels?.[attributeName] ?? attributeName;
+
     const renderCell = (propertiesById: IItemData['propertiesById'], attributeName: string) => {
         // TODO: handle inherited and calculated values
         const isLinkValue = (v: PropertyValueFragment): v is PropertyValueLinkValueFragment =>
@@ -116,7 +120,7 @@ export const DataView: FunctionComponent<IDataViewProps> = ({
 
     const columns = attributesToDisplay
         .map<KitTableColumnType<IItemData>>(attributeName => ({
-            title: attributeName,
+            title: attributeName === 'whoAmI' ? '' : _getColumnName(attributeName),
             dataIndex: USELESS,
             render: (_, {whoAmI, propertiesById}) =>
                 attributeName === 'whoAmI' ? _getIdCard(whoAmI) : renderCell(propertiesById, attributeName)
