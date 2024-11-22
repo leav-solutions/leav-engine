@@ -12,6 +12,7 @@ interface IActiveSettings {
 export interface IEditSettingsContext {
     setActiveSettings: (params: IActiveSettings) => void;
     activeSettings: null | IActiveSettings;
+    panelElement: Element | DocumentFragment | null;
     onClose: () => void;
 }
 
@@ -20,6 +21,7 @@ export const EditSettingsContext = createContext<IEditSettingsContext>({
         throw new Error('Not implemented');
     },
     activeSettings: null,
+    panelElement: null,
     onClose: () => {
         throw new Error('Not implemented');
     }
