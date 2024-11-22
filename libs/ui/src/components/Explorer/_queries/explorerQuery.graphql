@@ -1,7 +1,9 @@
 fragment PropertyValue on GenericValue {
     attribute {
+        id
         type
         label
+        format
     }
     ... on Value {
         valuePayload: payload
