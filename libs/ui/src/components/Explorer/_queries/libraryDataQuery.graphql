@@ -1,3 +1,5 @@
+# TODO: change file name to get the same
+# TODO: where is the hook to use those data?
 query ExplorerLibraryData($libraryId: ID!) {
     libraries(filters: {id: [$libraryId]} ) {
         list {

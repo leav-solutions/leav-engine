@@ -6,6 +6,13 @@ import {ReactElement} from 'react';
 
 export type ItemWhoAmI = Required<RecordIdentityFragment['whoAmI']>;
 
+export interface IExplorerData {
+    attributes: {
+        [attributeId: string]: string;
+    };
+    records: IItemData[];
+}
+
 export interface IItemData {
     libraryId: string;
     key: string;

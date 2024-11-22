@@ -4,9 +4,11 @@
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitRadio, KitSpace, KitTag} from 'aristid-ds';
 import {RadioChangeEvent} from 'aristid-ds/dist/Kit/DataEntry/Radio';
-import {FunctionComponent, useState} from 'react';
+import {FunctionComponent} from 'react';
 import styled from 'styled-components';
 import {DisplayModeTable} from './DisplayModeTable';
+import {ViewSettingsActionTypes} from './viewSettingsReducer';
+import {useViewSettingsContext} from './useViewSettingsContext';
 
 const StyledWrapperDiv = styled.div`
     display: flex;
@@ -24,17 +26,22 @@ interface IDisplayModeProps {
 
 export const DisplayMode: FunctionComponent<IDisplayModeProps> = ({library}) => {
     const {t} = useSharedTranslation();
-    const [currentDisplayMode, setCurrentDisplayMode] = useState('table');
+    const {view, dispatch} = useViewSettingsContext();
 
     const _handleDisplayModeChange = (event: RadioChangeEvent) => {
-        setCurrentDisplayMode(event.target.value);
+        dispatch({
+            type: ViewSettingsActionTypes.CHANGE_DISPLAY_MODE,
+            payload: {
+                displayMode: event.target.value
+            }
+        });
     };
 
     const comingSoonTag = <KitTag type="secondary" idCardProps={{description: String(t('explorer.coming-soon'))}} />;
 
     return (
         <StyledWrapperDiv>
-            <KitRadio.Group value={currentDisplayMode} onChange={_handleDisplayModeChange}>
+            <KitRadio.Group value={view.displayMode} onChange={_handleDisplayModeChange}>
                 <KitSpace direction="vertical" size={0}>
                     <KitRadio value="list" disabled>
                         <KitSpace>
@@ -54,7 +61,7 @@ export const DisplayMode: FunctionComponent<IDisplayModeProps> = ({library}) => 
                     </KitRadio>
                 </KitSpace>
             </KitRadio.Group>
-            {currentDisplayMode === 'table' && <DisplayModeTable library={library} />}
+            {view.displayMode === 'table' && <DisplayModeTable library={library} />}
         </StyledWrapperDiv>
     );
 };
