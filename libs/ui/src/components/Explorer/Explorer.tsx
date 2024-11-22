@@ -59,12 +59,15 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         refetch
     });
 
+    // TODO: move to `useCreateAction` directly?
     const enabledDefaultActions = createAction ? [createAction] : [];
 
     const {primaryButton} = usePrimaryActionsButton([...enabledDefaultActions, ...(primaryActions ?? [])]);
 
+    // TODO: harmonize to other hook signature that return only object
     const settingsButton = useOpenSettings(library);
 
+    // TODO: remove SET
     const dedupItemActions = [...new Set([editAction, deactivateAction, ...(itemActions ?? [])].filter(Boolean))];
 
     return (
@@ -85,7 +88,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                     <DataView
                         dataGroupedFilteredSorted={data?.records ?? []}
                         itemActions={dedupItemActions}
-                        columnsLabels={data?.attributes}
+                        columnsLabels={data?.attributes ?? {}}
                         attributesToDisplay={['whoAmI', ...view.fields]}
                     />
                 </>

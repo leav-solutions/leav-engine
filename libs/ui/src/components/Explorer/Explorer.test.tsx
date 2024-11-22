@@ -9,9 +9,17 @@ import userEvent from '@testing-library/user-event';
 import {Fa500Px, FaAccessibleIcon, FaBeer, FaJs, FaXbox} from 'react-icons/fa';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {IItemAction, IPrimaryAction} from './_types';
+import {viewSettingsInitialState} from '_ui/components/Explorer/edit-settings/ViewSetingsContext';
 
 jest.mock('_ui/components/RecordEdition/EditRecordModal', () => ({
     EditRecordModal: () => <div>EditRecordModal</div>
+}));
+
+jest.mock('./edit-settings/useViewSettingsContext', () => ({
+    useViewSettingsContext: () => ({
+        view: viewSettingsInitialState,
+        dispatch: jest.fn()
+    })
 }));
 
 describe('Explorer', () => {

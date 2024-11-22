@@ -32,7 +32,7 @@ const _getIdCard = ({id, label, library, preview, subLabel}: ItemWhoAmI): Return
 interface IDataViewProps {
     dataGroupedFilteredSorted: IItemData[];
     itemActions: IItemAction[];
-    columnsLabels: IExplorerData['attributes'] | null;
+    columnsLabels: IExplorerData['attributes'];
     attributesToDisplay: string[];
 }
 

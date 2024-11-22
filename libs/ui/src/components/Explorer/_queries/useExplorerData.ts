@@ -8,6 +8,7 @@ import {useLang} from '_ui/hooks';
 
 const _mapping = (data: ExplorerQuery, libraryId: string, availableLangs: string[]): IExplorerData => {
     const attributes = {};
+    // TODO: can we use `Array.reduce` method?
     if (data.records.list.length > 0) {
         data.records.list[0].properties.forEach(({attributeId, values}) => {
             attributes[attributeId] = localizedTranslation(values[0].attribute.label, availableLangs);
