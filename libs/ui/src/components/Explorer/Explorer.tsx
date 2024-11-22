@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent} from 'react';
+import {FunctionComponent, useReducer} from 'react';
 import {KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {IItemAction, IPrimaryAction} from './_types';
@@ -13,7 +13,11 @@ import {useEditAction} from './useEditAction';
 import {usePrimaryActionsButton as usePrimaryActionsButton} from './usePrimaryActions';
 import {ExplorerTitle} from './ExplorerTitle';
 import {useCreateAction} from './useCreateAction';
-import {useViewSettingsContext} from './edit-settings/useViewSettingsContext';
+import {createPortal} from 'react-dom';
+import {SidePanel} from './edit-settings/SidePanel';
+import {useEditSettings} from './edit-settings/useEditSettings';
+import ViewSettingsReducer from './edit-settings/viewSettingsReducer';
+import {ViewSettingsContext, viewSettingsInitialState} from './edit-settings/ViewSetingsContext';
 
 interface IExplorerProps {
     library: string;
@@ -41,8 +45,8 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     defaultActionsForItem = ['edit', 'deactivate'],
     defaultPrimaryActions = ['create']
 }) => {
-    const {view} = useViewSettingsContext();
-
+    const {panelElement} = useEditSettings();
+    const [view, dispatch] = useReducer(ViewSettingsReducer, viewSettingsInitialState);
     const {data, loading, refetch} = useExplorerData(library, view.fields); // TODO: refresh when go back on page
 
     const {deactivateAction} = useDeactivateAction({
@@ -71,7 +75,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     const dedupItemActions = [...new Set([editAction, deactivateAction, ...(itemActions ?? [])].filter(Boolean))];
 
     return (
-        <>
+        <ViewSettingsContext.Provider value={{view, dispatch}}>
             {loading ? (
                 'Loading...' // TODO: handle loading properly
             ) : (
@@ -93,8 +97,9 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                     />
                 </>
             )}
+            {panelElement && createPortal(<SidePanel />, panelElement)}
             {editModal}
             {createModal}
-        </>
+        </ViewSettingsContext.Provider>
     );
 };

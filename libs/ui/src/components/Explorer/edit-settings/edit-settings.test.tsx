@@ -1,22 +1,31 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {FunctionComponent} from 'react';
 import {render, screen, within} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
-import {FunctionComponent} from 'react';
+import {Mockify} from '@leav/utils';
+import {mockAttributeLink, mockAttributeSimple} from '_ui/__mocks__/common/attribute';
+import * as gqlTypes from '_ui/_gqlTypes';
 import {EditSettingsContextProvider} from './EditSettingsContextProvider';
 import {SidePanel} from './SidePanel';
 import {useOpenSettings} from './useOpenSettings';
-import {mockAttributeLink, mockAttributeSimple} from '_ui/__mocks__/common/attribute';
-import {Mockify} from '@leav/utils';
-import * as gqlTypes from '_ui/_gqlTypes';
-import {ViewSettingsContextProvider} from './ViewSetingsContextProvider';
+import {ViewSettingsContext, viewSettingsInitialState} from './ViewSetingsContext';
+import {IViewSettingsState} from './viewSettingsReducer';
 
 const MockOpenEditSettings: FunctionComponent = () => {
     const OpenEditSettingsButton = useOpenSettings('');
 
     return <>{OpenEditSettingsButton}</>;
 };
+
+const mockDispatch = jest.fn();
+
+const MockViewSettingsContextProvider: FunctionComponent<{view?: IViewSettingsState}> = ({view, children}) => (
+    <ViewSettingsContext.Provider value={{view: view ?? viewSettingsInitialState, dispatch: mockDispatch}}>
+        {children}
+    </ViewSettingsContext.Provider>
+);
 
 describe('Integration tests about edit settings feature', () => {
     const attributesList = [
@@ -35,13 +44,17 @@ describe('Integration tests about edit settings feature', () => {
         );
     });
 
+    beforeEach(() => {
+        mockDispatch.mockClear();
+    });
+
     test('should be able to open panel and navigate inside to advanced setting and go back', async () => {
         render(
             <EditSettingsContextProvider>
-                <ViewSettingsContextProvider>
+                <MockViewSettingsContextProvider>
                     <MockOpenEditSettings />
                     <SidePanel />
-                </ViewSettingsContextProvider>
+                </MockViewSettingsContextProvider>
             </EditSettingsContextProvider>
         );
 
@@ -59,13 +72,13 @@ describe('Integration tests about edit settings feature', () => {
     });
 
     describe('Display mode Table', () => {
-        test('should be able to select visible/hidden columns', async () => {
+        test('should be able to select hidden columns', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <ViewSettingsContextProvider>
+                    <MockViewSettingsContextProvider view={{displayMode: 'table', fields: []}}>
                         <MockOpenEditSettings />
                         <SidePanel />
-                    </ViewSettingsContextProvider>
+                    </MockViewSettingsContextProvider>
                 </EditSettingsContextProvider>
             );
 
@@ -73,6 +86,12 @@ describe('Integration tests about edit settings feature', () => {
             await userEvent.click(screen.getByRole('button', {name: 'explorer.display-mode'}));
 
             const [visibleFieldsList, hiddenFieldsList] = screen.getAllByRole('list');
+
+            expect(
+                within(visibleFieldsList)
+                    .getAllByRole('listitem')
+                    .find(item => item.textContent === attributesList[0].label.fr)
+            ).toBeUndefined();
 
             const [firstAttribute, secondAttribute] = within(hiddenFieldsList).getAllByRole('listitem');
 
@@ -82,6 +101,30 @@ describe('Integration tests about edit settings feature', () => {
             expect(secondAttribute).toBeVisible();
 
             await userEvent.click(within(firstAttribute!).getByRole('button', {name: /show/}));
+
+            expect(mockDispatch).toHaveBeenCalledTimes(1);
+            expect(mockDispatch).toHaveBeenCalledWith({
+                type: 'ADD_FIELD',
+                payload: {
+                    field: 'simple_attribute'
+                }
+            });
+        });
+
+        test('should be able to select visible columns', async () => {
+            render(
+                <EditSettingsContextProvider>
+                    <MockViewSettingsContextProvider view={{displayMode: 'table', fields: ['simple_attribute']}}>
+                        <MockOpenEditSettings />
+                        <SidePanel />
+                    </MockViewSettingsContextProvider>
+                </EditSettingsContextProvider>
+            );
+
+            await userEvent.click(screen.getByRole('button', {name: 'explorer.settings'}));
+            await userEvent.click(screen.getByRole('button', {name: 'explorer.display-mode'}));
+
+            const [visibleFieldsList, hiddenFieldsList] = screen.getAllByRole('list');
 
             const [_ignoredWhoAmI, firstAttributeVisible] = within(visibleFieldsList).getAllByRole('listitem');
             expect(firstAttributeVisible).toBeVisible();
@@ -95,17 +138,13 @@ describe('Integration tests about edit settings feature', () => {
 
             await userEvent.click(within(firstAttributeVisible).getByRole('button', {name: /hide/}));
 
-            expect(
-                within(hiddenFieldsList)
-                    .getAllByRole('listitem')
-                    .find(item => item.textContent === attributesList[0].label.fr)
-            ).toBeVisible();
-
-            expect(
-                within(visibleFieldsList)
-                    .getAllByRole('listitem')
-                    .find(item => item.textContent === attributesList[0].label.fr)
-            ).toBeUndefined();
+            expect(mockDispatch).toHaveBeenCalledTimes(1);
+            expect(mockDispatch).toHaveBeenCalledWith({
+                type: 'REMOVE_FIELD',
+                payload: {
+                    field: 'simple_attribute'
+                }
+            });
         });
     });
 });

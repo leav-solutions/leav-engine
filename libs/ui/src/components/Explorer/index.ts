@@ -5,17 +5,14 @@ import {Explorer as InternalExplorer} from './Explorer';
 import {useEditSettings} from './edit-settings/useEditSettings';
 import {EditSettingsContextProvider} from './edit-settings/EditSettingsContextProvider';
 import {SidePanel} from './edit-settings/SidePanel';
-import {ViewSettingsContextProvider} from './edit-settings/ViewSetingsContextProvider';
 
 type CompoundedComponent = typeof InternalExplorer & {
     useEditSettings: typeof useEditSettings;
     EditSettingsContextProvider: typeof EditSettingsContextProvider;
-    ViewSettingsContextProvider: typeof ViewSettingsContextProvider;
     SettingsSidePanel: typeof SidePanel;
 };
 
 export const Explorer = InternalExplorer as unknown as CompoundedComponent;
 Explorer.EditSettingsContextProvider = EditSettingsContextProvider;
-Explorer.ViewSettingsContextProvider = ViewSettingsContextProvider;
 Explorer.useEditSettings = useEditSettings;
 Explorer.SettingsSidePanel = SidePanel;
