@@ -46,13 +46,15 @@ const Router: FunctionComponent = () => {
                     </Header>
                     <Layout style={{overflow: 'hidden', position: 'relative'}}>
                         <Explorer.EditSettingsContextProvider>
-                            <Content style={{background: themeVars.defaultBg, overflow: 'hidden'}}>
-                                <UserPanel userPanelVisible={userPanelVisible} hideUserPanel={hideUserPanel} />
-                                <NotifsPanel setNbNotifs={_setNbNotifs} />
-                                <Routes />
-                            </Content>
-                            {/* TODO: handle conflict with app side panel */}
-                            <Explorer.SettingsSidePanel />
+                            <Explorer.ViewSettingsContextProvider>
+                                <Content style={{background: themeVars.defaultBg, overflow: 'hidden'}}>
+                                    <UserPanel userPanelVisible={userPanelVisible} hideUserPanel={hideUserPanel} />
+                                    <NotifsPanel setNbNotifs={_setNbNotifs} />
+                                    <Routes />
+                                </Content>
+                                {/* TODO: handle conflict with app side panel */}
+                                <Explorer.SettingsSidePanel />
+                            </Explorer.ViewSettingsContextProvider>
                         </Explorer.EditSettingsContextProvider>
                     </Layout>
                 </Layout>

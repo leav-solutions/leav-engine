@@ -937,11 +937,11 @@ export type TreeNodeChildFragment = { id: string, order?: number | null, childre
 
 export type ViewDetailsFragment = { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size: ViewSizes, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: { field: string, order: SortOrder } | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, settings?: Array<{ name: string, value?: any | null }> | null };
 
-export type PropertyValueLinkValueFragment = { linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, attribute: { type: AttributeType } };
+export type PropertyValueLinkValueFragment = { linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, attribute: { type: AttributeType, label?: any | null } };
 
-export type PropertyValueTreeValueFragment = { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null, attribute: { type: AttributeType } };
+export type PropertyValueTreeValueFragment = { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null, attribute: { type: AttributeType, label?: any | null } };
 
-export type PropertyValueValueFragment = { valuePayload?: any | null, attribute: { type: AttributeType } };
+export type PropertyValueValueFragment = { valuePayload?: any | null, attribute: { type: AttributeType, label?: any | null } };
 
 export type PropertyValueFragment = PropertyValueLinkValueFragment | PropertyValueTreeValueFragment | PropertyValueValueFragment;
 
@@ -1349,7 +1349,7 @@ export type ExplorerQueryVariables = Exact<{
 }>;
 
 
-export type ExplorerQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, properties: Array<{ attributeId: string, values: Array<{ linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, attribute: { type: AttributeType } } | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null, attribute: { type: AttributeType } } | { valuePayload?: any | null, attribute: { type: AttributeType } }> }> }> } };
+export type ExplorerQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, properties: Array<{ attributeId: string, values: Array<{ linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, attribute: { type: AttributeType, label?: any | null } } | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null, attribute: { type: AttributeType, label?: any | null } } | { valuePayload?: any | null, attribute: { type: AttributeType, label?: any | null } }> }> }> } };
 
 export type ExplorerLibraryDataQueryVariables = Exact<{
   libraryId: Scalars['ID'];
@@ -1907,6 +1907,7 @@ export const PropertyValueFragmentDoc = gql`
     fragment PropertyValue on GenericValue {
   attribute {
     type
+    label
   }
   ... on Value {
     valuePayload: payload

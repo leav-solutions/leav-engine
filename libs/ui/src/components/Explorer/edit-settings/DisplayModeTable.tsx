@@ -9,6 +9,8 @@ import styled from 'styled-components';
 import {FaGripLines} from 'react-icons/fa';
 import {ColumnItem} from './ColumnItem';
 import {useGetLibraryColumns} from './useGetLibraryColumns';
+import {ViewSettingsActionTypes} from '../edit-settings/viewSettingsReducer';
+import {useViewSettingsContext} from './useViewSettingsContext';
 
 const StyledList = styled.ul`
     padding: 0;
@@ -32,9 +34,10 @@ interface IDisplayModeTableProps {
 
 export const DisplayModeTable: FunctionComponent<IDisplayModeTableProps> = ({library}) => {
     const {t} = useSharedTranslation();
-    // TODO Where to stock visible columns list
-    // TODO when are changes saved (and thus, when is the table updated) ?
-    const [orderedVisibleColumns, setOrderedVisibleColumns] = useState<string[]>([]);
+
+    const {view, dispatch} = useViewSettingsContext();
+    const {fields: orderedVisibleColumns} = view!;
+
     const [searchInput, setSearchInput] = useState('');
     const debouncedSearchInput = useDebouncedValue(searchInput, 300);
 
@@ -72,12 +75,10 @@ export const DisplayModeTable: FunctionComponent<IDisplayModeTableProps> = ({lib
     };
 
     const _toggleColumnVisibility = (columnId: string) => () => {
-        setOrderedVisibleColumns(() => {
-            if (orderedVisibleColumns.includes(columnId)) {
-                return orderedVisibleColumns.filter(id => id !== columnId);
-            }
-            return [...orderedVisibleColumns, columnId];
-        });
+        const actionType = orderedVisibleColumns.includes(columnId)
+            ? ViewSettingsActionTypes.REMOVE_FIELD
+            : ViewSettingsActionTypes.ADD_FIELD;
+        dispatch({type: actionType, payload: {field: columnId}});
     };
 
     return (
