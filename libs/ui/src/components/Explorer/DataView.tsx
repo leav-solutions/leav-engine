@@ -2,26 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {cloneElement, FunctionComponent, ReactNode} from 'react';
-import {KitButton, KitDropDown, KitIdCard, KitSpace, KitTable} from 'aristid-ds';
+import {KitButton, KitDropDown, KitSpace, KitTable} from 'aristid-ds';
 import type {KitTableColumnType} from 'aristid-ds/dist/Kit/DataDisplay/Table/types';
-import type {IKitAvatar} from 'aristid-ds/dist/Kit/DataDisplay/Avatar/types';
 import {FaEllipsisH} from 'react-icons/fa';
 import {Override} from '@leav/utils';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {IExplorerData, IItemAction, IItemData, ItemWhoAmI} from './_types';
+import {IExplorerData, IItemAction, IItemData} from './_types';
 import {TableCell} from './TableCell';
+import {IdCard} from './IdCard';
 
 const USELESS = '';
-
-const _getIdCard = ({id, label, library, preview, subLabel}: ItemWhoAmI): ReturnType<typeof KitIdCard> => {
-    const avatarProps: IKitAvatar = {label: label ?? undefined};
-
-    if (preview) {
-        avatarProps.src = preview.small;
-    }
-
-    return <KitIdCard avatarProps={avatarProps} title={label ?? id} description={subLabel ?? library.id} />;
-};
 
 interface IDataViewProps {
     dataGroupedFilteredSorted: IItemData[];
@@ -90,7 +80,11 @@ export const DataView: FunctionComponent<IDataViewProps> = ({
             title: attributeName === 'whoAmI' ? '' : _getColumnName(attributeName),
             dataIndex: USELESS,
             render: (_, {whoAmI, propertiesById}) =>
-                attributeName === 'whoAmI' ? _getIdCard(whoAmI) : <TableCell values={propertiesById[attributeName]} />
+                attributeName === 'whoAmI' ? (
+                    <IdCard item={whoAmI} />
+                ) : (
+                    <TableCell values={propertiesById[attributeName]} />
+                )
         }))
         .concat(
             itemActions.length === 0

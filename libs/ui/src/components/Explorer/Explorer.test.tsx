@@ -10,7 +10,7 @@ import * as gqlTypes from '_ui/_gqlTypes';
 import {Fa500Px, FaAccessibleIcon, FaBeer, FaJs, FaXbox} from 'react-icons/fa';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {IItemAction, IPrimaryAction} from './_types';
-import {viewSettingsInitialState} from '_ui/components/Explorer/edit-settings/ViewSetingsContext';
+import {mockAttributeLink, mockAttributeSimple} from '_ui/__mocks__/common/attribute';
 
 const EditRecordModalMock = 'EditRecordModal';
 
@@ -18,14 +18,9 @@ jest.mock('_ui/components/RecordEdition/EditRecordModal', () => ({
     EditRecordModal: () => <div>{EditRecordModalMock}</div>
 }));
 
-jest.mock('./edit-settings/useViewSettingsContext', () => ({
-    useViewSettingsContext: () => ({
-        view: viewSettingsInitialState,
-        dispatch: jest.fn()
-    })
-}));
-
 describe('Explorer', () => {
+    const recordId1 = '613982168';
+    const recordId2 = '612694174';
     const mockRecords = [
         {
             id: '613982168',
@@ -48,10 +43,17 @@ describe('Explorer', () => {
                     attributeId: 'id',
                     values: [
                         {
-                            attribute: {
-                                type: 'simple'
-                            },
-                            valuePayload: '613982168'
+                            attribute: {...mockAttributeSimple, id: 'id', label: {fr: 'ID', en: 'ID'}},
+                            valuePayload: recordId1
+                        }
+                    ]
+                },
+                {
+                    attributeId: 'link_attribute',
+                    values: [
+                        {
+                            attribute: {...mockAttributeLink, id: 'link_attribute', label: {fr: 'Link', en: 'Link'}},
+                            linkPayload: {whoAmI: mockRecord}
                         }
                     ]
                 }
@@ -78,10 +80,17 @@ describe('Explorer', () => {
                     attributeId: 'id',
                     values: [
                         {
-                            attribute: {
-                                type: 'simple'
-                            },
-                            valuePayload: '612694174'
+                            attribute: {...mockAttributeSimple, id: 'id', label: {fr: 'ID', en: 'ID'}},
+                            valuePayload: recordId2
+                        }
+                    ]
+                },
+                {
+                    attributeId: 'link_attribute',
+                    values: [
+                        {
+                            attribute: {...mockAttributeLink, id: 'link_attribute', label: {fr: 'ID', en: 'ID'}},
+                            linkPayload: {whoAmI: mockRecord}
                         }
                     ]
                 }
@@ -143,6 +152,7 @@ describe('Explorer', () => {
 
     let user: ReturnType<typeof userEvent.setup>;
     beforeEach(() => {
+        jest.clearAllMocks();
         user = userEvent.setup();
     });
 
@@ -168,6 +178,21 @@ describe('Explorer', () => {
         const [record1, record2] = mockRecords;
         expect(screen.getByText(record1.whoAmI.label)).toBeInTheDocument();
         expect(screen.getByText(record2.whoAmI.label)).toBeInTheDocument();
+    });
+
+    test('Should display the list of records in a table with attributes values', async () => {
+        render(<Explorer library="campaigns" defaultViewSettings={{fields: ['id', 'link_attribute']}} />);
+
+        const tableRows = screen.getAllByRole('row');
+        expect(screen.getByRole('table')).toBeVisible();
+        expect(tableRows).toHaveLength(1 + mockRecords.length); // 1 header row + 2 records
+        const [_headerRow, firstRecordRow] = tableRows;
+        const [record1] = mockRecords;
+
+        expect(within(firstRecordRow).getByText(record1.whoAmI.label)).toBeInTheDocument();
+        expect(within(firstRecordRow).getByText(recordId1)).toBeVisible();
+        expect(within(firstRecordRow).getByText(String(mockRecord.label))).toBeVisible();
+        expect(within(firstRecordRow).getByText(String(mockRecord.subLabel))).toBeVisible();
     });
 
     test('Should be able to deactivate a record with default actions', async () => {

@@ -16,8 +16,8 @@ import {useCreateAction} from './useCreateAction';
 import {createPortal} from 'react-dom';
 import {SidePanel} from './edit-settings/SidePanel';
 import {useEditSettings} from './edit-settings/useEditSettings';
-import ViewSettingsReducer from './edit-settings/viewSettingsReducer';
 import {ViewSettingsContext, viewSettingsInitialState} from './edit-settings/ViewSetingsContext';
+import ViewSettingsReducer, {IViewSettingsState} from './edit-settings/viewSettingsReducer';
 
 interface IExplorerProps {
     library: string;
@@ -26,6 +26,7 @@ interface IExplorerProps {
     title?: string;
     defaultActionsForItem?: Array<'edit' | 'deactivate'>;
     defaultPrimaryActions?: Array<'create'>;
+    defaultViewSettings?: Partial<IViewSettingsState>;
 }
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
@@ -43,10 +44,13 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     primaryActions,
     title,
     defaultActionsForItem = ['edit', 'deactivate'],
-    defaultPrimaryActions = ['create']
+    defaultPrimaryActions = ['create'],
+    defaultViewSettings
 }) => {
     const {panelElement} = useEditSettings();
-    const [view, dispatch] = useReducer(ViewSettingsReducer, viewSettingsInitialState);
+
+    const [view, dispatch] = useReducer(ViewSettingsReducer, {...viewSettingsInitialState, ...defaultViewSettings});
+
     const {data, loading, refetch} = useExplorerData(library, view.fields); // TODO: refresh when go back on page
 
     const {deactivateAction} = useDeactivateAction({
