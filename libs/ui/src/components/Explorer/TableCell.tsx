@@ -13,6 +13,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitTag, KitTypography} from 'aristid-ds';
 import {FunctionComponent} from 'react';
 import styled from 'styled-components';
+import {IdCard} from './IdCard';
 
 const isLinkValue = (v: PropertyValueFragment): v is PropertyValueLinkValueFragment =>
     [AttributeType.simple_link, AttributeType.advanced_link].includes(v.attribute.type);
@@ -66,7 +67,9 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values}) => {
                 }
 
                 if (isLinkValue(value)) {
-                    return value.linkPayload?.id ?? defaultValue;
+                    return value.linkPayload?.whoAmI ? (
+                        <IdCard key={value.attribute.id} item={value.linkPayload?.whoAmI} />
+                    ) : null;
                 }
             })}
         </StyledCenteringWrapper>
