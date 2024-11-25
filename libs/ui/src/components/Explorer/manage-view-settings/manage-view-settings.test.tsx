@@ -7,11 +7,12 @@ import userEvent from '@testing-library/user-event';
 import {Mockify} from '@leav/utils';
 import {mockAttributeLink, mockAttributeSimple} from '_ui/__mocks__/common/attribute';
 import * as gqlTypes from '_ui/_gqlTypes';
-import {EditSettingsContextProvider} from './EditSettingsContextProvider';
-import {SidePanel} from './SidePanel';
-import {useOpenSettings} from './useOpenSettings';
-import {ViewSettingsContext, viewSettingsInitialState} from './ViewSetingsContext';
-import {IViewSettingsState} from './viewSettingsReducer';
+import {EditSettingsContextProvider} from './open-view-settings/EditSettingsContextProvider';
+import {SidePanel} from './open-view-settings/SidePanel';
+import {useOpenSettings} from './open-view-settings/useOpenSettings';
+import {ViewSettingsContext} from './store-view-settings/ViewSettingsContext';
+import {IViewSettingsState} from './store-view-settings/viewSettingsReducer';
+import {viewSettingsInitialState} from './store-view-settings/viewSettingsInitialState';
 
 const MockOpenEditSettings: FunctionComponent = () => {
     const OpenEditSettingsButton = useOpenSettings('');
@@ -27,7 +28,7 @@ const MockViewSettingsContextProvider: FunctionComponent<{view?: IViewSettingsSt
     </ViewSettingsContext.Provider>
 );
 
-describe('Integration tests about edit settings feature', () => {
+describe('Integration tests about managing view settings feature', () => {
     const attributesList = [
         {...mockAttributeSimple, id: 'simple_attribute', label: {fr: 'Attribut simple'}},
         {...mockAttributeLink, id: 'link_attribute', label: {fr: 'Attribut lien'}}
@@ -60,22 +61,22 @@ describe('Integration tests about edit settings feature', () => {
 
         await userEvent.click(screen.getByRole('button', {name: 'explorer.settings'}));
 
-        expect(screen.getByRole('heading', {name: 'explorer.view-configuration'})).toBeVisible();
+        expect(screen.getByRole('heading', {name: 'explorer.router-menu'})).toBeVisible();
 
-        await userEvent.click(screen.getByRole('button', {name: 'explorer.display-mode'}));
+        await userEvent.click(screen.getByRole('button', {name: 'explorer.configure-display'}));
 
-        expect(screen.getByText('explorer.display-mode')).toBeVisible();
+        expect(screen.getByText('explorer.configure-display')).toBeVisible();
 
         await userEvent.click(screen.getByRole('button', {name: 'explorer.back'}));
 
-        expect(screen.getByRole('heading', {name: 'explorer.view-configuration'})).toBeVisible();
+        expect(screen.getByRole('heading', {name: 'explorer.router-menu'})).toBeVisible();
     });
 
-    describe('Display mode Table', () => {
+    describe('View type Table', () => {
         test('should be able to select hidden columns', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider view={{displayMode: 'table', fields: []}}>
+                    <MockViewSettingsContextProvider view={{viewType: 'table', fields: []}}>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -83,7 +84,7 @@ describe('Integration tests about edit settings feature', () => {
             );
 
             await userEvent.click(screen.getByRole('button', {name: 'explorer.settings'}));
-            await userEvent.click(screen.getByRole('button', {name: 'explorer.display-mode'}));
+            await userEvent.click(screen.getByRole('button', {name: 'explorer.configure-display'}));
 
             const [visibleFieldsList, hiddenFieldsList] = screen.getAllByRole('list');
 
@@ -114,7 +115,7 @@ describe('Integration tests about edit settings feature', () => {
         test('should be able to select visible columns', async () => {
             render(
                 <EditSettingsContextProvider>
-                    <MockViewSettingsContextProvider view={{displayMode: 'table', fields: ['simple_attribute']}}>
+                    <MockViewSettingsContextProvider view={{viewType: 'table', fields: ['simple_attribute']}}>
                         <MockOpenEditSettings />
                         <SidePanel />
                     </MockViewSettingsContextProvider>
@@ -122,7 +123,7 @@ describe('Integration tests about edit settings feature', () => {
             );
 
             await userEvent.click(screen.getByRole('button', {name: 'explorer.settings'}));
-            await userEvent.click(screen.getByRole('button', {name: 'explorer.display-mode'}));
+            await userEvent.click(screen.getByRole('button', {name: 'explorer.configure-display'}));
 
             const [visibleFieldsList, hiddenFieldsList] = screen.getAllByRole('list');
 

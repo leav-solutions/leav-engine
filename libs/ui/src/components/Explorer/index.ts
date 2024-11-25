@@ -2,9 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Explorer as InternalExplorer} from './Explorer';
-import {useEditSettings} from './edit-settings/useEditSettings';
-import {EditSettingsContextProvider} from './edit-settings/EditSettingsContextProvider';
-import {SidePanel} from './edit-settings/SidePanel';
+import {useEditSettings, SidePanel, EditSettingsContextProvider} from './manage-view-settings';
 
 type CompoundedComponent = typeof InternalExplorer & {
     useEditSettings: typeof useEditSettings;

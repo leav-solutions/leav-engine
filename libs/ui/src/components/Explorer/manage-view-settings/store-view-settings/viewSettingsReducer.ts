@@ -2,18 +2,18 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 
-export type DisplayMode = 'table' | 'list' | 'timeline' | 'mosaic';
+export type ViewType = 'table' | 'list' | 'timeline' | 'mosaic';
 
 export const ViewSettingsActionTypes = {
     ADD_FIELD: 'ADD_FIELD',
     REMOVE_FIELD: 'REMOVE_FIELD',
     MOVE_FIELD: 'MOVE_FIELD',
     RESET_FIELDS: 'RESET_FIELDS',
-    CHANGE_DISPLAY_MODE: 'CHANGE_DISPLAY_MODE'
+    CHANGE_VIEW_TYPE: 'CHANGE_VIEW_TYPE'
 } as const;
 
 export interface IViewSettingsState {
-    displayMode: DisplayMode;
+    viewType: ViewType;
     fields: string[];
 }
 
@@ -35,9 +35,9 @@ interface IViewSettingsActionMoveField {
     };
 }
 
-interface IViewSettingsActionChangeDisplayMode {
-    type: typeof ViewSettingsActionTypes.CHANGE_DISPLAY_MODE;
-    payload: {displayMode: DisplayMode};
+interface IViewSettingsActionChangeViewType {
+    type: typeof ViewSettingsActionTypes.CHANGE_VIEW_TYPE;
+    payload: {viewType: ViewType};
 }
 
 interface IViewSettingsActionResetFields {
@@ -73,9 +73,9 @@ const resetFields: Reducer = state => ({
     fields: []
 });
 
-const changeDisplayMode: Reducer<IViewSettingsActionChangeDisplayMode['payload']> = (state, payload) => ({
+const changeViewType: Reducer<IViewSettingsActionChangeViewType['payload']> = (state, payload) => ({
     ...state,
-    displayMode: payload.displayMode
+    viewType: payload.viewType
 });
 
 export type IViewSettingsAction =
@@ -83,9 +83,9 @@ export type IViewSettingsAction =
     | IViewSettingsActionAddField
     | IViewSettingsActionRemoveField
     | IViewSettingsActionMoveField
-    | IViewSettingsActionChangeDisplayMode;
+    | IViewSettingsActionChangeViewType;
 
-const ViewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
+export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
     switch (action.type) {
         case ViewSettingsActionTypes.ADD_FIELD: {
             return addField(state, action.payload);
@@ -99,12 +99,10 @@ const ViewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAct
         case ViewSettingsActionTypes.RESET_FIELDS: {
             return resetFields(state);
         }
-        case ViewSettingsActionTypes.CHANGE_DISPLAY_MODE: {
-            return changeDisplayMode(state, action.payload);
+        case ViewSettingsActionTypes.CHANGE_VIEW_TYPE: {
+            return changeViewType(state, action.payload);
         }
         default:
             return state;
     }
 };
-
-export default ViewSettingsReducer;

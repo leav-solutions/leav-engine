@@ -86,7 +86,7 @@ const mockBrowserFunctionsForTiptap = () => {
     }
 
     class FakeDOMRectList extends Array<DOMRect> implements DOMRectList {
-        item(index: number): DOMRect | null {
+        public item(index: number): DOMRect | null {
             return this[index];
         }
     }
