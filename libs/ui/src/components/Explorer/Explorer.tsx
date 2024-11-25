@@ -2,22 +2,26 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent, useReducer} from 'react';
+import {createPortal} from 'react-dom';
 import {KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {IItemAction, IPrimaryAction} from './_types';
-import {DataView} from './DataView';
-import {useOpenSettings} from './edit-settings/useOpenSettings';
 import {useExplorerData} from './_queries/useExplorerData';
+import {DataView} from './DataView';
 import {useDeactivateAction} from './useDeactivateAction';
 import {useEditAction} from './useEditAction';
-import {usePrimaryActionsButton as usePrimaryActionsButton} from './usePrimaryActions';
+import {usePrimaryActionsButton} from './usePrimaryActions';
 import {ExplorerTitle} from './ExplorerTitle';
 import {useCreateAction} from './useCreateAction';
-import {createPortal} from 'react-dom';
-import {SidePanel} from './edit-settings/SidePanel';
-import {useEditSettings} from './edit-settings/useEditSettings';
-import {ViewSettingsContext, viewSettingsInitialState} from './edit-settings/ViewSetingsContext';
-import ViewSettingsReducer, {IViewSettingsState} from './edit-settings/viewSettingsReducer';
+import {
+    useOpenSettings,
+    SidePanel,
+    useEditSettings,
+    viewSettingsReducer,
+    ViewSettingsContext,
+    viewSettingsInitialState,
+    type IViewSettingsState
+} from './manage-view-settings';
 
 interface IExplorerProps {
     library: string;
@@ -49,8 +53,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 }) => {
     const {panelElement} = useEditSettings();
 
-    const [view, dispatch] = useReducer(ViewSettingsReducer, {...viewSettingsInitialState, ...defaultViewSettings});
-
+    const [view, dispatch] = useReducer(viewSettingsReducer, {...viewSettingsInitialState, ...defaultViewSettings});
     const {data, loading, refetch} = useExplorerData(library, view.fields); // TODO: refresh when go back on page
 
     const {deactivateAction} = useDeactivateAction({

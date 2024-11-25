@@ -1,26 +1,29 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {viewSettingsInitialState} from './ViewSetingsContext';
-import reducer, {DisplayMode, ViewSettingsActionTypes} from './viewSettingsReducer';
+import {ViewType, ViewSettingsActionTypes, viewSettingsReducer} from './viewSettingsReducer';
+import {viewSettingsInitialState} from './viewSettingsInitialState';
 
 describe('ViewSettings Reducer', () => {
-    test.each(['table', 'list', 'mosaic', 'timeline'])('Action CHANGE_DISPLAY_MODE to %s', displayMode => {
-        const state = reducer(viewSettingsInitialState, {
-            type: ViewSettingsActionTypes.CHANGE_DISPLAY_MODE,
-            payload: {displayMode: displayMode as DisplayMode}
-        });
-        expect(state.displayMode).toEqual(displayMode);
-    });
+    test.each(['table', 'list', 'mosaic', 'timeline'])(
+        `Action ${ViewSettingsActionTypes.CHANGE_VIEW_TYPE} to %s`,
+        viewType => {
+            const state = viewSettingsReducer(viewSettingsInitialState, {
+                type: ViewSettingsActionTypes.CHANGE_VIEW_TYPE,
+                payload: {viewType: viewType as ViewType}
+            });
+            expect(state.viewType).toEqual(viewType);
+        }
+    );
     test('Action ADD_FIELD test', () => {
-        const state = reducer(viewSettingsInitialState, {
+        const state = viewSettingsReducer(viewSettingsInitialState, {
             type: ViewSettingsActionTypes.ADD_FIELD,
             payload: {field: 'test'}
         });
         expect(state.fields).toEqual(['test']);
     });
     test('Action REMOVE_FIELD test', () => {
-        const state = reducer(
+        const state = viewSettingsReducer(
             {
                 ...viewSettingsInitialState,
                 fields: ['test', 'active', 'created_at']
@@ -63,7 +66,7 @@ describe('ViewSettings Reducer', () => {
         ];
 
         test.each(cases)('Move field from $indexFrom to $indexTo', ({indexFrom, indexTo, expected}) => {
-            const state = reducer(initialState, {
+            const state = viewSettingsReducer(initialState, {
                 type: ViewSettingsActionTypes.MOVE_FIELD,
                 payload: {indexFrom, indexTo}
             });
@@ -72,7 +75,7 @@ describe('ViewSettings Reducer', () => {
     });
 
     test('Action RESET_FIELDS', () => {
-        const state = reducer(
+        const state = viewSettingsReducer(
             {
                 ...viewSettingsInitialState,
                 fields: ['test', 'active', 'created_at']

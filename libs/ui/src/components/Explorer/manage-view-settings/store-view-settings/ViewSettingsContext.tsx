@@ -2,12 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {createContext, Dispatch} from 'react';
-import {IViewSettingsState, IViewSettingsAction} from './viewSettingsReducer';
-
-export const viewSettingsInitialState: IViewSettingsState = {
-    displayMode: 'table',
-    fields: []
-};
+import {IViewSettingsAction, IViewSettingsState} from './viewSettingsReducer';
 
 export const ViewSettingsContext = createContext<{
     view: IViewSettingsState;

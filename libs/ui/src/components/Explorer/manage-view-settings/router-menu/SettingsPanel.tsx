@@ -6,11 +6,11 @@ import {FunctionComponent, useState} from 'react';
 import {KitTypography} from 'aristid-ds';
 import {FaFilter, FaList, FaSortAlphaDown} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {DisplayMode} from './DisplayMode';
+import {useEditSettings} from '../open-view-settings/useEditSettings';
+import {ConfigureDisplay} from '../configure-display/ConfigureDisplay';
 import {SettingItem} from './SettingItem';
-import {useEditSettings} from './useEditSettings';
 
-export type SettingsPanelPages = 'view-configuration' | 'display-mode';
+export type SettingsPanelPages = 'router-menu' | 'configure-display';
 
 const ContentWrapperStyledDiv = styled.div`
     display: flex;
@@ -31,7 +31,7 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library})
 
     const {setActiveSettings, activeSettings} = useEditSettings();
 
-    const [currentPage, setCurrentPage] = useState<SettingsPanelPages>('view-configuration');
+    const [currentPage, setCurrentPage] = useState<SettingsPanelPages>('router-menu');
 
     const _goToAdvancedSettingsPage = (page: SettingsPanelPages) => {
         if (!activeSettings) {
@@ -59,7 +59,7 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library})
             pageName: page,
             title: t(`explorer.${page}`),
             onClickLeftButton: () => {
-                const rootPanel = {pageName: 'view-configuration', title: t('explorer.settings')} as const;
+                const rootPanel = {pageName: 'router-menu', title: t('explorer.settings')} as const;
                 _changePanelPage(rootPanel);
             }
         });
@@ -69,14 +69,14 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library})
 
     return (
         <ContentWrapperStyledDiv>
-            {currentPage === 'view-configuration' && (
+            {currentPage === 'router-menu' && (
                 <nav>
-                    <KitTypography.Title level="h4">{t('explorer.view-configuration')}</KitTypography.Title>
+                    <KitTypography.Title level="h4">{t('explorer.router-menu')}</KitTypography.Title>
                     <ConfigurationStyledMenu>
                         <SettingItem
                             icon={<FaList />}
-                            title={t('explorer.display-mode')}
-                            onClick={() => _goToAdvancedSettingsPage('display-mode')}
+                            title={t('explorer.configure-display')}
+                            onClick={() => _goToAdvancedSettingsPage('configure-display')}
                         />
                         <SettingItem
                             icon={<FaFilter />}
@@ -95,7 +95,7 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library})
                     </ConfigurationStyledMenu>
                 </nav>
             )}
-            {currentPage === 'display-mode' && <DisplayMode library={library} />}
+            {currentPage === 'configure-display' && <ConfigureDisplay libraryId={library} />}
         </ContentWrapperStyledDiv>
     );
 };

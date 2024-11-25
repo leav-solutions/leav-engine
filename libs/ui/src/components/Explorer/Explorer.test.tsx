@@ -5,10 +5,10 @@ import {render, screen, within} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
 import {waitFor} from '@testing-library/react';
 import {Mockify} from '@leav/utils';
-import {Explorer} from '_ui/index';
-import * as gqlTypes from '_ui/_gqlTypes';
 import {Fa500Px, FaAccessibleIcon, FaBeer, FaJs, FaXbox} from 'react-icons/fa';
+import * as gqlTypes from '_ui/_gqlTypes';
 import {mockRecord} from '_ui/__mocks__/common/record';
+import {Explorer} from '_ui/index';
 import {IItemAction, IPrimaryAction} from './_types';
 import {mockAttributeLink, mockAttributeSimple} from '_ui/__mocks__/common/attribute';
 
