@@ -457,7 +457,6 @@ const StandardField: FunctionComponent<
         formErrors?.length > 0 ||
         antdForm.getFieldError([attribute.id, 0]).length > 0; // Todo: Un test par nombre de valeur du multivalué
 
-    //TODO: A vérifier dans le cas du multivalué
     // Use watch to update the component when the value changes (useful for errors)
     Form.useWatch(attribute.id, antdForm);
 
@@ -465,12 +464,13 @@ const StandardField: FunctionComponent<
     // - Gérer le allowclear qui vide la valeur mais ne supprime pas => DONE
     // - Gérer la corbeille qui supprime la valeur => DONE
     // - Gérer le supprimer tout => DONE
-    // - Gérer le allowClear
+    // - Gérer le allowClear => DONE
+    // - Gérer placeholder sur tous les formats => DONE
     // - Multivalués, l'ordre change en fonction de l'ordre d'édition des valeurs ? Peut être revoir cette logique pour que l'ordre soit toujours le même
-    // - Gérer placeholder sur tous les formats
     // - Vérifier required
     // - Vérifier errors
     // - Vérifier calculs
+    // - Vérifier avec différents formats
     // - Vérifier que rien n'est cassé sur les monovalués
     // - Vérifier que ça marche à la création (mono et multi)
     return (
