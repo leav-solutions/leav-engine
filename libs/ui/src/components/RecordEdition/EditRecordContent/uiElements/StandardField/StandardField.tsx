@@ -166,7 +166,8 @@ const StandardField: FunctionComponent<
     const _handleSubmit = async (
         idValue: IdValue,
         valueToSave: AnyPrimitive,
-        fieldName?: number
+        fieldName?: number,
+        addNewValue?: boolean
     ): Promise<void | ISubmitMultipleResult> => {
         const isSavingNewValue = idValue === newValueId;
         dispatch({
@@ -180,13 +181,12 @@ const StandardField: FunctionComponent<
             valueVersion
         );
 
-        if (submitRes.status === APICallStatus.SUCCESS) {
+        if (submitRes.status === APICallStatus.SUCCESS || addNewValue) {
             const submitResValue = submitRes.values[0] as ValueDetailsValueFragment;
 
             let resultValue: ValueDetailsValueFragment;
-            if (state.metadataEdit) {
-                const metadataValue =
-                    (submitResValue.metadata ?? []).find(({name}) => name === element.attribute.id)?.value ?? null;
+
+            if (state.metadataEdit || addNewValue) {
                 resultValue = {
                     id_value: null,
                     created_at: null,
@@ -194,11 +194,19 @@ const StandardField: FunctionComponent<
                     created_by: null,
                     modified_by: null,
                     version: null,
-                    raw_payload: metadataValue.raw_payload ?? metadataValue.payload,
-                    payload: metadataValue.payload,
+                    raw_payload: '',
+                    payload: '',
                     metadata: null,
                     attribute
                 };
+
+                if (state.metadataEdit) {
+                    const metadataValue =
+                        (submitResValue.metadata ?? []).find(({name}) => name === element.attribute.id)?.value ?? null;
+
+                    resultValue.raw_payload = metadataValue.raw_payload ?? metadataValue.payload;
+                    resultValue.payload = metadataValue.payload;
+                }
             } else {
                 resultValue = submitResValue;
             }
@@ -290,17 +298,6 @@ const StandardField: FunctionComponent<
         const deleteRes = await onValueDelete({id_value: idValue}, attribute.id);
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
-            // TODO: Géré l'actualisation ici (comme pour le handleSubmit)
-            // setPresentationValue(
-            //     _getPresentationValue({
-            //         t,
-            //         format: attribute.format,
-            //         value: '',
-            //         calculatedValue: state.calculatedValue,
-            //         inheritedValue: state.inheritedValue
-            //     })
-            // );
-
             dispatch({
                 type: StandardFieldReducerActionsTypes.UPDATE_AFTER_DELETE,
                 idValue
@@ -327,7 +324,7 @@ const StandardField: FunctionComponent<
     };
 
     const _handleAddValue = async (antdAdd: FormListOperation['add']) => {
-        await _handleSubmit(newValueId, '', valuesToDisplay.length);
+        await _handleSubmit(newValueId, '', valuesToDisplay.length, true);
         antdAdd();
     };
 
@@ -475,6 +472,7 @@ const StandardField: FunctionComponent<
     // - Vérifier errors
     // - Vérifier calculs
     // - Vérifier que rien n'est cassé sur les monovalués
+    // - Vérifier que ça marche à la création (mono et multi)
     return (
         <StandardFieldReducerContext.Provider value={{state, dispatch}}>
             <Wrapper $metadataEdit={metadataEdit}>
