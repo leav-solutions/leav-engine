@@ -6,6 +6,7 @@ import {Form} from 'antd';
 import {IStandFieldValueContentProps} from './_types';
 import {IKitPassword} from 'aristid-ds/dist/Kit/DataEntry/Input/types';
 import {KitInput} from 'aristid-ds';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 export const DSInputEncryptedWrapper: FunctionComponent<IStandFieldValueContentProps<IKitPassword>> = ({
     value,
@@ -19,6 +20,8 @@ export const DSInputEncryptedWrapper: FunctionComponent<IStandFieldValueContentP
     }
 
     const {errors} = Form.Item.useStatus();
+    const {t} = useSharedTranslation();
+
     const isErrors = errors.length > 0;
 
     const _handleOnBlur = (event: FocusEvent<HTMLInputElement>) => {
@@ -43,6 +46,7 @@ export const DSInputEncryptedWrapper: FunctionComponent<IStandFieldValueContentP
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
             value={value}
+            placeholder={t('record_edition.placeholder.enter_a_password')}
             disabled={state.isReadOnly}
             allowClear
             onChange={_handleOnChange}

@@ -7,6 +7,7 @@ import {Form, GetRef} from 'antd';
 import styled from 'styled-components';
 import {IStandFieldValueContentProps} from './_types';
 import {KitInputNumberProps} from 'aristid-ds/dist/Kit/DataEntry/InputNumber/types';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 const KitInputNumberStyled = styled(KitInputNumber)<{$shouldHighlightColor: boolean}>`
     .ant-input-number-input-wrap .ant-input-number-input {
@@ -31,6 +32,7 @@ export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProp
     const [isFocused, setIsFocused] = useState(false);
     const inputRef = useRef<GetRef<typeof KitInputNumberStyled>>(null);
     const {errors} = Form.Item.useStatus();
+    const {t} = useSharedTranslation();
 
     const isErrors = errors.length > 0;
 
@@ -84,7 +86,7 @@ export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProp
             $shouldHighlightColor={
                 !hasChanged && (state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue)
             }
-            placeholder="TODO" //TODO: Traduire et faire pour tous les autres inputs  + liste de valeurs (en attente wording Cyril - XSTREAM-954)
+            placeholder={t('record_edition.placeholder.enter_a_number')}
         />
     );
 };

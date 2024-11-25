@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import {KitRichText} from 'aristid-ds';
 import {IStandFieldValueContentProps} from './_types';
 import {KitRichTextProps} from 'aristid-ds/dist/Kit/DataEntry/RichText/types';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 const KitRichTextStyled = styled(KitRichText)<{$shouldHighlightColor: boolean}>`
     .tiptap.ProseMirror {
@@ -32,6 +33,7 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
     const [hasChanged, setHasChanged] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     const {errors} = Form.Item.useStatus();
+    const {t} = useSharedTranslation();
 
     const isErrors = errors.length > 0;
     const valueToDisplay = isFocused || isErrors ? value : presentationValue;
@@ -88,7 +90,7 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
             $shouldHighlightColor={
                 !hasChanged && (state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue)
             }
-            placeholder="TODO"
+            placeholder={t('record_edition.placeholder.enter_a_text')}
         />
     );
 };

@@ -11,6 +11,7 @@ import {setDateToUTCNoon} from '_ui/_utils';
 import {FaCalendar} from 'react-icons/fa';
 import {IStandFieldValueContentProps} from './_types';
 import {IKitRangePicker} from 'aristid-ds/dist/Kit/DataEntry/DatePicker/types';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 const KitDatePickerRangePickerStyled = styled(KitDatePicker.RangePicker)<{$shouldHighlightColor: boolean}>`
     color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
@@ -34,6 +35,7 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
 
     const [isFocused, setIsFocused] = useState(false);
     const {errors} = Form.Item.useStatus();
+    const {t} = useSharedTranslation();
 
     const isErrors = errors.length > 0;
 
@@ -122,7 +124,7 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
                         onFocus={_handleFocus}
                         onChange={_handleClear}
                         $shouldHighlightColor={state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue}
-                        placeholder="TODO" //TODO: Traduire et faire pour tous les autres inputs  + liste de valeurs (en attente wording Cyril - XSTREAM-954)
+                        placeholder={t('record_edition.placeholder.enter_a_period')}
                     />
                 )
                 //TODO: Léger décalage car l'icon n'est pas exactement le même que celui du DS (MAJ React-icons ?)
@@ -139,7 +141,7 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
                     onChange={_handleDateChange}
                     onOpenChange={_handleOpenChange}
                     $shouldHighlightColor={state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue}
-                    placeholder={['TODO', 'TODO']} //TODO: Traduire et faire pour tous les autres inputs  + liste de valeurs (en attente wording Cyril - XSTREAM-954)
+                    placeholder={[t('record_edition.placeholder.start_date'), t('record_edition.placeholder.end_date')]}
                 />
             )}
         </>

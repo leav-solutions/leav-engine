@@ -7,6 +7,7 @@ import {Form} from 'antd';
 import styled from 'styled-components';
 import {IStandFieldValueContentProps} from './_types';
 import {IKitInput} from 'aristid-ds/dist/Kit/DataEntry/Input/types';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 const KitInputStyled = styled(KitInput)<{$shouldHighlightColor: boolean}>`
     color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
@@ -27,6 +28,7 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
     const [hasChanged, setHasChanged] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     const {errors} = Form.Item.useStatus();
+    const {t} = useSharedTranslation();
 
     const isErrors = errors.length > 0;
     const valueToDisplay = isFocused || isErrors ? value : presentationValue;
@@ -88,7 +90,7 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
             $shouldHighlightColor={
                 !hasChanged && (state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue)
             }
-            placeholder="TODO" //TODO: Traduire et faire pour tous les autres inputs  + liste de valeurs (en attente wording Cyril - XSTREAM-954)
+            placeholder={t('record_edition.placeholder.enter_a_text')}
         />
     );
 };

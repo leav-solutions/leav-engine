@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import {setDateToUTCNoon} from '_ui/_utils';
 import {IStandFieldValueContentProps} from './_types';
 import {IKitDatePicker} from 'aristid-ds/dist/Kit/DataEntry/DatePicker/types';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 const KitDatePickerStyled = styled(KitDatePicker)<{$shouldHighlightColor: boolean}>`
     color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
@@ -28,6 +29,7 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
 
     const [isFocused, setIsFocused] = useState(false);
     const {errors} = Form.Item.useStatus();
+    const {t} = useSharedTranslation();
 
     const isErrors = errors.length > 0;
 
@@ -85,7 +87,7 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
             onFocus={_handleFocus}
             onBlur={_handleBlur}
             $shouldHighlightColor={state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue}
-            placeholder="TODO" //TODO: Traduire et faire pour tous les autres inputs  + liste de valeurs (en attente wording Cyril - XSTREAM-954)
+            placeholder={t('record_edition.placeholder.enter_a_date')}
         />
     );
 };
