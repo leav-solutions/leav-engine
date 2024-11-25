@@ -10,6 +10,7 @@ import {KitInputNumberProps} from 'aristid-ds/dist/Kit/DataEntry/InputNumber/typ
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 const KitInputNumberStyled = styled(KitInputNumber)<{$shouldHighlightColor: boolean}>`
+    width: 100%;
     .ant-input-number-input-wrap .ant-input-number-input {
         color: ${({$shouldHighlightColor}) =>
             $shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial'};
@@ -78,7 +79,7 @@ export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProp
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
             value={value}
-            formatter={v => (isFocused || isErrors ? `${v}` : `${presentationValue}`)}
+            formatter={v => (isFocused || isErrors || !presentationValue ? `${v}` : `${presentationValue}`)}
             disabled={state.isReadOnly}
             onChange={_handleOnChange}
             onFocus={_handleFocus}
