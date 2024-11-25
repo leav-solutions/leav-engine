@@ -8,14 +8,8 @@ import type {IKitAvatar} from 'aristid-ds/dist/Kit/DataDisplay/Avatar/types';
 import {FaEllipsisH} from 'react-icons/fa';
 import {Override} from '@leav/utils';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {
-    AttributeType,
-    PropertyValueFragment,
-    PropertyValueLinkValueFragment,
-    PropertyValueTreeValueFragment,
-    PropertyValueValueFragment
-} from '_ui/_gqlTypes';
 import {IExplorerData, IItemAction, IItemData, ItemWhoAmI} from './_types';
+import {TableCell} from './TableCell';
 
 const USELESS = '';
 
@@ -91,39 +85,12 @@ export const DataView: FunctionComponent<IDataViewProps> = ({
 
     const _getColumnName = (attributeName: string): string => columnsLabels?.[attributeName] ?? attributeName;
 
-    const renderCell = (propertiesById: IItemData['propertiesById'], attributeName: string) => {
-        // TODO: handle inherited and calculated values
-        const isLinkValue = (v: PropertyValueFragment): v is PropertyValueLinkValueFragment =>
-            [AttributeType.simple_link, AttributeType.advanced_link].includes(v.attribute.type);
-        const isTreeValue = (v: PropertyValueFragment): v is PropertyValueTreeValueFragment =>
-            [AttributeType.tree].includes(v.attribute.type);
-        const isStandardValue = (v: PropertyValueFragment): v is PropertyValueValueFragment =>
-            [AttributeType.simple, AttributeType.advanced].includes(v.attribute.type);
-
-        const defaultValue = '';
-        return propertiesById[attributeName]
-            .map(value => {
-                if (isStandardValue(value)) {
-                    return value.valuePayload;
-                }
-
-                if (isTreeValue(value)) {
-                    return value.treePayload?.record.id ?? defaultValue;
-                }
-
-                if (isLinkValue(value)) {
-                    return value.linkPayload?.id ?? defaultValue;
-                }
-            })
-            .join(', ');
-    };
-
     const columns = attributesToDisplay
         .map<KitTableColumnType<IItemData>>(attributeName => ({
             title: attributeName === 'whoAmI' ? '' : _getColumnName(attributeName),
             dataIndex: USELESS,
             render: (_, {whoAmI, propertiesById}) =>
-                attributeName === 'whoAmI' ? _getIdCard(whoAmI) : renderCell(propertiesById, attributeName)
+                attributeName === 'whoAmI' ? _getIdCard(whoAmI) : <TableCell values={propertiesById[attributeName]} />
         }))
         .concat(
             itemActions.length === 0
@@ -144,5 +111,6 @@ export const DataView: FunctionComponent<IDataViewProps> = ({
                   ]
         );
 
-    return <KitTable columns={columns} pagination={false} dataSource={dataGroupedFilteredSorted} />;
+    //TODO: handle columns width based on attribute type/format
+    return <KitTable columns={columns} pagination={false} dataSource={dataGroupedFilteredSorted} tableLayout="fixed" />;
 };
