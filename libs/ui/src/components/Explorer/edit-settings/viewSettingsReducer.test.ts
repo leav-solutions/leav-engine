@@ -32,19 +32,45 @@ describe('ViewSettings Reducer', () => {
         );
         expect(state.fields).toEqual(['active', 'created_at']);
     });
-    test('Action ORDER_FIELDS', () => {
-        const state = reducer(
+
+    describe('Action MOVE_FIELD', () => {
+        const initialState = {
+            ...viewSettingsInitialState,
+            fields: ['test', 'active', 'created_at']
+        };
+
+        const cases = [
             {
-                ...viewSettingsInitialState,
-                fields: ['test', 'active', 'created_at']
+                indexFrom: 0,
+                indexTo: 2,
+                expected: ['active', 'created_at', 'test']
             },
             {
-                type: ViewSettingsActionTypes.ORDER_FIELDS,
-                payload: {fields: ['created_at', 'test', 'active']}
+                indexFrom: 2,
+                indexTo: 0,
+                expected: ['created_at', 'test', 'active']
+            },
+            {
+                indexFrom: 2,
+                indexTo: 1,
+                expected: ['test', 'created_at', 'active']
+            },
+            {
+                indexFrom: 0,
+                indexTo: 0,
+                expected: initialState.fields
             }
-        );
-        expect(state.fields).toEqual(['created_at', 'test', 'active']);
+        ];
+
+        test.each(cases)('Move field from $indexFrom to $indexTo', ({indexFrom, indexTo, expected}) => {
+            const state = reducer(initialState, {
+                type: ViewSettingsActionTypes.MOVE_FIELD,
+                payload: {indexFrom, indexTo}
+            });
+            expect(state.fields).toEqual(expected);
+        });
     });
+
     test('Action RESET_FIELDS', () => {
         const state = reducer(
             {
