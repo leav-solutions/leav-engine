@@ -13,6 +13,7 @@
         "apps/core/src/plugins",
         "imports",
         ".git",
+        "**/.gitkeep",
         ".*",
         "config",
         "public",

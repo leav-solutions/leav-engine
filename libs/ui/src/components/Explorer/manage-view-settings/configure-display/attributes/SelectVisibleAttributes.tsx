@@ -17,10 +17,10 @@ import {
 } from '@dnd-kit/core';
 import {SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import {FaGripLines} from 'react-icons/fa';
-import {ColumnItem} from './ColumnItem';
-import {useGetLibraryColumns} from './useGetLibraryColumns';
-import {ViewSettingsActionTypes} from '../edit-settings/viewSettingsReducer';
-import {useViewSettingsContext} from './useViewSettingsContext';
+import {ColumnItem} from '../../_shared/ColumnItem';
+import {useGetLibraryColumns} from '../../_shared/useGetLibraryColumns';
+import {ViewSettingsActionTypes} from '../../store-view-settings/viewSettingsReducer';
+import {useViewSettingsContext} from '../../store-view-settings/useViewSettingsContext';
 
 const StyledList = styled.ul`
     padding: 0;
@@ -38,11 +38,11 @@ const StyledDivider = styled.hr`
     padding: 0;
 `;
 
-interface IDisplayModeTableProps {
-    library: string;
+interface ISelectVisibleAttributesProps {
+    libraryId: string;
 }
 
-export const DisplayModeTable: FunctionComponent<IDisplayModeTableProps> = ({library}) => {
+export const SelectVisibleAttributes: FunctionComponent<ISelectVisibleAttributesProps> = ({libraryId}) => {
     const {t} = useSharedTranslation();
 
     const sensors = useSensors(
@@ -58,7 +58,7 @@ export const DisplayModeTable: FunctionComponent<IDisplayModeTableProps> = ({lib
     const [searchInput, setSearchInput] = useState('');
     const debouncedSearchInput = useDebouncedValue(searchInput, 300);
 
-    const {attributeDetailsById} = useGetLibraryColumns(library);
+    const {attributeDetailsById} = useGetLibraryColumns(libraryId);
 
     const searchFilteredColumns = useMemo(() => {
         const columnIds = Object.keys(attributeDetailsById);

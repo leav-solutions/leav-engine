@@ -4,7 +4,7 @@
 import {KitButton} from 'aristid-ds';
 import {FaSlidersH} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {SettingsPanel} from './SettingsPanel';
+import {SettingsPanel} from '../router-menu/SettingsPanel';
 import {useEditSettings} from './useEditSettings';
 
 export const useOpenSettings = (library: string) => {
