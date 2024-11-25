@@ -12,12 +12,8 @@ import {IGetCoreEntitiesParams} from '_types/shared';
 
 export const FORM_COLLECTION_NAME = 'core_forms';
 
-type FormFilters = IGetCoreEntitiesParams & {
-    filters?: IFormFilterOptions;
-};
-
 export interface IFormRepo {
-    getForms({params, ctx}: {params?: FormFilters; ctx: IQueryInfos}): Promise<IList<IForm>>;
+    getForms({params, ctx}: {params?: IGetCoreEntitiesParams; ctx: IQueryInfos}): Promise<IList<IForm>>;
     updateForm({formData, ctx}: {formData: IFormStrict; ctx: IQueryInfos}): Promise<IForm>;
     createForm({formData, ctx}: {formData: IFormStrict; ctx: IQueryInfos}): Promise<IForm>;
     deleteForm({formData, ctx}: {formData: IForm; ctx: IQueryInfos}): Promise<IForm>;

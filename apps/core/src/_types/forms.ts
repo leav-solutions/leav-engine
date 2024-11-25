@@ -59,8 +59,8 @@ export type IFormElementWithValuesAndChildren = IFormElementWithValues & {
  * Accepted fields to filter attributes list
  */
 export interface IFormFilterOptions {
-    id?: string | string[];
+    id?: string;
     library?: string;
     system?: boolean;
-    label?: string | string[];
+    label?: string;
 }

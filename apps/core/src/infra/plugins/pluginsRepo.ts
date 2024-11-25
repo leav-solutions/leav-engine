@@ -10,7 +10,6 @@ export interface IPluginsRepo {
 
 export default function (): IPluginsRepo {
     const _registeredPlugins: IRegisteredPlugin[] = [];
-
     return {
         registerPlugin(path: string, plugin: IPluginInfos): IRegisteredPlugin {
             const pluginToRegister = {path, infos: {...plugin}};
@@ -19,7 +18,7 @@ export default function (): IPluginsRepo {
             return pluginToRegister;
         },
         getRegisteredPlugins(): IRegisteredPlugin[] {
-            return _registeredPlugins.sort((a, b) => a.infos.name.localeCompare(b.infos.name));
+            return _registeredPlugins;
         }
     };
 }
