@@ -4,8 +4,6 @@
 import {PropertyValueFragment, RecordIdentityFragment} from '_ui/_gqlTypes';
 import {ReactElement} from 'react';
 
-export type ItemWhoAmI = Required<RecordIdentityFragment['whoAmI']>;
-
 export interface IExplorerData {
     attributes: {
         [attributeId: string]: string;
@@ -17,7 +15,7 @@ export interface IItemData {
     libraryId: string;
     key: string;
     itemId: string;
-    whoAmI: ItemWhoAmI;
+    whoAmI: RecordIdentityFragment['whoAmI'];
     propertiesById: {
         [attributeId: string]: PropertyValueFragment[];
     };
