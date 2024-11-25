@@ -9,9 +9,12 @@ import {useLang} from '_ui/hooks';
 const _mapping = (data: ExplorerQuery, libraryId: string, availableLangs: string[]): IExplorerData => {
     const attributes = {};
     // TODO: can we use `Array.reduce` method?
+    // TODO: if no value on first record, no label!
     if (data.records.list.length > 0) {
         data.records.list[0].properties.forEach(({attributeId, values}) => {
-            attributes[attributeId] = localizedTranslation(values[0].attribute.label, availableLangs);
+            attributes[attributeId] = values[0]?.attribute.label
+                ? localizedTranslation(values[0].attribute.label, availableLangs)
+                : attributeId;
         });
     }
     const records = data.records.list.map(({whoAmI, properties}) => ({
