@@ -40,6 +40,19 @@ const Wrapper = styled.div<{$metadataEdit: boolean}>`
     margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
 `;
 
+const KitSpaceStyled = styled(KitSpace)`
+    width: 100%;
+`;
+
+const RowValueWrapper = styled.div`
+    display: flex;
+    flex-direction: row;
+`;
+
+const StandardFieldValueWrapper = styled.div`
+    flex: 1;
+`;
+
 const _isDateRangeValue = (value: any): value is {from: string; to: string} =>
     !!value && typeof value === 'object' && 'from' in value && 'to' in value;
 
@@ -454,13 +467,14 @@ const StandardField: FunctionComponent<
     // TODO:
     // - Gérer le allowclear qui vide la valeur mais ne supprime pas => DONE
     // - Gérer la corbeille qui supprime la valeur => DONE
-    // - Gérer le supprimer tout (globalement on fait un delete sur toutes les valeurs)
+    // - Gérer le supprimer tout => DONE
+    // - Gérer le allowClear
     // - Multivalués, l'ordre change en fonction de l'ordre d'édition des valeurs ? Peut être revoir cette logique pour que l'ordre soit toujours le même
-    // - Faire un composant StandardFieldInputWrapper pour alleger ce composant (A discuter , est-ce une bonne idée ?)
     // - Gérer placeholder sur tous les formats
     // - Vérifier required
     // - Vérifier errors
     // - Vérifier calculs
+    // - Vérifier que rien n'est cassé sur les monovalués
     return (
         <StandardFieldReducerContext.Provider value={{state, dispatch}}>
             <Wrapper $metadataEdit={metadataEdit}>
@@ -491,34 +505,32 @@ const StandardField: FunctionComponent<
                         />
                     )}
                     {attribute.multiple_values && (
-                        <KitSpace direction="vertical" style={{width: '100%'}}>
+                        <KitSpaceStyled direction="vertical">
                             <Form.List name={attribute.id}>
                                 {(fields, {add, remove}) => {
                                     antdListFieldsRef.current = {add, remove, indexes: fields.map((_, index) => index)};
 
                                     return (
-                                        <KitSpace direction="vertical" style={{width: '100%'}}>
+                                        <KitSpaceStyled direction="vertical">
                                             {fields.map((field, index) => {
-                                                console.log('------- field --------');
+                                                // console.log('------- field --------');
                                                 // console.log('field', field);
                                                 // console.log('value', valuesToDisplay[index]);
                                                 // console.log('presentationValues', presentationValues[index]);
                                                 return (
-                                                    <KitSpace
-                                                        direction="horizontal"
-                                                        style={{width: '100%'}}
-                                                        key={field.key}
-                                                    >
-                                                        <StandardFieldValue
-                                                            listField={field}
-                                                            value={valuesToDisplay[index]}
-                                                            presentationValue={presentationValues[index]}
-                                                            state={state}
-                                                            dispatch={dispatch}
-                                                            onSubmit={_handleSubmit}
-                                                            onDelete={_handleDelete}
-                                                            onScopeChange={_handleScopeChange}
-                                                        />
+                                                    <RowValueWrapper key={field.key}>
+                                                        <StandardFieldValueWrapper>
+                                                            <StandardFieldValue
+                                                                listField={field}
+                                                                value={valuesToDisplay[index]}
+                                                                presentationValue={presentationValues[index]}
+                                                                state={state}
+                                                                dispatch={dispatch}
+                                                                onSubmit={_handleSubmit}
+                                                                onDelete={_handleDelete}
+                                                                onScopeChange={_handleScopeChange}
+                                                            />
+                                                        </StandardFieldValueWrapper>
                                                         {fields.length > 1 && (
                                                             <KitButton
                                                                 type="tertiary"
@@ -532,7 +544,7 @@ const StandardField: FunctionComponent<
                                                                 }
                                                             />
                                                         )}
-                                                    </KitSpace>
+                                                    </RowValueWrapper>
                                                 );
                                             })}
                                             {canAddAnotherValue && (
@@ -545,11 +557,11 @@ const StandardField: FunctionComponent<
                                                     {t('record_edition.add_value')}
                                                 </KitButton>
                                             )}
-                                        </KitSpace>
+                                        </KitSpaceStyled>
                                     );
                                 }}
                             </Form.List>
-                        </KitSpace>
+                        </KitSpaceStyled>
                     )}
                 </KitInputWrapper>
                 {attribute?.versions_conf?.versionable && (
