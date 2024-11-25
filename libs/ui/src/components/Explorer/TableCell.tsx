@@ -9,7 +9,7 @@ import {
     PropertyValueTreeValueFragment,
     PropertyValueValueFragment
 } from '_ui/_gqlTypes';
-import {KitTypography} from 'aristid-ds';
+import {KitSwitch, KitTypography} from 'aristid-ds';
 import {FunctionComponent} from 'react';
 import styled from 'styled-components';
 
@@ -19,6 +19,7 @@ const isTreeValue = (v: PropertyValueFragment): v is PropertyValueTreeValueFragm
     [AttributeType.tree].includes(v.attribute.type);
 const isStandardValue = (v: PropertyValueFragment): v is PropertyValueValueFragment =>
     [AttributeType.simple, AttributeType.advanced].includes(v.attribute.type);
+const isBooleanFormatValue = (v: PropertyValueFragment): boolean => v.attribute.format === AttributeFormat.boolean;
 
 const StyledCenteringWrapper = styled.div`
     display: flex;
@@ -33,14 +34,18 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values}) => (
     <StyledCenteringWrapper>
         {values.map((value: PropertyValueFragment) => {
             if (isStandardValue(value)) {
-                const valueContent =
-                    value.attribute.format === AttributeFormat.encrypted ? '●●●●●●●●●●●●' : value.valuePayload;
-
-                return (
-                    <KitTypography.Text key={value.attribute.id} ellipsis={{tooltip: valueContent}}>
-                        {valueContent}
-                    </KitTypography.Text>
-                );
+                switch (value.attribute.format) {
+                    case AttributeFormat.boolean:
+                        return <KitSwitch key={value.attribute.id} checked={!!value.valuePayload} />;
+                    default:
+                        const valueContent =
+                            value.attribute.format === AttributeFormat.encrypted ? '●●●●●●●●●●●●' : value.valuePayload;
+                        return (
+                            <KitTypography.Text key={value.attribute.id} ellipsis={{tooltip: valueContent}}>
+                                {valueContent}
+                            </KitTypography.Text>
+                        );
+                }
             }
 
             const defaultValue = '';
