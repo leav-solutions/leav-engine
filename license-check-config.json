@@ -48,6 +48,7 @@
         "**/*.svg",
         "**/*tsconfig*",
         "**/*.tsbuildinfo",
-        ".idea"
+        ".idea",
+        "**/docs/adr/*.md"
     ]
 }
