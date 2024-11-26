@@ -470,9 +470,9 @@ const StandardField: FunctionComponent<
 
     // - Errors & Required:
     //  - isFieldInError (faire fonctionner avec les multivalués) => DONE
-    //  - si je ré-edite un champ il enlève l'erreur jusqu'au onBlur (useWatch)
+    //  - si je ré-edite un champ il enlève l'erreur jusqu'au onBlur (useWatch) => Standby
     //  - si un attriut mono est requis et est vide, il apparait en erreur => DONE
-    //  - si un attriut multi est requis et est vide, il apparait en erreur => TO IMPROVE (Soucis de name ? Même soucis que useWatch ?)
+    //  - si un attriut multi est requis et est vide, il apparait en erreur => DONE (Ticket à part)
 
     // - Vérifier les calculs:
     //   - Afficher la liste de toutes les valeurs dans des inputs
@@ -486,6 +486,8 @@ const StandardField: FunctionComponent<
     // Bugs:
     //  - Quand on ajoute des valeurs, au bout d'un moment on se retrouve avec un champ vide ??
     //  - Quand on édite plusieurs fois une valeur, cela édite les autres valeurs aussi ?? (lié au problème d'ordre des inputs ??)
+    //  - Encrypted si on ajoute deux valeurs, quand on revient on voit trois inputs ??
+    //  - Si validation echoue une première fois, elle reste en erreur même si on corrige le champ
     return (
         <StandardFieldReducerContext.Provider value={{state, dispatch}}>
             <Wrapper $metadataEdit={metadataEdit}>

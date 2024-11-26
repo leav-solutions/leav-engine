@@ -615,12 +615,17 @@ function StandardFieldValue({
                 <Form.Item
                     name={attribute.id}
                     {...listField}
-                    rules={[
-                        {
-                            required: state.formElement.settings.required,
-                            message: t('errors.standard_field_required')
-                        }
-                    ]}
+                    rules={
+                        //TODO: Remove this rule when required is implemented in the backend
+                        !attribute.multiple_values
+                            ? [
+                                  {
+                                      required: state.formElement.settings.required,
+                                      message: t('errors.standard_field_required')
+                                  }
+                              ]
+                            : undefined
+                    }
                     noStyle
                 >
                     {valueContent}
