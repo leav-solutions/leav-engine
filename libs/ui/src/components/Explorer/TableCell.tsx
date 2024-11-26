@@ -9,7 +9,8 @@ import {
     PropertyValueTreeValueFragment,
     PropertyValueValueFragment
 } from '_ui/_gqlTypes';
-import {KitTypography} from 'aristid-ds';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {KitTag, KitTypography} from 'aristid-ds';
 import {FunctionComponent} from 'react';
 import styled from 'styled-components';
 
@@ -29,28 +30,45 @@ interface ITableCellProps {
     values: PropertyValueFragment[];
 }
 
-export const TableCell: FunctionComponent<ITableCellProps> = ({values}) => (
-    <StyledCenteringWrapper>
-        {values.map((value: PropertyValueFragment) => {
-            if (isStandardValue(value)) {
-                const valueContent =
-                    value.attribute.format === AttributeFormat.encrypted ? '●●●●●●●●●●●●' : value.valuePayload;
+export const TableCell: FunctionComponent<ITableCellProps> = ({values}) => {
+    const {t} = useSharedTranslation();
 
-                return (
-                    <KitTypography.Text key={value.attribute.id} ellipsis={{tooltip: valueContent}}>
-                        {valueContent}
-                    </KitTypography.Text>
-                );
-            }
+    return (
+        <StyledCenteringWrapper>
+            {values.map((value: PropertyValueFragment) => {
+                if (isStandardValue(value)) {
+                    switch (value.attribute.format) {
+                        case AttributeFormat.boolean:
+                            const valueToDisplay = value.valuePayload ? t('global.yes') : t('global.no');
+                            return (
+                                <KitTag
+                                    key={value.attribute.id}
+                                    type={!!value.valuePayload ? 'primary' : 'neutral'}
+                                    idCardProps={{description: valueToDisplay}}
+                                />
+                            );
+                        default:
+                            const valueContent =
+                                value.attribute.format === AttributeFormat.encrypted
+                                    ? '●●●●●●●●●●●●'
+                                    : value.valuePayload;
+                            return (
+                                <KitTypography.Text key={value.attribute.id} ellipsis={{tooltip: valueContent}}>
+                                    {valueContent}
+                                </KitTypography.Text>
+                            );
+                    }
+                }
 
-            const defaultValue = '';
-            if (isTreeValue(value)) {
-                return value.treePayload?.record.id ?? defaultValue;
-            }
+                const defaultValue = '';
+                if (isTreeValue(value)) {
+                    return value.treePayload?.record.id ?? defaultValue;
+                }
 
-            if (isLinkValue(value)) {
-                return value.linkPayload?.id ?? defaultValue;
-            }
-        })}
-    </StyledCenteringWrapper>
-);
+                if (isLinkValue(value)) {
+                    return value.linkPayload?.id ?? defaultValue;
+                }
+            })}
+        </StyledCenteringWrapper>
+    );
+};
