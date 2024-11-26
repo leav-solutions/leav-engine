@@ -107,7 +107,7 @@ export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKi
         } else if (state.isCalculatedValue) {
             setTimeout(() => onChange(state.calculatedValue.raw_value, options), 0);
         }
-        await handleSubmit('', attribute.id);
+        await handleSubmit(null, attribute.id);
     };
 
     const _handleOnChange = async (selectedValue: string) => {

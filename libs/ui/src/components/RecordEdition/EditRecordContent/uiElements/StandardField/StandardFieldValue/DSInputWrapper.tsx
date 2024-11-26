@@ -40,7 +40,7 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
         } else if (state.isCalculatedValue) {
             onChange(state.calculatedValue.raw_payload);
         }
-        await handleSubmit('', state.attribute.id);
+        await handleSubmit(null, state.attribute.id);
     };
 
     const _handleFocus = () => setIsFocused(true);

@@ -57,7 +57,7 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
                 state.calculatedValue.raw_value
             );
         }
-        await handleSubmit('', state.attribute.id);
+        await handleSubmit(null, state.attribute.id);
     };
 
     const _handleFocus = () => setIsFocused(true);

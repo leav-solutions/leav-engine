@@ -248,7 +248,10 @@ function StandardFieldValue({
     }, [fieldValue.isEditing, fieldValue.editingValue]);
 
     const _handleSubmit = async (valueToSave: StandardValueTypes) => {
-        const convertedValue = typeof valueToSave === 'object' ? JSON.stringify(valueToSave) : valueToSave;
+        const convertedValue =
+            typeof valueToSave === 'object' && valueToSave !== null ? JSON.stringify(valueToSave) : valueToSave;
+
+        console.log('valueToSave', valueToSave);
 
         await onSubmit(fieldValue.idValue, convertedValue, listField?.name);
     };

@@ -35,7 +35,7 @@ export const DSInputEncryptedWrapper: FunctionComponent<IStandFieldValueContentP
         const inputValue = event.target.value;
         onChange(event);
         if (inputValue === '' && event.type === 'click') {
-            await handleSubmit('', attribute.id);
+            await handleSubmit(null, attribute.id);
         }
     };
 

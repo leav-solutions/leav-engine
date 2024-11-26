@@ -23,7 +23,10 @@ const getCalculatedValue = values => values.find(value => value.isCalculated);
 const getInheritedValue = values => values.find(value => value.isInherited);
 
 const getUserInputValue = values =>
-    values.find(value => !value.isInherited && !value.isCalculated && value.raw_value !== null);
+    values.find(
+        // value => !value.isInherited && !value.isCalculated && value.raw_value !== null && value.raw_value !== ''
+        value => !value.isInherited && !value.isCalculated && value.raw_value !== null
+    );
 
 const isRecordFormElementsValueLinkValue = (
     value: RecordFormElementsValue,

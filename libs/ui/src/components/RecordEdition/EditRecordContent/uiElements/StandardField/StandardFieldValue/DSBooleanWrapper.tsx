@@ -43,7 +43,7 @@ export const DSBooleanWrapper: FunctionComponent<IStandFieldValueContentProps<IK
         } else if (state.isCalculatedValue) {
             onChange(state.calculatedValue.raw_value, undefined);
         }
-        handleSubmit('', state.attribute.id);
+        handleSubmit(null, state.attribute.id);
     };
 
     const _handleOnChange: (checked: boolean, event: MouseEvent<HTMLButtonElement>) => void = (checked, event) => {

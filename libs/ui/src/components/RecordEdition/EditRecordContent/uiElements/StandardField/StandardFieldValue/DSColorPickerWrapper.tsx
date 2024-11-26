@@ -75,9 +75,9 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
             onChange(undefined, state.calculatedValue.raw_value);
         }
 
-        onChange(null, '');
+        onChange(null, null);
         setIsFocused(false);
-        await handleSubmit('', state.attribute.id);
+        await handleSubmit(null, state.attribute.id);
     };
 
     const label = localizedTranslation(state.formElement.settings.label, availableLang);

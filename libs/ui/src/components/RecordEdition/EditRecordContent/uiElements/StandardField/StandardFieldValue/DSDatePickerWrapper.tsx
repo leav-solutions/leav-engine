@@ -41,7 +41,7 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
             onChange(dayjs.unix(Number(state.calculatedValue.raw_value)), state.calculatedValue.raw_value);
         }
 
-        await handleSubmit('', state.attribute.id);
+        await handleSubmit(null, state.attribute.id);
     };
 
     const _handleFocus = () => setIsFocused(true);
