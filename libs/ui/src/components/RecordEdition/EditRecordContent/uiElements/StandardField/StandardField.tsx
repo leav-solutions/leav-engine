@@ -501,6 +501,7 @@ const StandardField: FunctionComponent<
     // - A faire:
     //   - Afficher un maximum de 7 inputs, au delà, on scroll (prendre l'équivalent de la hauteur de 7 inputs en pixel, cf cas du richText) => DONE
     //   - Vérifier que la création fonctionne bien (sans regex car traité dans un autre ticket)
+    //   - Vérifier et supprimer tous les TODO dans le code
 
     // Bugs:
     //  - Quand on ajoute des valeurs, au bout d'un moment on se retrouve avec un champ vide ??
