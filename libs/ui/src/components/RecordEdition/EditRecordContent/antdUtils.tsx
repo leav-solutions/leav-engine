@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
     IRecordForm,
+    RecordFormElementAttribute,
     RecordFormElementsValue,
     RecordFormElementsValueLinkValue,
     RecordFormElementsValueStandardValue
@@ -12,9 +13,6 @@ import {IDateRangeValue} from '@leav/utils';
 import {Store} from 'antd/lib/form/interface';
 import dayjs from 'dayjs';
 
-//TODO: A définir à côté de RecordFormElementsValue (ou aller cherche le vrais type de attribute)
-type RecordFormElementAttribute = IRecordForm['elements'][0]['attribute'];
-
 const hasDateRangeValues = (dateRange: unknown): dateRange is IDateRangeValue =>
     (dateRange as IDateRangeValue).from !== undefined && (dateRange as IDateRangeValue).to !== undefined;
 
@@ -23,10 +21,7 @@ const getCalculatedValue = values => values.find(value => value.isCalculated);
 const getInheritedValue = values => values.find(value => value.isInherited);
 
 const getUserInputValue = values =>
-    values.find(
-        // value => !value.isInherited && !value.isCalculated && value.raw_value !== null && value.raw_value !== ''
-        value => !value.isInherited && !value.isCalculated && value.raw_value !== null
-    );
+    values.find(value => !value.isInherited && !value.isCalculated && value.raw_value !== null);
 
 const isRecordFormElementsValueLinkValue = (
     value: RecordFormElementsValue,

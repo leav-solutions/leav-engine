@@ -21,7 +21,6 @@ import {RecordProperty} from '_ui/_queries/records/getRecordPropertiesQuery';
 import {RecordFormElementFragment} from '../../../_gqlTypes';
 import {IStandardFieldReducerState, IStandardFieldValue} from './reducers/standardFieldReducer/standardFieldReducer';
 import {FormInstance} from 'antd/lib/form/Form';
-import {NamePath} from 'antd/es/form/interface';
 
 export interface IValueToSubmit {
     attribute: string;
