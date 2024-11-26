@@ -205,7 +205,7 @@ const StandardField: FunctionComponent<
 
             if (state.metadataEdit || addNewValue) {
                 resultValue = {
-                    id_value: null,
+                    id_value: submitResValue.id_value,
                     created_at: null,
                     modified_at: null,
                     created_by: null,

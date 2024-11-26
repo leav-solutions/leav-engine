@@ -98,7 +98,11 @@ export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
 
         if (isRecordFormElementsStandardValues(values, attribute)) {
             acc[attribute.id] =
-                values.length === 0 ? [null] : values.map(val => formatStandardInitialValue(val, attribute));
+                values.length === 0
+                    ? [null]
+                    : values
+                          .sort((a, b) => Number(a.id_value) - Number(b.id_value))
+                          .map(val => formatStandardInitialValue(val, attribute));
             return acc;
         }
 
