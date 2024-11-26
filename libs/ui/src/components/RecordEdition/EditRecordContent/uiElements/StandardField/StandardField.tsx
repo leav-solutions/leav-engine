@@ -208,7 +208,6 @@ const StandardField: FunctionComponent<
             valueVersion
         );
 
-
         if (submitRes.status === APICallStatus.SUCCESS) {
             if (antdForm) {
                 setAntdErrorField(null, fieldName);
@@ -497,9 +496,6 @@ const StandardField: FunctionComponent<
     });
 
     const isFieldInError = antdForm.getFieldError(attribute.id).length > 0 || hasErrorsInFormList;
-
-    // Use watch to update the component when the value changes (useful for errors)
-    Form.useWatch(attribute.id, antdForm); //TODO: multi ?
 
     // TODO:
     // - Gérer le allowclear qui vide la valeur mais ne supprime pas => DONE
