@@ -20,7 +20,6 @@ const isTreeValue = (v: PropertyValueFragment): v is PropertyValueTreeValueFragm
     [AttributeType.tree].includes(v.attribute.type);
 const isStandardValue = (v: PropertyValueFragment): v is PropertyValueValueFragment =>
     [AttributeType.simple, AttributeType.advanced].includes(v.attribute.type);
-const isBooleanFormatValue = (v: PropertyValueFragment): boolean => v.attribute.format === AttributeFormat.boolean;
 
 const StyledCenteringWrapper = styled.div`
     display: flex;
