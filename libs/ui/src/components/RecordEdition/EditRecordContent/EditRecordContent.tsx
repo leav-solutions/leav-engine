@@ -133,21 +133,12 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
 
     const antdFormInitialValues = getAntdFormInitialValues(recordForm);
 
-    const _onFieldsChange = (_, allFields: Parameters<FormProps['onFieldsChange']>[1]) => {
-        const newFormErrors = allFields
-            .filter(field => field.errors.length > 0)
-            .map(field => ({name: field.name, errors: field.errors}));
-
-        setFormErrors(newFormErrors);
-    };
-
     return (
         <Form
             id={EDIT_OR_CREATE_RECORD_FORM_ID}
             form={antdForm}
             initialValues={antdFormInitialValues}
             onFinish={onRecordSubmit}
-            onFieldsChange={_onFieldsChange}
         >
             <RecordEditionContext.Provider value={{elements: elementsByContainer, readOnly: readonly, record}}>
                 <rootElement.uiElement

@@ -22,7 +22,7 @@ import standardFieldReducer, {
 } from '../../reducers/standardFieldReducer/standardFieldReducer';
 import FieldFooter from '../../shared/FieldFooter';
 import ValuesVersionBtn from '../../shared/ValuesVersionBtn';
-import {APICallStatus, VersionFieldScope, IFormElementProps, FormErrors, ISubmitMultipleResult} from '../../_types';
+import {APICallStatus, VersionFieldScope, IFormElementProps, ISubmitMultipleResult} from '../../_types';
 import StandardFieldValue from './StandardFieldValue';
 import {Form, FormInstance, FormListOperation} from 'antd';
 import {StandardFieldReducerContext} from '../../reducers/standardFieldReducer/standardFieldReducerContext';
@@ -112,9 +112,8 @@ const _getPresentationValue = ({
 const StandardField: FunctionComponent<
     IFormElementProps<ICommonFieldsSettings, RecordFormElementsValueStandardValue> & {
         antdForm?: FormInstance;
-        formErrors?: FormErrors;
     }
-> = ({element, antdForm, formErrors, onValueSubmit, onValueDelete, onDeleteMultipleValues, metadataEdit = false}) => {
+> = ({element, antdForm, onValueSubmit, onValueDelete, onDeleteMultipleValues, metadataEdit = false}) => {
     const {t} = useTranslation();
 
     const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
@@ -180,12 +179,23 @@ const StandardField: FunctionComponent<
         }
     }, [creationErrors, attribute.id]);
 
+    const setAntdErrorField = (error: null | string, fieldName?: number) => {
+        const shouldSpecifyFieldName = attribute.multiple_values && fieldName !== undefined;
+        const name = shouldSpecifyFieldName ? [attribute.id, fieldName] : attribute.id;
+
+        antdForm.setFields([
+            {
+                name,
+                errors: error ? [error] : null
+            }
+        ]);
+    };
+
     const _handleSubmit = async (
         idValue: IdValue,
         valueToSave: AnyPrimitive,
-        fieldName?: number,
-        addNewValue?: boolean
-    ): Promise<void | ISubmitMultipleResult> => {
+        fieldName?: number
+    ): Promise<ISubmitMultipleResult> => {
         const isSavingNewValue = idValue === newValueId;
         dispatch({
             type: StandardFieldReducerActionsTypes.CLEAR_ERROR,
@@ -198,12 +208,17 @@ const StandardField: FunctionComponent<
             valueVersion
         );
 
-        if (submitRes.status === APICallStatus.SUCCESS || addNewValue) {
+
+        if (submitRes.status === APICallStatus.SUCCESS) {
+            if (antdForm) {
+                setAntdErrorField(null, fieldName);
+            }
+
             const submitResValue = submitRes.values[0] as ValueDetailsValueFragment;
 
             let resultValue: ValueDetailsValueFragment;
 
-            if (state.metadataEdit || addNewValue) {
+            if (state.metadataEdit) {
                 resultValue = {
                     id_value: submitResValue.id_value,
                     created_at: null,
@@ -286,15 +301,7 @@ const StandardField: FunctionComponent<
                         : t(`errors.${attributeError.type}`);
 
                 if (antdForm) {
-                    const shouldSpecifyFieldName = attribute.multiple_values && fieldName !== undefined;
-                    const name = shouldSpecifyFieldName ? [attribute.id, fieldName] : attribute.id;
-
-                    antdForm.setFields([
-                        {
-                            name,
-                            errors: [errorMessage]
-                        }
-                    ]);
+                    setAntdErrorField(errorMessage, fieldName);
                 }
             }
         }
@@ -304,6 +311,8 @@ const StandardField: FunctionComponent<
             idValue,
             error: errorMessage
         });
+
+        return submitRes;
     };
 
     const _handleDelete = async (idValue: IdValue) => {
@@ -341,7 +350,9 @@ const StandardField: FunctionComponent<
     };
 
     const _handleAddValue = async (antdAdd: FormListOperation['add']) => {
-        await _handleSubmit(newValueId, '', valuesToDisplay.length, true);
+        dispatch({
+            type: StandardFieldReducerActionsTypes.ADD_VALUE
+        });
         antdAdd();
     };
 
@@ -412,7 +423,11 @@ const StandardField: FunctionComponent<
         (valueA, valueB) => valueA.index - valueB.index
     );
     const hasValue = valuesToDisplay[0].idValue !== newValueId && valuesToDisplay[0].idValue !== null;
-    const canAddAnotherValue = !state.isReadOnly && isMultipleValues && attribute.format !== AttributeFormat.boolean;
+    const canAddAnotherValue =
+        !state.isReadOnly &&
+        isMultipleValues &&
+        attribute.format !== AttributeFormat.boolean &&
+        attribute.format !== AttributeFormat.encrypted;
     const canDeleteAllValues = !state.isReadOnly && hasValue && valuesToDisplay.length > 1;
     const isAttributeVersionable = attribute?.versions_conf?.versionable;
 
@@ -474,8 +489,7 @@ const StandardField: FunctionComponent<
         return errors.length > 0;
     });
 
-    const isFieldInError =
-        antdForm.getFieldError(attribute.id).length > 0 || hasErrorsInFormList || formErrors?.length > 0;
+    const isFieldInError = antdForm.getFieldError(attribute.id).length > 0 || hasErrorsInFormList;
 
     // Use watch to update the component when the value changes (useful for errors)
     Form.useWatch(attribute.id, antdForm); //TODO: multi ?
@@ -504,10 +518,10 @@ const StandardField: FunctionComponent<
     //   - Vérifier et supprimer tous les TODO dans le code
 
     // Bugs:
-    //  - Quand on ajoute des valeurs, au bout d'un moment on se retrouve avec un champ vide ??
-    //  - Quand on édite plusieurs fois une valeur, cela édite les autres valeurs aussi ?? (lié au problème d'ordre des inputs ??)
-    //  - Encrypted si on ajoute deux valeurs, quand on revient on voit trois inputs ??
-    //  - Si validation echoue une première fois, elle reste en erreur même si on corrige le champ
+    //  - Quand on ajoute des valeurs, au bout d'un moment on se retrouve avec un champ vide ?? => DONE
+    //  - Quand on édite plusieurs fois une valeur, cela édite les autres valeurs aussi ?? (lié au problème d'ordre des inputs ??) => DONE
+    //  - Encrypted si on ajoute deux valeurs, quand on revient on voit trois inputs ?? => DONE (on se passe de l'encrypted multi pour le moment)
+    //  - Si validation echoue une première fois, elle reste en erreur même si on corrige le champ => DONE
     return (
         <StandardFieldReducerContext.Provider value={{state, dispatch}}>
             <Wrapper $metadataEdit={metadataEdit}>
@@ -587,6 +601,7 @@ const StandardField: FunctionComponent<
                                                 size="m"
                                                 icon={<FaPlus />}
                                                 onClick={() => _handleAddValue(add)}
+                                                disabled={valuesToDisplay.some(value => value.idValue === newValueId)}
                                             >
                                                 {t('record_edition.add_value')}
                                             </KitAddValueButton>

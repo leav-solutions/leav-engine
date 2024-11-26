@@ -238,16 +238,6 @@ function StandardFieldValue({
         }
     }, [fieldValue.isEditing]);
 
-    // Cancel value editing if value details panel is closed
-    useEffect(() => {
-        if (editRecordState.activeValue === null && fieldValue.isEditing) {
-            dispatch({
-                type: StandardFieldReducerActionsTypes.CANCEL_EDITING,
-                idValue: fieldValue.idValue
-            });
-        }
-    }, [editRecordState.activeValue]);
-
     useEffect(() => {
         if (fieldValue.isEditing) {
             editRecordDispatch({
