@@ -20,8 +20,6 @@ import standardFieldReducer, {
     newValueId,
     StandardFieldReducerActionsTypes
 } from '../../reducers/standardFieldReducer/standardFieldReducer';
-import AddValueBtn from '../../shared/AddValueBtn';
-import DeleteAllValuesBtn from '../../shared/DeleteAllValuesBtn';
 import FieldFooter from '../../shared/FieldFooter';
 import ValuesVersionBtn from '../../shared/ValuesVersionBtn';
 import {APICallStatus, VersionFieldScope, IFormElementProps, FormErrors, ISubmitMultipleResult} from '../../_types';
@@ -452,13 +450,16 @@ const StandardField: FunctionComponent<
         return;
     };
 
+    const hasErrorsInFormList = valuesToDisplay.some((_, index) => {
+        const errors = antdForm.getFieldError([attribute.id, index]);
+        return errors.length > 0;
+    });
+
     const isFieldInError =
-        antdForm.getFieldError(attribute.id).length > 0 ||
-        formErrors?.length > 0 ||
-        antdForm.getFieldError([attribute.id, 0]).length > 0; // Todo: Un test par nombre de valeur du multivalué
+        antdForm.getFieldError(attribute.id).length > 0 || hasErrorsInFormList || formErrors?.length > 0;
 
     // Use watch to update the component when the value changes (useful for errors)
-    Form.useWatch(attribute.id, antdForm);
+    Form.useWatch(attribute.id, antdForm); //TODO: multi ?
 
     // TODO:
     // - Gérer le allowclear qui vide la valeur mais ne supprime pas => DONE
@@ -466,13 +467,25 @@ const StandardField: FunctionComponent<
     // - Gérer le supprimer tout => DONE
     // - Gérer le allowClear => DONE
     // - Gérer placeholder sur tous les formats => DONE
-    // - Multivalués, l'ordre change en fonction de l'ordre d'édition des valeurs ? Peut être revoir cette logique pour que l'ordre soit toujours le même
-    // - Vérifier required
-    // - Vérifier errors
-    // - Vérifier calculs
-    // - Vérifier avec différents formats
-    // - Vérifier que rien n'est cassé sur les monovalués
-    // - Vérifier que ça marche à la création (mono et multi)
+
+    // - Errors & Required:
+    //  - isFieldInError (faire fonctionner avec les multivalués) => DONE
+    //  - si je ré-edite un champ il enlève l'erreur jusqu'au onBlur (useWatch)
+    //  - si un attriut mono est requis et est vide, il apparait en erreur => DONE
+    //  - si un attriut multi est requis et est vide, il apparait en erreur => TO IMPROVE (Soucis de name ? Même soucis que useWatch ?)
+
+    // - Vérifier les calculs:
+    //   - Afficher la liste de toutes les valeurs dans des inputs
+    //   - Quand on surchage, on enlève toutes les valeurs sauf celle qu'on surcharge
+    //   - Quand on supprime toute les valeurs, on réaffiche bien les valeurs calculées
+
+    // - A faire:
+    //   - Afficher un maximum de 7 inputs, au delà, on scroll (prendre l'équivalent de la hauteur de 7 inputs en pixel, cf cas du richText)
+    //   - Vérifier que la création fonctionne bien (sans regex car traité dans un autre ticket)
+
+    // Bugs:
+    //  - Quand on ajoute des valeurs, au bout d'un moment on se retrouve avec un champ vide ??
+    //  - Quand on édite plusieurs fois une valeur, cela édite les autres valeurs aussi ?? (lié au problème d'ordre des inputs ??)
     return (
         <StandardFieldReducerContext.Provider value={{state, dispatch}}>
             <Wrapper $metadataEdit={metadataEdit}>
