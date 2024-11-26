@@ -530,10 +530,6 @@ const StandardField: FunctionComponent<
                                     <>
                                         <KitFieldsWrapper>
                                             {fields.map((field, index) => {
-                                                // console.log('------- field --------');
-                                                // console.log('field', field);
-                                                // console.log('value', valuesToDisplay[index]);
-                                                // console.log('presentationValues', presentationValues[index]);
                                                 return (
                                                     <RowValueWrapper key={field.key}>
                                                         <StandardFieldValueWrapper>
