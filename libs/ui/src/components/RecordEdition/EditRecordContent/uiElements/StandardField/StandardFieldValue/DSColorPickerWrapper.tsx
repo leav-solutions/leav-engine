@@ -10,6 +10,9 @@ import {KitColor, KitColorPickerProps} from 'aristid-ds/dist/Kit/DataEntry/Color
 import {IStandFieldValueContentProps} from './_types';
 
 const KitColorPickerStyled = styled(KitColorPicker)<{$shouldHighlightColor: boolean}>`
+    width: 100%;
+    justify-content: start; //TODO: Remove when the component is fixed in DS
+
     .ant-color-picker-trigger-text {
         color: ${({$shouldHighlightColor}) =>
             $shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'var(--general-utilities-text-primary)'};
