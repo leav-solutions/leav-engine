@@ -16,14 +16,14 @@ const USELESS = '';
 interface IDataViewProps {
     dataGroupedFilteredSorted: IItemData[];
     itemActions: IItemAction[];
-    columnsLabels: IExplorerData['attributes'];
+    attributesProperties: IExplorerData['attributes'];
     attributesToDisplay: string[];
 }
 
 export const DataView: FunctionComponent<IDataViewProps> = ({
     dataGroupedFilteredSorted,
     attributesToDisplay,
-    columnsLabels,
+    attributesProperties,
     itemActions
 }) => {
     const {t} = useSharedTranslation();
@@ -73,17 +73,18 @@ export const DataView: FunctionComponent<IDataViewProps> = ({
         );
     };
 
-    const _getColumnName = (attributeName: string): string => columnsLabels?.[attributeName] ?? attributeName;
-
     const columns = attributesToDisplay
         .map<KitTableColumnType<IItemData>>(attributeName => ({
-            title: attributeName === 'whoAmI' ? '' : _getColumnName(attributeName),
+            title: attributeName === 'whoAmI' ? '' : attributesProperties[attributeName].label,
             dataIndex: USELESS,
             render: (_, {whoAmI, propertiesById}) =>
                 attributeName === 'whoAmI' ? (
                     <IdCard item={whoAmI} />
                 ) : (
-                    <TableCell values={propertiesById[attributeName]} />
+                    <TableCell
+                        attributeProperties={attributesProperties[attributeName]}
+                        values={propertiesById[attributeName]}
+                    />
                 )
         }))
         .concat(

@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
     AttributeFormat,
+    AttributePropertiesFragment,
     AttributeType,
     PropertyValueFragment,
     PropertyValueLinkValueFragment,
@@ -15,12 +16,19 @@ import {FunctionComponent} from 'react';
 import styled from 'styled-components';
 import {IdCard} from './IdCard';
 
-const isLinkValue = (v: PropertyValueFragment): v is PropertyValueLinkValueFragment =>
-    [AttributeType.simple_link, AttributeType.advanced_link].includes(v.attribute.type);
-const isTreeValue = (v: PropertyValueFragment): v is PropertyValueTreeValueFragment =>
-    [AttributeType.tree].includes(v.attribute.type);
-const isStandardValue = (v: PropertyValueFragment): v is PropertyValueValueFragment =>
-    [AttributeType.simple, AttributeType.advanced].includes(v.attribute.type);
+const isLinkValue = (
+    v: PropertyValueFragment,
+    attribute: AttributePropertiesFragment
+): v is PropertyValueLinkValueFragment =>
+    [AttributeType.simple_link, AttributeType.advanced_link].includes(attribute.type);
+const isTreeValue = (
+    v: PropertyValueFragment,
+    attribute: AttributePropertiesFragment
+): v is PropertyValueTreeValueFragment => [AttributeType.tree].includes(attribute.type);
+const isStandardValue = (
+    v: PropertyValueFragment,
+    attribute: AttributePropertiesFragment
+): v is PropertyValueValueFragment => [AttributeType.simple, AttributeType.advanced].includes(attribute.type);
 
 const StyledCenteringWrapper = styled.div`
     display: flex;
@@ -29,32 +37,33 @@ const StyledCenteringWrapper = styled.div`
 
 interface ITableCellProps {
     values: PropertyValueFragment[];
+    attributeProperties: AttributePropertiesFragment;
 }
 
-export const TableCell: FunctionComponent<ITableCellProps> = ({values}) => {
+export const TableCell: FunctionComponent<ITableCellProps> = ({values, attributeProperties}) => {
     const {t} = useSharedTranslation();
 
     return (
         <StyledCenteringWrapper>
             {values.map((value: PropertyValueFragment) => {
-                if (isStandardValue(value)) {
-                    switch (value.attribute.format) {
+                if (isStandardValue(value, attributeProperties)) {
+                    switch (attributeProperties.format) {
                         case AttributeFormat.boolean:
                             const valueToDisplay = value.valuePayload ? t('global.yes') : t('global.no');
                             return (
                                 <KitTag
-                                    key={value.attribute.id}
+                                    key={attributeProperties.id}
                                     type={!!value.valuePayload ? 'primary' : 'neutral'}
                                     idCardProps={{description: valueToDisplay}}
                                 />
                             );
                         default:
                             const valueContent =
-                                value.attribute.format === AttributeFormat.encrypted
+                                attributeProperties.format === AttributeFormat.encrypted
                                     ? '●●●●●●●●●●●●'
                                     : value.valuePayload;
                             return (
-                                <KitTypography.Text key={value.attribute.id} ellipsis={{tooltip: valueContent}}>
+                                <KitTypography.Text key={attributeProperties.id} ellipsis={{tooltip: valueContent}}>
                                     {valueContent}
                                 </KitTypography.Text>
                             );
@@ -62,13 +71,13 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values}) => {
                 }
 
                 const defaultValue = '';
-                if (isTreeValue(value)) {
+                if (isTreeValue(value, attributeProperties)) {
                     return value.treePayload?.record.id ?? defaultValue;
                 }
 
-                if (isLinkValue(value)) {
+                if (isLinkValue(value, attributeProperties)) {
                     return value.linkPayload?.whoAmI ? (
-                        <IdCard key={value.attribute.id} item={value.linkPayload?.whoAmI} />
+                        <IdCard key={attributeProperties.id} item={value.linkPayload?.whoAmI} />
                     ) : null;
                 }
             })}

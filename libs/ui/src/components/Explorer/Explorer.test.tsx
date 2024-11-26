@@ -10,7 +10,6 @@ import * as gqlTypes from '_ui/_gqlTypes';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {Explorer} from '_ui/index';
 import {IItemAction, IPrimaryAction} from './_types';
-import {mockAttributeLink, mockAttributeSimple} from '_ui/__mocks__/common/attribute';
 
 const EditRecordModalMock = 'EditRecordModal';
 
@@ -18,10 +17,31 @@ jest.mock('_ui/components/RecordEdition/EditRecordModal', () => ({
     EditRecordModal: () => <div>{EditRecordModalMock}</div>
 }));
 
+const simpleMockAttribute: gqlTypes.AttributePropertiesFragment = {
+    id: 'simple_attribute',
+    label: {
+        fr: 'Mon attribut simple',
+        en: 'My simple attribute'
+    },
+    type: gqlTypes.AttributeType.simple,
+    format: gqlTypes.AttributeFormat.text,
+    multiple_values: false
+};
+
+const linkMockAttribute: gqlTypes.AttributePropertiesFragment = {
+    ...simpleMockAttribute,
+    id: 'link_attribute',
+    label: {
+        fr: 'Mon attribut liaison',
+        en: 'My link attribute'
+    },
+    type: gqlTypes.AttributeType.advanced_link
+};
+
 describe('Explorer', () => {
     const recordId1 = '613982168';
     const recordId2 = '612694174';
-    const mockRecords = [
+    const mockRecords: gqlTypes.ExplorerQuery['records']['list'] = [
         {
             id: '613982168',
             whoAmI: {
@@ -40,20 +60,20 @@ describe('Explorer', () => {
             },
             properties: [
                 {
-                    attributeId: 'id',
+                    attributeId: simpleMockAttribute.id,
+                    attributeProperties: simpleMockAttribute,
                     values: [
                         {
-                            attribute: {...mockAttributeSimple, id: 'id', label: {fr: 'ID', en: 'ID'}},
                             valuePayload: recordId1
                         }
                     ]
                 },
                 {
-                    attributeId: 'link_attribute',
+                    attributeId: linkMockAttribute.id,
+                    attributeProperties: linkMockAttribute,
                     values: [
                         {
-                            attribute: {...mockAttributeLink, id: 'link_attribute', label: {fr: 'Link', en: 'Link'}},
-                            linkPayload: {whoAmI: mockRecord}
+                            linkPayload: {id: mockRecord.id, whoAmI: mockRecord}
                         }
                     ]
                 }
@@ -77,20 +97,20 @@ describe('Explorer', () => {
             },
             properties: [
                 {
-                    attributeId: 'id',
+                    attributeId: simpleMockAttribute.id,
+                    attributeProperties: simpleMockAttribute,
                     values: [
                         {
-                            attribute: {...mockAttributeSimple, id: 'id', label: {fr: 'ID', en: 'ID'}},
                             valuePayload: recordId2
                         }
                     ]
                 },
                 {
-                    attributeId: 'link_attribute',
+                    attributeId: linkMockAttribute.id,
+                    attributeProperties: linkMockAttribute,
                     values: [
                         {
-                            attribute: {...mockAttributeLink, id: 'link_attribute', label: {fr: 'ID', en: 'ID'}},
-                            linkPayload: {whoAmI: mockRecord}
+                            linkPayload: {id: mockRecord.id, whoAmI: mockRecord}
                         }
                     ]
                 }
@@ -176,12 +196,17 @@ describe('Explorer', () => {
         expect(screen.getByRole('table')).toBeVisible();
         expect(screen.getAllByRole('row')).toHaveLength(1 + mockRecords.length); // 1 header row + 2 records
         const [record1, record2] = mockRecords;
-        expect(screen.getByText(record1.whoAmI.label)).toBeInTheDocument();
-        expect(screen.getByText(record2.whoAmI.label)).toBeInTheDocument();
+        expect(screen.getByText(String(record1.whoAmI.label))).toBeInTheDocument();
+        expect(screen.getByText(String(record2.whoAmI.label))).toBeInTheDocument();
     });
 
     test('Should display the list of records in a table with attributes values', async () => {
-        render(<Explorer library="campaigns" defaultViewSettings={{fields: ['id', 'link_attribute']}} />);
+        render(
+            <Explorer
+                library="campaigns"
+                defaultViewSettings={{fields: [simpleMockAttribute.id, linkMockAttribute.id]}}
+            />
+        );
 
         const tableRows = screen.getAllByRole('row');
         expect(screen.getByRole('table')).toBeVisible();
@@ -189,7 +214,7 @@ describe('Explorer', () => {
         const [_headerRow, firstRecordRow] = tableRows;
         const [record1] = mockRecords;
 
-        expect(within(firstRecordRow).getByText(record1.whoAmI.label)).toBeInTheDocument();
+        expect(within(firstRecordRow).getByText(String(record1.whoAmI.label))).toBeInTheDocument();
         expect(within(firstRecordRow).getByText(recordId1)).toBeVisible();
         expect(within(firstRecordRow).getByText(String(mockRecord.label))).toBeVisible();
         expect(within(firstRecordRow).getByText(String(mockRecord.subLabel))).toBeVisible();

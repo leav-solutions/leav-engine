@@ -176,6 +176,7 @@ export enum AttributeType {
 export type AttributesFiltersInput = {
   format?: InputMaybe<Array<InputMaybe<AttributeFormat>>>;
   id?: InputMaybe<Scalars['ID']>;
+  ids?: InputMaybe<Array<Scalars['ID']>>;
   label?: InputMaybe<Scalars['String']>;
   libraries?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   librariesExcluded?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
@@ -937,11 +938,13 @@ export type TreeNodeChildFragment = { id: string, order?: number | null, childre
 
 export type ViewDetailsFragment = { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size: ViewSizes, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: { field: string, order: SortOrder } | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, settings?: Array<{ name: string, value?: any | null }> | null };
 
-export type PropertyValueLinkValueFragment = { linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, attribute: { id: string, type: AttributeType, label?: any | null, format?: AttributeFormat | null } };
+export type AttributePropertiesFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean };
 
-export type PropertyValueTreeValueFragment = { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null, attribute: { id: string, type: AttributeType, label?: any | null, format?: AttributeFormat | null } };
+export type PropertyValueLinkValueFragment = { linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null };
 
-export type PropertyValueValueFragment = { valuePayload?: any | null, attribute: { id: string, type: AttributeType, label?: any | null, format?: AttributeFormat | null } };
+export type PropertyValueTreeValueFragment = { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null };
+
+export type PropertyValueValueFragment = { valuePayload?: any | null };
 
 export type PropertyValueFragment = PropertyValueLinkValueFragment | PropertyValueTreeValueFragment | PropertyValueValueFragment;
 
@@ -1349,7 +1352,7 @@ export type ExplorerQueryVariables = Exact<{
 }>;
 
 
-export type ExplorerQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, properties: Array<{ attributeId: string, values: Array<{ linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, attribute: { id: string, type: AttributeType, label?: any | null, format?: AttributeFormat | null } } | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null, attribute: { id: string, type: AttributeType, label?: any | null, format?: AttributeFormat | null } } | { valuePayload?: any | null, attribute: { id: string, type: AttributeType, label?: any | null, format?: AttributeFormat | null } }> }> }> } };
+export type ExplorerQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }, values: Array<{ linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null } | { valuePayload?: any | null }> }> }> } };
 
 export type ExplorerLibraryDataQueryVariables = Exact<{
   libraryId: Scalars['ID'];
@@ -1905,12 +1908,6 @@ export const ViewDetailsFragmentDoc = gql`
     ${RecordIdentityFragmentDoc}`;
 export const PropertyValueFragmentDoc = gql`
     fragment PropertyValue on GenericValue {
-  attribute {
-    id
-    type
-    label
-    format
-  }
   ... on Value {
     valuePayload: payload
   }
@@ -1928,6 +1925,15 @@ export const PropertyValueFragmentDoc = gql`
   }
 }
     ${RecordIdentityFragmentDoc}`;
+export const AttributePropertiesFragmentDoc = gql`
+    fragment AttributeProperties on Attribute {
+  id
+  label
+  type
+  format
+  multiple_values
+}
+    `;
 export const CheckApplicationExistenceDocument = gql`
     query CHECK_APPLICATION_EXISTENCE($id: ID, $endpoint: String) {
   applications(filters: {id: $id, endpoint: $endpoint}) {
@@ -3973,6 +3979,9 @@ export const ExplorerDocument = gql`
       ...RecordIdentity
       properties(attributeIds: $attributeIds) {
         attributeId
+        attributeProperties {
+          ...AttributeProperties
+        }
         values {
           ...PropertyValue
         }
@@ -3981,6 +3990,7 @@ export const ExplorerDocument = gql`
   }
 }
     ${RecordIdentityFragmentDoc}
+${AttributePropertiesFragmentDoc}
 ${PropertyValueFragmentDoc}`;
 
 /**
