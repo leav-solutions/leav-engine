@@ -31,15 +31,15 @@ import {useLang} from '_ui/hooks';
 import {useValueDetailsButton} from '../../shared/ValueDetailsBtn/useValueDetailsButton';
 import {TFunction} from 'i18next';
 import {FaPlus, FaTrash} from 'react-icons/fa';
-import {StoreValue} from 'antd/es/form/interface';
 import {DeleteAllValuesButton} from './DeleteAllValuesButton';
 
 const Wrapper = styled.div<{$metadataEdit: boolean}>`
     margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
 `;
 
-const KitSpaceStyled = styled(KitSpace)`
-    width: 100%;
+const KitFieldsWrapper = styled.div`
+    max-height: 322px;
+    overflow-y: scroll;
 `;
 
 const RowValueWrapper = styled.div`
@@ -49,6 +49,25 @@ const RowValueWrapper = styled.div`
 
 const StandardFieldValueWrapper = styled.div`
     flex: 1;
+`;
+
+const KitInputWrapperStyled = styled(KitInputWrapper)`
+    &.bordered > .kit-input-wrapper-content {
+        padding: calc((var(--general-spacing-xs) - 3) * 1px);
+
+        .kit-input-wrapper-content {
+            margin: 3px;
+        }
+    }
+`;
+
+const KitDeleteValueButton = styled(KitButton)`
+    margin: 3px;
+`;
+
+const KitAddValueButton = styled(KitButton)`
+    margin-top: calc((var(--general-spacing-xs) - 3) * 1px);
+    margin-bottom: 3px;
 `;
 
 const _isDateRangeValue = (value: any): value is {from: string; to: string} =>
@@ -480,7 +499,7 @@ const StandardField: FunctionComponent<
     //   - Quand on supprime toute les valeurs, on réaffiche bien les valeurs calculées
 
     // - A faire:
-    //   - Afficher un maximum de 7 inputs, au delà, on scroll (prendre l'équivalent de la hauteur de 7 inputs en pixel, cf cas du richText)
+    //   - Afficher un maximum de 7 inputs, au delà, on scroll (prendre l'équivalent de la hauteur de 7 inputs en pixel, cf cas du richText) => DONE
     //   - Vérifier que la création fonctionne bien (sans regex car traité dans un autre ticket)
 
     // Bugs:
@@ -491,7 +510,7 @@ const StandardField: FunctionComponent<
     return (
         <StandardFieldReducerContext.Provider value={{state, dispatch}}>
             <Wrapper $metadataEdit={metadataEdit}>
-                <KitInputWrapper
+                <KitInputWrapperStyled
                     label={label}
                     onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
                     helper={_getHelper()}
@@ -518,13 +537,13 @@ const StandardField: FunctionComponent<
                         />
                     )}
                     {attribute.multiple_values && (
-                        <KitSpaceStyled direction="vertical">
-                            <Form.List name={attribute.id}>
-                                {(fields, {add, remove}) => {
-                                    antdListFieldsRef.current = {add, remove, indexes: fields.map((_, index) => index)};
+                        <Form.List name={attribute.id}>
+                            {(fields, {add, remove}) => {
+                                antdListFieldsRef.current = {add, remove, indexes: fields.map((_, index) => index)};
 
-                                    return (
-                                        <KitSpaceStyled direction="vertical">
+                                return (
+                                    <>
+                                        <KitFieldsWrapper>
                                             {fields.map((field, index) => {
                                                 // console.log('------- field --------');
                                                 // console.log('field', field);
@@ -545,7 +564,7 @@ const StandardField: FunctionComponent<
                                                             />
                                                         </StandardFieldValueWrapper>
                                                         {fields.length > 1 && (
-                                                            <KitButton
+                                                            <KitDeleteValueButton
                                                                 type="tertiary"
                                                                 icon={<FaTrash />}
                                                                 onClick={() =>
@@ -560,23 +579,23 @@ const StandardField: FunctionComponent<
                                                     </RowValueWrapper>
                                                 );
                                             })}
-                                            {canAddAnotherValue && (
-                                                <KitButton
-                                                    type="secondary"
-                                                    size="m"
-                                                    icon={<FaPlus />}
-                                                    onClick={() => _handleAddValue(add)}
-                                                >
-                                                    {t('record_edition.add_value')}
-                                                </KitButton>
-                                            )}
-                                        </KitSpaceStyled>
-                                    );
-                                }}
-                            </Form.List>
-                        </KitSpaceStyled>
+                                        </KitFieldsWrapper>
+                                        {canAddAnotherValue && (
+                                            <KitAddValueButton
+                                                type="secondary"
+                                                size="m"
+                                                icon={<FaPlus />}
+                                                onClick={() => _handleAddValue(add)}
+                                            >
+                                                {t('record_edition.add_value')}
+                                            </KitAddValueButton>
+                                        )}
+                                    </>
+                                );
+                            }}
+                        </Form.List>
                     )}
-                </KitInputWrapper>
+                </KitInputWrapperStyled>
                 {attribute?.versions_conf?.versionable && (
                     <FieldFooter
                         bordered
