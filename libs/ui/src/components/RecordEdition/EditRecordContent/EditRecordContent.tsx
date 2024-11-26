@@ -16,7 +16,7 @@ import EditRecordSkeleton from './EditRecordSkeleton';
 import extractFormElements from './helpers/extractFormElements';
 import {RecordEditionContext} from './hooks/useRecordEditionContext';
 import {formComponents} from './uiElements';
-import {DeleteMultipleValuesFunc, DeleteValueFunc, FormElement, FormErrors, SubmitValueFunc} from './_types';
+import {DeleteMultipleValuesFunc, DeleteValueFunc, FormElement, SubmitValueFunc} from './_types';
 import {Form, FormInstance, FormProps} from 'antd';
 import {EDIT_OR_CREATE_RECORD_FORM_ID} from './formConstants';
 import {getAntdFormInitialValues} from '_ui/components/RecordEdition/EditRecordContent/antdUtils';
@@ -45,7 +45,6 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     const formId = record ? 'edition' : 'creation';
     const {t} = useSharedTranslation();
     const {state, dispatch} = useEditRecordReducer();
-    const [formErrors, setFormErrors] = useState<FormErrors>();
 
     useRecordsConsultationHistory(record?.library?.id ?? null, record?.id ?? null);
 
@@ -145,7 +144,6 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
                     // Use a hash of record form as a key to force a full re-render when the form changes
                     key={recordFormHash}
                     antdForm={antdForm}
-                    formErrors={formErrors}
                     element={rootElement}
                     onValueSubmit={_handleValueSubmit}
                     onValueDelete={_handleValueDelete}

@@ -3,16 +3,15 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Col, FormInstance, Row} from 'antd';
 import {useRecordEditionContext} from '../../hooks/useRecordEditionContext';
-import {FormErrors, IFormElementProps} from '../../_types';
+import {IFormElementProps} from '../../_types';
 
 function Container({
     element,
     antdForm,
-    formErrors,
     onValueSubmit,
     onValueDelete,
     onDeleteMultipleValues
-}: IFormElementProps<{}> & {formErrors?: FormErrors; antdForm?: FormInstance}): JSX.Element {
+}: IFormElementProps<{}> & {antdForm?: FormInstance}): JSX.Element {
     const {elements: formElements} = useRecordEditionContext();
     const children = formElements[element.id] ?? [];
 
@@ -25,7 +24,6 @@ function Container({
                             <el.uiElement
                                 element={el}
                                 antdForm={antdForm}
-                                formErrors={formErrors?.filter(err => err.name[0] === el.attribute.id) ?? []} //TODO: Adjust here for multivalues ?
                                 onValueSubmit={onValueSubmit}
                                 onValueDelete={onValueDelete}
                                 onDeleteMultipleValues={onDeleteMultipleValues}

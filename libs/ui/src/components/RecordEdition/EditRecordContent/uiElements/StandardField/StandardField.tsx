@@ -115,7 +115,7 @@ const StandardField: FunctionComponent<
     }
 > = ({element, antdForm, onValueSubmit, onValueDelete, onDeleteMultipleValues, metadataEdit = false}) => {
     const {t} = useTranslation();
-
+    const {lang: availableLang} = useLang();
     const {readOnly: isRecordReadOnly, record} = useRecordEditionContext();
     const {state: editRecordState, dispatch: editRecordDispatch} = useEditRecordReducer();
 
@@ -161,8 +161,6 @@ const StandardField: FunctionComponent<
             })
         )
     );
-
-    console.log('presentationValues', presentationValues);
 
     useEffect(() => {
         if (creationErrors[attribute.id]) {
@@ -442,9 +440,6 @@ const StandardField: FunctionComponent<
         [VersionFieldScope.INHERITED]: state.values[VersionFieldScope.INHERITED]?.version ?? null
     };
 
-    // -------- Added
-    const {lang: availableLang} = useLang();
-
     const label = localizedTranslation(state.formElement.settings.label, availableLang);
 
     const {onValueDetailsButtonClick} = useValueDetailsButton({
@@ -497,34 +492,6 @@ const StandardField: FunctionComponent<
 
     const isFieldInError = antdForm.getFieldError(attribute.id).length > 0 || hasErrorsInFormList;
 
-    // TODO:
-    // - Gérer le allowclear qui vide la valeur mais ne supprime pas => DONE
-    // - Gérer la corbeille qui supprime la valeur => DONE
-    // - Gérer le supprimer tout => DONE
-    // - Gérer le allowClear => DONE
-    // - Gérer placeholder sur tous les formats => DONE
-
-    // - Errors & Required:
-    //  - isFieldInError (faire fonctionner avec les multivalués) => DONE
-    //  - si je ré-edite un champ il enlève l'erreur jusqu'au onBlur (useWatch) => Standby
-    //  - si un attriut mono est requis et est vide, il apparait en erreur => DONE
-    //  - si un attriut multi est requis et est vide, il apparait en erreur => DONE (Ticket à part)
-
-    // - Vérifier les calculs:
-    //   - Afficher la liste de toutes les valeurs dans des inputs
-    //   - Quand on surchage, on enlève toutes les valeurs sauf celle qu'on surcharge
-    //   - Quand on supprime toute les valeurs, on réaffiche bien les valeurs calculées
-
-    // - A faire:
-    //   - Afficher un maximum de 7 inputs, au delà, on scroll (prendre l'équivalent de la hauteur de 7 inputs en pixel, cf cas du richText) => DONE
-    //   - Vérifier que la création fonctionne bien (sans regex car traité dans un autre ticket)
-    //   - Vérifier et supprimer tous les TODO dans le code
-
-    // Bugs:
-    //  - Quand on ajoute des valeurs, au bout d'un moment on se retrouve avec un champ vide ?? => DONE
-    //  - Quand on édite plusieurs fois une valeur, cela édite les autres valeurs aussi ?? (lié au problème d'ordre des inputs ??) => DONE
-    //  - Encrypted si on ajoute deux valeurs, quand on revient on voit trois inputs ?? => DONE (on se passe de l'encrypted multi pour le moment)
-    //  - Si validation echoue une première fois, elle reste en erreur même si on corrige le champ => DONE
     return (
         <StandardFieldReducerContext.Provider value={{state, dispatch}}>
             <Wrapper $metadataEdit={metadataEdit}>

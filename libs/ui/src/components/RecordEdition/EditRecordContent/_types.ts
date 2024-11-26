@@ -114,7 +114,7 @@ export type FormElement<SettingsType, RecordFormElements = RecordFormElementsVal
         values: RecordFormElements[];
     }
 > & {
-    uiElement: (props: IFormElementProps<unknown> & {formErrors?: FormErrors; antdForm?: FormInstance}) => JSX.Element;
+    uiElement: (props: IFormElementProps<unknown> & {antdForm?: FormInstance}) => JSX.Element;
 };
 
 export interface IDependencyValues {
@@ -162,5 +162,3 @@ export interface IProvidedByAntFormItem<
     value?: InputFieldProps['value'];
     onChange?: AntNotifier['onChange'];
 }
-
-export type FormErrors = {name: NamePath; errors: string[]}[];
