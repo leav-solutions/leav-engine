@@ -124,6 +124,6 @@ describe('DSInputEncryptedWrapper', () => {
 
         await user.click(clearButton);
 
-        expect(mockHandleSubmit).toHaveBeenCalledWith('', mockFormAttribute.id);
+        expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
     });
 });

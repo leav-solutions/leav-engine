@@ -223,7 +223,7 @@ describe('DSInputWrapper', () => {
                 await user.click(clearIcon);
 
                 expect(mockOnChange).toHaveBeenCalledWith(onChangeValue);
-                expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
+                expect(mockHandleSubmit).toHaveBeenCalledWith(null, state.attribute.id);
             }
         );
     });

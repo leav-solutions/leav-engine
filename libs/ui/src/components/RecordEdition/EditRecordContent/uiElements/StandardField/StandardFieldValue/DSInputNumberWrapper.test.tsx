@@ -231,7 +231,7 @@ describe('DSInputNumberWrapper', () => {
                 await user.tab();
 
                 expect(mockOnChange).toHaveBeenCalledWith(onChangeValue);
-                expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
+                expect(mockHandleSubmit).toHaveBeenCalledWith(null, state.attribute.id);
             }
         );
     });

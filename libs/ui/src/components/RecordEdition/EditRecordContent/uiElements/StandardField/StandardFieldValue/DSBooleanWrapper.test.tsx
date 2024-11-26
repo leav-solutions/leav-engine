@@ -234,7 +234,7 @@ describe('DSBooleanWrapper', () => {
         const clearButton = screen.getByRole('button');
         await user.click(clearButton);
 
-        expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
+        expect(mockHandleSubmit).toHaveBeenCalledWith(null, state.attribute.id);
     });
 
     test('Should allow to clear calculated override value', async () => {
@@ -261,6 +261,6 @@ describe('DSBooleanWrapper', () => {
         const clearButton = screen.getByRole('button');
         await user.click(clearButton);
 
-        expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
+        expect(mockHandleSubmit).toHaveBeenCalledWith(null, state.attribute.id);
     });
 });

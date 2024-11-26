@@ -485,12 +485,15 @@ const StandardField: FunctionComponent<
         return;
     };
 
-    const hasErrorsInFormList = valuesToDisplay.some((_, index) => {
-        const errors = antdForm.getFieldError([attribute.id, index]);
-        return errors.length > 0;
-    });
+    let isFieldInError = false;
+    if (antdForm) {
+        const hasErrorsInFormList = valuesToDisplay.some((_, index) => {
+            const errors = antdForm.getFieldError([attribute.id, index]);
+            return errors.length > 0;
+        });
 
-    const isFieldInError = antdForm.getFieldError(attribute.id).length > 0 || hasErrorsInFormList;
+        isFieldInError = antdForm.getFieldError(attribute.id).length > 0 || hasErrorsInFormList;
+    }
 
     return (
         <StandardFieldReducerContext.Provider value={{state, dispatch}}>
@@ -529,37 +532,35 @@ const StandardField: FunctionComponent<
                                 return (
                                     <>
                                         <KitFieldsWrapper>
-                                            {fields.map((field, index) => {
-                                                return (
-                                                    <RowValueWrapper key={field.key}>
-                                                        <StandardFieldValueWrapper>
-                                                            <StandardFieldValue
-                                                                listField={field}
-                                                                value={valuesToDisplay[index]}
-                                                                presentationValue={presentationValues[index]}
-                                                                state={state}
-                                                                dispatch={dispatch}
-                                                                onSubmit={_handleSubmit}
-                                                                onDelete={_handleDelete}
-                                                                onScopeChange={_handleScopeChange}
-                                                            />
-                                                        </StandardFieldValueWrapper>
-                                                        {fields.length > 1 && (
-                                                            <KitDeleteValueButton
-                                                                type="tertiary"
-                                                                icon={<FaTrash />}
-                                                                onClick={() =>
-                                                                    _handleDeleteValue(
-                                                                        valuesToDisplay[index],
-                                                                        remove,
-                                                                        index
-                                                                    )
-                                                                }
-                                                            />
-                                                        )}
-                                                    </RowValueWrapper>
-                                                );
-                                            })}
+                                            {fields.map((field, index) => (
+                                                <RowValueWrapper key={field.key}>
+                                                    <StandardFieldValueWrapper>
+                                                        <StandardFieldValue
+                                                            listField={field}
+                                                            value={valuesToDisplay[index]}
+                                                            presentationValue={presentationValues[index]}
+                                                            state={state}
+                                                            dispatch={dispatch}
+                                                            onSubmit={_handleSubmit}
+                                                            onDelete={_handleDelete}
+                                                            onScopeChange={_handleScopeChange}
+                                                        />
+                                                    </StandardFieldValueWrapper>
+                                                    {fields.length > 1 && (
+                                                        <KitDeleteValueButton
+                                                            type="tertiary"
+                                                            icon={<FaTrash />}
+                                                            onClick={() =>
+                                                                _handleDeleteValue(
+                                                                    valuesToDisplay[index],
+                                                                    remove,
+                                                                    index
+                                                                )
+                                                            }
+                                                        />
+                                                    )}
+                                                </RowValueWrapper>
+                                            ))}
                                         </KitFieldsWrapper>
                                         {canAddAnotherValue && (
                                             <KitAddValueButton

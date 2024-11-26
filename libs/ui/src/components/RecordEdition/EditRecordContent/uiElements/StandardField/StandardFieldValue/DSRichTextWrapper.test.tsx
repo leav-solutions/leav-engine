@@ -232,7 +232,7 @@ describe('DSRichTextWrapper', () => {
                 await user.click(document.body);
 
                 expect(mockOnChange).toHaveBeenCalledWith(onChangeValue);
-                expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
+                expect(mockHandleSubmit).toHaveBeenCalledWith(null, state.attribute.id);
             }
         );
     });

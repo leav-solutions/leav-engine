@@ -256,7 +256,7 @@ describe('DSColorPickerWrapper', () => {
         const clearButton = screen.getByLabelText('clear');
         await user.click(clearButton);
 
-        expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
+        expect(mockHandleSubmit).toHaveBeenCalledWith(null, state.attribute.id);
         expect(screen.getByText(presentationValue)).toBeVisible();
     });
 
@@ -291,7 +291,7 @@ describe('DSColorPickerWrapper', () => {
         const clearButton = screen.getByLabelText('clear');
         await user.click(clearButton);
 
-        expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
+        expect(mockHandleSubmit).toHaveBeenCalledWith(null, state.attribute.id);
         expect(screen.getByText(presentationValue)).toBeVisible();
     });
 });

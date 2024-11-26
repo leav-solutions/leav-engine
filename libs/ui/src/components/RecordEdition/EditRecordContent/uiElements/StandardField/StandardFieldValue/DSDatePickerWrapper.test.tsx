@@ -275,7 +275,7 @@ describe('DSDatePickerWrapper', () => {
             expect(mockOnChange).toHaveBeenCalledTimes(1);
             expect(mockOnChange).toHaveBeenCalledWith(expect.any(Object), raw_value);
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
-            expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
+            expect(mockHandleSubmit).toHaveBeenCalledWith(null, state.attribute.id);
         });
 
         test('Should hide clear icon when value is inherited, but not override', async () => {
@@ -338,7 +338,7 @@ describe('DSDatePickerWrapper', () => {
             expect(mockOnChange).toHaveBeenCalledTimes(1);
             expect(mockOnChange).toHaveBeenCalledWith(expect.any(Object), raw_value);
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
-            expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
+            expect(mockHandleSubmit).toHaveBeenCalledWith(null, state.attribute.id);
         });
 
         test('Should hide clear icon when value is calculated, but not override', async () => {
