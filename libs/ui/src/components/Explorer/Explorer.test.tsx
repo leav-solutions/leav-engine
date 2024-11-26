@@ -38,10 +38,20 @@ const linkMockAttribute: gqlTypes.AttributePropertiesFragment = {
     type: gqlTypes.AttributeType.advanced_link
 };
 
+const multivalLinkMockAttribute: gqlTypes.AttributePropertiesFragment = {
+    ...linkMockAttribute,
+    id: 'link_attribute_multival',
+    label: {
+        fr: 'Mon attribut liaison multival',
+        en: 'My link attribute multi-valued'
+    },
+    multiple_values: true
+};
+
 describe('Explorer', () => {
     const recordId1 = '613982168';
     const recordId2 = '612694174';
-    const mockRecords: gqlTypes.ExplorerQuery['records']['list'] = [
+    const mockRecords = [
         {
             id: '613982168',
             whoAmI: {
@@ -74,6 +84,45 @@ describe('Explorer', () => {
                     values: [
                         {
                             linkPayload: {id: mockRecord.id, whoAmI: mockRecord}
+                        }
+                    ]
+                },
+                {
+                    attributeId: multivalLinkMockAttribute.id,
+                    attributeProperties: multivalLinkMockAttribute,
+                    values: [
+                        {
+                            linkPayload: {
+                                id: 'multivalRecord1',
+                                whoAmI: {...mockRecord, preview: null, label: 'Record A'}
+                            }
+                        },
+                        {
+                            linkPayload: {
+                                id: 'multivalRecord2',
+                                whoAmI: {...mockRecord, preview: null, label: 'Record B'}
+                            }
+                        },
+                        {
+                            linkPayload: {
+                                id: 'multivalRecord3',
+                                whoAmI: {...mockRecord, preview: null, label: 'Record C'}
+                            }
+                        },
+                        {
+                            linkPayload: {
+                                id: 'multivalRecord4',
+                                whoAmI: {...mockRecord, preview: null, label: 'Record D'}
+                            }
+                        },
+                        {
+                            linkPayload: {id: 'multivalRecord5', whoAmI: {...mockRecord, label: 'Record E'}}
+                        },
+                        {
+                            linkPayload: {id: 'multivalRecord6', whoAmI: {...mockRecord, label: 'Record F'}}
+                        },
+                        {
+                            linkPayload: {id: 'multivalRecord7', whoAmI: {...mockRecord, label: 'Record G'}}
                         }
                     ]
                 }
@@ -113,6 +162,11 @@ describe('Explorer', () => {
                             linkPayload: {id: mockRecord.id, whoAmI: mockRecord}
                         }
                     ]
+                },
+                {
+                    attributeId: multivalLinkMockAttribute.id,
+                    attributeProperties: multivalLinkMockAttribute,
+                    values: []
                 }
             ]
         }
@@ -197,15 +251,17 @@ describe('Explorer', () => {
         expect(screen.getByRole('table')).toBeVisible();
         expect(screen.getAllByRole('row')).toHaveLength(1 + mockRecords.length); // 1 header row + 2 records
         const [record1, record2] = mockRecords;
-        expect(screen.getByText(String(record1.whoAmI.label))).toBeInTheDocument();
-        expect(screen.getByText(String(record2.whoAmI.label))).toBeInTheDocument();
+        expect(screen.getByText(record1.whoAmI.label)).toBeInTheDocument();
+        expect(screen.getByText(record2.whoAmI.label)).toBeInTheDocument();
     });
 
     test('Should display the list of records in a table with attributes values', async () => {
         render(
             <Explorer
                 library="campaigns"
-                defaultViewSettings={{fields: [simpleMockAttribute.id, linkMockAttribute.id]}}
+                defaultViewSettings={{
+                    fields: [simpleMockAttribute.id, linkMockAttribute.id, multivalLinkMockAttribute.id]
+                }}
             />
         );
 
@@ -214,11 +270,22 @@ describe('Explorer', () => {
         expect(tableRows).toHaveLength(1 + mockRecords.length); // 1 header row + 2 records
         const [_headerRow, firstRecordRow] = tableRows;
         const [record1] = mockRecords;
+        const [_selectionCell, whoAmICell, simpleAttributeCell, linkCell, multivalLinkCell] =
+            within(firstRecordRow).getAllByRole('cell');
 
-        expect(within(firstRecordRow).getByText(String(record1.whoAmI.label))).toBeInTheDocument();
-        expect(within(firstRecordRow).getByText(recordId1)).toBeVisible();
-        expect(within(firstRecordRow).getByText(mockRecord.label)).toBeVisible();
-        expect(within(firstRecordRow).getByText(mockRecord.subLabel)).toBeVisible();
+        expect(within(whoAmICell).getByText(record1.whoAmI.label)).toBeInTheDocument();
+
+        expect(within(simpleAttributeCell).getByText(recordId1)).toBeVisible();
+
+        expect(within(linkCell).getByText(mockRecord.label)).toBeVisible();
+        expect(within(linkCell).getByText(mockRecord.subLabel)).toBeVisible();
+
+        expect(within(multivalLinkCell).getByText('RA')).toBeVisible();
+        expect(within(multivalLinkCell).getByText('RB')).toBeVisible();
+        expect(within(multivalLinkCell).getByText('RC')).toBeVisible();
+        expect(within(multivalLinkCell).getByText('RD')).toBeVisible();
+        expect(within(multivalLinkCell).getByRole('img')).toHaveAttribute('src', mockRecord.preview?.small);
+        expect(within(multivalLinkCell).getByText('+2')).toBeVisible();
     });
 
     test('Should be able to deactivate a record with default actions', async () => {
