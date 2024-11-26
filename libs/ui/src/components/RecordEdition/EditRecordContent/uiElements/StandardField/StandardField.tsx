@@ -243,11 +243,18 @@ const StandardField: FunctionComponent<
                 resultValue = submitResValue;
             }
 
-            dispatch({
-                type: StandardFieldReducerActionsTypes.UPDATE_AFTER_SUBMIT,
-                newValue: resultValue,
-                idValue
-            });
+            if (valueToSave === null) {
+                dispatch({
+                    type: StandardFieldReducerActionsTypes.UPDATE_AFTER_DELETE,
+                    idValue
+                });
+            } else {
+                dispatch({
+                    type: StandardFieldReducerActionsTypes.UPDATE_AFTER_SUBMIT,
+                    newValue: resultValue,
+                    idValue
+                });
+            }
 
             const index = fieldName ?? 0;
             setPresentationValues(previousPresentationValues => {
