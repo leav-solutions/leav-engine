@@ -201,7 +201,11 @@ interface IStandardFieldValueProps {
     presentationValue: string;
     state: IStandardFieldReducerState;
     dispatch: StandardFieldDispatchFunc;
-    onSubmit: (idValue: IdValue, value: AnyPrimitive, fieldName?: number) => Promise<void | ISubmitMultipleResult>;
+    onSubmit: (
+        idValue: IdValue,
+        value: AnyPrimitive | null,
+        fieldName?: number
+    ) => Promise<void | ISubmitMultipleResult>;
     onDelete: (idValue: IdValue) => void;
     onScopeChange: (scope: VersionFieldScope) => void;
     listField?: FormListFieldData;
@@ -249,9 +253,7 @@ function StandardFieldValue({
 
     const _handleSubmit = async (valueToSave: StandardValueTypes) => {
         const convertedValue =
-            typeof valueToSave === 'object' && valueToSave !== null ? JSON.stringify(valueToSave) : valueToSave;
-
-        console.log('valueToSave', valueToSave);
+            valueToSave === null ? null : typeof valueToSave === 'object' ? JSON.stringify(valueToSave) : valueToSave;
 
         await onSubmit(fieldValue.idValue, convertedValue, listField?.name);
     };
