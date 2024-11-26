@@ -85,7 +85,7 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
     return (
         <KitColorPickerStyled
             value={currentHex}
-            showText={isFocused ? true : () => `${presentationValue}`}
+            showText={isFocused || !presentationValue ? true : () => `${presentationValue}`}
             aria-label={label}
             disabled={state.isReadOnly}
             disabledAlpha
