@@ -99,7 +99,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                     <DataView
                         dataGroupedFilteredSorted={data?.records ?? []}
                         itemActions={dedupItemActions}
-                        columnsLabels={data?.attributes ?? {}}
+                        attributesProperties={data?.attributes ?? {}}
                         attributesToDisplay={['whoAmI', ...view.fields]}
                     />
                 </>

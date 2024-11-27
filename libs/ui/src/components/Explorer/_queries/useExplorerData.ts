@@ -7,16 +7,17 @@ import {ExplorerQuery, useExplorerQuery} from '_ui/_gqlTypes';
 import {useLang} from '_ui/hooks';
 
 const _mapping = (data: ExplorerQuery, libraryId: string, availableLangs: string[]): IExplorerData => {
-    const attributes = {};
-    // TODO: can we use `Array.reduce` method?
-    // TODO: if no value on first record, no label!
-    if (data.records.list.length > 0) {
-        data.records.list[0].properties.forEach(({attributeId, values}) => {
-            attributes[attributeId] = values[0]?.attribute.label
-                ? localizedTranslation(values[0].attribute.label, availableLangs)
-                : attributeId;
-        });
-    }
+    const attributes = data.records.list.length
+        ? data.records.list[0].properties.reduce((acc, property) => {
+              acc[property.attributeId] = {
+                  ...property.attributeProperties,
+                  label: localizedTranslation(property.attributeProperties.label, availableLangs)
+              };
+
+              return acc;
+          }, {})
+        : {};
+
     const records = data.records.list.map(({whoAmI, properties}) => ({
         libraryId,
         key: whoAmI.id, // For <KitTable /> only

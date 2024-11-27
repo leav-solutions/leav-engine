@@ -33,6 +33,7 @@ import {ICommonSubscriptionFilters, ICoreSubscriptionsHelpersApp} from '../helpe
 import {IIndexationManagerApp} from '../indexationManagerApp';
 import {ICreateRecordParams, IRecordsQueryVariables} from './_types';
 import {IFindRecordParams} from 'domain/record/_types';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 
 export interface ICoreRecordApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -44,6 +45,7 @@ interface IDeps {
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.domain.permission': IPermissionDomain;
     'core.domain.library': ILibraryDomain;
+    'core.domain.attribute': IAttributeDomain;
     'core.utils': IUtils;
     'core.app.graphql': IGraphqlApp;
     'core.app.core.indexationManager': IIndexationManagerApp;
@@ -57,6 +59,7 @@ export default function ({
     'core.domain.eventsManager': eventsManagerDomain,
     'core.domain.permission': permissionDomain,
     'core.domain.library': libraryDomain,
+    'core.domain.attribute': attributeDomain,
     'core.utils': utils,
     'core.app.graphql': graphqlApp,
     'core.app.core.indexationManager': indexationManagerApp,
@@ -116,6 +119,7 @@ export default function ({
 
                     type RecordProperty {
                         attributeId: ID!,
+                        attributeProperties: Attribute!,
                         values: [GenericValue!]!
                     }
 
@@ -403,6 +407,10 @@ export default function ({
                             Promise.all(
                                 attributeIds.map(async attributeId => ({
                                     attributeId,
+                                    attributeProperties: await attributeDomain.getAttributeProperties({
+                                        id: attributeId,
+                                        ctx
+                                    }),
                                     values: await _getPropertyValues(parent, attributeId, ctx)
                                 }))
                             ),
