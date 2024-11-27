@@ -45,9 +45,9 @@ interface ITableCellProps {
 
 export const TableCell: FunctionComponent<ITableCellProps> = ({values, attributeProperties}) => {
     const {t} = useSharedTranslation();
-    if (values.length > 1 && values.every(isStandardValue)) {
+    if (values.length > 1 && values.every(value => isStandardValue(value, attributeProperties))) {
         const tags: IKitTagConfig[] = values.map(value => {
-            switch (value.attribute.format) {
+            switch (attributeProperties.format) {
                 case AttributeFormat.boolean:
                     return {
                         idCardProps: {
@@ -57,7 +57,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                     };
                 default:
                     const valueContent =
-                        value.attribute.format === AttributeFormat.encrypted ? '●●●●●●●●●●●●' : value.valuePayload;
+                        attributeProperties.format === AttributeFormat.encrypted ? '●●●●●●●●●●●●' : value.valuePayload;
                     return {
                         idCardProps: {description: valueContent},
                         type: 'primary'
