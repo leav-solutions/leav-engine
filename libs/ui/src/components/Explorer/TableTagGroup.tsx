@@ -2,30 +2,31 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitTag, KitTooltip} from 'aristid-ds';
-import {IKitTagConfig} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types';
+import {IKitTag} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types';
 import {FunctionComponent} from 'react';
 import styled from 'styled-components';
 
 const StyledTagsGroupDiv = styled.div`
     display: flex;
-    column-gap: 4px;
-    row-gap: 2px;
+    column-gap: calc(var(--general-spacing-xxs) * 1px);
+    row-gap: calc(var(--general-spacing-xxs) * 0.5px);
     flex-wrap: wrap;
 
     & > span {
-        margin-right: 0;
+        margin-right: var(--general-spacing-none);
     }
 `;
 
 export const TableTagGroup: FunctionComponent<{
-    tags: IKitTagConfig[];
+    tags: IKitTag[];
     maxTags?: number;
 }> = ({tags, maxTags = 3}) => {
     const hiddenTags = tags.slice(maxTags);
+    const visibleTags = tags.slice(0, maxTags);
 
     return (
         <StyledTagsGroupDiv>
-            {tags.slice(0, maxTags).map(tag => (
+            {visibleTags.map(tag => (
                 <KitTag {...tag} />
             ))}
             {hiddenTags.length > 0 && (

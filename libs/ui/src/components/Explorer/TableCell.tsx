@@ -35,7 +35,7 @@ const isStandardValue = (
 const StyledCenteringWrapper = styled.div`
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: calc(var(--general-spacing-xs) * 1px);
 `;
 
 interface ITableCellProps {
@@ -45,8 +45,8 @@ interface ITableCellProps {
 
 export const TableCell: FunctionComponent<ITableCellProps> = ({values, attributeProperties}) => {
     const {t} = useSharedTranslation();
-    if (values.length > 1 && isStandardValue(values[0])) {
-        const tags: IKitTagConfig[] = values.map((value: PropertyValueValueFragment) => {
+    if (values.length > 1 && values.every(isStandardValue)) {
+        const tags: IKitTagConfig[] = values.map(value => {
             switch (value.attribute.format) {
                 case AttributeFormat.boolean:
                     return {
