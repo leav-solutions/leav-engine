@@ -41,7 +41,7 @@ const linkMockAttribute: gqlTypes.AttributePropertiesFragment = {
 describe('Explorer', () => {
     const recordId1 = '613982168';
     const recordId2 = '612694174';
-    const mockRecords: gqlTypes.ExplorerQuery['records']['list'] = [
+    const mockRecords = [
         {
             id: '613982168',
             whoAmI: {
@@ -116,7 +116,8 @@ describe('Explorer', () => {
                 }
             ]
         }
-    ];
+    ] satisfies gqlTypes.ExplorerQuery['records']['list'];
+
     const mockExplorerQueryResult: Mockify<typeof gqlTypes.useExplorerQuery> = {
         loading: false,
         called: true,
@@ -196,8 +197,8 @@ describe('Explorer', () => {
         expect(screen.getByRole('table')).toBeVisible();
         expect(screen.getAllByRole('row')).toHaveLength(1 + mockRecords.length); // 1 header row + 2 records
         const [record1, record2] = mockRecords;
-        expect(screen.getByText(String(record1.whoAmI.label))).toBeInTheDocument();
-        expect(screen.getByText(String(record2.whoAmI.label))).toBeInTheDocument();
+        expect(screen.getByText(record1.whoAmI.label)).toBeInTheDocument();
+        expect(screen.getByText(record2.whoAmI.label)).toBeInTheDocument();
     });
 
     test('Should display the list of records in a table with attributes values', async () => {
@@ -214,10 +215,10 @@ describe('Explorer', () => {
         const [_headerRow, firstRecordRow] = tableRows;
         const [record1] = mockRecords;
 
-        expect(within(firstRecordRow).getByText(String(record1.whoAmI.label))).toBeInTheDocument();
+        expect(within(firstRecordRow).getByText(record1.whoAmI.label)).toBeInTheDocument();
         expect(within(firstRecordRow).getByText(recordId1)).toBeVisible();
-        expect(within(firstRecordRow).getByText(String(mockRecord.label))).toBeVisible();
-        expect(within(firstRecordRow).getByText(String(mockRecord.subLabel))).toBeVisible();
+        expect(within(firstRecordRow).getByText(mockRecord.label)).toBeVisible();
+        expect(within(firstRecordRow).getByText(mockRecord.subLabel)).toBeVisible();
     });
 
     test('Should be able to deactivate a record with default actions', async () => {
