@@ -1,10 +1,4 @@
 fragment PropertyValue on GenericValue {
-    attribute {
-        id
-        type
-        label
-        format
-    }
     ... on Value {
         valuePayload: payload
     }
@@ -22,12 +16,23 @@ fragment PropertyValue on GenericValue {
     }
 }
 
+fragment AttributeProperties on Attribute {
+    id
+    label
+    type
+    format
+    multiple_values
+}
+
 query Explorer($libraryId: ID!, $attributeIds: [ID!]!, $filters: [RecordFilterInput]) {
     records(library: $libraryId, filters: $filters) {
         list {
             ...RecordIdentity
             properties(attributeIds: $attributeIds) {
                 attributeId
+                attributeProperties {
+                    ...AttributeProperties
+                }
                 values {
                     ...PropertyValue
                 }
