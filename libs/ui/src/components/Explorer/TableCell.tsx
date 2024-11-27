@@ -15,6 +15,8 @@ import {KitTag, KitTypography} from 'aristid-ds';
 import {FunctionComponent} from 'react';
 import styled from 'styled-components';
 import {IdCard} from './IdCard';
+import {IKitTag, IKitTagConfig} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types';
+import {TableTagGroup} from './TableTagGroup';
 
 const isLinkValue = (
     v: PropertyValueFragment,
@@ -33,6 +35,7 @@ const isStandardValue = (
 const StyledCenteringWrapper = styled.div`
     display: flex;
     align-items: center;
+    gap: calc(var(--general-spacing-xs) * 1px);
 `;
 
 interface ITableCellProps {
@@ -42,6 +45,27 @@ interface ITableCellProps {
 
 export const TableCell: FunctionComponent<ITableCellProps> = ({values, attributeProperties}) => {
     const {t} = useSharedTranslation();
+    if (values.length > 1 && values.every(value => isStandardValue(value, attributeProperties))) {
+        const tags: IKitTagConfig[] = values.map(value => {
+            switch (attributeProperties.format) {
+                case AttributeFormat.boolean:
+                    return {
+                        idCardProps: {
+                            description: value.valuePayload ? String(t('global.yes')) : String(t('global.no'))
+                        },
+                        type: value.valuePayload ? 'primary' : ('neutral' as IKitTag['type'])
+                    };
+                default:
+                    const valueContent =
+                        attributeProperties.format === AttributeFormat.encrypted ? '●●●●●●●●●●●●' : value.valuePayload;
+                    return {
+                        idCardProps: {description: valueContent},
+                        type: 'primary'
+                    };
+            }
+        });
+        return <TableTagGroup tags={tags} />;
+    }
 
     return (
         <StyledCenteringWrapper>
