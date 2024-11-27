@@ -36,10 +36,7 @@ const isRecordFormElementsValueLinkValues = (
 ): values is RecordFormElementsValueLinkValue[] =>
     attribute.type === AttributeType.advanced_link && attribute.multiple_values === true;
 
-const isRecordFormElementsStandardValues = (
-    values: RecordFormElementsValue[],
-    attribute: RecordFormElementAttribute
-): values is RecordFormElementsValueStandardValue[] =>
+const isRecordFormElementsMultipleValues = (attribute: RecordFormElementAttribute) =>
     attribute.type === AttributeType.advanced && attribute.multiple_values === true;
 
 const formatStandardInitialValue = (
@@ -94,7 +91,7 @@ export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
             return acc;
         }
 
-        if (isRecordFormElementsStandardValues(values, attribute)) {
+        if (isRecordFormElementsMultipleValues(attribute)) {
             acc[attribute.id] =
                 values.length === 0
                     ? [null]
