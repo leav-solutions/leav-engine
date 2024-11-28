@@ -14,7 +14,7 @@ import {usePrimaryActionsButton} from './usePrimaryActions';
 import {ExplorerTitle} from './ExplorerTitle';
 import {useCreateAction} from './useCreateAction';
 import {
-    useOpenSettings,
+    useOpenViewSettings,
     SidePanel,
     useEditSettings,
     viewSettingsReducer,
@@ -80,8 +80,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 
     const {primaryButton} = usePrimaryActionsButton([...enabledDefaultActions, ...(primaryActions ?? [])]);
 
-    // TODO: harmonize to other hook signature that return only object
-    const settingsButton = useOpenSettings(library);
+    const {viewSettingsButton} = useOpenViewSettings(library);
 
     // TODO: remove SET
     const dedupItemActions = [...new Set([editAction, deactivateAction, ...(itemActions ?? [])].filter(Boolean))];
@@ -97,7 +96,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                             <ExplorerTitle library={library} title={title} />
                         </KitTypography.Title>
                         <KitSpace size="xs">
-                            {settingsButton}
+                            {viewSettingsButton}
                             {primaryButton}
                         </KitSpace>
                     </ExplorerHeaderDivStyled>
