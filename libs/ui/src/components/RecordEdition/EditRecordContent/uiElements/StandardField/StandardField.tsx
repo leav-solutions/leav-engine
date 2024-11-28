@@ -365,7 +365,9 @@ const StandardField: FunctionComponent<
         antdRemove: FormListOperation['remove'],
         deletedFieldIndex: number
     ) => {
-        await onValueDelete({id_value: field.idValue}, attribute.id);
+        if (field.idValue !== newValueId) {
+            await onValueDelete({id_value: field.idValue}, attribute.id);
+        }
         antdRemove(deletedFieldIndex);
         setPresentationValues(previousPresentationValues =>
             previousPresentationValues.filter((_, index) => index !== deletedFieldIndex)
