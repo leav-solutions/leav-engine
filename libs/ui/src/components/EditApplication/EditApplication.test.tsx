@@ -153,7 +153,7 @@ describe('EditApplication', () => {
 
             await waitFor(() => expect(screen.getByRole('tablist')).toBeInTheDocument());
 
-            expect(screen.getByRole('tab', {name: /info/})).toHaveAttribute('aria-selected', 'true');
+            expect(screen.getByRole('tab', {name: /info/})).toHaveClass('active');
         });
 
         test('Can select default active tab', async () => {
@@ -171,7 +171,7 @@ describe('EditApplication', () => {
                 {
                     key: 'custom',
                     label: 'Custom',
-                    children: <div>Custom tab</div>
+                    tabContent: <div>Custom tab</div>
                 }
             ];
 
@@ -193,7 +193,7 @@ describe('EditApplication', () => {
                 {
                     key: 'custom',
                     label: 'Custom',
-                    children: <div>Custom tab</div>
+                    tabContent: <div>Custom tab</div>
                 }
             ];
 

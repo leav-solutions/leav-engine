@@ -1349,6 +1349,7 @@ export type ExplorerQueryVariables = Exact<{
   libraryId: Scalars['ID'];
   attributeIds: Array<Scalars['ID']> | Scalars['ID'];
   filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
+  multipleSort?: InputMaybe<Array<RecordSortInput> | RecordSortInput>;
 }>;
 
 
@@ -3973,8 +3974,8 @@ export type AddViewMutationHookResult = ReturnType<typeof useAddViewMutation>;
 export type AddViewMutationResult = Apollo.MutationResult<AddViewMutation>;
 export type AddViewMutationOptions = Apollo.BaseMutationOptions<AddViewMutation, AddViewMutationVariables>;
 export const ExplorerDocument = gql`
-    query Explorer($libraryId: ID!, $attributeIds: [ID!]!, $filters: [RecordFilterInput]) {
-  records(library: $libraryId, filters: $filters) {
+    query Explorer($libraryId: ID!, $attributeIds: [ID!]!, $filters: [RecordFilterInput], $multipleSort: [RecordSortInput!]) {
+  records(library: $libraryId, filters: $filters, multipleSort: $multipleSort) {
     list {
       ...RecordIdentity
       properties(attributeIds: $attributeIds) {
@@ -4008,6 +4009,7 @@ ${PropertyValueFragmentDoc}`;
  *      libraryId: // value for 'libraryId'
  *      attributeIds: // value for 'attributeIds'
  *      filters: // value for 'filters'
+ *      multipleSort: // value for 'multipleSort'
  *   },
  * });
  */

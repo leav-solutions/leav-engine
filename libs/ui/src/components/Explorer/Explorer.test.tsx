@@ -260,7 +260,7 @@ describe('Explorer', () => {
             <Explorer
                 library="campaigns"
                 defaultViewSettings={{
-                    fields: [simpleMockAttribute.id, linkMockAttribute.id, multivalLinkMockAttribute.id]
+                    attributesIds: [simpleMockAttribute.id, linkMockAttribute.id, multivalLinkMockAttribute.id]
                 }}
             />
         );
@@ -270,7 +270,7 @@ describe('Explorer', () => {
         expect(tableRows).toHaveLength(1 + mockRecords.length); // 1 header row + 2 records
         const [_headerRow, firstRecordRow] = tableRows;
         const [record1] = mockRecords;
-        const [_selectionCell, whoAmICell, simpleAttributeCell, linkCell, multivalLinkCell] =
+        const [whoAmICell, simpleAttributeCell, linkCell, multivalLinkCell] =
             within(firstRecordRow).getAllByRole('cell');
 
         expect(within(whoAmICell).getByText(record1.whoAmI.label)).toBeInTheDocument();
