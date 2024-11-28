@@ -7,7 +7,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {SettingsPanel} from '../router-menu/SettingsPanel';
 import {useEditSettings} from './useEditSettings';
 
-export const useOpenSettings = (library: string) => {
+export const useOpenViewSettings = (library: string) => {
     const {setActiveSettings} = useEditSettings();
     const {t} = useSharedTranslation();
 
@@ -17,13 +17,15 @@ export const useOpenSettings = (library: string) => {
             title: t('explorer.settings')
         });
 
-    return (
-        <KitButton
-            type="tertiary"
-            color="neutral"
-            icon={<FaSlidersH />}
-            onClick={_openSettingsPanel}
-            title={String(t('explorer.settings')) /* TODO: avoid transform null to 'null' */}
-        />
-    );
+    return {
+        viewSettingsButton: (
+            <KitButton
+                type="tertiary"
+                color="neutral"
+                icon={<FaSlidersH />}
+                onClick={_openSettingsPanel}
+                title={String(t('explorer.settings')) /* TODO: avoid transform null to 'null' */}
+            />
+        )
+    };
 };
