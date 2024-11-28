@@ -14,13 +14,13 @@ import {usePrimaryActionsButton} from './usePrimaryActions';
 import {ExplorerTitle} from './ExplorerTitle';
 import {useCreateAction} from './useCreateAction';
 import {
-    useOpenViewSettings,
+    type IViewSettingsState,
     SidePanel,
     useEditSettings,
-    viewSettingsReducer,
+    useOpenViewSettings,
     ViewSettingsContext,
     viewSettingsInitialState,
-    type IViewSettingsState
+    viewSettingsReducer
 } from './manage-view-settings';
 
 interface IExplorerProps {
@@ -79,9 +79,6 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 
     const {viewSettingsButton} = useOpenViewSettings(library);
 
-    // TODO: remove SET
-    const dedupItemActions = [...new Set([editAction, deactivateAction, ...(itemActions ?? [])].filter(Boolean))];
-
     return (
         <ViewSettingsContext.Provider value={{view, dispatch}}>
             {loading ? (
@@ -99,7 +96,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                     </ExplorerHeaderDivStyled>
                     <DataView
                         dataGroupedFilteredSorted={data?.records ?? []}
-                        itemActions={dedupItemActions}
+                        itemActions={[editAction, deactivateAction, ...(itemActions ?? [])].filter(Boolean)}
                         attributesProperties={data?.attributes ?? {}}
                         attributesToDisplay={['whoAmI', ...view.attributesIds]}
                     />
