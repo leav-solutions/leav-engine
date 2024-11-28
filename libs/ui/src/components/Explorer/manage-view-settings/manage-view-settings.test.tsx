@@ -9,7 +9,7 @@ import {mockAttributeLink, mockAttributeSimple} from '_ui/__mocks__/common/attri
 import * as gqlTypes from '_ui/_gqlTypes';
 import {EditSettingsContextProvider} from './open-view-settings/EditSettingsContextProvider';
 import {SidePanel} from './open-view-settings/SidePanel';
-import {useOpenSettings} from './open-view-settings/useOpenSettings';
+import {useOpenViewSettings} from './open-view-settings/useOpenViewSettings';
 import {ViewSettingsContext} from './store-view-settings/ViewSettingsContext';
 import {IViewSettingsState, viewSettingsReducer} from './store-view-settings/viewSettingsReducer';
 import {viewSettingsInitialState} from './store-view-settings/viewSettingsInitialState';
@@ -17,9 +17,9 @@ import {SortOrder} from '_ui/_gqlTypes';
 import {waitFor} from '@testing-library/react';
 
 const MockOpenEditSettings: FunctionComponent = () => {
-    const OpenEditSettingsButton = useOpenSettings('');
+    const {viewSettingsButton} = useOpenViewSettings('');
 
-    return <>{OpenEditSettingsButton}</>;
+    return <>{viewSettingsButton}</>;
 };
 
 const MockViewSettingsContextProvider: FunctionComponent<{viewMock: IViewSettingsState}> = ({viewMock, children}) => {

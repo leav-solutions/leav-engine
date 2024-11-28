@@ -6,7 +6,7 @@ export type {IViewSettingsState} from './store-view-settings/viewSettingsReducer
 export {ViewSettingsContext} from './store-view-settings/ViewSettingsContext';
 export {viewSettingsInitialState} from './store-view-settings/viewSettingsInitialState';
 
-export {useOpenSettings} from './open-view-settings/useOpenSettings';
+export {useOpenViewSettings} from './open-view-settings/useOpenViewSettings';
 export {SidePanel} from './open-view-settings/SidePanel';
 export {useEditSettings} from './open-view-settings/useEditSettings';
 export {EditSettingsContextProvider} from './open-view-settings/EditSettingsContextProvider';
