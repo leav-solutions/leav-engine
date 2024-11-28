@@ -25,6 +25,7 @@ import {ISheet} from '../_types';
 import ImportKeysSelector from './ImportKeysSelector';
 import ImportMappingRowTitle from './ImportMappingRowTitle';
 import ImportSheetSettings from './ImportSheetSettings';
+import {IKitTabs} from 'aristid-ds/dist/Kit/DataDisplay/Tabs/types';
 
 interface IImportModalConfigStepProps {
     libraries: LibraryLightFragment[];
@@ -141,7 +142,7 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
         _changeSheetProperty(sheetIndex, {treeLinkLibrary, keyToAttributes});
     };
 
-    const tabItems = sheets.map((sheet, sheetIndex) => {
+    const tabItems: IKitTabs['items'] = sheets.map((sheet, sheetIndex) => {
         const isSheetIgnored = sheet.type === ImportType.IGNORE;
         const displayedRows = sheet.data.slice(0, 3);
         const _handleSelectKey = (columnIndex: number) => (keyType: 'key' | 'keyTo', value: boolean) => {
