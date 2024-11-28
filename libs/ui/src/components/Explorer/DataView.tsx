@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {cloneElement, FunctionComponent, ReactNode} from 'react';
-import {KitButton, KitDropDown, KitSpace, KitTable} from 'aristid-ds';
+import {KitButton, KitDropDown, KitSpace, KitTable, useKitTheme} from 'aristid-ds';
 import type {KitTableColumnType} from 'aristid-ds/dist/Kit/DataDisplay/Table/types';
 import {FaEllipsisH} from 'react-icons/fa';
 import {Override} from '@leav/utils';
@@ -27,6 +27,7 @@ export const DataView: FunctionComponent<IDataViewProps> = ({
     itemActions
 }) => {
     const {t} = useSharedTranslation();
+    const {theme} = useKitTheme();
 
     const _getActionButtons = (actions: Array<Override<IItemAction, {callback: () => void}>>): ReactNode => {
         const isLessThanFourActions = actions.length < 4;
@@ -106,6 +107,15 @@ export const DataView: FunctionComponent<IDataViewProps> = ({
                   ]
         );
 
-    //TODO: handle columns width based on attribute type/format
-    return <KitTable columns={columns} pagination={false} dataSource={dataGroupedFilteredSorted} tableLayout="fixed" />;
+    // TODO: handle columns width based on attribute type/format
+    return (
+        <KitTable
+            borderedRows
+            cellsBackgroundColor={theme.utilities.light}
+            columns={columns}
+            pagination={false}
+            dataSource={dataGroupedFilteredSorted}
+            tableLayout="fixed"
+        />
+    );
 };

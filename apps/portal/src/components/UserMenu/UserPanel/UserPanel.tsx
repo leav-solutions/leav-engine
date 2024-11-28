@@ -4,13 +4,20 @@
 import {FlagOutlined, LogoutOutlined} from '@ant-design/icons';
 import {useAuth, useLang} from '@leav/ui';
 import {getFlagByLang} from '@leav/utils';
-import {Drawer} from 'antd';
-import {KitMenu} from 'aristid-ds';
+import {Button, Drawer, Menu} from 'antd';
 import {useTranslation} from 'react-i18next';
 import {styled} from 'styled-components';
+import {FunctionComponent} from 'react';
 
-const FlagWrapper = styled.span`
-    margin-right: 0.5rem;
+const CustomMenu = styled(Menu)`
+    .anticon {
+        margin-right: 0.5em;
+    }
+`;
+
+const Wrapper = styled.div`
+    display: flex;
+    align-items: center;
 `;
 
 interface IUserPanelProps {
@@ -18,49 +25,68 @@ interface IUserPanelProps {
     onClose: () => void;
 }
 
-function UserPanel({isVisible, onClose}: IUserPanelProps): JSX.Element {
+const UserPanel: FunctionComponent<IUserPanelProps> = ({isVisible, onClose}) => {
     const {t} = useTranslation();
     const {logout} = useAuth();
-    const {availableLangs, lang: activeLang, setLang} = useLang();
-    const _handleLogout = () => {
-        logout();
-    };
-    const currentLang = activeLang[0];
+    const {availableLangs, setLang, defaultLang} = useLang();
 
-    const currentLangAction = {
-        icon: <FlagWrapper>{getFlagByLang(currentLang)}</FlagWrapper>,
-        label: t(`lang.${currentLang}`),
-        onClick: null,
-        isActive: true
-    };
-
-    const langMenuActions = availableLangs.map(lang => ({
-        icon: <FlagWrapper>{getFlagByLang(lang)}</FlagWrapper>,
-        label: t(`lang.${lang}`),
-        onClick: () => setLang(lang),
-        isActive: activeLang.indexOf(lang) !== -1
-    }));
+    const _handleLogout = () => logout();
 
     return (
         <Drawer
+            open={isVisible}
+            onClose={onClose}
+            placement="right"
             closeIcon={false}
             closable={false}
-            placement="right"
-            onClose={onClose}
-            open={isVisible}
             styles={{
                 body: {padding: 0}
             }}
             data-testid="user-panel"
         >
-            <KitMenu.Item
-                icon={<FlagOutlined />}
-                actions={[currentLangAction, ...langMenuActions]}
-                title={t('global.language')}
+            <CustomMenu
+                style={{
+                    height: '100%'
+                }}
+                mode="inline"
+                items={[
+                    {
+                        key: 'lang-switcher',
+                        label: (
+                            <Wrapper>
+                                <FlagOutlined />
+                                {t('global.language')}
+                                <div style={{marginInlineStart: '10px'}}>
+                                    {availableLangs.map(l => (
+                                        <Button
+                                            size="small"
+                                            shape="circle"
+                                            type={l === defaultLang ? 'text' : 'default'}
+                                            name={l}
+                                            key={l}
+                                            style={{padding: '5 5px'}}
+                                            onClick={() => setLang(l)}
+                                            icon={getFlagByLang(l)}
+                                        />
+                                    ))}
+                                </div>
+                            </Wrapper>
+                        )
+                    },
+                    {
+                        onClick: _handleLogout,
+                        key: 'logout',
+                        label: (
+                            <>
+                                <LogoutOutlined />
+                                {t('logout')}
+                            </>
+                        )
+                    }
+                ]}
             />
-            <KitMenu.Item icon={<LogoutOutlined />} title={t('logout')} onClick={_handleLogout} />
         </Drawer>
     );
-}
+};
 
 export default UserPanel;

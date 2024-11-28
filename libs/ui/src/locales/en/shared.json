@@ -623,7 +623,14 @@
         "view-type-mosaic": "Mosaic",
         "view-type-planning": "Planning",
         "filters": "Filters",
-        "sort": "Sort",
+        "sort-items": "Sort",
+        "sort-ascending": "Ascending",
+        "sort-descending": "Descending",
+        "sort-list": {
+            "active": "Active sorts",
+            "inactive": "Inactive sorts"
+        },
+        "available-attributes": "Other available attributes",
         "coming-soon": "Coming soon",
         "show": "Show",
         "hide": "Hide"

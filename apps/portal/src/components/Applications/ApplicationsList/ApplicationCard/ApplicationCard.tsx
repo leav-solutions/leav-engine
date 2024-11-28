@@ -84,6 +84,7 @@ function ApplicationCard({application, isFavorite = false, onChangeFavorite}: IA
                 icon={cover}
                 onClick={_handleClick}
                 actions={actions}
+                style={{width: 300}}
             />
             {isEditAppModalOpen && (
                 <EditApplicationModal

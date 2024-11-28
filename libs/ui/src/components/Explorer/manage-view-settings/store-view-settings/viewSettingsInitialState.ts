@@ -5,5 +5,6 @@ import {IViewSettingsState} from './viewSettingsReducer';
 
 export const viewSettingsInitialState: IViewSettingsState = {
     viewType: 'table',
-    fields: []
+    attributesIds: [],
+    sort: []
 };

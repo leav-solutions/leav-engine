@@ -54,7 +54,12 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     const {panelElement} = useEditSettings();
 
     const [view, dispatch] = useReducer(viewSettingsReducer, {...viewSettingsInitialState, ...defaultViewSettings});
-    const {data, loading, refetch} = useExplorerData(library, view.fields); // TODO: refresh when go back on page
+
+    const {data, loading, refetch} = useExplorerData({
+        libraryId: library,
+        attributeIds: view.attributesIds,
+        sorts: view.sort
+    }); // TODO: refresh when go back on page
 
     const {deactivateAction} = useDeactivateAction({
         isEnabled: isNotEmpty(defaultActionsForItem) && defaultActionsForItem.includes('deactivate')
@@ -100,7 +105,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                         dataGroupedFilteredSorted={data?.records ?? []}
                         itemActions={dedupItemActions}
                         attributesProperties={data?.attributes ?? {}}
-                        attributesToDisplay={['whoAmI', ...view.fields]}
+                        attributesToDisplay={['whoAmI', ...view.attributesIds]}
                     />
                 </>
             )}
