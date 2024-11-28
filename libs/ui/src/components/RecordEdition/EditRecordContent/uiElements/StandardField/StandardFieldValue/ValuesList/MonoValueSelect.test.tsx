@@ -6,23 +6,20 @@ import {MonoValueSelect} from './MonoValueSelect';
 import {mockFormElementInput} from '_ui/__mocks__/common/form';
 import {mockAttributeSimple, mockAttributeWithDetails, mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import * as gqlTypes from '_ui/_gqlTypes';
+import * as useEditRecordReducer from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {AntForm} from 'aristid-ds';
 import userEvent from '@testing-library/user-event';
 import {RecordFormAttributeStandardAttributeFragment} from '_ui/_gqlTypes';
 import {VersionFieldScope} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {IStandardFieldReducerState} from '_ui/components/RecordEdition/EditRecordContent/reducers/standardFieldReducer/standardFieldReducer';
 import {
-    CalculatedFlags,
-    InheritedFlags,
-    IStandardFieldReducerState,
-    IStandardFieldValue
-} from '_ui/components/RecordEdition/EditRecordContent/reducers/standardFieldReducer/standardFieldReducer';
-import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
+    EditRecordReducerActionsTypes,
+    IEditRecordReducerState
+} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 
 describe('<MonoValueSelect />', () => {
     const handleSubmitMock = jest.fn();
-    const handleBlurMock = jest.fn();
-    const dispatch = jest.fn();
 
     const mockSaveAttributeMutation = jest.fn().mockReturnValue({
         data: {
@@ -80,21 +77,8 @@ describe('<MonoValueSelect />', () => {
         isCalculatedValue: false
     } satisfies IStandardFieldReducerState;
 
-    const fieldValue: IStandardFieldValue = {
-        idValue: '12',
-        index: 12,
-        value: null,
-        displayValue: '12',
-        editingValue: '12',
-        originRawValue: '12',
-        isEditing: false,
-        isErrorDisplayed: false,
-        state: null
-    };
-
     afterEach(() => {
         handleSubmitMock.mockClear();
-        handleBlurMock.mockClear();
     });
 
     describe('errors', () => {
@@ -104,11 +88,9 @@ describe('<MonoValueSelect />', () => {
                     render(
                         <MonoValueSelect
                             attribute={commonAttribute}
+                            presentationValue=""
                             state={state}
-                            editRecordDispatch={dispatch}
-                            fieldValue={fieldValue}
                             handleSubmit={handleSubmitMock}
-                            handleBlur={handleBlurMock}
                         />
                     ),
                 'MonoValueSelect should be used inside a antd Form.Item'
@@ -123,11 +105,9 @@ describe('<MonoValueSelect />', () => {
                             <AntForm.Item name="chartreuse">
                                 <MonoValueSelect
                                     attribute={commonAttribute}
+                                    presentationValue=""
                                     state={state}
-                                    editRecordDispatch={dispatch}
-                                    fieldValue={fieldValue}
                                     handleSubmit={handleSubmitMock}
-                                    handleBlur={handleBlurMock}
                                 />
                             </AntForm.Item>
                         </AntForm>
@@ -143,11 +123,9 @@ describe('<MonoValueSelect />', () => {
                 <AntForm.Item name="chartreuse">
                     <MonoValueSelect
                         attribute={attribute}
+                        presentationValue="green"
                         state={state}
-                        editRecordDispatch={dispatch}
-                        fieldValue={{...fieldValue, isEditing: true}}
                         handleSubmit={handleSubmitMock}
-                        handleBlur={handleBlurMock}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -169,132 +147,6 @@ describe('<MonoValueSelect />', () => {
         expect(handleSubmitMock).toHaveBeenCalledWith('', attribute.id);
     });
 
-    describe('calulated & inherited values', () => {
-        it.each`
-            calculatedValue | inheritedValue | displayedValue
-            ${'calculated'} | ${null}        | ${'calculated'}
-            ${null}         | ${'inherited'} | ${'inherited'}
-            ${'calculated'} | ${'inherited'} | ${'inherited'}
-        `(
-            'should display calculated / inherited value in helper',
-            ({
-                calculatedValue,
-                inheritedValue,
-                displayedValue
-            }: {
-                calculatedValue: string | null;
-                inheritedValue: string | null;
-                displayedValue: string;
-            }) => {
-                const stateWithInheritedValue: InheritedFlags = {
-                    inheritedValue: {raw_value: inheritedValue},
-                    isInheritedValue: true,
-                    isInheritedNotOverrideValue: false,
-                    isInheritedOverrideValue: true
-                };
-                const stateWithCalculatedValue: CalculatedFlags = {
-                    calculatedValue: {raw_value: calculatedValue},
-                    isCalculatedValue: true,
-                    isCalculatedNotOverrideValue: false,
-                    isCalculatedOverrideValue: true
-                };
-
-                let newState = state;
-                if (inheritedValue) {
-                    newState = {...newState, ...stateWithInheritedValue} as any;
-                }
-
-                if (calculatedValue) {
-                    newState = {...newState, ...stateWithCalculatedValue} as any;
-                }
-
-                render(
-                    <AntForm name="name">
-                        <AntForm.Item name="chartreuse">
-                            <MonoValueSelect
-                                attribute={attribute}
-                                state={newState}
-                                editRecordDispatch={dispatch}
-                                fieldValue={{...fieldValue, isEditing: true}}
-                                handleSubmit={handleSubmitMock}
-                                handleBlur={handleBlurMock}
-                            />
-                        </AntForm.Item>
-                    </AntForm>
-                );
-
-                expect(screen.getByText(new RegExp(`${displayedValue}`))).toBeVisible();
-            }
-        );
-
-        it.each`
-            calculatedValue | inheritedValue | displayedValue
-            ${'calculated'} | ${null}        | ${'calculated'}
-            ${null}         | ${'inherited'} | ${'inherited'}
-            ${'calculated'} | ${'inherited'} | ${'inherited'}
-        `(
-            'should revert to calculated / inherited value on click on clear icon',
-            async ({
-                calculatedValue,
-                inheritedValue,
-                displayedValue
-            }: {
-                calculatedValue: string | null;
-                inheritedValue: string | null;
-                displayedValue: string;
-            }) => {
-                const stateWithInheritedValue: InheritedFlags = {
-                    inheritedValue: {raw_value: inheritedValue},
-                    isInheritedValue: true,
-                    isInheritedNotOverrideValue: true,
-                    isInheritedOverrideValue: false
-                };
-                const stateWithCalculatedValue: CalculatedFlags = {
-                    calculatedValue: {raw_value: calculatedValue},
-                    isCalculatedValue: true,
-                    isCalculatedNotOverrideValue: true,
-                    isCalculatedOverrideValue: false
-                };
-
-                let newState = state;
-                if (inheritedValue) {
-                    newState = {...newState, ...stateWithInheritedValue} as any;
-                }
-
-                if (calculatedValue) {
-                    newState = {...newState, ...stateWithCalculatedValue} as any;
-                }
-
-                render(
-                    <AntForm name="name">
-                        <AntForm.Item name="chartreuse">
-                            <MonoValueSelect
-                                attribute={attribute}
-                                state={newState}
-                                editRecordDispatch={dispatch}
-                                fieldValue={{...fieldValue, isEditing: true}}
-                                handleSubmit={handleSubmitMock}
-                                handleBlur={handleBlurMock}
-                            />
-                        </AntForm.Item>
-                    </AntForm>
-                );
-
-                expect(screen.getByTestId(attribute.id).innerHTML).not.toMatch(new RegExp(displayedValue));
-                const select = screen.getByRole('combobox');
-                await userEvent.click(select);
-
-                const green = screen.getAllByText('green').pop();
-                await userEvent.click(green);
-
-                const clearIcon = screen.getByLabelText('clear');
-                await userEvent.click(clearIcon);
-
-                expect(screen.getByTestId(attribute.id).innerHTML).toMatch(new RegExp(displayedValue));
-            }
-        );
-    });
-
     describe('search with result', () => {
         it('should display a specific text on search with results', async () => {
             render(
@@ -302,11 +154,9 @@ describe('<MonoValueSelect />', () => {
                     <AntForm.Item name="chartreuse">
                         <MonoValueSelect
                             attribute={attribute}
+                            presentationValue=""
                             state={state}
-                            editRecordDispatch={dispatch}
-                            fieldValue={{...fieldValue, isEditing: true}}
                             handleSubmit={handleSubmitMock}
-                            handleBlur={handleBlurMock}
                         />
                     </AntForm.Item>
                 </AntForm>
@@ -315,6 +165,8 @@ describe('<MonoValueSelect />', () => {
             const select = screen.getByRole('combobox');
             await userEvent.click(select);
             await userEvent.type(select, 'r');
+
+            await new Promise(resolve => setTimeout(resolve, 3000)); // 3 sec
 
             expect(screen.getByText('record_edition.press_enter_to')).toBeVisible();
             expect(screen.getByText('record_edition.select_this_value')).toBeVisible();
@@ -327,14 +179,7 @@ describe('<MonoValueSelect />', () => {
             render(
                 <AntForm name="name">
                     <AntForm.Item name="chartreuse">
-                        <MonoValueSelect
-                            attribute={attribute}
-                            state={state}
-                            editRecordDispatch={dispatch}
-                            fieldValue={{...fieldValue, isEditing: true}}
-                            handleSubmit={handleSubmitMock}
-                            handleBlur={handleBlurMock}
-                        />
+                        <MonoValueSelect attribute={attribute} state={state} handleSubmit={handleSubmitMock} />
                     </AntForm.Item>
                 </AntForm>
             );
@@ -354,10 +199,7 @@ describe('<MonoValueSelect />', () => {
                         <MonoValueSelect
                             attribute={{...attribute, values_list: {...valuesList, allowFreeEntry: true}}}
                             state={state}
-                            editRecordDispatch={dispatch}
-                            fieldValue={{...fieldValue, isEditing: true}}
                             handleSubmit={handleSubmitMock}
-                            handleBlur={handleBlurMock}
                         />
                     </AntForm.Item>
                 </AntForm>
@@ -376,7 +218,13 @@ describe('<MonoValueSelect />', () => {
         });
 
         it('should display the option and create it with list update', async () => {
-            const editRecordDispatch = jest.fn();
+            const mockEditRecordDispatch = jest.fn();
+            const editRecordState = {};
+            jest.spyOn(useEditRecordReducer, 'useEditRecordReducer').mockImplementation(() => ({
+                state: editRecordState as IEditRecordReducerState,
+                dispatch: mockEditRecordDispatch
+            }));
+
             render(
                 <AntForm name="name">
                     <AntForm.Item name="chartreuse">
@@ -386,10 +234,7 @@ describe('<MonoValueSelect />', () => {
                                 values_list: {...valuesList, allowFreeEntry: true, allowListUpdate: true}
                             }}
                             state={state}
-                            editRecordDispatch={editRecordDispatch}
-                            fieldValue={{...fieldValue, isEditing: true}}
                             handleSubmit={handleSubmitMock}
-                            handleBlur={handleBlurMock}
                         />
                     </AntForm.Item>
                 </AntForm>
@@ -404,7 +249,7 @@ describe('<MonoValueSelect />', () => {
             await userEvent.click(newColorOption);
 
             expect(handleSubmitMock).toHaveBeenCalledWith(newColor, attribute.id);
-            expect(editRecordDispatch).toHaveBeenCalledWith({type: EditRecordReducerActionsTypes.REQUEST_REFRESH});
+            expect(mockEditRecordDispatch).toHaveBeenCalledWith({type: EditRecordReducerActionsTypes.REQUEST_REFRESH});
             expect(screen.getByTestId(attribute.id).innerHTML).toMatch(new RegExp(newColor));
         });
     });

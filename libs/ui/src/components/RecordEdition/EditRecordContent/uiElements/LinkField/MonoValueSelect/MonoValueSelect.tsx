@@ -104,7 +104,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
             status={errors.length > 0 && 'error'}
             showSearch
             optionFilterProp="label"
-            placeholder={t('record_edition.record_select')}
+            placeholder={t('record_edition.placeholder.record_select')}
             onSelect={handleSelect}
             onChange={onChange}
             onClear={required ? undefined : handleClear}

@@ -97,20 +97,20 @@ export interface ISubmittedValueBase {
     metadata?: IKeyValue<AnyPrimitive>;
 }
 
-export interface IFormElementProps<SettingsType> {
-    element: FormElement<SettingsType>;
+export interface IFormElementProps<SettingsType, RecordFormElements = RecordFormElementsValue> {
+    element: FormElement<SettingsType, RecordFormElements>;
     onValueSubmit?: SubmitValueFunc;
     onValueDelete?: DeleteValueFunc;
     onDeleteMultipleValues?: DeleteMultipleValuesFunc;
     metadataEdit?: boolean;
 }
 
-export type FormElement<SettingsType> = Override<
+export type FormElement<SettingsType, RecordFormElements = RecordFormElementsValue> = Override<
     RecordFormElementFragment,
     {
         settings: SettingsType;
         uiElementType: FormUIElementTypes | FormFieldTypes;
-        values: RecordFormElementsValue[];
+        values: RecordFormElements[];
     }
 > & {
     uiElement: (props: IFormElementProps<unknown> & {antdForm?: FormInstance}) => JSX.Element;

@@ -2,79 +2,56 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitDatePicker} from 'aristid-ds';
-import {FunctionComponent, useEffect, useRef} from 'react';
-import {
-    IStandardFieldReducerState,
-    IStandardFieldValue
-} from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import {Form, type GetRef} from 'antd';
+import {FunctionComponent, useState} from 'react';
+import {Form} from 'antd';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
-import {IProvidedByAntFormItem, StandardValueTypes} from '../../../_types';
-import {DatePickerProps} from 'antd/lib/date-picker';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
-import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
-import {useLang} from '_ui/hooks';
-import {localizedTranslation} from '@leav/utils';
 import {setDateToUTCNoon} from '_ui/_utils';
-interface IDSDatePickerWrapperProps extends IProvidedByAntFormItem<DatePickerProps> {
-    state: IStandardFieldReducerState;
-    attribute: RecordFormAttributeFragment;
-    fieldValue: IStandardFieldValue;
-    handleSubmit: (value: StandardValueTypes, id?: string) => void;
-    handleBlur: () => void;
-    shouldShowValueDetailsButton?: boolean;
-}
+import {IStandFieldValueContentProps} from './_types';
+import {IKitDatePicker} from 'aristid-ds/dist/Kit/DataEntry/DatePicker/types';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 const KitDatePickerStyled = styled(KitDatePicker)<{$shouldHighlightColor: boolean}>`
+    width: 100%;
     color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
 `;
 
-export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> = ({
+export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps<IKitDatePicker>> = ({
     value,
+    presentationValue,
     onChange,
-    handleBlur,
     state,
     attribute,
-    fieldValue,
-    handleSubmit,
-    shouldShowValueDetailsButton = false
+    handleSubmit
 }) => {
     if (!onChange) {
         throw Error('DSDatePickerWrapper should be used inside a antd Form.Item');
     }
 
-    const {t} = useSharedTranslation();
-    const {lang: availableLangs} = useLang();
+    const [isFocused, setIsFocused] = useState(false);
     const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick} = useValueDetailsButton({
-        value: fieldValue?.value,
-        attribute
-    });
+    const {t} = useSharedTranslation();
 
-    const inputRef = useRef<GetRef<typeof KitDatePickerStyled>>(null);
+    const isErrors = errors.length > 0;
 
-    useEffect(() => {
-        if (fieldValue.isEditing && inputRef.current) {
-            inputRef.current.nativeElement.click(); // To automatically open the date picker
-        }
-    }, [fieldValue.isEditing]);
-
-    const _resetToInheritedOrCalculatedValue = () => {
+    const _resetToInheritedOrCalculatedValue = async () => {
         if (state.isInheritedValue) {
             onChange(dayjs.unix(Number(state.inheritedValue.raw_value)), state.inheritedValue.raw_value);
         } else if (state.isCalculatedValue) {
             onChange(dayjs.unix(Number(state.calculatedValue.raw_value)), state.calculatedValue.raw_value);
         }
 
-        handleSubmit('', state.attribute.id);
+        await handleSubmit(null, state.attribute.id);
     };
 
-    const _handleDateChange: (datePickerDate: dayjs.Dayjs | null, antOnChangeParams: string | string[]) => void = (
-        datePickerDate,
-        ...antOnChangeParams
-    ) => {
+    const _handleFocus = () => setIsFocused(true);
+
+    const _handleBlur = () => setIsFocused(false);
+
+    const _handleDateChange: (
+        datePickerDate: dayjs.Dayjs | null,
+        antOnChangeParams: string | string[]
+    ) => void = async (datePickerDate, ...antOnChangeParams) => {
         if ((state.isInheritedValue || state.isCalculatedValue) && datePickerDate === null) {
             _resetToInheritedOrCalculatedValue();
             return;
@@ -91,43 +68,27 @@ export const DSDatePickerWrapper: FunctionComponent<IDSDatePickerWrapperProps> =
             return;
         }
 
-        let dateToSave = null;
+        let dateToSave = '';
         if (!!datePickerDate) {
             dateToSave = String(datePickerDate.unix());
         }
 
-        handleSubmit(dateToSave, state.attribute.id);
+        await handleSubmit(dateToSave, state.attribute.id);
     };
-
-    const _getHelper = () => {
-        if (state.isInheritedOverrideValue) {
-            return t('record_edition.inherited_input_helper', {
-                inheritedValue: state.inheritedValue.value
-            });
-        } else if (state.isCalculatedOverrideValue) {
-            return t('record_edition.calculated_input_helper', {
-                calculatedValue: state.calculatedValue.value
-            });
-        }
-        return;
-    };
-
-    const label = localizedTranslation(state.formElement.settings.label, availableLangs);
 
     return (
         <KitDatePickerStyled
-            ref={inputRef}
             value={value}
-            onChange={_handleDateChange}
-            label={label}
-            required={state.formElement.settings.required}
+            format={isFocused || isErrors || !presentationValue ? undefined : () => presentationValue}
             disabled={state.isReadOnly}
             allowClear={!state.isInheritedNotOverrideValue && !state.isCalculatedNotOverrideValue}
-            status={errors.length > 0 ? 'error' : undefined}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
-            helper={_getHelper()}
-            onBlur={handleBlur}
+            helper={isErrors ? String(errors[0]) : undefined}
+            status={isErrors ? 'error' : undefined}
+            onChange={_handleDateChange}
+            onFocus={_handleFocus}
+            onBlur={_handleBlur}
             $shouldHighlightColor={state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue}
+            placeholder={t('record_edition.placeholder.enter_a_date')}
         />
     );
 };

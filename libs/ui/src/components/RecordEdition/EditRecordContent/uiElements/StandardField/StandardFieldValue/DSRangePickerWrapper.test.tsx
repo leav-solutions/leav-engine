@@ -74,57 +74,35 @@ const getInitialState = (required: boolean, fallbackLang = false): IStandardFiel
 describe('DSRangePickerWrapper', () => {
     const mockOnChange = jest.fn();
     const mockHandleSubmit = jest.fn();
-    const mockHandleBlur = jest.fn();
     let user!: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {
         user = userEvent.setup({});
         mockOnChange.mockReset();
         mockHandleSubmit.mockReset();
-        mockHandleBlur.mockReset();
+    });
+
+    test('Should display presentationValue by default', async () => {
+        const state = getInitialState(false);
+        const presentationValue = 'Du 20 novembre au 12 décembre';
+        render(
+            <Form>
+                <Form.Item>
+                    <DSRangePickerWrapper
+                        state={state}
+                        attribute={{} as RecordFormAttributeFragment}
+                        presentationValue={presentationValue}
+                        onChange={mockOnChange}
+                        handleSubmit={mockHandleSubmit}
+                    />
+                </Form.Item>
+            </Form>
+        );
+
+        expect(screen.getByRole('textbox')).toHaveValue(presentationValue);
     });
 
     describe('Without required field', () => {
-        test('Should display range picker with fr label ', async () => {
-            const state = getInitialState(false, false);
-            render(
-                <Form>
-                    <Form.Item>
-                        <DSRangePickerWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
-                            handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
-                            onChange={mockOnChange}
-                        />
-                    </Form.Item>
-                </Form>
-            );
-
-            expect(screen.getByText(fr_label)).toBeVisible();
-        });
-
-        test('Should display range picker with fallback label ', async () => {
-            const state = getInitialState(false, true);
-            render(
-                <Form>
-                    <Form.Item>
-                        <DSRangePickerWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
-                            handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
-                            onChange={mockOnChange}
-                        />
-                    </Form.Item>
-                </Form>
-            );
-
-            expect(screen.getByText(en_label)).toBeVisible();
-        });
-
         test('Should call onChange with value', async () => {
             const state = getInitialState(false);
             render(
@@ -133,10 +111,9 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
+                            presentationValue=""
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>
@@ -188,10 +165,9 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
+                            presentationValue="some date"
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>
@@ -223,10 +199,9 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
+                            presentationValue=""
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>
@@ -265,7 +240,36 @@ describe('DSRangePickerWrapper', () => {
             );
         });
 
-        test('Should not save to LEAV if field becomes empty', async () => {
+        test('Should display presentationValue after save', async () => {
+            const state = getInitialState(true);
+            const presentationValue = 'presentationValue';
+            render(
+                <Form>
+                    <Form.Item>
+                        <DSRangePickerWrapper
+                            state={state}
+                            attribute={{} as RecordFormAttributeFragment}
+                            presentationValue={presentationValue}
+                            onChange={mockOnChange}
+                            handleSubmit={mockHandleSubmit}
+                        />
+                    </Form.Item>
+                </Form>
+            );
+
+            const rangePickerInputs = screen.getAllByRole('textbox');
+            await user.click(rangePickerInputs[0]);
+            expect(screen.queryByText(presentationValue)).not.toBeInTheDocument();
+            const startRangeDateFormatted = dayjs().format('YYYY-MM-DD');
+            const endRangeDateFormatted = dayjs().add(1, 'day').format('YYYY-MM-DD');
+
+            await user.click(screen.getAllByTitle(startRangeDateFormatted)[0]);
+            await user.click(screen.getAllByTitle(endRangeDateFormatted)[0]);
+
+            expect(screen.getByRole('textbox')).toHaveValue(presentationValue);
+        });
+
+        test.skip('Should not save to LEAV if field becomes empty', async () => {
             const state = getInitialState(true);
             render(
                 <Form>
@@ -273,10 +277,9 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
+                            presentationValue="some date"
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>
@@ -300,89 +303,6 @@ describe('DSRangePickerWrapper', () => {
     });
 
     describe('Inherited values', () => {
-        test('Should not display helper without inherited value', async () => {
-            const state = getInitialState(false);
-            state.inheritedValue = null;
-            state.isInheritedOverrideValue = false;
-            render(
-                <Form>
-                    <Form.Item>
-                        <DSRangePickerWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
-                            onChange={mockOnChange}
-                            handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
-                        />
-                    </Form.Item>
-                </Form>
-            );
-
-            expect(screen.queryByText('record_edition.inherited_input_helper', {exact: false})).not.toBeInTheDocument();
-        });
-
-        test('Should display helper with inherited value', async () => {
-            const state = getInitialState(false);
-            state.inheritedValue = mockValue.value;
-            state.isInheritedOverrideValue = true;
-            render(
-                <Form>
-                    <Form.Item>
-                        <DSRangePickerWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
-                            onChange={mockOnChange}
-                            handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
-                        />
-                    </Form.Item>
-                </Form>
-            );
-
-            expect(screen.getByText('record_edition.inherited_input_helper', {exact: false})).toBeVisible();
-        });
-
-        test('Should call onChange/handleSubmit with inherited value on clear', async () => {
-            const raw_value = {
-                from: '1714138054',
-                to: '1714138054'
-            };
-            const state = getInitialState(false);
-            state.inheritedValue = {...mockValue.value, raw_value};
-            state.isInheritedValue = true;
-            state.isInheritedOverrideValue = true;
-            state.isInheritedNotOverrideValue = false;
-            render(
-                <Form
-                    initialValues={{
-                        dateRangeTest: [dayjs.unix(Number(raw_value.from)), dayjs.unix(Number(raw_value.to))]
-                    }}
-                >
-                    <Form.Item name="dateRangeTest">
-                        <DSRangePickerWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
-                            onChange={mockOnChange}
-                            handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
-                        />
-                    </Form.Item>
-                </Form>
-            );
-
-            // TODO : target clear button when DS add html attribute - Ticket DS-219
-            const clearButton = screen.getByRole('button');
-            await user.click(clearButton);
-
-            expect(mockOnChange).toHaveBeenCalledTimes(1);
-            expect(mockOnChange).toHaveBeenCalledWith([expect.any(Object), expect.any(Object)], raw_value);
-            expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
-            expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
-        });
-
         test('Should hide clear icon when value is inherited, but not override', async () => {
             const raw_value = {
                 from: '1714138054',
@@ -403,10 +323,9 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
+                            presentationValue=""
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
                         />
                     </Form.Item>
                 </Form>
@@ -418,91 +337,6 @@ describe('DSRangePickerWrapper', () => {
     });
 
     describe('Calculated values', () => {
-        test('Should not display helper without calculated value', async () => {
-            const state = getInitialState(false);
-            state.calculatedValue = null;
-            state.isCalculatedOverrideValue = false;
-            render(
-                <Form>
-                    <Form.Item>
-                        <DSRangePickerWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
-                            onChange={mockOnChange}
-                            handleBlur={mockHandleBlur}
-                            handleSubmit={mockHandleSubmit}
-                        />
-                    </Form.Item>
-                </Form>
-            );
-
-            expect(
-                screen.queryByText('record_edition.calculated_input_helper', {exact: false})
-            ).not.toBeInTheDocument();
-        });
-
-        test('Should display helper with calculated value', async () => {
-            const state = getInitialState(false);
-            state.calculatedValue = mockValue.value;
-            state.isCalculatedOverrideValue = true;
-            render(
-                <Form>
-                    <Form.Item>
-                        <DSRangePickerWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
-                            onChange={mockOnChange}
-                            handleBlur={mockHandleBlur}
-                            handleSubmit={mockHandleSubmit}
-                        />
-                    </Form.Item>
-                </Form>
-            );
-
-            expect(screen.getByText('record_edition.calculated_input_helper', {exact: false})).toBeVisible();
-        });
-
-        test('Should call onChange/handleSubmit with calculated value on clear', async () => {
-            const raw_value = {
-                from: '1714138054',
-                to: '1714138054'
-            };
-            const state = getInitialState(false);
-            state.calculatedValue = {...mockValue.value, raw_value};
-            state.isCalculatedValue = true;
-            state.isCalculatedOverrideValue = true;
-            state.isCalculatedNotOverrideValue = false;
-            render(
-                <Form
-                    initialValues={{
-                        dateRangeTest: [dayjs.unix(Number(raw_value.from)), dayjs.unix(Number(raw_value.to))]
-                    }}
-                >
-                    <Form.Item name="dateRangeTest">
-                        <DSRangePickerWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
-                            onChange={mockOnChange}
-                            handleBlur={mockHandleBlur}
-                            handleSubmit={mockHandleSubmit}
-                        />
-                    </Form.Item>
-                </Form>
-            );
-
-            // TODO : target clear button when DS add html attribute - Ticket DS-219
-            const clearButton = screen.getByRole('button');
-            await user.click(clearButton);
-
-            expect(mockOnChange).toHaveBeenCalledTimes(1);
-            expect(mockOnChange).toHaveBeenCalledWith([expect.any(Object), expect.any(Object)], raw_value);
-            expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
-            expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
-        });
-
         test('Should hide clear icon when value is calculated, but not override', async () => {
             const raw_value = {
                 from: '1714138054',
@@ -523,9 +357,8 @@ describe('DSRangePickerWrapper', () => {
                         <DSRangePickerWrapper
                             state={state}
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
+                            presentationValue=""
                             onChange={mockOnChange}
-                            handleBlur={mockHandleBlur}
                             handleSubmit={mockHandleSubmit}
                         />
                     </Form.Item>

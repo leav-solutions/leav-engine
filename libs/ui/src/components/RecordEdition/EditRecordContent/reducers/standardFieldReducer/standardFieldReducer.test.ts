@@ -626,7 +626,7 @@ describe('standardFieldReducer', () => {
                 element: {
                     values: [
                         {isInherited: true, value: 'testValue', raw_value: 'testRawValue'},
-                        {isInherited: false, value: null, raw_value: null}
+                        {isInherited: false, value: null, raw_value: null, payload: null}
                     ],
                     attribute: {
                         format: AttributeFormat.date_range

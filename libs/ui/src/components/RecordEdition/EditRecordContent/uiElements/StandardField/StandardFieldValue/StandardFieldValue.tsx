@@ -3,9 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {CloseOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import {AnyPrimitive, IDateRangeValue, localizedTranslation} from '@leav/utils';
-import {Button, Input, InputRef, Popover, Space, theme} from 'antd';
+import {Button, Form, FormListFieldData, Input, InputRef, Popover, Space, theme} from 'antd';
 import moment from 'moment';
-import React, {MutableRefObject, useEffect, useRef} from 'react';
+import React, {MutableRefObject, ReactNode, useEffect, useRef} from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import {FloatingMenu, FloatingMenuAction} from '_ui/components';
@@ -20,7 +20,8 @@ import {
     VersionFieldScope,
     InputRefPossibleTypes,
     IStandardInputProps,
-    StandardValueTypes
+    StandardValueTypes,
+    ISubmitMultipleResult
 } from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
@@ -46,7 +47,15 @@ import TextInput from './Inputs/TextInput';
 import ValuesList from './ValuesList';
 import {IValueOfValuesList} from './ValuesList/ValuesList';
 import {useLang} from '_ui/hooks';
-import {StandardFieldValueDisplayHandler} from './StandardFieldValueDisplayHandler';
+import {MonoValueSelect} from './ValuesList/MonoValueSelect';
+import {DSInputWrapper} from './DSInputWrapper';
+import {DSDatePickerWrapper} from './DSDatePickerWrapper';
+import {DSRangePickerWrapper} from './DSRangePickerWrapper';
+import {DSInputNumberWrapper} from './DSInputNumberWrapper';
+import {DSInputEncryptedWrapper} from './DSInputEncryptedWrapper';
+import {DSBooleanWrapper} from './DSBooleanWrapper';
+import {DSRichTextWrapper} from './DSRichTextWrapper';
+import {DSColorPickerWrapper} from './DSColorPickerWrapper';
 
 const ErrorMessage = styled.div`
     color: ${themeVars.errorColor};
@@ -189,20 +198,28 @@ type IDateRangeValuesListConf = StandardValuesListFragmentStandardDateRangeValue
 
 interface IStandardFieldValueProps {
     value: IStandardFieldValue;
+    presentationValue: string;
     state: IStandardFieldReducerState;
     dispatch: StandardFieldDispatchFunc;
-    onSubmit: (idValue: IdValue, value: AnyPrimitive) => Promise<void>;
+    onSubmit: (
+        idValue: IdValue,
+        value: AnyPrimitive | null,
+        fieldName?: number
+    ) => Promise<void | ISubmitMultipleResult>;
     onDelete: (idValue: IdValue) => void;
     onScopeChange: (scope: VersionFieldScope) => void;
+    listField?: FormListFieldData;
 }
 
 function StandardFieldValue({
     value: fieldValue,
+    presentationValue,
     onSubmit,
     onDelete,
     onScopeChange,
     state,
-    dispatch
+    dispatch,
+    listField
 }: IStandardFieldValueProps): JSX.Element {
     const {t, i18n} = useSharedTranslation();
     const {token} = theme.useToken();
@@ -225,16 +242,6 @@ function StandardFieldValue({
         }
     }, [fieldValue.isEditing]);
 
-    // Cancel value editing if value details panel is closed
-    useEffect(() => {
-        if (editRecordState.activeValue === null && fieldValue.isEditing) {
-            dispatch({
-                type: StandardFieldReducerActionsTypes.CANCEL_EDITING,
-                idValue: fieldValue.idValue
-            });
-        }
-    }, [editRecordState.activeValue]);
-
     useEffect(() => {
         if (fieldValue.isEditing) {
             editRecordDispatch({
@@ -244,14 +251,11 @@ function StandardFieldValue({
         }
     }, [fieldValue.isEditing, fieldValue.editingValue]);
 
-    const _handleSubmit = async (valueToSave: StandardValueTypes, id?: string) => {
-        if (valueToSave === '') {
-            return _handleDelete();
-        }
+    const _handleSubmit = async (valueToSave: StandardValueTypes) => {
+        const convertedValue =
+            valueToSave === null ? null : typeof valueToSave === 'object' ? JSON.stringify(valueToSave) : valueToSave;
 
-        const convertedValue = typeof valueToSave === 'object' ? JSON.stringify(valueToSave) : valueToSave;
-
-        await onSubmit(fieldValue.idValue, convertedValue);
+        await onSubmit(fieldValue.idValue, convertedValue, listField?.name);
     };
 
     const _handlePressEnter = async () => {
@@ -562,15 +566,65 @@ function StandardFieldValue({
 
     const attributeFormatsWithoutDS = [AttributeFormat.extended];
 
+    const commonProps = {
+        state,
+        handleSubmit: _handleSubmit,
+        attribute,
+        presentationValue
+    };
+
+    let valueContent: ReactNode;
+    if (isValuesListEnabled) {
+        valueContent = <MonoValueSelect {...commonProps} />;
+    } else {
+        switch (attribute.format) {
+            case AttributeFormat.text:
+                valueContent = <DSInputWrapper {...commonProps} />;
+                break;
+            case AttributeFormat.date:
+                valueContent = <DSDatePickerWrapper {...commonProps} />;
+                break;
+            case AttributeFormat.date_range:
+                valueContent = <DSRangePickerWrapper {...commonProps} />;
+                break;
+            case AttributeFormat.numeric:
+                valueContent = <DSInputNumberWrapper {...commonProps} />;
+                break;
+            case AttributeFormat.encrypted:
+                valueContent = <DSInputEncryptedWrapper {...commonProps} />;
+                break;
+            case AttributeFormat.boolean:
+                valueContent = <DSBooleanWrapper {...commonProps} />;
+                break;
+            case AttributeFormat.rich_text:
+                valueContent = <DSRichTextWrapper {...commonProps} />;
+                break;
+            case AttributeFormat.color:
+                valueContent = <DSColorPickerWrapper {...commonProps} />;
+        }
+    }
+
     return (
         <>
             {attributeFormatsWithDS.includes(attribute.format) && (
-                <StandardFieldValueDisplayHandler
-                    state={state}
-                    attribute={attribute}
-                    fieldValue={fieldValue}
-                    handleSubmit={_handleSubmit}
-                />
+                <Form.Item
+                    name={attribute.id}
+                    {...listField}
+                    rules={
+                        //TODO: Remove this rule when required is implemented in the backend
+                        !attribute.multiple_values
+                            ? [
+                                  {
+                                      required: state.formElement.settings.required,
+                                      message: t('errors.standard_field_required')
+                                  }
+                              ]
+                            : undefined
+                    }
+                    noStyle
+                >
+                    {valueContent}
+                </Form.Item>
             )}
 
             {attributeFormatsWithoutDS.includes(attribute.format) && (
