@@ -75,10 +75,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         refetch
     });
 
-    // TODO: move to `useCreateAction` directly?
-    const enabledDefaultActions = createAction ? [createAction] : [];
-
-    const {primaryButton} = usePrimaryActionsButton([...enabledDefaultActions, ...(primaryActions ?? [])]);
+    const {primaryButton} = usePrimaryActionsButton([createAction, ...(primaryActions ?? [])].filter(Boolean));
 
     const {viewSettingsButton} = useOpenViewSettings(library);
 
