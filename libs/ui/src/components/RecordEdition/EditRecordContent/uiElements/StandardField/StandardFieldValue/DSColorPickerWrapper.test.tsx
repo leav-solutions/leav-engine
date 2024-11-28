@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {fireEvent, render, screen, waitFor, within} from '_ui/_tests/testUtils';
+import {render, screen} from '_ui/_tests/testUtils';
 import {DSColorPickerWrapper} from './DSColorPickerWrapper';
 import {VersionFieldScope} from '../../../_types';
 import {
@@ -148,28 +148,8 @@ describe('DSColorPickerWrapper', () => {
         mockHandleBlur.mockReset();
     });
 
-    test('Should display colorPicker with fr label', async () => {
-        const state = getInitialState({required: false, fallbackLang: false});
-
-        render(
-            <AntForm>
-                <AntForm.Item>
-                    <DSColorPickerWrapper
-                        state={state}
-                        attribute={{} as RecordFormAttributeFragment}
-                        fieldValue={mockValue}
-                        handleSubmit={mockHandleSubmit}
-                        handleBlur={mockHandleBlur}
-                        onChange={mockOnChange}
-                    />
-                </AntForm.Item>
-            </AntForm>
-        );
-
-        expect(screen.getByText(fr_label)).toBeVisible();
-    });
-
-    test('Should display colorPicker with fallback label', async () => {
+    test('Should display the presentationValue value', async () => {
+        const presentationValue = pinkColor;
         const state = getInitialState({required: false, fallbackLang: true});
 
         render(
@@ -177,17 +157,17 @@ describe('DSColorPickerWrapper', () => {
                 <AntForm.Item>
                     <DSColorPickerWrapper
                         state={state}
+                        value={blueColor}
+                        presentationValue={presentationValue}
                         attribute={{} as RecordFormAttributeFragment}
-                        fieldValue={mockValue}
                         handleSubmit={mockHandleSubmit}
-                        handleBlur={mockHandleBlur}
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
             </AntForm>
         );
 
-        expect(screen.getByText(en_label)).toBeVisible();
+        expect(screen.getByText(presentationValue)).toBeVisible();
     });
 
     test('Should not submit if field has not changed', async () => {
@@ -197,10 +177,9 @@ describe('DSColorPickerWrapper', () => {
                 <AntForm.Item>
                     <DSColorPickerWrapper
                         state={state}
+                        presentationValue=""
                         attribute={{} as RecordFormAttributeFragment}
-                        fieldValue={mockValue}
                         handleSubmit={mockHandleSubmit}
-                        handleBlur={mockHandleBlur}
                         onChange={mockOnChange}
                     />
                 </AntForm.Item>
@@ -215,7 +194,7 @@ describe('DSColorPickerWrapper', () => {
         expect(mockHandleSubmit).not.toHaveBeenCalled();
     });
 
-    describe('With required colorPicker and no inheritance', () => {
+    describe('With no inheritance', () => {
         test('Should submit the value if field is not empty', async () => {
             const state = getInitialState({required: false, fallbackLang: true});
             render(
@@ -223,10 +202,9 @@ describe('DSColorPickerWrapper', () => {
                     <AntForm.Item>
                         <DSColorPickerWrapper
                             state={state}
+                            presentationValue=""
                             attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
                             handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
                             onChange={mockOnChange}
                         />
                     </AntForm.Item>
@@ -247,210 +225,73 @@ describe('DSColorPickerWrapper', () => {
         });
     });
 
-    describe('With inheritance', () => {
-        test("Should display the inherited value by default and not save if we don't change it", async () => {
-            let state = getInitialState({required: false, fallbackLang: true});
+    test("Should allow to clear input when it's inherited and override", async () => {
+        const presentationValue = '#000000';
+        let state = getInitialState({required: false, fallbackLang: true});
 
-            state = {
-                ...state,
-                ...inheritedNotOverrideValue,
-                formElement: {...state.formElement, values: inheritedValues}
-            };
+        state = {
+            ...state,
+            ...inheritedOverrideValue,
+            formElement: {...state.formElement, values: inheritedValues}
+        };
 
-            render(
-                <AntForm>
-                    <AntForm.Item>
-                        <DSColorPickerWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
-                            handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
-                            onChange={mockOnChange}
-                            value={inheritedValues[1].raw_value}
-                        />
-                    </AntForm.Item>
-                </AntForm>
-            );
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSColorPickerWrapper
+                        state={state}
+                        presentationValue={presentationValue}
+                        attribute={{} as RecordFormAttributeFragment}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                        value={inheritedValues[0].raw_value}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
 
-            expect(screen.getByText('#' + inheritedValues[1].raw_value)).toBeVisible();
+        const colorPicker = screen.getByLabelText(en_label);
+        await user.click(colorPicker);
 
-            const colorPicker = screen.getByLabelText(en_label);
-            await user.click(colorPicker);
-            await user.click(document.body);
+        const clearButton = screen.getByLabelText('clear');
+        await user.click(clearButton);
 
-            expect(mockHandleSubmit).not.toHaveBeenCalled();
-            expect(mockOnChange).not.toHaveBeenCalled();
-        });
-
-        test('Should display the override value in the input and inherited value under it', async () => {
-            let state = getInitialState({required: false, fallbackLang: true});
-
-            state = {
-                ...state,
-                ...inheritedOverrideValue,
-                formElement: {...state.formElement, values: inheritedValues}
-            };
-
-            render(
-                <AntForm>
-                    <AntForm.Item>
-                        <DSColorPickerWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
-                            handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
-                            onChange={mockOnChange}
-                            value={inheritedValues[0].raw_value}
-                        />
-                    </AntForm.Item>
-                </AntForm>
-            );
-
-            const inputText = screen.getByText('#' + inheritedValues[0].raw_value);
-            expect(inputText).toBeVisible();
-
-            const helperText = screen.getByText(new RegExp(inheritedValues[1].raw_value, 'i'));
-            expect(helperText).toBeInTheDocument();
-        });
-
-        test("Should allow to clear input when it's override", async () => {
-            let state = getInitialState({required: false, fallbackLang: true});
-
-            state = {
-                ...state,
-                ...inheritedOverrideValue,
-                formElement: {...state.formElement, values: inheritedValues}
-            };
-
-            render(
-                <AntForm>
-                    <AntForm.Item>
-                        <DSColorPickerWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
-                            handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
-                            onChange={mockOnChange}
-                            value={inheritedValues[0].raw_value}
-                        />
-                    </AntForm.Item>
-                </AntForm>
-            );
-
-            const colorPicker = screen.getByLabelText(en_label);
-            await user.click(colorPicker);
-
-            const clearButton = screen.getByLabelText('clear');
-            await user.click(clearButton);
-
-            expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
-            expect(screen.queryByText('#00000000')).toBeVisible();
-        });
+        expect(mockHandleSubmit).toHaveBeenCalledWith(null, state.attribute.id);
+        expect(screen.getByText(presentationValue)).toBeVisible();
     });
 
-    describe('With calculation', () => {
-        test("Should display the calculated value by default and not save if we don't change it", async () => {
-            let state = getInitialState({required: false, fallbackLang: true});
+    test("Should allow to clear input when it's calculated and override", async () => {
+        const presentationValue = '#000000';
+        let state = getInitialState({required: false, fallbackLang: true});
 
-            state = {
-                ...state,
-                ...calculatedNotOverrideValue,
-                formElement: {...state.formElement, values: calculatedValues}
-            };
+        state = {
+            ...state,
+            ...calculatedOverrideValue,
+            formElement: {...state.formElement, values: calculatedValues}
+        };
 
-            render(
-                <AntForm>
-                    <AntForm.Item>
-                        <DSColorPickerWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
-                            handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
-                            onChange={mockOnChange}
-                            value={calculatedValues[1].raw_value}
-                        />
-                    </AntForm.Item>
-                </AntForm>
-            );
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSColorPickerWrapper
+                        state={state}
+                        presentationValue={presentationValue}
+                        attribute={{} as RecordFormAttributeFragment}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                        value={calculatedValues[0].raw_value}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
 
-            expect(screen.getByText('#' + calculatedValues[1].raw_value)).toBeVisible();
+        const colorPicker = screen.getByLabelText(en_label);
+        await user.click(colorPicker);
 
-            const colorPicker = screen.getByLabelText(en_label);
-            await user.click(colorPicker);
-            await user.click(document.body);
+        const clearButton = screen.getByLabelText('clear');
+        await user.click(clearButton);
 
-            expect(mockHandleSubmit).not.toHaveBeenCalled();
-            expect(mockOnChange).not.toHaveBeenCalled();
-        });
-
-        test('Should display the override value in the input and calculated value under it', async () => {
-            let state = getInitialState({required: false, fallbackLang: true});
-
-            state = {
-                ...state,
-                ...calculatedOverrideValue,
-                formElement: {...state.formElement, values: calculatedValues}
-            };
-
-            render(
-                <AntForm>
-                    <AntForm.Item>
-                        <DSColorPickerWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
-                            handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
-                            onChange={mockOnChange}
-                            value={calculatedValues[0].raw_value}
-                        />
-                    </AntForm.Item>
-                </AntForm>
-            );
-
-            const inputText = screen.getByText('#' + calculatedValues[0].raw_value);
-            expect(inputText).toBeVisible();
-
-            const helperText = screen.getByText(new RegExp(calculatedValues[1].raw_value, 'i'));
-            expect(helperText).toBeInTheDocument();
-        });
-
-        test("Should allow to clear input when it's override", async () => {
-            let state = getInitialState({required: false, fallbackLang: true});
-
-            state = {
-                ...state,
-                ...calculatedOverrideValue,
-                formElement: {...state.formElement, values: calculatedValues}
-            };
-
-            render(
-                <AntForm>
-                    <AntForm.Item>
-                        <DSColorPickerWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            fieldValue={mockValue}
-                            handleSubmit={mockHandleSubmit}
-                            handleBlur={mockHandleBlur}
-                            onChange={mockOnChange}
-                            value={calculatedValues[0].raw_value}
-                        />
-                    </AntForm.Item>
-                </AntForm>
-            );
-
-            const colorPicker = screen.getByLabelText(en_label);
-            await user.click(colorPicker);
-
-            const clearButton = screen.getByLabelText('clear');
-            await user.click(clearButton);
-
-            expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
-        });
+        expect(mockHandleSubmit).toHaveBeenCalledWith(null, state.attribute.id);
+        expect(screen.getByText(presentationValue)).toBeVisible();
     });
 });

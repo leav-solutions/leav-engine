@@ -2,95 +2,70 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitInputNumber} from 'aristid-ds';
-import {ComponentPropsWithRef, FocusEvent, FunctionComponent, useEffect, useRef, useState} from 'react';
-import {
-    IStandardFieldReducerState,
-    IStandardFieldValue
-} from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import {Form, GetRef, InputNumberProps} from 'antd';
-import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {ComponentPropsWithRef, FocusEvent, FunctionComponent, useRef, useState} from 'react';
+import {Form, GetRef} from 'antd';
 import styled from 'styled-components';
-import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
-import {localizedTranslation} from '@leav/utils';
-import {useLang} from '_ui/hooks';
-
-interface IDSInputWrapperProps extends IProvidedByAntFormItem<InputNumberProps> {
-    state: IStandardFieldReducerState;
-    attribute: RecordFormAttributeFragment;
-    fieldValue: IStandardFieldValue;
-    handleSubmit: (value: string, id?: string) => void;
-    handleBlur: () => void;
-    shouldShowValueDetailsButton?: boolean;
-}
+import {IStandFieldValueContentProps} from './_types';
+import {KitInputNumberProps} from 'aristid-ds/dist/Kit/DataEntry/InputNumber/types';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 const KitInputNumberStyled = styled(KitInputNumber)<{$shouldHighlightColor: boolean}>`
+    width: 100%;
     .ant-input-number-input-wrap .ant-input-number-input {
         color: ${({$shouldHighlightColor}) =>
             $shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial'};
     }
 `;
 
-export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
+export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProps<KitInputNumberProps>> = ({
     value,
+    presentationValue,
     onChange,
     state,
     attribute,
-    fieldValue,
-    handleSubmit,
-    handleBlur,
-    shouldShowValueDetailsButton = false
+    handleSubmit
 }) => {
     if (!onChange) {
         throw Error('DSInputNumberWrapper should be used inside a antd Form.Item');
     }
 
-    const {t} = useSharedTranslation();
-    const {lang} = useLang();
-    const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick} = useValueDetailsButton({
-        value: fieldValue?.value,
-        attribute
-    });
-
     const [hasChanged, setHasChanged] = useState(false);
-
+    const [isFocused, setIsFocused] = useState(false);
     const inputRef = useRef<GetRef<typeof KitInputNumberStyled>>(null);
+    const {errors} = Form.Item.useStatus();
+    const {t} = useSharedTranslation();
 
-    useEffect(() => {
-        if (fieldValue.isEditing && inputRef.current) {
-            inputRef.current.focus(); // To automatically open the date picker
-        }
-    }, [fieldValue.isEditing]);
+    const isErrors = errors.length > 0;
 
-    const _resetToInheritedOrCalculatedValue = () => {
+    const _resetToInheritedOrCalculatedValue = async () => {
         setHasChanged(false);
         if (state.isInheritedValue) {
-            onChange(state.inheritedValue.raw_value);
+            onChange(state.inheritedValue.raw_payload);
         } else if (state.isCalculatedValue) {
-            onChange(state.calculatedValue.raw_value);
+            onChange(state.calculatedValue.raw_payload);
         }
-        handleSubmit('', state.attribute.id);
+        await handleSubmit(null, state.attribute.id);
     };
 
-    const _handleOnBlur = (event: FocusEvent<HTMLInputElement>) => {
+    const _handleFocus = () => setIsFocused(true);
+
+    const _handleOnBlur = async (event: FocusEvent<HTMLInputElement>) => {
+        const valueToSubmit = event.target.value;
+
         if (!hasChanged) {
-            handleBlur();
+            onChange(valueToSubmit);
+            setIsFocused(false);
             return;
         }
 
-        const valueToSubmit = event.target.value;
         if (valueToSubmit === '' && (state.isInheritedValue || state.isCalculatedValue)) {
             _resetToInheritedOrCalculatedValue();
             return;
         }
 
-        if (hasChanged || (!state.isInheritedValue && !state.isCalculatedValue)) {
-            handleSubmit(valueToSubmit, state.attribute.id);
-        }
-
         onChange(valueToSubmit);
+        setIsFocused(false);
+        await handleSubmit(valueToSubmit, state.attribute.id);
     };
 
     const _handleOnChange: ComponentPropsWithRef<typeof KitInputNumberStyled>['onChange'] = inputValue => {
@@ -98,36 +73,21 @@ export const DSInputNumberWrapper: FunctionComponent<IDSInputWrapperProps> = ({
         onChange(inputValue);
     };
 
-    const _getHelper = () => {
-        if (state.isInheritedOverrideValue) {
-            return t('record_edition.inherited_input_helper', {
-                inheritedValue: state.inheritedValue.raw_value
-            });
-        } else if (state.isCalculatedOverrideValue) {
-            return t('record_edition.calculated_input_helper', {
-                calculatedValue: state.calculatedValue.raw_value
-            });
-        }
-        return;
-    };
-
-    const label = localizedTranslation(state.formElement.settings.label, lang);
-
     return (
         <KitInputNumberStyled
             ref={inputRef}
-            required={state.formElement.settings.required}
-            label={label}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
-            status={errors.length > 0 ? 'error' : undefined}
-            helper={_getHelper()}
+            helper={isErrors ? String(errors[0]) : undefined}
+            status={isErrors ? 'error' : undefined}
             value={value}
-            onChange={_handleOnChange}
+            formatter={v => (isFocused || isErrors || !presentationValue ? `${v}` : `${presentationValue}`)}
             disabled={state.isReadOnly}
+            onChange={_handleOnChange}
+            onFocus={_handleFocus}
             onBlur={_handleOnBlur}
             $shouldHighlightColor={
                 !hasChanged && (state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue)
             }
+            placeholder={t('record_edition.placeholder.enter_a_number')}
         />
     );
 };
