@@ -8,9 +8,10 @@ import {FaFilter, FaList, FaSortAlphaDown} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useEditSettings} from '../open-view-settings/useEditSettings';
 import {ConfigureDisplay} from '../configure-display/ConfigureDisplay';
+import {SortItems} from '../sort-items/SortItems';
 import {SettingItem} from './SettingItem';
 
-export type SettingsPanelPages = 'router-menu' | 'configure-display';
+export type SettingsPanelPages = 'router-menu' | 'configure-display' | 'sort-items';
 
 const ContentWrapperStyledDiv = styled.div`
     display: flex;
@@ -87,15 +88,14 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library})
                         />
                         <SettingItem
                             icon={<FaSortAlphaDown />}
-                            title={t('explorer.sort')}
-                            onClick={() => {
-                                /* TODO: not implemented yet */
-                            }}
+                            title={t('explorer.sort-items')}
+                            onClick={() => _goToAdvancedSettingsPage('sort-items')}
                         />
                     </ConfigurationStyledMenu>
                 </nav>
             )}
             {currentPage === 'configure-display' && <ConfigureDisplay libraryId={library} />}
+            {currentPage === 'sort-items' && <SortItems libraryId={library} />}
         </ContentWrapperStyledDiv>
     );
 };

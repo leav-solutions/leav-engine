@@ -623,7 +623,14 @@
         "view-type-mosaic": "Mosaïque",
         "view-type-planning": "Planning",
         "filters": "Filtrer",
-        "sort": "Trier",
+        "sort-items": "Trier",
+        "sort-list": {
+            "active": "Tris actifs",
+            "inactive": "Tris inactifs"
+        },
+        "sort-ascending": "Ascendant",
+        "sort-descending": "Descendant",
+        "available-attributes": "Autres propriétés disponibles",
         "coming-soon": "À venir",
         "show": "Afficher",
         "hide": "Masquer"

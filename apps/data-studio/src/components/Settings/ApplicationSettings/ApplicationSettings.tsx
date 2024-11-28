@@ -15,7 +15,7 @@ function ApplicationSettings(): JSX.Element {
         {
             key: 'advanced_settings',
             label: t('app_settings.advanced_settings'),
-            children: <AdvancedSettings />
+            tabContent: <AdvancedSettings />
         }
     ];
 
