@@ -1,10 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useDebouncedValue} from '_ui/hooks/useDebouncedValue/useDebouncedValue';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitInput, KitTypography} from 'aristid-ds';
-import {ChangeEvent, FunctionComponent, useMemo, useState} from 'react';
+import {FunctionComponent} from 'react';
 import styled from 'styled-components';
 import {
     closestCenter,
@@ -18,9 +17,9 @@ import {
 import {SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import {FaGripLines} from 'react-icons/fa';
 import {ColumnItem} from '../../_shared/ColumnItem';
-import {useGetLibraryColumns} from '../../_shared/useGetLibraryColumns';
 import {ViewSettingsActionTypes} from '../../store-view-settings/viewSettingsReducer';
 import {useViewSettingsContext} from '../../store-view-settings/useViewSettingsContext';
+import {useAttributeDetailsData} from '../../_shared/useAttributeDetailsData';
 
 const StyledList = styled.ul`
     padding: 0;
@@ -53,49 +52,16 @@ export const SelectVisibleAttributes: FunctionComponent<ISelectVisibleAttributes
     );
 
     const {view, dispatch} = useViewSettingsContext();
-    const {fields: orderedVisibleColumns} = view;
+    // TODO: make naming great again
+    const {attributesIds: orderedVisibleColumns} = view;
 
-    const [searchInput, setSearchInput] = useState('');
-    const debouncedSearchInput = useDebouncedValue(searchInput, 300);
-
-    const {attributeDetailsById} = useGetLibraryColumns(libraryId);
-
-    const searchFilteredColumns = useMemo(() => {
-        const columnIds = Object.keys(attributeDetailsById);
-        if (columnIds.length === 0) {
-            return {};
-        }
-        if (searchInput === '') {
-            return attributeDetailsById;
-        }
-
-        return columnIds.reduce((acc, columnId) => {
-            if (attributeDetailsById[columnId].label.includes(searchInput) || columnId.includes(searchInput)) {
-                acc[columnId] = attributeDetailsById[columnId];
-            }
-            return acc;
-        }, {});
-    }, [debouncedSearchInput, attributeDetailsById]);
-    const searchFilteredColumnsIds = Object.keys(searchFilteredColumns);
-
-    const _onSearchChanged = (event: ChangeEvent<HTMLInputElement>) => {
-        const shouldIgnoreInputChange = event.target.value.length < 3 && searchInput.length < 3;
-        if (shouldIgnoreInputChange) {
-            return;
-        }
-        setSearchInput(() => {
-            if (event.target.value.length > 2) {
-                return event.target.value;
-            }
-            return '';
-        });
-    };
+    const {attributeDetailsById, searchFilteredColumnsIds, onSearchChanged} = useAttributeDetailsData(libraryId);
 
     const _toggleColumnVisibility = (columnId: string) => () => {
         const actionType = orderedVisibleColumns.includes(columnId)
-            ? ViewSettingsActionTypes.REMOVE_FIELD
-            : ViewSettingsActionTypes.ADD_FIELD;
-        dispatch({type: actionType, payload: {field: columnId}});
+            ? ViewSettingsActionTypes.REMOVE_ATTRIBUTE
+            : ViewSettingsActionTypes.ADD_ATTRIBUTE;
+        dispatch({type: actionType, payload: {attributeId: columnId}});
     };
 
     const _handleDragEnd = ({active: draggedElement, over: dropTarget}: DragEndEvent) => {
@@ -106,13 +72,13 @@ export const SelectVisibleAttributes: FunctionComponent<ISelectVisibleAttributes
             return;
         }
 
-        dispatch({type: ViewSettingsActionTypes.MOVE_FIELD, payload: {indexFrom, indexTo}});
+        dispatch({type: ViewSettingsActionTypes.MOVE_ATTRIBUTE, payload: {indexFrom, indexTo}});
     };
 
     return (
         <div>
             <KitTypography.Title level="h4">{t('items_list.columns')}</KitTypography.Title>
-            <KitInput placeholder={String(t('global.search'))} onChange={_onSearchChanged} allowClear></KitInput>
+            <KitInput placeholder={String(t('global.search'))} onChange={onSearchChanged} allowClear />
             <div>
                 <StyledList>
                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={_handleDragEnd}>

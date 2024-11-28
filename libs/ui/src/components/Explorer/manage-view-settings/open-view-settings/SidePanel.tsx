@@ -23,7 +23,6 @@ export const SidePanel: FunctionComponent = () => {
 
     return (
         <KitSidePanel
-            style={{zIndex: '10000'}}
             initialOpen
             floating
             closable

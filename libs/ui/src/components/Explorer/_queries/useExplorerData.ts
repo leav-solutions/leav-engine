@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
 import {IExplorerData} from '../_types';
-import {ExplorerQuery, useExplorerQuery} from '_ui/_gqlTypes';
+import {ExplorerQuery, SortOrder, useExplorerQuery} from '_ui/_gqlTypes';
 import {useLang} from '_ui/hooks';
 
 const _mapping = (data: ExplorerQuery, libraryId: string, availableLangs: string[]): IExplorerData => {
@@ -38,9 +38,29 @@ const _mapping = (data: ExplorerQuery, libraryId: string, availableLangs: string
     };
 };
 
-export const useExplorerData = (libraryId: string, attributeIds: string[]) => {
+export const useExplorerData = ({
+    libraryId,
+    attributeIds,
+    sorts
+}: {
+    libraryId: string;
+    attributeIds: string[];
+    sorts: Array<{
+        attributeId: string;
+        order: SortOrder;
+    }>;
+}) => {
     const {lang: availableLangs} = useLang();
-    const {data, loading, refetch} = useExplorerQuery({variables: {libraryId, attributeIds}});
+    const {data, loading, refetch} = useExplorerQuery({
+        variables: {
+            libraryId,
+            attributeIds,
+            multipleSort: sorts.map(({order, attributeId}) => ({
+                field: attributeId,
+                order
+            }))
+        }
+    });
 
     return {
         data: data !== undefined ? _mapping(data, libraryId, availableLangs) : null,

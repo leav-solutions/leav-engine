@@ -14,7 +14,6 @@ const StyledValue = styled(KitTypography.Text)`
 `;
 
 const StyledConfigurationItem = styled.li`
-    list-style: none;
     color: var(--general-utilities-text-primary);
     display: flex;
     width: 100%;

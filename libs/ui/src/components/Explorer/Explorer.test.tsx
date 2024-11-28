@@ -260,7 +260,7 @@ describe('Explorer', () => {
             <Explorer
                 library="campaigns"
                 defaultViewSettings={{
-                    fields: [simpleMockAttribute.id, linkMockAttribute.id, multivalLinkMockAttribute.id]
+                    attributesIds: [simpleMockAttribute.id, linkMockAttribute.id, multivalLinkMockAttribute.id]
                 }}
             />
         );
