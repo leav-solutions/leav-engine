@@ -93,9 +93,11 @@ const removeAttribute: Reducer<IViewSettingsActionRemoveAttribute['payload']> = 
 const moveAttribute: Reducer<IViewSettingsActionMoveAttribute['payload']> = (state, payload) => {
     const attributesIds = [...state.attributesIds];
     const [attributeIdToMove] = attributesIds.splice(payload.indexFrom, 1);
+    // TODO use newES6 syntax (toSpliced)
+    attributesIds.splice(payload.indexTo, 0, attributeIdToMove);
     return {
         ...state,
-        attributesIds: attributesIds.toSpliced(payload.indexTo, 0, attributeIdToMove)
+        attributesIds
     };
 };
 
