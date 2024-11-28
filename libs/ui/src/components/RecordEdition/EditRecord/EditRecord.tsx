@@ -192,7 +192,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                     return savableValue as IValueToSubmit;
                 }),
                 version,
-                true // deleteEmpty
+                false // deleteEmpty
             );
         }
 

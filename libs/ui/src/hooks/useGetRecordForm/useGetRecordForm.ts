@@ -71,6 +71,8 @@ export type IRecordForm = Override<
     }
 >;
 
+export type RecordFormElementAttribute = RecordFormElement['attribute'];
+
 export interface IUseGetRecordFormHook {
     loading: boolean;
     error: ApolloError;

@@ -54,13 +54,6 @@ const inheritedValues = [
     }
 ];
 
-const inheritedNotOverrideValue: InheritedFlags = {
-    isInheritedValue: true,
-    isInheritedOverrideValue: false,
-    isInheritedNotOverrideValue: true,
-    inheritedValue: {raw_value: inheritedValues[1].raw_value}
-};
-
 const inheritedOverrideValue: InheritedFlags = {
     isInheritedValue: true,
     isInheritedOverrideValue: true,
@@ -80,13 +73,6 @@ const calculatedValues = [
         raw_value: true
     }
 ];
-
-const calculatedNotOverrideValue: CalculatedFlags = {
-    isCalculatedValue: true,
-    isCalculatedOverrideValue: false,
-    isCalculatedNotOverrideValue: true,
-    calculatedValue: {raw_value: calculatedValues[1].raw_value}
-};
 
 const calculatedOverrideValue: CalculatedFlags = {
     isCalculatedValue: true,
@@ -140,32 +126,6 @@ describe('DSBooleanWrapper', () => {
         user = userEvent.setup({});
         mockHandleSubmit.mockReset();
         mockOnChange.mockReset();
-    });
-
-    test('Should display boolean with fr label', async () => {
-        const state = getInitialState({required: false, fallbackLang: false});
-        render(
-            <AntForm>
-                <AntForm.Item>
-                    <DSBooleanWrapper state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
-                </AntForm.Item>
-            </AntForm>
-        );
-
-        expect(screen.getByText(fr_label)).toBeVisible();
-    });
-
-    test('Should display boolean with fallback label', async () => {
-        const state = getInitialState({required: false, fallbackLang: true});
-        render(
-            <AntForm>
-                <AntForm.Item>
-                    <DSBooleanWrapper state={state} handleSubmit={mockHandleSubmit} onChange={mockOnChange} />
-                </AntForm.Item>
-            </AntForm>
-        );
-
-        expect(screen.getByText(en_label)).toBeVisible();
     });
 
     test('Should display boolean value as yes', async () => {
@@ -250,163 +210,57 @@ describe('DSBooleanWrapper', () => {
         expect(mockHandleSubmit).toHaveBeenCalledWith('false', state.attribute.id);
     });
 
-    describe('With inheritance', () => {
-        test('Should display inherited value', async () => {
-            let state = getInitialState({required: false, fallbackLang: false});
-            state = {
-                ...state,
-                ...inheritedNotOverrideValue,
-                formElement: {...state.formElement, values: inheritedValues}
-            };
+    test('Should allow to clear inherited override value', async () => {
+        let state = getInitialState({required: false, fallbackLang: false});
+        state = {
+            ...state,
+            ...inheritedOverrideValue,
+            formElement: {...state.formElement, values: inheritedValues}
+        };
 
-            render(
-                <AntForm>
-                    <AntForm.Item>
-                        <DSBooleanWrapper
-                            value={inheritedValues[1].raw_value}
-                            state={state}
-                            handleSubmit={mockHandleSubmit}
-                            onChange={mockOnChange}
-                        />
-                    </AntForm.Item>
-                </AntForm>
-            );
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSBooleanWrapper
+                        value={inheritedValues[0].raw_value}
+                        state={state}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
 
-            expect(screen.getByText(/yes/)).toBeVisible();
-        });
+        const clearButton = screen.getByRole('button');
+        await user.click(clearButton);
 
-        test('Should display override value, clear icon and inherited value under it', async () => {
-            let state = getInitialState({required: false, fallbackLang: false});
-            state = {
-                ...state,
-                ...inheritedOverrideValue,
-                formElement: {...state.formElement, values: inheritedValues}
-            };
-
-            render(
-                <AntForm>
-                    <AntForm.Item>
-                        <DSBooleanWrapper
-                            value={inheritedValues[0].raw_value}
-                            state={state}
-                            handleSubmit={mockHandleSubmit}
-                            onChange={mockOnChange}
-                        />
-                    </AntForm.Item>
-                </AntForm>
-            );
-
-            expect(screen.getByText(/no/)).toBeVisible();
-
-            const helperText = screen.getByText(/inherited_input_helper/);
-            expect(helperText).toBeInTheDocument();
-        });
-
-        test('Should allow to clear override value', async () => {
-            let state = getInitialState({required: false, fallbackLang: false});
-            state = {
-                ...state,
-                ...inheritedOverrideValue,
-                formElement: {...state.formElement, values: inheritedValues}
-            };
-
-            render(
-                <AntForm>
-                    <AntForm.Item>
-                        <DSBooleanWrapper
-                            value={inheritedValues[0].raw_value}
-                            state={state}
-                            handleSubmit={mockHandleSubmit}
-                            onChange={mockOnChange}
-                        />
-                    </AntForm.Item>
-                </AntForm>
-            );
-
-            const clearButton = screen.getByRole('button');
-            await user.click(clearButton);
-
-            expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
-        });
+        expect(mockHandleSubmit).toHaveBeenCalledWith(null, state.attribute.id);
     });
 
-    describe('With calculus', () => {
-        test('Should display calculated value', async () => {
-            let state = getInitialState({required: false, fallbackLang: false});
-            state = {
-                ...state,
-                ...calculatedNotOverrideValue,
-                formElement: {...state.formElement, values: calculatedValues}
-            };
+    test('Should allow to clear calculated override value', async () => {
+        let state = getInitialState({required: false, fallbackLang: false});
+        state = {
+            ...state,
+            ...calculatedOverrideValue,
+            formElement: {...state.formElement, values: calculatedValues}
+        };
 
-            render(
-                <AntForm>
-                    <AntForm.Item>
-                        <DSBooleanWrapper
-                            value={calculatedValues[1].raw_value}
-                            state={state}
-                            handleSubmit={mockHandleSubmit}
-                            onChange={mockOnChange}
-                        />
-                    </AntForm.Item>
-                </AntForm>
-            );
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSBooleanWrapper
+                        value={calculatedValues[0].raw_value}
+                        state={state}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
 
-            expect(screen.getByText(/yes/)).toBeVisible();
-        });
+        const clearButton = screen.getByRole('button');
+        await user.click(clearButton);
 
-        test('Should display override value, clear icon and calculated value under it', async () => {
-            let state = getInitialState({required: false, fallbackLang: false});
-            state = {
-                ...state,
-                ...calculatedOverrideValue,
-                formElement: {...state.formElement, values: calculatedValues}
-            };
-
-            render(
-                <AntForm>
-                    <AntForm.Item>
-                        <DSBooleanWrapper
-                            value={calculatedValues[0].raw_value}
-                            state={state}
-                            handleSubmit={mockHandleSubmit}
-                            onChange={mockOnChange}
-                        />
-                    </AntForm.Item>
-                </AntForm>
-            );
-
-            expect(screen.getByText(/no/)).toBeVisible();
-
-            const helperText = screen.getByText(/calculated_input_helper/);
-            expect(helperText).toBeInTheDocument();
-        });
-
-        test('Should allow to clear override value', async () => {
-            let state = getInitialState({required: false, fallbackLang: false});
-            state = {
-                ...state,
-                ...calculatedOverrideValue,
-                formElement: {...state.formElement, values: calculatedValues}
-            };
-
-            render(
-                <AntForm>
-                    <AntForm.Item>
-                        <DSBooleanWrapper
-                            value={calculatedValues[0].raw_value}
-                            state={state}
-                            handleSubmit={mockHandleSubmit}
-                            onChange={mockOnChange}
-                        />
-                    </AntForm.Item>
-                </AntForm>
-            );
-
-            const clearButton = screen.getByRole('button');
-            await user.click(clearButton);
-
-            expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
-        });
+        expect(mockHandleSubmit).toHaveBeenCalledWith(null, state.attribute.id);
     });
 });

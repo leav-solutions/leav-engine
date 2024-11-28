@@ -1,18 +1,18 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useEffect, useMemo, useRef, useState} from 'react';
+import {FunctionComponent, useMemo, useState} from 'react';
 import {KitSelect, KitTypography} from 'aristid-ds';
 import useSharedTranslation from '_ui/hooks/useSharedTranslation/useSharedTranslation';
 import {AttributeFormat, useSaveAttributeMutation} from '_ui/_gqlTypes';
-import {Form, GetRef} from 'antd';
-import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
-import {useLang} from '_ui/hooks';
-import {localizedTranslation} from '@leav/utils';
+import {Form} from 'antd';
 import moment from 'moment';
 import {stringifyDateRangeValue} from '_ui/_utils';
-import {IDateRangeValuesListConf, IMonoValueSelectProps, IStringValuesListConf} from './_types';
+import {IDateRangeValuesListConf, IStringValuesListConf} from './_types';
 import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
+import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
+import {IStandFieldValueContentProps} from '../_types';
+import {IKitSelect} from 'aristid-ds/dist/Kit/DataEntry/Select/types';
 
 interface IOption {
     label: string;
@@ -33,16 +33,13 @@ const addOption = (options: IOption[], optionToAdd: IOption) => {
     return newOptions;
 };
 
-export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
+export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKitSelect>> = ({
     value,
+    presentationValue,
     onChange,
     state,
-    editRecordDispatch,
     attribute,
-    fieldValue,
-    handleSubmit,
-    handleBlur,
-    shouldShowValueDetailsButton = false
+    handleSubmit
 }) => {
     if (!onChange) {
         throw Error('MonoValueSelect should be used inside a antd Form.Item');
@@ -54,24 +51,13 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
 
     const {t} = useSharedTranslation();
     const {errors} = Form.Item.useStatus();
-    const {onValueDetailsButtonClick} = useValueDetailsButton({
-        value: fieldValue?.value,
-        attribute
-    });
-    const [isSelectOpen, setIsSelectOpen] = useState(false);
+    const [isFocused, setIsFocused] = useState(false);
     const [searchedString, setSearchedString] = useState('');
-    const {lang: availableLang} = useLang();
-    const selectRef = useRef<GetRef<typeof KitSelect>>(null);
     const [saveAttribute] = useSaveAttributeMutation();
+    const {dispatch: editRecordDispatch} = useEditRecordReducer();
+
     const allowFreeEntry = attribute.values_list.allowFreeEntry;
     const allowListUpdate = attribute.values_list.allowListUpdate;
-
-    useEffect(() => {
-        if (fieldValue.isEditing && selectRef.current) {
-            selectRef.current.focus();
-            setIsSelectOpen(true);
-        }
-    }, [fieldValue.isEditing]);
 
     const _getFilteredValuesList = () => {
         let values = [];
@@ -115,22 +101,16 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
         [searchedString]
     );
 
-    const _resetToInheritedOrCalculatedValue = () => {
+    const _resetToInheritedOrCalculatedValue = async () => {
         if (state.isInheritedValue) {
             setTimeout(() => onChange(state.inheritedValue.raw_value, options), 0);
         } else if (state.isCalculatedValue) {
             setTimeout(() => onChange(state.calculatedValue.raw_value, options), 0);
         }
-        handleSubmit('', attribute.id);
-    };
-
-    const _handleOnBlur = () => {
-        handleBlur();
-        setIsSelectOpen(false);
+        await handleSubmit(null, attribute.id);
     };
 
     const _handleOnChange = async (selectedValue: string) => {
-        setIsSelectOpen(false);
         setSearchedString('');
         if ((state.isInheritedValue || state.isCalculatedValue) && selectedValue === '') {
             _resetToInheritedOrCalculatedValue();
@@ -154,50 +134,39 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
             editRecordDispatch({type: EditRecordReducerActionsTypes.REQUEST_REFRESH});
         }
 
-        handleSubmit(selectedValue, attribute.id);
+        await handleSubmit(selectedValue, attribute.id);
         onChange(selectedValue, options);
     };
 
-    const _handleOnClear = () => {
-        _handleOnChange('');
-        handleBlur();
+    const _handleOnClear = async () => {
+        await _handleOnChange('');
     };
 
-    const helper = useMemo(() => {
-        if (state.isInheritedOverrideValue) {
-            return t('record_edition.inherited_input_helper', {
-                inheritedValue: state.inheritedValue.raw_value
-            });
-        } else if (state.isCalculatedOverrideValue) {
-            return t('record_edition.calculated_input_helper', {
-                calculatedValue: state.calculatedValue.raw_value
-            });
+    const _handleOnSearch = async (search: string) => {
+        setSearchedString(search);
+        if (search) {
+            setIsFocused(true);
         }
-        return '';
-    }, [state.isInheritedOverrideValue, state.isCalculatedOverrideValue]);
+    };
 
-    const label = localizedTranslation(state.formElement.settings.label, availableLang);
     const required = state.formElement.settings.required;
+
+    const valueToDisplay = isFocused ? value : presentationValue;
 
     return (
         <KitSelect
-            ref={selectRef}
             data-testid={attribute.id}
-            open={isSelectOpen}
-            value={value}
-            required={required}
-            allowClear={!required}
-            label={label}
+            value={valueToDisplay}
+            allowClear={!required && value}
             options={options}
+            open={isFocused}
             status={errors.length > 0 && 'error'}
             showSearch
-            helper={helper}
+            onDropdownVisibleChange={visible => setIsFocused(visible)}
             onSelect={_handleOnChange}
             onChange={onChange}
             onClear={_handleOnClear}
-            onBlur={_handleOnBlur}
-            onSearch={setSearchedString}
-            onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
+            onSearch={_handleOnSearch}
             dropdownRender={menu => (
                 <>
                     {searchedString !== '' && searchResultsCount > 0 && (

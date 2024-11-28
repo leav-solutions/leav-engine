@@ -310,7 +310,7 @@ const _computeInheritedFlags = (fieldValues: RecordFormElementsValueStandardValu
 
     const isInheritedValue = true;
 
-    if (!overrideValue || overrideValue.value === null) {
+    if (!overrideValue || overrideValue.payload === null) {
         return {
             inheritedValue,
             isInheritedValue,
@@ -342,7 +342,7 @@ const _computeCalculatedFlags = (fieldValues: RecordFormElementsValueStandardVal
 
     const isCalculatedValue = true;
 
-    if (!overrideValue || overrideValue.value === null) {
+    if (!overrideValue || overrideValue.payload === null) {
         return {
             calculatedValue,
             isCalculatedValue,

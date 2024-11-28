@@ -127,7 +127,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
             options={selectOptions}
             showSearch
             optionFilterProp="label"
-            placeholder={t('record_edition.record_select')}
+            placeholder={t('record_edition.placeholder.record_select')}
             onSelect={_handleSelect}
             onClear={_clearValues}
             onBlur={_handleBlur}

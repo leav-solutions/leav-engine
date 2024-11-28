@@ -423,6 +423,7 @@
         "metadata_section": "Propriétés de la valeur",
         "metadata_section_link": "Propriétés de la liaison",
         "value_length": "{{length}} caractère(s)",
+        "delete_all": "Tout supprimer",
         "delete_all_values": "Supprimer toutes les valeurs",
         "delete_all_values_confirm": "Êtes-vous sûr de vouloir supprimer toutes les valeurs?",
         "value_details_tooltip": "Plus d'informations",
@@ -453,7 +454,6 @@
         "cancel_confirm_modal_title": "Confirmer l'abandon?",
         "cancel_confirm_modal_content": "Vous êtes sur le point d'abandonner la création.",
         "cancel_confirm_modal_question": "Êtes-vous sûr(e) ?",
-        "record_select": "Sélectionnez un élément",
         "inherited_input_helper": "Valeur héritée : {{- inheritedValue }}",
         "calculated_input_helper": "Valeur calculée : {{- calculatedValue}}",
         "date_range_from_to": "du {{- from}} au {{- to}}",
@@ -463,7 +463,17 @@
         "press_enter_to": "Appuyer sur Entrer pour ",
         "select_this_value": "Sélectionner cette valeur",
         "select_option": "Sélectionner l’option ",
-        "create_and_select_option": "Créer et sélectionner l’option "
+        "create_and_select_option": "Créer et sélectionner l’option ",
+        "placeholder": {
+            "record_select": "Sélectionnez un élément",
+            "enter_a_text": "Saisir un texte",
+            "enter_a_date": "Saisir une date (ex: 25/12/2024)",
+            "enter_a_period": "Saisir une période",
+            "enter_a_number": "Saisir un nombre",
+            "enter_a_password": "Saisir un mot de passe",
+            "start_date": "Date de début",
+            "end_date": "Date de fin"
+        }
     },
     "record_summary": {
         "preview_title": "Cliquez ici pour voir l’aperçu.",

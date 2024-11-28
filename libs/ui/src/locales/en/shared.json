@@ -423,6 +423,7 @@
         "metadata_section": "Value properties",
         "metadata_section_link": "Link properties",
         "value_length": "{{length}} characters",
+        "delete_all": "Delete all",
         "delete_all_values": "Delete all values",
         "delete_all_values_confirm": "Do you really want to delete all values?",
         "value_details_tooltip": "More details",
@@ -453,7 +454,6 @@
         "cancel_confirm_modal_title": "Confirm cancellation?",
         "cancel_confirm_modal_content": "You are about to cancel the creation.",
         "cancel_confirm_modal_question": "Are you sure?",
-        "record_select": "Select a record",
         "inherited_input_helper": "Inherited value: {{- inheritedValue}}",
         "calculated_input_helper": "Calculated value: {{- calculatedValue}}",
         "date_range_from_to": "from {{- from}} to {{- to}}",
@@ -463,7 +463,17 @@
         "press_enter_to": "Press enter to ",
         "select_this_value": "Select this value",
         "select_option": "Select option ",
-        "create_and_select_option": "Create and select option "
+        "create_and_select_option": "Create and select option ",
+        "placeholder": {
+            "record_select": "Select a record",
+            "enter_a_text": "Enter a text",
+            "enter_a_date": "Enter a date (e.g. 12/25/2024)",
+            "enter_a_period": "Enter a period",
+            "enter_a_number": "Enter a number",
+            "enter_a_password": "Enter a password",
+            "start_date": "Start date",
+            "end_date": "End date"
+        }
     },
     "record_summary": {
         "preview_title": "Click here to visualize preview.",

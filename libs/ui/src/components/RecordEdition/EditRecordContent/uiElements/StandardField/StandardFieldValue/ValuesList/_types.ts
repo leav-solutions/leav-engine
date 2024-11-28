@@ -7,22 +7,14 @@ import {
     StandardValuesListFragmentStandardStringValuesListConfFragment
 } from '_ui/_gqlTypes';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {
-    IStandardFieldReducerState,
-    IStandardFieldValue
-} from '_ui/components/RecordEdition/EditRecordContent/reducers/standardFieldReducer/standardFieldReducer';
-import {IEditRecordReducerActions} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
+import {IStandardFieldReducerState} from '_ui/components/RecordEdition/EditRecordContent/reducers/standardFieldReducer/standardFieldReducer';
 import {SelectProps} from 'antd';
-import {Dispatch} from 'react';
 
 export interface IMonoValueSelectProps extends IProvidedByAntFormItem<SelectProps> {
+    presentationValue: string;
     state: IStandardFieldReducerState;
-    editRecordDispatch: Dispatch<IEditRecordReducerActions>;
     attribute: RecordFormAttributeStandardAttributeFragment;
-    fieldValue: IStandardFieldValue;
-    handleSubmit: (value: string, id?: string) => void;
-    handleBlur: () => void;
-    shouldShowValueDetailsButton?: boolean;
+    handleSubmit: (value: string, id?: string) => Promise<void>;
 }
 
 export type IStringValuesListConf = StandardValuesListFragmentStandardStringValuesListConfFragment;
