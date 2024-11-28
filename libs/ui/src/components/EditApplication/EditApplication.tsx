@@ -53,12 +53,12 @@ function EditApplication({
         {
             key: 'info',
             label: t('applications.info'),
-            children: <TabContentWrapper style={tabContentStyle}>{appInfoComp}</TabContentWrapper>
+            tabContent: <TabContentWrapper style={tabContentStyle}>{appInfoComp}</TabContentWrapper>
         },
         ...additionalTabs
     ];
 
-    return <KitTabs items={tabs} defaultActiveKey={activeTab} />;
+    return <KitTabs items={tabs} defaultKey={activeTab} />;
 }
 
 export default EditApplication;
