@@ -112,6 +112,7 @@ export const DataView: FunctionComponent<IDataViewProps> = ({
         <KitTable
             borderedRows
             cellsBackgroundColor={theme.utilities.light}
+            showHeader={dataGroupedFilteredSorted.length > 0}
             columns={columns}
             pagination={false}
             dataSource={dataGroupedFilteredSorted}

@@ -48,9 +48,22 @@ const multivalLinkMockAttribute: gqlTypes.AttributePropertiesFragment = {
     multiple_values: true
 };
 
+const simpleRichTextMockAttribute = {
+    id: 'simple_rich_text',
+    type: gqlTypes.AttributeType.simple,
+    format: gqlTypes.AttributeFormat.rich_text,
+    multiple_values: false,
+    label: {
+        fr: 'Mon simple texte enrichi',
+        en: 'My simple rich text'
+    }
+} satisfies gqlTypes.AttributePropertiesFragment;
+
 describe('Explorer', () => {
     const recordId1 = '613982168';
+    const enrichTextRecord1 = '<h1>This is a test enrich text<script>alert("XSS")</script></h1>';
     const recordId2 = '612694174';
+    const enrichTextRecord2 = '<h1>This is a test enrich text</h1>';
     const mockRecords = [
         {
             id: '613982168',
@@ -125,6 +138,15 @@ describe('Explorer', () => {
                             linkPayload: {id: 'multivalRecord7', whoAmI: {...mockRecord, label: 'Record G'}}
                         }
                     ]
+                },
+                {
+                    attributeId: simpleRichTextMockAttribute.id,
+                    attributeProperties: simpleRichTextMockAttribute,
+                    values: [
+                        {
+                            valuePayload: enrichTextRecord1
+                        }
+                    ]
                 }
             ]
         },
@@ -167,6 +189,15 @@ describe('Explorer', () => {
                     attributeId: multivalLinkMockAttribute.id,
                     attributeProperties: multivalLinkMockAttribute,
                     values: []
+                },
+                {
+                    attributeId: simpleRichTextMockAttribute.id,
+                    attributeProperties: simpleRichTextMockAttribute,
+                    values: [
+                        {
+                            valuePayload: enrichTextRecord2
+                        }
+                    ]
                 }
             ]
         }
@@ -260,7 +291,12 @@ describe('Explorer', () => {
             <Explorer
                 library="campaigns"
                 defaultViewSettings={{
-                    attributesIds: [simpleMockAttribute.id, linkMockAttribute.id, multivalLinkMockAttribute.id]
+                    attributesIds: [
+                        simpleMockAttribute.id,
+                        linkMockAttribute.id,
+                        multivalLinkMockAttribute.id,
+                        simpleRichTextMockAttribute.id
+                    ]
                 }}
             />
         );
@@ -270,7 +306,7 @@ describe('Explorer', () => {
         expect(tableRows).toHaveLength(1 + mockRecords.length); // 1 header row + 2 records
         const [_headerRow, firstRecordRow] = tableRows;
         const [record1] = mockRecords;
-        const [whoAmICell, simpleAttributeCell, linkCell, multivalLinkCell] =
+        const [whoAmICell, simpleAttributeCell, linkCell, multivalLinkCell, simpleRichTextCell] =
             within(firstRecordRow).getAllByRole('cell');
 
         expect(within(whoAmICell).getByText(record1.whoAmI.label)).toBeInTheDocument();
@@ -286,6 +322,8 @@ describe('Explorer', () => {
         expect(within(multivalLinkCell).getByText('RD')).toBeVisible();
         expect(within(multivalLinkCell).getByRole('img')).toHaveAttribute('src', mockRecord.preview?.small);
         expect(within(multivalLinkCell).getByText('+2')).toBeVisible();
+
+        expect(simpleRichTextCell).toHaveTextContent('This is a test enrich text');
     });
 
     test('Should be able to deactivate a record with default actions', async () => {
@@ -324,111 +362,115 @@ describe('Explorer', () => {
         expect(screen.getByText(EditRecordModalMock)).toBeVisible();
     });
 
-    test('Should display the list of records with custom actions', async () => {
-        const customAction: IItemAction = {
-            icon: <Fa500Px />,
-            label: 'Custom action',
-            callback: jest.fn()
-        };
-        render(<Explorer library="campaigns" itemActions={[customAction]} />);
-
-        const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
-        await user.click(within(firstRecordRow).getByRole('button', {name: customAction.label}));
-
-        expect(customAction.callback).toHaveBeenCalled();
-    });
-
-    test('Should display the list of records with a lot of custom actions', async () => {
-        const customActions: IItemAction[] = [
-            {
-                label: 'Test 1',
-                icon: <FaBeer />,
+    describe('Item actions', () => {
+        test('Should display the list of records with custom actions', async () => {
+            const customAction: IItemAction = {
+                icon: <Fa500Px />,
+                label: 'Custom action',
                 callback: jest.fn()
-            },
-            {
-                label: 'Test 2',
-                icon: <FaAccessibleIcon />,
-                callback: jest.fn()
-            },
-            {
-                label: 'Test 3',
-                icon: <FaXbox />,
-                callback: jest.fn()
-            },
-            {
-                label: 'Test 4',
-                icon: <FaJs />,
-                callback: jest.fn()
-            }
-        ];
-        render(<Explorer library="campaigns" itemActions={customActions} />);
+            };
+            render(<Explorer library="campaigns" itemActions={[customAction]} />);
 
-        const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
-        await user.hover(within(firstRecordRow).getByRole('button', {name: 'explorer.more-actions'}));
+            const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
+            await user.click(within(firstRecordRow).getByRole('button', {name: customAction.label}));
 
-        await waitFor(() => {
-            expect(screen.getByRole('menuitem', {name: /Test 1/})).toBeVisible();
-            expect(screen.getByRole('menuitem', {name: /Test 2/})).toBeVisible();
-            expect(screen.getByRole('menuitem', {name: /Test 3/})).toBeVisible();
-            expect(screen.getByRole('menuitem', {name: /Test 4/})).toBeVisible();
+            expect(customAction.callback).toHaveBeenCalled();
         });
 
-        await user.click(screen.getByRole('menuitem', {name: customActions[0].label}));
+        test('Should display the list of records with a lot of custom actions', async () => {
+            const customActions: IItemAction[] = [
+                {
+                    label: 'Test 1',
+                    icon: <FaBeer />,
+                    callback: jest.fn()
+                },
+                {
+                    label: 'Test 2',
+                    icon: <FaAccessibleIcon />,
+                    callback: jest.fn()
+                },
+                {
+                    label: 'Test 3',
+                    icon: <FaXbox />,
+                    callback: jest.fn()
+                },
+                {
+                    label: 'Test 4',
+                    icon: <FaJs />,
+                    callback: jest.fn()
+                }
+            ];
+            render(<Explorer library="campaigns" itemActions={customActions} />);
 
-        expect(customActions[0].callback).toHaveBeenCalled();
+            const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
+            await user.hover(within(firstRecordRow).getByRole('button', {name: 'explorer.more-actions'}));
+
+            await waitFor(() => {
+                expect(screen.getByRole('menuitem', {name: /Test 1/})).toBeVisible();
+                expect(screen.getByRole('menuitem', {name: /Test 2/})).toBeVisible();
+                expect(screen.getByRole('menuitem', {name: /Test 3/})).toBeVisible();
+                expect(screen.getByRole('menuitem', {name: /Test 4/})).toBeVisible();
+            });
+
+            await user.click(screen.getByRole('menuitem', {name: customActions[0].label}));
+
+            expect(customActions[0].callback).toHaveBeenCalled();
+        });
+
+        test('Should display the list of records with no actions', () => {
+            render(<Explorer library="campaigns" defaultActionsForItem={[]} />);
+
+            const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
+            expect(within(firstRecordRow).queryByRole('button')).not.toBeInTheDocument();
+        });
     });
 
-    test('Should display the list of records with no actions', () => {
-        render(<Explorer library="campaigns" defaultActionsForItem={[]} />);
+    describe('Primary Action', () => {
+        test('Should be able to create a new record', async () => {
+            render(<Explorer library="campaigns" />);
 
-        const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
-        expect(within(firstRecordRow).queryByRole('button')).not.toBeInTheDocument();
-    });
+            await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
 
-    test('Should be able to create a new record', async () => {
-        render(<Explorer library="campaigns" />);
+            expect(screen.getByText(EditRecordModalMock)).toBeVisible();
+        });
 
-        await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
+        test('Should be able to display custom primary actions', async () => {
+            render(<Explorer library="campaigns" primaryActions={customPrimaryActions} />);
 
-        expect(screen.getByText(EditRecordModalMock)).toBeVisible();
-    });
+            const createButton = screen.getByRole('button', {name: 'explorer.create-one'});
+            const dropdownButton = createButton.nextElementSibling; // Not nice, but no way to get the dropdown button directly
 
-    test('Should be able to display custom primary actions', async () => {
-        render(<Explorer library="campaigns" primaryActions={customPrimaryActions} />);
+            expect(screen.queryByText(customPrimaryAction1.label)).not.toBeInTheDocument();
+            expect(screen.queryByText(customPrimaryAction2.label)).not.toBeInTheDocument();
 
-        const createButton = screen.getByRole('button', {name: 'explorer.create-one'});
-        const dropdownButton = createButton.nextElementSibling; // Not nice, but no way to get the dropdown button directly
+            await user.click(dropdownButton!);
 
-        expect(screen.queryByText(customPrimaryAction1.label)).not.toBeInTheDocument();
-        expect(screen.queryByText(customPrimaryAction2.label)).not.toBeInTheDocument();
+            expect(screen.getByRole('menuitem', {name: customPrimaryAction1.label})).toBeVisible();
+            expect(screen.getByRole('menuitem', {name: customPrimaryAction2.label})).toBeVisible();
 
-        await user.click(dropdownButton!);
+            await user.click(screen.getByRole('menuitem', {name: customPrimaryAction1.label}));
+            expect(customPrimaryActions[0].callback).toHaveBeenCalled();
+        });
 
-        expect(screen.getByRole('menuitem', {name: customPrimaryAction1.label})).toBeVisible();
-        expect(screen.getByRole('menuitem', {name: customPrimaryAction2.label})).toBeVisible();
+        test('Should be able to display custom primary actions without create button', async () => {
+            render(<Explorer library="campaigns" primaryActions={customPrimaryActions} defaultPrimaryActions={[]} />);
 
-        await user.click(screen.getByRole('menuitem', {name: customPrimaryAction1.label}));
-        expect(customPrimaryActions[0].callback).toHaveBeenCalled();
-    });
+            expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
+            const firstActionButton = screen.getByRole('button', {name: customPrimaryAction1.label});
+            expect(firstActionButton).toBeVisible();
 
-    test('Should be able to display custom primary actions without create button', async () => {
-        render(<Explorer library="campaigns" primaryActions={customPrimaryActions} defaultPrimaryActions={[]} />);
+            await user.click(firstActionButton);
+            expect(customPrimaryActions[0].callback).toHaveBeenCalled();
 
-        expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
-        const firstActionButton = screen.getByRole('button', {name: customPrimaryAction1.label});
-        expect(firstActionButton).toBeVisible();
+            const dropdownButton = firstActionButton.nextElementSibling; // Not nice, but no way to get the dropdown button directly
+            expect(screen.queryByText(customPrimaryAction2.label)).not.toBeInTheDocument();
 
-        await user.click(firstActionButton);
-        expect(customPrimaryActions[0].callback).toHaveBeenCalled();
+            await user.click(dropdownButton!);
 
-        const dropdownButton = firstActionButton.nextElementSibling; // Not nice, but no way to get the dropdown button directly
-        expect(screen.queryByText(customPrimaryAction2.label)).not.toBeInTheDocument();
+            expect(screen.getByRole('menuitem', {name: customPrimaryAction2.label})).toBeVisible();
 
-        await user.click(dropdownButton!);
-
-        expect(screen.getByRole('menuitem', {name: customPrimaryAction2.label})).toBeVisible();
-
-        await user.click(screen.getByRole('menuitem', {name: customPrimaryAction2.label}));
-        expect(customPrimaryActions[1].callback).toHaveBeenCalled();
+            await user.click(screen.getByRole('menuitem', {name: customPrimaryAction2.label}));
+            expect(customPrimaryActions[1].callback).toHaveBeenCalled();
+        });
     });
 });
