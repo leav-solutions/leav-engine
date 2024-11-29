@@ -38,7 +38,7 @@ const _getValuesForVersion = (version: IValueVersion, values: IValue[]): IValue[
 const findValue = (trees: IFindValueTree[], values: IValue[]): IValue[] => {
     // Extract version from all trees at their current state
     const version = trees.reduce((vers, t) => {
-        if (typeof t.elements[t.currentIndex].id !== 'undefined') {
+        if (typeof t.elements[t.currentIndex]?.id !== 'undefined') {
             vers[t.name] = t.elements[t.currentIndex].id;
         }
 

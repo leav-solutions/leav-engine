@@ -590,17 +590,18 @@ const valueDomain = function ({
                 const trees: IFindValueTree[] = await Promise.all(
                     versionProfile.trees.map(async (treeName: string): Promise<IFindValueTree> => {
                         const treeElem =
-                            options?.version && options.version[treeName]
-                                ? options.version[treeName]
-                                : (await getDefaultElementHelper.getDefaultElement({treeId: treeName, ctx})).id;
+                            options?.version?.[treeName] ??
+                            (await getDefaultElementHelper.getDefaultElement({treeId: treeName, ctx}))?.id;
 
-                        const ancestors = (
-                            await elementAncestors.getCachedElementAncestors({
-                                treeId: treeName,
-                                nodeId: treeElem,
-                                ctx
-                            })
-                        ).reverse(); // We want the leaves first
+                        const ancestors = treeElem
+                            ? (
+                                  await elementAncestors.getCachedElementAncestors({
+                                      treeId: treeName,
+                                      nodeId: treeElem,
+                                      ctx
+                                  })
+                              ).reverse() // We want the leaves first
+                            : [];
 
                         return {
                             name: treeName,
