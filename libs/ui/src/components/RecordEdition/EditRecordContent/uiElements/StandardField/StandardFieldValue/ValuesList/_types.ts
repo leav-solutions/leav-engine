@@ -7,12 +7,10 @@ import {
     StandardValuesListFragmentStandardStringValuesListConfFragment
 } from '_ui/_gqlTypes';
 import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {IStandardFieldReducerState} from '_ui/components/RecordEdition/EditRecordContent/reducers/standardFieldReducer/standardFieldReducer';
 import {SelectProps} from 'antd';
 
 export interface IMonoValueSelectProps extends IProvidedByAntFormItem<SelectProps> {
     presentationValue: string;
-    state: IStandardFieldReducerState;
     attribute: RecordFormAttributeStandardAttributeFragment;
     handleSubmit: (value: string, id?: string) => Promise<void>;
 }

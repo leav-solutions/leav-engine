@@ -22,9 +22,11 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
     value,
     presentationValue,
     onChange,
-    state,
     attribute,
-    handleSubmit
+    readonly,
+    handleSubmit,
+    calculatedFlags,
+    inheritedFlags
 }) => {
     if (!onChange) {
         throw Error('DSRichTextWrapper should be used inside a antd Form.Item');
@@ -40,12 +42,12 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
 
     const _resetToInheritedOrCalculatedValue = async () => {
         setHasChanged(false);
-        if (state.isInheritedValue) {
-            onChange(state.inheritedValue.raw_payload);
-        } else if (state.isCalculatedValue) {
-            onChange(state.calculatedValue.raw_payload);
+        if (inheritedFlags.isInheritedValue) {
+            onChange(inheritedFlags.inheritedValue.raw_payload);
+        } else if (calculatedFlags.isCalculatedValue) {
+            onChange(calculatedFlags.calculatedValue.raw_payload);
         }
-        await handleSubmit(null, state.attribute.id);
+        await handleSubmit(null, attribute.id);
     };
 
     const _handleFocus = () => setIsFocused(true);
@@ -59,19 +61,19 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
             return;
         }
 
-        if (valueToSubmit === '' && (state.isInheritedValue || state.isCalculatedValue)) {
+        if (valueToSubmit === '' && (inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue)) {
             _resetToInheritedOrCalculatedValue();
             return;
         }
 
         onChange(valueToSubmit);
+        await handleSubmit(valueToSubmit, attribute.id);
         setIsFocused(false);
-        await handleSubmit(valueToSubmit, state.attribute.id);
     };
 
     const _handleOnChange = inputValue => {
         setHasChanged(true);
-        if (state.isInheritedValue && isEmptyValue(inputValue)) {
+        if (inheritedFlags.isInheritedValue && isEmptyValue(inputValue)) {
             _resetToInheritedOrCalculatedValue();
             return;
         }
@@ -84,12 +86,13 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
             value={valueToDisplay}
-            disabled={state.isReadOnly}
+            disabled={readonly}
             onChange={_handleOnChange}
             onFocus={_handleFocus}
             onBlur={_handleOnBlur}
             $shouldHighlightColor={
-                !hasChanged && (state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue)
+                !hasChanged &&
+                (inheritedFlags.isInheritedNotOverrideValue || calculatedFlags.isCalculatedNotOverrideValue)
             }
             placeholder={t('record_edition.placeholder.enter_a_text')}
         />

@@ -4,12 +4,6 @@
 import {render, screen} from '_ui/_tests/testUtils';
 import {AntForm} from 'aristid-ds';
 import {DSBooleanWrapper} from './DSBooleanWrapper';
-import {
-    CalculatedFlags,
-    InheritedFlags,
-    IStandardFieldReducerState,
-    StandardFieldValueState
-} from '../../../reducers/standardFieldReducer/standardFieldReducer';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockFormElementInput} from '_ui/__mocks__/common/form';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';

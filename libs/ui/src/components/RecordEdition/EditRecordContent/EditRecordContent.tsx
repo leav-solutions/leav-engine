@@ -145,6 +145,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
                     key={recordFormHash}
                     antdForm={antdForm}
                     element={rootElement}
+                    readonly={readonly}
                     onValueSubmit={_handleValueSubmit}
                     onValueDelete={_handleValueDelete}
                     onDeleteMultipleValues={onDeleteMultipleValues}

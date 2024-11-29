@@ -2,12 +2,20 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {RecordFormAttributeStandardAttributeFragment} from '_ui/_gqlTypes';
-import {IProvidedByAntFormItem, StandardValueTypes} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {IStandardFieldReducerState} from '_ui/components/RecordEdition/EditRecordContent/reducers/standardFieldReducer/standardFieldReducer';
+import {
+    IProvidedByAntFormItem,
+    ISubmitMultipleResult,
+    StandardValueTypes
+} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
 
 export interface IStandFieldValueContentProps<T> extends IProvidedByAntFormItem<T> {
     presentationValue?: string;
-    state: IStandardFieldReducerState;
     attribute?: RecordFormAttributeStandardAttributeFragment;
-    handleSubmit: (value: StandardValueTypes, id?: string) => Promise<void>;
+    label?: string;
+    handleSubmit: (value: StandardValueTypes, id?: string) => Promise<void | ISubmitMultipleResult>;
+    readonly: boolean;
+    required: boolean;
+    calculatedFlags: CalculatedFlags;
+    inheritedFlags: InheritedFlags;
 }

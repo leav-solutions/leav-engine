@@ -4,8 +4,6 @@
 import {KitColorPicker} from 'aristid-ds';
 import {FunctionComponent, useState} from 'react';
 import styled from 'styled-components';
-import {useLang} from '_ui/hooks';
-import {localizedTranslation} from '@leav/utils';
 import {KitColor, KitColorPickerProps} from 'aristid-ds/dist/Kit/DataEntry/ColorPicker/types';
 import {IStandFieldValueContentProps} from './_types';
 
@@ -27,15 +25,17 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
     value,
     presentationValue,
     onChange,
-    state,
     attribute,
-    handleSubmit
+    label,
+    readonly,
+    handleSubmit,
+    calculatedFlags,
+    inheritedFlags
 }) => {
     if (!onChange) {
         throw Error('DSColorPickerWrapper should be used inside a antd Form.Item');
     }
 
-    const {lang: availableLang} = useLang();
     const [hasChanged, setHasChanged] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     const [currentColor, setCurrentColor] = useState<KitColor>();
@@ -49,8 +49,8 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
             }
 
             onChange(currentColor, currentHex);
+            await handleSubmit(currentColor.toHex(), attribute.id);
             setIsFocused(false);
-            await handleSubmit(currentColor.toHex(), state.attribute.id);
         } else {
             setIsFocused(true);
         }
@@ -69,18 +69,16 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
     const _handleOnClear = async () => {
         setHasChanged(false);
 
-        if (state.isInheritedValue) {
-            onChange(undefined, state.inheritedValue.raw_value);
-        } else if (state.isCalculatedValue) {
-            onChange(undefined, state.calculatedValue.raw_value);
+        if (inheritedFlags.isInheritedValue) {
+            onChange(undefined, inheritedFlags.inheritedValue.raw_value);
+        } else if (calculatedFlags.isCalculatedValue) {
+            onChange(undefined, calculatedFlags.calculatedValue.raw_value);
         }
 
         onChange(null, null);
+        await handleSubmit(null, attribute.id);
         setIsFocused(false);
-        await handleSubmit(null, state.attribute.id);
     };
-
-    const label = localizedTranslation(state.formElement.settings.label, availableLang);
 
     return (
         <KitColorPickerStyled
@@ -89,14 +87,15 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
             value={currentHex}
             showText={isFocused || !presentationValue ? true : () => `${presentationValue}`}
             aria-label={label}
-            disabled={state.isReadOnly}
+            disabled={readonly}
             disabledAlpha
-            allowClear={!state.isInheritedNotOverrideValue && !state.isCalculatedNotOverrideValue}
+            allowClear={!inheritedFlags.isInheritedNotOverrideValue && !calculatedFlags.isCalculatedNotOverrideValue}
             onOpenChange={_handleOnOpenChange}
             onChange={_handleOnChange}
             onClear={_handleOnClear}
             $shouldHighlightColor={
-                !hasChanged && (state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue)
+                !hasChanged &&
+                (inheritedFlags.isInheritedNotOverrideValue || calculatedFlags.isCalculatedNotOverrideValue)
             }
         />
     );
