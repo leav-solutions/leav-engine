@@ -59,11 +59,24 @@ const simpleRichTextMockAttribute = {
     }
 } satisfies gqlTypes.AttributePropertiesFragment;
 
+const simpleColorMockAttribute = {
+    id: 'simple_color',
+    type: gqlTypes.AttributeType.simple,
+    format: gqlTypes.AttributeFormat.color,
+    multiple_values: false,
+    label: {
+        fr: 'Ma simple couleur',
+        en: 'My simple color'
+    }
+} satisfies gqlTypes.AttributePropertiesFragment;
+
 describe('Explorer', () => {
     const recordId1 = '613982168';
     const enrichTextRecord1 = '<h1>This is a test enrich text<script>alert("XSS")</script></h1>';
+    const colorRecord1 = '35c441';
     const recordId2 = '612694174';
     const enrichTextRecord2 = '<h1>This is a test enrich text</h1>';
+    const colorRecord2 = '5510d1';
     const mockRecords = [
         {
             id: '613982168',
@@ -147,6 +160,15 @@ describe('Explorer', () => {
                             valuePayload: enrichTextRecord1
                         }
                     ]
+                },
+                {
+                    attributeId: simpleColorMockAttribute.id,
+                    attributeProperties: simpleColorMockAttribute,
+                    values: [
+                        {
+                            valuePayload: colorRecord1
+                        }
+                    ]
                 }
             ]
         },
@@ -196,6 +218,15 @@ describe('Explorer', () => {
                     values: [
                         {
                             valuePayload: enrichTextRecord2
+                        }
+                    ]
+                },
+                {
+                    attributeId: simpleColorMockAttribute.id,
+                    attributeProperties: simpleColorMockAttribute,
+                    values: [
+                        {
+                            valuePayload: colorRecord2
                         }
                     ]
                 }
@@ -295,7 +326,8 @@ describe('Explorer', () => {
                         simpleMockAttribute.id,
                         linkMockAttribute.id,
                         multivalLinkMockAttribute.id,
-                        simpleRichTextMockAttribute.id
+                        simpleRichTextMockAttribute.id,
+                        simpleColorMockAttribute.id
                     ]
                 }}
             />
@@ -306,7 +338,7 @@ describe('Explorer', () => {
         expect(tableRows).toHaveLength(1 + mockRecords.length); // 1 header row + 2 records
         const [_headerRow, firstRecordRow] = tableRows;
         const [record1] = mockRecords;
-        const [whoAmICell, simpleAttributeCell, linkCell, multivalLinkCell, simpleRichTextCell] =
+        const [whoAmICell, simpleAttributeCell, linkCell, multivalLinkCell, simpleRichTextCell, simpleColorCell] =
             within(firstRecordRow).getAllByRole('cell');
 
         expect(within(whoAmICell).getByText(record1.whoAmI.label)).toBeInTheDocument();
@@ -324,6 +356,8 @@ describe('Explorer', () => {
         expect(within(multivalLinkCell).getByText('+2')).toBeVisible();
 
         expect(simpleRichTextCell).toHaveTextContent('This is a test enrich text');
+
+        expect(simpleColorCell).toHaveTextContent(`#${colorRecord1}`);
     });
 
     test('Should be able to deactivate a record with default actions', async () => {
