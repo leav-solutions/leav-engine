@@ -17,6 +17,8 @@ import styled from 'styled-components';
 import {IdCard} from './IdCard';
 import {IKitTag, IKitTagConfig} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types';
 import {TableTagGroup} from './TableTagGroup';
+import {FaListAlt} from 'react-icons/fa';
+import DOMPurify from 'dompurify';
 
 const isStandardValue = (
     v: PropertyValueFragment,
@@ -48,6 +50,10 @@ const StyledCenteringWrapper = styled.div`
     gap: calc(var(--general-spacing-xs) * 1px);
 `;
 
+const StyledFaListAlt = styled(FaListAlt)`
+    flex-shrink: 0;
+`;
+
 interface ITableCellProps {
     values: PropertyValueFragment[];
     attributeProperties: AttributePropertiesFragment;
@@ -58,7 +64,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
 
     if (attributeProperties.multiple_values) {
         if (isStandardValues(values, attributeProperties)) {
-            const tags: IKitTagConfig[] = values.map(value => {
+            const tags = values.map<IKitTagConfig>(value => {
                 switch (attributeProperties.format) {
                     case AttributeFormat.boolean:
                         return {
@@ -100,7 +106,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                 </KitAvatar.Group>
             );
         } else {
-            //TODO: handle multiple tree values
+            // TODO: handle multiple tree values
             return null;
         }
     } else {
@@ -111,6 +117,9 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
 
         let content: ReactNode = null;
         if (isStandardValue(value, attributeProperties)) {
+            if (value.valuePayload === null) {
+                return null;
+            }
             switch (attributeProperties.format) {
                 case AttributeFormat.boolean:
                     const valueToDisplay = value.valuePayload ? t('global.yes') : t('global.no');
@@ -120,6 +129,19 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                             type={!!value.valuePayload ? 'primary' : 'neutral'}
                             idCardProps={{description: valueToDisplay}}
                         />
+                    );
+                    break;
+                case AttributeFormat.rich_text:
+                    const tmp = document.createElement('div');
+                    tmp.innerHTML = DOMPurify.sanitize(value.valuePayload);
+                    const textContent = tmp.textContent;
+                    content = (
+                        <>
+                            <StyledFaListAlt />
+                            <KitTypography.Text key={attributeProperties.id} ellipsis={{tooltip: textContent}}>
+                                {textContent}
+                            </KitTypography.Text>
+                        </>
                     );
                     break;
                 default:

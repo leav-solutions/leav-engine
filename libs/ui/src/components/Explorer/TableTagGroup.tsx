@@ -26,8 +26,8 @@ export const TableTagGroup: FunctionComponent<{
 
     return (
         <StyledTagsGroupDiv>
-            {visibleTags.map(tag => (
-                <KitTag {...tag} />
+            {visibleTags.map((tag, index) => (
+                <KitTag key={index} {...tag} />
             ))}
             {hiddenTags.length > 0 && (
                 <KitTooltip
