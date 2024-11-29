@@ -2061,6 +2061,131 @@ describe('ValueDomain', () => {
             expect(resValue[0].version).toMatchObject({my_tree: '8'});
         });
 
+        test('Should return versioned values for default tree node (no version supplied)', async function () {
+            const mockGetDefaultElementHelperForRoot: Mockify<IGetDefaultElementHelper> = {
+                getDefaultElement: global.__mockPromise({id: '7'})
+            };
+
+            const mockElementAncestorsHelperForRoot: Mockify<IElementAncestorsHelper> = {
+                getCachedElementAncestors: global.__mockPromise([
+                    {
+                        id: '7',
+                        record: {
+                            id: 7,
+                            library: 'my_lib'
+                        }
+                    }
+                ])
+            };
+
+            const valueData = [
+                {
+                    payload: 'val1',
+                    attribute: 'test_attr',
+                    version: {my_tree: '7'}
+                },
+                {
+                    payload: 'val2',
+                    attribute: 'test_attr',
+                    version: {my_tree: '8'}
+                }
+            ];
+
+            const mockValRepo = {
+                getValues: global.__mockPromise(valueData)
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable)
+            };
+
+            const valDomain = valueDomain({
+                ...depsBase,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as any,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.tree.helpers.elementAncestors':
+                    mockElementAncestorsHelperForRoot as IElementAncestorsHelper,
+                'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
+                'core.domain.tree.helpers.getDefaultElement':
+                    mockGetDefaultElementHelperForRoot as IGetDefaultElementHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
+            });
+
+            const resValue = await valDomain.getValues({
+                library: 'test_lib',
+                recordId: '12345',
+                attribute: 'test_attr',
+                options: {},
+                ctx
+            });
+
+            expect(mockValRepo.getValues.mock.calls.length).toBe(1);
+
+            expect(mockElementAncestorsHelperForRoot.getCachedElementAncestors).toHaveBeenCalledTimes(1);
+
+            expect(resValue.length).toBe(1);
+            expect(resValue[0].payload).toBe('val1');
+            expect(resValue[0].version).toMatchObject({my_tree: '7'});
+        });
+
+        test('Should handle versioned values for default tree node if tree has no elements', async function () {
+            const valueData = [
+                {
+                    payload: 'val1',
+                    attribute: 'test_attr',
+                    version: {my_tree: '7'}
+                },
+                {
+                    payload: 'val2',
+                    attribute: 'test_attr',
+                    version: {my_tree: '8'}
+                }
+            ];
+
+            const mockValRepo = {
+                getValues: global.__mockPromise(valueData)
+            };
+
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise(mockAttrAdvVersionable)
+            };
+
+            const mockGetDefaultElementHelperNoElement: Mockify<IGetDefaultElementHelper> = {
+                getDefaultElement: global.__mockPromise(undefined)
+            };
+
+            const valDomain = valueDomain({
+                ...depsBase,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.infra.record': mockRecordRepo as IRecordRepo,
+                'core.domain.actionsList': mockActionsListDomain as any,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.tree.helpers.elementAncestors': mockElementAncestorsHelper as IElementAncestorsHelper,
+                'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
+                'core.domain.tree.helpers.getDefaultElement':
+                    mockGetDefaultElementHelperNoElement as IGetDefaultElementHelper,
+                'core.utils': mockUtilsStandardAttribute as IUtils
+            });
+
+            const resValue = await valDomain.getValues({
+                library: 'test_lib',
+                recordId: '12345',
+                attribute: 'test_attr',
+                options: {},
+                ctx
+            });
+
+            expect(mockValRepo.getValues.mock.calls.length).toBe(1);
+
+            expect(mockElementAncestorsHelper.getCachedElementAncestors).toHaveBeenCalledTimes(0);
+
+            expect(resValue.length).toBe(0);
+        });
+
         test('Should return versioned values with multiple trees', async function () {
             const valueData = [
                 {
