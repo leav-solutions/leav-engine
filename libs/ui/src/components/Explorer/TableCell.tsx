@@ -50,6 +50,13 @@ const StyledCenteringWrapper = styled.div`
     gap: calc(var(--general-spacing-xs) * 1px);
 `;
 
+const StyledColorChip = styled.div<{$colorTextContent: string}>`
+    height: calc(var(--general-spacing-s) * 1px);
+    width: calc(var(--general-spacing-s) * 1px);
+    border-radius: calc(var(--general-border-radius-xs) * 1px);
+    background-color: ${props => props.$colorTextContent};
+`;
+
 const StyledFaListAlt = styled(FaListAlt)`
     flex-shrink: 0;
 `;
@@ -140,6 +147,17 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                             <StyledFaListAlt />
                             <KitTypography.Text key={attributeProperties.id} ellipsis={{tooltip: textContent}}>
                                 {textContent}
+                            </KitTypography.Text>
+                        </>
+                    );
+                    break;
+                case AttributeFormat.color:
+                    const colorTextContent = `#${value.valuePayload}`;
+                    content = (
+                        <>
+                            <StyledColorChip $colorTextContent={colorTextContent} />
+                            <KitTypography.Text key={attributeProperties.id} ellipsis={{tooltip: colorTextContent}}>
+                                {colorTextContent}
                             </KitTypography.Text>
                         </>
                     );
