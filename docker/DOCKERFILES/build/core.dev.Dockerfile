@@ -25,13 +25,13 @@ FROM base AS builder
 RUN yarn workspaces focus core && yarn workspace core build
 
 ### RUNNER ###
-FROM base as runner
+FROM base AS runner
 
 # Retrieve code
 COPY --from=builder /app/apps/core/dist ./apps/core/dist/
 
 # Install production only modules
-RUN yarn workspaces focus core --production
+RUN yarn workspaces focus core --production && yarn workspace core add nodemon
 
 COPY ./docker/scripts ./scripts
 COPY libs ./libs
@@ -39,7 +39,7 @@ COPY assets ./assets
 
 ### APPS INSTALLER FOR CORE ###
 # Install apps for core in a specific stage to avoid having all node_modules in runner-core
-FROM runner as apps-installer-core
+FROM runner AS apps-installer-core
 WORKDIR /app
 
 # Install apps
@@ -47,12 +47,10 @@ COPY scripts/apps_install.sh ./scripts/apps_install.sh
 RUN ./scripts/apps_install.sh
 
 ### RUNNER FOR CORE ###
-FROM runner as runner-core
+FROM runner AS runner-core
 WORKDIR /app
 
 COPY --from=apps-installer-core /app/apps/core/applications ./apps/core/applications
-
-RUN yarn add nodemon
 
 RUN rm -rf ./apps/{login,admin,data-studio,portal,preview-generator/src,automate-scan/src,sync-scan/src,core/src} \
     && rm -rf .yarn/cache
