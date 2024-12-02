@@ -33,6 +33,7 @@ const _mapping = (data: ExplorerQuery, libraryId: string, availableLangs: string
     }));
 
     return {
+        totalCount: data.records.totalCount ?? 0,
         attributes,
         records
     };
@@ -41,7 +42,8 @@ const _mapping = (data: ExplorerQuery, libraryId: string, availableLangs: string
 export const useExplorerData = ({
     libraryId,
     attributeIds,
-    sorts
+    sorts,
+    pagination
 }: {
     libraryId: string;
     attributeIds: string[];
@@ -49,12 +51,14 @@ export const useExplorerData = ({
         attributeId: string;
         order: SortOrder;
     }>;
+    pagination: null | {limit: number; offset: number};
 }) => {
     const {lang: availableLangs} = useLang();
     const {data, loading, refetch} = useExplorerQuery({
         variables: {
             libraryId,
             attributeIds,
+            pagination,
             multipleSort: sorts.map(({order, attributeId}) => ({
                 field: attributeId,
                 order

@@ -2,10 +2,26 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {IViewSettingsState, ViewSettingsActionTypes, viewSettingsReducer, ViewType} from './viewSettingsReducer';
-import {viewSettingsInitialState} from './viewSettingsInitialState';
+import {defaultPageSizeOptions, viewSettingsInitialState} from './viewSettingsInitialState';
 import {SortOrder} from '_ui/_gqlTypes';
 
 describe('ViewSettings Reducer', () => {
+    describe(`Action ${ViewSettingsActionTypes.CHANGE_PAGE_SIZE}`, () => {
+        test('default value should be the first of defaultPageSizeOptions', () => {
+            expect(viewSettingsInitialState.pageSize).toEqual(defaultPageSizeOptions[0]);
+        });
+
+        test('if the action can modify the pageSize', () => {
+            const state = viewSettingsReducer(viewSettingsInitialState, {
+                type: ViewSettingsActionTypes.CHANGE_PAGE_SIZE,
+                payload: {
+                    pageSize: 42
+                }
+            });
+            expect(state.pageSize).toEqual(42);
+        });
+    });
+
     test(`Action ${ViewSettingsActionTypes.ADD_ATTRIBUTE} test`, () => {
         const state = viewSettingsReducer(viewSettingsInitialState, {
             type: ViewSettingsActionTypes.ADD_ATTRIBUTE,

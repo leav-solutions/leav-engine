@@ -11,9 +11,10 @@ module.exports = {
             {
                 isolatedModules: true
             }
-        ]
+        ],
+        '^.+\\.js?$': ['babel-jest', {rootMode: 'upward'}]
     },
-    transformIgnorePatterns: ['node_modules'],
+    transformIgnorePatterns: ['node_modules/(?!(@uidotdev/usehooks)/)'],
     testRegex: '.test.(ts|tsx)$',
     testTimeout: 60_000,
     moduleNameMapper: require('../../jestModuleNameMapper')

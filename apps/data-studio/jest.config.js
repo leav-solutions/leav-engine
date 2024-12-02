@@ -29,9 +29,10 @@ module.exports = {
                 }
             }
         ],
-        '^.+\\.svg$': '<rootDir>/src/_tests/svgTransform.js'
+        '^.+\\.svg$': '<rootDir>/src/_tests/svgTransform.js',
+        '^.+\\.js$': ['babel-jest', {rootMode: 'upward'}]
     },
-    transformIgnorePatterns: ['node_modules'],
+    transformIgnorePatterns: ['node_modules/(?!(@uidotdev/usehooks)/)'],
     testRegex: '.test.(ts|tsx)$',
     moduleNameMapper: {
         ...commonModuleNameMapper,

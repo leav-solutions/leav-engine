@@ -33,6 +33,7 @@ const ExplorerContainerDivStyled = styled.div`
     --headerSize: 48px;
 
     padding: calc(var(--general-spacing-l) * 1px);
+    padding-bottom: calc(var(--general-spacing-s) * 1px);
     background-color: var(--general-colors-primary-50);
     height: calc(100vh - var(--headerSize));
 `;
