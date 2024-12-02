@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - develop
+      - feature/amp-170-core-hot-reload-in-dev
   workflow_dispatch:
 
 concurrency:
@@ -36,7 +37,7 @@ jobs:
                     context: .
                     platforms: linux/amd64, linux/arm64/v8
                     push: true
-                    file: docker/DOCKERFILES/build/core.Dockerfile
+                    file: docker/DOCKERFILES/build/core.dev.Dockerfile
                     labels:
                         LEAV Engine
                         Core
