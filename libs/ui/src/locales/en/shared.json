@@ -633,6 +633,7 @@
         "available-attributes": "Other available attributes",
         "coming-soon": "Coming soon",
         "show": "Show",
-        "hide": "Hide"
+        "hide": "Hide",
+        "pagination-total-number": "{{from, number}} - {{to, number}} of {{total, number}} items"
     }
 }

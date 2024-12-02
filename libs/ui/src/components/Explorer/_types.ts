@@ -6,6 +6,7 @@ import {AttributePropertiesFragment, PropertyValueFragment, RecordIdentityFragme
 import {ReactElement} from 'react';
 
 export interface IExplorerData {
+    totalCount: number;
     attributes: {
         [attributeId: string]: Override<AttributePropertiesFragment, {label: string}>;
     };
