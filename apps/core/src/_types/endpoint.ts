@@ -8,4 +8,9 @@ import {RequestHandler} from 'express';
  */
 export type ExpressAppMethod = 'all' | 'get' | 'post' | 'put' | 'delete' | 'patch' | 'options' | 'head';
 
-export type PluginRegisterRoute<T = any> = [path: string, method: ExpressAppMethod, handlers: Array<RequestHandler<T>>];
+export type PluginRegisterRoute<T = any> = [
+    path: string,
+    method: ExpressAppMethod,
+    handlers: Array<RequestHandler<T>>,
+    isProtected?: boolean
+];

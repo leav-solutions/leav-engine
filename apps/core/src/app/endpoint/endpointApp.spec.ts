@@ -4,15 +4,23 @@
 import initQueryContext from '../helpers/initQueryContext';
 import type {ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
 import type {Express} from 'express';
-import createEndpointApp from './endpointApp';
+import createEndpointApp, {IPluginRoute} from './endpointApp';
+import {IValueDomain} from 'domain/value/valueDomain';
+import {IConfig} from '_types/config';
 
 describe('endpointApp', () => {
     const validateRequestTokenHelper = jest.fn();
     const expressApp: Mockify<Express> = {get: jest.fn(), post: jest.fn()};
 
+    const mockRoute = {
+        path: '/test',
+        handlers: [jest.fn()],
+        method: 'get',
+        isProtected: true
+    } satisfies IPluginRoute;
+
     beforeEach(() => {
-        expressApp.get.mockClear();
-        expressApp.post.mockClear();
+        jest.clearAllMocks();
     });
 
     it('Should expose an extensionPoints.registerRoutes', async () => {
@@ -43,15 +51,26 @@ describe('endpointApp', () => {
     });
 
     describe('_initCtxHandler as the first handler', () => {
-        const endpointApp = createEndpointApp({
-            'core.app.helpers.initQueryContext': initQueryContext({}),
-            'core.app.helpers.validateRequestToken': validateRequestTokenHelper as ValidateRequestTokenFunc
+        let mockInitQueryContext: jest.Mock;
+        beforeEach(() => {
+            mockInitQueryContext = jest.fn().mockReturnValue({
+                userId: null,
+                lang: 'fr',
+                queryId: 'requestId',
+                groupsId: [],
+                errors: []
+            });
         });
-        endpointApp.extensionPoints.registerRoutes([['/protected_endpoint', 'get', [jest.fn()]]]);
 
-        it('Should call extends request and call next()', async () => {
+        it('Should call extends request and call next() if user is authenticated', async () => {
+            const endpointApp = createEndpointApp({
+                'core.app.helpers.initQueryContext': mockInitQueryContext,
+                'core.app.helpers.validateRequestToken': validateRequestTokenHelper as ValidateRequestTokenFunc
+            });
+            endpointApp.extensionPoints.registerRoutes([[mockRoute.path, mockRoute.method, mockRoute.handlers]]);
+
             endpointApp.registerRoute(expressApp as unknown as Express);
-            const [_initCtxHandler, ...ignoredHandlers] = expressApp.get.mock.calls[0][1];
+            const [_initCtxHandler, ..._ignoredHandlers] = expressApp.get.mock.calls[0][1];
             const request = {query: {lang: 'fr'}, body: {requestId: 'requestId'}};
             const nextMock = jest.fn();
             validateRequestTokenHelper.mockResolvedValue({groupsId: 'groupsId', userId: 'userId'});
@@ -77,9 +96,15 @@ describe('endpointApp', () => {
             expect(nextMock).toHaveBeenCalledWith();
         });
 
-        it('Should call extends request and call next() with error', async () => {
+        it('Should call extends request and call next() with error if user is not authenticated', async () => {
+            const endpointApp = createEndpointApp({
+                'core.app.helpers.initQueryContext': mockInitQueryContext,
+                'core.app.helpers.validateRequestToken': validateRequestTokenHelper as ValidateRequestTokenFunc
+            });
+            endpointApp.extensionPoints.registerRoutes([[mockRoute.path, mockRoute.method, mockRoute.handlers]]);
+
             endpointApp.registerRoute(expressApp as unknown as Express);
-            const [_initCtxHandler, ...ignoredHandlers] = expressApp.get.mock.calls[0][1];
+            const [_initCtxHandler, ..._ignoredHandlers] = expressApp.get.mock.calls[0][1];
             const request = {query: {lang: 'fr'}, body: {requestId: 'requestId'}};
             const nextMock = jest.fn();
             validateRequestTokenHelper.mockRejectedValue('error');
@@ -101,8 +126,61 @@ describe('endpointApp', () => {
                     lang: 'fr'
                 }
             });
+
             expect(nextMock).toHaveBeenCalledTimes(1);
             expect(nextMock).toHaveBeenCalledWith('error');
+        });
+
+        it('Should call extends request and call next() if route is not protected', async () => {
+            const mockValueDomain: Mockify<IValueDomain> = {
+                getValues: global.__mockPromise([
+                    {
+                        payload: {
+                            id: '123456'
+                        }
+                    }
+                ])
+            };
+
+            const mockConfig: Partial<IConfig> = {
+                defaultUserId: '2'
+            };
+
+            const endpointApp = createEndpointApp({
+                'core.app.helpers.initQueryContext': mockInitQueryContext,
+                'core.app.helpers.validateRequestToken': validateRequestTokenHelper as ValidateRequestTokenFunc,
+                'core.domain.value': mockValueDomain as IValueDomain,
+                config: mockConfig as IConfig
+            });
+
+            endpointApp.extensionPoints.registerRoutes([[mockRoute.path, mockRoute.method, mockRoute.handlers, false]]);
+
+            endpointApp.registerRoute(expressApp as unknown as Express);
+            const [_initCtxHandler, ..._ignoredHandlers] = expressApp.get.mock.calls[0][1];
+            const request = {query: {lang: 'fr'}, body: {requestId: 'requestId'}};
+            const nextMock = jest.fn();
+
+            await _initCtxHandler(request, undefined, nextMock);
+
+            expect(validateRequestTokenHelper).not.toHaveBeenCalled();
+
+            expect(request).toEqual({
+                body: {
+                    requestId: 'requestId'
+                },
+                ctx: {
+                    userId: mockConfig.defaultUserId, // default user id
+                    groupsId: ['123456'],
+                    errors: [],
+                    lang: 'fr',
+                    queryId: 'requestId'
+                },
+                query: {
+                    lang: 'fr'
+                }
+            });
+            expect(nextMock).toHaveBeenCalledTimes(1);
+            expect(nextMock).toHaveBeenCalledWith();
         });
     });
 });
