@@ -34,6 +34,7 @@ jobs:
                 uses: docker/build-push-action@v4
                 with:
                     context: .
+                    platforms: linux/amd64, linux/arm64/v8
                     push: true
                     file: docker/DOCKERFILES/build/core.Dockerfile
                     labels:
@@ -64,6 +65,7 @@ jobs:
                 uses: docker/build-push-action@v3
                 with:
                     context: .
+                    platforms: linux/amd64, linux/arm64/v8
                     push: true
                     target: runner-preview-generator
                     file: docker/DOCKERFILES/build/generic.Dockerfile
@@ -97,6 +99,7 @@ jobs:
                 uses: docker/build-push-action@v3
                 with:
                     context: .
+                    platforms: linux/amd64, linux/arm64/v8
                     push: true
                     target: runner
                     file: docker/DOCKERFILES/build/generic.Dockerfile
@@ -130,6 +133,7 @@ jobs:
                 uses: docker/build-push-action@v3
                 with:
                     context: .
+                    platforms: linux/amd64, linux/arm64/v8
                     push: true
                     target: runner
                     file: docker/DOCKERFILES/build/generic.Dockerfile
@@ -163,6 +167,7 @@ jobs:
                 uses: docker/build-push-action@v3
                 with:
                     context: .
+                    platforms: linux/amd64, linux/arm64/v8
                     push: true
                     target: runner
                     file: docker/DOCKERFILES/build/generic.Dockerfile
