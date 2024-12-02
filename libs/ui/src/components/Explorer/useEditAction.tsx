@@ -38,6 +38,7 @@ export const useEditAction = ({isEnabled}: ActionHook) => {
             variables: {
                 libraryId: item.libraryId,
                 attributeIds: ['id'],
+                pagination: {limit: 1},
                 filters: [
                     {
                         condition: RecordFilterCondition.EQUAL,

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useReducer} from 'react';
+import {ComponentProps, FunctionComponent, useReducer} from 'react';
 import {createPortal} from 'react-dom';
 import {KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
@@ -20,18 +20,10 @@ import {
     useOpenViewSettings,
     ViewSettingsContext,
     viewSettingsInitialState,
+    defaultPageSizeOptions,
     viewSettingsReducer
 } from './manage-view-settings';
-
-interface IExplorerProps {
-    library: string;
-    itemActions?: IItemAction[];
-    primaryActions?: IPrimaryAction[];
-    title?: string;
-    defaultActionsForItem?: Array<'edit' | 'deactivate'>;
-    defaultPrimaryActions?: Array<'create'>;
-    defaultViewSettings?: Partial<IViewSettingsState>;
-}
+import {usePagination} from './usePagination';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -42,11 +34,30 @@ const ExplorerHeaderDivStyled = styled.div`
     padding-bottom: calc(var(--general-spacing-xs) * 1px);
 `;
 
+const ExplorerPageDivStyled = styled.div`
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+`;
+
+interface IExplorerProps {
+    noPagination?: true;
+    library: string;
+    itemActions?: IItemAction[];
+    primaryActions?: IPrimaryAction[];
+    title?: string;
+    defaultActionsForItem?: Array<'edit' | 'deactivate'>;
+    defaultPrimaryActions?: Array<'create'>;
+    defaultViewSettings?: Partial<IViewSettingsState>;
+}
+
 export const Explorer: FunctionComponent<IExplorerProps> = ({
     library,
     itemActions,
     primaryActions,
     title,
+    noPagination,
     defaultActionsForItem = ['edit', 'deactivate'],
     defaultPrimaryActions = ['create'],
     defaultViewSettings
@@ -55,9 +66,12 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 
     const [view, dispatch] = useReducer(viewSettingsReducer, {...viewSettingsInitialState, ...defaultViewSettings});
 
+    const {currentPage, setNewPageSize, setNewPage} = usePagination(dispatch);
+
     const {data, loading, refetch} = useExplorerData({
         libraryId: library,
         attributeIds: view.attributesIds,
+        pagination: noPagination ? null : {limit: view.pageSize, offset: view.pageSize * (currentPage - 1)},
         sorts: view.sort
     }); // TODO: refresh when go back on page
 
@@ -79,12 +93,25 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 
     const {viewSettingsButton} = useOpenViewSettings(library);
 
+    const dataViewAdditionalProps: Pick<ComponentProps<typeof DataView>, 'paginationProps'> = noPagination
+        ? {}
+        : {
+              paginationProps: {
+                  pageSizeOptions: defaultPageSizeOptions,
+                  currentPage,
+                  pageSize: view.pageSize,
+                  setNewPageSize,
+                  setNewPage,
+                  totalItems: data?.totalCount ?? 0
+              }
+          };
+
     return (
         <ViewSettingsContext.Provider value={{view, dispatch}}>
             {loading ? (
                 'Loading...' // TODO: handle loading properly
             ) : (
-                <>
+                <ExplorerPageDivStyled>
                     <ExplorerHeaderDivStyled>
                         <KitTypography.Title level="h1">
                             <ExplorerTitle library={library} title={title} />
@@ -99,8 +126,9 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                         itemActions={[editAction, deactivateAction, ...(itemActions ?? [])].filter(Boolean)}
                         attributesProperties={data?.attributes ?? {}}
                         attributesToDisplay={['whoAmI', ...view.attributesIds]}
+                        {...dataViewAdditionalProps}
                     />
-                </>
+                </ExplorerPageDivStyled>
             )}
             {panelElement && createPortal(<SidePanel />, panelElement)}
             {editModal}
