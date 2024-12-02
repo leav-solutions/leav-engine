@@ -14,11 +14,11 @@ const KitInputStyled = styled(KitInput)<{$shouldHighlightColor: boolean}>`
 `;
 
 export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKitInput>> = ({
+    'data-testid': dataTestId,
     value,
     presentationValue,
     onChange,
     state,
-    attribute,
     handleSubmit
 }) => {
     if (!onChange) {
@@ -79,6 +79,7 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
 
     return (
         <KitInputStyled
+            data-testid={dataTestId}
             disabled={state.isReadOnly}
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}

@@ -6,6 +6,7 @@ import {CKEditor} from '@ckeditor/ckeditor5-react';
 import styled from 'styled-components';
 import {IStandardInputProps} from '_ui/components/RecordEdition/EditRecordContent/_types';
 
+// TODO: should be clean due to support with DS?
 const CkeditorComponent = styled.div<{$isEditing: boolean}>`
     border-width: 1px;
     border-style: solid;

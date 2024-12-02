@@ -17,11 +17,11 @@ const KitDatePickerStyled = styled(KitDatePicker)<{$shouldHighlightColor: boolea
 `;
 
 export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps<IKitDatePicker>> = ({
+    'data-testid': dataTestId,
     value,
     presentationValue,
     onChange,
     state,
-    attribute,
     handleSubmit
 }) => {
     if (!onChange) {
@@ -78,6 +78,7 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
 
     return (
         <KitDatePickerStyled
+            data-testid={dataTestId}
             value={value}
             format={isFocused || isErrors || !presentationValue ? undefined : () => presentationValue}
             disabled={state.isReadOnly}

@@ -5,6 +5,7 @@ import {Input, InputRef} from 'antd';
 import {MutableRefObject} from 'react';
 import {IStandardInputProps} from '_ui/components/RecordEdition/EditRecordContent/_types';
 
+// TODO: should be clean due to support with DS?
 function EncryptedInput({state, fieldValue, onChange, onPressEnter, inputRef}: IStandardInputProps): JSX.Element {
     const {editingValue} = fieldValue;
     const _handleChange = e => {

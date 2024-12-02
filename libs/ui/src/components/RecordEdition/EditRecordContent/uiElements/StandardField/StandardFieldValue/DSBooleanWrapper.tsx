@@ -26,6 +26,7 @@ const FontAwesomeIconStyled = styled(FontAwesomeIcon)`
 const _getBooleanValueAsStringForTranslation = (value: boolean): string => (value ? 'global.yes' : 'global.no');
 
 export const DSBooleanWrapper: FunctionComponent<IStandFieldValueContentProps<IKitSwitch>> = ({
+    'data-testid': dataTestId,
     value,
     onChange,
     state,
@@ -54,7 +55,12 @@ export const DSBooleanWrapper: FunctionComponent<IStandFieldValueContentProps<IK
     return (
         <>
             <label>
-                <KitSwitch checked={value} disabled={state.isReadOnly} onChange={_handleOnChange} />
+                <KitSwitch
+                    data-testid={dataTestId}
+                    checked={value}
+                    disabled={state.isReadOnly}
+                    onChange={_handleOnChange}
+                />
                 <KitTypographyTextStyled
                     size="fontSize5"
                     weight="medium"

@@ -22,11 +22,11 @@ const KitInputStyled = styled(KitInput)<{$shouldHighlightColor: boolean}>`
 `;
 
 export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProps<IKitRangePicker>> = ({
+    'data-testid': dataTestId,
     presentationValue,
     value,
     onChange,
     state,
-    attribute,
     handleSubmit
 }) => {
     if (!onChange) {
@@ -117,6 +117,7 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
             {
                 !isFocused && !isErrors && (
                     <KitInputStyled
+                        data-testid={dataTestId}
                         prefix={<FaCalendar />}
                         helper={isErrors ? String(errors[0]) : undefined}
                         status={isErrors ? 'error' : undefined}
@@ -131,6 +132,7 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
             }
             {(isFocused || isErrors) && (
                 <KitDatePickerRangePickerStyled
+                    data-testid={dataTestId}
                     open
                     autoFocus
                     value={value}

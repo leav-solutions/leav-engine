@@ -9,6 +9,7 @@ import {IStandardInputProps} from '_ui/components/RecordEdition/EditRecordConten
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {RecordFormAttributeStandardAttributeFragment} from '_ui/_gqlTypes';
 
+// TODO: should be clean due to support with DS?
 function DateInput({state, fieldValue, onFocus, onSubmit, settings}: IStandardInputProps): JSX.Element {
     const {editingValue} = fieldValue;
     const {i18n} = useSharedTranslation();

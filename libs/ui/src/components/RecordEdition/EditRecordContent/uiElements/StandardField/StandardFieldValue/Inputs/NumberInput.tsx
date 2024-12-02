@@ -6,6 +6,7 @@ import {ChangeEvent, MutableRefObject} from 'react';
 import styled from 'styled-components';
 import {IStandardInputProps} from '_ui/components/RecordEdition/EditRecordContent/_types';
 
+// TODO: should be clean due to support with DS?
 const StyledInput = styled(Input)`
     // Remove arrows on number input
     && {

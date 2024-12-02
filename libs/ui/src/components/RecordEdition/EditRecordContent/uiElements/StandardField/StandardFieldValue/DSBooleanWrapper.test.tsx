@@ -135,6 +135,7 @@ describe('DSBooleanWrapper', () => {
             <AntForm>
                 <AntForm.Item>
                     <DSBooleanWrapper
+                        data-testid="test"
                         value={true}
                         state={state}
                         handleSubmit={mockHandleSubmit}
@@ -154,6 +155,7 @@ describe('DSBooleanWrapper', () => {
             <AntForm>
                 <AntForm.Item>
                     <DSBooleanWrapper
+                        data-testid="test"
                         value={false}
                         state={state}
                         handleSubmit={mockHandleSubmit}
@@ -173,6 +175,7 @@ describe('DSBooleanWrapper', () => {
             <AntForm>
                 <AntForm.Item>
                     <DSBooleanWrapper
+                        data-testid="test"
                         value={false}
                         state={state}
                         handleSubmit={mockHandleSubmit}
@@ -195,6 +198,7 @@ describe('DSBooleanWrapper', () => {
             <AntForm>
                 <AntForm.Item>
                     <DSBooleanWrapper
+                        data-testid="test"
                         value={true}
                         state={state}
                         handleSubmit={mockHandleSubmit}
@@ -222,6 +226,7 @@ describe('DSBooleanWrapper', () => {
             <AntForm>
                 <AntForm.Item>
                     <DSBooleanWrapper
+                        data-testid="test"
                         value={inheritedValues[0].raw_value}
                         state={state}
                         handleSubmit={mockHandleSubmit}
@@ -249,6 +254,7 @@ describe('DSBooleanWrapper', () => {
             <AntForm>
                 <AntForm.Item>
                     <DSBooleanWrapper
+                        data-testid="test"
                         value={calculatedValues[0].raw_value}
                         state={state}
                         handleSubmit={mockHandleSubmit}

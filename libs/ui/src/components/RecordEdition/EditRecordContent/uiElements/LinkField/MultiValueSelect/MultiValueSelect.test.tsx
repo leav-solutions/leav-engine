@@ -101,6 +101,7 @@ describe('<MultiValueSelect />', () => {
             <AntForm name="name">
                 <AntForm.Item name="danette">
                     <MultiValueSelect
+                        data-testid="test"
                         activeValues={undefined}
                         attribute={mockFormElementLink.attribute}
                         label={state.formElement.settings.label.en}
@@ -141,6 +142,7 @@ describe('<MultiValueSelect />', () => {
             <AntForm name="name" initialValues={{danette: [records.list[1].id]}}>
                 <AntForm.Item name="danette">
                     <MultiValueSelect
+                        data-testid="test"
                         activeValues={[
                             {
                                 id_value,
@@ -217,6 +219,7 @@ describe('<MultiValueSelect />', () => {
                 <AntForm data-testid="antform" name="name" initialValues={{danette: [records.list[0].id]}}>
                     <AntForm.Item name="danette">
                         <MultiValueSelect
+                            data-testid="test"
                             activeValues={[activeValues[0]]}
                             attribute={mockFormElementLink.attribute}
                             label={state.formElement.settings.label.en}
@@ -253,6 +256,7 @@ describe('<MultiValueSelect />', () => {
                 <AntForm data-testid="antform" name="name" initialValues={{danette: [records.list[0].id]}}>
                     <AntForm.Item name="danette">
                         <MultiValueSelect
+                            data-testid="test"
                             activeValues={[activeValues[0]]}
                             attribute={mockFormElementLink.attribute}
                             label={state.formElement.settings.label.en}
@@ -285,6 +289,7 @@ describe('<MultiValueSelect />', () => {
                 <AntForm name="name" initialValues={{danette: [records.list[0].id, records.list[1].id]}}>
                     <AntForm.Item name="danette">
                         <MultiValueSelect
+                            data-testid="test"
                             activeValues={activeValues}
                             attribute={mockFormElementLink.attribute}
                             label={state.formElement.settings.label.en}
@@ -314,6 +319,7 @@ describe('<MultiValueSelect />', () => {
                 <AntForm name="name" initialValues={{danette: [records.list[0].id, records.list[1].id]}}>
                     <AntForm.Item name="danette">
                         <MultiValueSelect
+                            data-testid="test"
                             activeValues={activeValues}
                             attribute={mockFormElementLink.attribute}
                             label={state.formElement.settings.label.en}
@@ -353,6 +359,7 @@ describe('<MultiValueSelect />', () => {
                 <AntForm name="name" initialValues={{danette: [records.list[0].id, records.list[1].id]}}>
                     <AntForm.Item name="danette">
                         <MultiValueSelect
+                            data-testid="test"
                             activeValues={activeValues}
                             attribute={mockFormElementLink.attribute}
                             label={state.formElement.settings.label.en}

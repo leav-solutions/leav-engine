@@ -19,11 +19,11 @@ const KitRichTextStyled = styled(KitRichText)<{$shouldHighlightColor: boolean}>`
 const isEmptyValue = value => !value || value === '<p></p>';
 
 export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<KitRichTextProps>> = ({
+    'data-testid': dataTestId,
     value,
     presentationValue,
     onChange,
     state,
-    attribute,
     handleSubmit
 }) => {
     if (!onChange) {
@@ -80,6 +80,7 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
 
     return (
         <KitRichTextStyled
+            data-testid={dataTestId}
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
             value={valueToDisplay}

@@ -9,10 +9,10 @@ import {KitInput} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 export const DSInputEncryptedWrapper: FunctionComponent<IStandFieldValueContentProps<IKitPassword>> = ({
+    'data-testid': dataTestId,
     value,
     onChange,
     state,
-    attribute,
     handleSubmit
 }) => {
     if (!onChange) {
@@ -26,7 +26,7 @@ export const DSInputEncryptedWrapper: FunctionComponent<IStandFieldValueContentP
 
     const _handleOnBlur = (event: FocusEvent<HTMLInputElement>) => {
         const valueToSubmit = event.target.value;
-        handleSubmit(valueToSubmit, attribute.id);
+        handleSubmit(valueToSubmit, state.attribute.id);
 
         onChange(event);
     };
@@ -35,14 +35,14 @@ export const DSInputEncryptedWrapper: FunctionComponent<IStandFieldValueContentP
         const inputValue = event.target.value;
         onChange(event);
         if (inputValue === '' && event.type === 'click') {
-            await handleSubmit(null, attribute.id);
+            await handleSubmit(null, state.attribute.id);
         }
     };
 
     return (
         <KitInput.Password
+            data-testid={dataTestId}
             autoComplete="new-password"
-            data-testid="kit-input-password"
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
             value={value}

@@ -5,7 +5,7 @@ import {CloseOutlined, ExclamationCircleOutlined} from '@ant-design/icons';
 import {AnyPrimitive, IDateRangeValue, localizedTranslation} from '@leav/utils';
 import {Button, Form, FormListFieldData, Input, InputRef, Popover, Space, theme} from 'antd';
 import moment from 'moment';
-import React, {MutableRefObject, ReactNode, useEffect, useRef} from 'react';
+import {FunctionComponent, MutableRefObject, ReactNode, useEffect, useRef, CSSProperties, lazy} from 'react';
 import styled, {CSSObject} from 'styled-components';
 import {themeVars} from '_ui/antdTheme';
 import {FloatingMenu, FloatingMenuAction} from '_ui/components';
@@ -17,11 +17,11 @@ import ValueDetailsBtn from '_ui/components/RecordEdition/EditRecordContent/shar
 import ValuesVersionBtn from '_ui/components/RecordEdition/EditRecordContent/shared/ValuesVersionBtn';
 import ValuesVersionIndicator from '_ui/components/RecordEdition/EditRecordContent/shared/ValuesVersionIndicator';
 import {
-    VersionFieldScope,
     InputRefPossibleTypes,
     IStandardInputProps,
+    ISubmitMultipleResult,
     StandardValueTypes,
-    ISubmitMultipleResult
+    VersionFieldScope
 } from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
@@ -56,6 +56,7 @@ import {DSInputEncryptedWrapper} from './DSInputEncryptedWrapper';
 import {DSBooleanWrapper} from './DSBooleanWrapper';
 import {DSRichTextWrapper} from './DSRichTextWrapper';
 import {DSColorPickerWrapper} from './DSColorPickerWrapper';
+import {IStandFieldValueContentProps} from './_types';
 
 const ErrorMessage = styled.div`
     color: ${themeVars.errorColor};
@@ -178,9 +179,9 @@ const ButtonsWrapper = styled.div`
     }
 `;
 
-const RichTextEditorInput = React.lazy(() => import('./Inputs/RichTextEditorInput'));
+const RichTextEditorInput = lazy(() => import('./Inputs/RichTextEditorInput'));
 
-const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInputProps) => JSX.Element} = {
+const inputComponentByFormat: Record<AttributeFormat, FunctionComponent<IStandardInputProps>> = {
     [AttributeFormat.text]: null,
     [AttributeFormat.date]: null,
     [AttributeFormat.date_range]: null,
@@ -188,8 +189,8 @@ const inputComponentByFormat: {[format in AttributeFormat]: (props: IStandardInp
     [AttributeFormat.numeric]: null,
     [AttributeFormat.encrypted]: null,
     [AttributeFormat.extended]: TextInput,
-    [AttributeFormat.color]: ColorInput,
-    [AttributeFormat.rich_text]: RichTextEditorInput
+    [AttributeFormat.color]: ColorInput, // TODO: should be clean due to support with DS?
+    [AttributeFormat.rich_text]: RichTextEditorInput // TODO: should be clean due to support with DS?
 };
 
 type IStringValuesListConf = StandardValuesListFragmentStandardStringValuesListConfFragment;
@@ -197,6 +198,7 @@ type IStringValuesListConf = StandardValuesListFragmentStandardStringValuesListC
 type IDateRangeValuesListConf = StandardValuesListFragmentStandardDateRangeValuesListConfFragment;
 
 interface IStandardFieldValueProps {
+    'data-testid': string;
     value: IStandardFieldValue;
     presentationValue: string;
     state: IStandardFieldReducerState;
@@ -212,6 +214,7 @@ interface IStandardFieldValueProps {
 }
 
 function StandardFieldValue({
+    'data-testid': dataTestId,
     value: fieldValue,
     presentationValue,
     onSubmit,
@@ -337,14 +340,12 @@ function StandardFieldValue({
     };
 
     const _getInput = (): JSX.Element => {
-        let inputStyle: React.CSSProperties = {};
         if (
             !fieldValue.isEditing &&
-            attribute.format !== AttributeFormat.boolean &&
-            attribute.format !== AttributeFormat.rich_text
+            attribute.format !== AttributeFormat.boolean && // TODO: should be clean due to support with DS?
+            attribute.format !== AttributeFormat.rich_text // TODO: should be clean due to support with DS?
         ) {
             let displayedValue = String(fieldValue.displayValue);
-            let prefixValue;
             if (
                 attribute.format === AttributeFormat.color &&
                 (fieldValue.value === null || fieldValue.value.payload === null)
@@ -353,6 +354,8 @@ function StandardFieldValue({
             }
             const hasValue = fieldValue.value !== null;
 
+            let inputStyle: CSSProperties = {};
+            let prefixValue: ReactNode;
             if (hasValue) {
                 switch (attribute.format) {
                     case AttributeFormat.encrypted:
@@ -377,6 +380,7 @@ function StandardFieldValue({
                 <>
                     {prefixValue}
                     <Input
+                        data-testid={dataTestId}
                         key="display"
                         style={inputStyle}
                         className={hasValue ? 'has-value' : ''}
@@ -397,6 +401,7 @@ function StandardFieldValue({
 
         return (
             <InputComponent
+                data-testid={dataTestId}
                 state={state}
                 fieldValue={fieldValue}
                 onChange={_handleValueChange}
@@ -553,7 +558,7 @@ function StandardFieldValue({
         borderRadius: hasMultipleValuesDisplay ? 'none' : token.borderRadius
     };
 
-    const attributeFormatsWithDS = [
+    const attributeFormatsWithDS: Array<Exclude<AttributeFormat, typeof AttributeFormat.extended>> = [
         AttributeFormat.text,
         AttributeFormat.date_range,
         AttributeFormat.numeric,
@@ -564,44 +569,26 @@ function StandardFieldValue({
         AttributeFormat.color
     ];
 
-    const attributeFormatsWithoutDS = [AttributeFormat.extended];
+    const attributeFormatsWithoutDS: AttributeFormat[] = [AttributeFormat.extended];
 
-    const commonProps = {
-        state,
-        handleSubmit: _handleSubmit,
-        attribute,
-        presentationValue
-    };
-
-    let valueContent: ReactNode;
+    let ValueContent: FunctionComponent<IStandFieldValueContentProps<any>>;
     if (isValuesListEnabled) {
-        valueContent = <MonoValueSelect {...commonProps} />;
+        ValueContent = MonoValueSelect;
     } else {
-        switch (attribute.format) {
-            case AttributeFormat.text:
-                valueContent = <DSInputWrapper {...commonProps} />;
-                break;
-            case AttributeFormat.date:
-                valueContent = <DSDatePickerWrapper {...commonProps} />;
-                break;
-            case AttributeFormat.date_range:
-                valueContent = <DSRangePickerWrapper {...commonProps} />;
-                break;
-            case AttributeFormat.numeric:
-                valueContent = <DSInputNumberWrapper {...commonProps} />;
-                break;
-            case AttributeFormat.encrypted:
-                valueContent = <DSInputEncryptedWrapper {...commonProps} />;
-                break;
-            case AttributeFormat.boolean:
-                valueContent = <DSBooleanWrapper {...commonProps} />;
-                break;
-            case AttributeFormat.rich_text:
-                valueContent = <DSRichTextWrapper {...commonProps} />;
-                break;
-            case AttributeFormat.color:
-                valueContent = <DSColorPickerWrapper {...commonProps} />;
-        }
+        const InputWrapperByFormat: Record<
+            Exclude<AttributeFormat, typeof AttributeFormat.extended>,
+            FunctionComponent<IStandFieldValueContentProps<any>>
+        > = {
+            [AttributeFormat.text]: DSInputWrapper,
+            [AttributeFormat.date]: DSDatePickerWrapper,
+            [AttributeFormat.date_range]: DSRangePickerWrapper,
+            [AttributeFormat.numeric]: DSInputNumberWrapper,
+            [AttributeFormat.encrypted]: DSInputEncryptedWrapper,
+            [AttributeFormat.boolean]: DSBooleanWrapper,
+            [AttributeFormat.rich_text]: DSRichTextWrapper,
+            [AttributeFormat.color]: DSColorPickerWrapper
+        };
+        ValueContent = InputWrapperByFormat[attribute.format];
     }
 
     return (
@@ -611,7 +598,7 @@ function StandardFieldValue({
                     name={attribute.id}
                     {...listField}
                     rules={
-                        //TODO: Remove this rule when required is implemented in the backend
+                        // TODO: Remove this rule when required is implemented in the backend
                         !attribute.multiple_values
                             ? [
                                   {
@@ -623,7 +610,12 @@ function StandardFieldValue({
                     }
                     noStyle
                 >
-                    {valueContent}
+                    <ValueContent
+                        data-testid={dataTestId}
+                        state={state}
+                        handleSubmit={_handleSubmit}
+                        presentationValue={presentationValue}
+                    />
                 </Form.Item>
             )}
 

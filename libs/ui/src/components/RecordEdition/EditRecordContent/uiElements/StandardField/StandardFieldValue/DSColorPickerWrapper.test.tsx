@@ -15,7 +15,6 @@ import {mockFormElementInput} from '_ui/__mocks__/common/form';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
 import {AntForm} from 'aristid-ds';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 
 const en_label = 'label';
 const fr_label = 'libellé';
@@ -156,10 +155,10 @@ describe('DSColorPickerWrapper', () => {
             <AntForm>
                 <AntForm.Item>
                     <DSColorPickerWrapper
+                        data-testid="test"
                         state={state}
                         value={blueColor}
                         presentationValue={presentationValue}
-                        attribute={{} as RecordFormAttributeFragment}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
                     />
@@ -176,9 +175,9 @@ describe('DSColorPickerWrapper', () => {
             <AntForm>
                 <AntForm.Item>
                     <DSColorPickerWrapper
+                        data-testid="test"
                         state={state}
                         presentationValue=""
-                        attribute={{} as RecordFormAttributeFragment}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
                     />
@@ -201,9 +200,9 @@ describe('DSColorPickerWrapper', () => {
                 <AntForm>
                     <AntForm.Item>
                         <DSColorPickerWrapper
+                            data-testid="test"
                             state={state}
                             presentationValue=""
-                            attribute={{} as RecordFormAttributeFragment}
                             handleSubmit={mockHandleSubmit}
                             onChange={mockOnChange}
                         />
@@ -239,9 +238,9 @@ describe('DSColorPickerWrapper', () => {
             <AntForm>
                 <AntForm.Item>
                     <DSColorPickerWrapper
+                        data-testid="test"
                         state={state}
                         presentationValue={presentationValue}
-                        attribute={{} as RecordFormAttributeFragment}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
                         value={inheritedValues[0].raw_value}
@@ -274,9 +273,9 @@ describe('DSColorPickerWrapper', () => {
             <AntForm>
                 <AntForm.Item>
                     <DSColorPickerWrapper
+                        data-testid="test"
                         state={state}
                         presentationValue={presentationValue}
-                        attribute={{} as RecordFormAttributeFragment}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
                         value={calculatedValues[0].raw_value}

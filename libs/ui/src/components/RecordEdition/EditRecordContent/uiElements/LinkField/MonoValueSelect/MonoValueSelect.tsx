@@ -21,6 +21,7 @@ const ResultsCount = styled(KitTypography.Text)`
 `;
 
 interface IMonoValueSelectProps extends IProvidedByAntFormItem<SelectProps<string[]>, SelectProps<string>> {
+    'data-testid': string;
     activeValue: RecordFormElementsValueLinkValue | undefined;
     attribute: RecordFormAttributeLinkAttributeFragment;
     label: string;
@@ -36,6 +37,7 @@ interface IMonoValueSelectProps extends IProvidedByAntFormItem<SelectProps<strin
 }
 
 export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
+    'data-testid': dataTestId,
     value,
     onChange,
     activeValue,
@@ -96,6 +98,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
 
     return (
         <KitSelect
+            data-testid={dataTestId}
             loading={loading}
             value={value}
             required={required}

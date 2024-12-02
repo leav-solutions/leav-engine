@@ -15,6 +15,7 @@ import {IProvidedByAntFormItem} from '_ui/components/RecordEdition/EditRecordCon
 import {useValueDetailsButton} from '_ui/components/RecordEdition/EditRecordContent/shared/ValueDetailsBtn/useValueDetailsButton';
 
 interface IMultiValueSelectProps extends IProvidedByAntFormItem<SelectProps<string[]>, SelectProps> {
+    'data-testid': string;
     activeValues: RecordFormElementsValueLinkValue[] | undefined;
     attribute: RecordFormAttributeLinkAttributeFragment;
     label: string;
@@ -25,6 +26,7 @@ interface IMultiValueSelectProps extends IProvidedByAntFormItem<SelectProps<stri
 }
 
 export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
+    'data-testid': dataTestId,
     value,
     onChange,
     activeValues,
@@ -119,6 +121,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
 
     return (
         <KitSelect
+            data-testid={dataTestId}
             loading={loading}
             value={value}
             required={required}

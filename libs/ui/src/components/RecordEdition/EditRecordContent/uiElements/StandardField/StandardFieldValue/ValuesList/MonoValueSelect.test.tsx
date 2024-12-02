@@ -4,13 +4,12 @@
 import {expectToThrow, render, screen} from '_ui/_tests/testUtils';
 import {MonoValueSelect} from './MonoValueSelect';
 import {mockFormElementInput} from '_ui/__mocks__/common/form';
-import {mockAttributeSimple, mockAttributeWithDetails, mockFormAttribute} from '_ui/__mocks__/common/attribute';
+import {mockAttributeSimple, mockAttributeWithDetails} from '_ui/__mocks__/common/attribute';
 import * as gqlTypes from '_ui/_gqlTypes';
 import * as useEditRecordReducer from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {AntForm} from 'aristid-ds';
 import userEvent from '@testing-library/user-event';
-import {RecordFormAttributeStandardAttributeFragment} from '_ui/_gqlTypes';
 import {VersionFieldScope} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {IStandardFieldReducerState} from '_ui/components/RecordEdition/EditRecordContent/reducers/standardFieldReducer/standardFieldReducer';
 import {
@@ -33,22 +32,10 @@ describe('<MonoValueSelect />', () => {
         {loading: false, called: false, client: null, reset: null, error: null}
     ]);
 
-    const commonAttribute: RecordFormAttributeStandardAttributeFragment = {
-        ...mockAttributeSimple,
-        readonly: false,
-        multiple_values: false,
-        permissions: {access_attribute: true, edit_value: true}
-    };
-
     const valuesList = {
         enable: true,
         values: ['green', 'yellow', 'foudre']
     };
-
-    const attribute = {
-        ...commonAttribute,
-        values_list: valuesList
-    } satisfies RecordFormAttributeStandardAttributeFragment;
 
     const state = {
         record: mockRecord,
@@ -59,7 +46,13 @@ describe('<MonoValueSelect />', () => {
                 required: false
             }
         },
-        attribute: mockFormAttribute,
+        attribute: {
+            ...mockAttributeSimple,
+            readonly: false,
+            multiple_values: false,
+            permissions: {access_attribute: true, edit_value: true},
+            values_list: valuesList
+        },
         isReadOnly: false,
         activeScope: VersionFieldScope.CURRENT,
         values: {
@@ -87,7 +80,7 @@ describe('<MonoValueSelect />', () => {
                 () =>
                     render(
                         <MonoValueSelect
-                            attribute={commonAttribute}
+                            data-testid="test"
                             presentationValue=""
                             state={state}
                             handleSubmit={handleSubmitMock}
@@ -98,15 +91,18 @@ describe('<MonoValueSelect />', () => {
         });
 
         it('should throw an error when displayed without values_list in attribute', async () => {
+            const attributeWithoutValuesList = {...state.attribute};
+            delete attributeWithoutValuesList.values_list;
+
             expectToThrow(
                 () =>
                     render(
                         <AntForm name="name">
                             <AntForm.Item name="chartreuse">
                                 <MonoValueSelect
-                                    attribute={commonAttribute}
+                                    data-testid="test"
                                     presentationValue=""
-                                    state={state}
+                                    state={{...state, attribute: attributeWithoutValuesList}}
                                     handleSubmit={handleSubmitMock}
                                 />
                             </AntForm.Item>
@@ -122,7 +118,7 @@ describe('<MonoValueSelect />', () => {
             <AntForm name="name">
                 <AntForm.Item name="chartreuse">
                     <MonoValueSelect
-                        attribute={attribute}
+                        data-testid="test"
                         presentationValue="green"
                         state={state}
                         handleSubmit={handleSubmitMock}
@@ -138,13 +134,13 @@ describe('<MonoValueSelect />', () => {
         await userEvent.click(green);
 
         expect(handleSubmitMock).toHaveBeenCalledTimes(1);
-        expect(handleSubmitMock).toHaveBeenCalledWith('green', attribute.id);
+        expect(handleSubmitMock).toHaveBeenCalledWith('green', state.attribute.id);
 
         const clearIcon = screen.getByLabelText('clear');
         await userEvent.click(clearIcon);
 
         expect(handleSubmitMock).toHaveBeenCalledTimes(2);
-        expect(handleSubmitMock).toHaveBeenCalledWith('', attribute.id);
+        expect(handleSubmitMock).toHaveBeenCalledWith('', state.attribute.id);
     });
 
     describe('search with result', () => {
@@ -153,7 +149,7 @@ describe('<MonoValueSelect />', () => {
                 <AntForm name="name">
                     <AntForm.Item name="chartreuse">
                         <MonoValueSelect
-                            attribute={attribute}
+                            data-testid="test"
                             presentationValue=""
                             state={state}
                             handleSubmit={handleSubmitMock}
@@ -166,7 +162,7 @@ describe('<MonoValueSelect />', () => {
             await userEvent.click(select);
             await userEvent.type(select, 'r');
 
-            await new Promise(resolve => setTimeout(resolve, 3000)); // 3 sec
+            await new Promise(resolve => setTimeout(resolve, 3_000));
 
             expect(screen.getByText('record_edition.press_enter_to')).toBeVisible();
             expect(screen.getByText('record_edition.select_this_value')).toBeVisible();
@@ -179,7 +175,7 @@ describe('<MonoValueSelect />', () => {
             render(
                 <AntForm name="name">
                     <AntForm.Item name="chartreuse">
-                        <MonoValueSelect attribute={attribute} state={state} handleSubmit={handleSubmitMock} />
+                        <MonoValueSelect data-testid="test" state={state} handleSubmit={handleSubmitMock} />
                     </AntForm.Item>
                 </AntForm>
             );
@@ -197,8 +193,14 @@ describe('<MonoValueSelect />', () => {
                 <AntForm name="name">
                     <AntForm.Item name="chartreuse">
                         <MonoValueSelect
-                            attribute={{...attribute, values_list: {...valuesList, allowFreeEntry: true}}}
-                            state={state}
+                            data-testid="test"
+                            state={{
+                                ...state,
+                                attribute: {
+                                    ...state.attribute,
+                                    values_list: {...valuesList, allowFreeEntry: true}
+                                }
+                            }}
                             handleSubmit={handleSubmitMock}
                         />
                     </AntForm.Item>
@@ -213,8 +215,8 @@ describe('<MonoValueSelect />', () => {
             const newColorOption = screen.getByText(`record_edition.select_option${newColor}`);
             await userEvent.click(newColorOption);
 
-            expect(handleSubmitMock).toHaveBeenCalledWith(newColor, attribute.id);
-            expect(screen.getByTestId(attribute.id).innerHTML).toMatch(new RegExp(newColor));
+            expect(handleSubmitMock).toHaveBeenCalledWith(newColor, state.attribute.id);
+            expect(screen.getByTestId('test').innerHTML).toMatch(new RegExp(newColor));
         });
 
         it('should display the option and create it with list update', async () => {
@@ -229,11 +231,14 @@ describe('<MonoValueSelect />', () => {
                 <AntForm name="name">
                     <AntForm.Item name="chartreuse">
                         <MonoValueSelect
-                            attribute={{
-                                ...attribute,
-                                values_list: {...valuesList, allowFreeEntry: true, allowListUpdate: true}
+                            data-testid="test"
+                            state={{
+                                ...state,
+                                attribute: {
+                                    ...state.attribute,
+                                    values_list: {...valuesList, allowFreeEntry: true, allowListUpdate: true}
+                                }
                             }}
-                            state={state}
                             handleSubmit={handleSubmitMock}
                         />
                     </AntForm.Item>
@@ -248,9 +253,9 @@ describe('<MonoValueSelect />', () => {
             const newColorOption = screen.getByText(`record_edition.create_and_select_option${newColor}`);
             await userEvent.click(newColorOption);
 
-            expect(handleSubmitMock).toHaveBeenCalledWith(newColor, attribute.id);
+            expect(handleSubmitMock).toHaveBeenCalledWith(newColor, state.attribute.id);
             expect(mockEditRecordDispatch).toHaveBeenCalledWith({type: EditRecordReducerActionsTypes.REQUEST_REFRESH});
-            expect(screen.getByTestId(attribute.id).innerHTML).toMatch(new RegExp(newColor));
+            expect(screen.getByTestId('test').innerHTML).toMatch(new RegExp(newColor));
         });
     });
 });

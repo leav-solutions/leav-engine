@@ -5,6 +5,7 @@ import {ColorPicker} from 'antd';
 import {Color} from 'antd/es/color-picker';
 import {IStandardInputProps} from '_ui/components/RecordEdition/EditRecordContent/_types';
 
+// TODO: should be clean due to support with DS?
 function ColorInput({state, fieldValue, onChange, onFocus}: IStandardInputProps): JSX.Element {
     const {editingValue} = fieldValue;
     const colorValue = '#' + editingValue.toString();

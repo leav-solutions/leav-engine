@@ -13,7 +13,6 @@ import {mockFormElementInput} from '_ui/__mocks__/common/form';
 import userEvent from '@testing-library/user-event';
 import {Form} from 'antd';
 import dayjs from 'dayjs';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 
 const en_label = 'label';
@@ -99,10 +98,10 @@ describe('DSDatePickerWrapper', () => {
             <Form>
                 <Form.Item>
                     <DSDatePickerWrapper
+                        data-testid="test"
                         state={state}
                         value={value}
                         presentationValue={presentationValue}
-                        attribute={{} as RecordFormAttributeFragment}
                         onChange={mockOnChange}
                         handleSubmit={mockHandleSubmit}
                     />
@@ -120,9 +119,9 @@ describe('DSDatePickerWrapper', () => {
                 <Form>
                     <Form.Item>
                         <DSDatePickerWrapper
+                            data-testid="test"
                             state={state}
                             presentationValue=""
-                            attribute={{} as RecordFormAttributeFragment}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                         />
@@ -153,9 +152,9 @@ describe('DSDatePickerWrapper', () => {
                 <Form>
                     <Form.Item>
                         <DSDatePickerWrapper
+                            data-testid="test"
                             state={state}
                             presentationValue=""
-                            attribute={{} as RecordFormAttributeFragment}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                         />
@@ -185,9 +184,9 @@ describe('DSDatePickerWrapper', () => {
                 <Form>
                     <Form.Item>
                         <DSDatePickerWrapper
+                            data-testid="test"
                             state={state}
                             presentationValue=""
-                            attribute={{} as RecordFormAttributeFragment}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                         />
@@ -218,9 +217,9 @@ describe('DSDatePickerWrapper', () => {
                 <Form>
                     <Form.Item>
                         <DSDatePickerWrapper
+                            data-testid="test"
                             state={state}
                             presentationValue=""
-                            attribute={{} as RecordFormAttributeFragment}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                         />
@@ -259,9 +258,9 @@ describe('DSDatePickerWrapper', () => {
                 >
                     <Form.Item name="datePickerTest">
                         <DSDatePickerWrapper
+                            data-testid="test"
                             state={state}
                             presentationValue=""
-                            attribute={{} as RecordFormAttributeFragment}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                         />
@@ -293,9 +292,9 @@ describe('DSDatePickerWrapper', () => {
                 >
                     <Form.Item name="datePickerTest">
                         <DSDatePickerWrapper
+                            data-testid="test"
                             state={state}
                             presentationValue=""
-                            attribute={{} as RecordFormAttributeFragment}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                         />
@@ -322,9 +321,9 @@ describe('DSDatePickerWrapper', () => {
                 >
                     <Form.Item name="datePickerTest">
                         <DSDatePickerWrapper
+                            data-testid="test"
                             state={state}
                             presentationValue=""
-                            attribute={{} as RecordFormAttributeFragment}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                         />
@@ -356,9 +355,9 @@ describe('DSDatePickerWrapper', () => {
                 >
                     <Form.Item name="datePickerTest">
                         <DSDatePickerWrapper
+                            data-testid="test"
                             state={state}
                             presentationValue=""
-                            attribute={{} as RecordFormAttributeFragment}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                         />

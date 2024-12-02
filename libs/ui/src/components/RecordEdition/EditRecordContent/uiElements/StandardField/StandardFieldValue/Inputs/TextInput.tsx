@@ -5,6 +5,7 @@ import {Input, InputRef} from 'antd';
 import {MutableRefObject, useEffect} from 'react';
 import {IStandardInputProps} from '_ui/components/RecordEdition/EditRecordContent/_types';
 
+// TODO: should be clean due to support with DS?
 function TextInput({state, fieldValue, onFocus, onChange, onPressEnter, inputRef}: IStandardInputProps): JSX.Element {
     const {isEditing, editingValue} = fieldValue;
 

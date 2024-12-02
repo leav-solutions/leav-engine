@@ -516,6 +516,7 @@ const StandardField: FunctionComponent<
                 >
                     {!attribute.multiple_values && (
                         <StandardFieldValue
+                            data-testid={state.attribute.id}
                             key={valuesToDisplay[0].idValue}
                             value={valuesToDisplay[0]}
                             presentationValue={presentationValues[0]}
@@ -538,6 +539,7 @@ const StandardField: FunctionComponent<
                                                 <RowValueWrapper key={field.key}>
                                                     <StandardFieldValueWrapper>
                                                         <StandardFieldValue
+                                                            data-testid={[state.attribute.id, index].join('-')}
                                                             listField={field}
                                                             value={valuesToDisplay[index]}
                                                             presentationValue={presentationValues[index]}

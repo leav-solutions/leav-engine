@@ -18,11 +18,11 @@ const KitInputNumberStyled = styled(KitInputNumber)<{$shouldHighlightColor: bool
 `;
 
 export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProps<KitInputNumberProps>> = ({
+    'data-testid': dataTestId,
     value,
     presentationValue,
     onChange,
     state,
-    attribute,
     handleSubmit
 }) => {
     if (!onChange) {
@@ -75,6 +75,7 @@ export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProp
 
     return (
         <KitInputNumberStyled
+            data-testid={dataTestId}
             ref={inputRef}
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}

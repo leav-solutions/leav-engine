@@ -13,7 +13,6 @@ import {mockFormElementInput} from '_ui/__mocks__/common/form';
 import userEvent from '@testing-library/user-event';
 import {Form} from 'antd';
 import dayjs from 'dayjs';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 
 const en_label = 'label';
@@ -89,8 +88,8 @@ describe('DSRangePickerWrapper', () => {
             <Form>
                 <Form.Item>
                     <DSRangePickerWrapper
+                        data-testid="test"
                         state={state}
-                        attribute={{} as RecordFormAttributeFragment}
                         presentationValue={presentationValue}
                         onChange={mockOnChange}
                         handleSubmit={mockHandleSubmit}
@@ -109,8 +108,8 @@ describe('DSRangePickerWrapper', () => {
                 <Form>
                     <Form.Item>
                         <DSRangePickerWrapper
+                            data-testid="test"
                             state={state}
-                            attribute={{} as RecordFormAttributeFragment}
                             presentationValue=""
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
@@ -163,8 +162,8 @@ describe('DSRangePickerWrapper', () => {
                 <Form>
                     <Form.Item>
                         <DSRangePickerWrapper
+                            data-testid="test"
                             state={state}
-                            attribute={{} as RecordFormAttributeFragment}
                             presentationValue="some date"
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
@@ -197,8 +196,8 @@ describe('DSRangePickerWrapper', () => {
                 <Form>
                     <Form.Item>
                         <DSRangePickerWrapper
+                            data-testid="test"
                             state={state}
-                            attribute={{} as RecordFormAttributeFragment}
                             presentationValue=""
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
@@ -247,8 +246,8 @@ describe('DSRangePickerWrapper', () => {
                 <Form>
                     <Form.Item>
                         <DSRangePickerWrapper
+                            data-testid="test"
                             state={state}
-                            attribute={{} as RecordFormAttributeFragment}
                             presentationValue={presentationValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
@@ -275,8 +274,8 @@ describe('DSRangePickerWrapper', () => {
                 <Form>
                     <Form.Item>
                         <DSRangePickerWrapper
+                            data-testid="test"
                             state={state}
-                            attribute={{} as RecordFormAttributeFragment}
                             presentationValue="some date"
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
@@ -321,8 +320,8 @@ describe('DSRangePickerWrapper', () => {
                 >
                     <Form.Item name="dateRangeTest">
                         <DSRangePickerWrapper
+                            data-testid="test"
                             state={state}
-                            attribute={{} as RecordFormAttributeFragment}
                             presentationValue=""
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
@@ -355,8 +354,8 @@ describe('DSRangePickerWrapper', () => {
                 >
                     <Form.Item name="dateRangeTest">
                         <DSRangePickerWrapper
+                            data-testid="test"
                             state={state}
-                            attribute={{} as RecordFormAttributeFragment}
                             presentationValue=""
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}

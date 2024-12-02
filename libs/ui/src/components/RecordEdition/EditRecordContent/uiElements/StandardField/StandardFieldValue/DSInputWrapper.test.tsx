@@ -13,7 +13,6 @@ import {mockFormElementInput} from '_ui/__mocks__/common/form';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
 import {AntForm} from 'aristid-ds';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 
 const en_label = 'label';
 const fr_label = 'libellé';
@@ -89,9 +88,9 @@ describe('DSInputWrapper', () => {
             <AntForm>
                 <AntForm.Item>
                     <DSInputWrapper
+                        data-testid="test"
                         state={state}
                         presentationValue={presentationValue}
-                        attribute={{} as RecordFormAttributeFragment}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
                     />
@@ -111,9 +110,9 @@ describe('DSInputWrapper', () => {
             <AntForm>
                 <AntForm.Item>
                     <DSInputWrapper
+                        data-testid="test"
                         state={state}
                         presentationValue={presentationValue}
-                        attribute={{} as RecordFormAttributeFragment}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
                         value={value}
@@ -133,9 +132,9 @@ describe('DSInputWrapper', () => {
             <AntForm>
                 <AntForm.Item>
                     <DSInputWrapper
+                        data-testid="test"
                         state={state}
                         presentationValue=""
-                        attribute={{} as RecordFormAttributeFragment}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
                     />
@@ -161,9 +160,9 @@ describe('DSInputWrapper', () => {
                 <AntForm initialValues={{danette: '42'}}>
                     <AntForm.Item name="danette">
                         <DSInputWrapper
+                            data-testid="test"
                             state={state}
                             presentationValue=""
-                            attribute={{} as RecordFormAttributeFragment}
                             handleSubmit={mockHandleSubmit}
                             onChange={mockOnChange}
                         />
@@ -201,6 +200,7 @@ describe('DSInputWrapper', () => {
                     <AntForm initialValues={{danette: '42'}}>
                         <AntForm.Item name="danette">
                             <DSInputWrapper
+                                data-testid="test"
                                 state={
                                     {
                                         ...state,
@@ -211,7 +211,6 @@ describe('DSInputWrapper', () => {
                                     } as any
                                 }
                                 presentationValue=""
-                                attribute={{} as RecordFormAttributeFragment}
                                 handleSubmit={mockHandleSubmit}
                                 onChange={mockOnChange}
                             />

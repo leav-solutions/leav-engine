@@ -153,6 +153,7 @@ describe('<MonoValueSelect />', () => {
             <AntForm name="name">
                 <AntForm.Item name="danette">
                     <MonoValueSelect
+                        data-testid="test"
                         activeValue={undefined}
                         attribute={mockFormElementLink.attribute}
                         label={state.formElement.settings.label.en}
@@ -193,6 +194,7 @@ describe('<MonoValueSelect />', () => {
             <AntForm name="name" initialValues={{danette: records.list[1].id}}>
                 <AntForm.Item name="danette">
                     <MonoValueSelect
+                        data-testid="test"
                         activeValue={{
                             id_value,
                             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -254,6 +256,7 @@ describe('<MonoValueSelect />', () => {
             <AntForm name="name" initialValues={{danette: records.list[1].id}}>
                 <AntForm.Item name="danette">
                     <MonoValueSelect
+                        data-testid="test"
                         activeValue={activeValue}
                         attribute={mockFormElementLink.attribute}
                         label={state.formElement.settings.label.en}
@@ -290,6 +293,7 @@ describe('<MonoValueSelect />', () => {
             <AntForm name="name">
                 <AntForm.Item name="danette">
                     <MonoValueSelect
+                        data-testid="test"
                         activeValue={undefined}
                         attribute={mockFormElementLink.attribute}
                         label={state.formElement.settings.label.en}
@@ -339,6 +343,7 @@ describe('<MonoValueSelect />', () => {
             <AntForm name="name">
                 <AntForm.Item name="danette">
                     <MonoValueSelect
+                        data-testid="test"
                         activeValue={undefined}
                         attribute={mockFormElementLink.attribute}
                         label={state.formElement.settings.label.en}

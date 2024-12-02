@@ -5,6 +5,7 @@ import {Checkbox} from 'antd';
 import {CheckboxChangeEvent} from 'antd/lib/checkbox';
 import {IStandardInputProps} from '_ui/components/RecordEdition/EditRecordContent/_types';
 
+// TODO: should be clean due to support with DS?
 function CheckboxInput({state, fieldValue, onSubmit}: IStandardInputProps): JSX.Element {
     const _handleCheckboxChange = (e: CheckboxChangeEvent) => {
         onSubmit(String(e.target.checked));

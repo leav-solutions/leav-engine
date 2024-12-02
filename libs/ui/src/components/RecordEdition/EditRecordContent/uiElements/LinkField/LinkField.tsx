@@ -139,6 +139,7 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
         >
             {attribute.multiple_values === true ? (
                 <MultiValueSelect
+                    data-testid={attribute.id}
                     activeValues={activeValues}
                     attribute={attribute}
                     label={label}
@@ -149,6 +150,7 @@ const LinkField: FunctionComponent<IFormElementProps<ICommonFieldsSettings>> = (
                 />
             ) : (
                 <MonoValueSelect
+                    data-testid={attribute.id}
                     activeValue={activeValues[0]}
                     attribute={attribute}
                     label={label}

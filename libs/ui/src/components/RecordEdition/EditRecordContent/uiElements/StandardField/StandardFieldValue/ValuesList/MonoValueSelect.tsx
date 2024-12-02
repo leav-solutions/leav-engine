@@ -34,18 +34,18 @@ const addOption = (options: IOption[], optionToAdd: IOption) => {
 };
 
 export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKitSelect>> = ({
+    'data-testid': dataTestId,
     value,
     presentationValue,
     onChange,
     state,
-    attribute,
     handleSubmit
 }) => {
     if (!onChange) {
         throw Error('MonoValueSelect should be used inside a antd Form.Item');
     }
 
-    if (!attribute.values_list || attribute.values_list.enable === false) {
+    if (!state.attribute.values_list || state.attribute.values_list.enable === false) {
         throw Error('MonoValueSelect should have a values list');
     }
 
@@ -56,14 +56,14 @@ export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKi
     const [saveAttribute] = useSaveAttributeMutation();
     const {dispatch: editRecordDispatch} = useEditRecordReducer();
 
-    const allowFreeEntry = attribute.values_list.allowFreeEntry;
-    const allowListUpdate = attribute.values_list.allowListUpdate;
+    const allowFreeEntry = state.attribute.values_list.allowFreeEntry;
+    const allowListUpdate = state.attribute.values_list.allowListUpdate;
 
     const _getFilteredValuesList = () => {
         let values = [];
 
-        if (attribute.format === AttributeFormat.date_range) {
-            const valuesList = (attribute.values_list as IDateRangeValuesListConf).dateRangeValues ?? [];
+        if (state.attribute.format === AttributeFormat.date_range) {
+            const valuesList = (state.attribute.values_list as IDateRangeValuesListConf).dateRangeValues ?? [];
 
             values = valuesList.map(v => {
                 const rangeValue = {
@@ -76,7 +76,7 @@ export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKi
                 };
             });
         } else {
-            const valuesList = (attribute.values_list as IStringValuesListConf)?.values ?? [];
+            const valuesList = (state.attribute.values_list as IStringValuesListConf)?.values ?? [];
 
             values = valuesList.map(v => ({value: v, label: v}));
         }
@@ -107,7 +107,7 @@ export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKi
         } else if (state.isCalculatedValue) {
             setTimeout(() => onChange(state.calculatedValue.raw_value, options), 0);
         }
-        await handleSubmit(null, attribute.id);
+        await handleSubmit(null, state.attribute.id);
     };
 
     const _handleOnChange = async (selectedValue: string) => {
@@ -117,16 +117,16 @@ export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKi
             return;
         }
 
-        if (allowListUpdate && isNewOption(selectedValue, initialOptions) && 'values' in attribute.values_list) {
+        if (allowListUpdate && isNewOption(selectedValue, initialOptions) && 'values' in state.attribute.values_list) {
             await saveAttribute({
                 variables: {
                     attribute: {
-                        id: attribute.id,
+                        id: state.attribute.id,
                         values_list: {
                             enable: true,
                             allowFreeEntry: true,
                             allowListUpdate: true,
-                            values: [...attribute.values_list.values, selectedValue]
+                            values: [...state.attribute.values_list.values, selectedValue]
                         }
                     }
                 }
@@ -134,7 +134,7 @@ export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKi
             editRecordDispatch({type: EditRecordReducerActionsTypes.REQUEST_REFRESH});
         }
 
-        await handleSubmit(selectedValue, attribute.id);
+        await handleSubmit(selectedValue, state.attribute.id);
         onChange(selectedValue, options);
     };
 
@@ -155,7 +155,7 @@ export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKi
 
     return (
         <KitSelect
-            data-testid={attribute.id}
+            data-testid={dataTestId}
             value={valueToDisplay}
             allowClear={!required && value}
             options={options}

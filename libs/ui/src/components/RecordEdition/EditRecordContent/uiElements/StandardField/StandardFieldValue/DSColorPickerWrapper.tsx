@@ -24,11 +24,11 @@ const KitColorPickerStyled = styled(KitColorPicker)<{$shouldHighlightColor: bool
 `;
 
 export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProps<KitColorPickerProps>> = ({
+    'data-testid': dataTestId,
     value,
     presentationValue,
     onChange,
     state,
-    attribute,
     handleSubmit
 }) => {
     if (!onChange) {
@@ -84,6 +84,7 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
 
     return (
         <KitColorPickerStyled
+            data-testid={dataTestId}
             value={currentHex}
             showText={isFocused || !presentationValue ? true : () => `${presentationValue}`}
             aria-label={label}

@@ -13,7 +13,6 @@ import {mockFormElementInput} from '_ui/__mocks__/common/form';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
 import {AntForm} from 'aristid-ds';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 
 const idValue = '123';
 const mockValue = {
@@ -86,8 +85,8 @@ describe('DSInputEncryptedWrapper', () => {
             <AntForm>
                 <AntForm.Item>
                     <DSInputEncryptedWrapper
+                        data-testid="test"
                         state={state}
-                        attribute={{id: mockFormAttribute.id} as RecordFormAttributeFragment}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
                     />
@@ -96,7 +95,7 @@ describe('DSInputEncryptedWrapper', () => {
         );
 
         const text = 'text';
-        const input = screen.getByTestId('kit-input-password');
+        const input = screen.getByTestId('test');
         await user.click(input);
         await user.type(input, text);
         await user.tab();
@@ -111,9 +110,9 @@ describe('DSInputEncryptedWrapper', () => {
             <AntForm>
                 <AntForm.Item>
                     <DSInputEncryptedWrapper
+                        data-testid="test"
                         state={state}
                         value="password"
-                        attribute={{id: mockFormAttribute.id} as RecordFormAttributeFragment}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
                     />
