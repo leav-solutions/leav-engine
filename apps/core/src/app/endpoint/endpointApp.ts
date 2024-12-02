@@ -7,6 +7,11 @@ import type {ExpressAppMethod, PluginRegisterRoute} from '../../_types/endpoint'
 import type {IRequestWithContext} from '../../_types/express';
 import type {InitQueryContextFunc} from '../helpers/initQueryContext';
 import type {ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
+import {IConfig} from '_types/config';
+import {IValueDomain} from 'domain/value/valueDomain';
+import {USERS_LIBRARY} from '../../_types/library';
+import {ITreeValue} from '_types/value';
+import {USERS_GROUP_ATTRIBUTE_NAME} from '../../infra/permission/permissionRepo';
 
 interface IEndpointApp extends IAppModule {
     /**
@@ -16,7 +21,7 @@ interface IEndpointApp extends IAppModule {
     registerRoute(app: Express): void;
 }
 
-interface IPluginRoute {
+export interface IPluginRoute {
     path: string;
     method: ExpressAppMethod;
     /**
@@ -24,46 +29,69 @@ interface IPluginRoute {
      * Errors are managed globally by a middleware.
      */
     handlers: Array<RequestHandler<any>>;
+    isProtected?: boolean;
 }
 
 interface IDeps {
     'core.app.helpers.initQueryContext'?: InitQueryContextFunc;
     'core.app.helpers.validateRequestToken'?: ValidateRequestTokenFunc;
+    'core.domain.value'?: IValueDomain;
+    config?: IConfig;
 }
 
 export default function ({
     'core.app.helpers.initQueryContext': initQueryContext = null,
-    'core.app.helpers.validateRequestToken': validateRequestToken = null
+    'core.app.helpers.validateRequestToken': validateRequestToken = null,
+    'core.domain.value': valueDomain = null,
+    config = null
 }: IDeps = {}): IEndpointApp {
     const _pluginsRoutes: IPluginRoute[] = [];
 
     return {
         registerRoute(app) {
-            const _initCtxHandler: RequestHandler<any> = async (req: IRequestWithContext, res, next) => {
-                try {
-                    req.ctx = initQueryContext(req);
+            const _initCtxHandler =
+                (route: IPluginRoute) =>
+                async (req: IRequestWithContext, res, next): Promise<RequestHandler<any>> => {
+                    try {
+                        req.ctx = initQueryContext(req);
 
-                    const {groupsId, userId} = await validateRequestToken(req, res);
-                    req.ctx.userId = userId;
-                    req.ctx.groupsId = groupsId;
+                        if (route.isProtected ?? true) {
+                            const {groupsId, userId} = await validateRequestToken(req, res);
+                            req.ctx.userId = userId;
+                            req.ctx.groupsId = groupsId;
+                        } else {
+                            req.ctx.userId = config.defaultUserId;
 
-                    return next();
-                } catch (err) {
-                    return next(err);
-                }
-            };
+                            // Fetch user groups
+                            const userGroups = (await valueDomain.getValues({
+                                library: USERS_LIBRARY,
+                                recordId: req.ctx.userId,
+                                attribute: USERS_GROUP_ATTRIBUTE_NAME,
+                                ctx: req.ctx
+                            })) as ITreeValue[];
+                            const groupsId = userGroups.map(g => g.payload?.id);
+
+                            req.ctx.groupsId = groupsId;
+                        }
+
+                        return next();
+                    } catch (err) {
+                        return next(err);
+                    }
+                };
 
             _pluginsRoutes.forEach(route => {
-                app[route.method](route.path, [_initCtxHandler, ...route.handlers]);
+                app[route.method](route.path, [_initCtxHandler(route), ...route.handlers]);
             });
         },
         extensionPoints: {
             registerRoutes: (routes: PluginRegisterRoute[]) => {
                 _pluginsRoutes.push(
-                    ...routes.map<IPluginRoute>(([path, method, handlers]) => ({
+                    ...routes.map<IPluginRoute>(([path, method, handlers, isProtected]) => ({
                         path,
                         method,
-                        handlers
+                        handlers,
+                        isProtected
                     }))
                 );
             }
