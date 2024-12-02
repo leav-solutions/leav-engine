@@ -633,6 +633,7 @@
         "available-attributes": "Autres propriétés disponibles",
         "coming-soon": "À venir",
         "show": "Afficher",
-        "hide": "Masquer"
+        "hide": "Masquer",
+        "pagination-total-number": "{{from, number}} - {{to, number}} de {{total, number}} éléments"
     }
 }

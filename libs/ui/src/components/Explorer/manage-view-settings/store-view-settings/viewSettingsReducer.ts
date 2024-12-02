@@ -14,7 +14,8 @@ export const ViewSettingsActionTypes = {
     ADD_SORT: 'ADD_SORT',
     REMOVE_SORT: 'REMOVE_SORT',
     MOVE_SORT: 'MOVE_SORT',
-    CHANGE_SORT_ORDER: 'CHANGE_SORT_ORDER'
+    CHANGE_SORT_ORDER: 'CHANGE_SORT_ORDER',
+    CHANGE_PAGE_SIZE: 'CHANGE_PAGE_SIZE'
 } as const;
 
 export interface IViewSettingsState {
@@ -24,6 +25,12 @@ export interface IViewSettingsState {
         attributeId: string;
         order: SortOrder;
     }>;
+    pageSize: number;
+}
+
+interface IViewSettingsActionChangePageSize {
+    type: typeof ViewSettingsActionTypes.CHANGE_PAGE_SIZE;
+    payload: {pageSize: number};
 }
 
 interface IViewSettingsActionAddAttribute {
@@ -79,6 +86,11 @@ interface IViewSettingsActionMoveSort {
 type Reducer<PAYLOAD = 'no_payload'> = PAYLOAD extends 'no_payload'
     ? (state: IViewSettingsState) => IViewSettingsState
     : (state: IViewSettingsState, payload: PAYLOAD) => IViewSettingsState;
+
+const changePageSize: Reducer<IViewSettingsActionChangePageSize['payload']> = (state, payload) => ({
+    ...state,
+    pageSize: payload.pageSize
+});
 
 const addAttribute: Reducer<IViewSettingsActionAddAttribute['payload']> = (state, payload) => ({
     ...state,
@@ -145,10 +157,14 @@ export type IViewSettingsAction =
     | IViewSettingsActionAddSort
     | IViewSettingsActionRemoveSort
     | IViewSettingsActionChangeSortOrder
-    | IViewSettingsActionMoveSort;
+    | IViewSettingsActionMoveSort
+    | IViewSettingsActionChangePageSize;
 
 export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
     switch (action.type) {
+        case ViewSettingsActionTypes.CHANGE_PAGE_SIZE: {
+            return changePageSize(state, action.payload);
+        }
         case ViewSettingsActionTypes.ADD_ATTRIBUTE: {
             return addAttribute(state, action.payload);
         }

@@ -17,7 +17,11 @@ jest.mock('_ui/components/RecordEdition/EditRecordModal', () => ({
     EditRecordModal: () => <div>{EditRecordModalMock}</div>
 }));
 
-const simpleMockAttribute: gqlTypes.AttributePropertiesFragment = {
+jest.mock('@uidotdev/usehooks', () => ({
+    useMeasure: () => [jest.fn(), {height: 100, width: 100}]
+}));
+
+const simpleMockAttribute = {
     id: 'simple_attribute',
     label: {
         fr: 'Mon attribut simple',
@@ -26,9 +30,31 @@ const simpleMockAttribute: gqlTypes.AttributePropertiesFragment = {
     type: gqlTypes.AttributeType.simple,
     format: gqlTypes.AttributeFormat.text,
     multiple_values: false
-};
+} satisfies gqlTypes.AttributePropertiesFragment;
 
-const linkMockAttribute: gqlTypes.AttributePropertiesFragment = {
+const booleanMockAttribute = {
+    id: 'boolean_attribute',
+    label: {
+        fr: 'Mon attribut booléen',
+        en: 'My boolean attribute'
+    },
+    type: gqlTypes.AttributeType.simple,
+    format: gqlTypes.AttributeFormat.boolean,
+    multiple_values: false
+} satisfies gqlTypes.AttributePropertiesFragment;
+
+const multivalBooleanMockAttribute = {
+    id: 'boolean_attribute',
+    label: {
+        fr: 'Mon attribut booléen',
+        en: 'My boolean attribute'
+    },
+    type: gqlTypes.AttributeType.simple,
+    format: gqlTypes.AttributeFormat.boolean,
+    multiple_values: true
+} satisfies gqlTypes.AttributePropertiesFragment;
+
+const linkMockAttribute = {
     ...simpleMockAttribute,
     id: 'link_attribute',
     label: {
@@ -36,9 +62,9 @@ const linkMockAttribute: gqlTypes.AttributePropertiesFragment = {
         en: 'My link attribute'
     },
     type: gqlTypes.AttributeType.advanced_link
-};
+} satisfies gqlTypes.AttributePropertiesFragment;
 
-const multivalLinkMockAttribute: gqlTypes.AttributePropertiesFragment = {
+const multivalLinkMockAttribute = {
     ...linkMockAttribute,
     id: 'link_attribute_multival',
     label: {
@@ -46,7 +72,7 @@ const multivalLinkMockAttribute: gqlTypes.AttributePropertiesFragment = {
         en: 'My link attribute multi-valued'
     },
     multiple_values: true
-};
+} satisfies gqlTypes.AttributePropertiesFragment;
 
 const simpleRichTextMockAttribute = {
     id: 'simple_rich_text',
@@ -169,6 +195,27 @@ describe('Explorer', () => {
                             valuePayload: colorRecord1
                         }
                     ]
+                },
+                {
+                    attributeId: booleanMockAttribute.id,
+                    attributeProperties: booleanMockAttribute,
+                    values: [
+                        {
+                            valuePayload: true
+                        }
+                    ]
+                },
+                {
+                    attributeId: multivalBooleanMockAttribute.id,
+                    attributeProperties: multivalBooleanMockAttribute,
+                    values: [
+                        {
+                            valuePayload: true
+                        },
+                        {
+                            valuePayload: false
+                        }
+                    ]
                 }
             ]
         },
@@ -229,6 +276,16 @@ describe('Explorer', () => {
                             valuePayload: colorRecord2
                         }
                     ]
+                },
+                {
+                    attributeId: booleanMockAttribute.id,
+                    attributeProperties: booleanMockAttribute,
+                    values: []
+                },
+                {
+                    attributeId: multivalBooleanMockAttribute.id,
+                    attributeProperties: multivalBooleanMockAttribute,
+                    values: []
                 }
             ]
         }
@@ -311,7 +368,7 @@ describe('Explorer', () => {
         render(<Explorer library="campaigns" />);
 
         expect(screen.getByRole('table')).toBeVisible();
-        expect(screen.getAllByRole('row')).toHaveLength(1 + mockRecords.length); // 1 header row + 2 records
+        expect(screen.getAllByRole('row')).toHaveLength(mockRecords.length); // 2 records
         const [record1, record2] = mockRecords;
         expect(screen.getByText(record1.whoAmI.label)).toBeInTheDocument();
         expect(screen.getByText(record2.whoAmI.label)).toBeInTheDocument();
@@ -327,7 +384,9 @@ describe('Explorer', () => {
                         linkMockAttribute.id,
                         multivalLinkMockAttribute.id,
                         simpleRichTextMockAttribute.id,
-                        simpleColorMockAttribute.id
+                        simpleColorMockAttribute.id,
+                        booleanMockAttribute.id,
+                        multivalBooleanMockAttribute.id
                     ]
                 }}
             />
@@ -335,10 +394,19 @@ describe('Explorer', () => {
 
         const tableRows = screen.getAllByRole('row');
         expect(screen.getByRole('table')).toBeVisible();
-        expect(tableRows).toHaveLength(1 + mockRecords.length); // 1 header row + 2 records
-        const [_headerRow, firstRecordRow] = tableRows;
+        expect(tableRows).toHaveLength(mockRecords.length); // 2 records
+        const [firstRecordRow] = tableRows;
         const [record1] = mockRecords;
-        const [whoAmICell, simpleAttributeCell, linkCell, multivalLinkCell, simpleRichTextCell, simpleColorCell] =
+        const [
+            whoAmICell,
+            simpleAttributeCell,
+            linkCell,
+            multivalLinkCell,
+            simpleRichTextCell,
+            simpleColorCell,
+            boolCell,
+            multivalBoolCell
+        ] =
             within(firstRecordRow).getAllByRole('cell');
 
         expect(within(whoAmICell).getByText(record1.whoAmI.label)).toBeInTheDocument();
@@ -358,6 +426,11 @@ describe('Explorer', () => {
         expect(simpleRichTextCell).toHaveTextContent('This is a test enrich text');
 
         expect(simpleColorCell).toHaveTextContent(`#${colorRecord1}`);
+
+        expect(within(boolCell).getByText(/yes/)).toBeVisible();
+
+        expect(within(multivalBoolCell).getByText(/yes/)).toBeVisible();
+        expect(within(multivalBoolCell).getByText(/no/)).toBeVisible();
     });
 
     test('Should be able to deactivate a record with default actions', async () => {

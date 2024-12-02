@@ -176,7 +176,6 @@ export enum AttributeType {
 export type AttributesFiltersInput = {
   format?: InputMaybe<Array<InputMaybe<AttributeFormat>>>;
   id?: InputMaybe<Scalars['ID']>;
-  ids?: InputMaybe<Array<Scalars['ID']>>;
   label?: InputMaybe<Scalars['String']>;
   libraries?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   librariesExcluded?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
@@ -1348,12 +1347,13 @@ export type AddViewMutation = { saveView: { id: string, shared: boolean, label: 
 export type ExplorerQueryVariables = Exact<{
   libraryId: Scalars['ID'];
   attributeIds: Array<Scalars['ID']> | Scalars['ID'];
+  pagination?: InputMaybe<RecordsPagination>;
   filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
   multipleSort?: InputMaybe<Array<RecordSortInput> | RecordSortInput>;
 }>;
 
 
-export type ExplorerQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }, values: Array<{ linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null } | { valuePayload?: any | null }> }> }> } };
+export type ExplorerQuery = { records: { totalCount?: number | null, list: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }, values: Array<{ linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null } | { valuePayload?: any | null }> }> }> } };
 
 export type ExplorerLibraryDataQueryVariables = Exact<{
   libraryId: Scalars['ID'];
@@ -3974,8 +3974,14 @@ export type AddViewMutationHookResult = ReturnType<typeof useAddViewMutation>;
 export type AddViewMutationResult = Apollo.MutationResult<AddViewMutation>;
 export type AddViewMutationOptions = Apollo.BaseMutationOptions<AddViewMutation, AddViewMutationVariables>;
 export const ExplorerDocument = gql`
-    query Explorer($libraryId: ID!, $attributeIds: [ID!]!, $filters: [RecordFilterInput], $multipleSort: [RecordSortInput!]) {
-  records(library: $libraryId, filters: $filters, multipleSort: $multipleSort) {
+    query Explorer($libraryId: ID!, $attributeIds: [ID!]!, $pagination: RecordsPagination, $filters: [RecordFilterInput], $multipleSort: [RecordSortInput!]) {
+  records(
+    library: $libraryId
+    filters: $filters
+    pagination: $pagination
+    multipleSort: $multipleSort
+  ) {
+    totalCount
     list {
       ...RecordIdentity
       properties(attributeIds: $attributeIds) {
@@ -4008,6 +4014,7 @@ ${PropertyValueFragmentDoc}`;
  *   variables: {
  *      libraryId: // value for 'libraryId'
  *      attributeIds: // value for 'attributeIds'
+ *      pagination: // value for 'pagination'
  *      filters: // value for 'filters'
  *      multipleSort: // value for 'multipleSort'
  *   },
