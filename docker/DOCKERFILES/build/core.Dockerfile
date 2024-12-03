@@ -15,6 +15,9 @@ COPY apps/ ./apps
 COPY libs/ ./libs/
 COPY assets/ ./assets
 
+# Dependencies needed to retrieve metadata on files
+RUN apk --update add perl pkgconfig
+
 ### BUILDER ###
 FROM base AS builder
 
