@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {exiftool, Tags} from 'exiftool-vendored';
 import path from 'node:path';
-import {PopplerDocument} from 'poppler-simple';
 import {IConfig} from '_types/config';
 import {FilesAttributes, IFileMetadata} from '../../../_types/filesManager';
 import {getRootPathByKey} from './getRootPathByKey';
@@ -45,13 +44,7 @@ export const extractFileMetadata = async (
     };
 
     if (rawMimeType === 'application/pdf') {
-        const pdf = new PopplerDocument(fullPath);
-        const page = pdf.getPage(1);
-        const pdfResolution = 72;
-        const pdfWidth = Number(page.width);
-        const pdfHeight = Number(page.height);
-        fileData[FilesAttributes.PRINT_WIDTH] = pdfWidth ? (25.4 * pdfWidth) / pdfResolution : null; // In mm
-        fileData[FilesAttributes.PRINT_HEIGHT] = pdfHeight ? (25.4 * pdfHeight) / pdfResolution : null; // In mm
+        // TODO
     }
 
     return fileData;

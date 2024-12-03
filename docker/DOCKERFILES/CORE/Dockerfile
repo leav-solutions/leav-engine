@@ -1,7 +1,7 @@
 FROM node:18-alpine3.18
 
-# Dependencies needed to retrieve metadata
-RUN apk --update add alpine-sdk perl pkgconfig poppler poppler-dev poppler-utils
+# Dependencies needed to retrieve metadata on files
+RUN apk --update add perl pkgconfig
 
 WORKDIR /app/apps/core
 
