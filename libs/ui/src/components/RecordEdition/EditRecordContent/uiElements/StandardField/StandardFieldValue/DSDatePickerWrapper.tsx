@@ -78,6 +78,7 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
 
     return (
         <KitDatePickerStyled
+            id={attribute.id}
             value={value}
             format={isFocused || isErrors || !presentationValue ? undefined : () => presentationValue}
             disabled={state.isReadOnly}

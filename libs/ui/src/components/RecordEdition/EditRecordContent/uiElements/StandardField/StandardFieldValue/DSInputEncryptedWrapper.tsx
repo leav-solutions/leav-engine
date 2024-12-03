@@ -41,6 +41,7 @@ export const DSInputEncryptedWrapper: FunctionComponent<IStandFieldValueContentP
 
     return (
         <KitInput.Password
+            id={attribute.id}
             autoComplete="new-password"
             data-testid="kit-input-password"
             helper={isErrors ? String(errors[0]) : undefined}
