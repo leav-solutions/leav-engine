@@ -15,9 +15,6 @@ COPY apps/ ./apps
 COPY libs/ ./libs/
 COPY assets/ ./assets
 
-# Dependencies needed to retrieve metadata
-RUN apk --update --no-cache add alpine-sdk perl pkgconfig poppler poppler-dev poppler-utils python3
-
 ### BUILDER ###
 FROM base AS builder
 
@@ -60,8 +57,7 @@ RUN rm -rf ./apps/login \
     && rm -rf ./apps/automate-scan/src \
     && rm -rf ./apps/sync-scan/src \
     && rm -rf ./apps/core/src \
-    && rm -rf .yarn/cache \
-    && apk del alpine-sdk pkgconfig poppler-dev poppler-utils python3
+    && rm -rf .yarn/cache
 
 # Get ready for runtime
 WORKDIR /app/apps/core

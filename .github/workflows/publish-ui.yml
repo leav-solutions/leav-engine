@@ -67,7 +67,6 @@ jobs:
         with:
           path: '**/node_modules'
           key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      - run: sudo apt-get update && sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
       - name: build project
         run: yarn --cwd "libs/ui" build
       - name: publish next version

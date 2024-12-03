@@ -15221,7 +15221,6 @@ __metadata:
     nodemon: "npm:1.19.4"
     npm-run-all: "npm:4.1.5"
     openid-client: "npm:5.6.5"
-    poppler-simple: "npm:0.11.2"
     prettier: "npm:3.3.3"
     progress-stream: "npm:2.0.0"
     redis: "npm:4.0.4"
@@ -25538,15 +25537,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nan@npm:^2.15.0":
-  version: 2.19.0
-  resolution: "nan@npm:2.19.0"
-  dependencies:
-    node-gyp: "npm:latest"
-  checksum: b97f680753113bcd803cb174e40baa01e04aa4cb95ee62b48841336d9c48b278a2eeff71a4a0d7315b8f639fb1e38049925d3be1c6e266c158dc8f7d95d67eaa
-  languageName: node
-  linkType: hard
-
 "nanoclone@npm:^0.2.1":
   version: 0.2.1
   resolution: "nanoclone@npm:0.2.1"
@@ -26923,18 +26913,6 @@ __metadata:
   dependencies:
     queue-lit: "npm:^1.5.1"
   checksum: e4eaf018dc311fd4d452954c10992cd8a9eb72d168ec2274bb831d86558422703e1405a8978ffdd5c418654e6a25e10a0765a39bf3ce3a84dc799fe6268e0ea4
-  languageName: node
-  linkType: hard
-
-"poppler-simple@npm:0.11.2":
-  version: 0.11.2
-  resolution: "poppler-simple@npm:0.11.2"
-  dependencies:
-    bluebird: "npm:^3.7.2"
-    nan: "npm:^2.15.0"
-    node-gyp: "npm:latest"
-    typescript: "npm:^4.6.3"
-  checksum: 5e873125de28bb8d02ed08b45695f5e4129e1862dc2a2313144500dc7fe189920edd985cb334bce64b8901d803710e6f41e5bbc18a5a888c4a21608d3c69e81e
   languageName: node
   linkType: hard
 
@@ -32244,16 +32222,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.6.3":
-  version: 4.9.5
-  resolution: "typescript@npm:4.9.5"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 458f7220ab11e0fc191514cc41be1707645ec9a8c2d609448a448e18c522cef9646f58728f6811185a4c35613dacdf6c98cf8965c88b3541d0288c47291e4300
-  languageName: node
-  linkType: hard
-
 "typescript@npm:~5.1.0":
   version: 5.1.6
   resolution: "typescript@npm:5.1.6"
@@ -32271,16 +32239,6 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: b61b8bb4b4d6a8a00f9d5f931f8c67070eed6ad11feabf4c41744a326987080bfc806a621596c70fbf2e5974eca3ed65bafeeeb22a078071bdfb51d8abd7c013
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@npm%3A^4.6.3#optional!builtin<compat/typescript>":
-  version: 4.9.5
-  resolution: "typescript@patch:typescript@npm%3A4.9.5#optional!builtin<compat/typescript>::version=4.9.5&hash=289587"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 5659316360b5cc2d6f5931b346401fa534107b68b60179cf14970e27978f0936c1d5c46f4b5b8175f8cba0430f522b3ce355b4b724c0ea36ce6c0347fab25afd
   languageName: node
   linkType: hard
 
