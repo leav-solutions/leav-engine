@@ -79,6 +79,7 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
 
     return (
         <KitInputStyled
+            id={attribute.id}
             disabled={state.isReadOnly}
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}

@@ -119,6 +119,7 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
 
     return (
         <KitSelect
+            htmlFor={attribute.id}
             loading={loading}
             value={value}
             required={required}
