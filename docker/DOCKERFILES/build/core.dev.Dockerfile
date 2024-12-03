@@ -31,7 +31,8 @@ FROM base AS runner
 COPY --from=builder /app/apps/core/dist ./apps/core/dist/
 
 # Install production only modules
-RUN yarn workspaces focus core --production && yarn workspace core add nodemon
+RUN yarn workspaces focus core --production
+RUN yarn workspace core add nodemon
 
 COPY ./docker/scripts ./scripts
 COPY libs ./libs
