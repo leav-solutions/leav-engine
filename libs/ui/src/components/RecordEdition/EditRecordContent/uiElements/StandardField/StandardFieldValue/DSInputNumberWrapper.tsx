@@ -76,6 +76,7 @@ export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProp
     return (
         <KitInputNumberStyled
             ref={inputRef}
+            id={attribute.id}
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
             value={value}

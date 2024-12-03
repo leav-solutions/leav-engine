@@ -155,6 +155,7 @@ export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKi
 
     return (
         <KitSelect
+            id={attribute.id}
             data-testid={attribute.id}
             value={valueToDisplay}
             allowClear={!required && value}

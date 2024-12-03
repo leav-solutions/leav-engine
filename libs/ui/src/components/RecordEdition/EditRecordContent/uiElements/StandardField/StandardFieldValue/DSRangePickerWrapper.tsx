@@ -117,6 +117,7 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
             {
                 !isFocused && !isErrors && (
                     <KitInputStyled
+                        id={attribute.id}
                         prefix={<FaCalendar />}
                         helper={isErrors ? String(errors[0]) : undefined}
                         status={isErrors ? 'error' : undefined}
