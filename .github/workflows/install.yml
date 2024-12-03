@@ -21,7 +21,5 @@ jobs:
           key: |
             ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
             ${{ runner.OS }}-yarn
-      - name: Install dependency
-        run: sudo apt-get update && sudo apt-get install -y libpoppler-dev libpoppler-cpp-dev libpoppler-private-dev poppler-utils
       - name: install node module
         run: yarn install
