@@ -96,6 +96,7 @@ export const MonoValueSelect: FunctionComponent<IMonoValueSelectProps> = ({
 
     return (
         <KitSelect
+            htmlFor={attribute.id}
             loading={loading}
             value={value}
             required={required}

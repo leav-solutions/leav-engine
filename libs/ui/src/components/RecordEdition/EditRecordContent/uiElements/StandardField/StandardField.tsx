@@ -513,6 +513,7 @@ const StandardField: FunctionComponent<
                             ? [<DeleteAllValuesButton handleDelete={_handleDeleteAllValues} />]
                             : undefined
                     }
+                    htmlFor={attribute.id}
                 >
                     {!attribute.multiple_values && (
                         <StandardFieldValue

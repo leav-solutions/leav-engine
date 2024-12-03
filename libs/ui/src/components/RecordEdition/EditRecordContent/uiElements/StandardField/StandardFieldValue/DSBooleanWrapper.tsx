@@ -29,6 +29,7 @@ export const DSBooleanWrapper: FunctionComponent<IStandFieldValueContentProps<IK
     value,
     onChange,
     state,
+    attribute,
     handleSubmit
 }) => {
     if (!onChange) {
@@ -54,7 +55,7 @@ export const DSBooleanWrapper: FunctionComponent<IStandFieldValueContentProps<IK
     return (
         <>
             <label>
-                <KitSwitch checked={value} disabled={state.isReadOnly} onChange={_handleOnChange} />
+                <KitSwitch id={attribute.id} checked={value} disabled={state.isReadOnly} onChange={_handleOnChange} />
                 <KitTypographyTextStyled
                     size="fontSize5"
                     weight="medium"

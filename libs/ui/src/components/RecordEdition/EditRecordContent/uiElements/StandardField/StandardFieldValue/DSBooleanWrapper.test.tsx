@@ -136,6 +136,7 @@ describe('DSBooleanWrapper', () => {
                 <AntForm.Item>
                     <DSBooleanWrapper
                         value={true}
+                        attribute={mockFormAttribute}
                         state={state}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
@@ -155,6 +156,7 @@ describe('DSBooleanWrapper', () => {
                 <AntForm.Item>
                     <DSBooleanWrapper
                         value={false}
+                        attribute={mockFormAttribute}
                         state={state}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
@@ -174,6 +176,7 @@ describe('DSBooleanWrapper', () => {
                 <AntForm.Item>
                     <DSBooleanWrapper
                         value={false}
+                        attribute={mockFormAttribute}
                         state={state}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
@@ -196,6 +199,7 @@ describe('DSBooleanWrapper', () => {
                 <AntForm.Item>
                     <DSBooleanWrapper
                         value={true}
+                        attribute={mockFormAttribute}
                         state={state}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
@@ -223,6 +227,7 @@ describe('DSBooleanWrapper', () => {
                 <AntForm.Item>
                     <DSBooleanWrapper
                         value={inheritedValues[0].raw_value}
+                        attribute={mockFormAttribute}
                         state={state}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
@@ -250,6 +255,7 @@ describe('DSBooleanWrapper', () => {
                 <AntForm.Item>
                     <DSBooleanWrapper
                         value={calculatedValues[0].raw_value}
+                        attribute={mockFormAttribute}
                         state={state}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}

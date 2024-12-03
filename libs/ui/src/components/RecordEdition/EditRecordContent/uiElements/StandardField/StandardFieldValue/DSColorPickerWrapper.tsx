@@ -84,6 +84,8 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
 
     return (
         <KitColorPickerStyled
+            id={attribute.id} // unused until color picker is fixed in DS / antd
+            data-testid={attribute.id}
             value={currentHex}
             showText={isFocused || !presentationValue ? true : () => `${presentationValue}`}
             aria-label={label}

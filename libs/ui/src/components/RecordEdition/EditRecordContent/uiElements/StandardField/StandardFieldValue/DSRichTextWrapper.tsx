@@ -80,6 +80,7 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
 
     return (
         <KitRichTextStyled
+            id={attribute.id}
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
             value={valueToDisplay}
