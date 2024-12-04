@@ -12,33 +12,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-    core-test:
-        runs-on: ubuntu-latest
-        steps:
-            -   uses: actions/checkout@v4
-            -   name: Set version # Write version to package.json and manifest.json
-                run: |
-                    echo "Setting version to \"develop (${{ github.sha }})\""
-                    find \( -name "package.json" -o -name "manifest.json" \) -not -path "*/node_modules/*" -not -path "*/__tests__/*" -type f -exec sh -c 'jq ".version = \"develop (${{ github.sha }})\"" {} > tmpfile && mv tmpfile {}' \;
-            -   name: Set up Docker Buildx
-                uses: docker/setup-buildx-action@v2
-            -   name: Login to Docker Hub
-                uses: docker/login-action@v2
-                with:
-                    username: ${{ secrets.DOCKERHUB_USERNAME }}
-                    password: ${{ secrets.DOCKERHUB_TOKEN }}
-            -   name: Build image
-                uses: docker/build-push-action@v4
-                with:
-                    context: .
-                    platforms: linux/amd64, linux/arm64/v8
-                    push: true
-                    file: docker/DOCKERFILES/build/core.dev.Dockerfile
-                    labels:
-                        LEAV Engine
-                        Core
-                    tags: "leavengine/core:test"
-
     # Build core and deploy it to Docker Hub
     core:
         runs-on: ubuntu-latest
@@ -64,7 +37,7 @@ jobs:
                     context: .
                     platforms: linux/amd64, linux/arm64/v8
                     push: true
-                    file: docker/DOCKERFILES/build/core.Dockerfile
+                    file: docker/DOCKERFILES/build/core.dev.Dockerfile
                     labels:
                         LEAV Engine
                         Core
