@@ -176,7 +176,6 @@ export enum AttributeType {
 export type AttributesFiltersInput = {
   format?: InputMaybe<Array<InputMaybe<AttributeFormat>>>;
   id?: InputMaybe<Scalars['ID']>;
-  ids?: InputMaybe<Array<Scalars['ID']>>;
   label?: InputMaybe<Scalars['String']>;
   libraries?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
   librariesExcluded?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
@@ -282,6 +281,17 @@ export enum FormsSortableFields {
   id = 'id',
   library = 'library',
   system = 'system'
+}
+
+export enum GenerationStatus {
+  DONE = 'DONE',
+  GENERATION_FAILED = 'GENERATION_FAILED',
+  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
+  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
+  PREPARATION_FAILED = 'PREPARATION_FAILED',
+  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
+  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
+  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
 }
 
 export type GlobalSettingsFileInput = {
@@ -1350,6 +1360,7 @@ export type ExplorerQueryVariables = Exact<{
   attributeIds: Array<Scalars['ID']> | Scalars['ID'];
   filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
   multipleSort?: InputMaybe<Array<RecordSortInput> | RecordSortInput>;
+  searchQuery?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -3974,8 +3985,13 @@ export type AddViewMutationHookResult = ReturnType<typeof useAddViewMutation>;
 export type AddViewMutationResult = Apollo.MutationResult<AddViewMutation>;
 export type AddViewMutationOptions = Apollo.BaseMutationOptions<AddViewMutation, AddViewMutationVariables>;
 export const ExplorerDocument = gql`
-    query Explorer($libraryId: ID!, $attributeIds: [ID!]!, $filters: [RecordFilterInput], $multipleSort: [RecordSortInput!]) {
-  records(library: $libraryId, filters: $filters, multipleSort: $multipleSort) {
+    query Explorer($libraryId: ID!, $attributeIds: [ID!]!, $filters: [RecordFilterInput], $multipleSort: [RecordSortInput!], $searchQuery: String) {
+  records(
+    library: $libraryId
+    filters: $filters
+    multipleSort: $multipleSort
+    searchQuery: $searchQuery
+  ) {
     list {
       ...RecordIdentity
       properties(attributeIds: $attributeIds) {
@@ -4010,6 +4026,7 @@ ${PropertyValueFragmentDoc}`;
  *      attributeIds: // value for 'attributeIds'
  *      filters: // value for 'filters'
  *      multipleSort: // value for 'multipleSort'
+ *      searchQuery: // value for 'searchQuery'
  *   },
  * });
  */

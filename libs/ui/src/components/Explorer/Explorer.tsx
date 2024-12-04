@@ -22,6 +22,8 @@ import {
     viewSettingsInitialState,
     viewSettingsReducer
 } from './manage-view-settings';
+import {useSearchInput} from './useSearchInput';
+import {Loading} from '../Loading';
 
 interface IExplorerProps {
     library: string;
@@ -58,6 +60,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     const {data, loading, refetch} = useExplorerData({
         libraryId: library,
         attributeIds: view.attributesIds,
+        fulltextSearch: view.fulltextSearch,
         sorts: view.sort
     }); // TODO: refresh when go back on page
 
@@ -79,28 +82,29 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 
     const {viewSettingsButton} = useOpenViewSettings(library);
 
+    const {searchInput} = useSearchInput({view, dispatch});
+
     return (
         <ViewSettingsContext.Provider value={{view, dispatch}}>
+            <ExplorerHeaderDivStyled>
+                <KitTypography.Title level="h1">
+                    <ExplorerTitle library={library} title={title} />
+                </KitTypography.Title>
+                <KitSpace size="xs">
+                    {searchInput}
+                    {viewSettingsButton}
+                    {primaryButton}
+                </KitSpace>
+            </ExplorerHeaderDivStyled>
             {loading ? (
-                'Loading...' // TODO: handle loading properly
+                <Loading />
             ) : (
-                <>
-                    <ExplorerHeaderDivStyled>
-                        <KitTypography.Title level="h1">
-                            <ExplorerTitle library={library} title={title} />
-                        </KitTypography.Title>
-                        <KitSpace size="xs">
-                            {viewSettingsButton}
-                            {primaryButton}
-                        </KitSpace>
-                    </ExplorerHeaderDivStyled>
-                    <DataView
-                        dataGroupedFilteredSorted={data?.records ?? []}
-                        itemActions={[editAction, deactivateAction, ...(itemActions ?? [])].filter(Boolean)}
-                        attributesProperties={data?.attributes ?? {}}
-                        attributesToDisplay={['whoAmI', ...view.attributesIds]}
-                    />
-                </>
+                <DataView
+                    dataGroupedFilteredSorted={data?.records ?? []}
+                    itemActions={[editAction, deactivateAction, ...(itemActions ?? [])].filter(Boolean)}
+                    attributesProperties={data?.attributes ?? {}}
+                    attributesToDisplay={['whoAmI', ...view.attributesIds]}
+                />
             )}
             {panelElement && createPortal(<SidePanel />, panelElement)}
             {editModal}

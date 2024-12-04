@@ -24,8 +24,14 @@ fragment AttributeProperties on Attribute {
     multiple_values
 }
 
-query Explorer($libraryId: ID!, $attributeIds: [ID!]!, $filters: [RecordFilterInput], $multipleSort: [RecordSortInput!]) {
-    records(library: $libraryId, filters: $filters, multipleSort: $multipleSort) {
+query Explorer(
+    $libraryId: ID!,
+    $attributeIds: [ID!]!,
+    $filters: [RecordFilterInput],
+    $multipleSort: [RecordSortInput!],
+    $searchQuery: String
+) {
+    records(library: $libraryId, filters: $filters, multipleSort: $multipleSort, searchQuery: $searchQuery) {
         list {
             ...RecordIdentity
             properties(attributeIds: $attributeIds) {
