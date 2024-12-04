@@ -580,4 +580,52 @@ describe('Explorer', () => {
             expect(customPrimaryActions[1].callback).toHaveBeenCalled();
         });
     });
+
+    test('Should be able to make a fulltext search', async () => {
+        const mockExplorerQueryResultWithSearch: Mockify<typeof gqlTypes.useExplorerQuery> = {
+            loading: false,
+            called: true,
+            data: {
+                records: {
+                    list: [
+                        {
+                            id: '613982168',
+                            whoAmI: {
+                                id: '613982168',
+                                label: 'Christmas 2024',
+                                subLabel: 'Du 20 décembre 2024 au 31 décembre 2024',
+                                color: null,
+                                library: {
+                                    id: 'campaigns',
+                                    label: {
+                                        en: 'Campaigns',
+                                        fr: 'Campagnes'
+                                    }
+                                },
+                                preview: null
+                            },
+                            properties: []
+                        }
+                    ]
+                }
+            }
+        };
+        jest.spyOn(gqlTypes, 'useExplorerQuery').mockImplementation(({variables}) =>
+            variables?.searchQuery
+                ? (mockExplorerQueryResultWithSearch as gqlTypes.ExplorerQueryResult)
+                : (mockExplorerQueryResult as gqlTypes.ExplorerQueryResult)
+        );
+
+        render(<Explorer library="campaigns" primaryActions={customPrimaryActions} defaultPrimaryActions={[]} />);
+
+        const searchInput = screen.getByRole('textbox', {name: /search/});
+        await userEvent.type(searchInput, 'Christ{Enter}');
+
+        expect(screen.getByText('Christmas 2024')).toBeVisible();
+
+        const clearButton = within(searchInput.parentElement!).getByRole('button'); // Not nice, but no way to get the clear button directly
+        await user.click(clearButton!);
+
+        expect(screen.getByText('Halloween 2025')).toBeVisible();
+    });
 });

@@ -283,6 +283,17 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
+export enum GenerationStatus {
+  DONE = 'DONE',
+  GENERATION_FAILED = 'GENERATION_FAILED',
+  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
+  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
+  PREPARATION_FAILED = 'PREPARATION_FAILED',
+  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
+  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
+  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
+}
+
 export type GlobalSettingsFileInput = {
   library: Scalars['String'];
   recordId: Scalars['String'];
@@ -1350,6 +1361,7 @@ export type ExplorerQueryVariables = Exact<{
   pagination?: InputMaybe<RecordsPagination>;
   filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
   multipleSort?: InputMaybe<Array<RecordSortInput> | RecordSortInput>;
+  searchQuery?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -3974,12 +3986,13 @@ export type AddViewMutationHookResult = ReturnType<typeof useAddViewMutation>;
 export type AddViewMutationResult = Apollo.MutationResult<AddViewMutation>;
 export type AddViewMutationOptions = Apollo.BaseMutationOptions<AddViewMutation, AddViewMutationVariables>;
 export const ExplorerDocument = gql`
-    query Explorer($libraryId: ID!, $attributeIds: [ID!]!, $pagination: RecordsPagination, $filters: [RecordFilterInput], $multipleSort: [RecordSortInput!]) {
+    query Explorer($libraryId: ID!, $attributeIds: [ID!]!, $pagination: RecordsPagination, $filters: [RecordFilterInput], $multipleSort: [RecordSortInput!], $searchQuery: String) {
   records(
     library: $libraryId
     filters: $filters
     pagination: $pagination
     multipleSort: $multipleSort
+    searchQuery: $searchQuery
   ) {
     totalCount
     list {
@@ -4017,6 +4030,7 @@ ${PropertyValueFragmentDoc}`;
  *      pagination: // value for 'pagination'
  *      filters: // value for 'filters'
  *      multipleSort: // value for 'multipleSort'
+ *      searchQuery: // value for 'searchQuery'
  *   },
  * });
  */
