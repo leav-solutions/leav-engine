@@ -79,10 +79,16 @@ describe('SelectTreeNode', () => {
             error: null
         };
 
-        const spy = jest.spyOn(gqlTypes, 'useTreeNodeChildrenLazyQuery').mockReturnValue([
-            jest.fn().mockImplementation(({variables}) => variables.node === null ? {data: mockResultFromRoot} : {data: mockResultFromChild}),
-            mockResult as QueryResult<gqlTypes.TreeNodeChildrenQuery, gqlTypes.TreeNodeChildrenQueryVariables>
-        ]);
+        const spy = jest
+            .spyOn(gqlTypes, 'useTreeNodeChildrenLazyQuery')
+            .mockReturnValue([
+                jest
+                    .fn()
+                    .mockImplementation(({variables}) =>
+                        variables.node === null ? {data: mockResultFromRoot} : {data: mockResultFromChild}
+                    ),
+                mockResult as QueryResult<gqlTypes.TreeNodeChildrenQuery, gqlTypes.TreeNodeChildrenQueryVariables>
+            ]);
 
         render(<SelectTreeNode tree={{id: 'treeId', label: {fr: 'Tree Label'}}} onSelect={jest.fn()} />);
 
@@ -93,7 +99,7 @@ describe('SelectTreeNode', () => {
         expect(await screen.findByText('label1')).toBeInTheDocument();
 
         // Expand node => fetch children
-        await userEvent.click(screen.getAllByRole('img', {name: 'toggle-children'}).pop());
+        await userEvent.click(screen.getAllByRole('img', {name: 'plus-square'}).pop());
         await waitFor(() => expect(screen.getByText('label2')).toBeInTheDocument());
 
         spy.mockRestore();

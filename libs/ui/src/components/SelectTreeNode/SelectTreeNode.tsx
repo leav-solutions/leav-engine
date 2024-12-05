@@ -1,18 +1,18 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {DownOutlined} from '@ant-design/icons';
 import {localizedTranslation} from '@leav/utils';
-import {Spin, Tree} from 'antd';
+import {Spin} from 'antd';
 import {Key} from 'antd/lib/table/interface';
 import {EventDataNode} from 'antd/lib/tree';
-import {useEffect, useState} from 'react';
+import {ComponentProps, useEffect, useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {TreeNodeChildrenQuery, useTreeNodeChildrenLazyQuery} from '_ui/_gqlTypes';
 import {defaultPaginationPageSize, ErrorDisplay} from '../..';
 import useLang from '../../hooks/useLang';
 import {SystemTranslation} from '../../types/scalars';
 import {ITreeNodeWithRecord} from '../../types/trees';
+import {KitTree} from 'aristid-ds';
 
 interface ISelectTreeNodeProps {
     tree: {id: string; label?: SystemTranslation | null};
@@ -72,6 +72,7 @@ function SelectTreeNode({
     const {lang} = useLang();
     const {t} = useSharedTranslation();
 
+    //TODO: component should be autonomous and fetch tree label by itself. Right now, we rely on the caller to get tree data
     const rootNode: ITreeMapElement = {
         title: localizedTranslation(tree.label, lang) || tree.id,
         record: null,
@@ -157,7 +158,7 @@ function SelectTreeNode({
         _fetchTreeContent();
     }, []);
 
-    const _handleLoadData = async (nodeData: EventDataNode<ITreeMapElement>) => {
+    const _handleLoadData: ComponentProps<typeof KitTree>['loadData'] = async nodeData => {
         const {id, isShowMore} = nodeData as EventDataNode<ITreeMapElement>;
 
         // Handle offset if we get here through the "show more" element
@@ -207,7 +208,7 @@ function SelectTreeNode({
     }
 
     return (
-        <Tree
+        <KitTree
             defaultExpandedKeys={[tree.id]} // TODO: Should be selectedNode but more changes are needed
             multiple={multiple}
             selectable={true}
@@ -221,7 +222,6 @@ function SelectTreeNode({
             showLine={{
                 showLeafIcon: false
             }}
-            switcherIcon={<DownOutlined aria-label="toggle-children" />}
         />
     );
 }
