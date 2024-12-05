@@ -1,66 +1,48 @@
-# This Dockerfile is meant to build the core of LEAV-Engine.
+# This Dockerfile is meant to build the core of LEAV-Engine with a watch on plugin to allow hot reload when plugin changes
 # We're using the "multi-stage build" feature of Docker in order to limit the size of the final image.
 
-### BASE ###
-FROM node:18-alpine3.18 AS base
-
+### CORE BUILDER ###
+FROM node:18-alpine3.18 AS builder
 WORKDIR /app
-
 ENV YARN_ENABLE_INLINE_BUILDS=1
+
+# Dependencies needed to retrieve metadata
+RUN apk --update add perl pkgconfig
 
 # Copy required files for builds
 COPY .yarn ./.yarn
 COPY *.json yarn.lock .yarnrc.yml vite-config-common.js ./
 COPY apps/ ./apps
-COPY libs/ ./libs/
+COPY libs/ ./libs
 COPY assets/ ./assets
-
-# Dependencies needed to retrieve metadata on files
-RUN apk --update add perl pkgconfig
-
-### BUILDER ###
-FROM base AS builder
+COPY apps/core/package.json ./apps/core/
+COPY scripts/apps_install.sh ./scripts/apps_install.sh
 
 # Install dev modules, needed for build and build project
 RUN yarn workspaces focus core && yarn workspace core build
-
-### RUNNER ###
-FROM base as runner
-
-# Retrieve code
-COPY --from=builder /app/apps/core/dist ./apps/core/dist/
-
-# Install production only modules
-RUN yarn workspaces focus core --production
-
-COPY ./docker/scripts ./scripts
-COPY libs ./libs
-COPY assets ./assets
-
-### APPS INSTALLER FOR CORE ###
-# Install apps for core in a specific stage to avoid having all node_modules in runner-core
-FROM runner as apps-installer-core
-WORKDIR /app
-
 # Install apps
-COPY scripts/apps_install.sh ./scripts/apps_install.sh
 RUN ./scripts/apps_install.sh
 
-### RUNNER FOR CORE ###
-FROM runner as runner-core
+### PROD DEPENDENCIES INSTALL ###
+FROM node:18-alpine3.18 AS prod-dep-install
 WORKDIR /app
 
-COPY --from=apps-installer-core /app/apps/core/applications ./apps/core/applications
+COPY .yarn ./.yarn
+COPY *.json yarn.lock .yarnrc.yml ./
+COPY libs/ ./libs
+COPY apps/core/package.json ./apps/core/
 
-RUN rm -rf ./apps/login \
-    && rm -rf ./apps/admin \
-    && rm -rf ./apps/data-studio \
-    && rm -rf ./apps/portal \
-    && rm -rf ./apps/preview-generator/src \
-    && rm -rf ./apps/automate-scan/src \
-    && rm -rf ./apps/sync-scan/src \
-    && rm -rf ./apps/core/src \
-    && rm -rf .yarn/cache
+RUN yarn workspaces focus core --production && rm -rf .yarn yarn.lock .yarnrc.yml
+
+### RUNNER FOR CORE ###
+FROM node:18-alpine3.18 AS runner
+WORKDIR /app
+
+COPY --from=prod-dep-install app/ ./
+COPY --from=builder /app/apps/core/dist ./apps/core/dist
+COPY --from=builder /app/apps/core/applications ./apps/core/applications
+COPY docker/scripts ./scripts
+COPY apps/core/config ./apps/core/config
 
 # Get ready for runtime
 WORKDIR /app/apps/core

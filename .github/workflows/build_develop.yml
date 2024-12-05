@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - develop
-      - feature/amp-170-core-hot-reload-in-dev
   workflow_dispatch:
 
 concurrency:

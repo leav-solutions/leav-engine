@@ -44,7 +44,7 @@ COPY --from=builder /app/apps/core/applications ./apps/core/applications
 COPY docker/scripts ./scripts
 COPY apps/core/config ./apps/core/config
 
-RUN npm install -g nodemon@3.1.7
+RUN npm install -g nodemon@^3.1.7
 
 # Get ready for runtime
 WORKDIR /app/apps/core
