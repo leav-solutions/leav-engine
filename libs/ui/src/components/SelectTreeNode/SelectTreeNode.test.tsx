@@ -6,7 +6,7 @@ import {Mockify} from '@leav/utils';
 import userEvent from '@testing-library/user-event';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {render, screen, waitFor} from '_ui/_tests/testUtils';
-import SelectTreeNode from './SelectTreeNode';
+import {SelectTreeNode} from './SelectTreeNode';
 
 describe('SelectTreeNode', () => {
     test('Render tree and navigate', async () => {
