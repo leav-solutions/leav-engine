@@ -2,16 +2,19 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {render, screen, waitFor} from '../../_tests/testUtils';
+import {render, screen} from '../../_tests/testUtils';
 import SelectTreeNodeModal from './SelectTreeNodeModal';
+import ReactModal from 'react-modal';
 
 jest.mock('_ui/components/SelectTreeNode', () => ({
     SelectTreeNode: () => <div>SelectTreeNode</div>
 }));
 
 describe('SelectTreeNodeModal', () => {
-    test('Should render', async () => {
+    test('Should modal with SelectTreeNode inside', async () => {
         const onSubmit = jest.fn();
+
+        ReactModal.setAppElement(document.createElement('div'));
 
         render(
             <SelectTreeNodeModal
@@ -22,14 +25,14 @@ describe('SelectTreeNodeModal', () => {
             />
         );
 
-        expect(screen.getByText('SelectTreeNode')).toBeInTheDocument();
+        expect(screen.getByText('SelectTreeNode')).toBeVisible();
 
         const applyBtn = screen.getByRole('button', {name: 'global.apply'});
 
-        expect(applyBtn).toBeInTheDocument();
+        expect(applyBtn).toBeVisible();
 
-        userEvent.click(applyBtn);
+        await userEvent.click(applyBtn);
 
-        await waitFor(() => expect(onSubmit).toBeCalled());
+        expect(onSubmit).toBeCalled();
     });
 });
