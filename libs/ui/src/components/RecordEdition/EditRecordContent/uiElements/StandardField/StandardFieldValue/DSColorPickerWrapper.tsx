@@ -4,9 +4,9 @@
 import {KitColorPicker} from 'aristid-ds';
 import {FunctionComponent, useState} from 'react';
 import styled from 'styled-components';
-import {KitColor, KitColorPickerProps} from 'aristid-ds/dist/Kit/DataEntry/ColorPicker/types';
+import {KitColorPickerProps} from 'aristid-ds/dist/Kit/DataEntry/ColorPicker/types';
 import {IStandFieldValueContentProps} from './_types';
-import {ColorFactory} from 'antd/es/color-picker/color';
+import {ColorFactory} from 'antd/lib/color-picker/color';
 
 const KitColorPickerStyled = styled(KitColorPicker)<{$shouldHighlightColor: boolean}>`
     width: 100%;
