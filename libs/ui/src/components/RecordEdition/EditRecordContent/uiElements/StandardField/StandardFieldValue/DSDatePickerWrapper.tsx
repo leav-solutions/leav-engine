@@ -39,13 +39,13 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
     const _resetToInheritedOrCalculatedValue = async () => {
         if (inheritedFlags.isInheritedValue) {
             onChange(
-                dayjs.unix(Number(inheritedFlags.inheritedValue.raw_value)),
-                inheritedFlags.inheritedValue.raw_value
+                dayjs.unix(Number(inheritedFlags.inheritedValue.raw_payload)),
+                inheritedFlags.inheritedValue.raw_payload
             );
         } else if (calculatedFlags.isCalculatedValue) {
             onChange(
-                dayjs.unix(Number(calculatedFlags.calculatedValue.raw_value)),
-                calculatedFlags.calculatedValue.raw_value
+                dayjs.unix(Number(calculatedFlags.calculatedValue.raw_payload)),
+                calculatedFlags.calculatedValue.raw_payload
             );
         }
 
