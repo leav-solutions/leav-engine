@@ -20,7 +20,7 @@ const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
     isCalculatedOverrideValue: true,
     isCalculatedNotOverrideValue: false,
     calculatedValue: {
-        raw_value: true
+        raw_payload: true
     }
 };
 
@@ -36,7 +36,7 @@ const inheritedFagsWithInheritedValue: InheritedFlags = {
     isInheritedOverrideValue: true,
     isInheritedNotOverrideValue: false,
     inheritedValue: {
-        raw_value: true
+        raw_payload: true
     }
 };
 

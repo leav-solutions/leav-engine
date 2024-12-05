@@ -42,9 +42,9 @@ export const DSBooleanWrapper: FunctionComponent<IStandFieldValueContentProps<IK
 
     const _resetToInheritedOrCalculatedValue = () => {
         if (inheritedFlags.isInheritedValue) {
-            onChange(inheritedFlags.inheritedValue.raw_value, undefined);
+            onChange(inheritedFlags.inheritedValue.raw_payload, undefined);
         } else if (calculatedFlags.isCalculatedValue) {
-            onChange(calculatedFlags.calculatedValue.raw_value, undefined);
+            onChange(calculatedFlags.calculatedValue.raw_payload, undefined);
         }
         handleSubmit(null, attribute.id);
     };

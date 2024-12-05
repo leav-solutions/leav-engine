@@ -25,7 +25,7 @@ const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
     isCalculatedOverrideValue: true,
     isCalculatedNotOverrideValue: false,
     calculatedValue: {
-        raw_value: pinkColor
+        raw_payload: pinkColor
     }
 };
 
@@ -41,7 +41,7 @@ const inheritedFlagsWithInheritedValue: InheritedFlags = {
     isInheritedOverrideValue: true,
     isInheritedNotOverrideValue: false,
     inheritedValue: {
-        raw_value: pinkColor
+        raw_payload: pinkColor
     }
 };
 
@@ -192,8 +192,8 @@ describe('DSColorPickerWrapper', () => {
             <AntForm>
                 <AntForm.Item>
                     <DSColorPickerWrapper
-                        value={inheritedFlagsWithInheritedValue.inheritedValue.raw_value}
-                        presentationValue={'#' + inheritedFlagsWithInheritedValue.inheritedValue.raw_value}
+                        value={inheritedFlagsWithInheritedValue.inheritedValue.raw_payload}
+                        presentationValue={'#' + inheritedFlagsWithInheritedValue.inheritedValue.raw_payload}
                         attribute={mockFormAttribute}
                         required={notRequired}
                         readonly={notReadonly}
@@ -221,8 +221,8 @@ describe('DSColorPickerWrapper', () => {
             <AntForm>
                 <AntForm.Item>
                     <DSColorPickerWrapper
-                        value={calculatedFlagsWithCalculatedValue.calculatedValue.raw_value}
-                        presentationValue={'#' + calculatedFlagsWithCalculatedValue.calculatedValue.raw_value}
+                        value={calculatedFlagsWithCalculatedValue.calculatedValue.raw_payload}
+                        presentationValue={'#' + calculatedFlagsWithCalculatedValue.calculatedValue.raw_payload}
                         attribute={mockFormAttribute}
                         required={notRequired}
                         readonly={notReadonly}

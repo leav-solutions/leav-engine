@@ -69,13 +69,13 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
         if (inheritedFlags.isInheritedValue) {
             setKey(prevKey => prevKey + 1);
 
-            const inheritedColor = new ColorFactory(inheritedFlags.inheritedValue.raw_value);
-            onChange(inheritedColor, inheritedFlags.inheritedValue.raw_value);
+            const inheritedColor = new ColorFactory(inheritedFlags.inheritedValue.raw_payload);
+            onChange(inheritedColor, inheritedFlags.inheritedValue.raw_payload);
         } else if (calculatedFlags.isCalculatedValue) {
             setKey(prevKey => prevKey + 1);
 
-            const calculatedColor = new ColorFactory(calculatedFlags.calculatedValue.raw_value);
-            onChange(calculatedColor, calculatedFlags.calculatedValue.raw_value);
+            const calculatedColor = new ColorFactory(calculatedFlags.calculatedValue.raw_payload);
+            onChange(calculatedColor, calculatedFlags.calculatedValue.raw_payload);
         } else {
             onChange(undefined, undefined);
         }
