@@ -4,7 +4,6 @@
 import {CloseCircleFilled, MoreOutlined} from '@ant-design/icons';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Dropdown} from 'antd';
-import moment from 'moment';
 import {useCallback, useState} from 'react';
 import {DraggableProvidedDragHandleProps} from 'react-beautiful-dnd';
 import styled from 'styled-components';
@@ -465,7 +464,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
                     tree={(filter as IFilterTree).tree}
                     onSubmit={node => updateFilterValue(_getValueFromNode(node))}
                     onClose={() => setShowSelectTreeNodeModal(false)}
-                    visible={showSelectTreeNodeModal}
+                    isVisible={showSelectTreeNodeModal}
                     canSelectRoot
                 />
             )}

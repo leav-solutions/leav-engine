@@ -16,7 +16,7 @@ describe('SelectTreeNodeModal', () => {
         render(
             <SelectTreeNodeModal
                 tree={{id: 'treeId', label: {fr: 'tree'}}}
-                visible
+                isVisible
                 onSubmit={onSubmit}
                 onClose={jest.fn()}
             />
