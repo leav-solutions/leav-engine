@@ -37,6 +37,7 @@ jobs:
                     context: .
                     platforms: linux/amd64, linux/arm64/v8
                     push: true
+                    no-cache: true
                     file: docker/DOCKERFILES/build/core.dev.Dockerfile
                     labels:
                         LEAV Engine
