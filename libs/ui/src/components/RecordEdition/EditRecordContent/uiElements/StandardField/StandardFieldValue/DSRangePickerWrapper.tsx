@@ -85,7 +85,7 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
 
         if (rangePickerDates !== null) {
             const [dateFrom, dateTo] = rangePickerDates;
-            datesToSave = JSON.stringify({from: String(dateFrom.unix()), to: String(dateTo.unix())});
+            datesToSave = JSON.stringify({from: dateFrom.unix(), to: dateTo.unix()});
         }
 
         await handleSubmit(datesToSave, attribute.id);

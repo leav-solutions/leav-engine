@@ -2,21 +2,21 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AnyPrimitive, ErrorTypes, IRequiredFieldsSettings, localizedTranslation} from '@leav/utils';
-import {FunctionComponent, useMemo, useRef, useState} from 'react';
+import {FunctionComponent, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {ErrorDisplay} from '_ui/components';
 import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
-import {AttributeFormat, ValueDetailsValueFragment} from '_ui/_gqlTypes';
+import {AttributeFormat, ValueDetailsFragment} from '_ui/_gqlTypes';
 import {APICallStatus, IFormElementProps, ISubmitMultipleResult} from '../../_types';
 import StandardFieldValue from './StandardFieldValue';
 import {Form, FormInstance, FormListOperation} from 'antd';
 import {KitButton, KitInputWrapper} from 'aristid-ds';
 import {useLang} from '_ui/hooks';
-import {TFunction} from 'i18next';
 import {FaPlus, FaTrash} from 'react-icons/fa';
 import {DeleteAllValuesButton} from './DeleteAllValuesButton';
 import {computeCalculatedFlags, computeInheritedFlags} from './calculatedInheritedFlags';
+import {useGetPresentationValues} from './useGetPresentationValues';
 
 const Wrapper = styled.div<{$metadataEdit: boolean}>`
     margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
@@ -55,43 +55,6 @@ const KitAddValueButton = styled(KitButton)`
     margin-bottom: 3px;
 `;
 
-const _isDateRangeValue = (value: any): value is {from: string; to: string} =>
-    !!value && typeof value === 'object' && 'from' in value && 'to' in value;
-
-const _getPresentationValue = ({
-    t,
-    format,
-    value,
-    calculatedValue,
-    inheritedValue
-}: {
-    t: TFunction;
-    format: AttributeFormat;
-    value: ValueDetailsValueFragment['payload'];
-    calculatedValue: RecordFormElementsValueStandardValue;
-    inheritedValue: RecordFormElementsValueStandardValue;
-}): string => {
-    let presentationValue = value || calculatedValue?.payload || inheritedValue?.payload || '';
-
-    switch (format) {
-        case AttributeFormat.date_range:
-            if (!_isDateRangeValue(presentationValue)) {
-                presentationValue = '';
-            } else {
-                const {from, to} = presentationValue;
-                presentationValue = t('record_edition.date_range_value', {from, to});
-            }
-            break;
-        case AttributeFormat.color:
-            if (presentationValue) {
-                presentationValue = '#' + presentationValue;
-            }
-            break;
-    }
-
-    return presentationValue;
-};
-
 const StandardField: FunctionComponent<
     IFormElementProps<IRequiredFieldsSettings, RecordFormElementsValueStandardValue> & {
         antdForm?: FormInstance;
@@ -120,40 +83,30 @@ const StandardField: FunctionComponent<
         .filter(backendValue => !backendValue.isCalculated && !backendValue.isInherited)
         .sort((a, b) => Number(a.id_value) - Number(b.id_value));
 
-    const presentationValues = useMemo(
-        () =>
-            backendWithoutCalculatedOrInheritedValues.map(value =>
-                _getPresentationValue({
-                    t,
-                    format: attribute.format,
-                    value: value.payload,
-                    calculatedValue: calculatedFlags.calculatedValue,
-                    inheritedValue: inheritedFlags.inheritedValue
-                })
-            ),
-        [backendValues, calculatedFlags, inheritedFlags]
-    );
-
-    const setAntdErrorField = (error: null | string, fieldName?: number) => {
-        const shouldSpecifyFieldName = attribute.multiple_values && fieldName !== undefined;
-        const name = shouldSpecifyFieldName ? [attribute.id, fieldName] : attribute.id;
-
-        antdForm.setFields([
-            {
-                name,
-                errors: error ? [error] : null
-            }
-        ]);
-    };
+    const {presentationValues} = useGetPresentationValues({
+        //TODO fix type
+        values: backendWithoutCalculatedOrInheritedValues as unknown as ValueDetailsFragment[],
+        format: attribute.format,
+        calculatedValue: calculatedFlags.calculatedValue,
+        inheritedValue: inheritedFlags.inheritedValue
+    });
 
     const _handleSubmit =
         (idValue: string | undefined, fieldName?: number) =>
         async (valueToSave: AnyPrimitive): Promise<ISubmitMultipleResult> => {
             const submitRes = await onValueSubmit([{value: valueToSave, idValue: idValue ?? null, attribute}], null);
 
+            const shouldSpecifyFieldName = attribute.multiple_values && fieldName !== undefined;
+            const name = shouldSpecifyFieldName ? [attribute.id, fieldName] : attribute.id;
+
             if (submitRes.status === APICallStatus.SUCCESS) {
                 if (antdForm) {
-                    setAntdErrorField(null, fieldName);
+                    antdForm.setFields([
+                        {
+                            name,
+                            errors: null
+                        }
+                    ]);
                 }
 
                 setBackendValues(previousBackendValues => {
@@ -192,7 +145,12 @@ const StandardField: FunctionComponent<
                             : t(`errors.${attributeError.type}`);
 
                     if (antdForm) {
-                        setAntdErrorField(errorMessage, fieldName);
+                        antdForm.setFields([
+                            {
+                                name,
+                                errors: [errorMessage]
+                            }
+                        ]);
                     }
                 }
             }
