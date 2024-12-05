@@ -113,7 +113,7 @@ function VersionTree({tree, selectedNode, readOnly, onNodeChange}: IVersionTreeP
                 <SelectTreeNodeModal
                     tree={tree}
                     onClose={_handleCloseTreeSelector}
-                    visible={isTreeNodeSelectorOpen}
+                    isVisible={isTreeNodeSelectorOpen}
                     onSubmit={_handleTreeSelect}
                     selectedNodeKey={selectedNode?.id}
                 />
