@@ -14,7 +14,7 @@ import {themeVars} from '../../../antdTheme';
 import useLang from '../../../hooks/useLang';
 import {ITreeNode} from '../../../types/trees';
 import {GetVersionableAttributesByLibraryQuery} from '../../../_gqlTypes';
-import SelectTreeNodeModal from '../../SelectTreeNodeModal';
+import {SelectTreeNodeModal} from '../../SelectTreeNodeModal';
 
 const Wrapper = styled.div`
     background: ${themeVars.lightBg};
