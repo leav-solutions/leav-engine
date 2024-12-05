@@ -83,9 +83,7 @@ const _getPresentationValue = ({
             }
             break;
         case AttributeFormat.color:
-            if (!presentationValue) {
-                presentationValue = '#00000000';
-            } else {
+            if (presentationValue) {
                 presentationValue = '#' + presentationValue;
             }
             break;
@@ -107,6 +105,8 @@ const StandardField: FunctionComponent<
         remove: FormListOperation['remove'];
         indexes: number[];
     } | null>(null);
+
+    const defaultValueToAddInAntdForm = '';
 
     const isMultipleValues = element.attribute.multiple_values;
     const {attribute} = element;
@@ -224,7 +224,7 @@ const StandardField: FunctionComponent<
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
             antdListFieldsRef.current.remove(antdListFieldsRef.current.indexes);
-            antdListFieldsRef.current.add();
+            antdListFieldsRef.current.add(defaultValueToAddInAntdForm);
             setBackendValues(previousBackendValues =>
                 previousBackendValues.filter(backendValue => !backendValue.id_value)
             );
@@ -367,7 +367,7 @@ const StandardField: FunctionComponent<
                                             type="secondary"
                                             size="m"
                                             icon={<FaPlus />}
-                                            onClick={() => add()}
+                                            onClick={() => add(defaultValueToAddInAntdForm)}
                                             disabled={fields.length > backendWithoutCalculatedOrInheritedValues.length}
                                         >
                                             {t('record_edition.add_value')}

@@ -472,7 +472,8 @@
             "enter_a_number": "Saisir un nombre",
             "enter_a_password": "Saisir un mot de passe",
             "start_date": "Date de début",
-            "end_date": "Date de fin"
+            "end_date": "Date de fin",
+            "select_an_option": "Sélectionner une option"
         }
     },
     "record_summary": {

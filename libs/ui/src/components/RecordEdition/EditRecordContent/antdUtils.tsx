@@ -44,7 +44,7 @@ const formatStandardInitialValue = (
     attribute: RecordFormElementAttribute
 ) => {
     if (!standardValue?.raw_payload) {
-        if (attribute.format === AttributeFormat.date_range) {
+        if ([AttributeFormat.date_range, AttributeFormat.color].includes(attribute.format)) {
             return undefined;
         }
         return '';

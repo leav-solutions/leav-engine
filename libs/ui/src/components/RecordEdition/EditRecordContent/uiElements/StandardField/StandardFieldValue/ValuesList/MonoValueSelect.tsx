@@ -152,12 +152,13 @@ export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKi
     };
 
     const valueToDisplay = isFocused ? value : presentationValue;
+    const isValueEmpty = value === '';
 
     return (
         <KitSelect
             id={attribute.id}
             data-testid={attribute.id}
-            value={valueToDisplay}
+            value={isValueEmpty ? undefined : valueToDisplay}
             allowClear={!required && value}
             options={options}
             open={isFocused}
@@ -168,6 +169,7 @@ export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKi
             onChange={onChange}
             onClear={_handleOnClear}
             onSearch={_handleOnSearch}
+            placeholder={t('record_edition.placeholder.select_an_option')}
             dropdownRender={menu => (
                 <>
                     {searchedString !== '' && searchResultsCount > 0 && (

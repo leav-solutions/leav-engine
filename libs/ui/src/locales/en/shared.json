@@ -472,7 +472,8 @@
             "enter_a_number": "Enter a number",
             "enter_a_password": "Enter a password",
             "start_date": "Start date",
-            "end_date": "End date"
+            "end_date": "End date",
+            "select_an_option": "Select an option"
         }
     },
     "record_summary": {

@@ -6,10 +6,10 @@ import {FunctionComponent, useState} from 'react';
 import styled from 'styled-components';
 import {KitColor, KitColorPickerProps} from 'aristid-ds/dist/Kit/DataEntry/ColorPicker/types';
 import {IStandFieldValueContentProps} from './_types';
+import {ColorFactory} from 'antd/es/color-picker/color';
 
 const KitColorPickerStyled = styled(KitColorPicker)<{$shouldHighlightColor: boolean}>`
     width: 100%;
-    justify-content: start; //TODO: Remove when the component is fixed in DS
 
     .ant-color-picker-trigger-text {
         color: ${({$shouldHighlightColor}) =>
@@ -38,8 +38,7 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
 
     const [hasChanged, setHasChanged] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
-    const [currentColor, setCurrentColor] = useState<KitColor>();
-    const [currentHex, setCurrentHex] = useState((value as string) ?? '');
+    const [key, setKey] = useState(0);
 
     const _handleOnOpenChange = async (open: boolean) => {
         if (!open) {
@@ -48,8 +47,8 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
                 return;
             }
 
-            onChange(currentColor, currentHex);
-            await handleSubmit(currentColor.toHex(), attribute.id);
+            const valueToSubmit = typeof value !== 'string' && value !== null ? value.toHex() : value?.toString();
+            await handleSubmit(valueToSubmit, attribute.id);
             setIsFocused(false);
         } else {
             setIsFocused(true);
@@ -61,8 +60,6 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
         hex: Parameters<KitColorPickerProps['onChange']>[1]
     ) => {
         setHasChanged(true);
-        setCurrentHex(hex);
-        setCurrentColor(color);
         onChange(color, hex);
     };
 
@@ -70,26 +67,38 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
         setHasChanged(false);
 
         if (inheritedFlags.isInheritedValue) {
-            onChange(undefined, inheritedFlags.inheritedValue.raw_value);
+            setKey(prevKey => prevKey + 1);
+
+            const inheritedColor = new ColorFactory(inheritedFlags.inheritedValue.raw_value);
+            onChange(inheritedColor, inheritedFlags.inheritedValue.raw_value);
         } else if (calculatedFlags.isCalculatedValue) {
-            onChange(undefined, calculatedFlags.calculatedValue.raw_value);
+            setKey(prevKey => prevKey + 1);
+
+            const calculatedColor = new ColorFactory(calculatedFlags.calculatedValue.raw_value);
+            onChange(calculatedColor, calculatedFlags.calculatedValue.raw_value);
+        } else {
+            onChange(undefined, undefined);
         }
 
-        onChange(null, null);
         await handleSubmit(null, attribute.id);
         setIsFocused(false);
     };
 
     return (
         <KitColorPickerStyled
+            // This is a hack to force the color picker to re-render when needed (e.g. reset to inherited value)
+            // https://react.dev/learn/preserving-and-resetting-state#option-2-resetting-state-with-a-key
+            key={key}
             id={attribute.id} // unused until color picker is fixed in DS / antd
             data-testid={attribute.id}
-            value={currentHex}
+            value={value}
             showText={isFocused || !presentationValue ? true : () => `${presentationValue}`}
             aria-label={label}
             disabled={readonly}
             disabledAlpha
-            allowClear={!inheritedFlags.isInheritedNotOverrideValue && !calculatedFlags.isCalculatedNotOverrideValue}
+            allowClear={
+                value && !inheritedFlags.isInheritedNotOverrideValue && !calculatedFlags.isCalculatedNotOverrideValue
+            }
             onOpenChange={_handleOnOpenChange}
             onChange={_handleOnChange}
             onClear={_handleOnClear}
