@@ -10,5 +10,6 @@ export const viewSettingsInitialState: IViewSettingsState = {
     attributesIds: [],
     fulltextSearch: '',
     sort: [],
-    pageSize: defaultPageSizeOptions[0]
+    pageSize: defaultPageSizeOptions[0],
+    filter: []
 };

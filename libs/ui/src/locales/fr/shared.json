@@ -634,6 +634,8 @@
         "coming-soon": "À venir",
         "show": "Afficher",
         "hide": "Masquer",
-        "pagination-total-number": "{{from, number}} - {{to, number}} de {{total, number}} éléments"
+        "pagination-total-number": "{{from, number}} - {{to, number}} de {{total, number}} éléments",
+        "active-items-number": "{{count, number}} actifs",
+        "active-items-number_zero": "Aucun"
     }
 }

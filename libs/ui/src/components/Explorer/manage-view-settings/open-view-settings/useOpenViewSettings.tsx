@@ -7,13 +7,13 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {SettingsPanel} from '../router-menu/SettingsPanel';
 import {useEditSettings} from './useEditSettings';
 
-export const useOpenViewSettings = (library: string) => {
+export const useOpenViewSettings = (library: string, maxFilters: number) => {
     const {setActiveSettings} = useEditSettings();
     const {t} = useSharedTranslation();
 
     const _openSettingsPanel = () =>
         setActiveSettings({
-            content: <SettingsPanel library={library} />,
+            content: <SettingsPanel library={library} maxFilters={maxFilters} />,
             title: t('explorer.settings')
         });
 

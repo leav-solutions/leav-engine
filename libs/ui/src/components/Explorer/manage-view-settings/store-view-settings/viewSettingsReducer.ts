@@ -18,6 +18,11 @@ export const ViewSettingsActionTypes = {
     CHANGE_PAGE_SIZE: 'CHANGE_PAGE_SIZE',
     CHANGE_FULLTEXT_SEARCH: 'CHANGE_FULLTEXT_SEARCH',
     CLEAR_FULLTEXT_SEARCH: 'CLEAR_FULLTEXT_SEARCH'
+    CHANGE_SORT_ORDER: 'CHANGE_SORT_ORDER',
+    ADD_FILTER: 'ADD_FILTER',
+    REMOVE_FILTER: 'REMOVE_FILTER',
+    MOVE_FILTER: 'MOVE_FILTER',
+    CHANGE_FILTER_CONFIG: 'CHANGE_FILTER_CONFIG'
 } as const;
 
 export interface IViewSettingsState {
@@ -29,6 +34,11 @@ export interface IViewSettingsState {
         order: SortOrder;
     }>;
     pageSize: number;
+    filter: Array<{
+        field: string;
+        operator: string;
+        values: string[];
+    }>;
 }
 
 interface IViewSettingsActionChangePageSize {
@@ -93,6 +103,29 @@ interface IViewSettingsActionChangeFulltextSearch {
 
 interface IViewSettingsActionClearFulltextSearch {
     type: typeof ViewSettingsActionTypes.CLEAR_FULLTEXT_SEARCH;
+}
+
+interface IViewSettingsActionAddFilter {
+    type: typeof ViewSettingsActionTypes.ADD_FILTER;
+    payload: {field: string; operator: string; values: string[]};
+}
+
+interface IViewSettingsActionRemoveFilter {
+    type: typeof ViewSettingsActionTypes.REMOVE_FILTER;
+    payload: {field: string};
+}
+
+interface IViewSettingsActionChangeFilterConfig {
+    type: typeof ViewSettingsActionTypes.CHANGE_FILTER_CONFIG;
+    payload: {field: string; operator: string; values: string[]};
+}
+
+interface IViewSettingsActionMoveFilter {
+    type: typeof ViewSettingsActionTypes.MOVE_FILTER;
+    payload: {
+        indexFrom: number;
+        indexTo: number;
+    };
 }
 
 type Reducer<PAYLOAD = 'no_payload'> = PAYLOAD extends 'no_payload'
@@ -170,6 +203,33 @@ export const clearFulltextSearch: Reducer = state => ({
     fulltextSearch: ''
 });
 
+const addFilter: Reducer<IViewSettingsActionAddFilter['payload']> = (state, payload) => ({
+    ...state,
+    filter: [...state.filter, {field: payload.field, operator: payload.operator, values: payload.values}]
+});
+
+const removeFilter: Reducer<IViewSettingsActionRemoveFilter['payload']> = (state, payload) => ({
+    ...state,
+    filter: state.filter.filter(({field}) => field !== payload.field)
+});
+
+const changeFilterConfig: Reducer<IViewSettingsActionChangeFilterConfig['payload']> = (state, payload) => ({
+    ...state,
+    filter: state.filter.map(filter =>
+        filter.field === payload.field ? {...filter, operator: payload.operator, values: payload.values} : filter
+    )
+});
+
+const moveFilter: Reducer<IViewSettingsActionMoveFilter['payload']> = (state, payload) => {
+    const attributesUsedToFilter = [...state.filter];
+    const [filterToMove] = attributesUsedToFilter.splice(payload.indexFrom, 1);
+    attributesUsedToFilter.splice(payload.indexTo, 0, filterToMove);
+    return {
+        ...state,
+        filter: attributesUsedToFilter
+    };
+};
+
 export type IViewSettingsAction =
     | IViewSettingsActionResetAttributes
     | IViewSettingsActionAddAttribute
@@ -182,7 +242,12 @@ export type IViewSettingsAction =
     | IViewSettingsActionMoveSort
     | IViewSettingsActionChangePageSize
     | IViewSettingsActionChangeFulltextSearch
-    | IViewSettingsActionClearFulltextSearch;
+    | IViewSettingsActionClearFulltextSearch
+    | IViewSettingsActionMoveSort
+    | IViewSettingsActionAddFilter
+    | IViewSettingsActionRemoveFilter
+    | IViewSettingsActionChangeFilterConfig
+    | IViewSettingsActionMoveFilter;
 
 export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
     switch (action.type) {
@@ -221,6 +286,18 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
         }
         case ViewSettingsActionTypes.CLEAR_FULLTEXT_SEARCH: {
             return clearFulltextSearch(state);
+        }
+        case ViewSettingsActionTypes.ADD_FILTER: {
+            return addFilter(state, action.payload);
+        }
+        case ViewSettingsActionTypes.REMOVE_FILTER: {
+            return removeFilter(state, action.payload);
+        }
+        case ViewSettingsActionTypes.CHANGE_FILTER_CONFIG: {
+            return changeFilterConfig(state, action.payload);
+        }
+        case ViewSettingsActionTypes.MOVE_FILTER: {
+            return moveFilter(state, action.payload);
         }
         default:
             return state;

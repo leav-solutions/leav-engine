@@ -52,7 +52,19 @@ interface IExplorerProps {
     defaultActionsForItem?: Array<'edit' | 'deactivate'>;
     defaultPrimaryActions?: Array<'create'>;
     defaultViewSettings?: Partial<IViewSettingsState>;
+    maxFilters?: number;
 }
+
+const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
+
+const defaultMaxFilters = 10;
+
+const ExplorerHeaderDivStyled = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: calc(var(--general-spacing-xs) * 1px);
+`;
 
 export const Explorer: FunctionComponent<IExplorerProps> = ({
     library,
@@ -60,6 +72,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     primaryActions,
     title,
     noPagination,
+    maxFilters,
     defaultActionsForItem = ['edit', 'deactivate'],
     defaultPrimaryActions = ['create'],
     defaultViewSettings
@@ -94,7 +107,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 
     const {primaryButton} = usePrimaryActionsButton([createAction, ...(primaryActions ?? [])].filter(Boolean));
 
-    const {viewSettingsButton} = useOpenViewSettings(library);
+    const {viewSettingsButton} = useOpenViewSettings(library, maxFilters ?? defaultMaxFilters);
 
     const {searchInput} = useSearchInput({view, dispatch});
 

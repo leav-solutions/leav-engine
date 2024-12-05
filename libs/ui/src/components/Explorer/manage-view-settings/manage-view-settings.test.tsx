@@ -13,11 +13,10 @@ import {useOpenViewSettings} from './open-view-settings/useOpenViewSettings';
 import {ViewSettingsContext} from './store-view-settings/ViewSettingsContext';
 import {IViewSettingsState, viewSettingsReducer} from './store-view-settings/viewSettingsReducer';
 import {viewSettingsInitialState} from './store-view-settings/viewSettingsInitialState';
-import {SortOrder} from '_ui/_gqlTypes';
 import {waitFor} from '@testing-library/react';
 
 const MockOpenEditSettings: FunctionComponent = () => {
-    const {viewSettingsButton} = useOpenViewSettings('');
+    const {viewSettingsButton} = useOpenViewSettings('', 20);
 
     return <>{viewSettingsButton}</>;
 };
