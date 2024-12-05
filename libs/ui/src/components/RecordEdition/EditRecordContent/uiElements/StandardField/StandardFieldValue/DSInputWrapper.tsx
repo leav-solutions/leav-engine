@@ -33,7 +33,7 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
     const {t} = useSharedTranslation();
 
     const isErrors = errors.length > 0;
-    const valueToDisplay = isFocused || isErrors ? value : presentationValue;
+    const valueToDisplay = isFocused || isErrors || !presentationValue ? value : presentationValue;
 
     const _resetToInheritedOrCalculatedValue = async () => {
         setHasChanged(false);
