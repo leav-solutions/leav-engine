@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
 import {render, screen} from '../../_tests/testUtils';
-import SelectTreeNodeModal from './SelectTreeNodeModal';
+import {SelectTreeNodeModal} from './SelectTreeNodeModal';
 import ReactModal from 'react-modal';
 
 jest.mock('_ui/components/SelectTreeNode', () => ({
