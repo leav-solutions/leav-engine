@@ -7,9 +7,9 @@ import {getVersionableAttributesByLibraryQuery} from '../../_queries/attributes/
 import {act, render, screen, waitFor} from '../../_tests/testUtils';
 import ValuesVersionConfigurator from './ValuesVersionConfigurator';
 
-jest.mock('_ui/components/SelectTreeNodeModal', () => function SelectTreeNodeModal() {
-        return <div>SelectTreeNodeModal</div>;
-    });
+jest.mock('_ui/components/SelectTreeNodeModal', () => ({
+    SelectTreeNodeModal: () => <div>SelectTreeNodeModal</div>
+}));
 
 describe('VersionsPanel', () => {
     beforeEach(() => jest.clearAllMocks());
