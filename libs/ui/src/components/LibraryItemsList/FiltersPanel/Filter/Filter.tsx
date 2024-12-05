@@ -11,7 +11,7 @@ import {themeVars} from '_ui/antdTheme';
 import DateBetweenFilter from '_ui/components/LibraryItemsList/FiltersPanel/Filter/FilterInput/DateBetweenFilter';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import {SearchActionTypes} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchReducer';
-import SelectTreeNodeModal from '_ui/components/SelectTreeNodeModal';
+import {SelectTreeNodeModal} from '_ui/components/SelectTreeNodeModal';
 import {useLang} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {

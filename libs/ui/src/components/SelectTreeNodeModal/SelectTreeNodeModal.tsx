@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useState} from 'react';
+import {FunctionComponent, useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {SystemTranslation} from '../../types/scalars';
 import {ITreeNode, ITreeNodeWithRecord} from '../../types/trees';
@@ -17,14 +17,14 @@ interface ISelectTreeNodeModalProps {
     canSelectRoot?: boolean;
 }
 
-export default function SelectTreeNodeModal({
+export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> = ({
     tree,
     selectedNodeKey,
     onSubmit,
     isVisible,
     onClose,
     canSelectRoot = false
-}: ISelectTreeNodeModalProps): JSX.Element {
+}) => {
     const {t} = useSharedTranslation();
     const [selectedNode, setSelectedNode] = useState<ITreeNode>({
         id: selectedNodeKey,
@@ -75,4 +75,4 @@ export default function SelectTreeNodeModal({
             />
         </KitModal>
     );
-}
+};
