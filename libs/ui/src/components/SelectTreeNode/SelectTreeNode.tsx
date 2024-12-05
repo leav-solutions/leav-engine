@@ -5,9 +5,9 @@ import {localizedTranslation} from '@leav/utils';
 import {Spin} from 'antd';
 import {Key} from 'antd/lib/table/interface';
 import {EventDataNode} from 'antd/lib/tree';
-import {ComponentProps, useEffect, useState} from 'react';
+import {ComponentProps, FunctionComponent, useEffect, useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {TreeNodeChildrenQuery, useTreeNodeChildrenLazyQuery} from '_ui/_gqlTypes';
+import {TreeNodeChildFragment, useTreeNodeChildrenLazyQuery} from '_ui/_gqlTypes';
 import {defaultPaginationPageSize, ErrorDisplay} from '../..';
 import useLang from '../../hooks/useLang';
 import {SystemTranslation} from '../../types/scalars';
@@ -24,7 +24,7 @@ interface ISelectTreeNodeProps {
     selectableLibraries?: string[]; // all by default
 }
 
-const _constructTreeContent = (data: TreeNodeChildrenQuery['treeNodeChildren']['list']): ITreeNodeWithRecord[] =>
+const _constructTreeContent = (data: TreeNodeChildFragment[]): ITreeNodeWithRecord[] =>
     data.map(e => ({
         record: e.record,
         title: e.record.whoAmI.label || e.record.whoAmI.id,
@@ -33,20 +33,6 @@ const _constructTreeContent = (data: TreeNodeChildrenQuery['treeNodeChildren']['
         isLeaf: !e.childrenCount,
         children: []
     }));
-
-const _getTreeNodeByKey = (key: string, treeContent: ITreeNodeWithRecord[]): ITreeNodeWithRecord => {
-    for (const node of treeContent) {
-        if (key === node.key) {
-            return node;
-        }
-
-        const n = _getTreeNodeByKey(key, node.children);
-
-        if (!!n) {
-            return n;
-        }
-    }
-};
 
 interface ITreeMapElement extends ITreeNodeWithRecord {
     isLeaf?: boolean;
@@ -60,7 +46,7 @@ interface ITreeMap {
     [nodeId: string]: ITreeMapElement;
 }
 
-function SelectTreeNode({
+export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
     tree,
     onSelect,
     onCheck,
@@ -68,7 +54,7 @@ function SelectTreeNode({
     multiple = false,
     canSelectRoot = false,
     selectableLibraries
-}: ISelectTreeNodeProps): JSX.Element {
+}) => {
     const {lang} = useLang();
     const {t} = useSharedTranslation();
 
@@ -90,8 +76,6 @@ function SelectTreeNode({
     });
     const [selectedNode, setSelectedNode] = useState<string>(initSelectedNode);
     const [fetchError, setFetchError] = useState<string>();
-
-    // Retrieve tree content
     const [loadTreeContent, {error, called}] = useTreeNodeChildrenLazyQuery();
 
     const _fetchTreeContent = async (key?: string, offset = 0) => {
@@ -117,7 +101,7 @@ function SelectTreeNode({
 
             parentElement.children = parentElement.children.filter(
                 child => !child.key.match(`__showMore${parentMapKey}`)
-            ) as ITreeMapElement[];
+            );
 
             for (const node of formattedNodes) {
                 const nodeForTreeMap = {...node, paginationOffset: 0};
@@ -172,10 +156,10 @@ function SelectTreeNode({
             return;
         }
 
-        await _fetchTreeContent(String(id), paginationOffset);
+        await _fetchTreeContent(id, paginationOffset);
     };
 
-    const _handleSelect = (_, e: {selected: boolean; node: any}) => {
+    const _handleSelect: ComponentProps<typeof KitTree>['onSelect'] = (_, e) => {
         const node = treeMap[e.node.key];
         const isRoot = node.id === tree.id;
 
@@ -193,7 +177,7 @@ function SelectTreeNode({
         }
     };
 
-    const _handleCheck = (selection: {checked: Key[]} | Key[]) => {
+    const _handleCheck: ComponentProps<typeof KitTree>['onCheck'] = selection => {
         const checkedKeys = typeof selection === 'object' ? (selection as {checked: Key[]}).checked : selection;
         const nodes = checkedKeys.map(key => treeMap[key]);
         onCheck(nodes);
@@ -207,6 +191,8 @@ function SelectTreeNode({
         return <ErrorDisplay message={error?.message ?? fetchError} />;
     }
 
+    const treeData = [treeMap[rootNode.key]];
+
     return (
         <KitTree
             defaultExpandedKeys={[tree.id]} // TODO: Should be selectedNode but more changes are needed
@@ -215,7 +201,7 @@ function SelectTreeNode({
             selectedKeys={[selectedNode]}
             onSelect={_handleSelect}
             onCheck={_handleCheck}
-            treeData={[treeMap[rootNode.key]]}
+            treeData={treeData}
             loadData={_handleLoadData}
             checkStrictly
             checkable={multiple}
@@ -224,6 +210,4 @@ function SelectTreeNode({
             }}
         />
     );
-}
-
-export default SelectTreeNode;
+};
