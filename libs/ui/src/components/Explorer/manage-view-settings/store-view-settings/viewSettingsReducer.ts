@@ -14,7 +14,11 @@ export const ViewSettingsActionTypes = {
     ADD_SORT: 'ADD_SORT',
     REMOVE_SORT: 'REMOVE_SORT',
     MOVE_SORT: 'MOVE_SORT',
-    CHANGE_SORT_ORDER: 'CHANGE_SORT_ORDER'
+    CHANGE_SORT_ORDER: 'CHANGE_SORT_ORDER',
+    ADD_FILTER: 'ADD_FILTER',
+    REMOVE_FILTER: 'REMOVE_FILTER',
+    MOVE_FILTER: 'MOVE_FILTER',
+    CHANGE_FILTER_CONFIG: 'CHANGE_FILTER_CONFIG'
 } as const;
 
 export interface IViewSettingsState {
@@ -23,6 +27,11 @@ export interface IViewSettingsState {
     sort: Array<{
         attributeId: string;
         order: SortOrder;
+    }>;
+    filter: Array<{
+        field: string;
+        operator: string;
+        values: string[];
     }>;
 }
 
@@ -70,6 +79,29 @@ interface IViewSettingsActionChangeSortOrder {
 
 interface IViewSettingsActionMoveSort {
     type: typeof ViewSettingsActionTypes.MOVE_SORT;
+    payload: {
+        indexFrom: number;
+        indexTo: number;
+    };
+}
+
+interface IViewSettingsActionAddFilter {
+    type: typeof ViewSettingsActionTypes.ADD_FILTER;
+    payload: {field: string; operator: string; values: string[]};
+}
+
+interface IViewSettingsActionRemoveFilter {
+    type: typeof ViewSettingsActionTypes.REMOVE_FILTER;
+    payload: {field: string};
+}
+
+interface IViewSettingsActionChangeFilterConfig {
+    type: typeof ViewSettingsActionTypes.CHANGE_FILTER_CONFIG;
+    payload: {field: string; operator: string; values: string[]};
+}
+
+interface IViewSettingsActionMoveFilter {
+    type: typeof ViewSettingsActionTypes.MOVE_FILTER;
     payload: {
         indexFrom: number;
         indexTo: number;
@@ -136,6 +168,33 @@ const moveSort: Reducer<IViewSettingsActionMoveSort['payload']> = (state, payloa
     };
 };
 
+const addFilter: Reducer<IViewSettingsActionAddFilter['payload']> = (state, payload) => ({
+    ...state,
+    filter: [...state.filter, {field: payload.field, operator: payload.operator, values: payload.values}]
+});
+
+const removeFilter: Reducer<IViewSettingsActionRemoveFilter['payload']> = (state, payload) => ({
+    ...state,
+    filter: state.filter.filter(({field}) => field !== payload.field)
+});
+
+const changeFilterConfig: Reducer<IViewSettingsActionChangeFilterConfig['payload']> = (state, payload) => ({
+    ...state,
+    filter: state.filter.map(filter =>
+        filter.field === payload.field ? {...filter, operator: payload.operator, values: payload.values} : filter
+    )
+});
+
+const moveFilter: Reducer<IViewSettingsActionMoveFilter['payload']> = (state, payload) => {
+    const attributesUsedToFilter = [...state.filter];
+    const [filterToMove] = attributesUsedToFilter.splice(payload.indexFrom, 1);
+    attributesUsedToFilter.splice(payload.indexTo, 0, filterToMove);
+    return {
+        ...state,
+        filter: attributesUsedToFilter
+    };
+};
+
 export type IViewSettingsAction =
     | IViewSettingsActionResetAttributes
     | IViewSettingsActionAddAttribute
@@ -145,7 +204,11 @@ export type IViewSettingsAction =
     | IViewSettingsActionAddSort
     | IViewSettingsActionRemoveSort
     | IViewSettingsActionChangeSortOrder
-    | IViewSettingsActionMoveSort;
+    | IViewSettingsActionMoveSort
+    | IViewSettingsActionAddFilter
+    | IViewSettingsActionRemoveFilter
+    | IViewSettingsActionChangeFilterConfig
+    | IViewSettingsActionMoveFilter;
 
 export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
     switch (action.type) {
@@ -175,6 +238,18 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
         }
         case ViewSettingsActionTypes.CHANGE_SORT_ORDER: {
             return changeSortOrder(state, action.payload);
+        }
+        case ViewSettingsActionTypes.ADD_FILTER: {
+            return addFilter(state, action.payload);
+        }
+        case ViewSettingsActionTypes.REMOVE_FILTER: {
+            return removeFilter(state, action.payload);
+        }
+        case ViewSettingsActionTypes.CHANGE_FILTER_CONFIG: {
+            return changeFilterConfig(state, action.payload);
+        }
+        case ViewSettingsActionTypes.MOVE_FILTER: {
+            return moveFilter(state, action.payload);
         }
         default:
             return state;

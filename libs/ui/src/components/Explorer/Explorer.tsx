@@ -31,9 +31,12 @@ interface IExplorerProps {
     defaultActionsForItem?: Array<'edit' | 'deactivate'>;
     defaultPrimaryActions?: Array<'create'>;
     defaultViewSettings?: Partial<IViewSettingsState>;
+    maxFilters?: number;
 }
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
+
+const defaultMaxFilters = 10;
 
 const ExplorerHeaderDivStyled = styled.div`
     display: flex;
@@ -47,6 +50,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     itemActions,
     primaryActions,
     title,
+    maxFilters,
     defaultActionsForItem = ['edit', 'deactivate'],
     defaultPrimaryActions = ['create'],
     defaultViewSettings
@@ -77,7 +81,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 
     const {primaryButton} = usePrimaryActionsButton([createAction, ...(primaryActions ?? [])].filter(Boolean));
 
-    const {viewSettingsButton} = useOpenViewSettings(library);
+    const {viewSettingsButton} = useOpenViewSettings(library, maxFilters ?? defaultMaxFilters);
 
     return (
         <ViewSettingsContext.Provider value={{view, dispatch}}>

@@ -633,6 +633,8 @@
         "available-attributes": "Autres propriétés disponibles",
         "coming-soon": "À venir",
         "show": "Afficher",
-        "hide": "Masquer"
+        "hide": "Masquer",
+        "active-items-number": "{{count}} actifs",
+        "active-items-number_zero": "Aucun"
     }
 }

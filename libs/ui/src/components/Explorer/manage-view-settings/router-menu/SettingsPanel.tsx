@@ -10,8 +10,10 @@ import {useEditSettings} from '../open-view-settings/useEditSettings';
 import {ConfigureDisplay} from '../configure-display/ConfigureDisplay';
 import {SortItems} from '../sort-items/SortItems';
 import {SettingItem} from './SettingItem';
+import {FilterItems} from '../filter-items/FilterItems';
+import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 
-export type SettingsPanelPages = 'router-menu' | 'configure-display' | 'sort-items';
+export type SettingsPanelPages = 'router-menu' | 'configure-display' | 'sort-items' | 'filter-items';
 
 const ContentWrapperStyledDiv = styled.div`
     display: flex;
@@ -25,12 +27,16 @@ const ConfigurationStyledMenu = styled.menu`
 
 interface ISettingsPanelProps {
     library: string;
+    maxFilters: number;
 }
 
-export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library}) => {
+export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, maxFilters}) => {
     const {t} = useSharedTranslation();
 
     const {setActiveSettings, activeSettings} = useEditSettings();
+    const {
+        view: {filter}
+    } = useViewSettingsContext();
 
     const [currentPage, setCurrentPage] = useState<SettingsPanelPages>('router-menu');
 
@@ -82,9 +88,8 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library})
                         <SettingItem
                             icon={<FaFilter />}
                             title={t('explorer.filters')}
-                            onClick={() => {
-                                /* TODO: not implemented yet */
-                            }}
+                            value={String(t('explorer.active-items-number', {count: filter.length}))}
+                            onClick={() => _goToAdvancedSettingsPage('filter-items')}
                         />
                         <SettingItem
                             icon={<FaSortAlphaDown />}
@@ -96,6 +101,7 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library})
             )}
             {currentPage === 'configure-display' && <ConfigureDisplay libraryId={library} />}
             {currentPage === 'sort-items' && <SortItems libraryId={library} />}
+            {currentPage === 'filter-items' && <FilterItems libraryId={library} maxFilters={maxFilters} />}
         </ContentWrapperStyledDiv>
     );
 };
