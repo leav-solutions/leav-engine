@@ -112,27 +112,31 @@ const StandardField: FunctionComponent<
                     ]);
                 }
 
-                setBackendValues(previousBackendValues => {
-                    const newBackendValues = [...previousBackendValues, ...submitRes.values].reduce(
-                        (acc, backendValue) => {
-                            const index = acc.findIndex(
-                                o =>
-                                    o.id_value === backendValue.id_value &&
-                                    o.isCalculated === backendValue.isCalculated &&
-                                    o.isInherited === backendValue.isInherited
-                            );
-                            if (index !== -1) {
-                                acc[index] = backendValue;
-                            } else {
-                                acc.push(backendValue);
-                            }
-                            return acc;
-                        },
-                        []
-                    );
+                if (!attribute.multiple_values) {
+                    setBackendValues(submitRes.values);
+                } else {
+                    setBackendValues(previousBackendValues => {
+                        const newBackendValues = [...previousBackendValues, ...submitRes.values].reduce(
+                            (acc, backendValue) => {
+                                const index = acc.findIndex(
+                                    o =>
+                                        o.id_value === backendValue.id_value &&
+                                        o.isCalculated === backendValue.isCalculated &&
+                                        o.isInherited === backendValue.isInherited
+                                );
+                                if (index !== -1) {
+                                    acc[index] = backendValue;
+                                } else {
+                                    acc.push(backendValue);
+                                }
+                                return acc;
+                            },
+                            []
+                        );
 
-                    return newBackendValues;
-                });
+                        return newBackendValues;
+                    });
+                }
 
                 return submitRes;
             }
@@ -268,7 +272,9 @@ const StandardField: FunctionComponent<
                 {!attribute.multiple_values && (
                     <StandardFieldValue
                         presentationValue={presentationValues[0]}
-                        handleSubmit={_handleSubmit(backendWithoutCalculatedOrInheritedValues[0]?.id_value)}
+                        handleSubmit={valueToSave =>
+                            _handleSubmit(backendWithoutCalculatedOrInheritedValues[0]?.id_value)(valueToSave)
+                        }
                         attribute={attribute}
                         required={element.settings.required}
                         readonly={readonly}

@@ -45,18 +45,18 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
         if (inheritedFlags.isInheritedValue) {
             onChange(
                 [
-                    dayjs.unix(Number(inheritedFlags.inheritedValue.raw_value.from)),
-                    dayjs.unix(Number(inheritedFlags.inheritedValue.raw_value.to))
+                    dayjs.unix(Number(inheritedFlags.inheritedValue.raw_payload.from)),
+                    dayjs.unix(Number(inheritedFlags.inheritedValue.raw_payload.to))
                 ],
-                inheritedFlags.inheritedValue.raw_value
+                inheritedFlags.inheritedValue.raw_payload
             );
         } else if (calculatedFlags.isCalculatedValue) {
             onChange(
                 [
-                    dayjs.unix(Number(calculatedFlags.calculatedValue.raw_value.from)),
-                    dayjs.unix(Number(calculatedFlags.calculatedValue.raw_value.to))
+                    dayjs.unix(Number(calculatedFlags.calculatedValue.raw_payload.from)),
+                    dayjs.unix(Number(calculatedFlags.calculatedValue.raw_payload.to))
                 ],
-                calculatedFlags.calculatedValue.raw_value
+                calculatedFlags.calculatedValue.raw_payload
             );
         }
         await handleSubmit(null, attribute.id);
@@ -122,6 +122,7 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
                     <KitInputStyled
                         id={attribute.id}
                         prefix={<FaCalendar />}
+                        disabled={readonly}
                         helper={isErrors ? String(errors[0]) : undefined}
                         status={isErrors ? 'error' : undefined}
                         value={presentationValue}
