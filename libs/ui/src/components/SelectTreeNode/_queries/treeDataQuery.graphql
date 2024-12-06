@@ -1,0 +1,8 @@
+query TreeDataQuery($treeId: ID!) {
+    trees(filters: {id: [$treeId]}) {
+        list {
+            id
+            label
+        }
+    }
+}
