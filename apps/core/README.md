@@ -37,6 +37,8 @@ You can add plugins to the core by adding them to the plugins folder. Each plugi
 The plugin folder is located by default in `apps/core/src/plugins` on development environment and `apps/core/dist/plugins` on build.
 It can be configured with the `PLUGINS_PATH` environment variable or the `pluginsPath` variable in the `config/local.js` file. ⚠️ The path must be under the `apps/core/src/plugins` folder (eg. `apps/core/src/plugins/my-own-repo/my-plugins`)
 
+#### Hot Reload
+Plugins can be developed using the [leavengine/core:develop](../../docker/DOCKERFILES/build/core.dev.Dockerfile) Docker image, which includes the nodemon library to enable hot reloading. The image runs the `watch-dev` script from the `package.json`, where nodemon watch the bound plugin folder for changes. To use this feature, bind your plugin folder to the core directory in the Docker image. Any modifications to your plugin code will automatically trigger a hot reload of the core.
 ## Debugging in VS Code
 
 In VS Code, the easiest way to debug the app in its Docker container is to install the extension "Remote Development".
