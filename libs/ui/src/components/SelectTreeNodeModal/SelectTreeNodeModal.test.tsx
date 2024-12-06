@@ -16,14 +16,7 @@ describe('SelectTreeNodeModal', () => {
 
         ReactModal.setAppElement(document.createElement('div'));
 
-        render(
-            <SelectTreeNodeModal
-                tree={{id: 'treeId', label: {fr: 'tree'}}}
-                isVisible
-                onSubmit={onSubmit}
-                onClose={jest.fn()}
-            />
-        );
+        render(<SelectTreeNodeModal treeId="treeId" isVisible onSubmit={onSubmit} onClose={jest.fn()} />);
 
         expect(screen.getByText('SelectTreeNode')).toBeVisible();
 

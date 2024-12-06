@@ -3,13 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent, useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {SystemTranslation} from '../../types/scalars';
 import {ITreeNode, ITreeNodeWithRecord} from '../../types/trees';
 import {SelectTreeNode} from '../SelectTreeNode';
 import {KitButton, KitModal} from 'aristid-ds';
 
 interface ISelectTreeNodeModalProps {
-    tree: {id: string; label?: SystemTranslation | null};
+    treeId: string;
     selectedNodeKey?: string;
     isVisible: boolean;
     onSubmit: (treeNode: ITreeNode) => void;
@@ -18,7 +17,7 @@ interface ISelectTreeNodeModalProps {
 }
 
 export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> = ({
-    tree,
+    treeId,
     selectedNodeKey,
     onSubmit,
     isVisible,
@@ -68,7 +67,7 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
             destroyOnClose
         >
             <SelectTreeNode
-                tree={tree}
+                treeId={treeId}
                 onSelect={_onSelect}
                 selectedNode={selectedNode?.key}
                 canSelectRoot={canSelectRoot}

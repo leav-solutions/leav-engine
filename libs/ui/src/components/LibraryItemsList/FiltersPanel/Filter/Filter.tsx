@@ -461,7 +461,7 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
             {showSelectTreeNodeModal && (
                 <SelectTreeNodeModal
                     selectedNodeKey={(filter.value.value as string) || (filter as IFilterTree).tree.id}
-                    tree={(filter as IFilterTree).tree}
+                    treeId={(filter as IFilterTree).tree.id}
                     onSubmit={node => updateFilterValue(_getValueFromNode(node))}
                     onClose={() => setShowSelectTreeNodeModal(false)}
                     isVisible={showSelectTreeNodeModal}
