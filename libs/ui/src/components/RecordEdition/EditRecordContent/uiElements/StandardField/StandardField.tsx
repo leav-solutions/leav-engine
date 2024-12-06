@@ -113,7 +113,7 @@ const StandardField: FunctionComponent<
                 }
 
                 if (!attribute.multiple_values) {
-                    setBackendValues(submitRes.values);
+                    setBackendValues(submitRes.values as unknown as RecordFormElementsValueStandardValue[]);
                 } else {
                     setBackendValues(previousBackendValues => {
                         const newBackendValues = [...previousBackendValues, ...submitRes.values].reduce(

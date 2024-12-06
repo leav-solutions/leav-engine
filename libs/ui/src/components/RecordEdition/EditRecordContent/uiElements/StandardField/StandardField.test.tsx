@@ -17,8 +17,6 @@ import {
 import StandardField from './StandardField';
 import {AntForm} from 'aristid-ds';
 import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
-import {Form} from 'antd';
-import {ComponentProps, FunctionComponent} from 'react';
 
 describe('StandardField', () => {
     const mockAttribute: IRecordPropertyAttribute = {

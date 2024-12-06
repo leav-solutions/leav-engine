@@ -38,7 +38,7 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
     const {t} = useSharedTranslation();
 
     const isErrors = errors.length > 0;
-    const valueToDisplay = isFocused || isErrors ? value : presentationValue;
+    const valueToDisplay = isFocused || isErrors || !presentationValue ? value : presentationValue;
 
     const _resetToInheritedOrCalculatedValue = async () => {
         setHasChanged(false);
@@ -53,15 +53,14 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
     const _handleFocus = () => setIsFocused(true);
 
     const _handleOnBlur = async inputValue => {
-        const valueToSubmit = isEmptyValue(inputValue) ? '' : inputValue;
-
+        const valueToSubmit = isEmptyValue(inputValue) ? null : inputValue;
         if (!hasChanged) {
             onChange(valueToSubmit);
             setIsFocused(false);
             return;
         }
 
-        if (valueToSubmit === '' && (inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue)) {
+        if (valueToSubmit === null && (inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue)) {
             _resetToInheritedOrCalculatedValue();
             return;
         }
