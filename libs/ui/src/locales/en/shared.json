@@ -402,6 +402,7 @@
         "link_created_at": "Linked at",
         "add_value": "Add value",
         "add_value_link": "Add link",
+        "delete_value": "Delete value",
         "delete_value_confirm": "Do you really want to delete this value?",
         "whoAmI": "Information",
         "no_value": "No value",

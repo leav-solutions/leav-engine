@@ -55,6 +55,8 @@ const KitAddValueButton = styled(KitButton)`
     margin-bottom: 3px;
 `;
 
+const defaultValueToAddInAntdForm = '';
+
 const StandardField: FunctionComponent<
     IFormElementProps<IRequiredFieldsSettings, RecordFormElementsValueStandardValue> & {
         antdForm?: FormInstance;
@@ -69,10 +71,11 @@ const StandardField: FunctionComponent<
         indexes: number[];
     } | null>(null);
 
-    const defaultValueToAddInAntdForm = '';
-
-    const isMultipleValues = element.attribute.multiple_values;
     const {attribute} = element;
+
+    if (!attribute) {
+        return <ErrorDisplay message={t('record_edition.missing_attribute')} />;
+    }
 
     const [backendValues, setBackendValues] = useState<RecordFormElementsValueStandardValue[]>(element.values);
 
@@ -143,16 +146,16 @@ const StandardField: FunctionComponent<
                         attributeError.type === ErrorTypes.VALIDATION_ERROR
                             ? attributeError.message
                             : t(`errors.${attributeError.type}`);
-
-                    if (antdForm) {
-                        antdForm.setFields([
-                            {
-                                name,
-                                errors: [errorMessage]
-                            }
-                        ]);
-                    }
                 }
+            }
+
+            if (errorMessage && antdForm) {
+                antdForm.setFields([
+                    {
+                        name,
+                        errors: [errorMessage]
+                    }
+                ]);
             }
 
             return submitRes;
@@ -191,10 +194,7 @@ const StandardField: FunctionComponent<
         }
     };
 
-    if (!attribute) {
-        return <ErrorDisplay message={t('record_edition.missing_attribute')} />;
-    }
-
+    const isMultipleValues = element.attribute.multiple_values;
     const hasValue = isMultipleValues && backendValues.length > 0;
     const canAddAnotherValue =
         !readonly &&
@@ -306,6 +306,7 @@ const StandardField: FunctionComponent<
                                                 {fields.length > 1 && (
                                                     <KitDeleteValueButton
                                                         type="tertiary"
+                                                        title={t('record_edition.delete_value')}
                                                         icon={<FaTrash />}
                                                         onClick={() =>
                                                             _handleDeleteValue(
