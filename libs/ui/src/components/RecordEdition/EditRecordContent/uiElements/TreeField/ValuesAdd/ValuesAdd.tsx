@@ -57,7 +57,7 @@ type ValueFromList = ValueDetailsTreeValueFragment['treeValue'];
 function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
     const {t} = useSharedTranslation();
     const {lang} = useLang();
-    const valuesList = attribute?.treeValuesList?.enable ? attribute?.treeValuesList?.values ?? [] : [];
+    const valuesList = attribute.treeValuesList?.enable ? (attribute.treeValuesList.values ?? []) : [];
     const wrapperRef = useRef<HTMLDivElement>();
 
     const [selectedValuesFromTree, setSelectedValuesFromTree] = useState<ITreeNodeWithRecord[]>([]);
@@ -118,9 +118,9 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
         const recordCardSettings = {withLibrary: false, withPreview: false};
 
         const breadcrumbItems = parents.map(ancestor => ({
-                key: ancestor.record.id,
-                title: <RecordCard record={ancestor.record.whoAmI} size={PreviewSize.small} {...recordCardSettings} />
-            }));
+            key: ancestor.record.id,
+            title: <RecordCard record={ancestor.record.whoAmI} size={PreviewSize.small} {...recordCardSettings} />
+        }));
 
         breadcrumbItems.push({
             key: element.record.id,
@@ -170,7 +170,7 @@ function ValuesAdd({attribute, onAdd, onClose}: IValuesAddProps): JSX.Element {
                     )}
                     <Divider orientation="left">{localizedTranslation(attribute.linked_tree.label, lang)}</Divider>
                     <SelectTreeNode
-                        tree={attribute.linked_tree}
+                        treeId={attribute.linked_tree.id}
                         onSelect={_handleSelect}
                         onCheck={_handleCheck}
                         multiple={attribute.multiple_values}
