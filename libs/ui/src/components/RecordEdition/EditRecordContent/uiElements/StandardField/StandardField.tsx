@@ -3,7 +3,6 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AnyPrimitive, ErrorTypes, IRequiredFieldsSettings, localizedTranslation} from '@leav/utils';
 import {FunctionComponent, useRef, useState} from 'react';
-import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {ErrorDisplay} from '_ui/components';
 import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
@@ -17,6 +16,7 @@ import {FaPlus, FaTrash} from 'react-icons/fa';
 import {DeleteAllValuesButton} from './DeleteAllValuesButton';
 import {computeCalculatedFlags, computeInheritedFlags} from './calculatedInheritedFlags';
 import {useGetPresentationValues} from './useGetPresentationValues';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 const Wrapper = styled.div<{$metadataEdit: boolean}>`
     margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
@@ -62,7 +62,7 @@ const StandardField: FunctionComponent<
         antdForm?: FormInstance;
     }
 > = ({element, antdForm, readonly, onValueSubmit, onValueDelete, onDeleteMultipleValues, metadataEdit = false}) => {
-    const {t} = useTranslation();
+    const {t} = useSharedTranslation();
     const {lang: availableLang} = useLang();
 
     const antdListFieldsRef = useRef<{

@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormat, ValueDetailsValueFragment} from '_ui/_gqlTypes';
 import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
-import {useTranslation} from 'react-i18next';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 const _isDateRangeValue = (value: any): value is {from: string; to: string} =>
     !!value && typeof value === 'object' && 'from' in value && 'to' in value;
@@ -23,7 +23,7 @@ export const useGetPresentationValues = ({
     calculatedValue: RecordFormElementsValueStandardValue;
     inheritedValue: RecordFormElementsValueStandardValue;
 }): IUseGetPresentationvalues => {
-    const {t} = useTranslation();
+    const {t} = useSharedTranslation();
 
     const presentationValues = values.map(value => {
         let presentationValue = value.payload || calculatedValue?.payload || inheritedValue?.payload || '';
