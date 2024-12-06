@@ -108,7 +108,10 @@ describe('getAntdFormInitialValues', () => {
                     multiple_values: true,
                     id: standardAttributeId
                 },
-                values: [{raw_payload: elementFormId}, {raw_payload: yetAnotherElementFormId}]
+                values: [
+                    {raw_payload: elementFormId, id_value: '12'},
+                    {raw_payload: yetAnotherElementFormId, id_value: '13'}
+                ]
             };
             const recordForm = {elements: [standardElement]};
 
