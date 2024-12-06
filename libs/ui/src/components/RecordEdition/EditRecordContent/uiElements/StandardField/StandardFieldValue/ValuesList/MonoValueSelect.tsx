@@ -39,6 +39,7 @@ export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKi
     onChange,
     attribute,
     required,
+    readonly,
     handleSubmit,
     inheritedFlags,
     calculatedFlags
@@ -160,6 +161,7 @@ export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKi
             data-testid={attribute.id}
             value={isValueEmpty ? undefined : valueToDisplay}
             allowClear={!required && value}
+            disabled={readonly}
             options={options}
             open={isFocused}
             status={errors.length > 0 && 'error'}
