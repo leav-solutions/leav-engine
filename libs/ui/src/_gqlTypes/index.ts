@@ -1363,6 +1363,13 @@ export type ExplorerLibraryDataQueryVariables = Exact<{
 
 export type ExplorerLibraryDataQuery = { libraries?: { list: Array<{ id: string, label?: any | null }> } | null };
 
+export type TreeDataQueryQueryVariables = Exact<{
+  treeId: Scalars['ID'];
+}>;
+
+
+export type TreeDataQueryQuery = { trees?: { list: Array<{ id: string, label?: any | null }> } | null };
+
 export const RecordIdentityFragmentDoc = gql`
     fragment RecordIdentity on Record {
   id
@@ -4072,3 +4079,41 @@ export function useExplorerLibraryDataLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type ExplorerLibraryDataQueryHookResult = ReturnType<typeof useExplorerLibraryDataQuery>;
 export type ExplorerLibraryDataLazyQueryHookResult = ReturnType<typeof useExplorerLibraryDataLazyQuery>;
 export type ExplorerLibraryDataQueryResult = Apollo.QueryResult<ExplorerLibraryDataQuery, ExplorerLibraryDataQueryVariables>;
+export const TreeDataQueryDocument = gql`
+    query TreeDataQuery($treeId: ID!) {
+  trees(filters: {id: [$treeId]}) {
+    list {
+      id
+      label
+    }
+  }
+}
+    `;
+
+/**
+ * __useTreeDataQueryQuery__
+ *
+ * To run a query within a React component, call `useTreeDataQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTreeDataQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTreeDataQueryQuery({
+ *   variables: {
+ *      treeId: // value for 'treeId'
+ *   },
+ * });
+ */
+export function useTreeDataQueryQuery(baseOptions: Apollo.QueryHookOptions<TreeDataQueryQuery, TreeDataQueryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TreeDataQueryQuery, TreeDataQueryQueryVariables>(TreeDataQueryDocument, options);
+      }
+export function useTreeDataQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TreeDataQueryQuery, TreeDataQueryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TreeDataQueryQuery, TreeDataQueryQueryVariables>(TreeDataQueryDocument, options);
+        }
+export type TreeDataQueryQueryHookResult = ReturnType<typeof useTreeDataQueryQuery>;
+export type TreeDataQueryLazyQueryHookResult = ReturnType<typeof useTreeDataQueryLazyQuery>;
+export type TreeDataQueryQueryResult = Apollo.QueryResult<TreeDataQueryQuery, TreeDataQueryQueryVariables>;
