@@ -41,10 +41,12 @@ const _mapping = (data: ExplorerQuery, libraryId: string, availableLangs: string
 export const useExplorerData = ({
     libraryId,
     attributeIds,
+    fulltextSearch,
     sorts
 }: {
     libraryId: string;
     attributeIds: string[];
+    fulltextSearch: string;
     sorts: Array<{
         attributeId: string;
         order: SortOrder;
@@ -55,6 +57,7 @@ export const useExplorerData = ({
         variables: {
             libraryId,
             attributeIds,
+            searchQuery: fulltextSearch,
             multipleSort: sorts.map(({order, attributeId}) => ({
                 field: attributeId,
                 order

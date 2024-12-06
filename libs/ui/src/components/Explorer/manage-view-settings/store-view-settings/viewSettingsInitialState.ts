@@ -6,5 +6,6 @@ import {IViewSettingsState} from './viewSettingsReducer';
 export const viewSettingsInitialState: IViewSettingsState = {
     viewType: 'table',
     attributesIds: [],
+    fulltextSearch: '',
     sort: []
 };
