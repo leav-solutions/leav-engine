@@ -164,7 +164,8 @@
         "advanced_settings": "Advanced settings",
         "delete": "Delete tree",
         "delete_confirm": "Do you really want to delete this tree?",
-        "delete_confirm_warning": "Warning: this action is irreversible"
+        "delete_confirm_warning": "Warning: this action is irreversible",
+        "unknown_tree": "Unknown tree {{treeId}}"
     },
     "lang": {
         "fr": "French",
