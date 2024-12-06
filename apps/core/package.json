@@ -4,6 +4,7 @@
     "description": "",
     "scripts": {
         "start": "node .",
+        "watch-dev": "nodemon --watch dist/plugins",
         "start:watch": "npm run start:dev",
         "start:files": "ts-node-dev --inspect=0.0.0.0:9230 --respawn src/ --filesManager",
         "start:indexation": "ts-node-dev --respawn src/ --indexationManager",

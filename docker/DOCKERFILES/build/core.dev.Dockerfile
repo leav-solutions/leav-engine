@@ -44,8 +44,10 @@ COPY --from=prod-dep-install app/ ./
 COPY --from=builder /app/apps/core/applications ./apps/core/applications
 COPY --from=builder /app/apps/core/dist ./apps/core/dist
 
+RUN npm install -g nodemon@^3.1.7
+
 # Get ready for runtime
 WORKDIR /app/apps/core
 ENV APP_ROOT_PATH=/app/apps/core
 
-CMD ["sh", "-c", "/app/scripts/plugins_install.sh && yarn run db:migrate && yarn run start"]
+CMD ["sh", "-c", "/app/scripts/plugins_install.sh && yarn run db:migrate && yarn run watch-dev"]
