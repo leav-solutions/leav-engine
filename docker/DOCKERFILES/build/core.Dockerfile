@@ -38,11 +38,11 @@ RUN yarn workspaces focus core --production && rm -rf .yarn yarn.lock .yarnrc.ym
 FROM node:18-alpine3.18 AS runner
 WORKDIR /app
 
-COPY --from=prod-dep-install app/ ./
-COPY --from=builder /app/apps/core/dist ./apps/core/dist
-COPY --from=builder /app/apps/core/applications ./apps/core/applications
 COPY docker/scripts ./scripts
 COPY apps/core/config ./apps/core/config
+COPY --from=prod-dep-install app/ ./
+COPY --from=builder /app/apps/core/applications ./apps/core/applications
+COPY --from=builder /app/apps/core/dist ./apps/core/dist
 
 # Get ready for runtime
 WORKDIR /app/apps/core
