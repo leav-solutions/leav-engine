@@ -82,7 +82,6 @@ const ValueMetadata: FunctionComponent<IValueMetadataProps> = ({value: parentVal
                         onValueDelete={_handleValueDelete(field)}
                         onDeleteMultipleValues={null}
                         metadataEdit
-                        readonly
                     />
                 );
             })}
