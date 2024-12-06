@@ -1,7 +1,6 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {QueryResult} from '@apollo/client';
 import {Mockify} from '@leav/utils';
 import userEvent from '@testing-library/user-event';
 import * as gqlTypes from '_ui/_gqlTypes';
@@ -9,6 +8,10 @@ import {render, screen, waitFor} from '_ui/_tests/testUtils';
 import {SelectTreeNode} from './SelectTreeNode';
 
 describe('SelectTreeNode', () => {
+    afterAll(() => {
+        jest.restoreAllMocks();
+    });
+
     test('Render tree and navigate', async () => {
         const mockResultFromRoot = {
             treeNodeChildren: {
@@ -71,26 +74,33 @@ describe('SelectTreeNode', () => {
             }
         };
 
-        const mockResult: Mockify<
-            QueryResult<gqlTypes.TreeNodeChildrenQuery, gqlTypes.TreeNodeChildrenQueryVariables>
-        > = {
+        const mockResult: Mockify<gqlTypes.TreeNodeChildrenQueryResult> = {
             called: true,
             loading: false,
             error: null
         };
 
-        const spy = jest
-            .spyOn(gqlTypes, 'useTreeNodeChildrenLazyQuery')
-            .mockReturnValue([
-                jest
-                    .fn()
-                    .mockImplementation(({variables}) =>
-                        variables.node === null ? {data: mockResultFromRoot} : {data: mockResultFromChild}
-                    ),
-                mockResult as QueryResult<gqlTypes.TreeNodeChildrenQuery, gqlTypes.TreeNodeChildrenQueryVariables>
-            ]);
+        jest.spyOn(gqlTypes, 'useTreeDataQueryQuery').mockReturnValue({
+            data: {
+                trees: {
+                    list: [{id: 'treeId', label: {fr: 'Tree Label'}}]
+                }
+            },
+            called: true,
+            loading: false,
+            error: null
+        } as gqlTypes.TreeDataQueryQueryHookResult);
 
-        render(<SelectTreeNode tree={{id: 'treeId', label: {fr: 'Tree Label'}}} onSelect={jest.fn()} />);
+        jest.spyOn(gqlTypes, 'useTreeNodeChildrenLazyQuery').mockReturnValue([
+            jest
+                .fn()
+                .mockImplementation(({variables}) =>
+                    variables.node === null ? {data: mockResultFromRoot} : {data: mockResultFromChild}
+                ),
+            mockResult as gqlTypes.TreeNodeChildrenQueryResult
+        ]);
+
+        render(<SelectTreeNode treeId="treeId" onSelect={jest.fn()} />);
 
         await waitFor(() => screen.getByText('Tree Label'));
         expect(screen.getByText('Tree Label')).toBeInTheDocument();
@@ -101,7 +111,5 @@ describe('SelectTreeNode', () => {
         // Expand node => fetch children
         await userEvent.click(screen.getAllByRole('img', {name: 'plus-square'}).pop());
         await waitFor(() => expect(screen.getByText('label2')).toBeInTheDocument());
-
-        spy.mockRestore();
     });
 });

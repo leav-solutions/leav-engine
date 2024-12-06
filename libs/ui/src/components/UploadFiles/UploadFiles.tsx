@@ -316,7 +316,7 @@ function UploadFiles({
                 >
                     {filesTreeId && directoriesLibraryId && (
                         <SelectTreeNode
-                            tree={{id: filesTreeId}}
+                            treeId={filesTreeId}
                             onSelect={onSelectPath}
                             selectedNode={selectedNode?.id}
                             canSelectRoot
