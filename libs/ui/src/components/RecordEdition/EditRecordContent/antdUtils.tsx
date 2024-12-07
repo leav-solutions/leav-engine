@@ -44,7 +44,7 @@ const formatStandardInitialValue = (
     attribute: RecordFormElementAttribute
 ) => {
     if (!standardValue?.raw_payload) {
-        if (attribute.format === AttributeFormat.date_range) {
+        if ([AttributeFormat.date_range, AttributeFormat.color].includes(attribute.format)) {
             return undefined;
         }
         return '';
@@ -92,10 +92,11 @@ export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
         }
 
         if (isRecordFormElementsMultipleValues(attribute)) {
+            const valuesWithoutCalculatedOrInherited = values.filter(val => val.id_value);
             acc[attribute.id] =
-                values.length === 0
+                valuesWithoutCalculatedOrInherited.length === 0
                     ? [null]
-                    : values
+                    : valuesWithoutCalculatedOrInherited
                           .sort((a, b) => Number(a.id_value) - Number(b.id_value))
                           .map(val => formatStandardInitialValue(val, attribute));
             return acc;

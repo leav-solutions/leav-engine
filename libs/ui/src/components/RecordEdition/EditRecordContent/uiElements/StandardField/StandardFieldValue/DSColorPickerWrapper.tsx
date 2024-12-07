@@ -4,14 +4,12 @@
 import {KitColorPicker} from 'aristid-ds';
 import {FunctionComponent, useState} from 'react';
 import styled from 'styled-components';
-import {useLang} from '_ui/hooks';
-import {localizedTranslation} from '@leav/utils';
-import {KitColor, KitColorPickerProps} from 'aristid-ds/dist/Kit/DataEntry/ColorPicker/types';
+import {KitColorPickerProps} from 'aristid-ds/dist/Kit/DataEntry/ColorPicker/types';
 import {IStandFieldValueContentProps} from './_types';
+import {ColorFactory} from 'antd/lib/color-picker/color';
 
 const KitColorPickerStyled = styled(KitColorPicker)<{$shouldHighlightColor: boolean}>`
     width: 100%;
-    justify-content: start; //TODO: Remove when the component is fixed in DS
 
     .ant-color-picker-trigger-text {
         color: ${({$shouldHighlightColor}) =>
@@ -27,19 +25,20 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
     value,
     presentationValue,
     onChange,
-    state,
     attribute,
-    handleSubmit
+    label,
+    readonly,
+    handleSubmit,
+    calculatedFlags,
+    inheritedFlags
 }) => {
     if (!onChange) {
         throw Error('DSColorPickerWrapper should be used inside a antd Form.Item');
     }
 
-    const {lang: availableLang} = useLang();
     const [hasChanged, setHasChanged] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
-    const [currentColor, setCurrentColor] = useState<KitColor>();
-    const [currentHex, setCurrentHex] = useState((value as string) ?? '');
+    const [key, setKey] = useState(0);
 
     const _handleOnOpenChange = async (open: boolean) => {
         if (!open) {
@@ -48,9 +47,9 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
                 return;
             }
 
-            onChange(currentColor, currentHex);
+            const valueToSubmit = typeof value !== 'string' && value !== null ? value.toHex() : value?.toString();
+            await handleSubmit(valueToSubmit, attribute.id);
             setIsFocused(false);
-            await handleSubmit(currentColor.toHex(), state.attribute.id);
         } else {
             setIsFocused(true);
         }
@@ -61,42 +60,51 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
         hex: Parameters<KitColorPickerProps['onChange']>[1]
     ) => {
         setHasChanged(true);
-        setCurrentHex(hex);
-        setCurrentColor(color);
         onChange(color, hex);
     };
 
     const _handleOnClear = async () => {
         setHasChanged(false);
 
-        if (state.isInheritedValue) {
-            onChange(undefined, state.inheritedValue.raw_value);
-        } else if (state.isCalculatedValue) {
-            onChange(undefined, state.calculatedValue.raw_value);
+        if (inheritedFlags.isInheritedValue) {
+            setKey(prevKey => prevKey + 1);
+
+            const inheritedColor = new ColorFactory(inheritedFlags.inheritedValue.raw_payload);
+            onChange(inheritedColor, inheritedFlags.inheritedValue.raw_payload);
+        } else if (calculatedFlags.isCalculatedValue) {
+            setKey(prevKey => prevKey + 1);
+
+            const calculatedColor = new ColorFactory(calculatedFlags.calculatedValue.raw_payload);
+            onChange(calculatedColor, calculatedFlags.calculatedValue.raw_payload);
+        } else {
+            onChange(undefined, undefined);
         }
 
-        onChange(null, null);
+        await handleSubmit(null, attribute.id);
         setIsFocused(false);
-        await handleSubmit(null, state.attribute.id);
     };
-
-    const label = localizedTranslation(state.formElement.settings.label, availableLang);
 
     return (
         <KitColorPickerStyled
+            // This is a hack to force the color picker to re-render when needed (e.g. reset to inherited value)
+            // https://react.dev/learn/preserving-and-resetting-state#option-2-resetting-state-with-a-key
+            key={key}
             id={attribute.id} // unused until color picker is fixed in DS / antd
             data-testid={attribute.id}
-            value={currentHex}
+            value={value}
             showText={isFocused || !presentationValue ? true : () => `${presentationValue}`}
             aria-label={label}
-            disabled={state.isReadOnly}
+            disabled={readonly}
             disabledAlpha
-            allowClear={!state.isInheritedNotOverrideValue && !state.isCalculatedNotOverrideValue}
+            allowClear={
+                value && !inheritedFlags.isInheritedNotOverrideValue && !calculatedFlags.isCalculatedNotOverrideValue
+            }
             onOpenChange={_handleOnOpenChange}
             onChange={_handleOnChange}
             onClear={_handleOnClear}
             $shouldHighlightColor={
-                !hasChanged && (state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue)
+                !hasChanged &&
+                (inheritedFlags.isInheritedNotOverrideValue || calculatedFlags.isCalculatedNotOverrideValue)
             }
         />
     );

@@ -3,70 +3,28 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
 import {DSInputEncryptedWrapper} from './DSInputEncryptedWrapper';
-import {VersionFieldScope} from '../../../_types';
-import {
-    IStandardFieldReducerState,
-    StandardFieldValueState
-} from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import {mockRecord} from '_ui/__mocks__/common/record';
-import {mockFormElementInput} from '_ui/__mocks__/common/form';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
 import {AntForm} from 'aristid-ds';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
+import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
 
-const idValue = '123';
-const mockValue = {
-    index: 0,
-    displayValue: 'my value',
-    editingValue: 'my editing value',
-    originRawValue: 'my raw value',
-    idValue: null,
-    isEditing: false,
-    isErrorDisplayed: false,
-    value: {
-        id_value: null,
-        value: 'my value',
-        raw_value: 'my raw value',
-        modified_at: null,
-        created_at: null,
-        created_by: null,
-        modified_by: null
-    },
-    version: null,
-    error: '',
-    state: StandardFieldValueState.PRISTINE
+const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
+    isCalculatedValue: false,
+    isCalculatedOverrideValue: false,
+    isCalculatedNotOverrideValue: false,
+    calculatedValue: null
 };
 
-const getInitialState = ({required}: {required: boolean}): IStandardFieldReducerState => ({
-    record: mockRecord,
-    formElement: {
-        ...mockFormElementInput,
-        settings: {
-            label: {},
-            required
-        }
-    },
-    attribute: mockFormAttribute,
-    isReadOnly: false,
-    activeScope: VersionFieldScope.CURRENT,
-    values: {
-        [VersionFieldScope.CURRENT]: {
-            version: null,
-            values: {[idValue]: mockValue}
-        },
-        [VersionFieldScope.INHERITED]: null
-    },
-    metadataEdit: false,
-    inheritedValue: null,
-    isInheritedNotOverrideValue: false,
-    isInheritedOverrideValue: false,
+const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
     isInheritedValue: false,
-    calculatedValue: null,
-    isCalculatedNotOverrideValue: false,
-    isCalculatedOverrideValue: false,
-    isCalculatedValue: false
-});
+    isInheritedOverrideValue: false,
+    isInheritedNotOverrideValue: false,
+    inheritedValue: null
+};
+
+const notRequired = false;
+const notReadonly = false;
+const readonly = true;
 
 describe('DSInputEncryptedWrapper', () => {
     const mockHandleSubmit = jest.fn();
@@ -81,13 +39,15 @@ describe('DSInputEncryptedWrapper', () => {
     });
 
     test('Should submit the value', async () => {
-        const state = getInitialState({required: true});
         render(
             <AntForm>
                 <AntForm.Item>
                     <DSInputEncryptedWrapper
-                        state={state}
-                        attribute={{id: mockFormAttribute.id} as RecordFormAttributeFragment}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
                     />
@@ -97,6 +57,7 @@ describe('DSInputEncryptedWrapper', () => {
 
         const text = 'text';
         const input = screen.getByTestId('kit-input-password');
+
         await user.click(input);
         await user.type(input, text);
         await user.tab();
@@ -106,14 +67,16 @@ describe('DSInputEncryptedWrapper', () => {
     });
 
     test('Should allow to clear input', async () => {
-        const state = getInitialState({required: false});
         render(
             <AntForm>
                 <AntForm.Item>
                     <DSInputEncryptedWrapper
-                        state={state}
                         value="password"
-                        attribute={{id: mockFormAttribute.id} as RecordFormAttributeFragment}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
                     />
@@ -125,5 +88,28 @@ describe('DSInputEncryptedWrapper', () => {
         await user.click(clearButton);
 
         expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
+    });
+
+    test('Should be disabled if readonly', async () => {
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSInputEncryptedWrapper
+                        value="password"
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={readonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
+
+        const input = screen.getByTestId('kit-input-password');
+
+        expect(input).toBeDisabled();
     });
 });

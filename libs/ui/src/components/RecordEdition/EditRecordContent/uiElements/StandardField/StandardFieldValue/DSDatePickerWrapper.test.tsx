@@ -3,79 +3,59 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
 import {DSDatePickerWrapper} from './DSDatePickerWrapper';
-import {VersionFieldScope} from '../../../_types';
-import {
-    IStandardFieldReducerState,
-    StandardFieldValueState
-} from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import {mockRecord} from '_ui/__mocks__/common/record';
-import {mockFormElementInput} from '_ui/__mocks__/common/form';
 import userEvent from '@testing-library/user-event';
 import {Form} from 'antd';
 import dayjs from 'dayjs';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
+import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
 
-const en_label = 'label';
-const fr_label = 'libellé';
-const idValue = '123';
-const mockValue = {
-    index: 0,
-    displayValue: 'my value',
-    editingValue: 'my raw value',
-    originRawValue: 'my raw value',
-    idValue: null,
-    isEditing: false,
-    isErrorDisplayed: false,
-    value: {
-        id_value: null,
-        value: 'my value',
-        raw_value: 'my raw value',
-        modified_at: null,
-        created_at: null,
-        created_by: null,
-        modified_by: null
-    },
-    version: null,
-    error: '',
-    state: StandardFieldValueState.PRISTINE
+const todayDate = dayjs();
+const todayDateFormatted = todayDate.format('YYYY-MM-DD');
+const todayDateTimestamp = todayDate.unix().toString();
+const todayDateAtNoon = todayDate
+    .utc()
+    .set('date', todayDate.date())
+    .set('hour', 12)
+    .set('minute', 0)
+    .set('second', 0)
+    .set('millisecond', 0);
+const presentationDate = 'December 05, 2024';
+
+const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
+    isCalculatedValue: false,
+    isCalculatedOverrideValue: false,
+    isCalculatedNotOverrideValue: false,
+    calculatedValue: null
 };
 
-const getInitialState = ({
-    required,
-    fallbackLang
-}: {
-    required: boolean;
-    fallbackLang: boolean;
-}): IStandardFieldReducerState => ({
-    record: mockRecord,
-    formElement: {
-        ...mockFormElementInput,
-        settings: {
-            label: fallbackLang ? {en: en_label} : {fr: fr_label, en: en_label},
-            required
-        }
-    },
-    attribute: mockFormAttribute,
-    isReadOnly: false,
-    activeScope: VersionFieldScope.CURRENT,
-    values: {
-        [VersionFieldScope.CURRENT]: {
-            version: null,
-            values: {[idValue]: mockValue}
-        },
-        [VersionFieldScope.INHERITED]: null
-    },
-    metadataEdit: false,
-    inheritedValue: null,
-    isInheritedNotOverrideValue: false,
-    isInheritedOverrideValue: false,
-    isInheritedValue: false,
-    calculatedValue: null,
+const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
+    isCalculatedValue: true,
+    isCalculatedOverrideValue: true,
     isCalculatedNotOverrideValue: false,
-    isCalculatedOverrideValue: false,
-    isCalculatedValue: false
-});
+    calculatedValue: {
+        raw_payload: todayDateTimestamp
+    }
+};
+
+const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
+    isInheritedValue: false,
+    isInheritedOverrideValue: false,
+    isInheritedNotOverrideValue: false,
+    inheritedValue: null
+};
+
+const inheritedFlagsWithInheritedValue: InheritedFlags = {
+    isInheritedValue: true,
+    isInheritedOverrideValue: true,
+    isInheritedNotOverrideValue: false,
+    inheritedValue: {
+        raw_payload: todayDateTimestamp
+    }
+};
+
+const notRequired = false;
+const notReadonly = false;
+const readonly = true;
 
 describe('DSDatePickerWrapper', () => {
     const mockOnChange = jest.fn();
@@ -91,18 +71,17 @@ describe('DSDatePickerWrapper', () => {
     });
 
     test('Should display presentationValue By default', async () => {
-        const state = getInitialState({required: false, fallbackLang: false});
-        const value = dayjs();
-        const presentationValue = '12 octobre 2034';
-
         render(
             <Form>
                 <Form.Item>
                     <DSDatePickerWrapper
-                        state={state}
-                        value={value}
-                        presentationValue={presentationValue}
-                        attribute={{} as RecordFormAttributeFragment}
+                        value={todayDate}
+                        presentationValue={presentationDate}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         onChange={mockOnChange}
                         handleSubmit={mockHandleSubmit}
                     />
@@ -110,158 +89,151 @@ describe('DSDatePickerWrapper', () => {
             </Form>
         );
 
-        expect(screen.getByRole('textbox')).toHaveValue(presentationValue);
+        expect(screen.getByRole('textbox')).toHaveValue(presentationDate);
     });
 
-    describe('Without required field', () => {
-        test('Should call onChange / handle submit with value at noon', async () => {
-            const state = getInitialState({required: false, fallbackLang: false});
-            render(
-                <Form>
-                    <Form.Item>
-                        <DSDatePickerWrapper
-                            state={state}
-                            presentationValue=""
-                            attribute={{} as RecordFormAttributeFragment}
-                            onChange={mockOnChange}
-                            handleSubmit={mockHandleSubmit}
-                        />
-                    </Form.Item>
-                </Form>
-            );
+    test('Should display the value if presentationValue is empty', async () => {
+        render(
+            <Form>
+                <Form.Item>
+                    <DSDatePickerWrapper
+                        value={todayDate}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        onChange={mockOnChange}
+                        handleSubmit={mockHandleSubmit}
+                    />
+                </Form.Item>
+            </Form>
+        );
 
-            await user.click(screen.getByRole('textbox'));
-            const todayDate = dayjs();
-            const formattedTodayDate = todayDate.format('YYYY-MM-DD');
-            await user.click(screen.getByTitle(formattedTodayDate));
-
-            const todayDateAtNoon = todayDate
-                .utc()
-                .set('date', todayDate.date())
-                .set('hour', 12)
-                .set('minute', 0)
-                .set('second', 0)
-                .set('millisecond', 0);
-
-            expect(mockOnChange).toHaveBeenCalledWith(todayDateAtNoon, formattedTodayDate);
-            expect(mockHandleSubmit).toHaveBeenCalledWith(todayDateAtNoon.unix().toString(), state.attribute.id);
-        });
-
-        test('Should save to LEAV if field becomes empty', async () => {
-            const state = getInitialState({required: false, fallbackLang: false});
-            render(
-                <Form>
-                    <Form.Item>
-                        <DSDatePickerWrapper
-                            state={state}
-                            presentationValue=""
-                            attribute={{} as RecordFormAttributeFragment}
-                            onChange={mockOnChange}
-                            handleSubmit={mockHandleSubmit}
-                        />
-                    </Form.Item>
-                </Form>
-            );
-
-            await user.click(screen.getByRole('textbox'));
-            const todaysDate = dayjs().format('YYYY-MM-DD');
-            await user.click(screen.getByTitle(todaysDate));
-
-            expect(mockOnChange).toHaveBeenCalledTimes(1);
-            expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
-
-            const clearButton = screen.getByRole('button');
-            await user.click(clearButton);
-
-            expect(mockOnChange).toHaveBeenCalledTimes(2);
-            expect(mockHandleSubmit).toHaveBeenCalledTimes(2);
-        });
+        expect(screen.getByRole('textbox')).toHaveValue(todayDateFormatted);
     });
 
-    describe('With required field', () => {
-        test('Should save to LEAV if field is not empty', async () => {
-            const state = getInitialState({required: true, fallbackLang: false});
-            render(
-                <Form>
-                    <Form.Item>
-                        <DSDatePickerWrapper
-                            state={state}
-                            presentationValue=""
-                            attribute={{} as RecordFormAttributeFragment}
-                            onChange={mockOnChange}
-                            handleSubmit={mockHandleSubmit}
-                        />
-                    </Form.Item>
-                </Form>
-            );
+    test('Should display the value if focused', async () => {
+        render(
+            <Form>
+                <Form.Item>
+                    <DSDatePickerWrapper
+                        value={todayDate}
+                        presentationValue={presentationDate}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        onChange={mockOnChange}
+                        handleSubmit={mockHandleSubmit}
+                    />
+                </Form.Item>
+            </Form>
+        );
 
-            await user.click(screen.getByRole('textbox'));
-            const todayDate = dayjs();
-            const todayDateFormatted = dayjs().format('YYYY-MM-DD');
-            await user.click(screen.getByTitle(todayDateFormatted));
+        await user.click(screen.getByRole('textbox'));
 
-            const todayDateAtNoon = todayDate
-                .utc()
-                .set('date', todayDate.date())
-                .set('hour', 12)
-                .set('minute', 0)
-                .set('second', 0)
-                .set('millisecond', 0);
+        expect(screen.getByRole('textbox')).toHaveValue(todayDateFormatted);
+    });
 
-            expect(mockOnChange).toHaveBeenCalled();
-            expect(mockHandleSubmit).toHaveBeenCalledWith(todayDateAtNoon.unix().toString(), state.attribute.id);
-        });
+    test('Should be disabled when readonly', async () => {
+        render(
+            <Form>
+                <Form.Item>
+                    <DSDatePickerWrapper
+                        value={todayDate}
+                        presentationValue={presentationDate}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={readonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        onChange={mockOnChange}
+                        handleSubmit={mockHandleSubmit}
+                    />
+                </Form.Item>
+            </Form>
+        );
 
-        test('Should not save to LEAV if field becomes empty', async () => {
-            const state = getInitialState({required: true, fallbackLang: false});
-            render(
-                <Form>
-                    <Form.Item>
-                        <DSDatePickerWrapper
-                            state={state}
-                            presentationValue=""
-                            attribute={{} as RecordFormAttributeFragment}
-                            onChange={mockOnChange}
-                            handleSubmit={mockHandleSubmit}
-                        />
-                    </Form.Item>
-                </Form>
-            );
+        expect(screen.getByRole('textbox')).toBeDisabled();
+    });
 
-            await user.click(screen.getByRole('textbox'));
-            const todaysDate = dayjs().format('YYYY-MM-DD');
-            await user.click(screen.getByTitle(todaysDate));
+    test('Should call onChange / handleSubmit with value at noon', async () => {
+        render(
+            <Form>
+                <Form.Item>
+                    <DSDatePickerWrapper
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        onChange={mockOnChange}
+                        handleSubmit={mockHandleSubmit}
+                    />
+                </Form.Item>
+            </Form>
+        );
 
-            expect(mockOnChange).toHaveBeenCalledTimes(1);
-            expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
+        const datePicker = screen.getByRole('textbox');
 
-            const clearButton = screen.getByRole('button');
-            await user.click(clearButton);
+        await user.click(datePicker);
+        const dayToSelect = await screen.findAllByText(todayDate.date());
+        await user.click(dayToSelect[0]);
 
-            expect(mockOnChange).toHaveBeenCalledTimes(2);
-            expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
-        });
+        expect(mockOnChange).toHaveBeenCalledWith(todayDateAtNoon, todayDateFormatted);
+        expect(mockHandleSubmit).toHaveBeenCalledWith(todayDateAtNoon.unix().toString(), mockFormAttribute.id);
+    });
+
+    test('Should save to LEAV if field becomes empty', async () => {
+        render(
+            <Form>
+                <Form.Item>
+                    <DSDatePickerWrapper
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        onChange={mockOnChange}
+                        handleSubmit={mockHandleSubmit}
+                    />
+                </Form.Item>
+            </Form>
+        );
+
+        await user.click(screen.getByRole('textbox'));
+        const dayToSelect = await screen.findAllByText(todayDate.date());
+        await user.click(dayToSelect[0]);
+
+        expect(mockOnChange).toHaveBeenCalledTimes(1);
+        expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
+
+        const clearButton = screen.getByRole('button');
+        await user.click(clearButton);
+
+        expect(mockOnChange).toHaveBeenCalledTimes(2);
+        expect(mockHandleSubmit).toHaveBeenCalledTimes(2);
     });
 
     describe('Inherited values', () => {
         test('Should call onChange/handleSubmit with empty value on clear', async () => {
-            const raw_value = '1714138054';
-            const state = getInitialState({required: false, fallbackLang: false});
-            state.inheritedValue = {...mockValue.value, raw_value};
-            state.isInheritedValue = true;
-            state.isInheritedOverrideValue = true;
-            state.isInheritedNotOverrideValue = false;
             render(
                 <Form
                     initialValues={{
-                        datePickerTest: dayjs.unix(Number(raw_value))
+                        datePickerTest: todayDate
                     }}
                 >
                     <Form.Item name="datePickerTest">
                         <DSDatePickerWrapper
-                            state={state}
-                            presentationValue=""
-                            attribute={{} as RecordFormAttributeFragment}
+                            value={todayDate}
+                            presentationValue={presentationDate}
+                            attribute={mockFormAttribute}
+                            required={notRequired}
+                            readonly={notReadonly}
+                            calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                            inheritedFlags={inheritedFlagsWithInheritedValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                         />
@@ -273,29 +245,24 @@ describe('DSDatePickerWrapper', () => {
             await user.click(clearButton);
 
             expect(mockOnChange).toHaveBeenCalledTimes(1);
-            expect(mockOnChange).toHaveBeenCalledWith(expect.any(Object), raw_value);
+            expect(mockOnChange).toHaveBeenCalledWith(
+                expect.any(Object),
+                inheritedFlagsWithInheritedValue.inheritedValue.raw_payload
+            );
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
-            expect(mockHandleSubmit).toHaveBeenCalledWith(null, state.attribute.id);
+            expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
         });
 
         test('Should hide clear icon when value is inherited, but not override', async () => {
-            const raw_value = '1714138054';
-            const state = getInitialState({required: false, fallbackLang: false});
-            state.inheritedValue = {...mockValue.value, raw_value};
-            state.isInheritedValue = true;
-            state.isInheritedOverrideValue = false;
-            state.isInheritedNotOverrideValue = true;
             render(
-                <Form
-                    initialValues={{
-                        datePickerTest: dayjs.unix(Number(raw_value))
-                    }}
-                >
+                <Form>
                     <Form.Item name="datePickerTest">
                         <DSDatePickerWrapper
-                            state={state}
-                            presentationValue=""
-                            attribute={{} as RecordFormAttributeFragment}
+                            attribute={mockFormAttribute}
+                            required={notRequired}
+                            readonly={notReadonly}
+                            calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                            inheritedFlags={inheritedFlagsWithInheritedValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                         />
@@ -306,25 +273,24 @@ describe('DSDatePickerWrapper', () => {
             expect(screen.queryByRole('button')).toBeNull();
         });
     });
+
     describe('Calculated values', () => {
         test('Should call onChange/handleSubmit with empty value on clear', async () => {
-            const raw_value = '1714138054';
-            const state = getInitialState({required: false, fallbackLang: false});
-            state.calculatedValue = {...mockValue.value, raw_value};
-            state.isCalculatedValue = true;
-            state.isCalculatedOverrideValue = true;
-            state.isCalculatedNotOverrideValue = false;
             render(
                 <Form
                     initialValues={{
-                        datePickerTest: dayjs.unix(Number(raw_value))
+                        datePickerTest: todayDate
                     }}
                 >
                     <Form.Item name="datePickerTest">
                         <DSDatePickerWrapper
-                            state={state}
-                            presentationValue=""
-                            attribute={{} as RecordFormAttributeFragment}
+                            value={todayDate}
+                            presentationValue={presentationDate}
+                            attribute={mockFormAttribute}
+                            required={notRequired}
+                            readonly={notReadonly}
+                            calculatedFlags={calculatedFlagsWithCalculatedValue}
+                            inheritedFlags={inheritedFlagsWithoutInheritedValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                         />
@@ -336,29 +302,24 @@ describe('DSDatePickerWrapper', () => {
             await user.click(clearButton);
 
             expect(mockOnChange).toHaveBeenCalledTimes(1);
-            expect(mockOnChange).toHaveBeenCalledWith(expect.any(Object), raw_value);
+            expect(mockOnChange).toHaveBeenCalledWith(
+                expect.any(Object),
+                calculatedFlagsWithCalculatedValue.calculatedValue.raw_payload
+            );
             expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
-            expect(mockHandleSubmit).toHaveBeenCalledWith(null, state.attribute.id);
+            expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
         });
 
         test('Should hide clear icon when value is calculated, but not override', async () => {
-            const raw_value = '1714138054';
-            const state = getInitialState({required: false, fallbackLang: false});
-            state.calculatedValue = {...mockValue.value, raw_value};
-            state.isCalculatedValue = true;
-            state.isCalculatedOverrideValue = false;
-            state.isCalculatedNotOverrideValue = true;
             render(
-                <Form
-                    initialValues={{
-                        datePickerTest: dayjs.unix(Number(raw_value))
-                    }}
-                >
+                <Form>
                     <Form.Item name="datePickerTest">
                         <DSDatePickerWrapper
-                            state={state}
-                            presentationValue=""
-                            attribute={{} as RecordFormAttributeFragment}
+                            attribute={mockFormAttribute}
+                            required={notRequired}
+                            readonly={notReadonly}
+                            calculatedFlags={calculatedFlagsWithCalculatedValue}
+                            inheritedFlags={inheritedFlagsWithoutInheritedValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                         />

@@ -108,7 +108,10 @@ describe('getAntdFormInitialValues', () => {
                     multiple_values: true,
                     id: standardAttributeId
                 },
-                values: [{raw_payload: elementFormId}, {raw_payload: yetAnotherElementFormId}]
+                values: [
+                    {raw_payload: elementFormId, id_value: '12'},
+                    {raw_payload: yetAnotherElementFormId, id_value: '13'}
+                ]
             };
             const recordForm = {elements: [standardElement]};
 
@@ -217,6 +220,36 @@ describe('getAntdFormInitialValues', () => {
 
             expect(antdFormInitialValues).toEqual({
                 [dateRangeAttributeId]: [Number(from), Number(to)]
+            });
+        });
+    });
+
+    describe('AttributeFormat.color', () => {
+        test('Should skip when raw_value is not set', async () => {
+            const colorElementWithoutRawValue = {
+                attribute: {format: AttributeFormat.color},
+                values: [{}]
+            };
+            const recordForm = {elements: [colorElementWithoutRawValue]};
+
+            const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
+
+            expect(antdFormInitialValues).toEqual({});
+        });
+
+        test('Should initialize antd form with given value for color attribute', async () => {
+            const rawValue = 'rawValue';
+            const colorAttributeId = 'colorAttributeId';
+            const colorElement = {
+                attribute: {format: AttributeFormat.color, id: colorAttributeId},
+                values: [{raw_payload: rawValue}]
+            };
+            const recordForm = {elements: [colorElement]};
+
+            const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
+
+            expect(antdFormInitialValues).toEqual({
+                [colorAttributeId]: rawValue
             });
         });
     });

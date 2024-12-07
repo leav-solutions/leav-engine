@@ -51,20 +51,33 @@ describe('validateFormatAction', () => {
         expect(res.errors.length).toBe(1);
     });
 
-    test('validateFormat COLOR', async () => {
+    test('Should validate color format', async () => {
         const colorValue = [{payload: 'FFFFFF'}];
-        expect((await action(colorValue, {}, ctxAttrColor)).values[0]).toBe(colorValue[0]);
+        const res = await action(colorValue, {}, ctxAttrColor);
+
+        expect(res.errors.length).toBe(0);
+        expect(res.values[0]).toBe(colorValue[0]);
     });
 
-    test('Throw if invalid format COLOR', async () => {
+    test('Should validate color format if payload is null', async () => {
+        const colorValue = [{payload: null}];
+        const res = await action(colorValue, {}, ctxAttrColor);
+
+        expect(res.errors.length).toBe(0);
+        expect(res.values[0]).toBe(colorValue[0]);
+    });
+
+    test('Should throw if invalid color format', async () => {
         const badColorValue = [{payload: 'AZERTY'}];
         const res = await action(badColorValue, {}, ctxAttrColor);
+
         expect(res.errors.length).toBe(1);
     });
 
-    test('Throw if invalid format COLOR, to be less or equal to 6 characters ', async () => {
+    test('Should throw if invalid color format (must be less or equal to 6 characters)', async () => {
         const badColorValue = [{payload: 'FFFFFFFFFFFFFFFFFFF'}];
         const res = await action(badColorValue, {}, ctxAttrColor);
+
         expect(res.errors.length).toBe(1);
     });
 

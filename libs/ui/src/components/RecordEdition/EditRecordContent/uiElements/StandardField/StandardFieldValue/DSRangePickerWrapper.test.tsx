@@ -3,95 +3,93 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
 import {DSRangePickerWrapper} from './DSRangePickerWrapper';
-import {VersionFieldScope} from '../../../_types';
-import {
-    IStandardFieldReducerState,
-    StandardFieldValueState
-} from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import {mockRecord} from '_ui/__mocks__/common/record';
-import {mockFormElementInput} from '_ui/__mocks__/common/form';
 import userEvent from '@testing-library/user-event';
 import {Form} from 'antd';
 import dayjs from 'dayjs';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
+import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
 
-const en_label = 'label';
-const fr_label = 'libellé';
-const idValue = '123';
-const mockValue = {
-    index: 0,
-    displayValue: 'my value',
-    editingValue: 'my raw value',
-    originRawValue: 'my raw value',
-    idValue: null,
-    isEditing: false,
-    isErrorDisplayed: false,
-    value: {
-        id_value: null,
-        value: 'my value',
-        raw_value: 'my raw value',
-        modified_at: null,
-        created_at: null,
-        created_by: null,
-        modified_by: null
-    },
-    version: null,
-    error: '',
-    state: StandardFieldValueState.PRISTINE
+const todayDate = dayjs();
+const tomorrowDate = dayjs().add(1, 'day');
+const formatedDates = (date: dayjs.Dayjs) => ({
+    formated: date.format('YYYY-MM-DD'),
+    timestamp: date.unix().toString(),
+    atNoon: date.utc().set('date', date.date()).set('hour', 12).set('minute', 0).set('second', 0).set('millisecond', 0),
+    atNoonTimestamp: date
+        .utc()
+        .set('date', date.date())
+        .set('hour', 12)
+        .set('minute', 0)
+        .set('second', 0)
+        .set('millisecond', 0)
+        .unix()
+});
+const todayDateFormated = formatedDates(todayDate);
+const tomorrowDateFormated = formatedDates(tomorrowDate);
+
+const presentationDate = 'From December 05, 2024 To December 06, 2024';
+
+const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
+    isCalculatedValue: false,
+    isCalculatedOverrideValue: false,
+    isCalculatedNotOverrideValue: false,
+    calculatedValue: null
 };
 
-const getInitialState = (required: boolean, fallbackLang = false): IStandardFieldReducerState => ({
-    record: mockRecord,
-    formElement: {
-        ...mockFormElementInput,
-        settings: {
-            label: fallbackLang ? {en: en_label} : {fr: fr_label, en: en_label},
-            required
-        }
-    },
-    attribute: mockFormAttribute,
-    isReadOnly: false,
-    activeScope: VersionFieldScope.CURRENT,
-    values: {
-        [VersionFieldScope.CURRENT]: {
-            version: null,
-            values: {[idValue]: mockValue}
-        },
-        [VersionFieldScope.INHERITED]: null
-    },
-    metadataEdit: false,
-    inheritedValue: null,
-    isInheritedNotOverrideValue: false,
-    isInheritedOverrideValue: false,
-    isInheritedValue: false,
-    calculatedValue: null,
+const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
+    isCalculatedValue: true,
+    isCalculatedOverrideValue: true,
     isCalculatedNotOverrideValue: false,
-    isCalculatedOverrideValue: false,
-    isCalculatedValue: false
-});
+    calculatedValue: {
+        raw_payload: {from: todayDateFormated.timestamp, to: tomorrowDateFormated.timestamp}
+    }
+};
+
+const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
+    isInheritedValue: false,
+    isInheritedOverrideValue: false,
+    isInheritedNotOverrideValue: false,
+    inheritedValue: null
+};
+
+const inheritedFlagsWithInheritedValue: InheritedFlags = {
+    isInheritedValue: true,
+    isInheritedOverrideValue: true,
+    isInheritedNotOverrideValue: false,
+    inheritedValue: {
+        raw_payload: {from: todayDateFormated.timestamp, to: tomorrowDateFormated.timestamp}
+    }
+};
+
+const notRequired = false;
+const notReadonly = false;
+const readonly = true;
 
 describe('DSRangePickerWrapper', () => {
     const mockOnChange = jest.fn();
     const mockHandleSubmit = jest.fn();
+    const mockHandleBlur = jest.fn();
     let user!: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {
         user = userEvent.setup({});
         mockOnChange.mockReset();
         mockHandleSubmit.mockReset();
+        mockHandleBlur.mockReset();
     });
 
-    test('Should display presentationValue by default', async () => {
-        const state = getInitialState(false);
-        const presentationValue = 'Du 20 novembre au 12 décembre';
+    test('Should display presentationValue By default', async () => {
         render(
             <Form>
                 <Form.Item>
                     <DSRangePickerWrapper
-                        state={state}
-                        attribute={{} as RecordFormAttributeFragment}
-                        presentationValue={presentationValue}
+                        value={[todayDate, tomorrowDate]}
+                        presentationValue={presentationDate}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         onChange={mockOnChange}
                         handleSubmit={mockHandleSubmit}
                     />
@@ -99,231 +97,146 @@ describe('DSRangePickerWrapper', () => {
             </Form>
         );
 
-        expect(screen.getByRole('textbox')).toHaveValue(presentationValue);
+        expect(screen.getByRole('textbox')).toHaveValue(presentationDate);
     });
 
-    describe('Without required field', () => {
-        test('Should call onChange with value', async () => {
-            const state = getInitialState(false);
-            render(
-                <Form>
-                    <Form.Item>
-                        <DSRangePickerWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            presentationValue=""
-                            onChange={mockOnChange}
-                            handleSubmit={mockHandleSubmit}
-                        />
-                    </Form.Item>
-                </Form>
-            );
+    test('Should display the value if focused', async () => {
+        render(
+            <Form>
+                <Form.Item>
+                    <DSRangePickerWrapper
+                        value={[todayDate, tomorrowDate]}
+                        presentationValue={presentationDate}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        onChange={mockOnChange}
+                        handleSubmit={mockHandleSubmit}
+                    />
+                </Form.Item>
+            </Form>
+        );
 
-            const rangePickerInputs = screen.getAllByRole('textbox');
-            await user.click(rangePickerInputs[0]);
-
-            const startRangeDate = dayjs();
-            const startRangeDateFormatted = dayjs().format('YYYY-MM-DD');
-            const endRangeDate = dayjs().add(1, 'day');
-            const endRangeDateFormatted = dayjs().add(1, 'day').format('YYYY-MM-DD');
-
-            await user.click(screen.getAllByTitle(startRangeDateFormatted)[0]);
-            await user.click(screen.getAllByTitle(endRangeDateFormatted)[0]);
-
-            const startRangeDateAtNoon = startRangeDate
-                .utc()
-                .set('date', startRangeDate.date())
-                .set('hour', 12)
-                .set('minute', 0)
-                .set('second', 0)
-                .set('millisecond', 0);
-
-            const endRangeDateAtNoon = endRangeDate
-                .utc()
-                .set('date', endRangeDate.date())
-                .set('hour', 12)
-                .set('minute', 0)
-                .set('second', 0)
-                .set('millisecond', 0);
-
-            expect(mockOnChange).toHaveBeenCalledWith(
-                [startRangeDateAtNoon, endRangeDateAtNoon],
-                [startRangeDateFormatted, endRangeDateFormatted]
-            );
-
-            expect(mockHandleSubmit).toHaveBeenCalledWith(
-                {from: startRangeDateAtNoon.unix().toString(), to: endRangeDateAtNoon.unix().toString()},
-                state.attribute.id
-            );
-        });
-
-        test('Should save to LEAV if field becomes empty', async () => {
-            const state = getInitialState(false);
-            render(
-                <Form>
-                    <Form.Item>
-                        <DSRangePickerWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            presentationValue="some date"
-                            onChange={mockOnChange}
-                            handleSubmit={mockHandleSubmit}
-                        />
-                    </Form.Item>
-                </Form>
-            );
-
-            const rangePickerInputs = screen.getAllByRole('textbox');
-            await user.click(rangePickerInputs[0]);
-            const currentDate = dayjs().format('YYYY-MM-DD');
-            await user.click(screen.getAllByTitle(currentDate)[0]);
-            await user.click(screen.getAllByTitle(currentDate)[0]);
-
-            expect(mockOnChange).toHaveBeenCalledTimes(1);
-            expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
-
-            const clearButton = screen.getByRole('button');
-            await user.click(clearButton);
-
-            expect(mockOnChange).toHaveBeenCalledTimes(2);
-            expect(mockHandleSubmit).toHaveBeenCalledTimes(2);
-        });
+        const textInput = screen.getByRole('textbox');
+        await user.click(textInput);
+        const rangePickerInputs = screen.getAllByRole('textbox');
+        expect(rangePickerInputs[0]).toHaveValue(todayDateFormated.formated);
+        expect(rangePickerInputs[1]).toHaveValue(tomorrowDateFormated.formated);
     });
 
-    describe('With required field', () => {
-        test('Should save to LEAV if field is not empty', async () => {
-            const state = getInitialState(true);
-            render(
-                <Form>
-                    <Form.Item>
-                        <DSRangePickerWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            presentationValue=""
-                            onChange={mockOnChange}
-                            handleSubmit={mockHandleSubmit}
-                        />
-                    </Form.Item>
-                </Form>
-            );
+    test('Should be disabled when readonly', async () => {
+        render(
+            <Form>
+                <Form.Item>
+                    <DSRangePickerWrapper
+                        value={[todayDate, tomorrowDate]}
+                        presentationValue={presentationDate}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={readonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        onChange={mockOnChange}
+                        handleSubmit={mockHandleSubmit}
+                    />
+                </Form.Item>
+            </Form>
+        );
 
-            const rangePickerInputs = screen.getAllByRole('textbox');
-            await user.click(rangePickerInputs[0]);
-            const startRangeDate = dayjs();
-            const startRangeDateFormatted = dayjs().format('YYYY-MM-DD');
-            const endRangeDate = dayjs().add(1, 'day');
-            const endRangeDateFormatted = dayjs().add(1, 'day').format('YYYY-MM-DD');
+        expect(screen.getByRole('textbox')).toBeDisabled();
+    });
 
-            await user.click(screen.getAllByTitle(startRangeDateFormatted)[0]);
-            await user.click(screen.getAllByTitle(endRangeDateFormatted)[0]);
+    test('Should call onChange / handleSubmit with value at noon', async () => {
+        render(
+            <Form>
+                <Form.Item>
+                    <DSRangePickerWrapper
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        onChange={mockOnChange}
+                        handleSubmit={mockHandleSubmit}
+                    />
+                </Form.Item>
+            </Form>
+        );
 
-            const startRangeDateAtNoon = startRangeDate
-                .utc()
-                .set('date', startRangeDate.date())
-                .set('hour', 12)
-                .set('minute', 0)
-                .set('second', 0)
-                .set('millisecond', 0);
+        const textInput = screen.getByRole('textbox');
+        await user.click(textInput);
 
-            const endRangeDateAtNoon = endRangeDate
-                .utc()
-                .set('date', endRangeDate.date())
-                .set('hour', 12)
-                .set('minute', 0)
-                .set('second', 0)
-                .set('millisecond', 0);
+        await user.click(screen.getAllByTitle(todayDateFormated.formated)[0]);
+        await user.click(screen.getAllByTitle(tomorrowDateFormated.formated)[0]);
 
-            expect(mockOnChange).toHaveBeenCalled();
-            expect(mockHandleSubmit).toHaveBeenCalledWith(
-                {from: startRangeDateAtNoon.unix().toString(), to: endRangeDateAtNoon.unix().toString()},
-                state.attribute.id
-            );
-        });
+        expect(mockOnChange).toHaveBeenCalledWith(
+            [todayDateFormated.atNoon, tomorrowDateFormated.atNoon],
+            [todayDateFormated.formated, tomorrowDateFormated.formated]
+        );
 
-        test('Should display presentationValue after save', async () => {
-            const state = getInitialState(true);
-            const presentationValue = 'presentationValue';
-            render(
-                <Form>
-                    <Form.Item>
-                        <DSRangePickerWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            presentationValue={presentationValue}
-                            onChange={mockOnChange}
-                            handleSubmit={mockHandleSubmit}
-                        />
-                    </Form.Item>
-                </Form>
-            );
+        expect(mockHandleSubmit).toHaveBeenCalledWith(
+            JSON.stringify({
+                from: todayDateFormated.atNoonTimestamp,
+                to: tomorrowDateFormated.atNoonTimestamp
+            }),
+            mockFormAttribute.id
+        );
+    });
 
-            const rangePickerInputs = screen.getAllByRole('textbox');
-            await user.click(rangePickerInputs[0]);
-            expect(screen.queryByText(presentationValue)).not.toBeInTheDocument();
-            const startRangeDateFormatted = dayjs().format('YYYY-MM-DD');
-            const endRangeDateFormatted = dayjs().add(1, 'day').format('YYYY-MM-DD');
+    test('Should save to LEAV if field becomes empty', async () => {
+        render(
+            <Form>
+                <Form.Item>
+                    <DSRangePickerWrapper
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        onChange={mockOnChange}
+                        handleSubmit={mockHandleSubmit}
+                    />
+                </Form.Item>
+            </Form>
+        );
 
-            await user.click(screen.getAllByTitle(startRangeDateFormatted)[0]);
-            await user.click(screen.getAllByTitle(endRangeDateFormatted)[0]);
+        const textInput = screen.getByRole('textbox');
+        await user.click(textInput);
 
-            expect(screen.getByRole('textbox')).toHaveValue(presentationValue);
-        });
+        const rangePickerInputs = screen.getAllByRole('textbox');
+        await user.click(rangePickerInputs[0]);
+        await user.click(screen.getAllByTitle(todayDateFormated.formated)[0]);
+        await user.click(screen.getAllByTitle(tomorrowDateFormated.formated)[0]);
 
-        test.skip('Should not save to LEAV if field becomes empty', async () => {
-            const state = getInitialState(true);
-            render(
-                <Form>
-                    <Form.Item>
-                        <DSRangePickerWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            presentationValue="some date"
-                            onChange={mockOnChange}
-                            handleSubmit={mockHandleSubmit}
-                        />
-                    </Form.Item>
-                </Form>
-            );
+        expect(mockOnChange).toHaveBeenCalledTimes(1);
+        expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
 
-            const rangePickerInputs = screen.getAllByRole('textbox');
-            await user.click(rangePickerInputs[0]);
-            const currentDate = dayjs().format('YYYY-MM-DD');
-            await user.click(screen.getAllByTitle(currentDate)[0]);
-            await user.click(screen.getAllByTitle(currentDate)[0]);
+        const clearIcon = screen.getByLabelText('clear');
+        await user.click(clearIcon);
 
-            expect(mockOnChange).toHaveBeenCalledTimes(1);
-            expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
-
-            const clearButton = screen.getByRole('button');
-            await user.click(clearButton);
-
-            expect(mockOnChange).toHaveBeenCalledTimes(2);
-            expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
-        });
+        expect(mockOnChange).toHaveBeenCalledTimes(2);
+        expect(mockHandleSubmit).toHaveBeenCalledTimes(2);
     });
 
     describe('Inherited values', () => {
-        test('Should hide clear icon when value is inherited, but not override', async () => {
-            const raw_value = {
-                from: '1714138054',
-                to: '1714138054'
-            };
-            const state = getInitialState(false);
-            state.inheritedValue = {...mockValue.value, raw_value};
-            state.isInheritedValue = true;
-            state.isInheritedOverrideValue = false;
-            state.isInheritedNotOverrideValue = true;
+        test('Should call onChange/handleSubmit with empty value on clear', async () => {
             render(
                 <Form
                     initialValues={{
-                        dateRangeTest: [dayjs.unix(Number(raw_value.from)), dayjs.unix(Number(raw_value.to))]
+                        rangePickerTest: [todayDate, tomorrowDate]
                     }}
                 >
-                    <Form.Item name="dateRangeTest">
+                    <Form.Item name="rangePickerTest">
                         <DSRangePickerWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            presentationValue=""
+                            value={[todayDate, tomorrowDate]}
+                            presentationValue={presentationDate}
+                            attribute={mockFormAttribute}
+                            required={notRequired}
+                            readonly={notReadonly}
+                            calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                            inheritedFlags={inheritedFlagsWithInheritedValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                         />
@@ -331,33 +244,56 @@ describe('DSRangePickerWrapper', () => {
                 </Form>
             );
 
-            const clearButton = screen.queryByRole('button');
-            expect(clearButton).toBeNull();
+            const clearButton = screen.getByRole('button');
+            await user.click(clearButton);
+
+            expect(mockOnChange).toHaveBeenCalledTimes(1);
+            expect(mockOnChange).toHaveBeenCalledWith(
+                expect.any(Object),
+                inheritedFlagsWithInheritedValue.inheritedValue.raw_payload
+            );
+            expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
+            expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
+        });
+
+        test('Should hide clear icon when value is inherited, but not override', async () => {
+            render(
+                <Form>
+                    <Form.Item name="rangePickerTest">
+                        <DSRangePickerWrapper
+                            attribute={mockFormAttribute}
+                            required={notRequired}
+                            readonly={notReadonly}
+                            calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                            inheritedFlags={inheritedFlagsWithInheritedValue}
+                            onChange={mockOnChange}
+                            handleSubmit={mockHandleSubmit}
+                        />
+                    </Form.Item>
+                </Form>
+            );
+
+            expect(screen.queryByRole('button')).toBeNull();
         });
     });
 
     describe('Calculated values', () => {
-        test('Should hide clear icon when value is calculated, but not override', async () => {
-            const raw_value = {
-                from: '1714138054',
-                to: '1714138054'
-            };
-            const state = getInitialState(false);
-            state.calculatedValue = {...mockValue.value, raw_value};
-            state.isCalculatedValue = true;
-            state.isCalculatedOverrideValue = false;
-            state.isCalculatedNotOverrideValue = true;
+        test('Should call onChange/handleSubmit with empty value on clear', async () => {
             render(
                 <Form
                     initialValues={{
-                        dateRangeTest: [dayjs.unix(Number(raw_value.from)), dayjs.unix(Number(raw_value.to))]
+                        rangePickerTest: todayDate
                     }}
                 >
-                    <Form.Item name="dateRangeTest">
+                    <Form.Item name="rangePickerTest">
                         <DSRangePickerWrapper
-                            state={state}
-                            attribute={{} as RecordFormAttributeFragment}
-                            presentationValue=""
+                            value={[todayDate, tomorrowDate]}
+                            presentationValue={presentationDate}
+                            attribute={mockFormAttribute}
+                            required={notRequired}
+                            readonly={notReadonly}
+                            calculatedFlags={calculatedFlagsWithCalculatedValue}
+                            inheritedFlags={inheritedFlagsWithoutInheritedValue}
                             onChange={mockOnChange}
                             handleSubmit={mockHandleSubmit}
                         />
@@ -365,8 +301,36 @@ describe('DSRangePickerWrapper', () => {
                 </Form>
             );
 
-            const clearButton = screen.queryByRole('button');
-            expect(clearButton).toBeNull();
+            const clearButton = screen.getByRole('button');
+            await user.click(clearButton);
+
+            expect(mockOnChange).toHaveBeenCalledTimes(1);
+            expect(mockOnChange).toHaveBeenCalledWith(
+                expect.any(Object),
+                calculatedFlagsWithCalculatedValue.calculatedValue.raw_payload
+            );
+            expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
+            expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
+        });
+
+        test('Should hide clear icon when value is calculated, but not override', async () => {
+            render(
+                <Form>
+                    <Form.Item name="rangePickerTest">
+                        <DSRangePickerWrapper
+                            attribute={mockFormAttribute}
+                            required={notRequired}
+                            readonly={notReadonly}
+                            calculatedFlags={calculatedFlagsWithCalculatedValue}
+                            inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                            onChange={mockOnChange}
+                            handleSubmit={mockHandleSubmit}
+                        />
+                    </Form.Item>
+                </Form>
+            );
+
+            expect(screen.queryByRole('button')).toBeNull();
         });
     });
 });
