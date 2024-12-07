@@ -30,6 +30,7 @@ WORKDIR /app
 COPY .yarn ./.yarn
 COPY *.json yarn.lock .yarnrc.yml ./
 COPY libs/ ./libs
+COPY assets/ ./assets
 COPY apps/core/package.json ./apps/core/
 
 RUN yarn workspaces focus core --production && rm -rf .yarn yarn.lock .yarnrc.yml
