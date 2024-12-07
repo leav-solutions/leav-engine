@@ -4,7 +4,6 @@
 import {CloseCircleFilled, MoreOutlined} from '@ant-design/icons';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Dropdown} from 'antd';
-import moment from 'moment';
 import {useCallback, useState} from 'react';
 import {DraggableProvidedDragHandleProps} from 'react-beautiful-dnd';
 import styled from 'styled-components';
@@ -12,7 +11,7 @@ import {themeVars} from '_ui/antdTheme';
 import DateBetweenFilter from '_ui/components/LibraryItemsList/FiltersPanel/Filter/FilterInput/DateBetweenFilter';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import {SearchActionTypes} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchReducer';
-import SelectTreeNodeModal from '_ui/components/SelectTreeNodeModal';
+import {SelectTreeNodeModal} from '_ui/components/SelectTreeNodeModal';
 import {useLang} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
@@ -462,10 +461,10 @@ function Filter({filter, handleProps}: IFilterProps): JSX.Element {
             {showSelectTreeNodeModal && (
                 <SelectTreeNodeModal
                     selectedNodeKey={(filter.value.value as string) || (filter as IFilterTree).tree.id}
-                    tree={(filter as IFilterTree).tree}
+                    treeId={(filter as IFilterTree).tree.id}
                     onSubmit={node => updateFilterValue(_getValueFromNode(node))}
                     onClose={() => setShowSelectTreeNodeModal(false)}
-                    visible={showSelectTreeNodeModal}
+                    isVisible={showSelectTreeNodeModal}
                     canSelectRoot
                 />
             )}

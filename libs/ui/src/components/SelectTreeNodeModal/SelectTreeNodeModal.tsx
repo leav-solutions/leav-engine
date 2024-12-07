@@ -1,30 +1,29 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {Button, Modal} from 'antd';
-import {useState} from 'react';
+import {FunctionComponent, useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {SystemTranslation} from '../../types/scalars';
 import {ITreeNode, ITreeNodeWithRecord} from '../../types/trees';
 import {SelectTreeNode} from '../SelectTreeNode';
+import {KitButton, KitModal} from 'aristid-ds';
 
 interface ISelectTreeNodeModalProps {
-    tree: {id: string; label?: SystemTranslation | null};
+    treeId: string;
     selectedNodeKey?: string;
-    visible: boolean;
+    isVisible: boolean;
     onSubmit: (treeNode: ITreeNode) => void;
     onClose: () => void;
     canSelectRoot?: boolean;
 }
 
-export default function SelectTreeNodeModal({
-    tree,
+export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> = ({
+    treeId,
     selectedNodeKey,
     onSubmit,
-    visible,
+    isVisible,
     onClose,
     canSelectRoot = false
-}: ISelectTreeNodeModalProps): JSX.Element {
+}) => {
     const {t} = useSharedTranslation();
     const [selectedNode, setSelectedNode] = useState<ITreeNode>({
         id: selectedNodeKey,
@@ -33,43 +32,46 @@ export default function SelectTreeNodeModal({
         children: []
     });
 
-    const handleCancel = () => {
+    const _handleCancel = () => {
         onClose();
     };
 
-    const handleApply = () => {
+    const _handleApply = () => {
         onSubmit(selectedNode);
         onClose();
     };
 
-    const onSelect = (node: ITreeNodeWithRecord, selected: boolean) => {
+    const _onSelect = (node: ITreeNodeWithRecord, selected: boolean) => {
         setSelectedNode(!selected ? undefined : node);
     };
 
     return (
-        <Modal
-            open={visible}
-            onCancel={handleCancel}
+        <KitModal
+            isOpen={isVisible}
+            showCloseIcon
+            onClose={_handleCancel}
+            close={_handleCancel}
+            onCancel={_handleCancel}
             title={t('tree-node-selection.title')}
             width="70rem"
             styles={{body: {maxHeight: '80vh', overflowY: 'auto'}}}
             centered
             footer={[
-                <Button key="cancel" onClick={handleCancel}>
+                <KitButton key="cancel" onClick={_handleCancel}>
                     {t('global.cancel')}
-                </Button>,
-                <Button type="primary" key="add" onClick={handleApply}>
+                </KitButton>,
+                <KitButton type="primary" key="add" onClick={_handleApply}>
                     {t('global.apply')}
-                </Button>
+                </KitButton>
             ]}
             destroyOnClose
         >
             <SelectTreeNode
-                tree={tree}
-                onSelect={onSelect}
+                treeId={treeId}
+                onSelect={_onSelect}
                 selectedNode={selectedNode?.key}
                 canSelectRoot={canSelectRoot}
             />
-        </Modal>
+        </KitModal>
     );
-}
+};
