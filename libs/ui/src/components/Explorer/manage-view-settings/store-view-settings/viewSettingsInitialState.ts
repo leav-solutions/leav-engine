@@ -8,6 +8,7 @@ export const defaultPageSizeOptions = [20, 50, 100];
 export const viewSettingsInitialState: IViewSettingsState = {
     viewType: 'table',
     attributesIds: [],
+    fulltextSearch: '',
     sort: [],
     pageSize: defaultPageSizeOptions[0]
 };

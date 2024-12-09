@@ -15,12 +15,15 @@ export const ViewSettingsActionTypes = {
     REMOVE_SORT: 'REMOVE_SORT',
     MOVE_SORT: 'MOVE_SORT',
     CHANGE_SORT_ORDER: 'CHANGE_SORT_ORDER',
-    CHANGE_PAGE_SIZE: 'CHANGE_PAGE_SIZE'
+    CHANGE_PAGE_SIZE: 'CHANGE_PAGE_SIZE',
+    CHANGE_FULLTEXT_SEARCH: 'CHANGE_FULLTEXT_SEARCH',
+    CLEAR_FULLTEXT_SEARCH: 'CLEAR_FULLTEXT_SEARCH'
 } as const;
 
 export interface IViewSettingsState {
     viewType: ViewType;
     attributesIds: string[];
+    fulltextSearch: string;
     sort: Array<{
         attributeId: string;
         order: SortOrder;
@@ -81,6 +84,15 @@ interface IViewSettingsActionMoveSort {
         indexFrom: number;
         indexTo: number;
     };
+}
+
+interface IViewSettingsActionChangeFulltextSearch {
+    type: typeof ViewSettingsActionTypes.CHANGE_FULLTEXT_SEARCH;
+    payload: {search: string};
+}
+
+interface IViewSettingsActionClearFulltextSearch {
+    type: typeof ViewSettingsActionTypes.CLEAR_FULLTEXT_SEARCH;
 }
 
 type Reducer<PAYLOAD = 'no_payload'> = PAYLOAD extends 'no_payload'
@@ -148,6 +160,16 @@ const moveSort: Reducer<IViewSettingsActionMoveSort['payload']> = (state, payloa
     };
 };
 
+const changeFulltextSearch: Reducer<IViewSettingsActionChangeFulltextSearch['payload']> = (state, payload) => ({
+    ...state,
+    fulltextSearch: payload.search
+});
+
+export const clearFulltextSearch: Reducer = state => ({
+    ...state,
+    fulltextSearch: ''
+});
+
 export type IViewSettingsAction =
     | IViewSettingsActionResetAttributes
     | IViewSettingsActionAddAttribute
@@ -158,7 +180,9 @@ export type IViewSettingsAction =
     | IViewSettingsActionRemoveSort
     | IViewSettingsActionChangeSortOrder
     | IViewSettingsActionMoveSort
-    | IViewSettingsActionChangePageSize;
+    | IViewSettingsActionChangePageSize
+    | IViewSettingsActionChangeFulltextSearch
+    | IViewSettingsActionClearFulltextSearch;
 
 export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
     switch (action.type) {
@@ -191,6 +215,12 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
         }
         case ViewSettingsActionTypes.CHANGE_SORT_ORDER: {
             return changeSortOrder(state, action.payload);
+        }
+        case ViewSettingsActionTypes.CHANGE_FULLTEXT_SEARCH: {
+            return changeFulltextSearch(state, action.payload);
+        }
+        case ViewSettingsActionTypes.CLEAR_FULLTEXT_SEARCH: {
+            return clearFulltextSearch(state);
         }
         default:
             return state;
