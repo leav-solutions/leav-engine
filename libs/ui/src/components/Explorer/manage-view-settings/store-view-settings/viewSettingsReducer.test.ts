@@ -267,36 +267,6 @@ describe('ViewSettings Reducer', () => {
         });
     });
 
-<<<<<<< HEAD
-    test(`Action ${ViewSettingsActionTypes.CHANGE_FULLTEXT_SEARCH} test`, () => {
-        const state = viewSettingsReducer(viewSettingsInitialState, {
-            type: ViewSettingsActionTypes.CHANGE_FULLTEXT_SEARCH,
-            payload: {search: 'test'}
-        });
-
-        expect(state.fulltextSearch).toEqual('test');
-    });
-
-    test(`Action ${ViewSettingsActionTypes.CLEAR_FULLTEXT_SEARCH} test`, () => {
-        const state = viewSettingsReducer(
-            {...viewSettingsInitialState, fulltextSearch: 'test'},
-            {
-                type: ViewSettingsActionTypes.CLEAR_FULLTEXT_SEARCH
-            }
-        );
-
-        expect(state.fulltextSearch).toEqual('');
-    });
-
-    test(`Action ${ViewSettingsActionTypes.ADD_FILTER} test`, () => {
-        const state = viewSettingsReducer(
-            {
-                ...viewSettingsInitialState,
-                filters: [
-                    {
-                        id: 'id',
-                        field: 'first',
-=======
     describe('adding filters', () => {
         test('can add new filter', () => {
             const state = viewSettingsReducer(
@@ -315,7 +285,6 @@ describe('ViewSettings Reducer', () => {
                     type: ViewSettingsActionTypes.ADD_FILTER,
                     payload: {
                         field: 'second',
->>>>>>> bb527784a (fix(@leav/ui): pr comments)
                         condition: 'eq',
                         values: []
                     }
