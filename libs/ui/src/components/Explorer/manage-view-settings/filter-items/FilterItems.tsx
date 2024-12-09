@@ -38,10 +38,10 @@ const StyledFaEye = styled(FaEye)`
     color: var(--general-utilities-neutral-deepDark);
 `;
 
-export const FilterItems: FunctionComponent<{libraryId: string; maxFilters: number}> = ({libraryId, maxFilters}) => {
+export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId}) => {
     const {t} = useSharedTranslation();
     const {
-        view: {filter},
+        view: {filters, canAddFilter},
         dispatch
     } = useViewSettingsContext();
 
@@ -54,15 +54,13 @@ export const FilterItems: FunctionComponent<{libraryId: string; maxFilters: numb
         })
     );
 
-    const canAddFilter = filter.length < maxFilters;
-
     const _toggleColumnVisibility = (attributeId: string) => () => {
-        const isAttributeAlreadySorting = filter.some(filterItem => filterItem.field === attributeId);
-        if (isAttributeAlreadySorting) {
+        const isAttributeAlreadyFiltering = filters.find(filterItem => filterItem.field === attributeId);
+        if (isAttributeAlreadyFiltering) {
             dispatch({
                 type: ViewSettingsActionTypes.REMOVE_FILTER,
                 payload: {
-                    field: attributeId
+                    id: isAttributeAlreadyFiltering.id
                 }
             });
         } else {
@@ -70,9 +68,10 @@ export const FilterItems: FunctionComponent<{libraryId: string; maxFilters: numb
                 dispatch({
                     type: ViewSettingsActionTypes.ADD_FILTER,
                     payload: {
-                        operator: '',
-                        values: [],
-                        field: attributeId
+                        id: '',
+                        field: attributeId,
+                        condition: '',
+                        values: []
                     }
                 });
             }
@@ -90,36 +89,36 @@ export const FilterItems: FunctionComponent<{libraryId: string; maxFilters: numb
         dispatch({type: ViewSettingsActionTypes.MOVE_FILTER, payload: {indexFrom, indexTo}});
     };
 
-    const activeFilters = filter.filter(({field}) => searchFilteredColumnsIds.includes(field));
+    const activeFilters = filters.filter(({field}) => searchFilteredColumnsIds.includes(field));
     const inactiveFilters = searchFilteredColumnsIds.filter(
         attributeId =>
             attributeDetailsById?.[attributeId]?.type === AttributeType.simple &&
-            filter.every(filterItem => filterItem.field !== attributeId)
+            filters.every(filterItem => filterItem.field !== attributeId)
     );
 
     return (
         <>
             {activeFilters.length > 0 && (
-                <StyledList aria-label={t('explorer.sort-list.active')}>
+                <StyledList aria-label={t('explorer.filter-list.active')}>
                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={_handleDragEnd}>
                         <SortableContext
                             items={activeFilters.map(({field}) => ({id: field}))}
                             strategy={verticalListSortingStrategy}
                         >
-                            {activeFilters.map(({field, operator, values}) => (
+                            {activeFilters.map(activeFilter => (
                                 <FilterListItem
-                                    key={field}
-                                    attributeId={field}
+                                    key={activeFilter.field}
+                                    attributeId={activeFilter.field}
                                     isDraggable
                                     filterChipProps={{
-                                        label: attributeDetailsById[field].label,
+                                        label: attributeDetailsById[activeFilter.field].label,
                                         expandable: true,
-                                        values,
+                                        values: activeFilter.values,
                                         dropDownProps: {
                                             dropdownRender: () => (
                                                 <SimpleFilterDropdown
-                                                    filter={{field, operator, values}}
-                                                    attribute={attributeDetailsById[field]}
+                                                    filter={activeFilter}
+                                                    attribute={attributeDetailsById[activeFilter.field]}
                                                 />
                                             )
                                         }
@@ -127,7 +126,7 @@ export const FilterItems: FunctionComponent<{libraryId: string; maxFilters: numb
                                     visibilityButtonProps={{
                                         icon: <StyledFaEye />,
                                         title: String(t('explorer.hide')),
-                                        onClick: _toggleColumnVisibility(field)
+                                        onClick: _toggleColumnVisibility(activeFilter.field)
                                     }}
                                 />
                             ))}
@@ -142,7 +141,7 @@ export const FilterItems: FunctionComponent<{libraryId: string; maxFilters: numb
                 allowClear
                 prefix={<FaSearch />}
             />
-            <StyledList aria-label={t('explorer.sort-list.inactive')}>
+            <StyledList aria-label={t('explorer.filter-list.inactive')}>
                 {inactiveFilters.map(attributeId => (
                     <FilterListItem
                         key={attributeId}

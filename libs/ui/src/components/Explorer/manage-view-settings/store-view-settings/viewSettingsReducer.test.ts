@@ -286,4 +286,309 @@ describe('ViewSettings Reducer', () => {
 
         expect(state.fulltextSearch).toEqual('');
     });
+
+    test(`Action ${ViewSettingsActionTypes.ADD_FILTER} test`, () => {
+        const state = viewSettingsReducer(
+            {
+                ...viewSettingsInitialState,
+                filters: [
+                    {
+                        id: 'id',
+                        field: 'first',
+                        condition: 'eq',
+                        values: []
+                    }
+                ]
+            },
+            {
+                type: ViewSettingsActionTypes.ADD_FILTER,
+                payload: {
+                    id: '',
+                    field: 'second',
+                    condition: 'eq',
+                    values: []
+                }
+            }
+        );
+        expect(state.filters).toHaveLength(2);
+        expect(state.filters).toEqual([
+            {
+                id: 'id',
+                field: 'first',
+                condition: 'eq',
+                values: []
+            },
+            {
+                id: expect.any(String),
+                field: 'second',
+                condition: 'eq',
+                values: []
+            }
+        ]);
+    });
+
+    test(`Action ${ViewSettingsActionTypes.ADD_FILTER} maxfilters test`, () => {
+        const state = viewSettingsReducer(
+            {
+                ...viewSettingsInitialState,
+                maxFilters: 2,
+                filters: [
+                    {
+                        id: 'id',
+                        field: 'first',
+                        condition: 'eq',
+                        values: []
+                    }
+                ]
+            },
+            {
+                type: ViewSettingsActionTypes.ADD_FILTER,
+                payload: {
+                    id: '',
+                    field: 'second',
+                    condition: 'eq',
+                    values: []
+                }
+            }
+        );
+        expect(state.filters).toHaveLength(2);
+        expect(state.canAddFilter).toEqual(false);
+
+        const state2 = viewSettingsReducer(state, {
+            type: ViewSettingsActionTypes.ADD_FILTER,
+            payload: {
+                id: '',
+                field: 'third',
+                condition: 'eq',
+                values: []
+            }
+        });
+        expect(state2.filters).toHaveLength(2);
+        expect(state2.filters).toEqual([
+            {
+                id: 'id',
+                field: 'first',
+                condition: 'eq',
+                values: []
+            },
+            {
+                id: expect.any(String),
+                field: 'second',
+                condition: 'eq',
+                values: []
+            }
+        ]);
+    });
+
+    test(`Action ${ViewSettingsActionTypes.REMOVE_FILTER} test`, () => {
+        const state = viewSettingsReducer(
+            {
+                ...viewSettingsInitialState,
+                filters: [
+                    {
+                        id: 'id',
+                        field: 'first',
+                        condition: 'eq',
+                        values: []
+                    },
+                    {
+                        id: 'second-id',
+                        field: 'second',
+                        condition: 'eq',
+                        values: []
+                    },
+                    {
+                        id: 'third-id',
+                        field: 'third',
+                        condition: 'eq',
+                        values: []
+                    }
+                ]
+            },
+            {
+                type: ViewSettingsActionTypes.REMOVE_FILTER,
+                payload: {
+                    id: 'second-id'
+                }
+            }
+        );
+        expect(state.filters).toHaveLength(2);
+        expect(state.filters).toEqual([
+            {
+                id: 'id',
+                field: 'first',
+                condition: 'eq',
+                values: []
+            },
+            {
+                id: 'third-id',
+                field: 'third',
+                condition: 'eq',
+                values: []
+            }
+        ]);
+    });
+
+    test(`Action ${ViewSettingsActionTypes.CHANGE_FILTER_CONFIG} test`, () => {
+        const state = viewSettingsReducer(
+            {
+                ...viewSettingsInitialState,
+                filters: [
+                    {
+                        id: 'id',
+                        field: 'first',
+                        condition: 'eq',
+                        values: []
+                    },
+                    {
+                        id: 'second-id',
+                        field: 'second',
+                        condition: 'eq',
+                        values: []
+                    }
+                ]
+            },
+            {
+                type: ViewSettingsActionTypes.CHANGE_FILTER_CONFIG,
+                payload: {
+                    id: 'id',
+                    field: 'first',
+                    condition: 'less',
+                    values: []
+                }
+            }
+        );
+        expect(state.filters).toHaveLength(2);
+        expect(state.filters).toEqual([
+            {
+                id: 'id',
+                field: 'first',
+                condition: 'less',
+                values: []
+            },
+            {
+                id: 'second-id',
+                field: 'second',
+                condition: 'eq',
+                values: []
+            }
+        ]);
+    });
+
+    describe(`Action ${ViewSettingsActionTypes.MOVE_FILTER} test`, () => {
+        const initialState: IViewSettingsState = {
+            ...viewSettingsInitialState,
+            filters: [
+                {
+                    id: 'id',
+                    field: 'test',
+                    condition: 'eq',
+                    values: []
+                },
+                {
+                    id: 'active-id',
+                    field: 'active',
+                    condition: 'eq',
+                    values: []
+                },
+                {
+                    id: 'created_at-id',
+                    field: 'created_at',
+                    condition: 'eq',
+                    values: []
+                }
+                // {order: SortOrder.desc, attributeId: 'test'},
+                // {order: SortOrder.asc, attributeId: 'active'},
+                // {order: SortOrder.asc, attributeId: 'created_at'}
+            ]
+        };
+
+        const cases = [
+            {
+                indexFrom: 0,
+                indexTo: 2,
+                expected: [
+                    {
+                        id: 'active-id',
+                        field: 'active',
+                        condition: 'eq',
+                        values: []
+                    },
+                    {
+                        id: 'created_at-id',
+                        field: 'created_at',
+                        condition: 'eq',
+                        values: []
+                    },
+                    {
+                        id: 'id',
+                        field: 'test',
+                        condition: 'eq',
+                        values: []
+                    }
+                ]
+            },
+            {
+                indexFrom: 2,
+                indexTo: 0,
+                expected: [
+                    {
+                        id: 'created_at-id',
+                        field: 'created_at',
+                        condition: 'eq',
+                        values: []
+                    },
+                    {
+                        id: 'id',
+                        field: 'test',
+                        condition: 'eq',
+                        values: []
+                    },
+                    {
+                        id: 'active-id',
+                        field: 'active',
+                        condition: 'eq',
+                        values: []
+                    }
+                ]
+            },
+            {
+                indexFrom: 2,
+                indexTo: 1,
+                expected: [
+                    {
+                        id: 'id',
+                        field: 'test',
+                        condition: 'eq',
+                        values: []
+                    },
+                    {
+                        id: 'created_at-id',
+                        field: 'created_at',
+                        condition: 'eq',
+                        values: []
+                    },
+                    {
+                        id: 'active-id',
+                        field: 'active',
+                        condition: 'eq',
+                        values: []
+                    }
+                ]
+            },
+            {
+                indexFrom: 0,
+                indexTo: 0,
+                expected: initialState.filters
+            }
+        ];
+
+        test.each(cases)('Move filter from $indexFrom to $indexTo', ({indexFrom, indexTo, expected}) => {
+            const state = viewSettingsReducer(initialState, {
+                type: ViewSettingsActionTypes.MOVE_FILTER,
+                payload: {indexFrom, indexTo}
+            });
+            expect(state.filters).toEqual(expected);
+        });
+    });
 });

@@ -630,6 +630,10 @@
             "active": "Active sorts",
             "inactive": "Inactive sorts"
         },
+        "filter-list": {
+            "active": "Active filters",
+            "inactive": "Inactive filters"
+        },
         "available-attributes": "Other available attributes",
         "coming-soon": "Coming soon",
         "show": "Show",

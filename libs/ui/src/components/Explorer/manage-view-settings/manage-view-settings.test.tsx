@@ -16,7 +16,7 @@ import {viewSettingsInitialState} from './store-view-settings/viewSettingsInitia
 import {waitFor} from '@testing-library/react';
 
 const MockOpenEditSettings: FunctionComponent = () => {
-    const {viewSettingsButton} = useOpenViewSettings('', 20);
+    const {viewSettingsButton} = useOpenViewSettings('');
 
     return <>{viewSettingsButton}</>;
 };
@@ -156,6 +156,45 @@ describe('Integration tests about managing view settings feature', () => {
             await userEvent.click(within(firstActiveSort!).getByRole('button', {name: /hide/}));
 
             const [firstInactiveAttribute] = within(inactiveSorts).getAllByRole('listitem');
+
+            expect(firstInactiveAttribute).toHaveTextContent(attributesList[0].label.fr);
+            expect(firstInactiveAttribute).toBeVisible();
+        });
+    });
+
+    describe('Filter data', () => {
+        test.only('should be able to toggle filter activation', async () => {
+            render(
+                <EditSettingsContextProvider>
+                    <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
+                        <MockOpenEditSettings />
+                        <SidePanel />
+                    </MockViewSettingsContextProvider>
+                </EditSettingsContextProvider>
+            );
+
+            await userEvent.click(screen.getByRole('button', {name: /settings/}));
+            await userEvent.click(screen.getByRole('button', {name: /filters/}));
+
+            const inactiveFilters = screen.getByRole('list', {name: /inactive/});
+
+            const [firstAttribute] = within(inactiveFilters).getAllByRole('listitem');
+
+            expect(firstAttribute).toHaveTextContent(attributesList[0].label.fr);
+            expect(firstAttribute).toBeVisible();
+
+            await userEvent.click(within(firstAttribute!).getByRole('button', {name: /show/}));
+
+            const activeFilters = screen.getByRole('list', {name: 'explorer.filter-list.active'});
+
+            const firstActiveFilter = within(activeFilters).getByRole('listitem');
+
+            expect(firstActiveFilter).toHaveTextContent(attributesList[0].label.fr);
+            expect(firstActiveFilter).toBeVisible();
+
+            await userEvent.click(within(firstActiveFilter!).getByRole('button', {name: /hide/}));
+
+            const [firstInactiveAttribute] = within(inactiveFilters).getAllByRole('listitem');
 
             expect(firstInactiveAttribute).toHaveTextContent(attributesList[0].label.fr);
             expect(firstInactiveAttribute).toBeVisible();

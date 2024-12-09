@@ -25,6 +25,13 @@ export const ViewSettingsActionTypes = {
     CHANGE_FILTER_CONFIG: 'CHANGE_FILTER_CONFIG'
 } as const;
 
+export interface IExplorerFilter {
+    id: string;
+    field: string;
+    condition: string;
+    values: string[];
+}
+
 export interface IViewSettingsState {
     viewType: ViewType;
     attributesIds: string[];
@@ -34,11 +41,9 @@ export interface IViewSettingsState {
         order: SortOrder;
     }>;
     pageSize: number;
-    filter: Array<{
-        field: string;
-        operator: string;
-        values: string[];
-    }>;
+    filters: IExplorerFilter[];
+    maxFilters: number;
+    canAddFilter: boolean;
 }
 
 interface IViewSettingsActionChangePageSize {
@@ -107,17 +112,17 @@ interface IViewSettingsActionClearFulltextSearch {
 
 interface IViewSettingsActionAddFilter {
     type: typeof ViewSettingsActionTypes.ADD_FILTER;
-    payload: {field: string; operator: string; values: string[]};
+    payload: IExplorerFilter;
 }
 
 interface IViewSettingsActionRemoveFilter {
     type: typeof ViewSettingsActionTypes.REMOVE_FILTER;
-    payload: {field: string};
+    payload: {id: string};
 }
 
 interface IViewSettingsActionChangeFilterConfig {
     type: typeof ViewSettingsActionTypes.CHANGE_FILTER_CONFIG;
-    payload: {field: string; operator: string; values: string[]};
+    payload: IExplorerFilter;
 }
 
 interface IViewSettingsActionMoveFilter {
@@ -203,30 +208,42 @@ export const clearFulltextSearch: Reducer = state => ({
     fulltextSearch: ''
 });
 
-const addFilter: Reducer<IViewSettingsActionAddFilter['payload']> = (state, payload) => ({
-    ...state,
-    filter: [...state.filter, {field: payload.field, operator: payload.operator, values: payload.values}]
-});
+const addFilter: Reducer<IViewSettingsActionAddFilter['payload']> = (state, payload) => {
+    if (!state.canAddFilter) {
+        return state;
+    }
 
-const removeFilter: Reducer<IViewSettingsActionRemoveFilter['payload']> = (state, payload) => ({
-    ...state,
-    filter: state.filter.filter(({field}) => field !== payload.field)
-});
+    const newFilters = [...state.filters, {...payload, id: `${payload.field}-${Date.now()}`}];
+    return {
+        ...state,
+        filters: newFilters,
+        canAddFilter: newFilters.length < state.maxFilters
+    };
+};
+
+const removeFilter: Reducer<IViewSettingsActionRemoveFilter['payload']> = (state, payload) => {
+    const newFilters = state.filters.filter(({id}) => id !== payload.id);
+    return {
+        ...state,
+        filters: newFilters,
+        canAddFilter: newFilters.length < state.maxFilters
+    };
+};
 
 const changeFilterConfig: Reducer<IViewSettingsActionChangeFilterConfig['payload']> = (state, payload) => ({
     ...state,
-    filter: state.filter.map(filter =>
-        filter.field === payload.field ? {...filter, operator: payload.operator, values: payload.values} : filter
+    filters: state.filters.map(filter =>
+        filter.id === payload.id ? {...filter, condition: payload.condition, values: payload.values} : filter
     )
 });
 
 const moveFilter: Reducer<IViewSettingsActionMoveFilter['payload']> = (state, payload) => {
-    const attributesUsedToFilter = [...state.filter];
+    const attributesUsedToFilter = [...state.filters];
     const [filterToMove] = attributesUsedToFilter.splice(payload.indexFrom, 1);
     attributesUsedToFilter.splice(payload.indexTo, 0, filterToMove);
     return {
         ...state,
-        filter: attributesUsedToFilter
+        filters: attributesUsedToFilter
     };
 };
 

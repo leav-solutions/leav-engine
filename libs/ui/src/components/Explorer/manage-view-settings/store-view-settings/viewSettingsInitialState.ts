@@ -5,11 +5,15 @@ import {IViewSettingsState} from './viewSettingsReducer';
 
 export const defaultPageSizeOptions = [20, 50, 100];
 
+export const defaultMaxFilters = 3;
+
 export const viewSettingsInitialState: IViewSettingsState = {
     viewType: 'table',
     attributesIds: [],
     fulltextSearch: '',
     sort: [],
     pageSize: defaultPageSizeOptions[0],
-    filter: []
+    filters: [],
+    maxFilters: defaultMaxFilters,
+    canAddFilter: true
 };

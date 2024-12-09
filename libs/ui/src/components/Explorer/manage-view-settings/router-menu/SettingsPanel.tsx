@@ -27,15 +27,14 @@ const ConfigurationStyledMenu = styled.menu`
 
 interface ISettingsPanelProps {
     library: string;
-    maxFilters: number;
 }
 
-export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, maxFilters}) => {
+export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library}) => {
     const {t} = useSharedTranslation();
 
     const {setActiveSettings, activeSettings} = useEditSettings();
     const {
-        view: {filter}
+        view: {filters}
     } = useViewSettingsContext();
 
     const [currentPage, setCurrentPage] = useState<SettingsPanelPages>('router-menu');
@@ -88,7 +87,7 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
                         <SettingItem
                             icon={<FaFilter />}
                             title={t('explorer.filters')}
-                            value={String(t('explorer.active-items-number', {count: filter.length}))}
+                            value={String(t('explorer.active-items-number', {count: filters.length}))}
                             onClick={() => _goToAdvancedSettingsPage('filter-items')}
                         />
                         <SettingItem
@@ -101,7 +100,7 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, 
             )}
             {currentPage === 'configure-display' && <ConfigureDisplay libraryId={library} />}
             {currentPage === 'sort-items' && <SortItems libraryId={library} />}
-            {currentPage === 'filter-items' && <FilterItems libraryId={library} maxFilters={maxFilters} />}
+            {currentPage === 'filter-items' && <FilterItems libraryId={library} />}
         </ContentWrapperStyledDiv>
     );
 };

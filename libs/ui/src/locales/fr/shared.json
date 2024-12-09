@@ -628,6 +628,10 @@
             "active": "Tris actifs",
             "inactive": "Tris inactifs"
         },
+        "filter-list": {
+            "active": "Filtres actifs",
+            "inactive": "Filtres inactifs"
+        },
         "sort-ascending": "Ascendant",
         "sort-descending": "Descendant",
         "available-attributes": "Autres propriétés disponibles",

@@ -55,17 +55,6 @@ interface IExplorerProps {
     maxFilters?: number;
 }
 
-const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
-
-const defaultMaxFilters = 10;
-
-const ExplorerHeaderDivStyled = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: calc(var(--general-spacing-xs) * 1px);
-`;
-
 export const Explorer: FunctionComponent<IExplorerProps> = ({
     library,
     itemActions,
@@ -79,7 +68,11 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 }) => {
     const {panelElement} = useEditSettings();
 
-    const [view, dispatch] = useReducer(viewSettingsReducer, {...viewSettingsInitialState, ...defaultViewSettings});
+    const [view, dispatch] = useReducer(viewSettingsReducer, {
+        ...viewSettingsInitialState,
+        ...defaultViewSettings,
+        maxFilters: maxFilters ?? defaultViewSettings?.maxFilters ?? viewSettingsInitialState.maxFilters
+    });
 
     const {currentPage, setNewPageSize, setNewPage} = usePagination(dispatch);
 
@@ -107,7 +100,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 
     const {primaryButton} = usePrimaryActionsButton([createAction, ...(primaryActions ?? [])].filter(Boolean));
 
-    const {viewSettingsButton} = useOpenViewSettings(library, maxFilters ?? defaultMaxFilters);
+    const {viewSettingsButton} = useOpenViewSettings(library);
 
     const {searchInput} = useSearchInput({view, dispatch});
 

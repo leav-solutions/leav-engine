@@ -6,12 +6,12 @@ import {KitButton, KitDivider, KitInput, KitSelect, KitSpace} from 'aristid-ds';
 import {FunctionComponent} from 'react';
 import {FaCheck, FaClock, FaTrash} from 'react-icons/fa';
 import {useViewSettingsContext} from '../../store-view-settings/useViewSettingsContext';
-import {ViewSettingsActionTypes} from '../../store-view-settings/viewSettingsReducer';
+import {IExplorerFilter, ViewSettingsActionTypes} from '../../store-view-settings/viewSettingsReducer';
 import styled from 'styled-components';
 
 // TODO : This is an exemple file showing ho to customize dropdown Panel content. Don't mind the content of the file, missing types,... it's just an example.
 
-const operators = [
+const conditions = [
     {
         label: 'Egal à',
         value: 'eq'
@@ -69,11 +69,7 @@ const ValueListItemValueLi = styled.li`
 `;
 
 export const SimpleFilterDropdown: FunctionComponent<{
-    filter: {
-        field: string;
-        operator: string;
-        values: string[];
-    };
+    filter: IExplorerFilter;
     attribute: {multiple_values: boolean};
 }> = ({filter, attribute}) => {
     const {t} = useSharedTranslation();
@@ -83,15 +79,16 @@ export const SimpleFilterDropdown: FunctionComponent<{
         dispatch({
             type: ViewSettingsActionTypes.CHANGE_FILTER_CONFIG,
             payload: {
+                id: filter.id,
                 field: filter.field,
-                operator: data.operator,
+                condition: data.condition,
                 values: data.values
             }
         });
     };
 
-    const onOperatorChanged = operator => {
-        updateFilter({...filter, operator});
+    const onconditionChanged = condition => {
+        updateFilter({...filter, condition});
     };
 
     const onValueClick = value => {
@@ -110,7 +107,7 @@ export const SimpleFilterDropdown: FunctionComponent<{
 
     return (
         <KitSpace size="xxs" direction="vertical">
-            <KitSelect options={operators} onChange={onOperatorChanged} value={filter.operator} />
+            <KitSelect options={conditions} onChange={onconditionChanged} value={filter.condition} />
             <KitInput placeholder={String(t('search'))} />
             <ul>
                 {attributeValuesList.map(value => (
