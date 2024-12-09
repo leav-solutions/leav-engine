@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitInput} from 'aristid-ds';
-import {ChangeEvent, Dispatch, KeyboardEvent, useState} from 'react';
+import {ComponentProps, Dispatch, DOMAttributes, useState} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons';
 import {
@@ -21,7 +21,7 @@ export const useSearchInput = ({view, dispatch}: IUseSearchInputParams) => {
     const {t} = useSharedTranslation();
     const [search, setSearch] = useState<string>(view.fulltextSearch);
 
-    const _handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const _handleChange: ComponentProps<typeof KitInput>['onChange'] = e => {
         if (!e.target.value) {
             setSearch('');
             dispatch({type: ViewSettingsActionTypes.CLEAR_FULLTEXT_SEARCH});
@@ -30,22 +30,22 @@ export const useSearchInput = ({view, dispatch}: IUseSearchInputParams) => {
         }
     };
 
-    const _handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            dispatch({type: ViewSettingsActionTypes.CHANGE_FULLTEXT_SEARCH, payload: {search}});
-        }
+    const _handleSubmit: DOMAttributes<HTMLFormElement>['onSubmit'] = e => {
+        e.preventDefault();
+        dispatch({type: ViewSettingsActionTypes.CHANGE_FULLTEXT_SEARCH, payload: {search}});
     };
 
     return {
         searchInput: (
-            <KitInput
-                prefix={<FontAwesomeIcon icon={faMagnifyingGlass} />}
-                title={String(t('global.search'))}
-                placeholder={String(t('global.search'))}
-                value={search ?? ''}
-                onChange={_handleChange}
-                onKeyDown={_handleKeyDown}
-            />
+            <form onSubmit={_handleSubmit}>
+                <KitInput
+                    prefix={<FontAwesomeIcon icon={faMagnifyingGlass} />}
+                    title={String(t('global.search'))}
+                    placeholder={String(t('global.search'))}
+                    value={search ?? ''}
+                    onChange={_handleChange}
+                />
+            </form>
         )
     };
 };

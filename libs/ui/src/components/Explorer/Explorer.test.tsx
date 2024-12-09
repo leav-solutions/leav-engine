@@ -406,8 +406,7 @@ describe('Explorer', () => {
             simpleColorCell,
             boolCell,
             multivalBoolCell
-        ] =
-            within(firstRecordRow).getAllByRole('cell');
+        ] = within(firstRecordRow).getAllByRole('cell');
 
         expect(within(whoAmICell).getByText(record1.whoAmI.label)).toBeInTheDocument();
 
@@ -624,7 +623,7 @@ describe('Explorer', () => {
         expect(screen.getByText('Christmas 2024')).toBeVisible();
 
         const clearButton = within(searchInput.parentElement!).getByRole('button'); // Not nice, but no way to get the clear button directly
-        await user.click(clearButton!);
+        await user.click(clearButton);
 
         expect(screen.getByText('Halloween 2025')).toBeVisible();
     });
