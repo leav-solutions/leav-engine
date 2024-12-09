@@ -1,0 +1,13 @@
+{
+  "name": "@leav/types",
+  "version": "0.0.1",
+  "description": "Shared Leav types",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "tscheck": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "LGPL3",
+  "repository": "https://github.com/leav-solutions/leav-engine"
+}

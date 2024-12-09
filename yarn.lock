@@ -8061,6 +8061,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@leav/types@workspace:libs/types":
+  version: 0.0.0-use.local
+  resolution: "@leav/types@workspace:libs/types"
+  languageName: unknown
+  linkType: soft
+
 "@leav/ui@workspace:libs/ui":
   version: 0.0.0-use.local
   resolution: "@leav/ui@workspace:libs/ui"
