@@ -42,12 +42,15 @@ import {getMe} from '../../../graphQL/queries/userData/me';
 import {initialActiveLibrary, useActiveLibrary} from 'hooks/useActiveLibrary';
 import {ME} from '../../../_gqlTypes/ME';
 import Router from '../../Router';
+import ReactModal from 'react-modal';
 
 function AppHandler(): JSX.Element {
     const {t, i18n} = useTranslation();
     const dispatch = useAppDispatch();
     const {token: themeToken} = theme.useToken();
     const homeUrl = `/${APPS_ENDPOINT}/${APP_ENDPOINT}`;
+
+    ReactModal.setAppElement(document.getElementsByTagName('body')[0]);
 
     // Add lang infos to the cache
     const userLang = i18n.language.split('-')[0];

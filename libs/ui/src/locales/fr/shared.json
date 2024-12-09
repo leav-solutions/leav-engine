@@ -164,7 +164,8 @@
         "advanced_settings": "Paramètres avancés",
         "delete": "Supprimer l'arbre",
         "delete_confirm": "Êtes-vous sûr de vouloir supprimer cet arbre ?",
-        "delete_confirm_warning": "Attention, cette action est irréversible"
+        "delete_confirm_warning": "Attention, cette action est irréversible",
+        "unknown_tree": "Arbre {{treeId}} inconnu"
     },
     "lang": {
         "fr": "Français",

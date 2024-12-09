@@ -2,34 +2,30 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {render, screen, waitFor} from '../../_tests/testUtils';
-import SelectTreeNodeModal from './SelectTreeNodeModal';
+import {render, screen} from '../../_tests/testUtils';
+import {SelectTreeNodeModal} from './SelectTreeNodeModal';
+import ReactModal from 'react-modal';
 
 jest.mock('_ui/components/SelectTreeNode', () => ({
     SelectTreeNode: () => <div>SelectTreeNode</div>
 }));
 
 describe('SelectTreeNodeModal', () => {
-    test('Should render', async () => {
+    test('Should modal with SelectTreeNode inside', async () => {
         const onSubmit = jest.fn();
 
-        render(
-            <SelectTreeNodeModal
-                tree={{id: 'treeId', label: {fr: 'tree'}}}
-                visible
-                onSubmit={onSubmit}
-                onClose={jest.fn()}
-            />
-        );
+        ReactModal.setAppElement(document.createElement('div'));
 
-        expect(screen.getByText('SelectTreeNode')).toBeInTheDocument();
+        render(<SelectTreeNodeModal treeId="treeId" isVisible onSubmit={onSubmit} onClose={jest.fn()} />);
+
+        expect(screen.getByText('SelectTreeNode')).toBeVisible();
 
         const applyBtn = screen.getByRole('button', {name: 'global.apply'});
 
-        expect(applyBtn).toBeInTheDocument();
+        expect(applyBtn).toBeVisible();
 
-        userEvent.click(applyBtn);
+        await userEvent.click(applyBtn);
 
-        await waitFor(() => expect(onSubmit).toBeCalled());
+        expect(onSubmit).toBeCalled();
     });
 });
