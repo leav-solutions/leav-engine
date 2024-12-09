@@ -624,16 +624,23 @@
         "view-type-planning": "Planning",
         "filters": "Filters",
         "sort-items": "Sort",
+        "filter-items": "Filter",
         "sort-ascending": "Ascending",
         "sort-descending": "Descending",
         "sort-list": {
             "active": "Active sorts",
             "inactive": "Inactive sorts"
         },
+        "filter-list": {
+            "active": "Active filters",
+            "inactive": "Inactive filters"
+        },
         "available-attributes": "Other available attributes",
         "coming-soon": "Coming soon",
         "show": "Show",
         "hide": "Hide",
-        "pagination-total-number": "{{from, number}} - {{to, number}} of {{total, number}} items"
+        "pagination-total-number": "{{from, number}} - {{to, number}} of {{total, number}} items",
+        "active-items-number": "{{count, number}} active",
+        "active-items-number_zero": "None"
     }
 }

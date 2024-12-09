@@ -17,8 +17,19 @@ export const ViewSettingsActionTypes = {
     CHANGE_SORT_ORDER: 'CHANGE_SORT_ORDER',
     CHANGE_PAGE_SIZE: 'CHANGE_PAGE_SIZE',
     CHANGE_FULLTEXT_SEARCH: 'CHANGE_FULLTEXT_SEARCH',
-    CLEAR_FULLTEXT_SEARCH: 'CLEAR_FULLTEXT_SEARCH'
+    CLEAR_FULLTEXT_SEARCH: 'CLEAR_FULLTEXT_SEARCH',
+    ADD_FILTER: 'ADD_FILTER',
+    REMOVE_FILTER: 'REMOVE_FILTER',
+    MOVE_FILTER: 'MOVE_FILTER',
+    CHANGE_FILTER_CONFIG: 'CHANGE_FILTER_CONFIG'
 } as const;
+
+export interface IExplorerFilter {
+    id: string;
+    field: string;
+    condition: string;
+    values: string[];
+}
 
 export interface IViewSettingsState {
     viewType: ViewType;
@@ -29,6 +40,9 @@ export interface IViewSettingsState {
         order: SortOrder;
     }>;
     pageSize: number;
+    filters: IExplorerFilter[];
+    maxFilters: number;
+    canAddFilter: boolean;
 }
 
 interface IViewSettingsActionChangePageSize {
@@ -93,6 +107,29 @@ interface IViewSettingsActionChangeFulltextSearch {
 
 interface IViewSettingsActionClearFulltextSearch {
     type: typeof ViewSettingsActionTypes.CLEAR_FULLTEXT_SEARCH;
+}
+
+interface IViewSettingsActionAddFilter {
+    type: typeof ViewSettingsActionTypes.ADD_FILTER;
+    payload: Omit<IExplorerFilter, 'id'>;
+}
+
+interface IViewSettingsActionRemoveFilter {
+    type: typeof ViewSettingsActionTypes.REMOVE_FILTER;
+    payload: {id: string};
+}
+
+interface IViewSettingsActionChangeFilterConfig {
+    type: typeof ViewSettingsActionTypes.CHANGE_FILTER_CONFIG;
+    payload: IExplorerFilter;
+}
+
+interface IViewSettingsActionMoveFilter {
+    type: typeof ViewSettingsActionTypes.MOVE_FILTER;
+    payload: {
+        indexFrom: number;
+        indexTo: number;
+    };
 }
 
 type Reducer<PAYLOAD = 'no_payload'> = PAYLOAD extends 'no_payload'
@@ -170,6 +207,45 @@ export const clearFulltextSearch: Reducer = state => ({
     fulltextSearch: ''
 });
 
+const addFilter: Reducer<IViewSettingsActionAddFilter['payload']> = (state, payload) => {
+    if (!state.canAddFilter) {
+        return state;
+    }
+
+    const newFilters = [...state.filters, {...payload, id: `${payload.field}-${Date.now()}`}];
+    return {
+        ...state,
+        filters: newFilters,
+        canAddFilter: newFilters.length < state.maxFilters
+    };
+};
+
+const removeFilter: Reducer<IViewSettingsActionRemoveFilter['payload']> = (state, payload) => {
+    const newFilters = state.filters.filter(({id}) => id !== payload.id);
+    return {
+        ...state,
+        filters: newFilters,
+        canAddFilter: newFilters.length < state.maxFilters
+    };
+};
+
+const changeFilterConfig: Reducer<IViewSettingsActionChangeFilterConfig['payload']> = (state, payload) => ({
+    ...state,
+    filters: state.filters.map(filter =>
+        filter.id === payload.id ? {...filter, condition: payload.condition, values: payload.values} : filter
+    )
+});
+
+const moveFilter: Reducer<IViewSettingsActionMoveFilter['payload']> = (state, payload) => {
+    const attributesUsedToFilter = [...state.filters];
+    const [filterToMove] = attributesUsedToFilter.splice(payload.indexFrom, 1);
+    attributesUsedToFilter.splice(payload.indexTo, 0, filterToMove);
+    return {
+        ...state,
+        filters: attributesUsedToFilter
+    };
+};
+
 export type IViewSettingsAction =
     | IViewSettingsActionResetAttributes
     | IViewSettingsActionAddAttribute
@@ -182,7 +258,12 @@ export type IViewSettingsAction =
     | IViewSettingsActionMoveSort
     | IViewSettingsActionChangePageSize
     | IViewSettingsActionChangeFulltextSearch
-    | IViewSettingsActionClearFulltextSearch;
+    | IViewSettingsActionClearFulltextSearch
+    | IViewSettingsActionMoveSort
+    | IViewSettingsActionAddFilter
+    | IViewSettingsActionRemoveFilter
+    | IViewSettingsActionChangeFilterConfig
+    | IViewSettingsActionMoveFilter;
 
 export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
     switch (action.type) {
@@ -221,6 +302,18 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
         }
         case ViewSettingsActionTypes.CLEAR_FULLTEXT_SEARCH: {
             return clearFulltextSearch(state);
+        }
+        case ViewSettingsActionTypes.ADD_FILTER: {
+            return addFilter(state, action.payload);
+        }
+        case ViewSettingsActionTypes.REMOVE_FILTER: {
+            return removeFilter(state, action.payload);
+        }
+        case ViewSettingsActionTypes.CHANGE_FILTER_CONFIG: {
+            return changeFilterConfig(state, action.payload);
+        }
+        case ViewSettingsActionTypes.MOVE_FILTER: {
+            return moveFilter(state, action.payload);
         }
         default:
             return state;
