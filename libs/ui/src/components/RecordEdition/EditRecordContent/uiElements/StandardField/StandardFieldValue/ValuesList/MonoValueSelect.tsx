@@ -37,9 +37,12 @@ export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKi
     value,
     presentationValue,
     onChange,
-    state,
     attribute,
-    handleSubmit
+    required,
+    readonly,
+    handleSubmit,
+    inheritedFlags,
+    calculatedFlags
 }) => {
     if (!onChange) {
         throw Error('MonoValueSelect should be used inside a antd Form.Item');
@@ -102,17 +105,17 @@ export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKi
     );
 
     const _resetToInheritedOrCalculatedValue = async () => {
-        if (state.isInheritedValue) {
-            setTimeout(() => onChange(state.inheritedValue.raw_value, options), 0);
-        } else if (state.isCalculatedValue) {
-            setTimeout(() => onChange(state.calculatedValue.raw_value, options), 0);
+        if (inheritedFlags.isInheritedValue) {
+            setTimeout(() => onChange(inheritedFlags.inheritedValue.raw_value, options), 0);
+        } else if (calculatedFlags.isCalculatedValue) {
+            setTimeout(() => onChange(calculatedFlags.calculatedValue.raw_value, options), 0);
         }
         await handleSubmit(null, attribute.id);
     };
 
     const _handleOnChange = async (selectedValue: string) => {
         setSearchedString('');
-        if ((state.isInheritedValue || state.isCalculatedValue) && selectedValue === '') {
+        if ((inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue) && selectedValue === '') {
             _resetToInheritedOrCalculatedValue();
             return;
         }
@@ -149,16 +152,16 @@ export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKi
         }
     };
 
-    const required = state.formElement.settings.required;
-
     const valueToDisplay = isFocused ? value : presentationValue;
+    const isValueEmpty = value === '';
 
     return (
         <KitSelect
             id={attribute.id}
             data-testid={attribute.id}
-            value={valueToDisplay}
+            value={isValueEmpty ? undefined : valueToDisplay}
             allowClear={!required && value}
+            disabled={readonly}
             options={options}
             open={isFocused}
             status={errors.length > 0 && 'error'}
@@ -168,6 +171,7 @@ export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKi
             onChange={onChange}
             onClear={_handleOnClear}
             onSearch={_handleOnSearch}
+            placeholder={t('record_edition.placeholder.select_an_option')}
             dropdownRender={menu => (
                 <>
                     {searchedString !== '' && searchResultsCount > 0 && (

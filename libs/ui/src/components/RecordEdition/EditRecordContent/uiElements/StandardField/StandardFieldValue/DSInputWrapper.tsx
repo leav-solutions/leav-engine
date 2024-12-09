@@ -17,9 +17,11 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
     value,
     presentationValue,
     onChange,
-    state,
     attribute,
-    handleSubmit
+    readonly,
+    handleSubmit,
+    calculatedFlags,
+    inheritedFlags
 }) => {
     if (!onChange) {
         throw Error('DSInputWrapper should be used inside a antd Form.Item');
@@ -31,19 +33,17 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
     const {t} = useSharedTranslation();
 
     const isErrors = errors.length > 0;
-    const valueToDisplay = isFocused || isErrors ? value : presentationValue;
+    const valueToDisplay = isFocused || isErrors || !presentationValue ? value : presentationValue;
 
     const _resetToInheritedOrCalculatedValue = async () => {
         setHasChanged(false);
-        if (state.isInheritedValue) {
-            onChange(state.inheritedValue.raw_payload);
-        } else if (state.isCalculatedValue) {
-            onChange(state.calculatedValue.raw_payload);
+        if (inheritedFlags.isInheritedValue) {
+            onChange(inheritedFlags.inheritedValue.raw_payload);
+        } else if (calculatedFlags.isCalculatedValue) {
+            onChange(calculatedFlags.calculatedValue.raw_payload);
         }
-        await handleSubmit(null, state.attribute.id);
+        await handleSubmit(null, attribute.id);
     };
-
-    const _handleFocus = () => setIsFocused(true);
 
     const _handleOnBlur = async (event: FocusEvent<HTMLInputElement>) => {
         if (!hasChanged) {
@@ -52,44 +52,50 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
             return;
         }
 
-        const valueToSubmit = event.target.value;
-        if (valueToSubmit === '' && (state.isInheritedValue || state.isCalculatedValue)) {
+        const inputValue = event.target.value;
+        if (inputValue === '' && (inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue)) {
             _resetToInheritedOrCalculatedValue();
             return;
         }
 
         onChange(event);
+        await handleSubmit(inputValue, attribute.id);
         setIsFocused(false);
-        await handleSubmit(valueToSubmit, state.attribute.id);
     };
 
     // TODO remove this function to use onClear Prop when ant is updated to 5.20+ (and other inputs too)
     const _handleOnChange = async (event: ChangeEvent<HTMLInputElement>) => {
         setHasChanged(true);
+
         const inputValue = event.target.value;
-        if ((state.isInheritedValue || state.isCalculatedValue) && inputValue === '' && event.type === 'click') {
+        if (
+            (inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue) &&
+            inputValue === '' &&
+            event.type === 'click'
+        ) {
             _resetToInheritedOrCalculatedValue();
             return;
         }
         onChange(event);
         if (inputValue === '' && event.type === 'click') {
-            await handleSubmit(inputValue, state.attribute.id);
+            await handleSubmit(null, attribute.id);
         }
     };
 
     return (
         <KitInputStyled
             id={attribute.id}
-            disabled={state.isReadOnly}
+            disabled={readonly}
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
             value={valueToDisplay}
-            allowClear={!state.isInheritedNotOverrideValue && !state.isCalculatedNotOverrideValue}
+            allowClear={!inheritedFlags.isInheritedNotOverrideValue && !calculatedFlags.isCalculatedNotOverrideValue}
             onChange={_handleOnChange}
-            onFocus={_handleFocus}
+            onFocus={() => setIsFocused(true)}
             onBlur={_handleOnBlur}
             $shouldHighlightColor={
-                !hasChanged && (state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue)
+                !hasChanged &&
+                (inheritedFlags.isInheritedNotOverrideValue || calculatedFlags.isCalculatedNotOverrideValue)
             }
             placeholder={t('record_edition.placeholder.enter_a_text')}
         />

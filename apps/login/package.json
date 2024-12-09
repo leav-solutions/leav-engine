@@ -7,7 +7,7 @@
     "@ant-design/icons": "5.2.6",
     "@leav/ui": "workspace:libs/ui",
     "antd": "5.15.3",
-    "aristid-ds": "11.0.0-d125927",
+    "aristid-ds": "11.0.0-54bd35b",
     "i18next": "22.5.0",
     "i18next-browser-languagedetector": "7.0.2",
     "i18next-http-backend": "2.1.1",

@@ -20,39 +20,43 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
     value,
     presentationValue,
     onChange,
-    state,
     attribute,
-    handleSubmit
+    handleSubmit,
+    readonly,
+    calculatedFlags,
+    inheritedFlags
 }) => {
     if (!onChange) {
         throw Error('DSDatePickerWrapper should be used inside a antd Form.Item');
     }
 
-    const [isFocused, setIsFocused] = useState(false);
     const {errors} = Form.Item.useStatus();
     const {t} = useSharedTranslation();
 
+    const [isFocused, setIsFocused] = useState(false);
     const isErrors = errors.length > 0;
 
     const _resetToInheritedOrCalculatedValue = async () => {
-        if (state.isInheritedValue) {
-            onChange(dayjs.unix(Number(state.inheritedValue.raw_value)), state.inheritedValue.raw_value);
-        } else if (state.isCalculatedValue) {
-            onChange(dayjs.unix(Number(state.calculatedValue.raw_value)), state.calculatedValue.raw_value);
+        if (inheritedFlags.isInheritedValue) {
+            onChange(
+                dayjs.unix(Number(inheritedFlags.inheritedValue.raw_payload)),
+                inheritedFlags.inheritedValue.raw_payload
+            );
+        } else if (calculatedFlags.isCalculatedValue) {
+            onChange(
+                dayjs.unix(Number(calculatedFlags.calculatedValue.raw_payload)),
+                calculatedFlags.calculatedValue.raw_payload
+            );
         }
 
-        await handleSubmit(null, state.attribute.id);
+        await handleSubmit(null, attribute.id);
     };
-
-    const _handleFocus = () => setIsFocused(true);
-
-    const _handleBlur = () => setIsFocused(false);
 
     const _handleDateChange: (
         datePickerDate: dayjs.Dayjs | null,
         antOnChangeParams: string | string[]
     ) => void = async (datePickerDate, ...antOnChangeParams) => {
-        if ((state.isInheritedValue || state.isCalculatedValue) && datePickerDate === null) {
+        if ((inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue) && datePickerDate === null) {
             _resetToInheritedOrCalculatedValue();
             return;
         }
@@ -63,17 +67,14 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
 
         onChange(datePickerDate, ...antOnChangeParams);
 
-        // TODO : validate form with await form.validateFields(state.attribute.id)
-        if (state.formElement.settings.required && datePickerDate === null) {
-            return;
-        }
+        // TODO : validate form with await form.validateFields(attribute.id)
 
         let dateToSave = '';
         if (!!datePickerDate) {
             dateToSave = String(datePickerDate.unix());
         }
 
-        await handleSubmit(dateToSave, state.attribute.id);
+        await handleSubmit(dateToSave, attribute.id);
     };
 
     return (
@@ -81,14 +82,16 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
             id={attribute.id}
             value={value}
             format={isFocused || isErrors || !presentationValue ? undefined : () => presentationValue}
-            disabled={state.isReadOnly}
-            allowClear={!state.isInheritedNotOverrideValue && !state.isCalculatedNotOverrideValue}
+            disabled={readonly}
+            allowClear={!inheritedFlags.isInheritedNotOverrideValue && !calculatedFlags.isCalculatedNotOverrideValue}
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
             onChange={_handleDateChange}
-            onFocus={_handleFocus}
-            onBlur={_handleBlur}
-            $shouldHighlightColor={state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            $shouldHighlightColor={
+                inheritedFlags.isInheritedNotOverrideValue || calculatedFlags.isCalculatedNotOverrideValue
+            }
             placeholder={t('record_edition.placeholder.enter_a_date')}
         />
     );
