@@ -28,9 +28,11 @@ const _getBooleanValueAsStringForTranslation = (value: boolean): string => (valu
 export const DSBooleanWrapper: FunctionComponent<IStandFieldValueContentProps<IKitSwitch>> = ({
     value,
     onChange,
-    state,
+    handleSubmit,
     attribute,
-    handleSubmit
+    readonly,
+    inheritedFlags,
+    calculatedFlags
 }) => {
     if (!onChange) {
         throw Error('DSBooleanWrapper should be used inside a antd Form.Item');
@@ -39,32 +41,34 @@ export const DSBooleanWrapper: FunctionComponent<IStandFieldValueContentProps<IK
     const {t} = useSharedTranslation();
 
     const _resetToInheritedOrCalculatedValue = () => {
-        if (state.isInheritedValue) {
-            onChange(state.inheritedValue.raw_value, undefined);
-        } else if (state.isCalculatedValue) {
-            onChange(state.calculatedValue.raw_value, undefined);
+        if (inheritedFlags.isInheritedValue) {
+            onChange(inheritedFlags.inheritedValue.raw_payload, undefined);
+        } else if (calculatedFlags.isCalculatedValue) {
+            onChange(calculatedFlags.calculatedValue.raw_payload, undefined);
         }
-        handleSubmit(null, state.attribute.id);
+        handleSubmit(null, attribute.id);
     };
 
     const _handleOnChange: (checked: boolean, event: MouseEvent<HTMLButtonElement>) => void = (checked, event) => {
         onChange(checked, event);
-        handleSubmit(String(checked), state.attribute.id);
+        handleSubmit(String(checked), attribute.id);
     };
 
     return (
         <>
             <label>
-                <KitSwitch id={attribute.id} checked={value} disabled={state.isReadOnly} onChange={_handleOnChange} />
+                <KitSwitch id={attribute.id} checked={value} disabled={readonly} onChange={_handleOnChange} />
                 <KitTypographyTextStyled
                     size="fontSize5"
                     weight="medium"
-                    $shouldHighlightColor={state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue}
+                    $shouldHighlightColor={
+                        inheritedFlags.isInheritedNotOverrideValue || calculatedFlags.isCalculatedNotOverrideValue
+                    }
                 >
                     {t(_getBooleanValueAsStringForTranslation(value))}
                 </KitTypographyTextStyled>
             </label>
-            {(state.isInheritedOverrideValue || state.isCalculatedOverrideValue) && (
+            {(inheritedFlags.isInheritedOverrideValue || calculatedFlags.isCalculatedOverrideValue) && (
                 <span role="button" onClick={_resetToInheritedOrCalculatedValue}>
                     <FontAwesomeIconStyled aria-label="clear" icon={faCircleXmark} />
                 </span>
