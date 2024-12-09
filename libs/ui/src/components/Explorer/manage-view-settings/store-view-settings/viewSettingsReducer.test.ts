@@ -266,4 +266,24 @@ describe('ViewSettings Reducer', () => {
             expect(state.sort).toEqual(expected);
         });
     });
+
+    test(`Action ${ViewSettingsActionTypes.CHANGE_FULLTEXT_SEARCH} test`, () => {
+        const state = viewSettingsReducer(viewSettingsInitialState, {
+            type: ViewSettingsActionTypes.CHANGE_FULLTEXT_SEARCH,
+            payload: {search: 'test'}
+        });
+
+        expect(state.fulltextSearch).toEqual('test');
+    });
+
+    test(`Action ${ViewSettingsActionTypes.CLEAR_FULLTEXT_SEARCH} test`, () => {
+        const state = viewSettingsReducer(
+            {...viewSettingsInitialState, fulltextSearch: 'test'},
+            {
+                type: ViewSettingsActionTypes.CLEAR_FULLTEXT_SEARCH
+            }
+        );
+
+        expect(state.fulltextSearch).toEqual('');
+    });
 });

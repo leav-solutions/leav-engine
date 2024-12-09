@@ -23,7 +23,9 @@ import {
     defaultPageSizeOptions,
     viewSettingsReducer
 } from './manage-view-settings';
+import {useSearchInput} from './useSearchInput';
 import {usePagination} from './usePagination';
+import {Loading} from '../Loading';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -71,6 +73,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     const {data, loading, refetch} = useExplorerData({
         libraryId: library,
         attributeIds: view.attributesIds,
+        fulltextSearch: view.fulltextSearch,
         pagination: noPagination ? null : {limit: view.pageSize, offset: view.pageSize * (currentPage - 1)},
         sorts: view.sort
     }); // TODO: refresh when go back on page
@@ -93,6 +96,8 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 
     const {viewSettingsButton} = useOpenViewSettings(library);
 
+    const {searchInput} = useSearchInput({view, dispatch});
+
     const dataViewAdditionalProps: Pick<ComponentProps<typeof DataView>, 'paginationProps'> = noPagination
         ? {}
         : {
@@ -108,19 +113,20 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 
     return (
         <ViewSettingsContext.Provider value={{view, dispatch}}>
-            {loading ? (
-                'Loading...' // TODO: handle loading properly
-            ) : (
-                <ExplorerPageDivStyled>
-                    <ExplorerHeaderDivStyled>
-                        <KitTypography.Title level="h1">
-                            <ExplorerTitle library={library} title={title} />
-                        </KitTypography.Title>
-                        <KitSpace size="xs">
-                            {viewSettingsButton}
-                            {primaryButton}
-                        </KitSpace>
-                    </ExplorerHeaderDivStyled>
+            <ExplorerPageDivStyled>
+                <ExplorerHeaderDivStyled>
+                    <KitTypography.Title level="h1">
+                        <ExplorerTitle library={library} title={title} />
+                    </KitTypography.Title>
+                    <KitSpace size="xs">
+                        {searchInput}
+                        {viewSettingsButton}
+                        {primaryButton}
+                    </KitSpace>
+                </ExplorerHeaderDivStyled>
+                {loading ? (
+                    <Loading />
+                ) : (
                     <DataView
                         dataGroupedFilteredSorted={data?.records ?? []}
                         itemActions={[editAction, deactivateAction, ...(itemActions ?? [])].filter(Boolean)}
@@ -128,8 +134,8 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                         attributesToDisplay={['whoAmI', ...view.attributesIds]}
                         {...dataViewAdditionalProps}
                     />
-                </ExplorerPageDivStyled>
-            )}
+                )}
+            </ExplorerPageDivStyled>
             {panelElement && createPortal(<SidePanel />, panelElement)}
             {editModal}
             {createModal}

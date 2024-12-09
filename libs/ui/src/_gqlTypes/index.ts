@@ -1,8 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {IPreviewScalar} from '@leav/utils'
-import { gql } from '@apollo/client';
+import {IPreviewScalar} from '@leav/utils';
+import {gql} from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -1350,6 +1350,7 @@ export type ExplorerQueryVariables = Exact<{
   pagination?: InputMaybe<RecordsPagination>;
   filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
   multipleSort?: InputMaybe<Array<RecordSortInput> | RecordSortInput>;
+  searchQuery?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -3974,12 +3975,13 @@ export type AddViewMutationHookResult = ReturnType<typeof useAddViewMutation>;
 export type AddViewMutationResult = Apollo.MutationResult<AddViewMutation>;
 export type AddViewMutationOptions = Apollo.BaseMutationOptions<AddViewMutation, AddViewMutationVariables>;
 export const ExplorerDocument = gql`
-    query Explorer($libraryId: ID!, $attributeIds: [ID!]!, $pagination: RecordsPagination, $filters: [RecordFilterInput], $multipleSort: [RecordSortInput!]) {
+    query Explorer($libraryId: ID!, $attributeIds: [ID!]!, $pagination: RecordsPagination, $filters: [RecordFilterInput], $multipleSort: [RecordSortInput!], $searchQuery: String) {
   records(
     library: $libraryId
     filters: $filters
     pagination: $pagination
     multipleSort: $multipleSort
+    searchQuery: $searchQuery
   ) {
     totalCount
     list {
@@ -4017,6 +4019,7 @@ ${PropertyValueFragmentDoc}`;
  *      pagination: // value for 'pagination'
  *      filters: // value for 'filters'
  *      multipleSort: // value for 'multipleSort'
+ *      searchQuery: // value for 'searchQuery'
  *   },
  * });
  */
