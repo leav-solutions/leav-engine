@@ -11,9 +11,9 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 export const DSInputEncryptedWrapper: FunctionComponent<IStandFieldValueContentProps<IKitPassword>> = ({
     value,
     onChange,
-    state,
     attribute,
-    handleSubmit
+    handleSubmit,
+    readonly
 }) => {
     if (!onChange) {
         throw Error('DSInputEncryptedWrapper should be used inside a antd Form.Item');
@@ -48,7 +48,7 @@ export const DSInputEncryptedWrapper: FunctionComponent<IStandFieldValueContentP
             status={isErrors ? 'error' : undefined}
             value={value}
             placeholder={t('record_edition.placeholder.enter_a_password')}
-            disabled={state.isReadOnly}
+            disabled={readonly}
             allowClear
             onChange={_handleOnChange}
             onBlur={_handleOnBlur}
