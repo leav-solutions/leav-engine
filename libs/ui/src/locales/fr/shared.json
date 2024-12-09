@@ -624,9 +624,14 @@
         "view-type-planning": "Planning",
         "filters": "Filtrer",
         "sort-items": "Trier",
+        "filter-items": "Filtrer",
         "sort-list": {
             "active": "Tris actifs",
             "inactive": "Tris inactifs"
+        },
+        "filter-list": {
+            "active": "Filtres actifs",
+            "inactive": "Filtres inactifs"
         },
         "sort-ascending": "Ascendant",
         "sort-descending": "Descendant",
@@ -634,6 +639,8 @@
         "coming-soon": "À venir",
         "show": "Afficher",
         "hide": "Masquer",
-        "pagination-total-number": "{{from, number}} - {{to, number}} de {{total, number}} éléments"
+        "pagination-total-number": "{{from, number}} - {{to, number}} de {{total, number}} éléments",
+        "active-items-number": "{{count, number}} actifs",
+        "active-items-number_zero": "Aucun"
     }
 }

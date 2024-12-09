@@ -267,23 +267,362 @@ describe('ViewSettings Reducer', () => {
         });
     });
 
-    test(`Action ${ViewSettingsActionTypes.CHANGE_FULLTEXT_SEARCH} test`, () => {
-        const state = viewSettingsReducer(viewSettingsInitialState, {
-            type: ViewSettingsActionTypes.CHANGE_FULLTEXT_SEARCH,
-            payload: {search: 'test'}
+    describe('adding filters', () => {
+        test('can add new filter', () => {
+            const state = viewSettingsReducer(
+                {
+                    ...viewSettingsInitialState,
+                    filters: [
+                        {
+                            id: 'id',
+                            field: 'first',
+                            condition: 'eq',
+                            values: []
+                        }
+                    ]
+                },
+                {
+                    type: ViewSettingsActionTypes.ADD_FILTER,
+                    payload: {
+                        field: 'second',
+                        condition: 'eq',
+                        values: []
+                    }
+                }
+            );
+            expect(state.filters).toHaveLength(2);
+            expect(state.filters).toEqual([
+                {
+                    id: 'id',
+                    field: 'first',
+                    condition: 'eq',
+                    values: []
+                },
+                {
+                    id: expect.any(String),
+                    field: 'second',
+                    condition: 'eq',
+                    values: []
+                }
+            ]);
         });
-
-        expect(state.fulltextSearch).toEqual('test');
+        test('when limit is reach', () => {
+            const state = viewSettingsReducer(
+                {
+                    ...viewSettingsInitialState,
+                    maxFilters: 2,
+                    canAddFilter: false,
+                    filters: [
+                        {
+                            id: 'id',
+                            field: 'first',
+                            condition: 'eq',
+                            values: []
+                        },
+                        {
+                            id: 'second-id',
+                            field: 'second',
+                            condition: 'eq',
+                            values: []
+                        }
+                    ]
+                },
+                {
+                    type: ViewSettingsActionTypes.ADD_FILTER,
+                    payload: {
+                        field: 'third',
+                        condition: 'eq',
+                        values: []
+                    }
+                }
+            );
+            expect(state.filters).toHaveLength(2);
+            expect(state.filters).toEqual([
+                {
+                    id: 'id',
+                    field: 'first',
+                    condition: 'eq',
+                    values: []
+                },
+                {
+                    id: 'second-id',
+                    field: 'second',
+                    condition: 'eq',
+                    values: []
+                }
+            ]);
+        });
     });
 
-    test(`Action ${ViewSettingsActionTypes.CLEAR_FULLTEXT_SEARCH} test`, () => {
+    describe('canAddFilter flag', () => {
+        test('update to false when ADD_FILTER is called', () => {
+            const state = viewSettingsReducer(
+                {
+                    ...viewSettingsInitialState,
+                    maxFilters: 2,
+                    filters: [
+                        {
+                            id: 'id',
+                            field: 'first',
+                            condition: 'eq',
+                            values: []
+                        }
+                    ]
+                },
+                {
+                    type: ViewSettingsActionTypes.ADD_FILTER,
+                    payload: {
+                        field: 'second',
+                        condition: 'eq',
+                        values: []
+                    }
+                }
+            );
+            expect(state.filters).toHaveLength(2);
+            expect(state.canAddFilter).toEqual(false);
+        });
+        test('update to true when REMOVE_FILTER is called', () => {
+            const state = viewSettingsReducer(
+                {
+                    ...viewSettingsInitialState,
+                    maxFilters: 2,
+                    canAddFilter: false,
+                    filters: [
+                        {
+                            id: 'id',
+                            field: 'first',
+                            condition: 'eq',
+                            values: []
+                        },
+                        {
+                            id: 'second-id',
+                            field: 'second',
+                            condition: 'eq',
+                            values: []
+                        }
+                    ]
+                },
+                {
+                    type: ViewSettingsActionTypes.REMOVE_FILTER,
+                    payload: {
+                        id: 'second-id'
+                    }
+                }
+            );
+            expect(state.filters).toHaveLength(1);
+            expect(state.canAddFilter).toEqual(true);
+        });
+    });
+
+    test(`Action ${ViewSettingsActionTypes.REMOVE_FILTER} test`, () => {
         const state = viewSettingsReducer(
-            {...viewSettingsInitialState, fulltextSearch: 'test'},
             {
-                type: ViewSettingsActionTypes.CLEAR_FULLTEXT_SEARCH
+                ...viewSettingsInitialState,
+                filters: [
+                    {
+                        id: 'id',
+                        field: 'first',
+                        condition: 'eq',
+                        values: []
+                    },
+                    {
+                        id: 'second-id',
+                        field: 'second',
+                        condition: 'eq',
+                        values: []
+                    },
+                    {
+                        id: 'third-id',
+                        field: 'third',
+                        condition: 'eq',
+                        values: []
+                    }
+                ]
+            },
+            {
+                type: ViewSettingsActionTypes.REMOVE_FILTER,
+                payload: {
+                    id: 'second-id'
+                }
             }
         );
+        expect(state.filters).toHaveLength(2);
+        expect(state.filters).toEqual([
+            {
+                id: 'id',
+                field: 'first',
+                condition: 'eq',
+                values: []
+            },
+            {
+                id: 'third-id',
+                field: 'third',
+                condition: 'eq',
+                values: []
+            }
+        ]);
+    });
 
-        expect(state.fulltextSearch).toEqual('');
+    test(`Action ${ViewSettingsActionTypes.CHANGE_FILTER_CONFIG} test`, () => {
+        const state = viewSettingsReducer(
+            {
+                ...viewSettingsInitialState,
+                filters: [
+                    {
+                        id: 'id',
+                        field: 'first',
+                        condition: 'eq',
+                        values: []
+                    },
+                    {
+                        id: 'second-id',
+                        field: 'second',
+                        condition: 'eq',
+                        values: []
+                    }
+                ]
+            },
+            {
+                type: ViewSettingsActionTypes.CHANGE_FILTER_CONFIG,
+                payload: {
+                    id: 'id',
+                    field: 'first',
+                    condition: 'less',
+                    values: []
+                }
+            }
+        );
+        expect(state.filters).toHaveLength(2);
+        expect(state.filters).toEqual([
+            {
+                id: 'id',
+                field: 'first',
+                condition: 'less',
+                values: []
+            },
+            {
+                id: 'second-id',
+                field: 'second',
+                condition: 'eq',
+                values: []
+            }
+        ]);
+    });
+
+    describe(`Action ${ViewSettingsActionTypes.MOVE_FILTER} test`, () => {
+        const initialState: IViewSettingsState = {
+            ...viewSettingsInitialState,
+            filters: [
+                {
+                    id: 'id',
+                    field: 'test',
+                    condition: 'eq',
+                    values: []
+                },
+                {
+                    id: 'active-id',
+                    field: 'active',
+                    condition: 'eq',
+                    values: []
+                },
+                {
+                    id: 'created_at-id',
+                    field: 'created_at',
+                    condition: 'eq',
+                    values: []
+                }
+                // {order: SortOrder.desc, attributeId: 'test'},
+                // {order: SortOrder.asc, attributeId: 'active'},
+                // {order: SortOrder.asc, attributeId: 'created_at'}
+            ]
+        };
+
+        const cases = [
+            {
+                indexFrom: 0,
+                indexTo: 2,
+                expected: [
+                    {
+                        id: 'active-id',
+                        field: 'active',
+                        condition: 'eq',
+                        values: []
+                    },
+                    {
+                        id: 'created_at-id',
+                        field: 'created_at',
+                        condition: 'eq',
+                        values: []
+                    },
+                    {
+                        id: 'id',
+                        field: 'test',
+                        condition: 'eq',
+                        values: []
+                    }
+                ]
+            },
+            {
+                indexFrom: 2,
+                indexTo: 0,
+                expected: [
+                    {
+                        id: 'created_at-id',
+                        field: 'created_at',
+                        condition: 'eq',
+                        values: []
+                    },
+                    {
+                        id: 'id',
+                        field: 'test',
+                        condition: 'eq',
+                        values: []
+                    },
+                    {
+                        id: 'active-id',
+                        field: 'active',
+                        condition: 'eq',
+                        values: []
+                    }
+                ]
+            },
+            {
+                indexFrom: 2,
+                indexTo: 1,
+                expected: [
+                    {
+                        id: 'id',
+                        field: 'test',
+                        condition: 'eq',
+                        values: []
+                    },
+                    {
+                        id: 'created_at-id',
+                        field: 'created_at',
+                        condition: 'eq',
+                        values: []
+                    },
+                    {
+                        id: 'active-id',
+                        field: 'active',
+                        condition: 'eq',
+                        values: []
+                    }
+                ]
+            },
+            {
+                indexFrom: 0,
+                indexTo: 0,
+                expected: initialState.filters
+            }
+        ];
+
+        test.each(cases)('Move filter from $indexFrom to $indexTo', ({indexFrom, indexTo, expected}) => {
+            const state = viewSettingsReducer(initialState, {
+                type: ViewSettingsActionTypes.MOVE_FILTER,
+                payload: {indexFrom, indexTo}
+            });
+            expect(state.filters).toEqual(expected);
+        });
     });
 });

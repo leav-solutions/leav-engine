@@ -66,7 +66,11 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 }) => {
     const {panelElement} = useEditSettings();
 
-    const [view, dispatch] = useReducer(viewSettingsReducer, {...viewSettingsInitialState, ...defaultViewSettings});
+    const [view, dispatch] = useReducer(viewSettingsReducer, {
+        ...viewSettingsInitialState,
+        ...defaultViewSettings,
+        maxFilters: defaultViewSettings?.maxFilters ?? viewSettingsInitialState.maxFilters
+    });
 
     const {currentPage, setNewPageSize, setNewPage} = usePagination(dispatch);
 
