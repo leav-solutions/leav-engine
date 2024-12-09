@@ -6,12 +6,10 @@ import {
     FormFieldTypes,
     FormUIElementTypes,
     IRequiredFieldsSettings,
-    IDateRangeValue,
     IKeyValue,
     Override
 } from '@leav/utils';
 import {Checkbox, DatePicker, InputRef} from 'antd';
-import {MutableRefObject} from 'react';
 import {RecordFormElementsValue} from '_ui/hooks/useGetRecordForm';
 import {IRecordIdentity, IRecordIdentityWhoAmI} from '_ui/types/records';
 import {ITreeNodeWithRecord} from '_ui/types/trees';
@@ -19,7 +17,6 @@ import {IValueVersion} from '_ui/types/values';
 import {RecordFormAttributeFragment, SaveValueBatchMutation, ValueDetailsFragment, ValueInput} from '_ui/_gqlTypes';
 import {RecordProperty} from '_ui/_queries/records/getRecordPropertiesQuery';
 import {RecordFormElementFragment} from '../../../_gqlTypes';
-import {IStandardFieldReducerState, IStandardFieldValue} from './reducers/standardFieldReducer/standardFieldReducer';
 import {FormInstance} from 'antd/lib/form/Form';
 
 export interface IValueToSubmit {
@@ -99,6 +96,7 @@ export interface ISubmittedValueBase {
 
 export interface IFormElementProps<SettingsType, RecordFormElements = RecordFormElementsValue> {
     element: FormElement<SettingsType, RecordFormElements>;
+    readonly?: boolean;
     onValueSubmit?: SubmitValueFunc;
     onValueDelete?: DeleteValueFunc;
     onDeleteMultipleValues?: DeleteMultipleValuesFunc;
@@ -120,20 +118,7 @@ export interface IDependencyValues {
     [attributeId: string]: Array<{id: string; library: string}>;
 }
 
-export interface IStandardInputProps {
-    state: IStandardFieldReducerState;
-    fieldValue: IStandardFieldValue;
-    onFocus: () => void;
-    onChange: (value: string) => void;
-    onSubmit: (valueToSave: StandardValueTypes) => void;
-    onPressEnter?: () => void;
-    settings: IRequiredFieldsSettings;
-    inputRef: MutableRefObject<InputRefPossibleTypes>;
-}
-
-export type InputRefPossibleTypes = InputRef | typeof DatePicker | typeof Checkbox;
-
-export type StandardValueTypes = AnyPrimitive | IDateRangeValue;
+export type StandardValueTypes = AnyPrimitive;
 
 export enum VersionFieldScope {
     INHERITED = 'INHERITED', // inherited values

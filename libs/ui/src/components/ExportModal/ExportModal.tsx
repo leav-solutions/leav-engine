@@ -5,7 +5,6 @@ import {LoadingOutlined} from '@ant-design/icons';
 import {Modal, Result, StepProps, Steps} from 'antd';
 import {useKitNotification} from 'aristid-ds';
 import {useState} from 'react';
-import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {IFilter, ISearchSelection, ISelectedAttribute} from '_ui/types';
 import {
@@ -18,6 +17,7 @@ import {
 import {getRequestFromFilters} from '_ui/_utils/getRequestFromFilter';
 import AttributesSelectionList from '../AttributesSelectionList';
 import {ErrorDisplay} from '../ErrorDisplay';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 export interface IExportModalProps {
     open: boolean;
@@ -42,7 +42,7 @@ const CenteredWrapper = styled.div`
 `;
 
 function ExportModal({library, onClose, selection, filters, open}: IExportModalProps): JSX.Element {
-    const {t} = useTranslation();
+    const {t} = useSharedTranslation();
     const {kitNotification} = useKitNotification();
 
     const [selectedAttributes, setSelectedAttributes] = useState<ISelectedAttribute[]>([]);

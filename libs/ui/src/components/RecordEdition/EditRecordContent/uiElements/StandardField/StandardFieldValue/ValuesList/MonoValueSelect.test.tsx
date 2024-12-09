@@ -3,20 +3,35 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {expectToThrow, render, screen} from '_ui/_tests/testUtils';
 import {MonoValueSelect} from './MonoValueSelect';
-import {mockFormElementInput} from '_ui/__mocks__/common/form';
-import {mockAttributeSimple, mockAttributeWithDetails, mockFormAttribute} from '_ui/__mocks__/common/attribute';
+import {mockAttributeSimple, mockAttributeWithDetails} from '_ui/__mocks__/common/attribute';
 import * as gqlTypes from '_ui/_gqlTypes';
 import * as useEditRecordReducer from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
-import {mockRecord} from '_ui/__mocks__/common/record';
 import {AntForm} from 'aristid-ds';
 import userEvent from '@testing-library/user-event';
 import {RecordFormAttributeStandardAttributeFragment} from '_ui/_gqlTypes';
-import {VersionFieldScope} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {IStandardFieldReducerState} from '_ui/components/RecordEdition/EditRecordContent/reducers/standardFieldReducer/standardFieldReducer';
 import {
     EditRecordReducerActionsTypes,
     IEditRecordReducerState
 } from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
+import {CalculatedFlags, InheritedFlags} from '../../calculatedInheritedFlags';
+
+const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
+    isCalculatedValue: false,
+    isCalculatedOverrideValue: false,
+    isCalculatedNotOverrideValue: false,
+    calculatedValue: null
+};
+
+const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
+    isInheritedValue: false,
+    isInheritedOverrideValue: false,
+    isInheritedNotOverrideValue: false,
+    inheritedValue: null
+};
+
+const notRequired = false;
+const notReadonly = false;
+const readonly = true;
 
 describe('<MonoValueSelect />', () => {
     const handleSubmitMock = jest.fn();
@@ -50,33 +65,6 @@ describe('<MonoValueSelect />', () => {
         values_list: valuesList
     } satisfies RecordFormAttributeStandardAttributeFragment;
 
-    const state = {
-        record: mockRecord,
-        formElement: {
-            ...mockFormElementInput,
-            settings: {
-                label: {en: 'label'},
-                required: false
-            }
-        },
-        attribute: mockFormAttribute,
-        isReadOnly: false,
-        activeScope: VersionFieldScope.CURRENT,
-        values: {
-            [VersionFieldScope.CURRENT]: null,
-            [VersionFieldScope.INHERITED]: null
-        },
-        metadataEdit: false,
-        inheritedValue: null,
-        isInheritedValue: false,
-        isInheritedNotOverrideValue: false,
-        isInheritedOverrideValue: false,
-        calculatedValue: null,
-        isCalculatedNotOverrideValue: false,
-        isCalculatedOverrideValue: false,
-        isCalculatedValue: false
-    } satisfies IStandardFieldReducerState;
-
     afterEach(() => {
         handleSubmitMock.mockClear();
     });
@@ -89,8 +77,11 @@ describe('<MonoValueSelect />', () => {
                         <MonoValueSelect
                             attribute={commonAttribute}
                             presentationValue=""
-                            state={state}
                             handleSubmit={handleSubmitMock}
+                            required={notRequired}
+                            readonly={notReadonly}
+                            calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                            inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         />
                     ),
                 'MonoValueSelect should be used inside a antd Form.Item'
@@ -106,8 +97,11 @@ describe('<MonoValueSelect />', () => {
                                 <MonoValueSelect
                                     attribute={commonAttribute}
                                     presentationValue=""
-                                    state={state}
                                     handleSubmit={handleSubmitMock}
+                                    required={notRequired}
+                                    readonly={notReadonly}
+                                    calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                                    inheritedFlags={inheritedFlagsWithoutInheritedValue}
                                 />
                             </AntForm.Item>
                         </AntForm>
@@ -117,6 +111,27 @@ describe('<MonoValueSelect />', () => {
         });
     });
 
+    test('Should be disabled when readonly', async () => {
+        render(
+            <AntForm name="name">
+                <AntForm.Item name="chartreuse">
+                    <MonoValueSelect
+                        attribute={attribute}
+                        presentationValue="green"
+                        handleSubmit={handleSubmitMock}
+                        required={notRequired}
+                        readonly={readonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
+
+        const select = screen.getByRole('combobox');
+        expect(select).toBeDisabled();
+    });
+
     it('should call handleSubmit on clear', async () => {
         render(
             <AntForm name="name">
@@ -124,8 +139,11 @@ describe('<MonoValueSelect />', () => {
                     <MonoValueSelect
                         attribute={attribute}
                         presentationValue="green"
-                        state={state}
                         handleSubmit={handleSubmitMock}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
                     />
                 </AntForm.Item>
             </AntForm>
@@ -155,8 +173,11 @@ describe('<MonoValueSelect />', () => {
                         <MonoValueSelect
                             attribute={attribute}
                             presentationValue=""
-                            state={state}
                             handleSubmit={handleSubmitMock}
+                            required={notRequired}
+                            readonly={notReadonly}
+                            calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                            inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         />
                     </AntForm.Item>
                 </AntForm>
@@ -179,7 +200,14 @@ describe('<MonoValueSelect />', () => {
             render(
                 <AntForm name="name">
                     <AntForm.Item name="chartreuse">
-                        <MonoValueSelect attribute={attribute} state={state} handleSubmit={handleSubmitMock} />
+                        <MonoValueSelect
+                            attribute={attribute}
+                            handleSubmit={handleSubmitMock}
+                            required={notRequired}
+                            readonly={notReadonly}
+                            calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                            inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        />
                     </AntForm.Item>
                 </AntForm>
             );
@@ -198,8 +226,11 @@ describe('<MonoValueSelect />', () => {
                     <AntForm.Item name="chartreuse">
                         <MonoValueSelect
                             attribute={{...attribute, values_list: {...valuesList, allowFreeEntry: true}}}
-                            state={state}
                             handleSubmit={handleSubmitMock}
+                            required={notRequired}
+                            readonly={notReadonly}
+                            calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                            inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         />
                     </AntForm.Item>
                 </AntForm>
@@ -233,8 +264,11 @@ describe('<MonoValueSelect />', () => {
                                 ...attribute,
                                 values_list: {...valuesList, allowFreeEntry: true, allowListUpdate: true}
                             }}
-                            state={state}
                             handleSubmit={handleSubmitMock}
+                            required={notRequired}
+                            readonly={notReadonly}
+                            calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                            inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         />
                     </AntForm.Item>
                 </AntForm>

@@ -8,6 +8,7 @@ import {IFormElementProps} from '../../_types';
 function Container({
     element,
     antdForm,
+    readonly,
     onValueSubmit,
     onValueDelete,
     onDeleteMultipleValues
@@ -23,6 +24,7 @@ function Container({
                         {el.uiElement && (
                             <el.uiElement
                                 element={el}
+                                readonly={readonly}
                                 antdForm={antdForm}
                                 onValueSubmit={onValueSubmit}
                                 onValueDelete={onValueDelete}

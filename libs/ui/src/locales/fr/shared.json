@@ -402,6 +402,7 @@
         "link_created_at": "Lié le",
         "add_value": "Ajouter une valeur",
         "add_value_link": "Ajouter une liaison",
+        "delete_value": "Supprimer cette valeur",
         "delete_value_confirm": "Êtes-vous sûr de vouloir supprimer cette valeur?",
         "whoAmI": "Informations",
         "no_value": "Pas de valeur",
@@ -464,6 +465,7 @@
         "select_this_value": "Sélectionner cette valeur",
         "select_option": "Sélectionner l’option ",
         "create_and_select_option": "Créer et sélectionner l’option ",
+        "please_select_value_before_adding": "Veuillez sélectionner une valeur avant d'en ajouter une nouvelle",
         "placeholder": {
             "record_select": "Sélectionnez un élément",
             "enter_a_text": "Saisir un texte",
@@ -472,7 +474,8 @@
             "enter_a_number": "Saisir un nombre",
             "enter_a_password": "Saisir un mot de passe",
             "start_date": "Date de début",
-            "end_date": "Date de fin"
+            "end_date": "Date de fin",
+            "select_an_option": "Sélectionner une option"
         }
     },
     "record_summary": {

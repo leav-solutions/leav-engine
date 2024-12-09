@@ -71,7 +71,7 @@ export default function (): IActionsListFunction {
                         });
                         break;
                     case AttributeFormats.COLOR:
-                        schema = Joi.string().max(6).hex();
+                        schema = Joi.string().allow(null).max(6).hex();
                         break;
                 }
 

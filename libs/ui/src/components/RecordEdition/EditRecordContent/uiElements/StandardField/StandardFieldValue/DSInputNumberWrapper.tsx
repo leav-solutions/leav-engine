@@ -21,9 +21,11 @@ export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProp
     value,
     presentationValue,
     onChange,
-    state,
     attribute,
-    handleSubmit
+    handleSubmit,
+    readonly,
+    calculatedFlags,
+    inheritedFlags
 }) => {
     if (!onChange) {
         throw Error('DSInputNumberWrapper should be used inside a antd Form.Item');
@@ -39,12 +41,12 @@ export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProp
 
     const _resetToInheritedOrCalculatedValue = async () => {
         setHasChanged(false);
-        if (state.isInheritedValue) {
-            onChange(state.inheritedValue.raw_payload);
-        } else if (state.isCalculatedValue) {
-            onChange(state.calculatedValue.raw_payload);
+        if (inheritedFlags.isInheritedValue) {
+            onChange(inheritedFlags.inheritedValue.raw_payload);
+        } else if (calculatedFlags.isCalculatedValue) {
+            onChange(calculatedFlags.calculatedValue.raw_payload);
         }
-        await handleSubmit(null, state.attribute.id);
+        await handleSubmit(null, attribute.id);
     };
 
     const _handleFocus = () => setIsFocused(true);
@@ -58,14 +60,14 @@ export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProp
             return;
         }
 
-        if (valueToSubmit === '' && (state.isInheritedValue || state.isCalculatedValue)) {
+        if (valueToSubmit === '' && (inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue)) {
             _resetToInheritedOrCalculatedValue();
             return;
         }
 
         onChange(valueToSubmit);
+        await handleSubmit(valueToSubmit, attribute.id);
         setIsFocused(false);
-        await handleSubmit(valueToSubmit, state.attribute.id);
     };
 
     const _handleOnChange: ComponentPropsWithRef<typeof KitInputNumberStyled>['onChange'] = inputValue => {
@@ -81,12 +83,13 @@ export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProp
             status={isErrors ? 'error' : undefined}
             value={value}
             formatter={v => (isFocused || isErrors || !presentationValue ? `${v}` : `${presentationValue}`)}
-            disabled={state.isReadOnly}
+            disabled={readonly}
             onChange={_handleOnChange}
             onFocus={_handleFocus}
             onBlur={_handleOnBlur}
             $shouldHighlightColor={
-                !hasChanged && (state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue)
+                !hasChanged &&
+                (inheritedFlags.isInheritedNotOverrideValue || calculatedFlags.isCalculatedNotOverrideValue)
             }
             placeholder={t('record_edition.placeholder.enter_a_number')}
         />

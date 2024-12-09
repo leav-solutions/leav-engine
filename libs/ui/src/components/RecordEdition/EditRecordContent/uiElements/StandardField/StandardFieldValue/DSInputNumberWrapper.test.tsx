@@ -3,74 +3,50 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
 import {DSInputNumberWrapper} from './DSInputNumberWrapper';
-import {VersionFieldScope} from '../../../_types';
-import {
-    IStandardFieldReducerState,
-    StandardFieldValueState
-} from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import {mockRecord} from '_ui/__mocks__/common/record';
-import {mockFormElementInput} from '_ui/__mocks__/common/form';
-import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
 import {AntForm} from 'aristid-ds';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
+import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
+import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 
-const en_label = 'label';
-const fr_label = 'libellé';
-const idValue = '123';
-const mockValue = {
-    index: 0,
-    displayValue: '4',
-    editingValue: '4',
-    originRawValue: '4',
-    idValue: null,
-    isEditing: false,
-    isErrorDisplayed: false,
-    value: {
-        id_value: null,
-        value: '4',
-        raw_value: '4',
-        payload: '4',
-        raw_payload: '4',
-        modified_at: null,
-        created_at: null,
-        created_by: null,
-        modified_by: null
-    },
-    version: null,
-    error: '',
-    state: StandardFieldValueState.PRISTINE
+const value = '42';
+const presentationValue = 'The answer to life, the universe and everything';
+const dartMaxScore = '180';
+
+const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
+    isCalculatedValue: false,
+    isCalculatedOverrideValue: false,
+    isCalculatedNotOverrideValue: false,
+    calculatedValue: null
 };
 
-const getInitialState = (required: boolean, fallbackLang = false): IStandardFieldReducerState => ({
-    record: mockRecord,
-    formElement: {
-        ...mockFormElementInput,
-        settings: {
-            label: fallbackLang ? {en: en_label} : {fr: fr_label, en: en_label},
-            required
-        }
-    },
-    attribute: mockFormAttribute,
-    isReadOnly: false,
-    activeScope: VersionFieldScope.CURRENT,
-    values: {
-        [VersionFieldScope.CURRENT]: {
-            version: null,
-            values: {[idValue]: mockValue}
-        },
-        [VersionFieldScope.INHERITED]: null
-    },
-    metadataEdit: false,
-    inheritedValue: null,
-    isInheritedNotOverrideValue: false,
-    isInheritedOverrideValue: false,
-    isInheritedValue: false,
-    calculatedValue: null,
+const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
+    isCalculatedValue: true,
+    isCalculatedOverrideValue: true,
     isCalculatedNotOverrideValue: false,
-    isCalculatedOverrideValue: false,
-    isCalculatedValue: false
-});
+    calculatedValue: {
+        raw_payload: dartMaxScore
+    }
+};
+
+const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
+    isInheritedValue: false,
+    isInheritedOverrideValue: false,
+    isInheritedNotOverrideValue: false,
+    inheritedValue: null
+};
+
+const inheritedFlagsWithInheritedValue: InheritedFlags = {
+    isInheritedValue: true,
+    isInheritedOverrideValue: true,
+    isInheritedNotOverrideValue: false,
+    inheritedValue: {
+        raw_payload: dartMaxScore
+    }
+};
+
+const notRequired = false;
+const notReadonly = false;
+const readonly = true;
 
 describe('DSInputNumberWrapper', () => {
     const mockHandleSubmit = jest.fn();
@@ -85,60 +61,107 @@ describe('DSInputNumberWrapper', () => {
     });
 
     test('Should display the presentationValue', async () => {
-        const presentationValue = 'presentationValue';
-        const state = getInitialState(false);
         render(
             <AntForm>
                 <AntForm.Item>
                     <DSInputNumberWrapper
-                        state={state}
+                        value={value}
                         presentationValue={presentationValue}
-                        attribute={{} as RecordFormAttributeFragment}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        value={42}
                     />
                 </AntForm.Item>
             </AntForm>
         );
 
-        const input = screen.getByRole('spinbutton');
-        expect(input).toHaveValue(presentationValue);
+        const inputNumber = screen.getByRole('spinbutton');
+        expect(inputNumber).toHaveValue(presentationValue);
     });
 
-    test('Should display the value on focus', async () => {
-        const presentationValue = 'presentationValue';
-        const value = '42';
-        const state = getInitialState(false);
+    test('Should display the value if presentationValue is empty', async () => {
         render(
             <AntForm>
                 <AntForm.Item>
                     <DSInputNumberWrapper
-                        state={state}
-                        presentationValue={presentationValue}
-                        attribute={{} as RecordFormAttributeFragment}
+                        value={value}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        value={value}
                     />
                 </AntForm.Item>
             </AntForm>
         );
 
-        const input = screen.getByRole('spinbutton');
-        await user.click(input);
-        expect(input).toHaveValue(value);
+        const inputNumber = screen.getByRole('spinbutton');
+        expect(inputNumber).toHaveValue(value);
+    });
+
+    test('Should display the value if focused', async () => {
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSInputNumberWrapper
+                        value={value}
+                        presentationValue={presentationValue}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
+
+        const inputNumber = screen.getByRole('spinbutton');
+        await user.click(inputNumber);
+        expect(inputNumber).toHaveValue(value);
+    });
+
+    test('Should be disabled when readonly', async () => {
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSInputNumberWrapper
+                        value={value}
+                        presentationValue={presentationValue}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={readonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
+
+        const inputNumber = screen.getByRole('spinbutton');
+        expect(inputNumber).toBeDisabled();
     });
 
     test('Should call handleSubmit on blur with new value', async () => {
-        const state = getInitialState(false);
         render(
             <AntForm>
                 <AntForm.Item>
                     <DSInputNumberWrapper
-                        state={state}
-                        presentationValue=""
-                        attribute={{} as RecordFormAttributeFragment}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
                     />
@@ -146,27 +169,27 @@ describe('DSInputNumberWrapper', () => {
             </AntForm>
         );
 
-        const newValue = '72';
-        const input = screen.getByRole('spinbutton');
+        const inputNumber = screen.getByRole('spinbutton');
 
-        await user.click(input);
-        await user.type(input, newValue);
+        await user.click(inputNumber);
+        await user.type(inputNumber, dartMaxScore);
         await user.tab();
 
         expect(mockOnChange).toHaveBeenCalled();
-        expect(mockHandleSubmit).toHaveBeenCalledWith(newValue, state.attribute.id);
+        expect(mockHandleSubmit).toHaveBeenCalledWith(dartMaxScore, mockFormAttribute.id);
     });
 
     describe('Without inherited or calculated flags', () => {
         test('Should submit empty value on clear', async () => {
-            const state = getInitialState(false);
             render(
-                <AntForm initialValues={{danette: '42'}}>
-                    <AntForm.Item name="danette">
+                <AntForm initialValues={{inputNumberTest: value}}>
+                    <AntForm.Item name="inputNumberTest">
                         <DSInputNumberWrapper
-                            state={state}
-                            presentationValue=""
-                            attribute={{} as RecordFormAttributeFragment}
+                            attribute={mockFormAttribute}
+                            required={notRequired}
+                            readonly={notReadonly}
+                            calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                            inheritedFlags={inheritedFlagsWithoutInheritedValue}
                             handleSubmit={mockHandleSubmit}
                             onChange={mockOnChange}
                         />
@@ -174,50 +197,50 @@ describe('DSInputNumberWrapper', () => {
                 </AntForm>
             );
 
-            const input = screen.getByRole('spinbutton');
+            const inputNumber = screen.getByRole('spinbutton');
 
-            await user.click(input);
-            await user.clear(input);
+            await user.click(inputNumber);
+            await user.clear(inputNumber);
             await user.tab();
 
             expect(mockOnChange).toHaveBeenCalled();
-            expect(mockHandleSubmit).toHaveBeenCalledWith('', state.attribute.id);
+            expect(mockHandleSubmit).toHaveBeenCalledWith('', mockFormAttribute.id);
         });
     });
 
     describe('With inherited or calculated value', () => {
         it.each`
-            calculatedValue | inheritedValue | onChangeValue
-            ${'calculated'} | ${null}        | ${'calculated'}
-            ${null}         | ${'inherited'} | ${'inherited'}
-            ${'calculated'} | ${'inherited'} | ${'inherited'}
+            calculatedValue | inheritedValue
+            ${'calculated'} | ${null}
+            ${null}         | ${'inherited'}
+            ${'calculated'} | ${'inherited'}
         `(
             'Should submit empty value on clear and call onChange with inherited value',
             async ({
                 calculatedValue,
-                inheritedValue,
-                onChangeValue
+                inheritedValue
             }: {
                 calculatedValue: string | null;
                 inheritedValue: string | null;
-                onChangeValue: string;
             }) => {
-                const state = getInitialState(false);
                 render(
-                    <AntForm initialValues={{danette: '42'}}>
-                        <AntForm.Item name="danette">
+                    <AntForm initialValues={{inputNumberTest: value}}>
+                        <AntForm.Item name="inputNumberTest">
                             <DSInputNumberWrapper
-                                state={
-                                    {
-                                        ...state,
-                                        isInheritedValue: !!inheritedValue,
-                                        inheritedValue: {raw_payload: inheritedValue},
-                                        isCalculatedValue: !!calculatedValue,
-                                        calculatedValue: {raw_payload: calculatedValue}
-                                    } as any
+                                value={value}
+                                attribute={mockFormAttribute}
+                                required={notRequired}
+                                readonly={notReadonly}
+                                calculatedFlags={
+                                    calculatedValue
+                                        ? calculatedFlagsWithCalculatedValue
+                                        : calculatedFlagsWithoutCalculatedValue
                                 }
-                                presentationValue=""
-                                attribute={{} as RecordFormAttributeFragment}
+                                inheritedFlags={
+                                    inheritedValue
+                                        ? inheritedFlagsWithInheritedValue
+                                        : inheritedFlagsWithoutInheritedValue
+                                }
                                 handleSubmit={mockHandleSubmit}
                                 onChange={mockOnChange}
                             />
@@ -230,8 +253,8 @@ describe('DSInputNumberWrapper', () => {
                 await user.clear(input);
                 await user.tab();
 
-                expect(mockOnChange).toHaveBeenCalledWith(onChangeValue);
-                expect(mockHandleSubmit).toHaveBeenCalledWith(null, state.attribute.id);
+                expect(mockOnChange).toHaveBeenCalledWith(dartMaxScore);
+                expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
             }
         );
     });

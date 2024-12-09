@@ -1,8 +1,9 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getAntdFormInitialValues} from '_ui/components/RecordEdition/EditRecordContent/antdUtils';
+import {getAntdFormInitialValues, getEmptyInitialValue} from '_ui/components/RecordEdition/EditRecordContent/antdUtils';
 import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
+import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 
 jest.mock('dayjs', () => ({
     unix: jest.fn(t => t)
@@ -108,7 +109,10 @@ describe('getAntdFormInitialValues', () => {
                     multiple_values: true,
                     id: standardAttributeId
                 },
-                values: [{raw_payload: elementFormId}, {raw_payload: yetAnotherElementFormId}]
+                values: [
+                    {raw_payload: elementFormId, id_value: '12'},
+                    {raw_payload: yetAnotherElementFormId, id_value: '13'}
+                ]
             };
             const recordForm = {elements: [standardElement]};
 
@@ -135,7 +139,7 @@ describe('getAntdFormInitialValues', () => {
             const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
 
             expect(antdFormInitialValues).toEqual({
-                [standardAttributeId]: [null]
+                [standardAttributeId]: ['']
             });
         });
     });
@@ -219,5 +223,50 @@ describe('getAntdFormInitialValues', () => {
                 [dateRangeAttributeId]: [Number(from), Number(to)]
             });
         });
+    });
+
+    describe('AttributeFormat.color', () => {
+        test('Should skip when raw_value is not set', async () => {
+            const colorElementWithoutRawValue = {
+                attribute: {format: AttributeFormat.color},
+                values: [{}]
+            };
+            const recordForm = {elements: [colorElementWithoutRawValue]};
+
+            const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
+
+            expect(antdFormInitialValues).toEqual({});
+        });
+
+        test('Should initialize antd form with given value for color attribute', async () => {
+            const rawValue = 'rawValue';
+            const colorAttributeId = 'colorAttributeId';
+            const colorElement = {
+                attribute: {format: AttributeFormat.color, id: colorAttributeId},
+                values: [{raw_payload: rawValue}]
+            };
+            const recordForm = {elements: [colorElement]};
+
+            const antdFormInitialValues = getAntdFormInitialValues(recordForm as any);
+
+            expect(antdFormInitialValues).toEqual({
+                [colorAttributeId]: rawValue
+            });
+        });
+    });
+});
+
+describe('getEmptyInitialValue', () => {
+    test('Should return undefined for date_range and color attributes', async () => {
+        expect(getEmptyInitialValue({...mockFormAttribute, format: AttributeFormat.date_range})).toBeUndefined();
+        expect(getEmptyInitialValue({...mockFormAttribute, format: AttributeFormat.color})).toBeUndefined();
+    });
+
+    test('Should return empty string for other attributes', async () => {
+        expect(getEmptyInitialValue({...mockFormAttribute, format: AttributeFormat.text})).toBe('');
+        expect(getEmptyInitialValue({...mockFormAttribute, format: AttributeFormat.rich_text})).toBe('');
+        expect(getEmptyInitialValue({...mockFormAttribute, format: AttributeFormat.boolean})).toBe('');
+        expect(getEmptyInitialValue({...mockFormAttribute, format: AttributeFormat.date})).toBe('');
+        expect(getEmptyInitialValue({...mockFormAttribute, format: AttributeFormat.extended})).toBe('');
     });
 });
