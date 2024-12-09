@@ -609,10 +609,11 @@ describe('Explorer', () => {
                 }
             }
         };
-        jest.spyOn(gqlTypes, 'useExplorerQuery').mockImplementation(({variables}) =>
-            variables?.searchQuery
-                ? (mockExplorerQueryResultWithSearch as gqlTypes.ExplorerQueryResult)
-                : (mockExplorerQueryResult as gqlTypes.ExplorerQueryResult)
+        jest.spyOn(gqlTypes, 'useExplorerQuery').mockImplementation(
+            ({variables}) =>
+                (variables?.searchQuery
+                    ? mockExplorerQueryResultWithSearch
+                    : mockExplorerQueryResult) as gqlTypes.ExplorerQueryResult
         );
 
         render(<Explorer library="campaigns" primaryActions={customPrimaryActions} defaultPrimaryActions={[]} />);
@@ -622,7 +623,7 @@ describe('Explorer', () => {
 
         expect(screen.getByText('Christmas 2024')).toBeVisible();
 
-        const clearButton = within(searchInput.parentElement!).getByRole('button'); // Not nice, but no way to get the clear button directly
+        const clearButton = screen.getByLabelText('clear');
         await user.click(clearButton);
 
         expect(screen.getByText('Halloween 2025')).toBeVisible();
