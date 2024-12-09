@@ -2,9 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Spin} from 'antd';
-import {Key} from 'antd/lib/table/interface';
 import {EventDataNode} from 'antd/lib/tree';
-import {ComponentProps, FunctionComponent, useEffect, useState} from 'react';
+import {ComponentProps, FunctionComponent, Key, useEffect, useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {TreeNodeChildFragment, useTreeNodeChildrenLazyQuery} from '_ui/_gqlTypes';
 import {defaultPaginationPageSize, ErrorDisplay} from '../..';
@@ -20,6 +19,13 @@ interface ISelectTreeNodeContentProps {
     canSelectRoot?: boolean;
     selectableLibraries?: string[]; // all by default
 }
+
+const _isObjectSelection = (
+    selection: Parameters<ComponentProps<typeof KitTree>['onCheck']>[0]
+): selection is {
+    checked: Key[];
+    halfChecked: Key[];
+} => 'checked' in selection && 'halfChecked' in selection;
 
 const _constructTreeContent = (data: TreeNodeChildFragment[]): ITreeNodeWithRecord[] =>
     data.map(e => ({
@@ -73,12 +79,12 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
     const [fetchError, setFetchError] = useState<string>();
     const [loadTreeContent, {error, called}] = useTreeNodeChildrenLazyQuery();
 
-    const _fetchTreeContent = async (key?: string, offset = 0) => {
+    const _fetchTreeContent = async (parentNodeKey?: string, offset = 0) => {
         try {
             const data = await loadTreeContent({
                 variables: {
                     treeId: tree.id,
-                    node: key && key !== tree.id ? key : null,
+                    node: parentNodeKey && parentNodeKey !== tree.id ? parentNodeKey : null,
                     pagination: {
                         limit: defaultPaginationPageSize,
                         offset
@@ -87,7 +93,7 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
             });
 
             const formattedNodes = _constructTreeContent(data.data.treeNodeChildren.list);
-            const parentMapKey = key ?? tree.id;
+            const parentMapKey = parentNodeKey ?? tree.id;
 
             const newTreeMap = {...treeMap};
             const totalCount = data.data.treeNodeChildren.totalCount;
@@ -158,12 +164,7 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
         const node = treeMap[e.node.key];
         const isRoot = node.id === tree.id;
 
-        if (
-            (!canSelectRoot && isRoot) ||
-            (!isRoot &&
-                typeof selectableLibraries !== 'undefined' &&
-                selectableLibraries.indexOf(node.record.whoAmI.library.id) === -1)
-        ) {
+        if ((!canSelectRoot && isRoot) || (!isRoot && selectableLibraries?.includes(node.record.whoAmI.library.id))) {
             return;
         }
 
@@ -173,7 +174,7 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
     };
 
     const _handleCheck: ComponentProps<typeof KitTree>['onCheck'] = selection => {
-        const checkedKeys = typeof selection === 'object' ? (selection as {checked: Key[]}).checked : selection;
+        const checkedKeys = _isObjectSelection(selection) ? selection.checked : selection;
         const nodes = checkedKeys.map(key => treeMap[key]);
         onCheck(nodes);
     };
