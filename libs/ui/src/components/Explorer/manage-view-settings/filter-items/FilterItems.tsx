@@ -68,7 +68,6 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                 dispatch({
                     type: ViewSettingsActionTypes.ADD_FILTER,
                     payload: {
-                        id: '',
                         field: attributeId,
                         condition: '',
                         values: []

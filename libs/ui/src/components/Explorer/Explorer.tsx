@@ -52,7 +52,6 @@ interface IExplorerProps {
     defaultActionsForItem?: Array<'edit' | 'deactivate'>;
     defaultPrimaryActions?: Array<'create'>;
     defaultViewSettings?: Partial<IViewSettingsState>;
-    maxFilters?: number;
 }
 
 export const Explorer: FunctionComponent<IExplorerProps> = ({
@@ -61,7 +60,6 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     primaryActions,
     title,
     noPagination,
-    maxFilters,
     defaultActionsForItem = ['edit', 'deactivate'],
     defaultPrimaryActions = ['create'],
     defaultViewSettings
@@ -71,7 +69,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     const [view, dispatch] = useReducer(viewSettingsReducer, {
         ...viewSettingsInitialState,
         ...defaultViewSettings,
-        maxFilters: maxFilters ?? defaultViewSettings?.maxFilters ?? viewSettingsInitialState.maxFilters
+        maxFilters: defaultViewSettings?.maxFilters ?? viewSettingsInitialState.maxFilters
     });
 
     const {currentPage, setNewPageSize, setNewPage} = usePagination(dispatch);

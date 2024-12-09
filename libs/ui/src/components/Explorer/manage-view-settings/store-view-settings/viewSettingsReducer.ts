@@ -112,7 +112,7 @@ interface IViewSettingsActionClearFulltextSearch {
 
 interface IViewSettingsActionAddFilter {
     type: typeof ViewSettingsActionTypes.ADD_FILTER;
-    payload: IExplorerFilter;
+    payload: Omit<IExplorerFilter, 'id'>;
 }
 
 interface IViewSettingsActionRemoveFilter {

@@ -267,6 +267,7 @@ describe('ViewSettings Reducer', () => {
         });
     });
 
+<<<<<<< HEAD
     test(`Action ${ViewSettingsActionTypes.CHANGE_FULLTEXT_SEARCH} test`, () => {
         const state = viewSettingsReducer(viewSettingsInitialState, {
             type: ViewSettingsActionTypes.CHANGE_FULLTEXT_SEARCH,
@@ -295,89 +296,153 @@ describe('ViewSettings Reducer', () => {
                     {
                         id: 'id',
                         field: 'first',
+=======
+    describe('adding filters', () => {
+        test('can add new filter', () => {
+            const state = viewSettingsReducer(
+                {
+                    ...viewSettingsInitialState,
+                    filters: [
+                        {
+                            id: 'id',
+                            field: 'first',
+                            condition: 'eq',
+                            values: []
+                        }
+                    ]
+                },
+                {
+                    type: ViewSettingsActionTypes.ADD_FILTER,
+                    payload: {
+                        field: 'second',
+>>>>>>> bb527784a (fix(@leav/ui): pr comments)
                         condition: 'eq',
                         values: []
                     }
-                ]
-            },
-            {
-                type: ViewSettingsActionTypes.ADD_FILTER,
-                payload: {
-                    id: '',
+                }
+            );
+            expect(state.filters).toHaveLength(2);
+            expect(state.filters).toEqual([
+                {
+                    id: 'id',
+                    field: 'first',
+                    condition: 'eq',
+                    values: []
+                },
+                {
+                    id: expect.any(String),
                     field: 'second',
                     condition: 'eq',
                     values: []
                 }
-            }
-        );
-        expect(state.filters).toHaveLength(2);
-        expect(state.filters).toEqual([
-            {
-                id: 'id',
-                field: 'first',
-                condition: 'eq',
-                values: []
-            },
-            {
-                id: expect.any(String),
-                field: 'second',
-                condition: 'eq',
-                values: []
-            }
-        ]);
+            ]);
+        });
+        test('when limit is reach', () => {
+            const state = viewSettingsReducer(
+                {
+                    ...viewSettingsInitialState,
+                    maxFilters: 2,
+                    canAddFilter: false,
+                    filters: [
+                        {
+                            id: 'id',
+                            field: 'first',
+                            condition: 'eq',
+                            values: []
+                        },
+                        {
+                            id: 'second-id',
+                            field: 'second',
+                            condition: 'eq',
+                            values: []
+                        }
+                    ]
+                },
+                {
+                    type: ViewSettingsActionTypes.ADD_FILTER,
+                    payload: {
+                        field: 'third',
+                        condition: 'eq',
+                        values: []
+                    }
+                }
+            );
+            expect(state.filters).toHaveLength(2);
+            expect(state.filters).toEqual([
+                {
+                    id: 'id',
+                    field: 'first',
+                    condition: 'eq',
+                    values: []
+                },
+                {
+                    id: 'second-id',
+                    field: 'second',
+                    condition: 'eq',
+                    values: []
+                }
+            ]);
+        });
     });
 
-    test(`Action ${ViewSettingsActionTypes.ADD_FILTER} maxfilters test`, () => {
-        const state = viewSettingsReducer(
-            {
-                ...viewSettingsInitialState,
-                maxFilters: 2,
-                filters: [
-                    {
-                        id: 'id',
-                        field: 'first',
+    describe('canAddFilter flag', () => {
+        test('update to false when ADD_FILTER is called', () => {
+            const state = viewSettingsReducer(
+                {
+                    ...viewSettingsInitialState,
+                    maxFilters: 2,
+                    filters: [
+                        {
+                            id: 'id',
+                            field: 'first',
+                            condition: 'eq',
+                            values: []
+                        }
+                    ]
+                },
+                {
+                    type: ViewSettingsActionTypes.ADD_FILTER,
+                    payload: {
+                        field: 'second',
                         condition: 'eq',
                         values: []
                     }
-                ]
-            },
-            {
-                type: ViewSettingsActionTypes.ADD_FILTER,
-                payload: {
-                    id: '',
-                    field: 'second',
-                    condition: 'eq',
-                    values: []
                 }
-            }
-        );
-        expect(state.filters).toHaveLength(2);
-        expect(state.canAddFilter).toEqual(false);
-
-        const state2 = viewSettingsReducer(state, {
-            type: ViewSettingsActionTypes.ADD_FILTER,
-            payload: {
-                id: '',
-                field: 'third',
-                condition: 'eq',
-                values: []
-            }
+            );
+            expect(state.filters).toHaveLength(2);
+            expect(state.canAddFilter).toEqual(false);
         });
-        expect(state2.filters).toHaveLength(2);
-        expect(state2.filters).toEqual([
-            {
-                id: 'id',
-                field: 'first',
-                condition: 'eq',
-                values: []
-            },
-            {
-                id: expect.any(String),
-                field: 'second',
-                condition: 'eq',
-                values: []
-            }
-        ]);
+        test('update to true when REMOVE_FILTER is called', () => {
+            const state = viewSettingsReducer(
+                {
+                    ...viewSettingsInitialState,
+                    maxFilters: 2,
+                    canAddFilter: false,
+                    filters: [
+                        {
+                            id: 'id',
+                            field: 'first',
+                            condition: 'eq',
+                            values: []
+                        },
+                        {
+                            id: 'second-id',
+                            field: 'second',
+                            condition: 'eq',
+                            values: []
+                        }
+                    ]
+                },
+                {
+                    type: ViewSettingsActionTypes.REMOVE_FILTER,
+                    payload: {
+                        id: 'second-id'
+                    }
+                }
+            );
+            expect(state.filters).toHaveLength(1);
+            expect(state.canAddFilter).toEqual(true);
+        });
     });
 
     test(`Action ${ViewSettingsActionTypes.REMOVE_FILTER} test`, () => {

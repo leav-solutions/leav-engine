@@ -163,7 +163,7 @@ describe('Integration tests about managing view settings feature', () => {
     });
 
     describe('Filter data', () => {
-        test.only('should be able to toggle filter activation', async () => {
+        test('should be able to toggle filter activation', async () => {
             render(
                 <EditSettingsContextProvider>
                     <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
