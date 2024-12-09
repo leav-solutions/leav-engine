@@ -25,9 +25,11 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
     presentationValue,
     value,
     onChange,
-    state,
     attribute,
-    handleSubmit
+    handleSubmit,
+    readonly,
+    calculatedFlags,
+    inheritedFlags
 }) => {
     if (!onChange) {
         throw Error('DSRangePickerWrapper should be used inside a antd Form.Item');
@@ -40,24 +42,24 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
     const isErrors = errors.length > 0;
 
     const _resetToInheritedOrCalculatedValue = async () => {
-        if (state.isInheritedValue) {
+        if (inheritedFlags.isInheritedValue) {
             onChange(
                 [
-                    dayjs.unix(Number(state.inheritedValue.raw_value.from)),
-                    dayjs.unix(Number(state.inheritedValue.raw_value.to))
+                    dayjs.unix(Number(inheritedFlags.inheritedValue.raw_payload.from)),
+                    dayjs.unix(Number(inheritedFlags.inheritedValue.raw_payload.to))
                 ],
-                state.inheritedValue.raw_value
+                inheritedFlags.inheritedValue.raw_payload
             );
-        } else if (state.isCalculatedValue) {
+        } else if (calculatedFlags.isCalculatedValue) {
             onChange(
                 [
-                    dayjs.unix(Number(state.calculatedValue.raw_value.from)),
-                    dayjs.unix(Number(state.calculatedValue.raw_value.to))
+                    dayjs.unix(Number(calculatedFlags.calculatedValue.raw_payload.from)),
+                    dayjs.unix(Number(calculatedFlags.calculatedValue.raw_payload.to))
                 ],
-                state.calculatedValue.raw_value
+                calculatedFlags.calculatedValue.raw_payload
             );
         }
-        await handleSubmit(null, state.attribute.id);
+        await handleSubmit(null, attribute.id);
     };
 
     const _handleFocus = () => setIsFocused(true);
@@ -66,7 +68,7 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
         rangePickerDates: [from: dayjs.Dayjs, to: dayjs.Dayjs] | null,
         antOnChangeParams: [from: string, to: string] | null
     ) => void = async (rangePickerDates, ...antOnChangeParams) => {
-        if ((state.isInheritedValue || state.isCalculatedValue) && rangePickerDates === null) {
+        if ((inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue) && rangePickerDates === null) {
             _resetToInheritedOrCalculatedValue();
             return;
         }
@@ -78,18 +80,15 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
         onChange(rangePickerDates, ...antOnChangeParams);
 
         // TODO : validate form with await form.validateFields(state.attribute.id)
-        if (state.formElement.settings.required && rangePickerDates === null) {
-            return;
-        }
 
         let datesToSave: StandardValueTypes = '';
 
         if (rangePickerDates !== null) {
             const [dateFrom, dateTo] = rangePickerDates;
-            datesToSave = {from: String(dateFrom.unix()), to: String(dateTo.unix())};
+            datesToSave = JSON.stringify({from: dateFrom.unix(), to: dateTo.unix()});
         }
 
-        await handleSubmit(datesToSave, state.attribute.id);
+        await handleSubmit(datesToSave, attribute.id);
     };
 
     const _handleOpenChange = (open: boolean) => {
@@ -102,13 +101,17 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
     const _handleClear = async (event: ChangeEvent<HTMLInputElement>) => {
         const inputValue = event.target.value;
 
-        if ((state.isInheritedValue || state.isCalculatedValue) && inputValue === '' && event.type === 'click') {
+        if (
+            (inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue) &&
+            inputValue === '' &&
+            event.type === 'click'
+        ) {
             _resetToInheritedOrCalculatedValue();
             return;
         }
         onChange(null, null);
         if (inputValue === '' && event.type === 'click') {
-            await handleSubmit('', state.attribute.id);
+            await handleSubmit(null, attribute.id);
         }
     };
 
@@ -119,12 +122,15 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
                     <KitInputStyled
                         id={attribute.id}
                         prefix={<FaCalendar />}
+                        disabled={readonly}
                         helper={isErrors ? String(errors[0]) : undefined}
                         status={isErrors ? 'error' : undefined}
                         value={presentationValue}
                         onFocus={_handleFocus}
                         onChange={_handleClear}
-                        $shouldHighlightColor={state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue}
+                        $shouldHighlightColor={
+                            inheritedFlags.isInheritedNotOverrideValue || calculatedFlags.isCalculatedNotOverrideValue
+                        }
                         placeholder={t('record_edition.placeholder.enter_a_period')}
                     />
                 )
@@ -135,13 +141,17 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
                     open
                     autoFocus
                     value={value}
-                    disabled={state.isReadOnly}
-                    allowClear={!state.isInheritedNotOverrideValue && !state.isCalculatedNotOverrideValue}
+                    disabled={readonly}
+                    allowClear={
+                        !inheritedFlags.isInheritedNotOverrideValue && !calculatedFlags.isCalculatedNotOverrideValue
+                    }
                     helper={isErrors ? String(errors[0]) : undefined}
                     status={isErrors ? 'error' : undefined}
                     onChange={_handleDateChange}
                     onOpenChange={_handleOpenChange}
-                    $shouldHighlightColor={state.isInheritedNotOverrideValue || state.isCalculatedNotOverrideValue}
+                    $shouldHighlightColor={
+                        inheritedFlags.isInheritedNotOverrideValue || calculatedFlags.isCalculatedNotOverrideValue
+                    }
                     placeholder={[t('record_edition.placeholder.start_date'), t('record_edition.placeholder.end_date')]}
                 />
             )}

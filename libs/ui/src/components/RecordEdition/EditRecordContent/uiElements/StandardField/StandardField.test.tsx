@@ -2,94 +2,23 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import userEvent from '@testing-library/user-event';
-import {
-    EditRecordReducerActionsTypes,
-    initialState
-} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
-import * as useEditRecordReducer from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
-import * as useRefreshFieldValues from '_ui/hooks/useRefreshFieldValues/useRefreshFieldValues';
-import {
-    AttributeFormat,
-    AttributeType,
-    RecordFormAttributeStandardAttributeFragment,
-    ValueDetailsValueFragment
-} from '_ui/_gqlTypes';
+import {AttributeFormat, AttributeType, ValueDetailsValueFragment} from '_ui/_gqlTypes';
 import {IRecordPropertyAttribute} from '_ui/_queries/records/getRecordPropertiesQuery';
-import {render, screen, waitFor} from '_ui/_tests/testUtils';
-import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
-import {mockFormElementInput} from '_ui/__mocks__/common/form';
-import {mockRecord} from '_ui/__mocks__/common/record';
+import {render, screen} from '_ui/_tests/testUtils';
+import {mockFormElementInput, mockFormElementMultipleInput} from '_ui/__mocks__/common/form';
 import {mockModifier} from '_ui/__mocks__/common/value';
 import {
     APICallStatus,
     DeleteMultipleValuesFunc,
     DeleteValueFunc,
-    FormElement,
     ISubmitMultipleResult,
     SubmitValueFunc
 } from '../../_types';
 import StandardField from './StandardField';
 import {AntForm} from 'aristid-ds';
-import {getAntdFormInitialValues} from '../../antdUtils';
-import {FormInstance} from 'antd';
-
-jest.mock('../../hooks/useExecuteDeleteValueMutation');
-
-jest.useRealTimers();
-jest.setTimeout(15000);
-
-const _makeRecordForm = (payloads: {payload: any; raw_payload: any}, format: AttributeFormat) => ({
-    dependencyAttributes: [],
-    elements: [
-        {
-            ...mockFormElementInput,
-            settings: [
-                {key: 'label', value: 'test attribute'},
-                {key: 'attribute', value: 'test_attribute'}
-            ],
-            attribute: {...mockFormAttribute, format},
-            values: [
-                {
-                    created_at: 123456789,
-                    modified_at: 123456789,
-                    created_by: mockModifier,
-                    modified_by: mockModifier,
-                    id_value: null,
-                    metadata: null,
-                    version: null,
-                    ...payloads
-                }
-            ]
-        }
-    ],
-    id: 'edition',
-    recordId: 'recordId',
-    library: {id: 'libraryId'}
-});
+import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
 
 describe('StandardField', () => {
-    const mockEditRecordDispatch = jest.fn();
-    jest.spyOn(useEditRecordReducer, 'useEditRecordReducer').mockImplementation(() => ({
-        state: {...initialState, record: {...mockRecord}},
-        dispatch: mockEditRecordDispatch
-    }));
-
-    jest.spyOn(useRefreshFieldValues, 'default').mockImplementation(() => ({
-        fetchValues: jest.fn()
-    }));
-
-    const mockRecordValuesCommon = {
-        created_at: 123456789,
-        modified_at: 123456789,
-        created_by: mockModifier,
-        modified_by: mockModifier,
-        id_value: null,
-        metadata: null,
-        version: null
-    };
-
-    window.HTMLElement.prototype.scrollIntoView = jest.fn();
-
     const mockAttribute: IRecordPropertyAttribute = {
         id: 'test_attribute',
         label: {en: 'Test Attribute'},
@@ -98,11 +27,13 @@ describe('StandardField', () => {
         system: false
     };
 
+    const newFormatedValue = 'New formated value';
+    const idValue = 'id_value';
     const mockSubmitRes: ISubmitMultipleResult = {
         status: APICallStatus.SUCCESS,
         values: [
             {
-                id_value: null,
+                id_value: idValue,
                 created_at: 1234567890,
                 created_by: {
                     ...mockModifier
@@ -111,8 +42,10 @@ describe('StandardField', () => {
                 modified_by: {
                     ...mockModifier
                 },
-                value: 'new value',
+                value: newFormatedValue,
                 raw_value: 'new raw value',
+                payload: newFormatedValue,
+                raw_payload: 'new raw value',
                 version: null,
                 attribute: mockAttribute as ValueDetailsValueFragment['attribute'],
                 metadata: null
@@ -126,100 +59,201 @@ describe('StandardField', () => {
         .mockReturnValue({status: APICallStatus.SUCCESS});
 
     const baseProps = {
+        readonly: false,
         onValueSubmit: mockHandleSubmit,
         onValueDelete: mockHandleDelete,
         onDeleteMultipleValues: mockHandleMultipleValues
     };
 
-    global.ResizeObserver = jest.fn().mockImplementation(() => ({
-        observe: jest.fn(),
-        unobserve: jest.fn(),
-        disconnect: jest.fn()
-    }));
-
     beforeEach(() => jest.clearAllMocks());
 
-    test('Display informations about value', async () => {
-        render(<StandardField element={mockFormElementInput} {...baseProps} />);
+    describe('Mono', () => {
+        const initialValues = {
+            [mockFormElementInput.attribute.id]: (
+                mockFormElementInput.values[0] as RecordFormElementsValueStandardValue
+            ).raw_payload
+        };
 
-        const valueDisplayElem = screen.getByRole('textbox');
-        await userEvent.click(valueDisplayElem);
+        test('Should display an error with missing attribute', () => {
+            render(
+                <AntForm>
+                    <StandardField element={{...mockFormElementInput, attribute: null}} {...baseProps} />
+                </AntForm>
+            );
 
-        await waitFor(() => {
-            expect(mockEditRecordDispatch).toHaveBeenCalled();
+            expect(screen.getByText('record_edition.missing_attribute')).toBeVisible();
         });
 
-        expect(mockEditRecordDispatch.mock.calls[0][0].type).toBe(EditRecordReducerActionsTypes.SET_ACTIVE_VALUE);
+        test('Should display the formated value', async () => {
+            render(
+                <AntForm>
+                    <StandardField element={mockFormElementInput} {...baseProps} />
+                </AntForm>
+            );
+
+            const textInput = screen.getByRole('textbox');
+
+            expect(textInput).toHaveValue('My value formatted');
+        });
+
+        test('Should display the value on focus', async () => {
+            render(
+                <AntForm initialValues={initialValues}>
+                    <StandardField element={mockFormElementInput} {...baseProps} />
+                </AntForm>
+            );
+
+            const textInput = screen.getByRole('textbox');
+            await userEvent.click(textInput);
+
+            expect(textInput).toHaveValue('my_raw_payload');
+        });
+
+        test('Should do nothing on blur without change', async () => {
+            render(
+                <AntForm initialValues={initialValues}>
+                    <StandardField element={mockFormElementInput} {...baseProps} />
+                </AntForm>
+            );
+
+            const textInput = screen.getByRole('textbox');
+            await userEvent.click(textInput);
+            await userEvent.tab();
+
+            expect(mockHandleSubmit).not.toHaveBeenCalled();
+            expect(mockHandleDelete).not.toHaveBeenCalled();
+            expect(mockHandleMultipleValues).not.toHaveBeenCalled();
+            expect(textInput).toHaveValue('My value formatted');
+        });
+
+        test('Should save the value on blur with change', async () => {
+            render(
+                <AntForm initialValues={initialValues}>
+                    <StandardField
+                        element={{
+                            ...mockFormElementInput,
+                            values: [{...mockFormElementInput.values[0], id_value: idValue}]
+                        }}
+                        {...baseProps}
+                    />
+                </AntForm>
+            );
+
+            const textInput = screen.getByRole('textbox');
+            await userEvent.click(textInput);
+
+            const newValue = 'New Value';
+            await userEvent.clear(textInput);
+            await userEvent.type(textInput, newValue);
+            await userEvent.tab();
+
+            expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
+            expect(mockHandleSubmit).toHaveBeenCalledWith(
+                [
+                    {
+                        attribute: mockFormElementInput.attribute,
+                        idValue,
+                        value: newValue
+                    }
+                ],
+                null
+            );
+            expect(mockHandleDelete).not.toHaveBeenCalled();
+            expect(mockHandleMultipleValues).not.toHaveBeenCalled();
+            expect(textInput).toHaveValue(newFormatedValue);
+        });
     });
 
-    test('Cancel input', async () => {
-        render(<StandardField element={mockFormElementInput} {...baseProps} />);
+    describe('multiple', () => {
+        const initialValues = {
+            [mockFormElementInput.attribute.id]: [
+                (mockFormElementInput.values[0] as RecordFormElementsValueStandardValue).raw_payload,
+                (mockFormElementInput.values[0] as RecordFormElementsValueStandardValue).raw_payload
+            ]
+        };
 
-        let inputElem = screen.getByRole('textbox');
-        await userEvent.click(inputElem);
+        test('Should call onValueDelete click on delete', async () => {
+            render(
+                <AntForm initialValues={initialValues}>
+                    <StandardField
+                        element={{
+                            ...mockFormElementMultipleInput,
+                            values: [{...mockFormElementMultipleInput.values[0], id_value: idValue}]
+                        }}
+                        {...baseProps}
+                    />
+                </AntForm>
+            );
 
-        const cancelBtn = await screen.findByRole('button', {name: 'global.cancel'});
-        expect(cancelBtn).toBeVisible();
-
-        inputElem = screen.getByRole('textbox');
-        await userEvent.clear(inputElem);
-        await userEvent.type(inputElem, 'value modified');
-        await waitFor(() => {
-            expect(inputElem).toHaveValue('value modified');
+            const deleteButtons = screen.getAllByTitle('record_edition.delete_value');
+            expect(deleteButtons).toHaveLength(2);
+            await userEvent.click(screen.getAllByTitle('record_edition.delete_value')[0]);
+            expect(mockHandleDelete).toHaveBeenCalledWith(
+                {
+                    id_value: idValue
+                },
+                mockFormElementMultipleInput.attribute.id
+            );
         });
 
-        await userEvent.click(cancelBtn);
+        describe('Delete all values', () => {
+            test('Should not call onDeleteMultipleValues click on delete all and cancel', async () => {
+                const idValue2 = 'idValue2';
+                const backendValues = [
+                    {...mockFormElementMultipleInput.values[0], id_value: idValue},
+                    {...mockFormElementMultipleInput.values[0], id_value: idValue2}
+                ];
 
-        inputElem = screen.getByRole('textbox');
+                render(
+                    <AntForm initialValues={initialValues}>
+                        <StandardField
+                            element={{
+                                ...mockFormElementMultipleInput,
+                                values: backendValues
+                            }}
+                            {...baseProps}
+                        />
+                    </AntForm>
+                );
 
-        await waitFor(() => {
-            expect(inputElem).toHaveValue('My value formatted');
+                const deleteAllButton = screen.getByRole('button', {name: 'record_edition.delete_all'});
+                await userEvent.click(deleteAllButton);
+                expect(screen.getByText('record_edition.delete_all_values')).toBeVisible();
+                const cancelDeleteAllButton = screen.getByText('global.cancel');
+                await userEvent.click(cancelDeleteAllButton);
+                expect(mockHandleMultipleValues).not.toHaveBeenCalled();
+            });
+
+            test('Should call onDeleteMultipleValues click on delete all and confirm', async () => {
+                const idValue2 = 'idValue2';
+                const backendValues = [
+                    {...mockFormElementMultipleInput.values[0], id_value: idValue},
+                    {...mockFormElementMultipleInput.values[0], id_value: idValue2}
+                ];
+
+                render(
+                    <AntForm initialValues={initialValues}>
+                        <StandardField
+                            element={{
+                                ...mockFormElementMultipleInput,
+                                values: backendValues
+                            }}
+                            {...baseProps}
+                        />
+                    </AntForm>
+                );
+
+                const deleteAllButton = screen.getByRole('button', {name: 'record_edition.delete_all'});
+                await userEvent.click(deleteAllButton);
+                expect(screen.getByText('record_edition.delete_all_values')).toBeVisible();
+                const confirmDeleteAllButton = screen.getByText('global.confirm');
+                await userEvent.click(confirmDeleteAllButton);
+                expect(mockHandleMultipleValues).toHaveBeenCalledWith(
+                    mockFormElementMultipleInput.attribute.id,
+                    backendValues,
+                    null
+                );
+            });
         });
-        expect(inputElem).not.toHaveFocus();
-    });
-
-    test('Submit on enter', async () => {
-        render(<StandardField element={mockFormElementInput} {...baseProps} />);
-
-        const valueDisplayElem = screen.getByRole('textbox');
-
-        await userEvent.click(valueDisplayElem);
-
-        const inputElem = screen.getByRole('textbox');
-
-        await userEvent.type(inputElem, 'value modified{enter}');
-
-        await waitFor(() => {
-            expect(mockHandleSubmit).toHaveBeenCalled();
-        });
-    });
-
-    test('Disable readonly attribute', async () => {
-        render(
-            <StandardField
-                element={{...mockFormElementInput, attribute: {...mockFormAttribute, readonly: true}}}
-                {...baseProps}
-            />
-        );
-
-        const inputElem = screen.getByRole('textbox');
-
-        expect(inputElem).toBeDisabled();
-    });
-
-    test('Display error message', async () => {
-        const onSubmitFail: SubmitValueFunc = jest.fn().mockReturnValue({
-            status: APICallStatus.ERROR,
-            error: 'ERROR_MESSAGE'
-        });
-
-        render(<StandardField element={mockFormElementInput} {...baseProps} onValueSubmit={onSubmitFail} />);
-
-        await userEvent.click(screen.getByRole('textbox'));
-
-        const submitBtn = await screen.findByRole('button', {name: 'global.submit'});
-        await userEvent.click(submitBtn);
-
-        expect(screen.getByText('ERROR_MESSAGE')).toBeInTheDocument();
     });
 });

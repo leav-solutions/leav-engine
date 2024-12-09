@@ -3,136 +3,50 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {render, screen} from '_ui/_tests/testUtils';
 import {DSColorPickerWrapper} from './DSColorPickerWrapper';
-import {VersionFieldScope} from '../../../_types';
-import {
-    CalculatedFlags,
-    InheritedFlags,
-    IStandardFieldReducerState,
-    StandardFieldValueState
-} from '../../../reducers/standardFieldReducer/standardFieldReducer';
-import {mockRecord} from '_ui/__mocks__/common/record';
-import {mockFormElementInput} from '_ui/__mocks__/common/form';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';
 import {AntForm} from 'aristid-ds';
-import {RecordFormAttributeFragment} from '_ui/_gqlTypes';
+import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
 
-const en_label = 'label';
-const fr_label = 'libellé';
-const idValue = '123';
 const pinkColor = 'ff00ff';
+const pinkColorHex = '#' + pinkColor;
 const blueColor = '0000ff';
-const mockValue = {
-    index: 0,
-    displayValue: pinkColor,
-    editingValue: pinkColor,
-    originRawValue: pinkColor,
-    idValue: null,
-    isEditing: false,
-    isErrorDisplayed: false,
-    value: {
-        id_value: null,
-        value: pinkColor,
-        raw_value: pinkColor,
-        modified_at: null,
-        created_at: null,
-        created_by: null,
-        modified_by: null
-    },
-    version: null,
-    error: '',
-    state: StandardFieldValueState.PRISTINE
-};
+const blueColorHex = '#' + blueColor;
 
-const getInitialState = ({
-    required,
-    fallbackLang
-}: {
-    required: boolean;
-    fallbackLang: boolean;
-}): IStandardFieldReducerState => ({
-    record: mockRecord,
-    formElement: {
-        ...mockFormElementInput,
-        settings: {
-            label: fallbackLang ? {en: en_label} : {fr: fr_label, en: en_label},
-            required
-        }
-    },
-    attribute: mockFormAttribute,
-    isReadOnly: false,
-    activeScope: VersionFieldScope.CURRENT,
-    values: {
-        [VersionFieldScope.CURRENT]: {
-            version: null,
-            values: {[idValue]: mockValue}
-        },
-        [VersionFieldScope.INHERITED]: null
-    },
-    metadataEdit: false,
-    inheritedValue: null,
-    isInheritedNotOverrideValue: false,
-    isInheritedOverrideValue: false,
-    isInheritedValue: false,
-    calculatedValue: null,
+const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
+    isCalculatedValue: false,
+    isCalculatedOverrideValue: false,
     isCalculatedNotOverrideValue: false,
-    isCalculatedOverrideValue: false,
-    isCalculatedValue: false
-});
-
-const inheritedValues = [
-    {
-        isInherited: null,
-        value: pinkColor,
-        raw_value: pinkColor
-    },
-    {
-        isInherited: true,
-        value: blueColor,
-        raw_value: blueColor
-    }
-];
-
-const inheritedNotOverrideValue: InheritedFlags = {
-    isInheritedValue: true,
-    isInheritedOverrideValue: false,
-    isInheritedNotOverrideValue: true,
-    inheritedValue: {raw_value: inheritedValues[1].raw_value}
+    calculatedValue: null
 };
 
-const inheritedOverrideValue: InheritedFlags = {
-    isInheritedValue: true,
-    isInheritedOverrideValue: true,
-    isInheritedNotOverrideValue: false,
-    inheritedValue: {raw_value: inheritedValues[1].raw_value}
-};
-
-const calculatedValues = [
-    {
-        isCalculated: null,
-        value: pinkColor,
-        raw_value: pinkColor
-    },
-    {
-        isCalculated: true,
-        value: blueColor,
-        raw_value: blueColor
-    }
-];
-
-const calculatedNotOverrideValue: CalculatedFlags = {
-    isCalculatedValue: true,
-    isCalculatedOverrideValue: false,
-    isCalculatedNotOverrideValue: true,
-    calculatedValue: {raw_value: calculatedValues[1].raw_value}
-};
-
-const calculatedOverrideValue: CalculatedFlags = {
+const calculatedFlagsWithCalculatedValue: CalculatedFlags = {
     isCalculatedValue: true,
     isCalculatedOverrideValue: true,
     isCalculatedNotOverrideValue: false,
-    calculatedValue: {raw_value: calculatedValues[1].raw_value}
+    calculatedValue: {
+        raw_payload: pinkColor
+    }
 };
+
+const inheritedFlagsWithoutInheritedValue: InheritedFlags = {
+    isInheritedValue: false,
+    isInheritedOverrideValue: false,
+    isInheritedNotOverrideValue: false,
+    inheritedValue: null
+};
+
+const inheritedFlagsWithInheritedValue: InheritedFlags = {
+    isInheritedValue: true,
+    isInheritedOverrideValue: true,
+    isInheritedNotOverrideValue: false,
+    inheritedValue: {
+        raw_payload: pinkColor
+    }
+};
+
+const notRequired = false;
+const notReadonly = false;
 
 describe('DSColorPickerWrapper', () => {
     const mockHandleSubmit = jest.fn();
@@ -149,17 +63,17 @@ describe('DSColorPickerWrapper', () => {
     });
 
     test('Should display the presentationValue value', async () => {
-        const presentationValue = pinkColor;
-        const state = getInitialState({required: false, fallbackLang: true});
-
         render(
             <AntForm>
                 <AntForm.Item>
                     <DSColorPickerWrapper
-                        state={state}
                         value={blueColor}
-                        presentationValue={presentationValue}
-                        attribute={{} as RecordFormAttributeFragment}
+                        presentationValue={pinkColorHex}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
                     />
@@ -167,18 +81,67 @@ describe('DSColorPickerWrapper', () => {
             </AntForm>
         );
 
-        expect(screen.getByText(presentationValue)).toBeVisible();
+        expect(screen.getByText(pinkColorHex)).toBeVisible();
+    });
+
+    test('Should display the value if presentationValue is empty', async () => {
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSColorPickerWrapper
+                        value={blueColor}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
+
+        expect(screen.getByText(blueColorHex)).toBeVisible();
+    });
+
+    test('Should display the value if focused', async () => {
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSColorPickerWrapper
+                        value={blueColor}
+                        presentationValue={pinkColorHex}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
+
+        const colorPicker = screen.getByTestId(mockFormAttribute.id);
+        await user.click(colorPicker);
+
+        expect(screen.getByText(blueColorHex)).toBeVisible();
     });
 
     test('Should not submit if field has not changed', async () => {
-        const state = getInitialState({required: false, fallbackLang: true});
         render(
             <AntForm>
                 <AntForm.Item>
                     <DSColorPickerWrapper
-                        state={state}
-                        presentationValue=""
-                        attribute={{} as RecordFormAttributeFragment}
+                        value={blueColor}
+                        presentationValue={pinkColorHex}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
                     />
@@ -186,7 +149,7 @@ describe('DSColorPickerWrapper', () => {
             </AntForm>
         );
 
-        const colorPicker = screen.getByLabelText(en_label);
+        const colorPicker = screen.getByTestId(mockFormAttribute.id);
         await user.click(colorPicker);
         await user.tab();
 
@@ -194,104 +157,91 @@ describe('DSColorPickerWrapper', () => {
         expect(mockHandleSubmit).not.toHaveBeenCalled();
     });
 
-    describe('With no inheritance', () => {
-        test('Should submit the value if field is not empty', async () => {
-            const state = getInitialState({required: false, fallbackLang: true});
-            render(
-                <AntForm>
-                    <AntForm.Item>
-                        <DSColorPickerWrapper
-                            state={state}
-                            presentationValue=""
-                            attribute={{} as RecordFormAttributeFragment}
-                            handleSubmit={mockHandleSubmit}
-                            onChange={mockOnChange}
-                        />
-                    </AntForm.Item>
-                </AntForm>
-            );
+    test('Should submit the value if field is not empty', async () => {
+        render(
+            <AntForm>
+                <AntForm.Item>
+                    <DSColorPickerWrapper
+                        value={pinkColor}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        handleSubmit={mockHandleSubmit}
+                        onChange={mockOnChange}
+                    />
+                </AntForm.Item>
+            </AntForm>
+        );
 
-            const colorPicker = screen.getByLabelText(en_label);
-            await user.click(colorPicker);
+        const colorPicker = screen.getByTestId(mockFormAttribute.id);
+        await user.click(colorPicker);
 
-            const input = screen.getByRole('textbox');
+        const input = screen.getByRole('textbox');
+        await user.clear(input);
+        await user.type(input, pinkColor);
+        await user.click(document.body);
 
-            await user.clear(input);
-            await user.type(input, pinkColor);
-            await user.click(document.body);
-
-            expect(mockHandleSubmit).toHaveBeenCalledWith(pinkColor, state.attribute.id);
-            expect(mockOnChange).toHaveBeenCalled();
-        });
+        expect(mockHandleSubmit).toHaveBeenCalledWith(pinkColor, mockFormAttribute.id);
+        expect(mockOnChange).toHaveBeenCalled();
     });
 
     test("Should allow to clear input when it's inherited and override", async () => {
-        const presentationValue = '#000000';
-        let state = getInitialState({required: false, fallbackLang: true});
-
-        state = {
-            ...state,
-            ...inheritedOverrideValue,
-            formElement: {...state.formElement, values: inheritedValues}
-        };
-
         render(
             <AntForm>
                 <AntForm.Item>
                     <DSColorPickerWrapper
-                        state={state}
-                        presentationValue={presentationValue}
-                        attribute={{} as RecordFormAttributeFragment}
+                        value={inheritedFlagsWithInheritedValue.inheritedValue.raw_payload}
+                        presentationValue={'#' + inheritedFlagsWithInheritedValue.inheritedValue.raw_payload}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        value={inheritedValues[0].raw_value}
                     />
                 </AntForm.Item>
             </AntForm>
         );
 
-        const colorPicker = screen.getByLabelText(en_label);
+        const colorPicker = screen.getByTestId(mockFormAttribute.id);
         await user.click(colorPicker);
 
         const clearButton = screen.getByLabelText('clear');
         await user.click(clearButton);
 
-        expect(mockHandleSubmit).toHaveBeenCalledWith(null, state.attribute.id);
-        expect(screen.getByText(presentationValue)).toBeVisible();
+        expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
+        expect(mockOnChange).toHaveBeenCalled();
     });
 
     test("Should allow to clear input when it's calculated and override", async () => {
-        const presentationValue = '#000000';
-        let state = getInitialState({required: false, fallbackLang: true});
-
-        state = {
-            ...state,
-            ...calculatedOverrideValue,
-            formElement: {...state.formElement, values: calculatedValues}
-        };
-
         render(
             <AntForm>
                 <AntForm.Item>
                     <DSColorPickerWrapper
-                        state={state}
-                        presentationValue={presentationValue}
-                        attribute={{} as RecordFormAttributeFragment}
+                        value={calculatedFlagsWithCalculatedValue.calculatedValue.raw_payload}
+                        presentationValue={'#' + calculatedFlagsWithCalculatedValue.calculatedValue.raw_payload}
+                        attribute={mockFormAttribute}
+                        required={notRequired}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         handleSubmit={mockHandleSubmit}
                         onChange={mockOnChange}
-                        value={calculatedValues[0].raw_value}
                     />
                 </AntForm.Item>
             </AntForm>
         );
 
-        const colorPicker = screen.getByLabelText(en_label);
+        const colorPicker = screen.getByTestId(mockFormAttribute.id);
         await user.click(colorPicker);
 
         const clearButton = screen.getByLabelText('clear');
         await user.click(clearButton);
 
-        expect(mockHandleSubmit).toHaveBeenCalledWith(null, state.attribute.id);
-        expect(screen.getByText(presentationValue)).toBeVisible();
+        expect(mockHandleSubmit).toHaveBeenCalledWith(null, mockFormAttribute.id);
+        expect(mockOnChange).toHaveBeenCalled();
     });
 });
