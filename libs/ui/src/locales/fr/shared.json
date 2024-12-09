@@ -624,6 +624,7 @@
         "view-type-planning": "Planning",
         "filters": "Filtrer",
         "sort-items": "Trier",
+        "filter-items": "Filtrer",
         "sort-list": {
             "active": "Tris actifs",
             "inactive": "Tris inactifs"

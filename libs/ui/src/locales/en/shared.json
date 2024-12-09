@@ -624,6 +624,7 @@
         "view-type-planning": "Planning",
         "filters": "Filters",
         "sort-items": "Sort",
+        "filter-items": "Filter",
         "sort-ascending": "Ascending",
         "sort-descending": "Descending",
         "sort-list": {
