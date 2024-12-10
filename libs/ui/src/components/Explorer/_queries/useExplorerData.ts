@@ -2,8 +2,8 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
-import {IExplorerData} from '../_types';
-import {ExplorerQuery, SortOrder, useExplorerQuery} from '_ui/_gqlTypes';
+import {IExplorerData, IExplorerFilter} from '../_types';
+import {ExplorerQuery, RecordFilterCondition, SortOrder, useExplorerQuery} from '_ui/_gqlTypes';
 import {useLang} from '_ui/hooks';
 
 const _mapping = (data: ExplorerQuery, libraryId: string, availableLangs: string[]): IExplorerData => {
@@ -44,7 +44,8 @@ export const useExplorerData = ({
     attributeIds,
     fulltextSearch,
     sorts,
-    pagination
+    pagination,
+    filters
 }: {
     libraryId: string;
     attributeIds: string[];
@@ -54,6 +55,7 @@ export const useExplorerData = ({
         order: SortOrder;
     }>;
     pagination: null | {limit: number; offset: number};
+    filters: IExplorerFilter[];
 }) => {
     const {lang: availableLangs} = useLang();
     const {data, loading, refetch} = useExplorerQuery({
@@ -65,12 +67,23 @@ export const useExplorerData = ({
             multipleSort: sorts.map(({order, attributeId}) => ({
                 field: attributeId,
                 order
-            }))
+            })),
+            filters: filters
+                .filter(
+                    ({value, condition}) =>
+                        value !== null ||
+                        [RecordFilterCondition.IS_EMPTY, RecordFilterCondition.IS_NOT_EMPTY].includes(condition)
+                )
+                .map(({field, condition, value}) => ({
+                    field,
+                    condition,
+                    value
+                }))
         }
     });
 
     return {
-        data: data !== undefined ? _mapping(data, libraryId, availableLangs) : null,
+        data: data !== undefined && data.records.list.length > 0 ? _mapping(data, libraryId, availableLangs) : null,
         loading,
         refetch
     };

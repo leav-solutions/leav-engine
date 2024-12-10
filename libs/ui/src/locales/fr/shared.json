@@ -637,6 +637,9 @@
             "active": "Filtres actifs",
             "inactive": "Filtres inactifs"
         },
+        "reset-filter": "Réinitialiser le filtre",
+        "delete-filters": "Supprimer tous les filtres",
+        "empty-data": "Aucun élément trouvé.",
         "sort-ascending": "Ascendant",
         "sort-descending": "Descendant",
         "available-attributes": "Autres propriétés disponibles",
@@ -649,6 +652,7 @@
         "invisible-columns": "Colonnes invisibles",
         "active-items-number": "{{count, number}} actifs",
         "active-items-number_zero": "Aucun",
-        "invalid-value": "Valeur invalide"
+        "invalid-value": "Valeur invalide",
+        "type-a-value": "Écrivez une valeur"
     }
 }
