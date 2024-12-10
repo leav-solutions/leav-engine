@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitTypography} from 'aristid-ds';
 import {FunctionComponent, ReactNode} from 'react';
-import {FaEye, FaEyeSlash} from 'react-icons/fa';
+import {FaEye, FaEyeSlash, FaLock} from 'react-icons/fa';
 import styled from 'styled-components';
 import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
@@ -55,14 +55,22 @@ const StyledConfigurationItem = styled.li`
 `;
 
 const StyledFaEye = styled(FaEye)`
+    display: flex;
     color: currentColor;
 `;
 
 const StyledEyeSlash = styled(FaEyeSlash)`
+    display: flex;
+    color: var(--general-utilities-disabled);
+`;
+
+const StyledLocked = styled(FaLock)`
+    display: flex;
     color: var(--general-utilities-disabled);
 `;
 
 const StyledDragHandle = styled.span<{$isDragging: boolean}>`
+    display: flex;
     cursor: ${props => (props.$isDragging ? 'grabbing' : 'grab')};
 `;
 
@@ -76,17 +84,17 @@ interface IColumnItemProps {
     visible: boolean;
     title: string;
     onVisibilityClick?: () => void;
-    disabled?: boolean;
     value?: string;
+    locked?: boolean;
 }
 
 export const ColumnItem: FunctionComponent<IColumnItemProps> = ({
     itemId,
     dragHandler,
     title,
-    disabled,
     visible,
-    onVisibilityClick
+    onVisibilityClick,
+    locked = false
 }) => {
     const {t} = useSharedTranslation();
     const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id: itemId});
@@ -98,8 +106,11 @@ export const ColumnItem: FunctionComponent<IColumnItemProps> = ({
     const _handleClick = () => onVisibilityClick?.();
 
     const visibilityButtonLabel = visible ? t('explorer.hide') : t('explorer.show');
+
+    const visibilityIcon = locked ? <StyledLocked /> : visible ? <StyledFaEye /> : <StyledEyeSlash />;
+
     return (
-        <StyledConfigurationItem className={disabled ? 'disabled' : ''} ref={setNodeRef} style={style}>
+        <StyledConfigurationItem ref={setNodeRef} style={style}>
             {dragHandler ? (
                 <StyledDragHandle {...attributes} {...listeners} $isDragging={isDragging}>
                     {dragHandler}
@@ -111,12 +122,12 @@ export const ColumnItem: FunctionComponent<IColumnItemProps> = ({
                 {title}
             </KitTypography.Text>
             <button
-                disabled={disabled}
+                disabled={locked}
                 onClick={_handleClick}
                 title={visibilityButtonLabel}
                 aria-label={visibilityButtonLabel}
             >
-                {visible ? <StyledFaEye /> : <StyledEyeSlash />}
+                {visibilityIcon}
             </button>
         </StyledConfigurationItem>
     );
