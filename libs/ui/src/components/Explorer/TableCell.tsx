@@ -1,6 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {FunctionComponent, ReactNode} from 'react';
 import {
     AttributeFormat,
     AttributePropertiesFragment,
@@ -11,14 +12,13 @@ import {
     PropertyValueValueFragment
 } from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {KitAvatar, KitTag, KitTypography} from 'aristid-ds';
-import {FunctionComponent, ReactNode} from 'react';
-import styled from 'styled-components';
-import {IdCard} from './IdCard';
-import {IKitTag, IKitTagConfig} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types';
-import {TableTagGroup} from './TableTagGroup';
 import {FaListAlt} from 'react-icons/fa';
 import DOMPurify from 'dompurify';
+import {KitAvatar, KitTag, KitTypography} from 'aristid-ds';
+import {IKitTag, IKitTagConfig} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types';
+import styled from 'styled-components';
+import {IdCard} from './IdCard';
+import {multiColorTagAvatarClassName, TableTagGroup} from './TableTagGroup';
 
 const isStandardValue = (
     v: PropertyValueFragment,
@@ -79,6 +79,18 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                                 description: value.valuePayload ? String(t('global.yes')) : String(t('global.no'))
                             },
                             type: value.valuePayload ? 'primary' : ('neutral' as IKitTag['type'])
+                        };
+                    case AttributeFormat.color:
+                        const colorHexa = `#${value.valuePayload}`;
+                        return {
+                            idCardProps: {
+                                description: colorHexa,
+                                avatarProps: {
+                                    color: colorHexa,
+                                    shape: 'square',
+                                    className: multiColorTagAvatarClassName
+                                }
+                            }
                         };
                     default:
                         const valueContent =

@@ -96,6 +96,16 @@ const simpleColorMockAttribute = {
     }
 } satisfies gqlTypes.AttributePropertiesFragment;
 
+const multivalColorMockAttribute = {
+    ...simpleColorMockAttribute,
+    id: 'color_multival',
+    multiple_values: true,
+    label: {
+        fr: 'Mon attribut couleur multiple',
+        en: 'My color attribute multi-valued'
+    }
+} satisfies gqlTypes.AttributePropertiesFragment;
+
 describe('Explorer', () => {
     const recordId1 = '613982168';
     const enrichTextRecord1 = '<h1>This is a test enrich text<script>alert("XSS")</script></h1>';
@@ -197,6 +207,11 @@ describe('Explorer', () => {
                     ]
                 },
                 {
+                    attributeId: multivalColorMockAttribute.id,
+                    attributeProperties: multivalColorMockAttribute,
+                    values: [{valuePayload: '00FF00'}, {valuePayload: 'FF0000'}, {valuePayload: '0000FF'}]
+                },
+                {
                     attributeId: booleanMockAttribute.id,
                     attributeProperties: booleanMockAttribute,
                     values: [
@@ -278,6 +293,11 @@ describe('Explorer', () => {
                     ]
                 },
                 {
+                    attributeId: multivalColorMockAttribute.id,
+                    attributeProperties: multivalColorMockAttribute,
+                    values: []
+                },
+                {
                     attributeId: booleanMockAttribute.id,
                     attributeProperties: booleanMockAttribute,
                     values: []
@@ -290,6 +310,16 @@ describe('Explorer', () => {
             ]
         }
     ] satisfies gqlTypes.ExplorerQuery['records']['list'];
+
+    const mockEmptyExplorerQueryResult: Mockify<typeof gqlTypes.useExplorerQuery> = {
+        loading: false,
+        called: true,
+        data: {
+            records: {
+                list: []
+            }
+        }
+    };
 
     const mockExplorerQueryResult: Mockify<typeof gqlTypes.useExplorerQuery> = {
         loading: false,
@@ -334,10 +364,12 @@ describe('Explorer', () => {
     ];
     const [customPrimaryAction1, customPrimaryAction2] = customPrimaryActions;
 
+    let spyUseExplorerQuery: jest.SpyInstance;
+
     beforeAll(() => {
-        jest.spyOn(gqlTypes, 'useExplorerQuery').mockImplementation(
-            () => mockExplorerQueryResult as gqlTypes.ExplorerQueryResult
-        );
+        spyUseExplorerQuery = jest
+            .spyOn(gqlTypes, 'useExplorerQuery')
+            .mockImplementation(() => mockExplorerQueryResult as gqlTypes.ExplorerQueryResult);
 
         jest.spyOn(gqlTypes, 'useExplorerLibraryDataQuery').mockImplementation(
             () => mockLibraryDataQueryResult as gqlTypes.ExplorerLibraryDataQueryResult
@@ -374,6 +406,15 @@ describe('Explorer', () => {
         expect(screen.getByText(record2.whoAmI.label)).toBeInTheDocument();
     });
 
+    test('Should hide table header when no data provided', async () => {
+        spyUseExplorerQuery.mockReturnValueOnce(mockEmptyExplorerQueryResult);
+        render(<Explorer library="campaigns" />);
+
+        expect(screen.getByRole('table')).toBeVisible();
+        expect(screen.getByRole('row')).toBeVisible();
+        expect(within(screen.getByRole('row')).getByText('Aucune donnée')).toBeVisible();
+    });
+
     test('Should display the list of records in a table with attributes values', async () => {
         render(
             <Explorer
@@ -385,6 +426,7 @@ describe('Explorer', () => {
                         multivalLinkMockAttribute.id,
                         simpleRichTextMockAttribute.id,
                         simpleColorMockAttribute.id,
+                        multivalColorMockAttribute.id,
                         booleanMockAttribute.id,
                         multivalBooleanMockAttribute.id
                     ]
@@ -404,6 +446,7 @@ describe('Explorer', () => {
             multivalLinkCell,
             simpleRichTextCell,
             simpleColorCell,
+            multivalColorCell,
             boolCell,
             multivalBoolCell
         ] = within(firstRecordRow).getAllByRole('cell');
@@ -425,6 +468,10 @@ describe('Explorer', () => {
         expect(simpleRichTextCell).toHaveTextContent('This is a test enrich text');
 
         expect(simpleColorCell).toHaveTextContent(`#${colorRecord1}`);
+
+        expect(within(multivalColorCell).getByText('#00FF00')).toBeVisible();
+        expect(within(multivalColorCell).getByText('#FF0000')).toBeVisible();
+        expect(within(multivalColorCell).getByText('#0000FF')).toBeVisible();
 
         expect(within(boolCell).getByText(/yes/)).toBeVisible();
 
