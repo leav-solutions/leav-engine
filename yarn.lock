@@ -576,6 +576,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aristid/leav-types@workspace:libs/types":
+  version: 0.0.0-use.local
+  resolution: "@aristid/leav-types@workspace:libs/types"
+  languageName: unknown
+  linkType: soft
+
 "@babel/cli@npm:^7.21.0":
   version: 7.22.15
   resolution: "@babel/cli@npm:7.22.15"
@@ -8058,12 +8064,6 @@ __metadata:
     jest: "npm:29.0.3"
     ts-jest: "npm:29.0.1"
     typescript: "npm:5.5.3"
-  languageName: unknown
-  linkType: soft
-
-"@leav/types@workspace:libs/types":
-  version: 0.0.0-use.local
-  resolution: "@leav/types@workspace:libs/types"
   languageName: unknown
   linkType: soft
 

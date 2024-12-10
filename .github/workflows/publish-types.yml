@@ -1,4 +1,4 @@
-name: "Publish @leav/types @next package to npmjs on push on develop"
+name: "Publish @aristid/leav-types @next package to npmjs on push on develop"
 
 on:
   push:
