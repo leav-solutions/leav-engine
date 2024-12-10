@@ -4,10 +4,10 @@ on:
   push:
     branches:
       - feature/export-plugin-types-in-leav-ui
-  # workflow_dispatch:
-  #   secrets:
-  #     NPM_TOKEN:
-  #       description: 'Npm Token
+  workflow_dispatch:
+    secrets:
+      ARISTID_NPM_TOKEN:
+        description: 'Npm Token for publishing in aristid organization'
 jobs:
   install:
     uses: ./.github/workflows/install.yml
@@ -25,7 +25,7 @@ jobs:
           key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
       - name: Generate types
         run: yarn workspace core tsc --emitDeclarationOnly --declaration
-      - name: Create artifact with types
+      - name: Create types artifact
         uses: actions/upload-artifact@v4
         with:
           name: libs-types
@@ -84,7 +84,12 @@ jobs:
         with:
           path: '**/node_modules'
           key: ${{ runner.OS }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      # - name: publish next version
-        # run: yarn --cwd "libs/types" publish-ui --tag next
-        # env:
-          # NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Download types artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: libs-types
+          path: libs/types/
+      - name: publish next version
+        run: yarn --cwd "libs/types" publish --tag next
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.ARISTID_NPM_TOKEN }}
