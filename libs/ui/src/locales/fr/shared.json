@@ -633,6 +633,7 @@
             "active": "Filtres actifs",
             "inactive": "Filtres inactifs"
         },
+        "reset-filter": "Réinitialiser le filtre",
         "sort-ascending": "Ascendant",
         "sort-descending": "Descendant",
         "available-attributes": "Autres propriétés disponibles",
@@ -641,6 +642,7 @@
         "hide": "Masquer",
         "pagination-total-number": "{{from, number}} - {{to, number}} de {{total, number}} éléments",
         "active-items-number": "{{count, number}} actifs",
-        "active-items-number_zero": "Aucun"
+        "active-items-number_zero": "Aucun",
+        "type-a-value": "Ecrivez une valeur"
     }
 }
