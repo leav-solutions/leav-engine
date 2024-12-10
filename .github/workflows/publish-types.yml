@@ -10,7 +10,6 @@ on:
   #   secrets:
   #     NPM_TOKEN:
   #       description: 'Npm Token
-
 jobs:
   install:
     uses: ./.github/workflows/install.yml
