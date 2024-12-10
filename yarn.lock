@@ -16337,7 +16337,7 @@ __metadata:
     moment: "npm:2.29.4"
     moment-timezone: "npm:0.5.37"
     ms: "npm:2.1.3"
-    nanoid: "npm:3.2.0"
+    nanoid: "npm:3.3.8"
     nodemailer: "npm:6.9.9"
     nodemon: "npm:1.19.4"
     npm-run-all: "npm:4.1.5"
@@ -26691,12 +26691,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:3.2.0":
-  version: 3.2.0
-  resolution: "nanoid@npm:3.2.0"
+"nanoid@npm:3.3.8":
+  version: 3.3.8
+  resolution: "nanoid@npm:3.3.8"
   bin:
     nanoid: bin/nanoid.cjs
-  checksum: a9d802255bf0161bfa7cd614a92bba64ef2074600d28b2750c1f40cff6202cd6c9b826c8bef982aaefb6beafb6e1b01cbd95b324f8bbc94f35b1fa81f7efcb7f
+  checksum: 2d1766606cf0d6f47b6f0fdab91761bb81609b2e3d367027aff45e6ee7006f660fb7e7781f4a34799fe6734f1268eeed2e37a5fdee809ade0c2d4eb11b0f9c40
   languageName: node
   linkType: hard
 
