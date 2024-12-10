@@ -5,6 +5,7 @@ import {localizedTranslation} from '@leav/utils';
 import {IExplorerData} from '../_types';
 import {ExplorerQuery, SortOrder, useExplorerQuery} from '_ui/_gqlTypes';
 import {useLang} from '_ui/hooks';
+import {useMemo} from 'react';
 
 const _mapping = (data: ExplorerQuery, libraryId: string, availableLangs: string[]): IExplorerData => {
     const attributes = data.records.list.length
@@ -69,8 +70,10 @@ export const useExplorerData = ({
         }
     });
 
+    const memoizedData = useMemo(() => (data !== undefined ? _mapping(data, libraryId, availableLangs) : null), [data]);
+
     return {
-        data: data !== undefined ? _mapping(data, libraryId, availableLangs) : null,
+        data: memoizedData,
         loading,
         refetch
     };
