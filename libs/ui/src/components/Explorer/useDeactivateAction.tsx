@@ -6,6 +6,7 @@ import {KitModal} from 'aristid-ds';
 import {useDeactivateRecordsMutation} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ActionHook, IItemAction} from './_types';
+import {useMemo} from 'react';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -29,26 +30,29 @@ export const useDeactivateAction = ({isEnabled}: ActionHook) => {
         }
     });
 
-    const _deactivateAction: IItemAction = {
-        label: t('explorer.deactivate-item'),
-        icon: <FaTrash />,
-        isDanger: true,
-        callback: ({itemId, libraryId}) =>
-            KitModal.confirm({
-                type: 'confirm',
-                dangerConfirm: true,
-                content: t('records_deactivation.confirm_one') ?? undefined,
-                okText: t('global.submit') ?? undefined,
-                cancelText: t('global.cancel') ?? undefined,
-                onOk: () =>
-                    deactivateRecordsMutation({
-                        variables: {
-                            libraryId,
-                            recordsIds: [itemId]
-                        }
-                    })
-            })
-    };
+    const _deactivateAction: IItemAction = useMemo(
+        () => ({
+            label: t('explorer.deactivate-item'),
+            icon: <FaTrash />,
+            isDanger: true,
+            callback: ({itemId, libraryId}) =>
+                KitModal.confirm({
+                    type: 'confirm',
+                    dangerConfirm: true,
+                    content: t('records_deactivation.confirm_one') ?? undefined,
+                    okText: t('global.submit') ?? undefined,
+                    cancelText: t('global.cancel') ?? undefined,
+                    onOk: () =>
+                        deactivateRecordsMutation({
+                            variables: {
+                                libraryId,
+                                recordsIds: [itemId]
+                            }
+                        })
+                })
+        }),
+        [t, deactivateRecordsMutation]
+    );
 
     return {
         deactivateAction: isEnabled ? _deactivateAction : null
