@@ -644,6 +644,9 @@
         "show": "Afficher",
         "hide": "Masquer",
         "pagination-total-number": "{{from, number}} - {{to, number}} de {{total, number}} éléments",
+        "columns": "Colonnes",
+        "visible-columns": "Colonnes visibles",
+        "invisible-columns": "Colonnes invisibles",
         "active-items-number": "{{count, number}} actifs",
         "active-items-number_zero": "Aucun"
     }

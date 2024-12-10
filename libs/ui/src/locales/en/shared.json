@@ -643,6 +643,9 @@
         "coming-soon": "Coming soon",
         "show": "Show",
         "hide": "Hide",
+        "columns": "Columns",
+        "visible-columns": "Visible columns",
+        "invisible-columns": "Invisible columns",
         "pagination-total-number": "{{from, number}} - {{to, number}} of {{total, number}} items",
         "active-items-number": "{{count, number}} active",
         "active-items-number_zero": "None"
