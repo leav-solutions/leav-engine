@@ -148,6 +148,7 @@ export const DataView: FunctionComponent<IDataViewProps> = ({
                 borderedRows
                 cellsBackgroundColor={theme.utilities.light}
                 backgroundColor={theme.colors.primary['50']}
+                showHeader={dataGroupedFilteredSorted.length > 0}
                 columns={columns}
                 scroll={{y: scrollHeight}}
                 dataSource={dataGroupedFilteredSorted}
