@@ -21,6 +21,11 @@ import {ViewSettingsActionTypes} from '../../store-view-settings/viewSettingsRed
 import {useViewSettingsContext} from '../../store-view-settings/useViewSettingsContext';
 import {useAttributeDetailsData} from '../../_shared/useAttributeDetailsData';
 
+const StyledListTitle = styled.div`
+    margin-top: calc(var(--general-spacing-s) * 1px);
+    font-weight: var(--general-typography-boldFontWeight);
+`;
+
 const StyledList = styled.ul`
     padding: 0;
     margin: 0;
@@ -28,14 +33,8 @@ const StyledList = styled.ul`
     color: var(--general-utilities-text-primary);
 `;
 
-const StyledDivider = styled.hr`
-    display: block;
-    height: 1px;
-    border: 0;
-    border-top: 1px solid var(--general-utilities-main-light);
-    margin: 0 calc(var(--general-spacing-s) * 1px);
-    padding: 0;
-`;
+const visibleListTitle = 'visibleListTitle';
+const invisibleListTitle = 'invisibleListTitle';
 
 interface ISelectVisibleAttributesProps {
     libraryId: string;
@@ -77,43 +76,42 @@ export const SelectVisibleAttributes: FunctionComponent<ISelectVisibleAttributes
 
     return (
         <div>
-            <KitTypography.Title level="h4">{t('items_list.columns')}</KitTypography.Title>
+            <KitTypography.Title level="h4">{t('explorer.columns')}</KitTypography.Title>
             <KitInput placeholder={String(t('global.search'))} onChange={onSearchChanged} allowClear />
-            <div>
-                <StyledList>
-                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={_handleDragEnd}>
-                        <SortableContext items={orderedVisibleColumns} strategy={verticalListSortingStrategy}>
-                            <ColumnItem itemId="" title={t('record_edition.whoAmI')} visible={false} disabled />
-                            {orderedVisibleColumns
-                                .filter(columnId => searchFilteredColumnsIds.includes(columnId))
-                                .map(columnId => (
-                                    <ColumnItem
-                                        key={columnId}
-                                        itemId={attributeDetailsById[columnId].id}
-                                        title={attributeDetailsById[columnId].label}
-                                        visible
-                                        onVisibilityClick={_toggleColumnVisibility(columnId)}
-                                        dragHandler={<FaGripLines />}
-                                    />
-                                ))}
-                        </SortableContext>
-                    </DndContext>
-                </StyledList>
-                <StyledDivider />
-                <StyledList>
-                    {searchFilteredColumnsIds
-                        .filter(columnId => !orderedVisibleColumns.includes(columnId))
-                        .map(columnId => (
-                            <ColumnItem
-                                key={attributeDetailsById[columnId].id}
-                                itemId={attributeDetailsById[columnId].id}
-                                visible={false}
-                                title={attributeDetailsById[columnId].label}
-                                onVisibilityClick={_toggleColumnVisibility(columnId)}
-                            />
-                        ))}
-                </StyledList>
-            </div>
+            <StyledListTitle id={visibleListTitle}>{t('explorer.visible-columns')}</StyledListTitle>
+            <StyledList aria-labelledby={visibleListTitle}>
+                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={_handleDragEnd}>
+                    <SortableContext items={orderedVisibleColumns} strategy={verticalListSortingStrategy}>
+                        <ColumnItem itemId="" title={t('record_edition.whoAmI')} visible={false} locked />
+                        {orderedVisibleColumns
+                            .filter(columnId => searchFilteredColumnsIds.includes(columnId))
+                            .map(columnId => (
+                                <ColumnItem
+                                    key={columnId}
+                                    itemId={attributeDetailsById[columnId].id}
+                                    title={attributeDetailsById[columnId].label}
+                                    visible
+                                    onVisibilityClick={_toggleColumnVisibility(columnId)}
+                                    dragHandler={<FaGripLines />}
+                                />
+                            ))}
+                    </SortableContext>
+                </DndContext>
+            </StyledList>
+            <StyledListTitle id={invisibleListTitle}>{t('explorer.invisible-columns')}</StyledListTitle>
+            <StyledList aria-labelledby={invisibleListTitle}>
+                {searchFilteredColumnsIds
+                    .filter(columnId => !orderedVisibleColumns.includes(columnId))
+                    .map(columnId => (
+                        <ColumnItem
+                            key={attributeDetailsById[columnId].id}
+                            itemId={attributeDetailsById[columnId].id}
+                            visible={false}
+                            title={attributeDetailsById[columnId].label}
+                            onVisibilityClick={_toggleColumnVisibility(columnId)}
+                        />
+                    ))}
+            </StyledList>
         </div>
     );
 };
