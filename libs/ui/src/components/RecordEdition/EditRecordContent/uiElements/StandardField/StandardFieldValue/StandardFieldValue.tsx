@@ -19,8 +19,10 @@ import {DSColorPickerWrapper} from './DSColorPickerWrapper';
 import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
 
 interface IStandardFieldValueProps {
-    presentationValue: string;
+    presentationValue: string | string[];
     handleSubmit: (value: AnyPrimitive | null) => Promise<void | ISubmitMultipleResult>;
+    handleDeselect?: (value: AnyPrimitive | null) => Promise<void>;
+    handleDeleteAllValues?: () => Promise<void>;
     attribute: RecordFormAttributeStandardAttributeFragment;
     label: string;
     listField?: FormListFieldData;
@@ -33,6 +35,8 @@ interface IStandardFieldValueProps {
 function StandardFieldValue({
     presentationValue,
     handleSubmit,
+    handleDeselect,
+    handleDeleteAllValues,
     attribute,
     label,
     listField,
@@ -58,6 +62,8 @@ function StandardFieldValue({
 
     const commonProps = {
         handleSubmit,
+        handleDeselect,
+        handleDeleteAllValues,
         attribute,
         presentationValue,
         readonly,

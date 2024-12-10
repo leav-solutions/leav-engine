@@ -10,10 +10,12 @@ import {
 import {CalculatedFlags, InheritedFlags} from '../calculatedInheritedFlags';
 
 export interface IStandFieldValueContentProps<T> extends IProvidedByAntFormItem<T> {
-    presentationValue?: string;
+    presentationValue?: string | string[];
     attribute?: RecordFormAttributeStandardAttributeFragment;
     label?: string;
     handleSubmit: (value: StandardValueTypes, id?: string) => Promise<void | ISubmitMultipleResult>;
+    handleDeselect: (value: StandardValueTypes, id?: string) => Promise<void | ISubmitMultipleResult>;
+    handleDeleteAllValues: () => Promise<void>;
     readonly: boolean;
     required: boolean;
     calculatedFlags: CalculatedFlags;

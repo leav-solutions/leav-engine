@@ -6,7 +6,7 @@ import {FunctionComponent, useRef, useState} from 'react';
 import styled from 'styled-components';
 import {ErrorDisplay} from '_ui/components';
 import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
-import {AttributeFormat, ValueDetailsFragment} from '_ui/_gqlTypes';
+import {AttributeFormat, RecordFormAttributeStandardAttributeFragment, ValueDetailsFragment} from '_ui/_gqlTypes';
 import {APICallStatus, IFormElementProps, ISubmitMultipleResult} from '../../_types';
 import StandardFieldValue from './StandardFieldValue';
 import {Form, FormInstance, FormListOperation} from 'antd';
@@ -70,7 +70,7 @@ const StandardField: FunctionComponent<
         indexes: number[];
     } | null>(null);
 
-    const {attribute} = element;
+    const {attribute}: {attribute?: RecordFormAttributeStandardAttributeFragment} = element;
 
     if (!attribute) {
         return <ErrorDisplay message={t('record_edition.missing_attribute')} />;
@@ -168,8 +168,8 @@ const StandardField: FunctionComponent<
 
     const _handleDeleteValue = async (
         idValue: string | undefined,
-        antdRemove: FormListOperation['remove'],
-        deletedFieldIndex: number
+        antdRemove?: FormListOperation['remove'],
+        deletedFieldIndex?: number
     ) => {
         if (idValue) {
             await onValueDelete({id_value: idValue}, attribute.id);
@@ -178,7 +178,9 @@ const StandardField: FunctionComponent<
                 previousBackendValues.filter(backendValue => backendValue.id_value !== idValue)
             );
         }
-        antdRemove(deletedFieldIndex);
+        if (antdRemove) {
+            antdRemove(deletedFieldIndex);
+        }
     };
 
     const _handleDeleteAllValues = async () => {
@@ -189,8 +191,8 @@ const StandardField: FunctionComponent<
         );
 
         if (deleteRes.status === APICallStatus.SUCCESS) {
-            antdListFieldsRef.current.remove(antdListFieldsRef.current.indexes);
-            antdListFieldsRef.current.add(defaultValueToAddInAntdForm);
+            antdListFieldsRef.current?.remove(antdListFieldsRef.current.indexes);
+            antdListFieldsRef.current?.add(defaultValueToAddInAntdForm);
             setBackendValues(previousBackendValues =>
                 previousBackendValues.filter(backendValue => !backendValue.id_value)
             );
@@ -199,6 +201,7 @@ const StandardField: FunctionComponent<
         }
     };
 
+    const isValuesListEnabled = !!attribute?.values_list?.enable;
     const isMultipleValues = element.attribute.multiple_values;
     const hasValue = isMultipleValues && backendValues.length > 0;
     const canAddAnotherValue =
@@ -206,7 +209,7 @@ const StandardField: FunctionComponent<
         isMultipleValues &&
         attribute.format !== AttributeFormat.boolean &&
         attribute.format !== AttributeFormat.encrypted;
-    const canDeleteAllValues = !readonly && hasValue && backendValues.length > 1;
+    const canDeleteAllValues = !readonly && hasValue && backendValues.length > 1 && !isValuesListEnabled;
 
     const label = localizedTranslation(element.settings.label, availableLang);
 
@@ -263,7 +266,7 @@ const StandardField: FunctionComponent<
                 helper={_getHelper()}
                 required={element.settings.required}
                 disabled={readonly}
-                bordered={attribute.multiple_values}
+                bordered={attribute.multiple_values && !isValuesListEnabled}
                 status={isFieldInError ? 'error' : undefined}
                 actions={
                     canDeleteAllValues ? [<DeleteAllValuesButton handleDelete={_handleDeleteAllValues} />] : undefined
@@ -282,7 +285,31 @@ const StandardField: FunctionComponent<
                         inheritedFlags={inheritedFlags}
                     />
                 )}
-                {attribute.multiple_values && (
+                {attribute.multiple_values && isValuesListEnabled && (
+                    <StandardFieldValue
+                        presentationValue={presentationValues}
+                        handleSubmit={valueToSave => {
+                            const idValue = backendWithoutCalculatedOrInheritedValues.find(
+                                backendValue => backendValue.raw_payload === valueToSave
+                            )?.id_value;
+                            return _handleSubmit(idValue)(valueToSave);
+                        }}
+                        handleDeselect={valueToDeselect => {
+                            const idValue = backendWithoutCalculatedOrInheritedValues.find(
+                                backendValue => backendValue.raw_payload === valueToDeselect
+                            )?.id_value;
+                            return _handleDeleteValue(idValue);
+                        }}
+                        handleDeleteAllValues={_handleDeleteAllValues}
+                        attribute={attribute}
+                        required={element.settings.required}
+                        readonly={readonly}
+                        label={label}
+                        calculatedFlags={calculatedFlags}
+                        inheritedFlags={inheritedFlags}
+                    />
+                )}
+                {attribute.multiple_values && !isValuesListEnabled && (
                     <Form.List name={attribute.id}>
                         {(fields, {add, remove}) => {
                             antdListFieldsRef.current = {add, remove, indexes: fields.map((_, index) => index)};

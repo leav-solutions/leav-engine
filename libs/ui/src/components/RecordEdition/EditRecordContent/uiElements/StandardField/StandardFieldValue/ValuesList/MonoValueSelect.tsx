@@ -41,6 +41,8 @@ export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKi
     required,
     readonly,
     handleSubmit,
+    handleDeselect,
+    handleDeleteAllValues,
     inheritedFlags,
     calculatedFlags
 }) => {
@@ -61,6 +63,7 @@ export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKi
 
     const allowFreeEntry = attribute.values_list.allowFreeEntry;
     const allowListUpdate = attribute.values_list.allowListUpdate;
+    const emptyValue = attribute.multiple_values ? [] : '';
 
     const _getFilteredValuesList = () => {
         let values = [];
@@ -89,8 +92,13 @@ export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKi
 
     const initialOptions = _getFilteredValuesList();
     let options = [...initialOptions];
+
     if (allowFreeEntry) {
-        options = addOption(options, {value, label: value});
+        if (Array.isArray(value)) {
+            value.map(val => (options = addOption(options, {value: val as string, label: val as string})));
+        } else {
+            options = addOption(options, {value, label: value});
+        }
         options = addOption(options, {
             value: searchedString,
             label:
@@ -113,7 +121,7 @@ export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKi
         await handleSubmit(null, attribute.id);
     };
 
-    const _handleOnChange = async (selectedValue: string) => {
+    const _handleOnSelect = async (selectedValue: string) => {
         setSearchedString('');
         if ((inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue) && selectedValue === '') {
             _resetToInheritedOrCalculatedValue();
@@ -138,11 +146,18 @@ export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKi
         }
 
         await handleSubmit(selectedValue, attribute.id);
-        onChange(selectedValue, options);
     };
 
+    const _handleOnDeselect = (deselectValue: string) => handleDeselect(deselectValue, attribute.id);
+
     const _handleOnClear = async () => {
-        await _handleOnChange('');
+        console.log('_handleOnClear');
+        if (attribute.multiple_values) {
+            await handleDeleteAllValues();
+        } else {
+            await handleSubmit('');
+        }
+        onChange(emptyValue, options);
     };
 
     const _handleOnSearch = async (search: string) => {
@@ -159,18 +174,20 @@ export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKi
         <KitSelect
             id={attribute.id}
             data-testid={attribute.id}
-            value={isValueEmpty ? undefined : valueToDisplay}
+            value={value}
             allowClear={!required && value}
             disabled={readonly}
             options={options}
             open={isFocused}
             status={errors.length > 0 && 'error'}
+            mode={attribute.multiple_values ? 'tags' : undefined}
             showSearch
-            onDropdownVisibleChange={visible => setIsFocused(visible)}
-            onSelect={_handleOnChange}
+            onDropdownVisibleChange={visible => console.log('renal - visible : ', visible) || setIsFocused(visible)}
+            onSelect={_handleOnSelect}
             onChange={onChange}
             onClear={_handleOnClear}
             onSearch={_handleOnSearch}
+            onDeselect={_handleOnDeselect}
             placeholder={t('record_edition.placeholder.select_an_option')}
             dropdownRender={menu => (
                 <>

@@ -36,6 +36,12 @@ const isRecordFormElementsValueLinkValues = (
 ): values is RecordFormElementsValueLinkValue[] =>
     attribute.type === AttributeType.advanced_link && attribute.multiple_values === true;
 
+const isRecordFormElementsMultipleValuesList = (attribute: RecordFormElementAttribute) =>
+    attribute.type === AttributeType.advanced &&
+    attribute.multiple_values === true &&
+    'values_list' in attribute &&
+    attribute.values_list?.enable;
+
 const isRecordFormElementsMultipleValues = (attribute: RecordFormElementAttribute) =>
     attribute.type === AttributeType.advanced && attribute.multiple_values === true;
 
@@ -92,6 +98,17 @@ export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
 
         if (isRecordFormElementsValueLinkValues(values, attribute)) {
             acc[attribute.id] = values.map(val => val?.linkValue?.id ?? undefined);
+            return acc;
+        }
+
+        if (isRecordFormElementsMultipleValuesList(attribute)) {
+            const valuesWithoutCalculatedOrInherited = values.filter(val => val.id_value);
+            acc[attribute.id] =
+                valuesWithoutCalculatedOrInherited.length === 0
+                    ? []
+                    : valuesWithoutCalculatedOrInherited
+                          .sort((a, b) => Number(a.id_value) - Number(b.id_value))
+                          .map(val => formatStandardInitialValue(val, attribute));
             return acc;
         }
 
