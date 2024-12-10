@@ -2,7 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Override} from '@leav/utils';
-import {AttributePropertiesFragment, PropertyValueFragment, RecordIdentityFragment} from '_ui/_gqlTypes';
+import {
+    AttributeDetailsFragment,
+    AttributePropertiesFragment,
+    PropertyValueFragment,
+    RecordIdentityFragment
+} from '_ui/_gqlTypes';
+import {AttributeConditionType} from '_ui/types';
 import {ReactElement} from 'react';
 
 export interface IExplorerData {
@@ -37,3 +43,17 @@ export interface IPrimaryAction {
 }
 
 export type ActionHook<T = {}> = {isEnabled: boolean} & T;
+
+export interface IExplorerFilter {
+    id: string;
+    attribute: AttributeDetailsFragment;
+    field: string;
+    condition: AttributeConditionType;
+    values: string[];
+}
+
+export interface IFilterDropDownProps {
+    filter: IExplorerFilter;
+    attribute: AttributeDetailsFragment; // TODO use it for values lists, later
+    onDeleteFilter: () => void;
+}

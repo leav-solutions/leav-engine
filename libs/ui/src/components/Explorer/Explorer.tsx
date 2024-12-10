@@ -26,6 +26,7 @@ import {
 import {useSearchInput} from './useSearchInput';
 import {usePagination} from './usePagination';
 import {Loading} from '../Loading';
+import {ExplorerFilterBar} from './display-view-filters/ExplorerFilterBar';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -128,6 +129,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                         {primaryButton}
                     </KitSpace>
                 </ExplorerHeaderDivStyled>
+                {view.filters.length > 0 && <ExplorerFilterBar />}
                 {loading ? (
                     <Loading />
                 ) : (

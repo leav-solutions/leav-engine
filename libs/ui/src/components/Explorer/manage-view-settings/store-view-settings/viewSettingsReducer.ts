@@ -1,7 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {SortOrder} from '_ui/_gqlTypes';
+import {AttributeDetailsFragment, SortOrder} from '_ui/_gqlTypes';
+import {IExplorerFilter} from '../../_types';
 
 export type ViewType = 'table' | 'list' | 'timeline' | 'mosaic';
 
@@ -23,13 +24,6 @@ export const ViewSettingsActionTypes = {
     MOVE_FILTER: 'MOVE_FILTER',
     CHANGE_FILTER_CONFIG: 'CHANGE_FILTER_CONFIG'
 } as const;
-
-export interface IExplorerFilter {
-    id: string;
-    field: string;
-    condition: string;
-    values: string[];
-}
 
 export interface IViewSettingsState {
     viewType: ViewType;

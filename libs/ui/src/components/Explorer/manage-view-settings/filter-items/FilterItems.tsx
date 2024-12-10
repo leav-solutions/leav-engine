@@ -6,7 +6,7 @@ import {FaEye, FaEyeSlash, FaSearch} from 'react-icons/fa';
 import {KitInput, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {AttributeType, SortOrder} from '_ui/_gqlTypes';
+import {AttributeType, RecordFilterCondition} from '_ui/_gqlTypes';
 import {
     closestCenter,
     DndContext,
@@ -21,7 +21,7 @@ import {useAttributeDetailsData} from '../_shared/useAttributeDetailsData';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import {FilterListItem} from './FilterListItem';
-import {SimpleFilterDropdown} from './filter-type/SimpleFilterDropDown';
+import {FilterDropDown} from './filter-type/FilterDropDown';
 
 const StyledList = styled.ul`
     padding: calc(var(--general-spacing-s) * 1px) 0;
@@ -54,8 +54,8 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
         })
     );
 
-    const _toggleColumnVisibility = (attributeId: string) => () => {
-        const isAttributeAlreadyFiltering = filters.find(filterItem => filterItem.field === attributeId);
+    const _toggleColumnVisibility = (attributeOrFilterId: string) => () => {
+        const isAttributeAlreadyFiltering = filters.find(filterItem => filterItem.id === attributeOrFilterId);
         if (isAttributeAlreadyFiltering) {
             dispatch({
                 type: ViewSettingsActionTypes.REMOVE_FILTER,
@@ -68,8 +68,9 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                 dispatch({
                     type: ViewSettingsActionTypes.ADD_FILTER,
                     payload: {
-                        field: attributeId,
-                        condition: '',
+                        field: attributeOrFilterId,
+                        attribute: attributeDetailsById[attributeOrFilterId],
+                        condition: RecordFilterCondition.EQUAL,
                         values: []
                     }
                 });
@@ -115,9 +116,10 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                                         values: activeFilter.values,
                                         dropDownProps: {
                                             dropdownRender: () => (
-                                                <SimpleFilterDropdown
+                                                <FilterDropDown
                                                     filter={activeFilter}
                                                     attribute={attributeDetailsById[activeFilter.field]}
+                                                    onDeleteFilter={_toggleColumnVisibility(activeFilter.id)}
                                                 />
                                             )
                                         }
@@ -125,7 +127,7 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                                     visibilityButtonProps={{
                                         icon: <StyledFaEye />,
                                         title: String(t('explorer.hide')),
-                                        onClick: _toggleColumnVisibility(activeFilter.field)
+                                        onClick: _toggleColumnVisibility(activeFilter.id)
                                     }}
                                 />
                             ))}
