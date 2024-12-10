@@ -1,9 +1,9 @@
-name: "Publish @leav/types @next package to npmjs on push on develop"
+name: "Publish @aristid/leav-types @next package to npmjs on push on develop"
 
 on:
   push:
     branches:
-      - feature/export-plugin-types-in-leav-ui
+      - develop
   workflow_dispatch:
     secrets:
       ARISTID_NPM_TOKEN:
@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: 'feature/export-plugin-types-in-leav-ui'
+          ref: 'develop'
       - name: Get cache NPM dependencies
         uses: actions/cache@v4
         with:
@@ -41,7 +41,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: 'feature/export-plugin-types-in-leav-ui'
+          ref: 'develop'
       - name: get next version
         id: version
         run: |
@@ -67,7 +67,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: 'feature/export-plugin-types-in-leav-ui'
+          ref: 'develop'
       # Setup .npmrc file to publish to npm
       - uses: actions/setup-node@v4
         with:
@@ -90,6 +90,6 @@ jobs:
           name: libs-types
           path: libs/types/
       - name: publish next version
-        run: yarn --cwd "libs/types" publish --tag next
+        run: yarn --cwd "libs/types" publish-types --tag next
         env:
           NODE_AUTH_TOKEN: ${{ secrets.ARISTID_NPM_TOKEN }}
