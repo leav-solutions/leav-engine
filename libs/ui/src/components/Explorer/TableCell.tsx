@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, ReactNode} from 'react';
+import {FunctionComponent, ReactNode, useCallback} from 'react';
 import {
     AttributeFormat,
     AttributePropertiesFragment,
@@ -14,7 +14,7 @@ import {
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {FaArrowRight, FaCalendar, FaListAlt} from 'react-icons/fa';
 import DOMPurify from 'dompurify';
-import {KitAvatar, KitTag, KitTypography} from 'aristid-ds';
+import {KitAvatar, KitSpace, KitTag, KitTypography} from 'aristid-ds';
 import {IKitTag, IKitTagConfig} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types';
 import styled from 'styled-components';
 import {IdCard} from './IdCard';
@@ -43,6 +43,9 @@ const isTreeValue = (
     v: PropertyValueFragment,
     attribute: AttributePropertiesFragment
 ): v is PropertyValueTreeValueFragment => [AttributeType.tree].includes(attribute.type);
+
+const isDateRangeValue = (v: PropertyValueValueFragment['valuePayload']): v is {from: string; to: string} =>
+    'from' in v && 'to' in v;
 
 const StyledCenteringWrapper = styled.div`
     display: flex;
@@ -73,6 +76,19 @@ interface ITableCellProps {
 export const TableCell: FunctionComponent<ITableCellProps> = ({values, attributeProperties}) => {
     const {t} = useSharedTranslation();
 
+    const _getDateRangeValueContent = useCallback((value: PropertyValueValueFragment['valuePayload']) => {
+        if (!isDateRangeValue(value)) {
+            return t('explorer.invalid-value');
+        }
+
+        return (
+            <KitSpace size="xxs">
+                <StyledFaCalendar />
+                {value.from} <FaArrowRight /> {value.to}
+            </KitSpace>
+        );
+    }, []);
+
     if (attributeProperties.multiple_values) {
         if (isStandardValues(values, attributeProperties)) {
             const tags = values.map<IKitTagConfig>(value => {
@@ -95,6 +111,13 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                                     className: multiColorTagAvatarClassName
                                 }
                             }
+                        };
+                    case AttributeFormat.date_range:
+                        return {
+                            idCardProps: {
+                                description: _getDateRangeValueContent(value.valuePayload)
+                            },
+                            type: 'primary'
                         };
                     default:
                         const valueContent =
@@ -180,13 +203,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                     );
                     break;
                 case AttributeFormat.date_range:
-                    const dateRange = value.valuePayload;
-                    content = (
-                        <>
-                            <StyledFaCalendar />
-                            {dateRange.from} <FaArrowRight /> {dateRange.to}
-                        </>
-                    );
+                    content = _getDateRangeValueContent(value.valuePayload);
                     break;
                 default:
                     const valueContent =

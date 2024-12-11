@@ -117,6 +117,17 @@ const simpleDateRangeMockAttribute = {
     }
 } satisfies gqlTypes.AttributePropertiesFragment;
 
+const multivalDateRangeMockAttribute = {
+    ...simpleDateRangeMockAttribute,
+    id: 'multival_date_range',
+    type: gqlTypes.AttributeType.advanced,
+    multiple_values: true,
+    label: {
+        fr: 'Ma période multival',
+        en: 'My multivalued date range'
+    }
+} satisfies gqlTypes.AttributePropertiesFragment;
+
 describe('Explorer', () => {
     const recordId1 = '613982168';
     const enrichTextRecord1 = '<h1>This is a test enrich text<script>alert("XSS")</script></h1>';
@@ -125,6 +136,7 @@ describe('Explorer', () => {
     const enrichTextRecord2 = '<h1>This is a test enrich text</h1>';
     const colorRecord2 = '5510d1';
     const dateRangeRecord1 = {from: '2023-11-06', to: '2023-11-07'};
+    const dateRangeRecord2 = {from: '2024-11-06', to: '2024-11-07'};
     const mockRecords = [
         {
             id: '613982168',
@@ -252,6 +264,18 @@ describe('Explorer', () => {
                             valuePayload: dateRangeRecord1
                         }
                     ]
+                },
+                {
+                    attributeId: multivalDateRangeMockAttribute.id,
+                    attributeProperties: multivalDateRangeMockAttribute,
+                    values: [
+                        {
+                            valuePayload: dateRangeRecord1
+                        },
+                        {
+                            valuePayload: dateRangeRecord2
+                        }
+                    ]
                 }
             ]
         },
@@ -331,6 +355,11 @@ describe('Explorer', () => {
                 {
                     attributeId: simpleDateRangeMockAttribute.id,
                     attributeProperties: simpleDateRangeMockAttribute,
+                    values: []
+                },
+                {
+                    attributeId: multivalDateRangeMockAttribute.id,
+                    attributeProperties: multivalDateRangeMockAttribute,
                     values: []
                 }
             ]
@@ -455,7 +484,8 @@ describe('Explorer', () => {
                         multivalColorMockAttribute.id,
                         booleanMockAttribute.id,
                         multivalBooleanMockAttribute.id,
-                        simpleDateRangeMockAttribute.id
+                        simpleDateRangeMockAttribute.id,
+                        multivalDateRangeMockAttribute.id
                     ]
                 }}
             />
@@ -476,7 +506,8 @@ describe('Explorer', () => {
             multivalColorCell,
             boolCell,
             multivalBoolCell,
-            simpleDateRangeCell
+            simpleDateRangeCell,
+            multivalDateRangeCell
         ] = within(firstRecordRow).getAllByRole('cell');
 
         expect(within(whoAmICell).getByText(record1.whoAmI.label)).toBeInTheDocument();
@@ -506,7 +537,13 @@ describe('Explorer', () => {
         expect(within(multivalBoolCell).getByText(/yes/)).toBeVisible();
         expect(within(multivalBoolCell).getByText(/no/)).toBeVisible();
 
-        expect(simpleDateRangeCell).toHaveTextContent(`${dateRangeRecord1.from} ${dateRangeRecord1.to}`);
+        expect(within(simpleDateRangeCell).getByText(new RegExp(dateRangeRecord1.from))).toBeVisible();
+        expect(within(simpleDateRangeCell).getByText(new RegExp(dateRangeRecord1.to))).toBeVisible();
+
+        expect(within(multivalDateRangeCell).getByText(new RegExp(dateRangeRecord1.from))).toBeVisible();
+        expect(within(multivalDateRangeCell).getByText(new RegExp(dateRangeRecord1.to))).toBeVisible();
+        expect(within(multivalDateRangeCell).getByText(new RegExp(dateRangeRecord2.from))).toBeVisible();
+        expect(within(multivalDateRangeCell).getByText(new RegExp(dateRangeRecord2.to))).toBeVisible();
     });
 
     test('Should be able to deactivate a record with default actions', async () => {

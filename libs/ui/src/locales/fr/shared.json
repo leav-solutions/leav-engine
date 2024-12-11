@@ -648,6 +648,7 @@
         "visible-columns": "Colonnes visibles",
         "invisible-columns": "Colonnes invisibles",
         "active-items-number": "{{count, number}} actifs",
-        "active-items-number_zero": "Aucun"
+        "active-items-number_zero": "Aucun",
+        "invalid-value": "Valeur invalide"
     }
 }
