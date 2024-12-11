@@ -16,8 +16,6 @@ jobs:
     needs: install
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: 'develop'
       - name: Get cache NPM dependencies
         uses: actions/cache@v4
         with:
@@ -40,8 +38,6 @@ jobs:
       exists: ${{ steps.check.outputs.exists }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: 'develop'
       - name: get next version
         id: version
         run: |
@@ -66,8 +62,6 @@ jobs:
     if: ${{needs.prepublish.outputs.exists == '0'}}
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: 'develop'
       # Setup .npmrc file to publish to npm
       - uses: actions/setup-node@v4
         with:
