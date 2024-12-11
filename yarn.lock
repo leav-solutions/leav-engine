@@ -576,6 +576,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aristid/leav-types@workspace:libs/types":
+  version: 0.0.0-use.local
+  resolution: "@aristid/leav-types@workspace:libs/types"
+  languageName: unknown
+  linkType: soft
+
 "@babel/cli@npm:^7.21.0":
   version: 7.22.15
   resolution: "@babel/cli@npm:7.22.15"
