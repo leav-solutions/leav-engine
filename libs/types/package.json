@@ -1,0 +1,13 @@
+{
+  "name": "@aristid/leav-types",
+  "version": "0.0.7",
+  "description": "Shared Leav types",
+  "scripts": {
+    "tscheck": "",
+    "test:ci": "",
+    "test:commit": "",
+    "publish-types": "npm publish --access public"
+  },
+  "license": "LGPL3",
+  "repository": "https://github.com/leav-solutions/leav-engine"
+}
