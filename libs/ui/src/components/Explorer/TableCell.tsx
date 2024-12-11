@@ -12,7 +12,7 @@ import {
     PropertyValueValueFragment
 } from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {FaListAlt} from 'react-icons/fa';
+import {FaArrowRight, FaCalendar, FaListAlt} from 'react-icons/fa';
 import DOMPurify from 'dompurify';
 import {KitAvatar, KitTag, KitTypography} from 'aristid-ds';
 import {IKitTag, IKitTagConfig} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types';
@@ -58,6 +58,10 @@ const StyledColorChip = styled.div<{$colorTextContent: string}>`
 `;
 
 const StyledFaListAlt = styled(FaListAlt)`
+    flex-shrink: 0;
+`;
+
+const StyledFaCalendar = styled(FaCalendar)`
     flex-shrink: 0;
 `;
 
@@ -139,6 +143,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
             if (value.valuePayload === null) {
                 return null;
             }
+
             switch (attributeProperties.format) {
                 case AttributeFormat.boolean:
                     const valueToDisplay = value.valuePayload ? t('global.yes') : t('global.no');
@@ -171,6 +176,15 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                             <KitTypography.Text key={attributeProperties.id} ellipsis={{tooltip: colorTextContent}}>
                                 {colorTextContent}
                             </KitTypography.Text>
+                        </>
+                    );
+                    break;
+                case AttributeFormat.date_range:
+                    const dateRange = value.valuePayload;
+                    content = (
+                        <>
+                            <StyledFaCalendar />
+                            {dateRange.from} <FaArrowRight /> {dateRange.to}
                         </>
                     );
                     break;
