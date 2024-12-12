@@ -86,10 +86,10 @@ export const SimpleFilterDropdown: FunctionComponent<IFilterDropDownProps> = ({f
                 onSelectionChanged={onValueClick}
             />
             <KitDivider noMargin />
-            <KitButton type="link" icon={<FaClock />} disabled>
+            <KitButton type="redirect" icon={<FaClock />} disabled>
                 {t('explorer.reset-filter')}
             </KitButton>
-            <KitButton type="link" icon={<FaTrash />} onClick={_onDeleteFilter}>
+            <KitButton type="redirect" icon={<FaTrash />} onClick={_onDeleteFilter}>
                 {t('global.delete')}
             </KitButton>
         </KitSpace>

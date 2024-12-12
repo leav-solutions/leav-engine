@@ -8,7 +8,6 @@ import {FunctionComponent} from 'react';
 import {FilterDropDown} from '../manage-view-settings/filter-items/filter-type/FilterDropDown';
 import {FaTrash} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {AttributeFormat} from '_ui/_gqlTypes';
 
 const FilterStyled = styled(KitFilter)`
     flex: 0 0 auto;
@@ -56,9 +55,7 @@ export const ExplorerFilterBar: FunctionComponent = () => {
                             values={filter.value === null ? [] : [filter.value]}
                             dropDownProps={{
                                 placement: 'bottomLeft',
-                                dropdownRender: () => (
-                                    <FilterDropDown filter={filter} format={filter.attribute.format} />
-                                )
+                                dropdownRender: () => <FilterDropDown filter={filter} />
                             }}
                         />
                     ))}

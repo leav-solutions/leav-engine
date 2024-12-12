@@ -54,31 +54,28 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
         })
     );
 
-    const _toggleColumnVisibility = (attributeOrFilterId: string) => () => {
-        const isAttributeAlreadyFiltering = filters.find(filterItem => filterItem.id === attributeOrFilterId);
-        if (isAttributeAlreadyFiltering) {
-            dispatch({
-                type: ViewSettingsActionTypes.REMOVE_FILTER,
-                payload: {
-                    id: isAttributeAlreadyFiltering.id
-                }
-            });
-        } else {
-            if (canAddFilter) {
-                dispatch({
-                    type: ViewSettingsActionTypes.ADD_FILTER,
-                    payload: {
-                        field: attributeOrFilterId,
-                        attribute: {
-                            label: attributeDetailsById[attributeOrFilterId].label,
-                            format: attributeDetailsById[attributeOrFilterId].format ?? AttributeFormat.text
-                        },
-                        condition: RecordFilterCondition.EQUAL,
-                        value: null
-                    }
-                });
+    const addFilter = (attributeId: string) => () => {
+        dispatch({
+            type: ViewSettingsActionTypes.ADD_FILTER,
+            payload: {
+                field: attributeId,
+                attribute: {
+                    label: attributeDetailsById[attributeId].label,
+                    format: attributeDetailsById[attributeId].format ?? AttributeFormat.text
+                },
+                condition: RecordFilterCondition.EQUAL,
+                value: null
             }
-        }
+        });
+    };
+
+    const removeFilter = (filterId: string) => () => {
+        dispatch({
+            type: ViewSettingsActionTypes.REMOVE_FILTER,
+            payload: {
+                id: filterId
+            }
+        });
     };
 
     const _handleDragEnd = ({active: draggedElement, over: dropTarget}: DragEndEvent) => {
@@ -118,18 +115,13 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                                         expandable: true,
                                         values: activeFilter.value === null ? [] : [activeFilter.value],
                                         dropDownProps: {
-                                            dropdownRender: () => (
-                                                <FilterDropDown
-                                                    filter={activeFilter}
-                                                    format={activeFilter.attribute.format}
-                                                />
-                                            )
+                                            dropdownRender: () => <FilterDropDown filter={activeFilter} />
                                         }
                                     }}
                                     visibilityButtonProps={{
                                         icon: <StyledFaEye />,
                                         title: String(t('explorer.hide')),
-                                        onClick: _toggleColumnVisibility(activeFilter.id)
+                                        onClick: removeFilter(activeFilter.id)
                                     }}
                                 />
                             ))}
@@ -158,7 +150,7 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                                 ? {
                                       icon: <StyledEyeSlash />,
                                       title: String(t('explorer.show')),
-                                      onClick: _toggleColumnVisibility(attributeId)
+                                      onClick: addFilter(attributeId)
                                   }
                                 : undefined
                         }

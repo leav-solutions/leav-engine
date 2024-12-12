@@ -82,11 +82,7 @@ export const FilterValueList: FunctionComponent<IFilterValueListProps> = ({
         if (selectedValues.includes(value)) {
             onSelectionChanged(selectedValues.filter(selectedValue => selectedValue !== value));
         } else {
-            if (multiple) {
-                onSelectionChanged([...selectedValues, value]);
-            } else {
-                onSelectionChanged([value]);
-            }
+            onSelectionChanged(multiple ? [...selectedValues, value] : [value]);
         }
     };
 

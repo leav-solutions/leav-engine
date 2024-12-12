@@ -8,11 +8,8 @@ import {SimpleFilterDropdown} from './SimpleFilterDropDown';
 import {TextAttributeDropDown} from './TextAttributeDropDown';
 import {NumericAttributeDropDown} from './NumericAttributeDropDown';
 
-export const FilterDropDown: FunctionComponent<{format: AttributeFormat} & IFilterDropDownProps> = ({
-    filter,
-    format
-}) => {
-    switch (format) {
+export const FilterDropDown: FunctionComponent<IFilterDropDownProps> = ({filter}) => {
+    switch (filter.attribute.format) {
         case AttributeFormat.numeric:
             return <NumericAttributeDropDown filter={filter} />;
         case AttributeFormat.text:

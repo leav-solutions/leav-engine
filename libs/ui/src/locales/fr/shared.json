@@ -653,6 +653,6 @@
         "active-items-number": "{{count, number}} actifs",
         "active-items-number_zero": "Aucun",
         "invalid-value": "Valeur invalide",
-        "type-a-value": "Écrivez une valeur"
+        "type-a-value": "Saisissez une valeur"
     }
 }

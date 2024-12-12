@@ -30,7 +30,8 @@ export const TextAttributeDropDown: FunctionComponent<IFilterDropDownProps> = ({
 
     // TODO debounce ?
     const _onInputChanged: ComponentProps<typeof KitInput>['onChange'] = event => {
-        const shouldIgnoreInputChange = event.target.value.length < 3 && (filter.value?.length ?? 0) < 3;
+        const shouldIgnoreInputChange =
+            event.target.value.length < 3 && (filter.value?.length ?? 0) <= event.target.value.length;
         if (shouldIgnoreInputChange) {
             return;
         }
@@ -60,10 +61,10 @@ export const TextAttributeDropDown: FunctionComponent<IFilterDropDownProps> = ({
                 />
             )}
             <KitDivider noMargin />
-            <KitButton type="link" icon={<FaClock />} disabled>
+            <KitButton type="redirect" icon={<FaClock />} disabled>
                 {t('explorer.reset-filter')}
             </KitButton>
-            <KitButton type="link" icon={<FaTrash />} onClick={_onDeleteFilter}>
+            <KitButton type="redirect" icon={<FaTrash />} onClick={_onDeleteFilter}>
                 {t('global.delete')}
             </KitButton>
         </KitSpace>

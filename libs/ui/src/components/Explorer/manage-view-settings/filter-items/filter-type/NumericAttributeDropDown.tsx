@@ -55,10 +55,10 @@ export const NumericAttributeDropDown: FunctionComponent<IFilterDropDownProps> =
                 />
             )}
             <KitDivider noMargin />
-            <KitButton type="link" icon={<FaClock />} onClick={_onResetFilter}>
+            <KitButton type="redirect" icon={<FaClock />} onClick={_onResetFilter}>
                 {t('explorer.reset-filter')}
             </KitButton>
-            <KitButton type="link" icon={<FaTrash />} onClick={_onDeleteFilter}>
+            <KitButton type="redirect" icon={<FaTrash />} onClick={_onDeleteFilter}>
                 {t('global.delete')}
             </KitButton>
         </KitSpace>
