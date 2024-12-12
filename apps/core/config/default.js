@@ -51,7 +51,8 @@ module.exports = {
                 'http://keycloak:8080/realms/LEAV/.well-known/openid-configuration',
             clientId: process.env.OIDC_CLIENT_ID || 'leav',
             postLogoutRedirectUri: process.env.OIDC_POST_LOGOUT_REDIRECT_URI || 'http://core.leav.localhost/'
-        }
+        },
+        testApiKey: process.env.TEST_API_KEY // /!\ do not use in production /!\
     },
     mailer: {
         host: process.env.MAILER_HOST || 'localhost',
