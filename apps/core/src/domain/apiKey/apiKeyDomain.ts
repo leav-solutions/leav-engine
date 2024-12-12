@@ -17,6 +17,7 @@ import PermissionError from '../../errors/PermissionError';
 import {Errors} from '../../_types/errors';
 import {IList, SortOrder} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
+import {IConfig} from '../../_types/config';
 
 export interface IApiKeyDomain {
     getApiKeys(params: {params?: IGetCoreApiKeysParams; ctx: IQueryInfos}): Promise<IList<IApiKey>>;
@@ -32,13 +33,15 @@ export interface IApiKeyDomainDeps {
     'core.infra.apiKey': IApiKeyRepo;
     'core.utils': IUtils;
     translator: i18n;
+    config: IConfig;
 }
 
 export default function ({
     'core.domain.permission.admin': adminPermissionDomain,
     'core.domain.eventsManager': eventsManagerDomain,
     'core.infra.apiKey': apiKeyRepo,
-    'core.utils': utils
+    'core.utils': utils,
+    config
 }: IApiKeyDomainDeps): IApiKeyDomain {
     const _hashApiKey = async (key: string): Promise<string> => {
         const salt = await bcrypt.genSalt(10);
@@ -196,6 +199,15 @@ export default function ({
             return keyToReturn;
         },
         async validateApiKey({apiKey, ctx}) {
+            if (config.env === 'development' && config.auth.testApiKey && config.auth.testApiKey === apiKey) {
+                const now = new Date();
+                return {
+                    label: 'testApiKey',
+                    expiresAt: new Date(now.setDate(now.getDate() + 1)).getTime(),
+                    userId: config.defaultUserId
+                };
+            }
+
             // Get key hash
             const {id, key: rawKey} = _decodeExposedKey(apiKey);
 
@@ -203,7 +215,6 @@ export default function ({
             const keyData = await this.getApiKeyProperties({id, hideKey: false, ctx});
 
             const isKeyValid = await bcrypt.compare(rawKey, keyData.key);
-
             if (!isKeyValid) {
                 throw new AuthenticationError('Invalid API key');
             }

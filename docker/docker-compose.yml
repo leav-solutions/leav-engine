@@ -172,6 +172,7 @@ services:
       - *volume-message_broker-modules
     ports:
       - "9229:9229"
+      - "4001:4001"
     working_dir: *dir-core
     healthcheck:
       test: ["CMD-SHELL", "nc -z core 4001 || exit 1"]
