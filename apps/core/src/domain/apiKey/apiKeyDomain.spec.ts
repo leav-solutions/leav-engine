@@ -13,13 +13,18 @@ import {AdminPermissionsActions} from '../../_types/permissions';
 import {mockApiKey} from '../../__tests__/mocks/apiKey';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import apiKeyDomain, {IApiKeyDomainDeps} from './apiKeyDomain';
+import {Mockify} from '@leav/utils';
+import {IAuth, IConfig} from '../../_types/config';
+import * as Config from '_types/config';
+import {IAttributeDomainDeps} from '../attribute/attributeDomain';
 
 const depsBase: ToAny<IApiKeyDomainDeps> = {
     'core.domain.permission.admin': jest.fn(),
     'core.domain.eventsManager': jest.fn(),
     'core.infra.apiKey': jest.fn(),
     'core.utils': jest.fn(),
-    translator: {}
+    translator: {},
+    config: {}
 };
 
 describe('apiKeyDomain', () => {
@@ -344,6 +349,27 @@ describe('apiKeyDomain', () => {
             expect(apiKey).toEqual(mockApiKey);
 
             bcryptSpy.mockRestore();
+        });
+
+        test('Validate a test api key', async () => {
+            const mockconfig = {
+                auth: {
+                    testApiKey: mockApiKey.key
+                },
+                env: 'development',
+                defaultUserId: 'defaultUserId'
+            };
+
+            const domain = apiKeyDomain({
+                ...depsBase,
+                config: mockconfig
+            } as ToAny<IApiKeyDomainDeps>);
+
+            const apiKey = await domain.validateApiKey({apiKey: mockApiKey.key, ctx: mockCtx});
+
+            expect(apiKey.label).toEqual('testApiKey');
+            expect(apiKey.userId).toEqual('defaultUserId');
+            expect(apiKey.expiresAt).toBeGreaterThan(new Date().getTime());
         });
     });
 });
