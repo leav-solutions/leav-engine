@@ -36,7 +36,7 @@ export const useEditAction = ({isEnabled}: ActionHook) => {
     const _handleEditModalClose = (item: IItemData) => {
         refreshItem({
             variables: {
-                libraryId: editingItem?.libraryId ?? '',
+                libraryId: item.libraryId,
                 attributeIds: ['id'],
                 pagination: {limit: 1},
                 filters: [

@@ -111,25 +111,6 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 
     const {searchInput} = useSearchInput({view, dispatch});
 
-    const dataViewProps: Pick<
-        ComponentProps<typeof DataView>,
-        'paginationProps' | 'attributesToDisplay' | 'itemActions'
-    > = useMemo(
-        () => ({
-            attributesToDisplay: ['whoAmI', ...view.attributesIds],
-            paginationProps: {
-                pageSizeOptions: defaultPageSizeOptions,
-                currentPage,
-                pageSize: view.pageSize,
-                setNewPageSize,
-                setNewPage,
-                totalItems: data?.totalCount ?? 0
-            },
-            itemActions: [editAction, deactivateAction, ...(itemActions ?? emptyArray)].filter(Boolean)
-        }),
-        [view.attributesIds, data?.totalCount, itemActions, editAction, deactivateAction]
-    );
-
     return (
         <ViewSettingsContext.Provider value={{view, dispatch}}>
             <ExplorerPageDivStyled>
@@ -138,7 +119,6 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                         <ExplorerTitle library={library} title={title} />
                     </KitTypography.Title>
                     <KitSpace size="xs">
-                        kikoo
                         {searchInput}
                         {viewSettingsButton}
                         {primaryButton}
@@ -153,7 +133,16 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                     <DataView
                         dataGroupedFilteredSorted={data?.records ?? emptyArray}
                         attributesProperties={data?.attributes ?? emptyObject}
-                        {...dataViewProps}
+                        attributesToDisplay={['whoAmI', ...view.attributesIds]}
+                        paginationProps={{
+                            pageSizeOptions: defaultPageSizeOptions,
+                            currentPage,
+                            pageSize: view.pageSize,
+                            setNewPageSize,
+                            setNewPage,
+                            totalItems: data?.totalCount ?? 0
+                        }}
+                        itemActions={[editAction, deactivateAction, ...(itemActions ?? emptyArray)].filter(Boolean)}
                     />
                 )}
             </ExplorerPageDivStyled>

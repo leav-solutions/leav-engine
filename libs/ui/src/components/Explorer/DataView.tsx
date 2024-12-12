@@ -47,6 +47,13 @@ interface IDataViewProps {
     };
 }
 
+const arePropsEqual = (prevProps: IDataViewProps, nextProps: IDataViewProps) =>
+    prevProps.itemActions.length === nextProps.itemActions.length &&
+    prevProps.attributesToDisplay.length === nextProps.attributesToDisplay.length &&
+    prevProps.paginationProps?.totalItems === nextProps.paginationProps?.totalItems &&
+    prevProps.paginationProps?.currentPage === nextProps.paginationProps?.currentPage &&
+    prevProps.paginationProps?.pageSize === nextProps.paginationProps?.pageSize;
+
 export const DataView: FunctionComponent<IDataViewProps> = memo(
     ({dataGroupedFilteredSorted, attributesToDisplay, attributesProperties, paginationProps, itemActions}) => {
         const {t} = useSharedTranslation();
@@ -170,5 +177,6 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                 )}
             </DataViewContainerDivStyled>
         );
-    }
+    },
+    arePropsEqual
 );
