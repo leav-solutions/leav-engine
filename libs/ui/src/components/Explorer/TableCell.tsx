@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, ReactNode} from 'react';
+import {FunctionComponent, ReactNode, useCallback} from 'react';
 import {
     AttributeFormat,
     AttributePropertiesFragment,
@@ -12,9 +12,9 @@ import {
     PropertyValueValueFragment
 } from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {FaListAlt} from 'react-icons/fa';
+import {FaArrowRight, FaCalendar, FaListAlt} from 'react-icons/fa';
 import DOMPurify from 'dompurify';
-import {KitAvatar, KitTag, KitTypography} from 'aristid-ds';
+import {KitAvatar, KitSpace, KitTag, KitTypography} from 'aristid-ds';
 import {IKitTag, IKitTagConfig} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types';
 import styled from 'styled-components';
 import {IdCard} from './IdCard';
@@ -44,6 +44,9 @@ const isTreeValue = (
     attribute: AttributePropertiesFragment
 ): v is PropertyValueTreeValueFragment => [AttributeType.tree].includes(attribute.type);
 
+const isDateRangeValue = (v: PropertyValueValueFragment['valuePayload']): v is {from: string; to: string} =>
+    'from' in v && 'to' in v;
+
 const StyledCenteringWrapper = styled.div`
     display: flex;
     align-items: center;
@@ -61,6 +64,10 @@ const StyledFaListAlt = styled(FaListAlt)`
     flex-shrink: 0;
 `;
 
+const StyledFaCalendar = styled(FaCalendar)`
+    flex-shrink: 0;
+`;
+
 interface ITableCellProps {
     values: PropertyValueFragment[];
     attributeProperties: AttributePropertiesFragment;
@@ -68,6 +75,19 @@ interface ITableCellProps {
 
 export const TableCell: FunctionComponent<ITableCellProps> = ({values, attributeProperties}) => {
     const {t} = useSharedTranslation();
+
+    const _getDateRangeValueContent = useCallback((value: PropertyValueValueFragment['valuePayload']) => {
+        if (!isDateRangeValue(value)) {
+            return t('explorer.invalid-value');
+        }
+
+        return (
+            <KitSpace size="xxs">
+                <StyledFaCalendar />
+                {value.from} <FaArrowRight /> {value.to}
+            </KitSpace>
+        );
+    }, []);
 
     if (attributeProperties.multiple_values) {
         if (isStandardValues(values, attributeProperties)) {
@@ -91,6 +111,13 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                                     className: multiColorTagAvatarClassName
                                 }
                             }
+                        };
+                    case AttributeFormat.date_range:
+                        return {
+                            idCardProps: {
+                                description: _getDateRangeValueContent(value.valuePayload)
+                            },
+                            type: 'primary'
                         };
                     default:
                         const valueContent =
@@ -139,6 +166,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
             if (value.valuePayload === null) {
                 return null;
             }
+
             switch (attributeProperties.format) {
                 case AttributeFormat.boolean:
                     const valueToDisplay = value.valuePayload ? t('global.yes') : t('global.no');
@@ -173,6 +201,9 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                             </KitTypography.Text>
                         </>
                     );
+                    break;
+                case AttributeFormat.date_range:
+                    content = _getDateRangeValueContent(value.valuePayload);
                     break;
                 default:
                     const valueContent =
