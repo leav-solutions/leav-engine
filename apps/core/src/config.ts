@@ -64,7 +64,8 @@ export const validateConfig = (conf: IConfig) => {
                     then: Joi.string().required(),
                     otherwise: Joi.string()
                 })
-            })
+            }),
+            testApiKey: Joi.string()
         }),
         mailer: Joi.object().keys({
             host: Joi.string(),
@@ -190,6 +191,10 @@ export const validateConfig = (conf: IConfig) => {
     if (!!isValid.error) {
         const errorMsg = isValid.error.details.map(e => e.message).join(', ');
         throw new Error(errorMsg);
+    }
+
+    if (conf.env === 'production' && conf.auth.testApiKey) {
+        console.warn('/!\\ Test API key is set in config, it should be removed in production /!\\');
     }
 };
 
