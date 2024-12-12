@@ -81,7 +81,7 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
 
         // TODO : validate form with await form.validateFields(state.attribute.id)
 
-        let datesToSave: StandardValueTypes = '';
+        let datesToSave: StandardValueTypes = null;
 
         if (rangePickerDates !== null) {
             const [dateFrom, dateTo] = rangePickerDates;
