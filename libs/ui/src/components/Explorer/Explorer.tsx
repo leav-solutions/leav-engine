@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ComponentProps, FunctionComponent, useReducer} from 'react';
 import {createPortal} from 'react-dom';
-import {KitSpace, KitTypography} from 'aristid-ds';
+import {KitEmpty, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {IItemAction, IPrimaryAction} from './_types';
 import {useExplorerData} from './_queries/useExplorerData';
@@ -26,6 +26,8 @@ import {
 import {useSearchInput} from './useSearchInput';
 import {usePagination} from './usePagination';
 import {Loading} from '../Loading';
+import {ExplorerFilterBar} from './display-view-filters/ExplorerFilterBar';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -64,6 +66,8 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     defaultPrimaryActions = ['create'],
     defaultViewSettings
 }) => {
+    const {t} = useSharedTranslation();
+
     const {panelElement} = useEditSettings();
 
     const [view, dispatch] = useReducer(viewSettingsReducer, {
@@ -79,7 +83,8 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         attributeIds: view.attributesIds,
         fulltextSearch: view.fulltextSearch,
         pagination: noPagination ? null : {limit: view.pageSize, offset: view.pageSize * (currentPage - 1)},
-        sorts: view.sort
+        sorts: view.sort,
+        filters: view.filters
     }); // TODO: refresh when go back on page
 
     const {deactivateAction} = useDeactivateAction({
@@ -128,13 +133,16 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                         {primaryButton}
                     </KitSpace>
                 </ExplorerHeaderDivStyled>
+                <ExplorerFilterBar />
                 {loading ? (
                     <Loading />
+                ) : data === null ? (
+                    <KitEmpty title={t('explorer.empty-data')} />
                 ) : (
                     <DataView
-                        dataGroupedFilteredSorted={data?.records ?? []}
+                        dataGroupedFilteredSorted={data.records ?? []}
                         itemActions={[editAction, deactivateAction, ...(itemActions ?? [])].filter(Boolean)}
-                        attributesProperties={data?.attributes ?? {}}
+                        attributesProperties={data.attributes ?? {}}
                         attributesToDisplay={['whoAmI', ...view.attributesIds]}
                         {...dataViewAdditionalProps}
                     />
