@@ -256,13 +256,15 @@ const StandardField: FunctionComponent<
         isFieldInError = antdForm.getFieldError(attribute.id).length > 0 || hasErrorsInFormList;
     }
 
+    const isReadOnly = attribute.readonly || readonly;
+
     return (
         <Wrapper $metadataEdit={metadataEdit}>
             <KitInputWrapperStyled
                 label={label}
                 helper={_getHelper()}
                 required={element.settings.required}
-                disabled={readonly}
+                disabled={isReadOnly}
                 bordered={attribute.multiple_values}
                 status={isFieldInError ? 'error' : undefined}
                 actions={
@@ -276,7 +278,7 @@ const StandardField: FunctionComponent<
                         handleSubmit={_handleSubmit(backendWithoutCalculatedOrInheritedValues[0]?.id_value)}
                         attribute={attribute}
                         required={element.settings.required}
-                        readonly={readonly}
+                        readonly={isReadOnly}
                         label={label}
                         calculatedFlags={calculatedFlags}
                         inheritedFlags={inheritedFlags}
@@ -306,7 +308,7 @@ const StandardField: FunctionComponent<
                                                         attribute={attribute}
                                                         label={label}
                                                         required={element.settings.required}
-                                                        readonly={readonly}
+                                                        readonly={isReadOnly}
                                                         calculatedFlags={calculatedFlags}
                                                         inheritedFlags={inheritedFlags}
                                                     />
