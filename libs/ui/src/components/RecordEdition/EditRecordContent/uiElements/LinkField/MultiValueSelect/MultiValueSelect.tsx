@@ -132,7 +132,6 @@ export const MultiValueSelect: FunctionComponent<IMultiValueSelectProps> = ({
             onSelect={_handleSelect}
             onClear={_clearValues}
             onBlur={_handleBlur}
-            // @ts-expect-error
             onDeselect={_handleDeselect}
             onChange={onChange}
             onInfoClick={shouldShowValueDetailsButton ? onValueDetailsButtonClick : null}
