@@ -639,6 +639,9 @@
             "active": "Active filters",
             "inactive": "Inactive filters"
         },
+        "reset-filter": "Reset filter",
+        "delete-filters": "Delete all filters",
+        "empty-data": "No items found.",
         "available-attributes": "Other available attributes",
         "coming-soon": "Coming soon",
         "show": "Show",
@@ -649,6 +652,7 @@
         "pagination-total-number": "{{from, number}} - {{to, number}} of {{total, number}} items",
         "active-items-number": "{{count, number}} active",
         "active-items-number_zero": "None",
-        "invalid-value": "Invalid value"
+        "invalid-value": "Invalid value",
+        "type-a-value": "Type a value"
     }
 }

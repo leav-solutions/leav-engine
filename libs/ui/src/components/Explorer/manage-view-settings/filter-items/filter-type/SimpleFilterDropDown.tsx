@@ -2,12 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {KitButton, KitDivider, KitInput, KitSelect, KitSpace} from 'aristid-ds';
-import {FunctionComponent} from 'react';
-import {FaCheck, FaClock, FaTrash} from 'react-icons/fa';
+import {KitButton, KitDivider, KitSelect, KitSpace} from 'aristid-ds';
+import {ComponentProps, FunctionComponent} from 'react';
+import {FaClock, FaTrash} from 'react-icons/fa';
 import {useViewSettingsContext} from '../../store-view-settings/useViewSettingsContext';
-import {IExplorerFilter, ViewSettingsActionTypes} from '../../store-view-settings/viewSettingsReducer';
-import styled from 'styled-components';
+import {ViewSettingsActionTypes} from '../../store-view-settings/viewSettingsReducer';
+import {IFilterDropDownProps} from '_ui/components/Explorer/_types';
+import {FilterValueList} from './FilterValueList';
 
 // TODO : This is an exemple file showing ho to customize dropdown Panel content. Don't mind the content of the file, missing types,... it's just an example.
 
@@ -42,36 +43,9 @@ const conditions = [
     }
 ];
 
-const attributeValuesList = ['Value 1', 'Value 2', 'Value 3', 'Value 4', 'Value 5'];
+const attributeValuesList = ['toto', 'tata', 'Value 3', 'Value 4', 'Value 5'];
 
-const ValueListItemValueLi = styled.li`
-    display: flex;
-    align-items: center;
-    min-height: 32px;
-    height: 32px;
-    border-radius: calc(var(--general-border-radius-s) * 1px);
-    cursor: pointer;
-
-    &.selected {
-        color: var(--components-Icon-colors-icon-on, var(--general-utilities-main-default));
-        background-color: var(--components-Icon-colors-background-on, var(--general-utilities-main-light));
-    }
-
-    .label {
-        flex: 1;
-        padding: 0 calc(var(--general-spacing-xs) * 1px);
-    }
-
-    .check {
-        flex: 0;
-        padding: 0 calc(var(--general-spacing-xs) * 1px);
-    }
-`;
-
-export const SimpleFilterDropdown: FunctionComponent<{
-    filter: IExplorerFilter;
-    attribute: {multiple_values: boolean};
-}> = ({filter, attribute}) => {
+export const SimpleFilterDropdown: FunctionComponent<IFilterDropDownProps> = ({filter}) => {
     const {t} = useSharedTranslation();
     const {dispatch} = useViewSettingsContext();
 
@@ -80,57 +54,43 @@ export const SimpleFilterDropdown: FunctionComponent<{
             type: ViewSettingsActionTypes.CHANGE_FILTER_CONFIG,
             payload: {
                 id: filter.id,
-                field: filter.field,
-                condition: data.condition,
-                values: data.values
+                ...data
             }
         });
     };
 
-    const onconditionChanged = condition => {
-        updateFilter({...filter, condition});
+    const onConditionChanged = operator => {
+        updateFilter({...filter, operator});
     };
 
     const onValueClick = value => {
-        let newValues = [...filter.values];
-        if (filter.values.includes(value)) {
-            newValues = filter.values.filter(v => v !== value);
-        } else {
-            if (attribute.multiple_values) {
-                newValues = [...filter.values, value];
-            } else {
-                newValues = [value];
-            }
-        }
-        updateFilter({...filter, values: newValues});
+        updateFilter({...filter, value});
     };
+
+    const _onDeleteFilter: ComponentProps<typeof KitButton>['onClick'] = () =>
+        dispatch({
+            type: ViewSettingsActionTypes.REMOVE_FILTER,
+            payload: {
+                id: filter.id
+            }
+        });
 
     return (
         <KitSpace size="xxs" direction="vertical">
-            <KitSelect options={conditions} onChange={onconditionChanged} value={filter.condition} />
-            <KitInput placeholder={String(t('search'))} />
-            <ul>
-                {attributeValuesList.map(value => (
-                    <ValueListItemValueLi
-                        key={value}
-                        onClick={() => onValueClick(value)}
-                        className={filter.values.includes(value) ? 'selected' : ''}
-                    >
-                        <span className="label">{value}</span>
-                        {filter.values.includes(value) && (
-                            <span className="check">
-                                <FaCheck />
-                            </span>
-                        )}
-                    </ValueListItemValueLi>
-                ))}
-            </ul>
+            <KitSelect options={conditions} onChange={onConditionChanged} value={filter.condition} />
+            <FilterValueList
+                values={attributeValuesList}
+                multiple={false}
+                freeEntry={false}
+                selectedValues={filter.value === null ? [] : [filter.value]}
+                onSelectionChanged={onValueClick}
+            />
             <KitDivider noMargin />
-            <KitButton type="link" icon={<FaClock />}>
-                Réinitialiser le filtre
+            <KitButton type="redirect" icon={<FaClock />} disabled>
+                {t('explorer.reset-filter')}
             </KitButton>
-            <KitButton type="link" icon={<FaTrash />}>
-                Supprimer
+            <KitButton type="redirect" icon={<FaTrash />} onClick={_onDeleteFilter}>
+                {t('global.delete')}
             </KitButton>
         </KitSpace>
     );

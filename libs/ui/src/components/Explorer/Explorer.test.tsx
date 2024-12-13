@@ -461,13 +461,11 @@ describe('Explorer', () => {
         expect(screen.getByText(record2.whoAmI.label)).toBeInTheDocument();
     });
 
-    test('Should hide table header when no data provided', async () => {
+    test('Should display message on empty data', async () => {
         spyUseExplorerQuery.mockReturnValueOnce(mockEmptyExplorerQueryResult);
         render(<Explorer library="campaigns" />);
 
-        expect(screen.getByRole('table')).toBeVisible();
-        expect(screen.getByRole('row')).toBeVisible();
-        expect(within(screen.getByRole('row')).getByText('Aucune donnée')).toBeVisible();
+        expect(screen.getByText(/empty-data/)).toBeVisible();
     });
 
     test('Should display the list of records in a table with attributes values', async () => {

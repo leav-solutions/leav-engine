@@ -2,7 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {Override} from '@leav/utils';
-import {AttributePropertiesFragment, PropertyValueFragment, RecordIdentityFragment} from '_ui/_gqlTypes';
+import {
+    AttributeFormat,
+    AttributePropertiesFragment,
+    PropertyValueFragment,
+    RecordFilterCondition,
+    RecordIdentityFragment
+} from '_ui/_gqlTypes';
 import {ReactElement} from 'react';
 
 export interface IExplorerData {
@@ -37,3 +43,18 @@ export interface IPrimaryAction {
 }
 
 export type ActionHook<T = {}> = {isEnabled: boolean} & T;
+
+export interface IExplorerFilter {
+    id: string;
+    attribute: {
+        format: AttributeFormat;
+        label: string;
+    };
+    field: string;
+    condition: RecordFilterCondition;
+    value: string | null;
+}
+
+export interface IFilterDropDownProps {
+    filter: IExplorerFilter;
+}
