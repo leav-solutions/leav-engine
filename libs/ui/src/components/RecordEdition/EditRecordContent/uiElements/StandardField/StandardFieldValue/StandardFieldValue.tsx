@@ -7,7 +7,7 @@ import {ReactNode} from 'react';
 import {ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {AttributeFormat, RecordFormAttributeStandardAttributeFragment} from '_ui/_gqlTypes';
-import {DSListSelect} from './ValuesList/DSListSelect';
+import {MonoValueSelect} from './ValuesList/MonoValueSelect';
 import {DSInputWrapper} from './DSInputWrapper';
 import {DSDatePickerWrapper} from './DSDatePickerWrapper';
 import {DSRangePickerWrapper} from './DSRangePickerWrapper';
@@ -69,7 +69,7 @@ function StandardFieldValue({
 
     let valueContent: ReactNode;
     if (isValuesListEnabled) {
-        valueContent = <DSListSelect {...commonProps} />;
+        valueContent = <MonoValueSelect {...commonProps} />;
     } else {
         switch (attribute.format) {
             case AttributeFormat.text:

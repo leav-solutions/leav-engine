@@ -33,7 +33,7 @@ const addOption = (options: IOption[], optionToAdd: IOption) => {
     return newOptions;
 };
 
-export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSelect>> = ({
+export const MonoValueSelect: FunctionComponent<IStandFieldValueContentProps<IKitSelect>> = ({
     value,
     presentationValue,
     onChange,
@@ -45,15 +45,14 @@ export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSe
     calculatedFlags
 }) => {
     if (!onChange) {
-        throw Error('DSListSelect should be used inside a antd Form.Item');
+        throw Error('MonoValueSelect should be used inside a antd Form.Item');
     }
 
     if (!attribute.values_list || attribute.values_list.enable === false) {
-        throw Error('DSListSelect should have a values list');
+        throw Error('MonoValueSelect should have a values list');
     }
 
     const {t} = useSharedTranslation();
-    const form = Form.useFormInstance();
     const {errors} = Form.Item.useStatus();
     const [isFocused, setIsFocused] = useState(false);
     const [searchedString, setSearchedString] = useState('');
@@ -90,15 +89,8 @@ export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSe
 
     const initialOptions = _getFilteredValuesList();
     let options = [...initialOptions];
-    if (attribute.multiple_values) {
-        const currentValues = form.getFieldValue(attribute.id);
-        options = options.filter(option => !currentValues.includes(option.value));
-    }
-
     if (allowFreeEntry) {
-        if (!attribute.multiple_values) {
-            options = addOption(options, {value, label: value});
-        }
+        options = addOption(options, {value, label: value});
         options = addOption(options, {
             value: searchedString,
             label:

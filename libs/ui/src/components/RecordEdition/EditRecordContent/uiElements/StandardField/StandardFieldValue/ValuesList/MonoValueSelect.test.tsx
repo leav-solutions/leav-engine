@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {expectToThrow, render, screen} from '_ui/_tests/testUtils';
-import {DSListSelect} from './DSListSelect';
+import {MonoValueSelect} from './MonoValueSelect';
 import {mockAttributeSimple, mockAttributeWithDetails} from '_ui/__mocks__/common/attribute';
 import * as gqlTypes from '_ui/_gqlTypes';
 import * as useEditRecordReducer from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
@@ -33,7 +33,7 @@ const notRequired = false;
 const notReadonly = false;
 const readonly = true;
 
-describe('<DSListSelect />', () => {
+describe('<MonoValueSelect />', () => {
     const handleSubmitMock = jest.fn();
 
     const mockSaveAttributeMutation = jest.fn().mockReturnValue({
@@ -74,7 +74,7 @@ describe('<DSListSelect />', () => {
             expectToThrow(
                 () =>
                     render(
-                        <DSListSelect
+                        <MonoValueSelect
                             attribute={commonAttribute}
                             presentationValue=""
                             handleSubmit={handleSubmitMock}
@@ -84,7 +84,7 @@ describe('<DSListSelect />', () => {
                             inheritedFlags={inheritedFlagsWithoutInheritedValue}
                         />
                     ),
-                'DSListSelect should be used inside a antd Form.Item'
+                'MonoValueSelect should be used inside a antd Form.Item'
             );
         });
 
@@ -94,7 +94,7 @@ describe('<DSListSelect />', () => {
                     render(
                         <AntForm name="name">
                             <AntForm.Item name="chartreuse">
-                                <DSListSelect
+                                <MonoValueSelect
                                     attribute={commonAttribute}
                                     presentationValue=""
                                     handleSubmit={handleSubmitMock}
@@ -106,7 +106,7 @@ describe('<DSListSelect />', () => {
                             </AntForm.Item>
                         </AntForm>
                     ),
-                'DSListSelect should have a values list'
+                'MonoValueSelect should have a values list'
             );
         });
     });
@@ -115,7 +115,7 @@ describe('<DSListSelect />', () => {
         render(
             <AntForm name="name">
                 <AntForm.Item name="chartreuse">
-                    <DSListSelect
+                    <MonoValueSelect
                         attribute={attribute}
                         presentationValue="green"
                         handleSubmit={handleSubmitMock}
@@ -136,7 +136,7 @@ describe('<DSListSelect />', () => {
         render(
             <AntForm name="name">
                 <AntForm.Item name="chartreuse">
-                    <DSListSelect
+                    <MonoValueSelect
                         attribute={attribute}
                         presentationValue="green"
                         handleSubmit={handleSubmitMock}
@@ -170,7 +170,7 @@ describe('<DSListSelect />', () => {
             render(
                 <AntForm name="name">
                     <AntForm.Item name="chartreuse">
-                        <DSListSelect
+                        <MonoValueSelect
                             attribute={attribute}
                             presentationValue=""
                             handleSubmit={handleSubmitMock}
@@ -200,7 +200,7 @@ describe('<DSListSelect />', () => {
             render(
                 <AntForm name="name">
                     <AntForm.Item name="chartreuse">
-                        <DSListSelect
+                        <MonoValueSelect
                             attribute={attribute}
                             handleSubmit={handleSubmitMock}
                             required={notRequired}
@@ -224,7 +224,7 @@ describe('<DSListSelect />', () => {
             render(
                 <AntForm name="name">
                     <AntForm.Item name="chartreuse">
-                        <DSListSelect
+                        <MonoValueSelect
                             attribute={{...attribute, values_list: {...valuesList, allowFreeEntry: true}}}
                             handleSubmit={handleSubmitMock}
                             required={notRequired}
@@ -259,7 +259,7 @@ describe('<DSListSelect />', () => {
             render(
                 <AntForm name="name">
                     <AntForm.Item name="chartreuse">
-                        <DSListSelect
+                        <MonoValueSelect
                             attribute={{
                                 ...attribute,
                                 values_list: {...valuesList, allowFreeEntry: true, allowListUpdate: true}
@@ -285,34 +285,6 @@ describe('<DSListSelect />', () => {
             expect(handleSubmitMock).toHaveBeenCalledWith(newColor, attribute.id);
             expect(mockEditRecordDispatch).toHaveBeenCalledWith({type: EditRecordReducerActionsTypes.REQUEST_REFRESH});
             expect(screen.getByTestId(attribute.id).innerHTML).toMatch(new RegExp(newColor));
-        });
-
-        describe('multiple', () => {
-            it('should remove selected options from list', async () => {
-                render(
-                    <AntForm name="name" initialValues={{[attribute.id]: valuesList.values}}>
-                        <AntForm.Item name={attribute.id}>
-                            <DSListSelect
-                                attribute={{
-                                    ...attribute,
-                                    values_list: {...valuesList, allowFreeEntry: true, allowListUpdate: true},
-                                    multiple_values: true
-                                }}
-                                handleSubmit={handleSubmitMock}
-                                required={notRequired}
-                                readonly={notReadonly}
-                                calculatedFlags={calculatedFlagsWithoutCalculatedValue}
-                                inheritedFlags={inheritedFlagsWithoutInheritedValue}
-                            />
-                        </AntForm.Item>
-                    </AntForm>
-                );
-
-                const select = screen.getByRole('combobox');
-                await userEvent.click(select);
-
-                expect(screen.getByText('record_edition.search_not_found')).toBeVisible();
-            });
         });
     });
 });
