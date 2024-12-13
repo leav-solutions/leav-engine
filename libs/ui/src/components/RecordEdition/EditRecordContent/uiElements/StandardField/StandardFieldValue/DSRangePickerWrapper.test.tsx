@@ -97,7 +97,7 @@ describe('DSRangePickerWrapper', () => {
             </Form>
         );
 
-        expect(screen.getByRole('textbox')).toHaveValue(presentationDate);
+        expect(screen.getAllByRole('textbox')[0]).toHaveValue(presentationDate);
     });
 
     test('Should display the value if focused', async () => {
@@ -119,7 +119,7 @@ describe('DSRangePickerWrapper', () => {
             </Form>
         );
 
-        const textInput = screen.getByRole('textbox');
+        const textInput = screen.getAllByRole('textbox')[0];
         await user.click(textInput);
         const rangePickerInputs = screen.getAllByRole('textbox');
         expect(rangePickerInputs[0]).toHaveValue(todayDateFormated.formated);
@@ -145,7 +145,7 @@ describe('DSRangePickerWrapper', () => {
             </Form>
         );
 
-        expect(screen.getByRole('textbox')).toBeDisabled();
+        expect(screen.getAllByRole('textbox')[0]).toBeDisabled();
     });
 
     test('Should call onChange / handleSubmit with value at noon', async () => {
@@ -165,7 +165,7 @@ describe('DSRangePickerWrapper', () => {
             </Form>
         );
 
-        const textInput = screen.getByRole('textbox');
+        const textInput = screen.getAllByRole('textbox')[0];
         await user.click(textInput);
 
         await user.click(screen.getAllByTitle(todayDateFormated.formated)[0]);
@@ -202,7 +202,7 @@ describe('DSRangePickerWrapper', () => {
             </Form>
         );
 
-        const textInput = screen.getByRole('textbox');
+        const textInput = screen.getAllByRole('textbox')[0];
         await user.click(textInput);
 
         const rangePickerInputs = screen.getAllByRole('textbox');
