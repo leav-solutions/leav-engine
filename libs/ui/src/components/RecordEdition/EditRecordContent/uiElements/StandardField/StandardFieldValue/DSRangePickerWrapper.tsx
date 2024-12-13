@@ -1,24 +1,34 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {KitDatePicker, KitInput} from 'aristid-ds';
-import {ChangeEvent, FunctionComponent, useState} from 'react';
+import {KitDatePicker} from 'aristid-ds';
+import {FunctionComponent, useEffect, useState} from 'react';
 import {Form} from 'antd';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
 import {StandardValueTypes} from '../../../_types';
 import {setDateToUTCNoon} from '_ui/_utils';
-import {FaCalendar} from 'react-icons/fa';
 import {IStandFieldValueContentProps} from './_types';
 import {IKitRangePicker} from 'aristid-ds/dist/Kit/DataEntry/DatePicker/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
-const KitDatePickerRangePickerStyled = styled(KitDatePicker.RangePicker)<{$shouldHighlightColor: boolean}>`
+const KitDatePickerRangePickerStyled = styled(KitDatePicker.RangePicker)<{
+    $shouldHighlightColor: boolean;
+    $shouldUsePresentationLayout: boolean;
+}>`
     color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
-`;
 
-const KitInputStyled = styled(KitInput)<{$shouldHighlightColor: boolean}>`
-    color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
+    ${({$shouldUsePresentationLayout}) =>
+        $shouldUsePresentationLayout &&
+        `   &.ant-picker.ant-picker-range {
+                grid-template-columns: 28px 1fr 0px 0px 12px;
+
+                .ant-picker-range-separator,
+                .ant-picker-input:nth-of-type(0) {
+                    display: none;
+                }
+            }
+        `}
 `;
 
 export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProps<IKitRangePicker>> = ({
@@ -41,6 +51,10 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
 
     const isErrors = errors.length > 0;
 
+    // we slow down the css so that presentationValue does not flash before being hidden
+    const [usePresentationLayout, setUsePresentationLayout] = useState(false);
+    useEffect(() => setUsePresentationLayout(!isFocused && !isErrors), [isFocused, isErrors]);
+
     const _resetToInheritedOrCalculatedValue = async () => {
         if (inheritedFlags.isInheritedValue) {
             onChange(
@@ -61,8 +75,6 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
         }
         await handleSubmit(null, attribute.id);
     };
-
-    const _handleFocus = () => setIsFocused(true);
 
     const _handleDateChange: (
         rangePickerDates: [from: dayjs.Dayjs, to: dayjs.Dayjs] | null,
@@ -97,64 +109,28 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
         }
     };
 
-    // TOTO remove this function to use onClear Prop when ant is updated to 5.20+
-    const _handleClear = async (event: ChangeEvent<HTMLInputElement>) => {
-        const inputValue = event.target.value;
-
-        if (
-            (inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue) &&
-            inputValue === '' &&
-            event.type === 'click'
-        ) {
-            _resetToInheritedOrCalculatedValue();
-            return;
-        }
-        onChange(null, null);
-        if (inputValue === '' && event.type === 'click') {
-            await handleSubmit(null, attribute.id);
-        }
-    };
+    const placeholderToDisplay: IKitRangePicker['placeholder'] = isFocused
+        ? [t('record_edition.placeholder.start_date'), t('record_edition.placeholder.end_date')]
+        : [t('record_edition.placeholder.enter_a_period'), ''];
 
     return (
-        <>
-            {
-                !isFocused && !isErrors && (
-                    <KitInputStyled
-                        id={attribute.id}
-                        prefix={<FaCalendar />}
-                        disabled={readonly}
-                        helper={isErrors ? String(errors[0]) : undefined}
-                        status={isErrors ? 'error' : undefined}
-                        value={presentationValue}
-                        onFocus={_handleFocus}
-                        onChange={_handleClear}
-                        $shouldHighlightColor={
-                            inheritedFlags.isInheritedNotOverrideValue || calculatedFlags.isCalculatedNotOverrideValue
-                        }
-                        placeholder={t('record_edition.placeholder.enter_a_period')}
-                    />
-                )
-                //TODO: Léger décalage car l'icon n'est pas exactement le même que celui du DS (MAJ React-icons ?)
+        <KitDatePickerRangePickerStyled
+            id={attribute.id}
+            value={value}
+            format={!isFocused && !isErrors && !!presentationValue ? () => presentationValue : undefined}
+            disabled={readonly}
+            allowClear={!inheritedFlags.isInheritedNotOverrideValue && !calculatedFlags.isCalculatedNotOverrideValue}
+            helper={isErrors ? String(errors[0]) : undefined}
+            status={isErrors ? 'error' : undefined}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            onChange={_handleDateChange}
+            onOpenChange={_handleOpenChange}
+            placeholder={placeholderToDisplay}
+            $shouldHighlightColor={
+                inheritedFlags.isInheritedNotOverrideValue || calculatedFlags.isCalculatedNotOverrideValue
             }
-            {(isFocused || isErrors) && (
-                <KitDatePickerRangePickerStyled
-                    open
-                    autoFocus
-                    value={value}
-                    disabled={readonly}
-                    allowClear={
-                        !inheritedFlags.isInheritedNotOverrideValue && !calculatedFlags.isCalculatedNotOverrideValue
-                    }
-                    helper={isErrors ? String(errors[0]) : undefined}
-                    status={isErrors ? 'error' : undefined}
-                    onChange={_handleDateChange}
-                    onOpenChange={_handleOpenChange}
-                    $shouldHighlightColor={
-                        inheritedFlags.isInheritedNotOverrideValue || calculatedFlags.isCalculatedNotOverrideValue
-                    }
-                    placeholder={[t('record_edition.placeholder.start_date'), t('record_edition.placeholder.end_date')]}
-                />
-            )}
-        </>
+            $shouldUsePresentationLayout={usePresentationLayout}
+        />
     );
 };
