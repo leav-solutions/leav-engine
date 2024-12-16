@@ -70,6 +70,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
             coreApp.filterSysTranslationField(attributeData.description, args.lang || []),
         input_types: (attributeData, _, ctx) => attributeDomain.getInputTypes({attrData: attributeData, ctx}),
         output_types: (attributeData, _, ctx) => attributeDomain.getOutputTypes({attrData: attributeData, ctx}),
+        compute: (attributeData, _, ctx) => attributeDomain.doesCompute(attributeData),
         metadata_fields: async (attributeData: IAttribute, _, ctx) =>
             !!attributeData.metadata_fields
                 ? Promise.all(
@@ -138,6 +139,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
                 output_types: ActionListIOTypes!,
                 metadata_fields: [StandardAttribute!],
                 libraries: [Library!],
+                compute: Boolean!,
 
                 # Permissions for this attribute.
                 # If record is specified, returns permissions for this specific record, otherwise returns global attribute permissions
@@ -195,14 +197,14 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         maxLength: Int
                     }
 
-                    type LinkAttribute implements Attribute{
+                    type LinkAttribute implements Attribute {
                         ${attributesInterfaceSchema}
                         linked_library: Library,
                         values_list: LinkValuesListConf,
                         reverse_link: String
                     }
 
-                    type TreeAttribute implements Attribute{
+                    type TreeAttribute implements Attribute {
                         ${attributesInterfaceSchema}
                         linked_tree: Tree,
                         values_list: TreeValuesListConf

@@ -31,6 +31,7 @@ export default function (): IActionsListFunction<{
         description: 'Format a number',
         input_types: [ActionsListIOTypes.NUMBER],
         output_types: [ActionsListIOTypes.STRING],
+        compute: false,
         params: [
             {
                 name: 'decimals',

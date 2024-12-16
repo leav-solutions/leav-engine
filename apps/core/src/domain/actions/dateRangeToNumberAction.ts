@@ -11,6 +11,7 @@ export default function (): IActionsListFunction {
         description: 'Convert date range dates to numbers',
         input_types: [ActionsListIOTypes.OBJECT],
         output_types: [ActionsListIOTypes.OBJECT],
+        compute: false,
         action: values => ({
             values: values.map(valueElement => {
                 const dateRangeValue = valueElement.payload as IDateRangeValue<string>;

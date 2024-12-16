@@ -71,6 +71,7 @@ x-env-core: &env-core
   SERVER_ADMIN_EMAIL: admin@example.com
   ALLOW_FILES_LIST: *allow-list
   IGNORE_FILES_LIST: *ignore-list
+  TEST_API_KEY: __CORE_TEST_API_KEY__
 
 x-env-amqp: &env-amqp
   AMQP_PROTOCOL: 'amqp'
