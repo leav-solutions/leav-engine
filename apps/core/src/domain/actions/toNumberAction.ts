@@ -10,6 +10,7 @@ export default function (): IActionsListFunction {
         description: 'Convert value to number',
         input_types: [ActionsListIOTypes.STRING, ActionsListIOTypes.NUMBER, ActionsListIOTypes.BOOLEAN],
         output_types: [ActionsListIOTypes.NUMBER],
+        compute: false,
         action: values => {
             const computedValues = values.map(elementValue => {
                 elementValue.payload = elementValue.payload !== null ? Number(elementValue.payload) : null;
