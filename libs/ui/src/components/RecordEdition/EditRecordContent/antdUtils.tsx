@@ -21,7 +21,7 @@ const getCalculatedValue = values => values.find(value => value.isCalculated);
 const getInheritedValue = values => values.find(value => value.isInherited);
 
 const getUserInputValue = values =>
-    values.find(value => !value.isInherited && !value.isCalculated && value.raw_value !== null);
+    values.find(value => !value.isInherited && !value.isCalculated && value.raw_payload !== null);
 
 const isRecordFormElementsValueLinkValue = (
     value: RecordFormElementsValue,
@@ -76,6 +76,15 @@ export const getEmptyInitialValue = (attribute: RecordFormElementAttribute) => {
     }
     return '';
 };
+
+export const getAntdDisplayedValue = (
+    values: RecordFormElementsValueStandardValue[],
+    attribute: RecordFormElementAttribute
+) =>
+    formatStandardInitialValue(
+        getUserInputValue(values) ?? getInheritedValue(values) ?? getCalculatedValue(values) ?? null,
+        attribute
+    );
 
 export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
     recordForm.elements.reduce<Store>((acc, {attribute, values}) => {

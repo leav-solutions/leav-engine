@@ -18,6 +18,8 @@ import {RecordFormAttributeFragment, SaveValueBatchMutation, ValueDetailsFragmen
 import {RecordProperty} from '_ui/_queries/records/getRecordPropertiesQuery';
 import {RecordFormElementFragment} from '../../../_gqlTypes';
 import {FormInstance} from 'antd/lib/form/Form';
+import {IColumnsValuesByRecord} from '_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
+import {GetRecordColumnsValuesRecord, RecordColumnValue} from '_ui/_queries/records/getRecordColumnsValues';
 
 export interface IValueToSubmit {
     attribute: string;
@@ -111,7 +113,12 @@ export type FormElement<SettingsType, RecordFormElements = RecordFormElementsVal
         values: RecordFormElements[];
     }
 > & {
-    uiElement: (props: IFormElementProps<unknown> & {antdForm?: FormInstance}) => JSX.Element;
+    uiElement: (
+        props: IFormElementProps<unknown> & {
+            antdForm?: FormInstance;
+            computedValues?: GetRecordColumnsValuesRecord;
+        }
+    ) => JSX.Element;
 };
 
 export interface IDependencyValues {
