@@ -32,7 +32,13 @@ export const useGetPresentationValues = ({
             case AttributeFormat.date_range:
                 if (_isDateRangeValue(presentationValue)) {
                     const {from, to} = presentationValue;
-                    presentationValue = t('record_edition.date_range_value', {from, to});
+                    presentationValue = t('record_edition.date_range_value', {
+                        from,
+                        to,
+                        interpolation: {
+                            escapeValue: false
+                        }
+                    });
                 } else {
                     presentationValue = '';
                 }
