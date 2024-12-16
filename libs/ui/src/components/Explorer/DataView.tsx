@@ -12,6 +12,7 @@ import {IExplorerData, IItemAction, IItemData} from './_types';
 import {TableCell} from './TableCell';
 import {IdCard} from './IdCard';
 import {defaultPaginationHeight, useTableScrollableHeight} from './useTableScrollableHeight';
+import isEqual from 'lodash/isEqual';
 
 const USELESS = '';
 
@@ -48,11 +49,7 @@ interface IDataViewProps {
 }
 
 const arePropsEqual = (prevProps: IDataViewProps, nextProps: IDataViewProps) =>
-    prevProps.itemActions.length === nextProps.itemActions.length &&
-    prevProps.attributesToDisplay.length === nextProps.attributesToDisplay.length &&
-    prevProps.paginationProps?.totalItems === nextProps.paginationProps?.totalItems &&
-    prevProps.paginationProps?.currentPage === nextProps.paginationProps?.currentPage &&
-    prevProps.paginationProps?.pageSize === nextProps.paginationProps?.pageSize;
+    isEqual(prevProps.dataGroupedFilteredSorted, nextProps.dataGroupedFilteredSorted);
 
 export const DataView: FunctionComponent<IDataViewProps> = memo(
     ({dataGroupedFilteredSorted, attributesToDisplay, attributesProperties, paginationProps, itemActions}) => {
