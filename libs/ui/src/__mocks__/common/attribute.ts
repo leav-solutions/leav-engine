@@ -134,7 +134,15 @@ export const mockFormAttribute: RecordFormAttributeFragment = {
             }
         }
     ],
-    versions_conf: null
+    versions_conf: null,
+    compute: false
+};
+
+export const mockFormAttributeCompute: RecordFormAttributeFragment = {
+    ...mockFormAttribute,
+    id: 'test_compute_attribute',
+    format: AttributeFormat.text,
+    compute: true
 };
 
 export const mockFormAttributeTree: RecordFormAttributeTreeAttributeFragment = {
