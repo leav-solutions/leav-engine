@@ -44,7 +44,7 @@ export const ExplorerFilterBar: FunctionComponent = () => {
     }
 
     return (
-        <ExplorerFilterBarStyledDiv>
+        <ExplorerFilterBarStyledDiv data-testid="filter-bar">
             <ExplorerBarItemsListDiv>
                 <KitSpace size="s">
                     {filters.map(filter => (
