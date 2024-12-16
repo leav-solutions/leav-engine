@@ -11,10 +11,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 const KitInputNumberStyled = styled(KitInputNumber)<{$shouldHighlightColor: boolean}>`
     width: 100%;
-    .ant-input-number-input-wrap .ant-input-number-input {
-        color: ${({$shouldHighlightColor}) =>
-            $shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial'};
-    }
+    color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
 `;
 
 export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProps<KitInputNumberProps>> = ({
