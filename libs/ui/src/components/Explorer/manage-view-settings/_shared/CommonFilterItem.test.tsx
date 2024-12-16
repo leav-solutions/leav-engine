@@ -1,12 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render, screen, within} from '_ui/_tests/testUtils';
+import {render, screen} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
 import {IExplorerFilter} from '../../_types';
 import {CommonFilterItem} from './CommonFilterItem';
 import {AttributeFormat} from '_ui/_gqlTypes';
 import {AttributeConditionFilter} from '_ui/types';
+
+const getAllConditionOptions = (base: ReturnType<typeof render>['baseElement']) =>
+    base.getElementsByClassName('rc-virtual-list')[0].getElementsByClassName('kit-select-option');
 
 describe('CommonFilterItem', () => {
     test('should render numeric filter', async () => {
@@ -48,9 +51,7 @@ describe('CommonFilterItem', () => {
 
         const select = screen.getByRole('combobox');
         await userEvent.click(select);
-        const options = baseElement
-            .getElementsByClassName('rc-virtual-list')[0]
-            .getElementsByClassName('kit-select-option');
+        const options = getAllConditionOptions(baseElement);
         expect(options).toHaveLength(8);
     });
 
@@ -74,9 +75,7 @@ describe('CommonFilterItem', () => {
 
         const select = screen.getByRole('combobox');
         await userEvent.click(select);
-        const options = baseElement
-            .getElementsByClassName('rc-virtual-list')[0]
-            .getElementsByClassName('kit-select-option');
+        const options = getAllConditionOptions(baseElement);
         expect(options).toHaveLength(4);
     });
 });
