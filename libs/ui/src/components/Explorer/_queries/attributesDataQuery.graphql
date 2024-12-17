@@ -1,0 +1,10 @@
+query ExplorerAttributes($ids: [ID!]) {
+  attributes(filters: { ids: $ids }) {
+    list {
+      id
+      type
+      format
+      label
+    }
+  }
+}

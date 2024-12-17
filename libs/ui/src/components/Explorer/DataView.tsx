@@ -47,10 +47,6 @@ interface IDataViewProps {
         setNewPageSize: (page: number, pageSize: number) => void;
     };
 }
-
-const arePropsEqual = (prevProps: IDataViewProps, nextProps: IDataViewProps) =>
-    isEqual(prevProps.dataGroupedFilteredSorted, nextProps.dataGroupedFilteredSorted);
-
 export const DataView: FunctionComponent<IDataViewProps> = memo(
     ({dataGroupedFilteredSorted, attributesToDisplay, attributesProperties, paginationProps, itemActions}) => {
         const {t} = useSharedTranslation();
@@ -175,5 +171,5 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
             </DataViewContainerDivStyled>
         );
     },
-    arePropsEqual
+    isEqual
 );
