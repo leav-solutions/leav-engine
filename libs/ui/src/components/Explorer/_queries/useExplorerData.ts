@@ -3,7 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
 import {IExplorerData, IExplorerFilter} from '../_types';
-import {ExplorerQuery, RecordFilterCondition, SortOrder, useExplorerQuery} from '_ui/_gqlTypes';
+import {
+    ExplorerQuery,
+    RecordFilterCondition,
+    RecordFilterInput,
+    RecordFilterOperator,
+    SortOrder,
+    useExplorerQuery
+} from '_ui/_gqlTypes';
 import {useLang} from '_ui/hooks';
 import {useMemo} from 'react';
 
@@ -46,7 +53,8 @@ export const useExplorerData = ({
     fulltextSearch,
     sorts,
     pagination,
-    filters
+    filters,
+    skip
 }: {
     libraryId: string;
     attributeIds: string[];
@@ -57,9 +65,34 @@ export const useExplorerData = ({
     }>;
     pagination: null | {limit: number; offset: number};
     filters: IExplorerFilter[];
+    skip: boolean;
 }) => {
     const {lang: availableLangs} = useLang();
+
+    const queryFilters = filters
+        .filter(
+            ({value, condition}) =>
+                value !== null ||
+                [RecordFilterCondition.IS_EMPTY, RecordFilterCondition.IS_NOT_EMPTY].includes(condition)
+        )
+        .reduce<RecordFilterInput[]>((acc, {field, condition, value}, index) => {
+            if (index !== 0) {
+                acc.push({
+                    operator: RecordFilterOperator.AND
+                });
+            }
+
+            acc.push({
+                field,
+                condition,
+                value
+            });
+
+            return acc;
+        }, []);
+
     const {data, loading, refetch} = useExplorerQuery({
+        skip,
         variables: {
             libraryId,
             attributeIds,
@@ -69,17 +102,7 @@ export const useExplorerData = ({
                 field: attributeId,
                 order
             })),
-            filters: filters
-                .filter(
-                    ({value, condition}) =>
-                        value !== null ||
-                        [RecordFilterCondition.IS_EMPTY, RecordFilterCondition.IS_NOT_EMPTY].includes(condition)
-                )
-                .map(({field, condition, value}) => ({
-                    field,
-                    condition,
-                    value
-                }))
+            filters: queryFilters
         }
     });
 
