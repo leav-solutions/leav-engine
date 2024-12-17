@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent} from 'react';
 import {FaEye, FaEyeSlash, FaSearch} from 'react-icons/fa';
-import {KitInput, KitTypography} from 'aristid-ds';
+import {KitFilter, KitInput, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {AttributeFormat, AttributeType, RecordFilterCondition} from '_ui/_gqlTypes';
@@ -21,7 +21,7 @@ import {useAttributeDetailsData} from '../_shared/useAttributeDetailsData';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import {FilterListItem} from './FilterListItem';
-import {FilterDropDown} from './filter-type/FilterDropDown';
+import {CommonFilterItem} from '../_shared/CommonFilterItem';
 
 const StyledList = styled.ul`
     padding: calc(var(--general-spacing-s) * 1px) 0;
@@ -110,20 +110,14 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                                     key={activeFilter.field}
                                     attributeId={activeFilter.field}
                                     isDraggable
-                                    filterChipProps={{
-                                        label: activeFilter.attribute.label,
-                                        expandable: true,
-                                        values: activeFilter.value === null ? [] : [activeFilter.value],
-                                        dropDownProps: {
-                                            dropdownRender: () => <FilterDropDown filter={activeFilter} />
-                                        }
-                                    }}
                                     visibilityButtonProps={{
                                         icon: <StyledFaEye />,
                                         title: String(t('explorer.hide')),
                                         onClick: removeFilter(activeFilter.id)
                                     }}
-                                />
+                                >
+                                    <CommonFilterItem filter={activeFilter} />
+                                </FilterListItem>
                             ))}
                         </SortableContext>
                     </DndContext>
@@ -141,10 +135,6 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                     <FilterListItem
                         key={attributeId}
                         attributeId={attributeId}
-                        filterChipProps={{
-                            label: attributeDetailsById[attributeId].label,
-                            disabled: !canAddFilter
-                        }}
                         visibilityButtonProps={
                             canAddFilter
                                 ? {
@@ -154,7 +144,9 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                                   }
                                 : undefined
                         }
-                    />
+                    >
+                        <KitFilter label={attributeDetailsById[attributeId].label} disabled={!canAddFilter} />
+                    </FilterListItem>
                 ))}
             </StyledList>
         </>

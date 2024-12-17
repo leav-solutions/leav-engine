@@ -10,6 +10,11 @@ import {IExplorerFilter, IFilterDropDownProps} from '_ui/components/Explorer/_ty
 import {useViewSettingsContext} from '../../store-view-settings/useViewSettingsContext';
 import {ViewSettingsActionTypes} from '../../store-view-settings/viewSettingsReducer';
 import {useConditionsOptionsByType} from './useConditionOptionsByType';
+import styled from 'styled-components';
+
+const InputNumberStyled = styled(KitInputNumber)`
+    width: 100%;
+`;
 
 export const NumericAttributeDropDown: FunctionComponent<IFilterDropDownProps> = ({filter}) => {
     const {t} = useSharedTranslation();
@@ -48,7 +53,7 @@ export const NumericAttributeDropDown: FunctionComponent<IFilterDropDownProps> =
         <KitSpace size="xxs" direction="vertical">
             <KitSelect options={conditionOptionsByType} onChange={_onConditionChanged} value={filter.condition} />
             {showInput && (
-                <KitInputNumber
+                <InputNumberStyled
                     placeholder={String(t('explorer.type-a-value'))}
                     defaultValue={filter.value ?? undefined}
                     onChange={_onInputChanged}
