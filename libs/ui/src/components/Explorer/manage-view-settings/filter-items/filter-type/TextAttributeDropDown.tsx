@@ -10,6 +10,11 @@ import {ViewSettingsActionTypes} from '../../store-view-settings/viewSettingsRed
 import {IExplorerFilter, IFilterDropDownProps} from '_ui/components/Explorer/_types';
 import {useConditionsOptionsByType} from './useConditionOptionsByType';
 import {AttributeConditionFilter} from '_ui/types';
+import styled from 'styled-components';
+
+const InputStyled = styled(KitInput)`
+    width: 100%;
+`;
 
 export const TextAttributeDropDown: FunctionComponent<IFilterDropDownProps> = ({filter}) => {
     const {t} = useSharedTranslation();
@@ -54,7 +59,7 @@ export const TextAttributeDropDown: FunctionComponent<IFilterDropDownProps> = ({
         <KitSpace size="xxs" direction="vertical">
             <KitSelect options={conditionOptionsByType} onChange={_onConditionChanged} value={filter.condition} />
             {showSearch && (
-                <KitInput
+                <InputStyled
                     placeholder={String(t('explorer.type-a-value'))}
                     defaultValue={filter.value ?? undefined}
                     onChange={_onInputChanged}
