@@ -3,9 +3,19 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {localizedTranslation} from '@leav/utils';
 import {IExplorerData, IExplorerFilter} from '../_types';
-import {ExplorerQuery, RecordFilterCondition, SortOrder, useExplorerQuery} from '_ui/_gqlTypes';
+import {
+    AttributeFormat,
+    ExplorerQuery,
+    RecordFilterCondition,
+    RecordFilterInput,
+    RecordFilterOperator,
+    SortOrder,
+    useExplorerQuery
+} from '_ui/_gqlTypes';
 import {useLang} from '_ui/hooks';
 import {useMemo} from 'react';
+import dayjs from 'dayjs';
+import {dateValuesSeparator} from '../manage-view-settings/filter-items/filter-type/DateAttributeDropDown';
 
 const _mapping = (data: ExplorerQuery, libraryId: string, availableLangs: string[]): IExplorerData => {
     const attributes = data.records.list.length
@@ -40,6 +50,87 @@ const _mapping = (data: ExplorerQuery, libraryId: string, availableLangs: string
     };
 };
 
+const getQueryFilters = (filters: IExplorerFilter[]): RecordFilterInput[] =>
+    filters
+        .filter(
+            ({value, condition}) =>
+                value !== null ||
+                [RecordFilterCondition.IS_EMPTY, RecordFilterCondition.IS_NOT_EMPTY].includes(condition)
+        )
+        .reduce((acc, filter, index) => {
+            if (index !== 0) {
+                acc.push({
+                    operator: RecordFilterOperator.AND
+                });
+            }
+            if (filter.attribute.format === AttributeFormat.date) {
+                acc = acc.concat(_getDateRequestFilters(filter));
+            } else {
+                acc.push({
+                    field: filter.field,
+                    condition: filter.condition,
+                    value: filter.value
+                });
+            }
+            return acc;
+        }, [] as RecordFilterInput[]);
+
+const _getDateRequestFilters = ({field, condition, value}) => {
+    switch (condition) {
+        case RecordFilterCondition.BETWEEN:
+            const [from, to] = value.split(dateValuesSeparator);
+            return [
+                {
+                    field,
+                    condition,
+                    value: JSON.stringify({
+                        from,
+                        to
+                    })
+                }
+            ];
+        case RecordFilterCondition.NOT_EQUAL:
+            return [
+                {
+                    field,
+                    condition: RecordFilterCondition.LESS_THAN,
+                    value: dayjs.unix(value!).startOf('day').unix().toString()
+                },
+                {operator: RecordFilterOperator.OR},
+                {
+                    field,
+                    condition: RecordFilterCondition.GREATER_THAN,
+                    value: dayjs.unix(value!).endOf('day').unix().toString()
+                }
+            ];
+        case RecordFilterCondition.EQUAL:
+            return [
+                {
+                    field,
+                    condition: RecordFilterCondition.BETWEEN,
+                    value: JSON.stringify({
+                        from: dayjs(value! * 1000)
+                            .startOf('day')
+                            .unix()
+                            .toString(),
+                        to: dayjs(value! * 1000)
+                            .endOf('day')
+                            .unix()
+                            .toString()
+                    })
+                }
+            ];
+        default:
+            return [
+                {
+                    field,
+                    condition,
+                    value
+                }
+            ];
+    }
+};
+
 export const useExplorerData = ({
     libraryId,
     attributeIds,
@@ -69,17 +160,7 @@ export const useExplorerData = ({
                 field: attributeId,
                 order
             })),
-            filters: filters
-                .filter(
-                    ({value, condition}) =>
-                        value !== null ||
-                        [RecordFilterCondition.IS_EMPTY, RecordFilterCondition.IS_NOT_EMPTY].includes(condition)
-                )
-                .map(({field, condition, value}) => ({
-                    field,
-                    condition,
-                    value
-                }))
+            filters: getQueryFilters(filters)
         }
     });
 
