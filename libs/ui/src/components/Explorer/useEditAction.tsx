@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {useState} from 'react';
+import {useMemo, useState} from 'react';
 import {FaPen} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {EditRecordModal} from '_ui/components/RecordEdition/EditRecordModal';
@@ -51,16 +51,21 @@ export const useEditAction = ({isEnabled}: ActionHook) => {
         setEditingItem(null);
     };
 
-    return {
-        editAction: isEnabled ? _editAction : null,
-        editModal:
-            isEnabled && editingItem !== null ? (
-                <EditRecordModal
-                    open
-                    record={editingItem.whoAmI}
-                    library={editingItem.libraryId}
-                    onClose={() => _handleEditModalClose(editingItem)}
-                />
-            ) : null
-    };
+    const editAction = useMemo(
+        () => ({
+            editAction: isEnabled ? _editAction : null,
+            editModal:
+                isEnabled && editingItem !== null ? (
+                    <EditRecordModal
+                        open
+                        record={editingItem.whoAmI}
+                        library={editingItem.libraryId}
+                        onClose={() => _handleEditModalClose(editingItem)}
+                    />
+                ) : null
+        }),
+        [isEnabled, editingItem]
+    );
+
+    return editAction;
 };

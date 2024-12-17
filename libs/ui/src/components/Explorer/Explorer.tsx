@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {ComponentProps, FunctionComponent, useReducer} from 'react';
+import {FunctionComponent, useReducer} from 'react';
 import {createPortal} from 'react-dom';
 import {KitEmpty, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
@@ -30,6 +30,9 @@ import {ExplorerFilterBar} from './display-view-filters/ExplorerFilterBar';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
+
+const emptyArray = [];
+const emptyObject = {};
 
 const ExplorerHeaderDivStyled = styled.div`
     display: flex;
@@ -107,18 +110,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 
     const {searchInput} = useSearchInput({view, dispatch});
 
-    const dataViewAdditionalProps: Pick<ComponentProps<typeof DataView>, 'paginationProps'> = noPagination
-        ? {}
-        : {
-              paginationProps: {
-                  pageSizeOptions: defaultPageSizeOptions,
-                  currentPage,
-                  pageSize: view.pageSize,
-                  setNewPageSize,
-                  setNewPage,
-                  totalItems: data?.totalCount ?? 0
-              }
-          };
+    const hasNoResults = data === null || data.totalCount === 0;
 
     return (
         <ViewSettingsContext.Provider value={{view, dispatch}}>
@@ -136,15 +128,22 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                 <ExplorerFilterBar />
                 {loading ? (
                     <Loading />
-                ) : data === null ? (
+                ) : hasNoResults ? (
                     <KitEmpty title={t('explorer.empty-data')} />
                 ) : (
                     <DataView
-                        dataGroupedFilteredSorted={data.records ?? []}
-                        itemActions={[editAction, deactivateAction, ...(itemActions ?? [])].filter(Boolean)}
-                        attributesProperties={data.attributes ?? {}}
+                        dataGroupedFilteredSorted={data?.records ?? emptyArray}
+                        attributesProperties={data?.attributes ?? emptyObject}
                         attributesToDisplay={['whoAmI', ...view.attributesIds]}
-                        {...dataViewAdditionalProps}
+                        paginationProps={{
+                            pageSizeOptions: defaultPageSizeOptions,
+                            currentPage,
+                            pageSize: view.pageSize,
+                            setNewPageSize,
+                            setNewPage,
+                            totalItems: data?.totalCount ?? 0
+                        }}
+                        itemActions={[editAction, deactivateAction, ...(itemActions ?? emptyArray)].filter(Boolean)}
                     />
                 )}
             </ExplorerPageDivStyled>
