@@ -4,7 +4,7 @@
 import {ComponentProps, FunctionComponent} from 'react';
 import styled from 'styled-components';
 import {FaGripLines} from 'react-icons/fa';
-import {KitButton, KitFilter} from 'aristid-ds';
+import {KitButton} from 'aristid-ds';
 import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
 
@@ -31,10 +31,6 @@ const StyledDragHandle = styled.span<{$isDragging: boolean}>`
 interface IActiveFilterListItemProps {
     attributeId: string;
     isDraggable?: true;
-    filterChipProps: Pick<
-        ComponentProps<typeof KitFilter>,
-        'label' | 'values' | 'expandable' | 'dropDownProps' | 'disabled'
-    >;
     visibilityButtonProps?: Pick<ComponentProps<typeof KitButton>, 'onClick' | 'icon' | 'title'>;
 }
 
@@ -42,7 +38,7 @@ export const FilterListItem: FunctionComponent<IActiveFilterListItemProps> = ({
     attributeId,
     isDraggable,
     visibilityButtonProps,
-    filterChipProps
+    children
 }) => {
     const {attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({id: attributeId});
     const style = {
@@ -58,7 +54,7 @@ export const FilterListItem: FunctionComponent<IActiveFilterListItemProps> = ({
                         <FaGripLines />
                     </StyledDragHandle>
                 )}
-                <KitFilter key={attributeId} {...filterChipProps} />
+                {children}
             </div>
             {visibilityButtonProps && <KitButton size="m" type="tertiary" {...visibilityButtonProps} />}
         </StyledFilterListItem>

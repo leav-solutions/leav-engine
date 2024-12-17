@@ -5,9 +5,9 @@ import styled from 'styled-components';
 import {useViewSettingsContext} from '../manage-view-settings/store-view-settings/useViewSettingsContext';
 import {KitButton, KitDivider, KitFilter, KitSpace} from 'aristid-ds';
 import {FunctionComponent} from 'react';
-import {FilterDropDown} from '../manage-view-settings/filter-items/filter-type/FilterDropDown';
 import {FaTrash} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {CommonFilterItem} from '../manage-view-settings/_shared/CommonFilterItem';
 
 const FilterStyled = styled(KitFilter)`
     flex: 0 0 auto;
@@ -48,16 +48,7 @@ export const ExplorerFilterBar: FunctionComponent = () => {
             <ExplorerBarItemsListDiv>
                 <KitSpace size="s">
                     {filters.map(filter => (
-                        <FilterStyled
-                            key={filter.id}
-                            expandable
-                            label={filter.attribute.label}
-                            values={filter.value === null ? [] : [filter.value]}
-                            dropDownProps={{
-                                placement: 'bottomLeft',
-                                dropdownRender: () => <FilterDropDown filter={filter} />
-                            }}
-                        />
+                        <CommonFilterItem key={filter.id} filter={filter} />
                     ))}
                 </KitSpace>
                 <DividerStyled type="vertical" />
