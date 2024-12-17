@@ -10,7 +10,6 @@ import * as gqlTypes from '_ui/_gqlTypes';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {Explorer} from '_ui/index';
 import {IItemAction, IPrimaryAction} from './_types';
-import {act} from 'react-dom/test-utils';
 
 const EditRecordModalMock = 'EditRecordModal';
 
@@ -814,7 +813,7 @@ describe('Explorer', () => {
                     value: 'Christmas'
                 }
             ]);
-            const filterBar = screen.getByTestId('filter-bar');
+            const filterBar = screen.getByRole('list', {name: 'filter-bar'});
             expect(filterBar).toBeVisible();
             expect(within(filterBar).getByText(simpleMockAttribute.label.fr)).toBeVisible();
             expect(within(filterBar).getByRole('button', {name: /delete-filters/})).toBeVisible();
