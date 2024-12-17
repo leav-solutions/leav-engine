@@ -786,7 +786,7 @@ describe('Explorer', () => {
                         : mockExplorerQueryResult) as gqlTypes.ExplorerQueryResult
             );
 
-        test('should handle filters', async () => {
+        test('should handle filters for the request and for the display', async () => {
             render(
                 <Explorer
                     library="campaigns"
