@@ -7,6 +7,26 @@ import {IExplorerFilter} from '../../_types';
 import {CommonFilterItem} from './CommonFilterItem';
 import {AttributeFormat} from '_ui/_gqlTypes';
 import {AttributeConditionFilter} from '_ui/types';
+import {FunctionComponent, useReducer} from 'react';
+import {IViewSettingsState, viewSettingsReducer} from '../store-view-settings/viewSettingsReducer';
+import {ViewSettingsContext} from '../store-view-settings/ViewSettingsContext';
+import {viewSettingsInitialState} from '../store-view-settings/viewSettingsInitialState';
+import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
+
+const getAllConditionOptions = (base: ReturnType<typeof render>['baseElement']) =>
+    base.getElementsByClassName('rc-virtual-list')[0].getElementsByClassName('kit-select-option');
+
+const MockViewSettingsContextProvider: FunctionComponent<{viewMock: IViewSettingsState}> = ({viewMock, children}) => {
+    const [view, dispatch] = useReducer(viewSettingsReducer, viewMock);
+    return <ViewSettingsContext.Provider value={{view, dispatch}}>{children}</ViewSettingsContext.Provider>;
+};
+
+const CommonFilterItemContainer: FunctionComponent = () => {
+    const {
+        view: {filters}
+    } = useViewSettingsContext();
+    return <CommonFilterItem filter={filters[0]} />;
+};
 
 describe('CommonFilterItem', () => {
     describe('numeric filter', () => {
