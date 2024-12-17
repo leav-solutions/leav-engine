@@ -1,11 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useReducer} from 'react';
+import {FunctionComponent, useEffect, useReducer} from 'react';
 import {createPortal} from 'react-dom';
 import {KitEmpty, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
-import {IItemAction, IPrimaryAction} from './_types';
+import {DefaultViewSettings, IItemAction, IPrimaryAction} from './_types';
 import {useExplorerData} from './_queries/useExplorerData';
 import {DataView} from './DataView';
 import {useDeactivateAction} from './useDeactivateAction';
@@ -14,7 +14,6 @@ import {usePrimaryActionsButton} from './usePrimaryActions';
 import {ExplorerTitle} from './ExplorerTitle';
 import {useCreateAction} from './useCreateAction';
 import {
-    type IViewSettingsState,
     SidePanel,
     useEditSettings,
     useOpenViewSettings,
@@ -28,6 +27,7 @@ import {usePagination} from './usePagination';
 import {Loading} from '../Loading';
 import {ExplorerFilterBar} from './display-view-filters/ExplorerFilterBar';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {useHydrateDefaultViewSettings} from './useHydrateDefaultViewSettings';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -56,7 +56,7 @@ interface IExplorerProps {
     title?: string;
     defaultActionsForItem?: Array<'edit' | 'deactivate'>;
     defaultPrimaryActions?: Array<'create'>;
-    defaultViewSettings?: Partial<IViewSettingsState>;
+    defaultViewSettings?: DefaultViewSettings;
 }
 
 export const Explorer: FunctionComponent<IExplorerProps> = ({
@@ -72,12 +72,17 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     const {t} = useSharedTranslation();
 
     const {panelElement} = useEditSettings();
+    const [view, dispatch] = useReducer(viewSettingsReducer, viewSettingsInitialState);
 
-    const [view, dispatch] = useReducer(viewSettingsReducer, {
-        ...viewSettingsInitialState,
-        ...defaultViewSettings,
-        maxFilters: defaultViewSettings?.maxFilters ?? viewSettingsInitialState.maxFilters
-    });
+    const {loading: viewSettingsLoading, viewSettings: hydratedDefaultViewSettings} = useHydrateDefaultViewSettings(
+        defaultViewSettings ?? {}
+    );
+
+    useEffect(() => {
+        if (!viewSettingsLoading) {
+            dispatch({type: 'RESET', payload: {...viewSettingsInitialState, ...hydratedDefaultViewSettings}});
+        }
+    }, [viewSettingsLoading]);
 
     const {currentPage, setNewPageSize, setNewPage} = usePagination(dispatch);
 
@@ -87,7 +92,8 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
         fulltextSearch: view.fulltextSearch,
         pagination: noPagination ? null : {limit: view.pageSize, offset: view.pageSize * (currentPage - 1)},
         sorts: view.sort,
-        filters: view.filters
+        filters: view.filters,
+        skip: viewSettingsLoading
     }); // TODO: refresh when go back on page
 
     const {deactivateAction} = useDeactivateAction({
@@ -126,7 +132,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                     </KitSpace>
                 </ExplorerHeaderDivStyled>
                 <ExplorerFilterBar />
-                {loading ? (
+                {loading || viewSettingsLoading ? (
                     <Loading />
                 ) : hasNoResults ? (
                     <KitEmpty title={t('explorer.empty-data')} />
