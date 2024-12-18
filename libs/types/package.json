@@ -9,5 +9,12 @@
     "publish-types": "npm publish --access public"
   },
   "license": "LGPL3",
-  "repository": "https://github.com/leav-solutions/leav-engine"
+  "repository": "https://github.com/leav-solutions/leav-engine",
+  "dependencies": {
+    "@leav/utils": "workspace:*",
+    "@types/express": "5.0.0",
+    "@types/jest": "29.5.14",
+    "arangojs": "8.1.0",
+    "jest": "29.7.0"
+  }
 }
