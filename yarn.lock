@@ -579,6 +579,12 @@ __metadata:
 "@aristid/leav-types@workspace:libs/types":
   version: 0.0.0-use.local
   resolution: "@aristid/leav-types@workspace:libs/types"
+  dependencies:
+    "@leav/utils": "workspace:*"
+    "@types/express": "npm:5.0.0"
+    "@types/jest": "npm:29.5.14"
+    arangojs: "npm:8.1.0"
+    jest: "npm:29.7.0"
   languageName: unknown
   linkType: soft
 
@@ -11276,6 +11282,16 @@ __metadata:
     expect: "npm:^29.0.0"
     pretty-format: "npm:^29.0.0"
   checksum: 7d6e3e4ef4b1cab0f61270d55764709512fdfbcb1bd47c0ef44117d48490529c1f264dacf3440b9188363e99e290b80b79c529eadc3af2184116a90f6856b192
+  languageName: node
+  linkType: hard
+
+"@types/jest@npm:29.5.14":
+  version: 29.5.14
+  resolution: "@types/jest@npm:29.5.14"
+  dependencies:
+    expect: "npm:^29.0.0"
+    pretty-format: "npm:^29.0.0"
+  checksum: 59ec7a9c4688aae8ee529316c43853468b6034f453d08a2e1064b281af9c81234cec986be796288f1bbb29efe943bc950e70c8fa8faae1e460d50e3cf9760f9b
   languageName: node
   linkType: hard
 
