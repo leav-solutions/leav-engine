@@ -11,7 +11,7 @@
   "license": "LGPL3",
   "repository": "https://github.com/leav-solutions/leav-engine",
   "dependencies": {
-    "@leav/utils": "workspace:libs/utils",
+    "@leav/utils": "0.0.3",
     "@types/express": "5.0.0",
     "@types/jest": "29.5.14",
     "arangojs": "8.1.0",
