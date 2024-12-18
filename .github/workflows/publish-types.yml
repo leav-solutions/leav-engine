@@ -79,6 +79,6 @@ jobs:
           name: libs-types
           path: libs/types/
       - name: publish next version
-        run: yarn --cwd "libs/types" publish-types --tag next
+        run: yarn --cwd "libs/types" install && yarn --cwd "libs/types" publish-types --tag next
         env:
           NODE_AUTH_TOKEN: ${{ secrets.ARISTID_NPM_TOKEN }}
