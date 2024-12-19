@@ -9,9 +9,8 @@ import {IStandFieldValueContentProps} from './_types';
 import {KitInputNumberProps} from 'aristid-ds/dist/Kit/DataEntry/InputNumber/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
-const KitInputNumberStyled = styled(KitInputNumber)<{$shouldHighlightColor: boolean}>`
+const KitInputNumberStyled = styled(KitInputNumber)`
     width: 100%;
-    color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
 `;
 
 export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProps<KitInputNumberProps>> = ({
@@ -84,10 +83,6 @@ export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProp
             onChange={_handleOnChange}
             onFocus={_handleFocus}
             onBlur={_handleOnBlur}
-            $shouldHighlightColor={
-                !hasChanged &&
-                (inheritedFlags.isInheritedNotOverrideValue || calculatedFlags.isCalculatedNotOverrideValue)
-            }
             placeholder={t('record_edition.placeholder.enter_a_number')}
         />
     );
