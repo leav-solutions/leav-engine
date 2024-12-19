@@ -8,6 +8,7 @@ const mockActionBase: IActionsListFunction = {
     id: 'myAction',
     name: 'MyAction',
     description: 'My action',
+    compute: false,
     input_types: Object.values(ActionsListIOTypes),
     output_types: Object.values(ActionsListIOTypes),
     action: jest.fn()

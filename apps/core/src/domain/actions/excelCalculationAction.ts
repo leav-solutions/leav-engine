@@ -74,6 +74,7 @@ export default function ({
         description: 'Performs an excel calculation',
         input_types: [ActionsListIOTypes.STRING, ActionsListIOTypes.NUMBER],
         output_types: [ActionsListIOTypes.STRING],
+        compute: true,
         params: [
             {
                 name: 'Description',

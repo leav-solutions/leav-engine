@@ -10,6 +10,7 @@ export default function (): IActionsListFunction {
         description: 'Convert value to boolean',
         input_types: [ActionsListIOTypes.STRING, ActionsListIOTypes.NUMBER, ActionsListIOTypes.BOOLEAN],
         output_types: [ActionsListIOTypes.BOOLEAN],
+        compute: false,
         action: values => {
             const computedValues = values.map(elementValue => {
                 switch (elementValue.payload) {

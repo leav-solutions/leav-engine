@@ -12,6 +12,7 @@ export default function (): IActionsListFunction {
         description: 'Check if value is a string matching URL format',
         input_types: [ActionsListIOTypes.STRING],
         output_types: [ActionsListIOTypes.STRING],
+        compute: false,
         action: (values: IValue[]) => {
             const allErrors = values.reduce<Array<{errorType: Errors; attributeValue: IValue}>>(
                 (errors, elementValue) => {

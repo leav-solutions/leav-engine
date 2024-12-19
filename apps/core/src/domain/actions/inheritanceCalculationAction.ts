@@ -31,6 +31,7 @@ export default function ({
             ActionsListIOTypes.OBJECT,
             ActionsListIOTypes.BOOLEAN
         ],
+        compute: true,
         params: [
             {
                 name: 'Description',

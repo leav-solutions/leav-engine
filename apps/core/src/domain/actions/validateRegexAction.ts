@@ -13,6 +13,7 @@ export default function (): IActionsListFunction<{regex: true}> {
         input_types: [ActionsListIOTypes.STRING],
         output_types: [ActionsListIOTypes.STRING],
         params: [{name: 'regex', type: 'string', description: 'Validation regex', required: true, default_value: ''}],
+        compute: false,
         action: (values, params) => {
             const allErrors = values.reduce<Array<{errorType: Errors; attributeValue: IValue}>>(
                 (errors, elementValue) => {
