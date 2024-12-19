@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import {KitColorPickerProps} from 'aristid-ds/dist/Kit/DataEntry/ColorPicker/types';
 import {IStandFieldValueContentProps} from './_types';
 import {ColorFactory} from 'antd/lib/color-picker/color';
+import {EMPTY_INITIAL_VALUE_UNDEFINED} from '../../../antdUtils';
 
 const KitColorPickerStyled = styled(KitColorPicker)`
     width: 100%;
@@ -21,6 +22,8 @@ const KitColorPickerStyled = styled(KitColorPicker)`
 export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProps<KitColorPickerProps>> = ({
     value,
     presentationValue,
+    isLastValueOfMultivalues,
+    removeLastValueOfMultivalues,
     onChange,
     attribute,
     label,
@@ -33,14 +36,21 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
         throw Error('DSColorPickerWrapper should be used inside a antd Form.Item');
     }
 
+    const isNewValueOfMultivalues = isLastValueOfMultivalues && value === EMPTY_INITIAL_VALUE_UNDEFINED;
+    const focusedDefaultValue = attribute.multiple_values ? isNewValueOfMultivalues : false;
+
     const [hasChanged, setHasChanged] = useState(false);
-    const [isFocused, setIsFocused] = useState(false);
+    const [isFocused, setIsFocused] = useState(focusedDefaultValue);
     const [key, setKey] = useState(0);
 
     const _handleOnOpenChange = async (open: boolean) => {
         if (!open) {
             if (!hasChanged) {
                 setIsFocused(false);
+
+                if (isNewValueOfMultivalues) {
+                    removeLastValueOfMultivalues();
+                }
                 return;
             }
 
@@ -87,6 +97,8 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
             // https://react.dev/learn/preserving-and-resetting-state#option-2-resetting-state-with-a-key
             key={key}
             id={attribute.id} // unused until color picker is fixed in DS / antd
+            autoFocus={isFocused}
+            open={attribute.multiple_values ? isFocused : undefined}
             data-testid={attribute.id}
             value={value}
             showText={isFocused || !presentationValue ? true : () => `${presentationValue}`}
