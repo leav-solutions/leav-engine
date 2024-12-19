@@ -813,7 +813,7 @@ describe('Explorer', () => {
                     value: 'Christmas'
                 }
             ]);
-            const filterBar = screen.getByRole('list', {name: 'filter-bar'});
+            const filterBar = screen.getByRole('list', {name: /filter-list/});
             expect(filterBar).toBeVisible();
             expect(within(filterBar).getByText(simpleMockAttribute.label.fr)).toBeVisible();
             expect(within(filterBar).getByRole('button', {name: /delete-filters/})).toBeVisible();

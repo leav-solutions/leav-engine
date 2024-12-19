@@ -13,10 +13,9 @@ const FilterStyled = styled(KitFilter)`
     flex: 0 0 auto;
 `;
 
-const ExplorerFilterBarStyledUl = styled.ul`
-    padding: 0 calc(var(--general-spacing-xxs) * 1px);
-    padding-bottom: calc(var(--general-spacing-m) * 1px);
-    padding-top: calc(var(--general-spacing-xs) * 1px);
+const ExplorerFilterBarListStyled = styled.ul`
+    padding: calc(var(--general-spacing-xs) * 1px) calc(var(--general-spacing-xxs) * 1px)
+        calc(var(--general-spacing-m) * 1px) calc(var(--general-spacing-xxs) * 1px);
     margin: 0;
     list-style: none;
     display: flex;
@@ -43,7 +42,7 @@ export const ExplorerFilterBar: FunctionComponent = () => {
     }
 
     return (
-        <ExplorerFilterBarStyledUl aria-label="filter-bar">
+        <ExplorerFilterBarListStyled aria-label={t('explorer.filter-list.active')}>
             <KitSpace size="s">
                 {filters.map(filter => (
                     <li key={filter.id}>
@@ -57,6 +56,6 @@ export const ExplorerFilterBar: FunctionComponent = () => {
                     {t('explorer.delete-filters')}
                 </FilterStyled>
             </li>
-        </ExplorerFilterBarStyledUl>
+        </ExplorerFilterBarListStyled>
     );
 };
