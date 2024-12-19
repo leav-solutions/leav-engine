@@ -48,8 +48,12 @@ interface IDataViewProps {
     };
 }
 
+// TODO: tests will fail if we don't check attributeToDisplay because we have a render with no attributes but data is present. We should check why there's this behavior
 const arePropsEqual = (prevProps: IDataViewProps, nextProps: IDataViewProps) =>
-    isEqual(prevProps.dataGroupedFilteredSorted, nextProps.dataGroupedFilteredSorted);
+    isEqual(
+        {attributesToDisplay: prevProps.attributesToDisplay, data: prevProps.dataGroupedFilteredSorted},
+        {attributesToDisplay: nextProps.attributesToDisplay, data: nextProps.dataGroupedFilteredSorted}
+    );
 
 export const DataView: FunctionComponent<IDataViewProps> = memo(
     ({dataGroupedFilteredSorted, attributesToDisplay, attributesProperties, paginationProps, itemActions}) => {

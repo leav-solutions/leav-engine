@@ -68,6 +68,16 @@ describe('Attributes', () => {
         expect(res.data.errors).toBeUndefined();
     });
 
+    test('Get Attribute by IDs', async () => {
+        const res = await makeGraphQlCall(
+            `{attributes(filters: {ids: ["${testAttrName}", "created_by"]}) { list {id} }}`
+        );
+
+        expect(res.status).toBe(200);
+        expect(res.data.errors).toBeUndefined();
+        expect(res.data.data.attributes.list.length).toBe(2);
+    });
+
     test('Return only request language on label', async () => {
         const res = await makeGraphQlCall(
             `{attributes(filters: {id: "${testAttrName}"}) { list {id label(lang: [fr])}}}`
