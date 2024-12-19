@@ -285,6 +285,8 @@ const StandardField: FunctionComponent<
                                                         readonly={isReadOnly}
                                                         calculatedFlags={calculatedFlags}
                                                         inheritedFlags={inheritedFlags}
+                                                        isLastValueOfMultivalues={index === fields.length - 1}
+                                                        removeLastValueOfMultivalues={() => remove(index)}
                                                     />
                                                 </StandardFieldValueWrapper>
                                                 {fields.length > 1 && (

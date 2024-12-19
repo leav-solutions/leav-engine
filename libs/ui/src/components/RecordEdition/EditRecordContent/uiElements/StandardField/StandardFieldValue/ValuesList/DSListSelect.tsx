@@ -13,6 +13,7 @@ import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRe
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {IStandFieldValueContentProps} from '../_types';
 import {IKitSelect} from 'aristid-ds/dist/Kit/DataEntry/Select/types';
+import {EMPTY_INITIAL_VALUE_STRING} from '_ui/components/RecordEdition/EditRecordContent/antdUtils';
 
 interface IOption {
     label: string;
@@ -36,6 +37,8 @@ const addOption = (options: IOption[], optionToAdd: IOption) => {
 export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSelect>> = ({
     value,
     presentationValue,
+    isLastValueOfMultivalues,
+    removeLastValueOfMultivalues,
     onChange,
     attribute,
     required,
@@ -52,10 +55,14 @@ export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSe
         throw Error('DSListSelect should have a values list');
     }
 
+    const isNewValueOfMultivalues = isLastValueOfMultivalues && value === EMPTY_INITIAL_VALUE_STRING;
+    const focusedDefaultValue = attribute.multiple_values ? isNewValueOfMultivalues : false;
+
     const {t} = useSharedTranslation();
     const form = Form.useFormInstance();
     const {errors} = Form.Item.useStatus();
-    const [isFocused, setIsFocused] = useState(false);
+    const [hasChanged, setHasChanged] = useState(false);
+    const [isFocused, setIsFocused] = useState(focusedDefaultValue);
     const [searchedString, setSearchedString] = useState('');
     const [saveAttribute] = useSaveAttributeMutation();
     const {dispatch: editRecordDispatch} = useEditRecordReducer();
@@ -113,6 +120,7 @@ export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSe
     );
 
     const _resetToInheritedOrCalculatedValue = async () => {
+        setHasChanged(false);
         if (inheritedFlags.isInheritedValue) {
             setTimeout(() => onChange(inheritedFlags.inheritedValue.raw_value, options), 0);
         } else if (calculatedFlags.isCalculatedValue) {
@@ -122,6 +130,7 @@ export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSe
     };
 
     const _handleOnChange = async (selectedValue: string) => {
+        setHasChanged(true);
         setSearchedString('');
         if ((inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue) && selectedValue === '') {
             _resetToInheritedOrCalculatedValue();
@@ -160,6 +169,14 @@ export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSe
         }
     };
 
+    const _handleDropdownVisibleChange = (visible: boolean) => {
+        setIsFocused(visible);
+
+        if (!hasChanged && isNewValueOfMultivalues) {
+            removeLastValueOfMultivalues();
+        }
+    };
+
     const valueToDisplay = isFocused ? value : presentationValue;
     const isValueEmpty = value === '';
 
@@ -167,14 +184,15 @@ export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSe
         <KitSelect
             id={attribute.id}
             data-testid={attribute.id}
+            autoFocus={isFocused}
+            open={isFocused}
             value={isValueEmpty ? undefined : valueToDisplay}
             allowClear={!required && value}
             disabled={readonly}
             options={options}
-            open={isFocused}
             status={errors.length > 0 && 'error'}
             showSearch
-            onDropdownVisibleChange={visible => setIsFocused(visible)}
+            onDropdownVisibleChange={_handleDropdownVisibleChange}
             onSelect={_handleOnChange}
             onChange={onChange}
             onClear={_handleOnClear}

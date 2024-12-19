@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitDatePicker} from 'aristid-ds';
-import {FunctionComponent, useEffect, useState} from 'react';
+import {FunctionComponent, useEffect, useRef, useState} from 'react';
 import {Form} from 'antd';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
@@ -11,6 +11,7 @@ import {setDateToUTCNoon} from '_ui/_utils';
 import {IStandFieldValueContentProps} from './_types';
 import {IKitRangePicker} from 'aristid-ds/dist/Kit/DataEntry/DatePicker/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {EMPTY_INITIAL_VALUE_UNDEFINED} from '../../../antdUtils';
 
 const KitDatePickerRangePickerStyled = styled(KitDatePicker.RangePicker)<{
     $shouldUsePresentationLayout: boolean;
@@ -29,8 +30,10 @@ const KitDatePickerRangePickerStyled = styled(KitDatePicker.RangePicker)<{
 `;
 
 export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProps<IKitRangePicker>> = ({
-    presentationValue,
     value,
+    presentationValue,
+    isLastValueOfMultivalues,
+    removeLastValueOfMultivalues,
     onChange,
     attribute,
     handleSubmit,
@@ -42,7 +45,11 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
         throw Error('DSRangePickerWrapper should be used inside a antd Form.Item');
     }
 
-    const [isFocused, setIsFocused] = useState(false);
+    const isNewValueOfMultivalues = isLastValueOfMultivalues && value === EMPTY_INITIAL_VALUE_UNDEFINED;
+    const focusedDefaultValue = attribute.multiple_values ? isNewValueOfMultivalues : false;
+
+    const hasChangedRef = useRef(false);
+    const [isFocused, setIsFocused] = useState(focusedDefaultValue);
     const {errors} = Form.Item.useStatus();
     const {t} = useSharedTranslation();
 
@@ -53,6 +60,8 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
     useEffect(() => setUsePresentationLayout(!isFocused && !isErrors), [isFocused, isErrors]);
 
     const _resetToInheritedOrCalculatedValue = async () => {
+        hasChangedRef.current = false;
+
         if (inheritedFlags.isInheritedValue) {
             onChange(
                 [
@@ -77,6 +86,8 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
         rangePickerDates: [from: dayjs.Dayjs, to: dayjs.Dayjs] | null,
         antOnChangeParams: [from: string, to: string] | null
     ) => void = async (rangePickerDates, ...antOnChangeParams) => {
+        hasChangedRef.current = true;
+
         if ((inheritedFlags.isInheritedValue || calculatedFlags.isCalculatedValue) && rangePickerDates === null) {
             _resetToInheritedOrCalculatedValue();
             return;
@@ -103,6 +114,10 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
     const _handleOpenChange = (open: boolean) => {
         if (!open) {
             setIsFocused(false);
+
+            if (!hasChangedRef.current && isNewValueOfMultivalues) {
+                removeLastValueOfMultivalues();
+            }
         }
     };
 
@@ -113,6 +128,8 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
     return (
         <KitDatePickerRangePickerStyled
             id={attribute.id}
+            autoFocus={isFocused}
+            open={attribute.multiple_values ? isFocused : undefined}
             value={value}
             format={!isFocused && !isErrors && !!presentationValue ? () => presentationValue : undefined}
             disabled={readonly}
@@ -120,7 +137,6 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
             onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
             onChange={_handleDateChange}
             onOpenChange={_handleOpenChange}
             placeholder={placeholderToDisplay}
