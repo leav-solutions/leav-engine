@@ -11,9 +11,8 @@ import {IStandFieldValueContentProps} from './_types';
 import {IKitDatePicker} from 'aristid-ds/dist/Kit/DataEntry/DatePicker/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
-const KitDatePickerStyled = styled(KitDatePicker)<{$shouldHighlightColor: boolean}>`
+const KitDatePickerStyled = styled(KitDatePicker)`
     width: 100%;
-    color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
 `;
 
 export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps<IKitDatePicker>> = ({
@@ -89,9 +88,6 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
             onChange={_handleDateChange}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            $shouldHighlightColor={
-                inheritedFlags.isInheritedNotOverrideValue || calculatedFlags.isCalculatedNotOverrideValue
-            }
             placeholder={t('record_edition.placeholder.enter_a_date')}
         />
     );

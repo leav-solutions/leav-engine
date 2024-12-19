@@ -13,11 +13,8 @@ import {IKitRangePicker} from 'aristid-ds/dist/Kit/DataEntry/DatePicker/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 const KitDatePickerRangePickerStyled = styled(KitDatePicker.RangePicker)<{
-    $shouldHighlightColor: boolean;
     $shouldUsePresentationLayout: boolean;
 }>`
-    color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
-
     ${({$shouldUsePresentationLayout}) =>
         $shouldUsePresentationLayout &&
         `   &.ant-picker.ant-picker-range {
@@ -127,9 +124,6 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
             onChange={_handleDateChange}
             onOpenChange={_handleOpenChange}
             placeholder={placeholderToDisplay}
-            $shouldHighlightColor={
-                inheritedFlags.isInheritedNotOverrideValue || calculatedFlags.isCalculatedNotOverrideValue
-            }
             $shouldUsePresentationLayout={usePresentationLayout}
         />
     );
