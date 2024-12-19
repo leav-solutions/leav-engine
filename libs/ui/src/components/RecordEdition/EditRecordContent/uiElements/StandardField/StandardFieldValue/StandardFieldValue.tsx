@@ -23,11 +23,13 @@ interface IStandardFieldValueProps {
     handleSubmit: (value: AnyPrimitive | null) => Promise<void | ISubmitMultipleResult>;
     attribute: RecordFormAttributeStandardAttributeFragment;
     label: string;
-    listField?: FormListFieldData;
     required: boolean;
     readonly: boolean;
     calculatedFlags: CalculatedFlags;
     inheritedFlags: InheritedFlags;
+    listField?: FormListFieldData;
+    removeLastValueOfMultivalues?: () => void;
+    isLastValueOfMultivalues?: boolean;
 }
 
 function StandardFieldValue({
@@ -35,11 +37,13 @@ function StandardFieldValue({
     handleSubmit,
     attribute,
     label,
-    listField,
     required,
     readonly,
     calculatedFlags,
-    inheritedFlags
+    inheritedFlags,
+    listField,
+    removeLastValueOfMultivalues,
+    isLastValueOfMultivalues = false
 }: IStandardFieldValueProps): JSX.Element {
     const {t} = useSharedTranslation();
 
@@ -60,6 +64,8 @@ function StandardFieldValue({
         handleSubmit,
         attribute,
         presentationValue,
+        isLastValueOfMultivalues,
+        removeLastValueOfMultivalues,
         readonly,
         label,
         required,
