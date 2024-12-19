@@ -4,20 +4,24 @@
 import {useExplorerAttributesQuery} from '_ui/_gqlTypes';
 import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
-import {useMemo} from 'react';
+import {useEffect, useMemo, useReducer} from 'react';
 import {DefaultViewSettings, IExplorerFilter} from './_types';
 import {v4 as uuid} from 'uuid';
+import {viewSettingsReducer, viewSettingsInitialState} from './manage-view-settings';
 
-export const useHydrateDefaultViewSettings = (defaultViewSettings: DefaultViewSettings) => {
+export const useViewSettingsReducer = (defaultViewSettings: DefaultViewSettings = {}) => {
     const {lang} = useLang();
+    const [view, dispatch] = useReducer(viewSettingsReducer, viewSettingsInitialState);
+
+    const attributesToHydrate = [
+        ...(defaultViewSettings.filters?.map(filter => filter.field) ?? []),
+        ...(defaultViewSettings.sort?.map(sort => sort.attributeId) ?? [])
+    ];
     const {data, loading, error} = useExplorerAttributesQuery({
         variables: {
-            ids: [
-                ...(defaultViewSettings.filters?.map(filter => filter.field) || []),
-                ...(defaultViewSettings.sort?.map(sort => sort.attributeId) || [])
-            ]
+            ids: attributesToHydrate
         },
-        skip: !defaultViewSettings.filters?.length && !defaultViewSettings.sort?.length
+        skip: !attributesToHydrate.length
     });
 
     const attributesDataById = useMemo(
@@ -54,10 +58,17 @@ export const useHydrateDefaultViewSettings = (defaultViewSettings: DefaultViewSe
         [defaultViewSettings, attributesDataById, lang]
     );
 
+    useEffect(() => {
+        if (!loading) {
+            dispatch({type: 'RESET', payload: {...viewSettingsInitialState, ...hydratedSettings}});
+        }
+    }, [loading]);
+
     const res = {
         loading,
         error,
-        viewSettings: hydratedSettings
+        view,
+        dispatch
     };
 
     return res;
