@@ -6,7 +6,7 @@ import {FaEye, FaEyeSlash, FaSearch} from 'react-icons/fa';
 import {KitFilter, KitInput, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {AttributeFormat, AttributeType, RecordFilterCondition} from '_ui/_gqlTypes';
+import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
 import {
     closestCenter,
     DndContext,
@@ -18,10 +18,10 @@ import {
 } from '@dnd-kit/core';
 import {SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import {useAttributeDetailsData} from '../_shared/useAttributeDetailsData';
+import {CommonFilterItem} from '../_shared/CommonFilterItem';
 import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
 import {FilterListItem} from './FilterListItem';
-import {CommonFilterItem} from '../_shared/CommonFilterItem';
 
 const StyledList = styled.ul`
     padding: calc(var(--general-spacing-s) * 1px) 0;
@@ -62,9 +62,7 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
                 attribute: {
                     label: attributeDetailsById[attributeId].label,
                     format: attributeDetailsById[attributeId].format ?? AttributeFormat.text
-                },
-                condition: RecordFilterCondition.EQUAL,
-                value: null
+                }
             }
         });
     };
