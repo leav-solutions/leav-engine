@@ -13,19 +13,17 @@ const FilterStyled = styled(KitFilter)`
     flex: 0 0 auto;
 `;
 
-const ExplorerFilterBarStyledDiv = styled.div`
-    overflow: auto;
-    padding: 0 calc(var(--general-spacing-xxs) * 1px);
-    padding-bottom: calc(var(--general-spacing-m) * 1px);
-`;
-
-const ExplorerBarItemsListDiv = styled.div`
+const ExplorerFilterBarListStyled = styled.ul`
+    padding: calc(var(--general-spacing-xs) * 1px) calc(var(--general-spacing-xxs) * 1px)
+        calc(var(--general-spacing-m) * 1px) calc(var(--general-spacing-xxs) * 1px);
+    margin: 0;
+    list-style: none;
     display: flex;
+    overflow: auto;
     flex-wrap: nowrap;
     align-items: center;
     gap: 0;
     white-space: nowrap;
-    padding-top: calc(var(--general-spacing-xs) * 1px);
 `;
 
 const DividerStyled = styled(KitDivider)`
@@ -44,18 +42,20 @@ export const ExplorerFilterBar: FunctionComponent = () => {
     }
 
     return (
-        <ExplorerFilterBarStyledDiv>
-            <ExplorerBarItemsListDiv>
-                <KitSpace size="s">
-                    {filters.map(filter => (
+        <ExplorerFilterBarListStyled aria-label={t('explorer.filter-list.active')}>
+            <KitSpace size="s">
+                {filters.map(filter => (
+                    <li key={filter.id}>
                         <CommonFilterItem key={filter.id} filter={filter} />
-                    ))}
-                </KitSpace>
-                <DividerStyled type="vertical" />
+                    </li>
+                ))}
+            </KitSpace>
+            <DividerStyled type="vertical" />
+            <li>
                 <FilterStyled as={KitButton} type="secondary" size="s" danger icon={<FaTrash />} disabled>
                     {t('explorer.delete-filters')}
                 </FilterStyled>
-            </ExplorerBarItemsListDiv>
-        </ExplorerFilterBarStyledDiv>
+            </li>
+        </ExplorerFilterBarListStyled>
     );
 };
