@@ -13,6 +13,7 @@ import {
 } from '_ui/_gqlTypes';
 import {useLang} from '_ui/hooks';
 import {useMemo} from 'react';
+import {interleaveElement} from '_ui/_utils/interleaveElement';
 
 const _mapping = (data: ExplorerQuery, libraryId: string, availableLangs: string[]): IExplorerData => {
     const attributes = data.records.list.length
@@ -69,27 +70,18 @@ export const useExplorerData = ({
 }) => {
     const {lang: availableLangs} = useLang();
 
-    const queryFilters = filters
+    let queryFilters: RecordFilterInput[] = filters
         .filter(
             ({value, condition}) =>
                 value !== null ||
                 [RecordFilterCondition.IS_EMPTY, RecordFilterCondition.IS_NOT_EMPTY].includes(condition)
         )
-        .reduce<RecordFilterInput[]>((acc, {field, condition, value}, index) => {
-            if (index !== 0) {
-                acc.push({
-                    operator: RecordFilterOperator.AND
-                });
-            }
-
-            acc.push({
-                field,
-                condition,
-                value
-            });
-
-            return acc;
-        }, []);
+        .map(({field, condition, value}) => ({
+            field,
+            condition,
+            value
+        }));
+    queryFilters = interleaveElement({operator: RecordFilterOperator.AND}, queryFilters);
 
     const {data, loading, refetch} = useExplorerQuery({
         skip,

@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useEffect, useReducer} from 'react';
+import {FunctionComponent} from 'react';
 import {createPortal} from 'react-dom';
 import {KitEmpty, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
@@ -18,16 +18,14 @@ import {
     useEditSettings,
     useOpenViewSettings,
     ViewSettingsContext,
-    viewSettingsInitialState,
-    defaultPageSizeOptions,
-    viewSettingsReducer
+    defaultPageSizeOptions
 } from './manage-view-settings';
 import {useSearchInput} from './useSearchInput';
 import {usePagination} from './usePagination';
 import {Loading} from '../Loading';
 import {ExplorerFilterBar} from './display-view-filters/ExplorerFilterBar';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {useHydrateDefaultViewSettings} from './useHydrateDefaultViewSettings';
+import {useViewSettingsReducer} from './useViewSettingsReducer';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -72,17 +70,8 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
     const {t} = useSharedTranslation();
 
     const {panelElement} = useEditSettings();
-    const [view, dispatch] = useReducer(viewSettingsReducer, viewSettingsInitialState);
 
-    const {loading: viewSettingsLoading, viewSettings: hydratedDefaultViewSettings} = useHydrateDefaultViewSettings(
-        defaultViewSettings ?? {}
-    );
-
-    useEffect(() => {
-        if (!viewSettingsLoading) {
-            dispatch({type: 'RESET', payload: {...viewSettingsInitialState, ...hydratedDefaultViewSettings}});
-        }
-    }, [viewSettingsLoading]);
+    const {loading: viewSettingsLoading, view, dispatch} = useViewSettingsReducer(defaultViewSettings);
 
     const {currentPage, setNewPageSize, setNewPage} = usePagination(dispatch);
 
