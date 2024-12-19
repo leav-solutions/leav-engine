@@ -4,14 +4,9 @@
 import {KitInput} from 'aristid-ds';
 import {ChangeEvent, FocusEvent, FunctionComponent, useState} from 'react';
 import {Form} from 'antd';
-import styled from 'styled-components';
 import {IStandFieldValueContentProps} from './_types';
 import {IKitInput} from 'aristid-ds/dist/Kit/DataEntry/Input/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-
-const KitInputStyled = styled(KitInput)<{$shouldHighlightColor: boolean}>`
-    color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
-`;
 
 export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKitInput>> = ({
     value,
@@ -83,7 +78,7 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
     };
 
     return (
-        <KitInputStyled
+        <KitInput
             id={attribute.id}
             disabled={readonly}
             helper={isErrors ? String(errors[0]) : undefined}
@@ -93,10 +88,6 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
             onChange={_handleOnChange}
             onFocus={() => setIsFocused(true)}
             onBlur={_handleOnBlur}
-            $shouldHighlightColor={
-                !hasChanged &&
-                (inheritedFlags.isInheritedNotOverrideValue || calculatedFlags.isCalculatedNotOverrideValue)
-            }
             placeholder={t('record_edition.placeholder.enter_a_text')}
         />
     );

@@ -8,13 +8,10 @@ import {KitColorPickerProps} from 'aristid-ds/dist/Kit/DataEntry/ColorPicker/typ
 import {IStandFieldValueContentProps} from './_types';
 import {ColorFactory} from 'antd/lib/color-picker/color';
 
-const KitColorPickerStyled = styled(KitColorPicker)<{$shouldHighlightColor: boolean}>`
+const KitColorPickerStyled = styled(KitColorPicker)`
     width: 100%;
 
     .ant-color-picker-trigger-text {
-        color: ${({$shouldHighlightColor}) =>
-            $shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'var(--general-utilities-text-primary)'};
-
         svg {
             color: var(--general-utilities-text-primary);
         }
@@ -102,10 +99,6 @@ export const DSColorPickerWrapper: FunctionComponent<IStandFieldValueContentProp
             onOpenChange={_handleOnOpenChange}
             onChange={_handleOnChange}
             onClear={_handleOnClear}
-            $shouldHighlightColor={
-                !hasChanged &&
-                (inheritedFlags.isInheritedNotOverrideValue || calculatedFlags.isCalculatedNotOverrideValue)
-            }
         />
     );
 };
