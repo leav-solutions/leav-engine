@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import {IStandFieldValueContentProps} from './_types';
 import {KitInputNumberProps} from 'aristid-ds/dist/Kit/DataEntry/InputNumber/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {getEmptyInitialValue} from '../../../antdUtils';
+import {EMPTY_INITIAL_VALUE_STRING} from '../../../antdUtils';
 
 const KitInputNumberStyled = styled(KitInputNumber)`
     width: 100%;
@@ -30,7 +30,7 @@ export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProp
         throw Error('DSInputNumberWrapper should be used inside a antd Form.Item');
     }
 
-    const isNewValueOfMultivalues = isLastValueOfMultivalues && value === getEmptyInitialValue(attribute);
+    const isNewValueOfMultivalues = isLastValueOfMultivalues && value === EMPTY_INITIAL_VALUE_STRING;
     const focusedDefaultValue = attribute.multiple_values ? isNewValueOfMultivalues : false;
 
     const [hasChanged, setHasChanged] = useState(false);

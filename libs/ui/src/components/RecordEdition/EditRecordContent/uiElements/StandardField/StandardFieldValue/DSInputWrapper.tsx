@@ -7,7 +7,7 @@ import {Form} from 'antd';
 import {IStandFieldValueContentProps} from './_types';
 import {IKitInput} from 'aristid-ds/dist/Kit/DataEntry/Input/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {getEmptyInitialValue} from '../../../antdUtils';
+import {EMPTY_INITIAL_VALUE_STRING} from '../../../antdUtils';
 
 export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKitInput>> = ({
     value,
@@ -25,7 +25,7 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
         throw Error('DSInputWrapper should be used inside a antd Form.Item');
     }
 
-    const isNewValueOfMultivalues = isLastValueOfMultivalues && value === getEmptyInitialValue(attribute);
+    const isNewValueOfMultivalues = isLastValueOfMultivalues && value === EMPTY_INITIAL_VALUE_STRING;
     const focusedDefaultValue = attribute.multiple_values ? isNewValueOfMultivalues : false;
 
     const [hasChanged, setHasChanged] = useState(false);

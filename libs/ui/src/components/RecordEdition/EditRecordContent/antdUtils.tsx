@@ -70,11 +70,14 @@ const formatStandardInitialValue = (
     }
 };
 
+export const EMPTY_INITIAL_VALUE_STRING = '';
+export const EMPTY_INITIAL_VALUE_UNDEFINED = undefined;
+
 export const getEmptyInitialValue = (attribute: RecordFormElementAttribute) => {
     if ([AttributeFormat.date_range, AttributeFormat.color].includes(attribute.format)) {
-        return undefined;
+        return EMPTY_INITIAL_VALUE_UNDEFINED;
     }
-    return '';
+    return EMPTY_INITIAL_VALUE_STRING;
 };
 
 export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
