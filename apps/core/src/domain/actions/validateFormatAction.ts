@@ -13,6 +13,7 @@ export default function (): IActionsListFunction {
         id: 'validateFormat',
         name: 'Validate Format',
         description: 'Check if value matches attribute format',
+        compute: false,
         input_types: [
             ActionsListIOTypes.STRING,
             ActionsListIOTypes.NUMBER,

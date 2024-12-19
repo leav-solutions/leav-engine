@@ -1,13 +1,43 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {getAntdFormInitialValues, getEmptyInitialValue} from '_ui/components/RecordEdition/EditRecordContent/antdUtils';
+import {
+    getAntdDisplayedValue,
+    getAntdFormInitialValues,
+    getEmptyInitialValue
+} from '_ui/components/RecordEdition/EditRecordContent/antdUtils';
 import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
+import {RecordFormElementAttribute, RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
 
 jest.mock('dayjs', () => ({
     unix: jest.fn(t => t)
 }));
+
+describe('getAntdDisplayedValue', () => {
+    it.each`
+        values                                                                  | attribute                            | result
+        ${[{raw_payload: ''}]}                                                  | ${{format: AttributeFormat.text}}    | ${''}
+        ${[{raw_payload: 'truc'}]}                                              | ${{format: AttributeFormat.text}}    | ${'truc'}
+        ${[{raw_payload: null}, {raw_payload: 'calcul', isCalculated: true}]}   | ${{format: AttributeFormat.text}}    | ${'calcul'}
+        ${[{raw_payload: null}, {raw_payload: 'inherited', isInherited: true}]} | ${{format: AttributeFormat.text}}    | ${'inherited'}
+        ${[{raw_payload: '12'}]}                                                | ${{format: AttributeFormat.numeric}} | ${12}
+    `(
+        'Should submit empty value on clear and call onChange with inherited value',
+        async ({
+            values,
+            attribute,
+            result
+        }: {
+            values: RecordFormElementsValueStandardValue[];
+            attribute: RecordFormElementAttribute;
+            result: any;
+        }) => {
+            const antdFormInitialValues = getAntdDisplayedValue(values, attribute);
+            expect(antdFormInitialValues).toEqual(result);
+        }
+    );
+});
 
 describe('getAntdFormInitialValues', () => {
     test('Should return empty object on empty elements', async () => {

@@ -22,6 +22,7 @@ export default function (): IActionsListFunction<{localized: false; universal: f
         description: 'Convert range timestamps to a range dates',
         input_types: [ActionsListIOTypes.OBJECT],
         output_types: [ActionsListIOTypes.OBJECT],
+        compute: false,
         params: [
             {
                 name: 'localized',

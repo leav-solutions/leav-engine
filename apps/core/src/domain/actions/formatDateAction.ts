@@ -21,6 +21,7 @@ export default function (): IActionsListFunction<{localized: false; universal: f
         description: 'Convert timestamp to a date',
         input_types: [ActionsListIOTypes.NUMBER],
         output_types: [ActionsListIOTypes.STRING],
+        compute: false,
         params: [
             {
                 name: 'localized',

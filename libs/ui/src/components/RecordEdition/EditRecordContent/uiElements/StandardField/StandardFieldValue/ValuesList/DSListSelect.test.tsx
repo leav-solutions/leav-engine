@@ -52,7 +52,8 @@ describe('<DSListSelect />', () => {
         ...mockAttributeSimple,
         readonly: false,
         multiple_values: false,
-        permissions: {access_attribute: true, edit_value: true}
+        permissions: {access_attribute: true, edit_value: true},
+        compute: false
     };
 
     const valuesList = {
