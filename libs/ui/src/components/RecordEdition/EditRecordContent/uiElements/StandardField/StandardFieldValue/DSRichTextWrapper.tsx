@@ -3,18 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FunctionComponent, useState} from 'react';
 import {Form} from 'antd';
-import styled from 'styled-components';
 import {KitRichText} from 'aristid-ds';
 import {IStandFieldValueContentProps} from './_types';
 import {KitRichTextProps} from 'aristid-ds/dist/Kit/DataEntry/RichText/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-
-const KitRichTextStyled = styled(KitRichText)<{$shouldHighlightColor: boolean}>`
-    .tiptap.ProseMirror {
-        color: ${({$shouldHighlightColor}) =>
-            $shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial'};
-    }
-`;
 
 const isEmptyValue = value => !value || value === '<p></p>';
 
@@ -80,7 +72,7 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
     };
 
     return (
-        <KitRichTextStyled
+        <KitRichText
             id={attribute.id}
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
@@ -89,10 +81,6 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
             onChange={_handleOnChange}
             onFocus={_handleFocus}
             onBlur={_handleOnBlur}
-            $shouldHighlightColor={
-                !hasChanged &&
-                (inheritedFlags.isInheritedNotOverrideValue || calculatedFlags.isCalculatedNotOverrideValue)
-            }
             placeholder={t('record_edition.placeholder.enter_a_text')}
         />
     );

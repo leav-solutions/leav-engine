@@ -10,10 +10,9 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCircleXmark} from '@fortawesome/free-solid-svg-icons';
 import {IStandFieldValueContentProps} from './_types';
 
-const KitTypographyTextStyled = styled(KitTypography.Text)<{$shouldHighlightColor: boolean}>`
+const KitTypographyTextStyled = styled(KitTypography.Text)`
     vertical-align: middle;
     margin-left: calc(var(--general-spacing-xs) * 1px);
-    color: ${({$shouldHighlightColor}) => ($shouldHighlightColor ? 'var(--general-colors-primary-400)' : 'initial')};
 `;
 
 const FontAwesomeIconStyled = styled(FontAwesomeIcon)`
@@ -58,13 +57,7 @@ export const DSBooleanWrapper: FunctionComponent<IStandFieldValueContentProps<IK
         <>
             <label>
                 <KitSwitch id={attribute.id} checked={value} disabled={readonly} onChange={_handleOnChange} />
-                <KitTypographyTextStyled
-                    size="fontSize5"
-                    weight="medium"
-                    $shouldHighlightColor={
-                        inheritedFlags.isInheritedNotOverrideValue || calculatedFlags.isCalculatedNotOverrideValue
-                    }
-                >
+                <KitTypographyTextStyled size="fontSize5" weight="medium">
                     {t(_getBooleanValueAsStringForTranslation(value))}
                 </KitTypographyTextStyled>
             </label>

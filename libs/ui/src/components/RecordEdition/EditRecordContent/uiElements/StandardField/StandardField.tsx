@@ -18,6 +18,7 @@ import {computeCalculatedFlags, computeInheritedFlags} from './calculatedInherit
 import {useGetPresentationValues} from './useGetPresentationValues';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {getEmptyInitialValue} from '../../antdUtils';
+import {ComputeIndicator} from './ComputeIndicator';
 
 const Wrapper = styled.div<{$metadataEdit: boolean}>`
     margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
@@ -45,6 +46,11 @@ const KitInputWrapperStyled = styled(KitInputWrapper)`
             margin: 3px;
         }
     }
+`;
+
+const KitInputExtraAlignLeft = styled.div`
+    margin-right: auto;
+    line-height: 12px;
 `;
 
 const KitDeleteValueButton = styled(KitButton)`
@@ -210,42 +216,6 @@ const StandardField: FunctionComponent<
 
     const label = localizedTranslation(element.settings.label, availableLang);
 
-    const _getFormattedValueForHelper = (valueToFormat: RecordFormElementsValueStandardValue) => {
-        switch (attribute.format) {
-            case AttributeFormat.date_range:
-                return t('record_edition.date_range_from_to', {
-                    from: valueToFormat.payload.from,
-                    to: valueToFormat.payload.to
-                });
-            case AttributeFormat.encrypted:
-                return valueToFormat.payload ? '●●●●●●●' : '';
-            case AttributeFormat.color:
-                return '#' + valueToFormat.payload;
-            default:
-                return valueToFormat.payload;
-        }
-    };
-
-    const _getHelper = () => {
-        if (attribute.multiple_values) {
-            return;
-        }
-
-        if (inheritedFlags.isInheritedOverrideValue) {
-            return t('record_edition.inherited_input_helper', {
-                inheritedValue: _getFormattedValueForHelper(inheritedFlags.inheritedValue)
-            });
-        }
-
-        if (calculatedFlags.isCalculatedOverrideValue) {
-            return t('record_edition.calculated_input_helper', {
-                calculatedValue: _getFormattedValueForHelper(calculatedFlags.calculatedValue)
-            });
-        }
-
-        return;
-    };
-
     let isFieldInError = false;
     if (antdForm) {
         const hasErrorsInFormList = backendValues.some((_, index) => {
@@ -262,13 +232,17 @@ const StandardField: FunctionComponent<
         <Wrapper $metadataEdit={metadataEdit}>
             <KitInputWrapperStyled
                 label={label}
-                helper={_getHelper()}
                 required={element.settings.required}
                 disabled={isReadOnly}
                 bordered={attribute.multiple_values}
                 status={isFieldInError ? 'error' : undefined}
-                actions={
-                    canDeleteAllValues ? [<DeleteAllValuesButton handleDelete={_handleDeleteAllValues} />] : undefined
+                extra={
+                    <>
+                        <KitInputExtraAlignLeft>
+                            <ComputeIndicator calculatedFlags={calculatedFlags} inheritedFlags={inheritedFlags} />
+                        </KitInputExtraAlignLeft>
+                        {canDeleteAllValues && <DeleteAllValuesButton handleDelete={_handleDeleteAllValues} />}
+                    </>
                 }
                 htmlFor={attribute.id}
             >
