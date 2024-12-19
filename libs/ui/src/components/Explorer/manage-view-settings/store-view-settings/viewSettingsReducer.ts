@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AttributeDetailsFragment, SortOrder} from '_ui/_gqlTypes';
+import {RecordFilterCondition, SortOrder} from '_ui/_gqlTypes';
 import {IExplorerFilter} from '../../_types';
 
 export type ViewType = 'table' | 'list' | 'timeline' | 'mosaic';
@@ -20,6 +20,7 @@ export const ViewSettingsActionTypes = {
     CHANGE_FULLTEXT_SEARCH: 'CHANGE_FULLTEXT_SEARCH',
     CLEAR_FULLTEXT_SEARCH: 'CLEAR_FULLTEXT_SEARCH',
     ADD_FILTER: 'ADD_FILTER',
+    RESET_FILTER: 'RESET_FILTER',
     REMOVE_FILTER: 'REMOVE_FILTER',
     MOVE_FILTER: 'MOVE_FILTER',
     CHANGE_FILTER_CONFIG: 'CHANGE_FILTER_CONFIG'
@@ -105,12 +106,17 @@ interface IViewSettingsActionClearFulltextSearch {
 
 interface IViewSettingsActionAddFilter {
     type: typeof ViewSettingsActionTypes.ADD_FILTER;
-    payload: Omit<IExplorerFilter, 'id'>;
+    payload: Omit<IExplorerFilter, 'id' | 'value' | 'condition'>;
+}
+
+interface IViewSettingsActionResetFilter {
+    type: typeof ViewSettingsActionTypes.RESET_FILTER;
+    payload: Pick<IExplorerFilter, 'id'>;
 }
 
 interface IViewSettingsActionRemoveFilter {
     type: typeof ViewSettingsActionTypes.REMOVE_FILTER;
-    payload: {id: string};
+    payload: Pick<IExplorerFilter, 'id'>;
 }
 
 interface IViewSettingsActionChangeFilterConfig {
@@ -206,13 +212,30 @@ const addFilter: Reducer<IViewSettingsActionAddFilter['payload']> = (state, payl
         return state;
     }
 
-    const newFilters = [...state.filters, {...payload, id: `${payload.field}-${Date.now()}`}];
+    const newFilters = [
+        ...state.filters,
+        {...payload, id: `${payload.field}-${Date.now()}`, condition: RecordFilterCondition.EQUAL, value: null}
+    ];
     return {
         ...state,
         filters: newFilters,
         canAddFilter: newFilters.length < state.maxFilters
     };
 };
+
+const resetFilter: Reducer<IViewSettingsActionResetFilter['payload']> = (state, payload) => ({
+    ...state,
+    filters: state.filters.map(filter => {
+        if (filter.id === payload.id) {
+            return {
+                ...filter,
+                condition: RecordFilterCondition.EQUAL,
+                value: null
+            };
+        }
+        return filter;
+    })
+});
 
 const removeFilter: Reducer<IViewSettingsActionRemoveFilter['payload']> = (state, payload) => {
     const newFilters = state.filters.filter(({id}) => id !== payload.id);
@@ -252,6 +275,7 @@ export type IViewSettingsAction =
     | IViewSettingsActionChangeFulltextSearch
     | IViewSettingsActionClearFulltextSearch
     | IViewSettingsActionAddFilter
+    | IViewSettingsActionResetFilter
     | IViewSettingsActionRemoveFilter
     | IViewSettingsActionChangeFilterConfig
     | IViewSettingsActionMoveFilter;
@@ -296,6 +320,9 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
         }
         case ViewSettingsActionTypes.ADD_FILTER: {
             return addFilter(state, action.payload);
+        }
+        case ViewSettingsActionTypes.RESET_FILTER: {
+            return resetFilter(state, action.payload);
         }
         case ViewSettingsActionTypes.REMOVE_FILTER: {
             return removeFilter(state, action.payload);

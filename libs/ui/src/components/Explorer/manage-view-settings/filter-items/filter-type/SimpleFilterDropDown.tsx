@@ -5,9 +5,9 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {KitButton, KitDivider, KitSelect, KitSpace} from 'aristid-ds';
 import {ComponentProps, FunctionComponent} from 'react';
 import {FaClock, FaTrash} from 'react-icons/fa';
+import {IExplorerFilter, IFilterDropDownProps} from '../../../_types';
 import {useViewSettingsContext} from '../../store-view-settings/useViewSettingsContext';
 import {ViewSettingsActionTypes} from '../../store-view-settings/viewSettingsReducer';
-import {IFilterDropDownProps} from '_ui/components/Explorer/_types';
 import {FilterValueList} from './FilterValueList';
 
 // TODO : This is an exemple file showing ho to customize dropdown Panel content. Don't mind the content of the file, missing types,... it's just an example.
@@ -49,23 +49,28 @@ export const SimpleFilterDropdown: FunctionComponent<IFilterDropDownProps> = ({f
     const {t} = useSharedTranslation();
     const {dispatch} = useViewSettingsContext();
 
-    const updateFilter = data => {
+    const _updateFilter = (filterData: IExplorerFilter) => {
         dispatch({
             type: ViewSettingsActionTypes.CHANGE_FILTER_CONFIG,
-            payload: {
-                id: filter.id,
-                ...data
-            }
+            payload: filterData
         });
     };
 
-    const onConditionChanged = operator => {
-        updateFilter({...filter, operator});
+    const _onConditionChanged: ComponentProps<typeof KitSelect>['onChange'] = condition => {
+        _updateFilter({...filter, condition});
     };
 
-    const onValueClick = value => {
-        updateFilter({...filter, value});
+    const _onValueClick: ComponentProps<typeof FilterValueList>['onSelectionChanged'] = value => {
+        _updateFilter({...filter, value: value.join('-')});
     };
+
+    const _onResetFilter: ComponentProps<typeof KitButton>['onClick'] = () =>
+        dispatch({
+            type: ViewSettingsActionTypes.RESET_FILTER,
+            payload: {
+                id: filter.id
+            }
+        });
 
     const _onDeleteFilter: ComponentProps<typeof KitButton>['onClick'] = () =>
         dispatch({
@@ -77,16 +82,16 @@ export const SimpleFilterDropdown: FunctionComponent<IFilterDropDownProps> = ({f
 
     return (
         <KitSpace size="xxs" direction="vertical">
-            <KitSelect options={conditions} onChange={onConditionChanged} value={filter.condition} />
+            <KitSelect options={conditions} onChange={_onConditionChanged} value={filter.condition} />
             <FilterValueList
                 values={attributeValuesList}
                 multiple={false}
                 freeEntry={false}
                 selectedValues={filter.value === null ? [] : [filter.value]}
-                onSelectionChanged={onValueClick}
+                onSelectionChanged={_onValueClick}
             />
             <KitDivider noMargin />
-            <KitButton type="redirect" icon={<FaClock />} disabled>
+            <KitButton type="redirect" icon={<FaClock />} onClick={_onResetFilter}>
                 {t('explorer.reset-filter')}
             </KitButton>
             <KitButton type="redirect" icon={<FaTrash />} onClick={_onDeleteFilter}>
