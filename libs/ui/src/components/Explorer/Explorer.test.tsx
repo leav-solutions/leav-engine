@@ -733,17 +733,15 @@ describe('Explorer', () => {
 
         render(<Explorer library="campaigns" primaryActions={customPrimaryActions} defaultPrimaryActions={[]} />);
 
-        waitFor(async () => {
-            const searchInput = screen.getByRole('textbox', {name: /search/});
-            await userEvent.type(searchInput, 'Christ{Enter}');
+        const searchInput = screen.getByRole('textbox', {name: /search/});
+        await userEvent.type(searchInput, 'Christ{Enter}');
 
-            expect(screen.getByText('Christmas 2024')).toBeVisible();
+        expect(screen.getByText('Christmas 2024')).toBeVisible();
 
-            const clearButton = screen.getByLabelText('clear');
-            await user.click(clearButton);
+        const clearButton = screen.getByLabelText('clear');
+        await user.click(clearButton);
 
-            expect(screen.getByText('Halloween 2025')).toBeVisible();
-        });
+        expect(screen.getByText('Halloween 2025')).toBeVisible();
     });
 
     describe('With filters', () => {
