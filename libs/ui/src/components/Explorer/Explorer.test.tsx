@@ -10,7 +10,6 @@ import * as gqlTypes from '_ui/_gqlTypes';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {Explorer} from '_ui/index';
 import {IItemAction, IPrimaryAction} from './_types';
-import {act} from 'react-dom/test-utils';
 
 const EditRecordModalMock = 'EditRecordModal';
 
@@ -744,6 +743,80 @@ describe('Explorer', () => {
             await user.click(clearButton);
 
             expect(screen.getByText('Halloween 2025')).toBeVisible();
+        });
+    });
+
+    describe('With filters', () => {
+        const mockExplorerQueryResultWithFilters: Mockify<typeof gqlTypes.useExplorerQuery> = {
+            loading: false,
+            called: true,
+            data: {
+                records: {
+                    list: [
+                        {
+                            id: '613982168',
+                            whoAmI: {
+                                id: '613982168',
+                                label: 'Christmas 2024',
+                                subLabel: 'Du 20 décembre 2024 au 31 décembre 2024',
+                                color: null,
+                                library: {
+                                    id: 'campaigns',
+                                    label: {
+                                        en: 'Campaigns',
+                                        fr: 'Campagnes'
+                                    }
+                                },
+                                preview: null
+                            },
+                            properties: []
+                        }
+                    ]
+                }
+            }
+        };
+
+        const spy = jest
+            .spyOn(gqlTypes, 'useExplorerQuery')
+            .mockImplementation(
+                ({variables}) =>
+                    (Array.isArray(variables?.filters) && variables.filters.length
+                        ? mockExplorerQueryResultWithFilters
+                        : mockExplorerQueryResult) as gqlTypes.ExplorerQueryResult
+            );
+
+        test('should handle filters for the request and for the display', async () => {
+            render(
+                <Explorer
+                    library="campaigns"
+                    defaultViewSettings={{
+                        filters: [
+                            {
+                                id: 'filter1',
+                                attribute: {
+                                    label: simpleMockAttribute.label.fr,
+                                    format: simpleMockAttribute.format
+                                },
+                                field: simpleMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                value: 'Christmas'
+                            }
+                        ]
+                    }}
+                />
+            );
+
+            expect(spy.mock.calls[0][0].variables?.filters).toEqual([
+                {
+                    field: simpleMockAttribute.id,
+                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                    value: 'Christmas'
+                }
+            ]);
+            const filterBar = screen.getByRole('list', {name: /filter-list/});
+            expect(filterBar).toBeVisible();
+            expect(within(filterBar).getByText(simpleMockAttribute.label.fr)).toBeVisible();
+            expect(within(filterBar).getByRole('button', {name: /delete-filters/})).toBeVisible();
         });
     });
 });
