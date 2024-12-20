@@ -118,8 +118,8 @@ export default function ({
         doesCompute(attrData): boolean {
             const availableActions = actionsListDomain.getAvailableActions();
 
-            return attrData.actions_list[ActionsListEvents.GET_VALUE].some(
-                action => availableActions.find(availableAction => availableAction.id === action.id).compute
+            return (attrData.actions_list?.[ActionsListEvents.GET_VALUE] || []).some(
+                action => availableActions.find(availableAction => availableAction.id === action.id)?.compute
             );
         },
         async getLibraryAttributes(libraryId: string, ctx): Promise<IAttribute[]> {
