@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AnyPrimitive, ErrorTypes, IRequiredFieldsSettings, localizedTranslation} from '@leav/utils';
-import {FunctionComponent, useRef, useState} from 'react';
+import {FunctionComponent, useEffect, useRef, useState} from 'react';
 import styled from 'styled-components';
 import {ErrorDisplay} from '_ui/components';
 import {RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm/useGetRecordForm';
@@ -17,8 +17,9 @@ import {DeleteAllValuesButton} from './DeleteAllValuesButton';
 import {computeCalculatedFlags, computeInheritedFlags} from './calculatedInheritedFlags';
 import {useGetPresentationValues} from './useGetPresentationValues';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {getEmptyInitialValue} from '../../antdUtils';
 import {ComputeIndicator} from './ComputeIndicator';
+import {getAntdDisplayedValue, getEmptyInitialValue} from '../../antdUtils';
+import {GetRecordColumnsValuesRecord, IRecordColumnValueStandard} from '_ui/_queries/records/getRecordColumnsValues';
 
 const Wrapper = styled.div<{$metadataEdit: boolean}>`
     margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
@@ -65,8 +66,18 @@ const KitAddValueButton = styled(KitButton)`
 const StandardField: FunctionComponent<
     IFormElementProps<IRequiredFieldsSettings, RecordFormElementsValueStandardValue> & {
         antdForm?: FormInstance;
+        computedValues?: GetRecordColumnsValuesRecord<IRecordColumnValueStandard>;
     }
-> = ({element, antdForm, readonly, onValueSubmit, onValueDelete, onDeleteMultipleValues, metadataEdit = false}) => {
+> = ({
+    element,
+    computedValues,
+    antdForm,
+    readonly,
+    onValueSubmit,
+    onValueDelete,
+    onDeleteMultipleValues,
+    metadataEdit = false
+}) => {
     const {t} = useSharedTranslation();
     const {lang: availableLang} = useLang();
 
@@ -77,6 +88,13 @@ const StandardField: FunctionComponent<
     } | null>(null);
 
     const {attribute} = element;
+
+    useEffect(() => {
+        if (computedValues && computedValues[attribute.id]) {
+            setBackendValues(computedValues[attribute.id]);
+            antdForm.setFieldValue(attribute.id, getAntdDisplayedValue(computedValues[attribute.id], attribute));
+        }
+    }, [computedValues]);
 
     if (!attribute) {
         return <ErrorDisplay message={t('record_edition.missing_attribute')} />;

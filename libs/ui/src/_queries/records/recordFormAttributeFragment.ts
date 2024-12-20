@@ -13,6 +13,7 @@ export const recordFormAttributeFragment = gql`
         system
         readonly
         multiple_values
+        compute
         permissions(record: {id: $recordId, library: $libraryId}) {
             access_attribute
             edit_value

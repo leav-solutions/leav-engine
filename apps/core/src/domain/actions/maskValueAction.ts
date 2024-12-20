@@ -10,6 +10,7 @@ export default function (): IActionsListFunction {
         description: 'Mask any value by replacing with dots or empty string if no value',
         input_types: [ActionsListIOTypes.STRING, ActionsListIOTypes.NUMBER, ActionsListIOTypes.OBJECT],
         output_types: [ActionsListIOTypes.STRING],
+        compute: false,
         action: values => {
             const _isValueDefined = value =>
                 value !== null && value !== '' && (typeof value !== 'object' || Object.keys(value).length);

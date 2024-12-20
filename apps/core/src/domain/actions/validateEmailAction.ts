@@ -13,6 +13,7 @@ export default function (): IActionsListFunction {
         description: 'Check if value is a string matching email format',
         input_types: [ActionsListIOTypes.STRING],
         output_types: [ActionsListIOTypes.STRING],
+        compute: false,
         action: values => {
             const allErrors = values.reduce((errors, elementValue) => {
                 if (!elementValue.payload.match(EMAIL_REGEX)) {

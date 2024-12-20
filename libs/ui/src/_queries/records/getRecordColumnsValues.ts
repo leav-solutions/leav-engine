@@ -23,6 +23,8 @@ export interface IRecordColumnTreeValue {
 
 export interface IRecordColumnValueStandard {
     value: string | null;
+    isCalculated: boolean;
+    isInherited: boolean;
 }
 
 export interface IRecordColumnValueLink {
@@ -35,8 +37,8 @@ export interface IRecordColumnValueTree {
 
 export type RecordColumnValue = IRecordColumnValueStandard | IRecordColumnValueLink | IRecordColumnValueTree;
 
-export type GetRecordColumnsValuesRecord = {
-    [attributeName: string]: RecordColumnValue[];
+export type GetRecordColumnsValuesRecord<RecordColumnValues = RecordColumnValue> = {
+    [attributeName: string]: RecordColumnValues[];
 } & {
     _id: string;
 };
@@ -55,7 +57,10 @@ export interface IGetRecordColumnsValuesVariables {
 const _getColumnQueryPart = (column: string): string => `
     ${column}: property(attribute: "${column}") {
         ...on Value {
-            value
+            payload
+            raw_payload
+            isInherited
+            isCalculated
         }
 
         ...on LinkValue {

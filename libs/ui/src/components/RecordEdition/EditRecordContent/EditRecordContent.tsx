@@ -20,6 +20,7 @@ import {DeleteMultipleValuesFunc, DeleteValueFunc, FormElement, SubmitValueFunc}
 import {Form, FormInstance} from 'antd';
 import {EDIT_OR_CREATE_RECORD_FORM_ID} from './formConstants';
 import {getAntdFormInitialValues} from '_ui/components/RecordEdition/EditRecordContent/antdUtils';
+import {useGetRecordValuesQuery} from '_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 
 interface IEditRecordContentProps {
     antdForm: FormInstance;
@@ -70,6 +71,14 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         version: state.valuesVersion
     });
 
+    const {data: computeFieldsData, refetch: refetchComputeFields} = useGetRecordValuesQuery(
+        library,
+        recordForm
+            ? recordForm.elements.filter(element => element.attribute?.compute).map(element => element.attribute.id)
+            : [],
+        [record?.id]
+    );
+
     // Generate a hash of recordForm to detect changes
     const recordFormHash = useMemo(() => simpleStringHash(JSON.stringify(recordForm)), [recordForm]);
 
@@ -105,6 +114,11 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
 
         _checkDependencyChange(element[0].attribute.id);
 
+        const isEditing = Boolean(record);
+        if (isEditing) {
+            refetchComputeFields();
+        }
+
         return submitRes;
     };
 
@@ -131,6 +145,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
     };
 
     const antdFormInitialValues = getAntdFormInitialValues(recordForm);
+    const recordComputedValues = computeFieldsData && record ? computeFieldsData[record.id] : null;
 
     return (
         <Form
@@ -139,12 +154,19 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
             initialValues={antdFormInitialValues}
             onFinish={onRecordSubmit}
         >
-            <RecordEditionContext.Provider value={{elements: elementsByContainer, readOnly: readonly, record}}>
+            <RecordEditionContext.Provider
+                value={{
+                    elements: elementsByContainer,
+                    readOnly: readonly,
+                    record
+                }}
+            >
                 <rootElement.uiElement
                     // Use a hash of record form as a key to force a full re-render when the form changes
                     key={recordFormHash}
                     antdForm={antdForm}
                     element={rootElement}
+                    computedValues={recordComputedValues}
                     readonly={readonly}
                     onValueSubmit={_handleValueSubmit}
                     onValueDelete={_handleValueDelete}
