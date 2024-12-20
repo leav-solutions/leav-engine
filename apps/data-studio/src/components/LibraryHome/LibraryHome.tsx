@@ -24,6 +24,7 @@ import {IBaseInfo, InfoType, SharedStateSelectionType, WorkspacePanels} from '_t
 import {useSearchParams} from 'react-router-dom';
 import {FaAccessibleIcon, FaBeer, FaBirthdayCake, FaCheese, FaJs, FaXbox} from 'react-icons/all';
 import styled from 'styled-components';
+import {RecordFilterCondition} from '_ui/_gqlTypes';
 
 interface ILibraryHomeProps {
     library?: string;
@@ -147,21 +148,20 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                 library={library}
                 defaultActionsForItem={['edit', 'deactivate']}
                 defaultPrimaryActions={['create']}
-                // Uncomment to test default filters
-                // defaultViewSettings={{
-                //     filters: [
-                //         {
-                //             field: 'offers_label',
-                //             condition: RecordFilterCondition.CONTAINS,
-                //             value: 'Café'
-                //         },
-                //         {
-                //             field: 'bad_attribute',
-                //             condition: RecordFilterCondition.CONTAINS,
-                //             value: 'Café'
-                //         }
-                //     ]
-                // }}
+                defaultViewSettings={{
+                    filters: [
+                        {
+                            field: 'offers_label',
+                            condition: RecordFilterCondition.CONTAINS,
+                            value: 'Café'
+                        },
+                        {
+                            field: 'bad_attribute',
+                            condition: RecordFilterCondition.CONTAINS,
+                            value: 'Café'
+                        }
+                    ]
+                }}
                 itemActions={[
                     {
                         label: 'Test 1',
