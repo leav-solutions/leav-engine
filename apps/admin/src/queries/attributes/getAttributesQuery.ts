@@ -7,8 +7,8 @@ export const getAttributesQuery = gql`
     query GET_ATTRIBUTES(
         $id: ID
         $label: String
-        $type: [AttributeType]
-        $format: [AttributeFormat]
+        $type: [AttributeType!]
+        $format: [AttributeFormat!]
         $system: Boolean
         $multiple_values: Boolean
         $versionable: Boolean
