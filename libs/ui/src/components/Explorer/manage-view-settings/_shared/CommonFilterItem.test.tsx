@@ -186,4 +186,25 @@ describe('CommonFilterItem', () => {
             expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
         });
     });
+
+    describe('boolean filter', () => {
+        test('should render boolean filter', async () => {
+            const filter: IExplorerFilter = {
+                id: 'test',
+                attribute: {
+                    label: 'boolean filter',
+                    format: AttributeFormat.boolean
+                },
+                field: 'test',
+                value: 'true',
+                condition: AttributeConditionFilter.EQUAL
+            };
+
+            render(<CommonFilterItem filter={filter} />);
+            await userEvent.click(screen.getByRole('button', {name: /boolean/}));
+            const switchInput = screen.getByRole('switch');
+            expect(switchInput).toBeVisible();
+            expect(switchInput).toHaveAttribute('aria-checked', filter.value);
+        });
+    });
 });
