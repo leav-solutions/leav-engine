@@ -7,12 +7,15 @@ import {KitRichText} from 'aristid-ds';
 import {IStandFieldValueContentProps} from './_types';
 import {KitRichTextProps} from 'aristid-ds/dist/Kit/DataEntry/RichText/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {EMPTY_INITIAL_VALUE_STRING} from '../../../antdUtils';
 
 const isEmptyValue = value => !value || value === '<p></p>';
 
 export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<KitRichTextProps>> = ({
     value,
     presentationValue,
+    isLastValueOfMultivalues,
+    removeLastValueOfMultivalues,
     onChange,
     attribute,
     readonly,
@@ -24,8 +27,11 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
         throw Error('DSRichTextWrapper should be used inside a antd Form.Item');
     }
 
+    const isNewValueOfMultivalues = isLastValueOfMultivalues && value === EMPTY_INITIAL_VALUE_STRING;
+    const focusedDefaultValue = attribute.multiple_values ? isNewValueOfMultivalues : false;
+
     const [hasChanged, setHasChanged] = useState(false);
-    const [isFocused, setIsFocused] = useState(false);
+    const [isFocused, setIsFocused] = useState(focusedDefaultValue);
     const {errors} = Form.Item.useStatus();
     const {t} = useSharedTranslation();
 
@@ -49,6 +55,10 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
         if (!hasChanged) {
             onChange(valueToSubmit);
             setIsFocused(false);
+
+            if (isNewValueOfMultivalues) {
+                removeLastValueOfMultivalues();
+            }
             return;
         }
 
@@ -74,6 +84,7 @@ export const DSRichTextWrapper: FunctionComponent<IStandFieldValueContentProps<K
     return (
         <KitRichText
             id={attribute.id}
+            autoFocus={isFocused}
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
             value={valueToDisplay}
