@@ -26,6 +26,7 @@ import {IActionsListDomain} from '../actionsList/actionsListDomain';
 import getPermissionCachePatternKey from '../permission/helpers/getPermissionCachePatternKey';
 import {getActionsListToSave, getAllowedInputTypes, getAllowedOutputTypes} from './helpers/attributeALHelper';
 import {validateAttributeData} from './helpers/attributeValidationHelper';
+import {ActionsListEvents} from '../../_types/actionsList';
 
 export interface IAttributeDomain {
     getAttributeProperties({id, ctx}: {id: string; ctx: IQueryInfos}): Promise<IAttribute>;
@@ -55,6 +56,8 @@ export interface IAttributeDomain {
      * Retrieve libraries linked to attribute
      */
     getAttributeLibraries(params: {attributeId: string; ctx: IQueryInfos}): Promise<ILibrary[]>;
+
+    doesCompute(attrData: IAttribute): boolean;
 }
 
 export interface IAttributeDomainDeps {
@@ -112,6 +115,13 @@ export default function ({
     };
 
     return {
+        doesCompute(attrData): boolean {
+            const availableActions = actionsListDomain.getAvailableActions();
+
+            return attrData.actions_list[ActionsListEvents.GET_VALUE].some(
+                action => availableActions.find(availableAction => availableAction.id === action.id).compute
+            );
+        },
         async getLibraryAttributes(libraryId: string, ctx): Promise<IAttribute[]> {
             const _execute = async () => {
                 const libs = await libraryRepo.getLibraries({params: {filters: {id: libraryId}}, ctx});

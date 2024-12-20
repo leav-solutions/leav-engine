@@ -33,8 +33,8 @@ jest.mock('_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery', () => ({
         data: {
             [mockRecord.id]: {
                 _id: null,
-                col1: [{value: 'col1 value'}],
-                col2: [{value: 'col2 value'}]
+                col1: [{value: 'col1 value', isCalculated: false, isInherited: false}],
+                col2: [{value: 'col2 value', isCalculated: false, isInherited: false}]
             }
         },
         refetch: jest.fn()

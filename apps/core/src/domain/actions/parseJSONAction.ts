@@ -10,6 +10,7 @@ export default function (): IActionsListFunction {
         description: 'Parse a JSON string',
         input_types: [ActionsListIOTypes.STRING],
         output_types: [ActionsListIOTypes.OBJECT],
+        compute: false,
         action: values => {
             const computedValues = values.map(elementValue => {
                 elementValue.payload = JSON.parse('' + elementValue.payload);
