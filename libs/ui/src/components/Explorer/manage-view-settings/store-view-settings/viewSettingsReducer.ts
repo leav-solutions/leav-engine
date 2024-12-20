@@ -1,12 +1,14 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {RecordFilterCondition, SortOrder} from '_ui/_gqlTypes';
+import {SortOrder, RecordFilterCondition} from '_ui/_gqlTypes';
 import {IExplorerFilter} from '../../_types';
+import {v4 as uuid} from 'uuid';
 
 export type ViewType = 'table' | 'list' | 'timeline' | 'mosaic';
 
 export const ViewSettingsActionTypes = {
+    RESET: 'RESET',
     ADD_ATTRIBUTE: 'ADD_ATTRIBUTE',
     REMOVE_ATTRIBUTE: 'REMOVE_ATTRIBUTE',
     MOVE_ATTRIBUTE: 'MOVE_ATTRIBUTE',
@@ -132,6 +134,11 @@ interface IViewSettingsActionMoveFilter {
     };
 }
 
+interface IViewSettingsActionReset {
+    type: typeof ViewSettingsActionTypes.RESET;
+    payload: IViewSettingsState;
+}
+
 type Reducer<PAYLOAD = 'no_payload'> = PAYLOAD extends 'no_payload'
     ? (state: IViewSettingsState) => IViewSettingsState
     : (state: IViewSettingsState, payload: PAYLOAD) => IViewSettingsState;
@@ -214,7 +221,7 @@ const addFilter: Reducer<IViewSettingsActionAddFilter['payload']> = (state, payl
 
     const newFilters = [
         ...state.filters,
-        {...payload, id: `${payload.field}-${Date.now()}`, condition: RecordFilterCondition.EQUAL, value: null}
+        {...payload, id: uuid(), condition: RecordFilterCondition.EQUAL, value: null}
     ];
     return {
         ...state,
@@ -261,6 +268,8 @@ const moveFilter: Reducer<IViewSettingsActionMoveFilter['payload']> = (state, pa
     };
 };
 
+const reset: Reducer<IViewSettingsActionReset['payload']> = (_, payload) => payload;
+
 export type IViewSettingsAction =
     | IViewSettingsActionResetAttributes
     | IViewSettingsActionAddAttribute
@@ -278,7 +287,8 @@ export type IViewSettingsAction =
     | IViewSettingsActionResetFilter
     | IViewSettingsActionRemoveFilter
     | IViewSettingsActionChangeFilterConfig
-    | IViewSettingsActionMoveFilter;
+    | IViewSettingsActionMoveFilter
+    | IViewSettingsActionReset;
 
 export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
     switch (action.type) {
@@ -332,6 +342,9 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
         }
         case ViewSettingsActionTypes.MOVE_FILTER: {
             return moveFilter(state, action.payload);
+        }
+        case ViewSettingsActionTypes.RESET: {
+            return reset(state, action.payload);
         }
         default:
             return state;

@@ -174,14 +174,15 @@ export enum AttributeType {
 }
 
 export type AttributesFiltersInput = {
-  format?: InputMaybe<Array<InputMaybe<AttributeFormat>>>;
+  format?: InputMaybe<Array<AttributeFormat>>;
   id?: InputMaybe<Scalars['ID']>;
+  ids?: InputMaybe<Array<Scalars['ID']>>;
   label?: InputMaybe<Scalars['String']>;
-  libraries?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  librariesExcluded?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  libraries?: InputMaybe<Array<Scalars['String']>>;
+  librariesExcluded?: InputMaybe<Array<Scalars['String']>>;
   multiple_values?: InputMaybe<Scalars['Boolean']>;
   system?: InputMaybe<Scalars['Boolean']>;
-  type?: InputMaybe<Array<InputMaybe<AttributeType>>>;
+  type?: InputMaybe<Array<AttributeType>>;
   versionable?: InputMaybe<Scalars['Boolean']>;
 };
 
@@ -283,16 +284,6 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
-export enum GenerationStatus {
-  DONE = 'DONE',
-  GENERATION_FAILED = 'GENERATION_FAILED',
-  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
-  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
-  PREPARATION_FAILED = 'PREPARATION_FAILED',
-  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
-  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
-  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
-}
 
 export type GlobalSettingsFileInput = {
   library: Scalars['String'];
@@ -1354,6 +1345,13 @@ export type AddViewMutationVariables = Exact<{
 
 
 export type AddViewMutation = { saveView: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size: ViewSizes, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: { field: string, order: SortOrder } | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, settings?: Array<{ name: string, value?: any | null }> | null } };
+
+export type ExplorerAttributesQueryVariables = Exact<{
+  ids?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
+}>;
+
+
+export type ExplorerAttributesQuery = { attributes?: { list: Array<{ id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null }> } | null };
 
 export type ExplorerQueryVariables = Exact<{
   libraryId: Scalars['ID'];
@@ -3993,6 +3991,46 @@ export function useAddViewMutation(baseOptions?: Apollo.MutationHookOptions<AddV
 export type AddViewMutationHookResult = ReturnType<typeof useAddViewMutation>;
 export type AddViewMutationResult = Apollo.MutationResult<AddViewMutation>;
 export type AddViewMutationOptions = Apollo.BaseMutationOptions<AddViewMutation, AddViewMutationVariables>;
+export const ExplorerAttributesDocument = gql`
+    query ExplorerAttributes($ids: [ID!]) {
+  attributes(filters: {ids: $ids}) {
+    list {
+      id
+      type
+      format
+      label
+    }
+  }
+}
+    `;
+
+/**
+ * __useExplorerAttributesQuery__
+ *
+ * To run a query within a React component, call `useExplorerAttributesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExplorerAttributesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useExplorerAttributesQuery({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useExplorerAttributesQuery(baseOptions?: Apollo.QueryHookOptions<ExplorerAttributesQuery, ExplorerAttributesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ExplorerAttributesQuery, ExplorerAttributesQueryVariables>(ExplorerAttributesDocument, options);
+      }
+export function useExplorerAttributesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ExplorerAttributesQuery, ExplorerAttributesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ExplorerAttributesQuery, ExplorerAttributesQueryVariables>(ExplorerAttributesDocument, options);
+        }
+export type ExplorerAttributesQueryHookResult = ReturnType<typeof useExplorerAttributesQuery>;
+export type ExplorerAttributesLazyQueryHookResult = ReturnType<typeof useExplorerAttributesLazyQuery>;
+export type ExplorerAttributesQueryResult = Apollo.QueryResult<ExplorerAttributesQuery, ExplorerAttributesQueryVariables>;
 export const ExplorerDocument = gql`
     query Explorer($libraryId: ID!, $attributeIds: [ID!]!, $pagination: RecordsPagination, $filters: [RecordFilterInput], $multipleSort: [RecordSortInput!], $searchQuery: String) {
   records(
