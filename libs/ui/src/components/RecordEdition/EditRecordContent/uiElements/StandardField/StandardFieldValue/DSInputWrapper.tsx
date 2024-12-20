@@ -7,10 +7,13 @@ import {Form} from 'antd';
 import {IStandFieldValueContentProps} from './_types';
 import {IKitInput} from 'aristid-ds/dist/Kit/DataEntry/Input/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {EMPTY_INITIAL_VALUE_STRING} from '../../../antdUtils';
 
 export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKitInput>> = ({
     value,
     presentationValue,
+    isLastValueOfMultivalues,
+    removeLastValueOfMultivalues,
     onChange,
     attribute,
     readonly,
@@ -22,8 +25,11 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
         throw Error('DSInputWrapper should be used inside a antd Form.Item');
     }
 
+    const isNewValueOfMultivalues = isLastValueOfMultivalues && value === EMPTY_INITIAL_VALUE_STRING;
+    const focusedDefaultValue = attribute.multiple_values ? isNewValueOfMultivalues : false;
+
     const [hasChanged, setHasChanged] = useState(false);
-    const [isFocused, setIsFocused] = useState(false);
+    const [isFocused, setIsFocused] = useState(focusedDefaultValue);
     const {errors} = Form.Item.useStatus();
     const {t} = useSharedTranslation();
 
@@ -44,6 +50,10 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
         if (!hasChanged) {
             onChange(event);
             setIsFocused(false);
+
+            if (isNewValueOfMultivalues) {
+                removeLastValueOfMultivalues();
+            }
             return;
         }
 
@@ -80,6 +90,7 @@ export const DSInputWrapper: FunctionComponent<IStandFieldValueContentProps<IKit
     return (
         <KitInput
             id={attribute.id}
+            autoFocus={isFocused}
             disabled={readonly}
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
