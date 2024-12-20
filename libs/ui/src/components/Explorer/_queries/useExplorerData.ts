@@ -70,16 +70,13 @@ export const useExplorerData = ({
 }) => {
     const {lang: availableLangs} = useLang();
 
+    const noValueConditions = [RecordFilterCondition.IS_EMPTY, RecordFilterCondition.IS_NOT_EMPTY];
     let queryFilters: RecordFilterInput[] = filters
-        .filter(
-            ({value, condition}) =>
-                value !== null ||
-                [RecordFilterCondition.IS_EMPTY, RecordFilterCondition.IS_NOT_EMPTY].includes(condition)
-        )
+        .filter(({value, condition}) => value !== null || noValueConditions.includes(condition))
         .map(({field, condition, value}) => ({
             field,
             condition,
-            value
+            value: noValueConditions.includes(condition) ? null : value
         }));
     queryFilters = interleaveElement({operator: RecordFilterOperator.AND}, queryFilters);
 
