@@ -407,6 +407,22 @@ describe('Explorer', () => {
         }
     };
 
+    const mockExplorerAttributesQueryResult: Mockify<typeof gqlTypes.useExplorerAttributesQuery> = {
+        loading: false,
+        called: true,
+        data: {
+            attributes: {
+                list: [
+                    {
+                        id: simpleMockAttribute.id,
+                        label: simpleMockAttribute.label,
+                        format: simpleMockAttribute.format
+                    }
+                ]
+            }
+        }
+    };
+
     const customPrimaryActions: IPrimaryAction[] = [
         {
             label: 'Additional action 1',
@@ -430,6 +446,10 @@ describe('Explorer', () => {
 
         jest.spyOn(gqlTypes, 'useExplorerLibraryDataQuery').mockImplementation(
             () => mockLibraryDataQueryResult as gqlTypes.ExplorerLibraryDataQueryResult
+        );
+
+        jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
+            () => mockExplorerAttributesQueryResult as gqlTypes.ExplorerAttributesQueryResult
         );
     });
 
@@ -790,11 +810,6 @@ describe('Explorer', () => {
                     defaultViewSettings={{
                         filters: [
                             {
-                                id: 'filter1',
-                                attribute: {
-                                    label: simpleMockAttribute.label.fr,
-                                    format: simpleMockAttribute.format
-                                },
                                 field: simpleMockAttribute.id,
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
                                 value: 'Christmas'
@@ -804,17 +819,24 @@ describe('Explorer', () => {
                 />
             );
 
-            expect(spy.mock.calls[0][0].variables?.filters).toEqual([
-                {
-                    field: simpleMockAttribute.id,
-                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                    value: 'Christmas'
-                }
-            ]);
             const filterBar = screen.getByRole('list', {name: /filter-list/});
             expect(filterBar).toBeVisible();
             expect(within(filterBar).getByText(simpleMockAttribute.label.fr)).toBeVisible();
             expect(within(filterBar).getByRole('button', {name: /delete-filters/})).toBeVisible();
+
+            expect(spy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: expect.objectContaining({
+                        filters: [
+                            {
+                                field: simpleMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                value: 'Christmas'
+                            }
+                        ]
+                    })
+                })
+            );
         });
     });
 });
