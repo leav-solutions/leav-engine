@@ -10,6 +10,7 @@ export default function (): IActionsListFunction {
         description: 'Convert value to a JSON string',
         input_types: [ActionsListIOTypes.OBJECT],
         output_types: [ActionsListIOTypes.STRING],
+        compute: false,
         action: values => {
             const computedValues = values.map(elementValue => {
                 elementValue.payload = elementValue?.payload === null ? null : JSON.stringify(elementValue.payload);
