@@ -131,27 +131,26 @@ export const useExplorerData = ({
 }) => {
     const {lang: availableLangs} = useLang();
 
-    const preparedFilters: RecordFilterInput[][] = filters
-        .filter(
-            ({value, condition}) =>
-                value !== null ||
-                [RecordFilterCondition.IS_EMPTY, RecordFilterCondition.IS_NOT_EMPTY].includes(condition)
-        )
-        .map(({attribute, field, condition, value}) =>
-            attribute.format === AttributeFormat.date
-                ? _getDateRequestFilters({field, condition, value})
-                : [
-                      {
-                          field,
-                          condition,
-                          value
-                      }
-                  ]
-        );
-    const queryFilters: RecordFilterInput[] = interleaveElement(
+    const queryFilters = interleaveElement(
         {operator: RecordFilterOperator.AND},
-        preparedFilters
-    ) as RecordFilterInput[];
+        filters
+            .filter(
+                ({value, condition}) =>
+                    value !== null ||
+                    [RecordFilterCondition.IS_EMPTY, RecordFilterCondition.IS_NOT_EMPTY].includes(condition)
+            )
+            .map(({attribute, field, condition, value}) =>
+                attribute.format === AttributeFormat.date
+                    ? _getDateRequestFilters({field, condition, value})
+                    : [
+                          {
+                              field,
+                              condition,
+                              value
+                          }
+                      ]
+            )
+    );
 
     const {data, loading, refetch} = useExplorerQuery({
         skip,
