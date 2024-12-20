@@ -87,10 +87,11 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
         dispatch({type: ViewSettingsActionTypes.MOVE_FILTER, payload: {indexFrom, indexTo}});
     };
 
+    const ignoredTypes = [AttributeType.tree];
     const activeFilters = filters.filter(({field}) => searchFilteredColumnsIds.includes(field));
     const inactiveFilters = searchFilteredColumnsIds.filter(
         attributeId =>
-            attributeDetailsById?.[attributeId]?.type === AttributeType.simple &&
+            !ignoredTypes.includes(attributeDetailsById?.[attributeId]?.type) &&
             filters.every(filterItem => filterItem.field !== attributeId)
     );
 
