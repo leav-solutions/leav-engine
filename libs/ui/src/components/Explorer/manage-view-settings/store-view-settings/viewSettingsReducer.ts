@@ -1,8 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {SortOrder} from '_ui/_gqlTypes';
-import {RecordFilterCondition} from '_ui/_gqlTypes';
+import {SortOrder, RecordFilterCondition} from '_ui/_gqlTypes';
 import {IExplorerFilter} from '../../_types';
 import {v4 as uuid} from 'uuid';
 
