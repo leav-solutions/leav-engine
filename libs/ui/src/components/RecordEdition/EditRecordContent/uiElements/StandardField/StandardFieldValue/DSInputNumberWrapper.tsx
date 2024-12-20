@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import {IStandFieldValueContentProps} from './_types';
 import {KitInputNumberProps} from 'aristid-ds/dist/Kit/DataEntry/InputNumber/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {EMPTY_INITIAL_VALUE_STRING} from '../../../antdUtils';
 
 const KitInputNumberStyled = styled(KitInputNumber)`
     width: 100%;
@@ -16,6 +17,8 @@ const KitInputNumberStyled = styled(KitInputNumber)`
 export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProps<KitInputNumberProps>> = ({
     value,
     presentationValue,
+    isLastValueOfMultivalues,
+    removeLastValueOfMultivalues,
     onChange,
     attribute,
     handleSubmit,
@@ -27,8 +30,11 @@ export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProp
         throw Error('DSInputNumberWrapper should be used inside a antd Form.Item');
     }
 
+    const isNewValueOfMultivalues = isLastValueOfMultivalues && value === EMPTY_INITIAL_VALUE_STRING;
+    const focusedDefaultValue = attribute.multiple_values ? isNewValueOfMultivalues : false;
+
     const [hasChanged, setHasChanged] = useState(false);
-    const [isFocused, setIsFocused] = useState(false);
+    const [isFocused, setIsFocused] = useState(focusedDefaultValue);
     const inputRef = useRef<GetRef<typeof KitInputNumberStyled>>(null);
     const {errors} = Form.Item.useStatus();
     const {t} = useSharedTranslation();
@@ -53,6 +59,10 @@ export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProp
         if (!hasChanged) {
             onChange(valueToSubmit);
             setIsFocused(false);
+
+            if (isNewValueOfMultivalues) {
+                removeLastValueOfMultivalues();
+            }
             return;
         }
 
@@ -75,6 +85,7 @@ export const DSInputNumberWrapper: FunctionComponent<IStandFieldValueContentProp
         <KitInputNumberStyled
             ref={inputRef}
             id={attribute.id}
+            autoFocus={isFocused}
             helper={isErrors ? String(errors[0]) : undefined}
             status={isErrors ? 'error' : undefined}
             value={value}
