@@ -10,6 +10,7 @@ import {
     RecordIdentityFragment
 } from '_ui/_gqlTypes';
 import {ReactElement} from 'react';
+import {IViewSettingsState} from './manage-view-settings';
 
 export interface IExplorerData {
     totalCount: number;
@@ -58,3 +59,14 @@ export interface IExplorerFilter {
 export interface IFilterDropDownProps {
     filter: IExplorerFilter;
 }
+
+export type DefaultViewSettings = Override<
+    Partial<IViewSettingsState>,
+    {
+        filters?: Array<{
+            field: string;
+            condition: RecordFilterCondition;
+            value: string | null;
+        }>;
+    }
+>;

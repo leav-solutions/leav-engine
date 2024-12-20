@@ -171,7 +171,6 @@ export default function ({
             params?: IGetCoreAttributesParams;
             ctx: IQueryInfos;
         }): Promise<IList<IAttribute>> {
-            // TODO: possibility to search multiple IDs
             const initializedParams = {...params};
             if (typeof initializedParams.sort === 'undefined') {
                 initializedParams.sort = {field: 'id', order: SortOrder.ASC};

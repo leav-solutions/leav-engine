@@ -11,17 +11,15 @@ import {IVersionProfileDomain} from 'domain/versionProfile/versionProfileDomain'
 import {GraphQLResolveInfo} from 'graphql';
 import {IUtils} from 'utils/utils';
 import {IAppGraphQLSchema} from '_types/graphql';
-import {ILibrary} from '_types/library';
 import {IList} from '_types/list';
 import {IQueryInfos} from '_types/queryInfos';
 import {IKeyValue} from '_types/shared';
-import {ITree} from '_types/tree';
-import {IVersionProfile} from '_types/versionProfile';
 import {ActionsListEvents} from '../../../_types/actionsList';
 import {
     AttributeFormats,
     AttributeTypes,
     IAttribute,
+    IAttributeFilterOptions,
     IAttributeVersionsConf,
     IGetCoreAttributesParams,
     IValuesListConf
@@ -30,7 +28,7 @@ import {AttributePermissionsActions, PermissionTypes} from '../../../_types/perm
 import {AttributeCondition, IRecord} from '../../../_types/record';
 import {IGraphqlApp} from '../../graphql/graphqlApp';
 import {ICoreApp} from '../coreApp';
-import {IIsAllowedParams} from 'domain/permission/_types';
+import {Override} from '@leav/utils';
 
 export interface ICoreAttributeApp {
     getGraphQLSchema(): Promise<IAppGraphQLSchema>;
@@ -270,7 +268,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         allowListUpdate: Boolean,
                         values: [String!]
                     }
-                    
+
                     type StandardDateRangeValuesListConf {
                         enable: Boolean!,
                         allowFreeEntry: Boolean,
@@ -301,14 +299,15 @@ export default function (deps: IDeps): ICoreAttributeApp {
 
                     input AttributesFiltersInput {
                         id: ID,
-                        type: [AttributeType],
-                        format: [AttributeFormat],
+                        ids: [ID!],
+                        type: [AttributeType!],
+                        format: [AttributeFormat!],
                         label: String,
                         system: Boolean,
                         multiple_values: Boolean,
                         versionable: Boolean,
-                        libraries: [String],
-                        librariesExcluded: [String]
+                        libraries: [String!],
+                        librariesExcluded: [String!]
                     }
 
                     type AttributesList {
@@ -346,12 +345,25 @@ export default function (deps: IDeps): ICoreAttributeApp {
                 resolvers: {
                     Query: {
                         async attributes(
-                            parent,
-                            {filters, pagination, sort}: IGetCoreAttributesParams,
+                            _,
+                            {
+                                filters,
+                                pagination,
+                                sort
+                            }: Override<
+                                IGetCoreAttributesParams,
+                                {filters?: IAttributeFilterOptions & {ids?: string[]}}
+                            >,
                             ctx: IQueryInfos
                         ): Promise<IList<IAttribute>> {
+                            const applicableFilters = {
+                                ...filters,
+                                id: filters?.ids ?? filters?.id
+                            };
+                            delete applicableFilters.ids;
+
                             return attributeDomain.getAttributes({
-                                params: {filters, withCount: true, pagination, sort},
+                                params: {filters: applicableFilters, withCount: true, pagination, sort},
                                 ctx
                             });
                         }

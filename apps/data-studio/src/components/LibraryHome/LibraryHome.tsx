@@ -147,6 +147,21 @@ const LibraryHome: FunctionComponent<ILibraryHomeProps> = ({library}) => {
                 library={library}
                 defaultActionsForItem={['edit', 'deactivate']}
                 defaultPrimaryActions={['create']}
+                // Uncomment to test default filters
+                // defaultViewSettings={{
+                //     filters: [
+                //         {
+                //             field: 'offers_label',
+                //             condition: RecordFilterCondition.CONTAINS,
+                //             value: 'Café'
+                //         },
+                //         {
+                //             field: 'bad_attribute',
+                //             condition: RecordFilterCondition.CONTAINS,
+                //             value: 'Café'
+                //         }
+                //     ]
+                // }}
                 itemActions={[
                     {
                         label: 'Test 1',

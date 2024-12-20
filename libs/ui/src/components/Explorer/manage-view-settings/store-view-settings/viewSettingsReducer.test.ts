@@ -719,4 +719,38 @@ describe('ViewSettings Reducer', () => {
             expect(state.filters).toEqual(expected);
         });
     });
+
+    test(`Action ${ViewSettingsActionTypes.RESET} test`, async () => {
+        const newState = {
+            ...viewSettingsInitialState,
+            pageSize: 42,
+            filters: [
+                {
+                    id: 'id',
+                    attribute: attributeData,
+                    field: 'first',
+                    condition: RecordFilterCondition.EQUAL,
+                    value: null
+                }
+            ],
+            sort: [
+                {
+                    attributeId: 'first',
+                    order: SortOrder.asc
+                }
+            ],
+            fulltextSearch: 'test',
+            attributesIds: ['first'],
+            viewType: 'table' as ViewType,
+            canAddFilter: true,
+            maxFilters: 2
+        };
+
+        const state = viewSettingsReducer(viewSettingsInitialState, {
+            type: ViewSettingsActionTypes.RESET,
+            payload: newState
+        });
+
+        expect(state).toEqual(newState);
+    });
 });
