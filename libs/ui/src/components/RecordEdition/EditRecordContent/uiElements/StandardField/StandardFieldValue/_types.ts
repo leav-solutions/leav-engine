@@ -13,6 +13,8 @@ export interface IStandFieldValueContentProps<T> extends IProvidedByAntFormItem<
     presentationValue?: string;
     attribute?: RecordFormAttributeStandardAttributeFragment;
     label?: string;
+    isLastValueOfMultivalues?: boolean;
+    removeLastValueOfMultivalues?: () => void;
     handleSubmit: (value: StandardValueTypes, id?: string) => Promise<void | ISubmitMultipleResult>;
     readonly: boolean;
     required: boolean;
