@@ -4,6 +4,7 @@
 import {localizedTranslation} from '@leav/utils';
 import {IExplorerData, IExplorerFilter} from '../_types';
 import {
+    AttributeFormat,
     ExplorerQuery,
     RecordFilterCondition,
     RecordFilterInput,
@@ -14,6 +15,9 @@ import {
 import {useLang} from '_ui/hooks';
 import {useMemo} from 'react';
 import {interleaveElement} from '_ui/_utils/interleaveElement';
+import dayjs from 'dayjs';
+
+export const dateValuesSeparator = '\n';
 
 const _mapping = (data: ExplorerQuery, libraryId: string, availableLangs: string[]): IExplorerData => {
     const attributes = data.records.list.length
@@ -48,6 +52,63 @@ const _mapping = (data: ExplorerQuery, libraryId: string, availableLangs: string
     };
 };
 
+const _getDateRequestFilters = ({
+    field,
+    condition,
+    value
+}: Pick<IExplorerFilter, 'field' | 'value' | 'condition'>): RecordFilterInput[] => {
+    if (!value) {
+        return [];
+    }
+    switch (condition) {
+        case RecordFilterCondition.BETWEEN:
+            const [from, to] = value.split(dateValuesSeparator);
+            return [
+                {
+                    field,
+                    condition,
+                    value: JSON.stringify({
+                        from,
+                        to
+                    })
+                }
+            ];
+        case RecordFilterCondition.NOT_EQUAL:
+            return [
+                {
+                    field,
+                    condition: RecordFilterCondition.LESS_THAN,
+                    value: dayjs.unix(Number(value)).startOf('day').unix().toString()
+                },
+                {operator: RecordFilterOperator.OR},
+                {
+                    field,
+                    condition: RecordFilterCondition.GREATER_THAN,
+                    value: dayjs.unix(Number(value)).endOf('day').unix().toString()
+                }
+            ];
+        case RecordFilterCondition.EQUAL:
+            return [
+                {
+                    field,
+                    condition: RecordFilterCondition.BETWEEN,
+                    value: JSON.stringify({
+                        from: dayjs.unix(Number(value)).startOf('day').unix().toString(),
+                        to: dayjs.unix(Number(value)).endOf('day').unix().toString()
+                    })
+                }
+            ];
+        default:
+            return [
+                {
+                    field,
+                    condition,
+                    value
+                }
+            ];
+    }
+};
+
 export const useExplorerData = ({
     libraryId,
     attributeIds,
@@ -70,18 +131,27 @@ export const useExplorerData = ({
 }) => {
     const {lang: availableLangs} = useLang();
 
-    let queryFilters: RecordFilterInput[] = filters
+    const preparedFilters: RecordFilterInput[][] = filters
         .filter(
             ({value, condition}) =>
                 value !== null ||
                 [RecordFilterCondition.IS_EMPTY, RecordFilterCondition.IS_NOT_EMPTY].includes(condition)
         )
-        .map(({field, condition, value}) => ({
-            field,
-            condition,
-            value
-        }));
-    queryFilters = interleaveElement({operator: RecordFilterOperator.AND}, queryFilters);
+        .map(({attribute, field, condition, value}) =>
+            attribute.format === AttributeFormat.date
+                ? _getDateRequestFilters({field, condition, value})
+                : [
+                      {
+                          field,
+                          condition,
+                          value
+                      }
+                  ]
+        );
+    const queryFilters: RecordFilterInput[] = interleaveElement(
+        {operator: RecordFilterOperator.AND},
+        preparedFilters
+    ) as RecordFilterInput[];
 
     const {data, loading, refetch} = useExplorerQuery({
         skip,
