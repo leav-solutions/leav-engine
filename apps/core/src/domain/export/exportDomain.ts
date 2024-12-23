@@ -10,7 +10,7 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import ExcelJS from 'exceljs';
 import {i18n} from 'i18next';
-import {pick} from 'lodash';
+import {pick, merge} from 'lodash';
 import path from 'path';
 import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
@@ -24,7 +24,6 @@ import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
 import {getValuesToDisplay} from '../../utils/helpers/getValuesToDisplay';
 import LeavError from '../../errors/LeavError';
-import {merge} from 'lodash';
 
 export interface IExportParams {
     library: string;
