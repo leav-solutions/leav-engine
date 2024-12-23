@@ -12,6 +12,7 @@ import {IViewSettingsState, viewSettingsReducer} from '../store-view-settings/vi
 import {ViewSettingsContext} from '../store-view-settings/ViewSettingsContext';
 import {viewSettingsInitialState} from '../store-view-settings/viewSettingsInitialState';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
+import dayjs from 'dayjs';
 
 const getAllConditionOptions = (base: ReturnType<typeof render>['baseElement']) =>
     base.getElementsByClassName('rc-virtual-list')[0].getElementsByClassName('kit-select-option');
@@ -72,8 +73,8 @@ describe('CommonFilterItem', () => {
             const select = screen.getByRole('combobox');
             await userEvent.click(select);
 
-            const options = screen.getAllByText(/is-empty/);
-            await userEvent.click(options.pop()!);
+            const option = screen.getByText(/is-empty/);
+            await userEvent.click(option);
 
             expect(screen.queryByRole('spinbutton')).not.toBeInTheDocument();
         });
@@ -127,8 +128,8 @@ describe('CommonFilterItem', () => {
             const select = screen.getByRole('combobox');
             await userEvent.click(select);
 
-            const options = screen.getAllByText(/is-empty/);
-            await userEvent.click(options.pop()!);
+            const option = screen.getByText(/is-empty/);
+            await userEvent.click(option);
             expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
         });
     });
@@ -181,8 +182,8 @@ describe('CommonFilterItem', () => {
             const select = screen.getByRole('combobox');
             await userEvent.click(select);
 
-            const options = screen.getAllByText(/is-empty/);
-            await userEvent.click(options.pop()!);
+            const option = screen.getByText(/is-empty/);
+            await userEvent.click(option);
             expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
         });
     });
@@ -205,6 +206,58 @@ describe('CommonFilterItem', () => {
             const switchInput = screen.getByRole('switch');
             expect(switchInput).toBeVisible();
             expect(switchInput).toHaveAttribute('aria-checked', filter.value);
+        });
+    });
+
+    describe('date filter', () => {
+        const date = {unix: '1730761200', formatted: dayjs.unix(1730761200).format('YYYY-MM-DD')};
+
+        test('should render simple filter', async () => {
+            const filter: IExplorerFilter = {
+                id: 'test',
+                attribute: {
+                    label: 'date filter',
+                    format: AttributeFormat.date
+                },
+                field: 'test',
+                value: date.unix,
+                condition: AttributeConditionFilter.EQUAL
+            };
+
+            render(<CommonFilterItem filter={filter} />);
+            await userEvent.click(screen.getByRole('button', {name: /date/}));
+            const textInput = screen.getByRole('textbox');
+            expect(textInput).toBeVisible();
+            expect(textInput).toHaveValue(date.formatted);
+        });
+
+        test('should render an DateRangePicker if condition is BETWEEN', async () => {
+            const filter: IExplorerFilter = {
+                id: 'test',
+                attribute: {
+                    label: 'date filter',
+                    format: AttributeFormat.date
+                },
+                field: 'test',
+                value: date.unix,
+                condition: AttributeConditionFilter.EQUAL
+            };
+
+            render(
+                <MockViewSettingsContextProvider viewMock={{...viewSettingsInitialState, filters: [filter]}}>
+                    <CommonFilterItemContainer />
+                </MockViewSettingsContextProvider>
+            );
+            await userEvent.click(screen.getByRole('button', {name: /date/}));
+            expect(screen.queryByRole('textbox')).toBeInTheDocument();
+
+            const select = screen.getByRole('combobox');
+            await userEvent.click(select);
+
+            const emptyOption = screen.getAllByText(/between/).pop()!;
+            await userEvent.click(emptyOption);
+
+            expect(screen.queryAllByRole('textbox').length).toBe(2);
         });
     });
 });

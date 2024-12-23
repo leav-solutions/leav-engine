@@ -8,11 +8,14 @@ import {SimpleFilterDropdown} from './SimpleFilterDropDown';
 import {TextAttributeDropDown} from './TextAttributeDropDown';
 import {NumericAttributeDropDown} from './NumericAttributeDropDown';
 import {BooleanAttributeDropDown} from './BooleanAttributeDropdown';
+import {DateAttributeDropDown} from './DateAttributeDropDown';
 
 export const FilterDropDown: FunctionComponent<IFilterDropDownProps> = ({filter}) => {
     switch (filter.attribute.format) {
         case AttributeFormat.numeric:
             return <NumericAttributeDropDown filter={filter} />;
+        case AttributeFormat.date:
+            return <DateAttributeDropDown filter={filter} />;
         case AttributeFormat.text:
         case AttributeFormat.rich_text:
             return <TextAttributeDropDown filter={filter} />;

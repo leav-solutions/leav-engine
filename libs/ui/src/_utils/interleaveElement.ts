@@ -3,5 +3,5 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export const interleaveElement = <T extends unknown, U extends unknown>(
     insertedElement: T,
-    sourceArray: U[]
-): Array<T | U> => sourceArray.flatMap(arrayElement => [insertedElement, arrayElement]).slice(1);
+    sourceArray: U[][]
+): Array<T | U> => sourceArray.flatMap(arrayElement => [insertedElement, ...arrayElement]).slice(1);
