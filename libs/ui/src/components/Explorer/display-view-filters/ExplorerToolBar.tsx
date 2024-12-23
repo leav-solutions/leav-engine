@@ -8,12 +8,15 @@ import {FunctionComponent} from 'react';
 import {FaTrash} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {CommonFilterItem} from '../manage-view-settings/_shared/CommonFilterItem';
+import {SortOrder} from '_ui/_gqlTypes';
+import {useOpenViewSettings} from '../manage-view-settings';
+import {useAttributeDetailsData} from '../manage-view-settings/_shared/useAttributeDetailsData';
 
 const FilterStyled = styled(KitFilter)`
     flex: 0 0 auto;
 `;
 
-const ExplorerFilterBarListStyled = styled.ul`
+const ExplorerToolBarListStyled = styled.ul`
     padding: calc(var(--general-spacing-xs) * 1px) calc(var(--general-spacing-xxs) * 1px)
         calc(var(--general-spacing-m) * 1px) calc(var(--general-spacing-xxs) * 1px);
     margin: 0;
@@ -30,19 +33,34 @@ const DividerStyled = styled(KitDivider)`
     height: 2em;
 `;
 
-export const ExplorerFilterBar: FunctionComponent = () => {
+export const ExplorerToolBar: FunctionComponent<{
+    libraryId: string;
+}> = ({libraryId}) => {
     const {t} = useSharedTranslation();
 
     const {
-        view: {filters}
+        view: {filters, sort}
     } = useViewSettingsContext();
 
-    if (filters.length === 0) {
+    const {openSettingsPanel} = useOpenViewSettings(libraryId);
+
+    const {attributeDetailsById} = useAttributeDetailsData(libraryId);
+
+    if (filters.length === 0 && sort.length === 0) {
         return null;
     }
+    const sortValues =
+        sort.length === 0
+            ? undefined
+            : sort.map(
+                  ({attributeId, order}) =>
+                      (attributeDetailsById?.[attributeId]?.label ?? attributeId) +
+                      ' ' +
+                      (order === SortOrder.asc ? t('explorer.sort-ascending') : t('explorer.sort-descending'))
+              );
 
     return (
-        <ExplorerFilterBarListStyled aria-label={t('explorer.filter-list.active')}>
+        <ExplorerToolBarListStyled aria-label={t('explorer.toolbar.active')}>
             <KitSpace size="s">
                 {filters.map(filter => (
                     <li key={filter.id}>
@@ -50,12 +68,22 @@ export const ExplorerFilterBar: FunctionComponent = () => {
                     </li>
                 ))}
             </KitSpace>
+            {filters.length > 0 && sort.length > 0 && <DividerStyled type="vertical" />}
+            {sort.length > 0 && (
+                <li>
+                    <FilterStyled
+                        label={t('explorer.sort-items')}
+                        values={sortValues}
+                        onClick={() => openSettingsPanel('sort-items')}
+                    />
+                </li>
+            )}
             <DividerStyled type="vertical" />
             <li>
                 <FilterStyled as={KitButton} type="secondary" size="s" danger icon={<FaTrash />} disabled>
-                    {t('explorer.delete-filters')}
+                    {t('explorer.reset-view')}
                 </FilterStyled>
             </li>
-        </ExplorerFilterBarListStyled>
+        </ExplorerToolBarListStyled>
     );
 };

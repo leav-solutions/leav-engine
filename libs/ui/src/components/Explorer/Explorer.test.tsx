@@ -437,6 +437,17 @@ describe('Explorer', () => {
     ];
     const [customPrimaryAction1, customPrimaryAction2] = customPrimaryActions;
 
+    const attributesList = [
+        {...simpleMockAttribute, id: 'simple_attribute', label: {fr: 'Attribut simple'}},
+        {...linkMockAttribute, id: 'link_attribute', label: {fr: 'Attribut lien'}}
+    ];
+
+    const mockAttributesByLibResult: Mockify<typeof gqlTypes.useGetAttributesByLibQuery> = {
+        data: {attributes: {list: attributesList}},
+        loading: false,
+        called: true
+    };
+
     let spyUseExplorerQuery: jest.SpyInstance;
 
     beforeEach(() => {
@@ -450,6 +461,10 @@ describe('Explorer', () => {
 
         jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
             () => mockExplorerAttributesQueryResult as gqlTypes.ExplorerAttributesQueryResult
+        );
+
+        jest.spyOn(gqlTypes, 'useGetAttributesByLibQuery').mockReturnValue(
+            mockAttributesByLibResult as gqlTypes.GetAttributesByLibQueryResult
         );
     });
 
@@ -814,15 +829,22 @@ describe('Explorer', () => {
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
                                 value: 'Christmas'
                             }
+                        ],
+                        sort: [
+                            {
+                                attributeId: simpleMockAttribute.id,
+                                order: gqlTypes.SortOrder.asc
+                            }
                         ]
                     }}
                 />
             );
 
-            const filterBar = screen.getByRole('list', {name: /filter-list/});
-            expect(filterBar).toBeVisible();
-            expect(within(filterBar).getByText(simpleMockAttribute.label.fr)).toBeVisible();
-            expect(within(filterBar).getByRole('button', {name: /delete-filters/})).toBeVisible();
+            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            expect(toolbar).toBeVisible();
+            expect(within(toolbar).getByText(simpleMockAttribute.label.fr)).toBeVisible();
+            expect(within(toolbar).getByRole('button', {name: /reset-view/})).toBeVisible();
+            expect(within(toolbar).getByRole('button', {name: /sort-items/})).toBeVisible();
 
             expect(spy).toHaveBeenCalledWith(
                 expect.objectContaining({
