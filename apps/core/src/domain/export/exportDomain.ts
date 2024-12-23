@@ -39,7 +39,7 @@ export interface IExportDomain {
         jsonMapping: string,
         elements: Array<{[libraryId: string]: string}>,
         ctx: IQueryInfos
-    ): Promise<Array<{[mappingKey: string]: string}>>;
+    ): Promise<Array<{[key: string]: NestedValue}>>;
 }
 
 type NestedValue = string | {[key: string]: NestedValue};
@@ -208,7 +208,7 @@ export default function ({
             jsonMapping: string,
             recordsToExport: Array<{[libraryId: string]: string}>,
             ctx: IQueryInfos
-        ): Promise<Array<{[mappingKey: string]: string}>> {
+        ): Promise<Array<{[key: string]: NestedValue}>> {
             const mapping = JSON.parse(jsonMapping) as Record<string, string>;
             const mappingKeysByLibrary = _getMappingKeysByLibrary(mapping);
 
