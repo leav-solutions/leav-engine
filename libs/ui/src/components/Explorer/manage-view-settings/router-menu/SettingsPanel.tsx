@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import styled from 'styled-components';
-import {FunctionComponent, useState} from 'react';
+import {FunctionComponent} from 'react';
 import {KitTypography} from 'aristid-ds';
 import {FaFilter, FaList, FaSortAlphaDown} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -12,8 +12,7 @@ import {SortItems} from '../sort-items/SortItems';
 import {SettingItem} from './SettingItem';
 import {FilterItems} from '../filter-items/FilterItems';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
-
-export type SettingsPanelPages = 'router-menu' | 'configure-display' | 'sort-items' | 'filter-items';
+import {SettingsPanelPages} from '../open-view-settings/EditSettingsContext';
 
 const ContentWrapperStyledDiv = styled.div`
     display: flex;
@@ -37,8 +36,6 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library})
         view: {filters}
     } = useViewSettingsContext();
 
-    const [currentPage, setCurrentPage] = useState<SettingsPanelPages>('router-menu');
-
     const _goToAdvancedSettingsPage = (page: SettingsPanelPages) => {
         if (!activeSettings) {
             throw Error('Should not be able to change side pane page if there is no side panel!');
@@ -53,9 +50,10 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library})
             title: string;
             onClickLeftButton?: () => void;
         }) => {
-            setCurrentPage(pageName);
+            // setCurrentPage(pageName);
             setActiveSettings({
                 ...activeSettings!,
+                currentPage: pageName,
                 title,
                 onClickLeftButton
             });
@@ -70,12 +68,13 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library})
             }
         });
     };
-
     // TODO: look for MemoryRouter
+
+    const currentPageIsMainPage = activeSettings?.currentPage ?? 'router-menu';
 
     return (
         <ContentWrapperStyledDiv>
-            {currentPage === 'router-menu' && (
+            {currentPageIsMainPage === 'router-menu' && (
                 <nav>
                     <KitTypography.Title level="h4">{t('explorer.router-menu')}</KitTypography.Title>
                     <ConfigurationStyledMenu>
@@ -98,9 +97,9 @@ export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library})
                     </ConfigurationStyledMenu>
                 </nav>
             )}
-            {currentPage === 'configure-display' && <ConfigureDisplay libraryId={library} />}
-            {currentPage === 'sort-items' && <SortItems libraryId={library} />}
-            {currentPage === 'filter-items' && <FilterItems libraryId={library} />}
+            {activeSettings?.currentPage === 'configure-display' && <ConfigureDisplay libraryId={library} />}
+            {activeSettings?.currentPage === 'sort-items' && <SortItems libraryId={library} />}
+            {activeSettings?.currentPage === 'filter-items' && <FilterItems libraryId={library} />}
         </ContentWrapperStyledDiv>
     );
 };

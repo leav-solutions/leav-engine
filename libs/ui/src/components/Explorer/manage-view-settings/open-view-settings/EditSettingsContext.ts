@@ -4,10 +4,13 @@
 import {createContext, ReactNode} from 'react';
 
 interface IActiveSettings {
+    currentPage: SettingsPanelPages;
     content: ReactNode;
     title: string;
     onClickLeftButton?: () => void;
 }
+
+export type SettingsPanelPages = 'router-menu' | 'configure-display' | 'sort-items' | 'filter-items';
 
 export interface IEditSettingsContext {
     setActiveSettings: (params: IActiveSettings) => void;
