@@ -39,10 +39,8 @@ export interface IExportDomain {
         jsonMapping: string,
         elements: Array<{[libraryId: string]: string}>,
         ctx: IQueryInfos
-    ): Promise<Array<{[key: string]: NestedValue}>>;
+    ): Promise<Array<{[key: string]: any}>>;
 }
-
-type NestedValue = string | {[key: string]: NestedValue};
 
 export interface IExportDomainDeps {
     'core.domain.record': IRecordDomain;
@@ -208,7 +206,7 @@ export default function ({
             jsonMapping: string,
             recordsToExport: Array<{[libraryId: string]: string}>,
             ctx: IQueryInfos
-        ): Promise<Array<{[key: string]: NestedValue}>> {
+        ): Promise<Array<{[key: string]: any}>> {
             const mapping = JSON.parse(jsonMapping) as Record<string, string>;
             const mappingKeysByLibrary = _getMappingKeysByLibrary(mapping);
 
@@ -218,7 +216,7 @@ export default function ({
                     const value = await _getInDepthValue(libraryId, recordId, nestedAttributes, ctx);
                     const nestedValue = key
                         .split('.')
-                        .reduceRight<NestedValue>((mappingValue, k) => ({[k]: mappingValue}), value);
+                        .reduceRight<any>((mappingValue, k) => ({[k]: mappingValue}), value);
                     return merge(await acc, nestedValue);
                 }, Promise.resolve({}));
 
