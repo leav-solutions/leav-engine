@@ -24,6 +24,7 @@ import {IValue} from '../../_types/value';
 import {IValidateHelper} from '../helpers/validate';
 import {getValuesToDisplay} from '../../utils/helpers/getValuesToDisplay';
 import LeavError from '../../errors/LeavError';
+import {merge} from 'lodash';
 
 export interface IExportParams {
     library: string;
@@ -40,6 +41,8 @@ export interface IExportDomain {
         ctx: IQueryInfos
     ): Promise<Array<{[mappingKey: string]: string}>>;
 }
+
+type NestedValue = string | {[key: string]: NestedValue};
 
 export interface IExportDomainDeps {
     'core.domain.record': IRecordDomain;
@@ -213,7 +216,10 @@ export default function ({
                 keys.reduce(async (acc, key) => {
                     const nestedAttributes = mapping[key].split('.').slice(1); // first element is the library id, we delete it
                     const value = await _getInDepthValue(libraryId, recordId, nestedAttributes, ctx);
-                    return {...(await acc), [key]: value};
+                    const nestedValue = key
+                        .split('.')
+                        .reduceRight<NestedValue>((mappingValue, k) => ({[k]: mappingValue}), value);
+                    return merge(await acc, nestedValue);
                 }, Promise.resolve({}));
 
             return Promise.all(
