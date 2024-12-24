@@ -214,10 +214,6 @@ export default function ({
                     const nestedAttributes = mapping[key].split('.').slice(1); // first element is the library id, we delete it
                     const value = await _getInDepthValue(libraryId, recordId, nestedAttributes, ctx);
                     return set(await acc, key, value);
-                    // const nestedValue = key
-                    //     .split('.')
-                    //     .reduceRight<any>((mappingValue, k) => ({[k]: mappingValue}), value);
-                    // return merge(await acc, nestedValue);
                 }, Promise.resolve({}));
 
             return Promise.all(
