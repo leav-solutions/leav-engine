@@ -10,7 +10,7 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import ExcelJS from 'exceljs';
 import {i18n} from 'i18next';
-import {pick} from 'lodash';
+import {pick, set} from 'lodash';
 import path from 'path';
 import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
@@ -38,7 +38,7 @@ export interface IExportDomain {
         jsonMapping: string,
         elements: Array<{[libraryId: string]: string}>,
         ctx: IQueryInfos
-    ): Promise<Array<{[mappingKey: string]: string}>>;
+    ): Promise<Array<{[key: string]: any}>>;
 }
 
 export interface IExportDomainDeps {
@@ -205,7 +205,7 @@ export default function ({
             jsonMapping: string,
             recordsToExport: Array<{[libraryId: string]: string}>,
             ctx: IQueryInfos
-        ): Promise<Array<{[mappingKey: string]: string}>> {
+        ): Promise<Array<{[key: string]: any}>> {
             const mapping = JSON.parse(jsonMapping) as Record<string, string>;
             const mappingKeysByLibrary = _getMappingKeysByLibrary(mapping);
 
@@ -213,7 +213,7 @@ export default function ({
                 keys.reduce(async (acc, key) => {
                     const nestedAttributes = mapping[key].split('.').slice(1); // first element is the library id, we delete it
                     const value = await _getInDepthValue(libraryId, recordId, nestedAttributes, ctx);
-                    return {...(await acc), [key]: value};
+                    return set(await acc, key, value);
                 }, Promise.resolve({}));
 
             return Promise.all(

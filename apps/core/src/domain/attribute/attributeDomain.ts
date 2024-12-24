@@ -118,7 +118,7 @@ export default function ({
         doesCompute(attrData): boolean {
             const availableActions = actionsListDomain.getAvailableActions();
 
-            return (attrData.actions_list?.[ActionsListEvents.GET_VALUE] || []).some(
+            return (attrData.actions_list?.[ActionsListEvents.GET_VALUE] ?? []).some(
                 action => availableActions.find(availableAction => availableAction.id === action.id)?.compute
             );
         },
