@@ -10,7 +10,7 @@ import {IRecordDomain} from 'domain/record/recordDomain';
 import {ITasksManagerDomain} from 'domain/tasksManager/tasksManagerDomain';
 import ExcelJS from 'exceljs';
 import {i18n} from 'i18next';
-import {pick, merge} from 'lodash';
+import {pick, set} from 'lodash';
 import path from 'path';
 import {IUtils} from 'utils/utils';
 import {v4 as uuidv4} from 'uuid';
@@ -213,10 +213,11 @@ export default function ({
                 keys.reduce(async (acc, key) => {
                     const nestedAttributes = mapping[key].split('.').slice(1); // first element is the library id, we delete it
                     const value = await _getInDepthValue(libraryId, recordId, nestedAttributes, ctx);
-                    const nestedValue = key
-                        .split('.')
-                        .reduceRight<any>((mappingValue, k) => ({[k]: mappingValue}), value);
-                    return merge(await acc, nestedValue);
+                    return set(await acc, key, value);
+                    // const nestedValue = key
+                    //     .split('.')
+                    //     .reduceRight<any>((mappingValue, k) => ({[k]: mappingValue}), value);
+                    // return merge(await acc, nestedValue);
                 }, Promise.resolve({}));
 
             return Promise.all(
