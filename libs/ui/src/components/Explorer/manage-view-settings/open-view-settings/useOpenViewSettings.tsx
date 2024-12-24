@@ -13,6 +13,7 @@ export const useOpenViewSettings = (library: string) => {
 
     const _openSettingsPanel = () =>
         setActiveSettings({
+            currentPage: 'router-menu',
             content: <SettingsPanel library={library} />,
             title: t('explorer.settings')
         });
