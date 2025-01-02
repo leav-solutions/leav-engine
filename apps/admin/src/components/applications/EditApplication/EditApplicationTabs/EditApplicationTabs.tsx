@@ -7,7 +7,7 @@ import {useEditApplicationContext} from 'context/EditApplicationContext';
 import useLang from 'hooks/useLang';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {useHistory, useLocation} from 'react-router-v5';
+import {useHistory, useLocation} from 'react-router-dom-v5';
 import {Header, Icon, Tab, TabProps} from 'semantic-ui-react';
 import InfosTab from './InfosTab';
 import PermissionsTab from './PermissionsTab';
