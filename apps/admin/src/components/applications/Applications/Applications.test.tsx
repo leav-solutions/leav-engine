@@ -9,7 +9,7 @@ import {mockApplication} from '__mocks__/common/applications';
 import Applications from './Applications';
 
 const mockHistoryPush = jest.fn();
-jest.mock('react-router-v5', () => ({
+jest.mock('react-router-dom-v5', () => ({
     ...jest.requireActual('react-router-v5'),
     useHistory: () => ({
         push: mockHistoryPush
