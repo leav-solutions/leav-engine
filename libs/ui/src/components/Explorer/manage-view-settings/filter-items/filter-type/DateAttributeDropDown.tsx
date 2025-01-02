@@ -8,11 +8,12 @@ import {FaClock, FaTrash} from 'react-icons/fa';
 import {useViewSettingsContext} from '../../store-view-settings/useViewSettingsContext';
 import {ViewSettingsActionTypes} from '../../store-view-settings/viewSettingsReducer';
 import {IExplorerFilter, IFilterDropDownProps} from '_ui/components/Explorer/_types';
-import {nullValueConditions, useConditionsOptionsByType} from './useConditionOptionsByType';
+import {useConditionsOptionsByType} from './useConditionOptionsByType';
 import {AttributeConditionFilter} from '_ui/types';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 import {dateValuesSeparator} from '_ui/components/Explorer/_queries/useExplorerData';
+import {nullValueConditions} from '_ui/components/Explorer/nullValuesConditions';
 
 const DatePickerContainerStyledDiv = styled.div`
     .ant-picker {

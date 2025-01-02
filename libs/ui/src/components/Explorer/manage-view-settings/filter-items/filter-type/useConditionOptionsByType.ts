@@ -112,18 +112,11 @@ export const useConditionsOptionsByType = (filter: IExplorerFilter) => {
     const attributeConditionOptions = _getAttributeConditionOptions(t);
 
     return {
-        conditionOptionsByType: attributeConditionOptions.filter(({value}) =>
-            conditionsByFormat[filter.attribute.format].includes(value)
-        )
+        conditionOptionsByType: attributeConditionOptions
+            .filter(({value}) => conditionsByFormat[filter.attribute.format].includes(value))
+            .map(option => ({
+                ...option,
+                label: option.textByFormat?.[filter.attribute.format] ?? option.label
+            }))
     };
 };
-
-export const nullValueConditions = [
-    AttributeConditionFilter.IS_EMPTY,
-    AttributeConditionFilter.IS_NOT_EMPTY,
-    AttributeConditionFilter.TODAY,
-    AttributeConditionFilter.TOMORROW,
-    AttributeConditionFilter.YESTERDAY,
-    AttributeConditionFilter.LAST_MONTH,
-    AttributeConditionFilter.NEXT_MONTH
-];
