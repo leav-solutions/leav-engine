@@ -24,5 +24,5 @@ export const mockView: IView = {
         field: 'id',
         order: SortOrder.asc
     },
-    settings: []
+    attributes: []
 };

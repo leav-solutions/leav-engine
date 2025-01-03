@@ -23,7 +23,7 @@ import {
 } from '_ui/_queries/records/getRecordsFromLibraryQuery';
 import {objectValueVersionToArray} from '_ui/_utils';
 import {getRequestFromFilters} from '_ui/_utils/getRequestFromFilter';
-import {getSelectedViewKey, viewSettingsField} from '../constants';
+import {getSelectedViewKey} from '../constants';
 import DisplayTypeSelector from '../DisplayTypeSelector';
 import extractAttributesFromLibrary from '../helpers/extractAttributesFromLibrary';
 import getFieldFromKey from '../helpers/getFieldFromKey';
@@ -100,14 +100,10 @@ const LibraryItemsListContent: FunctionComponent<ILibraryItemsListContentProps> 
     const defaultAttributes = extractAttributesFromLibrary(library);
 
     const _getFieldsFromView = (view: IView): IField[] =>
-        !!view.settings?.find(s => s.name === viewSettingsField)
-            ? view.settings
-                  .find(s => s.name === viewSettingsField)
-                  .value.reduce((acc, fieldKey) => {
-                      const field = getFieldFromKey(fieldKey, library, defaultAttributes, lang);
-                      return field ? [...acc, field] : acc;
-                  }, [])
-            : [];
+        (view.attributes ?? []).reduce((acc, fieldKey) => {
+            const field = getFieldFromKey(fieldKey, library, defaultAttributes, lang);
+            return field ? [...acc, field] : acc;
+        }, []);
 
     const [searchState, searchDispatch] = useReducer(searchReducer, {
         ...initialSearchState,
