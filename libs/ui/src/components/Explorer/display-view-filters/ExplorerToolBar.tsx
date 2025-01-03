@@ -53,8 +53,8 @@ export const ExplorerToolBar: FunctionComponent<{
         sort.length === 0
             ? undefined
             : sort.map(
-                  ({attributeId, order}) =>
-                      (attributeDetailsById?.[attributeId]?.label ?? attributeId) +
+                  ({field, order}) =>
+                      (attributeDetailsById?.[field]?.label ?? field) +
                       ' ' +
                       (order === SortOrder.asc ? t('explorer.sort-ascending') : t('explorer.sort-descending'))
               );

@@ -161,7 +161,7 @@ const LibraryItemsListContent: FunctionComponent<ILibraryItemsListContentProps> 
             limit: searchState.pagination,
             offset: searchState.offset,
             filters: getRequestFromFilters(searchState.filters),
-            sort: searchState.sort[0],
+            sort: searchState.sort?.[0] ?? null,
             fullText: searchState.fullText,
             version: _getVersionForRequest()
         }),
@@ -192,7 +192,7 @@ const LibraryItemsListContent: FunctionComponent<ILibraryItemsListContentProps> 
             limit: searchState.pagination,
             offset: searchState.offset,
             filters: queryFilters,
-            sort: searchState.sort[0],
+            sort: searchState.sort?.[0] ?? null,
             fullText: searchState.fullText,
             version: _getVersionForRequest()
         };
