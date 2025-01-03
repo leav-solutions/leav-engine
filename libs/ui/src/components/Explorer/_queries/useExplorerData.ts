@@ -16,6 +16,7 @@ import {useLang} from '_ui/hooks';
 import {useMemo} from 'react';
 import {interleaveElement} from '_ui/_utils/interleaveElement';
 import dayjs from 'dayjs';
+import {nullValueConditions} from '../nullValuesConditions';
 
 export const dateValuesSeparator = '\n';
 
@@ -57,12 +58,9 @@ const _getDateRequestFilters = ({
     condition,
     value
 }: Pick<IExplorerFilter, 'field' | 'value' | 'condition'>): RecordFilterInput[] => {
-    if (!value) {
-        return [];
-    }
     switch (condition) {
         case RecordFilterCondition.BETWEEN:
-            const [from, to] = value.split(dateValuesSeparator);
+            const [from, to] = value!.split(dateValuesSeparator);
             return [
                 {
                     field,
@@ -134,11 +132,7 @@ export const useExplorerData = ({
     const queryFilters = interleaveElement(
         {operator: RecordFilterOperator.AND},
         filters
-            .filter(
-                ({value, condition}) =>
-                    value !== null ||
-                    [RecordFilterCondition.IS_EMPTY, RecordFilterCondition.IS_NOT_EMPTY].includes(condition)
-            )
+            .filter(({value, condition}) => value !== null || nullValueConditions.includes(condition))
             .map(({attribute, field, condition, value}) =>
                 attribute.format === AttributeFormat.date
                     ? _getDateRequestFilters({field, condition, value})
