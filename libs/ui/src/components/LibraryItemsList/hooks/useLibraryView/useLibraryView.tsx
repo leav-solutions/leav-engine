@@ -41,7 +41,7 @@ const useLibraryView = (library: ILibraryDetailExtended): {loading: boolean; err
                       order: library.defaultView.sort.order
                   }
                 : null,
-            settings: library.defaultView.settings
+            attributes: (library.defaultView.attributes ?? []).map(attr => attr.id)
         };
     };
 

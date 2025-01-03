@@ -19,7 +19,7 @@ export const mockGetLibraryDetailExtendedDefaultView: ILibraryDetailExtendedDefa
     filters: [],
     color: null,
     sort: null,
-    settings: null
+    attributes: []
 };
 
 export const mockGetLibraryDetailExtendedElement: ILibraryDetailExtended = {

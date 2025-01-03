@@ -59,7 +59,6 @@ function EditView({visible, onClose, view, libraryId}: IEditViewProps): JSX.Elem
             shared: values.shared,
             label: values.label,
             description: !Object.values(values.description).every(x => x === '') ? values.description : null,
-            settings: view.settings,
             filters: getRequestFromFilters(view.filters),
             sort: view.sort
         };
