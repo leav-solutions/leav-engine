@@ -27,7 +27,7 @@ declare global {
         color?: string;
         display?: IViewDisplay;
         filters?: IRecordFilterLight[];
-        sort?: IRecordSortLight;
+        sort?: IRecordSortLight[];
         valuesVersions?: IViewValuesVersion;
         attributes?: string[];
     }

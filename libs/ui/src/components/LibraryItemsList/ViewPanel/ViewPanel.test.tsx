@@ -46,11 +46,13 @@ describe('ViewPanel', () => {
         },
         color: '#e48232',
         filters: [] as any,
-        sort: {
-            __typename: 'RecordSort',
-            field: 'id',
-            order: gqlTypes.SortOrder.asc
-        },
+        sort: [
+            {
+                __typename: 'RecordSort',
+                field: 'id',
+                order: gqlTypes.SortOrder.asc
+            }
+        ],
         valuesVersions: [] as any
     };
 
