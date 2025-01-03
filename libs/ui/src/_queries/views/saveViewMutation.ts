@@ -6,7 +6,7 @@ import viewDetailsFragment from './viewDetailsFragment';
 
 const saveViewMutation = gql`
     ${viewDetailsFragment}
-    mutation ADD_VIEW($view: ViewInput!) {
+    mutation SAVE_VIEW($view: ViewInput!) {
         saveView(view: $view) {
             ...ViewDetails
         }
