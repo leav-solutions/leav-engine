@@ -7,6 +7,10 @@ exports[`viewRepo createView Should create a new view 2`] = `
   "@value1": "core_views",
   "value0": {
     "_key": "test_view",
+    "attributes": [
+      "id",
+      "label",
+    ],
     "color": "#123456",
     "created_at": 1234567890,
     "created_by": "1",
@@ -29,12 +33,6 @@ exports[`viewRepo createView Should create a new view 2`] = `
     },
     "library": "test_lib",
     "modified_at": 1234567890,
-    "settings": {
-      "columns": [
-        "id",
-        "label",
-      ],
-    },
     "shared": true,
     "sort": {
       "field": "id",
@@ -67,6 +65,10 @@ exports[`viewRepo updateView Should update an existing view 2`] = `
   "@value1": "core_views",
   "value0": {
     "_key": "test_view",
+    "attributes": [
+      "id",
+      "label",
+    ],
     "color": "#123456",
     "created_at": 1234567890,
     "created_by": "1",
@@ -89,12 +91,6 @@ exports[`viewRepo updateView Should update an existing view 2`] = `
     },
     "library": "test_lib",
     "modified_at": 1234567890,
-    "settings": {
-      "columns": [
-        "id",
-        "label",
-      ],
-    },
     "shared": true,
     "sort": {
       "field": "id",

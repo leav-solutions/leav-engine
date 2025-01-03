@@ -49,9 +49,8 @@ const viewDetailsFragment = gql`
                 }
             }
         }
-        settings {
-            name
-            value
+        attributes {
+            id
         }
     }
 `;

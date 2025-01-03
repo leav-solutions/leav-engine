@@ -51,8 +51,7 @@ describe('ViewPanel', () => {
             field: 'id',
             order: gqlTypes.SortOrder.asc
         },
-        valuesVersions: [] as any,
-        settings: null
+        valuesVersions: [] as any
     };
 
     const mocks = [
