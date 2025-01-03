@@ -71,7 +71,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 
     const {panelElement} = useEditSettings();
 
-    const {loading: viewSettingsLoading, view, dispatch} = useViewSettingsReducer(defaultViewSettings);
+    const {loading: viewSettingsLoading, view, dispatch} = useViewSettingsReducer(library, defaultViewSettings);
 
     const {currentPage, setNewPageSize, setNewPage} = usePagination(dispatch);
 

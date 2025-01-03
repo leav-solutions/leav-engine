@@ -933,6 +933,8 @@ export type TreeNodeChildFragment = { id: string, order?: number | null, childre
 
 export type ViewDetailsFragment = { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null };
 
+export type ViewDetailsFilterFragment = { field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null };
+
 export type AttributePropertiesFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean };
 
 export type PropertyValueLinkValueFragment = { linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null };
@@ -1869,6 +1871,18 @@ export const TreeNodeChildFragmentDoc = gql`
   }
 }
     ${RecordIdentityFragmentDoc}`;
+export const ViewDetailsFilterFragmentDoc = gql`
+    fragment ViewDetailsFilter on RecordFilter {
+  field
+  value
+  tree {
+    id
+    label
+  }
+  condition
+  operator
+}
+    `;
 export const ViewDetailsFragmentDoc = gql`
     fragment ViewDetails on View {
   id
@@ -1891,14 +1905,7 @@ export const ViewDetailsFragmentDoc = gql`
   description
   color
   filters {
-    field
-    value
-    tree {
-      id
-      label
-    }
-    condition
-    operator
+    ...ViewDetailsFilter
   }
   sort {
     field
@@ -1917,7 +1924,8 @@ export const ViewDetailsFragmentDoc = gql`
     id
   }
 }
-    ${RecordIdentityFragmentDoc}`;
+    ${ViewDetailsFilterFragmentDoc}
+${RecordIdentityFragmentDoc}`;
 export const PropertyValueFragmentDoc = gql`
     fragment PropertyValue on GenericValue {
   ... on Value {

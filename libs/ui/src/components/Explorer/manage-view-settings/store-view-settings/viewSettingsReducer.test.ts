@@ -117,7 +117,7 @@ describe('ViewSettings Reducer', () => {
                 ...viewSettingsInitialState,
                 sort: [
                     {
-                        attributeId: 'first',
+                        field: 'first',
                         order: SortOrder.asc
                     }
                 ]
@@ -125,7 +125,7 @@ describe('ViewSettings Reducer', () => {
             {
                 type: ViewSettingsActionTypes.ADD_SORT,
                 payload: {
-                    attributeId: 'attributeId',
+                    field: 'attributeId',
                     order: SortOrder.desc
                 }
             }
@@ -133,11 +133,11 @@ describe('ViewSettings Reducer', () => {
         expect(state.sort).toHaveLength(2);
         expect(state.sort).toEqual([
             {
-                attributeId: 'first',
+                field: 'first',
                 order: SortOrder.asc
             },
             {
-                attributeId: 'attributeId',
+                field: 'attributeId',
                 order: 'desc'
             }
         ]);
@@ -149,15 +149,15 @@ describe('ViewSettings Reducer', () => {
                 ...viewSettingsInitialState,
                 sort: [
                     {
-                        attributeId: 'first',
+                        field: 'first',
                         order: SortOrder.asc
                     },
                     {
-                        attributeId: 'second',
+                        field: 'second',
                         order: SortOrder.desc
                     },
                     {
-                        attributeId: 'third',
+                        field: 'third',
                         order: SortOrder.desc
                     }
                 ]
@@ -165,18 +165,18 @@ describe('ViewSettings Reducer', () => {
             {
                 type: ViewSettingsActionTypes.REMOVE_SORT,
                 payload: {
-                    attributeId: 'second'
+                    field: 'second'
                 }
             }
         );
         expect(state.sort).toHaveLength(2);
         expect(state.sort).toEqual([
             {
-                attributeId: 'first',
+                field: 'first',
                 order: 'asc'
             },
             {
-                attributeId: 'third',
+                field: 'third',
                 order: 'desc'
             }
         ]);
@@ -188,11 +188,11 @@ describe('ViewSettings Reducer', () => {
                 ...viewSettingsInitialState,
                 sort: [
                     {
-                        attributeId: 'first',
+                        field: 'first',
                         order: SortOrder.asc
                     },
                     {
-                        attributeId: 'second',
+                        field: 'second',
                         order: SortOrder.asc
                     }
                 ]
@@ -200,7 +200,7 @@ describe('ViewSettings Reducer', () => {
             {
                 type: ViewSettingsActionTypes.CHANGE_SORT_ORDER,
                 payload: {
-                    attributeId: 'first',
+                    field: 'first',
                     order: SortOrder.desc
                 }
             }
@@ -208,11 +208,11 @@ describe('ViewSettings Reducer', () => {
         expect(state.sort).toHaveLength(2);
         expect(state.sort).toEqual([
             {
-                attributeId: 'first',
+                field: 'first',
                 order: SortOrder.desc
             },
             {
-                attributeId: 'second',
+                field: 'second',
                 order: SortOrder.asc
             }
         ]);
@@ -222,9 +222,9 @@ describe('ViewSettings Reducer', () => {
         const initialState: IViewSettingsState = {
             ...viewSettingsInitialState,
             sort: [
-                {order: SortOrder.desc, attributeId: 'test'},
-                {order: SortOrder.asc, attributeId: 'active'},
-                {order: SortOrder.asc, attributeId: 'created_at'}
+                {order: SortOrder.desc, field: 'test'},
+                {order: SortOrder.asc, field: 'active'},
+                {order: SortOrder.asc, field: 'created_at'}
             ]
         };
 
@@ -233,27 +233,27 @@ describe('ViewSettings Reducer', () => {
                 indexFrom: 0,
                 indexTo: 2,
                 expected: [
-                    {order: SortOrder.asc, attributeId: 'active'},
-                    {order: SortOrder.asc, attributeId: 'created_at'},
-                    {order: SortOrder.desc, attributeId: 'test'}
+                    {order: SortOrder.asc, field: 'active'},
+                    {order: SortOrder.asc, field: 'created_at'},
+                    {order: SortOrder.desc, field: 'test'}
                 ]
             },
             {
                 indexFrom: 2,
                 indexTo: 0,
                 expected: [
-                    {order: SortOrder.asc, attributeId: 'created_at'},
-                    {order: SortOrder.desc, attributeId: 'test'},
-                    {order: SortOrder.asc, attributeId: 'active'}
+                    {order: SortOrder.asc, field: 'created_at'},
+                    {order: SortOrder.desc, field: 'test'},
+                    {order: SortOrder.asc, field: 'active'}
                 ]
             },
             {
                 indexFrom: 2,
                 indexTo: 1,
                 expected: [
-                    {order: SortOrder.desc, attributeId: 'test'},
-                    {order: SortOrder.asc, attributeId: 'created_at'},
-                    {order: SortOrder.asc, attributeId: 'active'}
+                    {order: SortOrder.desc, field: 'test'},
+                    {order: SortOrder.asc, field: 'created_at'},
+                    {order: SortOrder.asc, field: 'active'}
                 ]
             },
             {
@@ -314,179 +314,117 @@ describe('ViewSettings Reducer', () => {
                     }
                 ]);
             });
-            test('when limit is reach', () => {
-                const state = viewSettingsReducer(
-                    {
-                        ...viewSettingsInitialState,
-                        maxFilters: 2,
-                        canAddFilter: false,
-                        filters: [
-                            {
-                                id: 'id',
-                                attribute: attributeData,
-                                field: 'first',
-                                condition: RecordFilterCondition.EQUAL,
-                                value: null
-                            },
-                            {
-                                id: 'second-id',
-                                attribute: attributeData,
-                                field: 'second',
-                                condition: RecordFilterCondition.EQUAL,
-                                value: 'test'
-                            }
-                        ]
-                    },
-                    {
-                        type: ViewSettingsActionTypes.ADD_FILTER,
-                        payload: {
-                            attribute: attributeData,
-                            field: 'third'
-                        }
-                    }
-                );
-                expect(state.filters).toHaveLength(2);
-                expect(state.filters).toEqual([
-                    {
-                        id: 'id',
-                        attribute: attributeData,
-                        field: 'first',
-                        condition: RecordFilterCondition.EQUAL,
-                        value: null
-                    },
-                    {
-                        id: 'second-id',
-                        attribute: attributeData,
-                        field: 'second',
-                        condition: RecordFilterCondition.EQUAL,
-                        value: 'test'
-                    }
-                ]);
-            });
-        });
-
-        describe('canAddFilter flag', () => {
-            test('update to false when ADD_FILTER is called', () => {
-                const state = viewSettingsReducer(
-                    {
-                        ...viewSettingsInitialState,
-                        maxFilters: 2,
-                        filters: [
-                            {
-                                id: 'id',
-                                attribute: attributeData,
-                                field: 'first',
-                                condition: RecordFilterCondition.EQUAL,
-                                value: 'test'
-                            }
-                        ]
-                    },
-                    {
-                        type: ViewSettingsActionTypes.ADD_FILTER,
-                        payload: {
-                            attribute: attributeData,
-                            field: 'second'
-                        }
-                    }
-                );
-                expect(state.filters).toHaveLength(2);
-                expect(state.canAddFilter).toEqual(false);
-            });
-            test('update to true when REMOVE_FILTER is called', () => {
-                const state = viewSettingsReducer(
-                    {
-                        ...viewSettingsInitialState,
-                        maxFilters: 2,
-                        canAddFilter: false,
-                        filters: [
-                            {
-                                id: 'id',
-                                attribute: attributeData,
-                                field: 'first',
-                                condition: RecordFilterCondition.EQUAL,
-                                value: null
-                            },
-                            {
-                                id: 'second-id',
-                                attribute: attributeData,
-                                field: 'second',
-                                condition: RecordFilterCondition.EQUAL,
-                                value: 'test'
-                            }
-                        ]
-                    },
-                    {
-                        type: ViewSettingsActionTypes.REMOVE_FILTER,
-                        payload: {
-                            id: 'second-id'
-                        }
-                    }
-                );
-                expect(state.filters).toHaveLength(1);
-                expect(state.canAddFilter).toEqual(true);
-            });
         });
     });
 
-    test(`Action ${ViewSettingsActionTypes.RESET_FILTER} test`, () => {
-        const state = viewSettingsReducer(
-            {
-                ...viewSettingsInitialState,
-                filters: [
-                    {
-                        id: 'id',
-                        attribute: attributeData,
-                        field: 'first',
-                        condition: RecordFilterCondition.EQUAL,
-                        value: null
-                    },
-                    {
-                        id: 'second-id',
-                        attribute: attributeData,
-                        field: 'second',
-                        condition: RecordFilterCondition.CONTAINS,
-                        value: '42'
-                    },
-                    {
-                        id: 'third-id',
-                        attribute: attributeData,
-                        field: 'third',
-                        condition: RecordFilterCondition.EQUAL,
-                        value: null
+    describe(`Action ${ViewSettingsActionTypes.RESET_FILTER} test`, () => {
+        test('Reset to empty filter', () => {
+            const state = viewSettingsReducer(
+                {
+                    ...viewSettingsInitialState,
+                    filters: [
+                        {
+                            id: 'id',
+                            attribute: attributeData,
+                            field: 'first',
+                            condition: RecordFilterCondition.EQUAL,
+                            value: null
+                        },
+                        {
+                            id: 'second-id',
+                            attribute: attributeData,
+                            field: 'second',
+                            condition: RecordFilterCondition.CONTAINS,
+                            value: '42'
+                        },
+                        {
+                            id: 'third-id',
+                            attribute: attributeData,
+                            field: 'third',
+                            condition: RecordFilterCondition.EQUAL,
+                            value: null
+                        }
+                    ]
+                },
+                {
+                    type: ViewSettingsActionTypes.RESET_FILTER,
+                    payload: {
+                        id: 'second-id'
                     }
-                ]
-            },
-            {
-                type: ViewSettingsActionTypes.RESET_FILTER,
-                payload: {
-                    id: 'second-id'
                 }
-            }
-        );
-        expect(state.filters).toHaveLength(3);
-        expect(state.filters).toEqual([
-            {
-                id: 'id',
-                attribute: attributeData,
-                field: 'first',
-                condition: RecordFilterCondition.EQUAL,
-                value: null
-            },
-            {
-                id: 'second-id',
-                attribute: attributeData,
-                field: 'second',
-                condition: RecordFilterCondition.EQUAL,
-                value: null
-            },
-            {
-                id: 'third-id',
-                attribute: attributeData,
-                field: 'third',
-                condition: RecordFilterCondition.EQUAL,
-                value: null
-            }
-        ]);
+            );
+            expect(state.filters).toHaveLength(3);
+            expect(state.filters).toEqual([
+                {
+                    id: 'id',
+                    attribute: attributeData,
+                    field: 'first',
+                    condition: RecordFilterCondition.EQUAL,
+                    value: null
+                },
+                {
+                    id: 'second-id',
+                    attribute: attributeData,
+                    field: 'second',
+                    condition: RecordFilterCondition.EQUAL,
+                    value: null
+                },
+                {
+                    id: 'third-id',
+                    attribute: attributeData,
+                    field: 'third',
+                    condition: RecordFilterCondition.EQUAL,
+                    value: null
+                }
+            ]);
+        });
+
+        test('Reset filter to initial view settings', async () => {
+            const userFilterValue = '42';
+            const initialViewFilterValue = 'View value';
+            const state = viewSettingsReducer(
+                {
+                    ...viewSettingsInitialState,
+                    filters: [
+                        {
+                            id: 'first-id',
+                            attribute: attributeData,
+                            field: 'second',
+                            condition: RecordFilterCondition.CONTAINS,
+                            value: userFilterValue
+                        }
+                    ],
+                    initialViewSettings: {
+                        ...viewSettingsInitialState.initialViewSettings,
+                        filters: [
+                            {
+                                id: 'first-id',
+                                attribute: attributeData,
+                                field: 'second',
+                                condition: RecordFilterCondition.NOT_CONTAINS,
+                                value: initialViewFilterValue
+                            }
+                        ]
+                    }
+                },
+                {
+                    type: ViewSettingsActionTypes.RESET_FILTER,
+                    payload: {
+                        id: 'first-id'
+                    }
+                }
+            );
+
+            expect(state.filters).toEqual([
+                {
+                    id: 'first-id',
+                    attribute: attributeData,
+                    field: 'second',
+                    condition: RecordFilterCondition.NOT_CONTAINS,
+                    value: initialViewFilterValue
+                }
+            ]);
+        });
     });
 
     test(`Action ${ViewSettingsActionTypes.REMOVE_FILTER} test`, () => {
@@ -735,14 +673,13 @@ describe('ViewSettings Reducer', () => {
             ],
             sort: [
                 {
-                    attributeId: 'first',
+                    field: 'first',
                     order: SortOrder.asc
                 }
             ],
             fulltextSearch: 'test',
             attributesIds: ['first'],
             viewType: 'table' as ViewType,
-            canAddFilter: true,
             maxFilters: 2
         };
 
@@ -752,5 +689,45 @@ describe('ViewSettings Reducer', () => {
         });
 
         expect(state).toEqual(newState);
+    });
+
+    test(`Action ${ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS} test`, async () => {
+        const state = viewSettingsReducer(
+            {
+                ...viewSettingsInitialState,
+                viewType: 'mosaic',
+                filters: [
+                    {
+                        id: '123456',
+                        field: 'my_field',
+                        condition: RecordFilterCondition.EQUAL,
+                        value: 'test',
+                        attribute: {
+                            label: 'My Field',
+                            format: AttributeFormat.text
+                        }
+                    }
+                ],
+                sort: [
+                    {
+                        field: 'my_field',
+                        order: SortOrder.asc
+                    }
+                ],
+                attributesIds: ['my_field', 'my_field2'],
+                initialViewSettings: {
+                    viewType: viewSettingsInitialState.viewType,
+                    filters: viewSettingsInitialState.filters,
+                    sort: viewSettingsInitialState.sort,
+                    attributesIds: viewSettingsInitialState.attributesIds,
+                    pageSize: viewSettingsInitialState.pageSize
+                }
+            },
+            {
+                type: ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS
+            }
+        );
+
+        expect(state).toEqual(viewSettingsInitialState);
     });
 });

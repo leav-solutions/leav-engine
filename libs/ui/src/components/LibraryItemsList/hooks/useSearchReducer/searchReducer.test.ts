@@ -85,10 +85,12 @@ describe('searchReducer', () => {
             }
         );
 
-        expect(newState.sort).toEqual({
-            order: SortOrder.desc,
-            field: 'label'
-        });
+        expect(newState.sort).toEqual([
+            {
+                order: SortOrder.desc,
+                field: 'label'
+            }
+        ]);
     });
 
     test('CANCEL_SORT', async () => {
