@@ -3,24 +3,24 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {FetchResult} from '@apollo/client';
 import {
-    AddViewMutation,
-    AddViewMutationVariables,
+    SaveViewMutation,
+    SaveViewMutationVariables,
     GetViewsListQuery,
     GetViewsListQueryVariables,
-    useAddViewMutation
+    useSaveViewMutation
 } from '_ui/_gqlTypes';
 import {getViewsListQuery} from '_ui/_queries/views/getViewsListQuery';
 
-export interface IUseAddViewMutationHook {
-    addView: (variables: AddViewMutationVariables) => Promise<FetchResult<AddViewMutation>>;
+export interface IUseSaveViewMutationHook {
+    saveView: (variables: SaveViewMutationVariables) => Promise<FetchResult<SaveViewMutation>>;
 }
 
-export default function useExecuteAddViewMutation(): IUseAddViewMutationHook {
-    const [executeAddView] = useAddViewMutation();
+export default function useExecuteSaveViewMutation(): IUseSaveViewMutationHook {
+    const [executeSaveView] = useSaveViewMutation();
 
     return {
-        addView(variables) {
-            return executeAddView({
+        saveView(variables) {
+            return executeSaveView({
                 variables,
                 update: (cache, mutationResult, options) => {
                     if (options.variables.view.id) {

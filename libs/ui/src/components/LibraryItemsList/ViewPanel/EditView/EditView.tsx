@@ -9,7 +9,7 @@ import useLang from '_ui/hooks/useLang';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {SystemTranslation} from '_ui/types/scalars';
 import {IView} from '_ui/types/views';
-import {useAddViewMutation, ViewInput, ViewTypes} from '_ui/_gqlTypes';
+import {useSaveViewMutation, ViewInput, ViewTypes} from '_ui/_gqlTypes';
 import {getRequestFromFilters} from '_ui/_utils/getRequestFromFilter';
 import {PREFIX_SHARED_VIEWS_ORDER_KEY, PREFIX_USER_VIEWS_ORDER_KEY} from '../../../../constants';
 import useUpdateViewsOrderMutation from '../../hooks/useUpdateViewsOrderMutation';
@@ -37,7 +37,7 @@ function EditView({visible, onClose, view, libraryId}: IEditViewProps): JSX.Elem
     const [form] = Form.useForm();
     const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
 
-    const [addView] = useAddViewMutation();
+    const [addView] = useSaveViewMutation();
     const {updateViewsOrder} = useUpdateViewsOrderMutation(libraryId);
 
     const _handleOk = async () => {
