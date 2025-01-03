@@ -9,7 +9,7 @@ import {VscLayers} from 'react-icons/vsc';
 import styled from 'styled-components';
 import useSearchReducer from '_ui/components/LibraryItemsList/hooks/useSearchReducer';
 import {SearchActionTypes} from '_ui/components/LibraryItemsList/hooks/useSearchReducer/searchReducer';
-import useExecuteAddViewMutation from '_ui/hooks/useExecuteAddViewMutation/useExecuteAddViewMutation';
+import useExecuteSaveViewMutation from '_ui/hooks/useExecuteSaveViewMutation/useExecuteSaveViewMutation';
 import useLang from '_ui/hooks/useLang';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {SidebarContentType} from '_ui/types/search';
@@ -49,7 +49,7 @@ function MenuView({library}: IMenuViewProps): JSX.Element {
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
     const {userData} = useUser();
 
-    const {addView} = useExecuteAddViewMutation();
+    const {saveView: addView} = useExecuteSaveViewMutation();
     const {updateViewsOrder} = useUpdateViewsOrderMutation(library.id);
 
     const _toggleShowView = () => {
