@@ -456,7 +456,7 @@ export default function ({
                 modified_at: now,
                 shared: true,
                 library: 'files',
-                settings: {},
+                attributes: [],
                 filters: [],
                 sort: {
                     field: 'id',

@@ -134,7 +134,7 @@ export const prepareView = (
 
             return versions;
         }, {}),
-        settings: view.settings?.map(s => omit(s, '__typename'))
+        attributes: (view.attributes ?? []).map(attr => attr.id)
     };
 };
 export const getAttributeFromKey = (key: string, library: string, attributes: IAttribute[]): IAttribute | undefined => {

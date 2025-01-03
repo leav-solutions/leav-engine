@@ -20,9 +20,7 @@ export const mockViewBeforeCreation: IView = {
         order: 'asc'
     },
     shared: true,
-    settings: {
-        columns: ['id', 'label']
-    }
+    attributes: ['id', 'label']
 };
 
 export const mockView: MandatoryId<IView> = {
