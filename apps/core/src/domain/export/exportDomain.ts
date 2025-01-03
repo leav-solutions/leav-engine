@@ -163,30 +163,37 @@ export default function ({
 
     const _getInDepthValue = async (
         libraryId: string,
-        recordId: string,
+        recordIds: string[],
         nestedAttribute: string[],
         ctx: IQueryInfos
     ): Promise<string> => {
         const attributeProps = await attributeDomain.getAttributeProperties({id: nestedAttribute[0], ctx});
 
-        const recordFieldValues = await recordDomain.getRecordFieldValue({
-            library: libraryId,
-            record: {id: recordId},
-            attributeId: nestedAttribute[0],
-            ctx
-        });
+        const recordsFieldValues = await Promise.all(
+            recordIds.map(recordId =>
+                recordDomain.getRecordFieldValue({
+                    library: libraryId,
+                    record: {id: recordId},
+                    attributeId: nestedAttribute[0],
+                    ctx
+                })
+            )
+        );
 
-        let value = getValuesToDisplay(recordFieldValues)[0]?.payload;
-
-        if (typeof value === 'undefined' || value === null) {
-            return '';
-        }
+        let values = recordsFieldValues
+            .map(recordFieldValues => getValuesToDisplay(recordFieldValues).map(({payload}) => payload ?? ''))
+            .flat(Infinity);
 
         if (utils.isLinkAttribute(attributeProps)) {
-            return _getInDepthValue(attributeProps.linked_library, value.id, nestedAttribute.slice(1), ctx);
+            return _getInDepthValue(
+                attributeProps.linked_library,
+                values.map(({id}) => id),
+                nestedAttribute.slice(1),
+                ctx
+            );
         } else if (nestedAttribute.length > 1) {
             if (attributeProps.format === AttributeFormats.EXTENDED) {
-                value = nestedAttribute.slice(1).reduce((acc, attr) => acc[attr], JSON.parse(value));
+                values = values.map(v => nestedAttribute.slice(1).reduce((acc, attr) => acc[attr], JSON.parse(v)));
             } else {
                 throw new LeavError(
                     ErrorTypes.VALIDATION_ERROR,
@@ -194,10 +201,10 @@ export default function ({
                 );
             }
         } else if (attributeProps.format === AttributeFormats.DATE_RANGE) {
-            value = `${value.from} - ${value.to}`;
+            values = values.map(v => `${v.from} - ${v.to}`);
         }
 
-        return String(value);
+        return values.join(',');
     };
 
     return {
@@ -212,7 +219,7 @@ export default function ({
             const getMappingRecordValues = async (keys: string[], libraryId: string, recordId: string) =>
                 keys.reduce(async (acc, key) => {
                     const nestedAttributes = mapping[key].split('.').slice(1); // first element is the library id, we delete it
-                    const value = await _getInDepthValue(libraryId, recordId, nestedAttributes, ctx);
+                    const value = await _getInDepthValue(libraryId, [recordId], nestedAttributes, ctx);
                     return set(await acc, key, value);
                 }, Promise.resolve({}));
 
@@ -221,7 +228,8 @@ export default function ({
                     Object.entries(e).reduce(
                         async (acc, [libraryId, recordId]) => ({
                             ...(await acc),
-                            ...(await getMappingRecordValues(mappingKeysByLibrary[libraryId], libraryId, recordId))
+                            ...(mappingKeysByLibrary[libraryId] &&
+                                (await getMappingRecordValues(mappingKeysByLibrary[libraryId], libraryId, recordId)))
                         }),
                         Promise.resolve({})
                     )
