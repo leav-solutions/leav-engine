@@ -458,10 +458,12 @@ export default function ({
                 library: 'files',
                 attributes: [],
                 filters: [],
-                sort: {
-                    field: 'id',
-                    order: SortOrder.ASC
-                },
+                sort: [
+                    {
+                        field: 'id',
+                        order: SortOrder.ASC
+                    }
+                ],
                 description: null,
                 color: null
             };

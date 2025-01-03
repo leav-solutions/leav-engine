@@ -76,10 +76,12 @@ describe('searchReducer', () => {
             {...initialSearchState},
             {
                 type: SearchActionTypes.SET_SORT,
-                sort: {
-                    order: SortOrder.desc,
-                    field: 'label'
-                }
+                sort: [
+                    {
+                        order: SortOrder.desc,
+                        field: 'label'
+                    }
+                ]
             }
         );
 
