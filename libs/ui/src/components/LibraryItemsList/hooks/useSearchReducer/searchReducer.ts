@@ -54,7 +54,7 @@ export type SearchAction =
     | {type: SearchActionTypes.SET_PAGINATION; page: number}
     | {type: SearchActionTypes.SET_OFFSET; offset: number}
     | {type: SearchActionTypes.SET_LOADING; loading: boolean}
-    | {type: SearchActionTypes.SET_SORT; sort: ISearchSort}
+    | {type: SearchActionTypes.SET_SORT; sort: ISearchSort[]}
     | {type: SearchActionTypes.CANCEL_SORT}
     | {type: SearchActionTypes.SET_ATTRIBUTES; attributes: IAttribute[]}
     | {type: SearchActionTypes.SET_FIELDS; fields: IField[]}
@@ -117,9 +117,7 @@ const checkSync = (
     let isSync = true;
 
     if (toCheck.sort) {
-        isSync =
-            state.sort?.field === state.view?.current?.sort?.field &&
-            state.sort?.order === state.view?.current?.sort?.order;
+        isSync = JSON.stringify(state.sort) === JSON.stringify(state.view.current?.sort);
     }
 
     if (toCheck.filters) {
@@ -168,10 +166,7 @@ const searchReducer = (state: ISearchState, action: SearchAction): ISearchState 
         case SearchActionTypes.SET_LOADING:
             return {...state, loading: action.loading};
         case SearchActionTypes.SET_SORT:
-            isSync =
-                isSync &&
-                state.view.current.sort?.field === action.sort.field &&
-                state.view.current.sort?.order === action.sort.order;
+            isSync = isSync && JSON.stringify(state.view.current.sort) === JSON.stringify(action.sort);
 
             return {...state, sort: action.sort, view: {...state.view, sync: isSync}};
         case SearchActionTypes.CANCEL_SORT:

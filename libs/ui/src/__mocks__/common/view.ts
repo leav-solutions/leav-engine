@@ -20,9 +20,11 @@ export const mockView: IView = {
     },
     color: '#e48232',
     filters: [],
-    sort: {
-        field: 'id',
-        order: SortOrder.asc
-    },
+    sort: [
+        {
+            field: 'id',
+            order: SortOrder.asc
+        }
+    ],
     attributes: []
 };

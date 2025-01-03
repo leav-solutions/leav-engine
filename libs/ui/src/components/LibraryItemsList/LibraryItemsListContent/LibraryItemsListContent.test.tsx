@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {render, screen, waitFor} from '_ui/_tests/testUtils';
+import {render, screen} from '_ui/_tests/testUtils';
 import LibraryItemsListContent from '_ui/components/LibraryItemsList/LibraryItemsListContent/LibraryItemsListContent';
 import {mockLibrarySimple} from '_ui/__mocks__/common/library';
 import {LibraryBehavior, SortOrder, ViewSizes, ViewTypes} from '_ui/_gqlTypes';
@@ -55,10 +55,12 @@ describe('<LibraryItemsListContent/>', () => {
                         shared: false,
                         filters: [],
                         owner: true,
-                        sort: {
-                            field: 'id',
-                            order: SortOrder.asc
-                        }
+                        sort: [
+                            {
+                                field: 'id',
+                                order: SortOrder.asc
+                            }
+                        ]
                     }}
                 />
             );

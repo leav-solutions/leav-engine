@@ -72,7 +72,7 @@ export interface ISearchState {
     loading: boolean;
     pagination: number;
     offset: number;
-    sort?: ISearchSort;
+    sort?: ISearchSort[];
     attributes: IAttribute[];
     trees: ILibraryDetailExtendedLinkedTree[];
     fields: IField[];

@@ -36,10 +36,12 @@ const useLibraryView = (library: ILibraryDetailExtended): {loading: boolean; err
             shared: library.defaultView.shared,
             filters: getFiltersFromRequest(library.defaultView.filters ?? [], library.id, attributesFromQuery),
             sort: library?.defaultView?.sort
-                ? {
-                      field: library.defaultView.sort.field,
-                      order: library.defaultView.sort.order
-                  }
+                ? [
+                      {
+                          field: library.defaultView.sort.field,
+                          order: library.defaultView.sort.order
+                      }
+                  ]
                 : null,
             attributes: (library.defaultView.attributes ?? []).map(attr => attr.id)
         };
