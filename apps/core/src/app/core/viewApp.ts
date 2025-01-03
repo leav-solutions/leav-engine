@@ -72,7 +72,7 @@ export default function ({
                         description: SystemTranslationOptional,
                         color: String,
                         filters: [RecordFilter!],
-                        sort: RecordSort,
+                        sort: [RecordSort!],
                         display: ViewDisplay!,
                         valuesVersions: [ViewValuesVersion!],
                         attributes: [Attribute!]
@@ -87,7 +87,7 @@ export default function ({
                         description: SystemTranslationOptional,
                         color: String,
                         filters: [RecordFilterInput!],
-                        sort: RecordSortInput,
+                        sort: [RecordSortInput!],
                         valuesVersions: [ViewValuesVersionInput!],
                         attributes: [String!]
                     }
