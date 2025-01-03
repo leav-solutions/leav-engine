@@ -654,6 +654,8 @@
         "active-items-number": "{{count, number}} actifs",
         "active-items-number_zero": "Aucun",
         "invalid-value": "Valeur invalide",
-        "type-a-value": "Saisissez une valeur"
+        "type-a-value": "Saisissez une valeur",
+        "save-view": "Enregistrer",
+        "reinit-view": "Réinitialiser"
     }
 }

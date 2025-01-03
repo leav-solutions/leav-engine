@@ -34,10 +34,12 @@ exports[`viewRepo createView Should create a new view 2`] = `
     "library": "test_lib",
     "modified_at": 1234567890,
     "shared": true,
-    "sort": {
-      "field": "id",
-      "order": "asc",
-    },
+    "sort": [
+      {
+        "field": "id",
+        "order": "asc",
+      },
+    ],
   },
 }
 `;
@@ -92,10 +94,12 @@ exports[`viewRepo updateView Should update an existing view 2`] = `
     "library": "test_lib",
     "modified_at": 1234567890,
     "shared": true,
-    "sort": {
-      "field": "id",
-      "order": "asc",
-    },
+    "sort": [
+      {
+        "field": "id",
+        "order": "asc",
+      },
+    ],
   },
 }
 `;

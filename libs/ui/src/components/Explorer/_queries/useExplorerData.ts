@@ -120,7 +120,7 @@ export const useExplorerData = ({
     attributeIds: string[];
     fulltextSearch: string;
     sorts: Array<{
-        attributeId: string;
+        field: string;
         order: SortOrder;
     }>;
     pagination: null | {limit: number; offset: number};
@@ -153,8 +153,8 @@ export const useExplorerData = ({
             attributeIds,
             pagination,
             searchQuery: fulltextSearch,
-            multipleSort: sorts.map(({order, attributeId}) => ({
-                field: attributeId,
+            multipleSort: sorts.map(({order, field}) => ({
+                field,
                 order
             })),
             filters: queryFilters

@@ -124,7 +124,10 @@ export const prepareView = (
         ...omit(view, 'created_by', '__typename'),
         owner: view.created_by.id === userId,
         filters: getFiltersFromRequest(viewFilters, libraryId, attributes),
-        sort: view.sort && (omit(view.sort, '__typename') as ViewDetailsFragment['sort']),
+        sort: (view.sort ?? []).map(s => ({
+            field: s.field,
+            order: s.order
+        })),
         display: omit(view.display, '__typename') as ViewDetailsFragment['display'],
         valuesVersions: viewValuesVersions.reduce((versions: IValueVersion, version): IValueVersion => {
             versions[version.treeId] = {
