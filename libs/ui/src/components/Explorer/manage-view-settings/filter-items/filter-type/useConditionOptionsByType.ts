@@ -26,8 +26,31 @@ const conditionsByFormat: Record<AttributeFormat, AttributeConditionType[]> = {
     ],
     [AttributeFormat.boolean]: [],
     [AttributeFormat.color]: [],
-    [AttributeFormat.date]: [],
-    [AttributeFormat.date_range]: [],
+    [AttributeFormat.date]: [
+        AttributeConditionFilter.EQUAL,
+        AttributeConditionFilter.NOT_EQUAL,
+        AttributeConditionFilter.GREATER_THAN,
+        AttributeConditionFilter.LESS_THAN,
+        AttributeConditionFilter.IS_EMPTY,
+        AttributeConditionFilter.IS_NOT_EMPTY,
+        AttributeConditionFilter.TODAY,
+        AttributeConditionFilter.TOMORROW,
+        AttributeConditionFilter.YESTERDAY,
+        AttributeConditionFilter.LAST_MONTH,
+        AttributeConditionFilter.NEXT_MONTH,
+        AttributeConditionFilter.BETWEEN
+    ],
+    [AttributeFormat.date_range]: [
+        AttributeConditionFilter.CONTAINS,
+        AttributeConditionFilter.START_ON,
+        AttributeConditionFilter.START_AFTER,
+        AttributeConditionFilter.START_BEFORE,
+        AttributeConditionFilter.END_ON,
+        AttributeConditionFilter.END_AFTER,
+        AttributeConditionFilter.END_BEFORE,
+        AttributeConditionFilter.IS_EMPTY,
+        AttributeConditionFilter.IS_NOT_EMPTY
+    ],
     [AttributeFormat.encrypted]: [],
     [AttributeFormat.extended]: [],
     [AttributeFormat.numeric]: [
@@ -89,8 +112,11 @@ export const useConditionsOptionsByType = (filter: IExplorerFilter) => {
     const attributeConditionOptions = _getAttributeConditionOptions(t);
 
     return {
-        conditionOptionsByType: attributeConditionOptions.filter(({value}) =>
-            conditionsByFormat[filter.attribute.format].includes(value)
-        )
+        conditionOptionsByType: attributeConditionOptions
+            .filter(({value}) => conditionsByFormat[filter.attribute.format].includes(value))
+            .map(option => ({
+                ...option,
+                label: option.textByFormat?.[filter.attribute.format] ?? option.label
+            }))
     };
 };
