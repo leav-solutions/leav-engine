@@ -25,21 +25,23 @@ export const ViewSettingsActionTypes = {
     RESET_FILTER: 'RESET_FILTER',
     REMOVE_FILTER: 'REMOVE_FILTER',
     MOVE_FILTER: 'MOVE_FILTER',
-    CHANGE_FILTER_CONFIG: 'CHANGE_FILTER_CONFIG'
+    CHANGE_FILTER_CONFIG: 'CHANGE_FILTER_CONFIG',
+    RESTORE_INITIAL_VIEW_SETTINGS: 'RESTORE_INITIAL_VIEW_SETTINGS'
 } as const;
 
 export interface IViewSettingsState {
+    viewId?: string;
     viewType: ViewType;
     attributesIds: string[];
     fulltextSearch: string;
     sort: Array<{
-        attributeId: string;
+        field: string;
         order: SortOrder;
     }>;
     pageSize: number;
     filters: IExplorerFilter[];
     maxFilters: number;
-    canAddFilter: boolean;
+    initialViewSettings: Pick<IViewSettingsState, 'viewType' | 'attributesIds' | 'sort' | 'pageSize' | 'filters'>;
 }
 
 interface IViewSettingsActionChangePageSize {
@@ -76,17 +78,17 @@ interface IViewSettingsActionResetAttributes {
 
 interface IViewSettingsActionAddSort {
     type: typeof ViewSettingsActionTypes.ADD_SORT;
-    payload: {attributeId: string; order: SortOrder};
+    payload: {field: string; order: SortOrder};
 }
 
 interface IViewSettingsActionRemoveSort {
     type: typeof ViewSettingsActionTypes.REMOVE_SORT;
-    payload: {attributeId: string};
+    payload: {field: string};
 }
 
 interface IViewSettingsActionChangeSortOrder {
     type: typeof ViewSettingsActionTypes.CHANGE_SORT_ORDER;
-    payload: {attributeId: string; order: SortOrder};
+    payload: {field: string; order: SortOrder};
 }
 
 interface IViewSettingsActionMoveSort {
@@ -139,6 +141,10 @@ interface IViewSettingsActionReset {
     payload: IViewSettingsState;
 }
 
+interface IViewSettingsActionRestoreInitialViewSettings {
+    type: typeof ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS;
+}
+
 type Reducer<PAYLOAD = 'no_payload'> = PAYLOAD extends 'no_payload'
     ? (state: IViewSettingsState) => IViewSettingsState
     : (state: IViewSettingsState, payload: PAYLOAD) => IViewSettingsState;
@@ -181,17 +187,17 @@ const changeViewType: Reducer<IViewSettingsActionChangeViewType['payload']> = (s
 
 const addSort: Reducer<IViewSettingsActionAddSort['payload']> = (state, payload) => ({
     ...state,
-    sort: [...state.sort, {attributeId: payload.attributeId, order: payload.order}]
+    sort: [...state.sort, {field: payload.field, order: payload.order}]
 });
 
 const removeSort: Reducer<IViewSettingsActionRemoveSort['payload']> = (state, payload) => ({
     ...state,
-    sort: state.sort.filter(({attributeId}) => attributeId !== payload.attributeId)
+    sort: state.sort.filter(({field: attributeId}) => attributeId !== payload.field)
 });
 
 const changeSortOrder: Reducer<IViewSettingsActionChangeSortOrder['payload']> = (state, payload) => ({
     ...state,
-    sort: state.sort.map(sort => (sort.attributeId === payload.attributeId ? {...sort, order: payload.order} : sort))
+    sort: state.sort.map(sort => (sort.field === payload.field ? {...sort, order: payload.order} : sort))
 });
 
 const moveSort: Reducer<IViewSettingsActionMoveSort['payload']> = (state, payload) => {
@@ -214,44 +220,32 @@ export const clearFulltextSearch: Reducer = state => ({
     fulltextSearch: ''
 });
 
-const addFilter: Reducer<IViewSettingsActionAddFilter['payload']> = (state, payload) => {
-    if (!state.canAddFilter) {
-        return state;
-    }
-
-    const newFilters = [
-        ...state.filters,
-        {...payload, id: uuid(), condition: RecordFilterCondition.EQUAL, value: null}
-    ];
-    return {
-        ...state,
-        filters: newFilters,
-        canAddFilter: newFilters.length < state.maxFilters
-    };
-};
+const addFilter: Reducer<IViewSettingsActionAddFilter['payload']> = (state, payload) => ({
+    ...state,
+    filters: [...state.filters, {...payload, id: uuid(), condition: RecordFilterCondition.EQUAL, value: null}]
+});
 
 const resetFilter: Reducer<IViewSettingsActionResetFilter['payload']> = (state, payload) => ({
     ...state,
     filters: state.filters.map(filter => {
         if (filter.id === payload.id) {
-            return {
-                ...filter,
-                condition: RecordFilterCondition.EQUAL,
-                value: null
-            };
+            const initialViewFilter = state.initialViewSettings.filters.find(({id}) => id === payload.id);
+            return (
+                initialViewFilter ?? {
+                    ...filter,
+                    condition: RecordFilterCondition.EQUAL,
+                    value: null
+                }
+            );
         }
         return filter;
     })
 });
 
-const removeFilter: Reducer<IViewSettingsActionRemoveFilter['payload']> = (state, payload) => {
-    const newFilters = state.filters.filter(({id}) => id !== payload.id);
-    return {
-        ...state,
-        filters: newFilters,
-        canAddFilter: newFilters.length < state.maxFilters
-    };
-};
+const removeFilter: Reducer<IViewSettingsActionRemoveFilter['payload']> = (state, payload) => ({
+    ...state,
+    filters: state.filters.filter(({id}) => id !== payload.id)
+});
 
 const changeFilterConfig: Reducer<IViewSettingsActionChangeFilterConfig['payload']> = (state, payload) => ({
     ...state,
@@ -269,6 +263,11 @@ const moveFilter: Reducer<IViewSettingsActionMoveFilter['payload']> = (state, pa
 };
 
 const reset: Reducer<IViewSettingsActionReset['payload']> = (_, payload) => payload;
+
+const restoreInitialViewSettings: Reducer = state => ({
+    ...state,
+    ...state.initialViewSettings
+});
 
 export type IViewSettingsAction =
     | IViewSettingsActionResetAttributes
@@ -288,7 +287,8 @@ export type IViewSettingsAction =
     | IViewSettingsActionRemoveFilter
     | IViewSettingsActionChangeFilterConfig
     | IViewSettingsActionMoveFilter
-    | IViewSettingsActionReset;
+    | IViewSettingsActionReset
+    | IViewSettingsActionRestoreInitialViewSettings;
 
 export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
     switch (action.type) {
@@ -345,6 +345,9 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
         }
         case ViewSettingsActionTypes.RESET: {
             return reset(state, action.payload);
+        }
+        case ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS: {
+            return restoreInitialViewSettings(state);
         }
         default:
             return state;

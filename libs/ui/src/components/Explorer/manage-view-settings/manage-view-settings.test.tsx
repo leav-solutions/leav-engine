@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {FunctionComponent, useReducer} from 'react';
+import {FunctionComponent} from 'react';
 import {render, screen, within} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
 import {Mockify} from '@leav/utils';
@@ -11,9 +11,10 @@ import {EditSettingsContextProvider} from './open-view-settings/EditSettingsCont
 import {SidePanel} from './open-view-settings/SidePanel';
 import {useOpenViewSettings} from './open-view-settings/useOpenViewSettings';
 import {ViewSettingsContext} from './store-view-settings/ViewSettingsContext';
-import {IViewSettingsState, viewSettingsReducer} from './store-view-settings/viewSettingsReducer';
+import {IViewSettingsState} from './store-view-settings/viewSettingsReducer';
 import {viewSettingsInitialState} from './store-view-settings/viewSettingsInitialState';
 import {waitFor} from '@testing-library/react';
+import {useViewSettingsReducer} from '../useViewSettingsReducer';
 
 const MockOpenEditSettings: FunctionComponent = () => {
     const {viewSettingsButton} = useOpenViewSettings('');
@@ -22,7 +23,7 @@ const MockOpenEditSettings: FunctionComponent = () => {
 };
 
 const MockViewSettingsContextProvider: FunctionComponent<{viewMock: IViewSettingsState}> = ({viewMock, children}) => {
-    const [view, dispatch] = useReducer(viewSettingsReducer, viewMock);
+    const {view, dispatch} = useViewSettingsReducer('my_lib', viewMock);
     return <ViewSettingsContext.Provider value={{view, dispatch}}>{children}</ViewSettingsContext.Provider>;
 };
 
@@ -37,10 +38,79 @@ describe('Integration tests about managing view settings feature', () => {
         called: true
     };
 
+    const mockSaveViewMutation = jest.fn().mockReturnValue({
+        data: {
+            saveView: [
+                {
+                    id: 42
+                }
+            ]
+        }
+    });
+
+    const mockViewsResult: Mockify<typeof gqlTypes.useGetViewsListQuery> = {
+        data: {
+            views: {
+                list: [
+                    {
+                        id: '42',
+                        label: {en: 'My view'},
+                        filters: [],
+                        sort: []
+                    }
+                ]
+            }
+        },
+        loading: false,
+        called: true
+    };
+
+    const mockViewsResultWithSort: Mockify<typeof gqlTypes.useGetViewsListQuery> = {
+        data: {
+            views: {
+                list: [
+                    {
+                        id: '42',
+                        label: {en: 'My view'},
+                        filters: [],
+                        sort: [
+                            {
+                                field: 'simple_attribute',
+                                direction: gqlTypes.SortOrder.asc
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        loading: false,
+        called: true
+    };
+
+    const mockExplorerAttributesQuery: Mockify<typeof gqlTypes.useExplorerAttributesQuery> = {
+        data: {attributes: {list: attributesList}},
+        loading: false,
+        called: true
+    };
+
+    let getViewsListSpy: jest.SpyInstance;
     beforeAll(() => {
         jest.spyOn(gqlTypes, 'useGetAttributesByLibQuery').mockReturnValue(
             mockAttributesByLibResult as gqlTypes.GetAttributesByLibQueryResult
         );
+
+        getViewsListSpy = jest
+            .spyOn(gqlTypes, 'useGetViewsListQuery')
+            .mockReturnValue(mockViewsResult as gqlTypes.GetViewsListQueryResult);
+
+        jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockReturnValue(
+            mockExplorerAttributesQuery as gqlTypes.ExplorerAttributesQueryResult
+        );
+
+        jest.spyOn(gqlTypes, 'useSaveViewMutation').mockImplementation(() => [
+            mockSaveViewMutation,
+            {loading: false, called: false, client: {} as any, reset: jest.fn()}
+        ]);
     });
 
     test('should be able to open panel and navigate inside to advanced setting and go back', async () => {
@@ -198,6 +268,92 @@ describe('Integration tests about managing view settings feature', () => {
 
             expect(firstInactiveAttribute).toHaveTextContent(attributesList[0].label.fr);
             expect(firstInactiveAttribute).toBeVisible();
+        });
+    });
+
+    describe('Views', () => {
+        test('Should be able to save view', async () => {
+            render(
+                <EditSettingsContextProvider>
+                    <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
+                        <MockOpenEditSettings />
+                        <SidePanel />
+                    </MockViewSettingsContextProvider>
+                </EditSettingsContextProvider>
+            );
+
+            await userEvent.click(screen.getByRole('button', {name: /settings/}));
+            await userEvent.click(screen.getByRole('button', {name: /save/}));
+
+            expect(mockSaveViewMutation).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: {
+                        view: {
+                            attributes: [],
+                            display: {type: 'list'},
+                            filters: [],
+                            id: '42',
+                            label: {fr: 'user view'},
+                            library: '',
+                            shared: false,
+                            sort: []
+                        }
+                    }
+                })
+            );
+        });
+
+        test('Should be able to load user view', async () => {
+            getViewsListSpy.mockReturnValueOnce(mockViewsResultWithSort as gqlTypes.GetViewsListQueryResult);
+
+            render(
+                <EditSettingsContextProvider>
+                    <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
+                        <MockOpenEditSettings />
+                        <SidePanel />
+                    </MockViewSettingsContextProvider>
+                </EditSettingsContextProvider>
+            );
+
+            await userEvent.click(screen.getByRole('button', {name: /settings/}));
+            await userEvent.click(screen.getByRole('button', {name: /sort-items/}));
+
+            const activeSorts = screen.getByRole('list', {name: 'explorer.sort-list.active'});
+            expect(within(activeSorts).getAllByRole('listitem')).toHaveLength(1);
+        });
+
+        test('Should be able to reset settings to loaded view', async () => {
+            getViewsListSpy.mockReturnValueOnce(mockViewsResultWithSort as gqlTypes.GetViewsListQueryResult);
+
+            render(
+                <EditSettingsContextProvider>
+                    <MockViewSettingsContextProvider viewMock={viewSettingsInitialState}>
+                        <MockOpenEditSettings />
+                        <SidePanel />
+                    </MockViewSettingsContextProvider>
+                </EditSettingsContextProvider>
+            );
+
+            await userEvent.click(screen.getByRole('button', {name: /settings/}));
+            await userEvent.click(screen.getByRole('button', {name: /sort-items/}));
+
+            let activeSorts = screen.getByRole('list', {name: 'explorer.sort-list.active'});
+
+            expect(within(activeSorts).getAllByRole('listitem')).toHaveLength(1);
+            const inactiveSorts = screen.getByRole('list', {name: /inactive/});
+
+            const [firstInactiveAttribute] = within(inactiveSorts).getAllByRole('listitem');
+
+            await userEvent.click(within(firstInactiveAttribute!).getByRole('button', {name: /show/}));
+
+            expect(within(activeSorts).getAllByRole('listitem')).toHaveLength(2);
+
+            await userEvent.click(screen.getByRole('button', {name: /back/}));
+            await userEvent.click(screen.getByRole('button', {name: /reinit/}));
+
+            await userEvent.click(screen.getByRole('button', {name: /sort-items/}));
+            activeSorts = screen.getByRole('list', {name: 'explorer.sort-list.active'});
+            expect(within(activeSorts).getAllByRole('listitem')).toHaveLength(1);
         });
     });
 });

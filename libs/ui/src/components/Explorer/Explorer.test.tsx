@@ -437,6 +437,23 @@ describe('Explorer', () => {
     ];
     const [customPrimaryAction1, customPrimaryAction2] = customPrimaryActions;
 
+    const mockViewsResult: Mockify<typeof gqlTypes.useGetViewsListQuery> = {
+        data: {
+            views: {
+                list: [
+                    {
+                        id: '42',
+                        label: {en: 'My view'},
+                        filters: [],
+                        sort: []
+                    }
+                ]
+            }
+        },
+        loading: false,
+        called: true
+    };
+
     const attributesList = [
         {...simpleMockAttribute, id: 'simple_attribute', label: {fr: 'Attribut simple'}},
         {...linkMockAttribute, id: 'link_attribute', label: {fr: 'Attribut lien'}}
@@ -461,6 +478,10 @@ describe('Explorer', () => {
 
         jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
             () => mockExplorerAttributesQueryResult as gqlTypes.ExplorerAttributesQueryResult
+        );
+
+        jest.spyOn(gqlTypes, 'useGetViewsListQuery').mockReturnValue(
+            mockViewsResult as gqlTypes.GetViewsListQueryResult
         );
 
         jest.spyOn(gqlTypes, 'useGetAttributesByLibQuery').mockReturnValue(
@@ -832,7 +853,7 @@ describe('Explorer', () => {
                         ],
                         sort: [
                             {
-                                attributeId: simpleMockAttribute.id,
+                                field: simpleMockAttribute.id,
                                 order: gqlTypes.SortOrder.asc
                             }
                         ]

@@ -39,10 +39,7 @@ const StyledFaEye = styled(FaEye)`
 
 export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) => {
     const {t} = useSharedTranslation();
-    const {
-        view: {sort},
-        dispatch
-    } = useViewSettingsContext();
+    const {view, dispatch} = useViewSettingsContext();
 
     const {onSearchChanged, searchFilteredColumnsIds, attributeDetailsById} = useAttributeDetailsData(libraryId);
 
@@ -53,13 +50,13 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
         })
     );
 
-    const _toggleColumnVisibility = (attributeId: string) => () => {
-        const isAttributeAlreadySorting = sort.some(sortItem => sortItem.attributeId === attributeId);
+    const _toggleColumnVisibility = (field: string) => () => {
+        const isAttributeAlreadySorting = view.sort.some(sortItem => sortItem.field === field);
         if (isAttributeAlreadySorting) {
             dispatch({
                 type: ViewSettingsActionTypes.REMOVE_SORT,
                 payload: {
-                    attributeId
+                    field
                 }
             });
         } else {
@@ -67,25 +64,25 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
                 type: ViewSettingsActionTypes.ADD_SORT,
                 payload: {
                     order: SortOrder.asc,
-                    attributeId
+                    field
                 }
             });
         }
     };
 
-    const _changeOrderActiveFilterTo = (attributeId: string) => (order: SortOrder) => {
+    const _changeOrderActiveFilterTo = (field: string) => (order: SortOrder) => {
         dispatch({
             type: ViewSettingsActionTypes.CHANGE_SORT_ORDER,
             payload: {
-                attributeId,
+                field,
                 order
             }
         });
     };
 
     const _handleDragEnd = ({active: draggedElement, over: dropTarget}: DragEndEvent) => {
-        const indexFrom = activeFilters.findIndex(({attributeId}) => attributeId === String(draggedElement.id));
-        const indexTo = activeFilters.findIndex(({attributeId}) => attributeId === String(dropTarget?.id));
+        const indexFrom = activeFilters.findIndex(({field}) => field === String(draggedElement.id));
+        const indexTo = activeFilters.findIndex(({field}) => field === String(dropTarget?.id));
 
         if (!dropTarget || indexFrom === indexTo || indexTo === -1) {
             return;
@@ -94,9 +91,9 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
         dispatch({type: ViewSettingsActionTypes.MOVE_SORT, payload: {indexFrom, indexTo}});
     };
 
-    const activeFilters = sort.filter(({attributeId}) => searchFilteredColumnsIds.includes(attributeId));
-    const inactiveFilters = searchFilteredColumnsIds.filter(attributeId =>
-        sort.every(sortItem => sortItem.attributeId !== attributeId)
+    const activeFilters = view.sort.filter(({field}) => searchFilteredColumnsIds.includes(field));
+    const inactiveFilters = searchFilteredColumnsIds.filter(field =>
+        view.sort.every(sortItem => sortItem.field !== field)
     );
 
     return (
@@ -105,16 +102,16 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
                 <StyledList aria-label={t('explorer.sort-list.active')}>
                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={_handleDragEnd}>
                         <SortableContext
-                            items={activeFilters.map(({attributeId}) => ({id: attributeId}))}
+                            items={activeFilters.map(({field}) => ({id: field}))}
                             strategy={verticalListSortingStrategy}
                         >
-                            {activeFilters.map(({attributeId, order}) => (
+                            {activeFilters.map(({field, order}) => (
                                 <SortListItem
-                                    key={attributeId}
-                                    attributeId={attributeId}
+                                    key={field}
+                                    attributeId={field}
                                     isDraggable
                                     filterChipProps={{
-                                        label: attributeDetailsById[attributeId].label,
+                                        label: attributeDetailsById[field].label,
                                         values: [
                                             order === SortOrder.asc
                                                 ? t('explorer.sort-ascending')
@@ -136,16 +133,16 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
                                                     }
                                                 ],
                                                 onSelect: ({selectedKeys: [newOrder]}) =>
-                                                    _changeOrderActiveFilterTo(attributeId)(newOrder as SortOrder),
+                                                    _changeOrderActiveFilterTo(field)(newOrder as SortOrder),
                                                 onDeselect: ({selectedKeys: [newOrder]}) =>
-                                                    _changeOrderActiveFilterTo(attributeId)(newOrder as SortOrder)
+                                                    _changeOrderActiveFilterTo(field)(newOrder as SortOrder)
                                             }
                                         }
                                     }}
                                     visibilityButtonProps={{
                                         icon: <StyledFaEye />,
                                         title: String(t('explorer.hide')),
-                                        onClick: _toggleColumnVisibility(attributeId)
+                                        onClick: _toggleColumnVisibility(field)
                                     }}
                                 />
                             ))}
@@ -161,17 +158,17 @@ export const SortItems: FunctionComponent<{libraryId: string}> = ({libraryId}) =
                 prefix={<FaSearch />}
             />
             <StyledList aria-label={t('explorer.sort-list.inactive')}>
-                {inactiveFilters.map(attributeId => (
+                {inactiveFilters.map(field => (
                     <SortListItem
-                        key={attributeId}
-                        attributeId={attributeId}
+                        key={field}
+                        attributeId={field}
                         filterChipProps={{
-                            label: attributeDetailsById[attributeId].label
+                            label: attributeDetailsById[field].label
                         }}
                         visibilityButtonProps={{
                             icon: <StyledEyeSlash />,
                             title: String(t('explorer.show')),
-                            onClick: _toggleColumnVisibility(attributeId)
+                            onClick: _toggleColumnVisibility(field)
                         }}
                     />
                 ))}

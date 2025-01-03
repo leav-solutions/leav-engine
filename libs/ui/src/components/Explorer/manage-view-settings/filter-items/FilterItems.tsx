@@ -41,7 +41,7 @@ const StyledFaEye = styled(FaEye)`
 export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId}) => {
     const {t} = useSharedTranslation();
     const {
-        view: {filters, canAddFilter},
+        view: {filters, maxFilters},
         dispatch
     } = useViewSettingsContext();
 
@@ -94,6 +94,8 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
             !ignoredTypes.includes(attributeDetailsById?.[attributeId]?.type) &&
             filters.every(filterItem => filterItem.field !== attributeId)
     );
+
+    const canAddFilter = activeFilters.length < maxFilters;
 
     return (
         <>
