@@ -15,7 +15,7 @@ import {SearchActionTypes} from '_ui/components/LibraryItemsList/hooks/useSearch
 import IconViewType from '_ui/components/LibraryItemsList/IconViewType';
 import {PREFIX_SHARED_VIEWS_ORDER_KEY, PREFIX_USER_VIEWS_ORDER_KEY} from '_ui/constants';
 import {useLang} from '_ui/hooks';
-import useExecuteAddViewMutation from '_ui/hooks/useExecuteAddViewMutation/useExecuteAddViewMutation';
+import useExecuteSaveViewMutation from '_ui/hooks/useExecuteSaveViewMutation/useExecuteSaveViewMutation';
 import useExecuteDeleteViewMutation from '_ui/hooks/useExecuteDeleteViewMutation/useExecuteDeleteViewMutation';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {IView} from '_ui/types/views';
@@ -83,7 +83,7 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
     const {state: searchState, dispatch: searchDispatch} = useSearchReducer();
     const [description, setDescription] = useState<{expand: boolean; key: number}>({expand: false, key: 0});
 
-    const {addView} = useExecuteAddViewMutation();
+    const {saveView} = useExecuteSaveViewMutation();
 
     const {deleteView} = useExecuteDeleteViewMutation();
     const {updateViewsOrder} = useUpdateViewsOrderMutation(searchState.library.id);
@@ -138,7 +138,7 @@ function View({view, onEdit, handleProps}: IViewProps): JSX.Element {
                 shared: false
             };
 
-            const newViewRes = await addView({
+            const newViewRes = await saveView({
                 view: newView
             });
 
