@@ -17,7 +17,7 @@
     "error": {
         "network_error_occurred": "Une erreur réseau est survenue",
         "error_occurred": "Une erreur est survenue",
-        "unknown_app": "Le chemin d'accès \"{{app}}\" n'existe pas",
+        "unknown_app": "L'application \"{{app}}\" n'existe pas",
         "forbidden": "Vous n'êtes pas autorisé à accéder à l'application \"{{app}}\""
     },
     "application": {
