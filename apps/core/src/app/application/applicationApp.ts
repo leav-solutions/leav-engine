@@ -373,6 +373,18 @@ export default function ({
                         req.ctx.userId = payload.userId;
                         req.ctx.groupsId = payload.groupsId;
 
+                        const canAccess = await permissionDomain.isAllowed({
+                            type: PermissionTypes.APPLICATION,
+                            action: ApplicationPermissionsActions.ACCESS_APPLICATION,
+                            applyTo: application.id,
+                            userId: payload.userId,
+                            ctx: req.ctx
+                        });
+
+                        if (!canAccess) {
+                            return next(new ApplicationError(ApplicationErrorType.FORBIDDEN_ERROR, endpoint));
+                        }
+
                         return next();
                     } catch {
                         if (config.auth.oidc.enable) {
