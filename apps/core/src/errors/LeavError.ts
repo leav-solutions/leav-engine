@@ -13,15 +13,15 @@ interface ILeavErrorDetails {
     record?: ILeavErrorRecord;
 }
 
-export default class LeavError<T> extends Error {
+export default class LeavError<T, E = ErrorTypes> extends Error {
     /**
      * Details about fields concerned by this permission
      */
     public fields?: ErrorFieldDetail<T>;
-    public type: ErrorTypes;
+    public type: E;
     public record?: ILeavErrorRecord;
 
-    public constructor(type: ErrorTypes, message = 'Action forbidden', details?: ILeavErrorDetails) {
+    public constructor(type: E, message = 'Action forbidden', details?: ILeavErrorDetails) {
         super(message);
 
         this.type = type;
