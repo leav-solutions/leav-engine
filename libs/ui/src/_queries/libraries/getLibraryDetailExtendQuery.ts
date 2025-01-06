@@ -35,10 +35,7 @@ export interface ILibraryDetailExtendedDefaultView {
         field: string;
         order: SortOrder;
     };
-    settings?: Array<{
-        name: string;
-        value: any;
-    }>;
+    attributes?: Array<{id: string}> | null;
 }
 
 export interface ILibraryDetailExtendedAttributeParentLinkedLibrary {
@@ -241,9 +238,8 @@ export const getLibraryDetailExtendedQuery = (depthEmbeddedFields: number) => gq
                         field
                         order
                     }
-                    settings {
-                        name
-                        value
+                    attributes {
+                        id
                     }
                 }
                 permissions {

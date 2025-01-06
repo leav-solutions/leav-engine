@@ -207,9 +207,8 @@ export const getLibraryDetailExtendedQuery = (depthEmbeddedFields: number) => gq
                         field
                         order
                     }
-                    settings {
-                        name
-                        value
+                    attributes {
+                        id
                     }
                 }
                 permissions {

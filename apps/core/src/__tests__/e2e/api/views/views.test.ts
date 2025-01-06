@@ -66,7 +66,7 @@ describe('Views', () => {
                 color
                 filters {field value condition operator}
                 sort {field order}
-                settings {name value}
+                attributes {id}
               }
             }
           }`);
@@ -90,6 +90,7 @@ describe('Views', () => {
                 {field: "label", value: "Test", condition: EQUAL}
               ],
               sort: {field: "created_at", order: asc}
+              attributes: ["label"]
             }) {
               id
               library
@@ -102,6 +103,9 @@ describe('Views', () => {
               color
               filters {field value condition operator}
               sort {field order}
+              attributes {
+                id
+              }
             }
           }
         `);
@@ -109,6 +113,7 @@ describe('Views', () => {
         expect(resUpdateView.status).toBe(200);
         expect(resUpdateView.data.errors).toBeUndefined();
         expect(resUpdateView.data.data.saveView.color).toBe('#000000');
+        expect(resUpdateView.data.data.saveView.attributes).toEqual([{id: 'label'}]);
 
         // Delete view
         const resDeleteView = await makeGraphQlCall(`mutation {

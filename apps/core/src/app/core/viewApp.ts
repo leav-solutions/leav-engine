@@ -10,10 +10,12 @@ import {IQueryInfos} from '_types/queryInfos';
 import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, IRecord} from '../../_types/record';
 import {ViewSizes, ViewTypes} from '../../_types/views';
+import {IAttributeDomain} from 'domain/attribute/attributeDomain';
 
 interface IDeps {
     'core.domain.record': IRecordDomain;
     'core.domain.view': IViewDomain;
+    'core.domain.attribute': IAttributeDomain;
     'core.utils': IUtils;
 }
 
@@ -24,6 +26,7 @@ export interface IViewApp {
 export default function ({
     'core.domain.view': viewDomain,
     'core.domain.record': recordDomain,
+    'core.domain.attribute': attributeDomain,
     'core.utils': utils
 }: IDeps): IViewApp {
     return {
@@ -38,24 +41,14 @@ export default function ({
                         ${Object.values(ViewSizes).join(' ')}
                     }
 
-                    type ViewSettings {
-                        name: String!,
-                        value: Any
-                    }
-
                     type ViewDisplay {
                         type: ViewTypes!,
-                        size: ViewSizes!
-                    }
-
-                    input ViewSettingsInput {
-                        name: String!,
-                        value: Any
+                        size: ViewSizes
                     }
 
                     input ViewDisplayInput {
                         type: ViewTypes!,
-                        size: ViewSizes!
+                        size: ViewSizes
                     }
 
                     type ViewValuesVersion {
@@ -82,7 +75,7 @@ export default function ({
                         sort: RecordSort,
                         display: ViewDisplay!,
                         valuesVersions: [ViewValuesVersion!],
-                        settings: [ViewSettings!]
+                        attributes: [Attribute!]
                     }
 
                     input ViewInput {
@@ -96,7 +89,7 @@ export default function ({
                         filters: [RecordFilterInput!],
                         sort: RecordSortInput,
                         valuesVersions: [ViewValuesVersionInput!],
-                        settings: [ViewSettingsInput!]
+                        attributes: [String!]
                     }
 
                     type ViewsList {
@@ -126,8 +119,7 @@ export default function ({
                             viewDomain.saveView(
                                 {
                                     ...view,
-                                    valuesVersions: utils.nameValArrayToObj(view.valuesVersions, 'treeId', 'treeNode'),
-                                    settings: utils.nameValArrayToObj(view.settings)
+                                    valuesVersions: utils.nameValArrayToObj(view.valuesVersions, 'treeId', 'treeNode')
                                 },
                                 ctx
                             ),
@@ -148,7 +140,7 @@ export default function ({
 
                             return record.list.length ? record.list[0] : null;
                         },
-                        valuesVersions: (view: IView, _, ctx): IViewValuesVersionForGraphql[] | null => {
+                        valuesVersions: (view: IView): IViewValuesVersionForGraphql[] | null => {
                             if (!view.valuesVersions) {
                                 return null;
                             }
@@ -159,8 +151,12 @@ export default function ({
                             }));
                             return versions;
                         },
-                        settings: (view: IView): IViewSettingsNameVal[] | null =>
-                            view.settings ? utils.objToNameValArray<IViewSettingsNameVal>(view.settings) : null
+                        attributes: (view: IView, _, ctx: IQueryInfos) =>
+                            Promise.all(
+                                (view.attributes ?? []).map(attributeId =>
+                                    attributeDomain.getAttributeProperties({id: attributeId, ctx})
+                                )
+                            )
                     }
                 }
             };
