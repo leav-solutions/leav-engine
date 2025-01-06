@@ -180,9 +180,9 @@ export default function ({
             )
         );
 
-        let values = recordsFieldValues
-            .map(recordFieldValues => getValuesToDisplay(recordFieldValues).map(({payload}) => payload ?? ''))
-            .flat(Infinity);
+        let values = recordsFieldValues.flatMap(recordFieldValues =>
+            getValuesToDisplay(recordFieldValues).map(({payload}) => payload ?? '')
+        );
 
         if (utils.isLinkAttribute(attributeProps)) {
             return _getInDepthValue(
@@ -193,7 +193,9 @@ export default function ({
             );
         } else if (nestedAttribute.length > 1) {
             if (attributeProps.format === AttributeFormats.EXTENDED) {
-                values = values.map(v => nestedAttribute.slice(1).reduce((acc, attr) => acc[attr], JSON.parse(v)));
+                values = values.map(value =>
+                    nestedAttribute.slice(1).reduce((acc, attr) => acc[attr], JSON.parse(value))
+                );
             } else {
                 throw new LeavError(
                     ErrorTypes.VALIDATION_ERROR,
@@ -201,7 +203,7 @@ export default function ({
                 );
             }
         } else if (attributeProps.format === AttributeFormats.DATE_RANGE) {
-            values = values.map(v => `${v.from} - ${v.to}`);
+            values = values.map(value => `${value.from} - ${value.to}`);
         }
 
         return values.join(',');

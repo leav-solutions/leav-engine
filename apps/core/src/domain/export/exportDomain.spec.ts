@@ -253,8 +253,9 @@ describe('exportDomain', () => {
 
         it('should export data with multiple values', async () => {
             const jsonMapping = JSON.stringify({
-                shops: 'bikes.bikes_shops.shops_label',
-                sizes: 'bikes.bikes_sizes'
+                multivalues_links: 'bikes.bikes_shops.shops_label',
+                multivalues: 'bikes.bikes_sizes',
+                no_values: 'bikes.colors_label'
             });
 
             const mockAttributeDomain: Mockify<IAttributeDomain> = {
@@ -268,7 +269,8 @@ describe('exportDomain', () => {
             const attributeProperties = {
                 bikes_shops: {linked_library: 'shops'},
                 shops_label: {format: AttributeFormats.TEXT, multiple_values: true},
-                bikes_sizes: {format: AttributeFormats.TEXT, multiple_values: true}
+                bikes_sizes: {format: AttributeFormats.TEXT, multiple_values: true},
+                colors_label: {format: AttributeFormats.TEXT, multiple_values: true}
             };
 
             when(mockUtils.isLinkAttribute)
@@ -309,6 +311,12 @@ describe('exportDomain', () => {
                     recordId: 'shopId2',
                     attributeId: 'shops_label',
                     returnValue: [{payload: 'shopLabel2'}]
+                },
+                {
+                    library: 'bikes',
+                    recordId: 'bikeId',
+                    attributeId: 'colors_label',
+                    returnValue: []
                 }
             ];
 
@@ -329,8 +337,9 @@ describe('exportDomain', () => {
 
             expect(data).toEqual([
                 {
-                    shops: 'shopLabel,shopLabel2',
-                    sizes: 'S,M,L,XL'
+                    multivalues_links: 'shopLabel,shopLabel2',
+                    multivalues: 'S,M,L,XL',
+                    no_values: ''
                 }
             ]);
         });
