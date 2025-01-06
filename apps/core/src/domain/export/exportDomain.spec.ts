@@ -138,5 +138,117 @@ describe('exportDomain', () => {
                 }
             ]);
         });
+
+        it('should export data with a structure based on dot notation keys', async () => {
+            const jsonMapping = JSON.stringify({
+                simple: 'bikes.bikes_label',
+                'link.link': 'bikes.bikes_activity.activities_label',
+                'link.preview': 'bikes.bikes_visual.files_previews.medium',
+                'no_value.no_value.no_value': 'bikes.no_value',
+                shop_label: 'shops.shops_label'
+            });
+
+            const mockAttributeDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: jest.fn()
+            };
+
+            const mockUtils: Mockify<IUtils> = {
+                isLinkAttribute: jest.fn()
+            };
+
+            const attributeProperties = {
+                bikes_label: {format: AttributeFormats.TEXT},
+                bikes_activity: {linked_library: 'activities'},
+                activities_label: {format: AttributeFormats.TEXT},
+                bikes_visual: {linked_library: 'files'},
+                files_previews: {format: AttributeFormats.EXTENDED},
+                no_value: {format: AttributeFormats.TEXT, linked_library: false},
+                shops_label: {format: AttributeFormats.TEXT}
+            };
+
+            when(mockUtils.isLinkAttribute)
+                .calledWith({id: 'bikes_visual', ...attributeProperties.bikes_visual})
+                .mockReturnValue(true);
+            when(mockUtils.isLinkAttribute)
+                .calledWith({id: 'bikes_activity', ...attributeProperties.bikes_activity})
+                .mockReturnValue(true);
+
+            Object.entries(attributeProperties).forEach(([id, returnValue]) =>
+                when(mockAttributeDomain.getAttributeProperties)
+                    .calledWith({id, ctx: mockCtx})
+                    .mockReturnValue({id, ...returnValue})
+            );
+
+            const mockRecordDomain: Mockify<IRecordDomain> = {
+                getRecordFieldValue: jest.fn()
+            };
+
+            const fieldValues = [
+                {
+                    library: 'bikes',
+                    recordId: 'bikeId',
+                    attributeId: 'bikes_label',
+                    returnValue: [{payload: 'bikeLabel'}]
+                },
+                {
+                    library: 'bikes',
+                    recordId: 'bikeId',
+                    attributeId: 'bikes_activity',
+                    returnValue: [{payload: {id: 'activityId'}}]
+                },
+                {
+                    library: 'activities',
+                    recordId: 'activityId',
+                    attributeId: 'activities_label',
+                    returnValue: [{payload: 'activityLabel'}]
+                },
+                {
+                    library: 'bikes',
+                    recordId: 'bikeId',
+                    attributeId: 'bikes_visual',
+                    returnValue: [{payload: {id: 'fileId'}}]
+                },
+                {
+                    library: 'files',
+                    recordId: 'fileId',
+                    attributeId: 'files_previews',
+                    returnValue: [{payload: JSON.stringify({medium: '/path/to/preview'})}]
+                },
+                {library: 'bikes', recordId: 'bikeId', attributeId: 'no_value', returnValue: []},
+                {
+                    library: 'shops',
+                    recordId: 'shopId',
+                    attributeId: 'shops_label',
+                    returnValue: [{payload: 'shopLabel'}]
+                }
+            ];
+
+            fieldValues.forEach(({library, recordId, attributeId, returnValue}) =>
+                when(mockRecordDomain.getRecordFieldValue)
+                    .calledWith({library, record: {id: recordId}, attributeId, ctx: mockCtx})
+                    .mockReturnValue(returnValue)
+            );
+
+            const domain = exportDomain({
+                ...depsBase,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
+                'core.utils': mockUtils as IUtils
+            });
+
+            const data = await domain.exportData(jsonMapping, [{bikes: 'bikeId', shops: 'shopId'}], mockCtx);
+
+            expect(data).toEqual([
+                {
+                    link: {
+                        link: 'activityLabel',
+                        preview: '/path/to/preview'
+                    },
+                    no_value: {no_value: {no_value: ''}},
+                    simple: 'bikeLabel',
+                    shop_label: 'shopLabel'
+                }
+            ]);
+        });
     });
 });
