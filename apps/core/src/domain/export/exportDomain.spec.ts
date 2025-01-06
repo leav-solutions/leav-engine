@@ -441,6 +441,5 @@ describe('exportDomain', () => {
                 }
             ]);
         });
-        // TODO: test raw value
     });
 });
