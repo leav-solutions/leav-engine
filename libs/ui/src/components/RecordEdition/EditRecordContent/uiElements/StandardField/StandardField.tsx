@@ -254,14 +254,14 @@ const StandardField: FunctionComponent<
                 disabled={isReadOnly}
                 bordered={attribute.multiple_values}
                 status={isFieldInError ? 'error' : undefined}
-                actions={[
+                extra={
                     <>
                         <KitInputExtraAlignLeft>
                             <ComputeIndicator calculatedFlags={calculatedFlags} inheritedFlags={inheritedFlags} />
                         </KitInputExtraAlignLeft>
                         {canDeleteAllValues && <DeleteAllValuesButton handleDelete={_handleDeleteAllValues} />}
                     </>
-                ]}
+                }
                 htmlFor={attribute.id}
             >
                 {!attribute.multiple_values && (
