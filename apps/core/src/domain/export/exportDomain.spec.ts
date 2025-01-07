@@ -250,5 +250,98 @@ describe('exportDomain', () => {
                 }
             ]);
         });
+
+        it('should export data with multiple values', async () => {
+            const jsonMapping = JSON.stringify({
+                multivalues_links: 'bikes.bikes_shops.shops_label',
+                multivalues: 'bikes.bikes_sizes',
+                no_values: 'bikes.colors_label'
+            });
+
+            const mockAttributeDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: jest.fn()
+            };
+
+            const mockUtils: Mockify<IUtils> = {
+                isLinkAttribute: jest.fn()
+            };
+
+            const attributeProperties = {
+                bikes_shops: {linked_library: 'shops'},
+                shops_label: {format: AttributeFormats.TEXT, multiple_values: true},
+                bikes_sizes: {format: AttributeFormats.TEXT, multiple_values: true},
+                colors_label: {format: AttributeFormats.TEXT, multiple_values: true}
+            };
+
+            when(mockUtils.isLinkAttribute)
+                .calledWith({id: 'bikes_shops', ...attributeProperties.bikes_shops})
+                .mockReturnValue(true);
+
+            Object.entries(attributeProperties).forEach(([id, returnValue]) =>
+                when(mockAttributeDomain.getAttributeProperties)
+                    .calledWith({id, ctx: mockCtx})
+                    .mockReturnValue({id, ...returnValue})
+            );
+
+            const mockRecordDomain: Mockify<IRecordDomain> = {
+                getRecordFieldValue: jest.fn()
+            };
+
+            const fieldValues = [
+                {
+                    library: 'bikes',
+                    recordId: 'bikeId',
+                    attributeId: 'bikes_sizes',
+                    returnValue: [{payload: 'S'}, {payload: 'M'}, {payload: 'L'}, {payload: 'XL'}]
+                },
+                {
+                    library: 'bikes',
+                    recordId: 'bikeId',
+                    attributeId: 'bikes_shops',
+                    returnValue: [{payload: {id: 'shopId'}}, {payload: {id: 'shopId2'}}]
+                },
+                {
+                    library: 'shops',
+                    recordId: 'shopId',
+                    attributeId: 'shops_label',
+                    returnValue: [{payload: 'shopLabel'}]
+                },
+                {
+                    library: 'shops',
+                    recordId: 'shopId2',
+                    attributeId: 'shops_label',
+                    returnValue: [{payload: 'shopLabel2'}]
+                },
+                {
+                    library: 'bikes',
+                    recordId: 'bikeId',
+                    attributeId: 'colors_label',
+                    returnValue: []
+                }
+            ];
+
+            fieldValues.forEach(({library, recordId, attributeId, returnValue}) =>
+                when(mockRecordDomain.getRecordFieldValue)
+                    .calledWith({library, record: {id: recordId}, attributeId, ctx: mockCtx})
+                    .mockReturnValue(returnValue)
+            );
+
+            const domain = exportDomain({
+                ...depsBase,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
+                'core.utils': mockUtils as IUtils
+            });
+
+            const data = await domain.exportData(jsonMapping, [{bikes: 'bikeId'}], mockCtx);
+
+            expect(data).toEqual([
+                {
+                    multivalues_links: 'shopLabel,shopLabel2',
+                    multivalues: 'S,M,L,XL',
+                    no_values: ''
+                }
+            ]);
+        });
     });
 });
