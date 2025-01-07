@@ -11,13 +11,21 @@ import {initialState} from '../editRecordReducer/editRecordReducer';
 import {EditRecordReducerContext, IEditRecordReducerContext} from '../editRecordReducer/editRecordReducerContext';
 import EditRecordSidebar from './EditRecordSidebar';
 
-jest.mock('_ui/components/RecordEdition/EditRecordSidebar/RecordSummary', () => function RecordSummary() {
-        return <div>RecordSummary</div>;
-    });
+jest.mock(
+    '_ui/components/RecordEdition/EditRecordSidebar/RecordSummary',
+    () =>
+        function RecordSummary() {
+            return <div>RecordSummary</div>;
+        }
+);
 
-jest.mock('_ui/components/RecordEdition/EditRecordContent/uiElements/StandardField', () => function StandardField() {
-        return <div>StandardField</div>;
-    });
+jest.mock(
+    '_ui/components/RecordEdition/EditRecordContent/uiElements/StandardField',
+    () =>
+        function StandardField() {
+            return <div>StandardField</div>;
+        }
+);
 
 describe('EditRecordSidebar', () => {
     const mockReducer: IEditRecordReducerContext = {
@@ -34,6 +42,15 @@ describe('EditRecordSidebar', () => {
         }
     };
 
+    const mockReducerWithoutValue: IEditRecordReducerContext = {
+        ...mockReducer,
+        state: {
+            ...mockReducer.state,
+            record: mockRecord,
+            sidebarContent: 'none'
+        }
+    };
+
     const mockReducerWithValueSimple: IEditRecordReducerContext = {
         ...mockReducerWithValue,
         state: {
@@ -47,6 +64,31 @@ describe('EditRecordSidebar', () => {
     };
 
     const mockHandleMetadataSubmit = jest.fn();
+
+    test("Don't display sidebar content if none", async () => {
+        render(
+            <EditRecordReducerContext.Provider value={mockReducerWithoutValue}>
+                <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} />
+            </EditRecordReducerContext.Provider>
+        );
+
+        expect(screen.queryByText(/RecordSummary/)).not.toBeInTheDocument();
+    });
+
+    test('Display sidebar content in portal if sidebarContainer is provided', async () => {
+        const sidebarContainer = document.createElement('div');
+        document.body.appendChild(sidebarContainer);
+
+        render(
+            <EditRecordReducerContext.Provider value={mockReducer}>
+                <EditRecordSidebar onMetadataSubmit={mockHandleMetadataSubmit} sidebarContainer={sidebarContainer} />
+            </EditRecordReducerContext.Provider>
+        );
+
+        const renderedContent = sidebarContainer.querySelector('div');
+        expect(renderedContent).toBeInTheDocument();
+        expect(renderedContent).toHaveTextContent('RecordSummary');
+    });
 
     describe('Record summary', () => {
         test('Display record summary', async () => {
