@@ -4,7 +4,6 @@
 import isEqual from 'lodash/isEqual';
 import {FunctionComponent, useEffect, useReducer, useRef, useState} from 'react';
 import styled, {CSSObject} from 'styled-components';
-import {themeVars} from '../../../antdTheme';
 import {ErrorDisplayTypes} from '../../../constants';
 import {useCanEditRecord} from '../../../hooks/useCanEditRecord';
 import {IValueVersion} from '../../../types/values';
@@ -42,10 +41,10 @@ import {
 } from '../EditRecordContent/_types';
 import editRecordReducer, {EditRecordReducerActionsTypes, initialState} from '../editRecordReducer/editRecordReducer';
 import {EditRecordReducerContext} from '../editRecordReducer/editRecordReducerContext';
-import EditRecordSidebar from '../EditRecordSidebar';
 import CreationErrorContext, {ICreationErrorByField} from './creationErrorContext';
 import {FormInstance} from 'antd/lib/form/Form';
 import {useRunActionsListAndFormatOnValue} from '../EditRecordContent/hooks/useRunActionsListAndFormatOnValue';
+import EditRecordSidebar from '../EditRecordSidebar';
 
 interface IEditRecordProps {
     antdForm: FormInstance;
@@ -54,6 +53,7 @@ interface IEditRecordProps {
     onCreate?: (newRecord: RecordIdentityFragment['whoAmI']) => void;
     valuesVersion?: IValueVersion;
     showSidebar?: boolean;
+    sidebarContainer?: HTMLElement;
     containerStyle?: CSSObject;
     withInfoButton: boolean;
     // Here we're not in charge of buttons position. It might on a modal footer or pretty much anywhere.
@@ -70,10 +70,11 @@ interface IPendingValues {
 
 const sidebarWidth = 300;
 
-const Container = styled.div<{$showSidebar: boolean; style: CSSObject}>`
+const Container = styled.div<{$shouldUseLayoutWithSidebar: boolean; style: CSSObject}>`
     display: grid;
-    grid-template-columns: ${props => (props.$showSidebar ? `minmax(0, auto) ${sidebarWidth}px` : '1fr')};
-    grid-template-areas: ${props => (props.$showSidebar ? '"content sidebar"' : '"content"')};
+    grid-template-columns: ${props =>
+        props.$shouldUseLayoutWithSidebar ? `minmax(0, auto) ${sidebarWidth}px` : '1fr'};
+    grid-template-areas: ${props => (props.$shouldUseLayoutWithSidebar ? '"content sidebar"' : '"content"')};
     overflow: hidden;
 `;
 
@@ -84,16 +85,6 @@ const Content = styled.div`
     overflow-y: scroll;
 `;
 
-const Sidebar = styled.div`
-    overflow-x: hidden;
-    overflow-y: scroll;
-    position: relative;
-    grid-area: sidebar;
-    background: ${themeVars.secondaryBg};
-    border-top-right-radius: 3px;
-    z-index: 1;
-`;
-
 export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     antdForm,
     record,
@@ -101,6 +92,7 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
     onCreate,
     valuesVersion,
     showSidebar = false,
+    sidebarContainer,
     containerStyle,
     withInfoButton,
     buttonsRefs
@@ -473,11 +465,13 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
         }
     };
 
+    const shouldUseLayoutWithSidebar = state.sidebarContent !== 'none' && sidebarContainer === undefined;
+
     return (
         <ErrorBoundary>
             <EditRecordReducerContext.Provider value={{state, dispatch}}>
                 <CreationErrorContext.Provider value={creationErrors}>
-                    <Container $showSidebar={state.sidebarContent !== 'none'} style={containerStyle}>
+                    <Container $shouldUseLayoutWithSidebar={shouldUseLayoutWithSidebar} style={containerStyle}>
                         <Content className="content">
                             {permissionsLoading ? (
                                 <EditRecordSkeleton rows={5} />
@@ -496,9 +490,10 @@ export const EditRecord: FunctionComponent<IEditRecordProps> = ({
                                 <ErrorDisplay type={ErrorDisplayTypes.PERMISSION_ERROR} showActionButton={false} />
                             )}
                         </Content>
-                        <Sidebar className="sidebar">
-                            <EditRecordSidebar onMetadataSubmit={_handleMetadataSubmit} />
-                        </Sidebar>
+                        <EditRecordSidebar
+                            onMetadataSubmit={_handleMetadataSubmit}
+                            sidebarContainer={sidebarContainer}
+                        />
                     </Container>
                 </CreationErrorContext.Provider>
             </EditRecordReducerContext.Provider>
