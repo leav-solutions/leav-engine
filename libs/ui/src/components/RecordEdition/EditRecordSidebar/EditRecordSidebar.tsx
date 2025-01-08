@@ -12,10 +12,10 @@ import styled from 'styled-components';
 import {createPortal} from 'react-dom';
 import {IEditRecordReducerState} from '../editRecordReducer/editRecordReducer';
 
-type IEditRecordSidebarProps = {
+interface IEditRecordSidebarProps {
     onMetadataSubmit: MetadataSubmitValueFunc;
     sidebarContainer?: HTMLElement;
-};
+}
 
 const SidebarWrapper = styled.div`
     overflow-x: hidden;

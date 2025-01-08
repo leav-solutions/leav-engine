@@ -35,10 +35,17 @@ export interface IExportParams {
 export interface IExportDomain {
     exportExcel(params: IExportParams, task?: ITaskFuncParams): Promise<string>;
     exportData(
-        jsonMapping: string,
+        mapping: IExportMapping,
         elements: Array<{[libraryId: string]: string}>,
         ctx: IQueryInfos
     ): Promise<Array<{[key: string]: any}>>;
+}
+
+export interface IExportMapping {
+    [key: string]: {
+        attribute: string;
+        rawValue?: boolean;
+    };
 }
 
 export interface IExportDomainDeps {
@@ -154,9 +161,9 @@ export default function ({
         return _getRecFieldValue(values, attributes.slice(1), ctx);
     };
 
-    const _getMappingKeysByLibrary = (mapping: Record<string, string>): Record<string, string[]> =>
+    const _getMappingKeysByLibrary = (mapping: IExportMapping): Record<string, string[]> =>
         Object.entries(mapping).reduce((acc, [key, value]) => {
-            const libraryId = value.split('.')[0];
+            const libraryId = value.attribute.split('.')[0];
             (acc[libraryId] ??= []).push(key);
             return acc;
         }, {});
@@ -165,7 +172,8 @@ export default function ({
         libraryId: string,
         recordIds: string[],
         nestedAttribute: string[],
-        ctx: IQueryInfos
+        ctx: IQueryInfos,
+        rawValue: boolean = false
     ): Promise<string> => {
         const attributeProps = await attributeDomain.getAttributeProperties({id: nestedAttribute[0], ctx});
 
@@ -181,7 +189,12 @@ export default function ({
         );
 
         let values = recordsFieldValues.flatMap(recordFieldValues =>
-            getValuesToDisplay(recordFieldValues).map(({payload}) => payload ?? '')
+            getValuesToDisplay(recordFieldValues).map(
+                recordFieldValue =>
+                    (rawValue && 'raw_payload' in recordFieldValue
+                        ? recordFieldValue.raw_payload
+                        : recordFieldValue.payload) ?? ''
+            )
         );
 
         if (utils.isLinkAttribute(attributeProps)) {
@@ -189,7 +202,8 @@ export default function ({
                 attributeProps.linked_library,
                 values.map(({id}) => id),
                 nestedAttribute.slice(1),
-                ctx
+                ctx,
+                rawValue
             );
         } else if (nestedAttribute.length > 1) {
             if (attributeProps.format === AttributeFormats.EXTENDED) {
@@ -211,17 +225,22 @@ export default function ({
 
     return {
         async exportData(
-            jsonMapping: string,
+            mapping: IExportMapping,
             recordsToExport: Array<{[libraryId: string]: string}>,
             ctx: IQueryInfos
         ): Promise<Array<{[key: string]: any}>> {
-            const mapping = JSON.parse(jsonMapping) as Record<string, string>;
             const mappingKeysByLibrary = _getMappingKeysByLibrary(mapping);
 
             const getMappingRecordValues = async (keys: string[], libraryId: string, recordId: string) =>
                 keys.reduce(async (acc, key) => {
-                    const nestedAttributes = mapping[key].split('.').slice(1); // first element is the library id, we delete it
-                    const value = await _getInDepthValue(libraryId, [recordId], nestedAttributes, ctx);
+                    const nestedAttributes = mapping[key].attribute.split('.').slice(1); // first element is the library id, we delete it
+                    const value = await _getInDepthValue(
+                        libraryId,
+                        [recordId],
+                        nestedAttributes,
+                        ctx,
+                        mapping[key].rawValue
+                    );
                     return set(await acc, key, value);
                 }, Promise.resolve({}));
 
