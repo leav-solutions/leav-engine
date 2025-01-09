@@ -844,7 +844,7 @@ export type ViewInput = {
   label?: InputMaybe<Scalars['SystemTranslation']>;
   library: Scalars['String'];
   shared: Scalars['Boolean'];
-  sort?: InputMaybe<RecordSortInput>;
+  sort?: InputMaybe<Array<RecordSortInput>>;
   valuesVersions?: InputMaybe<Array<ViewValuesVersionInput>>;
 };
 
@@ -931,7 +931,9 @@ export type TreeLightFragment = { id: string, label?: any | null };
 
 export type TreeNodeChildFragment = { id: string, order?: number | null, childrenCount?: number | null, record: { id: string, active: Array<{ value?: any | null }>, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ id: string, record: { id: string, library: { id: string, label?: any | null }, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null, permissions: { access_tree: boolean, detach: boolean, edit_children: boolean } };
 
-export type ViewDetailsFragment = { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: { field: string, order: SortOrder } | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null };
+export type ViewDetailsFragment = { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null };
+
+export type ViewDetailsFilterFragment = { field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null };
 
 export type AttributePropertiesFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean };
 
@@ -1324,21 +1326,21 @@ export type GetViewQueryVariables = Exact<{
 }>;
 
 
-export type GetViewQuery = { view: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: { field: string, order: SortOrder } | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
+export type GetViewQuery = { view: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
 
 export type GetViewsListQueryVariables = Exact<{
   libraryId: Scalars['String'];
 }>;
 
 
-export type GetViewsListQuery = { views: { totalCount: number, list: Array<{ id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: { field: string, order: SortOrder } | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null }> } };
+export type GetViewsListQuery = { views: { totalCount: number, list: Array<{ id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null }> } };
 
-export type AddViewMutationVariables = Exact<{
+export type SaveViewMutationVariables = Exact<{
   view: ViewInput;
 }>;
 
 
-export type AddViewMutation = { saveView: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: { field: string, order: SortOrder } | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
+export type SaveViewMutation = { saveView: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
 
 export type ExplorerAttributesQueryVariables = Exact<{
   ids?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
@@ -1869,6 +1871,18 @@ export const TreeNodeChildFragmentDoc = gql`
   }
 }
     ${RecordIdentityFragmentDoc}`;
+export const ViewDetailsFilterFragmentDoc = gql`
+    fragment ViewDetailsFilter on RecordFilter {
+  field
+  value
+  tree {
+    id
+    label
+  }
+  condition
+  operator
+}
+    `;
 export const ViewDetailsFragmentDoc = gql`
     fragment ViewDetails on View {
   id
@@ -1891,14 +1905,7 @@ export const ViewDetailsFragmentDoc = gql`
   description
   color
   filters {
-    field
-    value
-    tree {
-      id
-      label
-    }
-    condition
-    operator
+    ...ViewDetailsFilter
   }
   sort {
     field
@@ -1917,7 +1924,8 @@ export const ViewDetailsFragmentDoc = gql`
     id
   }
 }
-    ${RecordIdentityFragmentDoc}`;
+    ${ViewDetailsFilterFragmentDoc}
+${RecordIdentityFragmentDoc}`;
 export const PropertyValueFragmentDoc = gql`
     fragment PropertyValue on GenericValue {
   ... on Value {
@@ -3951,39 +3959,39 @@ export function useGetViewsListLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetViewsListQueryHookResult = ReturnType<typeof useGetViewsListQuery>;
 export type GetViewsListLazyQueryHookResult = ReturnType<typeof useGetViewsListLazyQuery>;
 export type GetViewsListQueryResult = Apollo.QueryResult<GetViewsListQuery, GetViewsListQueryVariables>;
-export const AddViewDocument = gql`
-    mutation ADD_VIEW($view: ViewInput!) {
+export const SaveViewDocument = gql`
+    mutation SAVE_VIEW($view: ViewInput!) {
   saveView(view: $view) {
     ...ViewDetails
   }
 }
     ${ViewDetailsFragmentDoc}`;
-export type AddViewMutationFn = Apollo.MutationFunction<AddViewMutation, AddViewMutationVariables>;
+export type SaveViewMutationFn = Apollo.MutationFunction<SaveViewMutation, SaveViewMutationVariables>;
 
 /**
- * __useAddViewMutation__
+ * __useSaveViewMutation__
  *
- * To run a mutation, you first call `useAddViewMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddViewMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useSaveViewMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveViewMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [addViewMutation, { data, loading, error }] = useAddViewMutation({
+ * const [saveViewMutation, { data, loading, error }] = useSaveViewMutation({
  *   variables: {
  *      view: // value for 'view'
  *   },
  * });
  */
-export function useAddViewMutation(baseOptions?: Apollo.MutationHookOptions<AddViewMutation, AddViewMutationVariables>) {
+export function useSaveViewMutation(baseOptions?: Apollo.MutationHookOptions<SaveViewMutation, SaveViewMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AddViewMutation, AddViewMutationVariables>(AddViewDocument, options);
+        return Apollo.useMutation<SaveViewMutation, SaveViewMutationVariables>(SaveViewDocument, options);
       }
-export type AddViewMutationHookResult = ReturnType<typeof useAddViewMutation>;
-export type AddViewMutationResult = Apollo.MutationResult<AddViewMutation>;
-export type AddViewMutationOptions = Apollo.BaseMutationOptions<AddViewMutation, AddViewMutationVariables>;
+export type SaveViewMutationHookResult = ReturnType<typeof useSaveViewMutation>;
+export type SaveViewMutationResult = Apollo.MutationResult<SaveViewMutation>;
+export type SaveViewMutationOptions = Apollo.BaseMutationOptions<SaveViewMutation, SaveViewMutationVariables>;
 export const ExplorerAttributesDocument = gql`
     query ExplorerAttributes($ids: [ID!]) {
   attributes(filters: {ids: $ids}) {

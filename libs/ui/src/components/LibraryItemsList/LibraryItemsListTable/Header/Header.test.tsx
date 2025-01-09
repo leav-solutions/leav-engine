@@ -30,10 +30,12 @@ describe('Header', () => {
             render(
                 <MockSearchContextProvider
                     state={{
-                        sort: {
-                            field: 'id',
-                            order: SortOrder.desc
-                        }
+                        sort: [
+                            {
+                                field: 'id',
+                                order: SortOrder.desc
+                            }
+                        ]
                     }}
                 >
                     <Header id="test" type={AttributeType.simple}>
@@ -54,10 +56,12 @@ describe('Header', () => {
             render(
                 <MockSearchContextProvider
                     state={{
-                        sort: {
-                            field: 'id',
-                            order: SortOrder.asc
-                        }
+                        sort: [
+                            {
+                                field: 'id',
+                                order: SortOrder.asc
+                            }
+                        ]
                     }}
                 >
                     <Header id="test" type={AttributeType.simple}>

@@ -636,12 +636,12 @@
             "active": "Active sorts",
             "inactive": "Inactive sorts"
         },
-        "filter-list": {
+        "toolbar": {
             "active": "Active filters",
             "inactive": "Inactive filters"
         },
         "reset-filter": "Reset filter",
-        "delete-filters": "Delete all filters",
+        "reset-view": "Reset view",
         "empty-data": "No items found.",
         "available-attributes": "Other available attributes",
         "coming-soon": "Coming soon",
@@ -654,6 +654,8 @@
         "active-items-number": "{{count, number}} active",
         "active-items-number_zero": "None",
         "invalid-value": "Invalid value",
-        "type-a-value": "Type a value"
+        "type-a-value": "Type a value",
+        "save-view": "Save",
+        "reinit-view": "Reset"
     }
 }

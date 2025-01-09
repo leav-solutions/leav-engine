@@ -83,6 +83,12 @@ const _getDateRequestFilters = ({
                     field,
                     condition: RecordFilterCondition.GREATER_THAN,
                     value: dayjs.unix(Number(value)).endOf('day').unix().toString()
+                },
+                {operator: RecordFilterOperator.OR},
+                {
+                    field,
+                    condition: RecordFilterCondition.IS_EMPTY,
+                    value: null
                 }
             ];
         case RecordFilterCondition.EQUAL:
@@ -120,7 +126,7 @@ export const useExplorerData = ({
     attributeIds: string[];
     fulltextSearch: string;
     sorts: Array<{
-        attributeId: string;
+        field: string;
         order: SortOrder;
     }>;
     pagination: null | {limit: number; offset: number};
@@ -153,8 +159,8 @@ export const useExplorerData = ({
             attributeIds,
             pagination,
             searchQuery: fulltextSearch,
-            multipleSort: sorts.map(({order, attributeId}) => ({
-                field: attributeId,
+            multipleSort: sorts.map(({order, field}) => ({
+                field,
                 order
             })),
             filters: queryFilters

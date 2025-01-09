@@ -634,12 +634,12 @@
             "active": "Tris actifs",
             "inactive": "Tris inactifs"
         },
-        "filter-list": {
+        "toolbar": {
             "active": "Filtres actifs",
             "inactive": "Filtres inactifs"
         },
         "reset-filter": "Réinitialiser le filtre",
-        "delete-filters": "Supprimer tous les filtres",
+        "reset-view": "Réinitialiser la vue",
         "empty-data": "Aucun élément trouvé.",
         "sort-ascending": "Ascendant",
         "sort-descending": "Descendant",
@@ -654,6 +654,8 @@
         "active-items-number": "{{count, number}} actifs",
         "active-items-number_zero": "Aucun",
         "invalid-value": "Valeur invalide",
-        "type-a-value": "Saisissez une valeur"
+        "type-a-value": "Saisissez une valeur",
+        "save-view": "Enregistrer",
+        "reinit-view": "Réinitialiser"
     }
 }

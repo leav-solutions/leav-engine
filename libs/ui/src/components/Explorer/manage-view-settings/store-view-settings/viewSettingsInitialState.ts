@@ -15,5 +15,11 @@ export const viewSettingsInitialState: IViewSettingsState = {
     pageSize: defaultPageSizeOptions[0],
     filters: [],
     maxFilters: defaultMaxFilters,
-    canAddFilter: true
+    initialViewSettings: {
+        viewType: 'table',
+        attributesIds: [],
+        sort: [],
+        pageSize: defaultPageSizeOptions[0],
+        filters: []
+    }
 };

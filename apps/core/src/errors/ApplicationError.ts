@@ -1,8 +1,6 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-
-import {ErrorTypes} from '../_types/errors';
 import LeavError from './LeavError';
 
 export enum ApplicationErrorType {
@@ -10,7 +8,7 @@ export enum ApplicationErrorType {
     FORBIDDEN_ERROR = 'forbidden'
 }
 
-export default class ApplicationError extends LeavError<{}> {
+export default class ApplicationError extends LeavError<{}, ApplicationErrorType> {
     public applicationErrorType: ApplicationErrorType;
     public appEndpoint: string;
     public statusCode: number;
@@ -21,7 +19,7 @@ export default class ApplicationError extends LeavError<{}> {
     };
 
     public constructor(type: ApplicationErrorType, appEndpoint: string) {
-        super(ErrorTypes.VALIDATION_ERROR, type);
+        super(type, type);
 
         this.applicationErrorType = type;
         this.statusCode = this._statusCodeByType[type];

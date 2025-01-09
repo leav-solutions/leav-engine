@@ -23,7 +23,7 @@ import {
 import {useSearchInput} from './useSearchInput';
 import {usePagination} from './usePagination';
 import {Loading} from '../Loading';
-import {ExplorerFilterBar} from './display-view-filters/ExplorerFilterBar';
+import {ExplorerToolBar} from './display-view-filters/ExplorerToolBar';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useViewSettingsReducer} from './useViewSettingsReducer';
 
@@ -71,7 +71,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
 
     const {panelElement} = useEditSettings();
 
-    const {loading: viewSettingsLoading, view, dispatch} = useViewSettingsReducer(defaultViewSettings);
+    const {loading: viewSettingsLoading, view, dispatch} = useViewSettingsReducer(library, defaultViewSettings);
 
     const {currentPage, setNewPageSize, setNewPage} = usePagination(dispatch);
 
@@ -120,7 +120,7 @@ export const Explorer: FunctionComponent<IExplorerProps> = ({
                         {primaryButton}
                     </KitSpace>
                 </ExplorerHeaderDivStyled>
-                <ExplorerFilterBar />
+                <ExplorerToolBar libraryId={library} />
                 {loading || viewSettingsLoading ? (
                     <Loading />
                 ) : hasNoResults ? (

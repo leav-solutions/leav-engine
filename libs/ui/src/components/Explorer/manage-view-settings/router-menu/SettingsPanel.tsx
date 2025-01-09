@@ -2,23 +2,35 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import styled from 'styled-components';
-import {FunctionComponent, useState} from 'react';
-import {KitTypography} from 'aristid-ds';
-import {FaFilter, FaList, FaSortAlphaDown} from 'react-icons/fa';
+import {FunctionComponent} from 'react';
+import {KitButton, KitTypography} from 'aristid-ds';
+import {FaFilter, FaList, FaSave, FaSortAlphaDown, FaUndo} from 'react-icons/fa';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {useEditSettings} from '../open-view-settings/useEditSettings';
 import {ConfigureDisplay} from '../configure-display/ConfigureDisplay';
 import {SortItems} from '../sort-items/SortItems';
 import {SettingItem} from './SettingItem';
 import {FilterItems} from '../filter-items/FilterItems';
 import {useViewSettingsContext} from '../store-view-settings/useViewSettingsContext';
-
-export type SettingsPanelPages = 'router-menu' | 'configure-display' | 'sort-items' | 'filter-items';
+import useExecuteSaveViewMutation from '_ui/hooks/useExecuteSaveViewMutation';
+import {useLang} from '_ui/hooks';
+import {mapViewTypeFromExplorerToLegacy} from '../../_constants';
+import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
+import {SettingsPanelPages} from '../open-view-settings/EditSettingsContext';
+import {useOpenViewSettings} from '../open-view-settings/useOpenViewSettings';
 
 const ContentWrapperStyledDiv = styled.div`
     display: flex;
     flex-direction: column;
     gap: calc(var(--general-spacing-s) * 1px);
+    justify-content: space-between;
+    height: 100%;
+`;
+
+const FooterStyledDiv = styled.footer`
+    display: flex;
+    justify-content: center;
+    gap: calc(var(--general-spacing-xs) * 1px);
+    padding: calc(var(--general-spacing-xxs) * 1px) 0;
 `;
 
 const ConfigurationStyledMenu = styled.menu`
@@ -27,80 +39,85 @@ const ConfigurationStyledMenu = styled.menu`
 
 interface ISettingsPanelProps {
     library: string;
+    page?: SettingsPanelPages;
 }
 
-export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library}) => {
+export const SettingsPanel: FunctionComponent<ISettingsPanelProps> = ({library, page = 'router-menu'}) => {
     const {t} = useSharedTranslation();
+    const {defaultLang} = useLang();
 
-    const {setActiveSettings, activeSettings} = useEditSettings();
-    const {
-        view: {filters}
-    } = useViewSettingsContext();
+    const {openSettingsPanel} = useOpenViewSettings(library);
+    const {view, dispatch} = useViewSettingsContext();
 
-    const [currentPage, setCurrentPage] = useState<SettingsPanelPages>('router-menu');
+    const {saveView} = useExecuteSaveViewMutation();
 
-    const _goToAdvancedSettingsPage = (page: SettingsPanelPages) => {
-        if (!activeSettings) {
-            throw Error('Should not be able to change side pane page if there is no side panel!');
-        }
-
-        const _changePanelPage = ({
-            pageName,
-            title,
-            onClickLeftButton
-        }: {
-            pageName: SettingsPanelPages;
-            title: string;
-            onClickLeftButton?: () => void;
-        }) => {
-            setCurrentPage(pageName);
-            setActiveSettings({
-                ...activeSettings!,
-                title,
-                onClickLeftButton
-            });
-        };
-
-        _changePanelPage({
-            pageName: page,
-            title: t(`explorer.${page}`),
-            onClickLeftButton: () => {
-                const rootPanel = {pageName: 'router-menu', title: t('explorer.settings')} as const;
-                _changePanelPage(rootPanel);
+    const _handleSaveView = () => {
+        saveView({
+            view: {
+                id: view.viewId,
+                library,
+                shared: false,
+                display: {
+                    type: mapViewTypeFromExplorerToLegacy[view.viewType]
+                },
+                filters: view.filters.map(filter => ({
+                    field: filter.field,
+                    value: filter.value,
+                    condition: filter.condition
+                })),
+                sort: view.sort.map(({field: attributeId, order}) => ({field: attributeId, order})),
+                attributes: view.attributesIds,
+                label: {
+                    //TODO: add a better label when view management is more advanced
+                    [defaultLang]: 'user view'
+                }
             }
         });
     };
 
-    // TODO: look for MemoryRouter
+    const _handleReinitView = () => {
+        dispatch({type: ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS});
+    };
 
+    // TODO: look for MemoryRouter
     return (
         <ContentWrapperStyledDiv>
-            {currentPage === 'router-menu' && (
-                <nav>
-                    <KitTypography.Title level="h4">{t('explorer.router-menu')}</KitTypography.Title>
-                    <ConfigurationStyledMenu>
-                        <SettingItem
-                            icon={<FaList />}
-                            title={t('explorer.configure-display')}
-                            onClick={() => _goToAdvancedSettingsPage('configure-display')}
-                        />
-                        <SettingItem
-                            icon={<FaFilter />}
-                            title={t('explorer.filters')}
-                            value={String(t('explorer.active-items-number', {count: filters.length}))}
-                            onClick={() => _goToAdvancedSettingsPage('filter-items')}
-                        />
-                        <SettingItem
-                            icon={<FaSortAlphaDown />}
-                            title={t('explorer.sort-items')}
-                            onClick={() => _goToAdvancedSettingsPage('sort-items')}
-                        />
-                    </ConfigurationStyledMenu>
-                </nav>
+            {page === 'router-menu' && (
+                <>
+                    <nav>
+                        <KitTypography.Title level="h4">{t('explorer.router-menu')}</KitTypography.Title>
+                        <ConfigurationStyledMenu>
+                            <SettingItem
+                                icon={<FaList />}
+                                title={t('explorer.configure-display')}
+                                onClick={() => openSettingsPanel('configure-display')}
+                            />
+                            <SettingItem
+                                icon={<FaFilter />}
+                                title={t('explorer.filters')}
+                                value={String(t('explorer.active-items-number', {count: view.filters.length}))}
+                                onClick={() => openSettingsPanel('filter-items')}
+                            />
+                            <SettingItem
+                                icon={<FaSortAlphaDown />}
+                                title={t('explorer.sort-items')}
+                                onClick={() => openSettingsPanel('sort-items')}
+                            />
+                        </ConfigurationStyledMenu>
+                    </nav>
+                    <FooterStyledDiv>
+                        <KitButton type="secondary" danger icon={<FaUndo />} onClick={_handleReinitView}>
+                            {t('explorer.reinit-view')}
+                        </KitButton>
+                        <KitButton type="primary" icon={<FaSave />} onClick={_handleSaveView}>
+                            {t('explorer.save-view')}
+                        </KitButton>
+                    </FooterStyledDiv>
+                </>
             )}
-            {currentPage === 'configure-display' && <ConfigureDisplay libraryId={library} />}
-            {currentPage === 'sort-items' && <SortItems libraryId={library} />}
-            {currentPage === 'filter-items' && <FilterItems libraryId={library} />}
+            {page === 'configure-display' && <ConfigureDisplay libraryId={library} />}
+            {page === 'sort-items' && <SortItems libraryId={library} />}
+            {page === 'filter-items' && <FilterItems libraryId={library} />}
         </ContentWrapperStyledDiv>
     );
 };

@@ -17,7 +17,7 @@ export interface IView {
     color?: string;
     filters?: IFilter[];
     valuesVersions?: IValueVersion;
-    sort?: IGetViewListSort;
+    sort?: IGetViewListSort[];
     attributes?: string[];
 }
 
