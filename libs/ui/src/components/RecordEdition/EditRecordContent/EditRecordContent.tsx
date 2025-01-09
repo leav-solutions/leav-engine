@@ -116,7 +116,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
 
         const isEditing = Boolean(record);
         if (isEditing) {
-            refetchComputeFields();
+            refetchComputeFields([record.id]);
         }
 
         return submitRes;
